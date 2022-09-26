@@ -51,6 +51,9 @@
               "src/assets"
             ],
             "styles": [
+              "src/scss/bootstrap.scss",
+              "src/scss/app.scss",
+              "src/scss/icons.scss",
               "src/styles.scss"
             ],
             "scripts": []
@@ -126,5 +129,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }
