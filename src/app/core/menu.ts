@@ -8,38 +8,9 @@ export const MENU: MenuItem[] = [
     },
     {
         id: 2,
-        label: 'Dashboard',
+        label: 'Inicio',
         icon: 'bx-home-circle',
-        badge: {
-            variant: 'info',
-            text: '11',
-        },
-        subItems: [
-            {
-                id: 3,
-                label: 'Defecto',
-                link: '/',
-                parentId: 2
-            },
-            {
-                id: 4,
-                label: 'Sass',
-                link: '/',
-                parentId: 2
-            },
-            {
-                id: 5,
-                label: 'Cripto',
-                link: '/',
-                parentId: 2
-            },
-            {
-                id: 6,
-                label: 'Blog',
-                link: '/',
-                parentId: 2
-            },
-        ]
+        link: '/admin/home'
     },
     {
         id: 7,

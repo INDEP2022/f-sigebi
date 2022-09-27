@@ -1,5 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-topbar',
@@ -16,7 +17,10 @@ export class TopbarComponent implements OnInit {
   @Output() settingsButtonClicked = new EventEmitter();
   @Output() mobileMenuButtonClicked = new EventEmitter();
 
-  constructor(@Inject(DOCUMENT) private document: any,) {
+  constructor(
+    @Inject(DOCUMENT) private document: any,
+    private router:Router
+    ) {
   }
 
   openMobileMenu: boolean;
@@ -51,7 +55,7 @@ export class TopbarComponent implements OnInit {
    * Logout the user
    */
   logout() {
-
+this.router.navigate(['auth/login']);
   }
 
   /**

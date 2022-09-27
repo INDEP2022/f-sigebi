@@ -9,6 +9,7 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { FullComponent } from './full.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { TopbarComponent } from './topbar/topbar.component';
+import { TitleComponent } from './title.component';
 
 
 
@@ -16,7 +17,8 @@ import { TopbarComponent } from './topbar/topbar.component';
   declarations: [
     FullComponent,
     SidebarComponent,
-    TopbarComponent
+    TopbarComponent,
+    TitleComponent
   ],
   imports: [
     CommonModule,

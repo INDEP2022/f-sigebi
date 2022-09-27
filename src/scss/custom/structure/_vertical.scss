@@ -46,6 +46,8 @@
 }
 
 .main-content {
+  min-height: calc(100vh - 490px);
+  background-color: #F8F8FB;
   margin-left: $sidebar-width;
   overflow   : hidden;
 
