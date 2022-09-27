@@ -1,1 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
+ng2-smart-table {
+    font-size: 15px !important;
+}
+
+.is-invalid input {
+    border-color: #dc3545;
+}
+
+.is-invalid select {
+    border-color: #dc3545;
+}

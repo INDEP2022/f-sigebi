@@ -6,11 +6,17 @@ import { FullComponent } from './layouts/full/full.component';
 const routes: Routes = [
   { path: 'admin', component: FullComponent },
   { path: 'auth', component: ContentComponent },
-  { path: '', redirectTo: 'admin', pathMatch: 'full' }
+  { path: '', redirectTo: 'admin', pathMatch: 'full' },
+  {
+    path: 'pages',
+    component: FullComponent,
+    loadChildren: async () =>
+      (await import('./pages/pages.module')).PagesModule,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
