@@ -33,7 +33,6 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
 
   ngOnInit() {
     this.initialize();
-
     this._scrollElement();
   }
 
@@ -134,10 +133,31 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
   /**
    * Initialize
    */
-  initialize(): void {
-    this.menuItems = MENU;
+  private initialize(): void {
+    let id = 0;
+    MENU.forEach(menu => {
+      if (menu.subItems?.length > 0) {
+        menu.id = id;
+        id = this.setParentId(menu, menu.id);
+      } else {
+        menu.id = id;
+        id++;
+      }
+      this.menuItems.push(menu);
+    });
   }
-
+  private setParentId(menuItem: MenuItem, id: number): number {
+    menuItem.subItems.forEach(sub => {
+      id++;
+      sub.id = id;
+      sub.parentId = menuItem.id;
+      if (sub.subItems?.length > 0) {
+        sub.id = id;
+        id = this.setParentId(sub, sub.id);
+      }
+    });
+    return id;
+  }
   /**
    * Returns true or false if given menu item has child or not
    * @param item menuItem

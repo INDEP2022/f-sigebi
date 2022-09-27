@@ -1,10 +1,10 @@
 <app-card [header]="true" [footer]="true">
-    <div class="d-flex justify-content-between align-items-center" header>
+    <div class="ch-content" header>
         <span class="title">
             Lista de asuntos
         </span>
         <div class="add-select">
-            <button class="btn btn-primary active">Nueva</button>
+            <button class="btn btn-primary active" (click)="showToast()">Nueva</button>
         </div>
     </div>
     <div body>

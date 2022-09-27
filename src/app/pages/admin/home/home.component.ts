@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'app-home',
@@ -6,11 +7,16 @@ import { Component, OnInit } from '@angular/core';
   styles: [
   ]
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent extends BasePage implements OnInit {
 
-  constructor() { }
+  constructor() {
+    super();
+  }
 
   ngOnInit(): void {
+  }
+  showToast() {
+    this.onLoadToast('question', 'prueba', 'prueba de alerta');
   }
 
 }
