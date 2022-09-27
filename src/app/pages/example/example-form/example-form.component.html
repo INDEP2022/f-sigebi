@@ -1,0 +1,27 @@
+<div class="modal-header">
+    <h4 class="modal-title text-center">{{title}}</h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="close()">
+        <span>&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <form class="inline-form" [formGroup]="form">
+        <form-field [control]="form.get('reportName')" label="Nombre de Reporte">
+            <input class="form-control" formControlName="reportName">
+        </form-field>
+
+        <div class="form-group">
+            <label>Parrafo</label>
+            <textarea rows="3" class="form-control" formControlName="paragraph"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Versión</label>
+            <input class="form-control" formControlName="version">
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary active btn-sm" (click)="close()">Cerrar</button>
+    <button type="submit" class="btn btn-primary active btn-sm" (click)="confirm()" [disabled]="!form.valid">Guardar</button>
+</div>
