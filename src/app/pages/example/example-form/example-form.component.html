@@ -8,20 +8,20 @@
                 <input class="form-control" formControlName="reportName">
             </form-field>
 
-            <div class="form-group">
-                <label>Parrafo</label>
-                <textarea rows="3" class="form-control" formControlName="paragraph"></textarea>
-            </div>
+        <form-field [control]="form.get('paragraph')" label="Parrafo">
+            <textarea rows="3" class="form-control" formControlName="paragraph"></textarea>
+        </form-field>
+        <form-field [control]="form.get('version')" label="Versión">
+            <input class="form-control" formControlName="version">
+        </form-field>
 
-            <div class="form-group">
-                <label>Versión</label>
-                <input class="form-control" formControlName="version">
-            </div>
-        </form>
-    </div>
-    <div footer>
-        <button type="button" class="btn btn-secondary active btn-sm" (click)="close()">Cerrar</button>
-        <button type="submit" class="btn btn-primary active btn-sm" (click)="confirm()"
-            [disabled]="!form.valid">Guardar</button>
-    </div>
-</app-modal>
+        <div class="form-group">
+            <label>Select</label>
+            <ngx-select [form]="form" [data]="items" label="reportName" value="id" (fetchItems)="getFromSelect($event)" control="version"></ngx-select>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary active btn-sm" (click)="close()">Cerrar</button>
+    <confirm-button [disabled]="!form.valid" [loading]="loading" (confirm)="confirm()"></confirm-button>
+</div>

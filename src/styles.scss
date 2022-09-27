@@ -53,6 +53,10 @@
     }
 }
 
+.table-bordered {
+    border: none !important;
+}
+
 .modal-content {
     border-radius: 7px !important;
 
@@ -89,4 +93,23 @@
 
 .is-invalid select {
     border-color: #dc3545;
+}
+
+.is-invalid textarea {
+    border-color: #dc3545;
+}
+
+.table-loading tbody:after {
+    position           : absolute;
+    top                : 0;
+    left               : 0;
+    right              : 0;
+    bottom             : 0;
+    background-color   : rgba(0, 0, 0, 0.2);
+    background-image   : url('./assets/images/loader-button.gif');
+    background-position: center;
+    background-repeat  : no-repeat;
+    background-size    : 100px 100px;
+    z-index            : 100;
+    content            : "";
 }

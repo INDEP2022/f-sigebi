@@ -15,12 +15,16 @@
                 <search-bar (onSearch)="search($event)"></search-bar>
             </div>
         </div>
-        <div class="row">
+        <div class="row pt-4">
             <div class="col-md-12">
-                <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="paragraphs"
-                    (edit)="edit($event.data)" (delete)="delete($event.data)">
-                </ng2-smart-table>
-                <pagination [totalItems]="totalItems" (pageChanged)="pageChanged($event)"></pagination>
+                <div [class]="loading ? 'table-loading': ''">
+                    <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="paragraphs"
+                        (edit)="edit($event.data)" (delete)="delete($event.data)">
+                    </ng2-smart-table>
+                </div>
+
+                <pagination nextText="Siguiente" previousText="Anterior" [totalItems]="totalItems"
+                    (pageChanged)="pageChanged($event)"></pagination>
             </div>
         </div>
     </div>

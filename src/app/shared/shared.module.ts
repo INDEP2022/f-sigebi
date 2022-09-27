@@ -5,20 +5,54 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { FormFieldComponent } from './components/form-field/form-field.component';
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ConfirmButtonComponent } from './components/confirm-button/confirm-button.component';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { SelectComponent } from './components/select/select.component';
+import { SeeMoreComponent } from './components/see-more/see-more.component';
+import { Ng2SmartTableModule } from 'ng2-smart-table';
+import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { ModalComponent } from './components/modal/modal.component';
 import { CardComponent } from './components/card/card.component';
 import { PaginationComponent } from './components/pagination/pagination.component';
-import { ModalComponent } from './components/modal/modal.component';
 
 @NgModule({
   declarations: [
     ColumnsSelectComponent,
     FormFieldComponent,
     SearchBarComponent,
+    ConfirmButtonComponent,
+    SelectComponent,
+    SeeMoreComponent,
+    ModalComponent,
+    CardComponent,
+    PaginationComponent
+  ],
+  imports: [
+    CommonModule,
+    BsDropdownModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NgSelectModule,
+    PaginationModule,
+    Ng2SmartTableModule,
+  ],
+  exports: [
+    ColumnsSelectComponent,
+    FormFieldComponent,
+    SearchBarComponent,
+    ConfirmButtonComponent,
+    SelectComponent,
+    SeeMoreComponent,
+    ModalComponent,
     CardComponent,
     PaginationComponent,
-    ModalComponent
+    NgSelectModule,
+    BsDropdownModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NgSelectModule,
+    PaginationModule,
+    Ng2SmartTableModule,
   ],
-  imports: [CommonModule, BsDropdownModule, FormsModule, ReactiveFormsModule],
-  exports: [ColumnsSelectComponent, FormFieldComponent, SearchBarComponent, CardComponent, ModalComponent],
 })
 export class SharedModule { }

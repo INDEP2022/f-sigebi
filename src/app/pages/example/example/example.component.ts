@@ -15,6 +15,7 @@ import { EXAMPLE_COLUMNS } from './example-columns';
   styles: [],
 })
 export class ExampleComponent extends BasePage implements OnInit {
+  loading: boolean = false;
   settings = TABLE_SETTINGS;
   params: ListParams = new ListParams();
   paragraphs: Example[] = [];
@@ -60,10 +61,15 @@ export class ExampleComponent extends BasePage implements OnInit {
   }
 
   getExample() {
-    this.exampleService.getAll(this.params).subscribe((response) => {
-      this.paragraphs = response.data;
-      this.totalItems = response.count;
-    });
+    this.loading = true;
+    this.exampleService.getAll(this.params).subscribe(
+      (response) => {
+        this.paragraphs = response.data;
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      (error) => (this.loading = false)
+    );
   }
 
   pageChanged(event: PageChangedEvent) {

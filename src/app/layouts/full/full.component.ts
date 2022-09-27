@@ -1,5 +1,9 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import {
+  Component,
+  Inject,
+  OnInit,
+} from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { SIDEBAR_TYPE } from 'src/app/core/models/layouts.model';
 import { EventService } from 'src/app/core/services/event.service';
@@ -8,11 +12,16 @@ import { ScriptService } from 'src/app/core/services/script.service';
 @Component({
   selector: 'app-full',
   templateUrl: './full.component.html',
-  styleUrls: ['./full.component.html']
+  styleUrls: ['./full.component.html'],
 })
 export class FullComponent implements OnInit {
   isCondensed = false;
   sidebartype: string;
+  scriptsToRemove: string[] = [
+    'https://framework-gb.cdn.gob.mx/gm/v4/js/jquery.min.js',
+    'https://framework-gb.cdn.gob.mx/gm/v4/js/bootstrapV4.min.js',
+    'https://framework-gb.cdn.gob.mx/gm/v4/js/main.js',
+  ];
 
   constructor(
     private router: Router,
@@ -34,6 +43,7 @@ export class FullComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    
     this.sidebartype = SIDEBAR_TYPE;
     // listen to event and change the layout, theme, etc
     this.eventService.subscribe('changeSidebartype', (layout: string) => {
@@ -47,10 +57,9 @@ export class FullComponent implements OnInit {
   }
   isMobile() {
     const ua = navigator.userAgent;
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(ua);
-  }
-
-  ngAfterViewInit() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(
+      ua
+    );
   }
 
   /**
@@ -62,7 +71,7 @@ export class FullComponent implements OnInit {
 
   changeSidebar(value: string) {
     switch (value) {
-      case "light":
+      case 'light':
         document.body.setAttribute('data-sidebar', 'light');
         document.body.setAttribute('data-topbar', 'dark');
         document.body.removeAttribute('data-sidebar-size');
@@ -71,7 +80,7 @@ export class FullComponent implements OnInit {
         document.body.classList.remove('vertical-collpsed');
         document.body.removeAttribute('data-layout-scrollable');
         break;
-      case "compact":
+      case 'compact':
         document.body.setAttribute('data-sidebar-size', 'small');
         document.body.setAttribute('data-sidebar', 'dark');
         document.body.removeAttribute('data-topbar');
@@ -81,7 +90,7 @@ export class FullComponent implements OnInit {
         document.body.classList.remove('vertical-collpsed');
         document.body.removeAttribute('data-layout-scrollable');
         break;
-      case "dark":
+      case 'dark':
         document.body.setAttribute('data-sidebar', 'dark');
         document.body.removeAttribute('data-topbar');
         document.body.removeAttribute('data-layout-size');
@@ -91,15 +100,15 @@ export class FullComponent implements OnInit {
         document.body.classList.remove('vertical-collpsed');
         document.body.removeAttribute('data-layout-scrollable');
         break;
-      case "icon":
+      case 'icon':
         document.body.classList.add('vertical-collpsed');
         document.body.setAttribute('data-sidebar', 'dark');
         document.body.removeAttribute('data-layout-size');
-        document.body.setAttribute('data-keep-enlarged', "true");
+        document.body.setAttribute('data-keep-enlarged', 'true');
         document.body.removeAttribute('data-topbar');
         document.body.removeAttribute('data-layout-scrollable');
         break;
-      case "colored":
+      case 'colored':
         document.body.classList.remove('sidebar-enable');
         document.body.classList.remove('vertical-collpsed');
         document.body.setAttribute('data-sidebar', 'colored');

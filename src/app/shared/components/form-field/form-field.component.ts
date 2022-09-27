@@ -1,13 +1,22 @@
-import {
-  Component,
-  Input,
-  OnInit,
-} from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { ValidationService } from 'src/app/common/services/validation.service';
 @Component({
   selector: 'form-field',
-  templateUrl: './form-field.component.html',
+  template: `
+    <div [class]="invalidClass(control) + 'form-group'" #container>
+      <label *ngIf="label" [class]="labelClass">{{ label }}</label>
+      <!-- ? Trasnclusion con ng-content -->
+      <ng-content></ng-content>
+      <div
+        *ngIf="isInvalid(control)"
+        class="invalid-feedback animated fadeInUp"
+        style="display: block;"
+      >
+        {{ getErrorMessage(control) }}
+      </div>
+    </div>
+  `,
   styles: [],
 })
 export class FormFieldComponent implements OnInit {
