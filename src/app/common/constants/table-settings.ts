@@ -8,7 +8,7 @@ export const TABLE_SETTINGS = {
         editButtonContent: '<i class="fa fa-edit mx-2"></i>',
       },
       delete: {
-        deleteButtonContent: '<i class="fa fa-trash mx-2"></i>',
+        deleteButtonContent: '<i class="fa fa-trash mx-2 text-danger"></i>',
         confirmDelete: true,
       },
       columns: {},

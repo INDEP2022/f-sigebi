@@ -1,8 +1,10 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Example } from 'src/app/core/models/example';
 import { ExampleService } from 'src/app/core/services/example.service';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-example-form',
@@ -10,11 +12,13 @@ import { ExampleService } from 'src/app/core/services/example.service';
   styles: [],
 })
 export class ExampleFormComponent implements OnInit {
+  loading: boolean = false;
   title: string = 'Nuevo Parrafo';
   edit: boolean = false;
-  @Output() refresh = new EventEmitter<true>();
   form: FormGroup = new FormGroup({});
   paragraph: Example;
+  items = new DefaultSelect<Example>()
+  @Output() refresh = new EventEmitter<true>();
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -41,23 +45,34 @@ export class ExampleFormComponent implements OnInit {
   }
 
   confirm() {
-    this.edit ? this.update() : this.create()
+    this.edit ? this.update() : this.create();
   }
 
   create() {
+    this.loading = true;
     this.exampleService.create(this.form.value).subscribe(
       (data) => this.handleSuccess(),
+      (error) => (this.loading = false)
     );
   }
 
   update() {
+    this.loading = true;
     this.exampleService.update(this.paragraph.id, this.form.value).subscribe(
-      (data) => this.handleSuccess()
+      (data) => this.handleSuccess(),
+      (error) => (this.loading = false)
     );
   }
 
   handleSuccess() {
+    this.loading = false;
     this.refresh.emit(true);
     this.modalRef.hide();
+  }
+
+  getFromSelect(params: ListParams) {
+    this.exampleService.getAll(params).subscribe(data => {
+      this.items = new DefaultSelect(data.data, data.count)
+    })
   }
 }

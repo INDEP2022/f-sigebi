@@ -1,8 +1,0 @@
-<div [class]="invalidClass(control) + 'form-group'" #container>
-    <label *ngIf="label" [class]="labelClass">{{label}}</label>
-    <!-- ? Trasnclusion con ng-content -->
-    <ng-content></ng-content>
-    <div *ngIf="isInvalid(control)" class="invalid-feedback animated fadeInUp" style="display: block;">
-        {{ getErrorMessage(control) }}
-    </div>
-</div>

@@ -1,4 +1,11 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import {
+  AfterViewInit,
+  Component,
+  Inject,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { SIDEBAR_TYPE } from 'src/app/core/models/layouts.model';
 import { EventService } from 'src/app/core/services/event.service';
@@ -7,33 +14,68 @@ import { ScriptService } from 'src/app/core/services/script.service';
 @Component({
   selector: 'app-full',
   templateUrl: './full.component.html',
-  styleUrls: ['./full.component.html']
+  styleUrls: ['./full.component.html'],
 })
-export class FullComponent implements OnInit, OnDestroy {
+export class FullComponent implements OnInit, OnDestroy, AfterViewInit {
   isCondensed = false;
   sidebartype: string;
+  scriptsToRemove: string[] = [
+    'https://framework-gb.cdn.gob.mx/gm/v4/js/jquery.min.js',
+    'https://framework-gb.cdn.gob.mx/gm/v4/js/bootstrapV4.min.js',
+    'https://framework-gb.cdn.gob.mx/gm/v4/js/main.js',
+  ];
 
   constructor(
     private router: Router,
     private scriptService: ScriptService,
-    private eventService: EventService
+    private eventService: EventService,
+    @Inject(DOCUMENT) private document: Document
   ) {
-    this.scriptService.loadScript({ id: 'my-script', url: 'https://framework-gb.cdn.gob.mx/gm/v4/js/gobmx.js' })
-      .then(data => {
-        console.log('script loaded ', data);
-      }).catch(error => console.log(error));
+    const script = this.document.getElementById('my-script')
+    console.log(script);
+    if(!script) {
+      this.scriptService
+      .loadScript({
+        id: 'my-script',
+        url: 'https://framework-gb.cdn.gob.mx/gm/v4/js/gobmx.js',
+      })
+      .then((data) => {
+        // this.removeScripts();
+      })
+      .catch((error) => console.log(error));
     this.router.events.forEach((event) => {
       if (event instanceof NavigationEnd) {
         document.body.classList.remove('sidebar-enable');
       }
     });
+    }
+  }
+
+  removeScripts() {
+    setTimeout(() => {
+      const scripts: HTMLCollectionOf<HTMLScriptElement> =
+        this.document.getElementsByTagName('script');
+      for (let i = 0; i < scripts.length; i++) {
+        const src = scripts[i].src;
+        console.log(src);
+        if (
+          this.scriptsToRemove.find(
+            (script) => script.toLowerCase() === src.toLocaleLowerCase()
+          )
+        ) {
+          scripts[i].parentElement?.removeChild(scripts[i]);
+        }
+      }
+    }, 1500);
   }
 
   ngOnDestroy(): void {
+    
     this.scriptService.removeScript('my-script');
   }
 
   ngOnInit(): void {
+    
     this.sidebartype = SIDEBAR_TYPE;
     // listen to event and change the layout, theme, etc
     this.eventService.subscribe('changeSidebartype', (layout: string) => {
@@ -47,11 +89,12 @@ export class FullComponent implements OnInit, OnDestroy {
   }
   isMobile() {
     const ua = navigator.userAgent;
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(ua);
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(
+      ua
+    );
   }
 
-  ngAfterViewInit() {
-  }
+  ngAfterViewInit() {}
 
   /**
    * on settings button clicked from topbar
@@ -62,7 +105,7 @@ export class FullComponent implements OnInit, OnDestroy {
 
   changeSidebar(value: string) {
     switch (value) {
-      case "light":
+      case 'light':
         document.body.setAttribute('data-sidebar', 'light');
         document.body.setAttribute('data-topbar', 'dark');
         document.body.removeAttribute('data-sidebar-size');
@@ -71,7 +114,7 @@ export class FullComponent implements OnInit, OnDestroy {
         document.body.classList.remove('vertical-collpsed');
         document.body.removeAttribute('data-layout-scrollable');
         break;
-      case "compact":
+      case 'compact':
         document.body.setAttribute('data-sidebar-size', 'small');
         document.body.setAttribute('data-sidebar', 'dark');
         document.body.removeAttribute('data-topbar');
@@ -81,7 +124,7 @@ export class FullComponent implements OnInit, OnDestroy {
         document.body.classList.remove('vertical-collpsed');
         document.body.removeAttribute('data-layout-scrollable');
         break;
-      case "dark":
+      case 'dark':
         document.body.setAttribute('data-sidebar', 'dark');
         document.body.removeAttribute('data-topbar');
         document.body.removeAttribute('data-layout-size');
@@ -91,15 +134,15 @@ export class FullComponent implements OnInit, OnDestroy {
         document.body.classList.remove('vertical-collpsed');
         document.body.removeAttribute('data-layout-scrollable');
         break;
-      case "icon":
+      case 'icon':
         document.body.classList.add('vertical-collpsed');
         document.body.setAttribute('data-sidebar', 'dark');
         document.body.removeAttribute('data-layout-size');
-        document.body.setAttribute('data-keep-enlarged', "true");
+        document.body.setAttribute('data-keep-enlarged', 'true');
         document.body.removeAttribute('data-topbar');
         document.body.removeAttribute('data-layout-scrollable');
         break;
-      case "colored":
+      case 'colored':
         document.body.classList.remove('sidebar-enable');
         document.body.classList.remove('vertical-collpsed');
         document.body.setAttribute('data-sidebar', 'colored');

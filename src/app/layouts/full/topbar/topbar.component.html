@@ -208,7 +208,7 @@
                         Pantalla de bloqueo
                     </a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item text-danger" href="javascript: void(0);" (click)="logout()">
+                    <a [routerLink]="['/auth']"  class="dropdown-item text-danger" href="javascript: void(0);" (click)="logout()">
                         <i class="bx bx-power-off font-size-16 align-middle me-1 text-danger"></i>
                         Cerrar sesión
                     </a>

@@ -11,7 +11,13 @@ import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [AppComponent, ContentComponent, InputFormDirective],
-  imports: [BrowserModule, FullModule, AppRoutingModule, HttpClientModule, ToastrModule.forRoot()],
+  imports: [
+    BrowserModule,
+    FullModule,
+    AppRoutingModule,
+    HttpClientModule,
+    ToastrModule.forRoot(),
+  ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,

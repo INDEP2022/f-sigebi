@@ -1,0 +1,9 @@
+<ng-container [formGroup]="form">
+    <ng-content></ng-content>
+    <ng-select #select [clearable]="false" class="px-0 custom" [items]="buffer" [bindLabel]="label"
+        [hideSelected]="true" [bindValue]="value" [minTermLength]="1" [loading]="loading"
+        typeToSearchText="Escriba 3 o mas caracteres" [typeahead]="input$" notFoundText="No se encontraron elementos"
+        [virtualScroll]="true" [formControlName]="control" (scrollToEnd)="fetchMore(select.searchTerm)"
+        (change)="onChange($event)">
+    </ng-select>
+</ng-container>

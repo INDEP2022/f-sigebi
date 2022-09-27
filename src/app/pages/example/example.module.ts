@@ -15,13 +15,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
   imports: [
     CommonModule,
     ExampleRoutingModule,
-    PaginationModule,
-    BsDropdownModule,
     SharedModule,
-    Ng2SmartTableModule,
     ModalModule.forChild(),
-    FormsModule,
-    ReactiveFormsModule
   ],
 })
 export class ExampleModule {}
