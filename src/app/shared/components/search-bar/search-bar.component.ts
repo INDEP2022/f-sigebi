@@ -18,16 +18,11 @@ import {
 @Component({
   selector: 'search-bar',
   template: `
-    <div class="form-group">
-      <label class="col-md-3">Buscar</label>
-      <div class="col-md-9">
-        <input
-          type="text"
-          class="form-control"
-          [formControl]="search"
-          placeholder="Buscar..."
-        />
-      </div>
+    <div class="form-group d-flex">
+        <label class="search-label">Buscar</label>
+        <div class="text-search">
+            <input type="text" class="form-control" [formControl]="search" placeholder="Buscar...">
+        </div>
     </div>
   `,
   styles: [],
@@ -37,7 +32,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   search: FormControl = new FormControl();
   @Output() onSearch = new EventEmitter<string>();
 
-  constructor() {}
+  constructor() { }
 
   ngOnInit(): void {
     this.search.valueChanges
