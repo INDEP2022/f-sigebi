@@ -1,37 +1,41 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AuthModel, UserInfoModel } from 'src/app/core/models/auth.model';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styles: [ ]
+  styleUrls: ['login.component.scss']
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
-  submitted = false;
-  error = '';
-  returnUrl: string;
-
-  year: number = new Date().getFullYear();
 
   constructor(
     private formBuilder: FormBuilder,
-    private route: ActivatedRoute,
+    private authService: AuthService,
     private router: Router
   ) { }
 
   ngOnInit(): void {
     this.loginForm = this.formBuilder.group({
-      email: ['admin@themesbrand.com', [Validators.required, Validators.email]],
-      password: ['123456', [Validators.required]],
+      username: [null, [Validators.required]],
+      password: [null, [Validators.required]],
     });
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
-  get f() { return this.loginForm.controls; }
-
   onSubmit() {
-
+    let { username, password } = this.loginForm.value;
+    let token: AuthModel;
+    this.authService.getToken(username, password).subscribe({
+      next: (data: AuthModel) => {
+        token = data;
+      },
+      complete: () => {
+        localStorage.setItem("token", token.access_token);
+        this.router.navigate(['pages/home']);
+      }
+    });
   }
 }

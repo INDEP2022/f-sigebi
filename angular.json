@@ -54,7 +54,6 @@
               "src/scss/bootstrap.scss",
               "src/scss/app.scss",
               "src/scss/icons.scss",
-              "node_modules/ngx-toastr/toastr.css",
               "src/styles.scss"
             ],
             "scripts": []

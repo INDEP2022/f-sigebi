@@ -1,4 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { SIDEBAR_TYPE } from 'src/app/core/models/layouts.model';
 import { EventService } from 'src/app/core/services/event.service';
@@ -9,28 +10,27 @@ import { ScriptService } from 'src/app/core/services/script.service';
   templateUrl: './full.component.html',
   styleUrls: ['./full.component.html']
 })
-export class FullComponent implements OnInit, OnDestroy {
+export class FullComponent implements OnInit {
   isCondensed = false;
   sidebartype: string;
 
   constructor(
     private router: Router,
     private scriptService: ScriptService,
-    private eventService: EventService
+    private eventService: EventService,
+    @Inject(DOCUMENT) private document: Document
   ) {
-    this.scriptService.loadScript({ id: 'my-script', url: 'https://framework-gb.cdn.gob.mx/gm/v4/js/gobmx.js' })
-      .then(data => {
-        console.log('script loaded ', data);
-      }).catch(error => console.log(error));
-    this.router.events.forEach((event) => {
-      if (event instanceof NavigationEnd) {
-        document.body.classList.remove('sidebar-enable');
-      }
-    });
-  }
-
-  ngOnDestroy(): void {
-    this.scriptService.removeScript('my-script');
+    let script = this.document.getElementById('my-script');
+    if (!script) {
+      this.scriptService.loadScript({ id: 'my-script', url: 'https://framework-gb.cdn.gob.mx/gm/v4/js/gobmx.js' })
+        .then(data => {
+        }).catch(error => console.log(error));
+      this.router.events.forEach((event) => {
+        if (event instanceof NavigationEnd) {
+          document.body.classList.remove('sidebar-enable');
+        }
+      });
+    }
   }
 
   ngOnInit(): void {

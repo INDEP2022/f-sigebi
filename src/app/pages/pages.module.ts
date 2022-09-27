@@ -6,4 +6,4 @@ import { PagesRoutingModule } from './pages-routing.module';
   declarations: [],
   imports: [CommonModule, PagesRoutingModule],
 })
-export class PagesModule {}
+export class PagesModule { }

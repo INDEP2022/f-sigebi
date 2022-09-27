@@ -28,8 +28,8 @@ class SweetalertModel {
         this.confirmButtonText = 'Aceptar';
         this.cancelButtonText = 'Cancelar';
         this.showCloseButton = false;
-        this.confirmButtonClass = 'btn btn-primary active';
-        this.cancelButtonClass = 'btn btn-danger active';
+        this.confirmButtonClass = 'btn btn-primary active btn-sm';
+        this.cancelButtonClass = 'btn btn-danger active btn-sm';
         this.buttonsStyling = false;
     }
 }

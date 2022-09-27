@@ -5,7 +5,7 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Example } from 'src/app/core/models/example';
 import { ExampleService } from 'src/app/core/services/example.service';
-import { GlobalConfirmComponent } from 'src/app/shared/components/global-confirm/global-confirm.component';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { ExampleFormComponent } from '../example-form/example-form.component';
 import { EXAMPLE_COLUMNS } from './example-columns';
 
@@ -14,7 +14,7 @@ import { EXAMPLE_COLUMNS } from './example-columns';
   templateUrl: './example.component.html',
   styles: [],
 })
-export class ExampleComponent implements OnInit {
+export class ExampleComponent extends BasePage implements OnInit {
   settings = TABLE_SETTINGS;
   params: ListParams = new ListParams();
   paragraphs: Example[] = [];
@@ -25,7 +25,9 @@ export class ExampleComponent implements OnInit {
     private exampleService: ExampleService,
     private modalService: BsModalService
   ) {
+    super();
     this.settings.columns = EXAMPLE_COLUMNS;
+    this.settings.actions.delete = true;
   }
 
   add() {
@@ -37,17 +39,16 @@ export class ExampleComponent implements OnInit {
   }
 
   delete(paragraph: Example) {
-    const modalRef = this.modalService.show(GlobalConfirmComponent, {
-      initialState: { deleteMethod: this.exampleService.remove(paragraph.id) },
-    });
-    modalRef.content.refresh.subscribe((next) => {
-      if (next) this.getExample();
+    this.alertQuestion('warning', 'Eliminar', 'Desea eliminar este registro?').then((question) => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+      }
     });
   }
 
   openModal(context?: Partial<ExampleFormComponent>) {
     const modalRef = this.modalService.show(ExampleFormComponent, {
-      initialState: context,
+      initialState: context, class: 'modal-lg modal-dialog-centered', ignoreBackdropClick: true
     });
     modalRef.content.refresh.subscribe((next) => {
       if (next) this.getExample();

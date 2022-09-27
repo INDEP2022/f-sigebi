@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-topbar',
   templateUrl: './topbar.component.html',
-  styleUrls:['./topbar.component.scss']
+  styleUrls: ['./topbar.component.scss']
 })
 export class TopbarComponent implements OnInit {
 
@@ -19,8 +19,8 @@ export class TopbarComponent implements OnInit {
 
   constructor(
     @Inject(DOCUMENT) private document: any,
-    private router:Router
-    ) {
+    private router: Router
+  ) {
   }
 
   openMobileMenu: boolean;
@@ -55,7 +55,8 @@ export class TopbarComponent implements OnInit {
    * Logout the user
    */
   logout() {
-this.router.navigate(['auth/login']);
+    localStorage.clear();
+    this.router.navigate(['auth/login']);
   }
 
   /**

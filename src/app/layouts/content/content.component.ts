@@ -1,19 +1,30 @@
-import { Component, OnInit } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Component, Inject, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ScriptService } from 'src/app/core/services/script.service';
 
 @Component({
   selector: 'app-content',
   templateUrl: './content.component.html',
-  styles:[]
+  styles: []
 })
 export class ContentComponent implements OnInit {
 
   constructor(
-    private scriptService: ScriptService
+    private scriptService: ScriptService,
+    @Inject(DOCUMENT) private document: Document,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
+    if (localStorage.getItem('token')) {
+      this.router.navigate(['/pages/home'])
+    }
     this.scriptService.removeScript('my-script');
+    const header: HTMLCollectionOf<HTMLElement> = this.document.getElementsByTagName('header');
+    header[0]?.remove();
+    const footer: HTMLCollectionOf<HTMLElement> = this.document.getElementsByTagName('footer');
+    footer[0]?.remove();
   }
 
 }

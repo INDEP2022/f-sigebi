@@ -8,15 +8,74 @@
     border-top: 4px solid #c0c0c0;
 }
 
+.swal2-actions {
+    width          : 70% !important;
+    justify-content: space-around !important;
+}
+
 .ch-content {
     display        : flex;
     justify-content: space-between;
     align-items    : center;
 
     .title {
-        font-size     : 16px;
+        font-size     : 14px;
         font-weight   : 600;
         text-transform: uppercase;
+    }
+
+    .buttons {
+        display        : flex;
+        justify-content: end;
+    }
+}
+
+.form-group {
+    align-items: center;
+
+    label {
+        font-size: 13px;
+    }
+
+    input,
+    textarea,
+    select,
+    ng-select {
+        font-size: 13px;
+    }
+
+    .search-label {
+        margin: 0 15px;
+    }
+
+    .text-search {
+        width: 100%;
+    }
+}
+
+.modal-content {
+    border-radius: 7px !important;
+
+    .modal-header {
+        border-radius  : 7px 7px 0 0;
+        background     : #fff !important;
+        border-bottom  : 2px solid #404041 !important;
+        display        : flex;
+        justify-content: space-between;
+        align-items    : center;
+
+        .modal-title {
+            color         : #000 !important;
+            font-size     : 13px;
+            font-weight   : 600;
+            text-transform: uppercase;
+        }
+
+        .close {
+            color     : #000;
+            margin-top: 0px !important;
+            font-size : small;
+        }
     }
 }
 
@@ -24,10 +83,10 @@
 //     font-size: 15px !important;
 // }
 
-// .is-invalid input {
-//     border-color: #dc3545;
-// }
+.is-invalid input {
+    border-color: #dc3545;
+}
 
-// .is-invalid select {
-//     border-color: #dc3545;
-// }
+.is-invalid select {
+    border-color: #dc3545;
+}

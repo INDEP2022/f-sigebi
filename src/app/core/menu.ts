@@ -8,7 +8,7 @@ export const MENU: MenuItem[] = [
     {
         label: 'Inicio',
         icon: 'bx-home-circle',
-        link: '/admin/home'
+        link: '/pages/home'
     },
     {
         isLayout: true
@@ -18,9 +18,9 @@ export const MENU: MenuItem[] = [
         isTitle: true
     },
     {
-        label: 'Calendario',
+        label: 'Ejemplo',
         icon: 'bx-calendar',
-        link: '/',
+        link: '/pages/example',
     },
     {
         label: 'Multi nivel',
