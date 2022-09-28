@@ -19,15 +19,15 @@
                     <div class="card-body pt-0">
                         <div>
                             <!-- <a routerLink="/"> -->
-                                <div class="avatar-md profile-user-wid mb-4">
-                                    <span class="avatar-title rounded-circle bg-light">
-                                        <img src="assets/images/logo.svg" alt="" class="rounded-circle" height="34">
-                                    </span>
-                                </div>
+                            <div class="avatar-md profile-user-wid mb-4">
+                                <span class="avatar-title rounded-circle bg-light">
+                                    <img src="assets/images/logo.svg" alt="" class="rounded-circle" height="34">
+                                </span>
+                            </div>
                             <!-- </a> -->
                         </div>
                         <div class="p-2">
-                            <form class="form-horizontal" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                            <form class="form-material form-horizontal" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
                                 <div class="mb-3">
                                     <form-field [control]="loginForm.get('username')" label="Usuario">
                                         <input type="text" class="form-control" formControlName="username">
@@ -39,7 +39,8 @@
                                     </form-field>
                                 </div>
                                 <div class="mt-3 d-grid">
-                                    <button class="btn btn-primary" type="submit" [disabled]="loginForm.invalid">Log In</button>
+                                    <button class="btn btn-primary" type="submit" [disabled]="loginForm.invalid">Iniciar
+                                        sesion</button>
                                 </div>
                             </form>
                         </div>

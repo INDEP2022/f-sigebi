@@ -1,4 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { PageChangedEvent } from 'ngx-bootstrap/pagination';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 
 @Component({
   selector: 'app-pagination',
@@ -6,81 +10,39 @@ import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@
   styleUrls: ['./pagination.component.scss']
 })
 export class PaginationComponent implements OnInit {
-  @Input() paginatorConf: any;
-  @Input() totalItems: number;
-  @Input() currentPage: number;
-  @Input() itemsPerPage: number;
-  @Input() maxSize?: number;
-  @Output() changePage: EventEmitter<{ page: number, itemsPerPage: number }>;
-  private rotate = true;
-  public startPage: number;
-  public endPage: number;
-  public pages: number[];
-  constructor() {
-    this.pages = [];
-    this.currentPage = 1;
-    this.changePage = new EventEmitter();
-  }
-  ngAfterViewInit(): void {
-    this.generatePages();
-  }
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['totalItems']) {
-      this.generatePages();
-    }
-    if (changes['currentPage']) {
-      this.generatePages();
-    }
-  }
+  @Input() params: BehaviorSubject<ListParams>;
+  @Input() totalItems: number = 0;
+  pageSizeOptions: number[] = [10, 25, 50, 100];
+  pageSize: FormControl = new FormControl(10);
+  constructor() { }
 
   ngOnInit(): void {
 
   }
-  private generatePages() {
-    this.pages = [];
-    this.currentPage = this.currentPage == 0 ? 1 : this.currentPage;
-    let total = Math.ceil(this.totalItems / this.itemsPerPage)
-    for (let i = 0; i < total; i++) {
-      this.pages.push(i + 1);
+  pageChanged(event: PageChangedEvent) {
+    const params = this.params.getValue();
+    this.emitEvent({ ...params, inicio: event.page });
+  }
+
+  get getRangeLabel(): string {
+    if (this.totalItems == 0 || this.params.getValue().pageSize == 0) {
+      return `0 of ${this.totalItems}`;
     }
-    if (this.maxSize == undefined || this.maxSize == 0) {
-      this.maxSize = total;
-    }
-    this.setMaxSize(this.currentPage, total);
+    this.totalItems = Math.max(this.totalItems, 0);
+    const startIndex = (this.params.getValue().inicio - 1) * this.params.getValue().pageSize;
+    const endIndex =
+      startIndex < this.totalItems
+        ? Math.min(startIndex + this.params.getValue().pageSize, this.totalItems)
+        : startIndex + this.params.getValue().pageSize;
+    return `${startIndex + 1} - ${endIndex} de ${this.totalItems}`;
   }
-  public prevPage() {
-    this.currentPage -= 1;
-    this.selectPage(this.currentPage);
+
+  emitEvent(params: ListParams) {
+    this.params.next(params)
   }
-  public nextPage() {
-    this.currentPage += 1;
-    this.selectPage(this.currentPage);
+
+  pageSizeChange() {
+    const params = this.params.getValue();
+    this.emitEvent({ ...params, pageSize: Number(this.pageSize.value) });
   }
-  public selectPage(page: number) {
-    this.changePage.emit({ page: page, itemsPerPage: this.itemsPerPage });
-  }
-  private setMaxSize(currentPage: number, totalPages: number) {
-    this.startPage = 1;
-    this.endPage = totalPages;
-    let isMaxSized = this.maxSize < totalPages;
-    if (isMaxSized) {
-      if (this.rotate) {
-        // Current page is displayed in the middle of the visible ones
-        this.startPage = Math.max(currentPage - Math.floor(this.maxSize / 2), 1);
-        this.endPage = this.startPage + this.maxSize - 1;
-        // Adjust if limit is exceeded
-        if (this.endPage > totalPages) {
-          this.endPage = totalPages;
-          this.startPage = this.endPage - this.maxSize + 1;
-        }
-      }
-      else {
-        // Visible pages are paginated with maxSize
-        this.startPage =
-          (Math.ceil(currentPage / this.maxSize) - 1) * this.maxSize + 1;
-        // Adjust last page if limit is exceeded
-        this.endPage = Math.min(this.startPage + this.maxSize - 1, totalPages);
-      }
-    }
-  };
 }

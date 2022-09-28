@@ -21,15 +21,16 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 @Component({
   selector: 'search-bar',
   template: `
-    <div class="form-group d-flex">
-      <label class="search-label">Buscar</label>
-      <div class="text-search">
+    <div class="form-group form-secondary d-flex">
+      <label class="search-label">Buscar:</label>
+      <div class="text-search ">
         <input
           type="text"
           class="form-control"
           [formControl]="search"
           placeholder="Buscar..."
         />
+        <span class="form-bar"></span>
       </div>
     </div>
   `,
@@ -40,7 +41,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   ngUnsubscribe = new Subject<void>();
   search: FormControl = new FormControl();
 
-  constructor() {}
+  constructor() { }
 
   ngOnInit(): void {
     this.search.valueChanges
@@ -58,7 +59,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   emitEvent(text: string) {
     const params = this.params.getValue();
-    this.params.next({...params, text});
+    this.params.next({ ...params, text });
   }
 
   ngOnDestroy(): void {

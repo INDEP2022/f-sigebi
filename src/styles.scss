@@ -63,7 +63,7 @@
     .modal-header {
         border-radius  : 7px 7px 0 0;
         background     : #fff !important;
-        border-bottom  : 2px solid #404041 !important;
+        border-bottom  : 1px solid #F2F2F2 !important;
         display        : flex;
         justify-content: space-between;
         align-items    : center;
@@ -81,6 +81,16 @@
             font-size : small;
         }
     }
+}
+
+.modal-content .modal-header h5:after {
+    content         : "" !important;
+    background-color: #9d2449 !important;
+    position        : absolute !important;
+    left            : -1px !important;
+    top             : 5 !important;
+    width           : 4px !important;
+    height          : 20px !important;
 }
 
 // ng2-smart-table {
