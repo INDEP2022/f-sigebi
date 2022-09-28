@@ -59,7 +59,6 @@ export class PaginateComponent implements OnInit, OnChanges, AfterViewInit {
     }
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['totalItems']) {
-            console.log('entra');
             this.generatePages();
         }
         if (changes['currentPage']) {
