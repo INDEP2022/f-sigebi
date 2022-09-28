@@ -15,13 +15,19 @@
                 <input class="form-control" formControlName="version">
             </form-field>
 
-                <ngx-select [form]="form" [data]="items" label="reportName" value="id"
-                    (fetchItems)="getFromSelect($event)" control="version"></ngx-select>
-            
+            <ngx-select [form]="form" [data]="items" label="reportName" value="id" (fetchItems)="getFromSelect($event)"
+                control="version"></ngx-select>
+
         </form>
     </div>
     <div footer>
-        <button type="button" class="btn btn-secondary active btn-sm" (click)="close()">Cerrar</button>
-        <confirm-button [disabled]="!form.valid" [loading]="loading" (confirm)="confirm()"></confirm-button>
+        <div class="d-flex justify-content-center">
+            <div class="m-3">
+                <confirm-button [disabled]="!form.valid" [loading]="loading" (confirm)="confirm()"></confirm-button>
+            </div>
+            <div class="m-3">
+                <button type="button" class="btn btn-secondary active" (click)="close()">Cerrar</button>
+            </div>
+        </div>
     </div>
 </app-modal>
