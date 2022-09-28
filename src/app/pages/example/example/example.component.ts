@@ -49,7 +49,7 @@ export class ExampleComponent extends BasePage implements OnInit {
 
   openModal(context?: Partial<ExampleFormComponent>) {
     const modalRef = this.modalService.show(ExampleFormComponent, {
-      initialState: context, class: 'modal-lg modal-dialog-centered', ignoreBackdropClick: true
+      initialState: context, class: 'modal-md modal-dialog-centered', ignoreBackdropClick: true
     });
     modalRef.content.refresh.subscribe((next) => {
       if (next) this.getExample();

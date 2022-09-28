@@ -11,7 +11,7 @@ export const TABLE_SETTINGS = {
   hideSubHeader: true,
   mode: "external",
   edit: {
-    editButtonContent: '<i class="fa fa-edit mx-2"></i>',
+    editButtonContent: '<i class="fa fa-pencil-alt mx-2"></i>',
   },
   delete: {
     deleteButtonContent: '<i class="fa fa-trash mx-2"></i>',

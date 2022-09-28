@@ -11,6 +11,7 @@ File: Main Css File
 @import "custom/fonts/fonts";
 
 //Core files
+@import "./node_modules/sweetalert2/src/sweetalert2";
 @import "./node_modules/bootstrap/scss/functions";
 @import "./node_modules/bootstrap/scss/variables";
 @import "variables";
