@@ -45,6 +45,6 @@ export class PaginatorComponent implements OnInit {
 
   pageSizeChange() {
     const params = this.params.getValue()
-    this.emitEvent({...params, pageSize: this.pageSize.value})
+    this.emitEvent({...params, pageSize: Number(this.pageSize.value)})
   }
 }

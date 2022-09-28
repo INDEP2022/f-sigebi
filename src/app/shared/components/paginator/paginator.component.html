@@ -9,5 +9,5 @@
         </select>
     </div>
     <pagination [totalItems]="totalItems" (pageChanged)="pageChanged($event)" [maxSize]="5" previousText="&lsaquo;"
-        nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;" [boundaryLinks]="true"></pagination>
+        nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;" [boundaryLinks]="true"[itemsPerPage]="pageSize.value"></pagination>
 </div>
