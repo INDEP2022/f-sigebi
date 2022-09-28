@@ -14,6 +14,7 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ModalComponent } from './components/modal/modal.component';
 import { CardComponent } from './components/card/card.component';
 import { PaginationComponent } from './components/pagination/pagination.component';
+import { PaginatorComponent } from './components/paginator/paginator.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { PaginationComponent } from './components/pagination/pagination.componen
     SeeMoreComponent,
     ModalComponent,
     CardComponent,
-    PaginationComponent
+    PaginationComponent,
+    PaginatorComponent
   ],
   imports: [
     CommonModule,
@@ -53,6 +55,7 @@ import { PaginationComponent } from './components/pagination/pagination.componen
     NgSelectModule,
     PaginationModule,
     Ng2SmartTableModule,
+    PaginatorComponent
   ],
 })
 export class SharedModule { }

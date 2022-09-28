@@ -22,10 +22,8 @@
                         (edit)="edit($event.data)" (delete)="delete($event.data)">
                     </ng2-smart-table>
                 </div>
-
-                <pagination nextText="Siguiente" previousText="Anterior" [totalItems]="totalItems"
-                    (pageChanged)="pageChanged($event)"></pagination>
             </div>
         </div>
+        <app-paginator></app-paginator>
     </div>
 </app-card>

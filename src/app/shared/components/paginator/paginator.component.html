@@ -1,0 +1,13 @@
+<div class="d-flex justify-content-end">
+    <div class="pt-5 mr-4">
+        {{getRangeLabel()}}
+    </div>
+    <div class="mr-4">
+        <small>Registros por página</small>
+        <select class="form-control form-control-sm" name="" id="">
+            <option *ngFor="let pageSize of pageSizeOptions" [value]="1">{{pageSize}}</option>
+        </select>
+    </div>
+    <pagination [totalItems]="totalItems" (pageChanged)="pageChanged($event)" [maxSize]="5" previousText="&lsaquo;"
+        nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;" [boundaryLinks]="true"></pagination>
+</div>
