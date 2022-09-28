@@ -12,7 +12,7 @@
     <div body>
         <div class="row">
             <div class="col-md-5">
-                <search-bar (onSearch)="search($event)"></search-bar>
+                <search-bar [params]="params"></search-bar>
             </div>
         </div>
         <div class="row pt-4">
@@ -24,6 +24,6 @@
                 </div>
             </div>
         </div>
-        <app-paginator></app-paginator>
+        <app-paginator [params]="params" [totalItems]="1000"></app-paginator>
     </div>
 </app-card>

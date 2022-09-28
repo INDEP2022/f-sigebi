@@ -39,7 +39,6 @@ export class SeeMoreComponent implements OnInit, ViewCell {
   cutText() {
     if (this.fullText.length > this.maxLenght) {
       this.visibleText = this.fullText.substring(0, this.maxLenght);
-      console.log(this.visibleText.length);
       this.hiddenText = this.fullText.substring(this.maxLenght);
     } else {
       this.visibleText = this.fullText;

@@ -1,3 +1,5 @@
+import { Component, OnDestroy } from "@angular/core";
+import { Subject } from "rxjs";
 import Swal, { SweetAlertIcon, SweetAlertPosition, SweetAlertResult } from "sweetalert2";
 
 class SweetalertModel {
@@ -34,7 +36,12 @@ class SweetalertModel {
     }
 }
 
-export abstract class BasePage {
+@Component({
+    template: ''
+})
+export abstract class BasePage implements OnDestroy {
+    loading: boolean = false;
+    $unSubscribe = new Subject<void>();
     constructor() { }
 
     protected onLoadToast(icon: SweetAlertIcon, title: string, text: string) {
@@ -65,5 +72,10 @@ export abstract class BasePage {
         sweetalert.showConfirmButton = true;
         sweetalert.showCancelButton = true;
         return Swal.fire(sweetalert);;
+    }
+
+    ngOnDestroy(): void {
+        this.$unSubscribe.next();
+        this.$unSubscribe.complete();
     }
 }
