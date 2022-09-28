@@ -7,7 +7,7 @@ import { ViewCell } from 'ng2-smart-table';
     <p>
       {{ visibleText }}
       <span *ngIf="hiddenText.length > 0 && !readingMore">...</span>
-      <span (click)="changeText()" class="see-more btn-link ml-0">
+      <span *ngIf="hiddenText.length > 0" (click)="changeText()" class="see-more btn-link ml-0">
         {{ readingMore ? 'Ver menos' : 'Ver más' }}
       </span>
     </p>
@@ -39,7 +39,6 @@ export class SeeMoreComponent implements OnInit, ViewCell {
   cutText() {
     if (this.fullText.length > this.maxLenght) {
       this.visibleText = this.fullText.substring(0, this.maxLenght);
-      console.log(this.visibleText.length);
       this.hiddenText = this.fullText.substring(this.maxLenght);
     } else {
       this.visibleText = this.fullText;

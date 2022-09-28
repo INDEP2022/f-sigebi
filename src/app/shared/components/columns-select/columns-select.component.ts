@@ -55,7 +55,6 @@ export class ColumnsSelectComponent implements OnInit {
     const settings = Object.assign({}, this.settings);
     settings.columns = columns;
     this.settingsChange.emit(settings);
-    console.log(this.columns);
   }
 
   change(field: string, value: boolean) {
