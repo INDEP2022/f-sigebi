@@ -36,8 +36,9 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
     console.log(error);
     if (error.status === 401) {
       localStorage.clear();
-      this.router.navigate(['/auth/login']);
+      sessionStorage.clear();
       this.onLoadToast('error', 'Unauthorized', 'Error' + error.status);
+      this.router.navigate(['/auth/login']);
     }
     if (error.status === 403) {
       this.router.navigate(['/forbidden']);

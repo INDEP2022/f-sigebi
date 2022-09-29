@@ -1,6 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 
 @Component({
   selector: 'app-topbar',
@@ -10,16 +11,14 @@ import { Router } from '@angular/router';
 export class TopbarComponent implements OnInit {
 
   element: any;
-  cookieValue: any;
-  flagvalue: any;
-  countryName: any;
-  valueset: any;
+  userName: string;
   @Output() settingsButtonClicked = new EventEmitter();
   @Output() mobileMenuButtonClicked = new EventEmitter();
 
   constructor(
     @Inject(DOCUMENT) private document: any,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
   }
 
@@ -28,12 +27,7 @@ export class TopbarComponent implements OnInit {
   ngOnInit() {
     this.openMobileMenu = false;
     this.element = document.documentElement;
-  }
-
-  setLanguage(text: string, lang: string, flag: string) {
-    this.countryName = text;
-    this.flagvalue = flag;
-    this.cookieValue = lang;
+    this.userName = this.authService.decodeToken().name;
   }
 
   /**

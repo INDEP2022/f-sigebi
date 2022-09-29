@@ -5,9 +5,9 @@ import {
   OnInit,
 } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { SIDEBAR_TYPE } from 'src/app/core/models/layouts.model';
-import { EventService } from 'src/app/core/services/event.service';
-import { ScriptService } from 'src/app/core/services/script.service';
+import { SIDEBAR_TYPE } from 'src/app/common/constants/layouts';
+import { EventService } from 'src/app/common/services/event.service';
+import { ScriptService } from 'src/app/common/services/script.service';
 
 @Component({
   selector: 'app-full',

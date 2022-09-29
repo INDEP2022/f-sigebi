@@ -1,6 +1,6 @@
-import { MenuItem } from "./models/menu.model";
+import { IMenuItem } from "./interfaces/menu.interface";
 
-export const MENU: MenuItem[] = [
+export const MENU: IMenuItem[] = [
     {
         label: 'Menu',
         isTitle: true
@@ -10,37 +10,26 @@ export const MENU: MenuItem[] = [
         icon: 'bx-home-circle',
         link: '/pages/home'
     },
-    {
-        isLayout: true
-    },
-    {
-        label: 'Aplicaciones',
-        isTitle: true
-    },
+    // {
+    //     isLayout: true
+    // },
+    // {
+    //     label: 'Aplicaciones',
+    //     isTitle: true
+    // },
     {
         label: 'Ejemplo',
         icon: 'bx-calendar',
         link: '/pages/example',
     },
     {
-        label: 'Multi nivel',
-        icon: 'bx-share-alt',
+        label: 'Catalogos',
+        icon: 'bx-folder',
         subItems: [
             {
                 label: 'Nivel 1.1',
                 link: '#',
-            },
-            {
-                label: 'Nivel 1.2',
-                subItems: [
-                    {
-                        label: 'Nivel 2.1',
-                    },
-                    {
-                        label: 'Nivel 2.2',
-                    }
-                ]
-            },
+            }
         ]
     },
     {

@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { AuthModel, UserInfoModel } from '../models/auth.model';
+import { AuthModel } from '../../models/authentication/auth.model';
+import { TokenInfoModel } from '../../models/authentication/token-info.model';
 
 @Injectable({
   providedIn: 'root'
@@ -31,8 +32,10 @@ export class AuthService {
     return this.token ? true : false;
   }
 
-  decodeToken() {
-    const decodedToken = this.jwtService.decodeToken(this.token);
+  decodeToken(): TokenInfoModel {
+    const decodedToken: TokenInfoModel = this.jwtService.decodeToken(this.token);
+    console.log(decodedToken);
+
     return decodedToken;
   }
 

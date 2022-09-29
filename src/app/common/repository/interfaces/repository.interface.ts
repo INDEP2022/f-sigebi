@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { IListResponse } from '../../../core/interfaces/list-response';
+import { IListResponse } from '../../../core/interfaces/list-response.interface';
 import { ListParams } from './list-params';
 
 export interface IRead<T> {
