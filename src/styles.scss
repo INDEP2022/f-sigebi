@@ -1,96 +1,96 @@
 /* You can add global styles to this file, and also import other style files */
 * {
-    font-size: 14px;
+  font-size: 14px;
 }
 
-.swal2-container.swal2-top-end>.swal2-popup,
-.swal2-container.swal2-top-right>.swal2-popup {
-    border-top: 4px solid #c0c0c0;
+.swal2-container.swal2-top-end > .swal2-popup,
+.swal2-container.swal2-top-right > .swal2-popup {
+  border-top: 4px solid #c0c0c0;
 }
 
 .swal2-actions {
-    width          : 70% !important;
-    justify-content: space-around !important;
+  width: 70% !important;
+  justify-content: space-around !important;
 }
 
 .ch-content {
-    display        : flex;
-    justify-content: space-between;
-    align-items    : center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
-    .title {
-        font-size     : 14px;
-        font-weight   : 600;
-        text-transform: uppercase;
-    }
+  .title {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
 
-    .buttons {
-        display        : flex;
-        justify-content: end;
-    }
+  .buttons {
+    display: flex;
+    justify-content: end;
+  }
 }
 
 .form-group {
-    align-items: center;
+  align-items: center;
 
-    label {
-        font-size: 13px;
-    }
+  label {
+    font-size: 13px;
+  }
 
-    input,
-    textarea,
-    select,
-    ng-select {
-        font-size: 13px;
-    }
+  input,
+  textarea,
+  select,
+  ng-select {
+    font-size: 13px;
+  }
 
-    .search-label {
-        margin: 0 15px;
-    }
+  .search-label {
+    margin: 0 15px;
+  }
 
-    .text-search {
-        width: 100%;
-    }
+  .text-search {
+    width: 100%;
+  }
 }
 
 .table-bordered {
-    border: none !important;
+  border: none !important;
 }
 
 .modal-content {
-    border-radius: 7px !important;
+  border-radius: 7px !important;
 
-    .modal-header {
-        border-radius  : 7px 7px 0 0;
-        background     : #fff !important;
-        border-bottom  : 1px solid #F2F2F2 !important;
-        display        : flex;
-        justify-content: space-between;
-        align-items    : center;
+  .modal-header {
+    border-radius: 7px 7px 0 0;
+    background: #fff !important;
+    border-bottom: 1px solid #f2f2f2 !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-        .modal-title {
-            color         : #000 !important;
-            font-size     : 13px;
-            font-weight   : 600;
-            text-transform: uppercase;
-        }
-
-        .close {
-            color     : #000;
-            margin-top: 0px !important;
-            font-size : small;
-        }
+    .modal-title {
+      color: #000 !important;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
     }
+
+    .close {
+      color: #000;
+      margin-top: 0px !important;
+      font-size: small;
+    }
+  }
 }
 
 .modal-content .modal-header h5:after {
-    content         : "" !important;
-    background-color: #9d2449 !important;
-    position        : absolute !important;
-    left            : -1px !important;
-    top             : 5 !important;
-    width           : 4px !important;
-    height          : 20px !important;
+  content: '' !important;
+  background-color: #9d2449 !important;
+  position: absolute !important;
+  left: -1px !important;
+  top: 5 !important;
+  width: 4px !important;
+  height: 20px !important;
 }
 
 // ng2-smart-table {
@@ -98,28 +98,28 @@
 // }
 
 .is-invalid input {
-    border-color: #dc3545;
+  border-color: #dc3545;
 }
 
 .is-invalid select {
-    border-color: #dc3545;
+  border-color: #dc3545;
 }
 
 .is-invalid textarea {
-    border-color: #dc3545;
+  border-color: #dc3545;
 }
 
 .table-loading tbody:after {
-    position           : absolute;
-    top                : 0;
-    left               : 0;
-    right              : 0;
-    bottom             : 0;
-    background-color   : rgba(0, 0, 0, 0.2);
-    background-image   : url('./assets/images/loader-button.gif');
-    background-position: center;
-    background-repeat  : no-repeat;
-    background-size    : 100px 100px;
-    z-index            : 100;
-    content            : "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  background-image: url('./assets/images/loader-button.gif');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100px 100px;
+  z-index: 100;
+  content: '';
 }

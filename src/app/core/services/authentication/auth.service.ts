@@ -7,7 +7,7 @@ import { AuthModel } from '../../models/authentication/auth.model';
 import { TokenInfoModel } from '../../models/authentication/token-info.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private token: string;
@@ -19,11 +19,14 @@ export class AuthService {
   constructor(
     private readonly http: HttpClient,
     private readonly jwtService: JwtHelperService
-  ) { }
+  ) {}
 
   getToken(username: string, password: string): Observable<AuthModel> {
     let params = `client_id=indep-auth&grant_type=password&client_secret=AzOyl1GDe3G9mhI8c7cIEYQ1nr5Qdpjs&scope=openid&username=${username}&password=${password}`;
-    let headers = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
+    let headers = new HttpHeaders().set(
+      'Content-Type',
+      'application/x-www-form-urlencoded'
+    );
     return this.http.post<AuthModel>(this.tokenUrl, params, { headers });
   }
 
@@ -33,7 +36,9 @@ export class AuthService {
   }
 
   decodeToken(): TokenInfoModel {
-    const decodedToken: TokenInfoModel = this.jwtService.decodeToken(this.token);
+    const decodedToken: TokenInfoModel = this.jwtService.decodeToken(
+      this.token
+    );
     console.log(decodedToken);
 
     return decodedToken;
@@ -48,5 +53,4 @@ export class AuthService {
     const isExpired = this.jwtService.isTokenExpired(this.token);
     return isExpired;
   }
-
 }

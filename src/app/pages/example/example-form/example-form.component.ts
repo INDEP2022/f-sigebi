@@ -17,7 +17,7 @@ export class ExampleFormComponent implements OnInit {
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
   paragraph: Example;
-  items = new DefaultSelect<Example>()
+  items = new DefaultSelect<Example>();
   @Output() refresh = new EventEmitter<true>();
   constructor(
     private modalRef: BsModalRef,
@@ -51,16 +51,16 @@ export class ExampleFormComponent implements OnInit {
   create() {
     this.loading = true;
     this.exampleService.create(this.form.value).subscribe(
-      (data) => this.handleSuccess(),
-      (error) => (this.loading = false)
+      data => this.handleSuccess(),
+      error => (this.loading = false)
     );
   }
 
   update() {
     this.loading = true;
     this.exampleService.update(this.paragraph.id, this.form.value).subscribe(
-      (data) => this.handleSuccess(),
-      (error) => (this.loading = false)
+      data => this.handleSuccess(),
+      error => (this.loading = false)
     );
   }
 
@@ -72,7 +72,7 @@ export class ExampleFormComponent implements OnInit {
 
   getFromSelect(params: ListParams) {
     this.exampleService.getAll(params).subscribe(data => {
-      this.items = new DefaultSelect(data.data, data.count)
-    })
+      this.items = new DefaultSelect(data.data, data.count);
+    });
   }
 }

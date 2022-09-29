@@ -24,10 +24,10 @@ export class ExampleService implements ICrudMethods<Example> {
   }
 
   update(id: number | string, formData: Object) {
-    return this.exampleRepository.update(this.route, id, formData)
+    return this.exampleRepository.update(this.route, id, formData);
   }
 
   remove(id: number | string) {
-      return this.exampleRepository.remove(this.route, id)
+    return this.exampleRepository.remove(this.route, id);
   }
 }

@@ -6,10 +6,9 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 @Component({
   selector: 'app-topbar',
   templateUrl: './topbar.component.html',
-  styleUrls: ['./topbar.component.scss']
+  styleUrls: ['./topbar.component.scss'],
 })
 export class TopbarComponent implements OnInit {
-
   element: any;
   userName: string;
   @Output() settingsButtonClicked = new EventEmitter();
@@ -19,8 +18,7 @@ export class TopbarComponent implements OnInit {
     @Inject(DOCUMENT) private document: any,
     private router: Router,
     private authService: AuthService
-  ) {
-  }
+  ) {}
 
   openMobileMenu: boolean;
 
@@ -59,8 +57,10 @@ export class TopbarComponent implements OnInit {
   fullscreen() {
     document.body.classList.toggle('fullscreen-enable');
     if (
-      !document.fullscreenElement && !this.element.mozFullScreenElement &&
-      !this.element.webkitFullscreenElement) {
+      !document.fullscreenElement &&
+      !this.element.mozFullScreenElement &&
+      !this.element.webkitFullscreenElement
+    ) {
       if (this.element.requestFullscreen) {
         this.element.requestFullscreen();
       } else if (this.element.mozRequestFullScreen) {

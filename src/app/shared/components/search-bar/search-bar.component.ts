@@ -28,8 +28,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
           type="text"
           class="form-control"
           [formControl]="search"
-          placeholder="Buscar..."
-        />
+          placeholder="Buscar..." />
         <span class="form-bar"></span>
       </div>
     </div>
@@ -41,7 +40,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   ngUnsubscribe = new Subject<void>();
   search: FormControl = new FormControl();
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
     this.search.valueChanges

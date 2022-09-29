@@ -27,7 +27,7 @@ import { PaginateComponent } from './components/pagination/paginate.component';
     ModalComponent,
     CardComponent,
     PaginationComponent,
-    PaginateComponent
+    PaginateComponent,
   ],
   imports: [
     CommonModule,
@@ -53,7 +53,7 @@ import { PaginateComponent } from './components/pagination/paginate.component';
     FormsModule,
     ReactiveFormsModule,
     NgSelectModule,
-    Ng2SmartTableModule
+    Ng2SmartTableModule,
   ],
 })
-export class SharedModule { }
+export class SharedModule {}

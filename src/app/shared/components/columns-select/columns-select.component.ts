@@ -63,11 +63,11 @@ export class ColumnsSelectComponent implements OnInit {
   }
 
   selectVal(): IColumns[] {
-    return this.columns.filter((_e) => _e.show);
+    return this.columns.filter(_e => _e.show);
   }
 
   selectColumn(event: Event, field: string, value: boolean) {
     event.stopPropagation();
-    this.change(field, value)
+    this.change(field, value);
   }
 }

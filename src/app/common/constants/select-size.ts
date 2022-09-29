@@ -1,1 +1,1 @@
-export const SELECT_SIZE = 10
+export const SELECT_SIZE = 10;

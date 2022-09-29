@@ -1,10 +1,8 @@
 import { Directive } from '@angular/core';
 
 @Directive({
-  selector: 'formInput'
+  selector: 'formInput',
 })
 export class InputFormDirective {
-
-  constructor() { }
-
+  constructor() {}
 }

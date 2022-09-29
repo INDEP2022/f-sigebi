@@ -6,11 +6,10 @@ export interface Script {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ScriptService {
-
-  constructor() { }
+  constructor() {}
 
   public loadScript({ id, url }: Script) {
     return new Promise((resolve, reject) => {
@@ -27,7 +26,8 @@ export class ScriptService {
       script.onload = () => {
         resolve({ id: id, loaded: true, status: 'Loaded' });
       };
-      script.onerror = (error: any) => resolve({ id: id, loaded: false, status: 'Loaded' });
+      script.onerror = (error: any) =>
+        resolve({ id: id, loaded: false, status: 'Loaded' });
       script.async = true;
       script.defer = true;
       body.appendChild(script);

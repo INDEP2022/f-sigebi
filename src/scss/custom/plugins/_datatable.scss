@@ -1,5 +1,3 @@
-
-
 /* 
 Datatable
 */
@@ -7,13 +5,12 @@ Datatable
 // datatable
 
 div.dataTables_wrapper {
-  div.dataTables_filter{
+  div.dataTables_filter {
     text-align: right;
 
-    input{
+    input {
       margin-left: 0.5em;
       margin-right: 0;
     }
   }
 }
-

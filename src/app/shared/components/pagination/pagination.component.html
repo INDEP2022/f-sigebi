@@ -1,28 +1,37 @@
 <div class="paginator">
-    <div class="paginator-outer-container">
-        <div class="paginator-container">
-            <div class="paginator-page-size">
-                <div class="paginator-page-size-label"> Items por página : </div>
-                <div class="form-field paginator-page-size-select ">
-                    <div class="form-field-wrapper">
-                        <div class="form-field-flex">
-                            <div class="form-field-infix">
-                                <select class="select" (change)="pageSizeChange()" [formControl]="pageSize">
-                                    <option *ngFor="let pageSize of pageSizeOptions" [value]="pageSize">{{pageSize}}
-                                    </option>
-                                </select>
-                                <span class="form-field-label-wrapper">
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+  <div class="paginator-outer-container">
+    <div class="paginator-container">
+      <div class="paginator-page-size">
+        <div class="paginator-page-size-label">Items por página :</div>
+        <div class="form-field paginator-page-size-select">
+          <div class="form-field-wrapper">
+            <div class="form-field-flex">
+              <div class="form-field-infix">
+                <select
+                  class="select"
+                  (change)="pageSizeChange()"
+                  [formControl]="pageSize">
+                  <option
+                    *ngFor="let pageSize of pageSizeOptions"
+                    [value]="pageSize">
+                    {{ pageSize }}
+                  </option>
+                </select>
+                <span class="form-field-label-wrapper"> </span>
+              </div>
             </div>
-            <div class="paginator-range-actions">
-                <div class="paginator-range-label"> {{getRangeLabel}} </div>
-                <paginate [totalItems]="totalItems" [itemsPerPage]="pageSize.value" [currentPage]="params.getValue().inicio"
-                (changePage)="pageChanged($event)" [maxSize]="5"></paginate>                
-            </div>
+          </div>
         </div>
+      </div>
+      <div class="paginator-range-actions">
+        <div class="paginator-range-label">{{ getRangeLabel }}</div>
+        <paginate
+          [totalItems]="totalItems"
+          [itemsPerPage]="pageSize.value"
+          [currentPage]="params.getValue().inicio"
+          (changePage)="pageChanged($event)"
+          [maxSize]="5"></paginate>
+      </div>
     </div>
+  </div>
 </div>

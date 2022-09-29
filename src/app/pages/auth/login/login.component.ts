@@ -7,7 +7,7 @@ import { AuthService } from 'src/app/core/services/authentication/auth.service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['login.component.scss']
+  styleUrls: ['login.component.scss'],
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
@@ -16,7 +16,7 @@ export class LoginComponent implements OnInit {
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private router: Router
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.loginForm = this.formBuilder.group({
@@ -29,13 +29,13 @@ export class LoginComponent implements OnInit {
     let { username, password } = this.loginForm.value;
     let token: AuthModel;
     this.authService.getToken(username, password).subscribe({
-      next: (data) => {
+      next: data => {
         token = data;
       },
       complete: () => {
-        localStorage.setItem("token", token.access_token);
+        localStorage.setItem('token', token.access_token);
         this.router.navigate(['pages/home']);
-      }
+      },
     });
   }
 }

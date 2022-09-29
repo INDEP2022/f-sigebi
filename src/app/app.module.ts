@@ -10,14 +10,10 @@ import { HttpErrorsInterceptor } from './common/interceptors/http-errors.interce
 import { JwtInterceptor, JwtModule } from '@auth0/angular-jwt';
 
 export function tokenGetter() {
-  return localStorage.getItem("token");
+  return localStorage.getItem('token');
 }
 @NgModule({
-  declarations: [
-    AppComponent,
-    ContentComponent,
-    InputFormDirective
-  ],
+  declarations: [AppComponent, ContentComponent, InputFormDirective],
   imports: [
     BrowserModule,
     FullModule,
@@ -26,10 +22,10 @@ export function tokenGetter() {
         tokenGetter: tokenGetter,
         allowedDomains: ['localhost:3000'],
         disallowedRoutes: [],
-      }
+      },
     }),
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
   ],
   providers: [
     {
@@ -37,8 +33,8 @@ export function tokenGetter() {
       useClass: HttpErrorsInterceptor,
       multi: true,
     },
-    JwtInterceptor
+    JwtInterceptor,
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

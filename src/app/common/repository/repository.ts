@@ -42,7 +42,7 @@ export class Repository<T> implements IRepository<T> {
 
   private makeParams(params: ListParams): HttpParams {
     let httpParams: HttpParams = new HttpParams();
-    Object.keys(params).forEach((key) => {
+    Object.keys(params).forEach(key => {
       httpParams = httpParams.append(key, (params as any)[key]);
     });
     return httpParams;

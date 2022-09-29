@@ -1,7 +1,6 @@
-// 
+//
 // bootstrap-rtl.scss
 //
-
 
 // Dropdowns
 
@@ -13,10 +12,6 @@
 .dropdown-menu[style] {
   right: 0 !important;
 }
-
-
-
-
 
 // List
 
@@ -39,7 +34,6 @@ ul {
   border-right: $border-width solid $border-color !important;
 }
 
-
 // Buttons
 
 .btn-label {
@@ -60,8 +54,6 @@ ul {
     }
   }
 }
-
-
 
 .btn-group,
 .btn-group-vertical {
@@ -105,7 +97,6 @@ dd {
 
 // Modal
 
-
 .custom-modal-title {
   text-align: right;
 }
@@ -124,19 +115,17 @@ dd {
   }
 }
 
-
 .modal-footer {
   > :not(:first-child) {
-    margin-right: .25rem;
+    margin-right: 0.25rem;
     margin-left: 0;
   }
 
   > :not(:last-child) {
-    margin-left: .25rem;
+    margin-left: 0.25rem;
     margin-right: 0;
   }
 }
-
 
 // Alerts
 
@@ -149,11 +138,10 @@ dd {
   }
 }
 
-
 // Breadcrumb item arrow
 
 .breadcrumb-item {
-  +.breadcrumb-item {
+  + .breadcrumb-item {
     padding-right: $breadcrumb-item-padding;
     padding-left: 0px;
   }
@@ -161,10 +149,10 @@ dd {
 
 // ------------ FORM  //
 
-[type="tel"],
-[type="url"],
-[type="email"],
-[type="number"] {
+[type='tel'],
+[type='url'],
+[type='email'],
+[type='number'] {
   &::placeholder {
     text-align: right;
   }
@@ -203,7 +191,6 @@ dd {
     background-position: right center;
   }
 }
-
 
 .form-switch {
   padding-right: 2.5em !important;
@@ -262,7 +249,6 @@ dd {
   }
 }
 
-
 // Forms
 
 .form-select {
@@ -276,7 +262,7 @@ dd {
   padding-bottom: 0.25rem;
 }
 
-// Custom Checkbox-Radio 
+// Custom Checkbox-Radio
 
 .form-check {
   text-align: right;
@@ -355,14 +341,12 @@ dd {
       right: calc(-3rem + 2px);
       left: auto;
     }
-
   }
 
-  .custom-control-input:checked~.custom-control-label::after {
+  .custom-control-input:checked ~ .custom-control-label::after {
     transform: translateX(-1.25rem);
   }
 }
-
 
 .custom-switch-lg {
   padding-right: 3.75rem;
@@ -378,10 +362,9 @@ dd {
       right: calc(-3.75rem + 2px);
       left: auto;
     }
-
   }
 
-  .custom-control-input:checked~.custom-control-label::after {
+  .custom-control-input:checked ~ .custom-control-label::after {
     transform: translateX(-1.5rem);
   }
 }
@@ -390,7 +373,7 @@ dd {
 
 // custom-checkbox-outline
 .custom-checkbox-outline {
-  .custom-control-input:checked~.custom-control-label:after {
+  .custom-control-input:checked ~ .custom-control-label:after {
     left: auto;
     right: -28px;
   }
@@ -398,7 +381,7 @@ dd {
 
 // custom-radio-outline
 .custom-radio-outline {
-  .custom-control-input:checked~.custom-control-label:after {
+  .custom-control-input:checked ~ .custom-control-label:after {
     left: auto;
     right: -20px;
   }
@@ -430,7 +413,8 @@ dd {
 //     border-bottom-left-radius: 0;
 // }
 
-.input-group> :not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback) {
+.input-group
+  > :not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback) {
   margin-right: -1px;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
@@ -438,8 +422,9 @@ dd {
   border-bottom-left-radius: $input-border-radius;
 }
 
-.input-group:not(.has-validation)> :not(:last-child):not(.dropdown-toggle):not(.dropdown-menu),
-.input-group:not(.has-validation)>.dropdown-toggle:nth-last-child(n+3) {
+.input-group:not(.has-validation)
+  > :not(:last-child):not(.dropdown-toggle):not(.dropdown-menu),
+.input-group:not(.has-validation) > .dropdown-toggle:nth-last-child(n + 3) {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   border-top-right-radius: $input-border-radius;

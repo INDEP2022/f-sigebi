@@ -38,12 +38,12 @@ export class ExampleComponent extends BasePage implements OnInit, OnDestroy {
   getExample() {
     this.loading = true;
     this.exampleService.getAll(this.params.getValue()).subscribe(
-      (response) => {
+      response => {
         this.paragraphs = response.data;
         this.totalItems = response.count;
         this.loading = false;
       },
-      (error) => (this.loading = false)
+      error => (this.loading = false)
     );
   }
 
@@ -53,7 +53,7 @@ export class ExampleComponent extends BasePage implements OnInit, OnDestroy {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    modalRef.content.refresh.subscribe((next) => {
+    modalRef.content.refresh.subscribe(next => {
       if (next) this.getExample();
     });
   }
@@ -71,7 +71,7 @@ export class ExampleComponent extends BasePage implements OnInit, OnDestroy {
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
-    ).then((question) => {
+    ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
       }
