@@ -71,7 +71,7 @@ export class ExampleFormComponent implements OnInit {
   }
 
   getFromSelect(params: ListParams) {
-    this.exampleService.getAll(params).subscribe((data) => {
+    this.exampleService.getAll(params).subscribe(data => {
       this.items = new DefaultSelect(data.data, data.count);
     });
   }
