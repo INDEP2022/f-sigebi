@@ -5,7 +5,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
   template: `
     <button
       type="submit"
-      class="btn btn-primary active btn-sm"
+      class="btn btn-primary active"
       (click)="onConfirm()"
       [disabled]="disabled || loading"
     >

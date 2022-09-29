@@ -11,10 +11,10 @@ export const TABLE_SETTINGS = {
   hideSubHeader: true,
   mode: "external",
   edit: {
-    editButtonContent: '<i class="fa fa-edit mx-2"></i>',
+    editButtonContent: '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
   },
   delete: {
-    deleteButtonContent: '<i class="fa fa-trash mx-2"></i>',
+    deleteButtonContent: '<i class="fa fa-trash text-danger mx-2"></i>',
     confirmDelete: true,
   },
   columns: {},

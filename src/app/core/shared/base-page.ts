@@ -1,26 +1,26 @@
 import { Component, OnDestroy } from "@angular/core";
 import { Subject } from "rxjs";
-import Swal, { SweetAlertIcon, SweetAlertPosition, SweetAlertResult } from "sweetalert2";
+import Swal, { SweetAlertIcon, SweetAlertOptions, SweetAlertPosition, SweetAlertResult } from "sweetalert2";
 
-class SweetalertModel {
-    public title: string;
-    public text: string;
-    public icon: SweetAlertIcon;
-    public footer: string;
-    public background: string;
-    public showConfirmButton: boolean;
-    public toast: boolean;
-    public showCancelButton: boolean;
-    public buttonsStyling: boolean;
-    public focusConfirm: boolean;
-    public focusCancel: boolean;
-    public showCloseButton: boolean;
-    public confirmButtonText: string;
-    public cancelButtonText: string;
-    public confirmButtonClass: string;
-    public cancelButtonClass: string;
-    public timer: number;
-    public position: SweetAlertPosition;
+class SweetalertModel implements SweetAlertOptions {
+    title: string;
+    text: string;
+    icon: SweetAlertIcon;
+    footer: string;
+    background: string;
+    showConfirmButton: boolean;
+    toast: boolean;
+    showCancelButton: boolean;
+    buttonsStyling: boolean;
+    focusConfirm: boolean;
+    focusCancel: boolean;
+    showCloseButton: boolean;
+    confirmButtonText: string;
+    cancelButtonText: string;
+    confirmButtonClass: string;
+    cancelButtonClass: string;
+    timer: number;
+    position: SweetAlertPosition;
     constructor() {
         this.icon = 'success';
         this.toast = false;
@@ -63,7 +63,7 @@ export abstract class BasePage implements OnDestroy {
         sweetalert.showConfirmButton = true;
         Swal.fire(sweetalert);
     }
-    
+
     protected alertQuestion(icon: SweetAlertIcon, title: string, text: string): Promise<SweetAlertResult> {
         let sweetalert = new SweetalertModel();
         sweetalert.title = title;

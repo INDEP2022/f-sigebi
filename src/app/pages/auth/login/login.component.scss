@@ -1,0 +1,9 @@
+.btn-primary {
+    background-color: #9d2449;
+    border-color    : #9d2449;
+
+    &:hover {
+        background-color: #AD4262;
+        border-color    : #9d2449;
+    }
+}

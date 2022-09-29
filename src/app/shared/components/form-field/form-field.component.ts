@@ -4,10 +4,11 @@ import { ValidationService } from 'src/app/common/services/validation.service';
 @Component({
   selector: 'form-field',
   template: `
-    <div [class]="invalidClass(control) + 'form-group'" #container>
-      <label *ngIf="label" [class]="labelClass">{{ label }}</label>
+    <div class="form-group form-static-label" [ngClass]="invalidClass(control)" #container>  
       <!-- ? Trasnclusion con ng-content -->
       <ng-content></ng-content>
+      <span class="form-bar"></span>
+      <label *ngIf="label" class="float-label">{{label}}</label>
       <div
         *ngIf="isInvalid(control)"
         class="invalid-feedback animated fadeInUp"
@@ -26,8 +27,8 @@ export class FormFieldComponent implements OnInit {
   @Input() control: AbstractControl;
   @Input() label: string = null;
   @Input() labelClass: string = '';
-  constructor(private validationService: ValidationService) {}
-  ngOnInit(): void {}
+  constructor(private validationService: ValidationService) { }
+  ngOnInit(): void { }
 
   isInvalid(control: AbstractControl): boolean {
     return this.validationService.isInvalid(control);

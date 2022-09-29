@@ -7,7 +7,7 @@ import { ERROR_MESSAGES } from '../constants/error-messages';
 })
 export class ValidationService {
   invalidClass(control: AbstractControl | null): string {
-    return this.isInvalid(control) ? 'is-invalid ' : '';
+    return this.isInvalid(control) ? 'form-danger' : 'form-secondary';
   }
 
   isInvalid(control: AbstractControl | null): boolean {

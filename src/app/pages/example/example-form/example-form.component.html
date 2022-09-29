@@ -1,9 +1,9 @@
 <app-modal>
     <div header>
-        <span class="modal-title">{{title}}</span>
+        <h5 class="modal-title">{{title}}</h5>
     </div>
     <div body>
-        <form class="inline-form" [formGroup]="form">
+        <form class="form-material" [formGroup]="form">
             <form-field [control]="form.get('reportName')" label="Nombre de Reporte">
                 <input class="form-control" formControlName="reportName">
             </form-field>
@@ -15,15 +15,19 @@
                 <input class="form-control" formControlName="version">
             </form-field>
 
-            <div class="form-group">
-                <label>Select</label>
-                <ngx-select [form]="form" [data]="items" label="reportName" value="id"
-                    (fetchItems)="getFromSelect($event)" control="version"></ngx-select>
-            </div>
+            <ngx-select [form]="form" [data]="items" label="reportName" value="id" (fetchItems)="getFromSelect($event)"
+                control="version"></ngx-select>
+
         </form>
     </div>
     <div footer>
-        <button type="button" class="btn btn-secondary active btn-sm" (click)="close()">Cerrar</button>
-        <confirm-button [disabled]="!form.valid" [loading]="loading" (confirm)="confirm()"></confirm-button>
+        <div class="d-flex justify-content-center">
+            <div class="m-3">
+                <confirm-button [disabled]="!form.valid" [loading]="loading" (confirm)="confirm()"></confirm-button>
+            </div>
+            <div class="m-3">
+                <button type="button" class="btn btn-secondary active" (click)="close()">Cerrar</button>
+            </div>
+        </div>
     </div>
 </app-modal>
