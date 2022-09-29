@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { ICrudMethods } from 'src/app/common/repository/interfaces/crud-methods';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { Example } from '../models/example';
-import { ExampleRepository } from '../repository/example.repository';
+import { Repository } from 'src/app/common/repository/repository';
+import { Example } from '../../models/catalogs/example';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ExampleService implements ICrudMethods<Example> {
   route: string = 'cat-paragraphs';
-  constructor(private exampleRepository: ExampleRepository) {}
+  constructor(private exampleRepository: Repository<Example>) {}
 
   getAll(params: ListParams) {
     return this.exampleRepository.getAllPaginated(this.route, params);
@@ -24,10 +24,10 @@ export class ExampleService implements ICrudMethods<Example> {
   }
 
   update(id: number | string, formData: Object) {
-    return this.exampleRepository.update(this.route, id, formData)
+    return this.exampleRepository.update(this.route, id, formData);
   }
 
   remove(id: number | string) {
-      return this.exampleRepository.remove(this.route, id)
+    return this.exampleRepository.remove(this.route, id);
   }
 }
