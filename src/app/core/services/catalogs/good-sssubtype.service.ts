@@ -1,0 +1,35 @@
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
+import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
+import { ListParams } from '../../../common/repository/interfaces/list-params';
+import { Repository } from '../../../common/repository/repository';
+import { IListResponse } from '../../interfaces/list-response.interface';
+import { IGoodSssubtype } from '../../models/catalogs/good-sssubtype.model';
+@Injectable({
+  providedIn: 'root',
+})
+export class GoodSssubtypeService implements ICrudMethods<IGoodSssubtype> {
+  private readonly route: string = ENDPOINT_LINKS.GoodSssubtype;
+  constructor(private goodSssubtypeRepository: Repository<IGoodSssubtype>) {}
+
+  getAll(params?: ListParams): Observable<IListResponse<IGoodSssubtype>> {
+    return this.goodSssubtypeRepository.getAllPaginated(this.route, params);
+  }
+
+  getById(id: string | number): Observable<IGoodSssubtype> {
+    return this.goodSssubtypeRepository.getById(this.route, id);
+  }
+
+  create(model: IGoodSssubtype): Observable<IGoodSssubtype> {
+    return this.goodSssubtypeRepository.create(this.route, model);
+  }
+
+  update(id: string | number, model: IGoodSssubtype): Observable<Object> {
+    return this.goodSssubtypeRepository.update(this.route, id, model);
+  }
+
+  remove(id: string | number): Observable<Object> {
+    return this.goodSssubtypeRepository.remove(this.route, id);
+  }
+}
