@@ -7,7 +7,7 @@ import { ContentComponent } from './layouts/content/content.component';
 import { FullModule } from './layouts/full/full.module';
 import { InputFormDirective } from './common/directives/input-form.directive';
 import { HttpErrorsInterceptor } from './common/interceptors/http-errors.interceptor';
-import { JwtModule } from '@auth0/angular-jwt';
+import { JwtInterceptor, JwtModule } from '@auth0/angular-jwt';
 
 export function tokenGetter() {
   return localStorage.getItem("token");
@@ -24,8 +24,8 @@ export function tokenGetter() {
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,
-        allowedDomains: ['localhost:4200'],
-        disallowedRoutes: []
+        allowedDomains: ['localhost:3000'],
+        disallowedRoutes: [],
       }
     }),
     AppRoutingModule,
@@ -37,6 +37,7 @@ export function tokenGetter() {
       useClass: HttpErrorsInterceptor,
       multi: true,
     },
+    JwtInterceptor
   ],
   bootstrap: [AppComponent],
 })

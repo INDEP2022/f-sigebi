@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { IListResponse } from 'src/app/core/interfaces/list-response';
+import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { environment } from 'src/environments/environment';
 import { ListParams } from './interfaces/list-params';
 import { IRepository } from './interfaces/repository.interface';

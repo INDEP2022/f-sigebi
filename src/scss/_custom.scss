@@ -817,3 +817,9 @@
 .nav>li>a {
     left: 0 !important;
 }
+
+.btn-danger.active {
+    color           : #fff !important;
+    background-color: #b38e5d !important;
+    border-color    : #b38e5d !important;
+}

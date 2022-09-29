@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import MetisMenu from 'metismenujs';
+import { IMenuItem } from 'src/app/core/interfaces/menu.interface';
 import { MENU } from 'src/app/core/menu';
-import { MenuItem } from 'src/app/core/models/menu.model';
 
 @Component({
   selector: 'app-sidebar',
@@ -16,7 +16,7 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
   private menu: any;
   private data: any;
 
-  public menuItems: MenuItem[] = [];
+  public menuItems: IMenuItem[] = [];
 
   @ViewChild('sideMenu') sideMenu: ElementRef;
 
@@ -146,7 +146,7 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
       this.menuItems.push(menu);
     });
   }
-  private setParentId(menuItem: MenuItem, id: number): number {
+  private setParentId(menuItem: IMenuItem, id: number): number {
     menuItem.subItems.forEach(sub => {
       id++;
       sub.id = id;
@@ -162,7 +162,7 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
    * Returns true or false if given menu item has child or not
    * @param item menuItem
    */
-  hasItems(item: MenuItem) {
+  hasItems(item: IMenuItem) {
     return item.subItems !== undefined ? item.subItems.length > 0 : false;
   }
 }

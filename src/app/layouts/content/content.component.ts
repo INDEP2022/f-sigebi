@@ -1,7 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ScriptService } from 'src/app/core/services/script.service';
+import { ScriptService } from 'src/app/common/services/script.service';
 
 @Component({
   selector: 'app-content',

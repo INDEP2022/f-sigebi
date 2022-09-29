@@ -11,13 +11,13 @@ export interface AuthModel {
     scope: string;
 }
 
-export interface UserInfoModel {
-    sub: string;
-    email_verified: boolean;
-    name: string;
-    preferred_username: string;
-    given_name: string;
-    family_name: string;
-    email: string;
+
+export interface RealmAccessModel {
+    roles: string[];
 }
 
+export interface ResourceAccessModel {
+    "realm-management": RealmAccessModel;
+    "indep-auth": RealmAccessModel;
+    account: RealmAccessModel;
+}

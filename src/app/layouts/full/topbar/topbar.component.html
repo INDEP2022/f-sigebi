@@ -183,9 +183,9 @@
         -->
             <div class="dropdown d-inline-block" dropdown>
                 <button type="button" class="btn header-item" dropdownToggle id="page-header-user-dropdown">
-                    <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-1.jpg"
+                    <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-6.jpg"
                         alt="Header Avatar">
-                    <span class="d-none d-xl-inline-block ms-1 user-font">Henry</span>
+                    <span class="d-none d-xl-inline-block ms-1 user-font">{{userName}}</span>
                     <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-end user-font" *dropdownMenu>
@@ -208,7 +208,8 @@
                         Pantalla de bloqueo
                     </a>
                     <div class="dropdown-divider"></div>
-                    <a [routerLink]="['/auth']"  class="dropdown-item text-danger" href="javascript: void(0);" (click)="logout()">
+                    <a [routerLink]="['/auth']" class="dropdown-item text-danger" href="javascript: void(0);"
+                        (click)="logout()">
                         <i class="bx bx-power-off font-size-16 align-middle me-1 text-danger"></i>
                         Cerrar sesión
                     </a>
