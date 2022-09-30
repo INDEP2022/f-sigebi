@@ -46,7 +46,6 @@ class SweetalertModel implements SweetAlertOptions {
   template: '',
 })
 export abstract class BasePage implements OnDestroy {
-  modalRef:BsModalRef;
   loading: boolean = false;
   $unSubscribe = new Subject<void>();
   constructor() {}

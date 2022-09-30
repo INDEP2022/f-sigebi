@@ -35,6 +35,6 @@ export class HomeComponent extends BasePage implements OnInit {
       class: 'modal-sm', //asignar clase de bootstrap o personalizado
       ignoreBackdropClick: true, //ignora el click fuera del modal
     };
-    this.modalRef = this.modalService.show(ExampleModalComponent, config);
+    this.modalService.show(ExampleModalComponent, config);
   }
 }

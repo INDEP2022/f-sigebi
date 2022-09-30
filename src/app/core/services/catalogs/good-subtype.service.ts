@@ -6,12 +6,15 @@ import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IGoodSubType } from '../../models/catalogs/good-subtype.model';
+import { IGoodType } from '../../models/catalogs/good-type.model';
 @Injectable({
   providedIn: 'root',
 })
 export class GoodSubtypeService implements ICrudMethods<IGoodSubType> {
   private readonly route: string = ENDPOINT_LINKS.GoodSubtype;
-  constructor(private goodSubtypeRepository: Repository<IGoodSubType>) {}
+  private readonly typesRoute: string = ENDPOINT_LINKS.GoodType
+  constructor(private goodSubtypeRepository: Repository<IGoodSubType>,
+    private goodTypeService: Repository<IGoodType>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IGoodSubType>> {
     return this.goodSubtypeRepository.getAllPaginated(this.route, params);
@@ -31,5 +34,9 @@ export class GoodSubtypeService implements ICrudMethods<IGoodSubType> {
 
   remove(id: string | number): Observable<Object> {
     return this.goodSubtypeRepository.remove(this.route, id);
+  }
+
+  getTypes(params: ListParams) {
+    return this.goodTypeService.getAllPaginated(this.typesRoute, params)
   }
 }

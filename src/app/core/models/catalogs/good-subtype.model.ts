@@ -1,6 +1,6 @@
 export interface IGoodSubType {
   id?: number;
-  idTypeGood: number;
+  idTypeGood: IGoodSubType;
   nameSubtypeGood: string;
   description: string;
   noPhotography: number;

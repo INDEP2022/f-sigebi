@@ -9,6 +9,17 @@ const routes: Routes = [
     data: { title: 'Ejemplo' },
   },
   {
+    path: 'good-types',
+    loadChildren: async () => (await import('./admin/good-types/good-types.module')).GoodTypesModule,
+    data: { title: 'Tipos de Bien' }
+  },
+  {
+    path: 'good-subtypes',
+    loadChildren: async () => (await import('./admin/good-subtypes/good-subtypes.module')).GoodSubtypesModule,
+    data: { title: 'Subtipos de Bien' }
+
+  },
+  {
     path: 'home',
     loadChildren: async () =>
       (await import('./admin/home/home.module')).HomeModule,
