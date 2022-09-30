@@ -30,7 +30,9 @@ export class HomeComponent extends BasePage implements OnInit {
   openModal() {
     let config: ModalOptions = {
       initialState: {
-        title:'Nuevo Modal'
+        callback: (data: any) => {
+          console.log(data);
+        },
       }, //pasar datos por aca
       class: 'modal-sm', //asignar clase de bootstrap o personalizado
       ignoreBackdropClick: true, //ignora el click fuera del modal

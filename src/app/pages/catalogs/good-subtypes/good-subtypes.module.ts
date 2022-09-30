@@ -7,17 +7,13 @@ import { GoodSubtypeFormComponent } from './good-subtype-form/good-subtype-form.
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
-  declarations: [
-    GoodSubtypesListComponent,
-    GoodSubtypeFormComponent
-  ],
+  declarations: [GoodSubtypesListComponent, GoodSubtypeFormComponent],
   imports: [
     CommonModule,
     GoodSubtypesRoutingModule,
     SharedModule,
-    ModalModule.forChild()
-  ]
+    ModalModule.forChild(),
+  ],
 })
-export class GoodSubtypesModule { }
+export class GoodSubtypesModule {}

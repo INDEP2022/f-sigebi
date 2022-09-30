@@ -38,10 +38,11 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class ExampleModalComponent extends BasePage {
   title: string = '';
-  constructor(private bsModalRef:BsModalRef) {
+  constructor(private bsModalRef: BsModalRef) {
     super();
   }
   close() {
+    this.bsModalRef.content.callback({ editado: true });
     this.bsModalRef.hide();
   }
 }

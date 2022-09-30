@@ -5,12 +5,12 @@ import { GoodTypesListComponent } from './good-types-list/good-types-list.compon
 const routes: Routes = [
   {
     path: '',
-    component: GoodTypesListComponent
-  }
+    component: GoodTypesListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class GoodTypesRoutingModule { }
+export class GoodTypesRoutingModule {}

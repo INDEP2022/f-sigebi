@@ -7,17 +7,13 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { GoodTypeFormComponent } from './good-type-form/good-type-form.component';
 
-
 @NgModule({
-  declarations: [
-    GoodTypesListComponent,
-    GoodTypeFormComponent
-  ],
+  declarations: [GoodTypesListComponent, GoodTypeFormComponent],
   imports: [
     CommonModule,
     GoodTypesRoutingModule,
     SharedModule,
-    ModalModule.forChild()
-  ]
+    ModalModule.forChild(),
+  ],
 })
-export class GoodTypesModule { }
+export class GoodTypesModule {}

@@ -27,8 +27,20 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-folder',
     subItems: [
       {
-        label: 'Nivel 1.1',
-        link: '#',
+        label: 'Tipo Bien',
+        link: '/pages/good-types',
+      },
+      {
+        label: 'Subtipo Bien',
+        link: '/pages/good-subtypes',
+      },
+      {
+        label: 'Delegacion',
+        link: '/pages/delegations',
+      },
+      {
+        label: 'Sub Delegacion',
+        link: '/pages/sub-delegations',
       },
     ],
   },

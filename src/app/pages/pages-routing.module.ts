@@ -10,14 +10,30 @@ const routes: Routes = [
   },
   {
     path: 'good-types',
-    loadChildren: async () => (await import('./admin/good-types/good-types.module')).GoodTypesModule,
-    data: { title: 'Tipos de Bien' }
+    loadChildren: async () =>
+      (await import('./catalogs/good-types/good-types.module')).GoodTypesModule,
+    data: { title: 'Tipos de Bien' },
   },
   {
     path: 'good-subtypes',
-    loadChildren: async () => (await import('./admin/good-subtypes/good-subtypes.module')).GoodSubtypesModule,
-    data: { title: 'Subtipos de Bien' }
-
+    loadChildren: async () =>
+      (await import('./catalogs/good-subtypes/good-subtypes.module'))
+        .GoodSubtypesModule,
+    data: { title: 'Subtipos de Bien' },
+  },
+  {
+    path: 'delegations',
+    loadChildren: async () =>
+      (await import('./catalogs/delegations/delegations.module'))
+        .DelegationsModule,
+    data: { title: 'Delegaciones' },
+  },
+  {
+    path: 'sub-delegations',
+    loadChildren: async () =>
+      (await import('./catalogs/sub-delegations/sub-delegations.module'))
+        .SubDelegationsModule,
+    data: { title: 'Sub Delegaciones' },
   },
   {
     path: 'home',
