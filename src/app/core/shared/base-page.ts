@@ -1,4 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { Subject } from 'rxjs';
 import Swal, {
   SweetAlertIcon,
@@ -45,6 +46,7 @@ class SweetalertModel implements SweetAlertOptions {
   template: '',
 })
 export abstract class BasePage implements OnDestroy {
+  modalRef:BsModalRef;
   loading: boolean = false;
   $unSubscribe = new Subject<void>();
   constructor() {}

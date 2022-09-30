@@ -39,8 +39,6 @@ export class AuthService {
     const decodedToken: TokenInfoModel = this.jwtService.decodeToken(
       this.token
     );
-    console.log(decodedToken);
-
     return decodedToken;
   }
 

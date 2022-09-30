@@ -1,8 +1,8 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">Lista de asuntos</h5>
+    <h5 class="title">Componentes basicos form</h5>
     <div class="add-select">
-      <button class="btn btn-primary btn-sm active" (click)="showToast()">
+      <button class="btn btn-primary btn-sm active" (click)="openModal()">
         Nueva
       </button>
     </div>
@@ -17,6 +17,33 @@
         </tabset>
       </div>
     </div>
+    <br />
+    <form [formGroup]="formExample" class="form-material">
+      <form-field [control]="formExample.get('input')" label="Input Label">
+        <input type="text" class="form-control" formControlName="input" />
+      </form-field>
+      <form-field
+        [control]="formExample.get('textarea')"
+        label="Textarea Label">
+        <textarea class="form-control" formControlName="textarea"></textarea>
+      </form-field>
+      <form-field [control]="formExample.get('select')" label="Select Label">
+        <select class="form-control" formControlName="select">
+          <option [value]="null">Seleccione un valor</option>
+          <option [value]="1">1</option>
+          <option [value]="2">2</option>
+        </select>
+      </form-field>
+      <form-check label="Checkbox" for="label">
+        <input id="label" type="checkbox" formControlName="check" />
+      </form-check>
+      <form-radio label="Radio Cat">
+        <input type="radio" formControlName="radio" value="cat" />
+      </form-radio>
+      <form-radio label="Radio Dog">
+        <input type="radio" formControlName="radio" value="dog" />
+      </form-radio>
+    </form>
   </div>
   <div footer class="d-flex justify-content-center">
     <div>

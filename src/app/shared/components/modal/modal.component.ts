@@ -1,12 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-modal',
-  templateUrl: './modal.component.html',
-  styles: [],
+  template: `
+    <div class="modal-content">
+      <div class="modal-header">
+        <ng-content select="[header]"></ng-content>
+      </div>
+      <div class="modal-body">
+        <ng-content select="[body]"></ng-content>
+      </div>
+      <div>
+        <ng-content select="[footer]"></ng-content>
+      </div>
+    </div>
+  `,
 })
-export class ModalComponent implements OnInit {
-  constructor() {}
-
-  ngOnInit(): void {}
-}
+export class ModalComponent {}
