@@ -1,35 +1,31 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 
 @Component({
   selector: 'app-topbar',
   templateUrl: './topbar.component.html',
-  styleUrls:['./topbar.component.scss']
+  styleUrls: ['./topbar.component.scss'],
 })
 export class TopbarComponent implements OnInit {
-
   element: any;
-  cookieValue: any;
-  flagvalue: any;
-  countryName: any;
-  valueset: any;
+  userName: string;
   @Output() settingsButtonClicked = new EventEmitter();
   @Output() mobileMenuButtonClicked = new EventEmitter();
 
-  constructor(@Inject(DOCUMENT) private document: any,) {
-  }
+  constructor(
+    @Inject(DOCUMENT) private document: any,
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   openMobileMenu: boolean;
 
   ngOnInit() {
     this.openMobileMenu = false;
     this.element = document.documentElement;
-  }
-
-  setLanguage(text: string, lang: string, flag: string) {
-    this.countryName = text;
-    this.flagvalue = flag;
-    this.cookieValue = lang;
+    this.userName = this.authService.decodeToken().name;
   }
 
   /**
@@ -51,7 +47,8 @@ export class TopbarComponent implements OnInit {
    * Logout the user
    */
   logout() {
-
+    localStorage.clear();
+    this.router.navigate(['auth/login']);
   }
 
   /**
@@ -60,8 +57,10 @@ export class TopbarComponent implements OnInit {
   fullscreen() {
     document.body.classList.toggle('fullscreen-enable');
     if (
-      !document.fullscreenElement && !this.element.mozFullScreenElement &&
-      !this.element.webkitFullscreenElement) {
+      !document.fullscreenElement &&
+      !this.element.mozFullScreenElement &&
+      !this.element.webkitFullscreenElement
+    ) {
       if (this.element.requestFullscreen) {
         this.element.requestFullscreen();
       } else if (this.element.mozRequestFullScreen) {

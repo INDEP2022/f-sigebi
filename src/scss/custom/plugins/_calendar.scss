@@ -1,10 +1,9 @@
 /* ==============
   Calendar
 ===================*/
-@import "@fullcalendar/daygrid/main.css";
-@import "@fullcalendar/timegrid/main.css";
-@import "@fullcalendar/bootstrap/main.css";
-
+@import '@fullcalendar/daygrid/main.css';
+@import '@fullcalendar/timegrid/main.css';
+@import '@fullcalendar/bootstrap/main.css';
 
 .fc-event {
   border-radius: 2px;
@@ -60,7 +59,6 @@ th.fc-day-header {
 }
 
 .fc-toolbar {
-
   .fc-state-active,
   .ui-state-active,
   button:focus,
@@ -82,7 +80,6 @@ th.fc-day-header {
 }
 
 .fc-unthemed {
-
   th,
   td,
   thead,
@@ -201,8 +198,8 @@ th.fc-day-header {
 
   .fc {
     .fc-toolbar {
-      >* {
-        >* {
+      > * {
+        > * {
           float: none;
         }
       }

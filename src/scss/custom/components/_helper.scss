@@ -79,7 +79,6 @@
   }
 }
 
-
 .w-xs {
   min-width: 80px;
 }
@@ -117,7 +116,8 @@
   .btn-close {
     font-size: 10px;
     padding: $alert-padding-y * 1.4 $alert-padding-x;
-    background: transparent escape-svg($btn-close-bg-dark) center / $btn-close-width auto no-repeat;
+    background: transparent escape-svg($btn-close-bg-dark) center /
+      $btn-close-width auto no-repeat;
   }
 }
 
@@ -127,11 +127,12 @@
     border: 0;
     font-size: 10px;
     padding: 1.35rem 1.25rem;
-    background: transparent escape-svg($btn-close-bg-dark) center / $btn-close-width auto no-repeat;
+    background: transparent escape-svg($btn-close-bg-dark) center /
+      $btn-close-width auto no-repeat;
     position: absolute;
     top: 0;
     right: 0;
-    opacity: .5;
+    opacity: 0.5;
     width: 1em;
     height: 1em;
     z-index: 2;

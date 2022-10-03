@@ -1,9 +1,8 @@
-
 //
 // Select 2
 //
 
-@import "~@ng-select/ng-select/themes/default.theme.css";
+@import '~@ng-select/ng-select/themes/default.theme.css';
 
 .ng-select.ng-select-single .ng-select-container {
   height: $input-height !important;
@@ -20,7 +19,9 @@
 }
 
 .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected,
-.ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-selected.ng-option-marked,
+.ng-dropdown-panel
+  .ng-dropdown-panel-items
+  .ng-option.ng-option-selected.ng-option-marked,
 .ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-marked {
   background-color: $gray-200 !important;
 }
@@ -33,20 +34,20 @@
   }
 }
 
-.ng-select.ng-select-multiple .ng-select-container .ng-value-container .ng-value {
+.ng-select.ng-select-multiple
+  .ng-select-container
+  .ng-value-container
+  .ng-value {
   background-color: $primary;
   color: $white;
 }
 
-
-
 .select2-container {
-
   .select2-selection--single {
     background-color: $input-bg;
     border: 1px solid $input-border-color;
     height: 38px;
-    &:focus{
+    &:focus {
       outline: none;
     }
 
@@ -60,7 +61,7 @@
       width: 34px;
       right: 3px;
 
-      b{
+      b {
         border-color: $gray-500 transparent transparent transparent;
         border-width: 6px 6px 0 6px;
       }
@@ -70,10 +71,8 @@
 
 .select2-container--open {
   .select2-selection--single {
-
     .select2-selection__arrow {
-
-      b{
+      b {
         border-color: transparent transparent $gray-500 transparent !important;
         border-width: 0 6px 6px 6px !important;
       }
@@ -83,25 +82,25 @@
 
 .select2-container--default {
   .select2-search--dropdown {
-      padding: 10px;
-      background-color: $dropdown-bg;
-      .select2-search__field {
-          border: 1px solid  $input-border-color;
-          background-color: $input-bg;
-          color: $gray-600;
-          outline: none;
-      }
+    padding: 10px;
+    background-color: $dropdown-bg;
+    .select2-search__field {
+      border: 1px solid $input-border-color;
+      background-color: $input-bg;
+      color: $gray-600;
+      outline: none;
+    }
   }
   .select2-results__option--highlighted[aria-selected] {
-      background-color: $primary;
+    background-color: $primary;
   }
-  .select2-results__option[aria-selected=true] {
-      background-color: $dropdown-link-active-bg;
-      color: $dropdown-link-active-color;
-      &:hover {
-          background-color: $primary;
-          color: $white;
-      }
+  .select2-results__option[aria-selected='true'] {
+    background-color: $dropdown-link-active-bg;
+    color: $dropdown-link-active-color;
+    &:hover {
+      background-color: $primary;
+      color: $white;
+    }
   }
 }
 
@@ -116,7 +115,7 @@
 }
 
 .select2-search {
-  input{
+  input {
     border: 1px solid $gray-300;
   }
 }
@@ -126,7 +125,7 @@
     min-height: 38px;
     background-color: $input-bg;
     border: 1px solid $input-border-color !important;
-  
+
     .select2-selection__rendered {
       padding: 2px 10px;
     }
@@ -143,31 +142,30 @@
   }
 }
 
-.select2-container--default{
+.select2-container--default {
   &.select2-container--focus {
-    .select2-selection--multiple{
+    .select2-selection--multiple {
       border-color: $gray-400;
     }
   }
 }
 
-
 .ng-select {
   .ng-select-container {
-      background-color: $input-bg !important;
+    background-color: $input-bg !important;
+    color: $input-color !important;
+    input {
       color: $input-color !important;
-      input {
-          color: $input-color !important;
-      }
+    }
   }
   .ng-dropdown-panel {
-      .ng-option {
-          background-color: $input-bg !important;
-          color: $input-color !important;
-          &.ng-option-marked {
-            background-color: $primary !important;
-            color: $white !important;
-          }
+    .ng-option {
+      background-color: $input-bg !important;
+      color: $input-color !important;
+      &.ng-option-marked {
+        background-color: $primary !important;
+        color: $white !important;
       }
+    }
   }
 }

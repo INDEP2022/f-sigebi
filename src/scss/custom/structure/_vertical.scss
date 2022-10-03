@@ -1,13 +1,13 @@
 //
 // _menu.scss
-// 
+//
 
 .metismenu {
   margin: 0;
 
   li {
     display: block;
-    width  : 100%;
+    width: 100%;
   }
 
   .mm-collapse {
@@ -18,49 +18,49 @@
     }
 
     &.mm-show {
-      display: block
+      display: block;
     }
   }
 
   .mm-collapsing {
-    position                  : relative;
-    height                    : 0;
-    overflow                  : hidden;
+    position: relative;
+    height: 0;
+    overflow: hidden;
     transition-timing-function: ease;
-    transition-duration       : .35s;
-    transition-property       : height, visibility;
+    transition-duration: 0.35s;
+    transition-property: height, visibility;
   }
 }
-
 
 .vertical-menu {
   padding-top: 55px;
-  width      : $sidebar-width;
-  z-index    : 1001;
-  background : $sidebar-bg;
-  bottom     : 0;
-  margin-top : 0;
-  position   : fixed;
-  top        : $header-height;
-  box-shadow : $box-shadow;
+  width: $sidebar-width;
+  z-index: 1001;
+  background: $sidebar-bg;
+  bottom: 0;
+  margin-top: 0;
+  position: fixed;
+  top: $header-height;
+  box-shadow: $box-shadow;
 }
 
 .main-content {
+  min-height: calc(100vh - 440px);
+  background-color: #f8f8fb;
   margin-left: $sidebar-width;
-  overflow   : hidden;
+  overflow: hidden;
 
   .content {
-    padding   : 0 15px 10px 15px;
+    padding: 0 15px 10px 15px;
     margin-top: $header-height;
   }
 }
-
 
 #sidebar-menu {
   padding: 10px 0 30px 0;
 
   .mm-active {
-    >.has-arrow {
+    > .has-arrow {
       &:after {
         transform: rotate(-180deg);
       }
@@ -69,34 +69,34 @@
 
   .has-arrow {
     &:after {
-      content    : "\F0140";
+      content: '\F0140';
       font-family: 'Material Design Icons';
-      display    : block;
-      float      : right;
-      transition : transform .2s;
-      font-size  : 1rem;
+      display: block;
+      float: right;
+      transition: transform 0.2s;
+      font-size: 1rem;
     }
   }
 
   ul {
     li {
       a {
-        display   : block;
-        padding   : .625rem 1.5rem;
-        color     : $sidebar-menu-item-color;
-        position  : relative;
-        font-size : 13px;
-        transition: all .4s;
+        display: block;
+        padding: 0.625rem 1.5rem;
+        color: $sidebar-menu-item-color;
+        position: relative;
+        font-size: 13px;
+        transition: all 0.4s;
 
         i {
-          display       : inline-block;
-          min-width     : 1.75rem;
-          padding-bottom: .125em;
-          font-size     : 1.25rem;
-          line-height   : 1.40625rem;
+          display: inline-block;
+          min-width: 1.75rem;
+          padding-bottom: 0.125em;
+          font-size: 1.25rem;
+          line-height: 1.40625rem;
           vertical-align: middle;
-          color         : $sidebar-menu-item-icon-color;
-          transition    : all .4s;
+          color: $sidebar-menu-item-icon-color;
+          transition: all 0.4s;
         }
 
         &:hover {
@@ -116,11 +116,10 @@
         padding: 0;
 
         li {
-
           a {
-            padding  : .4rem 1.5rem .4rem 3.5rem;
+            padding: 0.4rem 1.5rem 0.4rem 3.5rem;
             font-size: 13px;
-            color    : $sidebar-menu-sub-item-color;
+            color: $sidebar-menu-sub-item-color;
 
             &:hover {
               color: $sidebar-menu-item-hover-color;
@@ -132,17 +131,14 @@
 
             li {
               a {
-                padding  : .4rem 1.5rem .4rem 4.5rem;
+                padding: 0.4rem 1.5rem 0.4rem 4.5rem;
                 font-size: 13px;
-
-
               }
             }
           }
         }
       }
     }
-
   }
 }
 
@@ -151,20 +147,20 @@
 }
 
 .menu-title {
-  padding       : 12px 20px !important;
-  letter-spacing: .05em;
+  padding: 12px 20px !important;
+  letter-spacing: 0.05em;
   pointer-events: none;
-  cursor        : default;
-  font-size     : 11px;
+  cursor: default;
+  font-size: 11px;
   text-transform: uppercase;
-  color         : $sidebar-menu-item-icon-color;
-  font-weight   : $font-weight-semibold;
+  color: $sidebar-menu-item-icon-color;
+  font-weight: $font-weight-semibold;
 }
 
 .mm-active {
   color: $sidebar-menu-item-active-color !important;
 
-  >a {
+  > a {
     color: $sidebar-menu-item-active-color !important;
 
     i {
@@ -180,7 +176,7 @@
     }
   }
 
-  >i {
+  > i {
     color: $sidebar-menu-item-active-color !important;
   }
 }
@@ -198,8 +194,6 @@
     .vertical-menu {
       display: block;
     }
-
-
   }
 }
 
@@ -229,7 +223,6 @@
 
   // Side menu
   .vertical-menu {
-
     // scroll
 
     perfect-scrollbar {
@@ -245,8 +238,8 @@
     }
 
     position: absolute;
-    width   : $sidebar-collapsed-width !important;
-    z-index : 5;
+    width: $sidebar-collapsed-width !important;
+    z-index: 5;
 
     .simplebar-mask,
     .simplebar-content-wrapper {
@@ -263,7 +256,6 @@
 
     // Sidebar Menu
     #sidebar-menu {
-
       .menu-title,
       .badge,
       .collapse.in {
@@ -280,13 +272,13 @@
         }
       }
 
-      >ul {
-        >li {
-          position   : relative;
+      > ul {
+        > li {
+          position: relative;
           white-space: nowrap;
 
-          >a {
-            padding   : 15px 20px;
+          > a {
+            padding: 15px 20px;
             min-height: 55px;
             transition: none;
 
@@ -297,23 +289,23 @@
             }
 
             i {
-              font-size  : 1.45rem;
+              font-size: 1.45rem;
               margin-left: 4px;
             }
 
             span {
-              display     : none;
+              display: none;
               padding-left: 25px;
             }
           }
 
           &:hover {
-            >a {
-              position        : relative;
-              width           : calc(190px + #{$sidebar-collapsed-width});
-              color           : $primary;
+            > a {
+              position: relative;
+              width: calc(190px + #{$sidebar-collapsed-width});
+              color: $primary;
               background-color: darken($sidebar-bg, 4%);
-              transition      : none;
+              transition: none;
 
               i {
                 color: $primary;
@@ -324,25 +316,25 @@
               }
             }
 
-            >ul {
-              display   : block;
-              left      : $sidebar-collapsed-width;
-              position  : absolute;
-              width     : 190px;
-              height    : auto !important;
-              box-shadow: 3px 5px 10px 0 rgba(54, 61, 71, .1);
+            > ul {
+              display: block;
+              left: $sidebar-collapsed-width;
+              position: absolute;
+              width: 190px;
+              height: auto !important;
+              box-shadow: 3px 5px 10px 0 rgba(54, 61, 71, 0.1);
 
               ul {
-                box-shadow: 3px 5px 10px 0 rgba(54, 61, 71, .1);
+                box-shadow: 3px 5px 10px 0 rgba(54, 61, 71, 0.1);
               }
 
               a {
                 box-shadow: none;
-                padding   : 8px 20px;
-                position  : relative;
-                width     : 190px;
-                z-index   : 6;
-                color     : $sidebar-menu-sub-item-color;
+                padding: 8px 20px;
+                position: relative;
+                width: 190px;
+                z-index: 6;
+                color: $sidebar-menu-sub-item-color;
 
                 &:hover {
                   color: $sidebar-menu-item-hover-color;
@@ -353,28 +345,28 @@
         }
 
         ul {
-          padding         : 5px 0;
-          z-index         : 9999;
-          display         : none;
+          padding: 5px 0;
+          z-index: 9999;
+          display: none;
           background-color: $sidebar-bg;
 
           li {
             &:hover {
-              >ul {
-                display   : block;
-                left      : 190px;
-                height    : auto !important;
+              > ul {
+                display: block;
+                left: 190px;
+                height: auto !important;
                 margin-top: -36px;
-                position  : absolute;
-                width     : 190px;
+                position: absolute;
+                width: 190px;
               }
             }
 
-            >a {
+            > a {
               span.pull-right {
-                position : absolute;
-                right    : 20px;
-                top      : 12px;
+                position: absolute;
+                right: 20px;
+                top: 12px;
                 transform: rotate(270deg);
               }
             }
@@ -388,18 +380,15 @@
         }
       }
     }
-
   }
 }
 
-
-body[data-sidebar="dark"] {
+body[data-sidebar='dark'] {
   .vertical-menu {
     background: $sidebar-dark-bg;
   }
 
   #sidebar-menu {
-
     ul {
       li {
         a {
@@ -420,7 +409,6 @@ body[data-sidebar="dark"] {
 
         ul.sub-menu {
           li {
-
             a {
               color: $sidebar-dark-menu-sub-item-color;
 
@@ -440,24 +428,21 @@ body[data-sidebar="dark"] {
 
     // Side menu
     .vertical-menu {
-
       // Sidebar Menu
       #sidebar-menu {
-
-        >ul {
-          >li {
-
+        > ul {
+          > li {
             &:hover {
-              >a {
+              > a {
                 background: lighten($sidebar-dark-bg, 2%);
-                color     : $sidebar-dark-menu-item-hover-color;
+                color: $sidebar-dark-menu-item-hover-color;
 
                 i {
                   color: $sidebar-dark-menu-item-hover-color;
                 }
               }
 
-              >ul {
+              > ul {
                 a {
                   color: $sidebar-dark-menu-sub-item-color;
 
@@ -472,11 +457,9 @@ body[data-sidebar="dark"] {
           ul {
             background-color: $sidebar-dark-bg;
           }
-
         }
 
         ul {
-
           li {
             &.mm-active .active {
               color: $sidebar-dark-menu-item-active-color !important;
@@ -487,17 +470,14 @@ body[data-sidebar="dark"] {
             }
           }
         }
-
       }
-
-
     }
   }
 
   .mm-active {
     color: $sidebar-dark-menu-item-active-color !important;
 
-    >a {
+    > a {
       color: $sidebar-dark-menu-item-active-color !important;
 
       i {
@@ -505,7 +485,7 @@ body[data-sidebar="dark"] {
       }
     }
 
-    >i {
+    > i {
       color: $sidebar-dark-menu-item-active-color !important;
     }
 
@@ -523,8 +503,7 @@ body[data-sidebar="dark"] {
   }
 }
 
-
-body[data-layout="horizontal"] {
+body[data-layout='horizontal'] {
   .main-content {
     margin-left: 0 !important;
   }
@@ -532,13 +511,13 @@ body[data-layout="horizontal"] {
 
 // Compact Sidebar
 
-body[data-sidebar-size="small"] {
+body[data-sidebar-size='small'] {
   .navbar-brand-box {
     width: $sidebar-width-sm;
   }
 
   .vertical-menu {
-    width     : $sidebar-width-sm;
+    width: $sidebar-width-sm;
     text-align: center;
 
     .has-arrow:after,
@@ -594,9 +573,9 @@ body[data-sidebar-size="small"] {
       #sidebar-menu {
         text-align: left;
 
-        >ul {
-          >li {
-            >a {
+        > ul {
+          > li {
+            > a {
               i {
                 display: inline-block;
               }
@@ -614,7 +593,7 @@ body[data-sidebar-size="small"] {
 
 // colored sidebar
 
-body[data-sidebar="colored"] {
+body[data-sidebar='colored'] {
   .vertical-menu {
     background-color: $primary;
   }
@@ -634,7 +613,7 @@ body[data-sidebar="colored"] {
   .mm-active {
     color: $white !important;
 
-    >a {
+    > a {
       color: $white !important;
 
       i {
@@ -642,7 +621,7 @@ body[data-sidebar="colored"] {
       }
     }
 
-    >i,
+    > i,
     .active {
       color: $white !important;
     }
@@ -680,7 +659,7 @@ body[data-sidebar="colored"] {
         ul.sub-menu {
           li {
             a {
-              color: rgba($white, .5);
+              color: rgba($white, 0.5);
 
               &:hover {
                 color: $white;
@@ -695,11 +674,11 @@ body[data-sidebar="colored"] {
   &.vertical-collpsed {
     .vertical-menu {
       #sidebar-menu {
-        >ul {
-          >li {
-            &:hover>a {
+        > ul {
+          > li {
+            &:hover > a {
               background-color: lighten($primary, 2%);
-              color           : $white;
+              color: $white;
 
               i {
                 color: $white;
@@ -727,7 +706,7 @@ body[data-sidebar="colored"] {
                 &.mm-active {
                   color: $sidebar-menu-item-active-color !important;
 
-                  >a {
+                  > a {
                     color: $sidebar-menu-item-active-color !important;
 
                     i {
@@ -744,10 +723,9 @@ body[data-sidebar="colored"] {
   }
 }
 
-
 // colored sidebar
 
-body[data-sidebar="colored"] {
+body[data-sidebar='colored'] {
   .vertical-menu {
     background-color: $primary;
   }
@@ -767,7 +745,7 @@ body[data-sidebar="colored"] {
   .mm-active {
     color: $white !important;
 
-    >a {
+    > a {
       color: $white !important;
 
       i {
@@ -775,7 +753,7 @@ body[data-sidebar="colored"] {
       }
     }
 
-    >i,
+    > i,
     .active {
       color: $white !important;
     }
@@ -813,7 +791,7 @@ body[data-sidebar="colored"] {
         ul.sub-menu {
           li {
             a {
-              color: rgba($white, .5);
+              color: rgba($white, 0.5);
 
               &:hover {
                 color: $white;
@@ -828,11 +806,11 @@ body[data-sidebar="colored"] {
   &.vertical-collpsed {
     .vertical-menu {
       #sidebar-menu {
-        >ul {
-          >li {
-            &:hover>a {
+        > ul {
+          > li {
+            &:hover > a {
               background-color: lighten($primary, 2%);
-              color           : $white;
+              color: $white;
 
               i {
                 color: $white;
@@ -860,7 +838,7 @@ body[data-sidebar="colored"] {
                 &.mm-active {
                   color: $sidebar-menu-item-active-color !important;
 
-                  >a {
+                  > a {
                     color: $sidebar-menu-item-active-color !important;
 
                     i {

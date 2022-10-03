@@ -1,0 +1,24 @@
+<ng-container [formGroup]="form">
+  <div class="form-group form-secondary form-static-label">
+    <ng-select
+      #select
+      [clearable]="false"
+      class="form-control"
+      [items]="buffer"
+      [bindLabel]="bindLabel"
+      [hideSelected]="true"
+      [bindValue]="value"
+      [minTermLength]="1"
+      [loading]="loading"
+      typeToSearchText="Escriba 3 o mas caracteres"
+      [typeahead]="input$"
+      notFoundText="No se encontraron elementos"
+      [virtualScroll]="true"
+      [formControlName]="control"
+      (scrollToEnd)="fetchMore(select.searchTerm)"
+      (change)="onChange($event)">
+    </ng-select>
+    <span class="form-bar"></span>
+    <label class="float-label">{{ label }}</label>
+  </div>
+</ng-container>
