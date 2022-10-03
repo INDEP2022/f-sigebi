@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ModelFormGroup } from 'src/app/core/interfaces/ModelFormGroup';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -11,7 +12,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
   styles: [],
 })
 export class DelegationFormComponent extends BasePage implements OnInit {
-  delegationForm: FormGroup = new FormGroup({});
+  delegationForm: ModelFormGroup<IDelegation>;
   title: string = 'Delegacion';
   edit: boolean = false;
   delegation: IDelegation;
@@ -26,73 +27,30 @@ export class DelegationFormComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
   }
-
-  private prepareForm(): void {
+  private prepareForm() {
     this.delegationForm = this.fb.group({
-      id: ['', Validators.required],
-      description: [
-        null,
-        Validators.compose([
-          Validators.pattern(''),
-          Validators.required,
-          Validators.maxLength(80),
-        ]),
-      ],
-      zoneContractCVE: [
-        null,
-        Validators.compose([
-          Validators.pattern(''),
-          Validators.required,
-          Validators.maxLength(80),
-        ]),
-      ],
-      diffHours: [
-        null,
-        Validators.compose([
-          Validators.pattern(''),
-          Validators.required,
-          Validators.maxLength(80),
-        ]),
-      ],
-      phaseEdo: [
-        null,
-        Validators.compose([
-          Validators.pattern(''),
-          Validators.required,
-          Validators.maxLength(80),
-        ]),
-      ],
-      zoneVigilanceCVE: [
-        null,
-        Validators.compose([
-          Validators.pattern(''),
-          Validators.required,
-          Validators.maxLength(80),
-        ]),
-      ],
-      noRegister: [
-        null,
-        Validators.compose([
-          Validators.pattern(''),
-          Validators.required,
-          Validators.maxLength(80),
-        ]),
-      ],
-      etapaEdo: [, Validators.required],
-      cveState: ['', Validators.required],
-      addressOffice: ['', Validators.required],
-      regionalDelegate: ['', Validators.required],
-      cveZone: ['', Validators.required],
-      city: ['', Validators.required],
-      status: ['', Validators.required],
-      iva: ['', Validators.required],
+      addressOffice: '',
+      city: [null],
+      cveState: [null],
+      cveZone: [null],
+      description: [null],
+      diffHours: [null],
+      etapaEdo: [null],
+      idZoneGeographic: [null],
+      iva: [null],
+      noRegister: [null],
+      regionalDelegate: [null],
+      status: [null],
+      version: [null],
+      zoneContractCVE: [null],
+      zoneVigilanceCVE: [null],
     });
+    this.delegationForm.get('addressOffice').setValidators([]);
     if (this.delegation != null) {
       this.edit = true;
       this.delegationForm.patchValue(this.delegation);
     }
   }
-
   close() {
     this.modalRef.hide();
   }

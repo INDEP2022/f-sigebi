@@ -1,7 +1,7 @@
 import { IZoneGeographic } from './zone-geographic.model';
 
 export interface IDelegation {
-  id: number;
+  id?: number;
   etapaEdo: number;
   cveState: string;
   description: string;
@@ -16,9 +16,9 @@ export interface IDelegation {
   zoneVigilanceCVE: number;
   diffHours: number;
   version: number;
-  creationUser: string;
-  creationDate: Date;
-  editionUser: string;
-  modificationDate: Date;
+  creationUser?: string;
+  creationDate?: Date;
+  editionUser?: string;
+  modificationDate?: Date;
   idZoneGeographic: number | IZoneGeographic;
 }

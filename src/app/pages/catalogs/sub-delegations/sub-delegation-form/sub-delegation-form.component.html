@@ -1,1 +1,86 @@
-<p>sub-delegation-form works!</p>
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="subdelegationForm">
+      <div class="row">
+        <div class="col-md-12">
+          <form-field
+            [control]="subdelegationForm.get('description')"
+            label="Descripción">
+            <textarea
+              class="form-control"
+              type="text"
+              formControlName="description"
+              placeholder="Descripción">
+            </textarea>
+          </form-field>
+        </div>
+
+        <div class="col-md-12">
+          <ngx-select
+            [form]="subdelegationForm"
+            control="numDelegation"
+            (fetchItems)="getSubDelegations($event)"
+            [data]="delegations"
+            label="description"
+            value="id"></ngx-select>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="subdelegationForm.get('phaseEdo')"
+            label="Etapa EDO">
+            <input
+              class="form-control"
+              type="number"
+              formControlName="phaseEdo"
+              placeholder="Etapa EDO" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="subdelegationForm.get('numDailyCon')"
+            label="No. consecutivo diario">
+            <input
+              class="form-control"
+              type="number"
+              formControlName="numDailyCon"
+              type="number"
+              placeholder="No. consecutivo diario" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="subdelegationForm.get('numRegister')"
+            label="Número de registro">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="numRegister"
+              placeholder="Número de registro" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="subdelegationForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
