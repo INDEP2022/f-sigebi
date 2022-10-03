@@ -16,7 +16,7 @@ const routes: Routes = [
     component: FullComponent,
     loadChildren: async () =>
       (await import('./pages/pages.module')).PagesModule,
-    canActivate: [AuthGuard],
+    // canActivate: [AuthGuard],
   },
   {
     path: '',
