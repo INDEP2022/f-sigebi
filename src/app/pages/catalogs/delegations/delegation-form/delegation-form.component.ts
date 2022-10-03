@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelFormGroup } from 'src/app/core/interfaces/ModelFormGroup';
+import { ModelForm } from 'src/app/core/interfaces/ModelForm';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -12,7 +12,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
   styles: [],
 })
 export class DelegationFormComponent extends BasePage implements OnInit {
-  delegationForm: ModelFormGroup<IDelegation>;
+  delegationForm: ModelForm<IDelegation>;
   title: string = 'Delegacion';
   edit: boolean = false;
   delegation: IDelegation;
@@ -27,9 +27,10 @@ export class DelegationFormComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
   }
+
   private prepareForm() {
     this.delegationForm = this.fb.group({
-      addressOffice: '',
+      addressOffice: ['', [Validators.required]],
       city: [null],
       cveState: [null],
       cveZone: [null],
@@ -43,7 +44,7 @@ export class DelegationFormComponent extends BasePage implements OnInit {
       status: [null],
       version: [null],
       zoneContractCVE: [null],
-      zoneVigilanceCVE: [null],
+      zoneVigilanceCVE: [],
     });
     this.delegationForm.get('addressOffice').setValidators([]);
     if (this.delegation != null) {

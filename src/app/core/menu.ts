@@ -28,19 +28,19 @@ export const MENU: IMenuItem[] = [
     subItems: [
       {
         label: 'Tipo Bien',
-        link: '/pages/good-types',
+        link: '/pages/catalogs/good-types',
       },
       {
         label: 'Subtipo Bien',
-        link: '/pages/good-subtypes',
+        link: '/pages/catalogs/good-subtypes',
       },
       {
         label: 'Delegacion',
-        link: '/pages/delegations',
+        link: '/pages/catalogs/delegations',
       },
       {
         label: 'Sub Delegacion',
-        link: '/pages/sub-delegations',
+        link: '/pages/catalogs/sub-delegations',
       },
     ],
   },
