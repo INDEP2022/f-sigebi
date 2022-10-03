@@ -27,6 +27,13 @@ const routes: Routes = [
         .SubDelegationsModule,
     data: { title: 'Sub Delegaciones' },
   },
+  {
+    path: 'sat-clasification',
+    loadChildren: async () =>
+      (await import('./sat-clasification/sat-clasification.module'))
+        .SatClasificationModule,
+    data: { title: 'Sat clasificacion' },
+  },
 ];
 
 @NgModule({

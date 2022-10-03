@@ -1,0 +1,76 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="satClasificationForm">
+      <div class="row">
+        <div class="col-md-12">
+          <form-field
+            [control]="satClasificationForm.get('nombre_clasificacion')"
+            label="Nombre clasificacion">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nombre_clasificacion"
+              placeholder="Nombre clasificacion" />
+          </form-field>
+        </div>
+      </div>
+      <!-- <div class="form-group row">
+        <ngx-validation-message
+          label="Nombre clasificacion"
+          [showMinLength]="nombre_clasificacion?.hasError('minlength')"
+          [showMaxLength]="nombre_clasificacion?.hasError('maxlength')"
+          [showRequired]="
+            nombre_clasificacion?.errors?.required &&
+            nombre_clasificacion.touched
+          "
+          [showPattern]="
+            nombre_clasificacion?.hasError('pattern') &&
+            nombre_clasificacion.touched
+          "
+          minLength="1"
+          maxLength="255">
+        </ngx-validation-message>
+      </div>
+      <div class="form-group row">
+        <input
+          nbInput
+          fullWidth
+          formControlName="version"
+          placeholder="Version"
+          [status]="
+            (version?.errors?.required ||
+              version?.hasError('minlength') ||
+              version?.hasError('maxlength') ||
+              version?.hasError('pattern')) &&
+            version.touched
+              ? 'danger'
+              : ''
+          " />
+        <ngx-validation-message
+          label="version"
+          [showMinLength]="version?.hasError('minlength')"
+          [showMaxLength]="version?.hasError('maxlength')"
+          [showRequired]="version?.errors?.required && version.touched"
+          [showPattern]="version?.hasError('pattern') && version.touched"
+          minLength="1"
+          maxLength="255">
+        </ngx-validation-message>
+      </div>
+      <div class="form-group row">
+        <div class="offset-sm-3 col-sm-9">
+          <button
+            type="submit"
+            nbButton
+            status="primary"
+            [disabled]="!form.valid"
+            (click)="register()">
+            {{ actionBtn }}
+          </button>
+        </div>
+      </div> -->
+    </form>
+  </div>
+</app-modal>
