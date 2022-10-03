@@ -1,0 +1,208 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="delegationForm" class="form-material">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="delegationForm.get('id')" label="Id">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="id"
+              placeholder="Id" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="delegationForm.get('etapaEdo')"
+            label="Etapa Estado">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="etapaEdo"
+              placeholder="Etapa Estado" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="delegationForm.get('cveState')"
+            label="CVE Estado">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cveState"
+              placeholder="CVE State" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <form-field
+            [control]="delegationForm.get('addressOffice')"
+            label="Dirección de Oficina">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="addressOffice"
+              placeholder="Dirección de Oficina" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="delegationForm.get('regionalDelegate')"
+            label="Delegado regional">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="regionalDelegate"
+              placeholder="Delegado regional" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4">
+          <form-field
+            [control]="delegationForm.get('cveZone')"
+            label="Clave de la Zona">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cveZone"
+              placeholder="Clave de la Zona" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field [control]="delegationForm.get('city')" label="Ciudad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="city"
+              placeholder="Ciudad" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field [control]="delegationForm.get('status')" label="Estatus">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="status"
+              placeholder="Status" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field [control]="delegationForm.get('iva')" label="IVA">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="iva"
+              placeholder="Iva" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="delegationForm.get('zoneVigilanceCVE')"
+            label="CVE Zona">
+            <input
+              type="number"
+              class="form-control"
+              class="form-control"
+              formControlName="zoneVigilanceCVE"
+              placeholder="CVE Zona" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field [control]="delegationForm.get('phaseEdo')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="phaseEdo"
+              placeholder="Etapa Edo" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <form-field
+            [control]="delegationForm.get('description')"
+            label="Descripción">
+            <textarea
+              class="form-control"
+              type="text"
+              rows="2"
+              formControlName="description"
+              placeholder="Descripción"></textarea>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Diferencia de hras -->
+        <div class="col-md-4">
+          <form-field
+            [control]="delegationForm.get('diffHours')"
+            label="Diferencia de horas">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="diffHours"
+              placeholder="Diferencia de horas" />
+          </form-field>
+        </div>
+
+        <!-- Cona de contrato CVE -->
+        <div class="col-md-4">
+          <form-field
+            [control]="delegationForm.get('zoneContractCVE')"
+            label="CVE zona de contrato">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="zoneContractCVE"
+              placeholder="CVE zona de contrato" />
+          </form-field>
+        </div>
+
+        <!-- No Register -->
+        <div class="col-md-4">
+          <form-field
+            [control]="delegationForm.get('noRegister')"
+            label="noRegister">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noRegister"
+              placeholder="Número de registro" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="delegationForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

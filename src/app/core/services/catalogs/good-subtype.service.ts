@@ -12,9 +12,11 @@ import { IGoodType } from '../../models/catalogs/good-type.model';
 })
 export class GoodSubtypeService implements ICrudMethods<IGoodSubType> {
   private readonly route: string = ENDPOINT_LINKS.GoodSubtype;
-  private readonly typesRoute: string = ENDPOINT_LINKS.GoodType
-  constructor(private goodSubtypeRepository: Repository<IGoodSubType>,
-    private goodTypeService: Repository<IGoodType>) {}
+  private readonly typesRoute: string = ENDPOINT_LINKS.GoodType;
+  constructor(
+    private goodSubtypeRepository: Repository<IGoodSubType>,
+    private goodTypeService: Repository<IGoodType>
+  ) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IGoodSubType>> {
     return this.goodSubtypeRepository.getAllPaginated(this.route, params);
@@ -37,6 +39,6 @@ export class GoodSubtypeService implements ICrudMethods<IGoodSubType> {
   }
 
   getTypes(params: ListParams) {
-    return this.goodTypeService.getAllPaginated(this.typesRoute, params)
+    return this.goodTypeService.getAllPaginated(this.typesRoute, params);
   }
 }

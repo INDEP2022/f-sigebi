@@ -5,7 +5,7 @@
       [clearable]="false"
       class="form-control"
       [items]="buffer"
-      [bindLabel]="label"
+      [bindLabel]="bindLabel"
       [hideSelected]="true"
       [bindValue]="value"
       [minTermLength]="1"
@@ -19,6 +19,6 @@
       (change)="onChange($event)">
     </ng-select>
     <span class="form-bar"></span>
-    <label class="float-label">Select</label>
+    <label class="float-label">{{ label }}</label>
   </div>
 </ng-container>

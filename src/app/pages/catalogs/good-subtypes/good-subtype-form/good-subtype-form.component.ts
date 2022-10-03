@@ -11,11 +11,10 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-good-subtype-form',
   templateUrl: './good-subtype-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class GoodSubtypeFormComponent extends BasePage implements OnInit {
-  goodSubtypeForm: FormGroup = new FormGroup({})
+  goodSubtypeForm: FormGroup = new FormGroup({});
   title: string = 'Subtipo Bien';
   edit: boolean = false;
   goodSubtype: IGoodSubType;
@@ -25,12 +24,12 @@ export class GoodSubtypeFormComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private goodSubtypeService: GoodSubtypeService
-  ) { 
-    super()
+  ) {
+    super();
   }
 
   ngOnInit(): void {
-    this.prepareForm()
+    this.prepareForm();
   }
 
   private prepareForm(): void {
@@ -38,24 +37,29 @@ export class GoodSubtypeFormComponent extends BasePage implements OnInit {
       id: [null, [Validators.required]],
       idTypeGood: [null, [Validators.required]],
       nameSubtypeGood: [null, [Validators.required, Validators.maxLength(70)]],
-      descriptionPhotography: [null, [Validators.required, Validators.maxLength(500)]],
+      descriptionPhotography: [
+        null,
+        [Validators.required, Validators.maxLength(500)],
+      ],
       noPhotography: [null, [Validators.required]],
       noRegister: [null, [Validators.required]],
-      version: [null, [Validators.required]]
+      version: [null, [Validators.required]],
     });
-    if (this.edit) this.patchForm()
+    if (this.goodSubtype != null) {
+      this.edit = true;
+      this.goodSubtypeForm.patchValue(this.goodSubtype);
+    }
   }
 
   patchForm() {
-    this.goodSubtypeForm.patchValue(this.goodSubtype);
-    if(this.goodSubtype.idTypeGood.id) {
+    if (this.goodSubtype.idTypeGood.id) {
     }
   }
 
   getTypes(params: ListParams) {
     this.goodSubtypeService.getTypes(params).subscribe(data => {
-      this.types = new DefaultSelect(data.data, data.count)
-    })
+      this.types = new DefaultSelect(data.data, data.count);
+    });
   }
 
   close() {
@@ -68,26 +72,27 @@ export class GoodSubtypeFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.goodSubtypeService.create(this.goodSubtypeForm.value).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
-    );
+    this.goodSubtypeService.create(this.goodSubtypeForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   update() {
     this.loading = true;
-    this.goodSubtypeService.update(this.goodSubtype.id, this.goodSubtypeForm.value).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
-    );
+    this.goodSubtypeService
+      .update(this.goodSubtype.id, this.goodSubtypeForm.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado': 'Guardado'
-    this.onLoadToast('success', this.title, `${message} Correctamente`)
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.refresh.emit(true);
     this.modalRef.hide();
   }
-
 }

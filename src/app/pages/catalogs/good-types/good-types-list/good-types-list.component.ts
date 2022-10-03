@@ -12,8 +12,7 @@ import { GOOD_TYPES_COLUMS } from './good-types-colums';
 @Component({
   selector: 'app-good-types-list',
   templateUrl: './good-types-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class GoodTypesListComponent extends BasePage implements OnInit {
   settings = TABLE_SETTINGS;
@@ -38,19 +37,19 @@ export class GoodTypesListComponent extends BasePage implements OnInit {
 
   getExample() {
     this.loading = true;
-    this.goodTypesService.getAll(this.params.getValue()).subscribe(
-      response => {
+    this.goodTypesService.getAll(this.params.getValue()).subscribe({
+      next: response => {
         this.paragraphs = response.data;
         this.totalItems = response.count;
         this.loading = false;
       },
-      error => (this.loading = false)
-    );
+      error: error => (this.loading = false),
+    });
   }
 
   openModal(context?: Partial<GoodTypeFormComponent>) {
     const modalRef = this.modalService.show(GoodTypeFormComponent, {
-      initialState: context,
+      initialState: { ...context },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
@@ -59,12 +58,8 @@ export class GoodTypesListComponent extends BasePage implements OnInit {
     });
   }
 
-  add() {
-    this.openModal();
-  }
-
-  edit(goodType: IGoodType) {
-    this.openModal({ edit: true, goodType });
+  openForm(goodType?: IGoodType) {
+    this.openModal({ goodType });
   }
 
   delete(goodType: IGoodType) {

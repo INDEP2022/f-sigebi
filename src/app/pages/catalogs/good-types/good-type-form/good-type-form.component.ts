@@ -1,4 +1,10 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
@@ -9,11 +15,13 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-good-type-form',
   templateUrl: './good-type-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class GoodTypeFormComponent extends BasePage implements OnInit {
-  goodTypeForm: FormGroup = new FormGroup({})
+export class GoodTypeFormComponent
+  extends BasePage
+  implements OnInit
+{
+  goodTypeForm: FormGroup = new FormGroup({});
   title: string = 'Tipo Bien';
   edit: boolean = false;
   goodType: IGoodType;
@@ -24,8 +32,8 @@ export class GoodTypeFormComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private goodTypeService: GoodTypeService
-  ) { 
-    super()
+  ) {
+    super();
   }
 
   ngOnInit(): void {
@@ -44,9 +52,12 @@ export class GoodTypeFormComponent extends BasePage implements OnInit {
       maxLimitTime2: [null, [Validators.required]],
       maxLimitTime3: [null, [Validators.required]],
       noRegister: [null, [Validators.required]],
-      version: [null, [Validators.required]]
+      version: [null, [Validators.required]],
     });
-    if (this.edit) this.goodTypeForm.patchValue(this.goodType);
+    if (this.goodType != null) {
+      this.edit = true;
+      this.goodTypeForm.patchValue(this.goodType);
+    }
   }
 
   close() {
@@ -59,26 +70,27 @@ export class GoodTypeFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.goodTypeService.create(this.goodTypeForm.value).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
-    );
+    this.goodTypeService.create(this.goodTypeForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   update() {
     this.loading = true;
-    this.goodTypeService.update(this.goodType.id, this.goodTypeForm.value).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
-    );
+    this.goodTypeService
+      .update(this.goodType.id, this.goodTypeForm.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado': 'Guardado'
-    this.onLoadToast('success', this.title, `${message} Correctamente`)
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.refresh.emit(true);
     this.modalRef.hide();
   }
-
 }

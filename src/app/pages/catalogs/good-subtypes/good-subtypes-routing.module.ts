@@ -5,12 +5,12 @@ import { GoodSubtypesListComponent } from './good-subtypes-list/good-subtypes-li
 const routes: Routes = [
   {
     path: '',
-    component: GoodSubtypesListComponent
-  }
+    component: GoodSubtypesListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class GoodSubtypesRoutingModule { }
+export class GoodSubtypesRoutingModule {}

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -12,8 +12,7 @@ import { GOOD_SUBTYPES_COLUMNS } from './good-subtype-columns';
 @Component({
   selector: 'app-good-subtypes-list',
   templateUrl: './good-subtypes-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class GoodSubtypesListComponent extends BasePage implements OnInit {
   settings = TABLE_SETTINGS;
@@ -38,33 +37,40 @@ export class GoodSubtypesListComponent extends BasePage implements OnInit {
 
   getExample() {
     this.loading = true;
-    this.goodTypesService.getAll(this.params.getValue()).subscribe(
-      response => {
+    this.goodTypesService.getAll(this.params.getValue()).subscribe({
+      next: response => {
         this.paragraphs = response.data;
         this.totalItems = response.count;
         this.loading = false;
       },
-      error => (this.loading = false)
-    );
+      error: error => (this.loading = false),
+    });
   }
 
-  openModal(context?: Partial<GoodSubtypeFormComponent>) {
-    const modalRef = this.modalService.show(GoodSubtypeFormComponent, {
-      initialState: context,
+  // openModal(context?: Partial<GoodSubtypeFormComponent>) {
+  //   const modalRef = this.modalService.show(GoodSubtypeFormComponent, {
+  //     initialState: context,
+  //     class: 'modal-lg modal-dialog-centered',
+  //     ignoreBackdropClick: true,
+  //   });
+  //   modalRef.content.refresh.subscribe(next => {
+  //     if (next) this.getExample();
+  //   });
+  // }
+
+  openForm(goodSubtype?: IGoodSubType) {
+    console.log(goodSubtype);
+    let config: ModalOptions = {
+      initialState: {
+        goodSubtype,
+        callback: (next: boolean) => {
+          if (next) this.getExample();
+        },
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getExample();
-    });
-  }
-
-  add() {
-    this.openModal();
-  }
-
-  edit(goodSubtype: IGoodSubType) {
-    this.openModal({ edit: true, goodSubtype });
+    };
+    this.modalService.show(GoodSubtypeFormComponent, config);
   }
 
   delete(goodSubtype: IGoodSubType) {
