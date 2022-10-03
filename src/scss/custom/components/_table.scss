@@ -1,13 +1,13 @@
-// 
+//
 // _table.scss
-// 
+//
 
 .table {
   th {
-      font-weight: $font-weight-bold;
+    font-weight: $font-weight-bold;
   }
 
-  .table-light{
+  .table-light {
     color: $body-color;
     border-color: $table-border-color;
     background-color: $table-head-bg;
@@ -23,15 +23,13 @@
   }
 }
 
-
-.table-dark>:not(:last-child)>:last-child>*{
-  border-bottom-color:  $table-dark-border-color;
+.table-dark > :not(:last-child) > :last-child > * {
+  border-bottom-color: $table-dark-border-color;
 }
 
 .table-nowrap {
-  th, td {
+  th,
+  td {
     white-space: nowrap;
   }
 }
-
-

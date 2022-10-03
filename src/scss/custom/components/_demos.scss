@@ -1,9 +1,9 @@
-// 
+//
 // _demos.scss
-// 
+//
 
 // modal
-[dir="rtl"] {
+[dir='rtl'] {
   .modal-open {
     padding-right: 0px !important;
   }
@@ -20,7 +20,7 @@
   }
 }
 
-// Lightbox 
+// Lightbox
 
 .mfp-popup-form {
   max-width: 1140px;
@@ -37,7 +37,6 @@
   z-index: 1;
   display: block;
 }
-
 
 // Icon demo ( Demo only )
 .icon-demo-content {
@@ -64,19 +63,17 @@
   }
 }
 
-
 // Grid
 
 .grid-structure {
   .grid-container {
     background-color: $gray-100;
     margin-top: 10px;
-    font-size: .8rem;
+    font-size: 0.8rem;
     font-weight: $fw-medium;
     padding: 10px 20px;
   }
 }
-
 
 // card radio
 
@@ -101,7 +98,7 @@
 .card-radio-input {
   display: none;
 
-  &:checked+.card-radio {
+  &:checked + .card-radio {
     border-color: $primary !important;
   }
 }
