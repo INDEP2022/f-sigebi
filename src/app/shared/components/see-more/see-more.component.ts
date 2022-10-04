@@ -7,7 +7,10 @@ import { ViewCell } from 'ng2-smart-table';
     <p>
       {{ visibleText }}
       <span *ngIf="hiddenText.length > 0 && !readingMore">...</span>
-      <span *ngIf="hiddenText.length > 0" (click)="changeText()" class="see-more btn-link ml-0">
+      <span
+        *ngIf="hiddenText.length > 0"
+        (click)="changeText()"
+        class="see-more btn-link ml-0">
         {{ readingMore ? 'Ver menos' : 'Ver más' }}
       </span>
     </p>

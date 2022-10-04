@@ -9,24 +9,24 @@ const routes: Routes = [
     path: 'auth',
     component: ContentComponent,
     loadChildren: async () =>
-      (await import('./pages/auth/auth.module')).AuthModule
+      (await import('./pages/auth/auth.module')).AuthModule,
   },
   {
     path: 'pages',
     component: FullComponent,
     loadChildren: async () =>
       (await import('./pages/pages.module')).PagesModule,
-    canActivate: [AuthGuard]
+    // canActivate: [AuthGuard],
   },
   {
     path: '',
     redirectTo: 'auth',
-    pathMatch: 'full'
-  }
+    pathMatch: 'full',
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

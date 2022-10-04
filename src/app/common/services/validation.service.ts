@@ -23,7 +23,7 @@ export class ValidationService {
         errorCode = Object.keys(control.errors)[0];
         meta = Object.values(control.errors)[0];
         if (errorCode) {
-          Object.keys(ERROR_MESSAGES).forEach((key) => {
+          Object.keys(ERROR_MESSAGES).forEach(key => {
             if (key == errorCode) {
               msg = ERROR_MESSAGES[errorCode](meta);
             }
@@ -39,11 +39,11 @@ export class ValidationService {
     errorName: string,
     meta?: any
   ) {
-    if (control) control.setErrors({ [errorName]: meta ? meta : true })
+    if (control) control.setErrors({ [errorName]: meta ? meta : true });
   }
 
   handleServerErrors(serverErrors: string[], formGroup: FormGroup) {
-    serverErrors.forEach((error) => {
+    serverErrors.forEach(error => {
       this.getFieldAndCode(error, formGroup);
     });
   }

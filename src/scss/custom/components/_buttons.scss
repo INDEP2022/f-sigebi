@@ -1,48 +1,50 @@
-// 
+//
 // _buttons.scss
-// 
+//
 
-button,a {
+button,
+a {
   outline: none !important;
 }
-
 
 // Rounded Buttons
 .btn-rounded {
   border-radius: 30px;
 }
 
-.btn-dark, .btn-secondary{
+.btn-dark,
+.btn-secondary {
   color: $gray-200 !important;
 }
 
-.btn-outline-light{
+.btn-outline-light {
   color: $gray-900;
 }
 
-.btn-outline-dark, .btn-dark{
+.btn-outline-dark,
+.btn-dark {
   &:not(:disabled):not(.disabled):active,
   &:not(:disabled):not(.disabled).active,
   .show > &.dropdown-toggle,
-  &:hover{
+  &:hover {
     color: $light;
   }
 }
 
 // example 1
 
-.btn-group-example{
-  .btn{
+.btn-group-example {
+  .btn {
     position: relative;
 
-    &:first-child{
-      &::before{
+    &:first-child {
+      &::before {
         display: none;
       }
     }
 
-    &:before{
-      content: "OR";
+    &:before {
+      content: 'OR';
       position: absolute;
       font-size: 10px;
       width: 24px;
@@ -60,13 +62,12 @@ button,a {
   }
 }
 
-
 // Example 2
 
-.btn-label{
+.btn-label {
   position: relative;
   padding-left: 44px;
-  .label-icon{
+  .label-icon {
     position: absolute;
     width: 32px;
     height: 100%;
@@ -79,8 +80,8 @@ button,a {
     align-items: center;
     justify-content: center;
   }
-  &.btn-light{
-    .label-icon{
+  &.btn-light {
+    .label-icon {
       background-color: rgba($dark, 0.1);
       border-right: 1px solid rgba($dark, 0.2);
     }

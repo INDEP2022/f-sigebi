@@ -9,7 +9,7 @@ export const TABLE_SETTINGS = {
     display: false,
   },
   hideSubHeader: true,
-  mode: "external",
+  mode: 'external',
   edit: {
     editButtonContent: '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
   },
@@ -18,5 +18,5 @@ export const TABLE_SETTINGS = {
     confirmDelete: true,
   },
   columns: {},
-  noDataMessage: "No se encontrarón registros",
-}
+  noDataMessage: 'No se encontrarón registros',
+};

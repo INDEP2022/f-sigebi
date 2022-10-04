@@ -14,9 +14,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
   providedIn: 'root',
 })
 export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
-  constructor(
-    private router: Router
-  ) {
+  constructor(private router: Router) {
     super();
   }
 
@@ -36,24 +34,23 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
     console.log(error);
     if (error.status === 401) {
       localStorage.clear();
-      this.router.navigate(['/auth/login']);
+      sessionStorage.clear();
       this.onLoadToast('error', 'Unauthorized', 'Error' + error.status);
+      this.router.navigate(['/auth/login']);
     }
     if (error.status === 403) {
       this.router.navigate(['/forbidden']);
-      this.onLoadToast('error',
-        'No tienes permisos para realizar esta acción', 'Error' + error.status
+      this.onLoadToast(
+        'error',
+        'No tienes permisos para realizar esta acción',
+        'Error' + error.status
       );
     }
     if (error.status === 400) {
-      this.onLoadToast('error',
-        error?.error?.message, 'Error' + error.status
-      );
+      this.onLoadToast('error', error?.error?.message, 'Error' + error.status);
     }
     if (error.status === 500) {
-      this.onLoadToast('error',
-        error?.error?.message, 'Error' + error.status
-      );
+      this.onLoadToast('error', error?.error?.message, 'Error' + error.status);
     }
 
     if (error.status === 0) {

@@ -15,6 +15,8 @@ import { ModalComponent } from './components/modal/modal.component';
 import { CardComponent } from './components/card/card.component';
 import { PaginationComponent } from './components/pagination/pagination.component';
 import { PaginateComponent } from './components/pagination/paginate.component';
+import { FormCheckComponent } from './components/form-check/form-check.component';
+import { FormRadioComponent } from './components/form-radio/form-radio.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,9 @@ import { PaginateComponent } from './components/pagination/paginate.component';
     ModalComponent,
     CardComponent,
     PaginationComponent,
-    PaginateComponent
+    PaginateComponent,
+    FormCheckComponent,
+    FormRadioComponent,
   ],
   imports: [
     CommonModule,
@@ -52,8 +56,9 @@ import { PaginateComponent } from './components/pagination/paginate.component';
     BsDropdownModule,
     FormsModule,
     ReactiveFormsModule,
-    NgSelectModule,
-    Ng2SmartTableModule
+    Ng2SmartTableModule,
+    FormCheckComponent,
+    FormRadioComponent,
   ],
 })
-export class SharedModule { }
+export class SharedModule {}

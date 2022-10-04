@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { Example } from 'src/app/core/models/example';
-import { ExampleService } from 'src/app/core/services/example.service';
+import { Example } from 'src/app/core/models/catalogs/example';
+import { ExampleService } from 'src/app/core/services/catalogs/example.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ExampleFormComponent } from '../example-form/example-form.component';
 import { EXAMPLE_COLUMNS } from './example-columns';
@@ -38,12 +38,12 @@ export class ExampleComponent extends BasePage implements OnInit, OnDestroy {
   getExample() {
     this.loading = true;
     this.exampleService.getAll(this.params.getValue()).subscribe(
-      (response) => {
+      response => {
         this.paragraphs = response.data;
         this.totalItems = response.count;
         this.loading = false;
       },
-      (error) => (this.loading = false)
+      error => (this.loading = false)
     );
   }
 
@@ -53,7 +53,7 @@ export class ExampleComponent extends BasePage implements OnInit, OnDestroy {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    modalRef.content.refresh.subscribe((next) => {
+    modalRef.content.refresh.subscribe(next => {
       if (next) this.getExample();
     });
   }
@@ -71,7 +71,7 @@ export class ExampleComponent extends BasePage implements OnInit, OnDestroy {
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
-    ).then((question) => {
+    ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
       }

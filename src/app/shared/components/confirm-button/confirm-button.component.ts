@@ -5,16 +5,14 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
   template: `
     <button
       type="submit"
-      class="btn btn-primary active btn-sm"
+      class="btn btn-primary active"
       (click)="onConfirm()"
-      [disabled]="disabled || loading"
-    >
+      [disabled]="disabled || loading">
       {{ loading ? loadingText : text }}
       <img
         *ngIf="loading"
         src="assets/images/loader-button.gif"
-        alt="loading"
-      />
+        alt="loading" />
     </button>
   `,
   styles: [

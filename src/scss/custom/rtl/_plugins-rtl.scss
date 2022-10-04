@@ -1,4 +1,4 @@
-// 
+//
 // plugins-rtl.scss
 //
 
@@ -9,7 +9,7 @@
   margin-left: 7px;
 }
 
-input[type=checkbox].tui-full-calendar-checkbox-round+span {
+input[type='checkbox'].tui-full-calendar-checkbox-round + span {
   margin-right: 0px;
   margin-left: 8px;
 }
@@ -90,7 +90,7 @@ input[type=checkbox].tui-full-calendar-checkbox-round+span {
 
 // Foo table
 
-.footable.breakpoint>tbody>tr>td>span.footable-toggle {
+.footable.breakpoint > tbody > tr > td > span.footable-toggle {
   padding-left: 5px;
   padding-right: 0;
 }
@@ -98,10 +98,10 @@ input[type=checkbox].tui-full-calendar-checkbox-round+span {
 // tablesaw
 .tablesaw-columntoggle-popup {
   .tablesaw-btn-group {
-    >label {
+    > label {
       input {
         margin-right: 0;
-        margin-left: .8em;
+        margin-left: 0.8em;
       }
     }
   }
@@ -111,7 +111,7 @@ input[type=checkbox].tui-full-calendar-checkbox-round+span {
   .tablesaw-bar-section {
     .tablesaw-btn {
       margin-left: 0;
-      margin-right: .4em;
+      margin-right: 0.4em;
     }
   }
 }
@@ -135,7 +135,7 @@ input[type=checkbox].tui-full-calendar-checkbox-round+span {
 
 // Parsley
 .parsley-errors-list {
-  >li {
+  > li {
     padding-left: 0;
     padding-right: 20px;
 
@@ -166,8 +166,7 @@ input[type=checkbox].tui-full-calendar-checkbox-round+span {
   }
 }
 
-
-// X-ediatable 
+// X-ediatable
 
 .editable-buttons {
   margin-left: 0;
@@ -182,7 +181,7 @@ input[type=checkbox].tui-full-calendar-checkbox-round+span {
 // Floating
 
 .form-floating {
-  >label {
+  > label {
     right: 0;
     left: auto;
   }
@@ -190,7 +189,7 @@ input[type=checkbox].tui-full-calendar-checkbox-round+span {
 
 // editor
 
-.ck.ck-toolbar>.ck-toolbar__items {
+.ck.ck-toolbar > .ck-toolbar__items {
   flex-direction: row-reverse !important;
 }
 
@@ -209,21 +208,24 @@ input[type=checkbox].tui-full-calendar-checkbox-round+span {
 ============= */
 
 .wizard {
-    > .steps {
-      .number {
-        margin-left: 10px;
-        margin-right: 0px;
-      }
+  > .steps {
+    .number {
+      margin-left: 10px;
+      margin-right: 0px;
     }
   }
-  
-  aw-wizard-navigation-bar.horizontal.large-empty-symbols ul.steps-indicator li:not(:last-child):before {
-    left: -68px;
+}
+
+aw-wizard-navigation-bar.horizontal.large-empty-symbols
+  ul.steps-indicator
+  li:not(:last-child):before {
+  left: -68px;
+}
+
+.kycwizard {
+  aw-wizard-navigation-bar.horizontal.large-empty-symbols
+    ul.steps-indicator
+    li:not(:last-child):before {
+    left: -102px;
   }
-  
-  .kycwizard {
-    aw-wizard-navigation-bar.horizontal.large-empty-symbols ul.steps-indicator li:not(:last-child):before {
-      left: -102px;
-    }
-  }
-  
+}

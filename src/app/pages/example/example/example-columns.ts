@@ -1,4 +1,4 @@
-import { SeeMoreComponent } from "src/app/shared/components/see-more/see-more.component";
+import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
 
 export const EXAMPLE_COLUMNS = {
   id: {
@@ -15,7 +15,7 @@ export const EXAMPLE_COLUMNS = {
     title: 'Párrafo',
     sort: false,
     type: 'custom',
-    renderComponent: SeeMoreComponent
+    renderComponent: SeeMoreComponent,
   },
   userCreation: {
     title: 'Creado por',

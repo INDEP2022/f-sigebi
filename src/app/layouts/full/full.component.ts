@@ -1,13 +1,9 @@
 import { DOCUMENT } from '@angular/common';
-import {
-  Component,
-  Inject,
-  OnInit,
-} from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { SIDEBAR_TYPE } from 'src/app/core/models/layouts.model';
-import { EventService } from 'src/app/core/services/event.service';
-import { ScriptService } from 'src/app/core/services/script.service';
+import { SIDEBAR_TYPE } from 'src/app/common/constants/layouts';
+import { EventService } from 'src/app/common/services/event.service';
+import { ScriptService } from 'src/app/common/services/script.service';
 
 @Component({
   selector: 'app-full',
@@ -31,10 +27,14 @@ export class FullComponent implements OnInit {
   ) {
     let script = this.document.getElementById('my-script');
     if (!script) {
-      this.scriptService.loadScript({ id: 'my-script', url: 'https://framework-gb.cdn.gob.mx/gm/v4/js/gobmx.js' })
-        .then(data => {
-        }).catch(error => console.log(error));
-      this.router.events.forEach((event) => {
+      this.scriptService
+        .loadScript({
+          id: 'my-script',
+          url: 'https://framework-gb.cdn.gob.mx/gm/v4/js/gobmx.js',
+        })
+        .then(data => {})
+        .catch(error => console.log(error));
+      this.router.events.forEach(event => {
         if (event instanceof NavigationEnd) {
           document.body.classList.remove('sidebar-enable');
         }
@@ -43,7 +43,6 @@ export class FullComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    
     this.sidebartype = SIDEBAR_TYPE;
     // listen to event and change the layout, theme, etc
     this.eventService.subscribe('changeSidebartype', (layout: string) => {
