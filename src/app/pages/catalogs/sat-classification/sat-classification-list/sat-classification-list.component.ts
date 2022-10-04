@@ -3,29 +3,30 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
-import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
+import { ISatClassification } from 'src/app/core/models/catalogs/sat-classification.model';
+import { SatClassificationService } from 'src/app/core/services/catalogs/sat-classification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { GoodSubtypeFormComponent } from '../good-subtype-form/good-subtype-form.component';
-import { GOOD_SUBTYPES_COLUMNS } from './good-subtype-columns';
+import { SatClassificationFormComponent } from '../sat-classification-form/sat-classification-form.component';
+import { SAT_CLASSIFICATION_COLUMNS } from './sat-classification-columns';
 
 @Component({
-  selector: 'app-good-subtypes-list',
-  templateUrl: './good-subtypes-list.component.html',
-  styles: [],
+  selector: 'app-sat-classification-list',
+  templateUrl: './sat-classification-list.component.html',
+  styles: [
+  ]
 })
-export class GoodSubtypesListComponent extends BasePage implements OnInit {
+export class SatClassificationListComponent extends BasePage implements OnInit {
   settings = TABLE_SETTINGS;
-  paragraphs: IGoodSubType[] = [];
+  paragraphs: ISatClassification[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(
-    private goodTypesService: GoodSubtypeService,
+    private satClassificationService: SatClassificationService,
     private modalService: BsModalService
   ) {
     super();
-    this.settings.columns = GOOD_SUBTYPES_COLUMNS;
+    this.settings.columns = SAT_CLASSIFICATION_COLUMNS;
     this.settings.actions.delete = true;
   }
 
@@ -37,7 +38,7 @@ export class GoodSubtypesListComponent extends BasePage implements OnInit {
 
   getExample() {
     this.loading = true;
-    this.goodTypesService.getAll(this.params.getValue()).subscribe({
+    this.satClassificationService.getAll(this.params.getValue()).subscribe({
       next: response => {
         this.paragraphs = response.data;
         this.totalItems = response.count;
@@ -47,21 +48,21 @@ export class GoodSubtypesListComponent extends BasePage implements OnInit {
     });
   }
 
-  openForm(goodSubtype?: IGoodSubType) {
+  openForm(satclasification?: ISatClassification) {
     let config: ModalOptions = {
       initialState: {
-        goodSubtype,
+        satclasification,
         callback: (next: boolean) => {
           if (next) this.getExample();
         },
       },
-      class: 'modal-lg modal-dialog-centered',
+      class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.modalService.show(GoodSubtypeFormComponent, config);
+    this.modalService.show(SatClassificationFormComponent, config);
   }
 
-  delete(goodSubtype: IGoodSubType) {
+  delete(satclasification?: ISatClassification) {
     this.alertQuestion(
       'warning',
       'Eliminar',

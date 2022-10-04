@@ -46,6 +46,22 @@ export const MENU: IMenuItem[] = [
         label: 'Sat Clasificacion',
         link: '/pages/catalogs/sat-clasification',
       },
+      {
+        label: 'Sat Subclasificacion',
+        link: '/pages/catalogs/sat-subclasification',
+      },
+      {
+        label: 'Servicios',
+        link: '/pages/catalogs/services',
+      },
+      {
+        label: 'Series Ifai',
+        link: '/pages/catalogs/ifai-series',
+      },
+      {
+        label: 'Situacion Bien',
+        link: '/pages/catalogs/good-situation',
+      },
     ],
   },
   {

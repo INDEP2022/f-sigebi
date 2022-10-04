@@ -3,30 +3,32 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ISatClassification } from 'src/app/core/models/catalogs/sat-classification.model';
-import { SatClasificationService } from 'src/app/core/services/catalogs/sat-classification.service';
+import { ISatSubclassification } from 'src/app/core/models/catalogs/sat-subclassification.model';
+import { SATSubclassificationService } from 'src/app/core/services/catalogs/sat-subclassification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { SatClasificationFormComponent } from '../sat-clasification-form/sat-clasification-form.component';
-import { SAT_CLASIFICATION_COLUMNS } from './sat-clasification-columns';
+import { SatSubclassificationFormComponent } from '../sat-subclassification-form/sat-subclassification-form.component';
+import { SAT_SUBCLASSIFICATION_COLUMNS } from './sat-subclassification-columns';
 
 @Component({
-  selector: 'app-sat-clasification-list',
-  templateUrl: './sat-clasification-list.component.html',
-  styles: [
-  ]
+  selector: 'app-sat-subclassification-list',
+  templateUrl: './sat-subclassification-list.component.html',
+  styles: [],
 })
-export class SatClasificationListComponent extends BasePage implements OnInit {
+export class SatSubclassificationListComponent
+  extends BasePage
+  implements OnInit
+{
   settings = TABLE_SETTINGS;
-  paragraphs: ISatClassification[] = [];
+  paragraphs: ISatSubclassification[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(
-    private satClasificationService: SatClasificationService,
+    private satSubclassificationService: SATSubclassificationService,
     private modalService: BsModalService
   ) {
     super();
-    this.settings.columns = SAT_CLASIFICATION_COLUMNS;
+    this.settings.columns = SAT_SUBCLASSIFICATION_COLUMNS;
     this.settings.actions.delete = true;
   }
 
@@ -38,7 +40,7 @@ export class SatClasificationListComponent extends BasePage implements OnInit {
 
   getExample() {
     this.loading = true;
-    this.satClasificationService.getAll(this.params.getValue()).subscribe({
+    this.satSubclassificationService.getAll(this.params.getValue()).subscribe({
       next: response => {
         this.paragraphs = response.data;
         this.totalItems = response.count;
@@ -48,22 +50,21 @@ export class SatClasificationListComponent extends BasePage implements OnInit {
     });
   }
 
-  openForm(satclasification?: ISatClassification) {
-    console.log(satclasification);
+  openForm(satSubclassification?: ISatSubclassification) {
     let config: ModalOptions = {
       initialState: {
-        satclasification,
+        satSubclassification,
         callback: (next: boolean) => {
           if (next) this.getExample();
         },
       },
-      class: 'modal-lg modal-dialog-centered',
+      class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.modalService.show(SatClasificationFormComponent, config);
+    this.modalService.show(SatSubclassificationFormComponent, config);
   }
 
-  delete(satclasification?: ISatClassification) {
+  delete(satSubclassification?: ISatSubclassification) {
     this.alertQuestion(
       'warning',
       'Eliminar',

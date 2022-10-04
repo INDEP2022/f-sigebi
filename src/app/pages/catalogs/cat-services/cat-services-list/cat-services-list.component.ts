@@ -3,29 +3,29 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
-import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
+import { IServiceCat } from 'src/app/core/models/catalogs/service-cat.model';
+import { ServiceCatService } from 'src/app/core/services/catalogs/service-cat.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { GoodSubtypeFormComponent } from '../good-subtype-form/good-subtype-form.component';
-import { GOOD_SUBTYPES_COLUMNS } from './good-subtype-columns';
+import { CatServicesFormComponent } from '../cat-services-form/cat-services-form.component';
+import { SERVICES_COLUMS } from './cat-service-columns';
 
 @Component({
-  selector: 'app-good-subtypes-list',
-  templateUrl: './good-subtypes-list.component.html',
+  selector: 'app-cat-services-list',
+  templateUrl: './cat-services-list.component.html',
   styles: [],
 })
-export class GoodSubtypesListComponent extends BasePage implements OnInit {
+export class CatServicesListComponent extends BasePage implements OnInit {
   settings = TABLE_SETTINGS;
-  paragraphs: IGoodSubType[] = [];
+  paragraphs: IServiceCat[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(
-    private goodTypesService: GoodSubtypeService,
+    private catserviceService: ServiceCatService,
     private modalService: BsModalService
   ) {
     super();
-    this.settings.columns = GOOD_SUBTYPES_COLUMNS;
+    this.settings.columns = SERVICES_COLUMS;
     this.settings.actions.delete = true;
   }
 
@@ -37,7 +37,7 @@ export class GoodSubtypesListComponent extends BasePage implements OnInit {
 
   getExample() {
     this.loading = true;
-    this.goodTypesService.getAll(this.params.getValue()).subscribe({
+    this.catserviceService.getAll(this.params.getValue()).subscribe({
       next: response => {
         this.paragraphs = response.data;
         this.totalItems = response.count;
@@ -47,10 +47,10 @@ export class GoodSubtypesListComponent extends BasePage implements OnInit {
     });
   }
 
-  openForm(goodSubtype?: IGoodSubType) {
+  openForm(catservice?: IServiceCat) {
     let config: ModalOptions = {
       initialState: {
-        goodSubtype,
+        catservice,
         callback: (next: boolean) => {
           if (next) this.getExample();
         },
@@ -58,10 +58,10 @@ export class GoodSubtypesListComponent extends BasePage implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.modalService.show(GoodSubtypeFormComponent, config);
+    this.modalService.show(CatServicesFormComponent, config);
   }
 
-  delete(goodSubtype: IGoodSubType) {
+  delete(catservice: IServiceCat) {
     this.alertQuestion(
       'warning',
       'Eliminar',

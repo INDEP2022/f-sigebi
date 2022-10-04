@@ -6,9 +6,7 @@ import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IGoodSituation } from '../../models/catalogs/good-situation.model';
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class GoodSituationService implements ICrudMethods<IGoodSituation> {
   private readonly route: string = ENDPOINT_LINKS.GoodSituation;
   constructor(private goodSituationRepository: Repository<IGoodSituation>) {}

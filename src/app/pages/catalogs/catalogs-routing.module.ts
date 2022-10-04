@@ -30,9 +30,35 @@ const routes: Routes = [
   {
     path: 'sat-clasification',
     loadChildren: async () =>
-      (await import('./sat-clasification/sat-clasification.module'))
+      (await import('./sat-classification/sat-classification.module'))
         .SatClasificationModule,
-    data: { title: 'Sat clasificacion' },
+    data: { title: 'Sat Clasificacion' },
+  },
+  {
+    path: 'sat-subclasification',
+    loadChildren: async () =>
+      (await import('./sat-subclassification/sat-subclassification.module'))
+        .SatSubclassificationModule,
+    data: { title: 'Sat Subclasificacion' },
+  },
+  {
+    path: 'services',
+    loadChildren: async () =>
+      (await import('./cat-services/cat-services.module')).CatServicesModule,
+    data: { title: 'Servicios' },
+  },
+  {
+    path: 'ifai-series',
+    loadChildren: async () =>
+      (await import('./ifai-series/ifai-series.module')).IfaiSeriesModule,
+    data: { title: 'Series Ifai' },
+  },
+  {
+    path: 'good-situation',
+    loadChildren: async () =>
+      (await import('./good-situation/good-situation.module'))
+        .GoodSituationModule,
+    data: { title: 'Situacion Bien' },
   },
 ];
 

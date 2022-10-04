@@ -9,7 +9,7 @@ import { ISatClassification } from '../../models/catalogs/sat-classification.mod
 @Injectable({
   providedIn: 'root',
 })
-export class SatClasificationService
+export class SatClassificationService
   implements ICrudMethods<ISatClassification>
 {
   private readonly route: string = ENDPOINT_LINKS.SATClasification;
