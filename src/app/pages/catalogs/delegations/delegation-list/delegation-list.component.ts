@@ -50,7 +50,7 @@ export class DelegationListComponent extends BasePage implements OnInit {
   openForm(delegation?: IDelegation) {
     let config: ModalOptions = {
       initialState: {
-        ...delegation,
+        delegation,
         callback: (next: boolean) => {
           if (next) this.getExample();
         },
