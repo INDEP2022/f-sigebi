@@ -9,24 +9,22 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { FullComponent } from './full.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { TopbarComponent } from './topbar/topbar.component';
-
-
+import { TitleComponent } from './title.component';
 
 @NgModule({
   declarations: [
     FullComponent,
     SidebarComponent,
-    TopbarComponent
+    TopbarComponent,
+    TitleComponent,
   ],
   imports: [
     CommonModule,
     BrowserAnimationsModule,
     SimplebarAngularModule,
     BsDropdownModule,
-    RouterModule
+    RouterModule,
   ],
-  exports: [
-    FullComponent
-  ]
+  exports: [FullComponent],
 })
-export class FullModule { }
+export class FullModule {}

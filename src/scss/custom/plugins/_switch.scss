@@ -74,52 +74,54 @@ input[switch]:checked + label {
   }
 }
 
-input[switch="bool"] + label {
+input[switch='bool'] + label {
   background-color: $danger;
 }
-input[switch="bool"] + label:before,input[switch="bool"]:checked + label:before,
-input[switch="default"]:checked + label:before{
+input[switch='bool'] + label:before,
+input[switch='bool']:checked + label:before,
+input[switch='default']:checked + label:before {
   color: $white;
 }
 
-input[switch="bool"]:checked + label {
+input[switch='bool']:checked + label {
   background-color: $success;
 }
 
-input[switch="default"]:checked + label {
+input[switch='default']:checked + label {
   background-color: #a2a2a2;
 }
 
-input[switch="primary"]:checked + label {
+input[switch='primary']:checked + label {
   background-color: $primary;
 }
 
-input[switch="success"]:checked + label {
+input[switch='success']:checked + label {
   background-color: $success;
 }
 
-input[switch="info"]:checked + label {
+input[switch='info']:checked + label {
   background-color: $info;
 }
 
-input[switch="warning"]:checked + label {
+input[switch='warning']:checked + label {
   background-color: $warning;
 }
 
-input[switch="danger"]:checked + label {
+input[switch='danger']:checked + label {
   background-color: $danger;
 }
 
-input[switch="dark"]:checked + label {
+input[switch='dark']:checked + label {
   background-color: $dark;
   &:before {
     color: $light;
   }
 }
 
-.square-switch{
+.square-switch {
   margin-right: 7px;
-  input[switch]+label, input[switch]+label:after{
+  input[switch] + label,
+  input[switch] + label:after {
     border-radius: 4px;
   }
 }

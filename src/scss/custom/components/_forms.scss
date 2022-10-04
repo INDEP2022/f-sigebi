@@ -2,64 +2,63 @@
 // Forms.scss
 //
 
-[type="tel"],
-[type="url"],
-[type="email"],
-[type="number"] {
- &::placeholder{
-   text-align: left /*rtl: right*/;
- }
+[type='tel'],
+[type='url'],
+[type='email'],
+[type='number'] {
+  &::placeholder {
+    text-align: left /*rtl: right*/;
+  }
 }
 
-.form-check{
+.form-check {
   position: relative;
   text-align: left /*rtl: right*/;
 }
 
 // checkbox input right
 
-.form-check-right{
-    padding-left: 0;
-    display: inline-block;
-    padding-right: $form-check-padding-start;
-    .form-check-input{
-      float: right;
-      margin-left: 0;
-      margin-right: $form-check-padding-start * -1;
-    }
-  
-    .form-check-label{
-      display: block;
-    }
+.form-check-right {
+  padding-left: 0;
+  display: inline-block;
+  padding-right: $form-check-padding-start;
+  .form-check-input {
+    float: right;
+    margin-left: 0;
+    margin-right: $form-check-padding-start * -1;
+  }
+
+  .form-check-label {
+    display: block;
+  }
 }
 
 // checkbox
 
-.form-checkbox-outline{
-  
-  .form-check-input{
+.form-checkbox-outline {
+  .form-check-input {
     border-width: 2px;
     background-color: $card-bg;
 
-    &:active{
+    &:active {
       filter: none;
     }
 
-    &:checked{
+    &:checked {
       background-color: $card-bg !important;
 
-      &[type=checkbox]{
+      &[type='checkbox'] {
         background-image: none;
       }
 
-      &:after{
+      &:after {
         position: absolute;
         content: '\F012C';
-        font-family: "Material Design Icons";
+        font-family: 'Material Design Icons';
         top: -4px !important;
         left: 1px; /*rtl: -4px */
         font-size: 16px;
-        color: $dark;  
+        color: $dark;
       }
     }
   }
@@ -67,26 +66,26 @@
 
 // radio
 
-.form-radio-outline{
-  .form-check-input{
+.form-radio-outline {
+  .form-check-input {
     background-color: $card-bg;
     position: relative;
 
-    &:active{
+    &:active {
       filter: none;
     }
 
-    &:checked{
+    &:checked {
       background-color: $card-bg !important;
-  
-      &[type=checkbox]{
+
+      &[type='checkbox'] {
         background-image: none;
       }
-  
-      &:after{
+
+      &:after {
         position: absolute;
         content: '';
-        top: 3px!important;
+        top: 3px !important;
         left: 3px;
         width: 5px;
         height: 5px;
@@ -98,23 +97,22 @@
 
 // checkbox color
 
-@each $color,
-$value in $theme-colors {
-  .form-check-#{$color}{
-    .form-check-input{
-      &:checked{
+@each $color, $value in $theme-colors {
+  .form-check-#{$color} {
+    .form-check-input {
+      &:checked {
         background-color: $value;
         border-color: $value;
       }
     }
   }
 
-  .form-radio-#{$color}{
-    .form-check-input{
-      &:checked{
+  .form-radio-#{$color} {
+    .form-check-input {
+      &:checked {
         border-color: $value;
         background-color: $value;
-        &:after{
+        &:after {
           background-color: $value;
         }
       }
@@ -122,35 +120,34 @@ $value in $theme-colors {
   }
 }
 
-.form-check-label{
+.form-check-label {
   cursor: pointer;
   margin-bottom: 0;
 }
 
 // Switch sizes
 
-.form-switch-md{
+.form-switch-md {
   padding-left: 2.5rem;
   min-height: 24px;
   line-height: 24px;
-  .form-check-input{
+  .form-check-input {
     width: 40px;
     height: 20px;
     left: -0.5rem;
     position: relative;
   }
 
-  .form-check-label{
+  .form-check-label {
     vertical-align: middle;
   }
 }
 
-
-.form-switch-lg{
+.form-switch-lg {
   padding-left: 2.75rem;
   min-height: 28px;
   line-height: 28px;
-  .form-check-input{
+  .form-check-input {
     width: 48px;
     height: 24px;
     left: -0.75rem;
@@ -158,11 +155,10 @@ $value in $theme-colors {
   }
 }
 
-.input-group-text{
+.input-group-text {
   margin-bottom: 0px;
 }
 
-.form-select { 
+.form-select {
   padding-right: 1.75rem;
 }
-

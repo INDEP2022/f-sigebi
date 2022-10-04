@@ -1,90 +1,73 @@
-import { MenuItem } from "./models/menu.model";
+import { IMenuItem } from './interfaces/menu.interface';
 
-export const MENU: MenuItem[] = [
+export const MENU: IMenuItem[] = [
+  {
+    label: 'Menu',
+    isTitle: true,
+  },
+  {
+    label: 'Inicio',
+    icon: 'bx-home-circle',
+    link: '/pages/home',
+  },
+  // {
+  //     isLayout: true
+  // },
+  // {
+  //     label: 'Aplicaciones',
+  //     isTitle: true
+  // },
     {
-        id: 1,
-        label: 'Menu',
-        isTitle: true
-    },
-    {
-        id: 2,
-        label: 'Dashboard',
-        icon: 'bx-home-circle',
-        badge: {
-            variant: 'info',
-            text: '11',
-        },
+      label: 'Documentation',
+      icon: 'bx-home-circle',
+      link: '/pages/documentation'
+  },
+  {
+    label: 'Ejemplo',
+    icon: 'bx-calendar',
+    link: '/pages/example',
+  },
+  {
+    label: 'Catalogos',
+    icon: 'bx-folder',
+    subItems: [
+      {
+        label: 'Tipo Bien',
+        link: '/pages/catalogs/good-types',
+      },
+      {
+        label: 'Subtipo Bien',
+        link: '/pages/catalogs/good-subtypes',
+      },
+      {
+        label: 'Delegacion',
+        link: '/pages/catalogs/delegations',
+      },
+      {
+        label: 'Sub Delegacion',
+        link: '/pages/catalogs/sub-delegations',
+      },
+    ],
+  },
+  {
+    label: 'Multi nivel',
+    icon: 'bx-share-alt',
+    subItems: [
+      {
+        label: 'Nivel 1.1',
+        link: '#',
+      },
+      {
+        label: 'Nivel 1.2',
         subItems: [
-            {
-                id: 3,
-                label: 'Defecto',
-                link: '/',
-                parentId: 2
-            },
-            {
-                id: 4,
-                label: 'Sass',
-                link: '/',
-                parentId: 2
-            },
-            {
-                id: 5,
-                label: 'Cripto',
-                link: '/',
-                parentId: 2
-            },
-            {
-                id: 6,
-                label: 'Blog',
-                link: '/',
-                parentId: 2
-            },
-        ]
-    },
-    {
-        id: 7,
-        isLayout: true
-    },
-    {
-        id: 8,
-        label: 'Aplicaciones',
-        isTitle: true
-    },
-    {
-        id: 9,
-        label: 'Calendario',
-        icon: 'bx-calendar',
-        link: '/',
-    },
-    {
-        id: 10,
-        label: 'Multi nivel',
-        icon: 'bx-share-alt',
-        subItems: [
-            {
-                id: 11,
-                label: 'Nivel 1.1',
-                link: '#',
-                parentId: 10
-            },
-            {
-                id: 13,
-                label: 'Nivel 1.2',
-                parentId: 10,
-                subItems: [
-                    {
-                        id: 14,
-                        label: 'Nivel 2.1',
-                        parentId: 13,
-                    },
-                    {
-                        id: 15,
-                        label: 'Nivel 2.2',
-                        parentId: 13,
-                    }
-                ]
-            },
-        ]
-    }
+          {
+            label: 'Nivel 2.1',
+          },
+          {
+            label: 'Nivel 2.2',
+          },
+        ],
+      },
+    ],
+  },
 ];
-
