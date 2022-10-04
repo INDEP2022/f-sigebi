@@ -17,6 +17,11 @@ export const MENU: IMenuItem[] = [
   //     label: 'Aplicaciones',
   //     isTitle: true
   // },
+    {
+      label: 'Documentation',
+      icon: 'bx-home-circle',
+      link: '/pages/documentation'
+  },
   {
     label: 'Ejemplo',
     icon: 'bx-calendar',
