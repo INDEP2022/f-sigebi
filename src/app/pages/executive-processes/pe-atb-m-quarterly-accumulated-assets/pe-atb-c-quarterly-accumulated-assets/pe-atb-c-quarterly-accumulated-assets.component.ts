@@ -3,16 +3,14 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
-  selector: 'app-pe-aab-annual-accumulated-assets',
-  templateUrl: './pe-aab-annual-accumulated-assets.component.html',
+  selector: 'app-pe-atb-c-quarterly-accumulated-assets',
+  templateUrl: './pe-atb-c-quarterly-accumulated-assets.component.html',
   styles: [
   ]
 })
-export class PeAabAnnualAccumulatedAssetsComponent implements OnInit {
+export class PeAtbCQuarterlyAccumulatedAssetsComponent implements OnInit {
 
-  
   form: FormGroup = new FormGroup({}); 
-
   constructor(private fb: FormBuilder) { }
 
   ngOnInit(): void {
@@ -23,8 +21,8 @@ export class PeAabAnnualAccumulatedAssetsComponent implements OnInit {
     this.form = this.fb.group({
       delegation: ['', [Validators.required]],
       subDelegation: ['', [Validators.required]],
-      fromDate: ['', [Validators.required]],
-      toDate: ['', [Validators.required]],
+      fromMonth: ['', [Validators.required]],
+      toMonth: ['', [Validators.required]],
     });
   }
 
