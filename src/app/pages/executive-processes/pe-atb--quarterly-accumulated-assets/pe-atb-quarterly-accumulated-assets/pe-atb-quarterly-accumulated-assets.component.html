@@ -7,21 +7,31 @@
     <div body>
       
         <form class="form-material" [formGroup]="form">
-            <div class="row">
+            <div class="row pt-5">
                 <div class="col-md-4">
-                    <form-field [control]="form.get('delegation')" label="Delegación">
-                        <input class="form-control" formControlName="delegation">
+                    <form-field [control]="form.get('delegation')" >
+                        <ngx-select
+			            	typeToSearchText="Escriba 3 o más caracteres" 
+                            label="Delegación"
+                            [form]="form"
+                            control="delegation">
+				    	</ngx-select>
                     </form-field>
                 </div>
             </div>
-            <div class="row">
+            <div class="row pt-5">
                 <div class="col-md-4">
-                    <form-field [control]="form.get('subDelegation')" label="subDelegación">
-                        <input class="form-control" formControlName="subDelegation">
+                    <form-field [control]="form.get('subDelegation')" >
+                        <ngx-select
+			            	typeToSearchText="Escriba 3 o más caracteres" 
+                            label="Sub Delegación"
+                            [form]="form"
+                            control="subDelegation">
+				    	</ngx-select>
                     </form-field>
                 </div>
             </div>
-            <div class="row">
+            <div class="row pt-5">
                 <div class="col-md-2">
                     <form-field [control]="form.get('fromMonth')" label="Mes Inicial">
                         <input type="text"
@@ -34,7 +44,7 @@
                 </div>
                 <div class="col-md-2">
                     <form-field [control]="form.get('toMonth')" label="Mes Final">
-                        <input type="text"
+                        <input type="text" 
                                placeholder="Al"
                                class="form-control"
                                bsDatepicker
