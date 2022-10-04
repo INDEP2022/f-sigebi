@@ -27,6 +27,13 @@ const routes: Routes = [
         .SubDelegationsModule,
     data: { title: 'Sub Delegaciones' },
   },
+  {
+    path: 'doc-resarcimiento-sat-xml',
+    loadChildren: async () =>
+      (await import("./doc-resarcimiento-sat-xml/doc-resarcimiento-sat-xml.module"))
+      .DocResarcimientoSatXmlModule,
+      data: {title: "Documentos Resarcimiento Sat XML"}
+  }
 ];
 
 @NgModule({
