@@ -2,24 +2,26 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/ModelForm';
-import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
-import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { IDocCompensationSatXml } from 'src/app/core/models/catalogs/doc-compensation-sat-xml.model';
+import { DocCompensationSatXmlService } from 'src/app/core/services/catalogs/doc-compensation-sat-xml.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
-  selector: 'app-delegation-form',
-  templateUrl: './delegation-form.component.html',
-  styles: [],
+  selector: 'app-doc-resarcimiento-sat-xml-form',
+  templateUrl: './doc-compensation-sat-xml-form.component.html',
+  styles: [
+  ]
 })
-export class DelegationFormComponent extends BasePage implements OnInit {
-  delegationForm: ModelForm<IDelegation>;
+export class DocCompensationSatXmlFormComponent extends BasePage implements OnInit {
+  compensationForm: ModelForm<IDocCompensationSatXml>;
   title: string = 'Delegacion';
   edit: boolean = false;
-  delegation: IDelegation;
+  compensationSatXml: IDocCompensationSatXml;
+  
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private delegationService: DelegationService
+    private compensationService:  DocCompensationSatXmlService
   ) {
     super();
   }
@@ -29,28 +31,18 @@ export class DelegationFormComponent extends BasePage implements OnInit {
   }
 
   private prepareForm() {
-    this.delegationForm = this.fb.group({
-      addressOffice: ['', [Validators.required]],
-      city: [null],
-      cveState: [null],
-      cveZone: [null],
-      description: [null],
-      diffHours: [null],
-      etapaEdo: [null],
-      idZoneGeographic: [null],
-      iva: [null],
-      noRegister: [null],
-      regionalDelegate: [null],
-      status: [null],
-      version: [null],
-      zoneContractCVE: [null],
-      zoneVigilanceCVE: [],
+    this.compensationForm = this.fb.group({
+      id: [null],
+      idOficioSat: [null, Validators.required],
+      typeDocSatXml: [null, Validators.required],
     });
-    if (this.delegation != null) {
+    
+    if (this.compensationSatXml != null) {
       this.edit = true;
-      this.delegationForm.patchValue(this.delegation);
+      this.compensationForm.patchValue(this.compensationSatXml);
     }
   }
+
   close() {
     this.modalRef.hide();
   }
@@ -61,7 +53,7 @@ export class DelegationFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.delegationService.create(this.delegationForm.getRawValue()).subscribe({
+    this.compensationService.create(this.compensationForm.getRawValue()).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -69,8 +61,8 @@ export class DelegationFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.delegationService
-      .update(this.delegation.id, this.delegationForm.getRawValue())
+    this.compensationService
+      .update(this.compensationSatXml.id, this.compensationForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
@@ -84,4 +76,5 @@ export class DelegationFormComponent extends BasePage implements OnInit {
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
+
 }

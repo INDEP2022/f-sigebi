@@ -28,10 +28,10 @@ const routes: Routes = [
     data: { title: 'Sub Delegaciones' },
   },
   {
-    path: 'doc-resarcimiento-sat-xml',
+    path: 'doc-compensation-sat-xml',
     loadChildren: async () =>
-      (await import("./doc-resarcimiento-sat-xml/doc-resarcimiento-sat-xml.module"))
-      .DocResarcimientoSatXmlModule,
+      (await import("./doc-compensation-sat-xml/doc-compensation-sat-xml.module"))
+      .DocCompensationSatXmlModule,
       data: {title: "Documentos Resarcimiento Sat XML"}
   }
 ];

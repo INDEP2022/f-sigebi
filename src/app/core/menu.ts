@@ -42,6 +42,10 @@ export const MENU: IMenuItem[] = [
         label: 'Sub Delegacion',
         link: '/pages/catalogs/sub-delegations',
       },
+      {
+        label: 'Doc. Resarcimiento Sat XML',
+        link: '/pages/catalogs/doc-compensation-sat-xml'
+      }
     ],
   },
   {

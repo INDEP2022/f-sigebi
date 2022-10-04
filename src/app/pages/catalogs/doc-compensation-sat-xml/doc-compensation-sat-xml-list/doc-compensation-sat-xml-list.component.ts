@@ -1,31 +1,33 @@
 import { Component, OnInit } from '@angular/core';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { IDocCompensationSatXml } from 'src/app/core/models/catalogs/doc-compensation-sat-xml.model';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
-import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { DocCompensationSATService } from 'src/app/core/services/catalogs/doc-compesation-sat.service';
+import { DocCompensationSatXmlService } from 'src/app/core/services/catalogs/doc-compensation-sat-xml.service';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { DelegationFormComponent } from '../delegation-form/delegation-form.component';
-import { DELEGATION_COLUMS } from './delegation-columns';
+import { COMPENSATION_COLUMNS } from './doccompensationsatxml-columns';
+import { DocCompensationSatXmlFormComponent } from '../doc-compensation-sat-xml-form/doc-compensation-sat-xml-form.component';
 
 @Component({
-  selector: 'app-delegation-list',
-  templateUrl: './delegation-list.component.html',
-  styles: [],
+  selector: 'app-doc-compensation-sat-xml-list',
+  templateUrl: './doc-compensation-sat-xml-list.component.html',
+  styles: [
+  ]
 })
-export class DelegationListComponent extends BasePage implements OnInit {
+export class DocCompensationSatXmlListComponent extends BasePage implements OnInit {
   settings = TABLE_SETTINGS;
-  paragraphs: IDelegation[] = [];
+  paragraphs: IDocCompensationSatXml[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(
-    private delegationService: DelegationService,
+    private docConpensation: DocCompensationSatXmlService,
     private modalService: BsModalService
   ) {
     super();
-    this.settings.columns = DELEGATION_COLUMS;
+    this.settings.columns = COMPENSATION_COLUMNS;
     this.settings.actions.delete = true;
   }
 
@@ -37,7 +39,7 @@ export class DelegationListComponent extends BasePage implements OnInit {
 
   getExample() {
     this.loading = true;
-    this.delegationService.getAll(this.params.getValue()).subscribe({
+    this.docConpensation.getAll(this.params.getValue()).subscribe({
       next: response => {
         this.paragraphs = response.data;
         this.totalItems = response.count;
@@ -47,10 +49,10 @@ export class DelegationListComponent extends BasePage implements OnInit {
     });
   }
 
-  openForm(delegation?: IDelegation) {
+  openForm(compensationSatXml?: IDocCompensationSatXml) {
     let config: ModalOptions = {
       initialState: {
-        delegation,
+        compensationSatXml,
         callback: (next: boolean) => {
           if (next) this.getExample();
         },
@@ -58,10 +60,10 @@ export class DelegationListComponent extends BasePage implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.modalService.show(DelegationFormComponent, config);
+    this.modalService.show(DocCompensationSatXmlFormComponent, config);
   }
 
-  delete(delegation: IDelegation) {
+  delete(compensationSatXml: IDocCompensationSatXml) {
     this.alertQuestion(
       'warning',
       'Eliminar',
