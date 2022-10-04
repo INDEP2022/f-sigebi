@@ -1,0 +1,33 @@
+<app-card [header]="true">
+    <div class="ch-content" header>
+      <h5 class="title">ACUMULADO ANUAL DE BIENES</h5>
+     
+    </div>
+  
+    <div body>
+      
+        <form class="form-material" [formGroup]="form">
+            <div class="row">
+                <div class="col-md-4">
+                    <form-field [control]="form.get('delegation')" label="Delegación">
+                        <input class="form-control" formControlName="delegation">
+                    </form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <form-field [control]="form.get('fromDate')" label="Año Inicial">
+                        <input class="form-control" formControlName="fromDate">
+                    </form-field>
+                </div>
+                <div class="col-md-2">
+                    <form-field [control]="form.get('toDate')" label="Año Final">
+                        <input class="form-control" formControlName="toDate">
+                    </form-field>
+                </div>
+            </div>
+        </form>
+
+    </div>
+  </app-card>
+  

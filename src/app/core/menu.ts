@@ -65,4 +65,23 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
+  {
+    label: 'Procesos Ejecutivos',
+    icon: 'bx-folder',
+    subItems: [
+      {
+        label: 'Acumulado Anual de Bienes',
+        link: '/pages/executive-processes/pe-adbt-annual-accumulated-assets',
+      },
+      {
+        label: 'Acumulado Trimestral de Bienes',
+        link: '/pages/executive-processes/pe-adbt-quarterly-accumulated-assets',
+      },
+      {
+        label: 'Acumulado Bienes',
+        link: '/pages/executive-processes/acumulative-asset-tabs',
+      },
+      
+    ],
+  },
 ];
