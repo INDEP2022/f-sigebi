@@ -1,0 +1,60 @@
+<app-card [header]="true" [footer]="true">
+    <div class="ch-content" header>
+      <h5 class="title">ACUMULADO TRIMESTRAL DE BIENES</h5>
+     
+    </div>
+  
+    <div body>
+      
+        <form class="form-material" [formGroup]="form">
+            <div class="row">
+                <div class="col-md-4">
+                    <form-field [control]="form.get('delegation')" label="Delegación">
+                        <input class="form-control" formControlName="delegation">
+                    </form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <form-field [control]="form.get('subDelegation')" label="subDelegación">
+                        <input class="form-control" formControlName="subDelegation">
+                    </form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    <form-field [control]="form.get('fromMonth')" label="Mes Inicial">
+                        <input type="text"
+                               placeholder="Del"
+                               class="form-control"
+                               bsDatepicker
+                               formControlName="fromMonth"
+                               [bsConfig]="{ isAnimated: true }">
+                    </form-field>
+                </div>
+                <div class="col-md-2">
+                    <form-field [control]="form.get('toMonth')" label="Mes Final">
+                        <input type="text"
+                               placeholder="Al"
+                               class="form-control"
+                               bsDatepicker
+                               formControlName="toMonth"
+                               [bsConfig]="{ isAnimated: true }">
+                    </form-field>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+    <div footer>
+        <div class="d-flex justify-content-center">
+            <div class="m-3">
+                <button type="button" class="btn btn-primary active" [disabled]="!form.valid">
+                  Imprimir
+                </button>
+            </div>
+        </div>
+      </div>
+  </app-card>
+  

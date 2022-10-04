@@ -71,11 +71,11 @@ export const MENU: IMenuItem[] = [
     subItems: [
       {
         label: 'Acumulado Anual de Bienes',
-        link: '/pages/executive-processes/pe-adbt-annual-accumulated-assets',
+        link: '/pages/executive-processes/pe-aab--annual-accumulated-assets',
       },
       {
         label: 'Acumulado Trimestral de Bienes',
-        link: '/pages/executive-processes/pe-adbt-quarterly-accumulated-assets',
+        link: '/pages/executive-processes/pe-atb--quarterly-accumulated-assets',
       },
       {
         label: 'Acumulado Bienes',

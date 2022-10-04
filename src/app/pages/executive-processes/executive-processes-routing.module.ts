@@ -3,15 +3,15 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'pe-adbt-quarterly-accumulated-assets',
+    path: 'pe-atb--quarterly-accumulated-assets',
     loadChildren: async () =>
-      (await import('./pe-adbt-quarterly-accumulated-assets/pe-adbt-quarterly-accumulated-assets.module')).PeAdbtQuarterlyAccumulatedAssetsModule,
+      (await import('./pe-atb--quarterly-accumulated-assets/pe-atb--quarterly-accumulated-assets.module')).PeAtbQuarterlyAccumulatedAssetsModule,
     data: { title: 'Acumulado Trimestral de Bienes' },
   },
   {
-    path: 'pe-adbt-annual-accumulated-assets',
+    path: 'pe-aab--annual-accumulated-assets',
     loadChildren: async () =>
-      (await import('./pe-adbt-annual-accumulated-assets/pe-adbt-annual-accumulated-assets.module')).PeAdbtAnnualAccumulatedAssetsModule,
+      (await import('./pe-aab--annual-accumulated-assets/pe-aab--annual-accumulated-assets.module')).PeAabAnnualAccumulatedAssetsModule,
     data: { title: 'Acumulado Anual de Bienes' },
   },
   {
