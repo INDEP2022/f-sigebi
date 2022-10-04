@@ -49,9 +49,10 @@ export class SatClasificationListComponent extends BasePage implements OnInit {
   }
 
   openForm(satclasification?: ISatClassification) {
+    console.log(satclasification);
     let config: ModalOptions = {
       initialState: {
-        ...satclasification,
+        satclasification,
         callback: (next: boolean) => {
           if (next) this.getExample();
         },

@@ -15,7 +15,7 @@ export class SatClasificationFormComponent extends BasePage implements OnInit {
   satClasificationForm: ModelForm<ISatClassification>;
   title: string = 'SAT Clasificacion';
   edit: boolean = false;
-  satClafisication: ISatClassification;
+  satclasification: ISatClassification;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -29,6 +29,8 @@ export class SatClasificationFormComponent extends BasePage implements OnInit {
   }
 
   private prepareForm() {
+    console.log(this.satclasification);
+    
     this.satClasificationForm = this.fb.group({
       id: [null],
       nombre_clasificacion: [
@@ -37,9 +39,9 @@ export class SatClasificationFormComponent extends BasePage implements OnInit {
       ],
       version: [null, Validators.compose([Validators.pattern('')])],
     });
-    if (this.satClafisication != null) {
+    if (this.satclasification != null) {
       this.edit = true;
-      this.satClasificationForm.patchValue(this.satClafisication);
+      this.satClasificationForm.patchValue(this.satclasification);
     }
   }
   close() {
@@ -63,7 +65,7 @@ export class SatClasificationFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.satClasificationService
-      .update(this.satClafisication.id, this.satClasificationForm.getRawValue())
+      .update(this.satclasification.id, this.satClasificationForm.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
