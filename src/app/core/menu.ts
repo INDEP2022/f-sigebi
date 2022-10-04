@@ -11,6 +11,11 @@ export const MENU: MenuItem[] = [
         link: '/pages/home'
     },
     {
+        label: 'Documentation',
+        icon: 'bx-home-circle',
+        link: '/pages/documentation'
+    },
+    {
         isLayout: true
     },
     {

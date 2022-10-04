@@ -3,6 +3,12 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
+    path: 'documentation',
+    loadChildren: async () =>
+      (await import('./documentation-examples/documentation-examples.module')).DocumentationExamplesModule,
+      data: { title: 'Documentation' }
+  },
+  {
     path: 'example',
     loadChildren: async () =>
       (await import('./example/example.module')).ExampleModule,
