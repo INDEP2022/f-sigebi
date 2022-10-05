@@ -6,9 +6,7 @@ import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IDetailDelegation } from '../../models/catalogs/detail-delegation.model';
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class DetailDelegationService
   implements ICrudMethods<IDetailDelegation>
 {

@@ -30,7 +30,7 @@ export class DelegationFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.delegationForm = this.fb.group({
-      addressOffice: ['', [Validators.required]],
+      addressOffice: [null, [Validators.required]],
       city: [null],
       cveState: [null],
       cveZone: [null],

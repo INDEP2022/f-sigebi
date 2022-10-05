@@ -1,7 +1,7 @@
 import { IDelegation } from './delegation.model';
 import { ISubdelegation } from './subdelegation.model';
 
-export interface IDepartament {
+export interface IDepartment {
   id?: number;
   numDelegation: IDelegation | number;
   numSubDelegation: ISubdelegation | number;

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
@@ -48,17 +49,14 @@ export class DelegationListComponent extends BasePage implements OnInit {
   }
 
   openForm(delegation?: IDelegation) {
-    let config: ModalOptions = {
-      initialState: {
-        ...delegation,
-        callback: (next: boolean) => {
-          if (next) this.getExample();
-        },
+    const modalConfig = MODAL_CONFIG
+    modalConfig.initialState = {
+      delegation, 
+      callback: (next: boolean) => {
+        if (next) this.getExample();
       },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(DelegationFormComponent, config);
+    }
+    this.modalService.show(DelegationFormComponent, modalConfig);
   }
 
   delete(delegation: IDelegation) {

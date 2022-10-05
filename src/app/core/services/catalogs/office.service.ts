@@ -6,9 +6,7 @@ import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IOffice } from '../../models/catalogs/office.model';
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class OfficeService implements ICrudMethods<IOffice> {
   private readonly route: string = ENDPOINT_LINKS.Office;
   constructor(private officeRepository: Repository<IOffice>) {}

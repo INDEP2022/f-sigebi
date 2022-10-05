@@ -6,9 +6,7 @@ import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IOpinion } from '../../models/catalogs/opinion.model';
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class OpinionService implements ICrudMethods<IOpinion> {
   private readonly route: string = ENDPOINT_LINKS.Opinion;
   constructor(private opinionRepository: Repository<IOpinion>) {}
