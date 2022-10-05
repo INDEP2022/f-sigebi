@@ -75,6 +75,24 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-folder',
     subItems: [
       {
+        label: 'Reportes del Director Gral',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Total de documentos recibidos vs área destino',
+            link: '/pages/executive-processes/pe-rddg-drpad-m-totaldoc-received-destinationarea',
+          },
+          {
+            label: 'Reporte Documentación Recibida',
+            link: '/pages/executive-processes/pe-rddg-tddr-m-report-doc-received',
+          },
+          {
+            label: 'Reporte de bienes recibidos en administración',
+            link: '/pages/executive-processes/pe-rddg-brea-m-assets-received-admon',
+          },
+        ],
+      },
+      {
         label: 'Acumulado Anual de Bienes',
         link: '/pages/executive-processes/pe-aab-m-annual-accumulated-assets',
       },
@@ -121,18 +139,6 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Recepción recibida por área en el SERA ',
         link: '/pages/executive-processes/pe-rddxdees-m-reception-area-sera',
-      },
-      {
-        label: 'Total de documentos recibidos vs área destino',
-        link: '/pages/executive-processes/pe-rddg-drpad-m-totaldoc-received-destinationarea',
-      },
-      {
-        label: 'Reporte Documentación Recibida',
-        link: '/pages/executive-processes/pe-rddg-tddr-m-report-doc-received',
-      },
-      {
-        label: 'Reporte de bienes recibidos en administración',
-        link: '/pages/executive-processes/pe-rddg-brea-m-assets-received-admon',
       },
       {
         label: 'Proceso de actualización masiva de valor avaluó',
