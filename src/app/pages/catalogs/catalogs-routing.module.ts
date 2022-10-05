@@ -60,6 +60,13 @@ const routes: Routes = [
         .GoodSituationModule,
     data: { title: 'Situacion Bien' },
   },
+  {
+    path: 'legal-support',
+    loadChildren: async () =>
+      (await import('./legal-support/legal-support.module'))
+        .LegalSupportModule,
+    data: { title: 'Soporte Legal' },
+  },
 ];
 
 @NgModule({

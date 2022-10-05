@@ -67,6 +67,10 @@ export const MENU: IMenuItem[] = [
         label: 'Situacion Bien',
         link: '/pages/catalogs/good-situation',
       },
+      {
+        label: 'Soporte Legal',
+        link: '/pages/catalogs/legal-support',
+      },
     ],
   },
   {
