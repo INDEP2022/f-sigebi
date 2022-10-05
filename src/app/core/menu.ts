@@ -91,16 +91,16 @@ export const MENU: IMenuItem[] = [
         link: '/pages/executive-processes/pe-cmrd-m-cumulative-goods',
       },
       {
+        label: 'Control diario de recepción de expedientes',
+        link: '/pages/executive-processes/pe-rdde-m-daily-control-reception',
+      },
+      {
         label: 'información Bienes',
         link: '/pages/executive-processes/pe-ibs-d-a-m-report-registration-module',
       },
       {
         label: 'Reporte de documentación recibida por autoridad emisora ',
         link: '/pages/executive-processes/pe-drpae-m-doc-received-authority',
-      },
-      {
-        label: 'Control diario de recepción de expedientes',
-        link: '/pages/executive-processes/pe-rdde-m-daily-control-reception',
       },
       {
         label: 'Gestión de Autorización de Destrucción',
