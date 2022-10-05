@@ -31,6 +31,7 @@ const routes: Routes = [
       (await import('./admin/home/home.module')).HomeModule,
     data: { title: 'Inicio' },
   },
+  
   {
     path: '',
     redirectTo: 'home',
