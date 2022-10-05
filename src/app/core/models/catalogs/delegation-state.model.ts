@@ -1,11 +1,11 @@
 export class IDelegationState {
-  id: number | null;
+  id?: number;
   stateCode: string;
   userCreated?: string;
   creationDate?: Date;
   editionUser?: string;
   modificationDate?: Date;
-  version?: number | null;
-  keyState: number | null;
-  status: number | null;
+  version?: number;
+  keyState: number;
+  status: number;
 }

@@ -32,6 +32,50 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-folder',
     subItems: [
       {
+        label: 'Deductivas',
+        link: '/pages/catalogs/deductives',
+      },
+      {
+        label: 'Deductivas Verificacion',
+        link: '/pages/catalogs/deductives-verification',
+      },
+      {
+        label: 'Delegaciones Estado',
+        link: '/pages/catalogs/delegations-state',
+      },
+      {
+        label: 'Delegaciones Regionales',
+        link: '/pages/catalogs/regional-delegations',
+      },
+      {
+        label: 'Departamentos',
+        link: '/pages/catalogs/departments',
+      },
+      {
+        label: 'Despachos',
+        link: '/pages/catalogs/offices',
+      },
+      {
+        label: 'Detalle Delegacion',
+        link: '/pages/catalogs/detail-delegation',
+      },
+      {
+        label: 'Dictamenes',
+        link: '/pages/catalogs/opinions',
+      },
+      {
+        label: 'Documentos Resarsimiento',
+        link: '/pages/catalogs/doc-compensation',
+      },
+      {
+        label: 'Leyendas',
+        link: '/pages/catalogs/legends',
+      },
+      {
+        label: 'Estados',
+        link: '/pages/catalogs/states',
+      },
+      {
         label: 'Tipo Bien',
         link: '/pages/catalogs/good-types',
       },
