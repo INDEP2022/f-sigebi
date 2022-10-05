@@ -82,6 +82,13 @@ export const MENU: IMenuItem[] = [
     ],
   },
   {
+    label: 'Solicitudes',
+    icon: 'bx-folder',
+    subItems: [
+
+    ]
+  },
+  {
     label: 'Multi nivel',
     icon: 'bx-share-alt',
     subItems: [
