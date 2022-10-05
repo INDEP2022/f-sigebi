@@ -86,6 +86,62 @@ export const MENU: IMenuItem[] = [
         label: 'Acumulado Bienes',
         link: '/pages/executive-processes/acumulative-asset-tabs',
       },
+      {
+        label: 'Control Mensual de Recepción Documental',
+        link: '/pages/executive-processes/pe-cmrd-m-cumulative-goods',
+      },
+      {
+        label: 'información Bienes',
+        link: '/pages/executive-processes/pe-ibs-d-a-m-report-registration-module',
+      },
+      {
+        label: 'Reporte de documentación recibida por autoridad emisora ',
+        link: '/pages/executive-processes/pe-drpae-m-doc-received-authority',
+      },
+      {
+        label: 'Control diario de recepción de expedientes',
+        link: '/pages/executive-processes/pe-rdde-m-daily-control-reception',
+      },
+      {
+        label: 'Gestión de Autorización de Destrucción',
+        link: '/pages/executive-processes/pe-gdadd-m-destruction-authorization-management',
+      },
+      {
+        label: 'Autorización de bienes para destrucción ',
+        link: '/pages/executive-processes/pe-ad-m-authorization-assets-destruction',
+      },
+      {
+        label: 'Aprobación de bienes para destino',
+        link: '/pages/executive-processes/pe-ad-m-approval-assets-destination',
+      },
+      {
+        label: 'Reporte de tipos y subtipos',
+        link: '/pages/executive-processes/pe-idbptys-m-report-types-subtypes',
+      },
+      {
+        label: 'Recepción recibida por área en el SERA ',
+        link: '/pages/executive-processes/pe-rddxdees-m-reception-area-sera',
+      },
+      {
+        label: 'Total de documentos recibidos vs área destino',
+        link: '/pages/executive-processes/pe-rddg-drpad-m-totaldoc-received-destinationarea',
+      },
+      {
+        label: 'Reporte Documentación Recibida',
+        link: '/pages/executive-processes/pe-rddg-tddr-m-report-doc-received',
+      },
+      {
+        label: 'Reporte de bienes recibidos en administración',
+        link: '/pages/executive-processes/pe-rddg-brea-m-assets-received-admon',
+      },
+      {
+        label: 'Proceso de actualización masiva de valor avaluó',
+        link: '/pages/executive-processes/pe-amdvda-m-update-mss-value',
+      },
+      {
+        label: 'Aprobación donación',
+        link: '/pages/executive-processes/pe-ad-m-donation-approval',
+      },
       
     ],
   },
