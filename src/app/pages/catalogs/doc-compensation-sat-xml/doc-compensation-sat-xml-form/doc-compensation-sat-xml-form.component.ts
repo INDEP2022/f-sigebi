@@ -14,7 +14,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class DocCompensationSatXmlFormComponent extends BasePage implements OnInit {
   compensationForm: ModelForm<IDocCompensationSatXml>;
-  title: string = 'Delegacion';
+  title: string = 'Documento resarcimiento sat xml';
   edit: boolean = false;
   compensationSatXml: IDocCompensationSatXml;
   

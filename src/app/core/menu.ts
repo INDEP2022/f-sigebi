@@ -45,6 +45,10 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Doc. Resarcimiento Sat XML',
         link: '/pages/catalogs/doc-compensation-sat-xml'
+      },
+      {
+        label: 'Donatorios',
+        link: '/pages/catalogs/donations'
       }
     ],
   },

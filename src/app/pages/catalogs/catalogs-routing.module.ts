@@ -33,6 +33,13 @@ const routes: Routes = [
       (await import("./doc-compensation-sat-xml/doc-compensation-sat-xml.module"))
       .DocCompensationSatXmlModule,
       data: {title: "Documentos Resarcimiento Sat XML"}
+  },
+  {
+    path: 'donations',
+    loadChildren: async () =>
+      (await import("./donations/grantees.module"))
+      .DonationsModule,
+      data: {title: "Donatorios"}
   }
 ];
 
