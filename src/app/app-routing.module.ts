@@ -23,6 +23,8 @@ const routes: Routes = [
     redirectTo: 'auth',
     pathMatch: 'full',
   },
+
+  { path: 'experts', loadChildren: () => import('./pages/catalogs/experts/experts.module').then(m => m.ExpertsModule) },
 ];
 
 @NgModule({

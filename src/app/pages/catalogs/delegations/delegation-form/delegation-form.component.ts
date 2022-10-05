@@ -46,7 +46,6 @@ export class DelegationFormComponent extends BasePage implements OnInit {
       zoneContractCVE: [null],
       zoneVigilanceCVE: [],
     });
-    this.delegationForm.get('addressOffice').setValidators([]);
     if (this.delegation != null) {
       this.edit = true;
       this.delegationForm.patchValue(this.delegation);
