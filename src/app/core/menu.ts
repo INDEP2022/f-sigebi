@@ -32,6 +32,50 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-folder',
     subItems: [
       {
+        label: 'Deductivas',
+        link: '/pages/catalogs/deductives',
+      },
+      {
+        label: 'Deductivas Verificacion',
+        link: '/pages/catalogs/deductives-verification',
+      },
+      {
+        label: 'Delegaciones Estado',
+        link: '/pages/catalogs/delegations-state',
+      },
+      {
+        label: 'Delegaciones Regionales',
+        link: '/pages/catalogs/regional-delegations',
+      },
+      {
+        label: 'Departamentos',
+        link: '/pages/catalogs/departments',
+      },
+      {
+        label: 'Despachos',
+        link: '/pages/catalogs/offices',
+      },
+      {
+        label: 'Detalle Delegacion',
+        link: '/pages/catalogs/detail-delegation',
+      },
+      {
+        label: 'Dictamenes',
+        link: '/pages/catalogs/opinions',
+      },
+      {
+        label: 'Documentos Resarsimiento',
+        link: '/pages/catalogs/doc-compensation',
+      },
+      {
+        label: 'Leyendas',
+        link: '/pages/catalogs/legends',
+      },
+      {
+        label: 'Estados',
+        link: '/pages/catalogs/states',
+      },
+      {
         label: 'Tipo Bien',
         link: '/pages/catalogs/good-types',
       },
@@ -47,7 +91,54 @@ export const MENU: IMenuItem[] = [
         label: 'Sub Delegacion',
         link: '/pages/catalogs/sub-delegations',
       },
+      {
+
+        label: 'Etiquetas Bien',
+        link: '/pages/catalogs/label-okey',
+      },
+      {
+        label: 'Fracciones',
+        link: '/pages/catalogs/fractions',
+      },
+      {
+        label: 'Gavetas',
+        link: '/pages/catalogs/drawers',
+      },
+      {
+        label: 'Gestión',
+        link: '/pages/catalogs/management',
+      },
+      {
+        label: 'Guarda Valores',
+        link: '/pages/catalogs/save-values',
+      },
+
+      {
+        label: 'Identificador',
+        link: '/pages/catalogs/identifier',
+      },
+
+      {
+        label: 'Indiciados',
+        link: '/pages/catalogs/indicated',
+      },
+      
+      {
+        label: 'Doc. Resarcimiento Sat XML',
+        link: '/pages/catalogs/doc-compensation-sat-xml'
+      },
+      {
+        label: 'Donatorios',
+        link: '/pages/catalogs/grantees'
+      }
     ],
+  },
+  {
+    label: 'Solicitudes',
+    icon: 'bx-folder',
+    subItems: [
+
+    ]
   },
   {
     label: 'Multi nivel',
