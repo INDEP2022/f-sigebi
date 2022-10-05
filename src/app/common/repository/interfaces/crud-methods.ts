@@ -10,6 +10,7 @@ export interface IRead<T> {
 export interface IWrite<T> {
   create?(model: T): Observable<T>;
   update?(id: number | string, model: T): Observable<Object>;
+  updateByIds?(id: number, idSecond: number, model: T): Observable<Object>;
   remove?(id: number | string): Observable<Object>;
 }
 

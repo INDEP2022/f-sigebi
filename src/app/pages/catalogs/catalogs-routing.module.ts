@@ -98,6 +98,7 @@ const routes: Routes = [
       (await import('./states/states.module')).StatesModule,
   },
   {
+<<<<<<< Updated upstream
     path: 'label-okey',
       loadChildren: async () =>
         (await import('./label-okey/label-okey.module')).LabelOkeyModule,
@@ -161,6 +162,66 @@ const routes: Routes = [
       .GranteesModule,
       data: {title: "Donatorios"}
   }
+=======
+    path: 'lawyer',
+    loadChildren: async () =>
+      (await import('./lawyer/lawyer.module')).LawyerModule,
+    data: { title: 'Abogados' },
+  },
+  {
+    path: 'clarifications',
+    loadChildren: async () =>
+      (await import('./clarifications/clarifications.module'))
+        .ClarificationsModule,
+    data: { title: 'Aclaraciónes' },
+  },
+  {
+    path: 'warehouses',
+    loadChildren: async () =>
+      (await import('./warehouses/warehouses.module')).WarehousesModule,
+    data: { title: 'Almacenes' },
+  },
+  {
+    path: 'banks',
+    loadChildren: async () =>
+      (await import('./banks/banks.module')).BanksModule,
+    data: { title: 'Bancos' },
+  },
+  {
+    path: 'storehouses',
+    loadChildren: async () =>
+      (await import('./store-house/store-house.module')).StoreHouseModule,
+    data: { title: 'Bodegas' },
+  },
+  {
+    path: 'vault',
+    loadChildren: async () =>
+      (await import('./vault/vault.module')).VaultModule,
+    data: { title: 'Bóvedas' },
+  },
+  {
+    path: 'cities',
+    loadChildren: async () => (await import('./city/city.module')).CityModule,
+    data: { title: 'Ciudades' },
+  },
+  {
+    path: 'intitution-classification',
+    loadChildren: async () =>
+      (
+        await import(
+          './institution-classification/institution-classification.module'
+        )
+      ).InstitutionClassificationModule,
+    data: { title: 'Institución Clasificación' },
+  },
+  {
+    path: 'payment-concept',
+    loadChildren: async () =>
+      (await import('./payment-concept/payment-concept.module'))
+        .PaymentConceptModule,
+    data: { title: 'Concepto de Pago' },
+  },
+>>>>>>> Stashed changes
 ];
 
 @NgModule({

@@ -76,6 +76,42 @@ export const MENU: IMenuItem[] = [
         link: '/pages/catalogs/states',
       },
       {
+        label: 'Abogados',
+        link: '/pages/catalogs/lawyer',
+      },
+      {
+        label: 'Aclaraciónes',
+        link: '/pages/catalogs/clarifications',
+      },
+      {
+        label: 'Bodegas',
+        link: '/pages/catalogs/warehouses',
+      },
+      {
+        label: 'Bancos',
+        link: '/pages/catalogs/banks',
+      },
+      {
+        label: 'Bóveda',
+        link: '/pages/catalogs/vault',
+      },
+      {
+        label: 'Bodegas',
+        link: '/pages/catalogs/storehouses',
+      },
+      {
+        label: 'Ciudades',
+        link: '/pages/catalogs/cities',
+      },
+      {
+        label: 'Concepto de Pagos',
+        link: '/pages/catalogs/payment-concept',
+      },
+      {
+        label: 'Institución Clasificación',
+        link: '/pages/catalogs/intitution-classification',
+      },
+      {
         label: 'Tipo Bien',
         link: '/pages/catalogs/good-types',
       },
