@@ -53,7 +53,7 @@ export const MENU: IMenuItem[] = [
       },
       {
         label: 'Donatorios',
-        link: '/pages/catalogs/donations'
+        link: '/pages/catalogs/grantees'
       }
     ],
   },

@@ -35,10 +35,10 @@ const routes: Routes = [
       data: {title: "Documentos Resarcimiento Sat XML"}
   },
   {
-    path: 'donations',
+    path: 'grantees',
     loadChildren: async () =>
-      (await import("./donations/grantees.module"))
-      .DonationsModule,
+      (await import("./grantees/grantees.module"))
+      .GranteesModule,
       data: {title: "Donatorios"}
   }
 ];
