@@ -1,3 +1,4 @@
+import { DOCUMENTS_RECEPTION_ROUTES } from '../common/constants/documents-reception-routes';
 import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
@@ -17,10 +18,10 @@ export const MENU: IMenuItem[] = [
   //     label: 'Aplicaciones',
   //     isTitle: true
   // },
-    {
-      label: 'Documentation',
-      icon: 'bx-home-circle',
-      link: '/pages/documentation'
+  {
+    label: 'Documentation',
+    icon: 'bx-home-circle',
+    link: '/pages/documentation',
   },
   {
     label: 'Ejemplo',
@@ -92,7 +93,6 @@ export const MENU: IMenuItem[] = [
         link: '/pages/catalogs/sub-delegations',
       },
       {
-
         label: 'Etiquetas Bien',
         link: '/pages/catalogs/label-okey',
       },
@@ -122,23 +122,21 @@ export const MENU: IMenuItem[] = [
         label: 'Indiciados',
         link: '/pages/catalogs/indicated',
       },
-      
+
       {
         label: 'Doc. Resarcimiento Sat XML',
-        link: '/pages/catalogs/doc-compensation-sat-xml'
+        link: '/pages/catalogs/doc-compensation-sat-xml',
       },
       {
         label: 'Donatorios',
-        link: '/pages/catalogs/grantees'
-      }
+        link: '/pages/catalogs/grantees',
+      },
     ],
   },
   {
     label: 'Solicitudes',
     icon: 'bx-folder',
-    subItems: [
-
-    ]
+    subItems: [],
   },
   {
     label: 'Multi nivel',
@@ -161,4 +159,5 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
+  ...DOCUMENTS_RECEPTION_ROUTES,
 ];

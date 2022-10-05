@@ -5,8 +5,9 @@ const routes: Routes = [
   {
     path: 'documentation',
     loadChildren: async () =>
-      (await import('./documentation-examples/documentation-examples.module')).DocumentationExamplesModule,
-      data: { title: 'Documentation' }
+      (await import('./documentation-examples/documentation-examples.module'))
+        .DocumentationExamplesModule,
+    data: { title: 'Documentation' },
   },
   {
     path: 'example',
@@ -26,12 +27,18 @@ const routes: Routes = [
       (await import('./catalogs/catalogs.module')).CatalogModule,
   },
   {
+    path: 'documents-reception',
+    loadChildren: async () =>
+      (await import('./documents-reception/documents-reception.module'))
+        .DocumentsReceptionModule,
+  },
+  {
     path: 'home',
     loadChildren: async () =>
       (await import('./admin/home/home.module')).HomeModule,
     data: { title: 'Inicio' },
   },
-  
+
   {
     path: '',
     redirectTo: 'home',
