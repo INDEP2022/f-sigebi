@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ExpertsModule } from './experts/experts.module';
 
 const routes: Routes = [
   {
@@ -26,6 +27,13 @@ const routes: Routes = [
       (await import('./sub-delegations/sub-delegations.module'))
         .SubDelegationsModule,
     data: { title: 'Sub Delegaciones' },
+  }, 
+  {
+    path: 'expert',
+    loadChildren: async () =>
+      (await import('./experts/experts.module'))
+        .ExpertsModule,
+    data: { title: 'Peritos' },
   },
 ];
 

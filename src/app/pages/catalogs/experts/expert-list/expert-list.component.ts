@@ -1,4 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IProficient } from 'src/app/core/models/catalogs/proficient.model';
+import { ProeficientService } from 'src/app/core/services/catalogs/proficient.service';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { EXPERT_COLUMNS } from './expert-columns';
+import { ExpertFormComponent } from '../experts-form/expert-form.component';
 
 @Component({
   selector: 'app-expert-list',
@@ -6,11 +15,64 @@ import { Component, OnInit } from '@angular/core';
   styles: [
   ]
 })
-export class ExpertListComponent implements OnInit {
+export class ExpertListComponent  extends BasePage implements OnInit 
+{
+  settings = TABLE_SETTINGS;
+  paragraphs: IProficient[] = [];
+  totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
 
-  constructor() { }
-
-  ngOnInit(): void {
+  constructor(
+    private procientService: ProeficientService,
+    private modalService: BsModalService
+  ) {
+    super();
+    this.settings.columns = EXPERT_COLUMNS;
+    this.settings.actions.delete = true;
   }
 
+  ngOnInit(): void {
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getExample());
+  }
+
+  getExample() {
+    this.loading = true;
+    this.procientService.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        this.paragraphs = response.data;
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
+  }
+
+  openForm(proficient?: IProficient) {
+    let config: ModalOptions = {
+      initialState: {
+        proficient,
+        callback: (next: boolean) => {
+          if (next) this.getExample();
+        },
+      },
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ExpertFormComponent, config);
+  }
+
+  delete(proficient?: IProficient) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //this.procientService.remove(proficient.id);
+      }
+    });
+  }
 }
+
