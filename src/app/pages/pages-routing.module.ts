@@ -15,6 +15,12 @@ const routes: Routes = [
     data: { title: 'Ejemplo' },
   },
   {
+    path: 'request',
+    loadChildren: async () =>
+      (await import('./request/request.module')).RequestModule,
+    data: { title: 'Request' },
+  },
+  {
     path: 'catalogs',
     loadChildren: async () =>
       (await import('./catalogs/catalogs.module')).CatalogModule,
