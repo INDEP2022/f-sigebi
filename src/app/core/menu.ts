@@ -17,6 +17,11 @@ export const MENU: IMenuItem[] = [
   //     label: 'Aplicaciones',
   //     isTitle: true
   // },
+    {
+      label: 'Documentation',
+      icon: 'bx-home-circle',
+      link: '/pages/documentation'
+  },
   {
     label: 'Ejemplo',
     icon: 'bx-calendar',
@@ -86,7 +91,54 @@ export const MENU: IMenuItem[] = [
         label: 'Sub Delegacion',
         link: '/pages/catalogs/sub-delegations',
       },
+      {
+
+        label: 'Etiquetas Bien',
+        link: '/pages/catalogs/label-okey',
+      },
+      {
+        label: 'Fracciones',
+        link: '/pages/catalogs/fractions',
+      },
+      {
+        label: 'Gavetas',
+        link: '/pages/catalogs/drawers',
+      },
+      {
+        label: 'Gestión',
+        link: '/pages/catalogs/management',
+      },
+      {
+        label: 'Guarda Valores',
+        link: '/pages/catalogs/save-values',
+      },
+
+      {
+        label: 'Identificador',
+        link: '/pages/catalogs/identifier',
+      },
+
+      {
+        label: 'Indiciados',
+        link: '/pages/catalogs/indicated',
+      },
+      
+      {
+        label: 'Doc. Resarcimiento Sat XML',
+        link: '/pages/catalogs/doc-compensation-sat-xml'
+      },
+      {
+        label: 'Donatorios',
+        link: '/pages/catalogs/grantees'
+      }
     ],
+  },
+  {
+    label: 'Solicitudes',
+    icon: 'bx-folder',
+    subItems: [
+
+    ]
   },
   {
     label: 'Multi nivel',

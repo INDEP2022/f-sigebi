@@ -49,13 +49,13 @@ export class DelegationListComponent extends BasePage implements OnInit {
   }
 
   openForm(delegation?: IDelegation) {
-    const modalConfig = MODAL_CONFIG
+    const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
-      delegation, 
+      delegation,
       callback: (next: boolean) => {
         if (next) this.getExample();
       },
-    }
+    };
     this.modalService.show(DelegationFormComponent, modalConfig);
   }
 
