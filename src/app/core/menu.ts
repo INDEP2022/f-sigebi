@@ -17,10 +17,10 @@ export const MENU: IMenuItem[] = [
   //     label: 'Aplicaciones',
   //     isTitle: true
   // },
-    {
-      label: 'Documentation',
-      icon: 'bx-home-circle',
-      link: '/pages/documentation'
+  {
+    label: 'Documentation',
+    icon: 'bx-home-circle',
+    link: '/pages/documentation',
   },
   {
     label: 'Ejemplo',
@@ -70,6 +70,14 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Soporte Legal',
         link: '/pages/catalogs/legal-support',
+      },
+      {
+        label: 'Doc. Resarcimiento Sat XML',
+        link: '/pages/catalogs/doc-compensation-sat-xml',
+      },
+      {
+        label: 'Donatorios',
+        link: '/pages/catalogs/grantees',
       },
     ],
   },

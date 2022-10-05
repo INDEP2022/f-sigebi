@@ -63,9 +63,24 @@ const routes: Routes = [
   {
     path: 'legal-support',
     loadChildren: async () =>
-      (await import('./legal-support/legal-support.module'))
-        .LegalSupportModule,
+      (await import('./legal-support/legal-support.module')).LegalSupportModule,
     data: { title: 'Soporte Legal' },
+  },
+  {
+    path: 'doc-compensation-sat-xml',
+    loadChildren: async () =>
+      (
+        await import(
+          './doc-compensation-sat-xml/doc-compensation-sat-xml.module'
+        )
+      ).DocCompensationSatXmlModule,
+    data: { title: 'Documentos Resarcimiento Sat XML' },
+  },
+  {
+    path: 'grantees',
+    loadChildren: async () =>
+      (await import('./grantees/grantees.module')).GranteesModule,
+    data: { title: 'Donatorios' },
   },
 ];
 
