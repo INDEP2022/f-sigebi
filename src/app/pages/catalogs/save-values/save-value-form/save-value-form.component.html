@@ -1,0 +1,78 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">
+      {{ edit ? 'Editar guarda valores' : 'Crear guarda valores' }}
+    </h5>
+  </div>
+  <div body>
+    <form [formGroup]="saveValueForm" class="form-material">
+      <form-field [control]="saveValueForm.get('cve')" label="Clave">
+        <input
+          *ngIf="edit"
+          type="text"
+          class="form-control"
+          formControlName="cve"
+          readonly />
+        <input
+          *ngIf="!edit"
+          type="text"
+          class="form-control"
+          formControlName="cve" />
+      </form-field>
+
+      <div class="row pt-4">
+        <form-field
+          [control]="saveValueForm.get('description')"
+          label="Descripción">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="description" />
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field [control]="saveValueForm.get('location')" label="Ubicación">
+          <input type="text" class="form-control" formControlName="location" />
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field
+          [control]="saveValueForm.get('responsible')"
+          label="Responsable">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="responsible" />
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field
+          [control]="saveValueForm.get('noRegistration')"
+          label="Número de registro">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="noRegistration" />
+        </form-field>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!saveValueForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

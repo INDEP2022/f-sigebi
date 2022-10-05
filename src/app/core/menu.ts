@@ -42,6 +42,37 @@ export const MENU: IMenuItem[] = [
         label: 'Sub Delegacion',
         link: '/pages/catalogs/sub-delegations',
       },
+      {
+        label: 'Etiquetas Bien',
+        link: '/pages/catalogs/label-okey',
+      },
+      {
+        label: 'Fracciones',
+        link: '/pages/catalogs/fractions',
+      },
+      {
+        label: 'Gavetas',
+        link: '/pages/catalogs/drawers',
+      },
+      {
+        label: 'Gestión',
+        link: '/pages/catalogs/management',
+      },
+      {
+        label: 'Guarda Valores',
+        link: '/pages/catalogs/save-values',
+      },
+
+      {
+        label: 'Identificador',
+        link: '/pages/catalogs/identifier',
+      },
+
+      {
+        label: 'Indiciados',
+        link: '/pages/catalogs/indicated',
+      }
+
     ],
   },
   {
