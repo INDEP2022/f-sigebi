@@ -7,38 +7,41 @@
 
   <div body>
     <form [formGroup]="identifierForm" class="form-material">
-      <form-field [control]="identifierForm.get('code')" label="Código">
-        <input type="text" class="form-control" formControlName="code" />
-      </form-field>
+      <div class="row">
+        <div class="col-md-5">
+          <form-field [control]="identifierForm.get('code')" label="Código">
+            <input type="text" class="form-control" formControlName="code" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="identifierForm.get('description')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
 
-      <div class="row pt-4">
-        <form-field
-          [control]="identifierForm.get('description')"
-          label="Descripción">
-          <input
-            type="text"
-            class="form-control"
-            formControlName="description" />
-        </form-field>
-      </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="identifierForm.get('keyview')"
+            label="Clave vista">
+            <input type="text" class="form-control" formControlName="keyview" />
+          </form-field>
+        </div>
 
-      <div class="row pt-4">
-        <form-field
-          [control]="identifierForm.get('keyview')"
-          label="Clave vista">
-          <input type="text" class="form-control" formControlName="keyview" />
-        </form-field>
-      </div>
-
-      <div class="row pt-4">
-        <form-field
-          [control]="identifierForm.get('noRegistration')"
-          label="Número de registro">
-          <input
-            type="text"
-            class="form-control"
-            formControlName="noRegistration" />
-        </form-field>
+        <div class="col-md-6">
+          <form-field
+            [control]="identifierForm.get('noRegistration')"
+            label="Número de registro">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="noRegistration" />
+          </form-field>
+        </div>
       </div>
     </form>
   </div>

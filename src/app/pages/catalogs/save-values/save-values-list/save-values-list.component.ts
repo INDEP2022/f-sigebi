@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -21,7 +21,6 @@ export class SaveValuesListComponent extends BasePage implements OnInit {
   paragraphs: ISaveValue[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  @Output() refresh = new EventEmitter<true>();
   
   constructor(
     private saveValueService: SaveValueService,
@@ -50,19 +49,18 @@ export class SaveValuesListComponent extends BasePage implements OnInit {
     });
   }
 
-  openModal(context?: Partial<SaveValueFormComponent>) {
-    const modalRef = this.modalService.show(SaveValueFormComponent, {
-      initialState: context,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getSaveValues();
-    });
-  }
-
   openForm(saveValue?: ISaveValue) {
-    this.openModal({saveValue});
+    let config: ModalOptions = {
+      initialState: {
+        saveValue,
+        callback: (next: boolean) => {
+          if (next) this.getSaveValues();
+        },
+      },
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(SaveValueFormComponent, config);
   }
 
   delete(saveValue: ISaveValue) {
@@ -79,11 +77,5 @@ export class SaveValuesListComponent extends BasePage implements OnInit {
       }
     });
   } 
-
-  handleSuccess() {
-    this.loading = false;
-    this.refresh.emit(true);
-    this.modalService.hide();
-  }
 }
 

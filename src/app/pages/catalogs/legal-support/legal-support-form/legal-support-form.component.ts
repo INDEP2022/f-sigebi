@@ -30,12 +30,13 @@ export class LegalSupportFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.legalSupportForm = this.fb.group({
-      id: ['', [Validators.required, Validators.maxLength(5)]],
+      id: [null, [Validators.required, Validators.maxLength(5)]],
       support: [null, [Validators.required]],
     });
     if (this.legalSupport != null) {
       this.edit = true;
       this.legalSupportForm.patchValue(this.legalSupport);
+      this.legalSupportForm.get('id').disable();
     }
   }
   close() {

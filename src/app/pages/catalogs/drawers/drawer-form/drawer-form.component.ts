@@ -8,6 +8,7 @@ import { ISafe } from 'src/app/core/models/catalogs/safe.model';
 import { DrawerService } from 'src/app/core/services/catalogs/drawer.service';
 import { SafeService } from 'src/app/core/services/catalogs/safe.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -21,10 +22,9 @@ export class DrawerFormComponent extends BasePage implements OnInit {
   drawerForm: ModelForm<IDrawer>;
   idBoveda: number = 0;
   boveda = new DefaultSelect<ISafe>();
-  @Output() refresh = new EventEmitter<true>();
 
   constructor(
-    private modalService: BsModalRef,
+    private modalRef: BsModalRef,
     private fb: FormBuilder,
     private drawerService: DrawerService,
     private safeService: SafeService
@@ -41,7 +41,7 @@ export class DrawerFormComponent extends BasePage implements OnInit {
       noDrawer: [null, [Validators.required, Validators.maxLength(3)]],
       noBobeda: [
         null,
-        [Validators.required, Validators.pattern('[0-9]{0,255}')],
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
       status: [null, [Validators.required, Validators.maxLength(2)]],
       noRegistration: [null, [Validators.required, Validators.maxLength(10)]],
@@ -49,14 +49,12 @@ export class DrawerFormComponent extends BasePage implements OnInit {
 
     if (this.drawer != null) {
       this.edit = true;
-      this.drawerForm.patchValue(this.drawer);
-
-      if (this.drawer.noBobeda) {
-        this.drawerForm.controls.noBobeda.setValue(
-          (this.drawer.noBobeda as ISafe).idSafe
-        );
-        this.boveda = new DefaultSelect([this.drawer.noBobeda], 1);
-      }
+      let bobeda: ISafe = this.drawer.noBobeda as ISafe;
+      this.drawerForm.patchValue({ ...this.drawer, noBobeda: bobeda.idSafe });
+      this.boveda = new DefaultSelect([bobeda], 1);
+      this.drawerForm.get('noDrawer').disable();
+    } else {
+      this.getBovedaSelect({ inicio: 1, text: '' });
     }
   }
 
@@ -77,10 +75,10 @@ export class DrawerFormComponent extends BasePage implements OnInit {
   create() {
     this.loading = true;
 
-    this.drawerService.create(this.drawerForm.value).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
-    );
+    this.drawerService.create(this.drawerForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   update() {
@@ -89,19 +87,19 @@ export class DrawerFormComponent extends BasePage implements OnInit {
     noBobeda = idBobeda;
     this.drawerService
       .updateByIds({ noDrawer, noBobeda }, this.drawerForm.value)
-      .subscribe(
-        data => this.handleSuccess(),
-        error => (this.loading = false)
-      );
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   close() {
-    this.modalService.hide();
+    this.modalRef.hide();
   }
 
   handleSuccess() {
     this.loading = false;
-    this.refresh.emit(true);
-    this.modalService.hide();
+    this.modalRef.content.callback(true);
+    this.modalRef.hide();
   }
 }

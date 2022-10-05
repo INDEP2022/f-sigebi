@@ -1,6 +1,6 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/ModelForm';
 import { IManagement } from 'src/app/core/models/catalogs/management.model';
 import { ManagementService } from 'src/app/core/services/catalogs/management.service';
@@ -9,19 +9,18 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-management-form',
   templateUrl: './management-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ManagementFormComponent extends BasePage implements OnInit {
-
   management: IManagement;
-  edit:boolean = false;
+  edit: boolean = false;
   managementForm: ModelForm<IManagement>;
-  @Output() refresh = new EventEmitter<true>();
+
   constructor(
-    private modalService: BsModalRef,
+    private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private managemetService: ManagementService) { 
+    private managemetService: ManagementService
+  ) {
     super();
   }
 
@@ -29,13 +28,13 @@ export class ManagementFormComponent extends BasePage implements OnInit {
     this.prepareForm();
   }
 
-  prepareForm(){
+  prepareForm() {
     this.managementForm = this.fb.group({
       description: [null, [Validators.required, Validators.maxLength(30)]],
-      idTramite: [null,[Validators.required, Validators.maxLength(2)]],
+      idTramite: [null, [Validators.required, Validators.maxLength(2)]],
     });
 
-    if(this.management != null){
+    if (this.management != null) {
       this.edit = true;
       this.managementForm.patchValue(this.management);
     }
@@ -47,26 +46,28 @@ export class ManagementFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.managemetService.create(this.managementForm.value).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
-    );
+    this.managemetService.create(this.managementForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   update() {
-    this.managemetService.update(this.management.id,this.managementForm.value).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
-    );
+    this.managemetService
+      .update(this.management.id, this.managementForm.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   close() {
-    this.modalService.hide();
+    this.modalRef.hide();
   }
 
   handleSuccess() {
     this.loading = false;
-    this.refresh.emit(true);
-    this.modalService.hide();
+    this.modalRef.content.callback(true);
+    this.modalRef.hide();
   }
 }
