@@ -6,7 +6,9 @@ import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IDeductiveVerification } from '../../models/catalogs/deductive-verification.model';
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class DeductiveVerificationService
   implements ICrudMethods<IDeductiveVerification>
 {

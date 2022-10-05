@@ -8,7 +8,9 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import { IDocCompensationSatXml } from '../../models/catalogs/doc-compensation-sat-xml.model';
 import { IDocCompensation } from '../../models/catalogs/doc-compensation.model';
 import { IDocCompesationSat } from '../../models/catalogs/doc-compesation-sat.model';
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class DocCompensationService implements ICrudMethods<IDocCompensation> {
   private readonly route: string = ENDPOINT_LINKS.DocCompensation;
   private readonly docCompensationSATRoute = ENDPOINT_LINKS.DocCompensationSAT;

@@ -5,7 +5,6 @@ import { RegionalDelegationsListComponent } from './regional-delegations-list/re
 import { RegionalDelegationFormComponent } from './regional-delegation-form/regional-delegation-form.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
-import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 
 @NgModule({
   declarations: [
@@ -18,6 +17,5 @@ import { RegionalDelegationService } from 'src/app/core/services/catalogs/region
     SharedModule,
     ModalModule.forChild(),
   ],
-  providers: [RegionalDelegationService],
 })
 export class RegionalDelegationsModule {}

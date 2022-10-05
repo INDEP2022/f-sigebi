@@ -5,13 +5,13 @@
   <div body>
     <form [formGroup]="delegationStateForm" class="form-material">
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field [control]="delegationStateForm.get('id')" label="ID">
             <input type="number" class="form-control" formControlName="id" />
           </form-field>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-8">
           <form-field [control]="delegationStateForm.get('stateCode')">
             <ngx-select
               [form]="delegationStateForm"
@@ -24,17 +24,6 @@
               (change)="stateChange($event)"></ngx-select>
           </form-field>
         </div>
-
-        <div class="col-md-3">
-          <form-field
-            [control]="delegationStateForm.get('status')"
-            label="Status">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="status" />
-          </form-field>
-        </div>
       </div>
       <div class="row pt-5">
         <div class="col-md-3">
@@ -45,6 +34,17 @@
               type="number"
               class="form-control"
               formControlName="version" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field
+            [control]="delegationStateForm.get('status')"
+            label="Status">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="status" />
           </form-field>
         </div>
       </div>

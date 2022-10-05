@@ -6,7 +6,6 @@ import { DetailDelegationListComponent } from './detail-delegation-list/detail-d
 import { DetailDelegationFormComponent } from './detail-delegation-form/detail-delegation-form.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
-import { DetailDelegationService } from 'src/app/core/services/catalogs/detail-delegation.service';
 
 @NgModule({
   declarations: [DetailDelegationListComponent, DetailDelegationFormComponent],
@@ -16,6 +15,5 @@ import { DetailDelegationService } from 'src/app/core/services/catalogs/detail-d
     SharedModule,
     ModalModule.forChild(),
   ],
-  providers: [DetailDelegationService],
 })
 export class DetailDelegationModule {}

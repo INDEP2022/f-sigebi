@@ -8,7 +8,9 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import { IDelegation } from '../../models/catalogs/delegation.model';
 import { IDepartment } from '../../models/catalogs/department.model';
 import { ISubdelegation } from '../../models/catalogs/subdelegation.model';
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class DepartamentService implements ICrudMethods<IDepartment> {
   private readonly route: string = ENDPOINT_LINKS.Departament;
   private readonly delegationsRoute: string = ENDPOINT_LINKS.Delegation;

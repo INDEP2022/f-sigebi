@@ -6,7 +6,6 @@ import { DeductivesVerificationListComponent } from './deductives-verification-l
 import { DeductivesVerificationFormComponent } from './deductives-verification-form/deductives-verification-form.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
-import { DeductiveVerificationService } from 'src/app/core/services/catalogs/deductive-verification.service';
 
 @NgModule({
   declarations: [
@@ -19,6 +18,5 @@ import { DeductiveVerificationService } from 'src/app/core/services/catalogs/ded
     SharedModule,
     ModalModule.forChild(),
   ],
-  providers: [DeductiveVerificationService],
 })
 export class DeductivesVerificationModule {}

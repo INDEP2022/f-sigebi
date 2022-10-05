@@ -6,7 +6,9 @@ import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IDelegationState } from '../../models/catalogs/delegation-state.model';
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class DelegationStateService implements ICrudMethods<IDelegationState> {
   private readonly route: string = ENDPOINT_LINKS.DelegationState;
   constructor(

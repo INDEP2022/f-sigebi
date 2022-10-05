@@ -43,9 +43,18 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
       version: [null, Validators.required],
     });
     if (this.delegationSate) {
-      this.edit = true;
-      this.delegationStateForm.patchValue(this.delegationSate);
+      this.fillForm();
     }
+  }
+
+  fillForm() {
+    this.edit = true;
+    this.delegationStateForm.patchValue(this.delegationSate);
+    /**
+     * !Agregar funcionalidad para llenar el select
+     * !cuando lo traiga del backend
+     */
+    // const state = this.delegationSate.keyState
   }
 
   getStates(params: ListParams) {
@@ -54,8 +63,7 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
     });
   }
 
-  // ! Cambiar de any a IStateOfRepublic
-  stateChange(state: any) {
+  stateChange(state: IStateOfRepublic) {
     this.delegationStateForm.controls.keyState.setValue(state.cveState);
   }
 

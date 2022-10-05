@@ -5,7 +5,6 @@ import { DelegationStateListComponent } from './delegation-state-list/delegation
 import { DelegationStateFormComponent } from './delegation-state-form/delegation-state-form.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
-import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 
 @NgModule({
   declarations: [DelegationStateListComponent, DelegationStateFormComponent],
@@ -15,6 +14,5 @@ import { DelegationStateService } from 'src/app/core/services/catalogs/delegatio
     SharedModule,
     ModalModule.forChild(),
   ],
-  providers: [DelegationStateService],
 })
 export class DelegationStateModule {}

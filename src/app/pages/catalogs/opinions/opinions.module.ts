@@ -6,7 +6,6 @@ import { OpinionsListComponent } from './opinions-list/opinions-list.component';
 import { OpinionFormComponent } from './opinion-form/opinion-form.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
-import { OpinionService } from 'src/app/core/services/catalogs/opinion.service';
 
 @NgModule({
   declarations: [OpinionsListComponent, OpinionFormComponent],
@@ -16,6 +15,5 @@ import { OpinionService } from 'src/app/core/services/catalogs/opinion.service';
     SharedModule,
     ModalModule.forChild(),
   ],
-  providers: [OpinionService],
 })
 export class OpinionsModule {}

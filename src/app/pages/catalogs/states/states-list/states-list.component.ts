@@ -4,43 +4,43 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IDelegationState } from 'src/app/core/models/catalogs/delegation-state.model';
-import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
+import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { DelegationStateFormComponent } from '../delegation-state-form/delegation-state-form.component';
-import { DELEGATION_STATE_COLUMNS } from './delegation-state-columns';
+import { IStateOfRepublic } from '../../../../core/models/catalogs/state-of-republic.model';
+import { StateFormComponent } from '../state-form/state-form.component';
+import { STATES_COLUMNS } from './states-columns';
 
 @Component({
-  selector: 'app-delegation-state-list',
-  templateUrl: './delegation-state-list.component.html',
+  selector: 'app-states-list',
+  templateUrl: './states-list.component.html',
   styles: [],
 })
-export class DelegationStateListComponent extends BasePage implements OnInit {
+export class StatesListComponent extends BasePage implements OnInit {
   settings = TABLE_SETTINGS;
-  delegationsState: IDelegationState[] = [];
+  states: IStateOfRepublic[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(
-    private delegationStateService: DelegationStateService,
+    private stateService: StateOfRepublicService,
     private modalService: BsModalService
   ) {
     super();
-    this.settings.columns = DELEGATION_STATE_COLUMNS;
+    this.settings.columns = STATES_COLUMNS;
     this.settings.actions.delete = true;
   }
 
   ngOnInit(): void {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getDelegationState());
+      .subscribe(() => this.getDeductives());
   }
 
-  getDelegationState() {
+  getDeductives() {
     this.loading = true;
-    this.delegationStateService.getAll(this.params.getValue()).subscribe({
+    this.stateService.getAll(this.params.getValue()).subscribe({
       next: response => {
-        this.delegationsState = response.data;
+        this.states = response.data;
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -48,26 +48,32 @@ export class DelegationStateListComponent extends BasePage implements OnInit {
     });
   }
 
-  openForm(delegationSate?: IDelegationState) {
+  openForm(state?: IStateOfRepublic) {
     const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
     modalConfig.initialState = {
-      delegationSate,
+      state,
       callback: (next: boolean) => {
-        if (next) this.getDelegationState();
+        if (next) this.getDeductives();
       },
     };
-    this.modalService.show(DelegationStateFormComponent, modalConfig);
+    this.modalService.show(StateFormComponent, modalConfig);
   }
 
-  showDeleteAlert(delegationSate: IDelegationState) {
+  showDeleteAlert(state: IStateOfRepublic) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
+        this.delete(state.cveState);
       }
+    });
+  }
+
+  delete(id: string) {
+    this.stateService.remove(id).subscribe({
+      next: () => this.getDeductives(),
     });
   }
 }

@@ -6,7 +6,9 @@ import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { ILegend } from '../../models/catalogs/legend.model';
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class LegendService implements ICrudMethods<ILegend> {
   private readonly route: string = ENDPOINT_LINKS.Legend;
   constructor(private legendRepository: Repository<ILegend>) {}

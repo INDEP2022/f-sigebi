@@ -92,6 +92,11 @@ const routes: Routes = [
       (await import('./legends/legends.module')).LegendsModule,
     data: { title: 'Leyendas' },
   },
+  {
+    path: 'states',
+    loadChildren: async () =>
+      (await import('./states/states.module')).StatesModule,
+  },
 ];
 
 @NgModule({

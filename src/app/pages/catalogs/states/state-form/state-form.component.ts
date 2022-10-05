@@ -2,24 +2,24 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/ModelForm';
-import { IOpinion } from 'src/app/core/models/catalogs/opinion.model';
-import { OpinionService } from 'src/app/core/services/catalogs/opinion.service';
+import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
+import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
-  selector: 'app-opinion-form',
-  templateUrl: './opinion-form.component.html',
+  selector: 'app-state-form',
+  templateUrl: './state-form.component.html',
   styles: [],
 })
-export class OpinionFormComponent extends BasePage implements OnInit {
-  opinionForm: ModelForm<IOpinion>;
-  title: string = 'Dictamen';
+export class StateFormComponent extends BasePage implements OnInit {
+  stateForm: ModelForm<IStateOfRepublic>;
+  title: string = 'Estado';
   edit: boolean = false;
-  opinion: IOpinion;
+  state: IStateOfRepublic;
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private opinionService: OpinionService
+    private stateService: StateOfRepublicService
   ) {
     super();
   }
@@ -29,16 +29,17 @@ export class OpinionFormComponent extends BasePage implements OnInit {
   }
 
   private prepareForm() {
-    this.opinionForm = this.fb.group({
-      id: [null],
-      description: [null, Validators.required],
-      noRegistration: [null, Validators.required],
-      dict_ofi: [null, [Validators.required, Validators.maxLength(1)]],
-      areaProcess: [null, [Validators.required, Validators.maxLength(2)]],
+    this.stateForm = this.fb.group({
+      cveState: [null, [Validators.required]],
+      descState: [null, [Validators.required]],
+      codeState: [null, [Validators.required]],
+      version: [null, [Validators.required]],
+      timeZonaStd: [null, [Validators.required]],
+      timeZonaView: [null, [Validators.required]],
     });
-    if (this.opinion != null) {
+    if (this.state != null) {
       this.edit = true;
-      this.opinionForm.patchValue(this.opinion);
+      this.stateForm.patchValue(this.state);
     }
   }
   close() {
@@ -51,7 +52,7 @@ export class OpinionFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.opinionService.create(this.opinionForm.value).subscribe({
+    this.stateService.create(this.stateForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -59,8 +60,8 @@ export class OpinionFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.opinionService
-      .update(this.opinion.id, this.opinionForm.value)
+    this.stateService
+      .update(this.state.cveState, this.stateForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
@@ -68,7 +69,7 @@ export class OpinionFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);

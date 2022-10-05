@@ -6,7 +6,9 @@ import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IDeductive } from '../../models/catalogs/deductive.model';
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class DeductiveService implements ICrudMethods<IDeductive> {
   private readonly route: string = ENDPOINT_LINKS.Deductive;
   constructor(private deductiveRepository: Repository<IDeductive>) {}

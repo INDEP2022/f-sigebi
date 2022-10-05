@@ -6,7 +6,9 @@ import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IRegionalDelegation } from '../../models/catalogs/regional-delegation.model';
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class RegionalDelegationService
   implements ICrudMethods<IRegionalDelegation>
 {

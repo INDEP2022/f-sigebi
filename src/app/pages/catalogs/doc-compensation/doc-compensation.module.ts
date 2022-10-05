@@ -5,7 +5,6 @@ import { DocCompensationListComponent } from './doc-compensation-list/doc-compen
 import { DocCompensationFormComponent } from './doc-compensation-form/doc-compensation-form.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
-import { DocCompensationService } from 'src/app/core/services/catalogs/doc-compensation.service';
 
 @NgModule({
   declarations: [DocCompensationListComponent, DocCompensationFormComponent],
@@ -15,6 +14,5 @@ import { DocCompensationService } from 'src/app/core/services/catalogs/doc-compe
     SharedModule,
     ModalModule.forChild(),
   ],
-  providers: [DocCompensationService],
 })
 export class DocCompensationModule {}

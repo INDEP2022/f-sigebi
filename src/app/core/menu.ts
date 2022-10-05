@@ -67,6 +67,10 @@ export const MENU: IMenuItem[] = [
         link: '/pages/catalogs/legends',
       },
       {
+        label: 'Estados',
+        link: '/pages/catalogs/states',
+      },
+      {
         label: 'Tipo Bien',
         link: '/pages/catalogs/good-types',
       },

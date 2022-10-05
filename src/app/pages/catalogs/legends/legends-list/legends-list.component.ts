@@ -49,8 +49,7 @@ export class LegendsListComponent extends BasePage implements OnInit {
   }
 
   openForm(legend?: ILegend) {
-    const modalConfig = MODAL_CONFIG;
-    modalConfig.class = 'modal-dialog-centered';
+    const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
     modalConfig.initialState = {
       legend,
       callback: (next: boolean) => {

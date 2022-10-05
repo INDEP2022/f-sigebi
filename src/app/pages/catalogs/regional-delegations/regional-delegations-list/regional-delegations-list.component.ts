@@ -36,10 +36,10 @@ export class RegionalDelegationsListComponent
   ngOnInit(): void {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getExample());
+      .subscribe(() => this.getReginalDelegations());
   }
 
-  getExample() {
+  getReginalDelegations() {
     this.loading = true;
     this.regionalDelegationService.getAll(this.params.getValue()).subscribe({
       next: response => {
@@ -56,7 +56,7 @@ export class RegionalDelegationsListComponent
     modalConfig.initialState = {
       reginalDelegation,
       callback: (next: boolean) => {
-        if (next) this.getExample();
+        if (next) this.getReginalDelegations();
       },
     };
     this.modalService.show(RegionalDelegationFormComponent, modalConfig);
