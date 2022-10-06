@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
   selector: 'app-modal',
   template: `
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header mb-3">
         <ng-content select="[header]"></ng-content>
       </div>
       <div class="modal-body">

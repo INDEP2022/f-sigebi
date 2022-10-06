@@ -24,6 +24,13 @@ const routes: Routes = [
     redirectTo: 'home',
     pathMatch: 'full',
   },
+  {
+    path: 'administrative-processes',
+    loadChildren:  async () =>
+      (await import('./administrative-processes/administrative-processes.module'))
+      .AdministrativeProcessesModule,
+    data: { title: 'Procesos Administrativos' },
+  },
 ];
 
 @NgModule({

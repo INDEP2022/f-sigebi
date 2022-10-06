@@ -44,6 +44,33 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
+  //Administración
+  {
+    label: 'Administración',
+    icon: 'bx-folder',
+    subItems: [
+      {
+        label: 'Reportes',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Almacenes',
+            link: '/pages/administrative-processes/warehouse-reports',
+          },
+        ]
+      },
+      {
+        label: 'Empresas',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Resumen Info Financiera',
+            link: '/pages/administrative-processes/summary-financial-info',
+          },
+        ]
+      },
+    ],
+  },
   {
     label: 'Multi nivel',
     icon: 'bx-share-alt',
