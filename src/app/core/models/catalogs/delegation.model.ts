@@ -7,7 +7,7 @@ export interface IDelegation {
   description: string;
   addressOffice: string;
   regionalDelegate: string;
-  cveZone: string;
+  cveZone?: string;
   city: string;
   status: number;
   iva: number;
@@ -15,7 +15,7 @@ export interface IDelegation {
   zoneContractCVE: number;
   zoneVigilanceCVE: number;
   diffHours: number;
-  version: number;
+  version?: number;
   creationUser?: string;
   creationDate?: Date;
   editionUser?: string;

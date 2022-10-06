@@ -49,6 +49,9 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
     if (error.status === 400) {
       this.onLoadToast('error', error?.error?.message, 'Error' + error.status);
     }
+    if (error.status === 404) {
+      this.onLoadToast('error', error?.error?.message, 'Error' + error.status);
+    }
     if (error.status === 500) {
       this.onLoadToast('error', error?.error?.message, 'Error' + error.status);
     }

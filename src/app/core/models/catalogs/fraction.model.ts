@@ -1,18 +1,19 @@
 import { INorm } from './norm.model';
+import { ISiabClasification } from './siab-clasification.model';
 
 export interface IFraction {
   id?: number;
   code: string;
   level: string;
   description: string;
-  parentId: number;
+  parentId?: number;
   normId: INorm | number;
   unit: string;
-  clasificationId: number;
-  userCreation: string;
-  creationDate: Date;
-  userModification: string;
-  modificationDate: Date;
+  clasificationId: number | ISiabClasification;
+  userCreation?: string;
+  creationDate?: Date;
+  userModification?: string;
+  modificationDate?: Date;
   version: number;
   relevantTypeId: number;
   codeErp1: string;
