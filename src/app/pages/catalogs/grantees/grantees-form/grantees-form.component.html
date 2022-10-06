@@ -1,0 +1,185 @@
+<app-modal>
+    <div header>
+      <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+    </div>
+    <div body>
+      <form [formGroup]="granteesForm" class="form-material">
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <form-field [control]="granteesForm.get('id')" label="Id">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="id"
+                placeholder="Id" />
+            </form-field>
+          </div>
+  
+          <div class="col-md-4 offset-md-4">
+            <form-field
+              [control]="granteesForm.get('usrStatus')"
+              label="Estatus de usuario">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="usrStatus"
+                placeholder="Estatus de usuario" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <form-field
+                  [control]="granteesForm.get('description')"
+                  label="Descripción">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="description"
+                    placeholder="Descripción" />
+                </form-field>
+              </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <form-field 
+              [control]="granteesForm.get('puesto')" 
+              label="Puesto donatarios">
+              <input 
+                type="text" 
+                class="form-control" 
+                formControlName="puesto" 
+                placeholder="Puesto donatarios" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field 
+              [control]="granteesForm.get('type')" 
+              label="Tipo donatarios">
+              <input 
+                type="number" 
+                class="form-control" 
+                formControlName="type" 
+                placeholder="Tipo donatarios" />
+            </form-field>
+          </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <form-field 
+            [control]="granteesForm.get('razonSocial')" 
+            label="Razón Social">
+            <input 
+              type="text" 
+              class="form-control" 
+              formControlName="razonSocial" 
+              placeholder="Razón Social" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field 
+            [control]="granteesForm.get('street')" 
+            label="Calle">
+            <input 
+              type="text" 
+              class="form-control" 
+              formControlName="street" 
+              placeholder="Calle" />
+          </form-field>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-3">
+        <form-field 
+          [control]="granteesForm.get('noInside')" 
+          label="No. Interior">
+          <input 
+            type="text" 
+            class="form-control" 
+            formControlName="noInside" 
+            placeholder="No. Interior" />
+        </form-field>
+      </div>
+      <div class="col-md-3">
+        <form-field 
+          [control]="granteesForm.get('noExterior')" 
+          label="No. Exterior">
+          <input 
+            type="text" 
+            class="form-control" 
+            formControlName="noExterior" 
+            placeholder="No. Exterior" />
+        </form-field>
+      </div>
+      <div class="col-md-6">
+        <form-field 
+          [control]="granteesForm.get('col')" 
+          label="Colonia">
+          <input 
+            type="text" 
+            class="form-control" 
+            formControlName="col" 
+            placeholder="Colonia" />
+        </form-field>
+      </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4">
+      <form-field 
+        [control]="granteesForm.get('nommun')" 
+        label="Nombre municipio">
+        <input 
+          type="text" 
+          class="form-control" 
+          formControlName="nommun" 
+          placeholder="Nombre municipio" />
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field 
+        [control]="granteesForm.get('nomedo')" 
+        label="Nombre estado">
+        <input 
+          type="text" 
+          class="form-control" 
+          formControlName="nomedo" 
+          placeholder="Nombre estado" />
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field 
+        [control]="granteesForm.get('cp')" 
+        label="Código postal">
+        <input 
+          type="text" 
+          class="form-control" 
+          formControlName="cp" 
+          placeholder="Código postal" />
+      </form-field>
+    </div>
+  </div>
+
+      </form>
+    </div>
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <confirm-button
+            [disabled]="granteesForm.invalid"
+            [loading]="loading"
+            (confirm)="confirm()">
+          </confirm-button>
+        </div>
+        <div class="m-3">
+          <button type="button" class="btn btn-danger active" (click)="close()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </app-modal>

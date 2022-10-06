@@ -1,0 +1,58 @@
+<app-card [header]="true" [footer]="true">
+    <div class="ch-content" header>
+      <h5 class="title">ACUMULADO ANUAL DE BIENES</h5>
+     
+    </div>
+  
+    <div body>
+      
+        <form class="form-material" [formGroup]="form">
+            <div class="row">
+                <div class="col-md-4">
+                    <form-field [control]="form.get('delegation')" >
+                        <ngx-select
+			            	typeToSearchText="Escriba 3 o más caracteres" 
+                            label="Delegación"
+                            [form]="form"
+                            control="delegation">
+				    	</ngx-select>
+                    </form-field>
+                </div>
+            </div>
+            <div class="row pt-5">
+                <div class="col-md-4">
+                    <form-field [control]="form.get('subDelegation')" >
+                        <ngx-select
+			            	typeToSearchText="Escriba 3 o más caracteres" 
+                            label="Sub Delegación"
+                            [form]="form"
+                            control="subDelegation">
+				    	</ngx-select>
+                    </form-field>
+                </div>
+            </div>
+            <div class="row pt-5">
+                <div class="col-md-2">
+                    <form-field [control]="form.get('fromDate')" label="Año Inicial">
+                        <input class="form-control" formControlName="fromDate">
+                    </form-field>
+                </div>
+                <div class="col-md-2">
+                    <form-field [control]="form.get('toDate')" label="Año Final">
+                        <input class="form-control" formControlName="toDate">
+                    </form-field>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div footer>
+        <div class="d-flex justify-content-center">
+            <div class="m-3">
+                <button type="button" class="btn btn-primary active" [disabled]="!form.valid">
+                  Imprimir
+                </button>
+            </div>
+        </div>
+      </div>
+  </app-card>
+  

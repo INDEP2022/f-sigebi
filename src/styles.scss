@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 * {
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .swal2-container.swal2-top-end > .swal2-popup,
@@ -122,4 +122,9 @@
   background-size: 100px 100px;
   z-index: 100;
   content: '';
+}
+
+.btn-header {
+  transform: scale(95%);
+  padding-top: 8px;
 }
