@@ -1,12 +1,15 @@
 export interface IStateOfRepublic {
-  stateCode: string;
-  entityName: string | null;
-  creationUser: string;
-  creationDate: Date;
-  editionUser: string;
-  modificationDate: Date;
-  keyState: number;
-  version: number | null;
-  stdTimezone: string;
-  verTimezone: string;
+  cveState: string;
+  descState: string;
+  codeState: string;
+  noRegister?: string;
+  nameTable?: string;
+  abbreviation?: any;
+  risk?: any;
+  version: string;
+  timeZonaStd: string;
+  timeZonaView: string;
+  creationUser?: string;
+  editionUser?: string;
+  fecha_modificacion?: Date;
 }

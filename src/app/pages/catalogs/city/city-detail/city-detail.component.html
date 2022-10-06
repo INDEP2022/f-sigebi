@@ -1,0 +1,101 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ status }} CIUDAD</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('noRegister')"
+            label="Número de Registro">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noRegister"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('idCity')" label="Id de Ciudad">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="idCity"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('nameCity')"
+            label="Nombre de la Ciudad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nameCity" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('cveState')" label="Ciudad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cveState" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <form-field [control]="form.get('noDelegation')" label="Delegacíon">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noDelegation"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('noSubDelegation')"
+            label="Subdelegación">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noSubDelegation"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('legendOffice')" label="Oficina">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="legendOffice" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
