@@ -1,3 +1,4 @@
+import { DOCUMENTS_RECEPTION_ROUTES } from '../common/constants/documents-reception-routes';
 import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
@@ -375,6 +376,7 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
+  ...DOCUMENTS_RECEPTION_ROUTES,
   {
     label: 'Procesos Ejecutivos',
     icon: 'bx-folder',
