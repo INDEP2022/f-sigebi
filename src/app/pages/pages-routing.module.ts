@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { async } from 'rxjs';
 
 const routes: Routes = [
   {
@@ -38,6 +39,12 @@ const routes: Routes = [
   },
   
   {
+    path: 'final-destination-process',
+    loadChildren: async() =>
+    (await import('./final-destination-process/final-destination-process.module')).FinalDestinationProcessModule,
+    data: { Title: 'Destino final' },
+  },
+  {
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',
@@ -54,6 +61,12 @@ const routes: Routes = [
     loadChildren: () => import('./legal-processes/legal-processes.module')
       .then(m => m.LegalProcessesModule),
   },
+  {
+    path: 'executive-processes',
+    loadChildren: async () =>
+      (await import('./executive-processes/executive-processes.module')).ExecutiveProcessesModule,
+  },
+  
 ];
 
 @NgModule({
