@@ -121,12 +121,52 @@ export const MENU: IMenuItem[] = [
         link: '/pages/catalogs/good-subtypes',
       },
       {
+        label: 'Ssubtipo Bien',
+        link: '/pages/catalogs/good-ssubtypes',
+      },
+      {
+        label: 'Sssubtipo Bien',
+        link: '/pages/catalogs/good-sssubtypes',
+      },
+      {
         label: 'Delegacion',
         link: '/pages/catalogs/delegations',
       },
       {
         label: 'Sub Delegacion',
         link: '/pages/catalogs/sub-delegations',
+      },
+      {
+        label: 'Sat Clasificacion',
+        link: '/pages/catalogs/sat-clasification',
+      },
+      {
+        label: 'Sat Subclasificacion',
+        link: '/pages/catalogs/sat-subclasification',
+      },
+      {
+        label: 'Servicios',
+        link: '/pages/catalogs/services',
+      },
+      {
+        label: 'Series Ifai',
+        link: '/pages/catalogs/ifai-series',
+      },
+      {
+        label: 'Situacion Bien',
+        link: '/pages/catalogs/good-situation',
+      },
+      {
+        label: 'Soporte Legal',
+        link: '/pages/catalogs/legal-support',
+      },
+      {
+        label: 'Doc. Resarcimiento Sat XML',
+        link: '/pages/catalogs/doc-compensation-sat-xml',
+      },
+      {
+        label: 'Donatorios',
+        link: '/pages/catalogs/grantees',
       },
       {
         label: 'Lotes',

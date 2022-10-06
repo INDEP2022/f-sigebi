@@ -98,6 +98,45 @@ const routes: Routes = [
       (await import('./states/states.module')).StatesModule,
   },
   {
+    path: 'sat-clasification',
+    loadChildren: async () =>
+      (await import('./sat-classification/sat-classification.module'))
+        .SatClasificationModule,
+    data: { title: 'Sat Clasificacion' },
+  },
+  {
+    path: 'sat-subclasification',
+    loadChildren: async () =>
+      (await import('./sat-subclassification/sat-subclassification.module'))
+        .SatSubclassificationModule,
+    data: { title: 'Sat Subclasificacion' },
+  },
+  {
+    path: 'services',
+    loadChildren: async () =>
+      (await import('./cat-services/cat-services.module')).CatServicesModule,
+    data: { title: 'Servicios' },
+  },
+  {
+    path: 'ifai-series',
+    loadChildren: async () =>
+      (await import('./ifai-series/ifai-series.module')).IfaiSeriesModule,
+    data: { title: 'Series Ifai' },
+  },
+  {
+    path: 'good-situation',
+    loadChildren: async () =>
+      (await import('./good-situation/good-situation.module'))
+        .GoodSituationModule,
+    data: { title: 'Situacion Bien' },
+  },
+  {
+    path: 'legal-support',
+    loadChildren: async () =>
+      (await import('./legal-support/legal-support.module')).LegalSupportModule,
+    data: { title: 'Soporte Legal' },
+  },
+  {
     path: 'label-okey',
     loadChildren: async () =>
       (await import('./label-okey/label-okey.module')).LabelOkeyModule,
@@ -162,6 +201,62 @@ const routes: Routes = [
     data: { title: 'Donatorios' },
   },
   {
+    path: 'label-okey',
+    loadChildren: async () =>
+      (await import('./label-okey/label-okey.module')).LabelOkeyModule,
+    data: { title: 'Etiquetas Bien' },
+  },
+  {
+    path: 'fractions',
+    loadChildren: async () =>
+      (await import('./fractions/fractions.module')).FractionsModule,
+    data: { title: 'Fracciones' },
+  },
+  {
+    path: 'drawers',
+    loadChildren: async () =>
+      (await import('./drawers/drawers.module')).DrawersModule,
+    data: { title: 'Gavetas' },
+  },
+  {
+    path: 'management',
+    loadChildren: async () =>
+      (await import('./management/management.module')).ManagementModule,
+    data: { title: 'Gestión' },
+  },
+  {
+    path: 'save-values',
+    loadChildren: async () =>
+      (await import('./save-values/save-values.module')).SaveValuesModule,
+    data: { title: 'Gestión' },
+  },
+  {
+    path: 'identifier',
+    loadChildren: async () =>
+      (await import('./identifiers/identifiers.module')).IdentifiersModule,
+    data: { title: 'Identificador' },
+  },
+  {
+    path: 'indicated',
+    loadChildren: async () =>
+      (await import('./indicated/indicated.module')).IndicatedModule,
+    data: { title: 'Indiciados' },
+  },
+  {
+    path: 'good-ssubtypes',
+    loadChildren: async () =>
+      (await import('./good-ssubtypes/good-ssubtypes.module'))
+        .GoodSsubtypesModule,
+    data: { title: 'Ssubtipo Bien' },
+  },
+  {
+    path: 'good-sssubtypes',
+    loadChildren: async () =>
+      (await import('./good-sssubtypes/good-sssubtypes.module'))
+        .GoodSssubtypesModule,
+    data: { title: 'Sssubtipo bien' },
+  },
+  {
     path: 'lawyer',
     loadChildren: async () =>
       (await import('./lawyer/lawyer.module')).LawyerModule,
@@ -223,15 +318,13 @@ const routes: Routes = [
   {
     path: 'batch',
     loadChildren: async () =>
-      (await import('./batch/batch.module'))
-        .BatchModule,
+      (await import('./batch/batch.module')).BatchModule,
     data: { title: 'Lotes' },
   },
   {
     path: 'minpub',
     loadChildren: async () =>
-      (await import('./minpub/minpub.module'))
-        .MinpubModule,
+      (await import('./minpub/minpub.module')).MinpubModule,
     data: { title: 'Minpub' },
   },
   {
@@ -244,8 +337,7 @@ const routes: Routes = [
   {
     path: 'image-media',
     loadChildren: async () =>
-      (await import('./image-media/image-media.module'))
-        .ImageMediaModule,
+      (await import('./image-media/image-media.module')).ImageMediaModule,
     data: { title: 'Medio Imagen' },
   },
   {
@@ -272,22 +364,19 @@ const routes: Routes = [
   {
     path: 'norms',
     loadChildren: async () =>
-      (await import('./norms/norms.module'))
-        .NormsModule,
+      (await import('./norms/norms.module')).NormsModule,
     data: { title: 'Normas' },
   },
   {
     path: 'notary',
     loadChildren: async () =>
-      (await import('./notary/notary.module'))
-        .NotaryModule,
+      (await import('./notary/notary.module')).NotaryModule,
     data: { title: 'Notarios' },
   },
   {
     path: 'paragraphs',
     loadChildren: async () =>
-      (await import('./paragraphs/paragraphs.module'))
-        .ParagraphsModule,
+      (await import('./paragraphs/paragraphs.module')).ParagraphsModule,
     data: { title: 'Párrafos' },
   },
 ];

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -47,19 +47,18 @@ export class LabelOkeyListComponent extends BasePage implements OnInit {
     });
   }
 
-  openModal(context?: Partial<LabelOkeyFormComponent>) {
-    const modalRef = this.modalService.show(LabelOkeyFormComponent, {
-      initialState: context,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getLabelsOkey();
-    });
-  }
-
   openForm(labelOKey?: ILabelOKey) {
-    this.openModal({labelOKey});
+    let config: ModalOptions = {
+      initialState:{
+        labelOKey,
+        callback: (next: boolean) => {
+          if(next) this.getLabelsOkey()
+        }
+      },
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(LabelOkeyFormComponent, config);
   }
 
   delete(labelOKey: ILabelOKey) {
@@ -68,7 +67,7 @@ export class LabelOkeyListComponent extends BasePage implements OnInit {
       'Eliminar',
       '¿Desea eliminar este registro?'
     ).then(question => {
-      if(question.isConfirmed){
+      if (question.isConfirmed) {
         this.labelOkeyService.remove(labelOKey.id).subscribe({
           next: data => this.getLabelsOkey(),
           error: error => (this.loading = false),
