@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -12,21 +12,18 @@ import { INDICATED_COLUMNS } from './indicated-columns';
 @Component({
   selector: 'app-indicated-list',
   templateUrl: './indicated-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class IndicatedListComponent extends BasePage implements OnInit {
-
   settings = TABLE_SETTINGS;
   paragraphs: IIndiciados[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  @Output() refresh = new EventEmitter<true>();
-  
+
   constructor(
     private indicatedService: IndiciadosService,
     private modalService: BsModalService
-  ) { 
+  ) {
     super();
     this.settings.columns = INDICATED_COLUMNS;
     this.settings.actions.delete = true;
@@ -38,7 +35,7 @@ export class IndicatedListComponent extends BasePage implements OnInit {
       .subscribe(() => this.getIndicated());
   }
 
-  getIndicated(){
+  getIndicated() {
     this.loading = true;
     this.indicatedService.getAll(this.params.getValue()).subscribe({
       next: response => {
@@ -50,20 +47,18 @@ export class IndicatedListComponent extends BasePage implements OnInit {
     });
   }
 
-
-  openModal(context?: Partial<IndicatedFormComponent>) {
-    const modalRef = this.modalService.show(IndicatedFormComponent, {
-      initialState: context,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getIndicated();
-    });
-  }
-
   openForm(indicated?: IIndiciados) {
-    this.openModal({indicated});
+    let config: ModalOptions = {
+      initialState: {
+        indicated,
+        callback: (next: boolean) => {
+          if (next) this.getIndicated();
+        },
+      },
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(IndicatedFormComponent, config);
   }
 
   delete(indicated: IIndiciados) {
@@ -72,18 +67,12 @@ export class IndicatedListComponent extends BasePage implements OnInit {
       'Eliminar',
       '¿Desea eliminar este registro?'
     ).then(question => {
-      if(question.isConfirmed){
+      if (question.isConfirmed) {
         this.indicatedService.remove(indicated.id).subscribe({
           next: data => this.getIndicated(),
           error: error => (this.loading = false),
         });
       }
     });
-  }
-
-  handleSuccess() {
-    this.loading = false;
-    this.refresh.emit(true);
-    this.modalService.hide();
   }
 }

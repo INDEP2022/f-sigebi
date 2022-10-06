@@ -1,0 +1,95 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="catserviceForm" class="form-material">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="catserviceForm.get('code')" label="Código">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="code"
+              placeholder="Código de serie ej. 1123" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="catserviceForm.get('unaffordabilityCriterion')"
+            label="Criterio de incosteabilidad">
+            <input
+              type="string"
+              class="form-control"
+              formControlName="unaffordabilityCriterion"
+              placeholder="Criterio de incosteabilidad" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="catserviceForm.get('subaccount')"
+            label="Subcuenta">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="subaccount"
+              placeholder="Subcuenta" />
+          </form-field>
+        </div>
+
+        <div class="col-md-12">
+          <form-field
+            [control]="catserviceForm.get('description')"
+            label="Descripción">
+            <textarea
+              type="text"
+              class="form-control"
+              formControlName="description"
+              placeholder="Descripción">
+            </textarea>
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="catserviceForm.get('registryNumber')"
+            label="No. de registro">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="registryNumber"
+              placeholder="No. de registro" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="catserviceForm.get('cost')" label="Costo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cost"
+              placeholder="Costo" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="catserviceForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

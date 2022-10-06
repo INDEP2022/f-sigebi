@@ -5,34 +5,34 @@ import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { ISatSubclasification } from '../../models/catalogs/sat-subclasification.model';
+import { ISatSubclassification } from '../../models/catalogs/sat-subclassification.model';
 @Injectable({
   providedIn: 'root',
 })
-export class SATSubclasificationService
-  implements ICrudMethods<ISatSubclasification>
+export class SATSubclassificationService
+  implements ICrudMethods<ISatSubclassification>
 {
   private readonly route: string = ENDPOINT_LINKS.SATSubclasification;
   constructor(
-    private satSubclasificationRepository: Repository<ISatSubclasification>
+    private satSubclasificationRepository: Repository<ISatSubclassification>
   ) {}
 
-  getAll(params?: ListParams): Observable<IListResponse<ISatSubclasification>> {
+  getAll(params?: ListParams): Observable<IListResponse<ISatSubclassification>> {
     return this.satSubclasificationRepository.getAllPaginated(
       this.route,
       params
     );
   }
 
-  getById(id: string | number): Observable<ISatSubclasification> {
+  getById(id: string | number): Observable<ISatSubclassification> {
     return this.satSubclasificationRepository.getById(this.route, id);
   }
 
-  create(model: ISatSubclasification): Observable<ISatSubclasification> {
+  create(model: ISatSubclassification): Observable<ISatSubclassification> {
     return this.satSubclasificationRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: ISatSubclasification): Observable<Object> {
+  update(id: string | number, model: ISatSubclassification): Observable<Object> {
     return this.satSubclasificationRepository.update(this.route, id, model);
   }
 

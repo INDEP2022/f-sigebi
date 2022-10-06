@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ModelForm } from 'src/app/core/interfaces/ModelForm';
 import { ILabelOKey } from 'src/app/core/models/catalogs/label-okey.model';
 import { LabelOkeyService } from 'src/app/core/services/catalogs/label-okey.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -12,12 +13,9 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class LabelOkeyFormComponent extends BasePage implements OnInit {
   labelOKey: ILabelOKey;
-  title: string = 'Crear etiqueta bien';
+  title: string = 'etiqueta bien';
   edit: boolean = false;
-
-  labelOkeyForm: FormGroup = new FormGroup({});
-
-  @Output() refresh = new EventEmitter<true>();
+  labelOkeyForm: ModelForm<ILabelOKey>;
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -46,23 +44,25 @@ export class LabelOkeyFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.labelOkeyService.create(this.labelOkeyForm.value).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
-    ) 
-  }
-
-  update() {
-    this.loading = true;
-    this.labelOkeyService.update(this.labelOKey.id, this.labelOkeyForm.value).subscribe({
+    this.labelOkeyService.create(this.labelOkeyForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
   }
 
+  update() {
+    this.loading = true;
+    this.labelOkeyService
+      .update(this.labelOKey.id, this.labelOkeyForm.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+  }
+
   handleSuccess() {
     this.loading = false;
-    this.refresh.emit(true);
+    this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 

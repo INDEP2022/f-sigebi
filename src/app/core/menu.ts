@@ -121,12 +121,92 @@ export const MENU: IMenuItem[] = [
         link: '/pages/catalogs/good-subtypes',
       },
       {
+        label: 'Ssubtipo Bien',
+        link: '/pages/catalogs/good-ssubtypes',
+      },
+      {
+        label: 'Sssubtipo Bien',
+        link: '/pages/catalogs/good-sssubtypes',
+      },
+      {
         label: 'Delegacion',
         link: '/pages/catalogs/delegations',
       },
       {
         label: 'Sub Delegacion',
         link: '/pages/catalogs/sub-delegations',
+      },
+      {
+        label: 'Sat Clasificacion',
+        link: '/pages/catalogs/sat-clasification',
+      },
+      {
+        label: 'Tipo Docto',
+        link: '/pages/catalogs/type-docto',
+      },
+      {
+        label: 'Tipo Siniestro',
+        link: '/pages/catalogs/type-sinister',
+      },
+      {
+        label: 'Tipo de Almacenes',
+        link: '/pages/catalogs/type-wharehouse',
+      },
+      {
+        label: 'Tipo de Servicios',
+        link: '/pages/catalogs/type-services',
+      },
+      {
+        label: 'Tipo order servicio',
+        link: '/pages/catalogs/type-order-service',
+      },
+      {
+        label: 'Tipo relevante',
+        link: '/pages/catalogs/type-relevant',
+      },
+      {
+        label: 'Zona Geográficas',
+        link: '/pages/catalogs/zone-geographic',
+      },
+      {
+        label: 'Conclusion siniestros',
+        link: '/pages/catalogs/claim-conclusion',
+      },
+      {
+        label: 'Código estado',
+        link: '/pages/catalogs/status-code',
+      },
+      {
+        label: 'Documentos resarcimiento sat',
+        link: '/pages/catalogs/doc-compensation-sat',
+      },
+      {
+        label: 'Sat Subclasificacion',
+        link: '/pages/catalogs/sat-subclasification',
+      },
+      {
+        label: 'Servicios',
+        link: '/pages/catalogs/services',
+      },
+      {
+        label: 'Series Ifai',
+        link: '/pages/catalogs/ifai-series',
+      },
+      {
+        label: 'Situacion Bien',
+        link: '/pages/catalogs/good-situation',
+      },
+      {
+        label: 'Soporte Legal',
+        link: '/pages/catalogs/legal-support',
+      },
+      {
+        label: 'Doc. Resarcimiento Sat XML',
+        link: '/pages/catalogs/doc-compensation-sat-xml',
+      },
+      {
+        label: 'Donatorios',
+        link: '/pages/catalogs/grantees',
       },
       {
         label: 'Lotes',
@@ -293,7 +373,7 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Actas de destino',
         link: '/pages/final-destination-process/destination-acts',
-      }
+      },
     ],
   },
   ...DOCUMENTS_RECEPTION_ROUTES,
@@ -371,7 +451,6 @@ export const MENU: IMenuItem[] = [
         label: 'Aprobación donación',
         link: '/pages/executive-processes/pe-ad-m-donation-approval',
       },
-      
     ],
   },
 ];
