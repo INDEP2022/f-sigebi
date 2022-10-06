@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { async } from 'rxjs';
 
 const routes: Routes = [
   {
@@ -48,6 +49,12 @@ const routes: Routes = [
     data: { title: 'Inicio' },
   },
 
+  {
+    path: 'final-destination-process',
+    loadChildren: async() =>
+    (await import('./final-destination-process/final-destination-process.module')).FinalDestinationProcessModule,
+    data: { Title: 'Destino final' },
+  },
   {
     path: '',
     redirectTo: 'home',
