@@ -130,7 +130,7 @@ export class ConversionActDetailComponent implements OnInit {
   }
 
   back(){
-    this.router.navigate(['pages/administration/conversion-act']);
+    this.router.navigate(['pages/administrative-processes/conversion-act']);
   }
 
   save(){

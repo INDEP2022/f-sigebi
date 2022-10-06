@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { PasswordModalComponent } from '../password-modal/password-modal.component';
+
 
 export interface Example{
   idConversion: number,
@@ -57,24 +57,26 @@ export class ConversionManagementComponent implements OnInit {
     }
   ]
   //
-  public saved: boolean = true;
+   saved: boolean = true;
   //
-  public good: GoodsExample;
+   generarPass: boolean= false;
+  //
+   good: GoodsExample;
 
   //Reactive Forms
-  public form: FormGroup;
+   form: FormGroup;
   // Variable para la contraseña
-  private _password: string;
+   password: string;
 
-  public get idConversion() { return this.form.get('idConversion'); }
-  public get noBien() { return this.form.get('noBien'); }
-  public get date() { return this.form.get('date'); }
-  public get tipo() { return this.form.get('tipo'); }
-  public get noExpediente() { return this.form.get('noExpediente'); }
-  public get actaConversion() { return this.form.get('actaConversion'); }
-  public get desStatus() { return this.form.get('desStatus'); }
-  public get actaER() { return this.form.get('actaER'); }
-  public get description() { return this.form.get('description'); }
+   get idConversion() { return this.form.get('idConversion'); }
+   get noBien() { return this.form.get('noBien'); }
+   get date() { return this.form.get('date'); }
+   get tipo() { return this.form.get('tipo'); }
+   get noExpediente() { return this.form.get('noExpediente'); }
+   get actaConversion() { return this.form.get('actaConversion'); }
+   get desStatus() { return this.form.get('desStatus'); }
+   get actaER() { return this.form.get('actaER'); }
+   get description() { return this.form.get('description'); }
  // public get goods(){return this.form.controls['goods'] as FormArray;}
 
   constructor(private fb: FormBuilder) {  }
@@ -132,6 +134,20 @@ export class ConversionManagementComponent implements OnInit {
 
   openDialogPW(){
  
+  }
+
+  generatePaswword() {
+    this.generarPass = true;
+    var pass = '';
+    var str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    for (let i = 1; i <= 8; i++) {
+      var char = Math.floor(Math.random()
+        * str.length + 1);
+      pass += str.charAt(char)
+    }
+    this.password = pass;
+    console.log(this.password);
+    
   }
 
 /*   showToast(status: NbComponentStatus) {

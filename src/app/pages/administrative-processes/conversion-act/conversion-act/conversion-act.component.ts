@@ -208,7 +208,7 @@ export class ConversionActComponent implements OnInit {
   }
 
   detail() {
-    this.router.navigate(['pages/administration/conversion-act/act-detail']);
+    this.router.navigate(['pages/administrative-processes/conversion-act/act-detail']);
   }
 
   add() {
