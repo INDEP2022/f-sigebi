@@ -8,11 +8,13 @@ const routes: Routes = [
     pathMatch: 'prefix',
     component: AdministrativeProcessesComponent,
     children: [
-       /*{
-        path: 'numerary-operator', loadChildren: () => import('./numerary-operator/numerary-operator.module')
-          .then(m => m.NumeraryOperatorModule)
+       {
+        path: 'numerary-operator',
+        loadChildren: async () =>
+          (await import('./numerary-operator/numerary-operator.module')).NumeraryOperatorModule,
+        data: { title: 'Numerario Operado' },
       },
-      {
+      /*{
         path: 'numerary-physics', loadChildren: () => import('./numerary-physics/numerary-physics.module')
           .then(m => m.NumeraryPhysicsModule)
       },*/
