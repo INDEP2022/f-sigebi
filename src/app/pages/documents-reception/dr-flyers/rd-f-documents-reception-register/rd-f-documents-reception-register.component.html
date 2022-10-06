@@ -35,7 +35,7 @@
             </form-radio>
           </div>
         </div>
-        <div class="row pt-3">
+        <div class="row pt-5">
           <form-field
             class="col-md-6"
             [control]="documentsReceptionForm.get('identifier')">
@@ -59,7 +59,7 @@
           </form-field>
         </div>
 
-        <div class="row pt-3">
+        <div class="row pt-5">
           <form-field
             class="col-md-6"
             [control]="documentsReceptionForm.get('subject')">
@@ -104,12 +104,8 @@
           <form-field
             class="col-md-4"
             [control]="documentsReceptionForm.get('reception')"
-            label="Recepción">
-            <input
-              type="number"
-              placeholder="Volante"
-              formControlName="flyer"
-              class="form-control" />
+            label="Volante">
+            <input type="number" formControlName="flyer" class="form-control" />
           </form-field>
 
           <form-field
@@ -174,7 +170,7 @@
       </div>
     </div>
     <hr />
-    <div class="row pt-3">
+    <div class="row pt-5">
       <div class="col-md-5">
         <div class="row">
           <form-field
@@ -205,7 +201,11 @@
             class="col-md-8"
             [control]="documentsReceptionForm.get('jobDate')"
             label="Fecha Oficio">
-            <input type="date" formControlName="jobDate" class="form-control" />
+            <input
+              type="date"
+              formControlName="jobDate"
+              class="form-control"
+              bsDaterangepicker />
           </form-field>
 
           <form-field
@@ -232,157 +232,199 @@
       </div>
       <div class="col-md-7">
         <div class="row">
-          <label class="label col-md-3 form-control-label"
-            >Clave única 3 niveles</label
-          >
-          <div class="col-md-9">
-            <!-- <ngx-select
-              [form]="documentsReceptionForm"
-              control="uniqueKey"></ngx-select> -->
-          </div>
-        </div>
-
-        <div class="row">
-          <label class="label col-md-3 form-control-label">Ciudad</label>
-          <div class="col-md-9">
-            <!-- <ngx-select
-              [form]="documentsReceptionForm"
-              control="city"></ngx-select> -->
-          </div>
-        </div>
-
-        <div class="row">
-          <label class="label col-md-3 form-control-label">Ent. Fed</label>
-          <div class="col-md-9">
-            <!-- <ngx-select
-              [form]="documentsReceptionForm"
-              control="state"></ngx-select> -->
-          </div>
-        </div>
-
-        <div class="row">
-          <label class="label col-md-3 form-control-label">Transferente</label>
-          <div class="col-md-9">
-            <!-- <ngx-select
-              [form]="documentsReceptionForm"
-              control="transfer"></ngx-select> -->
-          </div>
-        </div>
-
-        <div class="row">
-          <label class="label col-md-3 form-control-label">Emisora</label>
-          <div class="col-md-9">
-            <!-- <ngx-select
-              [form]="documentsReceptionForm"
-              control="transmitter"></ngx-select> -->
-          </div>
-        </div>
-
-        <div class="row">
-          <label class="label col-md-3 form-control-label">Autoridad</label>
-          <div class="col-md-9">
-            <!-- <ngx-select
-              [form]="documentsReceptionForm"
-              control="autority"></ngx-select> -->
-          </div>
-        </div>
-
-        <div class="row">
-          <label class="label col-md-3 form-control-label">Transferente</label>
-          <div class="col-md-9">
-            <!-- <ngx-select
-              [form]="documentsReceptionForm"
-              control="transfer"></ngx-select> -->
-          </div>
-        </div>
-
-        <div class="row">
-          <label class="label col-md-3 form-control-label">Juzgado</label>
-          <div class="col-md-9">
-            <!-- <ngx-select
-              [form]="documentsReceptionForm"
-              control="court"></ngx-select> -->
-          </div>
-        </div>
-
-        <div class="row">
-          <label class="label col-md-3 form-control-label">Contribuyente</label>
-          <div class="col-md-9">
-            <!-- <ngx-select
-              [form]="documentsReceptionForm"
-              control="taxpayer"></ngx-select> -->
-          </div>
-        </div>
-
-        <div class="row">
-          <label class="label col-md-3 form-control-label">Vía Recepción</label>
-          <div class="col-md-9">
-            <!-- <ngx-select
-              [form]="documentsReceptionForm"
-              control="receptionWay"></ngx-select> -->
-          </div>
-        </div>
-
-        <div class="row">
-          <label class="label col-md-3 form-control-label">Área Destino</label>
-          <div class="col-md-9">
-            <!-- <ngx-select
-              [form]="documentsReceptionForm"
-              control="destinationArea"></ngx-select> -->
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="offset-md-3 col-md-9">
-            <!-- <ngx-select
-              [form]="documentsReceptionForm"
-              control="destinationArea"></ngx-select> -->
-          </div>
-        </div>
-
-        <div class="row">
-          <label class="label col-md-3 form-control-label"
-            >Gestión Destino</label
-          >
-          <div class="col-md-9">
-            <!-- <ngx-select
-              [form]="documentsReceptionForm"
-              control="destinationManagement"></ngx-select> -->
-          </div>
-        </div>
-      </div>
-    </div>
-    <hr class="row" />
-    <div class="row">
-      <div class="col-md-10">
-        <div class="row">
-          <label class="label col-md-3 form-control-label">En atención</label>
-          <div class="col-md-9">
-            <!-- <ngx-select
-              [form]="documentsReceptionForm"
-              control="inAtention"></ngx-select> -->
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-10">
-        <div class="row">
-          <label class="label col-md-3 form-control-label">C.P.P.</label>
-          <div class="col-md-9">
-            <!-- <ngx-select
-              [form]="documentsReceptionForm"
-              control="cpp"></ngx-select>
+          <form-field
+            class="col-md-4"
+            [control]="documentsReceptionForm.get('uniqueKey')">
             <ngx-select
               [form]="documentsReceptionForm"
-              control="cpp"></ngx-select> -->
-          </div>
+              [data]="identifiers"
+              control="uniqueKey"
+              label="Clave única 3 niveles">
+            </ngx-select>
+          </form-field>
+
+          <form-field
+            class="col-md-8"
+            [control]="documentsReceptionForm.get('city')">
+            <ngx-select
+              [form]="documentsReceptionForm"
+              [data]="identifiers"
+              control="city"
+              label="Ciudad">
+            </ngx-select>
+          </form-field>
+        </div>
+
+        <div class="row pt-5">
+          <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('state')">
+            <ngx-select
+              [form]="documentsReceptionForm"
+              [data]="identifiers"
+              control="state"
+              label="Ent. Fed">
+            </ngx-select>
+          </form-field>
+
+          <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('transfer')">
+            <ngx-select
+              [form]="documentsReceptionForm"
+              [data]="identifiers"
+              control="transfer"
+              label="Transferente">
+            </ngx-select>
+          </form-field>
+        </div>
+
+        <div class="row pt-5">
+          <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('transmitter')">
+            <ngx-select
+              [form]="documentsReceptionForm"
+              [data]="identifiers"
+              control="transmitter"
+              label="Emisora">
+            </ngx-select>
+          </form-field>
+
+          <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('autority')">
+            <ngx-select
+              [form]="documentsReceptionForm"
+              [data]="identifiers"
+              control="autority"
+              label="Autoridad">
+            </ngx-select>
+          </form-field>
+        </div>
+
+        <div class="row pt-5">
+          <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('transfer')">
+            <ngx-select
+              [form]="documentsReceptionForm"
+              [data]="identifiers"
+              control="transfer"
+              label="Transferente">
+            </ngx-select>
+          </form-field>
+
+          <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('court')">
+            <ngx-select
+              [form]="documentsReceptionForm"
+              [data]="identifiers"
+              control="court"
+              label="Juzgado">
+            </ngx-select>
+          </form-field>
+        </div>
+
+        <div class="row pt-5">
+          <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('taxpayer')">
+            <ngx-select
+              [form]="documentsReceptionForm"
+              [data]="identifiers"
+              control="taxpayer"
+              label="Contribuyente">
+            </ngx-select>
+          </form-field>
+
+          <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('receptionWay')">
+            <ngx-select
+              [form]="documentsReceptionForm"
+              [data]="identifiers"
+              control="receptionWay"
+              label="Vía Recepción">
+            </ngx-select>
+          </form-field>
+        </div>
+
+        <div class="row pt-5">
+          <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('destinationArea')">
+            <ngx-select
+              [form]="documentsReceptionForm"
+              [data]="identifiers"
+              control="destinationArea"
+              label="Área Destino">
+            </ngx-select>
+          </form-field>
+
+          <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('destinationArea')">
+            <ngx-select
+              [form]="documentsReceptionForm"
+              [data]="identifiers"
+              control="destinationArea">
+            </ngx-select>
+          </form-field>
+        </div>
+
+        <div class="row pt-5">
+          <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('destinationManagement')">
+            <ngx-select
+              [form]="documentsReceptionForm"
+              [data]="identifiers"
+              control="destinationManagement"
+              label="Gestión Destino">
+            </ngx-select>
+          </form-field>
         </div>
       </div>
     </div>
-
+    <hr />
+    <div class="row pt-5">
+      <form-field
+        class="col-md-6"
+        [control]="documentsReceptionForm.get('cpp')">
+        <ngx-select
+          [form]="documentsReceptionForm"
+          [data]="identifiers"
+          control="cpp"
+          label="C.P.P.">
+        </ngx-select>
+      </form-field>
+      <form-field
+        class="col-md-6"
+        [control]="documentsReceptionForm.get('inAtention')">
+        <ngx-select
+          [form]="documentsReceptionForm"
+          [data]="identifiers"
+          control="inAtention"
+          label="En atención">
+        </ngx-select>
+      </form-field>
+    </div>
     <div class="row">
-      <div class="col-md-12 text-right">
-        <button status="success" outline type="submit">Siguiente</button>
+      <form-field
+        class="col-md-6"
+        [control]="documentsReceptionForm.get('cpp')">
+        <ngx-select
+          [form]="documentsReceptionForm"
+          [data]="identifiers"
+          control="cpp">
+        </ngx-select>
+      </form-field>
+      <div class="col-md-6 text-right">
+        <button class="btn btn-primary active btn-sm mt-3" type="submit">
+          Siguiente
+        </button>
       </div>
     </div>
   </form>
