@@ -1,15 +1,12 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/ModelForm';
 import { IFraction } from 'src/app/core/models/catalogs/fraction.model';
 import { INorm } from 'src/app/core/models/catalogs/norm.model';
-import { ISatClassification } from 'src/app/core/models/catalogs/sat-classification.model';
 import { ISiabClasification } from 'src/app/core/models/catalogs/siab-clasification.model';
-import { ClaimStatusService } from 'src/app/core/services/catalogs/claim-status.service';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
-import { InstitutionClasificationService } from 'src/app/core/services/catalogs/institution-classification.service';
 import { NormService } from 'src/app/core/services/catalogs/norm.service';
 import { SIABClasificationService } from 'src/app/core/services/catalogs/siab-clasification.service';
 import { BasePage } from 'src/app/core/shared/base-page';

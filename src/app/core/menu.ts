@@ -40,6 +40,14 @@ export const MENU: IMenuItem[] = [
         link: '/pages/catalogs/good-subtypes',
       },
       {
+        label: 'Ssubtipo Bien',
+        link: '/pages/catalogs/good-ssubtypes',
+      },
+      {
+        label: 'Sssubtipo Bien',
+        link: '/pages/catalogs/good-sssubtypes',
+      },
+      {
         label: 'Delegacion',
         link: '/pages/catalogs/delegations',
       },

@@ -16,6 +16,7 @@ export class GoodSituationFormComponent extends BasePage implements OnInit {
   goodSituation: IGoodSituation;
   edit: boolean = false;
   goodSituationForm: ModelForm<IGoodSituation>;
+  title = 'Situacion Bien';
 
   constructor(
     private modalRef: BsModalRef,

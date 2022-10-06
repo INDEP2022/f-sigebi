@@ -1,74 +1,33 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">
-      {{ edit ? 'Editar fracción' : 'Nueva fracción' }}
-    </h5>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form [formGroup]="goodSituationForm" class="form-material">
-      <!-- <div class="row">
-        <div class="form-group row">
-          <label class="label">Descripción</label>
-          <textarea
-            type="text"
-            nbInput
-            fullWidth
-            class="form-control"
-            formControlName="descSituation"
-            placeholder="Descripción"
-            [status]="
-              (descSituation?.errors?.required ||
-                descSituation?.hasError('minlength') ||
-                descSituation?.hasError('maxlength') ||
-                descSituation?.hasError('pattern')) &&
-              descSituation.touched
-                ? 'danger'
-                : ''
-            ">
-          </textarea>
-          <ngx-validation-message
-            label="Descripción"
-            [showMinLength]="descSituation?.hasError('minlength')"
-            [showMaxLength]="descSituation?.hasError('maxlength')"
-            [showRequired]="
-              descSituation?.errors?.required && descSituation.touched
-            "
-            [showPattern]="
-              descSituation?.hasError('pattern') && descSituation.touched
-            "
-            minLength="1"
-            maxLength="255">
-          </ngx-validation-message>
+      <div class="row">
+        <div class="col-md-12">
+          <form-field
+            [control]="goodSituationForm.get('descSituation')"
+            label="Descripción">
+            <textarea
+              class="form-control"
+              formControlName="descSituation"
+              placeholder="Descripción">
+            </textarea>
+          </form-field>
         </div>
-        <div class="form-group row">
-          <label class="label">Estado</label>
-          <input
-            type="text"
-            nbInput
-            fullWidth
-            class="form-control"
-            formControlName="status"
-            placeholder="Estado"
-            [status]="
-              (estatus?.errors?.required ||
-                estatus?.hasError('minlength') ||
-                estatus?.hasError('maxlength') ||
-                estatus?.hasError('pattern')) &&
-              estatus.touched
-                ? 'danger'
-                : ''
-            " />
-          <ngx-validation-message
-            label="Estado"
-            [showMinLength]="estatus?.hasError('minlength')"
-            [showMaxLength]="estatus?.hasError('maxlength')"
-            [showRequired]="estatus?.errors?.required && estatus.touched"
-            [showPattern]="estatus?.hasError('pattern') && estatus.touched"
-            minLength="1"
-            maxLength="255">
-          </ngx-validation-message>
+        <div class="col-md-4">
+          <form-field
+            [control]="goodSituationForm.get('status')"
+            label="Estado">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="status"
+              placeholder="Estado" />
+          </form-field>
         </div>
-      </div> -->
+      </div>
     </form>
   </div>
   <div footer>

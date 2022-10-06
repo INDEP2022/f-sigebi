@@ -22,7 +22,7 @@ export class DrawerFormComponent extends BasePage implements OnInit {
   drawerForm: ModelForm<IDrawer>;
   idBoveda: number = 0;
   boveda = new DefaultSelect<ISafe>();
-
+  title = 'gaveta';
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -98,6 +98,8 @@ export class DrawerFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();

@@ -20,7 +20,6 @@ export class GoodSubtypeFormComponent extends BasePage implements OnInit {
   edit: boolean = false;
   goodSubtype: IGoodSubType;
   types = new DefaultSelect<IGoodType>();
-  @Output() refresh = new EventEmitter<true>();
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -95,7 +94,7 @@ export class GoodSubtypeFormComponent extends BasePage implements OnInit {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
-    this.refresh.emit(true);
+    this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 }

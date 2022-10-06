@@ -3,41 +3,42 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IGoodSituation } from 'src/app/core/models/catalogs/good-situation.model';
-import { GoodSituationService } from 'src/app/core/services/catalogs/good-situation.service';
+import { IGoodSsubType } from 'src/app/core/models/catalogs/good-ssubtype.model';
+import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtype.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { GoodSituationFormComponent } from '../good-situation-form/good-situation-form.component';
-import { GOOD_SITUATION_COLUMS } from './good-situation-columns';
+import { GoodSsubtypesFormComponent } from '../good-ssubtypes-form/good-ssubtypes-form.component';
+import { GOOD_SSUBTYPES_COLUMNS } from './good-ssubtype-columns';
 
 @Component({
-  selector: 'app-good-situation-list',
-  templateUrl: './good-situation-list.component.html',
-  styles: [],
+  selector: 'app-good-ssubtypes-list',
+  templateUrl: './good-ssubtypes-list.component.html',
+  styles: [
+  ]
 })
-export class GoodSituationListComponent extends BasePage implements OnInit {
+export class GoodSsubtypesListComponent extends BasePage implements OnInit {
   settings = TABLE_SETTINGS;
-  paragraphs: IGoodSituation[] = [];
+  paragraphs: IGoodSsubType[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(
-    private goodSituationService: GoodSituationService,
+    private goodSsubtypeService: GoodSsubtypeService,
     private modalService: BsModalService
   ) {
     super();
-    this.settings.columns = GOOD_SITUATION_COLUMS;
+    this.settings.columns = GOOD_SSUBTYPES_COLUMNS;
     this.settings.actions.delete = true;
   }
 
   ngOnInit(): void {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getExample());
+      .subscribe(() => this.getGoodSsubtypes());
   }
 
-  getExample() {
+  getGoodSsubtypes() {
     this.loading = true;
-    this.goodSituationService.getAll(this.params.getValue()).subscribe({
+    this.goodSsubtypeService.getAll(this.params.getValue()).subscribe({
       next: response => {
         this.paragraphs = response.data;
         this.totalItems = response.count;
@@ -47,22 +48,21 @@ export class GoodSituationListComponent extends BasePage implements OnInit {
     });
   }
 
-  openForm(goodSituation?: IGoodSituation) {
+  openForm(goodSsubtype?: IGoodSsubType) {
     let config: ModalOptions = {
       initialState: {
-        goodSituation,
+        goodSsubtype,
         callback: (next: boolean) => {
-          if (next) this.getExample();
+          if (next) this.getGoodSsubtypes();
         },
       },
-      class: 'modal-md modal-dialog-centered',
+      class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.modalService.show(GoodSituationFormComponent, config);
+    this.modalService.show(GoodSsubtypesFormComponent, config);
   }
 
-  delete(goodSituation: IGoodSituation) {
-
+  delete(goodSsubtype: IGoodSsubType) {
     this.alertQuestion(
       'warning',
       'Eliminar',
