@@ -35,6 +35,13 @@ const routes: Routes = [
         .ExpertsModule,
     data: { title: 'Peritos' },
   },
+  {
+    path: 'person',
+    loadChildren: async () =>
+      (await import('./persons/persons.module'))
+        .PersonsModule,
+    data: { title: 'Personas' },
+  },
 ];
 
 @NgModule({

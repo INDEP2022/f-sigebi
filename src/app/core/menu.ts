@@ -46,6 +46,10 @@ export const MENU: IMenuItem[] = [
         label: 'Peritos',
         link: '/pages/catalogs/expert',
       },
+      {
+        label: 'Personas',
+        link: '/pages/catalogs/person',
+      },
     ],
   },
   {
