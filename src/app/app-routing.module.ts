@@ -26,6 +26,7 @@ const routes: Routes = [
 
   { path: 'experts', loadChildren: () => import('./pages/catalogs/experts/experts.module').then(m => m.ExpertsModule) },
   { path: 'persons', loadChildren: () => import('./pages/catalogs/persons/persons.module').then(m => m.PersonsModule) },
+  { path: 'origin', loadChildren: () => import('./pages/catalogs/origin/origin.module').then(m => m.OriginModule) },
 ];
 
 @NgModule({

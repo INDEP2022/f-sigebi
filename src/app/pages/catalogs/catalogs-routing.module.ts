@@ -42,6 +42,13 @@ const routes: Routes = [
         .PersonsModule,
     data: { title: 'Personas' },
   },
+  {
+    path: 'oring',
+    loadChildren: async () =>
+      (await import('./origin/origin.module'))
+        .OriginModule,
+    data: { title: 'Procedencias' },
+  },
 ];
 
 @NgModule({

@@ -50,6 +50,10 @@ export const MENU: IMenuItem[] = [
         label: 'Personas',
         link: '/pages/catalogs/person',
       },
+      {
+        label: 'Origenes',
+        link: '/pages/catalogs/oring',
+      },
     ],
   },
   {
