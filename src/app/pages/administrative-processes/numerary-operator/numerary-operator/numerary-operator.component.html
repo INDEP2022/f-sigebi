@@ -1,26 +1,34 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">NUMERARIO OPERADO</h5>
+    <h5 class="title">CONTROL DE NUMERARIO OPERADO</h5>
   </div>
 
   <div body>
-    <form [formGroup]="numeraryForm" class="form">
+    <form [formGroup]="numeraryForm" class="form-material">
       <div class="form-controls">
         <div class="col-md-3 form-group mb-3">
-          <input
-            type="text"
-            formControlName="startedDate"
-            placeholder="Datepicker"
-            class="form-control"
-            bsDatepicker />
+          <form-field
+            [control]="numeraryForm.get('startedDate')"
+            label="Deal día">
+            <input
+              type="text"
+              formControlName="startedDate"
+              placeholder="Del día"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
         </div>
         <div class="col-md-3 form-group mb-3">
-          <input
-            type="text"
-            formControlName="finishedDate"
-            placeholder="Datepicker"
-            class="form-control"
-            bsDatepicker />
+          <form-field
+            [control]="numeraryForm.get('finishedDate')"
+            label="Al día">
+            <input
+              type="text"
+              formControlName="finishedDate"
+              placeholder="Al día"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
         </div>
       </div>
     </form>

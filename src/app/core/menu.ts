@@ -17,10 +17,10 @@ export const MENU: IMenuItem[] = [
   //     label: 'Aplicaciones',
   //     isTitle: true
   // },
-    {
-      label: 'Documentation',
-      icon: 'bx-home-circle',
-      link: '/pages/documentation'
+  {
+    label: 'Documentation',
+    icon: 'bx-home-circle',
+    link: '/pages/documentation',
   },
   {
     label: 'Ejemplo',
@@ -197,15 +197,15 @@ export const MENU: IMenuItem[] = [
         label: 'Indiciados',
         link: '/pages/catalogs/indicated',
       },
-      
+
       {
         label: 'Doc. Resarcimiento Sat XML',
-        link: '/pages/catalogs/doc-compensation-sat-xml'
+        link: '/pages/catalogs/doc-compensation-sat-xml',
       },
       {
         label: 'Donatorios',
-        link: '/pages/catalogs/grantees'
-      }
+        link: '/pages/catalogs/grantees',
+      },
     ],
   },
   //Administración
@@ -218,33 +218,52 @@ export const MENU: IMenuItem[] = [
         link: '/pages/administrative-processes/numerary-operator',
       },
       {
-        label: 'Reportes',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Almacenes',
-            link: '/pages/administrative-processes/warehouse-reports',
-          },
-        ]
+        label: 'Numerario Físico',
+        link: '/pages/administrative-processes/numerary-physics',
       },
       {
-        label: 'Empresas',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Resumen Info Financiera',
-            link: '/pages/administrative-processes/summary-financial-info',
-          },
-        ]
+        label: 'Otras Monedas',
+        link: '/pages/administrative-processes/other-currencies',
+      },
+      {
+        label: 'Valores por Expediente',
+        link: '/pages/administrative-processes/values-per-file',
+      },
+      {
+        label: 'Movimientos Cuentas General',
+        link: '/pages/administrative-processes/general-account-movements',
+      },
+      {
+        label: 'Bienes conversión',
+        link: '/pages/administrative-processes/apply-lif',
       },
     ],
   },
   {
-    label: 'Solicitudes',
+    label: 'Reportes',
     icon: 'bx-folder',
     subItems: [
+      {
+        label: 'Almacenes',
+        link: '/pages/administrative-processes/warehouse-reports',
+      },
+    ],
+  },
+  {
+    label: 'Empresas',
+    icon: 'bx-folder',
+    subItems: [
+      {
+        label: 'Resumen Info Financiera',
+        link: '/pages/administrative-processes/summary-financial-info',
+      },
+    ],
+  },
 
-    ]
+  {
+    label: 'Solicitudes',
+    icon: 'bx-folder',
+    subItems: [],
   },
   {
     label: 'Multi nivel',

@@ -8,10 +8,11 @@ const routes: Routes = [
     pathMatch: 'prefix',
     component: AdministrativeProcessesComponent,
     children: [
-       {
+      {
         path: 'numerary-operator',
         loadChildren: async () =>
-          (await import('./numerary-operator/numerary-operator.module')).NumeraryOperatorModule,
+          (await import('./numerary-operator/numerary-operator.module'))
+            .NumeraryOperatorModule,
         data: { title: 'Numerario Operado' },
       },
       /*{
@@ -19,12 +20,18 @@ const routes: Routes = [
           .then(m => m.NumeraryPhysicsModule)
       },*/
       {
-        path: 'summary-financial-info', loadChildren: () => import('./companies/financial-info/pa-e-fi-m-financial-info.module')
-          .then(m => m.PaEFiMFinancialInfoModule)
+        path: 'summary-financial-info',
+        loadChildren: () =>
+          import(
+            './companies/financial-info/pa-e-fi-m-financial-info.module'
+          ).then(m => m.PaEFiMFinancialInfoModule),
       },
       {
-        path: 'warehouse-reports', loadChildren: () => import('./reports/warehouse/pa-r-wh-m-warehouse.module')
-          .then(m => m.PaRWhMWarehouseModule)
+        path: 'warehouse-reports',
+        loadChildren: () =>
+          import('./reports/warehouse/pa-r-wh-m-warehouse.module').then(
+            m => m.PaRWhMWarehouseModule
+          ),
       },
       /*{
         path: 'storehouse', loadChildren: () => import('./storehouse/storehouse.module')
@@ -50,12 +57,56 @@ const routes: Routes = [
         path: 'siab-sami-interaction', loadChildren: () => import('./siab-sami-interaction/siab-sami-interaction.module')
           .then(m => m.SiabSamiInteractionModule)
       }*/
-    ]
-  }
+      {
+        path: 'numerary-operator',
+        loadChildren: async () =>
+          (await import('./numerary-operator/numerary-operator.module'))
+            .NumeraryOperatorModule,
+        data: { title: 'Numerario Operado' },
+      },
+      {
+        path: 'numerary-physics',
+        loadChildren: async () =>
+          (await import('./numerary-physics/numerary-physics.module'))
+            .NumeraryPhysicsModule,
+        data: { title: 'Numerario Fisico' },
+      },
+      {
+        path: 'other-currencies',
+        loadChildren: async () =>
+          (await import('./other-currencies/other-currencies.module'))
+            .OtherCurrenciesModule,
+        data: { title: 'Otras Monedas' },
+      },
+      {
+        path: 'values-per-file',
+        loadChildren: async () =>
+          (await import('./values-per-file/values-per-file.module'))
+            .ValuesPerFileModule,
+        data: { title: 'Otras Monedas' },
+      },
+      {
+        path: 'general-account-movements',
+        loadChildren: async () =>
+          (
+            await import(
+              './general-account-movements/general-account-movements.module'
+            )
+          ).GeneralAccountMovementsModule,
+        data: { title: 'Movimientos Cuentas Generales' },
+      },
+      {
+        path: 'apply-lif',
+        loadChildren: async () =>
+          (await import('./apply-lif/apply-lif.module')).ApplyLifModule,
+        data: { title: 'Aplicar Lif' },
+      },
+    ],
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AdministrativeProcessesRoutingModule { }
+export class AdministrativeProcessesRoutingModule {}
