@@ -101,6 +101,32 @@ const routes: Routes = [
           (await import('./apply-lif/apply-lif.module')).ApplyLifModule,
         data: { title: 'Aplicar Lif' },
       },
+      {
+        path: 'conversion-act',
+        loadChildren: async () =>
+          (await import('./conversion-act/conversion-act.module')).ConversionActModule,
+        data: { title: 'Actas de converision' },
+
+      },
+      {
+        path: 'conversion-act',
+        loadChildren: async () =>
+          (await import('./conversion-act/conversion-act.module')).ConversionActModule,
+        data: { title: 'Actas de converision' },
+
+      },
+      {
+        path: 'conversion-management',
+        loadChildren: async () =>
+          (await import('./conversion-management/conversion-management.module')).ConversionManagementModule,
+        data: { title: 'Administracion de converision' },
+      },
+      {
+        path: 'derivation-goods',
+        loadChildren: async () =>
+          (await import('./derivation-goods/derivation-goods.module')).DerivationGoodsModule,
+        data: { title: 'Derivacion de bienes' },
+      }
     ],
   },
 ];

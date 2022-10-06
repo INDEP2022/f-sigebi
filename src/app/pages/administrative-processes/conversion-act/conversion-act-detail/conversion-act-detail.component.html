@@ -1,0 +1,499 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">DETALLES DEL ACTA</h5>
+  </div>
+</app-card>
+
+<form [formGroup]="form" class="form-material">
+  <app-card [header]="true">
+    <div class="ch-content" header>
+      <h5 class="title">Encabezado</h5>
+    </div>
+
+    <div body>
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('destination')" label="Destino">
+            <select class="form-control" formControlName="destination">
+              <option [value]="null">Seleccione un valor</option>
+              <option value="donacion">Donación</option>
+              <option value="venta">Venta</option>
+            </select>
+          </form-field>
+        </div>
+
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('idConversion')"
+            label="Id Conversión">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idConversion" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('city')" label="Ciudad">
+            <input type="text" class="form-control" formControlName="city" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('state')" label="Estado">
+            <input type="text" class="form-control" formControlName="state" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('time')" label="Hora">
+            <input type="text" class="form-control" formControlName="time" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('date')" label="Fecha">
+            <input type="text" class="form-control" formControlName="date" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('designated')" label="Designado por">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="designated" />
+          </form-field>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('holder')" label="Titular de">
+            <input type="text" class="form-control" formControlName="holder" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('officeNumber')"
+            label="Numero oficio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="officeNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('dateOffice')"
+            label="Fecha del oficio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateOffice" />
+          </form-field>
+        </div>
+      </div>
+    </div>
+  </app-card>
+
+  <!-- Antecedesntes I -->
+
+  <app-card [header]="true">
+    <div class="ch-content" header>
+      <h5 class="title">Antecedentes I</h5>
+    </div>
+
+    <div body>
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('officeEntity')"
+            label="Oficio entidad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="officeEntity" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('dateOfficeAntecedentsI')"
+            label="Fecha oficio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateOfficeAntecedentsI" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('subscribed')" label="Suscrito por">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="subscribed" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('charge')" label="Cargo">
+            <input type="text" class="form-control" formControlName="charge" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('dependence')" label="Dependencia">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dependence" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('customsOffice')" label="Aduana">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="customsOffice" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('container')" label="Contenedor">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="container" />
+          </form-field>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('containerNumber')"
+            label="No del contenedor">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="containerNumber" />
+          </form-field>
+        </div>
+      </div>
+    </div>
+  </app-card>
+
+  <!-- Antecedesntes II -->
+
+  <app-card [header]="true">
+    <div class="ch-content" header>
+      <h5 class="title">Antecedentes II</h5>
+    </div>
+
+    <div body>
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('office')" label="Oficio">
+            <input type="text" class="form-control" formControlName="office" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('dateOfficeAntecedentsII')"
+            label="Fecha oficio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateOfficeAntecedentsII" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('subscribedII')" label="Suscrito por">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="subscribedII" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('chargeII')" label="Cargo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="chargeII" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('property')" label="Propiedad de">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="property" />
+          </form-field>
+        </div>
+      </div>
+    </div>
+  </app-card>
+
+  <!-- Antecedesntes III -->
+
+  <app-card [header]="true">
+    <div class="ch-content" header>
+      <h5 class="title">Antecedentes III</h5>
+    </div>
+
+    <div body>
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('dateIII')" label="Fecha">
+            <input type="text" class="form-control" formControlName="dateIII" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('subscribed_1_III')"
+            label="Suscribe 1">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="subscribed_1_III" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('charge_1_III')" label="Cargo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="charge_1_III" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('assign_1')" label="Adscrito a">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="assign_1" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('subscribed_2_III')"
+            label="Suscribe 2">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="subscribed_2_III" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('charge_2_III')" label="Cargo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="charge_2_III" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('assign_2')" label="Adscrito a">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="assign_2" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('winerySAE')" label="Bodega SAE">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="winerySAE" />
+          </form-field>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('verificationOf')"
+            label="Verificacion de">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="verificationOf" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('consistsOf')" label="Consiste en">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="consistsOf" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('correspondingTo')"
+            label="Correspondiente a">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="correspondingTo" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('descriptionIII')" label="Descripcón">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descriptionIII" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('antStatus')" label="Antec3 Estado">
+            <select class="form-control" formControlName="antStatus">
+              <option [value]="null">Seleccione un valor</option>
+              <option value="excelente">Excelente</option>
+              <option value="bueno">Bueno</option>
+              <option value="regular">Regular</option>
+              <option value="mal">Mal</option>
+            </select>
+          </form-field>
+        </div>
+      </div>
+    </div>
+  </app-card>
+
+  <!-- Primera -->
+
+  <app-card [header]="true">
+    <div class="ch-content" header>
+      <h5 class="title">Primera</h5>
+    </div>
+
+    <div body>
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('authorizedBy')"
+            label="Autorizado por">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="authorizedBy" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('addressee')" label="Destinatario">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="addressee" />
+          </form-field>
+        </div>
+      </div>
+    </div>
+  </app-card>
+
+  <!-- Cierre de Acta -->
+
+  <app-card [header]="true">
+    <div class="ch-content" header>
+      <h5 class="title">Cierre de Acta</h5>
+    </div>
+
+    <div body>
+      <div class="row mt-5">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('dateClosingAct')" label="Fecha">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateClosingAct" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('timeClosingAct')" label="Hora">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="timeClosingAct" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('closingFoja')" label="Cierre Fojas">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="closingFoja" />
+          </form-field>
+        </div>
+      </div>
+    </div>
+  </app-card>
+
+  <app-card>
+    <div body>
+      <div class="row">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <button class="btn btn-primary btn-sm active" (click)="back()">
+            Atras
+          </button>
+        </div>
+
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <button class="btn btn-success btn-sm active" (click)="save()">
+            Guardar
+          </button>
+        </div>
+      </div>
+    </div>
+  </app-card>
+</form>
