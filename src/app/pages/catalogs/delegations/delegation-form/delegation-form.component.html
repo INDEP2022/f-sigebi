@@ -4,8 +4,8 @@
   </div>
   <div body>
     <form [formGroup]="delegationForm" class="form-material">
-      <div class="row">
-        <div class="col-md-4">
+      <div class="row pt-5">
+        <div class="col-md-2">
           <form-field [control]="delegationForm.get('id')" label="Id">
             <input
               type="number"
@@ -15,32 +15,38 @@
           </form-field>
         </div>
 
-        <div class="col-md-4">
-          <form-field
-            [control]="delegationForm.get('etapaEdo')"
-            label="Etapa Estado">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="etapaEdo"
-              placeholder="Etapa Estado" />
+        <div class="col-md-4 offset-md-2">
+          <form-field [control]="delegationForm.get('cveState')">
+            <ngx-select
+              [form]="delegationForm"
+              control="cveState"
+              value="cveState"
+              bindLabel="descState"
+              [data]="states"
+              (fetchItems)="getStates($event)"
+              (change)="stateChange($event)"
+              label="CVE Estado">
+            </ngx-select>
           </form-field>
         </div>
 
         <div class="col-md-4">
-          <form-field
-            [control]="delegationForm.get('cveState')"
-            label="CVE Estado">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="cveState"
-              placeholder="CVE State" />
+          <form-field [control]="delegationForm.get('idZoneGeographic')">
+            <ngx-select
+              [form]="delegationForm"
+              control="idZoneGeographic"
+              value="id_zona_geografica"
+              bindLabel="descripcion"
+              [data]="zones"
+              (fetchItems)="getZones($event)"
+              (change)="zoneChange($event)"
+              label="Zona Geografica">
+            </ngx-select>
           </form-field>
         </div>
       </div>
 
-      <div class="row">
+      <div class="row pt-5">
         <div class="col-md-6">
           <form-field
             [control]="delegationForm.get('addressOffice')"
@@ -65,20 +71,8 @@
         </div>
       </div>
 
-      <div class="row">
-        <div class="col-md-4">
-          <form-field
-            [control]="delegationForm.get('cveZone')"
-            label="Clave de la Zona">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="cveZone"
-              placeholder="Clave de la Zona" />
-          </form-field>
-        </div>
-
-        <div class="col-md-4">
+      <div class="row pt-5">
+        <div class="col-md-6">
           <form-field [control]="delegationForm.get('city')" label="Ciudad">
             <input
               type="text"
@@ -88,27 +82,56 @@
           </form-field>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-2">
+          <form-field
+            [control]="delegationForm.get('etapaEdo')"
+            label="Etapa Estado">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="etapaEdo"
+              placeholder="Etapa Estado" />
+          </form-field>
+        </div>
+
+        <div class="col-md-2">
           <form-field [control]="delegationForm.get('status')" label="Estatus">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="status"
               placeholder="Status" />
           </form-field>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-2">
           <form-field [control]="delegationForm.get('iva')" label="IVA">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="iva"
               placeholder="Iva" />
           </form-field>
         </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-12">
+          <form-field
+            [control]="delegationForm.get('description')"
+            label="Descripción">
+            <textarea
+              class="form-control"
+              type="text"
+              row
+              pt-5s="2"
+              formControlName="description"
+              placeholder="Descripción"></textarea>
+          </form-field>
+        </div>
+      </div>
 
-        <div class="col-md-4">
+      <div class="row pt-5">
+        <div class="col-md-3">
           <form-field
             [control]="delegationForm.get('zoneVigilanceCVE')"
             label="CVE Zona">
@@ -121,35 +144,8 @@
           </form-field>
         </div>
 
-        <div class="col-md-4">
-          <form-field [control]="delegationForm.get('phaseEdo')">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="phaseEdo"
-              placeholder="Etapa Edo" />
-          </form-field>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-12">
-          <form-field
-            [control]="delegationForm.get('description')"
-            label="Descripción">
-            <textarea
-              class="form-control"
-              type="text"
-              rows="2"
-              formControlName="description"
-              placeholder="Descripción"></textarea>
-          </form-field>
-        </div>
-      </div>
-
-      <div class="row">
         <!-- Diferencia de hras -->
-        <div class="col-md-4">
+        <div class="col-md-3">
           <form-field
             [control]="delegationForm.get('diffHours')"
             label="Diferencia de horas">
@@ -162,7 +158,7 @@
         </div>
 
         <!-- Cona de contrato CVE -->
-        <div class="col-md-4">
+        <div class="col-md-3">
           <form-field
             [control]="delegationForm.get('zoneContractCVE')"
             label="CVE zona de contrato">
@@ -175,7 +171,7 @@
         </div>
 
         <!-- No Register -->
-        <div class="col-md-4">
+        <div class="col-md-3">
           <form-field
             [control]="delegationForm.get('noRegister')"
             label="noRegister">

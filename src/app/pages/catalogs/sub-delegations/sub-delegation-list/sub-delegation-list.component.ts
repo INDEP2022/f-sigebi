@@ -50,7 +50,7 @@ export class SubDelegationListComponent extends BasePage implements OnInit {
   openForm(subdelegation?: ISubdelegation) {
     let config: ModalOptions = {
       initialState: {
-        ...subdelegation,
+        subdelegation,
         callback: (next: boolean) => {
           if (next) this.getExample();
         },

@@ -17,6 +17,11 @@ export const MENU: IMenuItem[] = [
   //     label: 'Aplicaciones',
   //     isTitle: true
   // },
+    {
+      label: 'Documentation',
+      icon: 'bx-home-circle',
+      link: '/pages/documentation'
+  },
   {
     label: 'Ejemplo',
     icon: 'bx-calendar',
@@ -26,6 +31,86 @@ export const MENU: IMenuItem[] = [
     label: 'Catalogos',
     icon: 'bx-folder',
     subItems: [
+      {
+        label: 'Deductivas',
+        link: '/pages/catalogs/deductives',
+      },
+      {
+        label: 'Deductivas Verificacion',
+        link: '/pages/catalogs/deductives-verification',
+      },
+      {
+        label: 'Delegaciones Estado',
+        link: '/pages/catalogs/delegations-state',
+      },
+      {
+        label: 'Delegaciones Regionales',
+        link: '/pages/catalogs/regional-delegations',
+      },
+      {
+        label: 'Departamentos',
+        link: '/pages/catalogs/departments',
+      },
+      {
+        label: 'Despachos',
+        link: '/pages/catalogs/offices',
+      },
+      {
+        label: 'Detalle Delegacion',
+        link: '/pages/catalogs/detail-delegation',
+      },
+      {
+        label: 'Dictamenes',
+        link: '/pages/catalogs/opinions',
+      },
+      {
+        label: 'Documentos Resarsimiento',
+        link: '/pages/catalogs/doc-compensation',
+      },
+      {
+        label: 'Leyendas',
+        link: '/pages/catalogs/legends',
+      },
+      {
+        label: 'Estados',
+        link: '/pages/catalogs/states',
+      },
+      {
+        label: 'Abogados',
+        link: '/pages/catalogs/lawyer',
+      },
+      {
+        label: 'Aclaraciónes',
+        link: '/pages/catalogs/clarifications',
+      },
+      {
+        label: 'Bodegas',
+        link: '/pages/catalogs/warehouses',
+      },
+      {
+        label: 'Bancos',
+        link: '/pages/catalogs/banks',
+      },
+      {
+        label: 'Bóveda',
+        link: '/pages/catalogs/vault',
+      },
+      {
+        label: 'Bodegas',
+        link: '/pages/catalogs/storehouses',
+      },
+      {
+        label: 'Ciudades',
+        link: '/pages/catalogs/cities',
+      },
+      {
+        label: 'Concepto de Pagos',
+        link: '/pages/catalogs/payment-concept',
+      },
+      {
+        label: 'Institución Clasificación',
+        link: '/pages/catalogs/intitution-classification',
+      },
       {
         label: 'Tipo Bien',
         link: '/pages/catalogs/good-types',
@@ -59,6 +144,13 @@ export const MENU: IMenuItem[] = [
         link: '/pages/catalogs/oringCisi',
       },
     ],
+  },
+  {
+    label: 'Solicitudes',
+    icon: 'bx-folder',
+    subItems: [
+
+    ]
   },
   {
     label: 'Multi nivel',
