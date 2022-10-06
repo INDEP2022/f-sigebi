@@ -41,7 +41,13 @@ const routes: Routes = [
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',
-  }
+  },
+  {
+    path: 'executive-processes',
+    loadChildren: async () =>
+      (await import('./executive-processes/executive-processes.module')).ExecutiveProcessesModule,
+  },
+  
 ];
 
 @NgModule({
