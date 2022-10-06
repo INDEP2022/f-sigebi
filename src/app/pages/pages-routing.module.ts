@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { async } from 'rxjs';
 
 const routes: Routes = [
   {
@@ -26,6 +27,11 @@ const routes: Routes = [
       (await import('./catalogs/catalogs.module')).CatalogModule,
   },
   {
+    path: 'administrative-processes',
+    loadChildren: async () =>
+      (await import('./administrative-processes/administrative-processes.module')).AdministrativeProcessesModule,
+  },
+  {
     path: 'home',
     loadChildren: async () =>
       (await import('./admin/home/home.module')).HomeModule,
@@ -33,10 +39,22 @@ const routes: Routes = [
   },
   
   {
+    path: 'final-destination-process',
+    loadChildren: async() =>
+    (await import('./final-destination-process/final-destination-process.module')).FinalDestinationProcessModule,
+    data: { Title: 'Destino final' },
+  },
+  {
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',
   },
+  {
+    path: 'executive-processes',
+    loadChildren: async () =>
+      (await import('./executive-processes/executive-processes.module')).ExecutiveProcessesModule,
+  },
+  
 ];
 
 @NgModule({

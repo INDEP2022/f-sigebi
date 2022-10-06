@@ -22,7 +22,8 @@
       <ngx-select
         [form]="form"
         [data]="items"
-        label="reportName"
+        bindLabel="reportName"
+        label="Reporte"
         value="id"
         (fetchItems)="getFromSelect($event)"
         control="version"></ngx-select>

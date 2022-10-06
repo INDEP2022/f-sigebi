@@ -13,14 +13,18 @@
           </form-field>
         </div>
         <div class="col-md-6 col-md-offset-3">
-          <ngx-select
-            [form]="goodSubtypeForm"
-            control="idTypeGood"
-            [data]="types"
-            value="id"
-            bindLabel="nameGoodType"
-            label="Tipo Bien"
-            (fetchItems)="getTypes($event)"></ngx-select>
+          <form-field
+            [control]="goodSubtypeForm.get('idTypeGood')"
+            label="Tipo Bienes">
+            <ngx-select
+              [form]="goodSubtypeForm"
+              control="idTypeGood"
+              [data]="types"
+              value="id"
+              bindLabel="nameGoodType"
+              label="Tipo Bien"
+              (fetchItems)="getTypes($event)"></ngx-select>
+          </form-field>
         </div>
       </div>
 

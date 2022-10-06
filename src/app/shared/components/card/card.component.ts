@@ -4,7 +4,7 @@ import { Component, Input, OnInit } from '@angular/core';
   selector: 'app-card',
   template: `
     <div class="card">
-      <div class="card-header" *ngIf="header">
+      <div class="card-header mb-3" *ngIf="header">
         <ng-content select="[header]"></ng-content>
       </div>
       <div class="card-block">
