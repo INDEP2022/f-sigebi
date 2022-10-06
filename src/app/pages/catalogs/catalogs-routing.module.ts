@@ -49,6 +49,13 @@ const routes: Routes = [
         .OriginModule,
     data: { title: 'Procedencias' },
   },
+  {
+    path: 'oringCisi',
+    loadChildren: async () =>
+      (await import('./origin-cisi/origin-cisi.module'))
+        .OriginCisiModule,
+    data: { title: 'Procedencias Cisi' },
+  },
 ];
 
 @NgModule({

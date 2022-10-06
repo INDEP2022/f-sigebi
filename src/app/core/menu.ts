@@ -51,8 +51,12 @@ export const MENU: IMenuItem[] = [
         link: '/pages/catalogs/person',
       },
       {
-        label: 'Origenes',
+        label: 'Procedenias',
         link: '/pages/catalogs/oring',
+      },
+      {
+        label: 'Procedencias Cisi',
+        link: '/pages/catalogs/oringCisi',
       },
     ],
   },
