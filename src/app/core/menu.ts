@@ -565,7 +565,7 @@ export const MENU: IMenuItem[] = [
           },
           {
             label: 'Bienes exentos de validación',
-            link: '/pages/home',
+            link: '/pages/commercialization/c-b-bedv-m-validation-exempted-goods',
           },
           {
             label: 'Reclasificacón OI',
@@ -607,7 +607,7 @@ export const MENU: IMenuItem[] = [
           },
           {
             label: 'Bienes exentos de validación',
-            link: '/pages/home',
+            link: '/pages/commercialization/c-b-bedv-m-validation-exempted-goods',
           },
           {
             label: 'Reclasificacón OI',
@@ -623,7 +623,7 @@ export const MENU: IMenuItem[] = [
           },
           {
             label: 'Validación de Pagos',
-            link: '/pages/home',
+            link: '/pages/commercialization/c-b-vdp-m-payment-dispersion-validation',
           },
           {
             label: 'Dispersión de Pagos',

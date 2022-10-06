@@ -9,6 +9,12 @@ const routes: Routes = [
       (await import('./shared-marketing-components/c-b-vdp-m-payment-dispersion-validation/c-b-vdp-m-payment-dispersion-validation.module')).CBVdpMPaymentDispersionValidationModule,
     data: { title: 'Validación de bienes' },
   },
+  {
+    path: 'c-b-bedv-m-validation-exempted-goods',
+    loadChildren: async () =>
+      (await import('./shared-marketing-components/c-b-bedv-m-validation-exempted-goods/c-b-bedv-m-validation-exempted-goods.module')).CBBedvMValidationExemptedGoodsModule,
+    data: { title: 'Bienes exentos de validación' },
+  }
 ];
 
 @NgModule({
