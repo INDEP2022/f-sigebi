@@ -379,6 +379,76 @@ const routes: Routes = [
       (await import('./paragraphs/paragraphs.module')).ParagraphsModule,
     data: { title: 'Párrafos' },
   },
+  {
+    path: 'type-docto',
+    loadChildren: async () =>
+      (await import('./type-docto/type-docto.module'))
+        .TypeDoctoModule,
+    data: { title: 'Tipo Docto' },
+  },
+  {
+    path: 'type-sinister',
+    loadChildren: async () =>
+      (await import('./type-sinister/type-sinister.module'))
+        .TypeSinisterModule,
+    data: { title: 'Tipo Siniestro' },
+  },
+  {
+    path: 'type-wharehouse',
+    loadChildren: async () =>
+      (await import('./type-wharehouse/type-wharehouse.module'))
+        .TypeWharehouseModule,
+    data: { title: 'Tipo de Almacenes' },
+  },
+  {
+    path: 'type-services',
+    loadChildren: async () =>
+      (await import('./type-services/type-services.module'))
+        .TypeServicesModule,
+    data: { title: 'Tipo de Servicios' },
+  },
+  {
+    path: 'type-order-service',
+    loadChildren: async () =>
+      (await import('./type-order-service/type-order-service.module'))
+        .TypeOrderServiceModule,
+    data: { title: 'Tipo Orden Servicio' },
+  },
+  {
+    path: 'type-relevant',
+    loadChildren: async () =>
+      (await import('./type-relevant/type-relevant.module'))
+        .TypeRelevantModule,
+    data: { title: 'Tipo relevante' },
+  },
+  {
+    path: 'zone-geographic',
+    loadChildren: async () =>
+      (await import('./zone-geographic/zone-geographic.module'))
+        .ZoneGeographicModule,
+    data: { title: 'Zone Geográficas' },
+  },
+  {
+    path: 'claim-conclusion',
+    loadChildren: async () =>
+      (await import('./claim-conclusion/claim-conclusion.module'))
+        .ClaimConclusionModule,
+    data: { title: 'Conclusion de siniestros' },
+  },
+  {
+    path: 'status-code',
+    loadChildren: async () =>
+      (await import('./status-code/status-code.module'))
+        .StatusCodeModule,
+    data: { title: 'Código estado' },
+  },
+  {
+    path: 'doc-compensation-sat',
+    loadChildren: async () =>
+      (await import('./doc-compensation-sat/doc-compensation-sat.module'))
+        .DocCompensationSatModule,
+    data: { title: 'Documentos resarcimiento sat' },
+  },
 ];
 
 @NgModule({
