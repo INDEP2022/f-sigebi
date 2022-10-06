@@ -35,7 +35,7 @@ export class PersonFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      id: [null, [Validators.required]],
+      id: [null],
       personNumber: [null, [Validators.required]],
       name: [null, [Validators.required]],
       street: [null, [Validators.required]],
@@ -100,7 +100,7 @@ export class PersonFormComponent extends BasePage implements OnInit {
     this.personService
       .update(
         this.person.id,
-        this.person
+        this.form.getRawValue()
       )
       .subscribe({
         next: data => this.handleSuccess(),

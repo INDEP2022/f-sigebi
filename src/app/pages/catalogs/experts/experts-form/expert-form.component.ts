@@ -35,7 +35,7 @@ export class ExpertFormComponent  extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      id: [null, [Validators.required]],
+      id: [null],
       name: [null, [Validators.required]],
       position: [null, [Validators.required]],
       registryNumber: [null, [Validators.required]],
@@ -74,7 +74,7 @@ export class ExpertFormComponent  extends BasePage implements OnInit {
     this.proeficientService
       .update(
         this.proficient.id,
-        this.proficient 
+        this.form.getRawValue() 
       )
       .subscribe({
         next: data => this.handleSuccess(),

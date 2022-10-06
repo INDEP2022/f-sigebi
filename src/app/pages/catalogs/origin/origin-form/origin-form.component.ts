@@ -35,7 +35,7 @@ export class OriginFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      id: [null, [Validators.required]],
+      id: [null],
       idTransferer: [null, [Validators.required]],
       keyTransferer: [null, [Validators.required]],
       description: [null, [Validators.required]],
@@ -79,7 +79,7 @@ export class OriginFormComponent extends BasePage implements OnInit {
     this.originService
       .update(
         this.origin.id,
-        this.origin
+        this.form.getRawValue()
       )
       .subscribe({
         next: data => this.handleSuccess(),

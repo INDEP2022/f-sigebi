@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { IOriginCisi } from 'src/app/core/models/catalogs/origin-cisi.model';
 import { OiriginCisiService } from 'src/app/core/services/catalogs/origin-cisi.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -20,8 +20,7 @@ export class OrignCisiFormComponent extends BasePage implements OnInit {
   title: string = 'Procedencia Cisi';
   edit: boolean = false;
   originCisi: IOriginCisi;
-  origins = new DefaultSelect<IOriginCisi>();
-  @Output() refresh = new EventEmitter<true>();
+  originCisis = new DefaultSelect<IOriginCisi>();
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -41,6 +40,7 @@ export class OrignCisiFormComponent extends BasePage implements OnInit {
      
     });
     if (this.originCisi != null) {
+      console.log(this.form);
       this.edit = true;
       this.form.patchValue(this.originCisi);
     }
@@ -48,7 +48,7 @@ export class OrignCisiFormComponent extends BasePage implements OnInit {
 
   getData(params: ListParams) {
     this.originCisiService.getAll(params).subscribe(data => {
-      this.origins = new DefaultSelect(data.data, data.count);
+      this.originCisis = new DefaultSelect(data.data, data.count);
     });
   }
   close() {
@@ -61,7 +61,7 @@ export class OrignCisiFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.originCisiService.create(this.form.value()).subscribe({
+    this.originCisiService.create(this.form.getRawValue()).subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
       });
@@ -72,7 +72,7 @@ export class OrignCisiFormComponent extends BasePage implements OnInit {
     this.originCisiService
       .update(
         this.originCisi.id,
-        this.form.value()
+        this.form.getRawValue()
       )
       .subscribe({
         next: data => this.handleSuccess(),
@@ -81,12 +81,10 @@ export class OrignCisiFormComponent extends BasePage implements OnInit {
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
-    this.refresh.emit(true);
+    this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
-
-
 }
