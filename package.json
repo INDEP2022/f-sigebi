@@ -29,6 +29,7 @@
     "simplebar-angular": "^2.4.0",
     "sweetalert2": "^11.4.34",
     "tslib": "^2.3.0",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {

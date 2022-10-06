@@ -74,7 +74,7 @@
               "src/scss/app.scss",
               "src/scss/icons.scss",
               "node_modules/@ng-select/ng-select/themes/default.theme.css",
-              "node_modules/ngx-bootstrap/datepicker/bs-datepicker.css"
+              "node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
               "src/styles.scss"
             ],
             "scripts": []
