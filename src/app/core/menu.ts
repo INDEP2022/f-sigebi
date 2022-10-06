@@ -278,24 +278,21 @@ export const MENU: IMenuItem[] = [
     subItems: [],
   },
   {
-    label: 'Multi nivel',
+    label: 'Proceso Destino final',
     icon: 'bx-share-alt',
     subItems: [
       {
-        label: 'Nivel 1.1',
-        link: '#',
+        label: 'Actas de destrucción',
+        link: '/pages/final-destination-process/destruction-acts',
       },
       {
-        label: 'Nivel 1.2',
-        subItems: [
-          {
-            label: 'Nivel 2.1',
-          },
-          {
-            label: 'Nivel 2.2',
-          },
-        ],
+        label: 'Actas de donación',
+        link: '/pages/final-destination-process/donation-acts',
       },
+      {
+        label: 'Actas de destino',
+        link: '/pages/final-destination-process/destination-acts',
+      }
     ],
   },
   {
