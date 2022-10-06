@@ -177,6 +177,18 @@ export const MENU: IMenuItem[] = [
         label: 'Numerario Operado',
         link: '/pages/administrative-processes/numerary-operator',
       },
+      {
+        label: 'Actas de conversión',
+        link: '/pages/administrative-processes/conversion-act',
+      },
+      {
+        label: 'Administración Conversiones',
+        link: '/pages/administrative-processes/conversion-management',
+      },
+      {
+        label: 'Derivacion Bienes',
+        link: '/pages/administrative-processes/derivation-goods',
+      },
     ],
   },
   {

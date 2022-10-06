@@ -8,6 +8,24 @@ const routes: Routes = [
       (await import('./numerary-operator/numerary-operator.module')).NumeraryOperatorModule,
     data: { title: 'Numerario Operado' },
   },
+  {
+    path:'conversion-management',
+    loadChildren: async () =>
+      (await import('./conversion-management/conversion-management.module')).ConversionManagementModule,
+    data: { title: 'Administracion Conversiones' }
+  },
+  {
+    path: 'conversion-act',
+    loadChildren: async () =>
+      (await import('./conversion-act/conversion-act.module')).ConversionActModule,
+    data: { title: 'Actas Conversion' }
+  },
+  {
+    path: 'derivation-goods',
+    loadChildren: async () =>
+      (await import('./derivation-goods/derivation-goods.module')).DerivationGoodsModule,
+    data: { title: 'Derivacion Bienes' }
+  }
 ];
 
 @NgModule({
