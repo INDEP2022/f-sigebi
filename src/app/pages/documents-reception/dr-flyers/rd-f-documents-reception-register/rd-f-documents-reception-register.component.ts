@@ -6,7 +6,13 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-rd-f-documents-reception-register',
   templateUrl: './rd-f-documents-reception-register.component.html',
-  styles: [],
+  styles: [
+    `
+      hr {
+        border-top: 1px solid #8c8b8b;
+      }
+    `,
+  ],
 })
 export class RdFDocumentsReceptionRegisterComponent implements OnInit {
   documentsReceptionForm: ModelForm<any>;

@@ -10,7 +10,7 @@
     class="form-material">
     <div class="row">
       <div class="col-md-7">
-        <div class="row">
+        <div class="d-flex">
           <div>
             <a
               [routerLink]="[
@@ -24,7 +24,7 @@
             </a>
           </div>
           <div class="d-flex">
-            <!-- <form-radio label="Admin_Transe">
+            <form-radio class="ml-3" label="Admin_Transe">
               <input
                 type="radio"
                 formControlName="type"
@@ -32,337 +32,358 @@
             </form-radio>
             <form-radio label="Transfere">
               <input type="radio" formControlName="type" value="Transfere" />
-            </form-radio> -->
+            </form-radio>
           </div>
         </div>
-        <div class="row">
-          <div class="col-md-9">
-            <!-- <form-field [control]="documentsReceptionForm.get('identifier')">
-              <ngx-select
-                [form]="documentsReceptionForm"
-                [data]="identifiers"
-                control="identifier"
-                value="code"
-                bindLabel="descripcion"
-                label="Identificador">
-              </ngx-select>
-            </form-field> -->
-          </div>
-        </div>
-
-        <div class="row">
-          <label class="label col-md-3 form-control-label">Remitente</label>
-          <div class="col-md-9">
-            <form-field [control]="documentsReceptionForm.get('sender')">
-              <ngx-select
-                [form]="documentsReceptionForm"
-                [data]="identifiers"
-                control="sender"
-                value="code"
-                bindLabel="descripcion"
-                label="Identificador">
-              </ngx-select>
-            </form-field>
-            <!-- <ngx-select
+        <div class="row pt-3">
+          <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('identifier')">
+            <ngx-select
               [form]="documentsReceptionForm"
-              control="sender"></ngx-select> -->
-          </div>
-        </div>
+              [data]="identifiers"
+              control="identifier"
+              label="Identificador">
+            </ngx-select>
+          </form-field>
 
-        <div class="row">
-          <label class="label col-md-3 form-control-label">Asunto</label>
-          <div class="col-md-9">
-            <!-- <ngx-select
+          <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('sender')">
+            <ngx-select
               [form]="documentsReceptionForm"
-              control="subject"></ngx-select> -->
-          </div>
+              [data]="identifiers"
+              control="sender"
+              label="Remitente">
+            </ngx-select>
+          </form-field>
+        </div>
+
+        <div class="row pt-3">
+          <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('subject')">
+            <ngx-select
+              [form]="documentsReceptionForm"
+              [data]="identifiers"
+              control="subject"
+              label="Asunto">
+            </ngx-select>
+          </form-field>
         </div>
 
         <div class="row">
-          <div class="col-md-6">
-            <div class="checkbox">
-              <!-- <nb-checkbox formControlName="desalojov">Desalojov</nb-checkbox> -->
-            </div>
-          </div>
+          <form-check class="col-md-6" label="Desalojov" for="desalojov-check">
+            <input
+              id="desalojov-check"
+              type="checkbox"
+              formControlName="desalojov" />
+          </form-check>
 
-          <div class="col-md-6">
-            <div class="checkbox">
-              <!-- <nb-checkbox formControlName="generalDirection"
-                >Dirección General</nb-checkbox
-              > -->
-            </div>
-          </div>
+          <form-check
+            class="col-md-6"
+            label="Dirección General"
+            for="general-check">
+            <input
+              id="general-check"
+              type="checkbox"
+              formControlName="generalDirection" />
+          </form-check>
         </div>
       </div>
 
-      <div class="col-md-5 form-inline">
+      <div class="col-md-5">
         <div class="row">
-          <div class="col-md-6">
-            <input
-              placeholder="Recepción"
-              formControlName="reception"
-              class="form-control" />
-          </div>
+          <form-field
+            class="col-md-4"
+            [control]="documentsReceptionForm.get('reception')"
+            label="Recepción">
+            <input formControlName="reception" class="form-control" />
+          </form-field>
 
-          <div class="col-md-6">
+          <form-field
+            class="col-md-4"
+            [control]="documentsReceptionForm.get('reception')"
+            label="Recepción">
             <input
               type="number"
               placeholder="Volante"
               formControlName="flyer"
               class="form-control" />
+          </form-field>
+
+          <form-field
+            class="col-md-4"
+            [control]="documentsReceptionForm.get('priority')"
+            label="Prioridad">
+            <select class="form-control" formControlName="priority">
+              <option value="Alta">Alta</option>
+              <option value="Normal">Normal</option>
+            </select>
+          </form-field>
+        </div>
+
+        <div class="row pt-5">
+          <div class="col-md-4">
+            <form-field
+              [control]="documentsReceptionForm.get('consecutive')"
+              label="Consecutivo">
+              <input
+                type="number"
+                formControlName="consecutive"
+                class="form-control" />
+            </form-field>
+          </div>
+
+          <div class="col-md-4">
+            <form-field
+              [control]="documentsReceptionForm.get('recordId')"
+              label="Ident. Exp">
+              <input
+                type="number"
+                formControlName="recordId"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="documentsReceptionForm.get('record')"
+              label="Expediente">
+              <input
+                type="number"
+                formControlName="record"
+                class="form-control" />
+            </form-field>
           </div>
         </div>
 
         <div class="row">
           <div class="col-md-6">
-            <!-- <nb-select placeholder="Prioridad" formControlName="priority" 
-                                [status]="documentsReceptionForm.get('priority').errors?.required && documentsReceptionForm.get('priority').touched ? 'danger' : ''">
-                                <nb-option value="Alta">Alta</nb-option>
-                                <nb-option value="Normal">Normal</nb-option>
-                            </nb-select> -->
-          </div>
-          <div class="col-md-6">
-            <input
-              type="number"
-              placeholder="Consecutivo"
-              formControlName="consecutive"
-              class="form-control" />
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-6">
-            <input
-              type="number"
-              placeholder="Ident. Exp"
-              formControlName="recordId"
-              class="form-control" />
-          </div>
-          <div class="col-md-6">
-            <input
-              type="number"
-              placeholder="Expediente"
-              formControlName="record"
-              class="form-control" />
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-6">
-            <button type="button" status="warning" (click)="sendFlyer()">
-              <!-- <nb-icon icon="unlock-outline"></nb-icon> -->
+            <button
+              type="button"
+              class="btn btn-warning btn-sm"
+              (click)="sendFlyer()">
+              <i class="bx bxs-lock-alt"></i>
             </button>
-          </div>
-          <div class="col-md-6">
-            <button type="button">
-              <!-- <nb-icon icon="file-text-outline"></nb-icon> -->
+
+            <button type="button" class="ml-5 btn btn-secondary active btn-sm">
+              <i class="bx bx-file"></i>
             </button>
           </div>
         </div>
       </div>
     </div>
-  </form>
-  <hr class="row" />
-  <div class="row pt-3">
-    <div class="col-md-5">
-      <div class="form-group row">
-        <label class="label col-md-3 form-control-label">Tipo Juicio</label>
-        <div class="col-md-9">
-          <!-- <nb-select placeholder=""  formControlName="judgmentType">
-                                <nb-option value="Amparo">Amparo</nb-option>
-                                <nb-option value="Procedimientos en amparos administrativos">Procedimientos en amparos
-                                    administrativos</nb-option>
-                            </nb-select> -->
-        </div>
-      </div>
-      <div class="form-group row">
-        <label class="label col-md-3 form-control-label">No. Ofifcio</label>
-        <div class="col-md-9">
-          <input
-            type="number"
-            formControlName="jobNumber"
-            class="form-control" />
-        </div>
-      </div>
+    <hr />
+    <div class="row pt-3">
+      <div class="col-md-5">
+        <div class="row">
+          <form-field
+            class="col-md-8"
+            [control]="documentsReceptionForm.get('judgmentType')">
+            <ngx-select
+              [form]="documentsReceptionForm"
+              [data]="identifiers"
+              control="judgmentType"
+              label="Tipo Juicio">
+            </ngx-select>
+          </form-field>
 
-      <div class="form-group row">
-        <label class="label col-md-3 form-control-label">Fecha Oficio</label>
-        <div class="col-md-9">
-          <input formControlName="jobDate" class="form-control" />
+          <form-field
+            class="col-md-4"
+            [control]="documentsReceptionForm.get('jobNumber')"
+            label="No. Oficio">
+            <input
+              type="number"
+              formControlName="jobNumber"
+              class="form-control" />
+          </form-field>
         </div>
-      </div>
+        <div class="row"></div>
 
-      <div class="form-group row">
-        <label class="label col-md-3 form-control-label">Exp Transfer</label>
-        <div class="col-md-9">
-          <input
-            type="number"
-            formControlName="expTransfer"
-            class="form-control" />
-        </div>
-      </div>
+        <div class="row pt-5">
+          <form-field
+            class="col-md-8"
+            [control]="documentsReceptionForm.get('jobDate')"
+            label="Fecha Oficio">
+            <input type="date" formControlName="jobDate" class="form-control" />
+          </form-field>
 
-      <div class="form-group row">
-        <label class="label col-md-3 form-control-label">Descripción</label>
-        <div class="col-md-9">
-          <textarea
-            rows="2"
-            formControlName="description"
-            class="form-control"></textarea>
+          <form-field
+            class="col-md-4"
+            [control]="documentsReceptionForm.get('expTransfer')"
+            label="Exp Transfer">
+            <input
+              type="number"
+              formControlName="expTransfer"
+              class="form-control" />
+          </form-field>
+        </div>
+
+        <div class="row pt-5">
+          <form-field
+            [control]="documentsReceptionForm.get('description')"
+            label="Descripción">
+            <textarea
+              rows="2"
+              formControlName="description"
+              class="form-control"></textarea>
+          </form-field>
         </div>
       </div>
-    </div>
-    <div class="col-md-7">
-      <div class="form-group row">
-        <label class="label col-md-3 form-control-label"
-          >Clave única 3 niveles</label
-        >
-        <div class="col-md-9">
-          <!-- <ngx-select
+      <div class="col-md-7">
+        <div class="row">
+          <label class="label col-md-3 form-control-label"
+            >Clave única 3 niveles</label
+          >
+          <div class="col-md-9">
+            <!-- <ngx-select
               [form]="documentsReceptionForm"
               control="uniqueKey"></ngx-select> -->
+          </div>
         </div>
-      </div>
 
-      <div class="form-group row">
-        <label class="label col-md-3 form-control-label">Ciudad</label>
-        <div class="col-md-9">
-          <!-- <ngx-select
+        <div class="row">
+          <label class="label col-md-3 form-control-label">Ciudad</label>
+          <div class="col-md-9">
+            <!-- <ngx-select
               [form]="documentsReceptionForm"
               control="city"></ngx-select> -->
+          </div>
         </div>
-      </div>
 
-      <div class="form-group row">
-        <label class="label col-md-3 form-control-label">Ent. Fed</label>
-        <div class="col-md-9">
-          <!-- <ngx-select
+        <div class="row">
+          <label class="label col-md-3 form-control-label">Ent. Fed</label>
+          <div class="col-md-9">
+            <!-- <ngx-select
               [form]="documentsReceptionForm"
               control="state"></ngx-select> -->
+          </div>
         </div>
-      </div>
 
-      <div class="form-group row">
-        <label class="label col-md-3 form-control-label">Transferente</label>
-        <div class="col-md-9">
-          <!-- <ngx-select
+        <div class="row">
+          <label class="label col-md-3 form-control-label">Transferente</label>
+          <div class="col-md-9">
+            <!-- <ngx-select
               [form]="documentsReceptionForm"
               control="transfer"></ngx-select> -->
+          </div>
         </div>
-      </div>
 
-      <div class="form-group row">
-        <label class="label col-md-3 form-control-label">Emisora</label>
-        <div class="col-md-9">
-          <!-- <ngx-select
+        <div class="row">
+          <label class="label col-md-3 form-control-label">Emisora</label>
+          <div class="col-md-9">
+            <!-- <ngx-select
               [form]="documentsReceptionForm"
               control="transmitter"></ngx-select> -->
+          </div>
         </div>
-      </div>
 
-      <div class="form-group row">
-        <label class="label col-md-3 form-control-label">Autoridad</label>
-        <div class="col-md-9">
-          <!-- <ngx-select
+        <div class="row">
+          <label class="label col-md-3 form-control-label">Autoridad</label>
+          <div class="col-md-9">
+            <!-- <ngx-select
               [form]="documentsReceptionForm"
               control="autority"></ngx-select> -->
+          </div>
         </div>
-      </div>
 
-      <div class="form-group row">
-        <label class="label col-md-3 form-control-label">Transferente</label>
-        <div class="col-md-9">
-          <!-- <ngx-select
+        <div class="row">
+          <label class="label col-md-3 form-control-label">Transferente</label>
+          <div class="col-md-9">
+            <!-- <ngx-select
               [form]="documentsReceptionForm"
               control="transfer"></ngx-select> -->
+          </div>
         </div>
-      </div>
 
-      <div class="form-group row">
-        <label class="label col-md-3 form-control-label">Juzgado</label>
-        <div class="col-md-9">
-          <!-- <ngx-select
+        <div class="row">
+          <label class="label col-md-3 form-control-label">Juzgado</label>
+          <div class="col-md-9">
+            <!-- <ngx-select
               [form]="documentsReceptionForm"
               control="court"></ngx-select> -->
+          </div>
         </div>
-      </div>
 
-      <div class="form-group row">
-        <label class="label col-md-3 form-control-label">Contribuyente</label>
-        <div class="col-md-9">
-          <!-- <ngx-select
+        <div class="row">
+          <label class="label col-md-3 form-control-label">Contribuyente</label>
+          <div class="col-md-9">
+            <!-- <ngx-select
               [form]="documentsReceptionForm"
               control="taxpayer"></ngx-select> -->
+          </div>
         </div>
-      </div>
 
-      <div class="form-group row">
-        <label class="label col-md-3 form-control-label">Vía Recepción</label>
-        <div class="col-md-9">
-          <!-- <ngx-select
+        <div class="row">
+          <label class="label col-md-3 form-control-label">Vía Recepción</label>
+          <div class="col-md-9">
+            <!-- <ngx-select
               [form]="documentsReceptionForm"
               control="receptionWay"></ngx-select> -->
+          </div>
         </div>
-      </div>
 
-      <div class="form-group row">
-        <label class="label col-md-3 form-control-label">Área Destino</label>
-        <div class="col-md-9">
-          <!-- <ngx-select
+        <div class="row">
+          <label class="label col-md-3 form-control-label">Área Destino</label>
+          <div class="col-md-9">
+            <!-- <ngx-select
               [form]="documentsReceptionForm"
               control="destinationArea"></ngx-select> -->
+          </div>
         </div>
-      </div>
 
-      <div class="form-group row">
-        <div class="offset-md-3 col-md-9">
-          <!-- <ngx-select
+        <div class="row">
+          <div class="offset-md-3 col-md-9">
+            <!-- <ngx-select
               [form]="documentsReceptionForm"
               control="destinationArea"></ngx-select> -->
+          </div>
         </div>
-      </div>
 
-      <div class="form-group row">
-        <label class="label col-md-3 form-control-label">Gestión Destino</label>
-        <div class="col-md-9">
-          <!-- <ngx-select
+        <div class="row">
+          <label class="label col-md-3 form-control-label"
+            >Gestión Destino</label
+          >
+          <div class="col-md-9">
+            <!-- <ngx-select
               [form]="documentsReceptionForm"
               control="destinationManagement"></ngx-select> -->
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <hr class="row" />
-  <div class="row">
-    <div class="col-md-10">
-      <div class="form-group row">
-        <label class="label col-md-3 form-control-label">En atención</label>
-        <div class="col-md-9">
-          <!-- <ngx-select
+    <hr class="row" />
+    <div class="row">
+      <div class="col-md-10">
+        <div class="row">
+          <label class="label col-md-3 form-control-label">En atención</label>
+          <div class="col-md-9">
+            <!-- <ngx-select
               [form]="documentsReceptionForm"
               control="inAtention"></ngx-select> -->
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="col-md-10">
-      <div class="form-group row">
-        <label class="label col-md-3 form-control-label">C.P.P.</label>
-        <div class="col-md-9">
-          <!-- <ngx-select
+      <div class="col-md-10">
+        <div class="row">
+          <label class="label col-md-3 form-control-label">C.P.P.</label>
+          <div class="col-md-9">
+            <!-- <ngx-select
               [form]="documentsReceptionForm"
               control="cpp"></ngx-select>
             <ngx-select
               [form]="documentsReceptionForm"
               control="cpp"></ngx-select> -->
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="row">
-    <div class="col-md-12 text-right">
-      <button status="success" outline type="submit">Siguiente</button>
+    <div class="row">
+      <div class="col-md-12 text-right">
+        <button status="success" outline type="submit">Siguiente</button>
+      </div>
     </div>
-  </div>
+  </form>
 </app-card>
