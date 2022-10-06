@@ -128,7 +128,46 @@ export const MENU: IMenuItem[] = [
         link: '/pages/catalogs/sub-delegations',
       },
       {
-
+        label: 'Lotes',
+        link: '/pages/catalogs/batch',
+      },
+      {
+        label: 'Medio Fotografía',
+        link: '/pages/catalogs/photograph-media',
+      },
+      {
+        label: 'Medio Imagen',
+        link: '/pages/catalogs/image-media',
+      },
+      {
+        label: 'MinPub',
+        link: '/pages/catalogs/minpub',
+      },
+      {
+        label: 'Motivo Revisión',
+        link: '/pages/catalogs/revision-reason',
+      },
+      {
+        label: 'Motivo No Entrega',
+        link: '/pages/catalogs/non-delivery-reasons',
+      },
+      {
+        label: 'Municipios',
+        link: '/pages/catalogs/municipalities',
+      },
+      {
+        label: 'Normas',
+        link: '/pages/catalogs/norms',
+      },
+      {
+        label: 'Notarios',
+        link: '/pages/catalogs/notary',
+      },
+      {
+        label: 'Párrafos',
+        link: '/pages/catalogs/paragraphs',
+      },
+      {
         label: 'Etiquetas Bien',
         link: '/pages/catalogs/label-okey',
       },
@@ -169,6 +208,7 @@ export const MENU: IMenuItem[] = [
       }
     ],
   },
+  //Administración
   {
     label: 'Procesos Administrativos',
     icon: 'bx-folder',
@@ -178,16 +218,24 @@ export const MENU: IMenuItem[] = [
         link: '/pages/administrative-processes/numerary-operator',
       },
       {
-        label: 'Actas de conversión',
-        link: '/pages/administrative-processes/conversion-act',
+        label: 'Reportes',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Almacenes',
+            link: '/pages/administrative-processes/warehouse-reports',
+          },
+        ]
       },
       {
-        label: 'Administración Conversiones',
-        link: '/pages/administrative-processes/conversion-management',
-      },
-      {
-        label: 'Derivacion Bienes',
-        link: '/pages/administrative-processes/derivation-goods',
+        label: 'Empresas',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Resumen Info Financiera',
+            link: '/pages/administrative-processes/summary-financial-info',
+          },
+        ]
       },
     ],
   },
