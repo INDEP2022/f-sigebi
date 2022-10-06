@@ -8,6 +8,9 @@ import { FullModule } from './layouts/full/full.module';
 import { InputFormDirective } from './common/directives/input-form.directive';
 import { HttpErrorsInterceptor } from './common/interceptors/http-errors.interceptor';
 import { JwtInterceptor, JwtModule } from '@auth0/angular-jwt';
+import { BsLocaleService } from 'ngx-bootstrap/datepicker';
+import { defineLocale } from 'ngx-bootstrap/chronos';
+import { esLocale } from 'ngx-bootstrap/locale';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -37,4 +40,9 @@ export function tokenGetter() {
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private localeService: BsLocaleService) {
+    defineLocale('es', esLocale);
+    this.localeService.use('es');
+  }
+}
