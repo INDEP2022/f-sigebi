@@ -237,6 +237,18 @@ export const MENU: IMenuItem[] = [
         label: 'Bienes conversión',
         link: '/pages/administrative-processes/apply-lif',
       },
+      {
+        label: 'Actas Conversión',
+        link: '/pages/administrative-processes/conversion-act',
+      },
+      {
+        label: 'Administración Conversión',
+        link: '/pages/administrative-processes/conversion-management',
+      },
+      {
+        label: 'Derivación Bienes',
+        link: '/pages/administrative-processes/derivation-goods',
+      },
     ],
   },
   {
