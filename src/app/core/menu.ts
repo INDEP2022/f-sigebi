@@ -170,6 +170,16 @@ export const MENU: IMenuItem[] = [
     ],
   },
   {
+    label: 'Procesos Administrativos',
+    icon: 'bx-folder',
+    subItems: [
+      {
+        label: 'Numerario Operado',
+        link: '/pages/administrative-processes/numerary-operator',
+      },
+    ],
+  },
+  {
     label: 'Solicitudes',
     icon: 'bx-folder',
     subItems: [
