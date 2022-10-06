@@ -143,6 +143,10 @@ export const MENU: IMenuItem[] = [
         label: 'Procedencias Cisi',
         link: '/pages/catalogs/oringCisi',
       },
+      {
+        label: 'Procesos Sisi',
+        link: '/pages/catalogs/processSisi',
+      },
     ],
   },
   {

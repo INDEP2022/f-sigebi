@@ -1,33 +1,33 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IProficient } from 'src/app/core/models/catalogs/proficient.model';
-import { ProeficientService } from 'src/app/core/services/catalogs/proficient.service';
+import { ISiseProcess } from 'src/app/core/models/catalogs/sise-process.model';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { EXPERT_COLUMNS } from './expert-columns';
-import { ExpertFormComponent } from '../experts-form/expert-form.component';
+import { TABLE_SETTINGS } from '../../../../common/constants/table-settings';
+import { SiseProcessService } from '../../../../core/services/catalogs/sise-process.service';
+import { SiseProcessFormComponent } from '../sise-process-form/sise-process-form.component';
+import { SISI_PROCESS_COLUMNS } from './sisi-process-columns';
 
 @Component({
-  selector: 'app-expert-list',
-  templateUrl: './expert-list.component.html',
+  selector: 'app-sise-process-list',
+  templateUrl: './sise-process-list.component.html',
   styles: [
   ]
 })
-export class ExpertListComponent  extends BasePage implements OnInit 
-{
+export class SiseProcessListComponent extends BasePage implements OnInit {
+
   settings = TABLE_SETTINGS;
-  proficients: IProficient[] = [];
+  siseProcess: ISiseProcess[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(
-    private procientService: ProeficientService,
-    private modalService: BsModalService
+    private siseProcessService: SiseProcessService,
+    private BsModalService: BsModalService
   ) {
     super();
-    this.settings.columns = EXPERT_COLUMNS;
+    this.settings.columns = SISI_PROCESS_COLUMNS;
     this.settings.actions.delete = true;
   }
 
@@ -39,9 +39,9 @@ export class ExpertListComponent  extends BasePage implements OnInit
 
   getExample() {
     this.loading = true;
-    this.procientService.getAll(this.params.getValue()).subscribe({
+    this.siseProcessService.getAll(this.params.getValue()).subscribe({
       next: response => {
-        this.proficients = response.data;
+        this.siseProcess = response.data;
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -49,10 +49,10 @@ export class ExpertListComponent  extends BasePage implements OnInit
     });
   }
 
-  openForm(proficient?: IProficient) {
+  openForm(sisi?: ISiseProcess) {
     let config: ModalOptions = {
       initialState: {
-        proficient,
+        sisi,
         callback: (next: boolean) => {
           if (next) this.getExample();
         },
@@ -60,19 +60,19 @@ export class ExpertListComponent  extends BasePage implements OnInit
       class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.modalService.show(ExpertFormComponent, config);
+    this.BsModalService.show(SiseProcessFormComponent, config);
   }
 
-  delete(proficient?: IProficient) {
+  delete(sisi?: ISiseProcess) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //this.procientService.remove(proficient.id);
+        //this.siseProcessService.remove(sisi.id);
       }
     });
   }
-}
 
+}

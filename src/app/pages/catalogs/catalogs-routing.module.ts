@@ -249,6 +249,13 @@ const routes: Routes = [
         .OriginCisiModule,
     data: { title: 'Procedencias Cisi' },
   },
+  {
+    path: 'processSisi',
+    loadChildren: async () =>
+      (await import('./sise-process/sise-process.module'))
+        .SiseProcessModule,
+    data: { title: 'Procesos Sisi' },
+  },
 ];
 
 @NgModule({
