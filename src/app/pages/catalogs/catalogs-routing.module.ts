@@ -220,6 +220,76 @@ const routes: Routes = [
         .PaymentConceptModule,
     data: { title: 'Concepto de Pago' },
   },
+  {
+    path: 'batch',
+    loadChildren: async () =>
+      (await import('./batch/batch.module'))
+        .BatchModule,
+    data: { title: 'Lotes' },
+  },
+  {
+    path: 'minpub',
+    loadChildren: async () =>
+      (await import('./minpub/minpub.module'))
+        .MinpubModule,
+    data: { title: 'Minpub' },
+  },
+  {
+    path: 'photograph-media',
+    loadChildren: async () =>
+      (await import('./photograph-media/photograph-media.module'))
+        .PhotographMediaModule,
+    data: { title: 'Medio Fotografía' },
+  },
+  {
+    path: 'image-media',
+    loadChildren: async () =>
+      (await import('./image-media/image-media.module'))
+        .ImageMediaModule,
+    data: { title: 'Medio Imagen' },
+  },
+  {
+    path: 'revision-reason',
+    loadChildren: async () =>
+      (await import('./revision-reason/revision-reason.module'))
+        .RevisionReasonModule,
+    data: { title: 'Motivo Revisión' },
+  },
+  {
+    path: 'non-delivery-reasons',
+    loadChildren: async () =>
+      (await import('./non-delivery-reasons/non-delivery-reasons.module'))
+        .NonDeliveryReasonsModule,
+    data: { title: 'Motivo No Entrega' },
+  },
+  {
+    path: 'municipalities',
+    loadChildren: async () =>
+      (await import('./municipalities/municipalities.module'))
+        .MunicipalitiesModule,
+    data: { title: 'Municipios' },
+  },
+  {
+    path: 'norms',
+    loadChildren: async () =>
+      (await import('./norms/norms.module'))
+        .NormsModule,
+    data: { title: 'Normas' },
+  },
+  {
+    path: 'notary',
+    loadChildren: async () =>
+      (await import('./notary/notary.module'))
+        .NotaryModule,
+    data: { title: 'Notarios' },
+  },
+  {
+    path: 'paragraphs',
+    loadChildren: async () =>
+      (await import('./paragraphs/paragraphs.module'))
+        .ParagraphsModule,
+    data: { title: 'Párrafos' },
+  },
 ];
 
 @NgModule({

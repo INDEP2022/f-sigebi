@@ -33,6 +33,15 @@ const routes: Routes = [
         .DocumentsReceptionModule,
   },
   {
+    path: 'administrative-processes',
+    loadChildren: async () =>
+      (
+        await import(
+          './administrative-processes/administrative-processes.module'
+        )
+      ).AdministrativeProcessesModule,
+  },
+  {
     path: 'home',
     loadChildren: async () =>
       (await import('./admin/home/home.module')).HomeModule,
@@ -43,6 +52,12 @@ const routes: Routes = [
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',
+  },
+  {
+    path: 'executive-processes',
+    loadChildren: async () =>
+      (await import('./executive-processes/executive-processes.module'))
+        .ExecutiveProcessesModule,
   },
 ];
 
