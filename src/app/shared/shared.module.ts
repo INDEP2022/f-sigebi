@@ -2,9 +2,12 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ColumnsSelectComponent } from './components/columns-select/columns-select.component';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BsLocaleService } from 'ngx-bootstrap/datepicker';
+import { defineLocale } from 'ngx-bootstrap/chronos';
+import { esLocale } from 'ngx-bootstrap/locale';
 import { FormFieldComponent } from './components/form-field/form-field.component';
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConfirmButtonComponent } from './components/confirm-button/confirm-button.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { SelectComponent } from './components/select/select.component';
@@ -68,7 +71,12 @@ import { DividerComponent } from './components/divider/divider.component';
     Ng2SmartTableModule,
     FormCheckComponent,
     FormRadioComponent,
-    CommonModule
+    CommonModule,
   ],
 })
-export class SharedModule {}
+export class SharedModule {
+  constructor(private localeService: BsLocaleService) {
+    defineLocale('es', esLocale);
+    this.localeService.use('es');
+  }
+}
