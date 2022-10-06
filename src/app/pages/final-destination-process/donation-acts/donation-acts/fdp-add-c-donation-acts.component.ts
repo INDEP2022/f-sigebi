@@ -1,10 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
-import { BsLocaleService } from 'ngx-bootstrap/datepicker';
-import { defineLocale } from 'ngx-bootstrap/chronos';
-import { esLocale } from 'ngx-bootstrap/locale';
-defineLocale('es', esLocale);
 
 
 @Component({
@@ -16,7 +11,6 @@ defineLocale('es', esLocale);
 export class FdpAddCDonationActsComponent implements OnInit {
   actForm: FormGroup;
   response: boolean = false;
-  bsConfig?: Partial<BsDatepickerConfig>;
 
   settings1 = {
     rowClassFunction: (row: any) =>

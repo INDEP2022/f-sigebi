@@ -4,7 +4,7 @@ import { FormControl } from '@angular/forms';
 @Component({
   selector: 'search-bar-simple',
   template: `
-    <div class="form-group form-secondary d-flex">
+    <div class="form-group form-secondary d-flex justify-content-center">
       <label class="search-label">{{label}}</label>
       <div class="">
         <input
