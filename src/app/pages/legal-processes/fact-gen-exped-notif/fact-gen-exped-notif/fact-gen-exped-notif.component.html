@@ -1,5 +1,5 @@
-<nb-card class="cat-card mt-5"> 
-    <nb-card-header>
+<app-card [header]="true" class="cat-card mt-5"> 
+    <div class="ch-content" header>
   
         <div class="row w-100">
             <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
@@ -15,7 +15,7 @@
                         <label class="label">No Expediente</label>
                         <input nbInput formControlName="noExpediente"
                                 placeholder="No Expediente">
-                        <ngx-validation-message label="noExpediente" [showRequired]="noExpediente?.errors?.required && noExpediente.touched"></ngx-validation-message>
+                        
                         
                         <!-- <button type="submit" nbButton status="primary" [disabled]="!form.valid">Buscar Expediente</button> -->
                     </div>
@@ -24,9 +24,9 @@
 
         </div>
 
-    </nb-card-header>
+    </div>
   
-    <nb-card-body>
+    <div body>
 
         <div class="row w-100">
             <div class="col-sm-12 col-12 col-md-12 p-2">
@@ -34,6 +34,6 @@
             </div>
         </div>
   
-    </nb-card-body>
+    </div>
   
-  </nb-card>
+  </app-card>

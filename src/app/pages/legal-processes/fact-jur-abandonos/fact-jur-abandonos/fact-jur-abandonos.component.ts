@@ -214,20 +214,20 @@ mostrarInfoDeclaratoria(formDeclaratoria: FormGroup): any{
   console.log(formDeclaratoria.value)
 }
 
-oficioRelacionado(event) {
+oficioRelacionado(event: any) {
   console.log("Oficio Relacionado", event);
 }
 
-capturaCopias(event) {
+capturaCopias(event: any) {
   console.log("Captura copias", event);
 }
 
 /**
  * Formulario
  */
-public returnField(form, field) { return form.get(field); }
-public returnShowRequirements(form, field) { 
-  return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched; 
-}
+// public returnField(form, field) { return form.get(field); }
+// public returnShowRequirements(form, field) { 
+//   return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched; 
+// }
 
 }

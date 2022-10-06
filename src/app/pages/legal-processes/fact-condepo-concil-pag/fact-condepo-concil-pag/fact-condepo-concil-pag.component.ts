@@ -88,20 +88,20 @@ export class FactCondepoConcilPagComponent  {
     });
   }
   
-mostrarInfo(form): any{
+mostrarInfo(form: any): any{
   console.log(form.value)
 }
 
-mostrarInfoDepositario(formDepositario): any{
+mostrarInfoDepositario(formDepositario: any): any{
   console.log(formDepositario.value)
 }
 
 /**
  * Formulario
  */
- public returnField(form, field) { return form.get(field); }
- public returnShowRequirements(form, field) { 
-   return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched; 
- }
+//  public returnField(form, field) { return form.get(field); }
+//  public returnShowRequirements(form, field) { 
+//    return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched; 
+//  }
 
 }

@@ -84,9 +84,9 @@ export class FactJurDictamRecrComponent  {
 /**
  * Formulario
  */
- public returnField(form, field) { return form.get(field); }
- public returnShowRequirements(form, field) { 
-   return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched; 
- }
+//  public returnField(form, field) { return form.get(field); }
+//  public returnShowRequirements(form, field) { 
+//    return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched; 
+//  }
 
 }

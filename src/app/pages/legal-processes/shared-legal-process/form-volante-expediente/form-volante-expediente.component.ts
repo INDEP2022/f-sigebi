@@ -47,7 +47,7 @@ capturaCopias() {
 /**
  * Formulario
  */
-public returnField(field) { return this.form.get(field); }
-public returnShowRequirements(field) { return this.returnField(field)?.errors?.required && this.returnField(field).touched; }
+// public returnField(field) { return this.form.get(field); }
+// public returnShowRequirements(field) { return this.returnField(field)?.errors?.required && this.returnField(field).touched; }
 
 }

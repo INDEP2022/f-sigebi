@@ -11,7 +11,7 @@
                 <label class="label w-100">No. Bien</label>
                 <input nbInput fullWidth class="w-100" formControlName="noBien"
                         placeholder="No. Bien">
-                <ngx-validation-message label="No. Bien" [showRequired]="returnShowRequirements(form, 'noBien')"></ngx-validation-message>
+                
             </div>
         </div>
         <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
@@ -25,7 +25,7 @@
                 <label class="label w-100">Nombramiento</label>
                 <input nbInput fullWidth class="w-100" formControlName="nombramiento"
                         placeholder="Nombramiento">
-                <ngx-validation-message label="Nombramiento" [showRequired]="returnShowRequirements(form, 'nombramiento')"></ngx-validation-message>
+                
             </div>
         </div>
         <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
@@ -38,9 +38,10 @@
             <div class="form-group">
                 <label class="label w-100">Fecha</label>
                 <input nbInput fullWidth class="w-100" formControlName="fecha"
-                        placeholder="Fecha" [nbDatepicker]="formpicker1">
-                <nb-datepicker #formpicker1></nb-datepicker>
-                <ngx-validation-message label="Fecha" [showRequired]="returnShowRequirements(form, 'fecha')"></ngx-validation-message>
+                        placeholder="Fecha">
+                         <!-- [nbDatepicker]="formpicker1">
+                <nb-datepicker #formpicker1></nb-datepicker> -->
+                
             </div>
         </div>
         <div *ngIf="nombrePantalla == 'concil-pag'" class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
@@ -80,7 +81,7 @@
                 <label class="label w-100">Id Depositario</label>
                 <input nbInput fullWidth class="w-100" formControlName="idDepositario"
                         placeholder="Id Depositario">
-                <ngx-validation-message label="Id Depositario" [showRequired]="returnShowRequirements(formDepositario, 'idDepositario')"></ngx-validation-message>
+                
             </div>
         </div>
         <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
@@ -88,26 +89,34 @@
                 <label class="label w-100">Depositario</label>
                 <input nbInput fullWidth class="w-100" formControlName="depositario"
                         placeholder="Depositario">
-                <ngx-validation-message label="Depositario" [showRequired]="returnShowRequirements(formDepositario, 'depositario')"></ngx-validation-message>
+                
             </div>
         </div>
         <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-            <div class="form-group">
+            <form-field [control]="formDepositario.get('procesar')" label="Procesar">
+              <select class="form-control" formControlName="select">
+                <option [value]="null">Seleccione un valor</option>
+                <option [value]="'SI'">SI</option>
+                <option [value]="'NO'">NO</option>
+              </select>
+            </form-field>
+            <!-- <div class="form-group">
                 <label class="label w-100">Procesar</label>
-                <nb-select fullWidth selected="No" formControlName="procesar" [status]="''">
+                <ngx-select fullWidth selected="No" formControlName="procesar" [status]="''">
                     <nb-option value="SI">SI</nb-option>
                     <nb-option value="NO">NO</nb-option>
-                </nb-select>
-                <ngx-validation-message label="Procesar" [showRequired]="returnShowRequirements(formDepositario, 'procesar')"></ngx-validation-message>
-            </div>
+                </ngx-select>
+                
+            </div> -->
         </div>
         <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
             <div class="form-group">
                 <label class="label w-100">Fecha Ejecución</label>
                 <input nbInput fullWidth class="w-100" formControlName="fechaEjecucion"
-                        placeholder="Fecha Ejecución" [nbDatepicker]="formpicker2">
-                <nb-datepicker #formpicker2></nb-datepicker>
-                <ngx-validation-message label="Fecha Ejecución" [showRequired]="returnShowRequirements(formDepositario, 'fechaEjecucion')"></ngx-validation-message>
+                        placeholder="Fecha Ejecución">
+                         <!-- [nbDatepicker]="formpicker2">
+                <nb-datepicker #formpicker2></nb-datepicker> -->
+                
             </div>
         </div>
         <div *ngIf="nombrePantalla == 'concil-pag'" class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">

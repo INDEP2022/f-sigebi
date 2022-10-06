@@ -1,58 +1,57 @@
-<nb-card class="cat-card">
-    <nb-card-header>
+<app-card [header]="true" class="cat-card">
+    <div class="ch-content" header>
         <span class="title">
             Dictaminaciones Jurídicas
         </span>
-    </nb-card-header>
+    </div>
 
-    <nb-card-body>
+    <div body>
         <form [formGroup]="legalForm" class="container-fluid">
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group row">
                         <label class="label form-control-label col-md-3">Tipo Dicatminación</label>
                         <div class="col-md-9">
-                            <nb-select fullWidth placeholder="Tipo de dictaminación"
+                            <form-field [control]="legalForm.get('tipoDictaminacion')" label="Tipo de dictaminación">
+                              <select class="form-control" formControlName="tipoDictaminacion">
+                                <option [value]="null">Seleccione un valor</option>
+                                <option [value]="'Alta'">Alta</option>
+                                <option [value]="'Normal'">Normal</option>
+                              </select>
+                            </form-field>
+                            <!-- <nb-select fullWidth placeholder="Tipo de dictaminación"
                                 formControlName="tipoDictaminacion">
                                 <nb-option value="Alta">Alta</nb-option>
                                 <nb-option value="Normal">Normal</nb-option>
-                            </nb-select>
-                            <ngx-validation-message label="Tipo de dictaminación"
-                                [showRequired]="legalForm.get('tipoDictaminacion').errors?.required && legalForm.get('tipoDictaminacion').touched">
-                            </ngx-validation-message>
+                            </nb-select> -->
+                            
                         </div>
                     </div>
 
                     <div class="form-group row">
                         <label class="label col-md-3 form-control-label">No Expediente</label>
                         <div class="col-md-9">
-                            <input class="form-control" type="number" nbInput fullWidth formControlName="noExpediente"
-                                [status]="legalForm.get('noExpediente').errors?.required && legalForm.get('noExpediente').touched ? 'danger' : ''">
-                            <ngx-validation-message label="No expediente"
-                                [showRequired]="legalForm.get('noExpediente').errors?.required && legalForm.get('noExpediente').touched">
-                            </ngx-validation-message>
+                            <input class="form-control" type="number" nbInput fullWidth formControlName="noExpediente">
+                                <!-- [status]="legalForm.get('noExpediente').errors?.required && legalForm.get('noExpediente').touched ? 'danger' : ''"> -->
+                            
                         </div>
                     </div>
 
                     <div class="form-group row">
                         <label class="label col-md-3 form-control-label">Averi. Previa</label>
                         <div class="col-md-9">
-                            <input class="form-control" type="text" nbInput fullWidth formControlName="averPrevia"
-                                [status]="legalForm.get('averPrevia').errors?.required && legalForm.get('averPrevia').touched ? 'danger' : ''">
-                            <ngx-validation-message label="Averi. Previa"
-                                [showRequired]="legalForm.get('averPrevia').errors?.required && legalForm.get('averPrevia').touched">
-                            </ngx-validation-message>
+                            <input class="form-control" type="text" nbInput fullWidth formControlName="averPrevia">
+                                <!-- [status]="legalForm.get('averPrevia').errors?.required && legalForm.get('averPrevia').touched ? 'danger' : ''"> -->
+                            
                         </div>
                     </div>
 
                     <div class="form-group row">
                         <label class="label col-md-3 form-control-label">Causa Penal</label>
                         <div class="col-md-9">
-                            <input class="form-control" type="text" nbInput fullWidth formControlName="causaPenal"
-                                [status]="legalForm.get('causaPenal').errors?.required && legalForm.get('causaPenal').touched ? 'danger' : ''">
-                            <ngx-validation-message label="Causa Penal"
-                                [showRequired]="legalForm.get('causaPenal').errors?.required && legalForm.get('causaPenal').touched">
-                            </ngx-validation-message>
+                            <input class="form-control" type="text" nbInput fullWidth formControlName="causaPenal">
+                                <!-- [status]="legalForm.get('causaPenal').errors?.required && legalForm.get('causaPenal').touched ? 'danger' : ''"> -->
+                            
                         </div>
                     </div>
 
@@ -65,11 +64,10 @@
 
                     <div class="form-group row">
                         <label class="label form-control-label">Observaciones del Dictamen</label>
-                        <textarea class="form-control" rows="2" nbInput fullWidth formControlName="observaciones"
-                            [status]="legalForm.get('observaciones').errors?.required && legalForm.get('observaciones').touched ? 'danger' : ''"></textarea>
-                        <ngx-validation-message label="Observaciones del dictamen"
-                            [showRequired]="legalForm.get('observaciones').errors?.required && legalForm.get('observaciones').touched">
-                        </ngx-validation-message>
+                        <textarea class="form-control" rows="2" nbInput fullWidth formControlName="observaciones">
+                            <!-- [status]="legalForm.get('observaciones').errors?.required && legalForm.get('observaciones').touched ? 'danger' : ''"> -->
+                        </textarea>
+                        
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -78,13 +76,11 @@
                             <div class="form-group row">
                                 <label class="label col-md-3 form-control-label">Fec. Dest.</label>
                                 <div class="col-md-9">
-                                    <input class="form-control" nbInput fullWidth formControlName="fecDest"
-                                        [nbDatepicker]="dest"
+                                    <input class="form-control" nbInput fullWidth formControlName="fecDest">
+                                        <!-- [nbDatepicker]="dest"
                                         [status]="legalForm.get('fecDest').errors?.required && legalForm.get('fecDest').touched ? 'danger' : ''">
-                                    <nb-datepicker #dest></nb-datepicker>
-                                    <ngx-validation-message label="Fec. Dest."
-                                        [showRequired]="legalForm.get('fecDest').errors?.required && legalForm.get('fecDest').touched">
-                                    </ngx-validation-message>
+                                    <nb-datepicker #dest></nb-datepicker> -->
+                                    
                                 </div>
                             </div>
                         </div>
@@ -92,13 +88,11 @@
                             <div class="form-group row">
                                 <label class="label col-md-3 form-control-label">Fec Dictamina</label>
                                 <div class="col-md-9">
-                                    <input class="form-control" nbInput fullWidth formControlName="fecDicta"
-                                        [nbDatepicker]="dicta"
+                                    <input class="form-control" nbInput fullWidth formControlName="fecDicta">
+                                        <!-- [nbDatepicker]="dicta"
                                         [status]="legalForm.get('fecDicta').errors?.required && legalForm.get('fecDicta').touched ? 'danger' : ''">
-                                    <nb-datepicker #dicta></nb-datepicker>
-                                    <ngx-validation-message label="Fec Dictamina"
-                                        [showRequired]="legalForm.get('fecDicta').errors?.required && legalForm.get('fecDicta').touched">
-                                    </ngx-validation-message>
+                                    <nb-datepicker #dicta></nb-datepicker> -->
+                                    
                                 </div>
                             </div>
                         </div>
@@ -108,20 +102,16 @@
                         <label class="label col-md-3 form-control-label">Autoriza Dict.</label>
                         <div class="col-md-9">
                             <ngx-select [form]="legalForm" control="autoriza"></ngx-select>
-                            <ngx-validation-message label="Autoriza Dic."
-                                [showRequired]="legalForm.get('autoriza').errors?.required && legalForm.get('autoriza').touched">
-                            </ngx-validation-message>
+                            
                         </div>
                     </div>
 
                     <div class="form-group row">
                         <label class="label col-md-3 form-control-label">Cve. Oficio</label>
                         <div class="col-md-9">
-                            <input class="form-control" type="test" nbInput fullWidth formControlName="cveOficio"
-                                [status]="legalForm.get('cveOficio').errors?.required && legalForm.get('cveOficio').touched ? 'danger' : ''">
-                            <ngx-validation-message label="Cve. Oficio"
-                                [showRequired]="legalForm.get('cveOficio').errors?.required && legalForm.get('cveOficio').touched">
-                            </ngx-validation-message>
+                            <input class="form-control" type="test" nbInput fullWidth formControlName="cveOficio">
+                                <!-- [status]="legalForm.get('cveOficio').errors?.required && legalForm.get('cveOficio').touched ? 'danger' : ''"> -->
+                            
                         </div>
                     </div>
 
@@ -140,19 +130,33 @@
             <hr class="row">
             <div class="row">
                 <div class="col-md-2">
-                    <label class="label">Ident.</label>
+                    <form-field [control]="legalForm.get('test')" label="Ident.">
+                      <select class="form-control" formControlName="test">
+                        <option [value]="null">Seleccione un valor</option>
+                        <option [value]="'Alta'">Alta</option>
+                        <option [value]="'Normal'">Normal</option>
+                      </select>
+                    </form-field>
+                    <!-- <label class="label">Ident.</label>
                     <nb-select fullWidth formControlName="test">
                         <nb-option value="Alta">Alta</nb-option>
                         <nb-option value="Normal">Normal</nb-option>
-                    </nb-select>
+                    </nb-select> -->
                 </div>
 
                 <div class="col-md-10">
-                    <label class="label">Subtipo - Ssubtipo - Sssubtipo</label>
+                    <form-field [control]="legalForm.get('test')" label="Subtipo - Ssubtipo - Sssubtipo">
+                      <select class="form-control" formControlName="test">
+                        <option [value]="null">Seleccione un valor</option>
+                        <option [value]="'Alta'">Alta</option>
+                        <option [value]="'Normal'">Normal</option>
+                      </select>
+                    </form-field>
+                    <!-- <label class="label">Subtipo - Ssubtipo - Sssubtipo</label>
                     <nb-select fullWidth formControlName="test">
                         <nb-option value="Alta">Alta</nb-option>
                         <nb-option value="Normal">Normal</nb-option>
-                    </nb-select>
+                    </nb-select> -->
                 </div>
             </div>
 
@@ -163,16 +167,20 @@
             <div class="row pt-2">
                 <div class="col-md-12 text-center">
                     <button nbButton class="mx-2">
-                        <nb-icon icon="arrow-ios-upward-outline"></nb-icon>
+                        ICONO
+                        <!-- <nb-icon icon="arrow-ios-upward-outline"></nb-icon> -->
                     </button>
                     <button nbButton class="mx-2">
-                        <nb-icon icon="arrowhead-up-outline"></nb-icon>
+                        ICONO
+                        <!-- <nb-icon icon="arrowhead-up-outline"></nb-icon> -->
                     </button>
                     <button nbButton class="mx-2">
-                        <nb-icon icon="arrow-ios-downward-outline"></nb-icon>
+                        ICONO
+                        <!-- <nb-icon icon="arrow-ios-downward-outline"></nb-icon> -->
                     </button>
                     <button nbButton class="mx-2">
-                        <nb-icon icon="arrowhead-down-outline"></nb-icon>
+                        ICONO
+                        <!-- <nb-icon icon="arrowhead-down-outline"></nb-icon> -->
                     </button>
                 </div>
             </div>
@@ -203,5 +211,5 @@
                 </div>
             </div>
         </form>
-    </nb-card-body>
-</nb-card>
+    </div>
+</app-card>

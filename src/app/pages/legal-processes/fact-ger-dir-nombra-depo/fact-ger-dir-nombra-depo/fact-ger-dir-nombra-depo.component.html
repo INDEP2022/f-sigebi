@@ -1,5 +1,5 @@
-<nb-card class="cat-card mt-5"> 
-    <nb-card-header>
+<app-card [header]="true" class="cat-card mt-5"> 
+    <div class="ch-content" header>
   
         <div class="row w-100">
             <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
@@ -10,9 +10,9 @@
             
         </div>
 
-    </nb-card-header>
+    </div>
   
-    <nb-card-body>
+    <div body>
 
         <!-- form Conciliacion de pagos recibidos -->
         <form [formGroup]="form" (submit)="mostrarInfo()">
@@ -22,7 +22,7 @@
                         <label class="label w-100">No. Bien</label>
                         <input nbInput fullWidth class="w-100" formControlName="noBien"
                                 placeholder="No. Bien">
-                        <ngx-validation-message label="No. Bien" [showRequired]="returnShowRequirements(form, 'noBien')"></ngx-validation-message>
+                        
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
@@ -39,7 +39,7 @@
                             <nb-option value="Depositario">Depositario</nb-option>
                             <nb-option value="Interventor">Interventor</nb-option>
                         </nb-select>
-                        <ngx-validation-message label="Procesar" [showRequired]="returnShowRequirements(form, 'tipoAdministrador')"></ngx-validation-message>
+                        
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
@@ -49,7 +49,7 @@
                             <nb-option value="Provisional">Provisional</nb-option>
                             <nb-option value="Definitiva">Definitiva</nb-option>
                         </nb-select>
-                        <ngx-validation-message label="Procesar" [showRequired]="returnShowRequirements(form, 'tipoAdministrador')"></ngx-validation-message>
+                        
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
@@ -73,6 +73,6 @@
             </div>
         </div> -->
   
-    </nb-card-body>
+    </div>
   
-  </nb-card>
+  </app-card>

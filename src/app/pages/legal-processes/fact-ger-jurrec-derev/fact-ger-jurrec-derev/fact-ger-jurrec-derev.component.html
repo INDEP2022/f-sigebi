@@ -1,5 +1,5 @@
-<nb-card class="cat-card mt-5"> 
-    <nb-card-header>
+<app-card [header]="true" class="cat-card mt-5"> 
+    <div class="ch-content" header>
   
         <div class="row w-100">
             <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
@@ -10,9 +10,9 @@
             
         </div>
 
-    </nb-card-header>
+    </div>
   
-    <nb-card-body>
+    <div body>
 
         <div class="row w-100">
             <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-1">
@@ -24,9 +24,7 @@
                                 <label class="label w-100">Delegación</label>
                                 <input nbInput fullWidth class="w-100" formControlName="delegacion"
                                         placeholder="Delegación">
-                                <ngx-validation-message label="Delegación" 
-                                [showRequired]="returnShowRequirements(form, 'delegacion')">
-                            </ngx-validation-message>
+                                
                             </div>
                         </div>
                         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
@@ -41,9 +39,7 @@
                                 <label class="label w-100">SubDelegación</label>
                                 <input nbInput fullWidth class="w-100" formControlName="subdelegacion"
                                         placeholder="SubDelegación">
-                                <ngx-validation-message label="SubDelegación" 
-                                [showRequired]="returnShowRequirements(form, 'subdelegacion')">
-                            </ngx-validation-message>
+                                
                             </div>
                         </div>
                         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
@@ -58,9 +54,7 @@
                                 <label class="label w-100">Desde No. Bien</label>
                                 <input nbInput fullWidth class="w-100" formControlName="delBien"
                                         placeholder="Desde No. Bien">
-                                <ngx-validation-message label="Desde No. Bien" 
-                                [showRequired]="returnShowRequirements(form, 'delBien')">
-                            </ngx-validation-message>
+                                
                             </div>
                         </div>
                         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
@@ -75,9 +69,7 @@
                                 <label class="label w-100">Hasta No. Bien</label>
                                 <input nbInput fullWidth class="w-100" formControlName="alBien"
                                         placeholder="Hasta No. Bien">
-                                <ngx-validation-message label="Hasta No. Bien" 
-                                [showRequired]="returnShowRequirements(form, 'alBien')">
-                            </ngx-validation-message>
+                                
                             </div>
                         </div>
                         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
@@ -91,22 +83,20 @@
                             <div class="form-group">
                                 <label class="label w-100">Fecha Presentación Recurso Del:</label>
                                 <input nbInput fullWidth class="w-100" formControlName="fechaPresentacionRecursoDesde"
-                                        placeholder="Fecha Presentación Recurso Del:" [nbDatepicker]="formpicker1">
-                                    <nb-datepicker #formpicker1></nb-datepicker>
-                                <ngx-validation-message label="Fecha Presentación Recurso Del:" 
-                                [showRequired]="returnShowRequirements(form, 'fechaPresentacionRecursoDesde')">
-                            </ngx-validation-message>
+                                        placeholder="Fecha Presentación Recurso Del:">
+                                         <!-- [nbDatepicker]="formpicker1">
+                                    <nb-datepicker #formpicker1></nb-datepicker> -->
+                                
                             </div>
                         </div>
                         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
                             <div class="form-group">
                                 <label class="label w-100">Fecha Presentación Recurso Hasta:</label>
                                 <input nbInput fullWidth class="w-100" formControlName="fechaPresentacionRecursoHasta"
-                                        placeholder="Fecha Presentación Recurso Hasta:" [nbDatepicker]="formpicker2">
-                                    <nb-datepicker #formpicker2></nb-datepicker>
-                                <ngx-validation-message label="Fecha Presentación Recurso Hasta:" 
-                                [showRequired]="returnShowRequirements(form, 'fechaPresentacionRecursoHasta')">
-                            </ngx-validation-message>
+                                        placeholder="Fecha Presentación Recurso Hasta:">
+                                         <!-- [nbDatepicker]="formpicker2">
+                                    <nb-datepicker #formpicker2></nb-datepicker> -->
+                                
                             </div>
                         </div>
                         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2 text-center">
@@ -123,6 +113,6 @@
             </div>
         </div>
   
-    </nb-card-body>
+    </div>
   
-  </nb-card>
+  </app-card>

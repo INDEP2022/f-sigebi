@@ -1,19 +1,22 @@
-import { NgModule } from '@angular/core';  
+/** BASE IMPORT */
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SharedModule } from 'src/app/shared/shared.module';
+/** BASE IMPORT */
 
-import { ComponentsModule } from '../../../@components/components.module';
+// import { ComponentsModule } from '../../../@components/components.module';
 
 import { NgSelectModule } from '@ng-select/ng-select';
 
 import { FactJurEmisionAcuRoutingModule } from './fact-jur-emision-acu.routing.module';
 
 import { Ng2SmartTableModule } from 'ng2-smart-table';
-import { ThemeModule } from '../../../@theme/theme.module';
+// import { ThemeModule } from '../../../@theme/theme.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NbButtonModule, NbCardModule, NbInputModule, NbSelectModule, NbWindowModule, NbDatepickerModule } from '@nebular/theme';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+// import { NbButtonModule, NbCardModule, NbInputModule, NbSelectModule, NbWindowModule, NbDatepickerModule } from '@nebular/theme';
+// import { MatPaginatorModule } from '@angular/material/paginator';
+// import { MatFormFieldModule } from '@angular/material/form-field';
+// import { MatInputModule } from '@angular/material/input';
 import { FactJurEmisionAcuComponent } from './fact-jur-emision-acu/fact-jur-emision-acu.component';
 import { SharedLegalProcessModule } from '../shared-legal-process/shared-legal-process.module';
 
@@ -25,28 +28,30 @@ import { SharedLegalProcessModule } from '../shared-legal-process/shared-legal-p
   imports: [
     CommonModule,
     FactJurEmisionAcuRoutingModule,
-    ComponentsModule,
+    // ComponentsModule,
     FormsModule,
     ReactiveFormsModule,
-    ComponentsModule,
-    ThemeModule,
-    NbCardModule,
+    // ComponentsModule,
+    // ThemeModule,
+    // NbCardModule,
     Ng2SmartTableModule,
-    NbSelectModule,
-    NbButtonModule,
-    NbInputModule,
-    NbWindowModule.forChild(),
-    MatPaginatorModule,
-    MatInputModule,
-    MatFormFieldModule,
-    NbDatepickerModule,
+    // NbSelectModule,
+    // NbButtonModule,
+    // NbInputModule,
+    // NbWindowModule.forChild(),
+    // MatPaginatorModule,
+    // MatInputModule,
+    // MatFormFieldModule,
+    // NbDatepickerModule,
     NgSelectModule,
+    SharedModule,
 
     SharedLegalProcessModule
   ],
   exports:[
     
-    ComponentsModule, NgSelectModule
+    // ComponentsModule, 
+    NgSelectModule
     
   ]
 })

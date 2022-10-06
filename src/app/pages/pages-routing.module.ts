@@ -48,6 +48,12 @@ const routes: Routes = [
       (await import('./juridical-processes/juridical-processes.module')).JuridicalProcessesModule,
     data: { title: 'Juridicos' },
   },
+  {
+
+    path: 'legal-processes',
+    loadChildren: () => import('./legal-processes/legal-processes.module')
+      .then(m => m.LegalProcessesModule),
+  },
 ];
 
 @NgModule({

@@ -1,5 +1,5 @@
-<nb-card class="cat-card mt-5"> 
-    <nb-card-header>
+<app-card [header]="true" class="cat-card mt-5"> 
+    <div class="ch-content" header>
   
         <div class="row w-100">
             <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
@@ -10,9 +10,9 @@
 
         </div>
 
-    </nb-card-header>
+    </div>
   
-    <nb-card-body>
+    <div body>
 
         <form [formGroup]="form" (submit)="mostrarInfo()">
             <div class="row w-100">
@@ -21,7 +21,7 @@
                         <label class="label w-100">No. Volante</label>
                         <input nbInput fullWidth type="number" class="w-100" formControlName="noVolante"
                                 placeholder="No. Volante">
-                        <ngx-validation-message label="No. Volante" [showRequired]="returnShowRequirements(form, 'noVolante')"></ngx-validation-message>
+                        
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-1">
@@ -29,7 +29,7 @@
                         <label class="label w-100">No. Expediente</label>
                         <input nbInput fullWidth type="number" class="w-100" formControlName="noExpediente"
                                 placeholder="No. Expediente">
-                        <ngx-validation-message label="No. Expediente" [showRequired]="returnShowRequirements(form, 'noExpediente')"></ngx-validation-message>
+                        
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-1">
@@ -37,7 +37,7 @@
                         <label class="label w-100">No. Oficio</label>
                         <input nbInput fullWidth type="number" class="w-100" formControlName="noOficio"
                                 placeholder="No. Oficio">
-                        <ngx-validation-message label="No. Oficio" [showRequired]="returnShowRequirements(form, 'noOficio')"></ngx-validation-message>
+                        
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-1">
@@ -45,7 +45,7 @@
                         <label class="label w-100">Tipo Oficio</label>
                         <input nbInput fullWidth class="w-100" formControlName="tipoOficio"
                                 placeholder="Tipo Oficio">
-                        <ngx-validation-message label="Tipo Oficio" [showRequired]="returnShowRequirements(form, 'tipoOficio')"></ngx-validation-message>
+                        
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-1">
@@ -53,7 +53,7 @@
                         <label class="label w-100">Estatus</label>
                         <input nbInput fullWidth class="w-100" formControlName="estatus"
                                 placeholder="Estatus">
-                        <ngx-validation-message label="Estatus" [showRequired]="returnShowRequirements(form, 'estatus')"></ngx-validation-message>
+                        
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-1">
@@ -61,12 +61,12 @@
                         <label class="label w-100">Tipo Oficio</label>
                         <input nbInput fullWidth class="w-100" formControlName="tipoOficio"
                                 placeholder="Tipo Oficio">
-                        <ngx-validation-message label="Tipo Oficio" [showRequired]="returnShowRequirements(form, 'tipoOficio')"></ngx-validation-message>
+                        
                     </div>
                 </div>
             </div>
         </form>
   
-    </nb-card-body>
+    </div>
   
-  </nb-card>
+  </app-card>

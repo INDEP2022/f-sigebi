@@ -1,5 +1,5 @@
-<nb-card class="cat-card mt-5"> 
-    <nb-card-header>
+<app-card [header]="true" class="cat-card mt-5"> 
+    <div class="ch-content" header>
   
         <div class="row w-100">
             <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
@@ -10,9 +10,9 @@
             
         </div>
 
-    </nb-card-header>
+    </div>
   
-    <nb-card-body>
+    <div body>
 
         <!-- TABLA----NOTIFICACIONES RELACIONADAS CON EL EXPEDIENTE -->
         <div class="row w-100">
@@ -49,16 +49,16 @@
             <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
                 <div class="form-group">
                     <button nbButton class="mx-2">
-                        <nb-icon icon="arrow-circle-right-outline"></nb-icon>
-                        <br>
+                        <!-- <nb-icon icon="arrow-circle-right-outline"></nb-icon>
+                        <br> -->
                         <label class="label w-100">Agregar</label>
                     </button>
                 </div>
                 <br>
                 <div class="form-group">
                     <button nbButton class="mx-2">
-                        <nb-icon icon="arrow-circle-left-outline"></nb-icon>
-                        <br>
+                        <!-- <nb-icon icon="arrow-circle-left-outline"></nb-icon>
+                        <br> -->
                         <label class="label w-100">Eliminar</label>
                     </button>
                 </div>
@@ -81,7 +81,7 @@
                         <label class="label w-100">No Volante</label>
                         <input nbInput fullWidth type="number" class="w-100" formControlName="noVolante"
                                 placeholder="No Volante">
-                        <ngx-validation-message label="No Volante" [showRequired]="returnShowRequirements(form, 'noVolante')"></ngx-validation-message>
+                        
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-1">
@@ -89,7 +89,7 @@
                         <label class="label w-100">Clave Oficio</label>
                         <input nbInput fullWidth type="number" class="w-100" formControlName="claveOficio"
                                 placeholder="Clave Oficio">
-                        <ngx-validation-message label="Clave Oficio" [showRequired]="returnShowRequirements(form, 'claveOficio')"></ngx-validation-message>
+                        
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-1">
@@ -97,7 +97,7 @@
                         <label class="label w-100">Destinatario</label>
                         <input nbInput fullWidth class="w-100" formControlName="destinatario"
                                 placeholder="Destinatario">
-                        <ngx-validation-message label="Destinatario" [showRequired]="returnShowRequirements(form, 'destinatario')"></ngx-validation-message>
+                        
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-1">
@@ -133,7 +133,7 @@
                         <label class="label w-100">Texto</label>
                         <textarea nbInput fullWidth fullWidth placeholder="Texto"
                             class="w-100" formControlName="texto" rows="10"></textarea>
-                        <ngx-validation-message label="Texto" [showRequired]="returnShowRequirements(form, 'texto')"></ngx-validation-message>
+                        
                     </div>
                 </div>
             </div>
@@ -148,7 +148,7 @@
                 <label class="label w-100">C.P.P 1</label>
                 <input nbInput fullWidth class="w-100" formControlName="ccp1"
                         placeholder="C.P.P 1">
-                <ngx-validation-message label="C.P.P 1" [showRequired]="returnShowRequirements(formCcpOficio, 'ccp1')"></ngx-validation-message>
+                
             </div>
         </div>
         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-1 pt-0 pb-0">
@@ -163,7 +163,7 @@
                 <label class="label w-100">C.P.P 2</label>
                 <input nbInput fullWidth class="w-100" formControlName="ccp2"
                         placeholder="C.P.P 2">
-                <ngx-validation-message label="C.P.P 2" [showRequired]="returnShowRequirements(formCcpOficio, 'ccp2')"></ngx-validation-message>
+                
             </div>
         </div>
         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-1 pt-0 pb-0">
@@ -178,7 +178,7 @@
                 <label class="label w-100">Firma</label>
                 <input nbInput fullWidth class="w-100" formControlName="firma"
                         placeholder="Firma">
-                <ngx-validation-message label="Firma" [showRequired]="returnShowRequirements(formCcpOficio, 'firma')"></ngx-validation-message>
+                
             </div>
         </div>
         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-1 pt-0 pb-0">
@@ -203,6 +203,6 @@
 <!-- Form CON COPIA PARA -->
 
 
-    </nb-card-body>
+    </div>
   
-  </nb-card>
+  </app-card>

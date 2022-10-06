@@ -1,5 +1,5 @@
-<nb-card class="cat-card mt-5"> 
-    <nb-card-header>
+<app-card [header]="true" class="cat-card mt-5"> 
+    <div class="ch-content" header>
   
         <div class="row w-100">
             <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
@@ -10,9 +10,9 @@
             
         </div>
 
-    </nb-card-header>
+    </div>
   
-    <nb-card-body>
+    <div body>
 
         <div class="row w-100">
             <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-1">
@@ -24,7 +24,7 @@
                                 <label class="label w-100">No. Expediente</label>
                                 <input nbInput fullWidth class="w-100" formControlName="noExpediente"
                                         placeholder="No. Expediente">
-                                <ngx-validation-message label="No. Expediente" [showRequired]="returnShowRequirements(form, 'noExpediente')"></ngx-validation-message>
+                                
                             </div>
                         </div>
                         <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
@@ -32,7 +32,7 @@
                                 <label class="label w-100">Averiguación Previa</label>
                                 <input nbInput fullWidth class="w-100" formControlName="averiguacionPrevia"
                                         placeholder="Averiguación Previa">
-                                <ngx-validation-message label="Averiguación Previa" [showRequired]="returnShowRequirements(form, 'averiguacionPrevia')"></ngx-validation-message>
+                                
                             </div>
                         </div>
                         <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
@@ -40,7 +40,7 @@
                                 <label class="label w-100">Causa Penal</label>
                                 <input nbInput fullWidth class="w-100" formControlName="causaPenal"
                                         placeholder="Causa Penal">
-                                <ngx-validation-message label="Causa Penal" [showRequired]="returnShowRequirements(form, 'causaPenal')"></ngx-validation-message>
+                                
                             </div>
                         </div>
                         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
@@ -66,12 +66,22 @@
                                 <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
                                     <div class="form-group">
                                         <label class="label w-100">Tipo Suspensión</label>
-                                        <nb-radio-group fullWidth formControlName="tipoSuspension" class="w-100">
+                                        <form-radio label="PROVISIONAL">
+                                            <input type="radio" formControlName="tipoSuspension" [value]="'PROVISIONAL'" />
+                                        </form-radio>
+                                        <form-radio label="DEFINITIVA">
+                                            <input type="radio" formControlName="tipoSuspension" [value]="'DEFINITIVA'" />
+                                        </form-radio>
+                                        <form-radio label="DE PLANO">
+                                            <input type="radio" formControlName="tipoSuspension" [value]="'DE PLANO'" />
+                                        </form-radio>
+
+                                        <!-- <nb-radio-group fullWidth formControlName="tipoSuspension" class="w-100">
                                             <nb-radio class="p-2" value="Provisional">Provisional</nb-radio>
                                             <nb-radio class="p-2" value="Definitiva">Definitiva</nb-radio>
                                             <nb-radio class="p-2" value="De plano">De plano</nb-radio>
-                                        </nb-radio-group>
-                                        <ngx-validation-message label="Tipo Suspensión" [showRequired]="returnShowRequirements(formTipoSuspersion, 'tipoSuspension')"></ngx-validation-message>
+                                        </nb-radio-group> -->
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -81,18 +91,20 @@
                                         <div class="form-group">
                                             <label class="label w-100">Fecha Informe Previo</label>
                                             <input nbInput fullWidth class="w-100" formControlName="fechaInformePrevio"
-                                                    placeholder="Fecha Informe Previo" [nbDatepicker]="formpicker1">
-                                            <nb-datepicker #formpicker1></nb-datepicker>
-                                            <ngx-validation-message label="Fecha Informe Previo" [showRequired]="returnShowRequirements(formTipoSuspersion, 'fechaInformePrevio')"></ngx-validation-message>
+                                                    placeholder="Fecha Informe Previo">
+                                                     <!-- [nbDatepicker]="formpicker1">
+                                            <nb-datepicker #formpicker1></nb-datepicker> -->
+                                            
                                         </div>
                                     </div>
                                     <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
                                         <div class="form-group">
                                             <label class="label w-100">Justificado</label>
                                             <input nbInput fullWidth class="w-100" formControlName="justificado"
-                                                    placeholder="Justificado" [nbDatepicker]="formpicker2">
-                                            <nb-datepicker #formpicker2></nb-datepicker>
-                                            <ngx-validation-message label="Justificado" [showRequired]="returnShowRequirements(formTipoSuspersion, 'justificado')"></ngx-validation-message>
+                                                    placeholder="Justificado">
+                                                     <!-- [nbDatepicker]="formpicker2">
+                                            <nb-datepicker #formpicker2></nb-datepicker> -->
+                                            
                                         </div>
                                     </div>
                                     <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
@@ -100,7 +112,7 @@
                                             <label class="label w-100">Observaciones</label>
                                             <textarea nbInput fullWidth placeholder="Observaciones"
                                             class="w-100" formControlName="observaciones"></textarea>
-                                            <ngx-validation-message label="Observaciones" [showRequired]="returnShowRequirements(formTipoSuspersion, 'observaciones')"></ngx-validation-message>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -119,32 +131,34 @@
                                     <label class="label w-100">Amparo</label>
                                     <input nbInput fullWidth class="w-100" formControlName="amparo"
                                             placeholder="Amparo">
-                                    <ngx-validation-message label="Amparo" 
-                                    [showRequired]="returnShowRequirements(formAmparo, 'amparo')">
-                                </ngx-validation-message>
+                                    
                                 </div>
                             </div>
                             <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-                                <div class="form-group">
+                                <form-field [control]="formAmparo.get('tipoAmparo')" label="Tipo Amparo">
+                                    <select class="form-control" formControlName="tipoAmparo">
+                                      <option [value]="null">Seleccione un valor</option>
+                                      <option [value]="'DIRECTO'">DIRECTO</option>
+                                      <option [value]="'INDIRECTO'">INDIRECTO</option>
+                                    </select>
+                                  </form-field>
+                                <!-- <div class="form-group">
                                     <label class="label w-100">Tipo Amparo</label>
                                     <nb-select fullWidth selected="No" formControlName="tipoAmparo" class="w-100" [status]="''">
                                         <nb-option class="p-2" value="Directo">Directo</nb-option>
                                         <nb-option class="p-2" value="Indirecto">Indirecto</nb-option>
                                     </nb-select>
-                                    <ngx-validation-message label="Tipo Amparo" 
-                                    [showRequired]="returnShowRequirements(formAmparo, 'tipoAmparo')">
-                                </ngx-validation-message>
-                                </div>
+                                    
+                                </div> -->
                             </div>
                             <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
                                 <div class="form-group">
                                     <label class="label w-100">Fecha Oficio</label>
                                     <input nbInput fullWidth class="w-100" formControlName="fechaOficio"
-                                            placeholder="Fecha Oficio" [nbDatepicker]="formpicker3">
-                                    <nb-datepicker #formpicker3></nb-datepicker>
-                                    <ngx-validation-message label="Fecha Oficio" 
-                                    [showRequired]="returnShowRequirements(formAmparo, 'fechaOficio')">
-                                </ngx-validation-message>
+                                            placeholder="Fecha Oficio">
+                                             <!-- [nbDatepicker]="formpicker3">
+                                    <nb-datepicker #formpicker3></nb-datepicker> -->
+                                    
                                 </div>
                             </div>
                             <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
@@ -152,9 +166,7 @@
                                     <label class="label w-100">Min. Pub.</label>
                                     <input nbInput fullWidth class="w-100" formControlName="minPub"
                                             placeholder="Min. Pub.">
-                                    <ngx-validation-message label="Min. Pub." 
-                                    [showRequired]="returnShowRequirements(formAmparo, 'minPub')">
-                                </ngx-validation-message>
+                                    
                                 </div>
                             </div>
                             <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
@@ -168,9 +180,7 @@
                                     <label class="label w-100">No. Juzgado</label>
                                     <input nbInput fullWidth class="w-100" formControlName="noJuzgado"
                                             placeholder="No. Juzgado">
-                                    <ngx-validation-message label="No. Juzgado" 
-                                    [showRequired]="returnShowRequirements(formAmparo, 'noJuzgado')">
-                                </ngx-validation-message>
+                                    
                                 </div>
                             </div>
                             <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
@@ -184,9 +194,7 @@
                                     <label class="label w-100">Delegación</label>
                                     <input nbInput fullWidth class="w-100" formControlName="delegacion"
                                             placeholder="Delegación">
-                                    <ngx-validation-message label="Delegación" 
-                                    [showRequired]="returnShowRequirements(formAmparo, 'delegacion')">
-                                </ngx-validation-message>
+                                    
                                 </div>
                             </div>
                             <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
@@ -213,9 +221,7 @@
                                     <label class="label w-100">Quejosos</label>
                                     <textarea nbInput fullWidth placeholder="Quejosos"
                                     class="w-100" formControlName="quejosos"></textarea>
-                                    <ngx-validation-message label="Quejosos" 
-                                    [showRequired]="returnShowRequirements(formAmparo, 'Quejosos')">
-                                </ngx-validation-message>
+                                    
                                 </div>
                             </div>
                             <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
@@ -223,9 +229,7 @@
                                     <label class="label w-100">Acto Reclamado</label>
                                     <textarea nbInput fullWidth placeholder="Acto Reclamado"
                                     class="w-100" formControlName="actoReclamado"></textarea>
-                                    <ngx-validation-message label="Acto Reclamado" 
-                                    [showRequired]="returnShowRequirements(formAmparo, 'Acto Reclamado')">
-                                </ngx-validation-message>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -267,6 +271,6 @@
         </div>
         <!-- tabla Emisión Acuerdos -->
   
-    </nb-card-body>
+    </div>
   
-  </nb-card>
+  </app-card>

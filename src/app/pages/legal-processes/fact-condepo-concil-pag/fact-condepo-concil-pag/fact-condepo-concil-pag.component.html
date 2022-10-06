@@ -1,5 +1,5 @@
-<nb-card class="cat-card mt-5"> 
-    <nb-card-header>
+<app-card [header]="true" class="cat-card mt-5"> 
+    <div class="ch-content" header>
   
         <div class="row w-100">
             <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
@@ -10,9 +10,9 @@
             
         </div>
 
-    </nb-card-header>
+    </div>
   
-    <nb-card-body>
+    <div body>
 
         <!-- Forms DEPOSITARIA -->
         <ngx-form-depositaria [form]="form" [formDepositario]="formDepositario" (formValues)="mostrarInfo($event)"
@@ -26,6 +26,6 @@
             </div>
         </div> -->
   
-    </nb-card-body>
+    </div>
   
-  </nb-card>
+  </app-card>

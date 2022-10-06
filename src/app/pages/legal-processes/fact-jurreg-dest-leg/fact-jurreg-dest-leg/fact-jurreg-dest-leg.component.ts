@@ -75,7 +75,7 @@ export class FactJurregDestLegComponent  {
     });
   }
 
-toggleRemocion(checked: boolean) {
+toggleRemocion(checked: any) {
   this.checked = checked;
 }
   
@@ -134,9 +134,9 @@ btnConsultarImagenesEscaneadas() {
 /**
  * Formulario
  */
- public returnField(form, field) { return form.get(field); }
- public returnShowRequirements(form, field) { 
-   return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched; 
- }
+//  public returnField(form, field) { return form.get(field); }
+//  public returnShowRequirements(form, field) { 
+//    return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched; 
+//  }
 
 }

@@ -11,7 +11,7 @@
                 <label class="label w-100">Inicio</label>
                 <textarea nbInput fullWidth fullWidth placeholder="Inicio"
                 class="w-100" formControlName="inicio"></textarea>
-                <ngx-validation-message label="Inicio" [showRequired]="returnShowRequirements(formOficioInicioFin, 'inicio')"></ngx-validation-message>
+                 
             </div>
         </div>
         <div class="col-sm-12 col-12 col-md-12 pr-3">
@@ -19,7 +19,7 @@
                 <label class="label w-100">Fin</label>
                 <textarea nbInput fullWidth fullWidth placeholder="Fin"
                 class="w-100" formControlName="fin"></textarea>
-                <ngx-validation-message label="Fin" [showRequired]="returnShowRequirements(formOficioInicioFin, 'fin')"></ngx-validation-message>
+                 
             </div>
         </div>
     </div>
@@ -48,57 +48,88 @@
 <form [formGroup]="formCcpOficio">
     <div class="row tp-2 mb-2">
         <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-1 pt-0 pb-0">
-            <div class="form-group pt-1 pb-1 mb-1">
+            
+            <form-field [control]="formCcpOficio.get('ccp')" label="C.P.P">
+              <select class="form-control" formControlName="ccp">
+                <option [value]="null">Seleccione un valor</option>
+                <option [value]="'INTERNO'">INTERNO</option>
+                <option [value]="'EXTERNO'">EXTERNO</option>
+              </select>
+            </form-field>
+
+            <!-- <div class="form-group pt-1 pb-1 mb-1">
                 <label class="label w-100">C.P.P</label>
                 <nb-select fullWidth selected="No" formControlName="ccp" [status]="''">
                     <nb-option value="INTERNO">INTERNO</nb-option>
                     <nb-option value="EXTERNO">EXTERNO</nb-option>
                 </nb-select>
-                <ngx-validation-message label="C.P.P" [showRequired]="returnShowRequirements(formCcpOficio, 'ccp')"></ngx-validation-message>
-            </div>
+                 
+            </div> -->
         </div>
         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-1 pt-0 pb-0">
-            <div class="form-group pt-1 pb-1 mb-1">
+            
+            <form-field [control]="formCcpOficio.get('usuario')" label="Usuario">
+                <select class="form-control" formControlName="usuario">
+                  <option [value]="null">Seleccione un valor</option>
+                  <option [value]="'USUARIO'">USUARIO</option>
+                </select>
+              </form-field>
+            <!-- <div class="form-group pt-1 pb-1 mb-1">
                 <label class="label w-100">Usuario</label>
                 <nb-select fullWidth selected="No" formControlName="usuario" [status]="''">
                     <nb-option value="USUARIO">USUARIO</nb-option>
                 </nb-select>
-                <ngx-validation-message label="Usuario" [showRequired]="returnShowRequirements(formCcpOficio, 'usuario')"></ngx-validation-message>
-            </div>
+                 
+            </div> -->
         </div>
         <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-1 pt-0 pb-0">
             <div class="form-group pt-1 pb-1 mb-1">
                 <label class="label w-100">Nombre Usuario</label>
                 <input nbInput fullWidth type="number" class="w-100" formControlName="nombreUsuario"
                         placeholder="Nombre Usuario">
-                <ngx-validation-message label="Nombre Usuario" [showRequired]="returnShowRequirements(formCcpOficio, 'nombreUsuario')"></ngx-validation-message>
+                 
             </div>
         </div>
         <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-1 pt-0 pb-0">
-            <div class="form-group pt-1 pb-1 mb-1">
+            
+            <form-field [control]="formCcpOficio.get('ccp2')" label="C.P.P">
+              <select class="form-control" formControlName="ccp2">
+                <option [value]="null">Seleccione un valor</option>
+                <option [value]="'INTERNO'">INTERNO</option>
+                <option [value]="'EXTERNO'">EXTERNO</option>
+              </select>
+            </form-field>
+            <!-- <div class="form-group pt-1 pb-1 mb-1">
                 <label class="label w-100">C.P.P</label>
                 <nb-select fullWidth selected="No" formControlName="ccp2" [status]="''">
                     <nb-option value="INTERNO">INTERNO</nb-option>
                     <nb-option value="EXTERNO">EXTERNO</nb-option>
                 </nb-select>
-                <ngx-validation-message label="C.P.P" [showRequired]="returnShowRequirements(formCcpOficio, 'ccp2')"></ngx-validation-message>
-            </div>
+                 
+            </div> -->
         </div>
         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-1 pt-0 pb-0">
-            <div class="form-group pt-1 pb-1 mb-1">
+            
+            <form-field [control]="formCcpOficio.get('usuario2')" label="Usuario">
+                <select class="form-control" formControlName="usuario2">
+                  <option [value]="null">Seleccione un valor</option>
+                  <option [value]="'USUARIO'">USUARIO</option>
+                </select>
+              </form-field>
+            <!-- <div class="form-group pt-1 pb-1 mb-1">
                 <label class="label w-100">Usuario</label>
                 <nb-select fullWidth selected="No" formControlName="usuario2" [status]="''">
                     <nb-option value="USUARIO">USUARIO</nb-option>
                 </nb-select>
-                <ngx-validation-message label="Usuario" [showRequired]="returnShowRequirements(formCcpOficio, 'usuario2')"></ngx-validation-message>
-            </div>
+                 
+            </div> -->
         </div>
         <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-1 pt-0 pb-0">
             <div class="form-group pt-1 pb-1 mb-1">
                 <label class="label w-100">Nombre Usuario</label>
                 <input nbInput fullWidth type="number" class="w-100" formControlName="nombreUsuario2"
                         placeholder="Nombre Usuario">
-                <ngx-validation-message label="Nombre Usuario" [showRequired]="returnShowRequirements(formCcpOficio, 'nombreUsuario2')"></ngx-validation-message>
+                 
             </div>
         </div>
     </div>

@@ -1,5 +1,5 @@
-<nb-card class="cat-card mt-5"> 
-    <nb-card-header>
+<app-card [header]="true" class="cat-card mt-5"> 
+    <div class="ch-content" header>
   
         <div class="row w-100">
             <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
@@ -10,9 +10,9 @@
             
         </div>
 
-    </nb-card-header>
+    </div>
   
-    <nb-card-body>
+    <div body>
 
         <!-- Forms Bienes DEPOSITARIA -->
         <form [formGroup]="form">
@@ -25,7 +25,7 @@
                                 <label class="label w-100">Delegación</label>
                                 <input nbInput fullWidth class="w-100" formControlName="delegacion"
                                         placeholder="Delegación">
-                                <ngx-validation-message label="Delegación" [showRequired]="returnShowRequirements(form, 'delegacion')"></ngx-validation-message>
+                                
                             </div>
                         </div>
                         <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
@@ -39,7 +39,7 @@
                                 <label class="label w-100">SubDelegación</label>
                                 <input nbInput fullWidth class="w-100" formControlName="subdelegacion"
                                         placeholder="SubDelegación">
-                                <ngx-validation-message label="SubDelegación" [showRequired]="returnShowRequirements(form, 'subdelegacion')"></ngx-validation-message>
+                                
                             </div>
                         </div>
                         <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
@@ -53,7 +53,7 @@
                                 <label class="label w-100">Depositaría</label>
                                 <input nbInput fullWidth class="w-100" formControlName="depositaria"
                                         placeholder="Depositaría">
-                                <ngx-validation-message label="Depositaría" [showRequired]="returnShowRequirements(form, 'depositaria')"></ngx-validation-message>
+                                
                             </div>
                         </div>
                         <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
@@ -67,7 +67,7 @@
                                 <label class="label w-100">Entidad Federativa</label>
                                 <input nbInput fullWidth class="w-100" formControlName="entidadFederativa"
                                         placeholder="Entidad Federativa">
-                                <ngx-validation-message label="Entidad Federativa" [showRequired]="returnShowRequirements(form, 'entidadFederativa')"></ngx-validation-message>
+                                
                             </div>
                         </div>
                         <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
@@ -81,7 +81,7 @@
                                 <label class="label w-100">Tipo Bien</label>
                                 <input nbInput fullWidth class="w-100" formControlName="tipoBien"
                                         placeholder="Tipo Bien">
-                                <ngx-validation-message label="Tipo Bien" [showRequired]="returnShowRequirements(form, 'tipoBien')"></ngx-validation-message>
+                                
                             </div>
                         </div>
                         <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
@@ -95,7 +95,7 @@
                                 <label class="label w-100">Subtipo de Bienes</label>
                                 <input nbInput fullWidth class="w-100" formControlName="subtipoBien"
                                         placeholder="Subtipo de Bienes">
-                                <ngx-validation-message label="Subtipo de Bienes" [showRequired]="returnShowRequirements(form, 'subtipoBien')"></ngx-validation-message>
+                                
                             </div>
                         </div>
                         <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
@@ -108,28 +108,28 @@
                             <div class="form-group">
                                 <nb-checkbox fullWidth class="w-100" formControlName="fechaNombramientoProvicional">
                                     Fecha Nombramiento Provicional</nb-checkbox>
-                                <ngx-validation-message label="Fecha Nombramiento Provicional" [showRequired]="returnShowRequirements(form, 'fechaNombramientoProvicional')"></ngx-validation-message>
+                                
                             </div>
                         </div>
                         <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
                             <div class="form-group">
                                 <nb-checkbox fullWidth class="w-100" formControlName="fechaRemocion">
                                     Fecha Remoción</nb-checkbox>
-                                <ngx-validation-message label="Fecha Remoción" [showRequired]="returnShowRequirements(form, 'fechaRemocion')"></ngx-validation-message>
+                                
                             </div>
                         </div>
                         <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
                             <div class="form-group">
                                 <nb-checkbox fullWidth class="w-100" formControlName="fechaNombramientoDefinitivo">
                                     Fecha Nombramiento Definitivo</nb-checkbox>
-                                <ngx-validation-message label="Fecha Nombramiento Definitivo" [showRequired]="returnShowRequirements(form, 'fechaNombramientoDefinitivo')"></ngx-validation-message>
+                                
                             </div>
                         </div>
                         <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
                             <div class="form-group">
                                 <nb-checkbox fullWidth class="w-100" formControlName="todasFechas">
                                     Todas las Fechas</nb-checkbox>
-                                <ngx-validation-message label="Todas las Fechas" [showRequired]="returnShowRequirements(form, 'todasFechas')"></ngx-validation-message>
+                                
                             </div>
                         </div>
                         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
@@ -141,7 +141,7 @@
                                     <nb-option value="Interventor">Interventor</nb-option>
                                     <nb-option value="Todos">Todos</nb-option>
                                 </nb-select>
-                                <ngx-validation-message label="Tipo" [showRequired]="returnShowRequirements(form, 'tipo')"></ngx-validation-message>
+                                
                             </div>
                         </div>
                         <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2 text-center">
@@ -160,6 +160,6 @@
         </form>
         <!-- Forms Bienes DEPOSITARIA -->
   
-    </nb-card-body>
+    </div>
   
-  </nb-card>
+  </app-card>

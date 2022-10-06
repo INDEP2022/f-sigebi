@@ -1,14 +1,15 @@
-import { Component, OnInit } from '@angular/core';  
+import { Component, OnInit, OnDestroy } from '@angular/core';  
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NbDialogService } from '@nebular/theme';
-import { BaseApp } from '../../../../@core/shared/base-app';
+// import { NbDialogService } from '@nebular/theme';
+// import { BaseApp } from '../../../../@core/shared/base-app';
+import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'ngx-fact-jur-dict-amas',
   templateUrl: './fact-jur-dict-amas.component.html',
   styleUrls: ['./fact-jur-dict-amas.component.scss']
 })
-export class FactJurDictAmasComponent extends BaseApp {
+export class FactJurDictAmasComponent extends BasePage implements OnInit, OnDestroy  {
   legalForm: FormGroup;
   data1 = [
     {
@@ -155,7 +156,9 @@ export class FactJurDictAmasComponent extends BaseApp {
     noDataMessage: "No se encontrarón registros",
   };
 
-  constructor(private fb: FormBuilder, private dialogService: NbDialogService) {
+  constructor(private fb: FormBuilder,
+    //  private dialogService: NbDialogService
+     ) {
     super();
   }
 
