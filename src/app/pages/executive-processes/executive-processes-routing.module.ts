@@ -63,12 +63,6 @@ const routes: Routes = [
     data: { title: 'Aprobación de bienes para destino' },
   },
   {
-    path: 'pe-idbptys-m-report-types-subtypes',
-    loadChildren: async () =>
-      (await import('./pe-idbptys-m-report-types-subtypes/pe-idbptys-m-report-types-subtypes.module')).PeIdbptysMReportTypesSubtypesModule,
-    data: { title: 'Reporte de tipos y subtipos' },
-  },
-  {
     path: 'pe-rddxdees-m-reception-area-sera',
     loadChildren: async () =>
       (await import('./pe-rddxdees-m-reception-area-sera/pe-rddxdees-m-reception-area-sera.module')).PeRddxdeesMReceptionAreaSeraModule,

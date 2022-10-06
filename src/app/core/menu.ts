@@ -224,10 +224,6 @@ export const MENU: IMenuItem[] = [
         link: '/pages/executive-processes/pe-ad-m-approval-assets-destination',
       },
       {
-        label: 'Reporte de tipos y subtipos',
-        link: '/pages/executive-processes/pe-idbptys-m-report-types-subtypes',
-      },
-      {
         label: 'Recepción recibida por área en el SERA ',
         link: '/pages/executive-processes/pe-rddxdees-m-reception-area-sera',
       },
