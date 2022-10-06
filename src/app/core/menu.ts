@@ -1,3 +1,4 @@
+import { DOCUMENTS_RECEPTION_ROUTES } from '../common/constants/documents-reception-routes';
 import { menuOpcionesProcesosJuridicos } from '../pages/juridical-processes/juridical-processes-nombres-rutas-archivos';
 import { IMenuItem } from './interfaces/menu.interface';
 
@@ -376,6 +377,7 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
+  // DOCUMENTS_RECEPTION_ROUTES,
   {
     label: 'Procesos Ejecutivos',
     icon: 'bx-folder',
