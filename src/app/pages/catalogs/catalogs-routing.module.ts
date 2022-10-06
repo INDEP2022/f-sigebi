@@ -250,11 +250,18 @@ const routes: Routes = [
     data: { title: 'Procedencias Cisi' },
   },
   {
-    path: 'processSisi',
+    path: 'processSise',
     loadChildren: async () =>
       (await import('./sise-process/sise-process.module'))
         .SiseProcessModule,
-    data: { title: 'Procesos Sisi' },
+    data: { title: 'Procesos Sise' },
+  },
+  {
+    path: 'rAsuntDic',
+    loadChildren: async () =>
+      (await import('./rasunt-dic/rasunt-dic.module'))
+        .RAsuntDicModule,
+    data: { title: 'Procesos Sise' },
   },
 ];
 

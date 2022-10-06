@@ -3,28 +3,28 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/ModelForm';
-import { ISiseProcess } from 'src/app/core/models/catalogs/sise-process.model';
-import { SiseProcessService } from 'src/app/core/services/catalogs/sise-process.service';
+import { IRAsuntDic } from 'src/app/core/models/catalogs/r-asunt-dic.model';
+import { RAsuntDicService } from 'src/app/core/services/catalogs/r-asunt-dic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
-  selector: 'app-sise-process-form',
-  templateUrl: './sise-process-form.component.html',
+  selector: 'app-rasunt-dic-form',
+  templateUrl: './rasunt-dic-form.component.html',
   styles: [
   ]
 })
-export class SiseProcessFormComponent extends BasePage implements OnInit {
+export class RAsuntDicFormComponent extends BasePage implements OnInit {
 
-  form: ModelForm<ISiseProcess>;
-  title: string = 'Proceso Sise';
+  form: ModelForm<IRAsuntDic>;
+  title: string = 'R Asunt Dic';
   edit: boolean = false;
-  sisi: ISiseProcess;
-  siseProcess = new DefaultSelect<ISiseProcess>();
+  rAsuntDic: IRAsuntDic;
+  rAsuntDics = new DefaultSelect<IRAsuntDic>();
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private siseProcessService: SiseProcessService,
+    private rAsuntDicService: RAsuntDicService,
   ) {
     super();
   }
@@ -35,18 +35,25 @@ export class SiseProcessFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      id: [null],
-      description: [null, [Validators.required]],
+      code: [null],
+      dictum: [null, [Validators.required]],
+      flyerType: [null, [Validators.required]],
+      doc: [null],
+      property: [null],
+      g_of: [null],
+      i: [null],
+      e: [null],
+      registryNumber: [null],
     });
-    if (this.sisi != null) {
+    if (this.rAsuntDic != null) {
       this.edit = true;
-      this.form.patchValue(this.sisi);
+      this.form.patchValue(this.rAsuntDic);
     }
   }
 
   getData(params: ListParams) {
-    this.siseProcessService.getAll(params).subscribe(data => {
-      this.siseProcess = new DefaultSelect(data.data, data.count);
+    this.rAsuntDicService.getAll(params).subscribe(data => {
+      this.rAsuntDics = new DefaultSelect(data.data, data.count);
     });
   }
   close() {
@@ -59,7 +66,7 @@ export class SiseProcessFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.siseProcessService
+    this.rAsuntDicService
       .create(this.form.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
@@ -69,9 +76,9 @@ export class SiseProcessFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.siseProcessService
+    this.rAsuntDicService
       .update(
-        this.sisi.id,
+        this.rAsuntDic.code,
         this.form.getRawValue()
       )
       .subscribe({
@@ -87,5 +94,6 @@ export class SiseProcessFormComponent extends BasePage implements OnInit {
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
+
 
 }

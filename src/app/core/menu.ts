@@ -146,6 +146,10 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Procesos Sisi',
         link: '/pages/catalogs/processSisi',
+      }, 
+      {
+        label: 'R Asunt Dic',
+        link: '/pages/catalogs/rAsuntDic',
       },
     ],
   },

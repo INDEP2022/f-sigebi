@@ -29,6 +29,7 @@ const routes: Routes = [
   { path: 'origin', loadChildren: () => import('./pages/catalogs/origin/origin.module').then(m => m.OriginModule) },
   { path: 'originCisi', loadChildren: () => import('./pages/catalogs/origin-cisi/origin-cisi.module').then(m => m.OriginCisiModule) },
   { path: 'siseProcess', loadChildren: () => import('./pages/catalogs/sise-process/sise-process.module').then(m => m.SiseProcessModule) },
+  { path: 'rAsuntDic', loadChildren: () => import('./pages/catalogs/rasunt-dic/rasunt-dic.module').then(m => m.RAsuntDicModule) },
 ];
 
 @NgModule({
