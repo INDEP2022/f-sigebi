@@ -1,0 +1,31 @@
+<nb-card class="cat-card mt-5"> 
+    <nb-card-header>
+  
+        <div class="row w-100">
+            <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
+                <span class="title">
+                    CONCILIACIÓN DE PAGOS DEPOSITARIAS
+                </span>
+            </div>
+            
+        </div>
+
+    </nb-card-header>
+  
+    <nb-card-body>
+
+        <!-- Forms DEPOSITARIA -->
+        <ngx-form-depositaria [form]="form" [formDepositario]="formDepositario" (formValues)="mostrarInfo($event)"
+        (formDepositariaValues)="mostrarInfoDepositario($event)" [nombrePantalla]="'concil-pag'"
+        ></ngx-form-depositaria>
+        <!-- Forms DEPOSITARIA -->
+
+        <!-- <div class="row w-100">
+            <div class="col-sm-12 col-12 col-md-12 p-2">
+                <ng2-smart-table class="my-table" [settings]="tableFactGenSettings" [source]="dataFactGen"></ng2-smart-table>
+            </div>
+        </div> -->
+  
+    </nb-card-body>
+  
+  </nb-card>

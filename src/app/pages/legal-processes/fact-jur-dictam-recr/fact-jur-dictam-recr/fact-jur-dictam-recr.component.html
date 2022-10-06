@@ -1,0 +1,165 @@
+<nb-card class="cat-card mt-5"> 
+    <nb-card-header>
+  
+        <div class="row w-100">
+            <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
+                <span class="title">
+                    NOTIFICACIONES POR EXPEDIENTE
+                </span>
+            </div>
+            
+        </div>
+
+    </nb-card-header>
+  
+    <nb-card-body>
+
+        <div class="row w-100">
+            <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-1">
+                <!-- FORM Expediente -->
+                <form [formGroup]="form">
+                    <div class="row w-100">
+                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">No. Expediente</label>
+                                <input nbInput fullWidth class="w-100" formControlName="noExpediente"
+                                        placeholder="No. Expediente">
+                                <ngx-validation-message label="No. Expediente" 
+                                [showRequired]="returnShowRequirements(form, 'noExpediente')">
+                            </ngx-validation-message>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Averiguación Previa</label>
+                                <input nbInput fullWidth class="w-100" formControlName="averiguacionPrevia"
+                                        placeholder="Averiguación Previa">
+                                <ngx-validation-message label="Averiguación Previa" 
+                                [showRequired]="returnShowRequirements(form, 'averiguacionPrevia')">
+                            </ngx-validation-message>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Causa Penal</label>
+                                <input nbInput fullWidth class="w-100" formControlName="causaPenal"
+                                        placeholder="Causa Penal">
+                                <ngx-validation-message label="Causa Penal" 
+                                [showRequired]="returnShowRequirements(form, 'causaPenal')">
+                            </ngx-validation-message>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Fecha Presentación Recurso Revisión</label>
+                                <input nbInput fullWidth class="w-100" formControlName="fechaPresentacionRecursoRevision"
+                                        placeholder="Fecha Presentación Recurso Revisión" [nbDatepicker]="formpicker1">
+                                    <nb-datepicker #formpicker1></nb-datepicker>
+                                <ngx-validation-message label="Fecha Presentación Recurso Revisión" 
+                                [showRequired]="returnShowRequirements(form, 'fechaPresentacionRecursoRevision')">
+                            </ngx-validation-message>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">No. Amparo</label>
+                                <input nbInput fullWidth class="w-100" formControlName="noAmparo"
+                                        placeholder="No. Amparo">
+                                <ngx-validation-message label="No. Amparo" 
+                                [showRequired]="returnShowRequirements(form, 'noAmparo')">
+                            </ngx-validation-message>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Estatus del Bien</label>
+                                <input nbInput fullWidth class="w-100" formControlName="estatusBien"
+                                        placeholder="Estatus del Bien">
+                                <ngx-validation-message label="Estatus del Bien" 
+                                [showRequired]="returnShowRequirements(form, 'estatusBien')">
+                            </ngx-validation-message>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Estatus Bien Descripción</label>
+                                <input nbInput fullWidth class="w-100"
+                                        placeholder="Estatus Bien Descripción">
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Fecha Notificación</label>
+                                <input nbInput fullWidth class="w-100" formControlName="fechaNotificacion"
+                                        placeholder="Fecha Notificación" [nbDatepicker]="formpicker2">
+                                    <nb-datepicker #formpicker2></nb-datepicker>
+                                <ngx-validation-message label="Fecha Notificación" 
+                                [showRequired]="returnShowRequirements(form, 'fechaNotificacion')">
+                            </ngx-validation-message>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Estatus Dictaminación</label>
+                                <input nbInput fullWidth class="w-100" formControlName="statusDictaminacion"
+                                        placeholder="Estatus Dictaminación">
+                                <ngx-validation-message label="Estatus Dictaminación" 
+                                [showRequired]="returnShowRequirements(form, 'statusDictaminacion')">
+                            </ngx-validation-message>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Acuerdo Inicial</label>
+                                <textarea nbInput fullWidth placeholder="Acuerdo Inicial"
+                                class="w-100" formControlName="acuerdoInicial"></textarea>
+                                <ngx-validation-message label="Acuerdo Inicial" 
+                                [showRequired]="returnShowRequirements(form, 'acuerdoInicial')">
+                            </ngx-validation-message>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Motivo Recurso Revisión</label>
+                                <textarea nbInput fullWidth placeholder="Motivo Recurso Revisión"
+                                class="w-100" formControlName="motivoRecursoRevision"></textarea>
+                                <ngx-validation-message label="Motivo Recurso Revisión" 
+                                [showRequired]="returnShowRequirements(form, 'motivoRecursoRevision')">
+                            </ngx-validation-message>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Observaciones</label>
+                                <textarea nbInput fullWidth placeholder="Observaciones"
+                                class="w-100" formControlName="observaciones"></textarea>
+                                <ngx-validation-message label="Observaciones" 
+                                [showRequired]="returnShowRequirements(form, 'observaciones')">
+                            </ngx-validation-message>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 text-center">
+                            <div class="form-group">
+                                <label class="label">&nbsp;</label>&nbsp;
+                                <button type="button" nbButton status="primary" (click)="btnAprobar()"
+                                class="text-wrap">
+                                    Aprobar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <!-- FORM Expediente -->
+            </div>
+        </div>
+
+        <!-- tabla Expediente -->
+        <div class="row w-100">
+            <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+                <ng2-smart-table class="my-table" [settings]="tableSettings" [source]="dataTable"></ng2-smart-table>
+            </div>
+        </div>
+  
+    </nb-card-body>
+  
+  </nb-card>

@@ -1,3 +1,4 @@
+import { menuOpcionesProcesosJuridicos } from '../pages/juridical-processes/juridical-processes-nombres-rutas-archivos';
 import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
@@ -78,4 +79,37 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
+  menuOpcionesProcesosJuridicos[0]
+  // // PROCESOS JURIDICOS
+  // {
+  //   label: 'Procesos Jurídicos',
+  //   icon: 'bx-share-alt',
+  //   subItems: [
+  //     {
+  //       label: 'Dictaminaciones Juridicas',
+  //       link: '/pages/juridicos/dictaminaciones-juridicas',
+  //     },
+  //     {
+  //       label: 'Dictaminaciones Juridicas',
+  //       link: '/pages/juridicos/dictaminaciones-juridicas',
+  //     },
+  //     {
+  //       label: 'Dictaminaciones Juridicas',
+  //       link: '/pages/juridicos/dictaminaciones-juridicas',
+  //     },
+  //     {
+  //       label: 'Nivel 1.2',
+  //       subItems: [
+  //         {
+  //           label: 'Nivel 2.1',
+  //         },
+  //         {
+  //           label: 'Nivel 2.2',
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // },
+  // // PROCESOS JURIDICOS
+
 ];

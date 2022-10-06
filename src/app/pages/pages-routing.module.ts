@@ -30,6 +30,12 @@ const routes: Routes = [
     redirectTo: 'home',
     pathMatch: 'full',
   },
+  {
+    path: 'juridicos',
+    loadChildren: async () =>
+      (await import('./juridical-processes/juridical-processes.module')).JuridicalProcessesModule,
+    data: { title: 'Juridicos' },
+  },
 ];
 
 @NgModule({

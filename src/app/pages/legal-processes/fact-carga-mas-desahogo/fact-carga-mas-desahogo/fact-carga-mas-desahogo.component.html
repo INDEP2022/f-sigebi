@@ -1,0 +1,247 @@
+<nb-card class="cat-card mt-5"> 
+    <nb-card-header>
+  
+        <div class="row w-100">
+            <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
+                <span class="title">
+                    DICTAMINACIÓN MASIVA
+                </span>
+            </div>
+            
+        </div>
+
+    </nb-card-header>
+  
+    <nb-card-body>
+
+        <div class="row w-100">
+            <div class="col-sm-12 col-12 col-md-9 col-lg-9 p-1">
+                <!-- FORM Expediente -->
+                <form [formGroup]="form">
+                    <div class="row w-100">
+                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">No. Oficio</label>
+                                <input nbInput fullWidth class="w-100" formControlName="noOficio"
+                                        placeholder="No. Oficio">
+                                <ngx-validation-message label="No. Oficio" 
+                                [showRequired]="returnShowRequirements(form, 'noOficio')">
+                            </ngx-validation-message>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">No. Volante</label>
+                                <input nbInput fullWidth class="w-100" formControlName="noVolante"
+                                        placeholder="No. Volante">
+                                <ngx-validation-message label="No. Volante" 
+                                [showRequired]="returnShowRequirements(form, 'noVolante')">
+                            </ngx-validation-message>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">No. Expediente</label>
+                                <input nbInput fullWidth class="w-100" formControlName="noExpediente"
+                                        placeholder="No. Expediente">
+                                <ngx-validation-message label="No. Expediente" 
+                                [showRequired]="returnShowRequirements(form, 'noExpediente')">
+                            </ngx-validation-message>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Tipo Dictaminación</label>
+                                <input nbInput fullWidth class="w-100" formControlName="tipoDictaminacion"
+                                        placeholder="Tipo Dictaminación">
+                                <ngx-validation-message label="Tipo Dictaminación" 
+                                [showRequired]="returnShowRequirements(form, 'tipoDictaminacion')">
+                            </ngx-validation-message>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Fecha</label>
+                                <input nbInput fullWidth class="w-100" formControlName="fecha"
+                                        placeholder="Fecha">
+                                <ngx-validation-message label="Fecha" 
+                                [showRequired]="returnShowRequirements(form, 'fecha')">
+                            </ngx-validation-message>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Estatus</label>
+                                <input nbInput fullWidth class="w-100" formControlName="estatus"
+                                        placeholder="Estatus">
+                                <ngx-validation-message label="Estatus" 
+                                [showRequired]="returnShowRequirements(form, 'estatus')">
+                            </ngx-validation-message>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Clave Oficio Armada</label>
+                                <input nbInput fullWidth class="w-100" formControlName="claveOficioArmada"
+                                        placeholder="Clave Oficio Armada">
+                                <ngx-validation-message label="Clave Oficio Armada" 
+                                [showRequired]="returnShowRequirements(form, 'claveOficioArmada')">
+                            </ngx-validation-message>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Usuario Dictamina</label>
+                                <input nbInput fullWidth class="w-100" formControlName="usuarioDictamina"
+                                        placeholder="Usuario Dictamina">
+                                <ngx-validation-message label="Usuario Dictamina" 
+                                [showRequired]="returnShowRequirements(form, 'usuarioDictamina')">
+                            </ngx-validation-message>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Fecha Instructora</label>
+                                <input nbInput fullWidth class="w-100" formControlName="fechaInstructora"
+                                        placeholder="Fecha Instructora" [nbDatepicker]="formpicker1">
+                                    <nb-datepicker #formpicker1></nb-datepicker>
+                                <ngx-validation-message label="Fecha Instructora" 
+                                [showRequired]="returnShowRequirements(form, 'fechaInstructora')">
+                            </ngx-validation-message>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Fecha Instructora Detalle</label>
+                                <input nbInput fullWidth class="w-100"
+                                        placeholder="Fecha Instructora Detalle">
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 text-center">
+                            <hr class="row">
+                            <span class="subtitle">Eliminar</span>
+                            <hr class="row">
+                        </div>
+
+                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Eliminar</label>
+                                <nb-checkbox fullWidth class="w-100" formControlName="eliminar">Eliminar</nb-checkbox>
+                                <ngx-validation-message label="Eliminar" 
+                                [showRequired]="returnShowRequirements(form, 'eliminar')">
+                            </ngx-validation-message>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2 text-center">
+                            <div class="form-group">
+                                <label class="label">&nbsp;</label>&nbsp;
+                                <button type="button" nbButton status="primary" (click)="btnBienesDictamen()"
+                                class="text-wrap">
+                                    Bienes del Dictamen
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2 text-center">
+                            <div class="form-group">
+                                <label class="label">&nbsp;</label>&nbsp;
+                                <button type="button" nbButton status="primary" (click)="btnDictamenes()"
+                                class="text-wrap">
+                                    Dictámenes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2 pl-4 border">
+                <div class="row w-100">
+                    <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+                        <!-- FORM formCargaMasiva -->
+                        <form [formGroup]="formCargaMasiva">
+                            <div class="form-group">
+                                <label class="label w-100">Identificador Carga Masiva</label>
+                                <input nbInput fullWidth class="w-100" formControlName="identificadorCargaMasiva"
+                                        placeholder="Identificador Carga Masiva">
+                                <ngx-validation-message label="Identificador Carga Masiva" 
+                                [showRequired]="returnShowRequirements(form, 'identificadorCargaMasiva')">
+                            </ngx-validation-message>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-sm-12 col-12 col-md-12 col-lg-12 pl-2 p-1 text-center">
+                        <div class="form-group m-1">
+                            <button type="button" nbButton status="primary" (click)="btnCargarIdentificador()"
+                            class="text-wrap fs-4">
+                                Cargar de Identificador
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-12 col-md-12 col-lg-12 pl-2 p-1 text-center">
+                        <div class="form-group m-1">
+                            <button type="button" nbButton status="primary" (click)="btnExpedientesCsv()"
+                            class="text-wrap fs-4">
+                                Carga Expedientes csv
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-12 col-md-12 col-lg-12 pl-2 p-1 text-center">
+                        <div class="form-group m-1">
+                            <button type="button" nbButton status="primary" (click)="btnExpedientesXls()"
+                            class="text-wrap fs-4">
+                                Carga Expedientes xls
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-12 col-md-12 col-lg-12 pl-2 p-1 text-center">
+                        <div class="form-group m-1">
+                            <button type="button" nbButton status="primary" (click)="btnCrearDictamenes()"
+                            class="text-wrap fs-4">
+                                Crear Dictámenes
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-12 col-md-12 col-lg-12 pl-2 p-1 text-center">
+                        <div class="form-group m-1">
+                            <button type="button" nbButton status="primary" (click)="btnImprimeOficio()"
+                            class="text-wrap fs-4">
+                                Imprime Oficio
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-12 col-md-12 col-lg-12 pl-2 p-1 text-center">
+                        <div class="form-group m-1">
+                            <button type="button" nbButton status="primary" (click)="btnImprimeRelacionBienes()"
+                            class="text-wrap fs-4">
+                                Imprime Relación Bienes
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-12 col-md-12 col-lg-12 pl-2 p-1 text-center">
+                        <div class="form-group m-1">
+                            <button type="button" nbButton status="primary" (click)="btnImprimeRelacionExpediente()"
+                            class="text-wrap fs-4">
+                                Imprime Relación Expediente
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+        </div>
+        <!-- TABLAS  -->
+        <div class="row w-100">
+            <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+                <ng2-smart-table class="my-table" [settings]="tableSettings" 
+                [source]="dataTable"></ng2-smart-table>
+            </div>
+            <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+                <ng2-smart-table class="my-table" [settings]="tableSettings1" 
+                [source]="dataTable1"></ng2-smart-table>
+            </div>
+        </div>
+        <!-- TABLAS  -->
+  
+    </nb-card-body>
+  
+  </nb-card>

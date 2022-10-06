@@ -1,0 +1,87 @@
+<form [formGroup]="form" (submit)="mostrarInfoDeclaratoria()">
+    <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-6 p-2 pr-3">
+            <div class="row">
+                <div class="col-sm-12 col-12 col-md-6 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">No Expediente</label>
+                        <input nbInput fullWidth type="number" class="w-100" formControlName="noExpediente"
+                                placeholder="No Expediente">
+                        <ngx-validation-message label="No Expediente" [showRequired]="returnShowRequirements('noExpediente')"></ngx-validation-message>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Averi. Previa</label>
+                        <input nbInput fullWidth class="w-100" formControlName="averiPrevia"
+                                placeholder="Averi. Previa">
+                        <ngx-validation-message label="Averi. Previa" [showRequired]="returnShowRequirements('averiPrevia')"></ngx-validation-message>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Causa Penal</label>
+                        <input nbInput fullWidth class="w-100" formControlName="causaPenal"
+                                placeholder="Causa Penal">
+                        <ngx-validation-message label="Causa Penal" [showRequired]="returnShowRequirements('causaPenal')"></ngx-validation-message>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Tipo Oficio</label>
+                        <nb-select fullWidth selected="No" formControlName="tipoOficio" [status]="''">
+                            <nb-option value="Declaratoria Abandono Bienes">Declaratoria Abandono Bienes</nb-option>
+                        </nb-select>
+                        <ngx-validation-message label="Tipo Oficio" [showRequired]="returnShowRequirements('tipoOficio')"></ngx-validation-message>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 p-2 pl-3">
+            <div class="row">
+                <div class="col-sm-12 col-12 col-md-6 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Remitente</label>
+                        <input nbInput fullWidth class="w-100" formControlName="remitente"
+                                placeholder="Remitente">
+                        <ngx-validation-message label="Remitente" [showRequired]="returnShowRequirements('remitente')"></ngx-validation-message>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Detalle Remitente</label>
+                        <input nbInput fullWidth class="w-100" placeholder="Detalle Remitente">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Destinatario</label>
+                        <input nbInput fullWidth class="w-100" formControlName="destinatario"
+                                placeholder="Destinatario">
+                        <ngx-validation-message label="Destinatario" [showRequired]="returnShowRequirements('destinatario')"></ngx-validation-message>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Detalle Destinatario</label>
+                        <input nbInput fullWidth class="w-100" placeholder="Detalle Destinatario">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Cve. Oficio</label>
+                        <input nbInput fullWidth class="w-100" formControlName="cveOficio"
+                                placeholder="Cve. Oficio">
+                        <ngx-validation-message label="Cve. Oficio" [showRequired]="returnShowRequirements('cveOficio')"></ngx-validation-message>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Detalle Cve. Oficio</label>
+                        <input nbInput fullWidth class="w-100" placeholder="Detalle Cve. Oficio">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

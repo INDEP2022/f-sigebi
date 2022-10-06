@@ -1,0 +1,180 @@
+<nb-card class="cat-card mt-5"> 
+    <nb-card-header>
+  
+        <div class="row w-100">
+            <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
+                <span class="title">
+                    DECLARATORIAS Y OFICIOS DE ABANDONOS
+                </span>
+            </div>
+
+        </div>
+
+    </nb-card-header>
+  
+    <nb-card-body>
+
+        <nb-tabset>
+            <!-- VOLANTE/EXPEDIENTE PANTALLA -->
+            <nb-tab tabTitle="VOLANTE/EXPEDIENTE" tabIcon="file-add-outline" responsive>
+              
+                <!-- Forms VOLANTE EXPEDIENTE -->
+                <ngx-form-volante-expediente [form]="form" (formValues)="mostrarInfo($event)"
+                (oficioRelacionadoEvent)="oficioRelacionado($event)" (capturaCopiasEvent)="capturaCopias($event)"
+                ></ngx-form-volante-expediente>
+                <!-- Forms VOLANTE EXPEDIENTE -->
+
+            </nb-tab>
+            <!-- VOLANTE/EXPEDIENTE PANTALLA -->
+
+            <!-- DECLARATORIA PANTALLA -->
+            <nb-tab tabTitle="DECLARATORIA" tabIcon="file-text-outline" responsive>
+                
+                <!-- Forms DECLARATORIA -->
+                <ngx-form-declaratoria [form]="formDeclaratoria" (formValues)="mostrarInfoDeclaratoria($event)"
+                ></ngx-form-declaratoria>
+                <!-- Forms DECLARATORIA -->
+                
+                <!-- Tabla de bienes DECLARATORIA -->
+                <hr class="row">
+                <div class="row">
+                    <div class="col-sm-12 col-12 col-md-2">
+                        <label class="label">No. Bien</label>
+                        <nb-select fullWidth formControlName="test">
+                            <nb-option value="3767">3767</nb-option>
+                            <nb-option value="3921">3921</nb-option>
+                        </nb-select>
+                    </div>
+
+                    <div class="col-sm-12 col-12 col-md-10">
+                        <label class="label">Tipo - Subtipo - Descripción</label>
+                        <nb-select fullWidth formControlName="test">
+                            <nb-option value="TELAS Y PRENDAS DE VESTIR - BLANCOS -TOALLAS">TELAS Y PRENDAS DE VESTIR - BLANCOS -TOALLAS</nb-option>
+                        </nb-select>
+                    </div>
+                </div>
+
+                <div class="row pt-2 mb-2">
+                    <ng2-smart-table class="col-md-12" [settings]="settings1" [source]="data1"></ng2-smart-table>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 col-12 col-md-6">
+                        <label class="label w-100 text-danger">Bien entregado en administración</label>
+                    </div>
+                </div>
+                <hr class="row">
+                <!-- Tabla de bienes DECLARATORIA -->
+
+                <!-- Forms DECLARATORIA INICIO FIN -->
+                <form [formGroup]="formDeclaratoriaInicioFin">
+                    <div class="row w-100">
+                        <div class="col-sm-12 col-12 col-md-12 pr-3">
+                            <div class="form-group mb-0">
+                                <label class="label w-100">Inicio</label>
+                                <textarea nbInput fullWidth fullWidth placeholder="Inicio"
+                                class="w-100" formControlName="inicio"></textarea>
+                                <ngx-validation-message label="Inicio" [showRequired]="returnShowRequirements(formDeclaratoriaInicioFin, 'inicio')"></ngx-validation-message>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-12 pr-3">
+                            <div class="form-group mb-0">
+                                <label class="label w-100">Fin</label>
+                                <textarea nbInput fullWidth fullWidth placeholder="Fin"
+                                class="w-100" formControlName="fin"></textarea>
+                                <ngx-validation-message label="Fin" [showRequired]="returnShowRequirements(formDeclaratoriaInicioFin, 'fin')"></ngx-validation-message>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <!-- Forms DECLARATORIA INICIO FIN -->
+
+                <!-- Apartado folio de escaneo -->
+                <hr class="row">
+                <div class="row">
+                    <div class="col-sm-12 col-12 col-md-8">
+                        <div class="row">
+                            <div class="col-sm-12 col-12 col-md-2">
+                                <button nbButton class="mx-2">
+                                    <nb-icon icon="arrow-ios-upward-outline"></nb-icon>
+                                </button>
+                            </div>
+                            <div class="col-sm-12 col-12 col-md-2">
+                                <button nbButton class="mx-2">
+                                    <nb-icon icon="arrowhead-up-outline"></nb-icon>
+                                </button>
+                            </div>
+                            <div class="col-sm-12 col-12 col-md-4 w-100">
+                                <div class="form-group">
+                                    <label class="label w-100">Folio Escaneo</label>
+                                    <input nbInput fullWidth type="number" class="w-100"
+                                            placeholder="Folio Escaneo">
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-12 col-md-2">
+                                <button nbButton class="mx-2">
+                                    <nb-icon icon="arrow-ios-upward-outline"></nb-icon>
+                                </button>
+                            </div>
+                            <div class="col-sm-12 col-12 col-md-2">
+                                <button nbButton class="mx-2">
+                                    <nb-icon icon="arrowhead-up-outline"></nb-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-12 col-md-4">
+                        <div class="row">
+                            <div class="col-sm-12 col-12 col-md-12">
+                                <div class="form-group">
+                                    <label class="label">&nbsp;</label>&nbsp;  
+                                    <div class="d-flex justify-content-center">
+                                        <button type="button" nbButton status="primary">
+                                            Aprobar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-12 col-md-12">
+                                <div class="form-group">
+                                    <label class="label">&nbsp;</label>&nbsp;  
+                                    <div class="d-flex justify-content-center">
+                                        <button type="button" nbButton status="danger">
+                                            Eliminar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-12 col-md-6">
+                                <button nbButton class="mx-2">
+                                    <nb-icon icon="arrow-ios-upward-outline"></nb-icon>
+                                </button>
+                            </div>
+                            <div class="col-sm-12 col-12 col-md-6">
+                                <button nbButton class="mx-2">
+                                    <nb-icon icon="arrowhead-up-outline"></nb-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr class="row">
+                <!-- Apartado folio de escaneo -->
+
+            </nb-tab>
+            <!-- DECLARATORIA PANTALLA INICIO FIN -->
+
+            <nb-tab tabTitle="OFICIO" tabIcon="archive-outline" responsive>
+              
+                <!-- FORM OFICIO -->
+                <ngx-fact-abandonos-oficio [formOficio]="formOficio" [formCcpOficio]="formCcpOficio" [formOficioInicioFin]="formOficioInicioFin" 
+                    (formValues)="mostrarInfoOficio($event)">
+                </ngx-fact-abandonos-oficio>
+                <!-- FORM OFICIO -->
+
+            </nb-tab>
+        </nb-tabset>
+
+  
+    </nb-card-body>
+  
+  </nb-card>

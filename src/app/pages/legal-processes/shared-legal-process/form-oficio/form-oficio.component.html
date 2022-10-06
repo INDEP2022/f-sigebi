@@ -1,0 +1,110 @@
+
+<form [formGroup]="form" (submit)="mostrarInfo()">
+    <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-6 p-2 pr-3">
+            <div class="row">
+                <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Tipo Oficio</label>
+                        <input nbInput fullWidth type="number" class="w-100" formControlName="tipoOficio"
+                                placeholder="Tipo Oficio">
+                        <ngx-validation-message label="Tipo Oficio" [showRequired]="returnShowRequirements('tipoOficio')"></ngx-validation-message>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Detalle Oficio</label>
+                        <input nbInput fullWidth class="w-100" placeholder="Tipo Oficio">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Oficio</label>
+                        <input nbInput fullWidth class="w-100" placeholder="Tipo Oficio">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Remitente</label>
+                        <input nbInput fullWidth class="w-100" formControlName="remitente"
+                                placeholder="Remitente">
+                        <ngx-validation-message label="Remitente" [showRequired]="returnShowRequirements('remitente')"></ngx-validation-message>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Detalle Remitente</label>
+                        <input nbInput fullWidth class="w-100" placeholder="Detalle Remitente">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Destinatario</label>
+                        <input nbInput fullWidth class="w-100" formControlName="destinatario"
+                                placeholder="Destinatario">
+                        <ngx-validation-message label="Destinatario" [showRequired]="returnShowRequirements('destinatario')"></ngx-validation-message>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Detalle Destinatario</label>
+                        <input nbInput fullWidth class="w-100" placeholder="Detalle Destinatario">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Ciudad ID</label>
+                        <input id="idCiudad" nbInput fullWidth class="w-100"
+                                placeholder="Ciudad">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Ciudad</label>
+                        <input nbInput fullWidth class="w-100" formControlName="ciudad"
+                                placeholder="Ciudad">
+                        <ngx-validation-message label="Ciudad" [showRequired]="returnShowRequirements('ciudad')"></ngx-validation-message>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 p-2 pl-3">
+            <div class="row">
+                <div class="col-sm-12 col-12 col-md-6 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">No Volante</label>
+                        <input nbInput fullWidth type="number" class="w-100" formControlName="noVolante"
+                                placeholder="No Volante">
+                        <ngx-validation-message label="No Volante" [showRequired]="returnShowRequirements('noVolante')"></ngx-validation-message>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">No Expediente</label>
+                        <input nbInput fullWidth type="number" class="w-100" formControlName="noExpediente"
+                                placeholder="No Expediente">
+                        <ngx-validation-message label="No Expediente" [showRequired]="returnShowRequirements('noExpediente')"></ngx-validation-message>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Clave Oficio</label>
+                        <label class="label w-100">DATA DE OFICIO</label>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Fecha Captura</label>
+                        <label class="label w-100">FECHA DE CAPTURA</label>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Estatus</label>
+                        <label class="label w-100">ESTATUS</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,46 @@
+<nb-card class="cat-card mt-5"> 
+    <nb-card-header>
+  
+        <div class="row w-100">
+            <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
+                <span class="title">
+                    SOLICITUD DE DESTINO LEGAL PARA EL BIEN
+                </span>
+            </div>
+            
+        </div>
+
+    </nb-card-header>
+  
+    <nb-card-body>
+
+        <!-- form No Bien -->
+        <form [formGroup]="form" (submit)="mostrarInfo()">
+            <div class="row w-100">
+                <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                    <div class="form-group">
+                        <label class="label w-100">No. Bien</label>
+                        <input nbInput fullWidth class="w-100" formControlName="noBien"
+                                placeholder="No. Bien">
+                        <ngx-validation-message label="No. Bien" [showRequired]="returnShowRequirements(form, 'noBien')"></ngx-validation-message>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
+                    <div class="form-group">
+                        <label class="label w-100">Detalle Remitente</label>
+                        <input nbInput fullWidth class="w-100" placeholder="Detalle Remitente">
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!-- form No Bien -->
+
+        <div class="row w-100">
+            <div class="col-sm-12 col-12 col-md-12 p-2">
+                <ng2-smart-table class="my-table" [settings]="tableFactGenSettings" [source]="dataFactGen"></ng2-smart-table>
+            </div>
+        </div>
+  
+    </nb-card-body>
+  
+  </nb-card>

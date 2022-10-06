@@ -1,0 +1,106 @@
+<!-- Forms OFICIO -->
+<ngx-form-oficio [form]="formOficio" (formValues)="getDataFormOficio($event)"
+></ngx-form-oficio>
+<!-- Forms OFICIO -->
+
+<!-- Forms OFICIO INICIO FIN -->
+<form [formGroup]="formOficioInicioFin">
+    <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-12 pr-3">
+            <div class="form-group mb-0">
+                <label class="label w-100">Inicio</label>
+                <textarea nbInput fullWidth fullWidth placeholder="Inicio"
+                class="w-100" formControlName="inicio"></textarea>
+                <ngx-validation-message label="Inicio" [showRequired]="returnShowRequirements(formOficioInicioFin, 'inicio')"></ngx-validation-message>
+            </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 pr-3">
+            <div class="form-group mb-0">
+                <label class="label w-100">Fin</label>
+                <textarea nbInput fullWidth fullWidth placeholder="Fin"
+                class="w-100" formControlName="fin"></textarea>
+                <ngx-validation-message label="Fin" [showRequired]="returnShowRequirements(formOficioInicioFin, 'fin')"></ngx-validation-message>
+            </div>
+        </div>
+    </div>
+</form>
+<!-- Forms OFICIO INICIO FIN -->
+
+<hr class="row">
+<div class="row">
+    <div class="col-sm-12 col-12 col-md-6">
+        <h3>Documentos</h3>
+    </div>
+</div>
+<div class="row pt-2 mb-2">
+    <ng2-smart-table class="col-md-12" [settings]="settings2" [source]="data2"></ng2-smart-table>
+</div>
+<hr class="row">
+
+<!-- C.C.P. -->
+<hr class="row">
+<div class="row">
+    <div class="col-sm-12 col-12 col-md-6">
+        <h3>Con Copia Para (C.C.P.)</h3>
+    </div>
+</div>
+<!-- Form CON COPIA PARA -->
+<form [formGroup]="formCcpOficio">
+    <div class="row tp-2 mb-2">
+        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-1 pt-0 pb-0">
+            <div class="form-group pt-1 pb-1 mb-1">
+                <label class="label w-100">C.P.P</label>
+                <nb-select fullWidth selected="No" formControlName="ccp" [status]="''">
+                    <nb-option value="INTERNO">INTERNO</nb-option>
+                    <nb-option value="EXTERNO">EXTERNO</nb-option>
+                </nb-select>
+                <ngx-validation-message label="C.P.P" [showRequired]="returnShowRequirements(formCcpOficio, 'ccp')"></ngx-validation-message>
+            </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-1 pt-0 pb-0">
+            <div class="form-group pt-1 pb-1 mb-1">
+                <label class="label w-100">Usuario</label>
+                <nb-select fullWidth selected="No" formControlName="usuario" [status]="''">
+                    <nb-option value="USUARIO">USUARIO</nb-option>
+                </nb-select>
+                <ngx-validation-message label="Usuario" [showRequired]="returnShowRequirements(formCcpOficio, 'usuario')"></ngx-validation-message>
+            </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-1 pt-0 pb-0">
+            <div class="form-group pt-1 pb-1 mb-1">
+                <label class="label w-100">Nombre Usuario</label>
+                <input nbInput fullWidth type="number" class="w-100" formControlName="nombreUsuario"
+                        placeholder="Nombre Usuario">
+                <ngx-validation-message label="Nombre Usuario" [showRequired]="returnShowRequirements(formCcpOficio, 'nombreUsuario')"></ngx-validation-message>
+            </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-1 pt-0 pb-0">
+            <div class="form-group pt-1 pb-1 mb-1">
+                <label class="label w-100">C.P.P</label>
+                <nb-select fullWidth selected="No" formControlName="ccp2" [status]="''">
+                    <nb-option value="INTERNO">INTERNO</nb-option>
+                    <nb-option value="EXTERNO">EXTERNO</nb-option>
+                </nb-select>
+                <ngx-validation-message label="C.P.P" [showRequired]="returnShowRequirements(formCcpOficio, 'ccp2')"></ngx-validation-message>
+            </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-1 pt-0 pb-0">
+            <div class="form-group pt-1 pb-1 mb-1">
+                <label class="label w-100">Usuario</label>
+                <nb-select fullWidth selected="No" formControlName="usuario2" [status]="''">
+                    <nb-option value="USUARIO">USUARIO</nb-option>
+                </nb-select>
+                <ngx-validation-message label="Usuario" [showRequired]="returnShowRequirements(formCcpOficio, 'usuario2')"></ngx-validation-message>
+            </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-1 pt-0 pb-0">
+            <div class="form-group pt-1 pb-1 mb-1">
+                <label class="label w-100">Nombre Usuario</label>
+                <input nbInput fullWidth type="number" class="w-100" formControlName="nombreUsuario2"
+                        placeholder="Nombre Usuario">
+                <ngx-validation-message label="Nombre Usuario" [showRequired]="returnShowRequirements(formCcpOficio, 'nombreUsuario2')"></ngx-validation-message>
+            </div>
+        </div>
+    </div>
+</form>
+<!-- Form CON COPIA PARA -->
