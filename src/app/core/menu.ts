@@ -169,6 +169,7 @@ export const MENU: IMenuItem[] = [
       }
     ],
   },
+  //Administración
   {
     label: 'Procesos Administrativos',
     icon: 'bx-folder',
@@ -176,6 +177,26 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Numerario Operado',
         link: '/pages/administrative-processes/numerary-operator',
+      },
+      {
+        label: 'Reportes',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Almacenes',
+            link: '/pages/administrative-processes/warehouse-reports',
+          },
+        ]
+      },
+      {
+        label: 'Empresas',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Resumen Info Financiera',
+            link: '/pages/administrative-processes/summary-financial-info',
+          },
+        ]
       },
     ],
   },
