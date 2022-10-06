@@ -5,27 +5,27 @@ import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IHalfImage } from '../../models/catalogs/half-image.model';
+import { IImageMedia } from '../../models/catalogs/image-media.model';
 @Injectable({
   providedIn: 'root',
 })
-export class HalfImageService implements ICrudMethods<IHalfImage> {
+export class ImageMediaService implements ICrudMethods<IImageMedia> {
   private readonly route: string = ENDPOINT_LINKS.HalfImage;
-  constructor(private halfImageRepository: Repository<IHalfImage>) {}
+  constructor(private halfImageRepository: Repository<IImageMedia>) {}
 
-  getAll(params?: ListParams): Observable<IListResponse<IHalfImage>> {
+  getAll(params?: ListParams): Observable<IListResponse<IImageMedia>> {
     return this.halfImageRepository.getAllPaginated(this.route, params);
   }
 
-  getById(id: string | number): Observable<IHalfImage> {
+  getById(id: string | number): Observable<IImageMedia> {
     return this.halfImageRepository.getById(this.route, id);
   }
 
-  create(model: IHalfImage): Observable<IHalfImage> {
+  create(model: IImageMedia): Observable<IImageMedia> {
     return this.halfImageRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: IHalfImage): Observable<Object> {
+  update(id: string | number, model: IImageMedia): Observable<Object> {
     return this.halfImageRepository.update(this.route, id, model);
   }
 

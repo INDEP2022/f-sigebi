@@ -5,31 +5,31 @@ import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IMediumPhotography } from '../../models/catalogs/medium-photography.model';
+import { IPhotographMedia } from '../../models/catalogs/photograph-media.model';
 @Injectable({
   providedIn: 'root',
 })
-export class MediumPhotographyService
-  implements ICrudMethods<IMediumPhotography>
+export class PhotographMediaService
+  implements ICrudMethods<IPhotographMedia>
 {
   private readonly route: string = ENDPOINT_LINKS.MediumPhotography;
   constructor(
-    private mediumPhotographyRepository: Repository<IMediumPhotography>
+    private mediumPhotographyRepository: Repository<IPhotographMedia>
   ) {}
 
-  getAll(params?: ListParams): Observable<IListResponse<IMediumPhotography>> {
+  getAll(params?: ListParams): Observable<IListResponse<IPhotographMedia>> {
     return this.mediumPhotographyRepository.getAllPaginated(this.route, params);
   }
 
-  getById(id: string | number): Observable<IMediumPhotography> {
+  getById(id: string | number): Observable<IPhotographMedia> {
     return this.mediumPhotographyRepository.getById(this.route, id);
   }
 
-  create(model: IMediumPhotography): Observable<IMediumPhotography> {
+  create(model: IPhotographMedia): Observable<IPhotographMedia> {
     return this.mediumPhotographyRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: IMediumPhotography): Observable<Object> {
+  update(id: string | number, model: IPhotographMedia): Observable<Object> {
     return this.mediumPhotographyRepository.update(this.route, id, model);
   }
 

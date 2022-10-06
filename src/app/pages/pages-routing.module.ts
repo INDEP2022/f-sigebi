@@ -47,6 +47,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./executive-processes/executive-processes.module')).ExecutiveProcessesModule,
   },
+  
 ];
 
 @NgModule({
