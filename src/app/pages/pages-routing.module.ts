@@ -26,6 +26,11 @@ const routes: Routes = [
       (await import('./catalogs/catalogs.module')).CatalogModule,
   },
   {
+    path: 'administrative-processes',
+    loadChildren: async () =>
+      (await import('./administrative-processes/administrative-processes.module')).AdministrativeProcessesModule,
+  },
+  {
     path: 'home',
     loadChildren: async () =>
       (await import('./admin/home/home.module')).HomeModule,

@@ -99,68 +99,127 @@ const routes: Routes = [
   },
   {
     path: 'label-okey',
-      loadChildren: async () =>
-        (await import('./label-okey/label-okey.module')).LabelOkeyModule,
-      data: { title: 'Etiquetas Bien' },
-    },
-  
-    {
-      path: 'fractions',
-      loadChildren: async () =>
-        (await import('./fractions/fractions.module')).FractionsModule,
-      data: { title: 'Fracciones' },
-    },
-  
-  
-    {
-      path: 'drawers',
-      loadChildren: async () =>
-        (await import('./drawers/drawers.module')).DrawersModule,
-      data: { title: 'Gavetas' },
-    },
-  
-  
-    {
-      path: 'management',
-      loadChildren: async () =>
-        (await import('./management/management.module')).ManagementModule,
-      data: { title: 'Gestión' },
-    },
-  
-    {
-      path: 'save-values',
-      loadChildren: async () =>
-        (await import('./save-values/save-values.module')).SaveValuesModule,
-      data: { title: 'Gestión' },
-    },
-  
-    {
-      path: 'identifier',
-      loadChildren: async () =>
-        (await import('./identifiers/identifiers.module')).IdentifiersModule,
-      data: { title: 'Identificador' },
-    },
-  
-    {
-      path: 'indicated',
-      loadChildren: async () =>
-        (await import('./indicated/indicated.module')).IndicatedModule,
-      data: { title: 'Indiciados' },
-    },
+    loadChildren: async () =>
+      (await import('./label-okey/label-okey.module')).LabelOkeyModule,
+    data: { title: 'Etiquetas Bien' },
+  },
+
+  {
+    path: 'fractions',
+    loadChildren: async () =>
+      (await import('./fractions/fractions.module')).FractionsModule,
+    data: { title: 'Fracciones' },
+  },
+
+  {
+    path: 'drawers',
+    loadChildren: async () =>
+      (await import('./drawers/drawers.module')).DrawersModule,
+    data: { title: 'Gavetas' },
+  },
+
+  {
+    path: 'management',
+    loadChildren: async () =>
+      (await import('./management/management.module')).ManagementModule,
+    data: { title: 'Gestión' },
+  },
+
+  {
+    path: 'save-values',
+    loadChildren: async () =>
+      (await import('./save-values/save-values.module')).SaveValuesModule,
+    data: { title: 'Gestión' },
+  },
+
+  {
+    path: 'identifier',
+    loadChildren: async () =>
+      (await import('./identifiers/identifiers.module')).IdentifiersModule,
+    data: { title: 'Identificador' },
+  },
+
+  {
+    path: 'indicated',
+    loadChildren: async () =>
+      (await import('./indicated/indicated.module')).IndicatedModule,
+    data: { title: 'Indiciados' },
+  },
   {
     path: 'doc-compensation-sat-xml',
     loadChildren: async () =>
-      (await import("./doc-compensation-sat-xml/doc-compensation-sat-xml.module"))
-      .DocCompensationSatXmlModule,
-      data: {title: "Documentos Resarcimiento Sat XML"}
+      (
+        await import(
+          './doc-compensation-sat-xml/doc-compensation-sat-xml.module'
+        )
+      ).DocCompensationSatXmlModule,
+    data: { title: 'Documentos Resarcimiento Sat XML' },
   },
   {
     path: 'grantees',
     loadChildren: async () =>
-      (await import("./grantees/grantees.module"))
-      .GranteesModule,
-      data: {title: "Donatorios"}
-  }
+      (await import('./grantees/grantees.module')).GranteesModule,
+    data: { title: 'Donatorios' },
+  },
+  {
+    path: 'lawyer',
+    loadChildren: async () =>
+      (await import('./lawyer/lawyer.module')).LawyerModule,
+    data: { title: 'Abogados' },
+  },
+  {
+    path: 'clarifications',
+    loadChildren: async () =>
+      (await import('./clarifications/clarifications.module'))
+        .ClarificationsModule,
+    data: { title: 'Aclaraciónes' },
+  },
+  {
+    path: 'warehouses',
+    loadChildren: async () =>
+      (await import('./warehouses/warehouses.module')).WarehousesModule,
+    data: { title: 'Almacenes' },
+  },
+  {
+    path: 'banks',
+    loadChildren: async () =>
+      (await import('./banks/banks.module')).BanksModule,
+    data: { title: 'Bancos' },
+  },
+  {
+    path: 'storehouses',
+    loadChildren: async () =>
+      (await import('./store-house/store-house.module')).StoreHouseModule,
+    data: { title: 'Bodegas' },
+  },
+  {
+    path: 'vault',
+    loadChildren: async () =>
+      (await import('./vault/vault.module')).VaultModule,
+    data: { title: 'Bóvedas' },
+  },
+  {
+    path: 'cities',
+    loadChildren: async () => (await import('./city/city.module')).CityModule,
+    data: { title: 'Ciudades' },
+  },
+  {
+    path: 'intitution-classification',
+    loadChildren: async () =>
+      (
+        await import(
+          './institution-classification/institution-classification.module'
+        )
+      ).InstitutionClassificationModule,
+    data: { title: 'Institución Clasificación' },
+  },
+  {
+    path: 'payment-concept',
+    loadChildren: async () =>
+      (await import('./payment-concept/payment-concept.module'))
+        .PaymentConceptModule,
+    data: { title: 'Concepto de Pago' },
+  },
 ];
 
 @NgModule({
