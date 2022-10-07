@@ -5,7 +5,7 @@
     <div body>
       <form [formGroup]="compensationForm" class="form-material">
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-6">
             <form-field [control]="compensationForm.get('id')" label="Id">
               <input
                 type="number"
@@ -15,7 +15,7 @@
             </form-field>
           </div>
   
-          <div class="col-md-4">
+          <div class="col-md-6">
             <form-field
               [control]="compensationForm.get('idOficioSat')"
               label="Id Oficina">
@@ -31,7 +31,7 @@
         </div>
 
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <form-field
                   [control]="compensationForm.get('typeDocSatXml')"
                   label="Tipo documento">

@@ -9,8 +9,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-grantees-form',
   templateUrl: './grantees-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class GranteesFormComponent extends BasePage implements OnInit {
   granteesForm: ModelForm<IGrantee>;
@@ -19,17 +18,18 @@ export class GranteesFormComponent extends BasePage implements OnInit {
   grantee: IGrantee;
 
   constructor(
-    public modalRef: BsModalRef, 
-    public fb: FormBuilder, 
-    public granteeService: GranteeService) {
-      super()
-    }
+    public modalRef: BsModalRef,
+    public fb: FormBuilder,
+    public granteeService: GranteeService
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
   }
 
-  prepareForm():void {
+  prepareForm(): void {
     this.granteesForm = this.fb.group({
       id: [null],
       description: [null, Validators.required],
@@ -43,21 +43,22 @@ export class GranteesFormComponent extends BasePage implements OnInit {
       nommun: [null, Validators.required],
       nomedo: [null, Validators.required],
       cp: [null, Validators.required],
-      usrStatus: [null, Validators.required]
-    })
+      usrStatus: [null, Validators.required],
+    });
 
-    if(this.grantee != null){
+    if (this.grantee != null) {
       this.edit = true;
-      this.granteesForm.patchValue(this.grantee)      
+      this.granteesForm.patchValue(this.grantee);
+      this.granteesForm.get('id').disable();
     }
   }
-  
-  close():void {
+
+  close(): void {
     this.modalRef.hide();
   }
 
-  confirm(){
-    this.edit?  this.update():this.create();
+  confirm() {
+    this.edit ? this.update() : this.create();
   }
 
   create() {

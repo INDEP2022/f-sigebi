@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -12,21 +12,17 @@ import { FRACTIONS_COLUMNS } from './fractions-columns';
 @Component({
   selector: 'app-fractions-list',
   templateUrl: './fractions-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class FractionsListComponent extends BasePage implements OnInit {
-
   settings = TABLE_SETTINGS;
   paragraphs: IFraction[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  @Output() refresh = new EventEmitter<true>();
-
   constructor(
     private fractionService: FractionService,
     private modalService: BsModalService
-  ) { 
+  ) {
     super();
     this.settings.columns = FRACTIONS_COLUMNS;
     this.settings.actions.delete = true;
@@ -38,7 +34,7 @@ export class FractionsListComponent extends BasePage implements OnInit {
       .subscribe(() => this.getFractions());
   }
 
-  getFractions(){
+  getFractions() {
     this.loading = true;
     this.fractionService.getAll(this.params.getValue()).subscribe({
       next: response => {
@@ -50,39 +46,34 @@ export class FractionsListComponent extends BasePage implements OnInit {
     });
   }
 
-  openModal(context?: Partial<FractionsFormComponent>) {
-    const modalRef = this.modalService.show(FractionsFormComponent, {
-      initialState: context,
+  openForm(fraction?: IFraction) {
+    console.log(fraction);
+    
+    let config: ModalOptions = {
+      initialState: {
+        fraction,
+        callback: (next: boolean) => {
+          if (next) this.getFractions();
+        },
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getFractions();
-    });
+    };
+    this.modalService.show(FractionsFormComponent, config);
   }
 
-  openForm(fraction?: IFraction){
-    this.openModal({fraction});
-  }
-
-  delete(fraction: IFraction){
+  delete(fraction: IFraction) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       '¿Desea eliminar este registro?'
     ).then(question => {
-      if(question.isConfirmed){
+      if (question.isConfirmed) {
         this.fractionService.remove(fraction.id).subscribe({
           next: data => this.getFractions(),
           error: error => (this.loading = false),
         });
       }
-    })
-  }
-
-  handleSuccess() {
-    this.loading = false;
-    this.refresh.emit(true);
-    this.modalService.hide();
+    });
   }
 }

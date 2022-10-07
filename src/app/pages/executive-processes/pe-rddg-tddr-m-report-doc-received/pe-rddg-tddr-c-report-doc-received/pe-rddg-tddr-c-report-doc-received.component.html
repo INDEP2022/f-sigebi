@@ -1,0 +1,45 @@
+<app-card [header]="true" [footer]="true">
+    <div class="ch-content" header>
+        <h5 class="title">DOCUMENTOS RECIBIDOS</h5> 
+    </div>
+
+    <div body>
+
+        <form class="form-material" [formGroup]="form">
+
+            <div class="row">
+                <div class="col-md-2">
+                    <form-field [control]="form.get('fromDate')" label="Acumulado del">
+                        <input class="form-control" formControlName="fromDate">
+                    </form-field>
+                </div>
+                <div class="col-md-2">
+                    <form-field [control]="form.get('toDate')" label="Al">
+                        <input class="form-control" formControlName="toDate">
+                    </form-field>
+                </div>
+                <div class="col-md-2">
+                    <form-field [control]="form.get('report')" label="¿Reporte Detallado?">
+                        <select class="form-control"  formControlName="report">
+                            <option value="si">Si</option>
+                            <option value="no">No</option>
+                          </select>
+                    </form-field>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+
+    <div footer>
+        <div class="d-flex justify-content-center">
+            <div class="m-3">
+                <button type="button" class="btn btn-primary active" [disabled]="!form.valid">
+                  Imprimir
+                </button>
+            </div>
+        </div>
+      </div>
+
+</app-card>

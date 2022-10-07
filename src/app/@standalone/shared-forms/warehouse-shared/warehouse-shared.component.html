@@ -1,0 +1,18 @@
+<ng-container >
+	<div class="row mb-3 mt-3" *ngIf="showWarehouse">
+        <div class="col-md-12">
+            <form-field [control]="form.get('warehouse')">
+            	<ngx-select
+            		(fetchItems)="getWarehouses($event)" 
+                    [data]="warehouses" 
+                    [form]="form" 
+                    value="idWarehouse"
+                	bindLabel="description"
+                    label="Almacenes"
+                    [control]="warehouseField" 
+                    (change)="onWarehouseChange($event)">
+                </ngx-select>      
+            </form-field>
+        </div>
+    </div>
+</ng-container>

@@ -22,7 +22,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
   selector: 'search-bar',
   template: `
     <div class="form-group form-secondary d-flex">
-      <label class="search-label">Buscar:</label>
+      <label class="search-label">{{label}}</label>
       <div class="text-search ">
         <input
           type="text"
@@ -38,6 +38,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 export class SearchBarComponent implements OnInit, OnDestroy {
   @Input() params: BehaviorSubject<ListParams>;
   @Input() placeholder?: string = 'Buscar...';
+  @Input() label?: string = 'Buscar:';
   ngUnsubscribe = new Subject<void>();
   search: FormControl = new FormControl();
 

@@ -1,0 +1,230 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">ACTAS DE CONVERSION</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <!--Date Form-->
+      <div class="row mt-5">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('idConversion')"
+            label="Id Conversión">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idConversion" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('numberAsset')"
+            label="No Bien Convertido (Padre)">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberAsset" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('numberDossier')"
+            label="No Expediente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberDossier" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('numberDossierI')"
+            label="No Expediente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberDossierI" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('previousInvestigation')"
+            label="Averiguación previa">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="previousInvestigation" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6 col-sm-12 col-xs-12 mt-5">
+          <form-field [control]="form.get('penalCause')" label="Causa penal">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="penalCause" />
+          </form-field>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="row mt-5">
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('act')" label="Acta">
+            <select class="form-control" formControlName="act">
+              <option [value]="null">Seleccione un valor</option>
+              <option value="1">Conv</option>
+            </select>
+          </form-field>
+        </div>
+
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('state')" label="Estado">
+            <select class="form-control" formControlName="state">
+              <option [value]="null">Seleccione un valor</option>
+              <option value="A">A</option>
+              <option value="D">D</option>
+              <option value="RT">RT</option>
+            </select>
+          </form-field>
+        </div>
+
+        <!-- <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field label="Trans">
+            <input type="text" class="form-control" />
+          </form-field>
+        </div>
+
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field label="Conv">
+            <input type="text" class="form-control" />
+          </form-field>
+        </div>
+
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field label="Trans">
+            <input type="text" class="form-control" />
+          </form-field>
+        </div> -->
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-full col-sm-12 col-xs-12">
+          <form-field [control]="form.get('actDescription')" label="Acta">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="actDescription" />
+          </form-field>
+        </div>
+        <div class="col-md-full col-sm-12 col-xs-12 mt-5">
+          <form-field [control]="form.get('address')" label="Dirección">
+            <textarea class="form-control" formControlName="address"></textarea>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <div class="justify-content-center">
+            <button class="btn btn-info btn-sm active" (click)="detail()">
+              Detalles Acta
+            </button>
+            &nbsp;
+            <button class="btn btn-danger btn-sm active" (click)="close()">
+              Cierra Acta
+            </button>
+            &nbsp;
+            <button class="btn btn-primary btn-sm active" (click)="print()">
+              Imprimir Acta
+            </button>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="row mt-5">
+          <div class="col-md-4 col-sm-12 col-xs-12">
+            <form-field [control]="form.get('responsible')" label="Responsable">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="responsible" />
+              </form-field>
+          </div>
+          <div class="col-md-4 col-sm-12 col-xs-12">
+            <form-field [control]="form.get('witness')" label="Testigo">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="witness" />
+              </form-field>
+          </div>
+          <div class="col-md-4 col-sm-12 col-xs-12">
+            <form-field [control]="form.get('witnessI')" label="Testigo">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="witnessI" />
+              </form-field>
+          </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <form-field [control]="form.get('contractWitness')" label="Testigo del contrato">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="contractWitness" />
+              </form-field>
+          </div>
+      </div>
+    </form>
+  </div>
+</app-card>
+
+<div class="row">
+    <div class="col-md-6 col-sm-12 col-xs-12">
+        <app-card>
+            <div body>
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settings"
+                  [source]="data">
+                </ng2-smart-table>
+            </div>
+        </app-card>
+    </div>
+    <div class="col-md-6 col-sm-12 col-xs-12">
+        <app-card>
+            <div body>
+                <ng2-smart-table
+                      [attr.class]="'table-bordered'"
+                      [settings]="settings1"
+                      [source]="data1">
+                </ng2-smart-table>
+            </div>
+        </app-card>
+    </div>
+</div>
+
+<div class="row">
+    <app-card>
+        <div body>
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="justify-content-center">
+                  <button class="btn btn-success btn-sm active" (click)="add()">
+                    Agregar
+                  </button>
+                </div>
+            </div>
+        </div>
+    </app-card>
+</div>
