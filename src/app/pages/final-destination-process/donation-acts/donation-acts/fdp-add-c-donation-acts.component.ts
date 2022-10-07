@@ -99,7 +99,6 @@ export class FdpAddCDonationActsComponent implements OnInit {
       statusAct: [null, [Validators.required]],
       preliminaryAscertainment: [null, [Validators.required]],
       causePenal: [null, [Validators.required]],
-      destructDate: [null, [Validators.required]],
       actSelect: [null, [Validators.required]],
       status: [null, [Validators.required]],
       trans: [null, [Validators.required]],
