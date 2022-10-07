@@ -1,0 +1,111 @@
+<form [formGroup]="form" class="form-material">
+    <app-card>
+        <div body>
+          <h5 class="title">Rastreador de Bienes</h5>
+        </div>
+    </app-card>
+    <app-card [header]="true">
+        <div class="ch-content" header>
+          <h5 class="title">Criterios por clasificacion de bienes (Tipos / Subtipos / SubSubTipos / SubSubSubTipos de Bienes)</h5>
+        </div>
+        <div body>
+            <div class="row">
+                <div class="col-md-4 col-sm-12 col-xs-12">
+                    <form-field [control]="form.get('tariffFraction')" label="Fracción Arancelaría">
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="tariffFraction">
+                    </form-field>
+                </div>
+                <div class="col-md-2 col-sm-12 col-xs-12">
+                    <button 
+                        class="btn btn-success btn-sm active" 
+                        >
+                        +
+                    </button> 
+                </div>
+                <div class="col-md-4 col-sm-12 col-xs-12">
+                    <form-field [control]="form.get('goodsClassificationNumber')" label="Número de Clasificación de Bien">
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="goodsClassificationNumber">
+                    </form-field>
+                </div>
+                <div class="col-md-2 col-sm-12 col-xs-12">
+                    <button 
+                        class="btn btn-success btn-sm active" 
+                        >
+                        +
+                    </button> 
+                  </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col-md-6 col-sm-12 col-xs-12">
+                    <form-field [control]="form.get('alternateClassificationGood')" label="Clasificación alterna de Bien">
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="alternateClassificationGood">
+                      
+                    </form-field>
+                  </div>
+                  <div class="col-md-6 col-sm-12 col-xs-12">
+                    <form-field [control]="form.get('search')" label="Buscar en descripción del Sub Sub Sub Tipo">
+                        <input
+                        type="text"
+                        class="form-control"
+                        formControlName="search">
+                    </form-field>
+                  </div>
+            </div>
+        </div>
+    </app-card>
+</form>
+
+<form [formGroup]="formCriteria" class="form-material">
+    <app-card [header]="true">
+        <div class="ch-content" header>
+          <h5 class="title">Criterios por Datos del Bien</h5>
+        </div>
+        <div body>
+            <div class="row">
+                <div class="col-md-2 col-sm-12 col-xs-12">
+                    <form-field [control]="formCriteria.get('numberGood')" label="No. Bien">
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="numberGood">
+                    </form-field>
+                </div>
+                <div class="col-md-2 col-sm-12 col-xs-12">
+                    <form-check label="List. Bienes" for="label">
+                        <input id="label" type="checkbox" formControlName="listGoods" />
+                    </form-check>    
+                </div>
+                <div class="col-md-2 col-sm-12 col-xs-12">
+                    <form-field [control]="formCriteria.get('process')" label="Proceso">
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="process">
+                    </form-field>
+                </div>
+                <div class="col-md-3 col-sm-12 col-xs-12">
+                    <form-field [control]="formCriteria.get('inventorySAMI')" label="Inv. SAMI">
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="inventorySAMI">
+                    </form-field>
+                </div>
+                <div class="col-md-2 col-sm-12 col-xs-12">
+                    <form-check label="List. Inventario" for="label">
+                        <input id="label" type="checkbox" formControlName="listInventory" />
+                    </form-check>    
+                </div>
+            </div>
+        </div>
+    </app-card>
+</form>

@@ -126,6 +126,12 @@ const routes: Routes = [
         loadChildren: async () =>
           (await import('./derivation-goods/derivation-goods.module')).DerivationGoodsModule,
         data: { title: 'Derivacion de bienes' },
+      },
+      {
+        path: 'location-goods',
+        loadChildren: async () =>
+          (await import('./location-of-goods/location-goods-warehouses-storage/pa-lg-m-location-goods-warehouses-storage.module')).PaLgMLocationGoodsWarehousesStorageModule,
+        data: { title: 'Ubicacion de bienes' },
       }
     ],
   },

@@ -330,6 +330,10 @@ export const MENU: IMenuItem[] = [
         label: 'Derivación Bienes',
         link: '/pages/administrative-processes/derivation-goods',
       },
+      {
+        label: 'Ubicación de Bienes',
+        link: '/pages/administrative-processes/location-goods'
+      }
     ],
   },
   {
