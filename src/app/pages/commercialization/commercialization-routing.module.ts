@@ -20,6 +20,12 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./shared-marketing-components/c-b-rdodi-m-reclass-recovery-orders/c-b-rdodi-m-reclass-recovery-orders.module')).CBRdodiMReclassRecoveryOrdersModule,
     data: { title: 'Reclasificación OI' },
+  },
+  {
+    path: 'numeraire-conversion-tabs',
+    loadChildren: async () =>
+      (await import('./shared-marketing-components/numeraire-conversion-tabs/numeraire-conversion-tabs.module')).NumeraireConversionTabsModule,
+    data: { title: 'Conversión a numerario' },
   }
 ];
 

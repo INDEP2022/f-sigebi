@@ -462,108 +462,6 @@ export const MENU: IMenuItem[] = [
         icon: 'bx-folder',
         subItems: [
           {
-            label: 'Gastos',
-            icon: 'layout-outline',
-            subItems:[
-              {
-                label: 'Captura de gastos',
-                link: '/pages/home',
-              },
-              {
-                label: 'Conversión a numerarios',
-                link: '/pages/home',
-              },
-              {
-                label: 'Cálculo Com.',
-                subItems:[
-                  {
-                    label: 'Terceros comercializadores',
-                    link: '/pages/home',
-                  },
-                  {
-                    label: 'Calcular Comisión',
-                    link: '/pages/home',
-                  },
-                ]
-              }
-            ]
-          },
-          {
-            label: 'Facturación',
-            icon: 'file-text-outline',
-            subItems:[
-              {
-                label: 'Series y Folios',
-                link: '/pages/home'
-              },
-              {
-                label: 'Causas y Refacturación',
-                link: '/pages/home'
-              },
-              {
-                label: 'Estatus de facturas',
-                link: '/pages/home'
-              },
-              {
-                label: 'Formato rectificación',
-                subItems:[
-                  {
-                    label: 'xxxxxxx',
-                    link: '/pages/home'
-                  },
-                ]
-              }
-            ]
-          },
-          {
-            label: 'Ventas',
-            icon: 'checkmark-square-2-outline',
-            subItems:[
-              {
-                label: 'xxxxxxx',
-                link: '/pages/home'
-              },
-            ]
-          },
-          {
-            label: 'Reportes',
-            icon: 'clipboard-outline',
-            subItems:[
-              {
-                label: 'xxxxxxx',
-                link: '/pages/home'
-              },
-            ]
-          },
-          {
-            label: 'Avaluos',
-            icon: 'calendar-outline',
-            subItems: [
-              {
-                label: 'Consulta',
-                link: '/pages/home'
-              },
-              {
-                label: 'Registro',
-                link: '/pages/home'
-              }
-            ]
-          },
-          {
-            label: 'Eventos',
-            icon: 'tv-outline',
-            subItems: [
-              {
-                label: 'Control de Permisos',
-                link: '/pages/home'
-              }
-            ]
-          },
-          {
-            label: 'Preparación del Evento',
-            link: '/pages/home', 
-          },
-          {
             label: 'Bienes exentos de validación',
             link: '/pages/commercialization/c-b-bedv-m-validation-exempted-goods',
           },
@@ -572,28 +470,12 @@ export const MENU: IMenuItem[] = [
             link: '/pages/commercialization/c-b-rdodi-m-reclass-recovery-orders',
           },
           {
-            label: 'Consulta de bienes',
-            link: '/pages/home',
-          },
-          {
             label: 'Validación de Pagos',
             link: '/pages/commercialization/c-b-vdp-m-payment-dispersion-validation',
           },
           {
-            label: 'Dispersión de Pagos',
-            link: '/pages/home',
-          },
-          {
-            label: 'Pagos Referenciados',
-            link: '/pages/home'
-          },
-          {
-            label: 'Pagos no Conciliados',
-            link: '/pages/home'
-          },
-          {
-            label: 'Conceptos de gasto',
-            link: '/pages/home'
+            label: 'Conversión a numerario',
+            link: '/pages/commercialization/numeraire-conversion-tabs',
           },
         ],
       },
@@ -602,10 +484,6 @@ export const MENU: IMenuItem[] = [
         icon: 'home-outline',
         subItems: [
           {
-            label: 'Preparación del Evento',
-            link: '/pages/home',
-          },
-          {
             label: 'Bienes exentos de validación',
             link: '/pages/commercialization/c-b-bedv-m-validation-exempted-goods',
           },
@@ -614,60 +492,12 @@ export const MENU: IMenuItem[] = [
             link: '/pages/commercialization/c-b-rdodi-m-reclass-recovery-orders',
           },
           {
-            label: 'Consulta de bienes',
-            link: '/pages/home',
-          },
-          {
-            label: 'Conversión a numerarios',
-            link: '/pages/home',
-          },
-          {
             label: 'Validación de Pagos',
             link: '/pages/commercialization/c-b-vdp-m-payment-dispersion-validation',
           },
           {
-            label: 'Dispersión de Pagos',
-            link: '/pages/home',
-          },
-          {
-            label: 'Pagos Referenciados',
-            link: '/pages/home'
-          },
-          {
-            label: 'Pagos no Conciliados',
-            link: '/pages/home'
-          },
-          {
-            label: 'Conceptos de gasto',
-            link: '/pages/home'
-          },
-          {
-            label: 'Eventos',
-            icon: 'calendar-outline',
-            subItems: [
-              {
-                label: 'Control de Permisos',
-                link: '/pages/home'
-              }
-            ]
-          },
-          {
-            label: 'Captura de gastos',
-            link: '/pages/home',
-          },
-          {
-            label: 'Avaluos',
-            icon: 'calendar-outline',
-            subItems: [
-              {
-                label: 'Consulta',
-                link: '/pages/home'
-              },
-              {
-                label: 'Registro',
-                link: '/pages/home'
-              }
-            ]
+            label: 'Conversión a numerario',
+            link: '/pages/commercialization/numeraire-conversion-tabs',
           },
         ],
       },
