@@ -250,7 +250,7 @@ const routes: Routes = [
     data: { title: 'Procedencias Cisi' },
   },
   {
-    path: 'processSise',
+    path: 'siseProcess',
     loadChildren: async () =>
       (await import('./sise-process/sise-process.module'))
         .SiseProcessModule,
@@ -276,6 +276,13 @@ const routes: Routes = [
       (await import('./regulatory/regulatory.module'))
         .RegulatoryModule,
     data: { title: 'Regulaciones' },
+  },
+  {
+    path: 'responseRepuve',
+    loadChildren: async () =>
+      (await import('./response-repuve/response-repuve.module'))
+        .ResponseRepuveModule,
+    data: { title: 'Respuestas Repuve' },
   },
 ];
 

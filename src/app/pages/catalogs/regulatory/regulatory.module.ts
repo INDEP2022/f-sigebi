@@ -11,7 +11,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 @NgModule({
   declarations: [
     RegulatoyFormComponent,
-    RegulatoryListComponent
+    RegulatoryListComponent,
   ],
   imports: [
     CommonModule,

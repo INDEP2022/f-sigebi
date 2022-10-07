@@ -32,6 +32,7 @@ const routes: Routes = [
   { path: 'rAsuntDic', loadChildren: () => import('./pages/catalogs/rasunt-dic/rasunt-dic.module').then(m => m.RAsuntDicModule) },
   { path: 'rack', loadChildren: () => import('./pages/catalogs/rack/rack.module').then(m => m.RackModule) },
   { path: 'regulatory', loadChildren: () => import('./pages/catalogs/regulatory/regulatory.module').then(m => m.RegulatoryModule) },
+  { path: 'responseRepuve', loadChildren: () => import('./pages/catalogs/response-repuve/response-repuve.module').then(m => m.ResponseRepuveModule) },
 ];
 
 @NgModule({

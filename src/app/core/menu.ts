@@ -144,8 +144,8 @@ export const MENU: IMenuItem[] = [
         link: '/pages/catalogs/oringCisi',
       },
       {
-        label: 'Procesos Sisi',
-        link: '/pages/catalogs/processSisi',
+        label: 'Procesos Sise',
+        link: '/pages/catalogs/siseProcess',
       }, 
       {
         label: 'R Asunt Dic',
@@ -158,6 +158,10 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Regulaciones',
         link: '/pages/catalogs/regulatory',
+      },
+      {
+        label: 'Respuestas Repuve',
+        link: '/pages/catalogs/responseRepuve',
       },
     ],
   },
