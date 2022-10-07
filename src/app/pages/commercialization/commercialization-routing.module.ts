@@ -26,6 +26,12 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./shared-marketing-components/numeraire-conversion-tabs/numeraire-conversion-tabs.module')).NumeraireConversionTabsModule,
     data: { title: 'Conversión a numerario' },
+  },
+  {
+    path: 'c-b-a-cda-m-appraisal-consultation',
+    loadChildren: async () =>
+      (await import('./shared-marketing-components/c-b-a-cda-m-appraisal-consultation/c-b-a-cda-m-appraisal-consultation.module')).CBACdaMAppraisalConsultationModule,
+    data: { title: 'Consulta de Avalúo' },
   }
 ];
 

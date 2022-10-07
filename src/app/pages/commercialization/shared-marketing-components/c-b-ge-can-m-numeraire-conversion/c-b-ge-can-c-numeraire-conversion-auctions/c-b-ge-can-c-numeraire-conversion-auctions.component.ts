@@ -1,4 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+
+import { BasePage } from 'src/app/core/shared/base-page';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { DISPERSION_COLUMNS } from './dispersion-columns';
+import { BILLS_COLUMNS } from './bills-columns';
+
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -7,11 +13,23 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styles: [
   ]
 })
-export class CBGeCanCNumeraireConversionAuctionsComponent implements OnInit {
-
+export class CBGeCanCNumeraireConversionAuctionsComponent extends BasePage implements OnInit {
+  settings = {...TABLE_SETTINGS};
+  settings2 = {...TABLE_SETTINGS};
   form: FormGroup = new FormGroup({}); 
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder) {
+    super();
+    this.settings.columns =  BILLS_COLUMNS;
+    this.settings.actions.edit = false;
+    this.settings.actions.add = false;
+    this.settings.actions.delete = false;
+
+    this.settings2.columns = DISPERSION_COLUMNS;
+    this.settings2.actions.edit = false;
+    this.settings2.actions.add = false;
+    this.settings2.actions.delete = false;
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -29,58 +47,6 @@ export class CBGeCanCNumeraireConversionAuctionsComponent implements OnInit {
     });
   }
 
-  //Tabla 1
-  settings = {
-
-    actions: {
-      add: false,
-      edit: false,
-      delete: false,
-    }, 
-
- 
-    hideSubHeader: true,//oculta subheaader de filtro
-    // mode: 'external', // ventana externa
-
-   add: {
-     addButtonContent: '<i class="nb-plus"></i>',
-     createButtonContent: '<i class="nb-checkmark"></i>',
-     cancelButtonContent: '<i class="nb-close"></i>',
-     
-   },
-   edit: {
-     editButtonContent: '<i class="nb-edit"></i>',
-     saveButtonContent: '<i class="nb-checkmark"></i>',
-     cancelButtonContent: '<i class="nb-close"></i>',
-   },
-   delete: {
-     deleteButtonContent: '<i class="nb-trash"></i>',
-     confirmDelete: true,
-   },
-   
-   columns: {
-     idGasto: {
-       title: 'ID Gasto',
-     },
-     descrIdGasto: {
-       title: ' ',
-     },
-     monto: {
-       title: 'Monto',
-     },
-     solPago: {
-       title: 'Solicitud de Pago',
-     },
-     mandato: {
-      title: 'Mandato',
-    },
-    total: {
-      title: 'Total',
-    },
-    
-   },
-   noDataMessage: "No se encontrarón registros"
- };
 
  data = [
   {
@@ -92,52 +58,6 @@ export class CBGeCanCNumeraireConversionAuctionsComponent implements OnInit {
     total: '132711',
   }
  ]
-
- //Tabla 2 Dispersión
-settings2 = {
-
-  actions: {
-    add: false,
-    edit: false,
-    delete: false,
-  }, 
-
-
- hideSubHeader: true,//oculta subheaader de filtro
-  // mode: 'external', // ventana externa
-
- add: {
-   addButtonContent: '<i class="nb-plus"></i>',
-   createButtonContent: '<i class="nb-checkmark"></i>',
-   cancelButtonContent: '<i class="nb-close"></i>',
-   
- },
- edit: {
-   editButtonContent: '<i class="nb-edit"></i>',
-   saveButtonContent: '<i class="nb-checkmark"></i>',
-   cancelButtonContent: '<i class="nb-close"></i>',
- },
- delete: {
-   deleteButtonContent: '<i class="nb-trash"></i>',
-   confirmDelete: true,
- },
- 
- columns: {
-   noBien: {
-     title: 'No. Bien',
-   },
-   monto: {
-     title: 'Monto',
-   },
-   partConver: {
-     title: 'Participa conversión',
-   },
-   fecha: {
-     title: 'Fecha',
-   },
- },
- noDataMessage: "No se encontrarón registros"
-};
 data2 = [
   {
     noBien: '147',

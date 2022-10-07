@@ -3,7 +3,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
-import { COLUMNS } from './columns';
+import { GOODS_COLUMNS } from './destruction-authorization-management-goods-columns';
+
+import { RULINGS_COLUMNS } from './destruction-authorization-management-rulings-columns';
+import { PROCEEDINGS_COLUMNS } from './destruction-authorization-management-proceedings-columns';
 
 @Component({
   selector: 'app-pe-gdadd-c-destruction-authorization-management',
@@ -13,13 +16,27 @@ import { COLUMNS } from './columns';
 })
 export class PeGdaddCDestructionAuthorizationManagementComponent extends BasePage implements OnInit  {
   
-  settings = TABLE_SETTINGS;
+  settings = {...TABLE_SETTINGS};
+  settings2 = {...TABLE_SETTINGS};
+  settings3 = {...TABLE_SETTINGS};
   form: FormGroup = new FormGroup({}); 
 
   constructor(private fb: FormBuilder) {
     super();
-    this.settings.columns = COLUMNS;
+    this.settings.columns = GOODS_COLUMNS;
     this.settings.actions.delete = true;
+    this.settings.actions.edit = false;
+    this.settings.actions.add = false;
+
+    this.settings2.columns = RULINGS_COLUMNS;
+    this.settings.actions.delete = false;
+    this.settings.actions.edit = false;
+    this.settings.actions.add = false;
+
+    this.settings3.columns =  PROCEEDINGS_COLUMNS;
+    this.settings.actions.delete = false;
+    this.settings.actions.edit = false;
+    this.settings.actions.add = false;
   }
 
   ngOnInit(): void {
@@ -37,23 +54,6 @@ export class PeGdaddCDestructionAuthorizationManagementComponent extends BasePag
     });
   }
 
-  tableActRecSettings = {
-    actions: {
-      columnTitle: '',
-      add: false,
-      edit: false,
-      delete: false,
-    },
-    hideSubHeader: true,
-    mode: 'external',
-
-    columns: {
-      actasRecepcion: {
-        title: 'Actas de Recepción',
-      },
-    },
-  };
-
   dataActRec = [
     {
       actasRecepcion: "RT/AGA/ADM/DRBC/00254/17/12",
@@ -66,23 +66,6 @@ export class PeGdaddCDestructionAuthorizationManagementComponent extends BasePag
     },
 
   ];
-
-  tableDictamSettings = {
-    actions: {
-      columnTitle: '',
-      add: false,
-      edit: false,
-      delete: false,
-    },
-    hideSubHeader: true,
-    mode: 'external', 
-
-    columns: {
-      actasRecepcion: {
-        title: 'Dictaminaciones',
-      },
-    },
-  };
 
   dataDictam = [
     {
@@ -98,40 +81,6 @@ export class PeGdaddCDestructionAuthorizationManagementComponent extends BasePag
   ];
 
   
-  tableNoBienSettings = {
-
-    add: {
-      addButtonContent: '<i class="nb-plus"></i>',
-      createButtonContent: '<i class="nb-checkmark"></i>',
-      cancelButtonContent: '<i class="nb-close"></i>',
-    },
-    edit: {
-      editButtonContent: '<i class="nb-edit"></i>',
-      saveButtonContent: '<i class="nb-checkmark"></i>',
-      cancelButtonContent: '<i class="nb-close"></i>',
-    },
-    delete: {
-      deleteButtonContent: '<i class="nb-trash"></i>',
-      confirmDelete: true,
-    },
-    
-    columns: {
-      noBien: {
-        title: 'No. Bien',
-        width: '25px'
-      },
-      descripcion: {
-        title: 'Descripción',
-      },
-      cantidad: {
-        title: 'Cantidad',
-      },
-      ofsol: {
-        title: 'Of. Sol.'
-      },
-    },
-  };
-
   dataNoBien = [
     {
       noBien: 85431,

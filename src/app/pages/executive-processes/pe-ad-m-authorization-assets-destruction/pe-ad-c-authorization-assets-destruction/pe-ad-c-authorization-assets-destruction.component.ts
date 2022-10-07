@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core'; 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BasePage } from 'src/app/core/shared/base-page';
+
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { ASSETS_DESTRUCTION_COLUMLNS } from './authorization-assets-destruction-columns';
 
 @Component({
   selector: 'app-pe-ad-c-authorization-assets-destruction',
@@ -8,11 +12,18 @@ import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
   styles: [
   ]
 })
-export class PeAdCAuthorizationAssetsDestructionComponent implements OnInit {
+export class PeAdCAuthorizationAssetsDestructionComponent extends BasePage implements OnInit {
 
+  settings = TABLE_SETTINGS;
   form: FormGroup = new FormGroup({}); 
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder) {
+    super();
+    this.settings.columns = ASSETS_DESTRUCTION_COLUMLNS;
+    this.settings.actions.edit = false;
+    this.settings.actions.add = false;
+    this.settings.actions.delete = false;
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -30,63 +41,6 @@ export class PeAdCAuthorizationAssetsDestructionComponent implements OnInit {
       fromDate: ['', [Validators.required]],
     });
   }
-
-  settings = {
-
-    actions: {
-      columnTitle: '',
-      add: false,
-      edit: false,
-      delete: false,
-    },
-
-    hideSubHeader: true,//oculta subheaader de filtro
-    mode: 'external', // ventana externa
-
-    // add: {
-    //   addButtonContent: '<i class="nb-plus"></i>',
-    //   createButtonContent: '<i class="nb-checkmark"></i>',
-    //   cancelButtonContent: '<i class="nb-close"></i>',
-    // },
-    // edit: {
-    //   editButtonContent: '<i class="nb-edit"></i>',
-    //   saveButtonContent: '<i class="nb-checkmark"></i>',
-    //   cancelButtonContent: '<i class="nb-close"></i>',
-    // },
-    // delete: {
-    //   deleteButtonContent: '<i class="nb-trash"></i>',
-    //   confirmDelete: true,
-    // },
-    
-    /*
-    */
-    columns: {
-      noBien: {
-        title: 'No. Bien',
-      },
-      description: {
-        title: 'Descripción',
-      },
-      ubiExact: {
-        title: 'Ubicación Exacta',
-      },
-      direction: {
-        title: '',
-      },
-      noOficio: {
-        title: 'No. de Autorización',
-      },
-      fecha: {
-        title: 'Fecha',
-      },
-      status: {
-        title: 'Estatus',
-      },
-      extraDom: {
-        title: 'Ext. Dom',
-      },
-    },
-  };
 
   data = [
     {

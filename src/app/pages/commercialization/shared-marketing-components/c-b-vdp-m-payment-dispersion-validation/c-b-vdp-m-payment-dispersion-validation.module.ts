@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { SharedModule } from 'src/app/shared/shared.module';
-import { Ng2SmartTableModule } from 'ng2-smart-table';
 
 import { ExcelService } from 'src/app/common/services/exportToExcel.service';
 
@@ -18,7 +17,6 @@ import { CBVdpCPaymentDispersionValidationComponent } from './c-b-vdp-c-payment-
     CommonModule,
     CBVdpMPaymentDispersionValidationRoutingModule,
     SharedModule,
-    Ng2SmartTableModule
   ],
   providers: [ExcelService],
 })

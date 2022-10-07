@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { DETAILS_OI_COLUMNS } from './c-b-rdodi-c-reclass-recovery-orders-columns';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
@@ -8,11 +11,20 @@ import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
   styles: [
   ]
 })
-export class CBRdodiCReclassRecoveryOrdersComponent implements OnInit {
-
+export class CBRdodiCReclassRecoveryOrdersComponent extends BasePage implements OnInit {
+  settings = TABLE_SETTINGS;
   form: FormGroup = new FormGroup({}); 
 
-  constructor(private fb: FormBuilder) { }
+  constructor(
+    private fb: FormBuilder
+    ) {
+      super();
+      this.settings.columns = DETAILS_OI_COLUMNS;
+      this.settings.actions.edit = false;
+      this.settings.actions.add = false;
+      this.settings.actions.delete = false;
+
+     }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -40,70 +52,6 @@ export class CBRdodiCReclassRecoveryOrdersComponent implements OnInit {
     });
   }
 
-  settings = {
-
-    actions: {
-      add: false,
-      edit: false,
-      delete: false,
-    }, 
-
-    hideSubHeader: true, //oculta subheaader de filtro
-    // mode: 'external', // ventana externa
-
-   add: {
-     addButtonContent: '<i class="nb-plus"></i>',
-     createButtonContent: '<i class="nb-checkmark"></i>',
-     cancelButtonContent: '<i class="nb-close"></i>',
-     
-   },
-   edit: {
-     editButtonContent: '<i class="nb-edit"></i>',
-     saveButtonContent: '<i class="nb-checkmark"></i>',
-     cancelButtonContent: '<i class="nb-close"></i>',
-   },
-   delete: {
-     deleteButtonContent: '<i class="nb-trash"></i>',
-     confirmDelete: true,
-   },
-   
-   columns: {
-     lote: {
-       title: 'Lote',
-     },
-     descripcion: {
-       title: 'Descripción',
-     },
-     mandato: {
-       title: 'Mandato',
-     },
-     importe: {
-       title: 'Importe',
-     },
-     importeSinIva: {
-      title: 'Importe sin IVA',
-    },
-    IVA: {
-      title: 'IVA',
-    },
-    tipoIngreso: {
-      title: 'Tipo de Ingreso',
-    },
-    pagoIva: {
-      title: 'Pago de IVA',
-    },
-    precioVta: {
-      title: 'Precio Venta',
-    },
-    ret: {
-      title: 'Ret',
-    },
-    retenido: {
-      title: 'retenido',
-    },
-   },
-   noDataMessage: "No se encontrarón registros"
-  };
 
   data = [
     {

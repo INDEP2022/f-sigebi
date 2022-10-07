@@ -37,6 +37,10 @@
             </div>
         </form>
 
+        <div class="ch-content">
+            <h5 class="title"></h5>
+            <app-columns-select [(settings)]="settings"></app-columns-select>
+        </div>
         <ng2-smart-table class="my-table" [settings]="settings" [source]="data"></ng2-smart-table>
 
         <div class="row pt-5">

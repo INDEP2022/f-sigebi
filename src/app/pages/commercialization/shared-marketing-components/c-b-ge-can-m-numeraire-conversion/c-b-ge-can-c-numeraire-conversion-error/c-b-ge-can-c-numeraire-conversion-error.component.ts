@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { EVENTO_ERROR_COLUMNS } from './numeraire-conversion-error-columns';
 
 @Component({
   selector: 'app-c-b-ge-can-c-numeraire-conversion-error',
@@ -6,60 +9,16 @@ import { Component, OnInit } from '@angular/core';
   styles: [
   ]
 })
-export class CBGeCanCNumeraireConversionErrorComponent implements OnInit {
-
+export class CBGeCanCNumeraireConversionErrorComponent extends BasePage implements OnInit {
+  settings = TABLE_SETTINGS;
   list: any;
   
-  constructor() { }
+  constructor() {
+    super();
+    this.settings.columns = EVENTO_ERROR_COLUMNS
+   }
 
   ngOnInit(): void {
   }
-
-  //Tabla 1
-  settings = {
-
-    actions: false,
-
-    //  hasScroll: false,
-   //  pager: {
-   //    display: false,
-   //  },
- 
-   hideSubHeader: true,//oculta subheaader de filtro
-    // mode: 'external', // ventana externa
-
-   add: {
-     addButtonContent: '<i class="nb-plus"></i>',
-     createButtonContent: '<i class="nb-checkmark"></i>',
-     cancelButtonContent: '<i class="nb-close"></i>',
-     
-   },
-   edit: {
-     editButtonContent: '<i class="nb-edit"></i>',
-     saveButtonContent: '<i class="nb-checkmark"></i>',
-     cancelButtonContent: '<i class="nb-close"></i>',
-   },
-   delete: {
-     deleteButtonContent: '<i class="nb-trash"></i>',
-     confirmDelete: true,
-   },
-   
-   columns: {
-     evento: {
-       title: 'Evento',
-       width: '60px'
-     },
-     lote: {
-       title: 'Lote',
-       width: '60px'
-     },
-     inconsistencia: {
-       title: 'Inconsistencia',
-     },
-    
-   },
-   noDataMessage: "No se encontrarón registros"
- };
-
 
 }

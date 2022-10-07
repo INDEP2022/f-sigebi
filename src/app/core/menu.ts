@@ -478,6 +478,10 @@ export const MENU: IMenuItem[] = [
             label: 'Conversión a numerario',
             link: '/pages/commercialization/numeraire-conversion-tabs',
           },
+          {
+            label: 'Consulta de Avalúo',
+            link: '/pages/commercialization/c-b-a-cda-m-appraisal-consultation',
+          },
         ],
       },
       {
@@ -499,6 +503,10 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Conversión a numerario',
             link: '/pages/commercialization/numeraire-conversion-tabs',
+          },
+          {
+            label: 'Consulta de Avalúo',
+            link: '/pages/commercialization/c-b-a-cda-m-appraisal-consultation',
           },
         ],
       },

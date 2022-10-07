@@ -5,19 +5,14 @@
             <!-- <app-columns-select [(settings)]="settingsCompos"></app-columns-select> -->
         </div>
     </div>
-    <div body>
-        <ng2-smart-table
-        class="my-table" 
-        [settings]="settings" 
-        [source]="list"  
-        >
-    </ng2-smart-table>
-    </div>
-    <div footer>
-        
 
+    <div body>
+        <ng2-smart-table class="my-table" [settings]="settings" [source]="list"></ng2-smart-table>
+    </div>
+    
+    <div footer>
         <button type="button" class="btn btn-sm btn-success dropdown-toggle" (click)="fileExcel.click()">iNSERTAR VÍA ARCHIVO PLANO</button>
-                            <input type="file" (change)="ReadExcel($event)" name="fileExcel" #fileExcel class="d-none"
-                            accept=".xlsx, .xls, .csv, application/vnd.ms-excel"> 
+            <input type="file" (change)="ReadExcel($event)" name="fileExcel" #fileExcel class="d-none"
+            accept=".xlsx, .xls, .csv, application/vnd.ms-excel"> 
     </div>
 </app-card>

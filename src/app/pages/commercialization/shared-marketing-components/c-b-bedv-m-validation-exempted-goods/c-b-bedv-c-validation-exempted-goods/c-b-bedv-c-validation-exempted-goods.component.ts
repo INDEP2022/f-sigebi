@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { VALIDATION_EXEMPTED_GOODS_COLUMS } from './c-b-bedv-c-validation-exempted-goods-columns';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { BasePage } from 'src/app/core/shared/base-page';
 //XLSX
 import * as XLSX from 'xlsx';
 
@@ -9,13 +12,21 @@ import * as XLSX from 'xlsx';
   styles: [
   ]
 })
-export class CBBedvCValidationExemptedGoodsComponent implements OnInit {
-
+export class CBBedvCValidationExemptedGoodsComponent extends BasePage implements OnInit {
+  settings =  TABLE_SETTINGS;
   ExcelData: any;
   CsvData:any;
   form: FormGroup = new FormGroup({}); 
 
-  constructor(private fb: FormBuilder) { }
+  constructor(
+    private fb: FormBuilder
+    ) {
+      super();
+      this.settings.columns = VALIDATION_EXEMPTED_GOODS_COLUMS;
+      this.settings.actions.add = false;
+      this.settings.actions.edit = false;
+      this.settings.actions.delete = false;
+     }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -29,60 +40,6 @@ export class CBBedvCValidationExemptedGoodsComponent implements OnInit {
       penaltyAmount: ['', [Validators.required]],
     });
   }
-
-  settings = {
-    actions: false,
-
-    // actions: {
-    //   columnTitle: 'Acciones',
-    //   // delete: false
-    //  },
-
-    //  hasScroll: false,
-   //  pager: {
-   //    display: false,
-   //  },
- 
-   // hideSubHeader: false,//oculta subheaader de filtro
-    // mode: 'external', // ventana externa
-
-   add: {
-     addButtonContent: '<i class="nb-plus"></i>',
-     createButtonContent: '<i class="nb-checkmark"></i>',
-     cancelButtonContent: '<i class="nb-close"></i>',
-     
-   },
-   edit: {
-     editButtonContent: '<i class="nb-edit"></i>',
-     saveButtonContent: '<i class="nb-checkmark"></i>',
-     cancelButtonContent: '<i class="nb-close"></i>',
-   },
-   delete: {
-     deleteButtonContent: '<i class="nb-trash"></i>',
-     confirmDelete: true,
-   },
-   
-   columns: {
-     bien: {
-       title: 'Bien',
-       width: '25px',
-       editable: false,
-      
-     },
-     descripcion: {
-       title: 'Descripción',
-       editable: false,
-     },
-     unidad: {
-       title: 'Unidad',
-       editable: false,
-     },
-     proceso: {
-       title: 'Proceso',
-     },
-   },
-   noDataMessage: "No se encontrarón registros"
-   };
 
   list = [
     {

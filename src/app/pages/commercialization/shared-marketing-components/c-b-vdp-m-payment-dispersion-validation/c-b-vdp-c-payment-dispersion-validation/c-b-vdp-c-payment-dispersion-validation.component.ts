@@ -1,6 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BasePage } from 'src/app/core/shared/base-page';
+
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { ALLOTMENT_COLUMNS } from './payment-dispersion-validation-allotment-columns';
+import { BANK_COLUMNS } from './payment-dispersion-validation-bank-columns';
+import { EVENT_COLUMNS } from './payment-dispersion-validation-event-columns';
+import { RECEIVED_COLUMNS } from './payment-dispersion-validation-received-columns';
+
 import { ExcelService } from 'src/app/common/services/exportToExcel.service';
+
 
 @Component({
   selector: 'app-c-b-vdp-c-payment-dispersion-validation',
@@ -8,11 +17,35 @@ import { ExcelService } from 'src/app/common/services/exportToExcel.service';
   styles: [
   ]
 })
-export class CBVdpCPaymentDispersionValidationComponent implements OnInit {
-
+export class CBVdpCPaymentDispersionValidationComponent extends BasePage implements OnInit {
+  settingsLotes = {...TABLE_SETTINGS};
+  settingsBienes = {...TABLE_SETTINGS};
+  settingsPagosBanco = {...TABLE_SETTINGS};
+  settingsCompos = {...TABLE_SETTINGS};
   form: FormGroup = new FormGroup({}); 
 
-  constructor(private fb: FormBuilder, private excelService:ExcelService) { }
+  constructor(private fb: FormBuilder, private excelService:ExcelService) {
+    super();
+    this.settingsLotes.columns = EVENT_COLUMNS;
+    this.settingsLotes.actions.edit = false;
+    this.settingsLotes.actions.delete = false;
+    this.settingsLotes.actions.add = false;
+
+    this.settingsBienes.columns = ALLOTMENT_COLUMNS;
+    this.settingsBienes.actions.edit = false;
+    this.settingsBienes.actions.delete = false;
+    this.settingsBienes.actions.add = false;
+
+    this.settingsPagosBanco.columns = BANK_COLUMNS;
+    this.settingsPagosBanco.actions.edit = false;
+    this.settingsPagosBanco.actions.delete = false;
+    this.settingsPagosBanco.actions.add = false;
+
+    this.settingsCompos.columns = RECEIVED_COLUMNS
+    this.settingsCompos.actions.edit = false;
+    this.settingsCompos.actions.delete = false;
+    this.settingsCompos.actions.add = false;
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -26,54 +59,6 @@ export class CBVdpCPaymentDispersionValidationComponent implements OnInit {
       penaltyAmount: ['', [Validators.required]],
     });
   }
-
-  //tabla LOTES PARTICIPANTES EN EL EVENTO
-  settingsLotes = {
-
-    actions: {
-      // columnTitle: 'Acciones', 
-      edit: false,
-      delete: false,
-      add: false,
-    },
-
-    hideSubHeader: true,
-
-    add: {
-      addButtonContent: '<i class="nb-plus"></i>',
-      createButtonContent: '<i class="nb-checkmark"></i>',
-      cancelButtonContent: '<i class="nb-close"></i>',
-    },
-    edit: {
-      editButtonContent: '<i class="nb-edit"></i>',
-      saveButtonContent: '<i class="nb-checkmark"></i>',
-      cancelButtonContent: '<i class="nb-close"></i>',
-    },
-    delete: {
-      deleteButtonContent: '<i class="nb-trash"></i>',
-      confirmDelete: true,
-    },
-    
-    columns: {
-      lote: {
-        title: 'Lote',
-        
-      },
-      cliente: {
-        title: 'Cliente',
-        
-      },
-      descripcion: {
-        title: 'Descripción',
-        
-      },
-      precio: {
-        title: 'Precio',
-        
-      },
-    },
-    noDataMessage: "No se encontrarón registros"
-  };
 
   dataLotes = [
     {
@@ -93,52 +78,7 @@ export class CBVdpCPaymentDispersionValidationComponent implements OnInit {
     this.excelService.exportAsExcelFile(this.dataLotes, 'lotes_de_evento');
   }
 
-
-  //tabla BIENES QUE CONFORMAN EL BIEN
-  settingsBienes = {
-
-    actions: {
-      // columnTitle: 'Acciones', 
-      edit: false,
-      delete: false,
-      add: false,
-    },
-
-    hideSubHeader: true,
-
-    add: {
-      addButtonContent: '<i class="nb-plus"></i>',
-      createButtonContent: '<i class="nb-checkmark"></i>',
-      cancelButtonContent: '<i class="nb-close"></i>',
-    },
-    edit: {
-      editButtonContent: '<i class="nb-edit"></i>',
-      saveButtonContent: '<i class="nb-checkmark"></i>',
-      cancelButtonContent: '<i class="nb-close"></i>',
-    },
-    delete: {
-      deleteButtonContent: '<i class="nb-trash"></i>',
-      confirmDelete: true,
-    },
-    
-    columns: {
-      noBien: {
-        title: 'No. Bien',
-        // width: '25px'
-      },
-      descripcion: {
-        title: 'Descripción',
-      },
-      precio: {
-        title: 'Precio',
-      },
-      iva: {
-        title: 'IVA',
-      }
-    },
-    noDataMessage: "No se encontrarón registros"
-  };
-
+  
   dataBienes = [
     {
       noBien: '78778',
@@ -152,59 +92,6 @@ export class CBVdpCPaymentDispersionValidationComponent implements OnInit {
     this.excelService.exportAsExcelFile(this.dataBienes, 'bienes_x_lote');
   }
 
-  //tabla PAGOS RECIBIDOS EN EL BANCO
-  settingsPagosBanco = {
-
-    actions: {
-      // columnTitle: 'Acciones', 
-      edit: false,
-      delete: false,
-      add: false,
-    },
-
-    hideSubHeader: true,
-
-    add: {
-      addButtonContent: '<i class="nb-plus"></i>',
-      createButtonContent: '<i class="nb-checkmark"></i>',
-      cancelButtonContent: '<i class="nb-close"></i>',
-    },
-    edit: {
-      editButtonContent: '<i class="nb-edit"></i>',
-      saveButtonContent: '<i class="nb-checkmark"></i>',
-      cancelButtonContent: '<i class="nb-close"></i>',
-    },
-    delete: {
-      deleteButtonContent: '<i class="nb-trash"></i>',
-      confirmDelete: true,
-    },
-    
-    columns: {
-      noMov: {
-        title: 'No. Mov.',
-        // width: '25px'
-      },
-      fecha: {
-        title: 'Fecha',
-      },
-      banco: {
-        title: 'Banco',
-      },
-      referencia: {
-        title: 'Referencia',
-      },
-      deposito: {
-        title: 'Depósito',
-      },
-      noOrdenIngreso: {
-        title: 'No. Orden ingreso',
-      },
-      noPago: {
-        title: 'No. Pago',
-      },
-    },
-    noDataMessage: "No se encontrarón registros"
-  };
 
   dataPagosBanco = [
     {
@@ -231,59 +118,6 @@ export class CBVdpCPaymentDispersionValidationComponent implements OnInit {
     this.excelService.exportAsExcelFile(this.dataPagosBanco, 'Pagos_banco');
   }
 
-  //tabla COMPOSICIÓN DE COMPOS
-  settingsCompos = {
-
-    actions: {
-      // columnTitle: 'Acciones', 
-      edit: false,
-      delete: false,
-      add: false,
-    },
-
-    hideSubHeader: true,
-
-    add: {
-      addButtonContent: '<i class="nb-plus"></i>',
-      createButtonContent: '<i class="nb-checkmark"></i>',
-      cancelButtonContent: '<i class="nb-close"></i>',
-    },
-    edit: {
-      editButtonContent: '<i class="nb-edit"></i>',
-      saveButtonContent: '<i class="nb-checkmark"></i>',
-      cancelButtonContent: '<i class="nb-close"></i>',
-    },
-    delete: {
-      deleteButtonContent: '<i class="nb-trash"></i>',
-      confirmDelete: true,
-    },
-    
-    columns: {
-      referencia: {
-        title: 'Referencia',
-        // width: '25px'
-      },
-      monto: {
-        title: 'Monto',
-      },
-      iva: {
-        title: 'IVA',
-      },
-      noIva: {
-        title: 'Monto no aplica IVA',
-      },
-      transferente: {
-        title: 'Transferente',
-      },
-      tipo: {
-        title: 'Pago Origen',
-      },
-      pagoOrigen: {
-        title: 'Total',
-      },
-    },
-    noDataMessage: "No se encontrarón registros"
-  };
 
   dataCompos = [
     {
