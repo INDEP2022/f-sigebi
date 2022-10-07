@@ -65,7 +65,12 @@
                 </div>
                 <div class="col-md-2">
                     <form-field [control]="form.get('ordenDate')" label="Fecha de orden">
-                        <input type="text" class="form-control" formControlName="ordenDate">
+                        <input type="text"
+                               placeholder=""
+                               class="form-control"
+                               bsDatepicker
+                               formControlName="ordenDate"
+                               [bsConfig]="{ isAnimated: true }">
                     </form-field>
                 </div>
                 <div class="col-md-1">

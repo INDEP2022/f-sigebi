@@ -1,6 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+import { SharedModule } from 'src/app/shared/shared.module';
+import { Ng2SmartTableModule } from 'ng2-smart-table';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+
 import { CBGeCanMNumeraireConversionRoutingModule } from './c-b-ge-can-m-numeraire-conversion-routing.module';
 import { CBGeCanCNumeraireConversionAuctionsComponent } from './c-b-ge-can-c-numeraire-conversion-auctions/c-b-ge-can-c-numeraire-conversion-auctions.component';
 import { CBGeCanCNumeraireConversionAllotmentsComponent } from './c-b-ge-can-c-numeraire-conversion-allotments/c-b-ge-can-c-numeraire-conversion-allotments.component';
@@ -15,7 +19,15 @@ import { CBGeCanCNumeraireConversionErrorComponent } from './c-b-ge-can-c-numera
   ],
   imports: [
     CommonModule,
-    CBGeCanMNumeraireConversionRoutingModule
+    CBGeCanMNumeraireConversionRoutingModule,
+    SharedModule,
+    Ng2SmartTableModule,
+    BsDatepickerModule    
+  ],
+  exports: [
+    CBGeCanCNumeraireConversionAuctionsComponent,
+    CBGeCanCNumeraireConversionAllotmentsComponent,
+    CBGeCanCNumeraireConversionErrorComponent
   ]
 })
 export class CBGeCanMNumeraireConversionModule { }
