@@ -363,15 +363,15 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-share-alt',
     subItems: [
       {
-        label: 'Actas de destrucción',
+        label: 'Actas de Destrucción',
         link: '/pages/final-destination-process/destruction-acts',
       },
       {
-        label: 'Actas de donación',
+        label: 'Actas de Donación',
         link: '/pages/final-destination-process/donation-acts',
       },
       {
-        label: 'Actas de destino',
+        label: 'Actas de Destino',
         link: '/pages/final-destination-process/destination-acts',
       },
     ],

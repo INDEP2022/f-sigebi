@@ -1,10 +1,5 @@
 import { Component, OnInit  } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
-import { BsLocaleService } from 'ngx-bootstrap/datepicker';
-import { defineLocale } from 'ngx-bootstrap/chronos';
-import { esLocale } from 'ngx-bootstrap/locale';
-defineLocale('es', esLocale);
 
 @Component({
   selector: 'app-fdp-add-c-destruction-acts',
@@ -13,7 +8,6 @@ defineLocale('es', esLocale);
   ]
 })
 export class FdpAddCDestructionActsComponent implements OnInit {
-  bsConfig?: Partial<BsDatepickerConfig>;
   actForm: FormGroup;
   //datePicker config
   colorTheme = 'theme-red';
@@ -88,20 +82,11 @@ export class FdpAddCDestructionActsComponent implements OnInit {
   data2 = EXAMPLE_DATA2;
 
   constructor(
-    private fb: FormBuilder,
-    private localeService: BsLocaleService
-  ) { 
-    this.setConfigDate();
-  }
+    private fb: FormBuilder
+  ) { }
   
   ngOnInit(): void {
     this.initForm();
-  }
-
-  setConfigDate(){
-    this.bsConfig = Object.assign({}, { containerClass: this.colorTheme });
-    this.localeService.use('es');
-    
   }
 
   search(term: string){
