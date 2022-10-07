@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -27,7 +28,7 @@ export class PeGdaddCDestructionAuthorizationManagementComponent extends BasePag
 
   private prepareForm() {
     this.form = this.fb.group({
-      noAuth: ['', [Validators.required]],
+      noAuth: ['', [Validators.required, Validators.maxLength(8), Validators.minLength(1), Validators.pattern(NUMBERS_PATTERN)]],
       requesOffice: ['', [Validators.required]],
       requesScop: ['', [Validators.required]],
       recepDate: ['', [Validators.required]],

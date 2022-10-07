@@ -9,7 +9,7 @@
             <div class="row">
                 <div class="col-md-2">
                     <form-field [control]="form.get('noAuth')" label="No.">
-                        <input type="text" class="form-control" formControlName="noAuth">
+                        <input type="text" class="form-control" formControlName="noAuth" maxlength="8" minlength="1">
                     </form-field>
                 </div>
                 <div class="col-md-2">
@@ -74,15 +74,15 @@
             </div>
     
             <div class="col-md-1">
-              <button type="submit" class="btn btn-primary active">Solicitud</button>
+              <button type="submit" class="btn-sm btn-primary active">Solicitud</button>
             </div>
     
             <div class="col-md-1">
-              <button type="submit" class="btn btn-primary active" >Escanear</button>
+              <button type="submit" class="btn-sm btn-primary active" >Escanear</button>
             </div>
     
             <div class="col-md-1">
-              <button type="submit" class="btn btn-primary active" >Ver IMG</button>
+              <button type="submit" class="btn-sm btn-primary active" >Ver IMG</button>
             </div>
 
             <div class="col-md-6">
@@ -122,10 +122,10 @@
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <button type="submit" class="btn btn-primary active">Insertar vía archivo plano</button>
+                    <button type="submit" class="btn-sm btn-primary active">Insertar vía archivo plano</button>
                 </div>
                 <div class="col-md-3">
-                    <button type="submit" class="btn btn-primary active">Insertar vía rastreador </button>
+                    <button type="submit" class="btn-sm btn-primary active">Insertar vía rastreador </button>
                 </div>
             </div>
     

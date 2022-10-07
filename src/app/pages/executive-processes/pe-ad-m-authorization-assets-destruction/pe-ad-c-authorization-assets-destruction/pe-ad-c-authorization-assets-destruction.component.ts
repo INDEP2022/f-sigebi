@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core'; 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-pe-ad-c-authorization-assets-destruction',
@@ -19,12 +20,12 @@ export class PeAdCAuthorizationAssetsDestructionComponent implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      idExp: ['', [Validators.required]],
+      idExp: ['', [Validators.required, Validators.maxLength(10), Validators.minLength(1), Validators.pattern(NUMBERS_PATTERN)]],
       preInquiry: ['', [Validators.required]],
       criminalCase: ['', [Validators.required]],
       circumstAct: ['', [Validators.required]],
       touchPenalty: ['', [Validators.required]],
-      noAuth: ['', [Validators.required]],
+      noAuth: ['', [Validators.required, Validators.maxLength(10), Validators.minLength(1), Validators.pattern(NUMBERS_PATTERN)]],
       authNotice: ['', [Validators.required]],
       fromDate: ['', [Validators.required]],
     });
