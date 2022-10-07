@@ -61,7 +61,10 @@ export const MENU: IMenuItem[] = [
     label: 'Solicitudes',
     icon: 'bx-folder',
     subItems: [
-
+      {
+        label: 'Solicitudes a turno',
+        link: '/pages/request/request-in-turn'
+      }
     ]
   },
   {
