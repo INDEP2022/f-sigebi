@@ -151,6 +151,10 @@ export const MENU: IMenuItem[] = [
         label: 'R Asunt Dic',
         link: '/pages/catalogs/rAsuntDic',
       },
+      {
+        label: 'Estantes',
+        link: '/pages/catalogs/rack',
+      },
     ],
   },
   {

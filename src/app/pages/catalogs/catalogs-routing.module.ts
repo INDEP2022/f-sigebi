@@ -263,6 +263,13 @@ const routes: Routes = [
         .RAsuntDicModule,
     data: { title: 'Procesos Sise' },
   },
+  {
+    path: 'rack',
+    loadChildren: async () =>
+      (await import('./rack/rack.module'))
+        .RackModule,
+    data: { title: 'Estante' },
+  },
 ];
 
 @NgModule({
