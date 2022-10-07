@@ -1,4 +1,5 @@
 import { DOCUMENTS_RECEPTION_ROUTES } from '../common/constants/documents-reception-routes';
+import { menuOptionsJuridicalProcesses } from '../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
 import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
@@ -270,15 +271,15 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-share-alt',
     subItems: [
       {
-        label: 'Actas de destrucción',
+        label: 'Actas de Destrucción',
         link: '/pages/final-destination-process/destruction-acts',
       },
       {
-        label: 'Actas de donación',
+        label: 'Actas de Donación',
         link: '/pages/final-destination-process/donation-acts',
       },
       {
-        label: 'Actas de destino',
+        label: 'Actas de Destino',
         link: '/pages/final-destination-process/destination-acts',
       },
     ],
@@ -360,4 +361,9 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
+  // PROCESOS JURIDICOS
+  menuOptionsJuridicalProcesses,
+  // PROCESOS JURIDICOS
+  
+
 ];

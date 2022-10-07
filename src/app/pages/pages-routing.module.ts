@@ -61,6 +61,18 @@ const routes: Routes = [
     pathMatch: 'full',
   },
   {
+    path: 'juridicos',
+    loadChildren: async () =>
+      (await import('./juridical-processes/juridical-processes.module')).JuridicalProcessesModule,
+    data: { title: 'Juridicos' },
+  },
+  // {
+
+  //   path: 'legal-processes',
+  //   loadChildren: () => import('./legal-processes/legal-processes.module')
+  //     .then(m => m.LegalProcessesModule),
+  // },
+  {
     path: 'executive-processes',
     loadChildren: async () =>
       (await import('./executive-processes/executive-processes.module'))
