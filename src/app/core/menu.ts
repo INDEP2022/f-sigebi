@@ -1,4 +1,5 @@
 import { DOCUMENTS_RECEPTION_ROUTES } from '../common/constants/documents-reception-routes';
+import { menuOptionsJuridicalProcesses } from '../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
 import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
@@ -453,4 +454,9 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
+  // PROCESOS JURIDICOS
+  menuOptionsJuridicalProcesses,
+  // PROCESOS JURIDICOS
+  
+
 ];

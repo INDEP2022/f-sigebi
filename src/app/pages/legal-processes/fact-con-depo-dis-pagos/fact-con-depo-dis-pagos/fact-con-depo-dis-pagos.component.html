@@ -1,0 +1,79 @@
+<app-card [header]="true" class="cat-card mt-5"> 
+    <div class="ch-content" header>
+  
+        <div class="row w-100">
+            <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
+                <span class="title">
+                    CONSULTA DE PAGOS RELACIONADOS DEPOSITARIAS
+                </span>
+            </div>
+            
+        </div>
+
+    </div>
+  
+    <div body>
+
+        <div class="row w-100">
+            <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+                <!-- Forms DEPOSITARIA -->
+                <ngx-form-depositaria [form]="form" [formDepositario]="formDepositario" (formValues)="mostrarInfo($event)"
+                (formDepositariaValues)="mostrarInfoDepositario($event)" [nombrePantalla]="'dis-pagos'"
+                ></ngx-form-depositaria>
+                <!-- Forms DEPOSITARIA -->
+                <hr class="row">
+            </div>
+            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                <div class="form-group">
+                    <label class="label">&nbsp;</label>&nbsp;
+                    <button type="button" nbButton status="primary" (click)="btnExportarExcel()"
+                    class="text-wrap">
+                        Exportar a Excel
+                    </button>
+                </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                <div class="form-group">
+                    <label class="label">&nbsp;</label>&nbsp;
+                    <button type="button" nbButton status="primary" (click)="btnEnviarSIRSAE()"
+                    class="text-wrap">
+                        Envíar a SIRSAE
+                    </button>
+                </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                <div class="form-group">
+                    <label class="label">&nbsp;</label>&nbsp;
+                    <button type="button" nbButton status="primary" (click)="btnImprimir()"
+                    class="text-wrap">
+                        Imprimir
+                    </button>
+                </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                <div class="form-group">
+                    <label class="label">&nbsp;</label>&nbsp;
+                    <button type="button" nbButton status="primary" (click)="btnActualizarPago()"
+                    class="text-wrap">
+                        Actualizar Pago
+                    </button>
+                </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-1 mt-4 mb-4">
+                <!-- Pagos Recibidos en el Banco -->
+                <ng2-smart-table class="my-table" [settings]="tableSettingsPagosBanco" 
+                [source]="dataPagosBanco"></ng2-smart-table>
+                <!-- Pagos Recibidos en el Banco -->
+            </div>
+            <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-1 mt-4 mb-4">
+                <hr class="row">
+                <!-- Composicion de Pagos Recibidos -->
+                <ng2-smart-table class="my-table" [settings]="tableSettingsPagosRecibidos" 
+                [source]="dataPagosRecibidos"></ng2-smart-table>
+                <!-- Composicion de Pagos Recibidos -->
+            </div>
+        </div>
+  
+    </div>
+  
+  </app-card>
