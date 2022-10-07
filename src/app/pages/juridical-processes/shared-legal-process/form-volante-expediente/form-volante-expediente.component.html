@@ -3,33 +3,33 @@
         <div class="col-sm-12 col-12 col-md-6 p-2 pr-3">
             <div class="row">
                 <div class="col-sm-12 col-12 col-md-6 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('noVolante')" label="No Volante">
                         <label class="label w-100">No Volante</label>
                         <input nbInput fullWidth type="number" class="w-100" formControlName="noVolante"
                                 placeholder="No Volante">
                         
-                    </div>
+                    </form-field>
                 <!-- </div>
                 <div class="col-sm-12 col-12 col-md-6 p-1"> -->
-                    <div class="form-group">
+                    <form-field [control]="form.get('fechaRecepcion')" label="Fec. Recepción">
                         <label class="label w-100">Fec. Recepción</label>
                         <input nbInput fullWidth class="w-100" formControlName="fechaRecepcion"
-                                placeholder="Fec. Recepción" >
+                                placeholder="Fec. Recepción" bsDatepicker>
                                 <!-- [nbDatepicker]="formpicker1">
                         <nb-datepicker #formpicker1></nb-datepicker> -->
                         
-                    </div>
+                    </form-field>
                 <!-- </div>
                 <div class="col-sm-12 col-12 col-md-6 p-1"> -->
-                    <div class="form-group">
+                    <form-field [control]="form.get('consecutivoDiario')" label="Consecutivo Diario">
                         <label class="label w-100">Consecutivo Diario</label>
                         <input nbInput fullWidth type="number" class="w-100" formControlName="consecutivoDiario"
                                 placeholder="Consecutivo Diario">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('tipoVolante')" label="Tipo Volante">
                         <label class="label w-100">Tipo Volante</label>
                         <ng-container *ngFor="let option of optionsTipoVolante">
                             <form-radio label="{{ option.label }}">
@@ -45,89 +45,89 @@
                             </nb-radio>
                         </nb-radio-group> -->
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-12 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('actaCircunst')" label="Acta Circunst.">
                         <label class="label w-100">Acta Circunst.</label>
                         <input nbInput fullWidth class="w-100" formControlName="actaCircunst"
                                 placeholder="Acta Circunst.">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-12 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('averigPrevia')" label="Averig. Previa">
                         <label class="label w-100">Averig. Previa</label>
                         <input nbInput fullWidth class="w-100" formControlName="averigPrevia"
                                 placeholder="Averig. Previa">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-12 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('causaPenal')" label="Causa Penal">
                         <label class="label w-100">Causa Penal</label>
                         <input nbInput fullWidth class="w-100" formControlName="causaPenal"
                                 placeholder="Causa Penal">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-12 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('noAmparo')" label="No. Amparo">
                         <label class="label w-100">No. Amparo</label>
                         <input nbInput fullWidth class="w-100" formControlName="noAmparo"
                                 placeholder="No. Amparo">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-12 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('tocaPenal')" label="Toca Penal">
                         <label class="label w-100">Toca Penal</label>
                         <input nbInput fullWidth class="w-100" formControlName="tocaPenal"
                                 placeholder="Toca Penal">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-12 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('noOficio')" label="No. Oficio">
                         <label class="label w-100">No. Oficio</label>
                         <input nbInput fullWidth class="w-100" formControlName="noOficio"
                                 placeholder="No. Oficio">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-12 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('fechaOficio')" label="Fecha Oficio">
                         <label class="label w-100">Fecha Oficio</label>
                         <input nbInput fullWidth class="w-100" formControlName="fechaOficio"
                                 placeholder="Fecha Oficio">
                                  <!-- [nbDatepicker]="formpicker2">
                         <nb-datepicker #formpicker2></nb-datepicker> -->
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-12 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('descripcionAsunto')" label="Descripción del Asunto">
                         <label class="label w-100">Descripción del Asunto</label>
                         <textarea nbInput fullWidth fullWidth placeholder="Descripción del Asunto"
                         class="w-100" formControlName="descripcionAsunto"></textarea>
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('noExpediente')" label="No. Expediente">
                         <label class="label w-100">No. Expediente</label>
                         <input nbInput fullWidth type="number" class="w-100" formControlName="noExpediente"
                                 placeholder="No. Expediente">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('remitente')" label="Remitente">
                         <label class="label w-100">Remitente</label>
                         <input nbInput fullWidth class="w-100" formControlName="remitente"
                                 placeholder="Remitente">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
                     <div class="form-group">
@@ -137,12 +137,12 @@
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('asunto')" label="Asunto">
                         <label class="label w-100">Asunto</label>
                         <input nbInput fullWidth class="w-100" formControlName="asunto"
                                 placeholder="Asunto">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
                     <div class="form-group">
@@ -152,12 +152,12 @@
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('desahogoAsunto')" label="Desahogo Asunto">
                         <label class="label w-100">Desahogo Asunto</label>
                         <input nbInput fullWidth class="w-100" formControlName="desahogoAsunto"
                                 placeholder="Desahogo Asunto">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
                     <div class="form-group">
@@ -167,12 +167,12 @@
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('ciudad')" label="Ciudad">
                         <label class="label w-100">Ciudad</label>
                         <input nbInput fullWidth class="w-100" formControlName="ciudad"
                                 placeholder="Ciudad">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
                     <div class="form-group">
@@ -182,24 +182,24 @@
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('entidadFederativa')" label="Entidad Federativa">
                         <label class="label w-100">Entidad Federativa</label>
                         <input nbInput fullWidth class="w-100" formControlName="entidadFederativa"
                                 placeholder="Entidad Federativa">
                         
-                    </div>
+                    </form-field>
                 </div>
             </div>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2 pl-3">
             <div class="row">
                 <div class="col-sm-12 col-12 col-md-6 offset-md-6 col-lg-6 offset-lg-6 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('claveUnica')" label="Clave Única">
                         <label class="label w-100">Clave Única</label>
                         <input nbInput fullWidth class="w-100" formControlName="claveUnica"
                                 placeholder="Clave Única">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
                     <div class="form-group">
@@ -209,12 +209,12 @@
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('transferente')" label="Transferente">
                         <label class="label w-100">Transferente</label>
                         <input nbInput fullWidth class="w-100" formControlName="transferente"
                                 placeholder="Transferente">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
                     <div class="form-group">
@@ -224,12 +224,12 @@
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('emisora')" label="Emisora">
                         <label class="label w-100">Emisora</label>
                         <input nbInput fullWidth class="w-100" formControlName="emisora"
                                 placeholder="Emisora">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
                     <div class="form-group">
@@ -239,12 +239,12 @@
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('autoridad')" label="Autoridad">
                         <label class="label w-100">Autoridad</label>
                         <input nbInput fullWidth class="w-100" formControlName="autoridad"
                                 placeholder="Autoridad">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
                     <div class="form-group">
@@ -254,12 +254,12 @@
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('autoridadEmisora')" label="Autoridad Emisora">
                         <label class="label w-100">Autoridad Emisora</label>
                         <input nbInput fullWidth class="w-100" formControlName="autoridadEmisora"
                                 placeholder="Autoridad Emisora">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
                     <div class="form-group">
@@ -269,12 +269,12 @@
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
-                    <div class="form-group">
-                        <label class="label w-100">Ministerio Publico</label>
+                    <form-field [control]="form.get('ministerioPublico')" label="Ministerio Público">
+                        <label class="label w-100">Ministerio Público</label>
                         <input nbInput fullWidth class="w-100" formControlName="ministerioPublico"
                                 placeholder="Ministerio Publico">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
                     <div class="form-group">
@@ -284,12 +284,12 @@
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('juzgado')" label="Juzgado">
                         <label class="label w-100">Juzgado</label>
                         <input nbInput fullWidth class="w-100" formControlName="juzgado"
                                 placeholder="Juzgado">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
                     <div class="form-group">
@@ -299,12 +299,12 @@
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('indiciado')" label="Indiciado">
                         <label class="label w-100">Indiciado</label>
                         <input nbInput fullWidth class="w-100" formControlName="indiciado"
                                 placeholder="Indiciado">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
                     <div class="form-group">
@@ -314,12 +314,12 @@
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('delito')" label="Delito">
                         <label class="label w-100">Delito</label>
                         <input nbInput fullWidth class="w-100" formControlName="delito"
                                 placeholder="Delito">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
                     <div class="form-group">
@@ -329,20 +329,20 @@
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('viaRecepcion')" label="Vía Recepción">
                         <label class="label w-100">Vía Recepción</label>
                         <input nbInput fullWidth class="w-100" formControlName="viaRecepcion"
                                 placeholder="Vía Recepción">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('areaDestino')" label="Áree Destino">
                         <label class="label w-100">Ärea Destino</label>
                         <input nbInput fullWidth class="w-100" formControlName="areaDestino"
                                 placeholder="Ärea Destino">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-1">
                     <div class="form-group">
@@ -370,20 +370,20 @@
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('destinatario')" label="Destinatario">
                         <label class="label w-100">Destinatario</label>
                         <input nbInput fullWidth class="w-100" formControlName="destinatario"
                                 placeholder="Destinatario">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-12 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('justificacionConocimiento')" label="Justificación del Conocimiento">
                         <label class="label w-100">Justificación del Conocimiento</label>
                         <textarea nbInput fullWidth fullWidth placeholder="Justificación del Conocimiento"
                         class="w-100" formControlName="justificacionConocimiento"></textarea>
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-12 p-1">
                     <div class="form-group">

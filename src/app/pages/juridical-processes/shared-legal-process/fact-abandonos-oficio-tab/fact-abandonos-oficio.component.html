@@ -7,20 +7,20 @@
 <form [formGroup]="formOficioInicioFin">
     <div class="row w-100">
         <div class="col-sm-12 col-12 col-md-12 pr-3">
-            <div class="form-group mb-0">
+            <form-field [control]="formOficioInicioFin.get('inicio')" label="Parrafo">
                 <label class="label w-100">Inicio</label>
                 <textarea nbInput fullWidth fullWidth placeholder="Inicio"
                 class="w-100" formControlName="inicio"></textarea>
                  
-            </div>
+            </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-12 pr-3">
-            <div class="form-group mb-0">
+            <form-field [control]="formOficioInicioFin.get('fin')" label="Parrafo">
                 <label class="label w-100">Fin</label>
                 <textarea nbInput fullWidth fullWidth placeholder="Fin"
                 class="w-100" formControlName="fin"></textarea>
                  
-            </div>
+            </form-field>
         </div>
     </div>
 </form>
@@ -57,14 +57,6 @@
               </select>
             </form-field>
 
-            <!-- <div class="form-group pt-1 pb-1 mb-1">
-                <label class="label w-100">C.P.P</label>
-                <nb-select fullWidth selected="No" formControlName="ccp" [status]="''">
-                    <nb-option value="INTERNO">INTERNO</nb-option>
-                    <nb-option value="EXTERNO">EXTERNO</nb-option>
-                </nb-select>
-                 
-            </div> -->
         </div>
         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-1 pt-0 pb-0">
             
@@ -74,13 +66,7 @@
                   <option [value]="'USUARIO'">USUARIO</option>
                 </select>
               </form-field>
-            <!-- <div class="form-group pt-1 pb-1 mb-1">
-                <label class="label w-100">Usuario</label>
-                <nb-select fullWidth selected="No" formControlName="usuario" [status]="''">
-                    <nb-option value="USUARIO">USUARIO</nb-option>
-                </nb-select>
-                 
-            </div> -->
+              
         </div>
         <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-1 pt-0 pb-0">
             <div class="form-group pt-1 pb-1 mb-1">
@@ -99,14 +85,7 @@
                 <option [value]="'EXTERNO'">EXTERNO</option>
               </select>
             </form-field>
-            <!-- <div class="form-group pt-1 pb-1 mb-1">
-                <label class="label w-100">C.P.P</label>
-                <nb-select fullWidth selected="No" formControlName="ccp2" [status]="''">
-                    <nb-option value="INTERNO">INTERNO</nb-option>
-                    <nb-option value="EXTERNO">EXTERNO</nb-option>
-                </nb-select>
-                 
-            </div> -->
+            
         </div>
         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-1 pt-0 pb-0">
             
@@ -116,13 +95,7 @@
                   <option [value]="'USUARIO'">USUARIO</option>
                 </select>
               </form-field>
-            <!-- <div class="form-group pt-1 pb-1 mb-1">
-                <label class="label w-100">Usuario</label>
-                <nb-select fullWidth selected="No" formControlName="usuario2" [status]="''">
-                    <nb-option value="USUARIO">USUARIO</nb-option>
-                </nb-select>
-                 
-            </div> -->
+              
         </div>
         <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-1 pt-0 pb-0">
             <div class="form-group pt-1 pb-1 mb-1">

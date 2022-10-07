@@ -23,5 +23,8 @@ import { PJADEFileDataUpdateComponent } from './file-data-update/pj-ade-c-file-d
     PJADEFileDataUpdateRoutingModule,
     SharedModule,
   ],
+  exports: [
+    PJADEFileDataUpdateComponent
+  ]
 })
 export class PJADEFileDataUpdateModule {}

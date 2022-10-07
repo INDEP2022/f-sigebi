@@ -23,5 +23,8 @@ import { PJDJJuridicalRulingComponent } from './juridical-ruling/pj-dj-c-juridic
     PJDJJuridicalRulingRoutingModule,
     SharedModule,
   ],
+  exports: [
+    PJDJJuridicalRulingComponent
+  ]
 })
 export class PJDJJuridicalRulingModule {}

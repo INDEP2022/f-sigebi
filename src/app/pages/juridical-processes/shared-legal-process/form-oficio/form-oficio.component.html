@@ -4,12 +4,12 @@
         <div class="col-sm-12 col-12 col-md-6 p-2 pr-3">
             <div class="row">
                 <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('tipoOficio')" label="Tipo Oficio">
                         <label class="label w-100">Tipo Oficio</label>
                         <input nbInput fullWidth type="number" class="w-100" formControlName="tipoOficio"
                                 placeholder="Tipo Oficio">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-1">
                     <div class="form-group">
@@ -24,12 +24,12 @@
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('remitente')" label="Remitente">
                         <label class="label w-100">Remitente</label>
                         <input nbInput fullWidth class="w-100" formControlName="remitente"
                                 placeholder="Remitente">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
                     <div class="form-group">
@@ -38,12 +38,12 @@
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('destinatario')" label="Destinatario">
                         <label class="label w-100">Destinatario</label>
                         <input nbInput fullWidth class="w-100" formControlName="destinatario"
                                 placeholder="Destinatario">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
                     <div class="form-group">
@@ -59,32 +59,32 @@
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('ciudad')" label="Ciudad">
                         <label class="label w-100">Ciudad</label>
                         <input nbInput fullWidth class="w-100" formControlName="ciudad"
                                 placeholder="Ciudad">
                         
-                    </div>
+                    </form-field>
                 </div>
             </div>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2 pl-3">
             <div class="row">
                 <div class="col-sm-12 col-12 col-md-6 p-1">
-                    <div class="form-group">
-                        <label class="label w-100">No Volante</label>
+                    <form-field [control]="form.get('noVolante')" label="No. Volante">
+                        <label class="label w-100">No. Volante</label>
                         <input nbInput fullWidth type="number" class="w-100" formControlName="noVolante"
                                 placeholder="No Volante">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 p-1">
-                    <div class="form-group">
-                        <label class="label w-100">No Expediente</label>
+                    <form-field [control]="form.get('noExpediente')" label="No. Expediente">
+                        <label class="label w-100">No. Expediente</label>
                         <input nbInput fullWidth type="number" class="w-100" formControlName="noExpediente"
                                 placeholder="No Expediente">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
                     <div class="form-group">

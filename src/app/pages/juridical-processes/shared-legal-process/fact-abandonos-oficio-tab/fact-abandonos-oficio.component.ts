@@ -7,8 +7,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./fact-abandonos-oficio.component.scss']
 })
 export class FormFactAbandonosOficioComponent  {
-    // @Input() formOficio: FormGroup;
-    // @Input() nombrePantalla: string;
     allForms: {
       formOficio: FormGroup,
       formCcpOficio: FormGroup,
@@ -19,14 +17,7 @@ export class FormFactAbandonosOficioComponent  {
     @Input() formCcpOficio: FormGroup;
     @Input() formOficioInicioFin: FormGroup;
 
-//   public formOficio: FormGroup;
 @Output() formValues = new EventEmitter<any>();
-// //   public formOficio: FormGroup;
-// @Output() formCcpOficioValues = new EventEmitter<any>();
-// //   public formOficio: FormGroup;
-// @Output() formOficioInicioFinValues = new EventEmitter<any>();
-
-// Config Table
 
   /** Tabla bienes */
   data2 = [

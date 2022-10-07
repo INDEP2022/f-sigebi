@@ -3,49 +3,50 @@
         <div class="col-sm-12 col-12 col-md-6 p-2 pr-3">
             <div class="row">
                 <div class="col-sm-12 col-12 col-md-6 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('noExpediente')" label="No Expediente">
                         <label class="label w-100">No Expediente</label>
                         <input nbInput fullWidth type="number" class="w-100" formControlName="noExpediente"
                                 placeholder="No Expediente">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('averiPrevia')" label="Averi. Previa">
                         <label class="label w-100">Averi. Previa</label>
                         <input nbInput fullWidth class="w-100" formControlName="averiPrevia"
                                 placeholder="Averi. Previa">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('causaPenal')" label="Causa Penal">
                         <label class="label w-100">Causa Penal</label>
                         <input nbInput fullWidth class="w-100" formControlName="causaPenal"
                                 placeholder="Causa Penal">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 p-1">
-                    <div class="form-group">
-                        <label class="label w-100">Tipo Oficio</label>
-                        <ngx-select>fullWidth selected="No" formControlName="tipoOficio" [status]="''">
-                            <option value="Declaratoria Abandono Bienes">Declaratoria Abandono Bienes</option>
-                        </ngx-select>
-                        
-                    </div>
+                    <label class="label form-control-label">Declaratoria Abandono Bienes</label>
+                    <ngx-select 
+                        [data]="items"
+                        bindLabel="tipoOficio"
+                        label="Declaratoria Abandono Bienes"
+                        value="id"
+                        (fetchItems)="getFromSelect($event)"
+                        [form]="form" control="tipoOficio"></ngx-select>
                 </div>
             </div>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2 pl-3">
             <div class="row">
                 <div class="col-sm-12 col-12 col-md-6 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('remitente')" label="Remitente">
                         <label class="label w-100">Remitente</label>
                         <input nbInput fullWidth class="w-100" formControlName="remitente"
                                 placeholder="Remitente">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 p-1">
                     <div class="form-group">
@@ -54,12 +55,12 @@
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('destinatario')" label="Destinatario">
                         <label class="label w-100">Destinatario</label>
                         <input nbInput fullWidth class="w-100" formControlName="destinatario"
                                 placeholder="Destinatario">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 p-1">
                     <div class="form-group">
@@ -68,12 +69,12 @@
                     </div>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 p-1">
-                    <div class="form-group">
+                    <form-field [control]="form.get('cveOficio')" label="Cve. Oficio">
                         <label class="label w-100">Cve. Oficio</label>
                         <input nbInput fullWidth class="w-100" formControlName="cveOficio"
                                 placeholder="Cve. Oficio">
                         
-                    </div>
+                    </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-6 p-1">
                     <div class="form-group">

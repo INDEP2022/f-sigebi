@@ -7,12 +7,12 @@
             </span>
         </div>
         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-            <div class="form-group">
+            <form-field [control]="form.get('noBien')" label="No. Bien">
                 <label class="label w-100">No. Bien</label>
                 <input nbInput fullWidth class="w-100" formControlName="noBien"
                         placeholder="No. Bien">
                 
-            </div>
+            </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
             <div class="form-group">
@@ -21,12 +21,12 @@
             </div>
         </div>
         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-            <div class="form-group">
+            <form-field [control]="form.get('cveOficio')" label="Nombramiento">
                 <label class="label w-100">Nombramiento</label>
                 <input nbInput fullWidth class="w-100" formControlName="nombramiento"
                         placeholder="Nombramiento">
                 
-            </div>
+            </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
             <div class="form-group">
@@ -35,14 +35,14 @@
             </div>
         </div>
         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-            <div class="form-group">
+            <form-field [control]="form.get('cveOficio')" label="Fecha">
                 <label class="label w-100">Fecha</label>
                 <input nbInput fullWidth class="w-100" formControlName="fecha"
                         placeholder="Fecha">
                          <!-- [nbDatepicker]="formpicker1">
                 <nb-datepicker #formpicker1></nb-datepicker> -->
                 
-            </div>
+            </form-field>
         </div>
         <div *ngIf="nombrePantalla == 'concil-pag'" class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
             <div class="form-group">
@@ -77,24 +77,24 @@
             </span>
         </div>
         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-            <div class="form-group">
+            <form-field [control]="form.get('idDepositario')" label="Id Depositario">
                 <label class="label w-100">Id Depositario</label>
                 <input nbInput fullWidth class="w-100" formControlName="idDepositario"
                         placeholder="Id Depositario">
                 
-            </div>
+            </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
-            <div class="form-group">
+            <form-field [control]="form.get('depositario')" label="Depositario">
                 <label class="label w-100">Depositario</label>
                 <input nbInput fullWidth class="w-100" formControlName="depositario"
                         placeholder="Depositario">
                 
-            </div>
+            </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
             <form-field [control]="formDepositario.get('procesar')" label="Procesar">
-              <select class="form-control" formControlName="select">
+              <select class="form-control" formControlName="procesar">
                 <option [value]="null">Seleccione un valor</option>
                 <option [value]="'SI'">SI</option>
                 <option [value]="'NO'">NO</option>
@@ -110,14 +110,14 @@
             </div> -->
         </div>
         <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-            <div class="form-group">
+            <form-field [control]="form.get('fechaEjecucion')" label="Fecha Ejecución">
                 <label class="label w-100">Fecha Ejecución</label>
                 <input nbInput fullWidth class="w-100" formControlName="fechaEjecucion"
                         placeholder="Fecha Ejecución">
                          <!-- [nbDatepicker]="formpicker2">
                 <nb-datepicker #formpicker2></nb-datepicker> -->
                 
-            </div>
+            </form-field>
         </div>
         <div *ngIf="nombrePantalla == 'concil-pag'" class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
             <div class="form-group">
