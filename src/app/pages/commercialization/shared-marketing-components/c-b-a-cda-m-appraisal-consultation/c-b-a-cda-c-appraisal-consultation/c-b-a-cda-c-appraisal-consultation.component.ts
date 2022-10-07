@@ -18,7 +18,8 @@ export class CBACdaCAppraisalConsultationComponent extends BasePage implements O
       super();
       this.settings.columns = APPRAISAL_COLUMNS;
       this.settings.actions.columnTitle = "Exportar";
-      this.settings.edit.editButtonContent = '<span class="icon-caret-down" aria-hidden="true"></span>';
+      this.settings.edit.editButtonContent = '<span class="icon-caret-down"></span>';
+      this.settings.actions.edit = true;
     }
 
   ngOnInit(): void {
