@@ -55,8 +55,10 @@ export class MinpubFormComponent extends BasePage implements OnInit {
     if (this.minpub != null) {
       this.edit = true;
       let city: ICity = this.minpub.no_ciudad as ICity;
-      this.minpubForm.patchValue({...this.minpub, no_ciudad: city.idCity});
-      this.items = new DefaultSelect([city], 1);
+      this.minpubForm.patchValue({...this.minpub, no_ciudad: city?.idCity});
+      ( this.minpub.no_ciudad ) 
+        ? this.items = new DefaultSelect([city], 1) 
+        : this.getFromSelect({ inicio: 1, text: '' });
     } else {
       this.getFromSelect({ inicio: 1, text: '' });
     }

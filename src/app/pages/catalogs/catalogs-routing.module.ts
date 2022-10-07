@@ -449,6 +449,27 @@ const routes: Routes = [
         .DocCompensationSatModule,
     data: { title: 'Documentos resarcimiento sat' },
   },
+  {
+    path: 'generics',
+    loadChildren: async () =>
+      (await import('./generics/generics.module'))
+        .GenericsModule,
+    data: { title: 'Genéricos' },
+  },
+  {
+    path: 'issuing-institution',
+    loadChildren: async () =>
+      (await import('./issuing-institution/issuing-institution.module'))
+        .IssuingInstitutionModule,
+    data: { title: 'Instituciones Emisoras' },
+  },
+  {
+    path: 'court',
+    loadChildren: async () =>
+      (await import('./court/court.module'))
+        .CourtModule,
+    data: { title: 'Juzgados' },
+  },
 ];
 
 @NgModule({
