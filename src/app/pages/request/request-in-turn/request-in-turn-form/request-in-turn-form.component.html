@@ -9,17 +9,17 @@
       <div class="row ">
         <form [formGroup]="requestForm" class="form-material">
           <div class="row mb-2">
-            <div class="col-md-2">
-              Match
+            <div class="col-sm-2">
+              <span style="line-height: 3;">Match</span>
             </div>
-            <div class="col-md-3">
-              <form-radio label="T.E">
-                <input type="radio" formControlName="typeMach" value="all" />
+            <div class="col-sm-2">
+              <form-radio label="All">
+                <input type="radio" [(ngModel)]="match" formControlName="typeMach" value="all" />
               </form-radio>   
             </div>
-            <div class="col-md-3">
-              <form-radio label="SAE">
-                <input type="radio" formControlName="typeMach" value="sae" />
+            <div class="col-sm-2">
+              <form-radio label="Any">
+                <input type="radio" [(ngModel)]="match"  formControlName="typeMach" value="any" />
               </form-radio>   
             </div>
           </div>

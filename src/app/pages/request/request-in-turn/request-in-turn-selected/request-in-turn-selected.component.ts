@@ -19,7 +19,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   requestForm: FormGroup;
   title:string = '¿DESEAS TURNAR LAS SOLICITUDES SELECCIONAS?';
   settings = TABLE_SETTINGS
-  paragraphs: []=[];//IRequestInTurnSelected[] = [];
+  paragraphs: IRequestInTurnSelected[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams);
   totalItems: number = 0;
   requestInTurn: any;
@@ -39,9 +39,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.prepareForm();
-    console.log(this.requestInTurn.value);
-    
+    this.prepareForm();   
   }
 
   prepareForm(){

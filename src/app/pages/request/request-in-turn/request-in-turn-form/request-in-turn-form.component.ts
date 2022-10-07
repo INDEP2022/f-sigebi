@@ -31,6 +31,8 @@ export class RequestInTurnFormComponent implements OnInit {
   selectSubject = new DefaultSelect<IRequestInTurn>;
   selectTransfer = new DefaultSelect<IRequestInTurn>;
 
+  match:string  = '';
+
   constructor(
     public modalRef: BsModalRef,
     public fb: FormBuilder,
@@ -64,7 +66,7 @@ export class RequestInTurnFormComponent implements OnInit {
       acta: [null],
       ascertainment: [null], 
       cause: [null],
-      typeMach: ['te'],
+      typeMach: ['All'],
     });
     if (this.requestInTurn != null) {
       this.edit = true;
@@ -81,7 +83,14 @@ getSubDelegations(params: ListParams) {
   search():void{
     /* console.log(this.requestForm.getRawValue());
     console.log(this.selectTransmitter); */
-    this.sendSearchForm.emit(this.requestForm);
+    
+    if (this.match == 'all') {
+      //retrieve all list
+    } else {
+      //retrieve data filtered
+      this.sendSearchForm.emit(this.requestForm);
+    }
+    
   }
 
   reset():void{
