@@ -27,8 +27,7 @@ export class MinpubFormComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private minpubService: MinPubService,
-    private cityService: CityService
+    private minpubService: MinPubService
   ) { 
     super();
   }
@@ -99,8 +98,7 @@ export class MinpubFormComponent extends BasePage implements OnInit {
   }
 
   getFromSelect(params: ListParams) {
-    this.cityService.getAll(params).subscribe((data: any) => {
-      console.log(data);
+    this.minpubService.getCities(params).subscribe((data: any) => {
       this.items = new DefaultSelect(data.data, data.count);
     });
   }

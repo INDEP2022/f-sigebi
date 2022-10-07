@@ -30,9 +30,7 @@ export class IssuingInstitutionFormComponent extends BasePage implements OnInit 
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private issuingInstitutionService: IssuingInstitutionService,
-    private cityService: CityService,
-    private transferService: TransferenteService
+    private issuingInstitutionService: IssuingInstitutionService
   ) { 
     super();
   }
@@ -61,7 +59,6 @@ export class IssuingInstitutionFormComponent extends BasePage implements OnInit 
     });
     if (this.issuingInstitution != null) {
       this.edit = true;
-      console.log(this.issuingInstitution);
       let city: ICity = this.issuingInstitution.numCity as ICity;
       let numTransfer: ITransferente = this.issuingInstitution.numTransference as ITransferente;
       this.issuingInstitutionForm.patchValue({
@@ -116,15 +113,14 @@ export class IssuingInstitutionFormComponent extends BasePage implements OnInit 
   }
 
   getFromSelectCity(params: ListParams) {
-    this.cityService.getAll(params).subscribe((data: any) => {
+    this.issuingInstitutionService.getCities(params).subscribe((data: any) => {
       console.log(data);
       this.itemsCity = new DefaultSelect(data.data, data.count);
     });
   }
 
   getFromSelectTransfer(params: ListParams) {
-    this.transferService.getAll(params).subscribe((data: any) => {
-      console.log(data);
+    this.issuingInstitutionService.getTransfers(params).subscribe((data: any) => {
       this.itemsTransfer = new DefaultSelect(data.data, data.count);
     });
   }
