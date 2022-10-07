@@ -1,8 +1,8 @@
 /** BASE IMPORT */
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { rutasJuridicalProcesses } from './juridical-processes-nombres-rutas-archivos';
 /** LIBRERÍAS EXTERNAS IMPORTS */
+import { routesJuridicalProcesses } from 'src/app/common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
 
 /** SERVICE IMPORTS */
 
@@ -14,25 +14,25 @@ import { rutasJuridicalProcesses } from './juridical-processes-nombres-rutas-arc
 
 const routes: Routes = [
     {
-        path: rutasJuridicalProcesses._1.ruta,
+        path: routesJuridicalProcesses.dictaminaciones_juridicas.link,
         loadChildren: async() => 
             (await import('./juridical-ruling/pj-dj-m-juridical-ruling.module'))
                 .PJDJJuridicalRulingModule,
-            data: { title: rutasJuridicalProcesses._1.titulo }
+            data: { title: routesJuridicalProcesses.dictaminaciones_juridicas.label }
     },
     {
-        path: rutasJuridicalProcesses._2.ruta,
+        path: routesJuridicalProcesses.actualizacion_datos_expediente.link,
         loadChildren: async() => 
             (await import('./file-data-update/pj-ade-m-file-data-update.module'))
                 .PJADEFileDataUpdateModule,
-            data: { title: rutasJuridicalProcesses._2.titulo }
+            data: { title: routesJuridicalProcesses.actualizacion_datos_expediente.label }
     },
     {
-        path: rutasJuridicalProcesses._3.ruta,
+        path: routesJuridicalProcesses.actualizacion_expedientes_notificacion.link,
         loadChildren: async() => 
             (await import('./notification-file-update/pj-aen-m-notification-file-update.module'))
                 .PJAENNotificationFileUpdateModule,
-                data: { title: rutasJuridicalProcesses._3.titulo }
+                data: { title: routesJuridicalProcesses.actualizacion_expedientes_notificacion.label }
     }
 ]
 @NgModule({

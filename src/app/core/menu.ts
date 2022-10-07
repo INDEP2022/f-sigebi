@@ -1,5 +1,5 @@
 import { DOCUMENTS_RECEPTION_ROUTES } from '../common/constants/documents-reception-routes';
-import { menuOpcionesProcesosJuridicos } from '../pages/juridical-processes/juridical-processes-nombres-rutas-archivos';
+import { menuOptionsJuridicalProcesses } from '../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
 import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
@@ -377,7 +377,7 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
-  // DOCUMENTS_RECEPTION_ROUTES,
+  ...DOCUMENTS_RECEPTION_ROUTES,
   {
     label: 'Procesos Ejecutivos',
     icon: 'bx-folder',
@@ -454,127 +454,9 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
-  // menuOpcionesProcesosJuridicos[0]
+  // PROCESOS JURIDICOS
+  menuOptionsJuridicalProcesses,
+  // PROCESOS JURIDICOS
   
-    //Procesos jurídicos
-    {
-      label: 'PROCESOS JURÍDICOS',
-      icon: 'grid-outline',
-      subItems: [
-        {
-          label: 'DICTAMINACIONES JURÍDICAS',
-          link: '/pages/legal-processes/fact-jur-dict-amas'
-        },
-        // {
-        //   label: 'ACTUALIZACIÓN DE EXPEDIENTES',
-        //   link: '/pages/legal-processes/fact-gen-act-datex'
-        // },
-        {
-          label: 'ACTUALIZACIÓN DEL EXPEDIENTE EN NOTIFICACIÓN',
-          link: '/pages/legal-processes/fact-gen-exped-notif'
-        },
-        {
-          label: 'ABANDONOS',
-          link: '/pages/legal-processes/fact-jur-abandonos'
-        },
-        {
-        label: 'DEPOSITARÍA',
-        subItems: [
-          // {
-          //   label: 'SOLICITUD',
-          //   subItems: [
-          //     {
-          //       label: 'MONITOR DE DESPOSITARÍA',
-          //       link: '/pages/legal-processes/fact-adb-sol-dest-leg'
-          //     },
-          //   ]
-          // },
-          {
-            label: 'REGISTRO DE DEPOSITARIA',
-            link: '/pages/legal-processes/fact-jurreg-dest-leg'
-          },
-          // {
-          //   label: 'CONCILIACIÓN DE PAGOS DEPOSITARIAS',
-          //   link: '/pages/legal-processes/fact-condepo-concil-pag'
-          // },
-          // {
-          //   label: 'PROCESO DE DISPERCIÓN DE PAGOS',
-          //   link: '/pages/legal-processes/fact-con-depo-dis-pagos'
-          // },
-          // {
-          //   label: 'REPORTE DE CÉDULA DE NOMBRAMIENTO',
-          //   link: '/pages/legal-processes/fact-ger-dir-nombra-depo'
-          // },
-          // {
-          //   label: 'REPORTE DE BIENES POR DEPOSITARÍA',
-          //   link: '/pages/legal-processes/fact-gena-db-bienes-dep'
-          // },
-          // {
-          //   label: 'EMISIÓN DE ACUERDOS',
-          //   link: '/pages/legal-processes/fact-jur-emision-acu'
-          // },
-          // {
-          //   label: 'RELACIÓN DE AMPAROS',
-          //   link: '/pages/legal-processes/fact-jur-bienes-x-amp'
-          // },
-          // {
-          //   label: 'NOTIFICACIONES POR EXPEDIENTE',
-          //   link: '/pages/legal-processes/fact-conjur-noti-poster'
-          // },
-          // {
-          //   label: 'DICTAMINACIÓN MASIVA PROG. DESALOJO',
-          //   link: '/pages/legal-processes/fact-carga-mas-desahogo'
-          // },
-          // {
-          //   label: 'VALIDACIÓN DE POSESIÓN',
-          //   link: '/pages/legal-processes/fact-bie-val-pos-tercero'
-          // },
-        ],
-      },
-      // {
-      //   label: 'COMPROBACIÓN DE DOC. PARA RECURSOS REVISIÓN',
-      //   link: '/pages/legal-processes/fact-jur-dictam-recr'
-      // },
-      // {
-      //   label: 'RESOLUCIÓN DE RECURSOS DE REVISIÓN',
-      //   link: '/pages/legal-processes/fact-jurresore-crev'
-      // },
-      // {
-      //   label: 'REPORTE DE RECURSOS DE REVISIÓN',
-      //   link: '/pages/legal-processes/fact-ger-jurrec-derev'
-      // },
-      ]
-    },
-  // // PROCESOS JURIDICOS
-  // {
-  //   label: 'Procesos Jurídicos',
-  //   icon: 'bx-share-alt',
-  //   subItems: [
-  //     {
-  //       label: 'Dictaminaciones Juridicas',
-  //       link: '/pages/juridicos/dictaminaciones-juridicas',
-  //     },
-  //     {
-  //       label: 'Dictaminaciones Juridicas',
-  //       link: '/pages/juridicos/dictaminaciones-juridicas',
-  //     },
-  //     {
-  //       label: 'Dictaminaciones Juridicas',
-  //       link: '/pages/juridicos/dictaminaciones-juridicas',
-  //     },
-  //     {
-  //       label: 'Nivel 1.2',
-  //       subItems: [
-  //         {
-  //           label: 'Nivel 2.1',
-  //         },
-  //         {
-  //           label: 'Nivel 2.2',
-  //         },
-  //       ],
-  //     },
-  //   ],
-  // },
-  // // PROCESOS JURIDICOS
 
 ];
