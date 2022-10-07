@@ -261,7 +261,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./rasunt-dic/rasunt-dic.module'))
         .RAsuntDicModule,
-    data: { title: 'Procesos Sise' },
+    data: { title: 'R Asunt Dic' },
   },
   {
     path: 'rack',
@@ -269,6 +269,13 @@ const routes: Routes = [
       (await import('./rack/rack.module'))
         .RackModule,
     data: { title: 'Estante' },
+  },
+  {
+    path: 'regulatory',
+    loadChildren: async () =>
+      (await import('./regulatory/regulatory.module'))
+        .RegulatoryModule,
+    data: { title: 'Regulaciones' },
   },
 ];
 

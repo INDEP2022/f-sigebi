@@ -31,6 +31,7 @@ const routes: Routes = [
   { path: 'siseProcess', loadChildren: () => import('./pages/catalogs/sise-process/sise-process.module').then(m => m.SiseProcessModule) },
   { path: 'rAsuntDic', loadChildren: () => import('./pages/catalogs/rasunt-dic/rasunt-dic.module').then(m => m.RAsuntDicModule) },
   { path: 'rack', loadChildren: () => import('./pages/catalogs/rack/rack.module').then(m => m.RackModule) },
+  { path: 'regulatory', loadChildren: () => import('./pages/catalogs/regulatory/regulatory.module').then(m => m.RegulatoryModule) },
 ];
 
 @NgModule({

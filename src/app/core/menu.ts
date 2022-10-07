@@ -155,6 +155,10 @@ export const MENU: IMenuItem[] = [
         label: 'Estantes',
         link: '/pages/catalogs/rack',
       },
+      {
+        label: 'Regulaciones',
+        link: '/pages/catalogs/regulatory',
+      },
     ],
   },
   {

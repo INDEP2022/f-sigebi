@@ -1,33 +1,33 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { RackService } from 'src/app/core/services/catalogs/rack.service';
+import { IRegulatory } from 'src/app/core/models/catalogs/regulatory.model';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { IRack } from '../../../../core/models/catalogs/rack.model';
+import { TABLE_SETTINGS } from '../../../../common/constants/table-settings';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { RegulatoryService } from 'src/app/core/services/catalogs/regulatory.service';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { RackFormComponent } from '../rack-form/rack-form.component';
-import { RACK_COLUMNS } from './rack-columns';
+import { RegulatoyFormComponent } from '../regulatory-form/regulatoy-form.component';
+import { REGULATORY_COLUMNS } from './regulatory-columns';
 
 @Component({
-  selector: 'app-rack-list',
-  templateUrl: './rack-list.component.html',
+  selector: 'app-regulatory-list',
+  templateUrl: './regulatory-list.component.html',
   styles: [
   ]
 })
-export class RackListComponent extends BasePage implements OnInit {
+export class RegulatoryListComponent extends BasePage implements OnInit {
 
   settings = TABLE_SETTINGS;
-  racks: IRack[] = [];
+  regulatorys: IRegulatory[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(
-    private rackService: RackService,
+    private regulatoryService: RegulatoryService,
     private BsModalService: BsModalService
   ) {
     super();
-    this.settings.columns = RACK_COLUMNS;
+    this.settings.columns = REGULATORY_COLUMNS;
     this.settings.actions.delete = true;
   }
 
@@ -39,9 +39,9 @@ export class RackListComponent extends BasePage implements OnInit {
 
   getExample() {
     this.loading = true;
-    this.rackService.getAll(this.params.getValue()).subscribe({
+    this.regulatoryService.getAll(this.params.getValue()).subscribe({
       next: response => {
-        this.racks = response.data;
+        this.regulatorys = response.data;
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -49,10 +49,10 @@ export class RackListComponent extends BasePage implements OnInit {
     });
   }
 
-  openForm(rack?: IRack) {
+  openForm(regulatory?: IRegulatory) {
     let config: ModalOptions = {
       initialState: {
-        rack,
+        regulatory,
         callback: (next: boolean) => {
           if (next) this.getExample();
         },
@@ -60,17 +60,17 @@ export class RackListComponent extends BasePage implements OnInit {
       class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.BsModalService.show(RackFormComponent, config);
+    this.BsModalService.show(RegulatoyFormComponent, config);
   }
 
-  delete(rack?: IRack) {
+  delete(regulatory?: IRegulatory) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //this.rackService.remove(rack.id);
+        //this.regulatoryService.remove(regulatory.id);
       }
     });
   }
