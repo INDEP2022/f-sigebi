@@ -21,6 +21,7 @@ export class RackFormComponent extends BasePage implements OnInit {
   edit: boolean = false;
   rack: IRack;
   racks = new DefaultSelect<IRack>();
+  public warehouse = new DefaultSelect();
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -31,6 +32,7 @@ export class RackFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getWarehouse(new ListParams() );
   }
 
   private prepareForm() {
@@ -90,6 +92,14 @@ export class RackFormComponent extends BasePage implements OnInit {
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
+  }
+
+  public getWarehouse(params: ListParams) {
+    this.rackService.getWarehouse(params).subscribe({
+      next: (types: any) => {
+        this.warehouse = new DefaultSelect(types.data, types.count);
+      }
+    });
   }
 
 }

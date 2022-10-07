@@ -31,6 +31,12 @@
                         <input type="text" class="form-control" formControlName="registerNumber" placeholder="ejemplo" />
                     </form-field>
                 </div>
+
+                <div class="col-md-12">
+                    <ngx-select [form]="form" control="idWarehouse" (fetchItems)="getWarehouse($event)" [data]="warehouse"
+                        bindLabel="description" value="idWarehouse" label="Almacen">
+                    </ngx-select>
+                </div>
             </div>
         </form>
     </div>

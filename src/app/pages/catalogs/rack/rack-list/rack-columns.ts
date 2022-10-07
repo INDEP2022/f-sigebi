@@ -1,3 +1,5 @@
+import { IWarehouse } from "src/app/core/models/catalogs/warehouse.model";
+
 export const RACK_COLUMNS ={
 
     id:{
@@ -6,8 +8,11 @@ export const RACK_COLUMNS ={
         sort: false,
     },
     idWarehouse:{
-        title: 'Id Deposito',
+        title: 'Deposito',
         type: 'number',
+        valuePrepareFunction: (value: IWarehouse) => {
+            return value.description;
+          },
         sort: false,
     },
     idBatch: {

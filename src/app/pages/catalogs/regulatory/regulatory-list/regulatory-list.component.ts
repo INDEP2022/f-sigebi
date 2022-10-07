@@ -57,7 +57,7 @@ export class RegulatoryListComponent extends BasePage implements OnInit {
           if (next) this.getExample();
         },
       },
-      class: 'modal-md modal-dialog-centered',
+      class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.BsModalService.show(RegulatoyFormComponent, config);
