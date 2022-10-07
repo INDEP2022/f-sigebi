@@ -14,6 +14,12 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./shared-marketing-components/c-b-bedv-m-validation-exempted-goods/c-b-bedv-m-validation-exempted-goods.module')).CBBedvMValidationExemptedGoodsModule,
     data: { title: 'Bienes exentos de validación' },
+  },
+  {
+    path: 'c-b-rdodi-m-reclass-recovery-orders',
+    loadChildren: async () =>
+      (await import('./shared-marketing-components/c-b-rdodi-m-reclass-recovery-orders/c-b-rdodi-m-reclass-recovery-orders.module')).CBRdodiMReclassRecoveryOrdersModule,
+    data: { title: 'Reclasificación OI' },
   }
 ];
 

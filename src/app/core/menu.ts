@@ -569,7 +569,7 @@ export const MENU: IMenuItem[] = [
           },
           {
             label: 'Reclasificacón OI',
-            link: '/pages/home',
+            link: '/pages/commercialization/c-b-rdodi-m-reclass-recovery-orders',
           },
           {
             label: 'Consulta de bienes',
@@ -611,7 +611,7 @@ export const MENU: IMenuItem[] = [
           },
           {
             label: 'Reclasificacón OI',
-            link: '/pages/home',
+            link: '/pages/commercialization/c-b-rdodi-m-reclass-recovery-orders',
           },
           {
             label: 'Consulta de bienes',
