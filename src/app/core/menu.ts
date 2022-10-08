@@ -482,6 +482,10 @@ export const MENU: IMenuItem[] = [
             label: 'Consulta de Avalúo',
             link: '/pages/commercialization/c-b-a-cda-m-appraisal-consultation',
           },
+          {
+            label: 'Registro de Avalúo',
+            link: '/pages/commercialization/c-b-a-rda-m-appraisal-registration',
+          },
         ],
       },
       {
@@ -507,6 +511,10 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Consulta de Avalúo',
             link: '/pages/commercialization/c-b-a-cda-m-appraisal-consultation',
+          },
+          {
+            label: 'Registro de Avalúo',
+            link: '/pages/commercialization/c-b-a-rda-m-appraisal-registration',
           },
         ],
       },

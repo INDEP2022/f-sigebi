@@ -32,6 +32,12 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./shared-marketing-components/c-b-a-cda-m-appraisal-consultation/c-b-a-cda-m-appraisal-consultation.module')).CBACdaMAppraisalConsultationModule,
     data: { title: 'Consulta de Avalúo' },
+  },
+  {
+    path: 'c-b-a-rda-m-appraisal-registration',
+    loadChildren: async () =>
+      (await import('./shared-marketing-components/c-b-a-rda-m-appraisal-registration/c-b-a-rda-m-appraisal-registration.module')).CBARdaMAppraisalRegistrationModule,
+    data: { title: 'Registro de Avalúos' },
   }
 ];
 
