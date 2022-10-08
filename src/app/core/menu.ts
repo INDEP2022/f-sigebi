@@ -498,6 +498,10 @@ export const MENU: IMenuItem[] = [
             label: 'Registro de Avalúo',
             link: '/pages/commercialization/c-b-a-rda-m-appraisal-registration',
           },
+          {
+            label: 'Captura de gastos',
+            link: '/pages/commercialization/c-b-ge-cdg-m-expense-capture',
+          },
         ],
       },
       {
@@ -527,6 +531,10 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Registro de Avalúo',
             link: '/pages/commercialization/c-b-a-rda-m-appraisal-registration',
+          },
+          {
+            label: 'Captura de gastos',
+            link: '/pages/commercialization/c-b-ge-cdg-m-expense-capture',
           },
         ],
       },

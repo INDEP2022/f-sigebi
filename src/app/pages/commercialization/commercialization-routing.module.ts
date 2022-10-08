@@ -38,6 +38,12 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./shared-marketing-components/c-b-a-rda-m-appraisal-registration/c-b-a-rda-m-appraisal-registration.module')).CBARdaMAppraisalRegistrationModule,
     data: { title: 'Registro de Avalúos' },
+  },
+  {
+    path: 'c-b-ge-cdg-m-expense-capture',
+    loadChildren: async () =>
+      (await import('./shared-marketing-components/c-b-ge-cdg-m-expense-capture/c-b-ge-cdg-m-expense-capture.module')).CBGeCdgMExpenseCaptureModule,
+    data: { title: 'Captura de gastos' },
   }
 ];
 
