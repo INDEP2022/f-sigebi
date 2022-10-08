@@ -288,6 +288,18 @@ export const MENU: IMenuItem[] = [
         label: 'Donatorios',
         link: '/pages/catalogs/grantees',
       },
+      {
+        label: 'Genéricos',
+        link: '/pages/catalogs/generics',
+      },
+      {
+        label: 'Instituciones Emisoras',
+        link: '/pages/catalogs/issuing-institution',
+      },
+      {
+        label: 'Juzgados',
+        link: '/pages/catalogs/court',
+      },
     ],
   },
   //Administración
