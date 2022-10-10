@@ -122,6 +122,61 @@ const routes: Routes = [
             .DerivationGoodsModule,
         data: { title: 'Derivacion de bienes' },
       },
+      /**
+       * Seguros **Legaspi**
+       **/
+      {
+        path: 'summary-financial-info',
+        loadChildren: () =>
+          import(
+            './companies/financial-info/pa-e-fi-m-financial-info.module'
+          ).then(m => m.PaEFiMFinancialInfoModule),
+      },
+      {
+        path: 'warehouse-reports',
+        loadChildren: () =>
+          import('./reports/warehouse/pa-r-wh-m-warehouse.module').then(
+            m => m.PaRWhMWarehouseModule
+          ),
+      },
+      {
+        path: 'record-details',
+        loadChildren: () =>
+          import('./reports/record/pa-r-r-m-record.module').then(
+            m => m.PaRRMRecordModule
+          ),
+      },
+      {
+        path: 'unit-conversion-packages',
+        loadChildren: () =>
+          import(
+            './unit-conversion-packages/pa-ucp-m-unit-conversion-packages.module'
+          ).then(m => m.PaUcpMUnitConversionPackagesModule),
+      },
+      {
+        path: 'goods-tracking',
+        loadChildren: () =>
+          import('./goods-tracking/pa-gt-m-goods-tracking.module').then(
+            m => m.PaGtMGoodsTrackingModule
+          ),
+      },
+      {
+        path: 'goods-management',
+        loadChildren: () =>
+          import('./goods-management/pa-gm-m-goods-management.module').then(
+            m => m.PaGmMGoodsManagementModule
+          ),
+      },
+      {
+        path: 'siab-sami-interaction',
+        loadChildren: () =>
+          import(
+            './siab-sami-interaction/pa-ssi-m-siab-sami-interaction.module'
+          ).then(m => m.PaSsiMSiabSamiInteractionModule),
+      },
+      /**
+       * Seguros **Legaspi**
+       **/
       {
         path: 'appraisal-request',
         loadChildren: async () =>

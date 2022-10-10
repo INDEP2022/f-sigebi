@@ -8,31 +8,31 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //Services
-//import { GoodTypeService } from 'src/app/core/services/catalogs/good-status.service';
+//import { MeasurementUnitsService } from 'src/app/core/services/catalogs/measurement-units.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
-import { IGoodStatus } from 'src/app/core/models/catalogs/good-status.model';
-import { goodsStatuData } from './goodStatusdData';
+import { IMeasurementUnits } from 'src/app/core/models/catalogs/measurement-units.model';
+import { unitsData } from './unitsData';
 
 @Component({
-  selector: 'app-goods-status-shared',
+  selector: 'app-measurement-units-shared',
   standalone: true,
   imports: [CommonModule, SharedModule],
-  templateUrl: './goods-status-shared.component.html',
+  templateUrl: './measurement-units-shared.component.html',
   styles: [
   ]
 })
-export class GoodsStatusSharedComponent extends BasePage implements OnInit {
+export class MeasurementUnitsSharedComponent extends BasePage implements OnInit {
 
   @Input() form: FormGroup;
-  @Input() goodStatusField: string = "goodStatus";
+  @Input() measurementUnitField: string = "measurementUnit";
 
-  @Input() showGoodStatus: boolean = true;
+  @Input() showMeasurementUnits: boolean = true;
 
-  status = new DefaultSelect<IGoodStatus>();
+  measurementUnits = new DefaultSelect<IMeasurementUnits>();
 
-  get goodStatus() {
-    return this.form.get(this.goodStatusField);
+  get measurementUnit() {
+    return this.form.get(this.measurementUnitField);
   }
 
   constructor(/*private service: WarehouseService*/) {
@@ -42,11 +42,11 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
   ngOnInit(): void {
   }
 
-  getGoodStatus(params: ListParams) {
+  getUnits(params: ListParams) {
     //Provisional data
-    let data=goodsStatuData;
+    let data=unitsData;
     let count= data.length;
-    this.status = new DefaultSelect(data,count);
+    this.measurementUnits = new DefaultSelect(data,count);
     /*this.service.getAll(params).subscribe(data => {
         this.status = new DefaultSelect(data.data,data.count);
       },err => {
@@ -62,7 +62,7 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
     );*/
   }
 
-  onGoodStatusChange(type: any) {
+  onUnitsChange(type: any) {
     //this.resetFields([this.subdelegation]);
     this.form.updateValueAndValidity();
   }
@@ -76,3 +76,4 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
   }
 
 }
+
