@@ -407,6 +407,10 @@ export const MENU: IMenuItem[] = [
         label: 'Actas de Destino',
         link: '/pages/final-destination-process/destination-acts',
       },
+      {
+        label: 'Actas de Devolución',
+        link: '/pages/final-destination-process/return-acts',
+      },
     ],
   },
   ...DOCUMENTS_RECEPTION_ROUTES,
