@@ -20,7 +20,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   templateUrl: './form-declaratoria.component.html',
   styleUrls: ['./form-declaratoria.component.scss']
 })
-export class FormDeclaratoriaComponent  {
+export class FormDeclaratoriaComponent  extends BasePage implements OnInit{
     @Input() form: FormGroup;
     @Input() nombrePantalla: string;
 
@@ -32,6 +32,7 @@ items = new DefaultSelect<Example>();
   constructor(
     private exampleService: ExampleService
     ) {  
+      super();
   }
 
   ngOnInit(): void {

@@ -1,12 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';  
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'ngx-fact-abandonos-oficio',
   templateUrl: './fact-abandonos-oficio.component.html',
   styleUrls: ['./fact-abandonos-oficio.component.scss']
 })
-export class FormFactAbandonosOficioComponent  {
+export class FormFactAbandonosOficioComponent extends BasePage implements OnInit {
     allForms: {
       formOficio: FormGroup,
       formCcpOficio: FormGroup,
@@ -51,6 +52,7 @@ export class FormFactAbandonosOficioComponent  {
   constructor(
     private fb: FormBuilder
     ) {  
+      super();
   }
 
   ngOnInit(): void {

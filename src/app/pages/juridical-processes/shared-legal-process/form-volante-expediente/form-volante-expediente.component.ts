@@ -1,12 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';  
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'ngx-form-volante-expediente',
   templateUrl: './form-volante-expediente.component.html',
   styleUrls: ['./form-volante-expediente.component.scss']
 })
-export class FormVolanteExpedienteComponent  {
+export class FormVolanteExpedienteComponent extends BasePage implements OnInit{
     @Input() form: FormGroup;
     @Input() nombrePantalla: string;
 
@@ -24,6 +25,7 @@ export class FormVolanteExpedienteComponent  {
 @Output() oficioRelacionadoEvent = new EventEmitter<any>();
 @Output() capturaCopiasEvent = new EventEmitter<any>();
   constructor() {  
+    super();
   }
 
   ngOnInit(): void {

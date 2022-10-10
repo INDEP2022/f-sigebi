@@ -110,6 +110,10 @@ export const MENU: IMenuItem[] = [
         link: '/pages/catalogs/payment-concept',
       },
       {
+        label: 'Clasificación SIAB',
+        link: '/pages/catalogs/siab-clasification',
+      },
+      {
         label: 'Institución Clasificación',
         link: '/pages/catalogs/intitution-classification',
       },
@@ -344,15 +348,37 @@ export const MENU: IMenuItem[] = [
         link: '/pages/administrative-processes/derivation-goods',
       },
       /**
-       * Seguros **Legaspi** 
+       * Seguros **Legaspi**
        **/
       {
+        label: 'Solicitud de Avalúos',
+        link: '/pages/administrative-processes/appraisal-request',
+      },
+      {
+        label: 'Registro de Avalúos',
+        link: '/pages/administrative-processes/appraisal-registry',
+      },
+      {
+        label: 'Monitor de Avalúos',
+        link: '/pages/administrative-processes/appraisal-monitor',
+      },
+      {
+        label: 'Bienes sin Avalúos',
+        link: '/pages/administrative-processes/appraisal-goods',
+      },
+    ],
+  },
+  {
+    label: 'Reportes',
+    icon: 'bx-folder',
+    subItems: [
+      {
         label: 'Atención Bienes',
-        link: '/pages/administrative-processes/goods-tracking'
+        link: '/pages/administrative-processes/goods-tracking',
       },
       {
         label: 'Gestión bienes Gab-Soc',
-        link: '/pages/administrative-processes/goods-management'
+        link: '/pages/administrative-processes/goods-management',
       },
       {
         label: 'Empresas',
@@ -373,10 +399,10 @@ export const MENU: IMenuItem[] = [
             link: '/pages/administrative-processes/warehouse-reports',
           },
           {
-            label:'Expedientes',
-            link: '/pages/administrative-processes/record-details'
-          }
-        ]
+            label: 'Expedientes',
+            link: '/pages/administrative-processes/record-details',
+          },
+        ],
       },
       {
         label: 'Coversión de Paquetes',
@@ -386,7 +412,7 @@ export const MENU: IMenuItem[] = [
             label: 'Conversión Masiva',
             link: '/pages/administrative-processes/unit-conversion-packages',
           },
-        ]
+        ],
       },
       {
         label: 'Interacción SIAB-SAMI',
@@ -398,16 +424,16 @@ export const MENU: IMenuItem[] = [
           },
           {
             label: 'Pago de Bienes',
-            link: '/pages/administrative-processes/siab-sami-interaction/payment-goods'
+            link: '/pages/administrative-processes/siab-sami-interaction/payment-goods',
           },
           {
             label: 'Avalúo de Bienes',
-            link: '/pages/administrative-processes/siab-sami-interaction/value-goods'
-          }
-        ]
-      }
+            link: '/pages/administrative-processes/siab-sami-interaction/value-goods',
+          },
+        ],
+      },
       /**
-       * Seguros **Legaspi** 
+       * Seguros **Legaspi**
        **/
     ],
   },
@@ -431,6 +457,10 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Actas de Destino',
         link: '/pages/final-destination-process/destination-acts',
+      },
+      {
+        label: 'Actas de Devolución',
+        link: '/pages/final-destination-process/return-acts',
       },
     ],
   },
@@ -514,6 +544,4 @@ export const MENU: IMenuItem[] = [
   // PROCESOS JURIDICOS
   menuOptionsJuridicalProcesses,
   // PROCESOS JURIDICOS
-  
-
 ];

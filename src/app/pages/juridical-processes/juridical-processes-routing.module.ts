@@ -14,27 +14,43 @@ import { routesJuridicalProcesses } from 'src/app/common/constants/juridical-pro
 
 const routes: Routes = [
     {
-        path: routesJuridicalProcesses.dictaminaciones_juridicas.link,
+        path: routesJuridicalProcesses[0].link,
         loadChildren: async() => 
             (await import('./juridical-ruling/pj-dj-m-juridical-ruling.module'))
                 .PJDJJuridicalRulingModule,
-            data: { title: routesJuridicalProcesses.dictaminaciones_juridicas.label }
+            data: { title: routesJuridicalProcesses[0].label }
     },
     {
-        path: routesJuridicalProcesses.actualizacion_datos_expediente.link,
+        path: routesJuridicalProcesses[1].link,
         loadChildren: async() => 
             (await import('./file-data-update/pj-ade-m-file-data-update.module'))
                 .PJADEFileDataUpdateModule,
-            data: { title: routesJuridicalProcesses.actualizacion_datos_expediente.label }
+            data: { title: routesJuridicalProcesses[1].label }
     },
     {
-        path: routesJuridicalProcesses.actualizacion_expedientes_notificacion.link,
+        path: routesJuridicalProcesses[2].link,
         loadChildren: async() => 
             (await import('./notification-file-update/pj-aen-m-notification-file-update.module'))
                 .PJAENNotificationFileUpdateModule,
-                data: { title: routesJuridicalProcesses.actualizacion_expedientes_notificacion.label }
+                data: { title: routesJuridicalProcesses[2].label }
+    },
+    {
+        path: routesJuridicalProcesses[3].link,
+        loadChildren: async() => 
+            (await import('./abandonments-declaration-trades/pj-a-m-abandonments-declaration-trades.module'))
+                .PJAAbandonmentsDeclarationTradesModule,
+                data: { title: routesJuridicalProcesses[3].label }
+    },
+    // DEPOSITARIA
+    {
+        path: 'depositaria',
+        loadChildren: async() => 
+            (await import('./depository/depository.module'))
+                .DepositoryModule,
+                data: { title: "Depositoria" }
     }
-]
+    // DEPOSITARIA
+];
 @NgModule({
     imports: [RouterModule.forChild(routes)],
     exports: [RouterModule]
