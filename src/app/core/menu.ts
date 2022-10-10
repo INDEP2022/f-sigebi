@@ -142,155 +142,33 @@ export const MENU: IMenuItem[] = [
         link: '/pages/catalogs/sub-delegations',
       },
       {
-        label: 'Sat Clasificacion',
-        link: '/pages/catalogs/sat-clasification',
-      },
-      {
-        label: 'Tipo Docto',
-        link: '/pages/catalogs/type-docto',
-      },
-      {
-        label: 'Tipo Siniestro',
-        link: '/pages/catalogs/type-sinister',
-      },
-      {
-        label: 'Tipo de Almacenes',
-        link: '/pages/catalogs/type-wharehouse',
-      },
-      {
-        label: 'Tipo de Servicios',
-        link: '/pages/catalogs/type-services',
-      },
-      {
-        label: 'Tipo order servicio',
-        link: '/pages/catalogs/type-order-service',
-      },
-      {
-        label: 'Tipo relevante',
-        link: '/pages/catalogs/type-relevant',
-      },
-      {
-        label: 'Zona Geográficas',
-        link: '/pages/catalogs/zone-geographic',
-      },
-      {
-        label: 'Conclusion siniestros',
-        link: '/pages/catalogs/claim-conclusion',
-      },
-      {
-        label: 'Código estado',
-        link: '/pages/catalogs/status-code',
-      },
-      {
-        label: 'Documentos resarcimiento sat',
-        link: '/pages/catalogs/doc-compensation-sat',
-      },
-      {
-        label: 'Sat Subclasificacion',
-        link: '/pages/catalogs/sat-subclasification',
-      },
-      {
-        label: 'Servicios',
-        link: '/pages/catalogs/services',
-      },
-      {
-        label: 'Series Ifai',
-        link: '/pages/catalogs/ifai-series',
-      },
-      {
-        label: 'Situacion Bien',
-        link: '/pages/catalogs/good-situation',
-      },
-      {
-        label: 'Soporte Legal',
-        link: '/pages/catalogs/legal-support',
-      },
-      {
-        label: 'Doc. Resarcimiento Sat XML',
-        link: '/pages/catalogs/doc-compensation-sat-xml',
-      },
-      {
-        label: 'Donatorios',
-        link: '/pages/catalogs/grantees',
-      },
-      {
-        label: 'Lotes',
-        link: '/pages/catalogs/batch',
-      },
-      {
-        label: 'Medio Fotografía',
-        link: '/pages/catalogs/photograph-media',
-      },
-      {
-        label: 'Medio Imagen',
-        link: '/pages/catalogs/image-media',
-      },
-      {
-        label: 'MinPub',
-        link: '/pages/catalogs/minpub',
-      },
-      {
-        label: 'Motivo Revisión',
-        link: '/pages/catalogs/revision-reason',
-      },
-      {
-        label: 'Motivo No Entrega',
-        link: '/pages/catalogs/non-delivery-reasons',
-      },
-      {
-        label: 'Municipios',
-        link: '/pages/catalogs/municipalities',
-      },
-      {
-        label: 'Normas',
-        link: '/pages/catalogs/norms',
-      },
-      {
-        label: 'Notarios',
-        link: '/pages/catalogs/notary',
-      },
-      {
-        label: 'Párrafos',
-        link: '/pages/catalogs/paragraphs',
-      },
-      {
+
         label: 'Etiquetas Bien',
         link: '/pages/catalogs/label-okey',
       },
       {
-        label: 'Fracciones',
-        link: '/pages/catalogs/fractions',
+        label: 'Personas',
+        link: '/pages/catalogs/person',
       },
       {
-        label: 'Gavetas',
-        link: '/pages/catalogs/drawers',
+        label: 'Procedenias',
+        link: '/pages/catalogs/oring',
       },
       {
-        label: 'Gestión',
-        link: '/pages/catalogs/management',
+        label: 'Procedencias Cisi',
+        link: '/pages/catalogs/oringCisi',
       },
       {
-        label: 'Guarda Valores',
-        link: '/pages/catalogs/save-values',
-      },
-
+        label: 'Procesos Sise',
+        link: '/pages/catalogs/siseProcess',
+      }, 
       {
-        label: 'Identificador',
-        link: '/pages/catalogs/identifier',
-      },
-
-      {
-        label: 'Indiciados',
-        link: '/pages/catalogs/indicated',
-      },
-
-      {
-        label: 'Doc. Resarcimiento Sat XML',
-        link: '/pages/catalogs/doc-compensation-sat-xml',
+        label: 'R Asunt Dic',
+        link: '/pages/catalogs/rAsuntDic',
       },
       {
-        label: 'Donatorios',
-        link: '/pages/catalogs/grantees',
+        label: 'Estantes',
+        link: '/pages/catalogs/rack',
       },
       {
         label: 'Genéricos',
@@ -312,8 +190,48 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-folder',
     subItems: [
       {
-        label: 'Numerario Operado',
-        link: '/pages/administrative-processes/numerary-operator',
+        label: 'Regulaciones',
+        link: '/pages/catalogs/regulatory',
+      },
+      {
+        label: 'Respuestas Repuve',
+        link: '/pages/catalogs/responseRepuve',
+      },
+      {
+        label: 'Indicador Reportes',
+        link: '/pages/catalogs/indicatorReport',
+      },
+      {
+        label: 'Numerario Físico',
+        link: '/pages/administrative-processes/numerary-physics',
+      },
+      {
+        label: 'Otras Monedas',
+        link: '/pages/administrative-processes/other-currencies',
+      },
+      {
+        label: 'Valores por Expediente',
+        link: '/pages/administrative-processes/values-per-file',
+      },
+      {
+        label: 'Movimientos Cuentas General',
+        link: '/pages/administrative-processes/general-account-movements',
+      },
+      {
+        label: 'Bienes conversión',
+        link: '/pages/administrative-processes/apply-lif',
+      },
+      {
+        label: 'Actas Conversión',
+        link: '/pages/administrative-processes/conversion-act',
+      },
+      {
+        label: 'Regulaciones',
+        link: '/pages/catalogs/regulatory',
+      },
+      {
+        label: 'Respuestas Repuve',
+        link: '/pages/catalogs/responseRepuve',
       },
       {
         label: 'Numerario Físico',

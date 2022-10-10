@@ -1,6 +1,6 @@
 export interface IProficient {
   id?: number;
-  nombre: string;
-  puesto: string;
-  no_registro: number;
+  name: string;
+  position: string;
+  registryNumber: number;
 }

@@ -1,32 +1,33 @@
 export interface IPerson {
-  id?: number;
-  nom_persona: string;
-  nombre: string;
-  calle: string;
-  no_exterior: string;
-  no_interior: string;
-  colonia: string;
-  deleg_munic: string;
-  codigo_postal: number;
+  id: number,
+  personNumber: number;
+  name: string;
+  street: string;
+  streetNumber: string;
+  apartmentNumber: string;
+  suburb: string;
+  delegation: string;
+  zipCode: number;
   rfc: string;
   curp: string;
-  telefono: string;
-  tipo_persona: string;
-  tipo_responsable: string;
-  representante: string;
-  no_escritura: string;
+  phone: string;
+  typePerson: string;
+  typeResponsible: string;
+  manager: string;
+  numberDeep: string;
   profesion: string;
   curriculum: string;
-  cve_entfed: string;
-  cve_giro: string;
-  observaciones: string;
-  perfil: string;
-  antecedentes_secodam: string;
-  antecedentes_pgr: string;
-  antecedentes_pff: string;
-  antecedentes_sera: string;
-  antecedentes_otros: string;
-  no_registro: number;
+  keyEntFed: string;
+  keyOperation: string;
+  observations: string;
+  profile: string;
+  precedentSecodam: string;
+  precedentPgr: string;
+  precedentPff: string;
+  precedentSera: string;
+  precedent0ther: string;
+  registryNumber: number;
   email: string;
-  lista_negra: string;
+  blackList: string;
 }
+
