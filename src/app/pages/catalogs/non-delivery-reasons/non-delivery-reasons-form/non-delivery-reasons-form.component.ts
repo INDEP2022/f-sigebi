@@ -8,20 +8,7 @@ import { NonDeliveryReasonService } from '../../../../core/services/catalogs/non
 @Component({
   selector: 'app-non-delivery-reasons-form',
   templateUrl: './non-delivery-reasons-form.component.html',
-  styles: [`
-    .arrow-after::after{
-    content: '';
-    position: absolute;
-    left: 42%;
-    top: 100%;
-    width: 0;
-    height: 0;
-    border-left: 20px solid transparent;
-    border-right: 20px solid transparent;
-    border-top: 20px solid #e8e8e8;
-    clear: both;
-}
-  `]
+  styles: []
 })
 export class NonDeliveryReasonsFormComponent extends BasePage implements OnInit {
 

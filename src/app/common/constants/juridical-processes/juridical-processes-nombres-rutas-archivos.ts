@@ -1,10 +1,29 @@
 import { IMenuItem } from "src/app/core/interfaces/menu.interface";
 
-
 export const baseMenu: string = "/pages/juridicos/"; // Base url Menu
-export const menuOptionsJuridicalProcesses: IMenuItem =//[] = menuGenerator();
-
-// [
+export const baseMenuDepositaria: string = "depositaria/"; // Base url Menu Depositaria
+// NOMBRE PANTALLA, LINK NOMBRE PANTALLA EN INGLES, NOMBRE OPCION MENU
+export const routesJuridicalProcesses: any =
+[
+  {
+    label: 'Dictaminaciones Juridicas', link: 'dictaminaciones-juridicas', menu: 'Dictaminaciones Juridicas' 
+  },
+  {
+    label: 'Actualización de Datos del Expediente', link: 'actualizacion-datos-expediente', menu: 'Actualización de Expediente' 
+  },
+  {
+    label: 'Actualización de Expedientes en Notificación', link: 'actualizacion-expedientes-notificacion', menu: 'Actualización de Expedientes en Notificación' 
+  },
+  {
+    label: 'Declaratoria y Oficios de Abandonos', link: 'abandonos', menu: 'Abandonos' 
+  },
+  // DEPOSITARIA
+  {
+    label: 'Nombranientos', link: 'registro-depositaria', menu: 'Registro de Depositaría' 
+  }
+  // DEPOSITARIA
+]
+export const menuOptionsJuridicalProcesses: IMenuItem =
     
   // PROCESOS JURIDICOS
   {
@@ -12,86 +31,30 @@ export const menuOptionsJuridicalProcesses: IMenuItem =//[] = menuGenerator();
     icon: 'bx-share-alt',
     subItems: [
       { 
-        label: 'Dictaminaciones Juridicas', 
-        link: baseMenu + 'dictaminaciones-juridicas' 
+        label: routesJuridicalProcesses[0].menu, 
+        link: baseMenu + routesJuridicalProcesses[0].link
       },
       {
-        label: 'Actualización de Datos del Expediente', 
-        link: baseMenu + 'actualizacion-datos-expediente'
+        label: routesJuridicalProcesses[1].menu, 
+        link: baseMenu + routesJuridicalProcesses[1].link
       },
       {
-        label: 'Actualización de Expedientes en Notificación', 
-        link: baseMenu + 'actualizacion-expedientes-notificacion'
+        label: routesJuridicalProcesses[2].menu, 
+        link: baseMenu + routesJuridicalProcesses[2].link
+      },
+      {
+        label: routesJuridicalProcesses[3].menu, 
+        link: baseMenu + routesJuridicalProcesses[3].link
       },
       {
         label: 'Depositaría',
         subItems: [
           {
-            label: 'Registro de Depositaría',
+            label: routesJuridicalProcesses[4].menu, 
+            link: baseMenu + baseMenuDepositaria + routesJuridicalProcesses[4].link
           },
         ],
       },
     ],
   }
   // PROCESOS JURIDICOS
-
-// ]
-
-
-export const routesJuridicalProcesses: any = 
-// [
-  {
-    'dictaminaciones_juridicas': { label: 'Dictaminaciones Juridicas', link: 'dictaminaciones-juridicas', 
-    import: './juridical-ruling/pj-dj-m-juridical-ruling.module', 
-    componentName: 'PJDJJuridicalRulingComponent', routingName: 'PJDJJuridicalRulingRoutingModule', moduleName: 'PJDJJuridicalRulingModule'},
-  // },
-  // {
-    'actualizacion_datos_expediente': { label: 'Actualización de Datos del Expediente', link: 'actualizacion-datos-expediente',
-    import: './file-data-update/pj-ade-m-file-data-update.module', 
-    componentName: 'PJADEFileDataUpdateComponent', routingName: 'PJADEFileDataUpdateRoutingModule', moduleName: 'PJADEFileDataUpdateModule'},
-  // },
-  // {
-    'actualizacion_expedientes_notificacion': { label: 'Actualización de Expedientes en Notificación', link: 'actualizacion-expedientes-notificacion',
-    import: './notification-file-update/pj-aen-m-notification-file-update.module', 
-    componentName: 'PJAENNotificationFileUpdateComponent', routingName: 'PJAENNotificationFileUpdateRoutingModule', moduleName: 'PJAENNotificationFileUpdateModule'},
-  }
-// ]
-
-export function generatorRoutesJuridicalProcesses() {
-  let routes = [];
-  for (const key in routesJuridicalProcesses) {
-    if (routesJuridicalProcesses[key]) {
-      const element = routesJuridicalProcesses[key];
-      routes.push({
-        path: element.link,
-        loadChildren: async() => 
-            (await import(element.import))[element.moduleName],
-            data: { title: element.label }
-      });
-    }
-  }
-  return routes;
-} 
-// export function menuGenerator() {
-//   let opcionesMenu: IMenuItem = {
-//     label: 'Procesos Jurídicos',
-//     icon: 'bx-share-alt',
-//     subItems: [
-
-//     ]
-//   };
-//   routesJuridicalProcesses.forEach((element: IMenuItem, index: number) => {
-//     opcionesMenu.subItems.push({
-//       id: (element.id) ? element.id : null,
-//       label: (element.label) ? element.label : '',
-//       icon: (element.icon) ? element.icon : '',
-//       link: (element.link) ? element.link : '',
-//       subItems: (element.subItems) ? element.subItems : [],
-//       isTitle: (element.isTitle) ? element.isTitle : false,
-//       badge: (element.badge) ? element.badge : '',
-//       parentId: (element.parentId) ? element.parentId : null,
-//       isLayout: (element.isLayout) ? element.isLayout : false,
-//     })
-//   });
-//   return opcionesMenu;
-// }

@@ -110,6 +110,10 @@ export const MENU: IMenuItem[] = [
         link: '/pages/catalogs/payment-concept',
       },
       {
+        label: 'Clasificación SIAB',
+        link: '/pages/catalogs/siab-clasification',
+      },
+      {
         label: 'Institución Clasificación',
         link: '/pages/catalogs/intitution-classification',
       },
@@ -166,6 +170,25 @@ export const MENU: IMenuItem[] = [
         label: 'Estantes',
         link: '/pages/catalogs/rack',
       },
+      {
+        label: 'Genéricos',
+        link: '/pages/catalogs/generics',
+      },
+      {
+        label: 'Instituciones Emisoras',
+        link: '/pages/catalogs/issuing-institution',
+      },
+      {
+        label: 'Juzgados',
+        link: '/pages/catalogs/court',
+      },
+    ],
+  },
+  //Administración
+  {
+    label: 'Procesos Administrativos',
+    icon: 'bx-folder',
+    subItems: [
       {
         label: 'Regulaciones',
         link: '/pages/catalogs/regulatory',
@@ -242,6 +265,25 @@ export const MENU: IMenuItem[] = [
         label: 'Derivación Bienes',
         link: '/pages/administrative-processes/derivation-goods',
       },
+      /**
+       * Seguros **Legaspi**
+       **/
+      {
+        label: 'Solicitud de Avalúos',
+        link: '/pages/administrative-processes/appraisal-request',
+      },
+      {
+        label: 'Registro de Avalúos',
+        link: '/pages/administrative-processes/appraisal-registry',
+      },
+      {
+        label: 'Monitor de Avalúos',
+        link: '/pages/administrative-processes/appraisal-monitor',
+      },
+      {
+        label: 'Bienes sin Avalúos',
+        link: '/pages/administrative-processes/appraisal-goods',
+      },
     ],
   },
   {
@@ -249,22 +291,70 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-folder',
     subItems: [
       {
-        label: 'Almacenes',
-        link: '/pages/administrative-processes/warehouse-reports',
+        label: 'Atención Bienes',
+        link: '/pages/administrative-processes/goods-tracking',
       },
-    ],
-  },
-  {
-    label: 'Empresas',
-    icon: 'bx-folder',
-    subItems: [
       {
-        label: 'Resumen Info Financiera',
-        link: '/pages/administrative-processes/summary-financial-info',
+        label: 'Gestión bienes Gab-Soc',
+        link: '/pages/administrative-processes/goods-management',
       },
+      {
+        label: 'Empresas',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Resumen Info Financiera',
+            link: '/pages/administrative-processes/summary-financial-info',
+          },
+        ],
+      },
+      {
+        label: 'Reportes',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Almacenes',
+            link: '/pages/administrative-processes/warehouse-reports',
+          },
+          {
+            label: 'Expedientes',
+            link: '/pages/administrative-processes/record-details',
+          },
+        ],
+      },
+      {
+        label: 'Coversión de Paquetes',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Conversión Masiva',
+            link: '/pages/administrative-processes/unit-conversion-packages',
+          },
+        ],
+      },
+      {
+        label: 'Interacción SIAB-SAMI',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Relación de Bienes',
+            link: '/pages/administrative-processes/siab-sami-interaction/',
+          },
+          {
+            label: 'Pago de Bienes',
+            link: '/pages/administrative-processes/siab-sami-interaction/payment-goods',
+          },
+          {
+            label: 'Avalúo de Bienes',
+            link: '/pages/administrative-processes/siab-sami-interaction/value-goods',
+          },
+        ],
+      },
+      /**
+       * Seguros **Legaspi**
+       **/
     ],
   },
-
   {
     label: 'Solicitudes',
     icon: 'bx-folder',
@@ -285,6 +375,10 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Actas de Destino',
         link: '/pages/final-destination-process/destination-acts',
+      },
+      {
+        label: 'Actas de Devolución',
+        link: '/pages/final-destination-process/return-acts',
       },
     ],
   },
@@ -368,6 +462,4 @@ export const MENU: IMenuItem[] = [
   // PROCESOS JURIDICOS
   menuOptionsJuridicalProcesses,
   // PROCESOS JURIDICOS
-  
-
 ];
