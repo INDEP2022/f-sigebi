@@ -13,7 +13,7 @@
             <div class="row">
                 <div class="col-md-2">
                     <form-field [control]="form.get('idExp')" label="No expediente">
-                        <input type="text" class="form-control" formControlName="idExp">
+                        <input type="text" class="form-control" formControlName="idExp" minlength="1" maxlength="10" >
                     </form-field>
                 </div>
                 <div class="col-md-2">
@@ -39,7 +39,7 @@
                 <div class="col-md-2">
                     <div class="d-flex justify-content-center">
                         <div class="m-3">
-                            <button type="button" class="btn btn-primary active">
+                            <button type="button" class="btn-sm btn-primary active">
                               Agregar Bienes
                             </button>
                         </div>
@@ -56,10 +56,10 @@
     <div body>
 
         <form class="form-material" [formGroup]="form">
-            <div class="row">
+            <div class="row pt-5">
                 <div class="col-md-1">
                     <form-field [control]="form.get('noAuth')" label="No.">
-                        <input type="text" class="form-control" formControlName="noAuth">
+                        <input type="text" class="form-control" formControlName="noAuth" minlength="1" maxlength="10">
                     </form-field>
                 </div>
                 <div class="col-md-2">
@@ -80,7 +80,7 @@
                 <div class="col-md-2">
                     <div class="d-flex justify-content-center">
                         <div class="m-3">
-                            <button type="button" class="btn btn-primary active">
+                            <button type="button" class="btn-sm btn-primary active">
                               Abrir
                             </button>
                         </div>
@@ -88,7 +88,10 @@
                 </div>
             </div>
         </form>
-
+        <div class="ch-content">
+            <h5 class="title"></h5>
+            <app-columns-select [(settings)]="settings"></app-columns-select>
+        </div>
         <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
 
         <div class="row pt-5">
@@ -112,7 +115,7 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <button type="submit" class="btn btn-primary active">Insertar vía archivo plano</button>
+                <button type="submit" class="btn-sm btn-primary active">Insertar vía archivo plano</button>
               </div>
         </div>
 
@@ -124,15 +127,15 @@
             </div>
     
             <div class="col-sm-1">
-              <button type="submit" class="btn btn-primary active">Solicitud</button>
+              <button type="submit" class="btn-sm btn-primary active">Solicitud</button>
             </div>
     
             <div class="col-sm-1">
-              <button type="submit" class="btn btn-primary active" >Escanear</button>
+              <button type="submit" class="btn-sm btn-primary active" >Escanear</button>
             </div>
     
             <div class="col-sm-1">
-              <button type="submit" class="btn btn-primary active" >Ver IMG</button>
+              <button type="submit" class="btn-sm btn-primary active" >Ver IMG</button>
             </div>
     
             <label class="col-sm-2 col-form-label">Folio de Cancelación</label>
@@ -141,15 +144,15 @@
             </div>
     
             <div class="col-sm-1">
-              <button type="submit" class="btn btn-primary active" >Solicitud</button>
+              <button type="submit" class="btn-sm btn-primary active" >Solicitud</button>
             </div>
     
             <div class="col-sm-1">
-              <button type="submit" class="btn btn-primary active" >Escanear</button>
+              <button type="submit" class="btn-sm btn-primary active" >Escanear</button>
             </div>
     
             <div class="col-sm-1">
-              <button type="submit" class="btn btn-primary active" >Ver IMG</button>
+              <button type="submit" class="btn-sm btn-primary active" >Ver IMG</button>
             </div>
     
           </div>

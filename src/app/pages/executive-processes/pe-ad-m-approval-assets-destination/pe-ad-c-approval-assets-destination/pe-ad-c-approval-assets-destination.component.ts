@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BasePage } from 'src/app/core/shared/base-page';
+
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings'; 
+import { ASSETS_DESTINATION_COLUMNS } from './approval-assets-destination-columns';
 
 @Component({
   selector: 'app-pe-ad-c-approval-assets-destination',
@@ -7,11 +12,18 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styles: [
   ]
 })
-export class PeAdCApprovalAssetsDestinationComponent implements OnInit {
-
+export class PeAdCApprovalAssetsDestinationComponent extends BasePage implements OnInit {
+  
+  settings = TABLE_SETTINGS;
   form: FormGroup = new FormGroup({}); 
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder) {
+    super();
+    this.settings.columns = ASSETS_DESTINATION_COLUMNS;
+    this.settings.actions.edit = false;
+    this.settings.actions.add = false;
+    this.settings.actions.add = false;
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -19,64 +31,13 @@ export class PeAdCApprovalAssetsDestinationComponent implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      idExp: ['', [Validators.required]],
+      idExp: ['', [Validators.required, Validators.maxLength(10), Validators.minLength(1), Validators.pattern(NUMBERS_PATTERN)]],
       preInquiry: ['', [Validators.required]],
       criminalCase: ['', [Validators.required]],
       circumstAct: ['', [Validators.required]],
       touchPenalty: ['', [Validators.required]],
     });
   }
-
-  settings = {
-
-    actions: {
-      columnTitle: '',
-      add: false,
-      edit: false,
-      delete: false,
-    },
-
-    hideSubHeader: true,
-    mode: 'external',
-
-    add: {
-      addButtonContent: '<i class="nb-plus"></i>',
-      createButtonContent: '<i class="nb-checkmark"></i>',
-      cancelButtonContent: '<i class="nb-close"></i>',
-    },
-    edit: {
-      editButtonContent: '<i class="nb-edit"></i>',
-      saveButtonContent: '<i class="nb-checkmark"></i>',
-      cancelButtonContent: '<i class="nb-close"></i>',
-    },
-    delete: {
-      deleteButtonContent: '<i class="nb-trash"></i>',
-      confirmDelete: true,
-    },
-    
-    /*
-    */
-    columns: {
-      noBien: {
-        title: 'No. Bien',
-      },
-      description: {
-        title: 'Descripción',
-      },
-      ubiExact: {
-        title: 'Ubicación Exacta',
-      },
-      direction: {
-        title: '',
-      },
-      noOficio: {
-        title: 'No. de Autorización',
-      },
-      fecha: {
-        title: 'Fecha',
-      },
-    },
-  };
 
   data = [
     {

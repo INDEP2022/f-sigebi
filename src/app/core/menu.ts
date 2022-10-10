@@ -541,6 +541,94 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
+  {
+    label: 'Comercialización',
+    icon: 'bx-folder',
+    subItems: [
+      {
+        label: 'Bienes Muebles',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Bienes exentos de validación',
+            link: '/pages/commercialization/c-b-bedv-m-validation-exempted-goods',
+          },
+          {
+            label: 'Reclasificacón OI',
+            link: '/pages/commercialization/c-b-rdodi-m-reclass-recovery-orders',
+          },
+          {
+            label: 'Validación de Pagos',
+            link: '/pages/commercialization/c-b-vdp-m-payment-dispersion-validation',
+          },
+          {
+            label: 'Conversión a numerario',
+            link: '/pages/commercialization/numeraire-conversion-tabs',
+          },
+          {
+            label: 'Consulta de Avalúo',
+            link: '/pages/commercialization/c-b-a-cda-m-appraisal-consultation',
+          },
+          {
+            label: 'Registro de Avalúo',
+            link: '/pages/commercialization/c-b-a-rda-m-appraisal-registration',
+          },
+          {
+            label: 'Captura de gastos',
+            link: '/pages/commercialization/c-b-ge-cdg-m-expense-capture',
+          },
+        ],
+      },
+      {
+        label: 'Bienes Inmuebles',
+        icon: 'home-outline',
+        subItems: [
+          {
+            label: 'Bienes exentos de validación',
+            link: '/pages/commercialization/c-b-bedv-m-validation-exempted-goods',
+          },
+          {
+            label: 'Reclasificacón OI',
+            link: '/pages/commercialization/c-b-rdodi-m-reclass-recovery-orders',
+          },
+          {
+            label: 'Validación de Pagos',
+            link: '/pages/commercialization/c-b-vdp-m-payment-dispersion-validation',
+          },
+          {
+            label: 'Conversión a numerario',
+            link: '/pages/commercialization/numeraire-conversion-tabs',
+          },
+          {
+            label: 'Consulta de Avalúo',
+            link: '/pages/commercialization/c-b-a-cda-m-appraisal-consultation',
+          },
+          {
+            label: 'Registro de Avalúo',
+            link: '/pages/commercialization/c-b-a-rda-m-appraisal-registration',
+          },
+          {
+            label: 'Captura de gastos',
+            link: '/pages/commercialization/c-b-ge-cdg-m-expense-capture',
+          },
+        ],
+      },
+
+      {
+        label: 'Activos Financieros',
+        icon: 'credit-card-outline',
+        subItems:[
+        ]
+      },
+      {
+        label: 'Catálogos',
+        icon: 'folder',
+        subItems:[
+        ]
+      }
+      
+    ]
+  },
   // PROCESOS JURIDICOS
   menuOptionsJuridicalProcesses,
   // PROCESOS JURIDICOS
