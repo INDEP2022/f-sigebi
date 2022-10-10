@@ -74,7 +74,7 @@ export class RequestInTurnFormComponent implements OnInit {
     }
   }
 
-getSubDelegations(params: ListParams) {
+  getSubDelegations(params: ListParams) {
     /* this.requestService.getAll(params).subscribe(data => {
       this.station = new DefaultSelect(data.data, data.count);
     }); */

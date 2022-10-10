@@ -17,6 +17,7 @@ import { PaginationComponent } from './components/pagination/pagination.componen
 import { PaginateComponent } from './components/pagination/paginate.component';
 import { FormCheckComponent } from './components/form-check/form-check.component';
 import { FormRadioComponent } from './components/form-radio/form-radio.component';
+import { CheckboxColumnComponent } from './components/checkbox-column/checkbox-column.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { FormRadioComponent } from './components/form-radio/form-radio.component
     PaginateComponent,
     FormCheckComponent,
     FormRadioComponent,
+    CheckboxColumnComponent,
   ],
   imports: [
     CommonModule,
@@ -59,6 +61,7 @@ import { FormRadioComponent } from './components/form-radio/form-radio.component
     Ng2SmartTableModule,
     FormCheckComponent,
     FormRadioComponent,
+    CheckboxColumnComponent
   ],
 })
 export class SharedModule {}

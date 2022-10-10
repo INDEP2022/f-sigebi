@@ -1,4 +1,5 @@
 export const TABLE_SETTINGS = {
+  selectMode: '',
   actions: {
     columnTitle: 'Acciones',
     add: true,

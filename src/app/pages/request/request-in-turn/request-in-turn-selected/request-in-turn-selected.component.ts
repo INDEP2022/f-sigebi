@@ -40,6 +40,8 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();   
+    console.log(this.requestInTurn);
+    
   }
 
   prepareForm(){

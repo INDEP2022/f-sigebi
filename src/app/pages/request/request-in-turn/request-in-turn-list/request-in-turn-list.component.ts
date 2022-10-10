@@ -12,6 +12,55 @@ import { ModelForm } from 'src/app/core/interfaces/ModelForm';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { RequestInTurnSelectedComponent } from '../request-in-turn-selected/request-in-turn-selected.component';
 
+var ejemplo:IRequestInTurn[] = [
+  {
+    check: false,
+    noRequest: '1458',
+    dateRequest: '1-10-2021',
+    titularName: 123,
+    senderCharger: 'AMPF',
+    noJob: 33,
+    dateJob: 11,
+    deleRegional: 22,
+    state: 2,
+    transfer: 2,
+    transmitter: 2,
+    authority: 33,
+    expedient:234,
+    reception: 'Metropolital',
+    subject: 'asunto',
+    type: 'type',
+    appliStatus: 'estado',
+    contributor: 'contribuidor',
+    acta: 'acta',
+    ascertainment: 'averiguacion', 
+    cause: 'causa',
+  },
+  {
+    check: false,
+    noRequest: '1458',
+    dateRequest: '1-10-2021',
+    titularName: 123,
+    senderCharger: 'AMPF',
+    noJob: 33,
+    dateJob: 11,
+    deleRegional: 22,
+    state: 2,
+    transfer: 2,
+    transmitter: 2,
+    authority: 33,
+    expedient:234,
+    reception: 'Metropolital',
+    subject: 'asunto',
+    type: 'type',
+    appliStatus: 'estado',
+    contributor: 'contribuidor',
+    acta: 'acta',
+    ascertainment: 'averiguacion', 
+    cause: 'causa',
+  }
+]
+
 @Component({
   selector: 'app-request-in-turn-list',
   templateUrl: './request-in-turn-list.component.html',
@@ -24,13 +73,14 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
   paragraphs: IRequestInTurn[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams);
 
-  requestForm: ModelForm<IRequestInTurn>;
+  requestSelected: IRequestInTurn[] = [];
+  /* requestForm: ModelForm<IRequestInTurn>;
   selectTransmitter = new DefaultSelect<IRequestInTurn>;
   selectAuthority = new DefaultSelect<IRequestInTurn>;
   selectDeleRegional = new DefaultSelect<IRequestInTurn>;
   selectState = new DefaultSelect<IRequestInTurn>;
   selectSubject = new DefaultSelect<IRequestInTurn>;
-  selectTransfer = new DefaultSelect<IRequestInTurn>;
+  selectTransfer = new DefaultSelect<IRequestInTurn>; */
   /* bsInlineValue = new Date();
   bsInlineRangeValue: Date[];
   maxDate = new Date(); */
@@ -41,11 +91,12 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
     ) {
     super();
     this.settings.columns = REQUEST_IN_TURN_COLUMNS;
+    this.settings.selectMode = 'multi'
     this.settings.actions = {
       columnTitle: 'Acciones',
       add: false,
       edit: false,
-      delete: false,
+      delete: false
     }
 
     /* this.maxDate.setDate(this.maxDate.getDate() + 7);
@@ -60,6 +111,7 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
 
   
   getExample():void{
+    this.paragraphs = ejemplo
     //this.loading = true;
     /* this.requestService.getAll(this.params.getValue()).subscribe({
       next: response => {
@@ -77,7 +129,8 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
     }); */
   }
 
-  openTurnRequests(requestInTurn?: IRequestInTurn) {
+  openTurnRequests(requestInTurn?: IRequestInTurn[]) {
+    requestInTurn = this.requestSelected;
     let config: ModalOptions = {
       initialState: {
         requestInTurn,
@@ -96,4 +149,9 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
     
   }
 
+  onCustomAction(event: any){
+    console.log(event);
+    this.requestSelected = event.selected;
+    //console.log(this.requestForm.);
+  }
 }
