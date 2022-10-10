@@ -1,12 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';  
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'ngx-form-oficio',
   templateUrl: './form-oficio.component.html',
   styleUrls: ['./form-oficio.component.scss']
 })
-export class FormOficioComponent  {
+export class FormOficioComponent  extends BasePage implements OnInit{
     @Input() form: FormGroup;
     @Input() nombrePantalla: string;
 
@@ -15,6 +16,7 @@ export class FormOficioComponent  {
 @Output() formValues = new EventEmitter<any>();
 
   constructor() {  
+    super();
   }
 
   ngOnInit(): void {
