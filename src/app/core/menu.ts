@@ -379,6 +379,10 @@ export const MENU: IMenuItem[] = [
             link: '/pages/administrative-processes/unit-conversion-packages',
           },
         ]
+      },
+      {
+        label: 'Atención Bienes',
+        link: '/pages/administrative-processes/goods-tracking'
       }
       /**
        * Seguros **Legaspi** 

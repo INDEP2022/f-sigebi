@@ -103,19 +103,11 @@ const routes: Routes = [
         path: 'unit-conversion-packages', loadChildren: () => import('./unit-conversion-packages/pa-ucp-m-unit-conversion-packages.module')
           .then(m => m.PaUcpMUnitConversionPackagesModule)
       },
+      {
+        path: 'goods-tracking', loadChildren: () => import('./goods-tracking/pa-gt-m-goods-tracking.module')
+          .then(m => m.PaGtMGoodsTrackingModule)
+      },
       /*
-      {
-        path: 'record', loadChildren: () => import('./record/record.module')
-          .then(m => m.RecordModule)
-      },
-      {
-        path: 'unit-conversion-packages', loadChildren: () => import('./unit-conversion-packages/unit-conversion-packages.module')
-          .then(m => m.UnitConversionPackagesModule)
-      },
-      {
-        path: 'goods-tracking', loadChildren: () => import('./goods-tracking/goods-tracking.module')
-          .then(m => m.GoodsTrackingModule)
-      },
       {
         path: 'goods-management', loadChildren: () => import('./goods-management/goods-management.module')
           .then(m => m.GoodsManagementModule)
