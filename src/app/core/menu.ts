@@ -347,6 +347,14 @@ export const MENU: IMenuItem[] = [
        * Seguros **Legaspi** 
        **/
       {
+        label: 'Atención Bienes',
+        link: '/pages/administrative-processes/goods-tracking'
+      },
+      {
+        label: 'Gestión bienes Gab-Soc',
+        link: '/pages/administrative-processes/goods-management'
+      },
+      {
         label: 'Empresas',
         icon: 'bx-folder',
         subItems: [
@@ -381,12 +389,22 @@ export const MENU: IMenuItem[] = [
         ]
       },
       {
-        label: 'Atención Bienes',
-        link: '/pages/administrative-processes/goods-tracking'
-      },
-      {
-        label: 'Gestión bienes Gab-Soc',
-        link: '/pages/administrative-processes/goods-management'
+        label: 'Interacción SIAB-SAMI',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Relación de Bienes',
+            link: '/pages/administrative-processes/siab-sami-interaction/',
+          },
+          {
+            label: 'Pago de Bienes',
+            link: '/pages/administrative-processes/siab-sami-interaction/payment-goods'
+          },
+          {
+            label: 'Avalúo de Bienes',
+            link: '/pages/administrative-processes/siab-sami-interaction/value-goods'
+          }
+        ]
       }
       /**
        * Seguros **Legaspi** 
