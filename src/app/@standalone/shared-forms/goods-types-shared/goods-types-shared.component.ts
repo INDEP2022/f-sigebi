@@ -39,8 +39,6 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
   subtypes = new DefaultSelect();
   ssubtypes = new DefaultSelect();
   sssubtypes = new DefaultSelect();
-  //public list: any;
-  //public length = 100;
 
   get type() {
     return this.form.get(this.typeField);

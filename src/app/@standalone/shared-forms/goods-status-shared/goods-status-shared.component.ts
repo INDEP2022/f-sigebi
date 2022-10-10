@@ -8,7 +8,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //Services
-//import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
+//import { GoodTypeService } from 'src/app/core/services/catalogs/good-status.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
 import { IGoodStatus } from 'src/app/core/models/catalogs/good-status.model';

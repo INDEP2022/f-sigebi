@@ -6,40 +6,40 @@
   <div body>
     <form class="form-material" [formGroup]="form">
     	<div class="row mb-3 mt-3">
-    		<!--Date Form-->
+        <!--Date Form-->
     		<div class="col-xs-12 col-12 col-md-3 mb-3">
     			<form-field [control]="form.get('from')" label="Del">
     				<input
     					formControlName="from"
-		              	placeholder="Selección de fecha"
-		              	class="form-control"
-           				bsDatepicker>
-          		</form-field>
-        	</div>
-	        <div class="col-xs-12 col-12 col-md-3 mb-3">
-	          <form-field [control]="form.get('to')" label="Al">
+		          placeholder="Selección de fecha"
+		          class="form-control"
+           		bsDatepicker>
+          </form-field>
+        </div>
+        <div class="col-xs-12 col-12 col-md-3 mb-3">
+          <form-field [control]="form.get('to')" label="Al">
 	            <input
 	            	formControlName="to"
-	              	placeholder="Selección de fecha"
-	              	class="form-control"
+	              placeholder="Selección de fecha"
+	              class="form-control"
 	           		bsDatepicker>
-	          </form-field>
-	        </div>
+          </form-field>
+        </div>
     	</div>
     	<div class="row mb-3 mt-3">
-    		    <!--Delegation Component-->
-            <div class="col-md-6 col-sm-12 col-xs-12">
-            	<app-delegation-shared [form]="form" [showSubdelegation]="false"></app-delegation-shared>
-            </div>
-            <!--warehouse Component-->
-            <div class="col-md-6 col-sm-12 col-xs-12">
-            	<app-warehouse-shared [form]="form"></app-warehouse-shared>
-            </div>
-            <!--Goods Status Component-->
-            <div class="col-md-6 col-sm-12 col-xs-12">
-              <app-goods-status-shared [form]="form"></app-goods-status-shared>
-            </div>
+    		<!--Delegation Component-->
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <app-delegation-shared [form]="form" [showSubdelegation]="false"></app-delegation-shared>
         </div>
+        <!--warehouse Component-->
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <app-warehouse-shared [form]="form"></app-warehouse-shared>
+        </div>
+        <!--Goods Status Component-->
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <app-goods-status-shared [form]="form"></app-goods-status-shared>
+        </div>
+      </div>
     </form>
   </div>
   <div footer class="d-flex justify-content-end">
