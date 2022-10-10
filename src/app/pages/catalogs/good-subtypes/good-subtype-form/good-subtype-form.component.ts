@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ModelForm } from 'src/app/core/interfaces/ModelForm';
 import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
 import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
@@ -14,12 +15,11 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class GoodSubtypeFormComponent extends BasePage implements OnInit {
-  goodSubtypeForm: FormGroup = new FormGroup({});
+  goodSubtypeForm: ModelForm<IGoodSubType>;
   title: string = 'Subtipo Bien';
   edit: boolean = false;
   goodSubtype: IGoodSubType;
   types = new DefaultSelect<IGoodType>();
-  @Output() refresh = new EventEmitter<true>();
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -47,12 +47,14 @@ export class GoodSubtypeFormComponent extends BasePage implements OnInit {
     });
     if (this.goodSubtype != null) {
       this.edit = true;
-      this.goodSubtypeForm.patchValue(this.goodSubtype);
-    }
-  }
-
-  patchForm() {
-    if (this.goodSubtype.idTypeGood.id) {
+      let goodType: IGoodType = this.goodSubtype.idTypeGood as IGoodType;
+      this.goodSubtypeForm.patchValue({
+        ...this.goodSubtype,
+        idTypeGood: goodType.id,
+      });
+      this.types = new DefaultSelect([goodType], 1);
+    } else {
+      this.getTypes({ inicio: 1, text: '' });
     }
   }
 
@@ -92,7 +94,7 @@ export class GoodSubtypeFormComponent extends BasePage implements OnInit {
     const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
-    this.refresh.emit(true);
+    this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 }

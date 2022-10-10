@@ -1,0 +1,26 @@
+<app-card [header]="true" class="cat-card mt-5"> 
+    <div class="ch-content" header>
+  
+        <div class="row w-100">
+            <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
+                <span class="title">
+                    RESOLUCIÓN DE RECURSOS DE REVISIÓN
+                </span>
+            </div>
+            
+        </div>
+
+    </div>
+  
+    <div body>
+
+        <!-- tabla Recurso de Revision -->
+        <div class="row w-100">
+            <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+                <ng2-smart-table class="my-table" [settings]="tableSettings" [source]="dataTable"></ng2-smart-table>
+            </div>
+        </div>
+  
+    </div>
+  
+  </app-card>

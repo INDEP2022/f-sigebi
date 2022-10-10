@@ -1,0 +1,83 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="ifaiSerieForm">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field [control]="ifaiSerieForm.get('code')" label="Código">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="code"
+              placeholder="Código de serie ej. 1123" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="ifaiSerieForm.get('typeProcedure')"
+            label="Tipo de trámite">
+            <input
+              type="string"
+              class="form-control"
+              formControlName="typeProcedure"
+              placeholder="Tipo de trámite" />
+          </form-field>
+        </div>
+
+        <div class="col-md-12">
+          <form-field
+            [control]="ifaiSerieForm.get('description')"
+            label="Descripción">
+            <textarea
+              type="text"
+              class="form-control"
+              formControlName="description"
+              placeholder="Descripción">
+            </textarea>
+          </form-field>
+        </div>
+
+        <div class="ol-md-6">
+          <form-field [control]="ifaiSerieForm.get('status')" label="Estado">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="status"
+              placeholder="Estado" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="ifaiSerieForm.get('registryNumber')"
+            label="No. registro">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="registryNumber"
+              placeholder="No. de registro" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="ifaiSerieForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

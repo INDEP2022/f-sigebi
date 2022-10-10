@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/ModelForm';
@@ -15,10 +15,10 @@ export class IdentifierFormComponent extends BasePage implements OnInit {
   identifier: IIdentifier;
   edit: boolean = false;
   identifierForm: ModelForm<IIdentifier>;
-  @Output() refresh = new EventEmitter<true>();
+
   constructor(
     private fb: FormBuilder,
-    private modalService: BsModalRef,
+    private modalRef: BsModalRef,
     private identifierService: IdentifierService
   ) {
     super();
@@ -32,16 +32,14 @@ export class IdentifierFormComponent extends BasePage implements OnInit {
     this.identifierForm = this.fb.group({
       code: [null, [Validators.required]],
       description: [null, [Validators.required]],
-      keyview: [
-        null,
-        [Validators.required, Validators.minLength(1), Validators.maxLength(1)],
-      ],
+      keyview: [null, [Validators.required, Validators.maxLength(1)]],
       noRegistration: [null, [Validators.required]],
     });
 
     if (this.identifier != null) {
       this.edit = true;
       this.identifierForm.patchValue(this.identifier);
+      this.identifierForm.get('code').disable();
     }
   }
 
@@ -51,28 +49,28 @@ export class IdentifierFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.identifierService.create(this.identifierForm.value).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
-    );
+    this.identifierService.create(this.identifierForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   update() {
     this.identifierService
       .update(this.identifier.code, this.identifierForm.value)
-      .subscribe(
-        data => this.handleSuccess(),
-        error => (this.loading = false)
-      );
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   close() {
-    this.modalService.hide();
+    this.modalRef.hide();
   }
 
   handleSuccess() {
     this.loading = false;
-    this.refresh.emit(true);
-    this.modalService.hide();
+    this.modalRef.content.callback(true);
+    this.modalRef.hide();
   }
 }

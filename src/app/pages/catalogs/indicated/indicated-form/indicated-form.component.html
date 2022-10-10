@@ -1,18 +1,19 @@
 <app-modal>
-    <div header>
-      <h5 class="modal-title">
-        {{ edit ? 'Editar indiciado' : 'Nuevo indiciado' }}
-      </h5>
-    </div>
-  
-    <div body>
-      <form [formGroup]="indicatedForm" class="form-material">
+  <div header>
+    <h5 class="modal-title">
+      {{ edit ? 'Editar indiciado' : 'Nuevo indiciado' }}
+    </h5>
+  </div>
 
-        <form-field [control]="indicatedForm.get('name')" label="Nombre">
-          <input type="text" class="form-control" formControlName="name" />
-        </form-field>
-  
-        <div class="row pt-4">
+  <div body>
+    <form [formGroup]="indicatedForm" class="form-material">
+      <div class="row">
+        <div class="col-md-12">
+          <form-field [control]="indicatedForm.get('name')" label="Nombre">
+            <input type="text" class="form-control" formControlName="name" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
           <form-field
             [control]="indicatedForm.get('noRegistration')"
             label="Número de registro">
@@ -23,18 +24,13 @@
           </form-field>
         </div>
 
-        <div class="row pt-4">
-          <form-field
-            [control]="indicatedForm.get('curp')"
-            label="Curp">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="curp" />
+        <div class="col-md-12">
+          <form-field [control]="indicatedForm.get('curp')" label="Curp">
+            <input type="text" class="form-control" formControlName="curp" />
           </form-field>
         </div>
 
-        <div class="row pt-4">
+        <div class="col-md-12">
           <form-field
             [control]="indicatedForm.get('consecutive')"
             label="Consecutivo">
@@ -44,24 +40,23 @@
               formControlName="consecutive" />
           </form-field>
         </div>
+      </div>
+    </form>
+  </div>
 
-      </form>
-    </div>
-  
-    <div footer>
-      <div class="d-flex justify-content-center">
-        <div class="m-3">
-          <confirm-button
-            [disabled]="!indicatedForm.valid"
-            [loading]="loading"
-            (confirm)="confirm()"></confirm-button>
-        </div>
-        <div class="m-3">
-          <button type="button" class="btn btn-danger active" (click)="close()">
-            Cancelar
-          </button>
-        </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!indicatedForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
       </div>
     </div>
-  </app-modal>
-  
+  </div>
+</app-modal>

@@ -1,0 +1,74 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="zoneGeographicForm">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field
+                [control]="zoneGeographicForm.get('descripcion')"
+                label="Descripción">
+                <textarea
+                  class="form-control"
+                  type="text"
+                  rows="2"
+                  formControlName="descripcion"
+                  placeholder="Descripción"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+                [control]="zoneGeographicForm.get('no_contrato')"
+                label="No de contrato">
+                <input type="number" class="form-control" formControlName="no_contrato" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+                [control]="zoneGeographicForm.get('version')"
+                label="Versión">
+                <input type="number" class="form-control" formControlName="version" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="zoneGeographicForm.get('tercero_especializado')"
+            label="Tercero especializado">
+            <input type="text" class="form-control" formControlName="tercero_especializado" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+                [control]="zoneGeographicForm.get('iva')"
+                label="Iva">
+                <input type="number" class="form-control" formControlName="iva" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+                [control]="zoneGeographicForm.get('estatus')"
+                label="Estatus">
+                <input type="number" class="form-control" formControlName="estatus" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="zoneGeographicForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
