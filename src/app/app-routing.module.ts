@@ -33,6 +33,7 @@ const routes: Routes = [
   { path: 'rack', loadChildren: () => import('./pages/catalogs/rack/rack.module').then(m => m.RackModule) },
   { path: 'regulatory', loadChildren: () => import('./pages/catalogs/regulatory/regulatory.module').then(m => m.RegulatoryModule) },
   { path: 'responseRepuve', loadChildren: () => import('./pages/catalogs/response-repuve/response-repuve.module').then(m => m.ResponseRepuveModule) },
+  { path: 'indicatorReport', loadChildren: () => import('./pages/catalogs/indicator-report/indicator-report.module').then(m => m.IndicatorReportModule) },
 ];
 
 @NgModule({

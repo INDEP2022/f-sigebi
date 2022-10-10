@@ -175,6 +175,10 @@ export const MENU: IMenuItem[] = [
         link: '/pages/catalogs/responseRepuve',
       },
       {
+        label: 'Indicador Reportes',
+        link: '/pages/catalogs/indicatorReport',
+      },
+      {
         label: 'Numerario Físico',
         link: '/pages/administrative-processes/numerary-physics',
       },

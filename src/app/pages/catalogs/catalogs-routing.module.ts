@@ -513,6 +513,13 @@ const routes: Routes = [
         .DocCompensationSatModule,
     data: { title: 'Documentos resarcimiento sat' },
   },
+  {
+    path: 'indicatorReport',
+    loadChildren: async () =>
+      (await import('./indicator-report/indicator-report.module'))
+        .IndicatorReportModule,
+    data: { title: 'Indicador de Reportes' },
+  },
 ];
 
 @NgModule({
