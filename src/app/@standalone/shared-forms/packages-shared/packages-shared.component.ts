@@ -8,31 +8,31 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //Services
-//import { GoodTypeService } from 'src/app/core/services/catalogs/good-status.service';
+//import { MeasurementUnitsService } from 'src/app/core/services/catalogs/measurement-units.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
-import { IGoodStatus } from 'src/app/core/models/catalogs/good-status.model';
-import { goodsStatuData } from './goodStatusdData';
+import { IPackages } from 'src/app/core/models/catalogs/packages.model';
+import { packagesData } from './packagesData';
 
 @Component({
-  selector: 'app-goods-status-shared',
+  selector: 'app-packages-shared',
   standalone: true,
   imports: [CommonModule, SharedModule],
-  templateUrl: './goods-status-shared.component.html',
+  templateUrl: './packages-shared.component.html',
   styles: [
   ]
 })
-export class GoodsStatusSharedComponent extends BasePage implements OnInit {
+export class PackagesSharedComponent extends BasePage implements OnInit {
 
   @Input() form: FormGroup;
-  @Input() goodStatusField: string = "goodStatus";
+  @Input() packageField: string = "package";
 
-  @Input() showGoodStatus: boolean = true;
+  @Input() showPackages: boolean = true;
 
-  status = new DefaultSelect<IGoodStatus>();
+  packages = new DefaultSelect<IPackages>();
 
-  get goodStatus() {
-    return this.form.get(this.goodStatusField);
+  get measurementUnit() {
+    return this.form.get(this.packageField);
   }
 
   constructor(/*private service: WarehouseService*/) {
@@ -42,11 +42,11 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
   ngOnInit(): void {
   }
 
-  getGoodStatus(params: ListParams) {
+  getPackages(params: ListParams) {
     //Provisional data
-    let data=goodsStatuData;
+    let data=packagesData;
     let count= data.length;
-    this.status = new DefaultSelect(data,count);
+    this.packages = new DefaultSelect(data,count);
     /*this.service.getAll(params).subscribe(data => {
         this.status = new DefaultSelect(data.data,data.count);
       },err => {
@@ -62,7 +62,7 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
     );*/
   }
 
-  onGoodStatusChange(type: any) {
+  onPackagesChange(type: any) {
     //this.resetFields([this.subdelegation]);
     this.form.updateValueAndValidity();
   }
@@ -76,3 +76,5 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
   }
 
 }
+
+

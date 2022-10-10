@@ -8,47 +8,43 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //Services
-//import { GoodTypeService } from 'src/app/core/services/catalogs/good-status.service';
+import { LabelOkeyService } from 'src/app/core/services/catalogs/label-okey.service'
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
-import { IGoodStatus } from 'src/app/core/models/catalogs/good-status.model';
-import { goodsStatuData } from './goodStatusdData';
+import { ILabelOKey } from 'src/app/core/models/catalogs/label-okey.model';
+
 
 @Component({
-  selector: 'app-goods-status-shared',
+  selector: 'app-target-tags-shared',
   standalone: true,
   imports: [CommonModule, SharedModule],
-  templateUrl: './goods-status-shared.component.html',
+  templateUrl: './target-tags-shared.component.html',
   styles: [
   ]
 })
-export class GoodsStatusSharedComponent extends BasePage implements OnInit {
+export class TargetTagsSharedComponent extends BasePage implements OnInit {
 
   @Input() form: FormGroup;
-  @Input() goodStatusField: string = "goodStatus";
+  @Input() targetTagField: string = "targetTag";
 
-  @Input() showGoodStatus: boolean = true;
+  @Input() showTargetTags: boolean = true;
 
-  status = new DefaultSelect<IGoodStatus>();
+  targetTags = new DefaultSelect<ILabelOKey>();
 
-  get goodStatus() {
-    return this.form.get(this.goodStatusField);
+  get targetTag() {
+    return this.form.get(this.targetTagField);
   }
 
-  constructor(/*private service: WarehouseService*/) {
+  constructor(private service: LabelOkeyService) {
     super()
   }
 
   ngOnInit(): void {
   }
 
-  getGoodStatus(params: ListParams) {
-    //Provisional data
-    let data=goodsStatuData;
-    let count= data.length;
-    this.status = new DefaultSelect(data,count);
-    /*this.service.getAll(params).subscribe(data => {
-        this.status = new DefaultSelect(data.data,data.count);
+  getTargetTags(params: ListParams) {
+    this.service.getAll(params).subscribe(data => {
+        this.targetTags = new DefaultSelect(data.data,data.count);
       },err => {
         let error = '';
         if (err.status === 0) {
@@ -59,10 +55,10 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
         this.onLoadToast('error', 'Error', error);
 
       }, () => {}
-    );*/
+    );
   }
 
-  onGoodStatusChange(type: any) {
+  onTargetTagsChange(type: any) {
     //this.resetFields([this.subdelegation]);
     this.form.updateValueAndValidity();
   }

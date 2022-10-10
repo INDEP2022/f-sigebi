@@ -186,6 +186,10 @@ export const MENU: IMenuItem[] = [
             label: 'Almacenes',
             link: '/pages/administrative-processes/warehouse-reports',
           },
+          {
+            label:'Expedientes',
+            link: '/pages/administrative-processes/record-details'
+          }
         ]
       },
       {
@@ -195,6 +199,16 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Resumen Info Financiera',
             link: '/pages/administrative-processes/summary-financial-info',
+          },
+        ]
+      },
+      {
+        label: 'Coversión de Paquetes',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Conversión Masiva',
+            link: '/pages/administrative-processes/unit-conversion-packages',
           },
         ]
       },

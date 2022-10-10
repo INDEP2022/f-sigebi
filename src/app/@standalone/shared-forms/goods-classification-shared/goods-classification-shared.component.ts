@@ -8,31 +8,31 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //Services
-//import { GoodTypeService } from 'src/app/core/services/catalogs/good-status.service';
+//import { GoodClassificationService } from 'src/app/core/services/catalogs/good-classification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
-import { IGoodStatus } from 'src/app/core/models/catalogs/good-status.model';
-import { goodsStatuData } from './goodStatusdData';
+import { IGoodClassification } from 'src/app/core/models/catalogs/good-classification.model';
+import { goodsClassData } from './goodsClassData';
 
 @Component({
-  selector: 'app-goods-status-shared',
+  selector: 'app-goods-classification-shared',
   standalone: true,
   imports: [CommonModule, SharedModule],
-  templateUrl: './goods-status-shared.component.html',
+  templateUrl: './goods-classification-shared.component.html',
   styles: [
   ]
 })
-export class GoodsStatusSharedComponent extends BasePage implements OnInit {
+export class GoodsClasificationSharedComponent extends BasePage implements OnInit {
 
   @Input() form: FormGroup;
-  @Input() goodStatusField: string = "goodStatus";
+  @Input() goodClassificationField: string = "goodClassification";
 
-  @Input() showGoodStatus: boolean = true;
+  @Input() showGoodClassification: boolean = true;
 
-  status = new DefaultSelect<IGoodStatus>();
+  classifications = new DefaultSelect<IGoodClassification>();
 
-  get goodStatus() {
-    return this.form.get(this.goodStatusField);
+  get goodClassification() {
+    return this.form.get(this.goodClassificationField);
   }
 
   constructor(/*private service: WarehouseService*/) {
@@ -42,16 +42,16 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
   ngOnInit(): void {
   }
 
-  getGoodStatus(params: ListParams) {
+  getGoodClassification(params: ListParams) {
     //Provisional data
-    let data=goodsStatuData;
+    let data=goodsClassData;
     let count= data.length;
-    this.status = new DefaultSelect(data,count);
+    this.classifications = new DefaultSelect(data,count);
     /*this.service.getAll(params).subscribe(data => {
-        this.status = new DefaultSelect(data.data,data.count);
+        this.classification = new DefaultSelect(data.data,data.count);
       },err => {
         let error = '';
-        if (err.status === 0) {
+        if (err.classification === 0) {
           error = 'Revise su conexión de Internet.';
         } else {
           error = err.message;
@@ -62,7 +62,7 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
     );*/
   }
 
-  onGoodStatusChange(type: any) {
+  onGoodClassificationChange(type: any) {
     //this.resetFields([this.subdelegation]);
     this.form.updateValueAndValidity();
   }

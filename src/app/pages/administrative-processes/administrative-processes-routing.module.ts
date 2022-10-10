@@ -26,10 +26,15 @@ const routes: Routes = [
         path: 'warehouse-reports', loadChildren: () => import('./reports/warehouse/pa-r-wh-m-warehouse.module')
           .then(m => m.PaRWhMWarehouseModule)
       },
-      /*{
-        path: 'storehouse', loadChildren: () => import('./storehouse/storehouse.module')
-          .then(m => m.StorehouseModule)
+      {
+        path: 'record-details', loadChildren: () => import('./reports/record/pa-r-r-m-record.module')
+          .then(m => m.PaRRMRecordModule)
       },
+      {
+        path: 'unit-conversion-packages', loadChildren: () => import('./unit-conversion-packages/pa-ucp-m-unit-conversion-packages.module')
+          .then(m => m.PaUcpMUnitConversionPackagesModule)
+      },
+      /*
       {
         path: 'record', loadChildren: () => import('./record/record.module')
           .then(m => m.RecordModule)
