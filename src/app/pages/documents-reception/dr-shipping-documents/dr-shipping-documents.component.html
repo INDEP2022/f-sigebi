@@ -157,6 +157,14 @@
       </div>
 
       <div class="row">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings"
+          [source]="data">
+        </ng2-smart-table>
+      </div>
+
+      <div class="row">
         <div class="col-md-12 text-right">
           <button status="success" type="submit">Guardar</button>
         </div>

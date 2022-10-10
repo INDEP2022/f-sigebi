@@ -1,12 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';  
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'ngx-form-depositaria',
   templateUrl: './form-depositaria.component.html',
   styleUrls: ['./form-depositaria.component.scss']
 })
-export class FormDepositariaComponent  {
+export class FormDepositariaComponent  extends BasePage implements OnInit{
     @Input() form: FormGroup;
     @Input() formDepositario: FormGroup;
     @Input() nombrePantalla: string;
@@ -17,6 +18,7 @@ export class FormDepositariaComponent  {
 @Output() formDepositariaValues = new EventEmitter<any>();
 
   constructor() {  
+    super();
   }
 
   ngOnInit(): void {

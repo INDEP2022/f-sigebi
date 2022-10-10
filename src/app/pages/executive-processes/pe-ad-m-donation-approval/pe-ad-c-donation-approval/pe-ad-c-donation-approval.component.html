@@ -10,8 +10,8 @@
         <form class="form-material" [formGroup]="form">
             <div class="row">
                 <div class="col-md-2">
-                    <form-field [control]="form.get('idExp')" label="No expediente">
-                        <input type="text" class="form-control" formControlName="idExp">
+                    <form-field [control]="form.get('idExp')" label="No expediente" >
+                        <input type="text" class="form-control" formControlName="idExp" minlength="1" maxlength="10">
                     </form-field>
                 </div>
                 <div class="col-md-2">
@@ -37,6 +37,10 @@
             </div>
         </form>
 
+        <div class="ch-content">
+            <h5 class="title"></h5>
+            <app-columns-select [(settings)]="settings"></app-columns-select>
+        </div>
         <ng2-smart-table class="my-table" [settings]="settings" [source]="data"></ng2-smart-table>
 
         <div class="row pt-5">

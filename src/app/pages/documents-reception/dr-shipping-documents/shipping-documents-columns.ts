@@ -1,0 +1,9 @@
+const SHIPPING_DOCUMENTS_COLUMNS = {
+  noVolante: {
+    title: 'No. Volante',
+  },
+};
+
+const SHIPPING_DOCUMENTS_EXAMPLE_DATA = [{}];
+
+export { SHIPPING_DOCUMENTS_COLUMNS, SHIPPING_DOCUMENTS_EXAMPLE_DATA };

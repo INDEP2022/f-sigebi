@@ -15,6 +15,9 @@ import { PeAabCAnnualAccumulatedAssetsComponent } from './pe-aab-c-annual-accumu
     CommonModule,
     PeAabMAnnualAccumulatedAssetsRoutingModule,
     SharedModule
+  ],
+  exports: [
+    PeAabCAnnualAccumulatedAssetsComponent
   ]
 })
 export class PeAabMAnnualAccumulatedAssetsModule { }

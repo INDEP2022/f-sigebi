@@ -34,7 +34,7 @@
             <div class="row pt-5">
                 <div class="col-md-2">
                     <form-field [control]="form.get('fromYear')" label="Recepciones del año">
-                        <input class="form-control" formControlName="fromYear">
+                        <input class="form-control" formControlName="fromYear" minlength="4" maxlength="4">
                     </form-field>
                 </div>
                 <div class="col-md-1">

@@ -9,7 +9,7 @@
         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
             <form-field [control]="form.get('noBien')" label="No. Bien">
                 <label class="label w-100">No. Bien</label>
-                <input nbInput fullWidth class="w-100" formControlName="noBien"
+                <input class="form-control" formControlName="noBien"
                         placeholder="No. Bien">
                 
             </form-field>
@@ -17,13 +17,13 @@
         <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
             <div class="form-group">
                 <label class="label w-100">Detalle No. Bien</label>
-                <input nbInput fullWidth class="w-100" placeholder="Detalle No. Bien">
+                <input class="form-control" placeholder="Detalle No. Bien">
             </div>
         </div>
         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
             <form-field [control]="form.get('cveOficio')" label="Nombramiento">
                 <label class="label w-100">Nombramiento</label>
-                <input nbInput fullWidth class="w-100" formControlName="nombramiento"
+                <input class="form-control" formControlName="nombramiento"
                         placeholder="Nombramiento">
                 
             </form-field>
@@ -31,13 +31,13 @@
         <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
             <div class="form-group">
                 <label class="label w-100">Detalle Nombramiento</label>
-                <input nbInput fullWidth class="w-100" placeholder="Detalle Nombramiento">
+                <input class="form-control" placeholder="Detalle Nombramiento">
             </div>
         </div>
         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
             <form-field [control]="form.get('cveOficio')" label="Fecha">
                 <label class="label w-100">Fecha</label>
-                <input nbInput fullWidth class="w-100" formControlName="fecha"
+                <input class="form-control" formControlName="fecha"
                         placeholder="Fecha">
                          <!-- [nbDatepicker]="formpicker1">
                 <nb-datepicker #formpicker1></nb-datepicker> -->
@@ -48,7 +48,7 @@
             <div class="form-group">
                 <label class="label">&nbsp;</label>&nbsp;  
                 <div class="d-flex justify-content-center">
-                    <button type="button" nbButton status="primary" (click)="btnEjecutar()">
+                    <button type="button" status="primary" (click)="btnEjecutar()">
                         Ejecutar
                     </button>
                 </div>
@@ -58,7 +58,7 @@
             <div class="form-group">
                 <label class="label">&nbsp;</label>&nbsp;  
                 <div class="d-flex justify-content-center">
-                    <button type="button" nbButton status="primary" (click)="btnDeshacer()">
+                    <button type="button" status="primary" (click)="btnDeshacer()">
                         Deshacer
                     </button>
                 </div>
@@ -79,7 +79,7 @@
         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
             <form-field [control]="form.get('idDepositario')" label="Id Depositario">
                 <label class="label w-100">Id Depositario</label>
-                <input nbInput fullWidth class="w-100" formControlName="idDepositario"
+                <input class="form-control" formControlName="idDepositario"
                         placeholder="Id Depositario">
                 
             </form-field>
@@ -87,7 +87,7 @@
         <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
             <form-field [control]="form.get('depositario')" label="Depositario">
                 <label class="label w-100">Depositario</label>
-                <input nbInput fullWidth class="w-100" formControlName="depositario"
+                <input class="form-control" formControlName="depositario"
                         placeholder="Depositario">
                 
             </form-field>
@@ -112,7 +112,7 @@
         <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
             <form-field [control]="form.get('fechaEjecucion')" label="Fecha Ejecución">
                 <label class="label w-100">Fecha Ejecución</label>
-                <input nbInput fullWidth class="w-100" formControlName="fechaEjecucion"
+                <input class="form-control" formControlName="fechaEjecucion"
                         placeholder="Fecha Ejecución">
                          <!-- [nbDatepicker]="formpicker2">
                 <nb-datepicker #formpicker2></nb-datepicker> -->
@@ -123,7 +123,7 @@
             <div class="form-group">
                 <label class="label">&nbsp;</label>&nbsp;  
                 <div class="d-flex justify-content-center">
-                    <button type="button" nbButton status="primary" (click)="btnRecargaDepositario()">
+                    <button type="button" status="primary" (click)="btnRecargaDepositario()">
                         Recarga Depositario
                     </button>
                 </div>
@@ -133,7 +133,7 @@
             <div class="form-group">
                 <label class="label">&nbsp;</label>&nbsp;  
                 <div class="d-flex justify-content-center">
-                    <button type="button" nbButton status="primary" (click)="btnValidacionPagos()">
+                    <button type="button" status="primary" (click)="btnValidacionPagos()">
                         Validación de Pagos
                     </button>
                 </div>
