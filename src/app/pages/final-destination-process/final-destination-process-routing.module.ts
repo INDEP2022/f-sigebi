@@ -22,6 +22,13 @@ const routes: Routes = [
       import("./destination-acts/fdp-add-m-destination-goods-acts.module").then(
         (m) => m.FdpAddMDestinationGoodsActsModule
       ),
+  },
+  {
+    path: "return-acts",
+    loadChildren: () =>
+      import("./return-acts/fdp-add-m-return-acts.module").then(
+        (m) => m.FdpAddMReturnActsModule
+      ),
   }
 ];
 

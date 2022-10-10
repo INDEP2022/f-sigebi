@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BasePage } from 'src/app/core/shared/base-page';
+
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { UPDATE_MASS_VALUE_COLUMNS } from './update-mss-value-columns';
 
 //XLSX
 import * as XLSX from 'xlsx';
@@ -11,11 +14,17 @@ import * as XLSX from 'xlsx';
   styles: [
   ]
 })
-export class PeAmdvdaCUpdateMssValueComponent implements OnInit {
-
+export class PeAmdvdaCUpdateMssValueComponent extends BasePage implements OnInit {
+  settings = TABLE_SETTINGS
   ExcelData:any;
   form: FormGroup = new FormGroup({}); 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder) {
+    super();
+    this.settings.columns = UPDATE_MASS_VALUE_COLUMNS,
+    this.settings.actions.edit = false;
+    this.settings.actions.delete = false;
+    this.settings.actions.add = false;
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -28,56 +37,6 @@ export class PeAmdvdaCUpdateMssValueComponent implements OnInit {
       
     });
   }
-
-  settings = {
-
-    actions: false,
-    hideSubHeader: true,
-
-    add: {
-      addButtonContent: '<i class="nb-plus"></i>',
-      createButtonContent: '<i class="nb-checkmark"></i>',
-      cancelButtonContent: '<i class="nb-close"></i>',
-    },
-    edit: {
-      editButtonContent: '<i class="nb-edit"></i>',
-      saveButtonContent: '<i class="nb-checkmark"></i>',
-      cancelButtonContent: '<i class="nb-close"></i>',
-    },
-    delete: {
-      deleteButtonContent: '<i class="nb-trash"></i>',
-      confirmDelete: true,
-    },
-    
-    columns: {
-      solicitante: {
-        title: 'Solicitante',
-        width: '25px'
-      },
-      fecavaluo: {
-        title: 'Fecha de Avalúo',
-      },
-      institucion: {
-        title: 'Institución',
-      },
-      perito: {
-        title: 'Perito',
-      },
-      observ: {
-        title: 'Observaciones',
-      },
-      nobien: {
-        title: 'No. Bien',
-      },
-      valoravaluo: {
-        title: 'Valor avalúo',
-      },
-      moneda: {
-        title: 'Moneda',
-      },
-    },
-    noDataMessage: "No se encontrarón registros"
-  };
 
   ReadExcel(event:any){
 

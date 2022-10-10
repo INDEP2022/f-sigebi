@@ -98,7 +98,9 @@
                             type="radio" 
                             [(ngModel)]="typeTurn" 
                             [ngModelOptions]="{standalone: true}"  
-                            value="all" />
+                            value="all" 
+                            id="all"
+                            [checked]="checked" />
                         </form-radio>   
                       </div>
                     <div class="col-sm-1">
@@ -107,7 +109,8 @@
                                 type="radio" 
                                 [(ngModel)]="typeTurn" 
                                 [ngModelOptions]="{standalone: true}"  
-                                value="any" />
+                                value="any" 
+                                id="any"/>
                         </form-radio>   
                     </div>
                     <div class="col-md-3">
@@ -142,6 +145,15 @@
             [loading]="loading"
             (confirm)="confirm()">
           </confirm-button>
+        </div>
+        <div class="m-3">
+            <button 
+                type="button" 
+                class="btn btn-secondary active" 
+                [disabled]="requestForm.invalid" 
+                (click)="confirm()">
+                Turnar
+            </button>
         </div>
        <!--  <div class="m-3">
           <button type="button" class="btn btn-danger active" (click)="close()">

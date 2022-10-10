@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ModelForm } from 'src/app/core/interfaces/ModelForm';
@@ -20,6 +20,7 @@ export class CreateRequestComponent extends BasePage implements OnInit {
   edit: boolean = false;
   typeTurn: String = '';
   bsModalRef: BsModalRef;
+  checked:string = 'checked'
 
   selectRegionalDeleg = new DefaultSelect<IRequest>();
   selectTransmitter = new DefaultSelect<IRequest>();
@@ -38,14 +39,14 @@ export class CreateRequestComponent extends BasePage implements OnInit {
   prepareForm(): void {
     this.requestForm = this.fb.group({
       date: [null],
-      noOfi: [null],
+      noOfi: [null, Validators.required],
       regDelega: [{ value: '', disabled: true }], // cargar la delegacion a la que pertence
       entity: [null],
       tranfe: [null],
       transmitter: [null],
       authority: [null],
       typeUser: [null],
-      receiUser: [{ value: '', disabled: true }],
+      receiUser: [{ value: '', disabled: true }]
     });
   }
 
@@ -80,18 +81,22 @@ export class CreateRequestComponent extends BasePage implements OnInit {
         console.log(res);
         this.requestForm.get('receiUser').patchValue(res.user);
       });
+    } else {
+      this.msgModal('','Tiene que seleccionar el tipo de usuario','','info');
     }
   }
 
   confirm(): void {
-    this.question();
+    console.log(this.requestForm)
+    this.msgModal('Turnar','Desea crear el registro de solicitud?','Confirmacion','info');
   }
 
-  question(){
+  msgModal(btnTitle:string, message:string,title:string,typeMsg:any){
     this.alertQuestion(
-      'info',
-      'Confirmacion',
-      'Desea crear el registro de solicitud?'
+      typeMsg,
+      title,
+      message,
+      btnTitle
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio

@@ -6,19 +6,19 @@
 <!-- Forms OFICIO INICIO FIN -->
 <form [formGroup]="formOficioInicioFin">
     <div class="row w-100">
-        <div class="col-sm-12 col-12 col-md-12 pr-3">
-            <form-field [control]="formOficioInicioFin.get('inicio')" label="Parrafo">
-                <label class="label w-100">Inicio</label>
-                <textarea nbInput fullWidth fullWidth placeholder="Inicio"
-                class="w-100" formControlName="inicio"></textarea>
+        <div class="col-sm-12 col-12 col-md-6 pr-3">
+            <form-field [control]="formOficioInicioFin.get('inicio')" label="Inicio">
+                <!-- <label class="label w-100">Inicio</label> -->
+                <textarea placeholder="Inicio"
+                class="form-control" formControlName="inicio"></textarea>
                  
             </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-12 pr-3">
-            <form-field [control]="formOficioInicioFin.get('fin')" label="Parrafo">
-                <label class="label w-100">Fin</label>
-                <textarea nbInput fullWidth fullWidth placeholder="Fin"
-                class="w-100" formControlName="fin"></textarea>
+        <div class="col-sm-12 col-12 col-md-6 pr-3">
+            <form-field [control]="formOficioInicioFin.get('fin')" label="Fin">
+                <!-- <label class="label w-100">Fin</label> -->
+                <textarea placeholder="Fin"
+                class="form-control" formControlName="fin"></textarea>
                  
             </form-field>
         </div>
@@ -47,7 +47,7 @@
 <!-- Form CON COPIA PARA -->
 <form [formGroup]="formCcpOficio">
     <div class="row tp-2 mb-2">
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-1 pt-0 pb-0">
+        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-1 pt-0 pb-0">
             
             <form-field [control]="formCcpOficio.get('ccp')" label="C.P.P">
               <select class="form-control" formControlName="ccp">
@@ -58,7 +58,7 @@
             </form-field>
 
         </div>
-        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-1 pt-0 pb-0">
+        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-1 pt-0 pb-0">
             
             <form-field [control]="formCcpOficio.get('usuario')" label="Usuario">
                 <select class="form-control" formControlName="usuario">
@@ -68,15 +68,15 @@
               </form-field>
               
         </div>
-        <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-1 pt-0 pb-0">
+        <div class="col-sm-12 col-12 col-md-7 col-lg-7 p-1 pt-0 pb-0">
             <div class="form-group pt-1 pb-1 mb-1">
-                <label class="label w-100">Nombre Usuario</label>
-                <input nbInput fullWidth type="number" class="w-100" formControlName="nombreUsuario"
-                        placeholder="Nombre Usuario">
+                <input type="number" class="form-control" formControlName="nombreUsuario"
+                placeholder="Nombre Usuario">
+                <label class="form-control-label w-100">Nombre Usuario</label>
                  
             </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-1 pt-0 pb-0">
+        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-1 pt-0 pb-0">
             
             <form-field [control]="formCcpOficio.get('ccp2')" label="C.P.P">
               <select class="form-control" formControlName="ccp2">
@@ -87,7 +87,7 @@
             </form-field>
             
         </div>
-        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-1 pt-0 pb-0">
+        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-1 pt-0 pb-0">
             
             <form-field [control]="formCcpOficio.get('usuario2')" label="Usuario">
                 <select class="form-control" formControlName="usuario2">
@@ -97,11 +97,11 @@
               </form-field>
               
         </div>
-        <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-1 pt-0 pb-0">
+        <div class="col-sm-12 col-12 col-md-7 col-lg-7 p-1 pt-0 pb-0">
             <div class="form-group pt-1 pb-1 mb-1">
-                <label class="label w-100">Nombre Usuario</label>
-                <input nbInput fullWidth type="number" class="w-100" formControlName="nombreUsuario2"
-                        placeholder="Nombre Usuario">
+                <input type="number" class="form-control" formControlName="nombreUsuario2"
+                placeholder="Nombre Usuario">
+                <label class="form-control-label w-100">Nombre Usuario</label>
                  
             </div>
         </div>
