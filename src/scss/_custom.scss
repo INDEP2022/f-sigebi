@@ -5,6 +5,7 @@
 .container {
   max-width: 100% !important;
 }
+
 /**
   *Add padding for main content
 **/
@@ -835,4 +836,10 @@
   color: #fff !important;
   background-color: #b38e5d !important;
   border-color: #b38e5d !important;
+}
+
+input[type='checkbox'],
+input[type='radio'] {
+  height: 2rem !important;
+  width: 2rem !important;
 }

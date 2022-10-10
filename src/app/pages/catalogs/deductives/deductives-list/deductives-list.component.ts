@@ -27,7 +27,6 @@ export class DeductivesListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = DEDUCTIVE_COLUMNS;
-    this.settings.actions.delete = true;
   }
 
   ngOnInit(): void {
