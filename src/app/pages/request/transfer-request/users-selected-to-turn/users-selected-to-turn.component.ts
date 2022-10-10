@@ -1,29 +1,28 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
 import { IRequestInTurnSelected } from 'src/app/core/models/catalogs/request-in-turn-selected.model';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TURN_SELECTED_COLUMNS } from './request-in-turn-selected-columns';
+import { TURN_SELECTED_COLUMNS } from '../../request-in-turn/request-in-turn-selected/request-in-turn-selected-columns';
 
 @Component({
-  selector: 'app-request-in-turn-selected',
-  templateUrl: './request-in-turn-selected.component.html',
+  selector: 'app-users-selected-to-turn',
+  templateUrl: './users-selected-to-turn.component.html',
   styles: [
   ]
 })
-export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
-  requestForm: FormGroup;
+export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
   title:string = '¿DESEAS TURNAR LAS SOLICITUDES SELECCIONAS?';
   settings = TABLE_SETTINGS
   paragraphs: IRequestInTurnSelected[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams);
+  public event: EventEmitter<any> = new EventEmitter();
   totalItems: number = 0;
-  requestInTurn: any;
-
+  typeTurn: string;
+  
   constructor(
     public modalRef: BsModalRef,
     public fb: FormBuilder
@@ -39,20 +38,24 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.prepareForm();       
+    //todo: search users by the type user and display
+    console.log(this.typeTurn);
+    
   }
 
-  prepareForm(){
-    this.requestForm = this.fb.group({
-      typeUser: ['te'],
-    });
+  triggerEvent(item:IRequestInTurnSelected){
+    this.event.emit(item)
   }
 
-  confirm(){
-    console.log(this.requestForm)
+  confirm():void{
+    let user = {user:'Jon Estragos', email: 'email.com'};
+
+    this.triggerEvent(user);
+    this.close();
   }
 
-  close(){
+  close():void{
     this.modalRef.hide();
   }
+
 }

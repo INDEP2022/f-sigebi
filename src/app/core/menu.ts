@@ -373,6 +373,10 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Solicitudes a turno',
         link: '/pages/request/request-in-turn'
+      },
+      {
+        label: 'Solicitudes de transferencia',
+        link: '/pages/request/transfer-request'
       }
     ]
   },
