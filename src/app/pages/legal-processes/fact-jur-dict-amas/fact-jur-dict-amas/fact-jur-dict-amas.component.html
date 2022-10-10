@@ -1,0 +1,215 @@
+<app-card [header]="true" class="cat-card">
+    <div class="ch-content" header>
+        <span class="title">
+            Dictaminaciones Jurídicas
+        </span>
+    </div>
+
+    <div body>
+        <form [formGroup]="legalForm" class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group row">
+                        <label class="label form-control-label col-md-3">Tipo Dicatminación</label>
+                        <div class="col-md-9">
+                            <form-field [control]="legalForm.get('tipoDictaminacion')" label="Tipo de dictaminación">
+                              <select class="form-control" formControlName="tipoDictaminacion">
+                                <option [value]="null">Seleccione un valor</option>
+                                <option [value]="'Alta'">Alta</option>
+                                <option [value]="'Normal'">Normal</option>
+                              </select>
+                            </form-field>
+                            <!-- <nb-select fullWidth placeholder="Tipo de dictaminación"
+                                formControlName="tipoDictaminacion">
+                                <nb-option value="Alta">Alta</nb-option>
+                                <nb-option value="Normal">Normal</nb-option>
+                            </nb-select> -->
+                            
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="label col-md-3 form-control-label">No Expediente</label>
+                        <div class="col-md-9">
+                            <input class="form-control" type="number" nbInput fullWidth formControlName="noExpediente">
+                                <!-- [status]="legalForm.get('noExpediente').errors?.required && legalForm.get('noExpediente').touched ? 'danger' : ''"> -->
+                            
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="label col-md-3 form-control-label">Averi. Previa</label>
+                        <div class="col-md-9">
+                            <input class="form-control" type="text" nbInput fullWidth formControlName="averPrevia">
+                                <!-- [status]="legalForm.get('averPrevia').errors?.required && legalForm.get('averPrevia').touched ? 'danger' : ''"> -->
+                            
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="label col-md-3 form-control-label">Causa Penal</label>
+                        <div class="col-md-9">
+                            <input class="form-control" type="text" nbInput fullWidth formControlName="causaPenal">
+                                <!-- [status]="legalForm.get('causaPenal').errors?.required && legalForm.get('causaPenal').touched ? 'danger' : ''"> -->
+                            
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="checkbox col-md-12 text-right">
+                            <nb-checkbox formControlName="esPropiedad">¿El expediente es delito propiedad intelectual?
+                            </nb-checkbox>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="label form-control-label">Observaciones del Dictamen</label>
+                        <textarea class="form-control" rows="2" nbInput fullWidth formControlName="observaciones">
+                            <!-- [status]="legalForm.get('observaciones').errors?.required && legalForm.get('observaciones').touched ? 'danger' : ''"> -->
+                        </textarea>
+                        
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group row">
+                                <label class="label col-md-3 form-control-label">Fec. Dest.</label>
+                                <div class="col-md-9">
+                                    <input class="form-control" nbInput fullWidth formControlName="fecDest">
+                                        <!-- [nbDatepicker]="dest"
+                                        [status]="legalForm.get('fecDest').errors?.required && legalForm.get('fecDest').touched ? 'danger' : ''">
+                                    <nb-datepicker #dest></nb-datepicker> -->
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="form-group row">
+                                <label class="label col-md-3 form-control-label">Fec Dictamina</label>
+                                <div class="col-md-9">
+                                    <input class="form-control" nbInput fullWidth formControlName="fecDicta">
+                                        <!-- [nbDatepicker]="dicta"
+                                        [status]="legalForm.get('fecDicta').errors?.required && legalForm.get('fecDicta').touched ? 'danger' : ''">
+                                    <nb-datepicker #dicta></nb-datepicker> -->
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="label col-md-3 form-control-label">Autoriza Dict.</label>
+                        <div class="col-md-9">
+                            <ngx-select [form]="legalForm" control="autoriza"></ngx-select>
+                            
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="label col-md-3 form-control-label">Cve. Oficio</label>
+                        <div class="col-md-9">
+                            <input class="form-control" type="test" nbInput fullWidth formControlName="cveOficio">
+                                <!-- [status]="legalForm.get('cveOficio').errors?.required && legalForm.get('cveOficio').touched ? 'danger' : ''"> -->
+                            
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 text-center text-danger">
+                            <b>Estatus</b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+
+                </div>
+            </div>
+            <hr class="row">
+            <div class="row">
+                <div class="col-md-2">
+                    <form-field [control]="legalForm.get('test')" label="Ident.">
+                      <select class="form-control" formControlName="test">
+                        <option [value]="null">Seleccione un valor</option>
+                        <option [value]="'Alta'">Alta</option>
+                        <option [value]="'Normal'">Normal</option>
+                      </select>
+                    </form-field>
+                    <!-- <label class="label">Ident.</label>
+                    <nb-select fullWidth formControlName="test">
+                        <nb-option value="Alta">Alta</nb-option>
+                        <nb-option value="Normal">Normal</nb-option>
+                    </nb-select> -->
+                </div>
+
+                <div class="col-md-10">
+                    <form-field [control]="legalForm.get('test')" label="Subtipo - Ssubtipo - Sssubtipo">
+                      <select class="form-control" formControlName="test">
+                        <option [value]="null">Seleccione un valor</option>
+                        <option [value]="'Alta'">Alta</option>
+                        <option [value]="'Normal'">Normal</option>
+                      </select>
+                    </form-field>
+                    <!-- <label class="label">Subtipo - Ssubtipo - Sssubtipo</label>
+                    <nb-select fullWidth formControlName="test">
+                        <nb-option value="Alta">Alta</nb-option>
+                        <nb-option value="Normal">Normal</nb-option>
+                    </nb-select> -->
+                </div>
+            </div>
+
+            <div class="row pt-2">
+                <ng2-smart-table class="col-md-12" [settings]="settings1" [source]="data1"></ng2-smart-table>
+            </div>
+
+            <div class="row pt-2">
+                <div class="col-md-12 text-center">
+                    <button nbButton class="mx-2">
+                        ICONO
+                        <!-- <nb-icon icon="arrow-ios-upward-outline"></nb-icon> -->
+                    </button>
+                    <button nbButton class="mx-2">
+                        ICONO
+                        <!-- <nb-icon icon="arrowhead-up-outline"></nb-icon> -->
+                    </button>
+                    <button nbButton class="mx-2">
+                        ICONO
+                        <!-- <nb-icon icon="arrow-ios-downward-outline"></nb-icon> -->
+                    </button>
+                    <button nbButton class="mx-2">
+                        ICONO
+                        <!-- <nb-icon icon="arrowhead-down-outline"></nb-icon> -->
+                    </button>
+                </div>
+            </div>
+
+            <div class="row pt-2">
+                <ng2-smart-table class="col-md-12" [settings]="settings2" [source]="data2"></ng2-smart-table>
+            </div>
+
+            <div class="row pt-2">
+                <div class="col-md-8">
+                    <div class="row">
+                        <ng2-smart-table class="col-md-10" [settings]="settings3" [source]="data3"></ng2-smart-table>
+                        <div class="col-md-2">
+                            <p class="text-info h5">
+                                No. bien
+                            </p>
+                            <p class="text-info h5">
+                                66345
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <button nbButton class="mr-2 mb-4" size="small">Documentos</button>
+                    <button nbButton class="mr-2 mb-4" size="small">Aprobar</button>
+                    <button nbButton class="mr-2 mb-4" size="small">Personalizar</button>
+                    <button nbButton size="small" class="mb-4">Borrar Dictamen</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</app-card>

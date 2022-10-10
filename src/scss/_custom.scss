@@ -1,3 +1,18 @@
+/**
+  *css class to display on large screens for footer & header
+  *@media (min-width: 1200px)
+**/
+.container {
+  max-width: 100% !important;
+}
+/**
+  *Add padding for main content
+**/
+.page-content {
+    margin-top: 80px;
+    padding: 30px;
+}
+
 // dropdown
 .dropdown-toggle {
   &:after {

@@ -41,25 +41,14 @@ export class GoodSubtypesListComponent extends BasePage implements OnInit {
       next: response => {
         this.paragraphs = response.data;
         this.totalItems = response.count;
+        console.log(this.paragraphs);
         this.loading = false;
       },
       error: error => (this.loading = false),
     });
   }
 
-  // openModal(context?: Partial<GoodSubtypeFormComponent>) {
-  //   const modalRef = this.modalService.show(GoodSubtypeFormComponent, {
-  //     initialState: context,
-  //     class: 'modal-lg modal-dialog-centered',
-  //     ignoreBackdropClick: true,
-  //   });
-  //   modalRef.content.refresh.subscribe(next => {
-  //     if (next) this.getExample();
-  //   });
-  // }
-
   openForm(goodSubtype?: IGoodSubType) {
-    console.log(goodSubtype);
     let config: ModalOptions = {
       initialState: {
         goodSubtype,

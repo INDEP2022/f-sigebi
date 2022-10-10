@@ -6,12 +6,20 @@ import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IDelegation } from '../../models/catalogs/delegation.model';
+import { IStateOfRepublic } from '../../models/catalogs/state-of-republic.model';
+import { IZoneGeographic } from '../../models/catalogs/zone-geographic.model';
 @Injectable({
   providedIn: 'root',
 })
 export class DelegationService implements ICrudMethods<IDelegation> {
   private readonly route: string = ENDPOINT_LINKS.Delegation;
-  constructor(private delegationRepository: Repository<IDelegation>) {}
+  private readonly statesRoute = ENDPOINT_LINKS.StateOfRepublic;
+  private readonly zonesRoute = ENDPOINT_LINKS.ZoneGeographic;
+  constructor(
+    private delegationRepository: Repository<IDelegation>,
+    private statesRepository: Repository<IStateOfRepublic>,
+    private zonesRepository: Repository<IZoneGeographic>
+  ) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IDelegation>> {
     return this.delegationRepository.getAllPaginated(this.route, params);
@@ -31,5 +39,13 @@ export class DelegationService implements ICrudMethods<IDelegation> {
 
   remove(id: string | number): Observable<Object> {
     return this.delegationRepository.remove(this.route, id);
+  }
+
+  getStates(params: ListParams) {
+    return this.statesRepository.getAllPaginated(this.statesRoute, params);
+  }
+
+  getZones(params: ListParams) {
+    return this.zonesRepository.getAllPaginated(this.zonesRoute, params);
   }
 }

@@ -1,0 +1,422 @@
+<form [formGroup]="form" (submit)="mostrarInfo()">
+    <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-6 p-2 pr-3">
+            <div class="row">
+                <div class="col-sm-12 col-12 col-md-6 p-1">
+                    <form-field [control]="form.get('noVolante')" label="No Volante">
+                        <label class="label w-100">No Volante</label>
+                        <input nbInput fullWidth type="number" class="w-100" formControlName="noVolante"
+                                placeholder="No Volante">
+                        
+                    </form-field>
+                <!-- </div>
+                <div class="col-sm-12 col-12 col-md-6 p-1"> -->
+                    <form-field [control]="form.get('fechaRecepcion')" label="Fec. Recepción">
+                        <label class="label w-100">Fec. Recepción</label>
+                        <input nbInput fullWidth class="w-100" formControlName="fechaRecepcion"
+                                placeholder="Fec. Recepción" bsDatepicker>
+                                <!-- [nbDatepicker]="formpicker1">
+                        <nb-datepicker #formpicker1></nb-datepicker> -->
+                        
+                    </form-field>
+                <!-- </div>
+                <div class="col-sm-12 col-12 col-md-6 p-1"> -->
+                    <form-field [control]="form.get('consecutivoDiario')" label="Consecutivo Diario">
+                        <label class="label w-100">Consecutivo Diario</label>
+                        <input nbInput fullWidth type="number" class="w-100" formControlName="consecutivoDiario"
+                                placeholder="Consecutivo Diario">
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 p-1">
+                    <form-field [control]="form.get('tipoVolante')" label="Tipo Volante">
+                        <label class="label w-100">Tipo Volante</label>
+                        <ng-container *ngFor="let option of optionsTipoVolante">
+                            <form-radio label="{{ option.label }}">
+                                <input type="radio" formControlName="tipoVolante" [value]="option.value" />
+                            </form-radio>
+                        </ng-container>
+
+                        <!-- <nb-radio-group formControlName="tipoVolante" class="w-100">
+                            <nb-radio class="p-2"
+                                *ngFor="let option of optionsTipoVolante"
+                                [value]="option.value">
+                                {{ option.label }}
+                            </nb-radio>
+                        </nb-radio-group> -->
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-12 p-1">
+                    <form-field [control]="form.get('actaCircunst')" label="Acta Circunst.">
+                        <label class="label w-100">Acta Circunst.</label>
+                        <input nbInput fullWidth class="w-100" formControlName="actaCircunst"
+                                placeholder="Acta Circunst.">
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-12 p-1">
+                    <form-field [control]="form.get('averigPrevia')" label="Averig. Previa">
+                        <label class="label w-100">Averig. Previa</label>
+                        <input nbInput fullWidth class="w-100" formControlName="averigPrevia"
+                                placeholder="Averig. Previa">
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-12 p-1">
+                    <form-field [control]="form.get('causaPenal')" label="Causa Penal">
+                        <label class="label w-100">Causa Penal</label>
+                        <input nbInput fullWidth class="w-100" formControlName="causaPenal"
+                                placeholder="Causa Penal">
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-12 p-1">
+                    <form-field [control]="form.get('noAmparo')" label="No. Amparo">
+                        <label class="label w-100">No. Amparo</label>
+                        <input nbInput fullWidth class="w-100" formControlName="noAmparo"
+                                placeholder="No. Amparo">
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-12 p-1">
+                    <form-field [control]="form.get('tocaPenal')" label="Toca Penal">
+                        <label class="label w-100">Toca Penal</label>
+                        <input nbInput fullWidth class="w-100" formControlName="tocaPenal"
+                                placeholder="Toca Penal">
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-12 p-1">
+                    <form-field [control]="form.get('noOficio')" label="No. Oficio">
+                        <label class="label w-100">No. Oficio</label>
+                        <input nbInput fullWidth class="w-100" formControlName="noOficio"
+                                placeholder="No. Oficio">
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-12 p-1">
+                    <form-field [control]="form.get('fechaOficio')" label="Fecha Oficio">
+                        <label class="label w-100">Fecha Oficio</label>
+                        <input nbInput fullWidth class="w-100" formControlName="fechaOficio"
+                                placeholder="Fecha Oficio">
+                                 <!-- [nbDatepicker]="formpicker2">
+                        <nb-datepicker #formpicker2></nb-datepicker> -->
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-12 p-1">
+                    <form-field [control]="form.get('descripcionAsunto')" label="Descripción del Asunto">
+                        <label class="label w-100">Descripción del Asunto</label>
+                        <textarea nbInput fullWidth fullWidth placeholder="Descripción del Asunto"
+                        class="w-100" formControlName="descripcionAsunto"></textarea>
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
+                    <form-field [control]="form.get('noExpediente')" label="No. Expediente">
+                        <label class="label w-100">No. Expediente</label>
+                        <input nbInput fullWidth type="number" class="w-100" formControlName="noExpediente"
+                                placeholder="No. Expediente">
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
+                    <form-field [control]="form.get('remitente')" label="Remitente">
+                        <label class="label w-100">Remitente</label>
+                        <input nbInput fullWidth class="w-100" formControlName="remitente"
+                                placeholder="Remitente">
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Asunto ID</label>
+                        <input id="idAsunto" nbInput fullWidth class="w-100"
+                                placeholder="Asunto">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
+                    <form-field [control]="form.get('asunto')" label="Asunto">
+                        <label class="label w-100">Asunto</label>
+                        <input nbInput fullWidth class="w-100" formControlName="asunto"
+                                placeholder="Asunto">
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Desahogo Asunto ID</label>
+                        <input id="idDesahogo" nbInput fullWidth class="w-100"
+                                placeholder="Desahogo Asunto">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
+                    <form-field [control]="form.get('desahogoAsunto')" label="Desahogo Asunto">
+                        <label class="label w-100">Desahogo Asunto</label>
+                        <input nbInput fullWidth class="w-100" formControlName="desahogoAsunto"
+                                placeholder="Desahogo Asunto">
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Ciudad ID</label>
+                        <input id="idCiudad" nbInput fullWidth class="w-100"
+                                placeholder="Ciudad">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
+                    <form-field [control]="form.get('ciudad')" label="Ciudad">
+                        <label class="label w-100">Ciudad</label>
+                        <input nbInput fullWidth class="w-100" formControlName="ciudad"
+                                placeholder="Ciudad">
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Entidad Federativa ID</label>
+                        <input id="idEntidadFederativa" nbInput fullWidth class="w-100"
+                                placeholder="Entidad Federativa">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
+                    <form-field [control]="form.get('entidadFederativa')" label="Entidad Federativa">
+                        <label class="label w-100">Entidad Federativa</label>
+                        <input nbInput fullWidth class="w-100" formControlName="entidadFederativa"
+                                placeholder="Entidad Federativa">
+                        
+                    </form-field>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 p-2 pl-3">
+            <div class="row">
+                <div class="col-sm-12 col-12 col-md-6 offset-md-6 col-lg-6 offset-lg-6 p-1">
+                    <form-field [control]="form.get('claveUnica')" label="Clave Única">
+                        <label class="label w-100">Clave Única</label>
+                        <input nbInput fullWidth class="w-100" formControlName="claveUnica"
+                                placeholder="Clave Única">
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Transferente ID</label>
+                        <input id="idTransferente" nbInput fullWidth class="w-100"
+                                placeholder="Transferente ID">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
+                    <form-field [control]="form.get('transferente')" label="Transferente">
+                        <label class="label w-100">Transferente</label>
+                        <input nbInput fullWidth class="w-100" formControlName="transferente"
+                                placeholder="Transferente">
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Emisora ID</label>
+                        <input id="idEmisora" nbInput fullWidth class="w-100"
+                                placeholder="Emisora ID">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
+                    <form-field [control]="form.get('emisora')" label="Emisora">
+                        <label class="label w-100">Emisora</label>
+                        <input nbInput fullWidth class="w-100" formControlName="emisora"
+                                placeholder="Emisora">
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Autoridad ID</label>
+                        <input id="idAutoridad" nbInput fullWidth class="w-100"
+                                placeholder="Autoridad ID">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
+                    <form-field [control]="form.get('autoridad')" label="Autoridad">
+                        <label class="label w-100">Autoridad</label>
+                        <input nbInput fullWidth class="w-100" formControlName="autoridad"
+                                placeholder="Autoridad">
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Autoridad Emisora</label>
+                        <input id="idAutoridadEmisora" nbInput fullWidth class="w-100"
+                                placeholder="Autoridad Emisora">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
+                    <form-field [control]="form.get('autoridadEmisora')" label="Autoridad Emisora">
+                        <label class="label w-100">Autoridad Emisora</label>
+                        <input nbInput fullWidth class="w-100" formControlName="autoridadEmisora"
+                                placeholder="Autoridad Emisora">
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Ministerio Publico</label>
+                        <input id="idMinisterioPublico" nbInput fullWidth class="w-100"
+                                placeholder="Ministerio Publico">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
+                    <form-field [control]="form.get('ministerioPublico')" label="Ministerio Público">
+                        <label class="label w-100">Ministerio Público</label>
+                        <input nbInput fullWidth class="w-100" formControlName="ministerioPublico"
+                                placeholder="Ministerio Publico">
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Juzgado</label>
+                        <input id="idJuzgado" nbInput fullWidth class="w-100"
+                                placeholder="Juzgado">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
+                    <form-field [control]="form.get('juzgado')" label="Juzgado">
+                        <label class="label w-100">Juzgado</label>
+                        <input nbInput fullWidth class="w-100" formControlName="juzgado"
+                                placeholder="Juzgado">
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Indiciado</label>
+                        <input id="idIndiciado" nbInput fullWidth class="w-100"
+                                placeholder="Indiciado">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
+                    <form-field [control]="form.get('indiciado')" label="Indiciado">
+                        <label class="label w-100">Indiciado</label>
+                        <input nbInput fullWidth class="w-100" formControlName="indiciado"
+                                placeholder="Indiciado">
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Delito</label>
+                        <input id="idDelito" nbInput fullWidth class="w-100"
+                                placeholder="Delito">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
+                    <form-field [control]="form.get('delito')" label="Delito">
+                        <label class="label w-100">Delito</label>
+                        <input nbInput fullWidth class="w-100" formControlName="delito"
+                                placeholder="Delito">
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Vía Recepción</label>
+                        <input id="idViaRecepcion" nbInput fullWidth class="w-100"
+                                placeholder="Vía Recepción">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
+                    <form-field [control]="form.get('viaRecepcion')" label="Vía Recepción">
+                        <label class="label w-100">Vía Recepción</label>
+                        <input nbInput fullWidth class="w-100" formControlName="viaRecepcion"
+                                placeholder="Vía Recepción">
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-1">
+                    <form-field [control]="form.get('areaDestino')" label="Áree Destino">
+                        <label class="label w-100">Ärea Destino</label>
+                        <input nbInput fullWidth class="w-100" formControlName="areaDestino"
+                                placeholder="Ärea Destino">
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Ärea Destino</label>
+                        <input nbInput fullWidth class="w-100" placeholder="Ärea Destino">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Ärea Destino</label>
+                        <input nbInput fullWidth class="w-100" placeholder="Ärea Destino">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Ärea Destino</label>
+                        <input nbInput fullWidth class="w-100" placeholder="Ärea Destino">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-1">
+                    <div class="form-group">
+                        <label class="label w-100">Destinatario</label>
+                        <input id="idDestinatario" nbInput fullWidth class="w-100"
+                                placeholder="Destinatario">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-8 p-1">
+                    <form-field [control]="form.get('destinatario')" label="Destinatario">
+                        <label class="label w-100">Destinatario</label>
+                        <input nbInput fullWidth class="w-100" formControlName="destinatario"
+                                placeholder="Destinatario">
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-12 p-1">
+                    <form-field [control]="form.get('justificacionConocimiento')" label="Justificación del Conocimiento">
+                        <label class="label w-100">Justificación del Conocimiento</label>
+                        <textarea nbInput fullWidth fullWidth placeholder="Justificación del Conocimiento"
+                        class="w-100" formControlName="justificacionConocimiento"></textarea>
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-12 p-1">
+                    <div class="form-group">
+                        <label class="label">&nbsp;</label>&nbsp;  
+                        <div class="d-flex justify-content-center">
+                            <button type="submit" nbButton status="primary" [disabled]="!form.valid">
+                                Resignación de Turno
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="botonOficio" class="col-sm-12 col-12 col-md-12 p-1">
+                    <div class="form-group">
+                        <label class="label">&nbsp;</label>&nbsp;  
+                        <div class="d-flex justify-content-center">
+                            <button type="button" nbButton status="primary" (click)="oficioRelacionado()">
+                                Oficio Relacionado
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="botonCaptura" class="col-sm-12 col-12 col-md-12 p-1">
+                    <div class="form-group">
+                        <label class="label">&nbsp;</label>&nbsp;  
+                        <div class="d-flex justify-content-center">
+                            <button type="button" nbButton status="primary" (click)="capturaCopias()">
+                                Captura de Copias
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</form>
