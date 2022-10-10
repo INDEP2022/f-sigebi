@@ -110,6 +110,10 @@ export const MENU: IMenuItem[] = [
         link: '/pages/catalogs/payment-concept',
       },
       {
+        label: 'Clasificación SIAB',
+        link: '/pages/catalogs/siab-clasification',
+      },
+      {
         label: 'Institución Clasificación',
         link: '/pages/catalogs/intitution-classification',
       },
@@ -343,6 +347,22 @@ export const MENU: IMenuItem[] = [
         label: 'Derivación Bienes',
         link: '/pages/administrative-processes/derivation-goods',
       },
+      {
+        label: 'Solicitud de Avalúos',
+        link: '/pages/administrative-processes/appraisal-request',
+      },
+      {
+        label: 'Registro de Avalúos',
+        link: '/pages/administrative-processes/appraisal-registry',
+      },
+      {
+        label: 'Monitor de Avalúos',
+        link: '/pages/administrative-processes/appraisal-monitor',
+      },
+      {
+        label: 'Bienes sin Avalúos',
+        link: '/pages/administrative-processes/appraisal-goods',
+      },
     ],
   },
   {
@@ -469,6 +489,4 @@ export const MENU: IMenuItem[] = [
   // PROCESOS JURIDICOS
   menuOptionsJuridicalProcesses,
   // PROCESOS JURIDICOS
-  
-
 ];

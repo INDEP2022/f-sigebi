@@ -382,15 +382,13 @@ const routes: Routes = [
   {
     path: 'type-docto',
     loadChildren: async () =>
-      (await import('./type-docto/type-docto.module'))
-        .TypeDoctoModule,
+      (await import('./type-docto/type-docto.module')).TypeDoctoModule,
     data: { title: 'Tipo Docto' },
   },
   {
     path: 'type-sinister',
     loadChildren: async () =>
-      (await import('./type-sinister/type-sinister.module'))
-        .TypeSinisterModule,
+      (await import('./type-sinister/type-sinister.module')).TypeSinisterModule,
     data: { title: 'Tipo Siniestro' },
   },
   {
@@ -403,8 +401,7 @@ const routes: Routes = [
   {
     path: 'type-services',
     loadChildren: async () =>
-      (await import('./type-services/type-services.module'))
-        .TypeServicesModule,
+      (await import('./type-services/type-services.module')).TypeServicesModule,
     data: { title: 'Tipo de Servicios' },
   },
   {
@@ -417,8 +414,7 @@ const routes: Routes = [
   {
     path: 'type-relevant',
     loadChildren: async () =>
-      (await import('./type-relevant/type-relevant.module'))
-        .TypeRelevantModule,
+      (await import('./type-relevant/type-relevant.module')).TypeRelevantModule,
     data: { title: 'Tipo relevante' },
   },
   {
@@ -438,8 +434,7 @@ const routes: Routes = [
   {
     path: 'status-code',
     loadChildren: async () =>
-      (await import('./status-code/status-code.module'))
-        .StatusCodeModule,
+      (await import('./status-code/status-code.module')).StatusCodeModule,
     data: { title: 'Código estado' },
   },
   {
@@ -469,6 +464,13 @@ const routes: Routes = [
       (await import('./court/court.module'))
         .CourtModule,
     data: { title: 'Juzgados' },
+  },
+  {
+    path: 'siab-clasification',
+    loadChildren: async () =>
+      (await import('./siab-clasification/siab-clasification.module'))
+        .SiabClasificationModule,
+    data: { title: 'Clasificacion SIAB' },
   },
 ];
 

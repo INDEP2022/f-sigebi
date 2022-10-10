@@ -8,13 +8,6 @@ const routes: Routes = [
     pathMatch: 'prefix',
     component: AdministrativeProcessesComponent,
     children: [
-      {
-        path: 'numerary-operator',
-        loadChildren: async () =>
-          (await import('./numerary-operator/numerary-operator.module'))
-            .NumeraryOperatorModule,
-        data: { title: 'Numerario Operado' },
-      },
       /*{
         path: 'numerary-physics', loadChildren: () => import('./numerary-physics/numerary-physics.module')
           .then(m => m.NumeraryPhysicsModule)
@@ -104,29 +97,59 @@ const routes: Routes = [
       {
         path: 'conversion-act',
         loadChildren: async () =>
-          (await import('./conversion-act/conversion-act.module')).ConversionActModule,
+          (await import('./conversion-act/conversion-act.module'))
+            .ConversionActModule,
         data: { title: 'Actas de converision' },
-
       },
       {
         path: 'conversion-act',
         loadChildren: async () =>
-          (await import('./conversion-act/conversion-act.module')).ConversionActModule,
+          (await import('./conversion-act/conversion-act.module'))
+            .ConversionActModule,
         data: { title: 'Actas de converision' },
-
       },
       {
         path: 'conversion-management',
         loadChildren: async () =>
-          (await import('./conversion-management/conversion-management.module')).ConversionManagementModule,
+          (await import('./conversion-management/conversion-management.module'))
+            .ConversionManagementModule,
         data: { title: 'Administracion de converision' },
       },
       {
         path: 'derivation-goods',
         loadChildren: async () =>
-          (await import('./derivation-goods/derivation-goods.module')).DerivationGoodsModule,
+          (await import('./derivation-goods/derivation-goods.module'))
+            .DerivationGoodsModule,
         data: { title: 'Derivacion de bienes' },
-      }
+      },
+      {
+        path: 'appraisal-request',
+        loadChildren: async () =>
+          (await import('./appraisal-request/appraisal-request.module'))
+            .AppraisalRequestModule,
+        data: { title: 'Solicitud de Avalúos' },
+      },
+      {
+        path: 'appraisal-registry',
+        loadChildren: async () =>
+          (await import('./appraisal-registry/appraisal-registry.module'))
+            .AppraisalRegistryModule,
+        data: { title: 'Registro de Avalúos' },
+      },
+      {
+        path: 'appraisal-monitor',
+        loadChildren: async () =>
+          (await import('./appraisal-monitor/appraisal-monitor.module'))
+            .AppraisalMonitorModule,
+        data: { title: 'Monitor de Avalúos' },
+      },
+      {
+        path: 'appraisal-goods',
+        loadChildren: async () =>
+          (await import('./appraisal-goods/appraisal-goods.module'))
+            .AppraisalGoodsModule,
+        data: { title: 'Bienes sin Avalúos' },
+      },
     ],
   },
 ];

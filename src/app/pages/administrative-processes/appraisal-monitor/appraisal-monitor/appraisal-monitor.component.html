@@ -1,0 +1,44 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">MONITOR DE AVALÚOS</h5>
+    <div class="col-md-5 buttons">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+    </div>
+  </div>
+
+  <div body>
+    <div class="row">
+      <form action="" [formGroup]="form">
+        <div class="form-material col-md-2">
+          <form-field [control]="form.get('pastDays')" label="Dias vencidos">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="pastDays"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <button type="submit" class="btn btn-primary btn-sm active">
+            Refrescar
+          </button>
+        </div>
+      </form>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="appraisals">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
+  </div>
+</app-card>
