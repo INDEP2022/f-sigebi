@@ -24,7 +24,7 @@ export class RdFDocumentsReceptionRegisterComponent implements OnInit {
       identifier: [null, [Validators.required]],
       sender: [null, [Validators.required]],
       subject: [null, [Validators.required]],
-      reception: [new Date().toISOString().slice(0, 10), [Validators.required]],
+      reception: [new Date(), [Validators.required]],
       priority: [null, [Validators.required]],
       flyer: [null, [Validators.required]],
       consecutive: [null, [Validators.required]],

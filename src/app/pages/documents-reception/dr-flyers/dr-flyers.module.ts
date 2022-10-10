@@ -24,6 +24,7 @@ import { RdFRelatedDocumentsComponent } from './rd-f-related-documents/rd-f-rela
     SharedModule,
     BsDatepickerModule,
     ModalModule.forChild(),
+    BsDatepickerModule,
   ],
 })
 export class DrFlyersModule {}

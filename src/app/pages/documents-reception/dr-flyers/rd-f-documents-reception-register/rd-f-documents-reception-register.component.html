@@ -98,12 +98,15 @@
             class="col-md-4"
             [control]="documentsReceptionForm.get('reception')"
             label="Recepción">
-            <input formControlName="reception" class="form-control" />
+            <input
+              formControlName="reception"
+              class="form-control"
+              bsDatepicker />
           </form-field>
 
           <form-field
             class="col-md-4"
-            [control]="documentsReceptionForm.get('reception')"
+            [control]="documentsReceptionForm.get('flyer')"
             label="Volante">
             <input type="number" formControlName="flyer" class="form-control" />
           </form-field>
@@ -202,10 +205,9 @@
             [control]="documentsReceptionForm.get('jobDate')"
             label="Fecha Oficio">
             <input
-              type="date"
               formControlName="jobDate"
               class="form-control"
-              bsDaterangepicker />
+              bsDatepicker />
           </form-field>
 
           <form-field
