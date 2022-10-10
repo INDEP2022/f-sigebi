@@ -343,6 +343,19 @@ export const MENU: IMenuItem[] = [
         label: 'Derivación Bienes',
         link: '/pages/administrative-processes/derivation-goods',
       },
+      /**
+       * Seguros **Legaspi** 
+       **/
+      {
+        label: 'Empresas',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Resumen Info Financiera',
+            link: '/pages/administrative-processes/summary-financial-info',
+          },
+        ],
+      },
       {
         label: 'Reportes',
         icon: 'bx-folder',
@@ -366,30 +379,12 @@ export const MENU: IMenuItem[] = [
             link: '/pages/administrative-processes/unit-conversion-packages',
           },
         ]
-      },
+      }
+      /**
+       * Seguros **Legaspi** 
+       **/
     ],
   },
-  {
-    label: 'Reportes',
-    icon: 'bx-folder',
-    subItems: [
-      {
-        label: 'Almacenes',
-        link: '/pages/administrative-processes/warehouse-reports',
-      },
-    ],
-  },
-  {
-    label: 'Empresas',
-    icon: 'bx-folder',
-    subItems: [
-      {
-        label: 'Resumen Info Financiera',
-        link: '/pages/administrative-processes/summary-financial-info',
-      },
-    ],
-  },
-
   {
     label: 'Solicitudes',
     icon: 'bx-folder',

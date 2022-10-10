@@ -15,60 +15,6 @@ const routes: Routes = [
             .NumeraryOperatorModule,
         data: { title: 'Numerario Operado' },
       },
-      /*{
-        path: 'numerary-physics', loadChildren: () => import('./numerary-physics/numerary-physics.module')
-          .then(m => m.NumeraryPhysicsModule)
-      },*/
-      {
-        path: 'summary-financial-info',
-        loadChildren: () =>
-          import(
-            './companies/financial-info/pa-e-fi-m-financial-info.module'
-          ).then(m => m.PaEFiMFinancialInfoModule),
-      },
-      {
-        path: 'warehouse-reports',
-        loadChildren: () =>
-          import('./reports/warehouse/pa-r-wh-m-warehouse.module').then(
-            m => m.PaRWhMWarehouseModule
-          ),
-      },
-      {
-        path: 'record-details', loadChildren: () => import('./reports/record/pa-r-r-m-record.module')
-          .then(m => m.PaRRMRecordModule)
-      },
-      {
-        path: 'unit-conversion-packages', loadChildren: () => import('./unit-conversion-packages/pa-ucp-m-unit-conversion-packages.module')
-          .then(m => m.PaUcpMUnitConversionPackagesModule)
-      },
-      /*
-      {
-        path: 'record', loadChildren: () => import('./record/record.module')
-          .then(m => m.RecordModule)
-      },
-      {
-        path: 'unit-conversion-packages', loadChildren: () => import('./unit-conversion-packages/unit-conversion-packages.module')
-          .then(m => m.UnitConversionPackagesModule)
-      },
-      {
-        path: 'goods-tracking', loadChildren: () => import('./goods-tracking/goods-tracking.module')
-          .then(m => m.GoodsTrackingModule)
-      },
-      {
-        path: 'goods-management', loadChildren: () => import('./goods-management/goods-management.module')
-          .then(m => m.GoodsManagementModule)
-      },
-      {
-        path: 'siab-sami-interaction', loadChildren: () => import('./siab-sami-interaction/siab-sami-interaction.module')
-          .then(m => m.SiabSamiInteractionModule)
-      }*/
-      {
-        path: 'numerary-operator',
-        loadChildren: async () =>
-          (await import('./numerary-operator/numerary-operator.module'))
-            .NumeraryOperatorModule,
-        data: { title: 'Numerario Operado' },
-      },
       {
         path: 'numerary-physics',
         loadChildren: async () =>
@@ -131,7 +77,56 @@ const routes: Routes = [
         loadChildren: async () =>
           (await import('./derivation-goods/derivation-goods.module')).DerivationGoodsModule,
         data: { title: 'Derivacion de bienes' },
-      }
+      },
+      /**
+       * Seguros **Legaspi** 
+       **/
+      {
+        path: 'summary-financial-info',
+        loadChildren: () =>
+          import(
+            './companies/financial-info/pa-e-fi-m-financial-info.module'
+          ).then(m => m.PaEFiMFinancialInfoModule),
+      },
+      {
+        path: 'warehouse-reports',
+        loadChildren: () =>
+          import('./reports/warehouse/pa-r-wh-m-warehouse.module').then(
+            m => m.PaRWhMWarehouseModule
+          ),
+      },
+      {
+        path: 'record-details', loadChildren: () => import('./reports/record/pa-r-r-m-record.module')
+          .then(m => m.PaRRMRecordModule)
+      },
+      {
+        path: 'unit-conversion-packages', loadChildren: () => import('./unit-conversion-packages/pa-ucp-m-unit-conversion-packages.module')
+          .then(m => m.PaUcpMUnitConversionPackagesModule)
+      },
+      /*
+      {
+        path: 'record', loadChildren: () => import('./record/record.module')
+          .then(m => m.RecordModule)
+      },
+      {
+        path: 'unit-conversion-packages', loadChildren: () => import('./unit-conversion-packages/unit-conversion-packages.module')
+          .then(m => m.UnitConversionPackagesModule)
+      },
+      {
+        path: 'goods-tracking', loadChildren: () => import('./goods-tracking/goods-tracking.module')
+          .then(m => m.GoodsTrackingModule)
+      },
+      {
+        path: 'goods-management', loadChildren: () => import('./goods-management/goods-management.module')
+          .then(m => m.GoodsManagementModule)
+      },
+      {
+        path: 'siab-sami-interaction', loadChildren: () => import('./siab-sami-interaction/siab-sami-interaction.module')
+          .then(m => m.SiabSamiInteractionModule)
+      }*/
+      /**
+       * Seguros **Legaspi** 
+       **/
     ],
   },
 ];
