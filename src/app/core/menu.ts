@@ -383,6 +383,10 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Atención Bienes',
         link: '/pages/administrative-processes/goods-tracking'
+      },
+      {
+        label: 'Gestión bienes Gab-Soc',
+        link: '/pages/administrative-processes/goods-management'
       }
       /**
        * Seguros **Legaspi** 

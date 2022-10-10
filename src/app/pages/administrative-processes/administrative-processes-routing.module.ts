@@ -107,11 +107,11 @@ const routes: Routes = [
         path: 'goods-tracking', loadChildren: () => import('./goods-tracking/pa-gt-m-goods-tracking.module')
           .then(m => m.PaGtMGoodsTrackingModule)
       },
-      /*
       {
-        path: 'goods-management', loadChildren: () => import('./goods-management/goods-management.module')
-          .then(m => m.GoodsManagementModule)
+        path: 'goods-management', loadChildren: () => import('./goods-management/pa-gm-m-goods-management.module')
+          .then(m => m.PaGmMGoodsManagementModule)
       },
+      /*
       {
         path: 'siab-sami-interaction', loadChildren: () => import('./siab-sami-interaction/siab-sami-interaction.module')
           .then(m => m.SiabSamiInteractionModule)

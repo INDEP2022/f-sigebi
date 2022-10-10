@@ -6,7 +6,6 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 //Ngx Bootstrap
 import { TabsModule } from 'ngx-bootstrap/tabs';
-
 //Routing
 import { PaGtMGoodsTrackingRoutingModule } from './pa-gt-m-goods-tracking-routing.module';
 //Components
