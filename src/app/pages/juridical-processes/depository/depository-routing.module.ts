@@ -22,20 +22,30 @@ const routes: Routes = [
                 data: { title: routesJuridicalProcesses[4].label }
     },
     {
-        path: routesJuridicalProcesses[5].link,
+        path: routesJuridicalProcesses[7].link,
         loadChildren: async() => 
-            (await import('./conciliation-depositary-payments/pj-d-pdp-m-conciliation-depositary-payments.module'))
-                .PJDPDPConciliationDepositaryPaymentsModule,
-                data: { title: routesJuridicalProcesses[5].label }
+            (await import('./request-legal-destination-goods/pj-d-s-md-m-request-legal-destination-goods.module'))
+                .PJDSMDRequestLegalDestinationGoodsModule,
+                data: { title: routesJuridicalProcesses[7].label }
     },
     {
-        path: routesJuridicalProcesses[6].link,
+        path: routesJuridicalProcesses[8].link,
         loadChildren: async() => 
-            (await import('./conciliation-depositary-payments/pj-d-pdp-m-conciliation-depositary-payments.module'))
-                .PJDPDPConciliationDepositaryPaymentsModule,
-                data: { title: routesJuridicalProcesses[6].label }
-    }
+            (await import('./appointment-certificate/pj-d-rcn-m-appointment-certificate.module'))
+                .PJDRCNAppointmentCertificateModule,
+                data: { title: routesJuridicalProcesses[8].label }
+    },
     // DEPOSITARIA
+    
+    // PROCESO DE DISPERCION DE PAGOS
+    {
+        path: 'procesos-dispercion-pagos',
+        loadChildren: async() => 
+            (await import('./payment-dispersal-process/payment-dispersal-process.module'))
+                .PaymentDispersalProcessModule,
+                data: { title: "Proceso de Disperción de Pagos" }
+    }
+    // PROCESO DE DISPERCION DE PAGOS
 ];
 @NgModule({
     imports: [RouterModule.forChild(routes)],

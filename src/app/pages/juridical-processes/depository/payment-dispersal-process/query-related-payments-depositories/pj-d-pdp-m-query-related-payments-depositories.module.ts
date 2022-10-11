@@ -5,7 +5,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 /** BASE IMPORT */
 
 /** LIBRERIAS EXTERNAS IMPORTS */
-import { SharedLegalProcessModule } from '../../shared-legal-process/shared-legal-process.module';
+import { SharedLegalProcessModule } from '../../../shared-legal-process/shared-legal-process.module';
 
 /** SERVICE IMPORTS */
 

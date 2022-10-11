@@ -1,0 +1,38 @@
+<app-card [header]="true">
+    <div class="ch-content" header>
+        <h5 class="title">
+            SOLICITUD DE DESTINO LEGAL PARA EL BIEN
+        </h5>
+    </div>
+
+    <div body>
+        
+        <!-- form No Bien -->
+        <form [formGroup]="form" (submit)="mostrarInfo()">
+            <div class="row w-100">
+                <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                    <form-field [control]="form.get('noBien')" label="No. Bien">
+                        <!-- <label class="label w-100">No. Bien</label> -->
+                        <input class="form-control w-100" formControlName="noBien"
+                                placeholder="No. Bien">
+                        
+                    </form-field>
+                </div>
+                <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
+                    <div class="form-group">
+                        <input class="form-control w-100" placeholder="Detalle Remitente">
+                        <label class="form-control-label w-100">Detalle Remitente</label>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!-- form No Bien -->
+
+        <div class="row w-100">
+            <div class="col-sm-12 col-12 col-md-12 p-2">
+                <ng2-smart-table class="my-table" [settings]="tableFactGenSettings" [source]="dataFactGen"></ng2-smart-table>
+            </div>
+        </div>
+
+    </div>
+</app-card>
