@@ -6,6 +6,8 @@ import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IIssuingInstitution } from '../../models/catalogs/issuing-institution.model';
+import { ICity } from 'src/app/core/models/catalogs/city.model';
+import { ITransferente } from '../../models/catalogs/transferente.model';
 @Injectable({
   providedIn: 'root',
 })
@@ -13,8 +15,12 @@ export class IssuingInstitutionService
   implements ICrudMethods<IIssuingInstitution>
 {
   private readonly route: string = ENDPOINT_LINKS.IssuingInstitution;
+  private readonly cityRoute: string = ENDPOINT_LINKS.City;
+  private readonly transferRoute: string = ENDPOINT_LINKS.Transferente;
   constructor(
-    private issuingInstitutionRepository: Repository<IIssuingInstitution>
+    private issuingInstitutionRepository: Repository<IIssuingInstitution>,
+    private cityRepository: Repository<ICity>,
+    private transferenteRepository: Repository<ITransferente>
   ) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IIssuingInstitution>> {
@@ -38,5 +44,13 @@ export class IssuingInstitutionService
 
   remove(id: string | number): Observable<Object> {
     return this.issuingInstitutionRepository.remove(this.route, id);
+  }
+
+  getCities(params?: ListParams): Observable<IListResponse<ICity>> {
+    return this.cityRepository.getAllPaginated(this.cityRoute, params);
+  }
+
+  getTransfers(params?: ListParams): Observable<IListResponse<ITransferente>> {
+    return this.transferenteRepository.getAllPaginated(this.transferRoute, params);
   }
 }

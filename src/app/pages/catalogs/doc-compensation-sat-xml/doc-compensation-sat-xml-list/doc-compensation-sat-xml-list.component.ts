@@ -57,7 +57,7 @@ export class DocCompensationSatXmlListComponent extends BasePage implements OnIn
           if (next) this.getExample();
         },
       },
-      class: 'modal-lg modal-dialog-centered',
+      class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.modalService.show(DocCompensationSatXmlFormComponent, config);

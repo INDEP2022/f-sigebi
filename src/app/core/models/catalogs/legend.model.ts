@@ -1,10 +1,10 @@
 export interface ILegend {
   id?: number;
   legend: string;
-  userCreation: string;
-  creationDate: Date;
-  userModification: string;
-  modificationDate: Date;
+  userCreation?: string;
+  creationDate?: Date;
+  userModification?: string;
+  modificationDate?: Date;
   version: number;
-  status: number;
+  status: string;
 }

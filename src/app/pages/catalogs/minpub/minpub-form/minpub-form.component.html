@@ -1,0 +1,150 @@
+<app-modal>
+    <div header>
+      <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+    </div>
+    <div body>
+      <form class="form-material" [formGroup]="minpubForm">
+        <div class="row">
+          <div class="col-md-6 pt-sm-5 pt-md-2">
+            <form-field 
+                [control]="minpubForm.get('id')" 
+                label="Registro">
+                <input 
+                    type="number" 
+                    class="form-control" 
+                    formControlName="id" />
+            </form-field>
+          </div>
+          <div class="col-md-6 pt-sm-5 pt-md-2">
+            <form-field 
+                [control]="minpubForm.get('descripcion')" 
+                label="Descripción">
+                <input 
+                    type="text" 
+                    class="form-control" 
+                    formControlName="descripcion" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-md-5">
+            <div class="col-md-6 pt-sm-5 pt-md-2">
+                <form-field 
+                    [control]="minpubForm.get('responsable')" 
+                    label="Responsable">
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        formControlName="responsable" />
+                </form-field>
+            </div>
+            <div class="col-md-6 pt-sm-5 pt-md-2">
+                <ngx-select
+                    [form]="minpubForm"
+                    [data]="items"
+                    label="Ciudad"
+                    bindLabel="nameCity"
+                    value="idCity"
+                    (fetchItems)="getFromSelect($event)"
+                    control="no_ciudad">
+                </ngx-select>
+            </div>
+        </div>
+        <div class="row pt-md-5">
+            <div class="col-md-6 pt-sm-5 pt-md-2">
+                <form-field 
+                    [control]="minpubForm.get('colonia')" 
+                    label="Colonia">
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        formControlName="colonia" />
+                </form-field>
+            </div>
+            <div class="col-md-6 pt-sm-5 pt-md-2">
+                <form-field 
+                    [control]="minpubForm.get('codigo_postal')" 
+                    label="Código postal">
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        formControlName="codigo_postal" />
+                </form-field>
+            </div>
+        </div>
+        <div class="row pt-md-5">
+            <div class="col-md-6 pt-sm-5 pt-md-2">
+                <form-field 
+                    [control]="minpubForm.get('calle')" 
+                    label="Calle">
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        formControlName="calle" />
+                </form-field>
+            </div>
+            <div class="col-md-6 pt-sm-5 pt-md-2">
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <form-field 
+                            [control]="minpubForm.get('no_interior')" 
+                            label="Número interior">
+                            <input 
+                                type="number" 
+                                class="form-control" 
+                                formControlName="no_interior" />
+                        </form-field>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <form-field 
+                            [control]="minpubForm.get('no_exterior')" 
+                            label="Número exterior">
+                            <input 
+                                type="number" 
+                                class="form-control" 
+                                formControlName="no_exterior" />
+                        </form-field>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row pt-md-5">
+            <div class="col-md-6 pt-sm-5 pt-md-2">
+                <form-field 
+                    [control]="minpubForm.get('deleg_munic')" 
+                    label="Delegación municipal">
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        formControlName="deleg_munic" />
+                </form-field>
+            </div>
+            <div class="col-md-6 pt-sm-5 pt-md-2">
+                <form-field 
+                    [control]="minpubForm.get('telefono')" 
+                    label="Teléfono">
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        formControlName="telefono" />
+                </form-field>
+            </div>
+        </div>
+      </form>
+    </div>
+    <div footer>
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <confirm-button
+            [disabled]="!minpubForm.valid"
+            [loading]="loading"
+            (confirm)="confirm()">
+          </confirm-button>
+        </div>
+        <div class="m-3">
+          <button type="button" class="btn btn-danger active" (click)="close()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+</app-modal>

@@ -1,14 +1,15 @@
+import { IGoodType } from './good-type.model';
+
 export interface IGoodSubType {
   id?: number;
-  idTypeGood: IGoodSubType;
+  idTypeGood: number | IGoodType;
   nameSubtypeGood: string;
-  description: string;
   noPhotography: number;
   descriptionPhotography: string;
   noRegister: number;
   version: number;
-  creationUser: string;
-  creationDate: Date;
-  editionUser: string;
-  modificationDate: Date;
+  creationUser?: string;
+  creationDate?: Date;
+  editionUser?: string;
+  modificationDate?: Date;
 }

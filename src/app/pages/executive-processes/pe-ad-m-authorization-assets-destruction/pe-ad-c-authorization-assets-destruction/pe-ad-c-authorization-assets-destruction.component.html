@@ -1,0 +1,162 @@
+<app-card [header]="true">
+
+    <div header>
+        <div class="ch-content">
+            <h5 class="title">
+                OFICIOS DE AUTORIZACIÓN DE DESTRUCCIÓN
+            </h5>
+        </div>
+    </div>
+
+    <div body>
+        <form class="form-material" [formGroup]="form">
+            <div class="row">
+                <div class="col-md-2">
+                    <form-field [control]="form.get('idExp')" label="No expediente">
+                        <input type="text" class="form-control" formControlName="idExp" minlength="1" maxlength="10" >
+                    </form-field>
+                </div>
+                <div class="col-md-2">
+                    <form-field [control]="form.get('preInquiry')" label="Averiguación Previa"> 
+                        <input type="text" class="form-control" formControlName="preInquiry">
+                    </form-field>
+                </div>
+                <div class="col-md-2">
+                    <form-field [control]="form.get('criminalCase')" label="Causa Penal">
+                        <input type="text" class="form-control" formControlName="criminalCase">
+                    </form-field>
+                </div>
+                <div class="col-md-2">
+                    <form-field [control]="form.get('circumstAct')" label="Acta Circunstanciada">
+                        <input type="text" class="form-control" formControlName="circumstAct">
+                    </form-field>
+                </div>
+                <div class="col-md-2">
+                    <form-field [control]="form.get('touchPenalty')" label="Toca penal">
+                        <input type="text" class="form-control" formControlName="touchPenalty">
+                    </form-field>
+                </div>
+                <div class="col-md-2">
+                    <div class="d-flex justify-content-center">
+                        <div class="m-3">
+                            <button type="button" class="btn-sm btn-primary active">
+                              Agregar Bienes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</app-card>
+
+<app-card>
+
+    <div body>
+
+        <form class="form-material" [formGroup]="form">
+            <div class="row pt-5">
+                <div class="col-md-1">
+                    <form-field [control]="form.get('noAuth')" label="No.">
+                        <input type="text" class="form-control" formControlName="noAuth" minlength="1" maxlength="10">
+                    </form-field>
+                </div>
+                <div class="col-md-2">
+                    <form-field [control]="form.get('authNotice')" label="Oficio de autorización">
+                        <input type="text" class="form-control" formControlName="authNotice">
+                    </form-field>
+                </div>
+                <div class="col-md-2">
+                    <form-field [control]="form.get('fromDate')" label="Fecha recepción">
+                        <input type="text"
+                               placeholder="Del"
+                               class="form-control"
+                               bsDatepicker
+                               formControlName="fromDate"
+                               [bsConfig]="{ isAnimated: true }">
+                    </form-field>
+                </div>
+                <div class="col-md-2">
+                    <div class="d-flex justify-content-center">
+                        <div class="m-3">
+                            <button type="button" class="btn-sm btn-primary active">
+                              Abrir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="ch-content">
+            <h5 class="title"></h5>
+            <app-columns-select [(settings)]="settings"></app-columns-select>
+        </div>
+        <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
+
+        <div class="row pt-5">
+            <div class="col-md-2">
+                <label> Estado: </label>
+            </div>
+            <div class="col-md-2">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                    <label class="form-check-label" >
+                      Disponible
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                    <label class="form-check-label" >
+                        No disponible
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn-sm btn-primary active">Insertar vía archivo plano</button>
+              </div>
+        </div>
+
+        <div class="form-group row pt-5">
+  
+            <label class="col-sm-2 col-form-label">Folio de escaneo</label>
+            <div class="col-sm-1">
+              <input class="form-control" type="" >
+            </div>
+    
+            <div class="col-sm-1">
+              <button type="submit" class="btn-sm btn-primary active">Solicitud</button>
+            </div>
+    
+            <div class="col-sm-1">
+              <button type="submit" class="btn-sm btn-primary active" >Escanear</button>
+            </div>
+    
+            <div class="col-sm-1">
+              <button type="submit" class="btn-sm btn-primary active" >Ver IMG</button>
+            </div>
+    
+            <label class="col-sm-2 col-form-label">Folio de Cancelación</label>
+            <div class="col-sm-1">
+              <input class="form-control" type="" >
+            </div>
+    
+            <div class="col-sm-1">
+              <button type="submit" class="btn-sm btn-primary active" >Solicitud</button>
+            </div>
+    
+            <div class="col-sm-1">
+              <button type="submit" class="btn-sm btn-primary active" >Escanear</button>
+            </div>
+    
+            <div class="col-sm-1">
+              <button type="submit" class="btn-sm btn-primary active" >Ver IMG</button>
+            </div>
+    
+          </div>
+        
+    </div>
+
+</app-card>

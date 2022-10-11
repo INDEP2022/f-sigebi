@@ -1,0 +1,31 @@
+<app-card [header]="true">
+    <div header>
+        <div class="ch-content">
+            <h5 class="title">PROCESO DE ACTUALIZACIÓN MASIVA DE VALOR AVALUÓ</h5>
+        </div>
+    </div>
+
+    <div body>        
+            <div class="row">
+                <div class="col-md-2">
+                    <button type="button" class="btn-sm btn-primary active" (click)="fileExcel.click()">Abrir archivo Excel o CSV</button>
+                    <input type="file" (change)="ReadExcel($event)" name="fileExcel" #fileExcel class="d-none"
+                            accept=".xlsx, .xls, .csv, application/vnd.ms-excel">
+                </div>    
+                <div class="col-md-2">
+                    <label for="" class="form-group">Registros Leidos: 0</label>
+                </div>
+                <div class="col-md-2">
+                    <label for="" class="form-group">Registros Procesados: 0</label>
+                </div>            
+            </div>
+            <div class="row pt-5">
+                <div class="ch-content">
+                    <h5 class="title"></h5>
+                    <app-columns-select [(settings)]="settings"></app-columns-select>
+                </div>
+                <ng2-smart-table class="my-table" [settings]="settings" [source]="ExcelData"></ng2-smart-table> 
+            </div>
+    </div>
+
+</app-card>

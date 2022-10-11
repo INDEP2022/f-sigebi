@@ -54,7 +54,8 @@ export class Repository<T> implements IRepository<T> {
   }
 
   removeByIds(route: string, ids: Partial<T>) {
-    return this.httpClient.delete(`${environment.API_URL}${route}/${ids}`);
+    const idsRoute: string = this.makeIdsRoute(ids);
+    return this.httpClient.delete(`${environment.API_URL}${route}/${idsRoute}`);
   }
 
   private makeIdsRoute(ids: Partial<T>): string {
