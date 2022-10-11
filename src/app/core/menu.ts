@@ -459,6 +459,7 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
+  //Comercialización
   {
     label: 'Comercialización',
     icon: 'bx-folder',
@@ -480,6 +481,18 @@ export const MENU: IMenuItem[] = [
             link: '/pages/commercialization/c-b-vdp-m-payment-dispersion-validation',
           },
           {
+            label: 'Pagos Referenciados',
+            link: '/pages/commercialization/referenced-payment',
+          },
+          {
+            label: 'Pagos no Conciliados',
+            link: '/pages/commercialization/unreconciled-payment',
+          },
+          {
+            label: 'Dispersión de Pagos',
+            link: '/pages/commercialization/payment-dispersion-monitor'
+          },
+          {
             label: 'Conversión a numerario',
             link: '/pages/commercialization/numeraire-conversion-tabs',
           },
@@ -492,9 +505,17 @@ export const MENU: IMenuItem[] = [
             link: '/pages/commercialization/c-b-a-rda-m-appraisal-registration',
           },
           {
-            label: 'Captura de gastos',
+            label: 'Captura de Gastos',
             link: '/pages/commercialization/c-b-ge-cdg-m-expense-capture',
           },
+          {
+            label:'Conceptos de Gasto',
+            link: '/pages/commercialization/expense-concepts'
+          },
+          {
+            label: 'Permisos a Eventos',
+            link: '/pages/commercialization/events'
+          }
         ],
       },
       {
@@ -514,6 +535,18 @@ export const MENU: IMenuItem[] = [
             link: '/pages/commercialization/c-b-vdp-m-payment-dispersion-validation',
           },
           {
+            label: 'Pagos Referenciados',
+            link: '/pages/commercialization/referenced-payment',
+          },
+          {
+            label: 'Pagos no Conciliados',
+            link: '/pages/commercialization/unreconciled-payment',
+          },
+          {
+            label: 'Dispersión de Pagos',
+            link: '/pages/commercialization/payment-dispersion-monitor'
+          },
+          {
             label: 'Conversión a numerario',
             link: '/pages/commercialization/numeraire-conversion-tabs',
           },
@@ -526,9 +559,17 @@ export const MENU: IMenuItem[] = [
             link: '/pages/commercialization/c-b-a-rda-m-appraisal-registration',
           },
           {
-            label: 'Captura de gastos',
+            label: 'Captura de Gastos',
             link: '/pages/commercialization/c-b-ge-cdg-m-expense-capture',
           },
+          {
+            label:'Conceptos de Gasto',
+            link: '/pages/commercialization/expense-concepts'
+          },
+          {
+            label: 'Permisos a Eventos',
+            link: '/pages/commercialization/events'
+          }
         ],
       },
 
