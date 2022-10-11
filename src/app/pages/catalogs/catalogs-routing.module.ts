@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ExpertsModule } from './experts/experts.module';
 
 const routes: Routes = [
   {
@@ -311,9 +312,72 @@ const routes: Routes = [
   {
     path: 'payment-concept',
     loadChildren: async () =>
-      (await import('./payment-concept/payment-concept.module'))
-        .PaymentConceptModule,
-    data: { title: 'Concepto de Pago' },
+      (await import('./sub-delegations/sub-delegations.module'))
+        .SubDelegationsModule,
+    data: { title: 'Sub Delegaciones' },
+  }, 
+  {
+    path: 'expert',
+    loadChildren: async () =>
+      (await import('./experts/experts.module'))
+        .ExpertsModule,
+    data: { title: 'Peritos' },
+  },
+  {
+    path: 'person',
+    loadChildren: async () =>
+      (await import('./persons/persons.module'))
+        .PersonsModule,
+    data: { title: 'Personas' },
+  },
+  {
+    path: 'oring',
+    loadChildren: async () =>
+      (await import('./origin/origin.module'))
+        .OriginModule,
+    data: { title: 'Procedencias' },
+  },
+  {
+    path: 'oringCisi',
+    loadChildren: async () =>
+      (await import('./origin-cisi/origin-cisi.module'))
+        .OriginCisiModule,
+    data: { title: 'Procedencias Cisi' },
+  },
+  {
+    path: 'siseProcess',
+    loadChildren: async () =>
+      (await import('./sise-process/sise-process.module'))
+        .SiseProcessModule,
+    data: { title: 'Procesos Sise' },
+  },
+  {
+    path: 'rAsuntDic',
+    loadChildren: async () =>
+      (await import('./rasunt-dic/rasunt-dic.module'))
+        .RAsuntDicModule,
+    data: { title: 'R Asunt Dic' },
+  },
+  {
+    path: 'rack',
+    loadChildren: async () =>
+      (await import('./rack/rack.module'))
+        .RackModule,
+    data: { title: 'Estante' },
+  },
+  {
+    path: 'regulatory',
+    loadChildren: async () =>
+      (await import('./regulatory/regulatory.module'))
+        .RegulatoryModule,
+    data: { title: 'Regulaciones' },
+  },
+  {
+    path: 'responseRepuve',
+    loadChildren: async () =>
+      (await import('./response-repuve/response-repuve.module'))
+        .ResponseRepuveModule,
+    data: { title: 'Respuestas Repuve' },
   },
   {
     path: 'batch',
@@ -443,6 +507,13 @@ const routes: Routes = [
       (await import('./doc-compensation-sat/doc-compensation-sat.module'))
         .DocCompensationSatModule,
     data: { title: 'Documentos resarcimiento sat' },
+  },
+  {
+    path: 'indicatorReport',
+    loadChildren: async () =>
+      (await import('./indicator-report/indicator-report.module'))
+        .IndicatorReportModule,
+    data: { title: 'Indicador de Reportes' },
   },
   {
     path: 'generics',
