@@ -12,6 +12,18 @@ const routes: Routes = [
       },
     ],
   },
+  {
+    path: 'goods-capture',
+    loadChildren: async () =>
+      (await import('./dr-goods/dr-goods.module')).DrGoodsModule,
+  },
+  {
+    path: 'shipping-documents',
+    loadChildren: () =>
+      import('./dr-shipping-documents/dr-shipping-documents.module').then(
+        m => m.DrShippingDocumentsModule
+      ),
+  },
 ];
 
 @NgModule({

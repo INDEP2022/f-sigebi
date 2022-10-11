@@ -6,13 +6,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-rd-f-documents-reception-register',
   templateUrl: './rd-f-documents-reception-register.component.html',
-  styles: [
-    `
-      hr {
-        border-top: 1px solid #8c8b8b;
-      }
-    `,
-  ],
+  styles: [],
 })
 export class RdFDocumentsReceptionRegisterComponent implements OnInit {
   documentsReceptionForm: ModelForm<any>;
@@ -30,7 +24,7 @@ export class RdFDocumentsReceptionRegisterComponent implements OnInit {
       identifier: [null, [Validators.required]],
       sender: [null, [Validators.required]],
       subject: [null, [Validators.required]],
-      reception: [new Date().toISOString().slice(0, 10), [Validators.required]],
+      reception: [new Date(), [Validators.required]],
       priority: [null, [Validators.required]],
       flyer: [null, [Validators.required]],
       consecutive: [null, [Validators.required]],

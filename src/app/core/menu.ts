@@ -1,4 +1,5 @@
 import { DOCUMENTS_RECEPTION_ROUTES } from '../common/constants/documents-reception-routes';
+import { menuOptionsJuridicalProcesses } from '../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
 import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
@@ -109,6 +110,10 @@ export const MENU: IMenuItem[] = [
         link: '/pages/catalogs/payment-concept',
       },
       {
+        label: 'Clasificación SIAB',
+        link: '/pages/catalogs/siab-clasification',
+      },
+      {
         label: 'Institución Clasificación',
         link: '/pages/catalogs/intitution-classification',
       },
@@ -137,155 +142,44 @@ export const MENU: IMenuItem[] = [
         link: '/pages/catalogs/sub-delegations',
       },
       {
-        label: 'Sat Clasificacion',
-        link: '/pages/catalogs/sat-clasification',
-      },
-      {
-        label: 'Tipo Docto',
-        link: '/pages/catalogs/type-docto',
-      },
-      {
-        label: 'Tipo Siniestro',
-        link: '/pages/catalogs/type-sinister',
-      },
-      {
-        label: 'Tipo de Almacenes',
-        link: '/pages/catalogs/type-wharehouse',
-      },
-      {
-        label: 'Tipo de Servicios',
-        link: '/pages/catalogs/type-services',
-      },
-      {
-        label: 'Tipo order servicio',
-        link: '/pages/catalogs/type-order-service',
-      },
-      {
-        label: 'Tipo relevante',
-        link: '/pages/catalogs/type-relevant',
-      },
-      {
-        label: 'Zona Geográficas',
-        link: '/pages/catalogs/zone-geographic',
-      },
-      {
-        label: 'Conclusion siniestros',
-        link: '/pages/catalogs/claim-conclusion',
-      },
-      {
-        label: 'Código estado',
-        link: '/pages/catalogs/status-code',
-      },
-      {
-        label: 'Documentos resarcimiento sat',
-        link: '/pages/catalogs/doc-compensation-sat',
-      },
-      {
-        label: 'Sat Subclasificacion',
-        link: '/pages/catalogs/sat-subclasification',
-      },
-      {
-        label: 'Servicios',
-        link: '/pages/catalogs/services',
-      },
-      {
-        label: 'Series Ifai',
-        link: '/pages/catalogs/ifai-series',
-      },
-      {
-        label: 'Situacion Bien',
-        link: '/pages/catalogs/good-situation',
-      },
-      {
-        label: 'Soporte Legal',
-        link: '/pages/catalogs/legal-support',
-      },
-      {
-        label: 'Doc. Resarcimiento Sat XML',
-        link: '/pages/catalogs/doc-compensation-sat-xml',
-      },
-      {
-        label: 'Donatorios',
-        link: '/pages/catalogs/grantees',
-      },
-      {
-        label: 'Lotes',
-        link: '/pages/catalogs/batch',
-      },
-      {
-        label: 'Medio Fotografía',
-        link: '/pages/catalogs/photograph-media',
-      },
-      {
-        label: 'Medio Imagen',
-        link: '/pages/catalogs/image-media',
-      },
-      {
-        label: 'MinPub',
-        link: '/pages/catalogs/minpub',
-      },
-      {
-        label: 'Motivo Revisión',
-        link: '/pages/catalogs/revision-reason',
-      },
-      {
-        label: 'Motivo No Entrega',
-        link: '/pages/catalogs/non-delivery-reasons',
-      },
-      {
-        label: 'Municipios',
-        link: '/pages/catalogs/municipalities',
-      },
-      {
-        label: 'Normas',
-        link: '/pages/catalogs/norms',
-      },
-      {
-        label: 'Notarios',
-        link: '/pages/catalogs/notary',
-      },
-      {
-        label: 'Párrafos',
-        link: '/pages/catalogs/paragraphs',
-      },
-      {
         label: 'Etiquetas Bien',
         link: '/pages/catalogs/label-okey',
       },
       {
-        label: 'Fracciones',
-        link: '/pages/catalogs/fractions',
+        label: 'Personas',
+        link: '/pages/catalogs/person',
       },
       {
-        label: 'Gavetas',
-        link: '/pages/catalogs/drawers',
+        label: 'Procedenias',
+        link: '/pages/catalogs/oring',
       },
       {
-        label: 'Gestión',
-        link: '/pages/catalogs/management',
+        label: 'Procedencias Cisi',
+        link: '/pages/catalogs/oringCisi',
       },
       {
-        label: 'Guarda Valores',
-        link: '/pages/catalogs/save-values',
-      },
-
-      {
-        label: 'Identificador',
-        link: '/pages/catalogs/identifier',
-      },
-
-      {
-        label: 'Indiciados',
-        link: '/pages/catalogs/indicated',
-      },
-
-      {
-        label: 'Doc. Resarcimiento Sat XML',
-        link: '/pages/catalogs/doc-compensation-sat-xml',
+        label: 'Procesos Sise',
+        link: '/pages/catalogs/siseProcess',
       },
       {
-        label: 'Donatorios',
-        link: '/pages/catalogs/grantees',
+        label: 'R Asunt Dic',
+        link: '/pages/catalogs/rAsuntDic',
+      },
+      {
+        label: 'Estantes',
+        link: '/pages/catalogs/rack',
+      },
+      {
+        label: 'Genéricos',
+        link: '/pages/catalogs/generics',
+      },
+      {
+        label: 'Instituciones Emisoras',
+        link: '/pages/catalogs/issuing-institution',
+      },
+      {
+        label: 'Juzgados',
+        link: '/pages/catalogs/court',
       },
     ],
   },
@@ -295,8 +189,87 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-folder',
     subItems: [
       {
-        label: 'Numerario Operado',
-        link: '/pages/administrative-processes/numerary-operator',
+        label: 'Regulaciones',
+        link: '/pages/catalogs/regulatory',
+      },
+      {
+        label: 'Respuestas Repuve',
+        link: '/pages/catalogs/responseRepuve',
+      },
+      {
+        label: 'Indicador Reportes',
+        link: '/pages/catalogs/indicatorReport',
+      },
+      {
+        label: 'Numerario Físico',
+        link: '/pages/administrative-processes/numerary-physics',
+      },
+      {
+        label: 'Otras Monedas',
+        link: '/pages/administrative-processes/other-currencies',
+      },
+      {
+        label: 'Valores por Expediente',
+        link: '/pages/administrative-processes/values-per-file',
+      },
+      {
+        label: 'Movimientos Cuentas General',
+        link: '/pages/administrative-processes/general-account-movements',
+      },
+      {
+        label: 'Bienes conversión',
+        link: '/pages/administrative-processes/apply-lif',
+      },
+      {
+        label: 'Actas Conversión',
+        link: '/pages/administrative-processes/conversion-act',
+      },
+      {
+        label: 'Regulaciones',
+        link: '/pages/catalogs/regulatory',
+      },
+      {
+        label: 'Edos X Coor',
+        link: '/pages/catalogs/edos-x-coor',
+      },
+      {
+        label: 'Emisoras',
+        link: '/pages/catalogs/station',
+      },
+      {
+        label: 'Empresa de terceros',
+        link: '/pages/catalogs/third-party-company',
+      },
+      {
+        label: 'Estado Transferencias',
+        link: '/pages/catalogs/status-transfer',
+      },
+      {
+        label: 'Estatus Proceso',
+        link: '/pages/catalogs/status-process',
+      },
+      {
+        label: 'Estato Repuves',
+        link: '/pages/catalogs/state-repuves',
+      },
+      {
+        label: 'Estatus Siniestros',
+        link: '/pages/catalogs/status-claims',
+      },
+      {
+        label: 'Penalizacion',
+        link: '/pages/catalogs/penalty',
+      },
+    ],
+  },
+  //Administración
+  {
+    label: 'Procesos Administrativos',
+    icon: 'bx-folder',
+    subItems: [
+      {
+        label: 'Respuestas Repuve',
+        link: '/pages/catalogs/responseRepuve',
       },
       {
         label: 'Numerario Físico',
@@ -330,22 +303,25 @@ export const MENU: IMenuItem[] = [
         label: 'Derivación Bienes',
         link: '/pages/administrative-processes/derivation-goods',
       },
+      /**
+       * Seguros **Legaspi**
+       **/
       {
-        label: 'Ubicación de Bienes',
-        link: '/pages/administrative-processes/location-goods'
+        label: 'Solicitud de Avalúos',
+        link: '/pages/administrative-processes/appraisal-request',
       },
       {
-        label: 'Consulta de Almacenes',
-        link: '/pages/administrative-processes/warehouse-inquiries'
+        label: 'Registro de Avalúos',
+        link: '/pages/administrative-processes/appraisal-registry',
       },
       {
-        label: 'Consulta de Bóvedas',
-        link: '/pages/administrative-processes/vault-consultation'
+        label: 'Monitor de Avalúos',
+        link: '/pages/administrative-processes/appraisal-monitor',
       },
       {
-        label: 'Registro de mensaje del Bien',
-        link: '/pages/administrative-processes/property-registration'
-      }
+        label: 'Bienes sin Avalúos',
+        link: '/pages/administrative-processes/appraisal-goods',
+      },
     ],
   },
   {
@@ -353,22 +329,70 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-folder',
     subItems: [
       {
-        label: 'Almacenes',
-        link: '/pages/administrative-processes/warehouse-reports',
+        label: 'Atención Bienes',
+        link: '/pages/administrative-processes/goods-tracking',
       },
-    ],
-  },
-  {
-    label: 'Empresas',
-    icon: 'bx-folder',
-    subItems: [
       {
-        label: 'Resumen Info Financiera',
-        link: '/pages/administrative-processes/summary-financial-info',
+        label: 'Gestión bienes Gab-Soc',
+        link: '/pages/administrative-processes/goods-management',
       },
+      {
+        label: 'Empresas',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Resumen Info Financiera',
+            link: '/pages/administrative-processes/summary-financial-info',
+          },
+        ],
+      },
+      {
+        label: 'Reportes',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Almacenes',
+            link: '/pages/administrative-processes/warehouse-reports',
+          },
+          {
+            label: 'Expedientes',
+            link: '/pages/administrative-processes/record-details',
+          },
+        ],
+      },
+      {
+        label: 'Coversión de Paquetes',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Conversión Masiva',
+            link: '/pages/administrative-processes/unit-conversion-packages',
+          },
+        ],
+      },
+      {
+        label: 'Interacción SIAB-SAMI',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Relación de Bienes',
+            link: '/pages/administrative-processes/siab-sami-interaction/',
+          },
+          {
+            label: 'Pago de Bienes',
+            link: '/pages/administrative-processes/siab-sami-interaction/payment-goods',
+          },
+          {
+            label: 'Avalúo de Bienes',
+            link: '/pages/administrative-processes/siab-sami-interaction/value-goods',
+          },
+        ],
+      },
+      /**
+       * Seguros **Legaspi**
+       **/
     ],
   },
-
   {
     label: 'Solicitudes',
     icon: 'bx-folder',
@@ -379,16 +403,20 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-share-alt',
     subItems: [
       {
-        label: 'Actas de destrucción',
+        label: 'Actas de Destrucción',
         link: '/pages/final-destination-process/destruction-acts',
       },
       {
-        label: 'Actas de donación',
+        label: 'Actas de Donación',
         link: '/pages/final-destination-process/donation-acts',
       },
       {
-        label: 'Actas de destino',
+        label: 'Actas de Destino',
         link: '/pages/final-destination-process/destination-acts',
+      },
+      {
+        label: 'Actas de Devolución',
+        link: '/pages/final-destination-process/return-acts',
       },
     ],
   },
@@ -469,4 +497,92 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
+  {
+    label: 'Comercialización',
+    icon: 'bx-folder',
+    subItems: [
+      {
+        label: 'Bienes Muebles',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Bienes exentos de validación',
+            link: '/pages/commercialization/c-b-bedv-m-validation-exempted-goods',
+          },
+          {
+            label: 'Reclasificacón OI',
+            link: '/pages/commercialization/c-b-rdodi-m-reclass-recovery-orders',
+          },
+          {
+            label: 'Validación de Pagos',
+            link: '/pages/commercialization/c-b-vdp-m-payment-dispersion-validation',
+          },
+          {
+            label: 'Conversión a numerario',
+            link: '/pages/commercialization/numeraire-conversion-tabs',
+          },
+          {
+            label: 'Consulta de Avalúo',
+            link: '/pages/commercialization/c-b-a-cda-m-appraisal-consultation',
+          },
+          {
+            label: 'Registro de Avalúo',
+            link: '/pages/commercialization/c-b-a-rda-m-appraisal-registration',
+          },
+          {
+            label: 'Captura de gastos',
+            link: '/pages/commercialization/c-b-ge-cdg-m-expense-capture',
+          },
+        ],
+      },
+      {
+        label: 'Bienes Inmuebles',
+        icon: 'home-outline',
+        subItems: [
+          {
+            label: 'Bienes exentos de validación',
+            link: '/pages/commercialization/c-b-bedv-m-validation-exempted-goods',
+          },
+          {
+            label: 'Reclasificacón OI',
+            link: '/pages/commercialization/c-b-rdodi-m-reclass-recovery-orders',
+          },
+          {
+            label: 'Validación de Pagos',
+            link: '/pages/commercialization/c-b-vdp-m-payment-dispersion-validation',
+          },
+          {
+            label: 'Conversión a numerario',
+            link: '/pages/commercialization/numeraire-conversion-tabs',
+          },
+          {
+            label: 'Consulta de Avalúo',
+            link: '/pages/commercialization/c-b-a-cda-m-appraisal-consultation',
+          },
+          {
+            label: 'Registro de Avalúo',
+            link: '/pages/commercialization/c-b-a-rda-m-appraisal-registration',
+          },
+          {
+            label: 'Captura de gastos',
+            link: '/pages/commercialization/c-b-ge-cdg-m-expense-capture',
+          },
+        ],
+      },
+
+      {
+        label: 'Activos Financieros',
+        icon: 'credit-card-outline',
+        subItems: [],
+      },
+      {
+        label: 'Catálogos',
+        icon: 'folder',
+        subItems: [],
+      },
+    ],
+  },
+  // PROCESOS JURIDICOS
+  menuOptionsJuridicalProcesses,
+  // PROCESOS JURIDICOS
 ];

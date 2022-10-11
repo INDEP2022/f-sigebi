@@ -73,12 +73,14 @@ export abstract class BasePage implements OnDestroy {
   protected alertQuestion(
     icon: SweetAlertIcon,
     title: string,
-    text: string
+    text: string,
+    confirmButtonText?: string
   ): Promise<SweetAlertResult> {
     let sweetalert = new SweetalertModel();
     sweetalert.title = title;
     sweetalert.text = text;
     sweetalert.icon = icon;
+    confirmButtonText ? (sweetalert.confirmButtonText = confirmButtonText) : '';
     sweetalert.showConfirmButton = true;
     sweetalert.showCancelButton = true;
     return Swal.fire(sweetalert);

@@ -1,0 +1,179 @@
+<app-card [header]="true">
+    <div class="ch-content" header>
+        <h5 class="title">
+            DICTAMINACIONES JUR&Iacute;DICAS
+        </h5>
+    </div>
+
+    <div body>
+        <form [formGroup]="legalForm" class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+                    <div class="row">
+                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+                            <form-field [control]="legalForm.get('noExpediente')" label="No Expediente">
+                                <input class="form-control" formControlName="noExpediente" />
+                            </form-field>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+                            <form-field [control]="legalForm.get('tipoDictaminacion')" label="Tipo de dictaminación">
+                              <select class="form-control" formControlName="tipoDictaminacion">
+                                <option [value]="null">Seleccione un valor</option>
+                              </select>
+                            </form-field>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+                            <form-field [control]="legalForm.get('cveOficio')" label="Cve. Oficio">
+                                <input class="form-control" formControlName="cveOficio" />
+                              </form-field>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <form-field [control]="legalForm.get('averPrevia')" label="Averiguación Previa">
+                                <input class="form-control" formControlName="averPrevia" />
+                              </form-field>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <form-field [control]="legalForm.get('causaPenal')" label="Causa Penal">
+                                <input class="form-control" formControlName="causaPenal" />
+                              </form-field>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+                            <form-field [control]="legalForm.get('observaciones')" label="Observaciones del Dictamen">
+                                <textarea
+                                  rows="3"
+                                  class="form-control"
+                                  formControlName="observaciones"></textarea>
+                              </form-field>
+                        </div>
+                    <!-- </div>
+                </div>
+
+                <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+                    <div class="row"> -->
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <form-field [control]="legalForm.get('fecDest')" label="Fec. Dest.">
+                                <input 
+                                    formControlName="fecDest"
+                                    placeholder="Selección de Fec. Dest."
+                                    class="form-control"
+                                        bsDatepicker>
+                            </form-field>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <form-field [control]="legalForm.get('fecDicta')" label="Fec. Dictamina">
+                                <input 
+                                    formControlName="fecDicta"
+                                    placeholder="Selección de Fec. Dictamina"
+                                    class="form-control"
+                                        bsDatepicker>
+                            </form-field>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                            <form-field [control]="legalForm.get('autoriza')" label="Autoriza Dict.">
+                                <!-- <ngx-select [form]="legalForm" control="autoriza"></ngx-select> -->
+                              <select class="form-control" formControlName="autoriza">
+                                <option [value]="null">Seleccione un valor</option>
+                              </select>
+                            </form-field>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <form-check
+                              class="col-md-12"
+                              label="¿El expediente es delito propiedad intelectual?"
+                              for="esPropiedad">
+                              <input
+                                id="esPropiedad-check"
+                                type="checkbox"
+                                class="form-control"
+                                formControlName="esPropiedad" />
+                            </form-check>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <div class="col-md-12 text-center text-danger">
+                                <b>Estatus</b>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+
+                </div>
+            </div>
+            <hr class="row">
+            <div class="row">
+                <div class="col-md-2">
+                    <form-field [control]="legalForm.get('test')" label="Ident.">
+                      <select class="form-control" formControlName="test">
+                        <option [value]="null">Seleccione un valor</option>
+                        <option [value]="'Alta'">Alta</option>
+                        <option [value]="'Normal'">Normal</option>
+                      </select>
+                    </form-field>
+                </div>
+
+                <div class="col-md-10">
+                    <form-field [control]="legalForm.get('test')" label="Subtipo - Ssubtipo - Sssubtipo">
+                      <select class="form-control" formControlName="test">
+                        <option [value]="null">Seleccione un valor</option>
+                        <option [value]="'Alta'">Alta</option>
+                        <option [value]="'Normal'">Normal</option>
+                      </select>
+                    </form-field>
+                </div>
+            </div>
+
+            <div class="row pt-2">
+                <ng2-smart-table class="col-md-12" [settings]="settings1" [source]="data1"></ng2-smart-table>
+            </div>
+
+            <div class="row pt-2">
+                <div class="col-md-12 text-center">
+                    <button nbButton class="mx-2">
+                        ICONO
+                        <!-- <nb-icon icon="arrow-ios-upward-outline"></nb-icon> -->
+                    </button>
+                    <button nbButton class="mx-2">
+                        ICONO
+                        <!-- <nb-icon icon="arrowhead-up-outline"></nb-icon> -->
+                    </button>
+                    <button nbButton class="mx-2">
+                        ICONO
+                        <!-- <nb-icon icon="arrow-ios-downward-outline"></nb-icon> -->
+                    </button>
+                    <button nbButton class="mx-2">
+                        ICONO
+                        <!-- <nb-icon icon="arrowhead-down-outline"></nb-icon> -->
+                    </button>
+                </div>
+            </div>
+
+            <div class="row pt-2">
+                <ng2-smart-table class="col-md-12" [settings]="settings2" [source]="data2"></ng2-smart-table>
+            </div>
+
+            <div class="row pt-2">
+                <div class="col-md-8">
+                    <div class="row">
+                        <ng2-smart-table class="col-md-10" [settings]="settings3" [source]="data3"></ng2-smart-table>
+                        <div class="col-md-2">
+                            <p class="text-info h5">
+                                No. bien
+                            </p>
+                            <p class="text-info h5">
+                                66345
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <button nbButton class="mr-2 mb-4" size="small">Documentos</button>
+                    <button nbButton class="mr-2 mb-4" size="small">Aprobar</button>
+                    <button nbButton class="mr-2 mb-4" size="small">Personalizar</button>
+                    <button nbButton size="small" class="mb-4">Borrar Dictamen</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</app-card>

@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
@@ -16,7 +15,6 @@ import { PeGdaddCDestructionAuthorizationManagementComponent } from './pe-gdadd-
   imports: [
     CommonModule,
     PeGdaddMDestructionAuthorizationManagementRoutingModule,
-    Ng2SmartTableModule,
     SharedModule,
     BsDatepickerModule
   ]
