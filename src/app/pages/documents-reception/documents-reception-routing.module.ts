@@ -78,6 +78,15 @@ const routes: Routes = [
         )
       ).DrPgrSubjectsRegisterModule,
   },
+  {
+    path: 'documents-requirements-verification',
+    loadChildren: async () =>
+      (
+        await import(
+          './dr-documents-requirements-verification/dr-documents-requirements-verification.module'
+        )
+      ).DrDocumentsRequirementsVerificationModule,
+  },
 ];
 
 @NgModule({

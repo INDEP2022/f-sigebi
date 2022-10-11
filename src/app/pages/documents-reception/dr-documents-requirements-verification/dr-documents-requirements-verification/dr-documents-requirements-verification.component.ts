@@ -1,16 +1,44 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import {
+  DOCUMENTS_REQUIREMENTS_VERIFICATION_COLUMNS,
+  DOCUMENTS_REQUIREMENTS_VERIFICATION_EXAMPLE_DATA,
+} from './documents-requirements-verification-columnts';
 
 @Component({
   selector: 'app-dr-documents-requirements-verification',
   templateUrl: './dr-documents-requirements-verification.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class DrDocumentsRequirementsVerificationComponent implements OnInit {
+  requirementsForm: FormGroup;
+  settings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
+  data = DOCUMENTS_REQUIREMENTS_VERIFICATION_EXAMPLE_DATA;
 
-  constructor() { }
-
-  ngOnInit(): void {
+  constructor(private fb: FormBuilder) {
+    this.settings.columns = DOCUMENTS_REQUIREMENTS_VERIFICATION_COLUMNS;
   }
 
+  ngOnInit(): void {
+    this.prepareForm();
+  }
+
+  prepareForm() {
+    this.requirementsForm = this.fb.group({
+      expediente: [null, [Validators.required]],
+      causaPenal: [null],
+      tipoDicta: [null],
+      oficio: [null],
+      volante: [null],
+      averPrevia: [null],
+      indiciado: [null],
+      bien: [null],
+      descripcion: [null],
+      statusBien: [null],
+      estatusDicta: [null],
+      fechAseg: [null],
+      observaciones: [null],
+    });
+  }
 }
