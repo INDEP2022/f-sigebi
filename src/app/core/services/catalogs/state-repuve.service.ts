@@ -5,27 +5,28 @@ import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IEstRepuve } from '../../models/catalogs/est-repuve.model';
+import { IStateRepuve } from '../../models/catalogs/state-repuve.model';
+
 @Injectable({
   providedIn: 'root',
 })
-export class EstRepuveService implements ICrudMethods<IEstRepuve> {
+export class StateRepuveService implements ICrudMethods<IStateRepuve> {
   private readonly route: string = ENDPOINT_LINKS.EstRepuve;
-  constructor(private estRepuveRepository: Repository<IEstRepuve>) {}
+  constructor(private estRepuveRepository: Repository<IStateRepuve>) {}
 
-  getAll(params?: ListParams): Observable<IListResponse<IEstRepuve>> {
+  getAll(params?: ListParams): Observable<IListResponse<IStateRepuve>> {
     return this.estRepuveRepository.getAllPaginated(this.route, params);
   }
 
-  getById(id: string | number): Observable<IEstRepuve> {
+  getById(id: string | number): Observable<IStateRepuve> {
     return this.estRepuveRepository.getById(this.route, id);
   }
 
-  create(model: IEstRepuve): Observable<IEstRepuve> {
+  create(model: IStateRepuve): Observable<IStateRepuve> {
     return this.estRepuveRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: IEstRepuve): Observable<Object> {
+  update(id: string | number, model: IStateRepuve): Observable<Object> {
     return this.estRepuveRepository.update(this.route, id, model);
   }
 

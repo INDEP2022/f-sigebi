@@ -360,6 +360,62 @@ const routes: Routes = [
         .DocCompensationSatModule,
     data: { title: 'Documentos resarcimiento sat' },
   },
+  {
+    path: 'edos-x-coor',
+    loadChildren: async () =>
+      (await import('./edos-x-coor/edos-x-coor.module'))
+        .EdosXCoorModule,
+    data: { title: 'Lista de Edos X Coor' },
+  },
+  {
+    path: 'station',
+    loadChildren: async () =>
+      (await import('./station/station.module'))
+        .StationModule,
+    data: { title: 'Lista de Emisoras' },
+  },
+  {
+    path: 'third-party-company',
+    loadChildren: async () =>
+      (await import('./third-party-company/third-party-company.module'))
+        .ThirdPartyCompanyModule,
+    data: { title: 'Lista de Emisoras' },
+  },
+  {
+    path: 'status-transfer',
+    loadChildren: async () =>
+      (await import('./status-transfer/status-transfer.module'))
+        .StatusTransferModule,
+    data: { title: 'Lista estado transferencias' },
+  },
+  {
+    path: 'status-process',
+    loadChildren: async () =>
+      (await import('./status-process/status-process.module'))
+        .StatusProcessModule,
+    data: { title: 'Lista estatus proceso' },
+  },
+  {
+    path: 'state-repuves',
+    loadChildren: async () =>
+      (await import('./state-repuves/state-repuves.module'))
+        .StateRepuvesModule,
+    data: { title: 'Lista estado repuves' },
+  },
+  {
+    path: 'status-claims',
+    loadChildren: async () =>
+      (await import('./status-claims/status-claims.module'))
+        .StatusClaimsModule,
+    data: { title: 'Lista estatus siniestros' },
+  },
+  {
+    path: 'penalty',
+    loadChildren: async () =>
+      (await import('./penalty/penalty.module'))
+        .PenaltyModule,
+    data: { title: 'Lista Penalizacion' },
+  },
 ];
 
 @NgModule({

@@ -1,4 +1,4 @@
-export interface IEstRepuve {
+export interface IStateRepuve {
   cve?: string;
   description?: string;
   procedure?: string;

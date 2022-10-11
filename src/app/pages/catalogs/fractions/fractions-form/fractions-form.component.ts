@@ -7,7 +7,6 @@ import { IFraction } from 'src/app/core/models/catalogs/fraction.model';
 import { INorm } from 'src/app/core/models/catalogs/norm.model';
 import { ISatClassification } from 'src/app/core/models/catalogs/sat-classification.model';
 import { ISiabClasification } from 'src/app/core/models/catalogs/siab-clasification.model';
-import { ClaimStatusService } from 'src/app/core/services/catalogs/claim-status.service';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { InstitutionClasificationService } from 'src/app/core/services/catalogs/institution-classification.service';
 import { NormService } from 'src/app/core/services/catalogs/norm.service';
@@ -28,14 +27,14 @@ export class FractionsFormComponent extends BasePage implements OnInit {
   fractionForm: ModelForm<IFraction>
   norms = new DefaultSelect<INorm>();
   clasifications = new DefaultSelect<ISiabClasification>();
-  edit: boolean = false; 
+  edit: boolean = false;
 
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private fractionService: FractionService,
     private normService: NormService,
-    private clasificationService:SIABClasificationService) { 
+    private clasificationService:SIABClasificationService) {
     super();
   }
 
@@ -65,14 +64,14 @@ export class FractionsFormComponent extends BasePage implements OnInit {
       this.edit = true;
       this.fractionForm.patchValue(this.fraction);
 
-      if(this.fraction.clasificationId || this.fraction.normId){     
+      if(this.fraction.clasificationId || this.fraction.normId){
         this.fractionForm.controls.clasificationId.setValue((this.fraction.clasificationId as ISiabClasification).id);
         this.clasifications = new DefaultSelect([this.fraction.clasificationId], 1);
 
         this.fractionForm.controls.normId.setValue((this.fraction.normId as INorm).id);
         this.norms = new DefaultSelect([this.fraction.normId], 1);
       }
-      
+
     }
   }
 
@@ -89,7 +88,7 @@ export class FractionsFormComponent extends BasePage implements OnInit {
   }
 
   confirm(){
-    this.edit ? this.update() : this.create(); 
+    this.edit ? this.update() : this.create();
   }
 
   create(){
