@@ -56,6 +56,24 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./movable-property/consultation-goods-commercial-process-tabs/consultation-goods-commercial-process-tabs.module')).ConsultationGoodsCommercialProcessTabsModule,
     data: { title: 'Consulta de bienes' },
+  },
+  {
+    path: 'c-bm-ge-cdc-clc-m-calculate-commission',
+    loadChildren: async () =>
+      (await import('./movable-property/c-bm-ge-cdc-clc-m-calculate-commission/c-bm-ge-cdc-clc-m-calculate-commission.module')).CBmGeCdcClcMCalculateCommissionModule,
+    data: { title: 'Calcular comisión' },
+  },
+  {
+    path: 'c-bm-f-syf-m-series-folios-control',
+    loadChildren: async () =>
+      (await import('./movable-property/c-bm-f-syf-m-series-folios-control/c-bm-f-syf-m-series-folios-control.module')).CBmFSyfMSeriesFoliosControlModule,
+    data: { title: 'Folios y series' },
+  },
+  {
+    path: 'c-bm-f-cdr-m-rebilling-causes',
+    loadChildren: async () =>
+      (await import('./movable-property/c-bm-f-cdr-m-rebilling-causes/c-bm-f-cdr-m-rebilling-causes.module')).CBmFCdrMRebillingCausesModule,
+    data: { title: 'Causas y Refacturación' },
   }
 ];
 

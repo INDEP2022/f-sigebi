@@ -503,6 +503,18 @@ export const MENU: IMenuItem[] = [
             label: 'Consulta de bienes',
             link: '/pages/commercialization/consultation-goods-commercial-process-tabs',
           },
+          {
+            label: 'Calcular comisión',
+            link: '/pages/commercialization/c-bm-ge-cdc-clc-m-calculate-commission',
+          },
+          {
+            label: 'Folios y Series',
+            link: '/pages/commercialization/c-bm-f-syf-m-series-folios-control',
+          },
+          {
+            label: 'Causas y Refacturación',
+            link: '/pages/commercialization/c-bm-f-cdr-m-rebilling-causes',
+          },
         ],
       },
       {

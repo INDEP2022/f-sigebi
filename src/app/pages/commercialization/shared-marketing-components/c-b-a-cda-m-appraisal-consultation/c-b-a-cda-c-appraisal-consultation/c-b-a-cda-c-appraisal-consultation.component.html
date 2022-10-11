@@ -9,9 +9,8 @@
             <h5 class="title"></h5>
             <app-columns-select [(settings)]="settings"></app-columns-select>
         </div>
-        
-        <ng2-smart-table [settings]="settings" [source]="data" (edit)="exportAsXLSX()"></ng2-smart-table>
-             
-        
+        <div class="row justify-content-end mr-5">
+           <ng2-smart-table [settings]="settings" [source]="data" (edit)="exportAsXLSX()"></ng2-smart-table> 
+        </div>
     </div>
 </app-card>
