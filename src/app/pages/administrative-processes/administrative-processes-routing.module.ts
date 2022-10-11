@@ -174,6 +174,30 @@ const routes: Routes = [
             './siab-sami-interaction/pa-ssi-m-siab-sami-interaction.module'
           ).then(m => m.PaSsiMSiabSamiInteractionModule),
       },
+      {
+        path: 'location-goods',
+        loadChildren: async () =>
+          (await import('./location-of-goods/location-goods-warehouses-storage/pa-lg-m-location-goods-warehouses-storage.module')).PaLgMLocationGoodsWarehousesStorageModule,
+        data: { title: 'Ubicacion de bienes' },
+      },
+      {
+        path: 'warehouse-inquiries',
+        loadChildren: async () =>
+         (await import('./warehouse-inquiries/pa-m-warehouse-inquiries.module')).PaMWarehouseInquiriesModule,
+         data: { title: 'Consulta Almacenes'}
+      },
+      {
+        path: 'vault-consultation',
+        loadChildren: async () =>
+         (await import('./vault-consultation/pa-m-vault-consultation.module')).PaMVaultConsultationModule,
+         data: { title: 'Consulta Bovedas'}
+      },
+      {
+        path: 'property-registration',
+        loadChildren: async () =>
+         (await import('./kitchenware/pa-m-kitchenware.module')).PaMKitchenwareModule,
+         data: { title: 'Registro de mensaje del bien'}
+      },
       /**
        * Seguros **Legaspi**
        **/
