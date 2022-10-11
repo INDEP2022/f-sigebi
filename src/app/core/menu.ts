@@ -142,7 +142,6 @@ export const MENU: IMenuItem[] = [
         link: '/pages/catalogs/sub-delegations',
       },
       {
-
         label: 'Etiquetas Bien',
         link: '/pages/catalogs/label-okey',
       },
@@ -161,7 +160,7 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Procesos Sise',
         link: '/pages/catalogs/siseProcess',
-      }, 
+      },
       {
         label: 'R Asunt Dic',
         link: '/pages/catalogs/rAsuntDic',
@@ -229,6 +228,45 @@ export const MENU: IMenuItem[] = [
         label: 'Regulaciones',
         link: '/pages/catalogs/regulatory',
       },
+      {
+        label: 'Edos X Coor',
+        link: '/pages/catalogs/edos-x-coor',
+      },
+      {
+        label: 'Emisoras',
+        link: '/pages/catalogs/station',
+      },
+      {
+        label: 'Empresa de terceros',
+        link: '/pages/catalogs/third-party-company',
+      },
+      {
+        label: 'Estado Transferencias',
+        link: '/pages/catalogs/status-transfer',
+      },
+      {
+        label: 'Estatus Proceso',
+        link: '/pages/catalogs/status-process',
+      },
+      {
+        label: 'Estato Repuves',
+        link: '/pages/catalogs/state-repuves',
+      },
+      {
+        label: 'Estatus Siniestros',
+        link: '/pages/catalogs/status-claims',
+      },
+      {
+        label: 'Penalizacion',
+        link: '/pages/catalogs/penalty',
+      },
+    ],
+  },
+  //Administración
+  {
+    label: 'Procesos Administrativos',
+    icon: 'bx-folder',
+    subItems: [
       {
         label: 'Respuestas Repuve',
         link: '/pages/catalogs/responseRepuve',
@@ -576,17 +614,14 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Activos Financieros',
         icon: 'credit-card-outline',
-        subItems:[
-        ]
+        subItems: [],
       },
       {
         label: 'Catálogos',
         icon: 'folder',
-        subItems:[
-        ]
-      }
-      
-    ]
+        subItems: [],
+      },
+    ],
   },
   // PROCESOS JURIDICOS
   menuOptionsJuridicalProcesses,

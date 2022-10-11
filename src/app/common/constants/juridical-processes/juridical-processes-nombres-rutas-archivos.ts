@@ -20,6 +20,12 @@ export const routesJuridicalProcesses: any =
   // DEPOSITARIA
   {
     label: 'Nombranientos', link: 'registro-depositaria', menu: 'Registro de Depositaría' 
+  },
+  {
+    label: 'Conciliación de Pagos Depositarias', link: 'conciliacion-pagos-depositaria', menu: 'Proceso de Disperción de Pagos' 
+  },
+  {
+    label: 'Consulta de Pagos Relacionados Depositarias', link: 'consulta-pagos-relacionados-depositaria', menu: 'Proceso de Disperción de Pagos' 
   }
   // DEPOSITARIA
 ]
@@ -52,6 +58,14 @@ export const menuOptionsJuridicalProcesses: IMenuItem =
           {
             label: routesJuridicalProcesses[4].menu, 
             link: baseMenu + baseMenuDepositaria + routesJuridicalProcesses[4].link
+          },
+          {
+            label: routesJuridicalProcesses[5].menu, 
+            link: baseMenu + baseMenuDepositaria + routesJuridicalProcesses[5].link
+          },
+          {
+            label: routesJuridicalProcesses[6].menu, 
+            link: baseMenu + baseMenuDepositaria + routesJuridicalProcesses[6].link
           },
         ],
       },

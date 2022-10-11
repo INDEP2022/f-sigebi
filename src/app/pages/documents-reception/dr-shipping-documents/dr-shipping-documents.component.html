@@ -1,0 +1,174 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Envio de oficios</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="documentsForm" class="form-material" (submit)="save()">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="row">
+            <form-field
+              class="col-md-4"
+              [control]="documentsForm.get('noOficio')"
+              label="No. Oficio">
+              <input
+                class="form-control"
+                type="text"
+                formControlName="noOficio" />
+            </form-field>
+            <form-field
+              class="col-md-8"
+              [control]="documentsForm.get('cveOficio')"
+              label="Cve Oficio">
+              <input
+                class="form-control"
+                type="text"
+                formControlName="cveOficio" />
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              class="col-md-6"
+              [control]="documentsForm.get('fecTurno')"
+              label="Fec. Turno">
+              <input
+                class="form-control"
+                formControlName="fecTurno"
+                bsDatepicker />
+            </form-field>
+
+            <form-field
+              class="col-md-4 offset-md-2"
+              [control]="documentsForm.get('prioridad')"
+              label="Prioridad">
+              <select class="form-control" formControlName="prioridad">
+                <option value="alta">Alta</option>
+                <option value="normal">Normal</option>
+              </select>
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              class="col-md-10"
+              [control]="documentsForm.get('remitente')">
+              <ngx-select
+                [form]="documentsForm"
+                control="remitente"
+                [data]="select"
+                label="Remitente"></ngx-select>
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field
+              class="col-md-10"
+              [control]="documentsForm.get('destinatario')">
+              <ngx-select
+                [form]="documentsForm"
+                control="destinatario"
+                [data]="select"
+                label="Destinatario"></ngx-select>
+            </form-field>
+          </div>
+
+          <div class="row pt-4">
+            <form-field class="col-md-10" [control]="documentsForm.get('cpp')">
+              <ngx-select
+                [form]="documentsForm"
+                control="cpp"
+                [data]="select"
+                label="C.P.P."></ngx-select>
+            </form-field>
+          </div>
+
+          <div class="row">
+            <form-field class="col-md-10" [control]="documentsForm.get('cpp')">
+              <ngx-select
+                [form]="documentsForm"
+                control="cpp"
+                [data]="select"
+                label="C.P.P."></ngx-select>
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="row">
+            <form-field
+              class="col-md-10"
+              [control]="documentsForm.get('descripcion')"
+              label="Descripción">
+              <textarea formControlName="descripcion" class="form-control">
+              </textarea>
+            </form-field>
+          </div>
+
+          <div class="row">
+            <div class="row pt-5">
+              <form-field [control]="documentsForm.get('cpp')">
+                <ngx-select
+                  [form]="documentsForm"
+                  control="destino"
+                  [data]="select"
+                  label="Del Destino"></ngx-select>
+              </form-field>
+            </div>
+
+            <div class="row pt-4">
+              <form-field [control]="documentsForm.get('cpp')">
+                <ngx-select
+                  [form]="documentsForm"
+                  control="subDestino"
+                  [data]="select"
+                  label="Subdel Destino"></ngx-select>
+              </form-field>
+            </div>
+
+            <div class="row pt-4">
+              <form-field [control]="documentsForm.get('cpp')">
+                <ngx-select
+                  [form]="documentsForm"
+                  control="area"
+                  [data]="select"
+                  label="Area Destino"></ngx-select>
+              </form-field>
+            </div>
+
+            <div class="row">
+              <div class="col-md-8 d-flex">
+                <form-radio label="Texto areas">
+                  <input type="radio" formControlName="type" value="text" />
+                </form-radio>
+
+                <form-radio label="Texto Dirección General">
+                  <input type="radio" formControlName="type" value="drigral" />
+                </form-radio>
+              </div>
+              <div class="col-md-4">
+                <button type="button" class="btn btn-info btn-sm">
+                  Selcción de volantes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings"
+          [source]="data">
+        </ng2-smart-table>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12 text-right">
+          <button status="success" type="submit">Guardar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>
