@@ -44,6 +44,18 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./shared-marketing-components/c-b-ge-cdg-m-expense-capture/c-b-ge-cdg-m-expense-capture.module')).CBGeCdgMExpenseCaptureModule,
     data: { title: 'Captura de gastos' },
+  },
+  {
+    path: 'c-bm-ge-cdc-tc-m-third-party-marketers',
+    loadChildren: async () =>
+      (await import('./movable-property/c-bm-ge-cdc-tc-m-third-party-marketers/c-bm-ge-cdc-tc-m-third-party-marketers.module')).CBmGeCdcTcMThirdPartyMarketersModule,
+    data: { title: 'Terceros comercializadores' },
+  },
+  {
+    path: 'consultation-goods-commercial-process-tabs',
+    loadChildren: async () =>
+      (await import('./movable-property/consultation-goods-commercial-process-tabs/consultation-goods-commercial-process-tabs.module')).ConsultationGoodsCommercialProcessTabsModule,
+    data: { title: 'Consulta de bienes' },
   }
 ];
 

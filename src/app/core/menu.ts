@@ -577,6 +577,14 @@ export const MENU: IMenuItem[] = [
             label: 'Captura de gastos',
             link: '/pages/commercialization/c-b-ge-cdg-m-expense-capture',
           },
+          {
+            label: 'Terceros comercializadores',
+            link: '/pages/commercialization/c-bm-ge-cdc-tc-m-third-party-marketers',
+          },
+          {
+            label: 'Consulta de bienes',
+            link: '/pages/commercialization/consultation-goods-commercial-process-tabs',
+          },
         ],
       },
       {
@@ -610,6 +618,10 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Captura de gastos',
             link: '/pages/commercialization/c-b-ge-cdg-m-expense-capture',
+          },
+          {
+            label: 'Consulta de bienes',
+            link: '/pages/commercialization/consultation-goods-commercial-process-tabs',
           },
         ],
       },
