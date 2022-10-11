@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 
 export interface ExampleActa {
   idConversion: number,
@@ -27,6 +29,9 @@ export interface ExampleActa {
 })
 export class ConversionActComponent implements OnInit {
 
+  totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  
   form: FormGroup;
   //Geters del Encabezado
   get idConversion() { return this.form.get('idConversion'); }

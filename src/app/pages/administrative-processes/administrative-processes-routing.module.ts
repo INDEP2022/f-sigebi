@@ -132,6 +132,12 @@ const routes: Routes = [
         loadChildren: async () =>
           (await import('./location-of-goods/location-goods-warehouses-storage/pa-lg-m-location-goods-warehouses-storage.module')).PaLgMLocationGoodsWarehousesStorageModule,
         data: { title: 'Ubicacion de bienes' },
+      },
+      {
+        path: 'warehouse-inquiries',
+        loadChildren: async () =>
+         (await import('./warehouse-inquiries/pa-m-warehouse-inquiries.module')).PaMWarehouseInquiriesModule,
+         data: { title: 'Consulta Almacenes'}
       }
     ],
   },

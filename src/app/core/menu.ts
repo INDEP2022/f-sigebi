@@ -333,6 +333,10 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Ubicación de Bienes',
         link: '/pages/administrative-processes/location-goods'
+      },
+      {
+        label: 'Consulta de Almacenes',
+        link: '/pages/administrative-processes/warehouse-inquiries'
       }
     ],
   },

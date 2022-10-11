@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { PaLgCModalSelectsGoodsComponent } from '../pa-lg-c-modal-selects-goods/pa-lg-c-modal-selects-goods.component';
 
 @Component({
   selector: 'app-pa-lg-c-location-goods-warehouses-storage',
@@ -57,10 +58,22 @@ export class PaLgCLocationGoodsWarehousesStorageComponent implements OnInit {
   }
 
   massAssignment(){
-
+    this.openModal();
   }
 
   checkLocations(){
+
+  }
+
+  openModal(): void {
+
+    this.modalService.show(PaLgCModalSelectsGoodsComponent, {
+      initialState: {
+        
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
 
   }
 }

@@ -1,111 +1,427 @@
 <form [formGroup]="form" class="form-material">
-    <app-card>
-        <div body>
-          <h5 class="title">Rastreador de Bienes</h5>
+  <app-card>
+    <div body>
+      <h5 class="title">Rastreador de Bienes</h5>
+    </div>
+  </app-card>
+  <app-card [header]="true">
+    <div class="ch-content" header>
+      <h5 class="title">
+        Criterios por clasificacion de bienes (Tipos / Subtipos / SubSubTipos /
+        SubSubSubTipos de Bienes)
+      </h5>
+    </div>
+    <div body>
+      <div class="row">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('tariffFraction')"
+            label="Fracción Arancelaría">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="tariffFraction" />
+          </form-field>
         </div>
-    </app-card>
-    <app-card [header]="true">
-        <div class="ch-content" header>
-          <h5 class="title">Criterios por clasificacion de bienes (Tipos / Subtipos / SubSubTipos / SubSubSubTipos de Bienes)</h5>
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <button class="btn btn-success btn-sm active">+</button>
         </div>
-        <div body>
-            <div class="row">
-                <div class="col-md-4 col-sm-12 col-xs-12">
-                    <form-field [control]="form.get('tariffFraction')" label="Fracción Arancelaría">
-                      <input
-                        type="text"
-                        class="form-control"
-                        formControlName="tariffFraction">
-                    </form-field>
-                </div>
-                <div class="col-md-2 col-sm-12 col-xs-12">
-                    <button 
-                        class="btn btn-success btn-sm active" 
-                        >
-                        +
-                    </button> 
-                </div>
-                <div class="col-md-4 col-sm-12 col-xs-12">
-                    <form-field [control]="form.get('goodsClassificationNumber')" label="Número de Clasificación de Bien">
-                      <input
-                        type="text"
-                        class="form-control"
-                        formControlName="goodsClassificationNumber">
-                    </form-field>
-                </div>
-                <div class="col-md-2 col-sm-12 col-xs-12">
-                    <button 
-                        class="btn btn-success btn-sm active" 
-                        >
-                        +
-                    </button> 
-                  </div>
-            </div>
-            <div class="row mt-5">
-                <div class="col-md-6 col-sm-12 col-xs-12">
-                    <form-field [control]="form.get('alternateClassificationGood')" label="Clasificación alterna de Bien">
-                      <input
-                        type="text"
-                        class="form-control"
-                        formControlName="alternateClassificationGood">
-                      
-                    </form-field>
-                  </div>
-                  <div class="col-md-6 col-sm-12 col-xs-12">
-                    <form-field [control]="form.get('search')" label="Buscar en descripción del Sub Sub Sub Tipo">
-                        <input
-                        type="text"
-                        class="form-control"
-                        formControlName="search">
-                    </form-field>
-                  </div>
-            </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('goodsClassificationNumber')"
+            label="Número de Clasificación de Bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="goodsClassificationNumber" />
+          </form-field>
         </div>
-    </app-card>
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <button class="btn btn-success btn-sm active">+</button>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('alternateClassificationGood')"
+            label="Clasificación alterna de Bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="alternateClassificationGood" />
+          </form-field>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('search')"
+            label="Buscar en descripción del Sub Sub Sub Tipo">
+            <input type="text" class="form-control" formControlName="search" />
+          </form-field>
+        </div>
+      </div>
+    </div>
+  </app-card>
 </form>
 
 <form [formGroup]="formCriteria" class="form-material">
-    <app-card [header]="true">
-        <div class="ch-content" header>
-          <h5 class="title">Criterios por Datos del Bien</h5>
+  <app-card [header]="true">
+    <div class="ch-content" header>
+      <h5 class="title">Criterios por Datos del Bien</h5>
+    </div>
+    <div body>
+      <div class="row">
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formCriteria.get('numberGood')"
+            label="No. Bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberGood" />
+          </form-field>
         </div>
-        <div body>
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-check label="List. Bienes" for="label">
+            <input id="label" type="checkbox" formControlName="listGoods" />
+          </form-check>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field [control]="formCriteria.get('process')" label="Proceso">
+            <input type="text" class="form-control" formControlName="process" />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formCriteria.get('inventorySAMI')"
+            label="Inv. SAMI">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="inventorySAMI" />
+          </form-field>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-check label="List. Inventario" for="labelList">
+            <input
+              id="labelList"
+              type="checkbox"
+              formControlName="listInventory" />
+          </form-check>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formCriteria.get('targetIndicator')"
+            label="Indicador Destino">
+            <select class="form-control" formControlName="targetIndicator">
+              <option value="derivado">opcion 1</option>
+              <option value="conversion">opcion 2</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field [control]="formCriteria.get('status')" label="Status">
+            <input type="text" class="form-control" formControlName="status" />
+          </form-field>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="formCriteria.get('goods')" label="Bienes">
+            <select class="form-control" formControlName="goods">
+              <option value="derivado">opcion 1</option>
+              <option value="conversion">opcion 2</option>
+            </select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formCriteria.get('goodFatherMenssagge')"
+            label="Bien Padre mensaje">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="goodFatherMenssagge"
+              placeholder="Ingrese el mensaje" />
+          </form-field>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <div class="col-md-6 col-sm-12 col-xs-12">
+            <form-field
+              [control]="formCriteria.get('approisedValue')"
+              label="Valor Avaluo de">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="approisedValue" />
+            </form-field>
+          </div>
+          <div class="col-md-6 col-sm-12 col-xs-12">
+            <form-field [control]="formCriteria.get('to')" label="a">
+              <input type="text" class="form-control" formControlName="to" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formCriteria.get('dateImg')"
+            label="Fecha Foto">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateImg"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <div class="col-md-full col-sm-12 col-xs-12">
+            <form-field
+              [control]="formCriteria.get('description')"
+              label="Descripcion">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="description" />
+            </form-field>
+          </div>
+          <div class="col-md-full col-sm-12 col-xs-12 mt-3">
+            <form-field
+              [control]="formCriteria.get('attributes')"
+              label="Atributos">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="attributes" />
+            </form-field>
+          </div>
+          <div class="col-md-full col-sm-12 col-xs-12 mt-3">
+            <form-field
+              [control]="formCriteria.get('identifier')"
+              label="Identificador">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="identifier" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <div class="col-md-full col-sm-12 col-xs-12">
+            <form-field
+              [control]="formCriteria.get('furnitureInv')"
+              label="Inv. Mueble">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="furnitureInv" />
+            </form-field>
+          </div>
+          <div class="col-md-full col-sm-12 col-xs-12 mt-3">
+            <form-field
+              [control]="formCriteria.get('siabiInv')"
+              label="Inv. SIABI">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="siabiInv" />
+            </form-field>
+          </div>
+          <div class="col-md-full col-sm-12 col-xs-12 mt-3">
+            <form-field
+              [control]="formCriteria.get('cisiInv')"
+              label="Inv. CISI">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="cisiInv" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-check label="Gabinete social" for="labelGabinete">
+            <input
+              id="labelGabinete"
+              type="checkbox"
+              formControlName="socialCabinet" />
+          </form-check>
+        </div>
+      </div>
+    </div>
+  </app-card>
+</form>
+
+<form [formGroup]="formCriterionFiles" class="form-material">
+  <app-card [header]="true">
+    <div class="ch-content" header>
+      <h5 class="title">Criterios por Expediente, Notificación y Dictamen</h5>
+    </div>
+    <div body>
+      <div class="row">
+        <div class="col-md-6 col-sm-12 col-xs-12">
             <div class="row">
-                <div class="col-md-2 col-sm-12 col-xs-12">
-                    <form-field [control]="formCriteria.get('numberGood')" label="No. Bien">
+                <div class="col-md-6 col-sm-12 col-xs-12 ">
+                    <form-field
+                      [control]="formCriterionFiles.get('dossier')"
+                      label="Expediente">
                       <input
                         type="text"
                         class="form-control"
-                        formControlName="numberGood">
+                        formControlName="dossier" />
                     </form-field>
-                </div>
-                <div class="col-md-2 col-sm-12 col-xs-12">
-                    <form-check label="List. Bienes" for="label">
-                        <input id="label" type="checkbox" formControlName="listGoods" />
-                    </form-check>    
-                </div>
-                <div class="col-md-2 col-sm-12 col-xs-12">
-                    <form-field [control]="formCriteria.get('process')" label="Proceso">
+                  </div>
+                  <div class="col-md-6 col-sm-12 col-xs-12 ">
+                    <form-field
+                      [control]="formCriterionFiles.get('numberFlyer')"
+                      label="No Volante">
                       <input
                         type="text"
                         class="form-control"
-                        formControlName="process">
+                        formControlName="numberFlyer" />
                     </form-field>
+                  </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-6 col-sm-12 col-xs-12">
+                    <form-field
+                    [control]="formCriterionFiles.get('typeFlyer')"
+                    label="Tipo Volante">
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="typeFlyer" />
+                  </form-field>
                 </div>
-                <div class="col-md-3 col-sm-12 col-xs-12">
-                    <form-field [control]="formCriteria.get('inventorySAMI')" label="Inv. SAMI">
-                      <input
-                        type="text"
-                        class="form-control"
-                        formControlName="inventorySAMI">
-                    </form-field>
+                <div class="col-md-6 col-sm-12 col-xs-12 mt-4">
+                    <form-check label="Listado de expediente" for="labelListFiles">
+                        <input
+                          id="labelListFiles"
+                          type="checkbox"
+                          formControlName="listFiles" />
+                      </form-check>
                 </div>
-                <div class="col-md-2 col-sm-12 col-xs-12">
-                    <form-check label="List. Inventario" for="label">
-                        <input id="label" type="checkbox" formControlName="listInventory" />
-                    </form-check>    
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-full col-sm-12 col-xs-12">
+                    <form-field
+                    [control]="formCriterionFiles.get('nameGiven')"
+                    label="Nombre Indicado">
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="nameGiven" />
+                  </form-field>
                 </div>
             </div>
         </div>
-    </app-card>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+            <div class="col-md-full col-sm-12 col-xs-12">
+                <form-field
+                [control]="formCriterionFiles.get('numberCourt')"
+                label="No Juzgado">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="numberCourt" />
+              </form-field>
+            </div>
+            <div class="col-md-full col-sm-12 col-xs-12 mt-3">
+                <form-field
+                [control]="formCriterionFiles.get('dateOficExt')"
+                label="Fecha Ofic. Ext.">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="dateOficExt" />
+              </form-field>
+            </div>
+            <div class="col-md-full col-sm-12 col-xs-12 mt-3">
+                <form-field
+                [control]="formCriterionFiles.get('publicMinistry')"
+                label="Ministerio Público">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="publicMinistry" />
+              </form-field>
+            </div>
+            <div class="col-md-full col-sm-12 col-xs-12 mt-3">
+                <form-field
+                [control]="formCriterionFiles.get('oficExtNo')"
+                label="Ofic. Ext. No.">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="oficExtNo" />
+              </form-field>
+            </div>
+            <div class="col-md-full col-sm-12 col-xs-12 mt-3">
+                <form-field
+                [control]="formCriterionFiles.get('opinion')"
+                label="Dictamen">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="opinion" />
+              </form-field>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+            <div class="col-md-full col-sm-12 col-xs-12">
+                <form-field
+                [control]="formCriterionFiles.get('expoTrans')"
+                label="Expo. Trans">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="expoTrans" />
+              </form-field>
+            </div>
+            <div class="col-md-full col-sm-12 col-xs-12 mt-3">
+                <form-field
+                [control]="formCriterionFiles.get('amparo')"
+                label="Amparo">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="amparo" />
+              </form-field>
+            </div>
+            <div class="col-md-full col-sm-12 col-xs-12 mt-3">
+                <form-field
+                [control]="formCriterionFiles.get('touchesPenal')"
+                label="Toca Penal">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="touchesPenal" />
+              </form-field>
+            </div>
+            <div class="col-md-full col-sm-12 col-xs-12 mt-3">
+                <form-field
+                [control]="formCriterionFiles.get('preliminaryInvestigation')"
+                label="Averiguación Previa">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="preliminaryInvestigation" />
+              </form-field>
+            </div>
+            <div class="col-md-full col-sm-12 col-xs-12 mt-3">
+                <form-field
+                [control]="formCriterionFiles.get('penalCause')"
+                label="Causa Penal">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="penalCause" />
+              </form-field>
+            </div>
+        </div>
+      </div>
+    </div>
+  </app-card>
 </form>

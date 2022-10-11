@@ -10,25 +10,24 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 
-///Components
-import { PaLgMLocationGoodsWarehousesStorageRoutingModule } from './pa-lg-m-location-goods-warehouses-storage-routing.module';
-import { PaLgCLocationGoodsWarehousesStorageComponent } from './pa-lg-c-location-goods-warehouses-storage/pa-lg-c-location-goods-warehouses-storage.component';
+
+//Components
+import { PaMWarehouseInquiriesRoutingModule } from './pa-m-warehouse-inquiries-routing.module';
+import { PaWiCWarehouseInquiriesComponent } from './pa-wi-c-warehouse-inquiries/pa-wi-c-warehouse-inquiries.component';
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
-import { PaLgCTrackerGoodsComponent } from './pa-lg-c-tracker-goods/pa-lg-c-tracker-goods.component';
-import { PaLgCModalSelectsGoodsComponent } from './pa-lg-c-modal-selects-goods/pa-lg-c-modal-selects-goods.component';
+import { PaWiCModalListGoodsComponent } from './pa-wi-c-modal-list-goods/pa-wi-c-modal-list-goods.component';
 
 
 @NgModule({
   declarations: [
-    PaLgCLocationGoodsWarehousesStorageComponent,
-    PaLgCTrackerGoodsComponent,
-    PaLgCModalSelectsGoodsComponent
+    PaWiCWarehouseInquiriesComponent,
+    PaWiCModalListGoodsComponent
   ],
   imports: [
     CommonModule,
     SharedModule,
     Ng2SmartTableModule,
-    PaLgMLocationGoodsWarehousesStorageRoutingModule,
+    PaMWarehouseInquiriesRoutingModule,
     FormsModule,
     ReactiveFormsModule,
     SharedModule,
@@ -39,4 +38,4 @@ import { PaLgCModalSelectsGoodsComponent } from './pa-lg-c-modal-selects-goods/p
     GoodsTypesSharedComponent
   ]
 })
-export class PaLgMLocationGoodsWarehousesStorageModule { }
+export class PaMWarehouseInquiriesModule { }
