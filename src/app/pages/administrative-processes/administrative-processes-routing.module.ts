@@ -138,6 +138,18 @@ const routes: Routes = [
         loadChildren: async () =>
          (await import('./warehouse-inquiries/pa-m-warehouse-inquiries.module')).PaMWarehouseInquiriesModule,
          data: { title: 'Consulta Almacenes'}
+      },
+      {
+        path: 'vault-consultation',
+        loadChildren: async () =>
+         (await import('./vault-consultation/pa-m-vault-consultation.module')).PaMVaultConsultationModule,
+         data: { title: 'Consulta Bovedas'}
+      },
+      {
+        path: 'property-registration',
+        loadChildren: async () =>
+         (await import('./kitchenware/pa-m-kitchenware.module')).PaMKitchenwareModule,
+         data: { title: 'Registro de mensaje del bien'}
       }
     ],
   },

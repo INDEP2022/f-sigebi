@@ -5,12 +5,12 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
-  selector: 'app-pa-wi-c-modal-list-goods',
-  templateUrl: './pa-wi-c-modal-list-goods.component.html',
+  selector: 'app-pa-vc-c-modal-list-goods',
+  templateUrl: './pa-vc-c-modal-list-goods.component.html',
   styles: [
   ]
 })
-export class PaWiCModalListGoodsComponent extends BasePage implements OnInit {
+export class PaVcCModalListGoodsComponent extends BasePage implements OnInit {
 
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -51,11 +51,9 @@ export class PaWiCModalListGoodsComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.data1 = this.opcion.initialState;
   }
-
-  mostrar(){
-    
-  }
+  
   return(){
     this.bsModalRef.hide();
   }
+
 }

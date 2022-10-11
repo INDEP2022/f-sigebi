@@ -3,9 +3,10 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { PaWiCModalListGoodsComponent } from '../pa-wi-c-modal-list-goods/pa-wi-c-modal-list-goods.component';
+import { ExampleGood } from '../../kitchenware/pa-k-c-property-registration/pa-k-c-property-registration.component';
+import { PaVcCModalListGoodsComponent } from '../pa-vc-c-modal-list-goods/pa-vc-c-modal-list-goods.component';
 
-export interface ExampleWarehouse{
+export interface ExampleVault{
   number: number,
   description: string,
   location: string,
@@ -26,12 +27,12 @@ export interface ExapleGoods{
 }
 
 @Component({
-  selector: 'app-pa-wi-c-warehouse-inquiries',
-  templateUrl: './pa-wi-c-warehouse-inquiries.component.html',
+  selector: 'app-pa-vc-c-vault-consultation',
+  templateUrl: './pa-vc-c-vault-consultation.component.html',
   styles: [
   ]
 })
-export class PaWiCWarehouseInquiriesComponent extends BasePage implements OnInit {
+export class PaVcCVaultConsultationComponent extends BasePage implements OnInit {
 
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -82,7 +83,7 @@ export class PaWiCWarehouseInquiriesComponent extends BasePage implements OnInit
     },
   };
 
-  data: ExampleWarehouse[] = [
+  data: ExampleVault[] = [
     {
       number: 1,
       description: 'Descripción 1',
@@ -124,6 +125,7 @@ export class PaWiCWarehouseInquiriesComponent extends BasePage implements OnInit
       locality: 'Localidad 2'
     }
   ];
+
   
   constructor(private modalService: BsModalService) { super() }
 
@@ -131,15 +133,14 @@ export class PaWiCWarehouseInquiriesComponent extends BasePage implements OnInit
   }
 
   select(event: any) {
-    event.data.goods ? this.openModal(event.data.goods) : this.alert('info','Ooop...','Este Almacen no contiene Bines');
+    event.data.goods ? this.openModal(event.data.goods) : this.alert('info','Ooop...','Esta Bóveda no contiene Bines');
   }
 
   openModal(data: any): void {
-    this.modalService.show( PaWiCModalListGoodsComponent , {
+    this.modalService.show( PaVcCModalListGoodsComponent , {
       initialState: data,
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
   }
-
 }

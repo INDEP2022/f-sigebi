@@ -337,6 +337,14 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Consulta de Almacenes',
         link: '/pages/administrative-processes/warehouse-inquiries'
+      },
+      {
+        label: 'Consulta de Bóvedas',
+        link: '/pages/administrative-processes/vault-consultation'
+      },
+      {
+        label: 'Registro de mensaje del Bien',
+        link: '/pages/administrative-processes/property-registration'
       }
     ],
   },
