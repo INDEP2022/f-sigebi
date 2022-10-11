@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -13,23 +13,18 @@ import { DRAWERS_COLUMNS } from './drawers-columns';
 @Component({
   selector: 'app-drawers-list',
   templateUrl: './drawers-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class DrawersListComponent extends BasePage implements OnInit {
-
   settings = TABLE_SETTINGS;
   paragraphs: IDrawer[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  
-  @Output() refresh = new EventEmitter<true>();
-
 
   constructor(
     private modalService: BsModalService,
     private drawerService: DrawerService
-  ) { 
+  ) {
     super();
     this.settings.columns = DRAWERS_COLUMNS;
     this.settings.actions.delete = true;
@@ -41,7 +36,7 @@ export class DrawersListComponent extends BasePage implements OnInit {
       .subscribe(() => this.getDrawers());
   }
 
-  getDrawers(){
+  getDrawers() {
     this.loading = true;
     this.drawerService.getAll(this.params.getValue()).subscribe({
       next: response => {
@@ -53,43 +48,35 @@ export class DrawersListComponent extends BasePage implements OnInit {
     });
   }
 
-
-  openModal(context?: Partial<DrawerFormComponent>) {
-    const modalRef = this.modalService.show(DrawerFormComponent,{
-      initialState: context,
-      class: 'modal-lg modal-dialog-centered',
+  openForm(drawer?: IDrawer) {
+    let config: ModalOptions = {
+      initialState: {
+        drawer,
+        callback: (next: boolean) => {
+          if (next) this.getDrawers();
+        },
+      },
+      class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getDrawers();
-    });
+    };
+    this.modalService.show(DrawerFormComponent, config);
   }
 
-  openForm(drawer?: IDrawer){
-    this.openModal({drawer});
-  }
-
-  delete(drawer: IDrawer){
+  delete(drawer: IDrawer) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       '¿Desea eliminar este registro?'
     ).then(question => {
-      if(question.isConfirmed){
-        let { noDrawer, noBobeda} = drawer;
+      if (question.isConfirmed) {
+        let { noDrawer, noBobeda } = drawer;
         const idBobeda = (noBobeda as ISafe).idSafe;
         noBobeda = idBobeda;
-        this.drawerService.removeByIds({noDrawer,noBobeda}).subscribe({
+        this.drawerService.removeByIds({ noDrawer, noBobeda }).subscribe({
           next: data => this.getDrawers(),
           error: error => (this.loading = false),
         });
       }
-    })
-  }
-
-  handleSuccess() {
-    this.loading = false;
-    this.refresh.emit(true);
-    this.modalService.hide();
+    });
   }
 }

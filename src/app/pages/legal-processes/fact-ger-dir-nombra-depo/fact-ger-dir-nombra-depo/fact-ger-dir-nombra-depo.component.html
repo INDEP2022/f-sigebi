@@ -1,0 +1,78 @@
+<app-card [header]="true" class="cat-card mt-5"> 
+    <div class="ch-content" header>
+  
+        <div class="row w-100">
+            <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
+                <span class="title">
+                    REPORTE DE CÉDULA DE NOMBRAMIENTOS
+                </span>
+            </div>
+            
+        </div>
+
+    </div>
+  
+    <div body>
+
+        <!-- form Conciliacion de pagos recibidos -->
+        <form [formGroup]="form" (submit)="mostrarInfo()">
+            <div class="row w-100">
+                <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                    <div class="form-group">
+                        <label class="label w-100">No. Bien</label>
+                        <input nbInput fullWidth class="w-100" formControlName="noBien"
+                                placeholder="No. Bien">
+                        
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
+                    <div class="form-group">
+                        <label class="label w-100">Detalle No. Bien</label>
+                        <input nbInput fullWidth class="w-100" placeholder="Detalle No. Bien">
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                    <div class="form-group">
+                        <label class="label w-100">Tipo de Administrador</label>
+                        <nb-select fullWidth selected="No" formControlName="tipoAdministrador" [status]="''">
+                            <nb-option value="Administrador">Administrador</nb-option>
+                            <nb-option value="Depositario">Depositario</nb-option>
+                            <nb-option value="Interventor">Interventor</nb-option>
+                        </nb-select>
+                        
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                    <div class="form-group">
+                        <label class="label w-100">Tipo de Depositaria</label>
+                        <nb-select fullWidth selected="No" formControlName="tipoAdministrador" [status]="''">
+                            <nb-option value="Provisional">Provisional</nb-option>
+                            <nb-option value="Definitiva">Definitiva</nb-option>
+                        </nb-select>
+                        
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                    <div class="form-group">
+                        <label class="label">&nbsp;</label>&nbsp;  
+                        <div class="d-flex justify-content-center">
+                            <button type="button" nbButton status="primary">
+                                Imprimir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!-- form Conciliacion de pagos recibidos -->
+
+
+        <!-- <div class="row w-100">
+            <div class="col-sm-12 col-12 col-md-12 p-2">
+                <ng2-smart-table class="my-table" [settings]="tableFactGenSettings" [source]="dataFactGen"></ng2-smart-table>
+            </div>
+        </div> -->
+  
+    </div>
+  
+  </app-card>

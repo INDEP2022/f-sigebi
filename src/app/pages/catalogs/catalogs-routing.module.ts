@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ExpertsModule } from './experts/experts.module';
 
 const routes: Routes = [
   {
@@ -98,6 +99,45 @@ const routes: Routes = [
       (await import('./states/states.module')).StatesModule,
   },
   {
+    path: 'sat-clasification',
+    loadChildren: async () =>
+      (await import('./sat-classification/sat-classification.module'))
+        .SatClasificationModule,
+    data: { title: 'Sat Clasificacion' },
+  },
+  {
+    path: 'sat-subclasification',
+    loadChildren: async () =>
+      (await import('./sat-subclassification/sat-subclassification.module'))
+        .SatSubclassificationModule,
+    data: { title: 'Sat Subclasificacion' },
+  },
+  {
+    path: 'services',
+    loadChildren: async () =>
+      (await import('./cat-services/cat-services.module')).CatServicesModule,
+    data: { title: 'Servicios' },
+  },
+  {
+    path: 'ifai-series',
+    loadChildren: async () =>
+      (await import('./ifai-series/ifai-series.module')).IfaiSeriesModule,
+    data: { title: 'Series Ifai' },
+  },
+  {
+    path: 'good-situation',
+    loadChildren: async () =>
+      (await import('./good-situation/good-situation.module'))
+        .GoodSituationModule,
+    data: { title: 'Situacion Bien' },
+  },
+  {
+    path: 'legal-support',
+    loadChildren: async () =>
+      (await import('./legal-support/legal-support.module')).LegalSupportModule,
+    data: { title: 'Soporte Legal' },
+  },
+  {
     path: 'label-okey',
     loadChildren: async () =>
       (await import('./label-okey/label-okey.module')).LabelOkeyModule,
@@ -162,6 +202,62 @@ const routes: Routes = [
     data: { title: 'Donatorios' },
   },
   {
+    path: 'label-okey',
+    loadChildren: async () =>
+      (await import('./label-okey/label-okey.module')).LabelOkeyModule,
+    data: { title: 'Etiquetas Bien' },
+  },
+  {
+    path: 'fractions',
+    loadChildren: async () =>
+      (await import('./fractions/fractions.module')).FractionsModule,
+    data: { title: 'Fracciones' },
+  },
+  {
+    path: 'drawers',
+    loadChildren: async () =>
+      (await import('./drawers/drawers.module')).DrawersModule,
+    data: { title: 'Gavetas' },
+  },
+  {
+    path: 'management',
+    loadChildren: async () =>
+      (await import('./management/management.module')).ManagementModule,
+    data: { title: 'Gestión' },
+  },
+  {
+    path: 'save-values',
+    loadChildren: async () =>
+      (await import('./save-values/save-values.module')).SaveValuesModule,
+    data: { title: 'Gestión' },
+  },
+  {
+    path: 'identifier',
+    loadChildren: async () =>
+      (await import('./identifiers/identifiers.module')).IdentifiersModule,
+    data: { title: 'Identificador' },
+  },
+  {
+    path: 'indicated',
+    loadChildren: async () =>
+      (await import('./indicated/indicated.module')).IndicatedModule,
+    data: { title: 'Indiciados' },
+  },
+  {
+    path: 'good-ssubtypes',
+    loadChildren: async () =>
+      (await import('./good-ssubtypes/good-ssubtypes.module'))
+        .GoodSsubtypesModule,
+    data: { title: 'Ssubtipo Bien' },
+  },
+  {
+    path: 'good-sssubtypes',
+    loadChildren: async () =>
+      (await import('./good-sssubtypes/good-sssubtypes.module'))
+        .GoodSssubtypesModule,
+    data: { title: 'Sssubtipo bien' },
+  },
+  {
     path: 'lawyer',
     loadChildren: async () =>
       (await import('./lawyer/lawyer.module')).LawyerModule,
@@ -216,22 +312,83 @@ const routes: Routes = [
   {
     path: 'payment-concept',
     loadChildren: async () =>
-      (await import('./payment-concept/payment-concept.module'))
-        .PaymentConceptModule,
-    data: { title: 'Concepto de Pago' },
+      (await import('./sub-delegations/sub-delegations.module'))
+        .SubDelegationsModule,
+    data: { title: 'Sub Delegaciones' },
+  },
+  {
+    path: 'expert',
+    loadChildren: async () =>
+      (await import('./experts/experts.module'))
+        .ExpertsModule,
+    data: { title: 'Peritos' },
+  },
+  {
+    path: 'person',
+    loadChildren: async () =>
+      (await import('./persons/persons.module'))
+        .PersonsModule,
+    data: { title: 'Personas' },
+  },
+  {
+    path: 'oring',
+    loadChildren: async () =>
+      (await import('./origin/origin.module'))
+        .OriginModule,
+    data: { title: 'Procedencias' },
+  },
+  {
+    path: 'oringCisi',
+    loadChildren: async () =>
+      (await import('./origin-cisi/origin-cisi.module'))
+        .OriginCisiModule,
+    data: { title: 'Procedencias Cisi' },
+  },
+  {
+    path: 'siseProcess',
+    loadChildren: async () =>
+      (await import('./sise-process/sise-process.module'))
+        .SiseProcessModule,
+    data: { title: 'Procesos Sise' },
+  },
+  {
+    path: 'rAsuntDic',
+    loadChildren: async () =>
+      (await import('./rasunt-dic/rasunt-dic.module'))
+        .RAsuntDicModule,
+    data: { title: 'R Asunt Dic' },
+  },
+  {
+    path: 'rack',
+    loadChildren: async () =>
+      (await import('./rack/rack.module'))
+        .RackModule,
+    data: { title: 'Estante' },
+  },
+  {
+    path: 'regulatory',
+    loadChildren: async () =>
+      (await import('./regulatory/regulatory.module'))
+        .RegulatoryModule,
+    data: { title: 'Regulaciones' },
+  },
+  {
+    path: 'responseRepuve',
+    loadChildren: async () =>
+      (await import('./response-repuve/response-repuve.module'))
+        .ResponseRepuveModule,
+    data: { title: 'Respuestas Repuve' },
   },
   {
     path: 'batch',
     loadChildren: async () =>
-      (await import('./batch/batch.module'))
-        .BatchModule,
+      (await import('./batch/batch.module')).BatchModule,
     data: { title: 'Lotes' },
   },
   {
     path: 'minpub',
     loadChildren: async () =>
-      (await import('./minpub/minpub.module'))
-        .MinpubModule,
+      (await import('./minpub/minpub.module')).MinpubModule,
     data: { title: 'Minpub' },
   },
   {
@@ -244,8 +401,7 @@ const routes: Routes = [
   {
     path: 'image-media',
     loadChildren: async () =>
-      (await import('./image-media/image-media.module'))
-        .ImageMediaModule,
+      (await import('./image-media/image-media.module')).ImageMediaModule,
     data: { title: 'Medio Imagen' },
   },
   {
@@ -272,36 +428,31 @@ const routes: Routes = [
   {
     path: 'norms',
     loadChildren: async () =>
-      (await import('./norms/norms.module'))
-        .NormsModule,
+      (await import('./norms/norms.module')).NormsModule,
     data: { title: 'Normas' },
   },
   {
     path: 'notary',
     loadChildren: async () =>
-      (await import('./notary/notary.module'))
-        .NotaryModule,
+      (await import('./notary/notary.module')).NotaryModule,
     data: { title: 'Notarios' },
   },
   {
     path: 'paragraphs',
     loadChildren: async () =>
-      (await import('./paragraphs/paragraphs.module'))
-        .ParagraphsModule,
+      (await import('./paragraphs/paragraphs.module')).ParagraphsModule,
     data: { title: 'Párrafos' },
   },
   {
     path: 'type-docto',
     loadChildren: async () =>
-      (await import('./type-docto/type-docto.module'))
-        .TypeDoctoModule,
+      (await import('./type-docto/type-docto.module')).TypeDoctoModule,
     data: { title: 'Tipo Docto' },
   },
   {
     path: 'type-sinister',
     loadChildren: async () =>
-      (await import('./type-sinister/type-sinister.module'))
-        .TypeSinisterModule,
+      (await import('./type-sinister/type-sinister.module')).TypeSinisterModule,
     data: { title: 'Tipo Siniestro' },
   },
   {
@@ -314,8 +465,7 @@ const routes: Routes = [
   {
     path: 'type-services',
     loadChildren: async () =>
-      (await import('./type-services/type-services.module'))
-        .TypeServicesModule,
+      (await import('./type-services/type-services.module')).TypeServicesModule,
     data: { title: 'Tipo de Servicios' },
   },
   {
@@ -328,8 +478,7 @@ const routes: Routes = [
   {
     path: 'type-relevant',
     loadChildren: async () =>
-      (await import('./type-relevant/type-relevant.module'))
-        .TypeRelevantModule,
+      (await import('./type-relevant/type-relevant.module')).TypeRelevantModule,
     data: { title: 'Tipo relevante' },
   },
   {
@@ -349,8 +498,7 @@ const routes: Routes = [
   {
     path: 'status-code',
     loadChildren: async () =>
-      (await import('./status-code/status-code.module'))
-        .StatusCodeModule,
+      (await import('./status-code/status-code.module')).StatusCodeModule,
     data: { title: 'Código estado' },
   },
   {
@@ -415,6 +563,41 @@ const routes: Routes = [
       (await import('./penalty/penalty.module'))
         .PenaltyModule,
     data: { title: 'Lista Penalizacion' },
+  },
+  {
+    path: 'indicatorReport',
+    loadChildren: async () =>
+      (await import('./indicator-report/indicator-report.module'))
+        .IndicatorReportModule,
+    data: { title: 'Indicador de Reportes' },
+  },
+  {
+    path: 'generics',
+    loadChildren: async () =>
+      (await import('./generics/generics.module'))
+        .GenericsModule,
+    data: { title: 'Genéricos' },
+  },
+  {
+    path: 'issuing-institution',
+    loadChildren: async () =>
+      (await import('./issuing-institution/issuing-institution.module'))
+        .IssuingInstitutionModule,
+    data: { title: 'Instituciones Emisoras' },
+  },
+  {
+    path: 'court',
+    loadChildren: async () =>
+      (await import('./court/court.module'))
+        .CourtModule,
+    data: { title: 'Juzgados' },
+  },
+  {
+    path: 'siab-clasification',
+    loadChildren: async () =>
+      (await import('./siab-clasification/siab-clasification.module'))
+        .SiabClasificationModule,
+    data: { title: 'Clasificacion SIAB' },
   },
 ];
 

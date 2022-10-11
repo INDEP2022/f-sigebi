@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -19,7 +19,6 @@ export class IdentifiersListComponent extends BasePage implements OnInit {
   paragraphs: IIdentifier[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  @Output() refresh = new EventEmitter<true>();
 
   constructor(
     private identifierService: IdentifierService,
@@ -48,19 +47,18 @@ export class IdentifiersListComponent extends BasePage implements OnInit {
     });
   }
 
-  openModal(context?: Partial<IdentifierFormComponent>) {
-    const modalRef = this.modalService.show(IdentifierFormComponent, {
-      initialState: context,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getIdentifiers();
-    });
-  }
-
   openForm(identifier?: IIdentifier) {
-    this.openModal({ identifier });
+    let config: ModalOptions = {
+      initialState: {
+        identifier,
+        callback: (next: boolean) => {
+          if (next) this.getIdentifiers();
+        },
+      },
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(IdentifierFormComponent, config);
   }
 
   delete(identifier: IIdentifier) {
@@ -76,11 +74,5 @@ export class IdentifiersListComponent extends BasePage implements OnInit {
         });
       }
     });
-  }
-
-  handleSuccess() {
-    this.loading = false;
-    this.refresh.emit(true);
-    this.modalService.hide();
   }
 }

@@ -12,14 +12,13 @@ import { BasePage } from 'src/app/core/shared/base-page';
   styles: [],
 })
 export class SaveValueFormComponent extends BasePage implements OnInit {
-  @Output() refresh = new EventEmitter<true>();
   saveValue: ISaveValue;
   edit: boolean;
   saveValueForm: ModelForm<ISaveValue>;
 
   constructor(
     private fb: FormBuilder,
-    private modalService: BsModalRef,
+    private modalRef: BsModalRef,
     private saveValueService: SaveValueService
   ) {
     super();
@@ -41,6 +40,7 @@ export class SaveValueFormComponent extends BasePage implements OnInit {
     if (this.saveValue != null) {
       this.edit = true;
       this.saveValueForm.patchValue(this.saveValue);
+      this.saveValueForm.get('cve').disable();
     }
   }
 
@@ -50,28 +50,28 @@ export class SaveValueFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.saveValueService.create(this.saveValueForm.value).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
-    );
+    this.saveValueService.create(this.saveValueForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   update() {
     this.saveValueService
       .update(this.saveValue.cve, this.saveValueForm.value)
-      .subscribe(
-        data => this.handleSuccess(),
-        error => (this.loading = false)
-      );
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   close() {
-    this.modalService.hide();
+    this.modalRef.hide();
   }
 
   handleSuccess() {
     this.loading = false;
-    this.refresh.emit(true);
-    this.modalService.hide();
+    this.modalRef.content.callback(true);
+    this.modalRef.hide();
   }
 }

@@ -1,0 +1,123 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">SOLICITUD DE AVALÚOS</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="row margin-input">
+          <div class="col-md-5">
+            <form-field [control]="form.get('delegation')">
+              <ngx-select
+                [form]="form"
+                [data]="delegations"
+                bindLabel="name"
+                label="Delegacíon"
+                value="id"
+                (fetchItems)="getDelegations($event)"
+                control="delegation"></ngx-select>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row margin-input">
+          <div class="col-md-5">
+            <form-field [control]="form.get('subdelegation')">
+              <ngx-select
+                [form]="form"
+                [data]="subdelegations"
+                bindLabel="name"
+                label="Subdelegación"
+                value="id"
+                (fetchItems)="getSubdelegations($event)"
+                control="subdelegation"></ngx-select>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row margin-input">
+          <div class="col-md-5">
+            <form-field [control]="form.get('initialType')">
+              <ngx-select
+                [form]="form"
+                [data]="initialType"
+                bindLabel="name"
+                label="Tipo Inicial"
+                value="id"
+                (fetchItems)="getInitialType($event)"
+                control="initialType"></ngx-select>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row margin-input">
+          <div class="col-md-5">
+            <form-field [control]="form.get('finalType')">
+              <ngx-select
+                [form]="form"
+                [data]="finalType"
+                bindLabel="name"
+                label="Tipo Final"
+                value="id"
+                (fetchItems)="getFinaltype($event)"
+                control="finalType"></ngx-select>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row margin-input">
+          <div class="col-md-5">
+            <form-field [control]="form.get('initialSubtype')">
+              <ngx-select
+                [form]="form"
+                [data]="initialSubtype"
+                bindLabel="name"
+                label="Subtipo Inicial"
+                value="id"
+                (fetchItems)="getInitialSubtype($event)"
+                control="initialSubtype"></ngx-select>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row margin-input">
+          <div class="col-md-5">
+            <form-field [control]="form.get('finalSubtype')">
+              <ngx-select
+                [form]="form"
+                [data]="finalSubtype"
+                bindLabel="name"
+                label="Subtipo Final"
+                value="id"
+                (fetchItems)="getFinalSubtype($event)"
+                control="finalSubtype"></ngx-select>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row margin-input">
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('daysToFinish')"
+              label="Días por terminar">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="daysToFinish"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <div class="col-md-2">
+              <button type="submit" class="btn btn-primary btn-sm active">
+                Enviar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

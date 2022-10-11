@@ -34,12 +34,12 @@
             <div class="row pt-5">
                 <div class="col-md-2">
                     <form-field [control]="form.get('fromDate')" label="Año Inicial">
-                        <input class="form-control" formControlName="fromDate">
+                        <input class="form-control" formControlName="fromDate" minlength="4" maxlength="4" >
                     </form-field>
                 </div>
                 <div class="col-md-2">
                     <form-field [control]="form.get('toDate')" label="Año Final">
-                        <input class="form-control" formControlName="toDate">
+                        <input class="form-control" formControlName="toDate" minlength="4" maxlength="4">
                     </form-field>
                 </div>
             </div>

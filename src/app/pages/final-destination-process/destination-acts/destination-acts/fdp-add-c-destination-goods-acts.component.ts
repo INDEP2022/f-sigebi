@@ -1,10 +1,5 @@
 import { Component, OnInit  } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
-import { BsLocaleService } from 'ngx-bootstrap/datepicker';
-import { defineLocale } from 'ngx-bootstrap/chronos';
-import { esLocale } from 'ngx-bootstrap/locale';
-defineLocale('es', esLocale);
 
 @Component({
   selector: 'app-fdp-add-c-destination-goods-acts',
@@ -13,11 +8,8 @@ defineLocale('es', esLocale);
   ]
 })
 export class FdpAddCDestinationGoodsActsComponent implements OnInit {
-  bsConfig?: Partial<BsDatepickerConfig>;
   actForm: FormGroup;
   response: boolean = false;
-  //datePicker config
-  colorTheme = 'theme-red';
 
   settings1 = {
     rowClassFunction: (row: any) =>
@@ -78,43 +70,26 @@ export class FdpAddCDestinationGoodsActsComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private localeService: BsLocaleService
   ) { }
 
   ngOnInit( ): void {
     this.initForm();
   }
 
-  setConfigDate(){
-    this.bsConfig = Object.assign({}, { containerClass: this.colorTheme });
-    this.localeService.use('es');
-    
-  }
-
   initForm(){
     this.actForm = this.fb.group({
       statusAct: [null, [Validators.required]],
+      act: [null, [Validators.required]],
       preliminaryAscertainment: [null, [Validators.required]],
       causePenal: [null, [Validators.required]],
       elabDate: [null, [Validators.required]],
       captureDate: [null, [Validators.required]],
       destinationDelivDate: [null, [Validators.required]],
-      actSelect: [null, [Validators.required]],
-      status: [null, [Validators.required]],
-      trans: [null, [Validators.required]],
-      destr: [null, [Validators.required]],
-      admin: [null, [Validators.required]],
-      folio: [null, [Validators.required]],
-      date: [null, [Validators.required]],
-      act: [null, [Validators.required]],
       address: [null, [Validators.required]],
       observations: [null, [Validators.required]],
       deliveryName: [null, [Validators.required]],
       receiverName: [null, [Validators.required]],
       auditor: [null, [Validators.required]],
-      methodDestruct: [null, [Validators.required]],
-      witnessContr: [null, [Validators.required]],
-      folioScan: [null, [Validators.required]],
     });
   }
 

@@ -9,29 +9,26 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-indicated-form',
   templateUrl: './indicated-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class IndicatedFormComponent extends BasePage implements OnInit {
-
   indicated: IIndiciados;
   edit: boolean = false;
   indicatedForm: ModelForm<IIndiciados>;
-  @Output() refresh = new EventEmitter<true>();
 
   constructor(
     private fb: FormBuilder,
-    private modalService: BsModalRef,
+    private modalRef: BsModalRef,
     private indicatedService: IndiciadosService
   ) {
     super();
-   }
+  }
 
   ngOnInit(): void {
     this.prepareForm();
   }
 
-  prepareForm(){
+  prepareForm() {
     this.indicatedForm = this.fb.group({
       name: [null, [Validators.required]],
       noRegistration: [null, [Validators.required]],
@@ -39,9 +36,9 @@ export class IndicatedFormComponent extends BasePage implements OnInit {
       consecutive: [null, [Validators.required]],
     });
 
-    if(this.indicated != null){
+    if (this.indicated != null) {
       this.edit = true;
-      this.indicatedForm.patchValue(this.indicated)
+      this.indicatedForm.patchValue(this.indicated);
     }
   }
 
@@ -51,28 +48,28 @@ export class IndicatedFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.indicatedService.create(this.indicatedForm.value).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
-    );
+    this.indicatedService.create(this.indicatedForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   update() {
     this.indicatedService
       .update(this.indicated.id, this.indicatedForm.value)
-      .subscribe(
-        data => this.handleSuccess(),
-        error => (this.loading = false)
-      );
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   close() {
-    this.modalService.hide();
+    this.modalRef.hide();
   }
 
   handleSuccess() {
     this.loading = false;
-    this.refresh.emit(true);
-    this.modalService.hide();
+    this.modalRef.content.callback(true);
+    this.modalRef.hide();
   }
 }
