@@ -1,18 +1,17 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import { DrPrintFlyersRoutingModule } from './dr-print-flyers-routing.module';
-import { DrPrintFlyersComponent } from './dr-print-flyers/dr-print-flyers.component';
+import { DrFlatFileNotificationsRoutingModule } from './dr-flat-file-notifications-routing.module';
+import { DrFlatFileNotificationsComponent } from './dr-flat-file-notifications/dr-flat-file-notifications.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { DelegationSharedComponent } from 'src/app/@standalone/shared-forms/delegation-shared/delegation-shared.component';
 
 @NgModule({
-  declarations: [DrPrintFlyersComponent],
+  declarations: [DrFlatFileNotificationsComponent],
   imports: [
     CommonModule,
-    DrPrintFlyersRoutingModule,
+    DrFlatFileNotificationsRoutingModule,
     SharedModule,
     DelegationSharedComponent,
   ],
 })
-export class DrPrintFlyersModule {}
+export class DrFlatFileNotificationsModule {}

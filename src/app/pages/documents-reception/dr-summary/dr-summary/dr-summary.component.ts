@@ -3,13 +3,17 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
-  selector: 'app-dr-print-flyers',
-  templateUrl: './dr-print-flyers.component.html',
+  selector: 'app-dr-summary',
+  templateUrl: './dr-summary.component.html',
   styles: [],
 })
-export class DrPrintFlyersComponent implements OnInit {
+export class DrSummaryComponent implements OnInit {
   flyersForm: FormGroup;
   select = new DefaultSelect();
+
+  get includeArea() {
+    return this.flyersForm.get('includeArea');
+  }
 
   constructor(private fb: FormBuilder) {}
 
@@ -21,13 +25,11 @@ export class DrPrintFlyersComponent implements OnInit {
     this.flyersForm = this.fb.group({
       delegation: [null, [Validators.required]],
       subdelegation: [null, [Validators.required]],
-      noArea: [null, [Validators.required]],
+      entidad: [null, [Validators.required]],
+      from: [null, [Validators.required]],
+      to: [null, [Validators.required]],
+      includeArea: [false, [Validators.required]],
       area: [null, [Validators.required]],
-      from: [null],
-      to: [null],
-      type: [null],
-      fromDate: [null],
-      toDate: [null],
     });
   }
 }
