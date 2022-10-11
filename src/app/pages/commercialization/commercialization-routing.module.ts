@@ -74,6 +74,12 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./movable-property/c-bm-f-cdr-m-rebilling-causes/c-bm-f-cdr-m-rebilling-causes.module')).CBmFCdrMRebillingCausesModule,
     data: { title: 'Causas y Refacturación' },
+  },
+  {
+    path: 'c-bm-f-edf-m-invoice-status',
+    loadChildren: async () =>
+      (await import('./movable-property/c-bm-f-edf-m-invoice-status/c-bm-f-edf-m-invoice-status.module')).CBmFEdfMInvoiceStatusModule,
+    data: { title: 'Estatus de la facturación' },
   }
 ];
 

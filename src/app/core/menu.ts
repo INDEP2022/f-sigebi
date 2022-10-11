@@ -515,6 +515,10 @@ export const MENU: IMenuItem[] = [
             label: 'Causas y Refacturación',
             link: '/pages/commercialization/c-bm-f-cdr-m-rebilling-causes',
           },
+          {
+            label: 'Estatus de la facturación',
+            link: '/pages/commercialization/c-bm-f-edf-m-invoice-status',
+          },
         ],
       },
       {
