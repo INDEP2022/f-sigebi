@@ -205,6 +205,20 @@ const routes: Routes = [
             .AppraisalGoodsModule,
         data: { title: 'Bienes sin Avalúos' },
       },
+      {
+        path: 'monitor-unavoidable-assets',
+        loadChildren: async () =>
+          (await import('./monitor-unavoidable-assets/monitor-unavoidable-assets.module'))
+            .MonitorUnavoidableAssetsModule,
+        data: { title: 'Monitor de bienes incosteables' },
+      },
+      {
+        path: 'sale-goods',
+        loadChildren: async () =>
+          (await import('./sale-goods/sale-goods.module'))
+            .SaleGoodsModule,
+        data: { title: 'VENTA DE BIENES' },
+      },
     ],
   },
 ];

@@ -257,38 +257,6 @@ export const MENU: IMenuItem[] = [
         link: '/pages/administrative-processes/conversion-act',
       },
       {
-        label: 'Regulaciones',
-        link: '/pages/catalogs/regulatory',
-      },
-      {
-        label: 'Respuestas Repuve',
-        link: '/pages/catalogs/responseRepuve',
-      },
-      {
-        label: 'Numerario Físico',
-        link: '/pages/administrative-processes/numerary-physics',
-      },
-      {
-        label: 'Otras Monedas',
-        link: '/pages/administrative-processes/other-currencies',
-      },
-      {
-        label: 'Valores por Expediente',
-        link: '/pages/administrative-processes/values-per-file',
-      },
-      {
-        label: 'Movimientos Cuentas General',
-        link: '/pages/administrative-processes/general-account-movements',
-      },
-      {
-        label: 'Bienes conversión',
-        link: '/pages/administrative-processes/apply-lif',
-      },
-      {
-        label: 'Actas Conversión',
-        link: '/pages/administrative-processes/conversion-act',
-      },
-      {
         label: 'Administración Conversión',
         link: '/pages/administrative-processes/conversion-management',
       },
@@ -314,6 +282,14 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Bienes sin Avalúos',
         link: '/pages/administrative-processes/appraisal-goods',
+      },
+      {
+        label: 'Monitor de bienes incosteables',
+        link: '/pages/administrative-processes/monitor-unavoidable-assets',
+      },
+      {
+        label: 'Venta de Bienes',
+        link: '/pages/administrative-processes/sale-goods',
       },
     ],
   },
