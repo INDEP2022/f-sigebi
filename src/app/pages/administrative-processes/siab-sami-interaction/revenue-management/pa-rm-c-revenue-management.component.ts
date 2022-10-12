@@ -16,12 +16,12 @@ export class PaRmCRevenueManagementComponent extends BasePage implements OnInit 
 
   form: FormGroup = new FormGroup({});
 
-  settings2 = JSON.parse(JSON.stringify(TABLE_SETTINGS));
+  settings2 = {...TABLE_SETTINGS};
   data2:any[]=[];
   totalItems2: number = 0;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
 
-  settings3 = JSON.parse(JSON.stringify(TABLE_SETTINGS));
+  settings3 = {...TABLE_SETTINGS};
   data3:any[]=[];
   totalItems3: number = 0;
   params3 = new BehaviorSubject<ListParams>(new ListParams());
