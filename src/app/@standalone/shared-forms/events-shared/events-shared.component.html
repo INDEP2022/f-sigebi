@@ -1,0 +1,18 @@
+<ng-container> 
+    <div class="row mb-3 mt-3" *ngIf="showEvents">
+        <div class="col-md-12">
+            <form-field [control]="form.get('event')">
+            	<ngx-select
+            		(fetchItems)="getEvents($event)" 
+                    [data]="events" 
+                    [form]="form" 
+                    value="id"
+                	bindLabel="keyProcess"
+                    label="Eventos"
+                    [control]="eventField" 
+                    (change)="onEventsChange($event)">
+                </ngx-select>      
+            </form-field>
+        </div>
+    </div>
+</ng-container>

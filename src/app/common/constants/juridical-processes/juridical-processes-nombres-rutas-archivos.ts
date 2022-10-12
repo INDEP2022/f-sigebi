@@ -2,6 +2,7 @@ import { IMenuItem } from "src/app/core/interfaces/menu.interface";
 
 export const baseMenu: string = "/pages/juridicos/"; // Base url Menu
 export const baseMenuDepositaria: string = "depositaria/"; // Base url Menu Depositaria
+export const baseMenuProcesoDispercionPagos: string = "procesos-dispercion-pagos/"; // Base url Menu ProcesoDispercionPagos
 // NOMBRE PANTALLA, LINK NOMBRE PANTALLA EN INGLES, NOMBRE OPCION MENU
 export const routesJuridicalProcesses: any =
 [
@@ -25,7 +26,13 @@ export const routesJuridicalProcesses: any =
     label: 'Conciliación de Pagos Depositarias', link: 'conciliacion-pagos-depositaria', menu: 'Proceso de Disperción de Pagos' 
   },
   {
-    label: 'Consulta de Pagos Relacionados Depositarias', link: 'consulta-pagos-relacionados-depositaria', menu: 'Proceso de Disperción de Pagos' 
+    label: 'Consulta de Pagos Relacionados Depositarias', link: 'consulta-pagos-relacionados-depositaria', menu: 'Validación de Pagos' 
+  },
+  {
+    label: 'Solicitud de Destino Legal para el Bien', link: 'solicitud-monitor-depositaria', menu: 'Solicitud/Monitor de Depositaría' 
+  },
+  {
+    label: 'Reporte de Cédulas de Nombramiento', link: 'reporte-cedulas-nombramiento', menu: 'Reporte de Cédulas de Nombramiento' 
   }
   // DEPOSITARIA
 ]
@@ -59,14 +66,24 @@ export const menuOptionsJuridicalProcesses: IMenuItem =
             label: routesJuridicalProcesses[4].menu, 
             link: baseMenu + baseMenuDepositaria + routesJuridicalProcesses[4].link
           },
+          // Proceso de Dispersión de Pagos
           {
             label: routesJuridicalProcesses[5].menu, 
-            link: baseMenu + baseMenuDepositaria + routesJuridicalProcesses[5].link
+            link: baseMenu + baseMenuDepositaria + baseMenuProcesoDispercionPagos + routesJuridicalProcesses[5].link
           },
           {
             label: routesJuridicalProcesses[6].menu, 
-            link: baseMenu + baseMenuDepositaria + routesJuridicalProcesses[6].link
+            link: baseMenu + baseMenuDepositaria + baseMenuProcesoDispercionPagos + routesJuridicalProcesses[6].link
           },
+          {
+            label: routesJuridicalProcesses[7].menu, 
+            link: baseMenu + baseMenuDepositaria + routesJuridicalProcesses[7].link
+          },
+          {
+            label: routesJuridicalProcesses[8].menu, 
+            link: baseMenu + baseMenuDepositaria + routesJuridicalProcesses[8].link
+          },
+          // Proceso de Dispersión de Pagos
         ],
       },
     ],

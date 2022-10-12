@@ -30,8 +30,7 @@ export class FractionsFormComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private fractionService: FractionService,
     private normService: NormService,
-    private clasificationService: SIABClasificationService
-  ) {
+    private clasificationService:SIABClasificationService) {
     super();
   }
 
@@ -77,23 +76,16 @@ export class FractionsFormComponent extends BasePage implements OnInit {
 
     if (this.fraction != null) {
       this.edit = true;
-      let classification: ISiabClasification = this.fraction
-        .clasificationId as ISiabClasification;
-      let norm: INorm = this.fraction.normId as INorm;
-      this.fractionForm.patchValue({
-        ...this.fraction,
-        normId: norm?.id,
-        clasificationId: classification?.id,
-      });
+      this.fractionForm.patchValue(this.fraction);
 
-      this.clasifications = new DefaultSelect(
-        [classification ? classification : []],
-        1
-      );
-      this.norms = new DefaultSelect([norm ? norm : []], 1);
-    } else {
-      this.getClasificationSelect({ inicio: 1, text: '' });
-      this.getFractionSelect({ inicio: 1, text: '' });
+      if(this.fraction.clasificationId || this.fraction.normId){
+        this.fractionForm.controls.clasificationId.setValue((this.fraction.clasificationId as ISiabClasification).id);
+        this.clasifications = new DefaultSelect([this.fraction.clasificationId], 1);
+
+        this.fractionForm.controls.normId.setValue((this.fraction.normId as INorm).id);
+        this.norms = new DefaultSelect([this.fraction.normId], 1);
+      }
+
     }
   }
 
@@ -109,7 +101,7 @@ export class FractionsFormComponent extends BasePage implements OnInit {
     });
   }
 
-  confirm() {
+  confirm(){
     this.edit ? this.update() : this.create();
   }
 
