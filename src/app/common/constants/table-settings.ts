@@ -7,6 +7,9 @@ export const TABLE_SETTINGS = {
     edit: true,
     delete: false,
   },
+  attr: {
+    class: 'table-bordered',
+  },
   pager: {
     display: false,
   },

@@ -80,7 +80,42 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./movable-property/c-bm-f-edf-m-invoice-status/c-bm-f-edf-m-invoice-status.module')).CBmFEdfMInvoiceStatusModule,
     data: { title: 'Estatus de la facturación' },
-  }
+  },
+  {
+    path: 'expense-concepts',
+    loadChildren: async () =>
+      (await import('./shared-marketing-components/expense-concepts/c-b-ec-m-expense-concepts.module'))
+      .CBEcMPaymentsConceptsModule,
+    data: { title: 'Conceptos de Gasto' },
+  },
+  {
+    path: 'referenced-payment',
+    loadChildren: async () =>(
+      await import('./shared-marketing-components/referenced-payment/c-b-rp-m-referenced-payment.module'))
+        .CBRpMReferencedPaymentModule,
+    data: { title: 'Pagos Referenciados' },
+  },
+  {
+    path: 'unreconciled-payment',
+    loadChildren: async () =>(
+      await import('./shared-marketing-components/unreconciled-payment/c-b-up-m-unreconciled-payment.module'))
+        .CBUpMUnreconciledPaymentModule,
+    data: { title: 'Pagos no Conciliados' },
+  },
+  {
+    path: 'payment-dispersion-monitor',
+    loadChildren: async () =>(
+      await import('./shared-marketing-components/payment-dispersion-monitor/c-b-pdm-m-payment-dispersion-monitor.module'))
+        .CBPdmMPaymentDispersionMonitorModule,
+    data: { title: 'Dispersión de Pagos' },
+  },
+  {
+    path: 'events',
+    loadChildren: async () =>(
+      await import('./shared-marketing-components/events/c-b-e-m-events.module'))
+        .CBEMEventsModule,
+    data: { title: 'Permisos a Eventos' },
+  },
 ];
 
 @NgModule({

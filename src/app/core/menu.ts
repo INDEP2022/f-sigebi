@@ -142,7 +142,6 @@ export const MENU: IMenuItem[] = [
         link: '/pages/catalogs/sub-delegations',
       },
       {
-
         label: 'Etiquetas Bien',
         link: '/pages/catalogs/label-okey',
       },
@@ -161,7 +160,7 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Procesos Sise',
         link: '/pages/catalogs/siseProcess',
-      }, 
+      },
       {
         label: 'R Asunt Dic',
         link: '/pages/catalogs/rAsuntDic',
@@ -182,6 +181,50 @@ export const MENU: IMenuItem[] = [
         label: 'Juzgados',
         link: '/pages/catalogs/court',
       },
+      {
+        label: 'Regulaciones',
+        link: '/pages/catalogs/regulatory',
+      },
+      {
+        label: 'Respuestas Repuve',
+        link: '/pages/catalogs/responseRepuve',
+      },
+      {
+        label: 'Edos X Coor',
+        link: '/pages/catalogs/edos-x-coor',
+      },
+      {
+        label: 'Emisoras',
+        link: '/pages/catalogs/station',
+      },
+      {
+        label: 'Empresa de terceros',
+        link: '/pages/catalogs/third-party-company',
+      },
+      {
+        label: 'Estado Transferencias',
+        link: '/pages/catalogs/status-transfer',
+      },
+      {
+        label: 'Estatus Proceso',
+        link: '/pages/catalogs/status-process',
+      },
+      {
+        label: 'Estato Repuves',
+        link: '/pages/catalogs/state-repuves',
+      },
+      {
+        label: 'Estatus Siniestros',
+        link: '/pages/catalogs/status-claims',
+      },
+      {
+        label: 'Penalizacion',
+        link: '/pages/catalogs/penalty',
+      },
+      {
+        label: 'Indicador Reportes',
+        link: '/pages/catalogs/indicatorReport',
+      },
     ],
   },
   //Administración
@@ -190,21 +233,14 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-folder',
     subItems: [
       {
-        label: 'Regulaciones',
-        link: '/pages/catalogs/regulatory',
-      },
-      {
-        label: 'Respuestas Repuve',
-        link: '/pages/catalogs/responseRepuve',
-      },
-      {
-        label: 'Indicador Reportes',
-        link: '/pages/catalogs/indicatorReport',
-      },
-      {
         label: 'Numerario Físico',
         link: '/pages/administrative-processes/numerary-physics',
       },
+      {
+        label: 'Actas Conversión',
+        link: '/pages/administrative-processes/conversion-act',
+      },
+      
       {
         label: 'Otras Monedas',
         link: '/pages/administrative-processes/other-currencies',
@@ -220,42 +256,6 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Bienes conversión',
         link: '/pages/administrative-processes/apply-lif',
-      },
-      {
-        label: 'Actas Conversión',
-        link: '/pages/administrative-processes/conversion-act',
-      },
-      {
-        label: 'Regulaciones',
-        link: '/pages/catalogs/regulatory',
-      },
-      {
-        label: 'Respuestas Repuve',
-        link: '/pages/catalogs/responseRepuve',
-      },
-      {
-        label: 'Numerario Físico',
-        link: '/pages/administrative-processes/numerary-physics',
-      },
-      {
-        label: 'Otras Monedas',
-        link: '/pages/administrative-processes/other-currencies',
-      },
-      {
-        label: 'Valores por Expediente',
-        link: '/pages/administrative-processes/values-per-file',
-      },
-      {
-        label: 'Movimientos Cuentas General',
-        link: '/pages/administrative-processes/general-account-movements',
-      },
-      {
-        label: 'Bienes conversión',
-        link: '/pages/administrative-processes/apply-lif',
-      },
-      {
-        label: 'Actas Conversión',
-        link: '/pages/administrative-processes/conversion-act',
       },
       {
         label: 'Administración Conversión',
@@ -459,6 +459,7 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
+  //Comercialización
   {
     label: 'Comercialización',
     icon: 'bx-folder',
@@ -480,6 +481,18 @@ export const MENU: IMenuItem[] = [
             link: '/pages/commercialization/c-b-vdp-m-payment-dispersion-validation',
           },
           {
+            label: 'Pagos Referenciados',
+            link: '/pages/commercialization/referenced-payment',
+          },
+          {
+            label: 'Pagos no Conciliados',
+            link: '/pages/commercialization/unreconciled-payment',
+          },
+          {
+            label: 'Dispersión de Pagos',
+            link: '/pages/commercialization/payment-dispersion-monitor',
+          },
+          {
             label: 'Conversión a numerario',
             link: '/pages/commercialization/numeraire-conversion-tabs',
           },
@@ -492,7 +505,7 @@ export const MENU: IMenuItem[] = [
             link: '/pages/commercialization/c-b-a-rda-m-appraisal-registration',
           },
           {
-            label: 'Captura de gastos',
+            label: 'Captura de Gastos',
             link: '/pages/commercialization/c-b-ge-cdg-m-expense-capture',
           },
           {
@@ -519,6 +532,14 @@ export const MENU: IMenuItem[] = [
             label: 'Estatus de la facturación',
             link: '/pages/commercialization/c-bm-f-edf-m-invoice-status',
           },
+          {
+            label: 'Conceptos de Gasto',
+            link: '/pages/commercialization/expense-concepts',
+          },
+          {
+            label: 'Permisos a Eventos',
+            link: '/pages/commercialization/events',
+          },
         ],
       },
       {
@@ -538,6 +559,18 @@ export const MENU: IMenuItem[] = [
             link: '/pages/commercialization/c-b-vdp-m-payment-dispersion-validation',
           },
           {
+            label: 'Pagos Referenciados',
+            link: '/pages/commercialization/referenced-payment',
+          },
+          {
+            label: 'Pagos no Conciliados',
+            link: '/pages/commercialization/unreconciled-payment',
+          },
+          {
+            label: 'Dispersión de Pagos',
+            link: '/pages/commercialization/payment-dispersion-monitor',
+          },
+          {
             label: 'Conversión a numerario',
             link: '/pages/commercialization/numeraire-conversion-tabs',
           },
@@ -550,12 +583,20 @@ export const MENU: IMenuItem[] = [
             link: '/pages/commercialization/c-b-a-rda-m-appraisal-registration',
           },
           {
-            label: 'Captura de gastos',
+            label: 'Captura de Gastos',
             link: '/pages/commercialization/c-b-ge-cdg-m-expense-capture',
           },
           {
             label: 'Consulta de bienes',
             link: '/pages/commercialization/consultation-goods-commercial-process-tabs',
+          },
+          {  
+            label: 'Conceptos de Gasto',
+            link: '/pages/commercialization/expense-concepts',
+          },
+          {
+            label: 'Permisos a Eventos',
+            link: '/pages/commercialization/events',
           },
         ],
       },
@@ -563,17 +604,14 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Activos Financieros',
         icon: 'credit-card-outline',
-        subItems:[
-        ]
+        subItems: [],
       },
       {
         label: 'Catálogos',
         icon: 'folder',
-        subItems:[
-        ]
-      }
-      
-    ]
+        subItems: [],
+      },
+    ],
   },
   // PROCESOS JURIDICOS
   menuOptionsJuridicalProcesses,
