@@ -365,20 +365,33 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-share-alt',
     subItems: [
       {
+        label: 'Actas de Destino',
+        link: '/pages/final-destination-process/destination-acts',
+      },
+      {
         label: 'Actas de Destrucción',
         link: '/pages/final-destination-process/destruction-acts',
+      },
+      {
+        label: 'Actas de Devolución',
+        link: '/pages/final-destination-process/return-acts',
       },
       {
         label: 'Actas de Donación',
         link: '/pages/final-destination-process/donation-acts',
       },
       {
-        label: 'Actas de Destino',
-        link: '/pages/final-destination-process/destination-acts',
+        label: 'Actas de Posesión de Terceros',
+        link: '/pages/final-destination-process/third-possession-acts',
       },
       {
-        label: 'Actas de Devolución',
-        link: '/pages/final-destination-process/return-acts',
+        label: 'Reporte de Actas Donación/Destrucción/Destino',
+        subItems: [
+          {
+            label: 'Actas de Donación/Destrucción/Destino',
+            link: '/pages/final-destination-process/report-of-acts/donation-destruction-destination',
+          },
+        ]
       },
     ],
   },
