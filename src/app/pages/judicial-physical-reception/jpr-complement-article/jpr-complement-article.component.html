@@ -1,0 +1,167 @@
+<app-card [header]="true">
+    <div class="ch-content" header>
+        <h5 class="title">
+            Datos complementarios Art. 6, 7 y 4
+        </h5>
+    </div>
+
+    <div body>
+        <form class="form-material" [formGroup]="form">
+            <div class="row">
+                <div class="col-md-4">
+                    <form-field [control]="form.get('expediente')" label="Expediente">
+                        <input type="text" class="form-control" formControlName="expediente" placeholder="expediente"/>
+                    </form-field>
+                </div>
+
+                <div class="col-md-4">
+                    <form-field [control]="form.get('fechaFe')" label="Fecha de fé ministerial">
+                        <input bsDatepicker class="form-control" formControlName="fechaFe" placeholder="Fecha Fe"/>
+                    </form-field>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>No Bien</th>
+                                <th>Descrición</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1231</td>
+                                <td>Mueble ....</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="col-md-8 md-tabs">
+                    <tabset>
+                        <tab heading="General">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <form-field [control]="form.get('clasificacion')" label="Clasificación del bien">
+                                        <textarea rows="5" class="form-control" formControlName="clasificacion">
+                                        </textarea>
+                                    </form-field>
+                                </div>
+                                <div class="col-md-6">
+                                    <form-field [control]="form.get('remarks')" label="Señalamientos del origen">
+                                        <textarea rows="5" class="form-control" formControlName="remarks">
+                                        </textarea>
+                                    </form-field>
+                                </div>
+                            </div>
+                        </tab>
+
+                        <tab heading="Avalúo de Origen">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <form-field [control]="form.get('importe')" label="Importe por Valor">
+                                            <input type="text" class="form-control" formControlName="importe" placeholder="importe"/>
+                                        </form-field>
+                                    </div>
+
+                                    <div class="row">
+                                        <form-field [control]="form.get('moneda')" label="Moneda">
+                                            <input type="text" class="form-control" formControlName="moneda" placeholder="moneda"/>
+                                        </form-field>
+                                    </div>
+
+                                    <div class="row">
+                                        <form-field [control]="form.get('fechaVigencia')" label="Fecha Vigencia">
+                                            <input bsDatepicker class="form-control" formControlName="fechaVigencia" placeholder="Fecha Vigencia"/>
+                                        </form-field>
+                                    </div>
+
+                                    <div class="row">
+                                        <form-field [control]="form.get('fechaAvaluo')" label="Fecha Avaluo">
+                                            <input bsDatepicker class="form-control" formControlName="fechaAvaluo" placeholder="Fecha Avaluo"/>
+                                        </form-field>
+                                    </div>
+
+                                    <div class="row">
+                                        <form-field [control]="form.get('perito')" label="Perito">
+                                            <ngx-select control="perito" [form]="form" [data]="itemsSelect"></ngx-select>
+                                        </form-field>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <form-field [control]="form.get('institucion')" label="Institucion">
+                                            <ngx-select control="institucion" [form]="form" [data]="itemsSelect"></ngx-select>
+                                        </form-field>
+                                    </div>
+                                </div>
+                            </div>
+                        </tab>
+
+                        <tab heading="Dictamen">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class=" row">
+                                        <form-field [control]="form.get('fechaDictamen')" label="Fecha Dictamen">
+                                            <input bsDatepicker class="form-control" formControlName="fechaDictamen" placeholder="Fecha Dictamen"/>
+                                        </form-field>
+                                    </div>
+
+                                    <div class="row">
+                                        <form-field [control]="form.get('dictamenPerito')" label="Dictamen Perito">
+                                            <ngx-select control="dictamenPerito" [form]="form" [data]="itemsSelect"></ngx-select>
+                                        </form-field>
+                                    </div>
+
+                                    <div class="row">
+                                        <form-field [control]="form.get('dictamenInstitucion')" label="Dictamen Institución">
+                                            <textarea rows="5" class="form-control mr-3"formControlName="dictamenInstitucion"></textarea>
+                                        </form-field>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <form-field [control]="form.get('dictamenPerenidad')" label="Dictamen Perenidad">
+                                            <textarea rows="5" class="form-control mr-3"formControlName="dictamenPerenidad"></textarea>
+                                        </form-field>
+                                    </div>
+                                </div>
+                            </div>
+                        </tab>
+                        
+                        <tab heading="Primera Notificación de Abandono">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-9">
+                                            <form-field [control]="form.get('fechaAseg')" label="Fecha Aseg">
+                                                <input bsDatepicker class="form-control" formControlName="fechaAseg" placeholder="Fecha Aseg"/>
+                                            </form-field>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <form-field [control]="form.get('notificado')" label="Notificado">
+                                            <textarea rows="5" class="form-control mr-3"formControlName="notificado"></textarea>
+                                        </form-field>
+
+                                    </div>
+
+                                    <div class="row">
+                                        <form-field [control]="form.get('lugar')" label="Lugar">
+                                            <textarea rows="5" class="form-control mr-3"formControlName="lugar"></textarea>
+                                        </form-field>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </tab>
+                    </tabset>
+                </div>
+            </div>
+        </form>
+    </div>
+</app-card>

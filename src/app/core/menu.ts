@@ -29,6 +29,7 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-calendar',
     link: '/pages/example',
   },
+  //Catalogos
   {
     label: 'Catalogos',
     icon: 'bx-folder',
@@ -286,6 +287,7 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
+  //Reportes
   {
     label: 'Reportes',
     icon: 'bx-folder',
@@ -355,11 +357,13 @@ export const MENU: IMenuItem[] = [
        **/
     ],
   },
+  //Solicitudes
   {
     label: 'Solicitudes',
     icon: 'bx-folder',
     subItems: [],
   },
+  //Proceso Destino final
   {
     label: 'Proceso Destino final',
     icon: 'bx-share-alt',
@@ -382,6 +386,7 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
+  //Recepcion Documental
   ...DOCUMENTS_RECEPTION_ROUTES,
   {
     label: 'Procesos Ejecutivos',
@@ -587,5 +592,17 @@ export const MENU: IMenuItem[] = [
   },
   // PROCESOS JURIDICOS
   menuOptionsJuridicalProcesses,
-  // PROCESOS JURIDICOS
+  // Recepcion Fisica Judicial 
+  {
+   
+    label: 'Recepcion Fisica Judicial',
+    icon: 'bx-folder',
+    subItems: [
+      {
+        label: 'Complemento Arituclo',
+        link: '/pages/judicial-physical-reception/articles-complement',
+      },
+    ],
+      
+  }
 ];
