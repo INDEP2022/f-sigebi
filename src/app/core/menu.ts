@@ -233,6 +233,10 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-folder',
     subItems: [
       {
+        label: 'Indicador Reportes',
+        link: '/pages/catalogs/indicatorReport',
+      },
+      {
         label: 'Numerario Físico',
         link: '/pages/administrative-processes/numerary-physics',
       },
@@ -240,7 +244,7 @@ export const MENU: IMenuItem[] = [
         label: 'Actas Conversión',
         link: '/pages/administrative-processes/conversion-act',
       },
-      
+
       {
         label: 'Otras Monedas',
         link: '/pages/administrative-processes/other-currencies',
@@ -299,6 +303,14 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Bienes sin Avalúos',
         link: '/pages/administrative-processes/appraisal-goods',
+      },
+      {
+        label: 'Monitor de bienes incosteables',
+        link: '/pages/administrative-processes/monitor-unavoidable-assets',
+      },
+      {
+        label: 'Venta de Bienes',
+        link: '/pages/administrative-processes/sale-goods',
       },
     ],
   },
