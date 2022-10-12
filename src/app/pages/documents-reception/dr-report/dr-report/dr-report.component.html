@@ -1,0 +1,50 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Resumen diario de recepción documental</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="reportForm" class="form-material">
+      <div class="row">
+        <div class="col-md-4">
+          <app-delegation-shared [form]="reportForm"></app-delegation-shared>
+          <div class="row">
+            <div class="d-flex">
+              <form-radio *ngFor="let range of ranges" [label]="range.name">
+                <input
+                  type="radio"
+                  formControlName="range"
+                  [value]="range.code" />
+              </form-radio>
+            </div>
+          </div>
+          <div class="row">
+            <form-field
+              [control]="reportForm.get('from')"
+              [label]="range.value == 'yearly' ? 'Al año' : 'Al mes'">
+              <input
+                [type]="range.value == 'yearly' ? 'number' : 'month'"
+                class="form-control"
+                formControlName="from" />
+            </form-field>
+          </div>
+          <div class="row pt-4" *ngIf="range.value != 'daily'">
+            <form-field
+              [control]="reportForm.get('to')"
+              [label]="range.value == 'yearly' ? 'Al año' : 'Al mes'">
+              <input
+                [type]="range.value == 'yearly' ? 'number' : 'month'"
+                class="form-control"
+                formControlName="to" />
+            </form-field>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <button type="submit" class="btn btn-primary">Imprimir</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>
