@@ -1,3 +1,5 @@
+// import { ReportOfActsModule } from './report-of-acts/report-of-acts.module';
+// import { FdpAdpdtMThirdPossessionActsModule } from './third-party-possession-acts/fdp-adpdt-m-third-possession-acts.module';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
@@ -28,6 +30,20 @@ const routes: Routes = [
     loadChildren: () =>
       import("./return-acts/fdp-add-m-return-acts.module").then(
         (m) => m.FdpAddMReturnActsModule
+      ),
+  },
+  {
+    path: "third-possession-acts",
+    loadChildren: () =>
+      import("./third-party-possession-acts/fdp-adpdt-m-third-possession-acts.module").then(
+        (m) => m.FdpAdpdtMThirdPossessionActsModule
+      ),
+  },
+  {
+    path: "report-of-acts",
+    loadChildren: () =>
+      import("./report-of-acts/report-of-acts.module").then(
+        (m) => m.ReportOfActsModule
       ),
   }
 ];
