@@ -1,0 +1,58 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Selección multiple de Bienes</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-10 col-sm-12 col-xs-12">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings"
+          [source]="data">
+        </ng2-smart-table>
+        <app-pagination
+      [params]="params"
+      [totalItems]="totalItems">
+    </app-pagination>
+      </div>
+      <div class="col-md-2 col-sm-12 col-xs-12">
+        <div class="row">
+            <div class="col-md-full col-sm-12 col-xs-12 mt-3">
+                <button class="btn btn-success btn-sm active">Aceptar</button>
+              </div>
+              <div class="col-md-full col-sm-12 col-xs-12 mt-3">
+                <button class="btn btn-primary btn-sm active">Cancelar</button>
+              </div>
+              <div class="col-md-full col-sm-12 col-xs-12 mt-3">
+                <button class="btn btn-success btn-sm active">+</button>
+              </div>
+              <div class="col-md-full col-sm-12 col-xs-12 mt-3">
+                <button class="btn btn-danger btn-sm active">-</button>
+              </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
+        <form-radio label="Almacén">
+          <input type="radio" value="cat" />
+        </form-radio>
+        <form-radio label="Bóveda">
+          <input type="radio" value="boveda" />
+        </form-radio>
+        <form-radio label="Nulo">
+          <input type="radio" [value]="null" />
+        </form-radio>
+      </div>
+      <div class="col-md-4 col-sm-12 col-xs-12 mt-5">
+        <button class="btn btn-info btn-sm active">Asignar Ubicación</button>
+      </div>
+      <div class="col-md-4 col-sm-12 col-xs-12 mt-5">
+        <button class="btn btn-primary btn-sm active" (click)="returnModal()">
+          Regresar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>
