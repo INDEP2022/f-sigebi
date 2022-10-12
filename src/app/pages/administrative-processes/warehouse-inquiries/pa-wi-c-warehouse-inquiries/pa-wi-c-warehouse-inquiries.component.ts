@@ -49,35 +49,43 @@ export class PaWiCWarehouseInquiriesComponent extends BasePage implements OnInit
     columns: {
       number: {
         title: 'No',
-        width: '10%'
+        width: '10%',
+        sort: false
       },
       description: {
         title: 'Descripcion',
-        width: '20%'
+        width: '20%',
+        sort: false
       },
       location: {
         title: 'Ubicacion',
-        width: '10%'
+        width: '10%',
+        sort: false
       },
       responsible: {
         title: 'Responsable',
-        width: '10%'
+        width: '10%',
+        sort: false
       },
       entity: {
         title: 'Entidad',
-        width: '10%'
+        width: '10%',
+        sort: false
       },
       municipality: {
         title: 'Municipio',
-        width: '10%'
+        width: '10%',
+        sort: false
       },
       city: {
         title: 'Ciudad',
-        width: '10%'
+        width: '10%',
+        sort: false
       },
       locality: {
         title: 'Localidad',
-        width: '10%'
+        width: '10%',
+        sort: false
       }
     },
   };

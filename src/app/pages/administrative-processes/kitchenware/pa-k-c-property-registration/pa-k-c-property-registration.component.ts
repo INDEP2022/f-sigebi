@@ -47,11 +47,13 @@ export class PaKCPropertyRegistrationComponent extends BasePage implements OnIni
       columns: {
         kitchenware: {
           title: 'Menaje',
-          width: '20%'
+          width: '20%',
+          sort: false
         },
         description: {
           title: 'Descripcion',
-          width: '40%'
+          width: '40%',
+          sort: false
         }
       },
     };
@@ -70,11 +72,13 @@ export class PaKCPropertyRegistrationComponent extends BasePage implements OnIni
       columns: {
         numberGood: {
           title: 'No Bien',
-          width: '20%'
+          width: '20%',
+          sort: false
         },
         description: {
           title: 'Descripcion',
-          width: '40%'
+          width: '40%',
+          sort: false
         }
       },
     };

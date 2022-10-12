@@ -28,19 +28,23 @@ export class PaWiCModalListGoodsComponent extends BasePage implements OnInit {
     columns: {
       numberGood: {
         title: 'No Bien',
-        width: '10%'
+        width: '10%',
+        sort: false
       },
       description: {
         title: 'Descripcion',
-        width: '20%'
+        width: '20%',
+        sort: false
       },
       quantity: {
         title: 'Cantidad',
-        width: '10%'
+        width: '10%',
+        sort: false
       },
       dossier: {
         title: 'Expediente',
-        width: '10%'
+        width: '10%',
+        sort: false
       }
     },
   };
