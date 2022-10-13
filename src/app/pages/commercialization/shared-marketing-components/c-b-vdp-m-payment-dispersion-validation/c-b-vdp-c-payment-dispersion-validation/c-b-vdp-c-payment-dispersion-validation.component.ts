@@ -18,33 +18,30 @@ import { ExcelService } from 'src/app/common/services/exportToExcel.service';
   ]
 })
 export class CBVdpCPaymentDispersionValidationComponent extends BasePage implements OnInit {
-  settingsLotes = {...TABLE_SETTINGS};
-  settingsBienes = {...TABLE_SETTINGS};
-  settingsPagosBanco = {...TABLE_SETTINGS};
-  settingsCompos = {...TABLE_SETTINGS};
+  settingsLotes = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
+  settingsBienes = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
+  settingsPagosBanco = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
+  settingsCompos = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
   form: FormGroup = new FormGroup({}); 
 
   constructor(private fb: FormBuilder, private excelService:ExcelService) {
     super();
     this.settingsLotes.columns = EVENT_COLUMNS;
-    this.settingsLotes.actions.edit = false;
-    this.settingsLotes.actions.delete = false;
-    this.settingsLotes.actions.add = false;
-
     this.settingsBienes.columns = ALLOTMENT_COLUMNS;
-    this.settingsBienes.actions.edit = false;
-    this.settingsBienes.actions.delete = false;
-    this.settingsBienes.actions.add = false;
-
     this.settingsPagosBanco.columns = BANK_COLUMNS;
-    this.settingsPagosBanco.actions.edit = false;
-    this.settingsPagosBanco.actions.delete = false;
-    this.settingsPagosBanco.actions.add = false;
-
     this.settingsCompos.columns = RECEIVED_COLUMNS
-    this.settingsCompos.actions.edit = false;
-    this.settingsCompos.actions.delete = false;
-    this.settingsCompos.actions.add = false;
   }
 
   ngOnInit(): void {

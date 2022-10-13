@@ -1,0 +1,65 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Resumen diario de recepción documental</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="flyersForm" class="form-material">
+      <div class="row">
+        <div class="col-md-4">
+          <app-delegation-shared [form]="flyersForm"></app-delegation-shared>
+          <form-check label="Filtrar por área" for="make_filter">
+            <input
+              id="make_filter"
+              type="checkbox"
+              formControlName="includeArea" />
+          </form-check>
+        </div>
+
+        <div class="col-md-2">
+          <div class="row pt-3">
+            <form-field
+              [control]="flyersForm.get('from')"
+              label="Recepción del">
+              <input formControlName="from" class="form-control" bsDatepicker />
+            </form-field>
+          </div>
+
+          <div class="row pt-3">
+            <form-field [control]="flyersForm.get('to')" label="Al">
+              <input formControlName="to" class="form-control" bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="row pt-3">
+            <form-field [control]="flyersForm.get('entidad')">
+              <ngx-select
+                [form]="flyersForm"
+                control="entidad"
+                [data]="select"
+                label="Entidad Federativa"></ngx-select>
+            </form-field>
+          </div>
+
+          <div class="row pt-3" *ngIf="includeArea.value">
+            <form-field [control]="flyersForm.get('area')">
+              <ngx-select
+                [form]="flyersForm"
+                control="area"
+                [data]="select"
+                label="Área Destino"></ngx-select>
+            </form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <button type="submit" class="btn btn-primary active">Imprimir</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

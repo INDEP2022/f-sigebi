@@ -1,0 +1,60 @@
+<app-modal>
+    <div header>
+        <h5 class="modal-title">EDITAR</h5>
+    </div>
+    <div body>
+        <form class="form-material" [formGroup]="form">
+            <div class="row">
+                <div class="col-md-3">
+                    <form-field [control]="form.get('idCauses')" label="ID">
+                        <input type="text" class="form-control" formControlName="idCauses">
+                    </form-field>
+                </div>
+                <div class="col-md-9">
+                    <form-field [control]="form.get('description')" label="Descripción">
+                        <input type="text" class="form-control" formControlName="description">
+                    </form-field>
+                </div>
+            </div>
+            <div class="row pt-5">
+                <div class="col-md-3">
+                    <form-field [control]="form.get('rebill')" label="Refactura/Cancela">
+                        <select class="form-control"  formControlName="rebill">
+                            <option value="Refactura">Refactura</option>
+                            <option value="Cancela">Cancela</option>
+                            <option value="Refac/Nolmg">Refac/Nolmg</option>
+                          </select>
+                    </form-field>
+                </div>
+                <div class="col-md-3">
+                    <form-field [control]="form.get('apply')" label="Aplica">
+                        <select class="form-control"  formControlName="rebill">
+                            <option value="Factura">Factura</option>
+                            <option value="Devolución">Devolución</option>
+                            <option value="Ambas">Ambas</option>
+                          </select>
+                    </form-field>
+                </div>
+                <div class="col-md-6">
+                    <form-field [control]="form.get('comments')" label="Comentarios">
+                        <textarea type="text" class="form-control" formControlName="comments"></textarea>
+                    </form-field>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div footer>
+        <div class="d-flex justify-content-center">
+    		<div class="m-3">
+        		<button type="button" class="btn btn-danger active" (click)="close()">
+          			Cancelar
+        		</button>
+      		</div>
+		    <div class="m-3">
+		        <button type="button" class="btn btn-success active" (click)="close()">
+		          Aceptar
+		        </button>
+		    </div>
+		</div>
+    </div>
+</app-modal>

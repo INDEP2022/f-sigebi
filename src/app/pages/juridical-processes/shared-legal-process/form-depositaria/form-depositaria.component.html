@@ -1,5 +1,5 @@
 <!-- form Conciliacion de pagos recibidos -->
-<form [formGroup]="form">
+<form [formGroup]="form" class="container-fluid form-material">
     <div class="row w-100">
         <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
             <span class="subtitle">
@@ -8,7 +8,7 @@
         </div>
         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
             <form-field [control]="form.get('noBien')" label="No. Bien">
-                <label class="label w-100">No. Bien</label>
+                <!-- <label class="label w-100">No. Bien</label> -->
                 <input class="form-control" formControlName="noBien"
                         placeholder="No. Bien">
                 
@@ -16,13 +16,13 @@
         </div>
         <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
             <div class="form-group">
-                <label class="label w-100">Detalle No. Bien</label>
                 <input class="form-control" placeholder="Detalle No. Bien">
+                <label class="label w-100">Detalle No. Bien</label>
             </div>
         </div>
         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-            <form-field [control]="form.get('cveOficio')" label="Nombramiento">
-                <label class="label w-100">Nombramiento</label>
+            <form-field [control]="form.get('nombramiento')" label="Nombramiento">
+                <!-- <label class="label w-100">Nombramiento</label> -->
                 <input class="form-control" formControlName="nombramiento"
                         placeholder="Nombramiento">
                 
@@ -30,15 +30,15 @@
         </div>
         <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
             <div class="form-group">
-                <label class="label w-100">Detalle Nombramiento</label>
                 <input class="form-control" placeholder="Detalle Nombramiento">
+                <label class="label w-100">Detalle Nombramiento</label>
             </div>
         </div>
         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-            <form-field [control]="form.get('cveOficio')" label="Fecha">
-                <label class="label w-100">Fecha</label>
+            <form-field [control]="form.get('fecha')" label="Fecha">
+                <!-- <label class="label w-100">Fecha</label> -->
                 <input class="form-control" formControlName="fecha"
-                        placeholder="Fecha">
+                        placeholder="Fecha" bsDatapicker>
                          <!-- [nbDatepicker]="formpicker1">
                 <nb-datepicker #formpicker1></nb-datepicker> -->
                 
@@ -46,22 +46,22 @@
         </div>
         <div *ngIf="nombrePantalla == 'concil-pag'" class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
             <div class="form-group">
-                <label class="label">&nbsp;</label>&nbsp;  
+                <button type="button" status="primary" (click)="btnEjecutar()">
+                    Ejecutar
+                </button>
+                <!-- <label class="label">&nbsp;</label>&nbsp;  
                 <div class="d-flex justify-content-center">
-                    <button type="button" status="primary" (click)="btnEjecutar()">
-                        Ejecutar
-                    </button>
-                </div>
+                </div> -->
             </div>
         </div>
         <div *ngIf="nombrePantalla == 'concil-pag'" class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
             <div class="form-group">
-                <label class="label">&nbsp;</label>&nbsp;  
+                <button type="button" status="primary" (click)="btnDeshacer()">
+                    Deshacer
+                </button>
+                <!-- <label class="label">&nbsp;</label>&nbsp;  
                 <div class="d-flex justify-content-center">
-                    <button type="button" status="primary" (click)="btnDeshacer()">
-                        Deshacer
-                    </button>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
@@ -69,7 +69,7 @@
 <!-- form Conciliacion de pagos recibidos -->
 
 <!-- form Conciliacion de pagos recibidos -->
-<form [formGroup]="formDepositario">
+<form [formGroup]="formDepositario" class="container-fluid form-material">
     <div class="row w-100">
         <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
             <span class="subtitle">
@@ -77,16 +77,16 @@
             </span>
         </div>
         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-            <form-field [control]="form.get('idDepositario')" label="Id Depositario">
-                <label class="label w-100">Id Depositario</label>
+            <form-field [control]="formDepositario.get('idDepositario')" label="Id Depositario">
+                <!-- <label class="label w-100">Id Depositario</label> -->
                 <input class="form-control" formControlName="idDepositario"
                         placeholder="Id Depositario">
                 
             </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
-            <form-field [control]="form.get('depositario')" label="Depositario">
-                <label class="label w-100">Depositario</label>
+            <form-field [control]="formDepositario.get('depositario')" label="Depositario">
+                <!-- <label class="label w-100">Depositario</label> -->
                 <input class="form-control" formControlName="depositario"
                         placeholder="Depositario">
                 
@@ -110,7 +110,7 @@
             </div> -->
         </div>
         <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-            <form-field [control]="form.get('fechaEjecucion')" label="Fecha Ejecución">
+            <form-field [control]="formDepositario.get('fechaEjecucion')" label="Fecha Ejecución">
                 <label class="label w-100">Fecha Ejecución</label>
                 <input class="form-control" formControlName="fechaEjecucion"
                         placeholder="Fecha Ejecución">

@@ -31,7 +31,7 @@
                 
                 <!-- Tabla de bienes DECLARATORIA -->
                 <hr class="row">
-                <form [formGroup]="formDeclaratoriaTabla">
+                <form [formGroup]="formDeclaratoriaTabla" class="container-fluid form-material">
                     <div class="row">
                         <div class="col-sm-12 col-12 col-md-2">
                             <form-field [control]="formDeclaratoriaTabla.get('noExpediente')" label="No. Expediente">
@@ -66,7 +66,7 @@
                 <!-- Tabla de bienes DECLARATORIA -->
 
                 <!-- Forms DECLARATORIA INICIO FIN -->
-                <form [formGroup]="formDeclaratoriaInicioFin">
+                <form [formGroup]="formDeclaratoriaInicioFin" class="container-fluid form-material">
                     <div class="row w-100">
                         <div class="col-sm-12 col-12 col-md-6 pr-3">
                             <form-field [control]="formDeclaratoriaInicioFin.get('inicio')" label="Inicio">

@@ -12,7 +12,10 @@ import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
   ]
 })
 export class CBRdodiCReclassRecoveryOrdersComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
+  settings = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
   form: FormGroup = new FormGroup({}); 
 
   constructor(
@@ -20,10 +23,6 @@ export class CBRdodiCReclassRecoveryOrdersComponent extends BasePage implements 
     ) {
       super();
       this.settings.columns = DETAILS_OI_COLUMNS;
-      this.settings.actions.edit = false;
-      this.settings.actions.add = false;
-      this.settings.actions.delete = false;
-
      }
 
   ngOnInit(): void {

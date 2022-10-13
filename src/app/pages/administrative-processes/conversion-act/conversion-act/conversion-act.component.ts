@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 
 export interface ExampleActa {
   idConversion: number,
@@ -27,6 +29,9 @@ export interface ExampleActa {
 })
 export class ConversionActComponent implements OnInit {
 
+  totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  
   form: FormGroup;
   //Geters del Encabezado
   get idConversion() { return this.form.get('idConversion'); }
@@ -80,19 +85,23 @@ export class ConversionActComponent implements OnInit {
     columns: {
       numberGood: {
         title: 'No Bien',
-        width: '10%'
+        width: '10%',
+        sort: false
       },
       description: {
         title: 'Descripcion',
-        width: '20%'
+        width: '20%',
+        sort: false
       },
       amount: {
         title: 'Cantidad',
-        width: '10%'
+        width: '10%',
+        sort: false
       },
       act: {
         title: 'Acta',
-        width: '10%'
+        width: '10%',
+        sort: false
       }
     },
   };
@@ -126,15 +135,18 @@ export class ConversionActComponent implements OnInit {
     columns: {
       numberGood: {
         title: 'No Bien',
-        width: '10%'
+        width: '10%',
+        sort: false
       },
       description: {
         title: 'Descripcion',
-        width: '30%'
+        width: '30%',
+        sort: false
       },
       amount: {
         title: 'Cantidad',
-        width: '10%'
+        width: '10%',
+        sort: false
       }
     },
   };

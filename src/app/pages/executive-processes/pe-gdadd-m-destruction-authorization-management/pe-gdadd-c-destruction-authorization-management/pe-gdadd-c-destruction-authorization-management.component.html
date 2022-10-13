@@ -53,7 +53,6 @@
                     </form-field>
                 </div>
             </div>
-        </form>
         <div class="row"> 
             <div class="col-lg-12">
               <div class="form-group row">
@@ -67,12 +66,11 @@
             </div>
         </div>
         <div class="form-group row pt-5">
-  
-            <label class="col-md-2 col-form-label">Folio de escaneo</label>
-            <div class="col-md-1">
-              <input class="form-control" type="" >
+            <div class="col-md-3">
+                <form-field [control]="form.get('scanFolio')" label="Folio de escaneo">
+                    <input type="text" class="form-control" formControlName="scanFolio">
+                </form-field>
             </div>
-    
             <div class="col-md-1">
               <button type="submit" class="btn-sm btn-primary active">Solicitud</button>
             </div>
@@ -86,11 +84,9 @@
             </div>
 
             <div class="col-md-6">
-                <label for="">Observaciones</label>
-                <textarea
-                rows="3"
-                class="form-control"
-                ></textarea>
+                <form-field [control]="form.get('observations')" label="Obervaciones">
+                    <textarea class="form-control" formControlName="observations"  rows="3"></textarea>
+                </form-field>
             </div>
 
             <div class="row pt-5">
@@ -103,32 +99,34 @@
                 </ng2-smart-table>
 
             </div>
-
-            <div class="row pt-5">
-                <div class="col-md-2">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                        <label class="form-check-label" >
-                          Disponible
-                        </label>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
-                        <label class="form-check-label" >
-                            No disponible
-                        </label>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <button type="submit" class="btn-sm btn-primary active">Insertar vía archivo plano</button>
-                </div>
-                <div class="col-md-3">
-                    <button type="submit" class="btn-sm btn-primary active">Insertar vía rastreador </button>
+          </div>
+          <div class="row pt-5">
+            <div class="col-md-2">
+                <label> Estado: </label>
+            </div>
+            <div class="col-md-2">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                    <label class="form-check-label" >
+                      Disponible
+                    </label>
                 </div>
             </div>
-    
-          </div>
+            <div class="col-md-2">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                    <label class="form-check-label" >
+                        No disponible
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn-sm btn-primary active">Insertar vía archivo plano</button>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn-sm btn-primary active">Insertar vía rastreador </button>
+            </div>
+        </div>
+    </form>
     </div>
 </app-card>

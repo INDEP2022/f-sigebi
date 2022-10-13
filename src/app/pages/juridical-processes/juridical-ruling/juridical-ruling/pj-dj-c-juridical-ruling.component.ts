@@ -17,7 +17,6 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class PJDJJuridicalRulingComponent extends BasePage implements OnInit, OnDestroy{
     
-    legalForm: FormGroup;
   data1 = [
     {
       noBien: 12345,
@@ -163,6 +162,9 @@ export class PJDJJuridicalRulingComponent extends BasePage implements OnInit, On
     noDataMessage: "No se encontrarón registros",
   };
 
+  legalForm: FormGroup;
+  subtipoForm: FormGroup;
+
   constructor(private fb: FormBuilder,
      ) {
     super();
@@ -175,11 +177,11 @@ export class PJDJJuridicalRulingComponent extends BasePage implements OnInit, On
 
   prepareForm() {
     this.legalForm = this.fb.group({
-      test: [null],
       tipoDictaminacion: [null, [Validators.required]],
       noExpediente: [null, [Validators.required]],
       averPrevia: [null],
       causaPenal: [null],
+      tipo: [null],
       esPropiedad: [false],
       observaciones: [null],
       fecDest: [null, [Validators.required]],
@@ -189,6 +191,10 @@ export class PJDJJuridicalRulingComponent extends BasePage implements OnInit, On
       ident: [null],
       tipos: [null],
     });
+    this.subtipoForm = this.fb.group({
+      tipoDictaminacion: [null],
+      noExpediente: [null],
+    })
   }
 }
 
