@@ -271,19 +271,19 @@ export const MENU: IMenuItem[] = [
       },
       {
         label: 'Ubicación de Bienes',
-        link: '/pages/administrative-processes/location-goods'
+        link: '/pages/administrative-processes/location-goods',
       },
       {
         label: 'Consulta de Almacenes',
-        link: '/pages/administrative-processes/warehouse-inquiries'
+        link: '/pages/administrative-processes/warehouse-inquiries',
       },
       {
         label: 'Consulta de Bóvedas',
-        link: '/pages/administrative-processes/vault-consultation'
+        link: '/pages/administrative-processes/vault-consultation',
       },
       {
         label: 'Registro de mensaje del Bien',
-        link: '/pages/administrative-processes/property-registration'
+        link: '/pages/administrative-processes/property-registration',
       },
       /**
        * Seguros **Legaspi**
@@ -428,7 +428,7 @@ export const MENU: IMenuItem[] = [
             label: 'Actas de Donación/Destrucción/Destino',
             link: '/pages/final-destination-process/report-of-acts/donation-destruction-destination',
           },
-        ]
+        ],
       },
     ],
   },
@@ -637,7 +637,7 @@ export const MENU: IMenuItem[] = [
             label: 'Consulta de bienes',
             link: '/pages/commercialization/consultation-goods-commercial-process-tabs',
           },
-          {  
+          {
             label: 'Conceptos de Gasto',
             link: '/pages/commercialization/expense-concepts',
           },
@@ -656,7 +656,16 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Catálogos',
         icon: 'folder',
-        subItems: [],
+        subItems: [
+          {
+            label: 'Tipos de penalización',
+            link: '/pages/commercialization/catalogs/penalty-types',
+          },
+          {
+            label: 'Claves autorización envío ext. OIs',
+            link: '/pages/commercialization/catalogs/authorization-keys-ois',
+          },
+        ],
       },
     ],
   },
