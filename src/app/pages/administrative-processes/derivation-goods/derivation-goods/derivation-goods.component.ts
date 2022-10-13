@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { PaDgCActsComponent } from '../pa-dg-c-acts/pa-dg-c-acts.component';
+import { PaDgCGoodsComponent } from '../pa-dg-c-goods/pa-dg-c-goods.component';
 
 @Component({
   selector: 'app-derivation-goods',
@@ -34,7 +37,7 @@ export class DerivationGoodsComponent implements OnInit {
      get destinationLabel() { return this.form.get('destinationLabel')}
 
 
-  constructor(private fb: FormBuilder, private router: Router) { }
+  constructor(private fb: FormBuilder, private router: Router,private modalService: BsModalService) { }
 
   ngOnInit(): void {
     this.buildForm();
@@ -89,6 +92,18 @@ export class DerivationGoodsComponent implements OnInit {
 
   imgUpload(){
     
+  }
+
+  openModal(): void {
+
+    this.modalService.show(PaDgCGoodsComponent, {
+      initialState: {
+        
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+
   }
 
   /* showToast(status: NbComponentStatus) {

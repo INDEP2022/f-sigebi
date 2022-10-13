@@ -233,6 +233,10 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-folder',
     subItems: [
       {
+        label: 'Indicador Reportes',
+        link: '/pages/catalogs/indicatorReport',
+      },
+      {
         label: 'Numerario Físico',
         link: '/pages/administrative-processes/numerary-physics',
       },
@@ -240,7 +244,7 @@ export const MENU: IMenuItem[] = [
         label: 'Actas Conversión',
         link: '/pages/administrative-processes/conversion-act',
       },
-      
+
       {
         label: 'Otras Monedas',
         link: '/pages/administrative-processes/other-currencies',
@@ -265,6 +269,22 @@ export const MENU: IMenuItem[] = [
         label: 'Derivación Bienes',
         link: '/pages/administrative-processes/derivation-goods',
       },
+      {
+        label: 'Ubicación de Bienes',
+        link: '/pages/administrative-processes/location-goods'
+      },
+      {
+        label: 'Consulta de Almacenes',
+        link: '/pages/administrative-processes/warehouse-inquiries'
+      },
+      {
+        label: 'Consulta de Bóvedas',
+        link: '/pages/administrative-processes/vault-consultation'
+      },
+      {
+        label: 'Registro de mensaje del Bien',
+        link: '/pages/administrative-processes/property-registration'
+      },
       /**
        * Seguros **Legaspi**
        **/
@@ -283,6 +303,14 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Bienes sin Avalúos',
         link: '/pages/administrative-processes/appraisal-goods',
+      },
+      {
+        label: 'Monitor de bienes incosteables',
+        link: '/pages/administrative-processes/monitor-unavoidable-assets',
+      },
+      {
+        label: 'Venta de Bienes',
+        link: '/pages/administrative-processes/sale-goods',
       },
     ],
   },
@@ -365,20 +393,33 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-share-alt',
     subItems: [
       {
+        label: 'Actas de Destino',
+        link: '/pages/final-destination-process/destination-acts',
+      },
+      {
         label: 'Actas de Destrucción',
         link: '/pages/final-destination-process/destruction-acts',
+      },
+      {
+        label: 'Actas de Devolución',
+        link: '/pages/final-destination-process/return-acts',
       },
       {
         label: 'Actas de Donación',
         link: '/pages/final-destination-process/donation-acts',
       },
       {
-        label: 'Actas de Destino',
-        link: '/pages/final-destination-process/destination-acts',
+        label: 'Actas de Posesión de Terceros',
+        link: '/pages/final-destination-process/third-possession-acts',
       },
       {
-        label: 'Actas de Devolución',
-        link: '/pages/final-destination-process/return-acts',
+        label: 'Reporte de Actas Donación/Destrucción/Destino',
+        subItems: [
+          {
+            label: 'Actas de Donación/Destrucción/Destino',
+            link: '/pages/final-destination-process/report-of-acts/donation-destruction-destination',
+          },
+        ]
       },
     ],
   },
