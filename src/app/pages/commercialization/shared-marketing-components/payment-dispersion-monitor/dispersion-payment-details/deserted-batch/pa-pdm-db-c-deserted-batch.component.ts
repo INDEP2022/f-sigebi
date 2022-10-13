@@ -8,17 +8,15 @@ import { COLUMNS } from './columns';
 @Component({
   selector: 'app-pa-pdm-db-c-deserted-batch',
   templateUrl: './pa-pdm-db-c-deserted-batch.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PaPdmDbCDesertedBatchComponent extends BasePage implements OnInit {
-
   settings = {
     ...TABLE_SETTINGS,
-    actions: false
+    actions: false,
   };
 
-  data:any[]=[];
+  data: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -27,20 +25,19 @@ export class PaPdmDbCDesertedBatchComponent extends BasePage implements OnInit {
     this.settings.columns = COLUMNS;
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   add() {
     //this.openModal();
   }
 
-  edit(data:any) {
+  edit(data: any) {
     //console.log(data)
     //this.openModal({ edit: true, paragraph });
   }
 
-  delete(data:any) {
-    console.log(data)
+  delete(data: any) {
+    console.log(data);
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -52,8 +49,7 @@ export class PaPdmDbCDesertedBatchComponent extends BasePage implements OnInit {
     });
   }
 
-  settingsChange($event:any): void {
-    this.settings=$event;
+  settingsChange($event: any): void {
+    this.settings = $event;
   }
-
 }

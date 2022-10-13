@@ -7,17 +7,16 @@ import { CCMPenaltyTypesRoutingModule } from './c-c-m-penalty-types-routing.modu
 import { CCTpCPenaltyTypesFormComponent } from './c-c-tp-c-penalty-types-form/c-c-tp-c-penalty-types-form.component';
 import { CCTpCPenaltyTypesListComponent } from './c-c-tp-c-penalty-types-list/c-c-tp-c-penalty-types-list.component';
 
-
 @NgModule({
   declarations: [
     CCTpCPenaltyTypesFormComponent,
-    CCTpCPenaltyTypesListComponent
+    CCTpCPenaltyTypesListComponent,
   ],
   imports: [
     CommonModule,
     CCMPenaltyTypesRoutingModule,
     SharedModule,
-    ModalModule.forChild()
-  ]
+    ModalModule.forChild(),
+  ],
 })
-export class CCMPenaltyTypesModule { }
+export class CCMPenaltyTypesModule {}

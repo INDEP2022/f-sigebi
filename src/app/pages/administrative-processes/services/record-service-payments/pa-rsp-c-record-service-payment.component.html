@@ -1,0 +1,55 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">REGISTRO DE PAGO DE SERVICIOS</h5>
+  </div>
+  <div body>
+    <!--Filtros-->
+    <div class="row mb-3 mt-3">
+      <form class="form-material mb-3 mt-3" [formGroup]="form">
+        <div class="row mb-3 mt-3">
+          <div class="col-xs-12 col-12 col-md-3 mb-3">
+            <form-field
+              label="Fecha de Solicitud"
+              [control]="form.get('applicationDate')">
+              <input
+                class="form-control"
+                bsDatepicker
+                formControlName="applicationDate" />
+            </form-field>
+          </div>
+          <div class="col-xs-12 col-12 col-md-2 mb-3 align-self-center">
+            <button class="btn btn-secondary btn-sm active w-100">
+              Filtrar
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!--CAN WORK1 TABLE-->
+    <div class="row justify-content-end mr-1">
+      <div class="ch-content">
+        <h5 class="title">CAN_WORK1</h5>
+        <div class="row justify-content-end pt-3 mr-3">
+          <app-columns-select
+            (settingsChange)="settingsChange($event)"
+            [settings]="settings"
+            class="row justify-content-end"></app-columns-select>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data"
+            (edit)="openGlobal($event.data.request)">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+  </div>
+</app-card>

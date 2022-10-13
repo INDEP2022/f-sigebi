@@ -14,11 +14,12 @@ import { TransferenteService } from '../../../../core/services/catalogs/transfer
 @Component({
   selector: 'app-issuing-institution-form',
   templateUrl: './issuing-institution-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class IssuingInstitutionFormComponent extends BasePage implements OnInit {
-
+export class IssuingInstitutionFormComponent
+  extends BasePage
+  implements OnInit
+{
   issuingInstitutionForm: FormGroup = new FormGroup({});
   title: string = 'Institución Emisora';
   edit: boolean = false;
@@ -31,7 +32,7 @@ export class IssuingInstitutionFormComponent extends BasePage implements OnInit 
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private issuingInstitutionService: IssuingInstitutionService
-  ) { 
+  ) {
     super();
   }
 
@@ -60,17 +61,18 @@ export class IssuingInstitutionFormComponent extends BasePage implements OnInit 
     if (this.issuingInstitution != null) {
       this.edit = true;
       let city: ICity = this.issuingInstitution.numCity as ICity;
-      let numTransfer: ITransferente = this.issuingInstitution.numTransference as ITransferente;
+      let numTransfer: ITransferente = this.issuingInstitution
+        .numTransference as ITransferente;
       this.issuingInstitutionForm.patchValue({
-        ...this.issuingInstitution, 
+        ...this.issuingInstitution,
         numCity: city?.idCity,
-        numTransference: numTransfer?.id
+        numTransference: numTransfer?.id,
       });
-      ( this.issuingInstitution.numCity ) 
-        ? this.itemsCity = new DefaultSelect([city], 1) 
+      this.issuingInstitution.numCity
+        ? (this.itemsCity = new DefaultSelect([city], 1))
         : this.getFromSelectCity({ inicio: 1, text: '' });
-      ( this.issuingInstitution.numTransference )
-        ? this.itemsTransfer = new DefaultSelect([numTransfer], 1)
+      this.issuingInstitution.numTransference
+        ? (this.itemsTransfer = new DefaultSelect([numTransfer], 1))
         : this.getFromSelectTransfer({ inicio: 1, text: '' });
     } else {
       this.getFromSelectCity({ inicio: 1, text: '' });
@@ -88,10 +90,12 @@ export class IssuingInstitutionFormComponent extends BasePage implements OnInit 
 
   create() {
     this.loading = true;
-    this.issuingInstitutionService.create(this.issuingInstitutionForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.issuingInstitutionService
+      .create(this.issuingInstitutionForm.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   update() {
@@ -120,9 +124,10 @@ export class IssuingInstitutionFormComponent extends BasePage implements OnInit 
   }
 
   getFromSelectTransfer(params: ListParams) {
-    this.issuingInstitutionService.getTransfers(params).subscribe((data: any) => {
-      this.itemsTransfer = new DefaultSelect(data.data, data.count);
-    });
+    this.issuingInstitutionService
+      .getTransfers(params)
+      .subscribe((data: any) => {
+        this.itemsTransfer = new DefaultSelect(data.data, data.count);
+      });
   }
-
 }

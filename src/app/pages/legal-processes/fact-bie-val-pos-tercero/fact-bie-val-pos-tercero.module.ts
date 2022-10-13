@@ -20,11 +20,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FactBieValPosTerceroComponent } from './fact-bie-val-pos-tercero/fact-bie-val-pos-tercero.component';
 import { SharedLegalProcessModule } from '../shared-legal-process/shared-legal-process.module';
 
-@NgModule({ 
-  declarations: [ 
-    FactBieValPosTerceroComponent,
-    
-  ],
+@NgModule({
+  declarations: [FactBieValPosTerceroComponent],
   imports: [
     CommonModule,
     FactBieValPosTerceroRoutingModule,
@@ -46,14 +43,11 @@ import { SharedLegalProcessModule } from '../shared-legal-process/shared-legal-p
     NgSelectModule,
     SharedModule,
 
-    SharedLegalProcessModule
+    SharedLegalProcessModule,
   ],
-  exports:[
-    
-    // ComponentsModule, 
-    NgSelectModule
-    
-  ]
+  exports: [
+    // ComponentsModule,
+    NgSelectModule,
+  ],
 })
-export class FactBieValPosTerceroModule { }
-
+export class FactBieValPosTerceroModule {}

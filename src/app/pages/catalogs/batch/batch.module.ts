@@ -7,17 +7,13 @@ import { BatchRoutingModule } from './batch-routing.module';
 import { BatchListComponent } from './batch-list/batch-list.component';
 import { BatchFormComponent } from './batch-form/batch-form.component';
 
-
 @NgModule({
-  declarations: [
-    BatchListComponent,
-    BatchFormComponent
-  ],
+  declarations: [BatchListComponent, BatchFormComponent],
   imports: [
     CommonModule,
     BatchRoutingModule,
     SharedModule,
-    ModalModule.forChild()
-  ]
+    ModalModule.forChild(),
+  ],
 })
-export class BatchModule { }
+export class BatchModule {}

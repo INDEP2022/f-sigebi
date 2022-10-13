@@ -5,12 +5,12 @@ import { CBmGeCdcClcCCalculateCommissionComponent } from './c-bm-ge-cdc-clc-c-ca
 const routes: Routes = [
   {
     path: '',
-    component: CBmGeCdcClcCCalculateCommissionComponent
-  }
+    component: CBmGeCdcClcCCalculateCommissionComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CBmGeCdcClcMCalculateCommissionRoutingModule { }
+export class CBmGeCdcClcMCalculateCommissionRoutingModule {}

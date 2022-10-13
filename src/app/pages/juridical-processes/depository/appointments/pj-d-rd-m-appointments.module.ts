@@ -15,13 +15,7 @@ import { PJDRDAppointmentsRoutingModule } from './pj-d-rd-m-appointments-routing
 import { PJDRDAppointmentsComponent } from './appointments/pj-d-rd-c-appointments.component';
 
 @NgModule({
-  declarations: [
-    PJDRDAppointmentsComponent
-  ],
-  imports: [
-    CommonModule,
-    PJDRDAppointmentsRoutingModule,
-    SharedModule,
-  ],
+  declarations: [PJDRDAppointmentsComponent],
+  imports: [CommonModule, PJDRDAppointmentsRoutingModule, SharedModule],
 })
 export class PJDRDAppointmentsModule {}

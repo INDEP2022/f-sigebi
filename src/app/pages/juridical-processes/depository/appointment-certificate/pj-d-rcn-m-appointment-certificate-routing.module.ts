@@ -10,16 +10,14 @@ import { RouterModule, Routes } from '@angular/router';
 /** COMPONENTS IMPORTS */
 import { PJDRCNAppointmentCertificateComponent } from './appointment-certificate/pj-d-rcn-c-appointment-certificate.component';
 
-
-
 const routes: Routes = [
-    {
-        path: '',
-        component: PJDRCNAppointmentCertificateComponent
-    }
-]
+  {
+    path: '',
+    component: PJDRCNAppointmentCertificateComponent,
+  },
+];
 @NgModule({
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule]
-  })
-  export class PJDRCNAppointmentCertificateRoutingModule { }
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
+})
+export class PJDRCNAppointmentCertificateRoutingModule {}

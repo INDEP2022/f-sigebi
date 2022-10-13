@@ -20,11 +20,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FactJurDictamRecrComponent } from './fact-jur-dictam-recr/fact-jur-dictam-recr.component';
 import { SharedLegalProcessModule } from '../shared-legal-process/shared-legal-process.module';
 
-@NgModule({ 
-  declarations: [ 
-    FactJurDictamRecrComponent,
-    
-  ],
+@NgModule({
+  declarations: [FactJurDictamRecrComponent],
   imports: [
     CommonModule,
     FactJurDictamRecrRoutingModule,
@@ -46,14 +43,11 @@ import { SharedLegalProcessModule } from '../shared-legal-process/shared-legal-p
     NgSelectModule,
     SharedModule,
 
-    SharedLegalProcessModule
+    SharedLegalProcessModule,
   ],
-  exports:[
-    
-    // ComponentsModule, 
-    NgSelectModule
-    
-  ]
+  exports: [
+    // ComponentsModule,
+    NgSelectModule,
+  ],
 })
-export class FactJurDictamRecrModule { }
-
+export class FactJurDictamRecrModule {}

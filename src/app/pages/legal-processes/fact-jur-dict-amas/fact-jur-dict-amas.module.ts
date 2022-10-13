@@ -21,8 +21,8 @@ import { FactJurDictAmasComponent } from './fact-jur-dict-amas/fact-jur-dict-ama
 // import { JuridicalDictumsComponent } from '../../documents-reception/flyers/juridical-dictums/juridical-dictums.component';
 // import { FlyersModule } from '../../documents-reception/flyers/flyers.module';
 
-@NgModule({ 
-  declarations: [ 
+@NgModule({
+  declarations: [
     FactJurDictAmasComponent,
     // JuridicalDictumsComponent
   ],
@@ -52,12 +52,9 @@ import { FactJurDictAmasComponent } from './fact-jur-dict-amas/fact-jur-dict-ama
     // NbIconModule,
     SharedModule,
   ],
-  exports:[
-    
-    // ComponentsModule, 
-    NgSelectModule
-    
-  ]
+  exports: [
+    // ComponentsModule,
+    NgSelectModule,
+  ],
 })
-export class FactJurDictAmasModule { }
-
+export class FactJurDictAmasModule {}

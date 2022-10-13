@@ -7,17 +7,13 @@ import { StatusClaimsFormComponent } from './status-claims-form/status-claims-fo
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
-  declarations: [
-    StatusClaimsListComponent,
-    StatusClaimsFormComponent
-  ],
+  declarations: [StatusClaimsListComponent, StatusClaimsFormComponent],
   imports: [
     CommonModule,
     SharedModule,
     ModalModule.forChild(),
-    StatusClaimsRoutingModule
-  ]
+    StatusClaimsRoutingModule,
+  ],
 })
-export class StatusClaimsModule { }
+export class StatusClaimsModule {}

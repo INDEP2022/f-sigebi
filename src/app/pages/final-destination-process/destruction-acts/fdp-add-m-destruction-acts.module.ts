@@ -5,14 +5,13 @@ import { FdpAddMDestructionActsRoutingModule } from './fdp-add-m-destruction-act
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 
-
 @NgModule({
-  declarations: [ FdpAddCDestructionActsComponent ],
+  declarations: [FdpAddCDestructionActsComponent],
   imports: [
     CommonModule,
     FdpAddMDestructionActsRoutingModule,
     SharedModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
 })
-export class FdpAddMDestructionActsModule { }
+export class FdpAddMDestructionActsModule {}

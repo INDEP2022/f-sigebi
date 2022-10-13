@@ -1,4 +1,4 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { IOriginCisi } from 'src/app/core/models/catalogs/origin-cisi.model';
 import { OiriginCisiService } from 'src/app/core/services/catalogs/origin-cisi.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -11,11 +11,9 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 @Component({
   selector: 'app-orign-cisi-form',
   templateUrl: './orign-cisi-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class OrignCisiFormComponent extends BasePage implements OnInit {
-
   form: ModelForm<IOriginCisi>;
   title: string = 'Procedencia Cisi';
   edit: boolean = false;
@@ -24,7 +22,7 @@ export class OrignCisiFormComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private originCisiService: OiriginCisiService,
+    private originCisiService: OiriginCisiService
   ) {
     super();
   }
@@ -37,7 +35,6 @@ export class OrignCisiFormComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       id: [null],
       detail: [null, [Validators.required]],
-     
     });
     if (this.originCisi != null) {
       console.log(this.form);
@@ -62,18 +59,15 @@ export class OrignCisiFormComponent extends BasePage implements OnInit {
   create() {
     this.loading = true;
     this.originCisiService.create(this.form.getRawValue()).subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   update() {
     this.loading = true;
     this.originCisiService
-      .update(
-        this.originCisi.id,
-        this.form.getRawValue()
-      )
+      .update(this.originCisi.id, this.form.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

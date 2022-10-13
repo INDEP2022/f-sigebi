@@ -8,8 +8,7 @@ import { SALEGOODSPARTICIPANTS_COLUMNS } from './sale-goods-participants-columns
 @Component({
   selector: 'app-sale-goods-participants',
   templateUrl: './sale-goods-participants.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class SaleGoodsParticipantsComponent extends BasePage implements OnInit {
   settings = { ...TABLE_SETTINGS, actions: false };
@@ -19,9 +18,7 @@ export class SaleGoodsParticipantsComponent extends BasePage implements OnInit {
   constructor() {
     super();
     this.settings.columns = SALEGOODSPARTICIPANTS_COLUMNS;
-   }
-
-  ngOnInit(): void {
   }
 
+  ngOnInit(): void {}
 }

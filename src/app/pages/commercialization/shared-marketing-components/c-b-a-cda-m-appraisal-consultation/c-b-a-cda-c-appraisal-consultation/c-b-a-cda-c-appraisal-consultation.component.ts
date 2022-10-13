@@ -7,11 +7,12 @@ import { ExcelService } from 'src/app/common/services/exportToExcel.service';
 @Component({
   selector: 'app-c-b-a-cda-c-appraisal-consultation',
   templateUrl: './c-b-a-cda-c-appraisal-consultation.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CBACdaCAppraisalConsultationComponent extends BasePage implements OnInit {
-  
+export class CBACdaCAppraisalConsultationComponent
+  extends BasePage
+  implements OnInit
+{
   settings = {
     ...TABLE_SETTINGS,
     actions: {
@@ -24,15 +25,12 @@ export class CBACdaCAppraisalConsultationComponent extends BasePage implements O
       editButtonContent: '<span class="bi bi-file-earmark-excel"></span>',
     },
   };
-  constructor(
-    private excelService:ExcelService
-    ) {
-      super();
-      this.settings.columns = APPRAISAL_COLUMNS;
-    }
-
-  ngOnInit(): void {
+  constructor(private excelService: ExcelService) {
+    super();
+    this.settings.columns = APPRAISAL_COLUMNS;
   }
+
+  ngOnInit(): void {}
 
   data = [
     {
@@ -54,7 +52,6 @@ export class CBACdaCAppraisalConsultationComponent extends BasePage implements O
       fechaAvaluo: '',
       fechaVigAvaluo: '',
       estatusAvaluo: '',
-
     },
     {
       idEvento: '21673',
@@ -69,11 +66,10 @@ export class CBACdaCAppraisalConsultationComponent extends BasePage implements O
       estatus: '',
       noClasif: '',
       descsssubtipo: '',
-    }
+    },
   ];
 
-  exportAsXLSX():void {
+  exportAsXLSX(): void {
     this.excelService.exportAsExcelFile(this.data, 'Consulta_Avaluos');
   }
-
 }

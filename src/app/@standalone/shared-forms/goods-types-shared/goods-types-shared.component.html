@@ -1,7 +1,7 @@
 <ng-container>
   <div class="row mb-3 pt-3" *ngIf="goodTypeShow">
     <div class="col-md-12">
-      <form-field [control]="form.get('type')">
+      <form-field [control]="form.get(typeField)">
         <ngx-select
           (fetchItems)="getTypes($event)"
           [data]="types"
@@ -18,7 +18,7 @@
 
   <div class="row mb-3 pt-3" *ngIf="subTypeShow">
     <div class="col-md-12">
-      <form-field [control]="form.get('subtype')">
+      <form-field [control]="form.get(subtypeField)">
         <ngx-select
           (fetchItems)="getSubtypes($event)"
           [data]="subtypes"
@@ -35,7 +35,7 @@
 
   <div class="row" *ngIf="ssubTypeShow">
     <div class="col-md-12">
-      <form-field [control]="form.get('ssubtype')">
+      <form-field [control]="form.get(ssubtypeField)">
         <ngx-select
           (fetchItems)="getSsubtypes($event)"
           [data]="ssubtypes"
@@ -52,7 +52,7 @@
 
   <div class="row" *ngIf="sssubTypeShow">
     <div class="col-md-12">
-      <form-field [control]="form.get('sssubtype')">
+      <form-field [control]="form.get(sssubtypeField)">
         <ngx-select
           (fetchItems)="getSssubtypes($event)"
           [data]="sssubtypes"

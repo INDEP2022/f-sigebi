@@ -5,29 +5,30 @@ import { EVENT_TYPE_THIRD_COLUMNS } from './event-types-third-columns';
 import { THIRD_PARTY_MARKETERS_COLUMNS } from './third-party-marketers-columns';
 import { THIRD_PARTY_MARKETERS2_COLUMNS } from './third-party-marketers2-columns';
 
-
 @Component({
   selector: 'app-c-bm-ge-cdc-tc-c-third-party-marketers',
   templateUrl: './c-bm-ge-cdc-tc-c-third-party-marketers.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CBmGeCdcTcCThirdPartyMarketersComponent extends BasePage implements OnInit {
+export class CBmGeCdcTcCThirdPartyMarketersComponent
+  extends BasePage
+  implements OnInit
+{
   settings1 = {
     ...TABLE_SETTINGS,
-    actions: false
+    actions: false,
   };
   settings2 = {
     ...TABLE_SETTINGS,
-    actions: false
+    actions: false,
   };
   settings3 = {
     ...TABLE_SETTINGS,
-    actions: false
+    actions: false,
   };
 
-  data2 : any;
-  data3 : any;
+  data2: any;
+  data3: any;
   constructor() {
     super();
     this.settings1.columns = THIRD_PARTY_MARKETERS_COLUMNS;
@@ -35,31 +36,29 @@ export class CBmGeCdcTcCThirdPartyMarketersComponent extends BasePage implements
     this.settings3.columns = EVENT_TYPE_THIRD_COLUMNS;
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   //Tabla1
   data1 = [
     {
       id: '1',
       nomRazon: 'DAE',
-      rutCalculo: 'CALCULO X RANGO'
+      rutCalculo: 'CALCULO X RANGO',
     },
     {
       id: '2',
       nomRazon: 'EBAY',
-      rutCalculo: 'CALCULO RANGO ESP'
+      rutCalculo: 'CALCULO RANGO ESP',
     },
     {
       id: '3',
       nomRazon: 'VENTURA',
-      rutCalculo: 'CALCULO TOTAL'
+      rutCalculo: 'CALCULO TOTAL',
     },
     {
       id: '4',
       nomRazon: 'DAE 2010',
-      rutCalculo: 'CALCULO TOTAL'
+      rutCalculo: 'CALCULO TOTAL',
     },
-  ]
-
+  ];
 }

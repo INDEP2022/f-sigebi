@@ -15,10 +15,6 @@ import { DepositoryRoutingModule } from './depository-routing.module';
 
 @NgModule({
   declarations: [],
-  imports: [
-    CommonModule,
-    DepositoryRoutingModule,
-    SharedModule,
-  ],
+  imports: [CommonModule, DepositoryRoutingModule, SharedModule],
 })
 export class DepositoryModule {}

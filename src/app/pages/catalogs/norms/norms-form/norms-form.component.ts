@@ -9,11 +9,9 @@ import { NormService } from './../../../../core/services/catalogs/norm.service';
 @Component({
   selector: 'app-norms-form',
   templateUrl: './norms-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class NormsFormComponent extends BasePage implements OnInit {
-
   normForm: FormGroup = new FormGroup({});
   title: string = 'Norma';
   edit: boolean = false;
@@ -25,7 +23,7 @@ export class NormsFormComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private normService: NormService
-  ) { 
+  ) {
     super();
   }
 
@@ -72,12 +70,10 @@ export class NormsFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.normService
-      .update(this.norm.id, this.normForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.normService.update(this.norm.id, this.normForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   handleSuccess() {
@@ -87,5 +83,4 @@ export class NormsFormComponent extends BasePage implements OnInit {
     this.refresh.emit(true);
     this.modalRef.hide();
   }
-
 }

@@ -11,17 +11,14 @@ import { PaRRMRecordRoutingModule } from './pa-r-r-m-record-routing.module';
 //Components
 import { PaRRCRecordDetailsComponent } from './record-details/pa-r-r-c-record-details.component';
 
-
 @NgModule({
-  declarations: [
-    PaRRCRecordDetailsComponent
-  ],
+  declarations: [PaRRCRecordDetailsComponent],
   imports: [
     CommonModule,
     PaRRMRecordRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedModule
-  ]
+    SharedModule,
+  ],
 })
-export class PaRRMRecordModule { }
+export class PaRRMRecordModule {}

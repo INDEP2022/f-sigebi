@@ -6,22 +6,22 @@ import { EVENTO_ERROR_COLUMNS } from './numeraire-conversion-error-columns';
 @Component({
   selector: 'app-c-b-ge-can-c-numeraire-conversion-error',
   templateUrl: './c-b-ge-can-c-numeraire-conversion-error.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CBGeCanCNumeraireConversionErrorComponent extends BasePage implements OnInit {
+export class CBGeCanCNumeraireConversionErrorComponent
+  extends BasePage
+  implements OnInit
+{
   settings = {
     ...TABLE_SETTINGS,
-    actions: false
+    actions: false,
   };
   list: any;
-  
+
   constructor() {
     super();
-    this.settings.columns = EVENTO_ERROR_COLUMNS
-   }
-
-  ngOnInit(): void {
+    this.settings.columns = EVENTO_ERROR_COLUMNS;
   }
 
+  ngOnInit(): void {}
 }

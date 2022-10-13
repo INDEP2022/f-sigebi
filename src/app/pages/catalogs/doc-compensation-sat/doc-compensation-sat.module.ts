@@ -7,17 +7,16 @@ import { DocCompensationSatListComponent } from './doc-compensation-sat-list/doc
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
   declarations: [
     DocCompensationSatFormComponent,
-    DocCompensationSatListComponent
+    DocCompensationSatListComponent,
   ],
   imports: [
     CommonModule,
     SharedModule,
     ModalModule.forChild(),
-    DocCompensationSatRoutingModule
-  ]
+    DocCompensationSatRoutingModule,
+  ],
 })
-export class DocCompensationSatModule { }
+export class DocCompensationSatModule {}

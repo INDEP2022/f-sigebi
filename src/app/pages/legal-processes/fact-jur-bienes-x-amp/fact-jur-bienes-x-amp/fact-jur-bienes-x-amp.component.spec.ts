@@ -8,9 +8,8 @@ describe('FactJurBienesXAmpComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FactJurBienesXAmpComponent ]
-    })
-    .compileComponents();
+      declarations: [FactJurBienesXAmpComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

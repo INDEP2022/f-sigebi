@@ -9,11 +9,9 @@ import { NotaryService } from './../../../../core/services/catalogs/notary.servi
 @Component({
   selector: 'app-notary-form',
   templateUrl: './notary-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class NotaryFormComponent extends BasePage implements OnInit {
-
   notaryForm: FormGroup = new FormGroup({});
   title: string = 'Notario';
   edit: boolean = false;
@@ -27,7 +25,7 @@ export class NotaryFormComponent extends BasePage implements OnInit {
     private notaryService: NotaryService
   ) {
     super();
-   }
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -43,7 +41,7 @@ export class NotaryFormComponent extends BasePage implements OnInit {
       domicile: [null, [Validators.required]],
       phone: [null, [Validators.required, Validators.maxLength(3)]],
       email: [null, [Validators.required]],
-      registryNumber: [null, [Validators.required]]
+      registryNumber: [null, [Validators.required]],
     });
     if (this.notary != null) {
       this.edit = true;
@@ -70,12 +68,10 @@ export class NotaryFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.notaryService
-      .update(this.notary.id, this.notaryForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.notaryService.update(this.notary.id, this.notaryForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   handleSuccess() {
@@ -85,5 +81,4 @@ export class NotaryFormComponent extends BasePage implements OnInit {
     this.refresh.emit(true);
     this.modalRef.hide();
   }
-
 }

@@ -3,27 +3,42 @@ import { RouterModule, Routes } from '@angular/router';
 import { LegalProcessesComponent } from './legal-processes.component';
 
 const routes: Routes = [
-  {  
-    path: '', pathMatch: 'prefix', component: LegalProcessesComponent, children: [
+  {
+    path: '',
+    pathMatch: 'prefix',
+    component: LegalProcessesComponent,
+    children: [
       {
-        path: 'fact-jur-dict-amas', loadChildren: () => import('./fact-jur-dict-amas/fact-jur-dict-amas.module')
-        .then(m => m.FactJurDictAmasModule)
+        path: 'fact-jur-dict-amas',
+        loadChildren: () =>
+          import('./fact-jur-dict-amas/fact-jur-dict-amas.module').then(
+            m => m.FactJurDictAmasModule
+          ),
       },
       // {
       //   path: 'fact-gen-act-datex', loadChildren: () => import('./fact-gen-act-datex/fact-gen-act-datex.module')
       //   .then(m => m.FactGenActDatexModule)
       // },
       {
-        path: 'fact-gen-exped-notif', loadChildren: () => import('./fact-gen-exped-notif/fact-gen-exped-notif.module')
-        .then(m => m.FactGenExpedNotifModule)
+        path: 'fact-gen-exped-notif',
+        loadChildren: () =>
+          import('./fact-gen-exped-notif/fact-gen-exped-notif.module').then(
+            m => m.FactGenExpedNotifModule
+          ),
       },
       {
-        path: 'fact-jur-abandonos', loadChildren: () => import('./fact-jur-abandonos/fact-jur-abandonos.module')
-        .then(m => m.FactJurAbonadosModule)
+        path: 'fact-jur-abandonos',
+        loadChildren: () =>
+          import('./fact-jur-abandonos/fact-jur-abandonos.module').then(
+            m => m.FactJurAbonadosModule
+          ),
       },
       {
-        path: 'fact-jurreg-dest-leg', loadChildren: () => import('./fact-jurreg-dest-leg/fact-jurreg-dest-leg.module')
-        .then(m => m.FactJurregDestLegModule)
+        path: 'fact-jurreg-dest-leg',
+        loadChildren: () =>
+          import('./fact-jurreg-dest-leg/fact-jurreg-dest-leg.module').then(
+            m => m.FactJurregDestLegModule
+          ),
       },
       // {
       //   path: 'fact-adb-sol-dest-leg', loadChildren: () => import('./fact-adb-sol-dest-leg/fact-adb-sol-dest-leg.module')
@@ -77,20 +92,14 @@ const routes: Routes = [
       //   path: 'fact-bie-val-pos-tercero', loadChildren: () => import('./fact-bie-val-pos-tercero/fact-bie-val-pos-tercero.module')
       //   .then(m => m.FactBieValPosTerceroModule)
       // },
-    
-    ]
+    ],
   },
-  
-
-]; 
-
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class LegalProcessesRoutingModule { }
+export class LegalProcessesRoutingModule {}
 
-export const routedComponents = [
-    LegalProcessesComponent,
-];
+export const routedComponents = [LegalProcessesComponent];

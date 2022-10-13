@@ -15,9 +15,7 @@ import { PJAENNotificationFileUpdateRoutingModule } from './pj-aen-m-notificatio
 import { PJAENNotificationFileUpdateComponent } from './notification-file-update/pj-aen-c-notification-file-update.component';
 
 @NgModule({
-  declarations: [
-    PJAENNotificationFileUpdateComponent
-  ],
+  declarations: [PJAENNotificationFileUpdateComponent],
   imports: [
     CommonModule,
     PJAENNotificationFileUpdateRoutingModule,

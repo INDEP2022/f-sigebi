@@ -12,11 +12,9 @@ import { GenericsFormComponent } from '../generics-form/generics-form.component'
 @Component({
   selector: 'app-generics-list',
   templateUrl: './generics-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class GenericsListComponent extends BasePage implements OnInit {
-
   settings = TABLE_SETTINGS;
   columns: IGeneric[] = [];
   totalItems: number = 0;
@@ -75,5 +73,4 @@ export class GenericsListComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }

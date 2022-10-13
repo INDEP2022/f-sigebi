@@ -1,174 +1,321 @@
 <app-modal>
-    <div header>
-        <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
-    </div>
-    <div body>
-        <form class="form-material " [formGroup]="form" >
-            <div class="row">
-                <div class="col-md-12">
-                    <form-field [control]="form.get('personNumber')" label="Numero Persona">
-                        <input type="text" class="form-control" formControlName="personNumber" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-12">
-                    <form-field [control]="form.get('name')" label="Nombre Completo">
-                        <input type="text" class="form-control" formControlName="name" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-12">
-                    <form-field [control]="form.get('street')" label="Direccion">
-                        <input type="text" class="form-control" formControlName="street" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-12">
-                    <form-field [control]="form.get('streetNumber')" label="Numero Direccion">
-                        <input type="text" class="form-control" formControlName="streetNumber" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-12">
-                    <form-field [control]="form.get('apartmentNumber')" label="Numero Apartamento">
-                        <input type="text" class="form-control" formControlName="apartmentNumber" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-12">
-                    <form-field [control]="form.get('suburb')" label="Colonia">
-                        <input type="text" class="form-control" formControlName="suburb" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-12">
-                    <form-field [control]="form.get('delegation')" label="Delegcion Municipal">
-                        <input type="text" class="form-control" formControlName="delegation" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-12">
-                    <form-field [control]="form.get('zipCode')" label="Codigo Postal">
-                        <input type="text" class="form-control" formControlName="zipCode" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-12">
-                    <form-field [control]="form.get('rfc')" label="RFC">
-                        <input type="text" class="form-control" formControlName="rfc" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-12">
-                    <form-field [control]="form.get('curp')" label="CURP">
-                        <input type="text" class="form-control" formControlName="curp" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-12">
-                    <form-field [control]="form.get('phone')" label="Telefono">
-                        <input type="tel" class="form-control" formControlName="phone" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-12">
-                    <form-field [control]="form.get('typePerson')" label="Tipo Persona">
-                        <input type="text" class="form-control" formControlName="typePerson" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-12">
-                    <form-field [control]="form.get('typeResponsible')" label="Tipo Responsabilidad">
-                        <input type="text" class="form-control" formControlName="typeResponsible" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-12">
-                    <form-field [control]="form.get('manager')" label="Gerente">
-                        <input type="text" class="form-control" formControlName="manager" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-12">
-                    <form-field [control]="form.get('numberDeep')" label="Numero Deep">
-                        <input type="tel" class="form-control" formControlName="numberDeep" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-12">
-                    <form-field [control]="form.get('profesion')" label="Profesion">
-                        <input type="text" class="form-control" formControlName="profesion" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-12">
-                    <form-field [control]="form.get('curriculum')" label="Curriculum">
-                        <input type="text" class="form-control" formControlName="curriculum" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-12">
-                    <form-field [control]="form.get('keyEntFed')" label="keyEntFed">
-                        <input type="text" class="form-control" formControlName="keyEntFed" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-4">
-                    <form-field [control]="form.get('keyOperation')" label="keyOperation">
-                        <input type="tel" class="form-control" formControlName="keyOperation" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-4">
-                    <form-field [control]="form.get('observations')" label="Observaciones">
-                        <input type="text" class="form-control" formControlName="observations" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-4">
-                    <form-field [control]="form.get('profile')" label="Perfil">
-                        <input type="text" class="form-control" formControlName="profile" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-4">
-                    <form-field [control]="form.get('precedentSecodam')" label="Anteecedetes SECODAm">
-                        <input type="text" class="form-control" formControlName="precedentSecodam" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-4">
-                    <form-field [control]="form.get('precedentPgr')" label="Anteecedetes PGR">
-                        <input type="text" class="form-control" formControlName="precedentPgr" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-4">
-                    <form-field [control]="form.get('precedentPff')" label="Anteecedetes PTFF">
-                        <input type="text" class="form-control" formControlName="precedentPff" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-4">
-                    <form-field [control]="form.get('precedentSera')" label="Anteecedetes Sera">
-                        <input type="text" class="form-control" formControlName="precedentSera" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-4">
-                    <form-field [control]="form.get('precedent0ther')" label="Otros Anteecedetes">
-                        <input type="text" class="form-control" formControlName="precedentPgr" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-4">
-                    <form-field [control]="form.get('registryNumber')" label="Numero Registro">
-                        <input type="number" class="form-control" formControlName="registryNumber" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-4">
-                    <form-field [control]="form.get('email')" label="email">
-                        <input type="email" class="form-control" formControlName="email" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-4">
-                    <form-field [control]="form.get('blackList')" label="blackList">
-                        <input type="email" class="form-control" formControlName="blackList" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-4">
-                    <form-field [control]="form.get('blackList')" label="blackList">
-                        <input type="email" class="form-control" formControlName="blackList" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-            </div>
-        </form>
-    </div>
-    <div footer>
-        <div class="d-flex justify-content-center">
-            <div class="m-3">
-                <confirm-button [disabled]="form.invalid" [loading]="loading" (confirm)="confirm()">
-                </confirm-button>
-            </div>
-            <div class="m-3">
-                <button type="button" class="btn btn-danger active" (click)="close()">
-                    Cancelar
-                </button>
-            </div>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('personNumber')"
+            label="Numero Persona">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="personNumber"
+              placeholder="ejemplo" />
+          </form-field>
         </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('name')" label="Nombre Completo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="name"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('street')" label="Direccion">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="street"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('streetNumber')"
+            label="Numero Direccion">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="streetNumber"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('apartmentNumber')"
+            label="Numero Apartamento">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="apartmentNumber"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('suburb')" label="Colonia">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="suburb"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('delegation')"
+            label="Delegcion Municipal">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegation"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('zipCode')" label="Codigo Postal">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="zipCode"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('rfc')" label="RFC">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="rfc"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('curp')" label="CURP">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="curp"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('phone')" label="Telefono">
+            <input
+              type="tel"
+              class="form-control"
+              formControlName="phone"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('typePerson')" label="Tipo Persona">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="typePerson"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('typeResponsible')"
+            label="Tipo Responsabilidad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="typeResponsible"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('manager')" label="Gerente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="manager"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('numberDeep')" label="Numero Deep">
+            <input
+              type="tel"
+              class="form-control"
+              formControlName="numberDeep"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('profesion')" label="Profesion">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="profesion"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('curriculum')" label="Curriculum">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="curriculum"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('keyEntFed')" label="keyEntFed">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="keyEntFed"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('keyOperation')" label="keyOperation">
+            <input
+              type="tel"
+              class="form-control"
+              formControlName="keyOperation"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('observations')"
+            label="Observaciones">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="observations"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('profile')" label="Perfil">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="profile"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('precedentSecodam')"
+            label="Anteecedetes SECODAm">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="precedentSecodam"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('precedentPgr')"
+            label="Anteecedetes PGR">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="precedentPgr"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('precedentPff')"
+            label="Anteecedetes PTFF">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="precedentPff"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('precedentSera')"
+            label="Anteecedetes Sera">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="precedentSera"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('precedent0ther')"
+            label="Otros Anteecedetes">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="precedentPgr"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('registryNumber')"
+            label="Numero Registro">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="registryNumber"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('email')" label="email">
+            <input
+              type="email"
+              class="form-control"
+              formControlName="email"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('blackList')" label="blackList">
+            <input
+              type="email"
+              class="form-control"
+              formControlName="blackList"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('blackList')" label="blackList">
+            <input
+              type="email"
+              class="form-control"
+              formControlName="blackList"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="form.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
     </div>
+  </div>
 </app-modal>

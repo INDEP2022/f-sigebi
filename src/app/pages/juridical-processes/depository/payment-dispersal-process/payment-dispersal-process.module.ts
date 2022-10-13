@@ -15,10 +15,6 @@ import { PaymentDispersalProcessRoutingModule } from './payment-dispersal-proces
 
 @NgModule({
   declarations: [],
-  imports: [
-    CommonModule,
-    PaymentDispersalProcessRoutingModule,
-    SharedModule,
-  ],
+  imports: [CommonModule, PaymentDispersalProcessRoutingModule, SharedModule],
 })
 export class PaymentDispersalProcessModule {}

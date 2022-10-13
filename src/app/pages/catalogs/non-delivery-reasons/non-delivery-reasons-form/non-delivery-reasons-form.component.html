@@ -1,118 +1,115 @@
 <app-modal>
-    <div header>
-      <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
-    </div>
-    <div body>
-      <form class="form-material" [formGroup]="nonDeliveryReasonsForm">
-        <div class="row">
-            <div class="col-md-6 pt-sm-5 pt-md-2">
-                <form-field 
-                    [control]="nonDeliveryReasonsForm.get('id')" 
-                    label="Registro">
-                    <input 
-                        type="number" 
-                        class="form-control" 
-                        formControlName="id" />
-                </form-field>
-            </div>
-            <div class="col-md-6 pt-sm-5 pt-md-2">
-                <form-field 
-                    [control]="nonDeliveryReasonsForm.get('reasonType')" 
-                    label="Tipo de motivo">
-                    <input 
-                        type="text" 
-                        class="form-control" 
-                        formControlName="reasonType" />
-                </form-field>
-            </div>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="nonDeliveryReasonsForm">
+      <div class="row">
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="nonDeliveryReasonsForm.get('id')"
+            label="Registro">
+            <input type="number" class="form-control" formControlName="id" />
+          </form-field>
         </div>
-        <div class="row pt-5">
-            <div class="col-md-6 pt-sm-5 pt-md-2">
-                <form-field 
-                    [control]="nonDeliveryReasonsForm.get('eventType')" 
-                    label="Tipo de evento">
-                    <input 
-                        type="text" 
-                        class="form-control" 
-                        formControlName="eventType" />
-                </form-field>
-            </div>
-            <div class="col-md-6 pt-sm-5 pt-md-2">
-                <form-field 
-                    [control]="nonDeliveryReasonsForm.get('reason')" 
-                    label="Motivo">
-                    <textarea 
-                        rows="2"
-                        class="form-control pt-3" 
-                        formControlName="reason">
-                    </textarea>
-                </form-field>
-            </div>
-        </div>
-        <div class="row pt-5">
-            <div class="col-md-6 pt-sm-5 pt-md-2">
-                <form-field 
-                    [control]="nonDeliveryReasonsForm.get('userCreation')" 
-                    label="Creado por">
-                    <input 
-                        type="text" 
-                        class="form-control" 
-                        formControlName="userCreation" />
-                </form-field>
-            </div>
-            <div class="col-md-6 pt-sm-5 pt-md-2">
-                <form-field 
-                    [control]="nonDeliveryReasonsForm.get('userModification')" 
-                    label="Modificado por">
-                    <input 
-                        type="text" 
-                        class="form-control" 
-                        formControlName="userModification" />
-                </form-field>
-            </div>
-        </div>
-        <div class="row pt-5">            
-            <div class="col-md-6 pt-sm-5 pt-md-2">
-                <form-field 
-                    [control]="nonDeliveryReasonsForm.get('version')" 
-                    label="Versión">
-                    <input 
-                        type="number" 
-                        class="form-control" 
-                        formControlName="version" />
-                </form-field>
-            </div>
-            <div class="col-md-6 pt-sm-5 pt-md-2">
-                <form-field 
-                    [control]="nonDeliveryReasonsForm.get('status')" 
-                    label="Estado">
-                    <ng-select 
-                        formControlName="status" 
-                        [searchable]="false" 
-                        class="form-control" 
-                        [clearable]="false">
-                        <ng-option value="0">Inactivo</ng-option>
-                        <ng-option value="1">Activo</ng-option>
-                    </ng-select>
-                </form-field>
-            </div>
-        </div>
-      </form>
-    </div>
-    <div footer>
-      <div class="d-flex justify-content-center">
-        <div class="m-3">
-          <confirm-button
-            [disabled]="!nonDeliveryReasonsForm.valid"
-            [loading]="loading"
-            (confirm)="confirm()">
-          </confirm-button>
-        </div>
-        <div class="m-3">
-          <button type="button" class="btn btn-danger active" (click)="close()">
-            Cancelar
-          </button>
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="nonDeliveryReasonsForm.get('reasonType')"
+            label="Tipo de motivo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="reasonType" />
+          </form-field>
         </div>
       </div>
+      <div class="row pt-5">
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="nonDeliveryReasonsForm.get('eventType')"
+            label="Tipo de evento">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="eventType" />
+          </form-field>
+        </div>
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="nonDeliveryReasonsForm.get('reason')"
+            label="Motivo">
+            <textarea
+              rows="2"
+              class="form-control pt-3"
+              formControlName="reason">
+            </textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="nonDeliveryReasonsForm.get('userCreation')"
+            label="Creado por">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userCreation" />
+          </form-field>
+        </div>
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="nonDeliveryReasonsForm.get('userModification')"
+            label="Modificado por">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userModification" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="nonDeliveryReasonsForm.get('version')"
+            label="Versión">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="version" />
+          </form-field>
+        </div>
+        <div class="col-md-6 pt-sm-5 pt-md-2">
+          <form-field
+            [control]="nonDeliveryReasonsForm.get('status')"
+            label="Estado">
+            <ng-select
+              formControlName="status"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="0">Inactivo</ng-option>
+              <ng-option value="1">Activo</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!nonDeliveryReasonsForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
     </div>
+  </div>
 </app-modal>

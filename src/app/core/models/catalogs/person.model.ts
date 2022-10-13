@@ -1,5 +1,5 @@
 export interface IPerson {
-  id: number,
+  id: number;
   personNumber: number;
   name: string;
   street: string;
@@ -30,4 +30,3 @@ export interface IPerson {
   email: string;
   blackList: string;
 }
-
