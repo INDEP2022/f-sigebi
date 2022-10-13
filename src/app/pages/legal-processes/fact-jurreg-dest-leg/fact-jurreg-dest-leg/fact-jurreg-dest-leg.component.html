@@ -1,0 +1,624 @@
+<app-card [header]="true" class="cat-card mt-5"> 
+    <div class="ch-content" header>
+  
+        <div class="row w-100">
+            <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
+                <span class="title">
+                    NOMBRAMIENTOS
+                </span>
+            </div>
+            
+        </div>
+
+    </div>
+  
+    <div body>
+        <!-- form Conciliacion de pagos recibidos -->
+        <form [formGroup]="form">
+
+            <div class="row w-100">
+
+                <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-1">    
+                    <div class="row w-100">
+                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">No. Bien</label>
+                                <input nbInput fullWidth class="w-100" formControlName="noBien"
+                                        placeholder="No. Bien">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Detalle No. Bien</label>
+                                <input nbInput fullWidth class="w-100" placeholder="Detalle No. Bien">
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Codigo No. Bien</label>
+                                <input nbInput fullWidth class="w-100" placeholder="Codigo No. Bien">
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Averiguación Previa</label>
+                                <input nbInput fullWidth class="w-100" formControlName="averiguacionPrevia"
+                                        placeholder="Averiguación Previa">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Causa Penal</label>
+                                <input nbInput fullWidth class="w-100" formControlName="causaPenal"
+                                        placeholder="Causa Penal">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Estatus del Bien</label>
+                                <input nbInput fullWidth class="w-100" formControlName="estatusBien"
+                                        placeholder="Estatus del Bien">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Fecha de Acuerdo Asegurado</label>
+                                <input nbInput fullWidth class="w-100" formControlName="fechaAcuerdoAsegurado"
+                                        placeholder="Fecha de Acuerdo Asegurado">
+                                         <!-- [nbDatepicker]="formpicker1">
+                                <nb-datepicker #formpicker1></nb-datepicker> -->
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Fecha de Recepción</label>
+                                <input nbInput fullWidth class="w-100" formControlName="fechaRecepcion"
+                                        placeholder="Fecha de Recepción">
+                                         <!-- [nbDatepicker]="formpicker2">
+                                <nb-datepicker #formpicker2></nb-datepicker> -->
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Fecha de Decomiso</label>
+                                <input nbInput fullWidth class="w-100" formControlName="fechaDecomiso"
+                                        placeholder="Fecha de Decomiso">
+                                         <!-- [nbDatepicker]="formpicker2">
+                                <nb-datepicker #formpicker2></nb-datepicker> -->
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="row">
+                </div>
+                <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-1">
+                    <div class="row w-100">
+                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                            
+                            <form-field [control]="form.get('tipoNombramiento')" label="Tipo de Nombramiento">
+                                <select class="form-control" formControlName="tipoNombramiento">
+                                <option [value]="null">Seleccione un valor</option>
+                                <option [value]="'Administrador'">Administrador</option>
+                                <option [value]="'Depositaría'">Depositaría</option>
+                                <option [value]="'Interventor'">Interventor</option>
+                                <option [value]="'Comodatarío'">Comodatarío</option>
+                                <option [value]="'Bien en uso del SAE'">Bien en uso del SAE</option>
+                                </select>
+                            </form-field>
+
+                            <!-- <div class="form-group">
+                                <label class="label w-100">Tipo de Nombramiento</label>
+                                <nb-select fullWidth selected="No" formControlName="tipoNombramiento" [status]="''">
+                                    <nb-option value="Administrador">Administrador</nb-option>
+                                    <nb-option value="Depositaría">Depositaría</nb-option>
+                                    <nb-option value="Interventor">Interventor</nb-option>
+                                    <nb-option value="Comodatarío">Comodatarío</nb-option>
+                                    <nb-option value="Bien en uso del SAE">Bien en uso del SAE</nb-option>
+                                </nb-select>
+                                
+                            </div> -->
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                            <form-field [control]="form.get('estatus')" label="Estatus">
+                                <select class="form-control" formControlName="estatus">
+                                <option [value]="null">Seleccione un valor</option>
+                                <option [value]="'Provisional'">Provisional</option>
+                                <option [value]="'Definitiva'">Definitiva</option>
+                                </select>
+                            </form-field>
+                            <!-- <div class="form-group">
+                                <label class="label w-100">Estatus</label>
+                                <nb-select fullWidth selected="No" formControlName="estatus" [status]="''">
+                                    <nb-option value="Provisional">Provisional</nb-option>
+                                    <nb-option value="Definitiva">Definitiva</nb-option>
+                                </nb-select>
+                                
+                            </div> -->
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Tipo de Depositaria</label>
+                                <input nbInput fullWidth class="w-100" formControlName="tipoDepositaria"
+                                        placeholder="Tipo de Depositaria">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Detalle Tipo Depositaria</label>
+                                <input nbInput fullWidth class="w-100" placeholder="Detalle Tipo Depositaria">
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Representante SAE</label>
+                                <input nbInput fullWidth class="w-100" formControlName="representanteSAE"
+                                        placeholder="Representante SAE">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Nombre</label>
+                                <input nbInput fullWidth class="w-100" formControlName="nombre"
+                                        placeholder="Nombre">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-2">
+                            <form-check label="Sin Mensaje" for="label">
+                              <input type="radio" formControlName="bienesMensaje" value="Sin Mensaje" />
+                            </form-check>
+                            <form-radio label="Con Mensaje">
+                              <input type="radio" formControlName="bienesMensaje" value="Con Mensaje" />
+                            </form-radio>
+
+                            <!-- <div class="form-group">
+                                <nb-radio-group formControlName="bienesMensaje" class="w-100">
+                                    <nb-radio class="p-2" value="Sin Mensaje">Sin Mensaje</nb-radio>
+                                    <nb-radio class="p-2" value="Con Mensaje">Con Mensaje</nb-radio>
+                                </nb-radio-group>
+                                
+                            </div> -->
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label">&nbsp;</label>&nbsp;  
+                                <div class="d-flex justify-content-center">
+                                    <button type="button" nbButton status="primary" (click)="btnBienes()">
+                                        Bienes
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="row">
+                </div>
+                <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-1">
+                    <div class="row w-100">
+                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Depositaria</label>
+                                <input nbInput fullWidth class="w-100" formControlName="depositaria"
+                                        placeholder="Depositaria">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Detalle Depositaria</label>
+                                <input nbInput fullWidth class="w-100" placeholder="Detalle Depositaria">
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Representante</label>
+                                <input nbInput fullWidth class="w-100" formControlName="representante"
+                                        placeholder="Representante">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Calle</label>
+                                <input nbInput fullWidth class="w-100" formControlName="calle"
+                                        placeholder="Calle">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">No. Externo</label>
+                                <input nbInput fullWidth class="w-100" formControlName="noExterno"
+                                        placeholder="No. Externo">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">No. Interno</label>
+                                <input nbInput fullWidth class="w-100" formControlName="noInterno"
+                                        placeholder="No. Interno">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Colonia</label>
+                                <input nbInput fullWidth class="w-100" formControlName="colonia"
+                                        placeholder="Colonia">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Delegación/Municipio</label>
+                                <input nbInput fullWidth class="w-100" formControlName="delegacionMunicipio"
+                                        placeholder="Delegación/Municipio">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Codigo Postal</label>
+                                <input nbInput fullWidth class="w-100" formControlName="codigoPostal"
+                                        placeholder="Codigo Postal">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Entidad Federativa</label>
+                                <input nbInput fullWidth class="w-100" formControlName="entidadFederativa"
+                                        placeholder="Entidad Federativa">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Detalle Entidad Federativa</label>
+                                <input nbInput fullWidth class="w-100" placeholder="Detalle Entidad Federativa">
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Teléfono</label>
+                                <input nbInput fullWidth class="w-100" formControlName="telefono"
+                                        placeholder="Teléfono">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">RFC</label>
+                                <input nbInput fullWidth class="w-100" formControlName="rfc"
+                                        placeholder="RFC">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">CURP</label>
+                                <input nbInput fullWidth class="w-100" formControlName="curp"
+                                        placeholder="CURP">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Tipo Persona (Legal)</label>
+                                <input nbInput fullWidth class="w-100" formControlName="tipoPersona"
+                                        placeholder="Tipo Persona">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Tipo Persona (Trabajo)</label>
+                                <input nbInput fullWidth class="w-100" formControlName="noInterno"
+                                        placeholder="Tipo Persona 2">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Giro</label>
+                                <input nbInput fullWidth class="w-100" formControlName="giro"
+                                        placeholder="Giro">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-7 col-lg-7 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Detalle Giro</label>
+                                <input nbInput fullWidth class="w-100" placeholder="Detalle Giro">
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Referencia</label>
+                                <input nbInput fullWidth class="w-100" formControlName="referencia"
+                                        placeholder="Referencia">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+                            <div class="form-group">
+                                <label class="label">&nbsp;</label>&nbsp;  
+                                <div class="d-flex justify-content-center">
+                                    <button type="button" nbButton status="primary" (click)="btnCatalogoDepositarias()">
+                                        Catálogo Depositarías
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="row">
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-1">
+                    <div class="row w-100">
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Con Remoción</label>
+                                <nb-checkbox fullWidth class="w-100" formControlName="remocion" 
+                                (checkedChange)="toggleRemocion($event)">Remoción</nb-checkbox>
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Fecha</label>
+                                <input nbInput fullWidth class="w-100" formControlName="fecha"
+                                        placeholder="Fecha">
+                                         <!-- [nbDatepicker]="formpicker2">
+                                    <nb-datepicker #formpicker2></nb-datepicker> -->
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">No. Oficio</label>
+                                <input nbInput fullWidth class="w-100" formControlName="noOficio"
+                                        placeholder="No. Oficio">
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row w-100">
+                        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-0 text-center">
+                            <div class="form-group m-1">
+                                <label class="label w-100 fs-3">Acuerdo Junta Gobierno</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Fecha Acuerdo</label>
+                                <input nbInput fullWidth class="w-100" formControlName="fechaAcuerdo"
+                                        placeholder="Fecha Acuerdo">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">No. Acuerdo</label>
+                                <input nbInput fullWidth class="w-100" formControlName="noAcuerdo"
+                                        placeholder="No. Acuerdo">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-1">
+                    <div class="row w-100">
+                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Contrapresentación</label>
+                                <input nbInput fullWidth class="w-100" formControlName="contrapresentacion"
+                                        placeholder="Contrapresentación">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Honorarios</label>
+                                <input nbInput fullWidth class="w-100" formControlName="honorarios"
+                                        placeholder="Honorarios">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Iva</label>
+                                <input nbInput fullWidth class="w-100" formControlName="iva"
+                                        placeholder="Iva">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Fecha Inicio</label>
+                                <input nbInput fullWidth class="w-100" formControlName="fechaInicio"
+                                        placeholder="Fecha Inicio">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">No. Nombramiento</label>
+                                <input nbInput fullWidth class="w-100" formControlName="noNombramiento"
+                                        placeholder="No. Nombramiento">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-1">
+                    <hr class="row">
+                    <div class="row w-100">
+                        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Anexo</label>
+                                <textarea nbInput fullWidth placeholder="Anexo"
+                                class="w-100" formControlName="anexo"></textarea>
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Observaciones</label>
+                                <textarea nbInput fullWidth placeholder="Observaciones"
+                                class="w-100" formControlName="observaciones"></textarea>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-1">
+                    <hr class="row">
+                    <div class="row w-100">
+                        <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Folio de Remoción</label>
+                                <input nbInput fullWidth class="w-100" formControlName="folioRemocion"
+                                        placeholder="Folio de Remoción">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2">
+                            <div class="form-group">
+                                <label class="label w-100">Folio Acta Depositaria</label>
+                                <input nbInput fullWidth class="w-100" formControlName="folioActaDepositaria"
+                                        placeholder="Folio Acta Depositaria">
+                                
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+                            <div class="form-group">
+                                <label class="label">&nbsp;</label>&nbsp;  
+                                <!-- <div class="d-flex justify-content-center"> -->
+                                    <button type="button" nbButton status="primary" (click)="btnReplicarFolio()"
+                                    class="text-wrap">
+                                        Replicar Folio
+                                    </button>
+                                <!-- </div> -->
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <div class="form-group">
+                                <label class="label">&nbsp;</label>&nbsp;  
+                                <!-- <div class="d-flex justify-content-center"> -->
+                                    <button type="button" nbButton status="primary" (click)="btnCatalogoDepositariasPersona()"
+                                    class="text-wrap">
+                                        Cátalogo Depositarias
+                                    </button>
+                                <!-- </div> -->
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <div class="form-group">
+                                <label class="label">&nbsp;</label>&nbsp;  
+                                <!-- <div class="d-flex justify-content-center"> -->
+                                    <button type="button" nbButton status="primary" (click)="btnFolioEscaneoSolicitud()"
+                                    class="text-wrap">
+                                        Generar Folio de Escaneo y Solicitud
+                                    </button>
+                                <!-- </div> -->
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <div class="form-group">
+                                <label class="label">&nbsp;</label>&nbsp;  
+                                <!-- <div class="d-flex justify-content-center"> -->
+                                    <button type="button" nbButton status="primary" (click)="btnImprimirSolicitudEscaneo()"
+                                    class="text-wrap">
+                                        Imprimir Solicitud de Escaneo
+                                    </button>
+                                <!-- </div> -->
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <div class="form-group">
+                                <label class="label">&nbsp;</label>&nbsp;  
+                                <!-- <div class="d-flex justify-content-center"> -->
+                                    <button type="button" nbButton status="primary" (click)="btnConsultarImagenesEscaneadas()"
+                                    class="text-wrap">
+                                        Consultar Imágenes Escaneadas
+                                    </button>
+                                <!-- </div> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-1">
+                    <hr class="row">
+                    <div class="row w-100">
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <div class="form-group">
+                                <label class="label">&nbsp;</label>&nbsp;  
+                                <!-- <div class="d-flex justify-content-center"> -->
+                                    <button type="button" nbButton status="primary" (click)="btnDetallesPago()"
+                                    class="text-wrap">
+                                        Detalles de Pagos
+                                    </button>
+                                <!-- </div> -->
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <div class="form-group">
+                                <label class="label">&nbsp;</label>&nbsp;  
+                                <!-- <div class="d-flex justify-content-center"> -->
+                                    <button type="button" nbButton status="primary" (click)="btnReportesJuridicos()"
+                                    class="text-wrap">
+                                        Reportes Jurídicos
+                                    </button>
+                                <!-- </div> -->
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <div class="form-group">
+                                <label class="label">&nbsp;</label>&nbsp;  
+                                <!-- <div class="d-flex justify-content-center"> -->
+                                    <button type="button" nbButton status="primary" (click)="btnReportesAdministrativos()"
+                                    class="text-wrap">
+                                        Reportes Administrativos
+                                    </button>
+                                <!-- </div> -->
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <div class="form-group">
+                                <label class="label">&nbsp;</label>&nbsp;  
+                                <!-- <div class="d-flex justify-content-center"> -->
+                                    <button type="button" nbButton status="primary" (click)="btnIngresoMasivoPagos()"
+                                    class="text-wrap">
+                                        Ingreso Masivo de Pagos
+                                    </button>
+                                <!-- </div> -->
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                            <div class="form-group">
+                                <label class="label">&nbsp;</label>&nbsp;  
+                                <!-- <div class="d-flex justify-content-center"> -->
+                                    <button type="button" nbButton status="primary" (click)="btnCatalogoConceptosPagos()"
+                                    class="text-wrap">
+                                        Cátalogo Conceptos de Pagos
+                                    </button>
+                                <!-- </div> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+        </form>
+    </div>
+  
+  </app-card>

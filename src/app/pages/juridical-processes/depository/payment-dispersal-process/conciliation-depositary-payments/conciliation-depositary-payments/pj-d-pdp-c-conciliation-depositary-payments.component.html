@@ -1,0 +1,17 @@
+<app-card [header]="true">
+    <div class="ch-content" header>
+        <h5 class="title">
+            CONCILIACI&Oacute;N DE PAGOS DEPOSITARIAS
+        </h5>
+    </div>
+
+    <div body>
+
+        <!-- Forms DEPOSITARIA -->
+        <ngx-form-depositaria [form]="form" [formDepositario]="formDepositario" (formValues)="mostrarInfo($event)"
+        (formDepositariaValues)="mostrarInfoDepositario($event)" [nombrePantalla]="'concil-pag'"
+        ></ngx-form-depositaria>
+        <!-- Forms DEPOSITARIA -->
+
+    </div>
+</app-card>

@@ -13,7 +13,7 @@ export function tokenGetter() {
   return localStorage.getItem('token');
 }
 @NgModule({
-  declarations: [AppComponent, ContentComponent, InputFormDirective],
+  declarations: [AppComponent, ContentComponent, InputFormDirective,],
   imports: [
     BrowserModule,
     FullModule,
@@ -37,4 +37,6 @@ export function tokenGetter() {
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+ 
+}

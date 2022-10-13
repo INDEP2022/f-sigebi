@@ -1,0 +1,273 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">SOLICITUD DE AVALÚOS</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field [control]="form.get('noRequest')" label="No. Solicitud">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noRequest"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-6"></div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('requestDate')"
+            label="Fecha de solicitud">
+            <input
+              type="text"
+              formControlName="requestDate"
+              placeholder="Fecha de solicitud"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-6">
+          <form-field [control]="form.get('noPerito')">
+            <ngx-select
+              [form]="form"
+              [data]="peritos"
+              bindLabel="name"
+              label="No. Perito"
+              value="id"
+              (fetchItems)="getPeritos($event)"
+              control="noPerito"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row margin-input">
+        <div class="col-md-6">
+          <form-field [control]="form.get('institution')">
+            <ngx-select
+              [form]="form"
+              [data]="institutions"
+              bindLabel="name"
+              label="Institución"
+              value="id"
+              (fetchItems)="getInstitutions($event)"
+              control="institution"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <h5 class="title" style="font-size: 15px; margin-bottom: 30px">
+        SOLICITANTE
+      </h5>
+      <div class="row margin-input">
+        <div class="col-md-6">
+          <form-field [control]="form.get('applicant')" label="Usuario Origen">
+            <input
+              type="text"
+              formControlName="applicant"
+              placeholder="Usuario Origen"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('userName')"
+            label="Nombre de usuario">
+            <input
+              type="text"
+              formControlName="userName"
+              placeholder="Nombre de usuario"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field [control]="form.get('delegation')">
+            <ngx-select
+              [form]="form"
+              [data]="delegation"
+              bindLabel="name"
+              label="Delegacíon"
+              value="id"
+              (fetchItems)="getDelegations($event)"
+              control="delegation"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('subdelegation')">
+            <ngx-select
+              [form]="form"
+              [data]="subdelegation"
+              bindLabel="name"
+              label="Subdelegación"
+              value="id"
+              (fetchItems)="getSubdelegations($event)"
+              control="subdelegation"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('department')">
+            <ngx-select
+              [form]="form"
+              [data]="department"
+              bindLabel="name"
+              label="Departamento"
+              value="id"
+              (fetchItems)="getDepartments($event)"
+              control="department"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <h5 class="title" style="font-size: 15px; margin-bottom: 30px">
+        SOLICITADO A
+      </h5>
+      <div class="row margin-input">
+        <div class="col-md-6">
+          <form-field [control]="form.get('requestedTo')" label="Solicitado a">
+            <input
+              type="text"
+              formControlName="requestedTo"
+              placeholder="Usuario destino"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('requestedName')"
+            label="Nombre de usuario">
+            <input
+              type="text"
+              formControlName="requestedName"
+              placeholder="Usuario al que se solicitó"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field [control]="form.get('requestedDelegation')">
+            <ngx-select
+              [form]="form"
+              [data]="delegation"
+              bindLabel="name"
+              label="Delegacíon"
+              value="id"
+              (fetchItems)="getDelegations($event)"
+              control="requestedDelegation"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('requestedSubdelegation')">
+            <ngx-select
+              [form]="form"
+              [data]="subdelegation"
+              bindLabel="name"
+              label="Subdelegación"
+              value="id"
+              (fetchItems)="getSubdelegations($event)"
+              control="requestedSubdelegation"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('requestedDepartment')">
+            <ngx-select
+              [form]="form"
+              [data]="department"
+              bindLabel="name"
+              label="Departamento"
+              value="id"
+              (fetchItems)="getDepartments($event)"
+              control="requestedDepartment"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <form-field [control]="form.get('observations')" label="Observaciones">
+          <textarea
+            rows="3"
+            placeholder="Observaciones"
+            class="form-control"
+            formControlName="observations"></textarea>
+        </form-field>
+      </div>
+
+      <div class="row margin-input">
+        <div class="form-group col-md-6">
+          <form-field [control]="form.get('costCurrency')">
+            <ngx-select
+              [form]="form"
+              [data]="appraisalCurrency"
+              bindLabel="name"
+              label="Moneda del Costo"
+              value="id"
+              (fetchItems)="getCurrencies($event)"
+              control="costCurrency"></ngx-select>
+          </form-field>
+        </div>
+        <div class="form-group col-md-6">
+          <form-field [control]="form.get('appraisalCurrency')">
+            <ngx-select
+              [form]="form"
+              [data]="appraisalCurrency"
+              bindLabel="name"
+              label="Moneda del avalúo"
+              value="id"
+              (fetchItems)="getCurrencies($event)"
+              control="appraisalCurrency"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div footer>
+        <div class="row margin-input">
+          <div class="col-md-8"></div>
+          <div class="col-md-4">
+            <div class="row margin-input">
+              <div class="col-md-1 mb-4">
+                <button type="submit" class="btn btn-secondary btn-sm active">
+                  Asignar bienes
+                </button>
+              </div>
+            </div>
+            <div class="row margin-input">
+              <div class="col-md-6">
+                <form-field [control]="form.get('elements')" label="Elementos">
+                  <input
+                    type="number"
+                    class="form-control"
+                    formControlName="elements"
+                    min="1"
+                    pattern="^[0-9]+" />
+                </form-field>
+              </div>
+            </div>
+            <div class="row margin-input">
+              <div class="col-md-6">
+                <form-field [control]="form.get('registers')" label="Registros">
+                  <input
+                    type="number"
+                    class="form-control"
+                    formControlName="registers"
+                    min="1"
+                    pattern="^[0-9]+" />
+                </form-field>
+              </div>
+            </div>
+            <div class="row margin-input">
+              <div class="col-md-1">
+                <button type="submit" class="btn btn-primary btn-sm active">
+                  Generar archivo
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

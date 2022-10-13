@@ -9,19 +9,21 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-doc-resarcimiento-sat-xml-form',
   templateUrl: './doc-compensation-sat-xml-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class DocCompensationSatXmlFormComponent extends BasePage implements OnInit {
+export class DocCompensationSatXmlFormComponent
+  extends BasePage
+  implements OnInit
+{
   compensationForm: ModelForm<IDocCompensationSatXml>;
   title: string = 'Documento resarcimiento sat xml';
   edit: boolean = false;
   compensationSatXml: IDocCompensationSatXml;
-  
+
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private compensationService:  DocCompensationSatXmlService
+    private compensationService: DocCompensationSatXmlService
   ) {
     super();
   }
@@ -36,10 +38,11 @@ export class DocCompensationSatXmlFormComponent extends BasePage implements OnIn
       idOficioSat: [null, Validators.required],
       typeDocSatXml: [null, Validators.required],
     });
-    
+
     if (this.compensationSatXml != null) {
       this.edit = true;
       this.compensationForm.patchValue(this.compensationSatXml);
+      this.compensationForm.get('id').disable();
     }
   }
 
@@ -53,10 +56,12 @@ export class DocCompensationSatXmlFormComponent extends BasePage implements OnIn
 
   create() {
     this.loading = true;
-    this.compensationService.create(this.compensationForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.compensationService
+      .create(this.compensationForm.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   update() {
@@ -76,5 +81,4 @@ export class DocCompensationSatXmlFormComponent extends BasePage implements OnIn
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
-
 }

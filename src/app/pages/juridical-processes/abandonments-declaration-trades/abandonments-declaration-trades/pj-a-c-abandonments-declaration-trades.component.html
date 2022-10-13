@@ -1,0 +1,185 @@
+<app-card [header]="true">
+    <div class="ch-content" header>
+        <h5 class="title">
+            DECLARATORIAS Y OFICIOS DE ABANDONOS
+        </h5>
+    </div>
+
+    <div body>
+        
+      <div class="md-tabs">
+        <tabset>
+            <!-- VOLANTE/EXPEDIENTE PANTALLA -->
+            <tab heading="VOLANTE/EXPEDIENTE">
+              
+                <!-- Forms VOLANTE EXPEDIENTE -->
+                <ngx-form-volante-expediente [form]="form" (formValues)="mostrarInfo($event)"
+                (oficioRelacionadoEvent)="oficioRelacionado($event)" (capturaCopiasEvent)="capturaCopias($event)"
+                ></ngx-form-volante-expediente>
+                <!-- Forms VOLANTE EXPEDIENTE -->
+
+            </tab>
+            <!-- VOLANTE/EXPEDIENTE PANTALLA -->
+
+            <!-- DECLARATORIA PANTALLA -->
+            <tab heading="DECLARATORIA">
+                
+                <!-- Forms DECLARATORIA -->
+                <ngx-form-declaratoria [form]="formDeclaratoria" (formValues)="mostrarInfoDeclaratoria($event)"
+                ></ngx-form-declaratoria>
+                <!-- Forms DECLARATORIA -->
+                
+                <!-- Tabla de bienes DECLARATORIA -->
+                <hr class="row">
+                <form [formGroup]="formDeclaratoriaTabla" class="container-fluid form-material">
+                    <div class="row">
+                        <div class="col-sm-12 col-12 col-md-2">
+                            <form-field [control]="formDeclaratoriaTabla.get('noExpediente')" label="No. Expediente">
+                            <select class="form-control" formControlName="noExpediente">
+                                <option [value]="null">Seleccione un valor</option>
+                                <option [value]="'3767'">3767</option>
+                                <option [value]="'3921'">3921</option>
+                            </select>
+                            </form-field>
+                        </div>
+
+                        <div class="col-sm-12 col-12 col-md-10">
+                            <form-field [control]="formDeclaratoriaTabla.get('averiPrevia')" label="Tipo - Subtipo - Descripción">
+                            <select class="form-control" formControlName="averiPrevia">
+                                <option [value]="null">Seleccione un valor</option>
+                                <option [value]="'TELAS Y PRENDAS DE VESTIR - BLANCOS -TOALLAS'">TELAS Y PRENDAS DE VESTIR - BLANCOS -TOALLAS</option>
+                            </select>
+                            </form-field>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="row pt-2 mb-2">
+                    <ng2-smart-table class="col-md-12" [settings]="settings1" [source]="data1"></ng2-smart-table>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 col-12 col-md-6">
+                        <label class="label w-100 text-danger">Bien entregado en administración</label>
+                    </div>
+                </div>
+                <hr class="row">
+                <!-- Tabla de bienes DECLARATORIA -->
+
+                <!-- Forms DECLARATORIA INICIO FIN -->
+                <form [formGroup]="formDeclaratoriaInicioFin" class="container-fluid form-material">
+                    <div class="row w-100">
+                        <div class="col-sm-12 col-12 col-md-6 pr-3">
+                            <form-field [control]="formDeclaratoriaInicioFin.get('inicio')" label="Inicio">
+                                <!-- <label class="label w-100">Inicio</label> -->
+                                <textarea placeholder="Inicio"
+                                class="form-control w-100" formControlName="inicio"></textarea>
+                                
+                            </form-field>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-6 pr-3">
+                            <form-field [control]="formDeclaratoriaInicioFin.get('fin')" label="Fin">
+                                <!-- <label class="label w-100">Fin</label> -->
+                                <textarea placeholder="Fin"
+                                class="form-control w-100" formControlName="fin"></textarea>
+                                
+                            </form-field>
+                        </div>
+                    </div>
+                </form>
+                <!-- Forms DECLARATORIA INICIO FIN -->
+
+                <!-- Apartado folio de escaneo -->
+                <hr class="row">
+                <div class="row">
+                    <div class="col-sm-12 col-12 col-md-6">
+                        <div class="row">
+                            <div class="col-sm-12 col-12 col-md-2">
+                                <button class="mx-2">
+                                    ICONO
+                                    <!-- <nb-icon icon="arrow-ios-upward-outline"></nb-icon> -->
+                                </button>
+                            </div>
+                            <div class="col-sm-12 col-12 col-md-2">
+                                <button class="mx-2">
+                                    ICONO
+                                    <!-- <nb-icon icon="arrowhead-up-outline"></nb-icon> -->
+                                </button>
+                            </div>
+                            <div class="col-sm-12 col-12 col-md-4 w-100">
+                                <div class="form-group">
+                                    <label class="label w-100">Folio Escaneo</label>
+                                    <input nbInput fullWidth type="number" class="w-100"
+                                            placeholder="Folio Escaneo">
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-12 col-md-2">
+                                <button class="mx-2">
+                                    ICONO
+                                    <!-- <nb-icon icon="arrow-ios-upward-outline"></nb-icon> -->
+                                </button>
+                            </div>
+                            <div class="col-sm-12 col-12 col-md-2">
+                                <button class="mx-2">
+                                    ICONO
+                                    <!-- <nb-icon icon="arrowhead-up-outline"></nb-icon> -->
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-12 col-md-6">
+                        <div class="row">
+                            <div class="col-sm-12 col-12 col-md-3">
+                                <div class="form-group">
+                                    <!-- <label class="label">&nbsp;</label>&nbsp;   -->
+                                    <!-- <div class="d-flex justify-content-center"> -->
+                                        <button type="button" status="primary">
+                                            Aprobar
+                                        </button>
+                                    <!-- </div> -->
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-12 col-md-3">
+                                <div class="form-group">
+                                    <!-- <label class="label">&nbsp;</label>&nbsp;  
+                                    <div class="d-flex justify-content-center"> -->
+                                        <button type="button" status="danger">
+                                            Eliminar
+                                        </button>
+                                    <!-- </div> -->
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-12 col-md-3">
+                                <button class="mx-2">
+                                    ICONO
+                                    <!-- <nb-icon icon="arrow-ios-upward-outline"></nb-icon> -->
+                                </button>
+                            </div>
+                            <div class="col-sm-12 col-12 col-md-3">
+                                <button class="mx-2">
+                                    ICONO
+                                    <!-- <nb-icon icon="arrowhead-up-outline"></nb-icon> -->
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr class="row">
+                <!-- Apartado folio de escaneo -->
+
+            </tab>
+            <!-- DECLARATORIA PANTALLA INICIO FIN -->
+
+            <tab heading="OFICIO">
+              
+                <!-- FORM OFICIO -->
+                <ngx-fact-abandonos-oficio [formOficio]="formOficio" [formCcpOficio]="formCcpOficio" [formOficioInicioFin]="formOficioInicioFin" 
+                    (formValues)="mostrarInfoOficio($event)">
+                </ngx-fact-abandonos-oficio>
+                <!-- FORM OFICIO -->
+
+            </tab>
+        </tabset>
+      </div>
+
+    </div>
+</app-card>

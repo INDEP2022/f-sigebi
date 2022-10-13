@@ -1,0 +1,69 @@
+<app-card [header]="true" [footer]="true">
+    <div class="ch-content" header>
+        <h5 class="title">REPORTE DE DOCUMENTOS RECIBIDOS POR EL SERA</h5> 
+    </div>
+
+    <div body>
+
+        <form class="form-material" [formGroup]="form"> 
+
+            <div class="row">
+                <div class="col-md-4">
+                    <app-date-range-shared [form]="form"></app-date-range-shared>
+                </div>
+                <!-- <div class="col-md-4">
+                    <form-field [control]="form.get('rangeDate')" label="Fechas de recepción">
+                        <input class="form-control"
+                            formControlName="rangeDate"
+                            placeholder="Seleccione el rango de fechas"
+                            ngModel
+                            bsDaterangepicker
+                            [maxDate]="today"
+                            [bsConfig]="{ dateInputFormat: 'DD-MM-YYYY',  displayOneMonthRange: true }">
+                    </form-field>
+                </div> -->
+                <!-- <div class="col-md-2">
+                    <form-field [control]="form.get('fromDate')" label="Acumulado del">
+                        <input type="text" 
+                               placeholder=""
+                               class="form-control"
+                               bsDatepicker
+                               formControlName="fromDate"
+                               [bsConfig]="{ isAnimated: true }">
+                    </form-field>
+                </div>
+                <div class="col-md-2">
+                    <form-field [control]="form.get('toDate')" label="Al">
+                        <input type="text" 
+                               placeholder=""
+                               class="form-control"
+                               bsDatepicker
+                               formControlName="toDate"
+                               [bsConfig]="{ isAnimated: true }">
+                    </form-field>
+                </div> -->
+                <div class="col-md-2">
+                    <form-field [control]="form.get('report')" label="¿Reporte Detallado?">
+                        <select class="form-control"  formControlName="report">
+                            <option value="si">Si</option>
+                            <option value="no">No</option>
+                          </select>
+                    </form-field>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+
+    <div footer>
+        <div class="d-flex justify-content-center">
+            <div class="m-3">
+                <button type="button" class="btn btn-primary active" [disabled]="!form.valid">
+                  Imprimir
+                </button>
+            </div>
+        </div>
+      </div>
+
+</app-card>

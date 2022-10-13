@@ -1,0 +1,102 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Proceso de actualización y carga masiva de bienes</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="assetsForm" (submit)="save()" class="form-material">
+      <div class="row">
+        <div class="col-md-7">
+          <div class="row">
+            <div class="col-md-7">
+              <div>
+                <form-radio
+                  *ngFor="let action of actionsTypes"
+                  [label]="action.value">
+                  <input
+                    type="radio"
+                    formControlName="actionType"
+                    [value]="action.title" />
+                </form-radio>
+              </div>
+            </div>
+            <div class="col-md-5">
+              <div class="row">
+                <form-check label="Son automoviles" for="cars">
+                  <input
+                    id="cars"
+                    type="checkbox"
+                    formControlName="assetType" />
+                </form-check>
+              </div>
+              <div class="row">
+                <form-check label="Son inmuebles" for="property">
+                  <input
+                    id="property"
+                    type="checkbox"
+                    formControlName="assetType" />
+                </form-check>
+              </div>
+              <hr class="row" />
+              <div class="row">
+                <form-check label="Desalojo" for="desalojov">
+                  <input
+                    id="desalojov"
+                    type="checkbox"
+                    formControlName="desalojo"
+                    (change)="desalojoChange()" />
+                </form-check>
+              </div>
+            </div>
+          </div>
+          <div class="row pt-1">
+            <form-field
+              [control]="assetsForm.get('idCarga')"
+              label="ID carga:"
+              class="col-md-9">
+              <input class="form-control" formControlName="idCarga" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="col-md-5">
+          <div class="row">
+            <div>
+              <button
+                class="btn btn-success btn-sm ml-2"
+                type="button"
+                (click)="file.click()">
+                Abrir archivo Excel / CSV
+              </button>
+              <input
+                type="file"
+                name="file"
+                #file
+                class="d-none"
+                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div>
+              <button
+                type="submit"
+                status="info"
+                class="ml-2 mb-0 btn btn-primary btn-sm active">
+                Ejecutar proceso
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <hr class="row" />
+
+    <div class="row">
+      <div class="col-md-12">
+        <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings">
+        </ng2-smart-table>
+      </div>
+    </div>
+  </div>
+</app-card>
