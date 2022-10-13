@@ -14,14 +14,14 @@ import { routesJuridicalProcesses } from 'src/app/common/constants/juridical-pro
 
 const routes: Routes = [
     {
-        path: routesJuridicalProcesses[0].link,
+        path: routesJuridicalProcesses[0].link + "/:id",
         loadChildren: async() => 
             (await import('./juridical-ruling/pj-dj-m-juridical-ruling.module'))
                 .PJDJJuridicalRulingModule,
             data: { title: routesJuridicalProcesses[0].label }
     },
     {
-        path: routesJuridicalProcesses[1].link,
+        path: routesJuridicalProcesses[1].link + "/:id",
         loadChildren: async() => 
             (await import('./file-data-update/pj-ade-m-file-data-update.module'))
                 .PJADEFileDataUpdateModule,

@@ -45,11 +45,11 @@ export const menuOptionsJuridicalProcesses: IMenuItem =
     subItems: [
       { 
         label: routesJuridicalProcesses[0].menu, 
-        link: baseMenu + routesJuridicalProcesses[0].link
+        link: baseMenu + routesJuridicalProcesses[0].link + "/12345"
       },
       {
         label: routesJuridicalProcesses[1].menu, 
-        link: baseMenu + routesJuridicalProcesses[1].link
+        link: baseMenu + routesJuridicalProcesses[1].link + "/12345"
       },
       {
         label: routesJuridicalProcesses[2].menu, 
