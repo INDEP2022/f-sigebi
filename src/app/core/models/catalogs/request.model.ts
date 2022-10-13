@@ -14,8 +14,8 @@ export interface IRequest {
 
     //Reception Requests
     priority?:boolean;
-    InfoReception?:string;
-    receptDate?: Date;
+    infoProvenance?:string;
+    receptDate?: string;
     officeDate?: Date;
     //typeExpedient?: string;
     indiciado?: string;
@@ -23,7 +23,7 @@ export interface IRequest {
     publicMinister?: string;
     roleSender?: string;
     tribunal?: string
-    phoneSender?:string;
+    phoneSender?:number;
     crime?: string;
     emailSender?: string;
     typeReception?: string;
@@ -31,10 +31,10 @@ export interface IRequest {
     destinationManage?: string;
     contributor?:string;
     subject?: string
-    transferExpedient?:number;
+    transExpedient?:number;
     typeTransfer?: string;
     transferEntityNotes?:string;
-    Observations?: string;
+    observations?: string;
 }
 
 

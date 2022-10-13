@@ -32,6 +32,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
     this.settings.columns = TURN_SELECTED_COLUMNS;
     this.settings.actions = {
       columnTitle: 'Acciones',
+      position: 'right',
       add: false,
       edit: false,
       delete: false,

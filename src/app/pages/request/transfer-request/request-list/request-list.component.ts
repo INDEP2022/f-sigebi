@@ -40,6 +40,7 @@ export class RequestListComponent extends BasePage implements OnInit {
     this.settings.selectMode = ''
     this.settings.actions = {
       columnTitle: 'Acciones',
+      position:'right',
       add: false,
       edit: false,
       delete: false
@@ -58,16 +59,8 @@ export class RequestListComponent extends BasePage implements OnInit {
     this.lastClick += 1;
     setTimeout(() => {
       if (this.lastClick > 1) {
-        //this.onDoubleClick(event);
-        console.log('two click');
-        console.log(event);
-        this.openModel('modalSizeXL',RegistrationOfRequestsComponent);
-      } else {
-        if (this.lastClick > 0) {
-          //this.onSingleClick(event);
-          console.log('one click');
-        }
-      }
+        this.openModel('modalSizeXL',RegistrationOfRequestsComponent,event.data);
+      } 
       this.lastClick = 0;
     }, 500);
   }

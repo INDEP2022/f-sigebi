@@ -1,6 +1,16 @@
+:host ::ng-deep app-modal .modal-content .modal-body
+{
+    padding: 5px 5px 5px !important;
+}
 
-label {
+.label {
     color: black;
-    font-size: 0.78em;
+    font-weight: 700;
+}
+
+label , span {
+    color: black;
+    font-size: 0.8em;
     font-weight: 400;
+
 }

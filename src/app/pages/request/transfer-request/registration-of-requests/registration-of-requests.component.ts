@@ -11,10 +11,10 @@ import { BasePage } from 'src/app/core/shared/base-page';
   styleUrls: ['./registration-of-requests.component.scss']
 })
 export class RegistrationOfRequestsComponent extends BasePage implements OnInit {
-  registRequestForm: ModelForm<any>;
+  registRequestForm: ModelForm<IRequest>;
   edit:boolean = false;
   title: string = '';
-
+  parameter: any;
 
   constructor(
     public fb: FormBuilder,
@@ -24,26 +24,25 @@ export class RegistrationOfRequestsComponent extends BasePage implements OnInit 
   }
 
   ngOnInit(): void {
+    this.title = this.parameter.title;
+    console.log(this.parameter);    
     this.prepareForm();
-
-    console.log(this.registRequestForm.get('entity'));
-    
   }
 
   prepareForm(){
     this.registRequestForm = this.fb.group({
-      date: [{value:'18-10-2022', disabled:'disabled'}],
-      noOfi: [{value:'400-10-00-01*00*2020-7824', disabled:'disabled'}],
-      regDelega: [{value:'BAJA CALIFORNIA', disabled:'disabled'}],
-      entity: [{value:'Juan Pablo', disabled:'disabled'}],
-      tranfe: [{value:'SAT FISCO FEDERAL', disabled:'disabled'}],
-      transmitter: [{value:'ADMINISTRACION GENERAL DE RECAUDACION', disabled:'disabled'}],
-      authority: [{value:'ADMINISTRACION DESCONCENTRADA DE RECAUDACION DE BAJA CALIFORNIA', disabled:'disabled'}],
-      typeUser: [{value:'', disabled:'disabled'}],
-      receiUser: [{value:'', disabled:'disabled'}],
-      noExpedient: [{value:'24355', disabled:'disabled'}],
-      typeExpedient: [{value:'AGR', disabled:'disabled'}],
-      noRequest: [{value:'27445', disabled:'disabled'}]
+      date: [],
+      noOfi: ['400-10-00-01*00*2020-7824'],
+      regDelega: ['BAJA CALIFORNIA'],
+      entity: ['Juan Pablo'],
+      tranfe: ['SAT FISCO FEDERAL'],
+      transmitter: ['ADMINISTRACION GENERAL DE RECAUDACION'],
+      authority: ['ADMINISTRACION DESCONCENTRADA DE RECAUDACION DE BAJA CALIFORNIA'],
+      typeUser: [''],
+      receiUser: [''],
+      noExpedient: ['24355'],
+      typeExpedient: ['AGR'],
+      noRequest: ['27445']
     });
   }
 

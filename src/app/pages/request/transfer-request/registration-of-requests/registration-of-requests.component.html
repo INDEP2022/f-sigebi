@@ -1,6 +1,6 @@
 <app-modal>
     <div header>
-        <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+        <h5 class="modal-title">{{ title }}</h5>
     </div>
     <div body class="body">
         <app-card [header]="true">
@@ -12,7 +12,7 @@
                     <div>
                         <div class="row pt-2">
                             <div class="col-md-3">
-                                <label class="label" for="">Fecha de Solicitud: <label for="">{{registRequestForm.get('date').value}}</label></label>
+                                <label class="label" for="">Fecha de Solicitud: <span for="">{{registRequestForm.get('date').value}}</span></label>
                             </div>
                             <div class="col-md-3">
                                 <label class="label" for="">Entidad: <label for="">{{registRequestForm.get('entity').value}}</label></label>                        
@@ -56,8 +56,8 @@
                             <tab heading="Registro de Solicitud" id="tab1">
                                 <app-request-record-tab></app-request-record-tab>
                             </tab>
-                            <tab heading="Basic Title 1">Basic content 1</tab>
-                            <tab heading="Basic Title 2">Basic content 2</tab>
+                            <tab heading="Bienes">Basic content 1</tab>
+                            <tab heading="Domicilio de la Transferencia">Basic content 2</tab>
                         </tabset>                        
                     </div>
                 </form>
