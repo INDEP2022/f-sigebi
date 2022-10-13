@@ -15,29 +15,27 @@ import { PROCEEDINGS_COLUMNS } from './destruction-authorization-management-proc
   ]
 })
 export class PeGdaddCDestructionAuthorizationManagementComponent extends BasePage implements OnInit  {
-  
-  settings = {...TABLE_SETTINGS};
-  settings2 = {...TABLE_SETTINGS};
-  settings3 = {...TABLE_SETTINGS};
+  settings = { 
+    ...TABLE_SETTINGS,
+    actions: false
+  };
+  settings2 = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
+  settings3 = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
   form: FormGroup = new FormGroup({}); 
 
   constructor(private fb: FormBuilder) {
     super();
     this.settings.columns = GOODS_COLUMNS;
-    this.settings.actions.delete = true;
-    this.settings.actions.edit = false;
-    this.settings.actions.add = false;
-
     this.settings2.columns = RULINGS_COLUMNS;
-    this.settings.actions.delete = false;
-    this.settings.actions.edit = false;
-    this.settings.actions.add = false;
-
     this.settings3.columns =  PROCEEDINGS_COLUMNS;
-    this.settings.actions.delete = false;
-    this.settings.actions.edit = false;
-    this.settings.actions.add = false;
   }
+    
 
   ngOnInit(): void {
     this.prepareForm();
@@ -51,6 +49,8 @@ export class PeGdaddCDestructionAuthorizationManagementComponent extends BasePag
       recepDate: ['', [Validators.required]],
       scopDate: ['', [Validators.required]],
       inteDate: ['', [Validators.required]],
+      scanFolio: ['', [Validators.required]],
+      observations: ['', [Validators.required]],
     });
   }
 

@@ -9,7 +9,10 @@
         <form class="form-material" [formGroup]="form">
 
             <div class="row">
-                <div class="col-md-2">
+                <div class="col-md-3 mt-3">
+                    <app-date-range-shared [form]="form"></app-date-range-shared>
+                </div>
+                <!-- <div class="col-md-2 mt-3">
                     <form-field [control]="form.get('fromDate')" label="Acumulado">
                         <input type="text"
                                placeholder="Del"
@@ -19,7 +22,7 @@
                                [bsConfig]="{ isAnimated: true }">
                     </form-field>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-2 mt-3">
                     <form-field [control]="form.get('toDate')" label="">
                         <input type="text" 
                                placeholder="Al"
@@ -28,34 +31,14 @@
                                formControlName="toDate"
                                [bsConfig]="{ isAnimated: true }">
                     </form-field>
-                </div>
-            </div>
-
-
-            <div class="row pt-5">
+                </div> -->
                 <div class="col-md-2">
-                    <form-field [control]="form.get('delegation')" >
-                        <ngx-select
-			            	typeToSearchText="Escriba 3 o más caracteres" 
-                            label="Delegación"
-                            [form]="form"
-                            control="delegation">
-				    	</ngx-select>
-                    </form-field>
+                    <app-delegation-shared [form]="form" [showSubdelegation]="false" > </app-delegation-shared>
                 </div>
-                <div class="col-md-2">
-                    <form-field [control]="form.get('subDelegation')" >
-                        <ngx-select
-			            	typeToSearchText="Escriba 3 o más caracteres" 
-                            label="Sub Delegación"
-                            [form]="form"
-                            control="subDelegation">
-				    	</ngx-select>
-                    </form-field>
+                <div class="col-md-2 mt-3">
+                    <app-delegation-shared [form]="form" [showDelegation]="false" > </app-delegation-shared>
                 </div>
-            </div>
-            <div class="row pt-5">
-                <div class="col-md-4">
+                <div class="col-md-4 mt-3">
                     <form-field [control]="form.get('status')" >
                         <ngx-select
 			            	typeToSearchText="Escriba 3 o más caracteres" 
@@ -66,7 +49,6 @@
                     </form-field>
                 </div>
             </div>
-
         </form>
     </div>
     <div footer>

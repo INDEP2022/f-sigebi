@@ -44,7 +44,78 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./shared-marketing-components/c-b-ge-cdg-m-expense-capture/c-b-ge-cdg-m-expense-capture.module')).CBGeCdgMExpenseCaptureModule,
     data: { title: 'Captura de gastos' },
-  }
+  },
+  {
+    path: 'c-bm-ge-cdc-tc-m-third-party-marketers',
+    loadChildren: async () =>
+      (await import('./movable-property/c-bm-ge-cdc-tc-m-third-party-marketers/c-bm-ge-cdc-tc-m-third-party-marketers.module')).CBmGeCdcTcMThirdPartyMarketersModule,
+    data: { title: 'Terceros comercializadores' },
+  },
+  {
+    path: 'consultation-goods-commercial-process-tabs',
+    loadChildren: async () =>
+      (await import('./movable-property/consultation-goods-commercial-process-tabs/consultation-goods-commercial-process-tabs.module')).ConsultationGoodsCommercialProcessTabsModule,
+    data: { title: 'Consulta de bienes' },
+  },
+  {
+    path: 'c-bm-ge-cdc-clc-m-calculate-commission',
+    loadChildren: async () =>
+      (await import('./movable-property/c-bm-ge-cdc-clc-m-calculate-commission/c-bm-ge-cdc-clc-m-calculate-commission.module')).CBmGeCdcClcMCalculateCommissionModule,
+    data: { title: 'Calcular comisión' },
+  },
+  {
+    path: 'c-bm-f-syf-m-series-folios-control',
+    loadChildren: async () =>
+      (await import('./movable-property/c-bm-f-syf-m-series-folios-control/c-bm-f-syf-m-series-folios-control.module')).CBmFSyfMSeriesFoliosControlModule,
+    data: { title: 'Folios y series' },
+  },
+  {
+    path: 'c-bm-f-cdr-m-rebilling-causes',
+    loadChildren: async () =>
+      (await import('./movable-property/c-bm-f-cdr-m-rebilling-causes/c-bm-f-cdr-m-rebilling-causes.module')).CBmFCdrMRebillingCausesModule,
+    data: { title: 'Causas y Refacturación' },
+  },
+  {
+    path: 'c-bm-f-edf-m-invoice-status',
+    loadChildren: async () =>
+      (await import('./movable-property/c-bm-f-edf-m-invoice-status/c-bm-f-edf-m-invoice-status.module')).CBmFEdfMInvoiceStatusModule,
+    data: { title: 'Estatus de la facturación' },
+  },
+  {
+    path: 'expense-concepts',
+    loadChildren: async () =>
+      (await import('./shared-marketing-components/expense-concepts/c-b-ec-m-expense-concepts.module'))
+      .CBEcMPaymentsConceptsModule,
+    data: { title: 'Conceptos de Gasto' },
+  },
+  {
+    path: 'referenced-payment',
+    loadChildren: async () =>(
+      await import('./shared-marketing-components/referenced-payment/c-b-rp-m-referenced-payment.module'))
+        .CBRpMReferencedPaymentModule,
+    data: { title: 'Pagos Referenciados' },
+  },
+  {
+    path: 'unreconciled-payment',
+    loadChildren: async () =>(
+      await import('./shared-marketing-components/unreconciled-payment/c-b-up-m-unreconciled-payment.module'))
+        .CBUpMUnreconciledPaymentModule,
+    data: { title: 'Pagos no Conciliados' },
+  },
+  {
+    path: 'payment-dispersion-monitor',
+    loadChildren: async () =>(
+      await import('./shared-marketing-components/payment-dispersion-monitor/c-b-pdm-m-payment-dispersion-monitor.module'))
+        .CBPdmMPaymentDispersionMonitorModule,
+    data: { title: 'Dispersión de Pagos' },
+  },
+  {
+    path: 'events',
+    loadChildren: async () =>(
+      await import('./shared-marketing-components/events/c-b-e-m-events.module'))
+        .CBEMEventsModule,
+    data: { title: 'Permisos a Eventos' },
+  },
 ];
 
 @NgModule({

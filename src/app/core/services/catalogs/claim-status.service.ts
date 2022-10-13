@@ -5,27 +5,28 @@ import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IClaimStatus } from '../../models/catalogs/claims-status.model';
+import { IStatusClaims } from '../../models/catalogs/status-claims.model';
+
 @Injectable({
   providedIn: 'root',
 })
-export class ClaimStatusService implements ICrudMethods<IClaimStatus> {
+export class StatusClaimsService implements ICrudMethods<IStatusClaims> {
   private readonly route: string = ENDPOINT_LINKS.ClaimStatus;
-  constructor(private claimConclusionRepository: Repository<IClaimStatus>) {}
+  constructor(private claimConclusionRepository: Repository<IStatusClaims>) {}
 
-  getAll(params?: ListParams): Observable<IListResponse<IClaimStatus>> {
+  getAll(params?: ListParams): Observable<IListResponse<IStatusClaims>> {
     return this.claimConclusionRepository.getAllPaginated(this.route, params);
   }
 
-  getById(id: string | number): Observable<IClaimStatus> {
+  getById(id: string | number): Observable<IStatusClaims> {
     return this.claimConclusionRepository.getById(this.route, id);
   }
 
-  create(model: IClaimStatus): Observable<IClaimStatus> {
+  create(model: IStatusClaims): Observable<IStatusClaims> {
     return this.claimConclusionRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: IClaimStatus): Observable<Object> {
+  update(id: string | number, model: IStatusClaims): Observable<Object> {
     return this.claimConclusionRepository.update(this.route, id, model);
   }
 

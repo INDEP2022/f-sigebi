@@ -174,6 +174,30 @@ const routes: Routes = [
             './siab-sami-interaction/pa-ssi-m-siab-sami-interaction.module'
           ).then(m => m.PaSsiMSiabSamiInteractionModule),
       },
+      {
+        path: 'location-goods',
+        loadChildren: async () =>
+          (await import('./location-of-goods/location-goods-warehouses-storage/pa-lg-m-location-goods-warehouses-storage.module')).PaLgMLocationGoodsWarehousesStorageModule,
+        data: { title: 'Ubicacion de bienes' },
+      },
+      {
+        path: 'warehouse-inquiries',
+        loadChildren: async () =>
+         (await import('./warehouse-inquiries/pa-m-warehouse-inquiries.module')).PaMWarehouseInquiriesModule,
+         data: { title: 'Consulta Almacenes'}
+      },
+      {
+        path: 'vault-consultation',
+        loadChildren: async () =>
+         (await import('./vault-consultation/pa-m-vault-consultation.module')).PaMVaultConsultationModule,
+         data: { title: 'Consulta Bovedas'}
+      },
+      {
+        path: 'property-registration',
+        loadChildren: async () =>
+         (await import('./kitchenware/pa-m-kitchenware.module')).PaMKitchenwareModule,
+         data: { title: 'Registro de mensaje del bien'}
+      },
       /**
        * Seguros **Legaspi**
        **/
@@ -204,6 +228,20 @@ const routes: Routes = [
           (await import('./appraisal-goods/appraisal-goods.module'))
             .AppraisalGoodsModule,
         data: { title: 'Bienes sin Avalúos' },
+      },
+      {
+        path: 'monitor-unavoidable-assets',
+        loadChildren: async () =>
+          (await import('./monitor-unavoidable-assets/monitor-unavoidable-assets.module'))
+            .MonitorUnavoidableAssetsModule,
+        data: { title: 'Monitor de bienes incosteables' },
+      },
+      {
+        path: 'sale-goods',
+        loadChildren: async () =>
+          (await import('./sale-goods/sale-goods.module'))
+            .SaleGoodsModule,
+        data: { title: 'VENTA DE BIENES' },
       },
     ],
   },

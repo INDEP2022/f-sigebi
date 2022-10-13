@@ -4,52 +4,36 @@
      
     </div>
   
-    <div body>
+    <div body> 
       
         <form class="form-material" [formGroup]="form">
+            
             <div class="row">
                 <div class="col-md-4">
-                    <form-field [control]="form.get('delegation')" >
-                        <ngx-select
-			            	typeToSearchText="Escriba 3 o más caracteres" 
-                            label="Delegación"
-                            [form]="form"
-                            control="delegation">
-				    	</ngx-select>
-                    </form-field>
+                    <app-delegation-shared [form]="form" [showSubdelegation]="false" > </app-delegation-shared>
                 </div>
-            </div>
-            <div class="row pt-5">
-                <div class="col-md-4">
-                    <form-field [control]="form.get('subDelegation')" >
-                        <ngx-select
-			            	typeToSearchText="Escriba 3 o más caracteres" 
-                            label="Sub Delegación"
-                            [form]="form"
-                            control="subDelegation">
-				    	</ngx-select>
-                    </form-field>
+                <div class="col-md-4 mt-3">
+                    <app-delegation-shared [form]="form" [showDelegation]="false" > </app-delegation-shared>
                 </div>
-            </div>
-            <div class="row pt-5">
-                <div class="col-md-2">
+                <div class="col-md-2 mt-3">
                     <form-field [control]="form.get('fromMonth')" label="Mes Inicial">
                         <input type="text"
-                               placeholder="Del"
-                               class="form-control"
-                               bsDatepicker
-                               formControlName="fromMonth"
-                               [bsConfig]="{ isAnimated: true }">
+                            class="form-control"
+                            [bsConfig]="(bsConfigFromMonth)"
+                            #dp="bsDatepicker"
+                            formControlName="fromMonth"
+                            bsDatepicker [(bsValue)]="bsValueFromMonth"
+                            >
                     </form-field>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-2 mt-3">
                     <form-field [control]="form.get('toMonth')" label="Mes Final">
-                        <input type="text" 
-                               placeholder="Al"
-                               class="form-control"
-                               bsDatepicker
-                               formControlName="toMonth"
-                               [bsConfig]="{ isAnimated: true }">
+                        <input type="text"
+                            class="form-control"
+                            [bsConfig]="bsConfigToMonth"
+                            #dp="bsDatepicker"
+                            formControlName="toMonth"
+                            bsDatepicker [(bsValue)]="bsValueToMonth">
                     </form-field>
                 </div>
             </div>

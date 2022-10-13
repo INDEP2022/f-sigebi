@@ -1,0 +1,124 @@
+<app-modal>
+    <div header>
+        <h5 class="modal-title">DETALLES</h5>
+    </div>
+    <div body>
+        <form class="form-material" [formGroup]="form">
+            <div class="row">
+                <div class="col-md-2">
+                    <form-field [control]="form.get('idInvoice')" label="idInvoice">
+                        <input type="text" class="form-control" formControlName="idInvoice">
+                    </form-field>
+                </div>
+                <div class="col-md-4">
+                    <form-field [control]="form.get('idcoordination')" label="Coordinación">
+                        <input type="text" class="form-control" formControlName="idcoordination">
+                    </form-field>
+                </div>
+                <div class="col-md-4">
+                    <form-field [control]="form.get('idRegional')" label="Regional">
+                        <input type="text" class="form-control" formControlName="idRegional">
+                    </form-field>
+                </div>
+                <div class="col-md-2">
+                    <form-field [control]="form.get('idSerie')" label="Serie">
+                        <input type="text" class="form-control" formControlName="idSerie">
+                    </form-field>
+                </div>
+            </div>
+            <div class="row pt-5">
+                <div class="col-md-2">
+                    <form-field [control]="form.get('initialFolio')" label="Folio inicial">
+                        <input type="text" class="form-control" formControlName="initialFolio">
+                    </form-field>
+                </div>
+                <div class="col-md-2">
+                    <form-field [control]="form.get('finalFolio')" label="Folio Final">
+                        <input type="text" class="form-control" formControlName="finalFolio">
+                    </form-field>
+                </div>
+                <div class="col-md-3">
+                    <form-field [control]="form.get('validity')" label="Validez">
+                        <input type="text" class="form-control" formControlName="validity">
+                    </form-field>
+                </div>
+                <div class="col-md-3">
+                    <form-field [control]="form.get('type')" label="Tipo">
+                        <select class="form-control"  formControlName="type">
+                            <option value="respuesta">De respuesta</option>
+                            <option value="cancelacion">De cancelación</option>
+                          </select>
+                    </form-field>
+                </div>
+                <div class="col-md-2">
+                    <form-field [control]="form.get('status')" label="Estatus">
+                        <input type="text" class="form-control" formControlName="status">
+                    </form-field>
+                </div>
+            </div>
+            <div class="row pt-5">
+                <div class="col-md-2">
+                    <form-field [control]="form.get('totalFolios')" label="Total de folios">
+                        <input type="text" class="form-control" formControlName="totalFolios">
+                    </form-field>
+                </div>
+                <div class="col-md-2">
+                    <form-field [control]="form.get('availableFolios')" label="Folios disponibles">
+                        <input type="text" class="form-control" formControlName="availableFolios">
+                    </form-field>
+                </div>
+                <div class="col-md-2">
+                    <form-field [control]="form.get('foliosUsed')" label="Folio utilizados">
+                        <input type="text" class="form-control" formControlName="foliosUsed">
+                    </form-field>
+                </div>
+                <div class="col-md-4">
+                    <form-field [control]="form.get('userRegister')" label="Usuarios registrados">
+                        <input type="text" class="form-control" formControlName="userRegister">
+                    </form-field>
+                </div>
+                <div class="col-md-2">
+                    <form-field [control]="form.get('registerDate')" label="Fecha registro">
+                        <input type="text" class="form-control" formControlName="registerDate">
+                    </form-field>
+                </div>
+            </div>
+            <div class="row pt-5">
+                <div class="col-md-5">
+                    <form-field [control]="form.get('address')" label="Dirección">
+                        <input type="text" class="form-control" formControlName="address">
+                    </form-field>
+                </div>
+            </div>
+        </form>
+
+        <div class="row pt-5">
+            <div class="ch-title">
+                <h5 class="title">Tipo de eventos por serie</h5>
+            </div>
+            <ng2-smart-table [settings]="settings1" [source]="data1"></ng2-smart-table>
+        </div>
+
+        <div class="row pt-5">
+            <div class="ch-title">
+                <h5 class="title">Folios apartados</h5>
+            </div>
+            <ng2-smart-table [settings]="settings2" [source]="data2"></ng2-smart-table>
+        </div>
+
+    </div>
+    <div footer>
+        <div class="d-flex justify-content-center">
+    		<div class="m-3">
+        		<button type="button" class="btn btn-danger active" (click)="close()">
+          			Cancelar
+        		</button>
+      		</div>
+		    <div class="m-3">
+		        <button type="button" class="btn btn-success active" (click)="close()">
+		          Aceptar
+		        </button>
+		    </div>
+		</div>
+    </div>
+</app-modal>

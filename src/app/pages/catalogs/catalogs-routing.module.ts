@@ -315,61 +315,52 @@ const routes: Routes = [
       (await import('./sub-delegations/sub-delegations.module'))
         .SubDelegationsModule,
     data: { title: 'Sub Delegaciones' },
-  }, 
+  },
   {
     path: 'expert',
     loadChildren: async () =>
-      (await import('./experts/experts.module'))
-        .ExpertsModule,
+      (await import('./experts/experts.module')).ExpertsModule,
     data: { title: 'Peritos' },
   },
   {
     path: 'person',
     loadChildren: async () =>
-      (await import('./persons/persons.module'))
-        .PersonsModule,
+      (await import('./persons/persons.module')).PersonsModule,
     data: { title: 'Personas' },
   },
   {
     path: 'oring',
     loadChildren: async () =>
-      (await import('./origin/origin.module'))
-        .OriginModule,
+      (await import('./origin/origin.module')).OriginModule,
     data: { title: 'Procedencias' },
   },
   {
     path: 'oringCisi',
     loadChildren: async () =>
-      (await import('./origin-cisi/origin-cisi.module'))
-        .OriginCisiModule,
+      (await import('./origin-cisi/origin-cisi.module')).OriginCisiModule,
     data: { title: 'Procedencias Cisi' },
   },
   {
     path: 'siseProcess',
     loadChildren: async () =>
-      (await import('./sise-process/sise-process.module'))
-        .SiseProcessModule,
+      (await import('./sise-process/sise-process.module')).SiseProcessModule,
     data: { title: 'Procesos Sise' },
   },
   {
     path: 'rAsuntDic',
     loadChildren: async () =>
-      (await import('./rasunt-dic/rasunt-dic.module'))
-        .RAsuntDicModule,
+      (await import('./rasunt-dic/rasunt-dic.module')).RAsuntDicModule,
     data: { title: 'R Asunt Dic' },
   },
   {
     path: 'rack',
-    loadChildren: async () =>
-      (await import('./rack/rack.module'))
-        .RackModule,
+    loadChildren: async () => (await import('./rack/rack.module')).RackModule,
     data: { title: 'Estante' },
   },
   {
     path: 'regulatory',
     loadChildren: async () =>
-      (await import('./regulatory/regulatory.module'))
-        .RegulatoryModule,
+      (await import('./regulatory/regulatory.module')).RegulatoryModule,
     data: { title: 'Regulaciones' },
   },
   {
@@ -518,8 +509,7 @@ const routes: Routes = [
   {
     path: 'generics',
     loadChildren: async () =>
-      (await import('./generics/generics.module'))
-        .GenericsModule,
+      (await import('./generics/generics.module')).GenericsModule,
     data: { title: 'Genéricos' },
   },
   {
@@ -532,8 +522,7 @@ const routes: Routes = [
   {
     path: 'court',
     loadChildren: async () =>
-      (await import('./court/court.module'))
-        .CourtModule,
+      (await import('./court/court.module')).CourtModule,
     data: { title: 'Juzgados' },
   },
   {
@@ -542,6 +531,57 @@ const routes: Routes = [
       (await import('./siab-clasification/siab-clasification.module'))
         .SiabClasificationModule,
     data: { title: 'Clasificacion SIAB' },
+  },
+  {
+    path: 'edos-x-coor',
+    loadChildren: async () =>
+      (await import('./edos-x-coor/edos-x-coor.module')).EdosXCoorModule,
+    data: { title: 'Lista de Edos X Coor' },
+  },
+  {
+    path: 'station',
+    loadChildren: async () =>
+      (await import('./station/station.module')).StationModule,
+    data: { title: 'Lista de Emisoras' },
+  },
+  {
+    path: 'third-party-company',
+    loadChildren: async () =>
+      (await import('./third-party-company/third-party-company.module'))
+        .ThirdPartyCompanyModule,
+    data: { title: 'Lista de Emisoras' },
+  },
+  {
+    path: 'status-transfer',
+    loadChildren: async () =>
+      (await import('./status-transfer/status-transfer.module'))
+        .StatusTransferModule,
+    data: { title: 'Lista estado transferencias' },
+  },
+  {
+    path: 'status-process',
+    loadChildren: async () =>
+      (await import('./status-process/status-process.module'))
+        .StatusProcessModule,
+    data: { title: 'Lista estatus proceso' },
+  },
+  {
+    path: 'state-repuves',
+    loadChildren: async () =>
+      (await import('./state-repuves/state-repuves.module')).StateRepuvesModule,
+    data: { title: 'Lista estado repuves' },
+  },
+  {
+    path: 'status-claims',
+    loadChildren: async () =>
+      (await import('./status-claims/status-claims.module')).StatusClaimsModule,
+    data: { title: 'Lista estatus siniestros' },
+  },
+  {
+    path: 'penalty',
+    loadChildren: async () =>
+      (await import('./penalty/penalty.module')).PenaltyModule,
+    data: { title: 'Lista Penalizacion' },
   },
 ];
 

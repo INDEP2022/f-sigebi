@@ -7,70 +7,43 @@
     <div body>
       
         <form class="form-material" [formGroup]="form">
-            <div class="row">
-                <div class="col-md-4">
-                    <form-field [control]="form.get('delegation')" >
-                        <ngx-select
-			            	typeToSearchText="Escriba 3 o más caracteres" 
-                            label="Delegación"
-                            [form]="form"
-                            control="delegation">
-				    	</ngx-select>
-                    </form-field>
-                </div>
-            </div>
+         
             <div class="row pt-5">
-                <div class="col-md-4">
-                    <form-field [control]="form.get('subDelegation')" >
-                        <ngx-select
-			            	typeToSearchText="Escriba 3 o más caracteres" 
-                            label="Sub Delegación"
-                            [form]="form"
-                            control="subDelegation">
-				    	</ngx-select>
-                    </form-field>
+                <div class="col-md-3">
+                    <app-delegation-shared [form]="form" [showSubdelegation]="false" > </app-delegation-shared>
                 </div>
-            </div>
-            <div class="row pt-5">
+                <div class="col-md-3 mt-3">
+                    <app-delegation-shared [form]="form" [showDelegation]="false" > </app-delegation-shared>
+                </div>
                 <div class="col-md-2">
                     <form-field [control]="form.get('fromYear')" label="Recepciones del año">
-                        <input class="form-control" formControlName="fromYear" minlength="4" maxlength="4">
+                            <input type="text"
+                            class="form-control"
+                            [bsConfig]="bsConfigYear"
+                            #dp="bsDatepicker"
+                            formControlName="fromYear"
+                            bsDatepicker [(bsValue)]="bsValueYear">
                     </form-field>
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-2">
                     <form-field [control]="form.get('fromMonth')" label="Del mes de">
-                        <select class="form-control"  formControlName="fromMonth">
-                            <option value="Enero">Enero</option>
-                            <option value="Febrero">Febrero</option>
-                            <option value="Marzo">Marzo</option>
-                            <option value="Abril">Abril</option>
-                            <option value="Mayo">Mayo</option>
-                            <option value="Junio">Junio</option>
-                            <option value="Julio">Julio</option>
-                            <option value="Agosto">Agosto</option>
-                            <option value="Septiembre">Septiembre</option>
-                            <option value="Octubre">Octubre</option>
-                            <option value="Noviembre">Noviembre</option>
-                            <option value="Diciembre">Diciembre</option>
-                          </select>
+                        <input type="text"
+                            class="form-control"
+                            [bsConfig]="(bsConfigFromMonth)"
+                            #dp="bsDatepicker"
+                            formControlName="fromMonth"
+                            bsDatepicker [(bsValue)]="bsValueFromMonth"
+                            >
                     </form-field>
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-2">
                     <form-field [control]="form.get('toMonth')" label="Al mes de">
-                        <select class="form-control"  formControlName="toMonth">
-                            <option value="Enero">Enero</option>
-                            <option value="Febrero">Febrero</option>
-                            <option value="Marzo">Marzo</option>
-                            <option value="Abril">Abril</option>
-                            <option value="Mayo">Mayo</option>
-                            <option value="Junio">Junio</option>
-                            <option value="Julio">Julio</option>
-                            <option value="Agosto">Agosto</option>
-                            <option value="Septiembre">Septiembre</option>
-                            <option value="Octubre">Octubre</option>
-                            <option value="Noviembre">Noviembre</option>
-                            <option value="Diciembre">Diciembre</option>
-                          </select>
+                        <input type="text"
+                            class="form-control"
+                            [bsConfig]="bsConfigToMonth"
+                            #dp="bsDatepicker"
+                            formControlName="toMonth"
+                            bsDatepicker [(bsValue)]="bsValueToMonth">
                     </form-field>
                 </div>
             </div>

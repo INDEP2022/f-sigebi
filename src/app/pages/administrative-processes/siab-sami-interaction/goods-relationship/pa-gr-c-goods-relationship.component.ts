@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-pa-gr-c-goods-relationship',

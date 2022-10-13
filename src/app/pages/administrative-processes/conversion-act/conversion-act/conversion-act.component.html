@@ -148,83 +148,86 @@
           </div>
         </div>
       </div>
-      <br>
+      <br />
       <div class="row mt-5">
-          <div class="col-md-4 col-sm-12 col-xs-12">
-            <form-field [control]="form.get('responsible')" label="Responsable">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="responsible" />
-              </form-field>
-          </div>
-          <div class="col-md-4 col-sm-12 col-xs-12">
-            <form-field [control]="form.get('witness')" label="Testigo">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="witness" />
-              </form-field>
-          </div>
-          <div class="col-md-4 col-sm-12 col-xs-12">
-            <form-field [control]="form.get('witnessI')" label="Testigo">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="witnessI" />
-              </form-field>
-          </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('responsible')" label="Responsable">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="responsible" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('witness')" label="Testigo">
+            <input type="text" class="form-control" formControlName="witness" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('witnessI')" label="Testigo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="witnessI" />
+          </form-field>
+        </div>
       </div>
 
       <div class="row mt-5">
         <div class="col-md-12 col-sm-12 col-xs-12">
-            <form-field [control]="form.get('contractWitness')" label="Testigo del contrato">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="contractWitness" />
-              </form-field>
-          </div>
+          <form-field
+            [control]="form.get('contractWitness')"
+            label="Testigo del contrato">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="contractWitness" />
+          </form-field>
+        </div>
       </div>
     </form>
   </div>
 </app-card>
 
 <div class="row">
-    <div class="col-md-6 col-sm-12 col-xs-12">
-        <app-card>
-            <div body>
-                <ng2-smart-table
-                  [attr.class]="'table-bordered'"
-                  [settings]="settings"
-                  [source]="data">
-                </ng2-smart-table>
-            </div>
-        </app-card>
-    </div>
-    <div class="col-md-6 col-sm-12 col-xs-12">
-        <app-card>
-            <div body>
-                <ng2-smart-table
-                      [attr.class]="'table-bordered'"
-                      [settings]="settings1"
-                      [source]="data1">
-                </ng2-smart-table>
-            </div>
-        </app-card>
-    </div>
+  <div class="col-md-6 col-sm-12 col-xs-12">
+    <app-card>
+      <div body>
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings"
+          [source]="data">
+        </ng2-smart-table>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
+      </div>
+    </app-card>
+  </div>
+  <div class="col-md-6 col-sm-12 col-xs-12">
+    <app-card>
+      <div body>
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings1"
+          [source]="data1">
+        </ng2-smart-table>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
+      </div>
+    </app-card>
+  </div>
 </div>
 
 <div class="row">
-    <app-card>
-        <div body>
-            <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="justify-content-center">
-                  <button class="btn btn-success btn-sm active" (click)="add()">
-                    Agregar
-                  </button>
-                </div>
-            </div>
+  <app-card>
+    <div body>
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="justify-content-center">
+          <button class="btn btn-success btn-sm active" (click)="add()">
+            Agregar
+          </button>
         </div>
-    </app-card>
+      </div>
+    </div>
+  </app-card>
 </div>
