@@ -1,7 +1,7 @@
 <ng-container> 
     <div class="row mb-3 mt-3" *ngIf="showDelegation">
         <div class="col-md-12">
-            <form-field [control]="form.get('delegation')">
+            <form-field [control]="form.get(delegationField)">
             	<ngx-select
             		(fetchItems)="getDelegations($event)" 
                     [data]="delegations" 
@@ -33,4 +33,3 @@
         </div>
     </div>
 </ng-container>
-

@@ -1,7 +1,7 @@
 <ng-container >
 	<div class="row mb-3 mt-3" *ngIf="showMeasurementUnits">
         <div class="col-md-12">
-            <form-field [control]="form.get('measurementUnit')">
+            <form-field [control]="form.get(measurementUnitField)">
             	<ngx-select
             		(fetchItems)="getUnits($event)" 
                     [data]="measurementUnits" 

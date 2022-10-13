@@ -1,5 +1,5 @@
 //Interface Provisional sin Validar 
-export interface IPackages{
+export interface IPackage{
     id?: number;
     description: string;
     packageType: number;

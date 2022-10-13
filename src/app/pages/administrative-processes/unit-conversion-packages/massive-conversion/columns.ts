@@ -3,22 +3,22 @@ import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.co
 export const COLUMNS = {
       good: {
         title: 'Bien',
-        width: '15%'
+        sort:false
       },
       description: {
         title: 'Descripción',
-        width: '40%'
+        sort:false
       },
       record: {
         title: 'Expediente',
-        width: '15%'
+        sort:false
       },
       originalUnit: {
         title: 'Unidad Original',
-        width: '15%'
+        sort:false
       },
       originalAmount: {
         title: 'Cantidad Original',
-        width: '15%'
+        sort:false
       }
   };

@@ -3,53 +3,53 @@ import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.co
 export const COLUMNS = {
     id:{
         title: 'Id',
-        width: '10%'
+        sort:false
     },
     valueKey:{
         title: 'Clave Avalúo',
-        width: '10%'
+        sort:false
     },
     fileKey:{
         title: 'Clave Oficio',
-        width: '10%'
+        sort:false
     },
     dateInsert:{
         title: 'Fecha Insert',
-        width: '10%'
+        sort:false
     },
 }
 
 export const COLUMNS2 = {
     number:{
         title: 'No.',
-        width: '10%'
+        sort:false
     },
     numberGood:{
         title: 'No. Bien',
-        width: '10%'
+        sort:false
     },
     description:{
         title: 'Descripción',
-        width: '10%'
+        sort:false
     },
     status:{
         title: 'Estatus',
-        width: '10%'
+        sort:false
     },
     clasification:{
         title: 'Clasificación',
-        width: '10%'
+        sort:false
     },
     sssubtypeGood:{
         title: 'Sub Sub Sub Tipo',
-        width: '10%'
+        sort:false
     },
     ssubtypeGood:{
         title: 'Sub Sub Tipo',
-        width: '10%'
+        sort:false
     },
     subtypeGood:{
         title: 'Sub Tipo',
-        width: '10%'
+        sort:false
     }
 }

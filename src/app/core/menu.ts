@@ -285,9 +285,6 @@ export const MENU: IMenuItem[] = [
         label: 'Registro de mensaje del Bien',
         link: '/pages/administrative-processes/property-registration',
       },
-      /**
-       * Seguros **Legaspi**
-       **/
       {
         label: 'Solicitud de Avalúos',
         link: '/pages/administrative-processes/appraisal-request',
@@ -312,18 +309,15 @@ export const MENU: IMenuItem[] = [
         label: 'Venta de Bienes',
         link: '/pages/administrative-processes/sale-goods',
       },
-    ],
-  },
-  {
-    label: 'Reportes',
-    icon: 'bx-folder',
-    subItems: [
+      /**
+       * ADMIN PROCESS-SEGUROS LEGASPI
+       **/
       {
         label: 'Atención Bienes',
         link: '/pages/administrative-processes/goods-tracking',
       },
       {
-        label: 'Gestión bienes Gab-Soc',
+        label: 'Gestión Bienes Gab-Soc',
         link: '/pages/administrative-processes/goods-management',
       },
       {
@@ -379,8 +373,24 @@ export const MENU: IMenuItem[] = [
         ],
       },
       /**
-       * Seguros **Legaspi**
+       * ADMIN PROCESS-SEGUROS LEGASPI
        **/
+      /**
+       * ADMIN PROCESS-SERVICES LEGASPI
+      **/
+      {
+        label: 'Servicios',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Registro de Pago de Servicios',
+            link: '/pages/administrative-processes/services/',
+          }
+        ],
+      },
+      /**
+       * ADMIN PROCESS-SERVICES LEGASPI
+      **/
     ],
   },
   {

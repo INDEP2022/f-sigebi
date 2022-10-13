@@ -5,7 +5,6 @@ import { SharedModule } from 'src/app/shared/shared.module';
 //Reactive Forms
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 //Ngx Bootstrap
-import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { TabsModule } from 'ngx-bootstrap/tabs';
@@ -27,7 +26,6 @@ import { GoodsTypesSharedComponent } from '../../../../@standalone/shared-forms/
     FormsModule,
     ReactiveFormsModule,
     SharedModule,
-    BsDropdownModule,
     BsDatepickerModule,
     TabsModule,
     ModalModule.forChild(),

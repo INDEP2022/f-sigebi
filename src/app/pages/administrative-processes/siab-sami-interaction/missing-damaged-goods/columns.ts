@@ -3,31 +3,31 @@ import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.co
 export const COLUMNS = {
     flowId:{
         title: 'Flow ID',
-        width: '10%'
+        sort:false
     },
     loadRef:{
         title: 'Ref.Carga',
-        width: '10%'
+        sort:false
     },
     good:{
         title: 'No.Bien',
-        width: '10%'
+        sort:false
     },
     samiStock:{
         title: 'Inventario SAMI',
-        width: '10%'
+        sort:false
     },
     description:{
         title: 'Descripción',
-        width: '10%'
+        sort:false
     },
     taxId:{
         title: 'R.F.C',
-        width: '10%'
+        sort:false
     },
     incident:{
         title: 'Incidente',
-        width: '10%'
+        sort:false
     },/*
       beneficiary:{
         title: 'No.Bien',

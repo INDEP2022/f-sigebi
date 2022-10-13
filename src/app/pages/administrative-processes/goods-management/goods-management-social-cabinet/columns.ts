@@ -3,30 +3,30 @@ import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.co
 export const COLUMNS = {
     officeProc: {
         title: 'Proc. Gabin',
-        width: '15%'
+        sort:false
     },
     record: {
         title: 'Expediente',
-        width: '10%'
+        sort:false
     },
       good: {
         title: 'Bien',
-        width: '10%'
+        sort:false
     },
       description: {
         title: 'Descripción',
-        width: '30%'
+        sort:false
     },
     status: {
         title: 'Estatus',
-        width: '10%'
+        sort:false
     },
     statusDes: {
         title: 'Desc Estatus',
-        width: '15%'
+        sort:false
     },
     destination: {
         title: 'Destino',
-        width: '10%'
+        sort:false
     }
 }

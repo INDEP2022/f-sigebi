@@ -3,118 +3,118 @@ import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.co
 export const COLUMNS = {
     processId:{
         title: 'Id. Proceso',
-        width: '10%'
+        sort: false
     },
     status:{
         title: 'Estatus',
-        width: '10%'
+        sort: false
     },
     registerDate:{
         title: 'Fecha Reg.',
-        width: '10%'
+        sort: false
     },
     taxId:{
         title: 'RFC',
-        width: '10%'
+        sort: false
     },
     beneficiary:{
         title: 'Beneficiario',
-        width: '10%'
+        sort: false
     },
     reference:{
         title: 'Referencia',
-        width: '10%'
+        sort: false
     },
     referenceDate:{
         title: 'Fecha Ref.',
-        width: '10%'
+        sort: false
     },
     amount:{
         title: 'Monto',
-        width: '10%'
+        sort: false
     },
     paymentDate:{
         title: 'Fecha Pag.',
-        width: '10%'
+        sort: false
     },
     bankId:{
         title: 'Cve. Banco',
-        width: '10%'
+        sort: false
     },
     account:{
         title: 'Cuenta',
-        width: '10%'
+        sort: false
     },
     office:{
         title: 'Sucursal',
-        width: '10%'
+        sort: false
     },
     paymentCode:{
         title: 'Cód. Pago',
-        width: '10%'
+        sort: false
     },
     area:{
         title: 'Área',
-        width: '10%'
+        sort: false
     },
     document:{
         title: 'Documento',
-        width: '10%'
+        sort: false
     },
     userR:{
         title: 'User Resp.',
-        width: '10%'
+        sort: false
     },
     concept:{
         title: 'Concepto',
-        width: '10%'
+        sort: false
     },
     attached:{
         title: 'Anexo',
-        width: '10%'
+        sort: false
     },
     date:{
         title: 'Fecha',
-        width: '10%'
+        sort: false
     },
     opType:{
         title: 'Tipo Op',
-        width: '10%'
+        sort: false
     },
     payDate:{
         title: 'F.Pago',
-        width: '10%'
+        sort: false
     },
     authUser:{
         title: 'User Autho.',
-        width: '10%'
+        sort: false
     },
     numberMove:{
         title: 'No. Mov.',
-        width: '10%'
+        sort: false
     },
     ordenInId:{
         title: 'Id. Órden de Ing.',
-        width: '10%'
+        sort: false
     },
     invoiceOi:{
         title: 'Folio OI',
-        width: '10%'
+        sort: false
     },
     dateOi:{
         title: 'Fecha OI',
-        width: '10%'
+        sort: false
     },
     statusOi:{
         title: 'Estatus OI',
-        width: '10%'
+        sort: false
     },
     satType:{
         title: 'Tipo SAT',
-        width: '10%'
+        sort: false
     },
     originInfo:{
         title: 'Orig. Info.',
-        width: '10%'
+        sort: false
     }
 };

@@ -15,12 +15,19 @@ import { COLUMNS,COLUMNS2 } from './columns';
 export class PaVgCValueGoodsComponent extends BasePage implements OnInit {
 
   form: FormGroup = new FormGroup({});
-  settings = TABLE_SETTINGS;
+
+  settings = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
   data:any[]=[];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  settings2 = JSON.parse(JSON.stringify(TABLE_SETTINGS));
+  settings2 = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
   data2:any[]=[];
   totalItems2: number = 0;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
@@ -28,9 +35,7 @@ export class PaVgCValueGoodsComponent extends BasePage implements OnInit {
   constructor(private fb: FormBuilder) {
     super();
     this.settings.columns = COLUMNS;
-    this.settings.actions.delete = false;
     this.settings2.columns = COLUMNS2;
-    this.settings2.actions.delete = false;
   }
 
   ngOnInit(): void {

@@ -11,20 +11,6 @@ const routes: Routes = [
   {
     path: '',
     component: PaGrCGoodsRelationshipComponent,
-    /*children: [
-      {
-        path: '',
-        redirectTo: 'missing-damaged-goods'
-      },
-      {
-        path: 'missing-damaged-goods',
-        component:PaMdgCMissingDamagedGoodsComponent
-      },
-      {
-        path: 'revenue-management',
-        component: PaRmCRevenueManagementComponent
-      }
-    ]*/
   },
   {
     path: 'payment-goods',

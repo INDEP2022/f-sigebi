@@ -1,7 +1,7 @@
 <ng-container >
 	<div class="row mb-3 mt-3" *ngIf="showPackages">
         <div class="col-md-12">
-            <form-field [control]="form.get('package')">
+            <form-field [control]="form.get(packageField)">
             	<ngx-select
             		(fetchItems)="getPackages($event)" 
                     [data]="packages" 
@@ -16,4 +16,3 @@
         </div>
     </div>
 </ng-container>
-
