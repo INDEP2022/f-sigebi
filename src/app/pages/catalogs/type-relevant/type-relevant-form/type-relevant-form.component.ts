@@ -9,8 +9,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-type-relevant-form',
   templateUrl: './type-relevant-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class TypeRelevantFormComponent extends BasePage implements OnInit {
   typeRelevantForm: ModelForm<ITypeRelevant>;
@@ -32,10 +31,16 @@ export class TypeRelevantFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.typeRelevantForm = this.fb.group({
       id: [null],
-      description: [null, Validators.compose([ Validators.required, Validators.maxLength(100)])],
-      version: [null, Validators.compose([ Validators.required])],
-      noPhotography: [null, Validators.compose([ Validators.required])],
-      detailsPhotography: [null, Validators.compose([ Validators.required, Validators.maxLength(500)])],
+      description: [
+        null,
+        Validators.compose([Validators.required, Validators.maxLength(100)]),
+      ],
+      version: [null, Validators.compose([Validators.required])],
+      noPhotography: [null, Validators.compose([Validators.required])],
+      detailsPhotography: [
+        null,
+        Validators.compose([Validators.required, Validators.maxLength(500)]),
+      ],
     });
     if (this.typeRelevant != null) {
       this.edit = true;
@@ -52,10 +57,12 @@ export class TypeRelevantFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.typeRelevantService.create(this.typeRelevantForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.typeRelevantService
+      .create(this.typeRelevantForm.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   update() {

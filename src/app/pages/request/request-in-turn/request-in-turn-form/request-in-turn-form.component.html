@@ -2,184 +2,200 @@
   <div class="ch-content" header>
     <div class="row mb-3">
       <h5 class="title">Filtar solicitudes</h5>
-      </div>
     </div>
+  </div>
 
-    <div body>
-      <div class="row ">
-        <form [formGroup]="requestForm" class="form-material">
-          <div class="row mb-2">
-            <div class="col-sm-2">
-              <span style="line-height: 3;">Match</span>
-            </div>
-            <div class="col-sm-2">
-              <form-radio label="All">
-                <input 
-                  type="radio" 
-                  formControlName="typeMach" 
-                  value="all" 
-                  id="all"
-                  [checked]="checked" />
-              </form-radio>   
-            </div>
-            <div class="col-sm-2">
-              <form-radio label="Any">
-                <input 
-                  type="radio"  
-                  formControlName="typeMach" 
-                  value="any" 
-                  id="any"/>
-              </form-radio>   
-            </div>
+  <div body>
+    <div class="row">
+      <form [formGroup]="requestForm" class="form-material">
+        <div class="row mb-2">
+          <div class="col-sm-2">
+            <span style="line-height: 3">Match</span>
           </div>
-          <div class="row mb-3 ">
-            <div class="col-md-3">
-              <form-field [control]="requestForm.get('dateRequest')" label="Fecha de solicitud">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="dateRequest"
-                  placeholder="" 
-                  bsDaterangepicker
-                  [bsConfig]="{ isAnimated: true }"/>
-              </form-field>
-            </div>
-
-            <div class="col-md-5">
-              <ngx-select
-                [form]="requestForm"
-                control="transmitter"
-                (fetchItems)="getSubDelegations($event)"
-                [data]="selectTransmitter"
-                label="Emisora"
-                bindLabel=""  
-                value="id"></ngx-select> <!-- bindLabel = name field -->
-            </div>
-
-            <div class="col-md-3">
-              <form-field [control]="requestForm.get('acta')" label="Acta Circunstanciada">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="acta"
-                  placeholder=""/>
-              </form-field>
-            </div>
+          <div class="col-sm-2">
+            <form-radio label="All">
+              <input
+                type="radio"
+                formControlName="typeMach"
+                value="all"
+                id="all"
+                [checked]="checked" />
+            </form-radio>
+          </div>
+          <div class="col-sm-2">
+            <form-radio label="Any">
+              <input
+                type="radio"
+                formControlName="typeMach"
+                value="any"
+                id="any" />
+            </form-radio>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-3">
+            <form-field
+              [control]="requestForm.get('dateRequest')"
+              label="Fecha de solicitud">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="dateRequest"
+                placeholder=""
+                bsDaterangepicker
+                [bsConfig]="{ isAnimated: true }" />
+            </form-field>
           </div>
 
-          <div class="row mb-3 ">
-            <div class="col-md-3">
-              <form-field [control]="requestForm.get('dateJob')" label="Fecha de oficio">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="dateJob"
-                  placeholder="" 
-                  bsDaterangepicker
-                  [bsConfig]="{ isAnimated: true }"/>
-              </form-field>
-            </div>
-            <div class="col-md-5">
-              <ngx-select
-                [form]="requestForm"
-                control="authority"
-                (fetchItems)="getSubDelegations($event)"
-                [data]="selectAuthority"
-                label="Autoridad"
-                value="Autoridad"></ngx-select>
-            </div>
-            <div class="col-md-3">
-              <form-field [control]="requestForm.get('ascertainment')" label="Averiguación previa">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="ascertainment"
-                  placeholder=""/>
-              </form-field>
-            </div>
+          <div class="col-md-5">
+            <ngx-select
+              [form]="requestForm"
+              control="transmitter"
+              (fetchItems)="getSubDelegations($event)"
+              [data]="selectTransmitter"
+              label="Emisora"
+              bindLabel=""
+              value="id"></ngx-select>
+            <!-- bindLabel = name field -->
           </div>
-          <div class="row mb-3 ">
-            <div class="col-md-3">
-              <ngx-select
-                [form]="requestForm"
-                control="deleRegional"
-                (fetchItems)="getSubDelegations($event)"
-                [data]="selectDeleRegional"
-                label="Delegación regional"
-                value="Autoridad"></ngx-select>
-            </div>
-            <div class="col-md-5">
-              <form-field [control]="requestForm.get('expedient')" label="Expediente transferencia">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="expedient"
-                  placeholder=""/>
-              </form-field>
-            </div>
-            <div class="col-md-3">
-              <form-field [control]="requestForm.get('cause')" label="Causa penal">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="cause"
-                  placeholder=""/>
-              </form-field>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-md-3">
-              <ngx-select
-                [form]="requestForm"
-                control="state"
-                (fetchItems)="getSubDelegations($event)"
-                [data]="selectState"
-                label="Estado"
-                value="estado"></ngx-select>
-            </div>
-            <div class="col-md-5">
-              <ngx-select
-                [form]="requestForm"
-                control="subject"
-                (fetchItems)="getSubDelegations($event)"
-                [data]="selectSubject"
-                label="Asunto"
-                value="asunto"></ngx-select>
-            </div>
-            <div class="col-md-3">
-              <form-field [control]="requestForm.get('contributor')" label="Contribuyente y/o Indiciado">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="contributor"
-                  placeholder=""/>
-              </form-field>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col-md-5">
-              <ngx-select
-                [form]="requestForm"
-                control="transfer"
-                (fetchItems)="getSubDelegations($event)"
-                [data]="selectTransfer"
-                label="Transferencia"
-                value="transferencia"></ngx-select>
-            </div>
-          </div>
-          <div class="row ">
-      
-              <div class="col align-self-end">
-                  <button (click)="search()" class="btn btn-primary active btn-sm ml-3" style="height: 36px;">
-                    Buscar
-                  </button>
-                  <button (click)="reset()" class="btn btn-danger active btn-sm ml-3">
-                      Limpiar
-                  </button>
-              </div>
 
+          <div class="col-md-3">
+            <form-field
+              [control]="requestForm.get('acta')"
+              label="Acta Circunstanciada">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="acta"
+                placeholder="" />
+            </form-field>
           </div>
-        </form>
-      </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-3">
+            <form-field
+              [control]="requestForm.get('dateJob')"
+              label="Fecha de oficio">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="dateJob"
+                placeholder=""
+                bsDaterangepicker
+                [bsConfig]="{ isAnimated: true }" />
+            </form-field>
+          </div>
+          <div class="col-md-5">
+            <ngx-select
+              [form]="requestForm"
+              control="authority"
+              (fetchItems)="getSubDelegations($event)"
+              [data]="selectAuthority"
+              label="Autoridad"
+              value="Autoridad"></ngx-select>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="requestForm.get('ascertainment')"
+              label="Averiguación previa">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="ascertainment"
+                placeholder="" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-3">
+            <ngx-select
+              [form]="requestForm"
+              control="deleRegional"
+              (fetchItems)="getSubDelegations($event)"
+              [data]="selectDeleRegional"
+              label="Delegación regional"
+              value="Autoridad"></ngx-select>
+          </div>
+          <div class="col-md-5">
+            <form-field
+              [control]="requestForm.get('expedient')"
+              label="Expediente transferencia">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="expedient"
+                placeholder="" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="requestForm.get('cause')"
+              label="Causa penal">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="cause"
+                placeholder="" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-3">
+            <ngx-select
+              [form]="requestForm"
+              control="state"
+              (fetchItems)="getSubDelegations($event)"
+              [data]="selectState"
+              label="Estado"
+              value="estado"></ngx-select>
+          </div>
+          <div class="col-md-5">
+            <ngx-select
+              [form]="requestForm"
+              control="subject"
+              (fetchItems)="getSubDelegations($event)"
+              [data]="selectSubject"
+              label="Asunto"
+              value="asunto"></ngx-select>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="requestForm.get('contributor')"
+              label="Contribuyente y/o Indiciado">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="contributor"
+                placeholder="" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-5">
+            <ngx-select
+              [form]="requestForm"
+              control="transfer"
+              (fetchItems)="getSubDelegations($event)"
+              [data]="selectTransfer"
+              label="Transferencia"
+              value="transferencia"></ngx-select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col align-self-end">
+            <button
+              (click)="search()"
+              class="btn btn-primary active btn-sm ml-3"
+              style="height: 36px">
+              Buscar
+            </button>
+            <button (click)="reset()" class="btn btn-danger active btn-sm ml-3">
+              Limpiar
+            </button>
+          </div>
+        </div>
+      </form>
     </div>
+  </div>
 </app-card>

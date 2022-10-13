@@ -7,17 +7,13 @@ import { PhotographMediaRoutingModule } from './photograph-media-routing.module'
 import { PhotographMediaListComponent } from './photograph-media-list/photograph-media-list.component';
 import { PhotographMediaFormComponent } from './photograph-media-form/photograph-media-form.component';
 
-
 @NgModule({
-  declarations: [
-    PhotographMediaListComponent,
-    PhotographMediaFormComponent
-  ],
+  declarations: [PhotographMediaListComponent, PhotographMediaFormComponent],
   imports: [
     CommonModule,
     PhotographMediaRoutingModule,
     SharedModule,
-    ModalModule.forChild()
-  ]
+    ModalModule.forChild(),
+  ],
 })
-export class PhotographMediaModule { }
+export class PhotographMediaModule {}

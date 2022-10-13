@@ -6,16 +6,13 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { CCMAuthorizationKeysOisRoutingModule } from './c-c-m-authorization-keys-ois-routing.module';
 import { CCCaeeoCAuthorizationKeysFormComponent } from './c-c-caeeo-c-authorization-keys-form/c-c-caeeo-c-authorization-keys-form.component';
 
-
 @NgModule({
-  declarations: [
-    CCCaeeoCAuthorizationKeysFormComponent
-  ],
+  declarations: [CCCaeeoCAuthorizationKeysFormComponent],
   imports: [
     CommonModule,
     CCMAuthorizationKeysOisRoutingModule,
     SharedModule,
-    ModalModule.forChild()
-  ]
+    ModalModule.forChild(),
+  ],
 })
-export class CCMAuthorizationKeysOisModule { }
+export class CCMAuthorizationKeysOisModule {}

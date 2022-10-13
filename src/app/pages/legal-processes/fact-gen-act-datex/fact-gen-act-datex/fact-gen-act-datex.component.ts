@@ -1,13 +1,12 @@
-import { Component, OnInit } from '@angular/core';  
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'ngx-fact-gen-act-datex',
   templateUrl: './fact-gen-act-datex.component.html',
-  styleUrls: ['./fact-gen-act-datex.component.scss']
+  styleUrls: ['./fact-gen-act-datex.component.scss'],
 })
-export class FactGenActDatexComponent  {
-
+export class FactGenActDatexComponent {
   tableFactGenSettings = {
     actions: {
       columnTitle: '',
@@ -15,7 +14,7 @@ export class FactGenActDatexComponent  {
       edit: false,
       delete: false,
     },
-    hideSubHeader: true,//oculta subheaader de filtro
+    hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
 
     columns: {
@@ -48,23 +47,20 @@ export class FactGenActDatexComponent  {
 
   dataFactGen = [
     {
-      noVolante: 1466449, 
-      asunto: "5", 
-      descripcion: "DOCUMENTACION COMPLEMENTARIA", 
-      fechaCaptura: "18-10-2018 09:50", 
-      claveAmparo: "", 
-      averiguacionPrevia: "FED/JAL/GDN", 
-      causaPenal: "", 
-      noExpediente: "1"
+      noVolante: 1466449,
+      asunto: '5',
+      descripcion: 'DOCUMENTACION COMPLEMENTARIA',
+      fechaCaptura: '18-10-2018 09:50',
+      claveAmparo: '',
+      averiguacionPrevia: 'FED/JAL/GDN',
+      causaPenal: '',
+      noExpediente: '1',
     },
-
   ];
 
   public form: FormGroup;
 
-  constructor(
-    private fb: FormBuilder) {  
-  }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();
@@ -72,12 +68,14 @@ export class FactGenActDatexComponent  {
   private prepareForm() {
     this.form = this.fb.group({
       noExpediente: ['', [Validators.required]],
-    });}
+    });
+  }
 
-  public get noExpediente() { return this.form.get('noExpediente'); }
-  
-mostrarInfo(): any{
-  console.log(this.form.value)
-}
+  public get noExpediente() {
+    return this.form.get('noExpediente');
+  }
 
+  mostrarInfo(): any {
+    console.log(this.form.value);
+  }
 }

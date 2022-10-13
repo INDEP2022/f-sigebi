@@ -19,4 +19,4 @@ export const TYPEDOCTO_COLUMS = {
     type: 'number',
     sort: false,
   },
-}
+};

@@ -9,8 +9,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-third-party-company-form',
   templateUrl: './third-party-company-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ThirdPartyCompanyFormComponent extends BasePage implements OnInit {
   thirdPartyCompanyForm: ModelForm<IThirdPartyCompany>;
@@ -51,16 +50,21 @@ export class ThirdPartyCompanyFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.thirdPartyCompanyService.create(this.thirdPartyCompanyForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.thirdPartyCompanyService
+      .create(this.thirdPartyCompanyForm.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   update() {
     this.loading = true;
     this.thirdPartyCompanyService
-      .update(this.thirdPartyCompany.id, this.thirdPartyCompanyForm.getRawValue())
+      .update(
+        this.thirdPartyCompany.id,
+        this.thirdPartyCompanyForm.getRawValue()
+      )
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

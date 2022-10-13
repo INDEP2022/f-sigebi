@@ -3,12 +3,8 @@ import { CommonModule } from '@angular/common';
 
 import { ExecutiveProcessesRoutingModule } from './executive-processes-routing.module';
 
-
 @NgModule({
   declarations: [],
-  imports: [
-    CommonModule,
-    ExecutiveProcessesRoutingModule
-  ]
+  imports: [CommonModule, ExecutiveProcessesRoutingModule],
 })
-export class ExecutiveProcessesModule { }
+export class ExecutiveProcessesModule {}

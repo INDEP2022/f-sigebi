@@ -16,14 +16,12 @@ import { PJDPDPQueryRelatedPaymentsDepositoriesRoutingModule } from './pj-d-pdp-
 import { PJDPDPQueryRelatedPaymentsDepositoriesComponent } from './query-related-payments-depositories/pj-d-pdp-c-query-related-payments-depositories.component';
 
 @NgModule({
-  declarations: [
-    PJDPDPQueryRelatedPaymentsDepositoriesComponent
-  ],
+  declarations: [PJDPDPQueryRelatedPaymentsDepositoriesComponent],
   imports: [
     CommonModule,
     PJDPDPQueryRelatedPaymentsDepositoriesRoutingModule,
     SharedModule,
-    SharedLegalProcessModule
+    SharedLegalProcessModule,
   ],
 })
 export class PJDPDPQueryRelatedPaymentsDepositoriesModule {}

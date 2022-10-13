@@ -4,12 +4,13 @@ import { StatusTransferListComponent } from './status-transfer-list/status-trans
 
 const routes: Routes = [
   {
-    path:'',component:StatusTransferListComponent
-  }
+    path: '',
+    component: StatusTransferListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class StatusTransferRoutingModule { }
+export class StatusTransferRoutingModule {}

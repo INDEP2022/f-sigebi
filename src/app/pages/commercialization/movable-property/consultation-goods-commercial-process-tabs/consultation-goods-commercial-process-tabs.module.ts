@@ -8,17 +8,14 @@ import { CBmCdbMConsultationGoodsCommercialModule } from '../c-bm-cdb-m-consulta
 import { ConsultationGoodsCommercialProcessTabsRoutingModule } from './consultation-goods-commercial-process-tabs-routing.module';
 import { ConsultationGoodsCommercialProcessTabsComponent } from './consultation-goods-commercial-process-tabs/consultation-goods-commercial-process-tabs.component';
 
-
 @NgModule({
-  declarations: [
-    ConsultationGoodsCommercialProcessTabsComponent
-  ],
+  declarations: [ConsultationGoodsCommercialProcessTabsComponent],
   imports: [
     CommonModule,
     ConsultationGoodsCommercialProcessTabsRoutingModule,
     SharedModule,
     TabsModule,
-    CBmCdbMConsultationGoodsCommercialModule
-  ]
+    CBmCdbMConsultationGoodsCommercialModule,
+  ],
 })
-export class ConsultationGoodsCommercialProcessTabsModule { }
+export class ConsultationGoodsCommercialProcessTabsModule {}

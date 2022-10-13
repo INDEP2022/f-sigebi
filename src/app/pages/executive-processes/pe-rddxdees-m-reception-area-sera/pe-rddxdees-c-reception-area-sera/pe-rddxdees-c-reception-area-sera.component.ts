@@ -5,14 +5,12 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-pe-rddxdees-c-reception-area-sera',
   templateUrl: './pe-rddxdees-c-reception-area-sera.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PeRddxdeesCReceptionAreaSeraComponent implements OnInit {
-
-  form: FormGroup = new FormGroup({}); 
+  form: FormGroup = new FormGroup({});
   select = new DefaultSelect();
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();
@@ -30,5 +28,4 @@ export class PeRddxdeesCReceptionAreaSeraComponent implements OnInit {
       // toMonth: ['', [Validators.required]],
     });
   }
-
 }

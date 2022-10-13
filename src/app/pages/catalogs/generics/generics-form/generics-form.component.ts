@@ -8,11 +8,9 @@ import { GenericService } from './../../../../core/services/catalogs/generic.ser
 @Component({
   selector: 'app-generics-form',
   templateUrl: './generics-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class GenericsFormComponent extends BasePage implements OnInit {
-
   genericsForm: FormGroup = new FormGroup({});
   title: string = 'Genérico';
   edit: boolean = false;
@@ -25,7 +23,7 @@ export class GenericsFormComponent extends BasePage implements OnInit {
     private genericsService: GenericService
   ) {
     super();
-   }
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -38,7 +36,7 @@ export class GenericsFormComponent extends BasePage implements OnInit {
       description: [null, [Validators.required]],
       version: [null, [Validators.required]],
       active: [null, [Validators.required]],
-      editable: [null, [Validators.required]]
+      editable: [null, [Validators.required]],
     });
     if (this.generics != null) {
       this.edit = true;
@@ -82,5 +80,4 @@ export class GenericsFormComponent extends BasePage implements OnInit {
     this.refresh.emit(true);
     this.modalRef.hide();
   }
-
 }

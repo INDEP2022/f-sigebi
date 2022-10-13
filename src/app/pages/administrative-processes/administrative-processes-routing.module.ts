@@ -86,9 +86,9 @@ const routes: Routes = [
       {
         path: 'summary-financial-info',
         loadChildren: () =>
-        import('./companies/financial-info/pa-e-fi-m-financial-info.module').then(
-            m => m.PaEFiMFinancialInfoModule
-        ),
+          import(
+            './companies/financial-info/pa-e-fi-m-financial-info.module'
+          ).then(m => m.PaEFiMFinancialInfoModule),
       },
       {
         path: 'warehouse-reports',
@@ -107,9 +107,9 @@ const routes: Routes = [
       {
         path: 'unit-conversion-packages',
         loadChildren: () =>
-        import('./unit-conversion-packages/pa-ucp-m-unit-conversion-packages.module').then(
-            m => m.PaUcpMUnitConversionPackagesModule
-        ),
+          import(
+            './unit-conversion-packages/pa-ucp-m-unit-conversion-packages.module'
+          ).then(m => m.PaUcpMUnitConversionPackagesModule),
       },
       {
         path: 'goods-tracking',
@@ -128,9 +128,9 @@ const routes: Routes = [
       {
         path: 'siab-sami-interaction',
         loadChildren: () =>
-        import('./siab-sami-interaction/pa-ssi-m-siab-sami-interaction.module').then(
-            m => m.PaSsiMSiabSamiInteractionModule
-        ),
+          import(
+            './siab-sami-interaction/pa-ssi-m-siab-sami-interaction.module'
+          ).then(m => m.PaSsiMSiabSamiInteractionModule),
       },
       /**
        * Seguros **Legaspi**
@@ -138,26 +138,36 @@ const routes: Routes = [
       {
         path: 'location-goods',
         loadChildren: async () =>
-          (await import('./location-of-goods/location-goods-warehouses-storage/pa-lg-m-location-goods-warehouses-storage.module')).PaLgMLocationGoodsWarehousesStorageModule,
+          (
+            await import(
+              './location-of-goods/location-goods-warehouses-storage/pa-lg-m-location-goods-warehouses-storage.module'
+            )
+          ).PaLgMLocationGoodsWarehousesStorageModule,
         data: { title: 'Ubicacion de bienes' },
       },
       {
         path: 'warehouse-inquiries',
         loadChildren: async () =>
-         (await import('./warehouse-inquiries/pa-m-warehouse-inquiries.module')).PaMWarehouseInquiriesModule,
-         data: { title: 'Consulta Almacenes'}
+          (
+            await import(
+              './warehouse-inquiries/pa-m-warehouse-inquiries.module'
+            )
+          ).PaMWarehouseInquiriesModule,
+        data: { title: 'Consulta Almacenes' },
       },
       {
         path: 'vault-consultation',
         loadChildren: async () =>
-         (await import('./vault-consultation/pa-m-vault-consultation.module')).PaMVaultConsultationModule,
-         data: { title: 'Consulta Bovedas'}
+          (await import('./vault-consultation/pa-m-vault-consultation.module'))
+            .PaMVaultConsultationModule,
+        data: { title: 'Consulta Bovedas' },
       },
       {
         path: 'property-registration',
         loadChildren: async () =>
-         (await import('./kitchenware/pa-m-kitchenware.module')).PaMKitchenwareModule,
-         data: { title: 'Registro de mensaje del bien'}
+          (await import('./kitchenware/pa-m-kitchenware.module'))
+            .PaMKitchenwareModule,
+        data: { title: 'Registro de mensaje del bien' },
       },
       /**
        * Seguros **Legaspi**
@@ -193,20 +203,22 @@ const routes: Routes = [
       {
         path: 'monitor-unavoidable-assets',
         loadChildren: async () =>
-          (await import('./monitor-unavoidable-assets/monitor-unavoidable-assets.module'))
-            .MonitorUnavoidableAssetsModule,
+          (
+            await import(
+              './monitor-unavoidable-assets/monitor-unavoidable-assets.module'
+            )
+          ).MonitorUnavoidableAssetsModule,
         data: { title: 'Monitor de bienes incosteables' },
       },
       {
         path: 'sale-goods',
         loadChildren: async () =>
-          (await import('./sale-goods/sale-goods.module'))
-            .SaleGoodsModule,
+          (await import('./sale-goods/sale-goods.module')).SaleGoodsModule,
         data: { title: 'VENTA DE BIENES' },
       },
       /**
        *Services Pages Legaspi
-      **/
+       **/
       {
         path: 'services',
         loadChildren: () =>
@@ -216,7 +228,7 @@ const routes: Routes = [
       },
       /**
        * Services Pages Legaspi
-      **/
+       **/
     ],
   },
 ];

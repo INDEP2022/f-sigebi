@@ -7,16 +7,13 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { CBGeCdgMExpenseCaptureRoutingModule } from './c-b-ge-cdg-m-expense-capture-routing.module';
 import { CBGeCdgCExpenseCaptureComponent } from './c-b-ge-cdg-c-expense-capture/c-b-ge-cdg-c-expense-capture.component';
 
-
 @NgModule({
-  declarations: [
-    CBGeCdgCExpenseCaptureComponent
-  ],
+  declarations: [CBGeCdgCExpenseCaptureComponent],
   imports: [
     CommonModule,
     CBGeCdgMExpenseCaptureRoutingModule,
     SharedModule,
-    BsDatepickerModule
-  ]
+    BsDatepickerModule,
+  ],
 })
-export class CBGeCdgMExpenseCaptureModule { }
+export class CBGeCdgMExpenseCaptureModule {}

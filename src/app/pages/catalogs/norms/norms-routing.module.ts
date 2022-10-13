@@ -5,12 +5,12 @@ import { NormsListComponent } from './norms-list/norms-list.component';
 const routes: Routes = [
   {
     path: '',
-    component: NormsListComponent
-  }
+    component: NormsListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class NormsRoutingModule { }
+export class NormsRoutingModule {}

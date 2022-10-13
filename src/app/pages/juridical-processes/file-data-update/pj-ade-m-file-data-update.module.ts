@@ -15,16 +15,8 @@ import { PJADEFileDataUpdateRoutingModule } from './pj-ade-m-file-data-update-ro
 import { PJADEFileDataUpdateComponent } from './file-data-update/pj-ade-c-file-data-update.component';
 
 @NgModule({
-  declarations: [
-    PJADEFileDataUpdateComponent
-  ],
-  imports: [
-    CommonModule,
-    PJADEFileDataUpdateRoutingModule,
-    SharedModule,
-  ],
-  exports: [
-    PJADEFileDataUpdateComponent
-  ]
+  declarations: [PJADEFileDataUpdateComponent],
+  imports: [CommonModule, PJADEFileDataUpdateRoutingModule, SharedModule],
+  exports: [PJADEFileDataUpdateComponent],
 })
 export class PJADEFileDataUpdateModule {}

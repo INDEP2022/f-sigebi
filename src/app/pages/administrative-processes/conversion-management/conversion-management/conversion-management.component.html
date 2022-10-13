@@ -30,7 +30,11 @@
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field [control]="form.get('date')" label="Fecha de creación">
-            <input type="text" class="form-control" formControlName="date" bsDatepicker/>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="date"
+              bsDatepicker />
           </form-field>
         </div>
       </div>
@@ -69,41 +73,37 @@
       </div>
       <app-card>
         <div body>
-            <h5 class="title mt-0 ">Datos del bien</h5>
-            <div class="row">
-                <div class="col-md-6 col-sm-12 col-xs-12">
-                    <form-field
-                    [control]="form.get('desStatus')"
-                    label="Desc. Estatus">
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="desStatus" />
-                  </form-field>
-                </div>
-                <div class="col-md-6 col-sm-12 col-xs-12">
-                    <form-field
-                    [control]="form.get('actaER')"
-                    label="Acta E/R">
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="actaER" />
-                  </form-field>
-                </div>
-              </div>
-              <div class="row mt-5">
-                <div class="col-md-12 col-sm-12 col-xs-12">
-                    <form-field
-                    [control]="form.get('description')"
-                    label="Descripción">
-                    <textarea 
-                    class="form-control" 
-                    formControlName="description">
-                    </textarea>
-                  </form-field>
-                </div>
-              </div>
+          <h5 class="title mt-0">Datos del bien</h5>
+          <div class="row">
+            <div class="col-md-6 col-sm-12 col-xs-12">
+              <form-field
+                [control]="form.get('desStatus')"
+                label="Desc. Estatus">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="desStatus" />
+              </form-field>
+            </div>
+            <div class="col-md-6 col-sm-12 col-xs-12">
+              <form-field [control]="form.get('actaER')" label="Acta E/R">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="actaER" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row mt-5">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <form-field
+                [control]="form.get('description')"
+                label="Descripción">
+                <textarea class="form-control" formControlName="description">
+                </textarea>
+              </form-field>
+            </div>
+          </div>
         </div>
       </app-card>
       <div class="row mt-5">
@@ -117,23 +117,23 @@
             </button>
           </div>
         </div>
-        
+
         <div class="col-md-6 col-sm-12 col-xs-12 mt-2">
           <div class="add-select">
-            <button 
-                class="btn btn-success btn-sm active" 
-                (click)="save()">
+            <button class="btn btn-success btn-sm active" (click)="save()">
               Guardar
             </button>
           </div>
         </div>
       </div>
 
-        <div class="row mt-5" *ngIf="generarPass">
-          <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
-            <p>Nueva contraseña:  <strong>{{password}}</strong></p>
-          </div>
+      <div class="row mt-5" *ngIf="generarPass">
+        <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
+          <p>
+            Nueva contraseña: <strong>{{ password }}</strong>
+          </p>
         </div>
+      </div>
     </form>
   </div>
 </app-card>

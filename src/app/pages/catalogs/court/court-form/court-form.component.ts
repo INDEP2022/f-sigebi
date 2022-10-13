@@ -9,11 +9,9 @@ import { CourtService } from './../../../../core/services/catalogs/court.service
 @Component({
   selector: 'app-court-form',
   templateUrl: './court-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CourtFormComponent extends BasePage implements OnInit {
-
   courtForm: FormGroup = new FormGroup({});
   title: string = 'Juzgado';
   edit: boolean = false;
@@ -27,7 +25,7 @@ export class CourtFormComponent extends BasePage implements OnInit {
     private courtService: CourtService
   ) {
     super();
-   }
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -45,7 +43,7 @@ export class CourtFormComponent extends BasePage implements OnInit {
       numExterior: [null, [Validators.required]],
       delegationMun: [null, [Validators.required]],
       zipCode: [null, [Validators.required]],
-      circuitCVE: [null, [Validators.required]]
+      circuitCVE: [null, [Validators.required]],
     });
     if (this.court != null) {
       this.edit = true;
@@ -72,12 +70,10 @@ export class CourtFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.courtService
-      .update(this.court.id, this.courtForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.courtService.update(this.court.id, this.courtForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   handleSuccess() {
@@ -87,5 +83,4 @@ export class CourtFormComponent extends BasePage implements OnInit {
     this.refresh.emit(true);
     this.modalRef.hide();
   }
-
 }

@@ -7,17 +7,13 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { ConversionActDetailComponent } from './conversion-act-detail/conversion-act-detail.component';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
 
-
 @NgModule({
-  declarations: [
-    ConversionActComponent,
-    ConversionActDetailComponent
-  ],
+  declarations: [ConversionActComponent, ConversionActDetailComponent],
   imports: [
     CommonModule,
     SharedModule,
     Ng2SmartTableModule,
-    ConversionActRoutingModule
-  ]
+    ConversionActRoutingModule,
+  ],
 })
-export class ConversionActModule { }
+export class ConversionActModule {}

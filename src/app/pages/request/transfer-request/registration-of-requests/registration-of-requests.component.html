@@ -1,84 +1,135 @@
 <app-modal>
-    <div header>
-        <h5 class="modal-title">{{ title }}</h5>
-    </div>
-    <div body class="body">
-        <app-card [header]="true">
-            <div class="ch-content" header>
-              <h5 class="title">Información de la Solicitud</h5>
-            </div> 
-            <div body>
-                <form [formGroup]="registRequestForm" class="form-material">
-                    <div>
-                        <div class="row pt-2">
-                            <div class="col-md-3">
-                                <label class="label" for="">Fecha de Solicitud: <span for="">{{registRequestForm.get('date').value}}</span></label>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="label" for="">Entidad: <label for="">{{registRequestForm.get('entity').value}}</label></label>                        
-                            </div>
-                            <div class="col-md-3">                               
-                                <label class="label" for="">No. Solicitud: <label for="">{{registRequestForm.get('noRequest').value}}</label></label>
-                            </div>
-                            <div class="col-md-3">                               
-                                <label class="label" for="">Transferencia: <label for="">{{registRequestForm.get('tranfe').value}}</label></label>
-                            </div>
-                        </div>
-                        <div class="row pt-2">
-                            <div class="col-md-3">
-                                <label class="label" for="">No. Expediente: <label for="">{{registRequestForm.get('noExpedient').value}}</label></label>
-                            </div>
-                            
-                            <div class="col-md-3">
-                                <label class="label" for="">No. Oficina: <label for="">{{registRequestForm.get('noOfi').value}}</label></label>
-                            </div>
-                            
-                            <div class="col-md-3">
-                                <label class="label" for="">Delegación Regional: <label for="">{{registRequestForm.get('regDelega').value}}</label></label>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="label" for="">Tipo de Expediente: <label for="">{{registRequestForm.get('typeExpedient').value}}</label></label>
-                            </div>
-                        </div>
-                        <div class="row pt-2">
-                            <div class="col-md-12">
-                                <label class="label" for="">Autoridad: <label for="">{{registRequestForm.get('authority').value}}</label></label>
-                            </div>
-                        </div>
-                        <div class="row pt-2">
-                            <div class="col-md-12">
-                                <label class="label" for="">Emisor: <label for="">{{registRequestForm.get('transmitter').value}}</label></label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row pt-4">
-                        <tabset>
-                            <tab heading="Registro de Solicitud" id="tab1">
-                                <app-request-record-tab></app-request-record-tab>
-                            </tab>
-                            <tab heading="Bienes">Basic content 1</tab>
-                            <tab heading="Domicilio de la Transferencia">Basic content 2</tab>
-                        </tabset>                        
-                    </div>
-                </form>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body class="body">
+    <app-card [header]="true">
+      <div class="ch-content" header>
+        <h5 class="title">Información de la Solicitud</h5>
+      </div>
+      <div body>
+        <form [formGroup]="registRequestForm" class="form-material">
+          <div>
+            <div class="row pt-2">
+              <div class="col-md-3">
+                <label class="label" for=""
+                  >Fecha de Solicitud:
+                  <span for="">{{
+                    registRequestForm.get('date').value
+                  }}</span></label
+                >
+              </div>
+              <div class="col-md-3">
+                <label class="label" for=""
+                  >Entidad:
+                  <label for="">{{
+                    registRequestForm.get('entity').value
+                  }}</label></label
+                >
+              </div>
+              <div class="col-md-3">
+                <label class="label" for=""
+                  >No. Solicitud:
+                  <label for="">{{
+                    registRequestForm.get('noRequest').value
+                  }}</label></label
+                >
+              </div>
+              <div class="col-md-3">
+                <label class="label" for=""
+                  >Transferencia:
+                  <label for="">{{
+                    registRequestForm.get('tranfe').value
+                  }}</label></label
+                >
+              </div>
             </div>
-        </app-card>
+            <div class="row pt-2">
+              <div class="col-md-3">
+                <label class="label" for=""
+                  >No. Expediente:
+                  <label for="">{{
+                    registRequestForm.get('noExpedient').value
+                  }}</label></label
+                >
+              </div>
 
+              <div class="col-md-3">
+                <label class="label" for=""
+                  >No. Oficina:
+                  <label for="">{{
+                    registRequestForm.get('noOfi').value
+                  }}</label></label
+                >
+              </div>
 
-    </div>
-        <div footer>
-            <div class="d-flex justify-content-center">
-                <div class="m-3">
-                    <button type="button" class="btn btn-secondary active" [disabled]="registRequestForm.invalid"
-                        (click)="confirm()">
-                        Turnar
-                    </button>
-                </div>
-                <div class="m-3">
-                    <button type="button" class="btn btn-danger active" (click)="close()">
-                        Cancelar
-                    </button>
-                </div>
+              <div class="col-md-3">
+                <label class="label" for=""
+                  >Delegación Regional:
+                  <label for="">{{
+                    registRequestForm.get('regDelega').value
+                  }}</label></label
+                >
+              </div>
+              <div class="col-md-3">
+                <label class="label" for=""
+                  >Tipo de Expediente:
+                  <label for="">{{
+                    registRequestForm.get('typeExpedient').value
+                  }}</label></label
+                >
+              </div>
             </div>
-        </div>
+            <div class="row pt-2">
+              <div class="col-md-12">
+                <label class="label" for=""
+                  >Autoridad:
+                  <label for="">{{
+                    registRequestForm.get('authority').value
+                  }}</label></label
+                >
+              </div>
+            </div>
+            <div class="row pt-2">
+              <div class="col-md-12">
+                <label class="label" for=""
+                  >Emisor:
+                  <label for="">{{
+                    registRequestForm.get('transmitter').value
+                  }}</label></label
+                >
+              </div>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <tabset>
+              <tab heading="Registro de Solicitud" id="tab1">
+                <app-request-record-tab></app-request-record-tab>
+              </tab>
+              <tab heading="Bienes">Basic content 1</tab>
+              <tab heading="Domicilio de la Transferencia">Basic content 2</tab>
+            </tabset>
+          </div>
+        </form>
+      </div>
+    </app-card>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-secondary active"
+          [disabled]="registRequestForm.invalid"
+          (click)="confirm()">
+          Turnar
+        </button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
 </app-modal>

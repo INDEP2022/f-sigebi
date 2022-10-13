@@ -21,11 +21,8 @@ import { FactJurAbonadosComponent } from './fact-jur-abandonos/fact-jur-abandono
 import { SharedLegalProcessModule } from '../shared-legal-process/shared-legal-process.module';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 
-@NgModule({ 
-  declarations: [ 
-    FactJurAbonadosComponent,
-    
-  ],
+@NgModule({
+  declarations: [FactJurAbonadosComponent],
   imports: [
     CommonModule,
     FactJurAbonadosRoutingModule,
@@ -51,14 +48,11 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
     SharedModule,
 
     TabsModule,
-    SharedLegalProcessModule
+    SharedLegalProcessModule,
   ],
-  exports:[
-    
-    // ComponentsModule, 
-    NgSelectModule
-    
-  ]
+  exports: [
+    // ComponentsModule,
+    NgSelectModule,
+  ],
 })
-export class FactJurAbonadosModule { }
-
+export class FactJurAbonadosModule {}

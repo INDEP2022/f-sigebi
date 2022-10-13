@@ -5,12 +5,12 @@ import { RequestInTurnListComponent } from './request-in-turn-list/request-in-tu
 const routes: Routes = [
   {
     path: '',
-    component: RequestInTurnListComponent
-  }
+    component: RequestInTurnListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class RequestInTurnRoutingModule { }
+export class RequestInTurnRoutingModule {}

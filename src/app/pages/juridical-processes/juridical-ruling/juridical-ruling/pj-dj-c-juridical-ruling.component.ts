@@ -11,56 +11,58 @@ import { BasePage } from 'src/app/core/shared/base-page';
 /** COMPONENTS IMPORTS */
 
 @Component({
-    selector: 'app-pj-dj-c-juridical-ruling',
-    templateUrl: './pj-dj-c-juridical-ruling.component.html',
-    styleUrls: ['./pj-dj-c-juridical-ruling.component.scss']
+  selector: 'app-pj-dj-c-juridical-ruling',
+  templateUrl: './pj-dj-c-juridical-ruling.component.html',
+  styleUrls: ['./pj-dj-c-juridical-ruling.component.scss'],
 })
-export class PJDJJuridicalRulingComponent extends BasePage implements OnInit, OnDestroy{
-    
+export class PJDJJuridicalRulingComponent
+  extends BasePage
+  implements OnInit, OnDestroy
+{
   data1 = [
     {
       noBien: 12345,
-      description: "UNA BOLSA",
+      description: 'UNA BOLSA',
       cantidad: 1,
-      est: "ENGD",
-      proceso: "ASEGURADO",
+      est: 'ENGD',
+      proceso: 'ASEGURADO',
     },
     {
       noBien: 12345,
-      description: "UNA BOLSA",
+      description: 'UNA BOLSA',
       cantidad: 1,
-      est: "ENGD",
-      proceso: "ASEGURADO",
+      est: 'ENGD',
+      proceso: 'ASEGURADO',
     },
     {
       noBien: 12345,
-      description: "UNA BOLSA",
+      description: 'UNA BOLSA',
       cantidad: 1,
-      est: "ENGD",
-      proceso: "ASEGURADO",
+      est: 'ENGD',
+      proceso: 'ASEGURADO',
     },
   ];
 
   data2 = [
     {
       noBien: 12345,
-      description: "UNA BOLSA",
+      description: 'UNA BOLSA',
       cantidad: 1,
       menaje: 13465,
-      proceso: "ASEGURADO",
+      proceso: 'ASEGURADO',
     },
     {
       noBien: 12345,
-      description: "UNA BOLSA",
+      description: 'UNA BOLSA',
       cantidad: 1,
       menaje: 13465,
-      proceso: "ASEGURADO",
+      proceso: 'ASEGURADO',
     },
   ];
 
   data3 = [
-    { id: "DEST", documento: "RESOLUCION DE LA AUTORIDAD JUDICIAL", fecha: "" },
-    { id: "DEST", documento: "RESOLUCION DE LA AUTORIDAD JUDICIAL", fecha: "" },
+    { id: 'DEST', documento: 'RESOLUCION DE LA AUTORIDAD JUDICIAL', fecha: '' },
+    { id: 'DEST', documento: 'RESOLUCION DE LA AUTORIDAD JUDICIAL', fecha: '' },
   ];
 
   settings1 = {
@@ -70,34 +72,34 @@ export class PJDJJuridicalRulingComponent extends BasePage implements OnInit, On
     hideSubHeader: true,
     actions: false,
     selectedRowIndex: -1,
-    mode: "external",
+    mode: 'external',
     columns: {
       noBien: {
-        title: "No. Bien",
-        type: "number",
+        title: 'No. Bien',
+        type: 'number',
       },
       description: {
-        title: "Descripcion",
-        type: "string",
+        title: 'Descripcion',
+        type: 'string',
       },
       cantidad: {
-        title: "Cantidad",
-        type: "string",
+        title: 'Cantidad',
+        type: 'string',
       },
       ident: {
-        title: "Ident.",
-        type: "string",
+        title: 'Ident.',
+        type: 'string',
       },
       est: {
-        title: "Est",
-        type: "string",
+        title: 'Est',
+        type: 'string',
       },
       proceso: {
-        title: "Proceso",
-        type: "string",
+        title: 'Proceso',
+        type: 'string',
       },
     },
-    noDataMessage: "No se encontrarón registros",
+    noDataMessage: 'No se encontrarón registros',
   };
 
   settings2 = {
@@ -107,34 +109,34 @@ export class PJDJJuridicalRulingComponent extends BasePage implements OnInit, On
     hideSubHeader: true,
     actions: false,
     selectedRowIndex: -1,
-    mode: "external",
+    mode: 'external',
     columns: {
       noBien: {
-        title: "No. Bien",
-        type: "number",
+        title: 'No. Bien',
+        type: 'number',
       },
       description: {
-        title: "Descripcion Dictaminada",
-        type: "string",
+        title: 'Descripcion Dictaminada',
+        type: 'string',
       },
       menaje: {
-        title: "Menaje",
-        type: "string",
+        title: 'Menaje',
+        type: 'string',
       },
       cantidad: {
-        title: "Cant. Dic..",
-        type: "string",
+        title: 'Cant. Dic..',
+        type: 'string',
       },
       est: {
-        title: "Est",
-        type: "string",
+        title: 'Est',
+        type: 'string',
       },
       proceso: {
-        title: "Proceso",
-        type: "string",
+        title: 'Proceso',
+        type: 'string',
       },
     },
-    noDataMessage: "No se encontrarón registros",
+    noDataMessage: 'No se encontrarón registros',
   };
 
   settings3 = {
@@ -144,29 +146,28 @@ export class PJDJJuridicalRulingComponent extends BasePage implements OnInit, On
     hideSubHeader: true,
     actions: false,
     selectedRowIndex: -1,
-    mode: "external",
+    mode: 'external',
     columns: {
       id: {
-        title: "#",
-        type: "number",
+        title: '#',
+        type: 'number',
       },
       documento: {
-        title: "Documentos",
-        type: "string",
+        title: 'Documentos',
+        type: 'string',
       },
       fecha: {
-        title: "Fec. Recibido",
-        type: "string",
+        title: 'Fec. Recibido',
+        type: 'string',
       },
     },
-    noDataMessage: "No se encontrarón registros",
+    noDataMessage: 'No se encontrarón registros',
   };
 
   legalForm: FormGroup;
   subtipoForm: FormGroup;
 
-  constructor(private fb: FormBuilder,
-     ) {
+  constructor(private fb: FormBuilder) {
     super();
   }
 
@@ -194,8 +195,6 @@ export class PJDJJuridicalRulingComponent extends BasePage implements OnInit, On
     this.subtipoForm = this.fb.group({
       tipoDictaminacion: [null],
       noExpediente: [null],
-    })
+    });
   }
 }
-
-  

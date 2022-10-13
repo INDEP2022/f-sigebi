@@ -18,7 +18,7 @@ import { GoodsTypesSharedComponent } from '../../../../@standalone/shared-forms/
 @NgModule({
   declarations: [
     PaEFiCSummaryFinancialInfoComponent,
-    PaEFiCSelectAttributesComponent
+    PaEFiCSelectAttributesComponent,
   ],
   imports: [
     CommonModule,
@@ -30,6 +30,6 @@ import { GoodsTypesSharedComponent } from '../../../../@standalone/shared-forms/
     TabsModule,
     ModalModule.forChild(),
     GoodsTypesSharedComponent,
-  ]
+  ],
 })
-export class PaEFiMFinancialInfoModule { }
+export class PaEFiMFinancialInfoModule {}

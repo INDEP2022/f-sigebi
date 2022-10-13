@@ -21,7 +21,7 @@ import { RecordsSharedComponent } from 'src/app/@standalone/shared-forms/records
   declarations: [
     PaRspCRecordServicePaymentComponent,
     PaGspCGlobalServicePaymentComponent,
-    PaGspCGoodsServicePaymentComponent
+    PaGspCGoodsServicePaymentComponent,
   ],
   imports: [
     CommonModule,
@@ -32,7 +32,7 @@ import { RecordsSharedComponent } from 'src/app/@standalone/shared-forms/records
     BsDatepickerModule,
     ModalModule.forChild(),
     GoodsTypesSharedComponent,
-    RecordsSharedComponent
-  ]
+    RecordsSharedComponent,
+  ],
 })
-export class PaSMServicesModule { }
+export class PaSMServicesModule {}

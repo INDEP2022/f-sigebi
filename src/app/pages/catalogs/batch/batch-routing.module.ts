@@ -5,12 +5,12 @@ import { BatchListComponent } from './batch-list/batch-list.component';
 const routes: Routes = [
   {
     path: '',
-    component: BatchListComponent
-  }
+    component: BatchListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class BatchRoutingModule { }
+export class BatchRoutingModule {}

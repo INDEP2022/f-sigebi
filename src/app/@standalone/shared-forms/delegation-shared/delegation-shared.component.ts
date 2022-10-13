@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { AbstractControl, FormGroup } from "@angular/forms";
+import { AbstractControl, FormGroup } from '@angular/forms';
 //Rxjs
 import { BehaviorSubject, takeUntil } from 'rxjs';
 //Params
@@ -20,14 +20,12 @@ import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './delegation-shared.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class DelegationSharedComponent extends BasePage implements OnInit {
-
   @Input() form: FormGroup;
-  @Input() delegationField: string = "delegation";
-  @Input() subdelegationField: string = "subdelegation";
+  @Input() delegationField: string = 'delegation';
+  @Input() subdelegationField: string = 'subdelegation';
 
   @Input() showSubdelegation: boolean = true;
   @Input() showDelegation: boolean = true;
@@ -36,38 +34,46 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
   delegations = new DefaultSelect<IDelegation>();
   subdelegations = new DefaultSelect<ISubdelegation>();
 
-  get delegation() {return this.form.get(this.delegationField);}
-  get subdelegation() {return this.form.get(this.subdelegationField);}
+  get delegation() {
+    return this.form.get(this.delegationField);
+  }
+  get subdelegation() {
+    return this.form.get(this.subdelegationField);
+  }
 
   constructor(
     private service: DelegationService,
-    private serviceSubDeleg: SubdelegationService){
+    private serviceSubDeleg: SubdelegationService
+  ) {
     super();
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
-  getDelegations(params: ListParams) { 
-    this.service.getAll(params).subscribe(data => {
-        this.delegations = new DefaultSelect(data.data,data.count);
-    },err => {
-      let error = '';
-      if (err.status === 0) {
-        error = 'Revise su conexión de Internet.';
-      } else {
-        error = err.message;
-      }
-      this.onLoadToast('error', 'Error', error);
-
-    }, () => {});
+  getDelegations(params: ListParams) {
+    this.service.getAll(params).subscribe(
+      data => {
+        this.delegations = new DefaultSelect(data.data, data.count);
+      },
+      err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          error = err.message;
+        }
+        this.onLoadToast('error', 'Error', error);
+      },
+      () => {}
+    );
   }
 
   getSubDelegations(params: ListParams) {
     this.serviceSubDeleg.getAll(params).subscribe(
       (data: any) => {
-        this.subdelegations = new DefaultSelect(data.data,data.count);
-      },err => {
+        this.subdelegations = new DefaultSelect(data.data, data.count);
+      },
+      err => {
         let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
@@ -76,8 +82,9 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
         }
 
         this.onLoadToast('error', 'Error', error);
-
-      }, () => {});
+      },
+      () => {}
+    );
   }
 
   onDelegationsChange(type: any) {
@@ -93,11 +100,10 @@ export class DelegationSharedComponent extends BasePage implements OnInit {
   }
 
   resetFields(fields: AbstractControl[]) {
-    fields.forEach((field) => {
+    fields.forEach(field => {
       //field.setValue(null);
-      field=null;
+      field = null;
     });
     this.form.updateValueAndValidity();
   }
-
 }

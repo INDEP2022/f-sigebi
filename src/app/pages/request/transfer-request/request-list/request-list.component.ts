@@ -10,72 +10,78 @@ import { RequestFormComponent } from '../request-form/request-form.component';
 import { REQUEST_LIST_COLUMNS } from './request-list-columns';
 
 var usuario: IRequestList[] = [
-{
-  title: 'Registro de solicitud (Captura de Solicitud) con folio 45009',
-  noRequest: 45009,
-  numTask: 260301,
-  noInstance: 820169,
-  created: 'tester_nsbxt',
-  process: 'SolicitudeTransferencia'
-}
-]
+  {
+    title: 'Registro de solicitud (Captura de Solicitud) con folio 45009',
+    noRequest: 45009,
+    numTask: 260301,
+    noInstance: 820169,
+    created: 'tester_nsbxt',
+    process: 'SolicitudeTransferencia',
+  },
+];
 
 @Component({
   selector: 'app-request-list',
   templateUrl: './request-list.component.html',
-  styleUrls: ['./request-list.component.scss']
+  styleUrls: ['./request-list.component.scss'],
 })
 export class RequestListComponent extends BasePage implements OnInit {
   settings = TABLE_SETTINGS;
-  params = new BehaviorSubject<ListParams>(new ListParams);
+  params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: IRequestList[] = [];
   totalItems: number = 0;
   lastClick: number = 0;
 
-  constructor(
-    public modalService: BsModalService
-  ) {
+  constructor(public modalService: BsModalService) {
     super();
     this.settings.columns = REQUEST_LIST_COLUMNS;
-    this.settings.selectMode = ''
+    this.settings.selectMode = '';
     this.settings.actions = {
       columnTitle: 'Acciones',
-      position:'right',
+      position: 'right',
       add: false,
       edit: false,
-      delete: false
-    }
-   }
+      delete: false,
+    };
+  }
 
   ngOnInit(): void {
     this.paragraphs = usuario;
   }
 
   openCreateRequestForm(event?: IRequestList) {
-    this.openModel('modal-lg',RequestFormComponent)
+    this.openModel('modal-lg', RequestFormComponent);
   }
 
   editRequest(event: any) {
     this.lastClick += 1;
     setTimeout(() => {
       if (this.lastClick > 1) {
-        this.openModel('modalSizeXL',RegistrationOfRequestsComponent,event.data);
-      } 
+        this.openModel(
+          'modalSizeXL',
+          RegistrationOfRequestsComponent,
+          event.data
+        );
+      }
       this.lastClick = 0;
     }, 500);
   }
 
-  private openModel(sizeModal:string, modalComponent:any,parameter?:IRequestList):void{
-    let config:ModalOptions = {
+  private openModel(
+    sizeModal: string,
+    modalComponent: any,
+    parameter?: IRequestList
+  ): void {
+    let config: ModalOptions = {
       initialState: {
         parameter: parameter,
         callback: (next: boolean) => {
           //if(next) this.getExample();
-        }
+        },
       },
       class: `${sizeModal} modal-dialog-centered`,
       ignoreBackdropClick: true,
-    }
+    };
     this.modalService.show(modalComponent, config);
   }
 }

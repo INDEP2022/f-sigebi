@@ -5,12 +5,12 @@ import { NotaryListComponent } from './notary-list/notary-list.component';
 const routes: Routes = [
   {
     path: '',
-    component: NotaryListComponent
-  }
+    component: NotaryListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class NotaryRoutingModule { }
+export class NotaryRoutingModule {}

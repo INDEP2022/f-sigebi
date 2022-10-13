@@ -6,6 +6,6 @@ const routes: Routes = [{ path: '', component: SiseProcessListComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class SiseProcessRoutingModule { }
+export class SiseProcessRoutingModule {}

@@ -3,14 +3,10 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-acumulative-asset-tabs',
   templateUrl: './acumulative-asset-tabs.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class AcumulativeAssetTabsComponent implements OnInit {
+  constructor() {}
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

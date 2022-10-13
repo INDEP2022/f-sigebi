@@ -15,10 +15,6 @@ import { JuridicalProcessesRoutingModule } from './juridical-processes-routing.m
 
 @NgModule({
   declarations: [],
-  imports: [
-    CommonModule,
-    JuridicalProcessesRoutingModule,
-    SharedModule,
-  ],
+  imports: [CommonModule, JuridicalProcessesRoutingModule, SharedModule],
 })
 export class JuridicalProcessesModule {}

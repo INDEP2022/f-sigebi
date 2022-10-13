@@ -14,5 +14,5 @@ export const TYPESINISTER_COLUMS = {
     title: 'Numero de registro',
     type: 'number',
     sort: false,
-  }
-}
+  },
+};

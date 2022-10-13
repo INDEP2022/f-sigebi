@@ -12,34 +12,30 @@ import { MONITORUNAVOIDABLEASSETS_COLUMNS } from './monitor-unavoidable-assets-c
 @Component({
   selector: 'app-monitor-unavoidable-assets',
   templateUrl: './monitor-unavoidable-assets.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class MonitorUnavoidableAssetsComponent extends BasePage implements OnInit {
-
+export class MonitorUnavoidableAssetsComponent
+  extends BasePage
+  implements OnInit
+{
   settings = TABLE_SETTINGS;
   data1: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
 
-
-    constructor(private modalService: BsModalService)
-  {
+  constructor(private modalService: BsModalService) {
     super();
     this.settings.columns = MONITORUNAVOIDABLEASSETS_COLUMNS;
     this.settings.actions.delete = true;
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
-  openForm(parameters:any) {
+  openForm(parameters: any) {
     let config: ModalOptions = {
       initialState: {
         parameters,
-        callback: (next: boolean) => {
-
-        },
+        callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,

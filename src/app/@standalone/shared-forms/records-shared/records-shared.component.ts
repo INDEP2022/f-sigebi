@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { AbstractControl, FormGroup } from "@angular/forms";
+import { AbstractControl, FormGroup } from '@angular/forms';
 //Rxjs
 import { BehaviorSubject, takeUntil } from 'rxjs';
 //Params
@@ -19,30 +19,27 @@ import { recordsData } from './recordsData';
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './records-shared.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class RecordsSharedComponent extends BasePage implements OnInit {
-
   @Input() form: FormGroup;
-  @Input() recordField: string = "record";
+  @Input() recordField: string = 'record';
 
   @Input() showRecords: boolean = true;
 
   records = new DefaultSelect<IRecord>();
 
   constructor(/*private service: WarehouseService*/) {
-    super()
+    super();
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   getRecords(params: ListParams) {
     //Provisional data
-    let data=recordsData;
-    let count= data.length;
-    this.records = new DefaultSelect(data,count);
+    let data = recordsData;
+    let count = data.length;
+    this.records = new DefaultSelect(data, count);
     /*this.service.getAll(params).subscribe(data => {
         this.status = new DefaultSelect(data.data,data.count);
       },err => {
@@ -61,15 +58,12 @@ export class RecordsSharedComponent extends BasePage implements OnInit {
   onRecordsChange(type: any) {
     this.form.updateValueAndValidity();
   }
-  
+
   resetFields(fields: AbstractControl[]) {
-    fields.forEach((field) => {
+    fields.forEach(field => {
       //field.setValue(null);
-      field=null;
+      field = null;
     });
     this.form.updateValueAndValidity();
   }
-
 }
-
-

@@ -49,11 +49,11 @@ export class LabelOkeyListComponent extends BasePage implements OnInit {
 
   openForm(labelOKey?: ILabelOKey) {
     let config: ModalOptions = {
-      initialState:{
+      initialState: {
         labelOKey,
         callback: (next: boolean) => {
-          if(next) this.getLabelsOkey()
-        }
+          if (next) this.getLabelsOkey();
+        },
       },
       class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,

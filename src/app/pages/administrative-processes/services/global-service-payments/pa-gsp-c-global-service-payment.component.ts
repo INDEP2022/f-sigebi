@@ -9,38 +9,39 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { COLUMNS } from './columns';
 //Provisional Data
-import {  data } from './bienStatusData';
+import { data } from './bienStatusData';
 //Components
 import { PaGspCGoodsServicePaymentComponent } from '../goods-service-payments/pa-gsp-c-goods-service-payment.component';
 
 @Component({
   selector: 'app-pa-gsp-c-global-service-payment',
   templateUrl: './pa-gsp-c-global-service-payment.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class PaGspCGlobalServicePaymentComponent extends BasePage implements OnInit {
-
+export class PaGspCGlobalServicePaymentComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
   settings = {
     ...TABLE_SETTINGS,
-    actions: false
+    actions: false,
   };
 
-  data:any[]=data;
-  
+  data: any[] = data;
+
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  
-  requestId:string;
-  serviceId: string = 'service3921dajk'
-  globalAmount:number = 20005000.00;
+
+  requestId: string;
+  serviceId: string = 'service3921dajk';
+  globalAmount: number = 20005000.0;
   paymentDate: Date = new Date();
 
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private modalService: BsModalService,
+    private modalService: BsModalService
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -58,34 +59,36 @@ export class PaGspCGlobalServicePaymentComponent extends BasePage implements OnI
   getGlobal(): void {
     const id = this.route.snapshot.paramMap.get('requestId');
     if (id) {
-      //Call Service 
-      this.requestId=id;
-    }else{
-
+      //Call Service
+      this.requestId = id;
+    } else {
     }
   }
   private prepareForm(): void {
     this.form = this.fb.group({
       applicationDate: [null, [Validators.required]],
-      pb_type: ['pb_lista', [Validators.required]]
+      pb_type: ['pb_lista', [Validators.required]],
     });
   }
 
-  settingsChange($event:any): void {
-    this.settings=$event;
+  settingsChange($event: any): void {
+    this.settings = $event;
   }
 
   openModal(context?: Partial<PaGspCGoodsServicePaymentComponent>): void {
-
-    const modalRef = this.modalService.show(PaGspCGoodsServicePaymentComponent, {
-      //initialState: {/**/},
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
+    const modalRef = this.modalService.show(
+      PaGspCGoodsServicePaymentComponent,
+      {
+        //initialState: {/**/},
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
 
     modalRef.content.data.subscribe(data => {
-      if(data){/*...*/}
+      if (data) {
+        /*...*/
+      }
     });
   }
-
 }

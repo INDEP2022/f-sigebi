@@ -82,7 +82,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     });
   }
 
-  close():void{
+  close(): void {
     this.modalServise.hide();
   }
 

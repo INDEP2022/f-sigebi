@@ -8,17 +8,14 @@ import { CBGeCanMNumeraireConversionModule } from '../c-b-ge-can-m-numeraire-con
 import { NumeraireConversionTabsRoutingModule } from './numeraire-conversion-tabs-routing.module';
 import { NumeraireConversionTabsComponent } from './numeraire-conversion-tabs/numeraire-conversion-tabs.component';
 
-
 @NgModule({
-  declarations: [
-    NumeraireConversionTabsComponent
-  ],
+  declarations: [NumeraireConversionTabsComponent],
   imports: [
     CommonModule,
     NumeraireConversionTabsRoutingModule,
     SharedModule,
     TabsModule,
-    CBGeCanMNumeraireConversionModule
-  ]
+    CBGeCanMNumeraireConversionModule,
+  ],
 })
-export class NumeraireConversionTabsModule { }
+export class NumeraireConversionTabsModule {}

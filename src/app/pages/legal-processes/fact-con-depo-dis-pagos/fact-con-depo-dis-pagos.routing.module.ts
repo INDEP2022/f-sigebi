@@ -3,15 +3,14 @@ import { RouterModule, Routes } from '@angular/router';
 import { FactConDepoDisPagosComponent } from './fact-con-depo-dis-pagos/fact-con-depo-dis-pagos.component';
 
 const routes: Routes = [
-  {  
-    path: '', component: FactConDepoDisPagosComponent
+  {
+    path: '',
+    component: FactConDepoDisPagosComponent,
   },
-  
-
-]; 
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class FactConDepoDisPagosRoutingModule { }
+export class FactConDepoDisPagosRoutingModule {}

@@ -12,11 +12,12 @@ import { IssuingInstitutionFormComponent } from '../issuing-institution-form/iss
 @Component({
   selector: 'app-issuing-institution-list',
   templateUrl: './issuing-institution-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class IssuingInstitutionListComponent extends BasePage implements OnInit {
-
+export class IssuingInstitutionListComponent
+  extends BasePage
+  implements OnInit
+{
   settings = TABLE_SETTINGS;
   columns: IIssuingInstitution[] = [];
   totalItems: number = 0;
@@ -25,7 +26,7 @@ export class IssuingInstitutionListComponent extends BasePage implements OnInit 
   constructor(
     private issuingInstitutionService: IssuingInstitutionService,
     private modalService: BsModalService
-  ) { 
+  ) {
     super();
     this.settings.columns = ISSUING_INSTITUTION_COLUMNS;
     this.settings.actions.delete = true;
@@ -75,5 +76,4 @@ export class IssuingInstitutionListComponent extends BasePage implements OnInit 
       }
     });
   }
-
 }

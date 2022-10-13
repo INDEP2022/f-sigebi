@@ -12,8 +12,7 @@ import { STATION_COLUMS } from './station-columns';
 @Component({
   selector: 'app-station-list',
   templateUrl: './station-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class StationListComponent extends BasePage implements OnInit {
   settings = TABLE_SETTINGS;

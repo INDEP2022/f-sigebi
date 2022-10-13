@@ -11,11 +11,9 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-origin-form',
   templateUrl: './origin-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class OriginFormComponent extends BasePage implements OnInit {
-
   form: ModelForm<IOrigin>;
   title: string = 'Procedencia';
   edit: boolean = false;
@@ -24,7 +22,7 @@ export class OriginFormComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private originService: OriginService,
+    private originService: OriginService
   ) {
     super();
   }
@@ -66,21 +64,16 @@ export class OriginFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.originService
-      .create(this.form.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.originService.create(this.form.getRawValue()).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   update() {
     this.loading = true;
     this.originService
-      .update(
-        this.origin.id,
-        this.form.getRawValue()
-      )
+      .update(this.origin.id, this.form.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
@@ -94,5 +87,4 @@ export class OriginFormComponent extends BasePage implements OnInit {
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
-
 }

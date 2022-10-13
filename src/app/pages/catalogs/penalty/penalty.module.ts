@@ -7,17 +7,13 @@ import { PenaltyFormComponent } from './penalty-form/penalty-form.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
-  declarations: [
-    PenaltyListComponent,
-    PenaltyFormComponent
-  ],
+  declarations: [PenaltyListComponent, PenaltyFormComponent],
   imports: [
     CommonModule,
     PenaltyRoutingModule,
     SharedModule,
-    ModalModule.forChild()
-  ]
+    ModalModule.forChild(),
+  ],
 })
-export class PenaltyModule { }
+export class PenaltyModule {}

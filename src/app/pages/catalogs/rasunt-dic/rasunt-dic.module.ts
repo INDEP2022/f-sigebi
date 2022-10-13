@@ -7,17 +7,13 @@ import { RAsuntDicListComponent } from './rasunt-dic-list/rasunt-dic-list.compon
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
-  declarations: [
-    RAsuntDicFormComponent,
-    RAsuntDicListComponent
-  ],
+  declarations: [RAsuntDicFormComponent, RAsuntDicListComponent],
   imports: [
     CommonModule,
     RAsuntDicRoutingModule,
     SharedModule,
     ModalModule.forChild(),
-  ]
+  ],
 })
-export class RAsuntDicModule { }
+export class RAsuntDicModule {}

@@ -6,15 +6,12 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { PeAdMApprovalAssetsDestinationRoutingModule } from './pe-ad-m-approval-assets-destination-routing.module';
 import { PeAdCApprovalAssetsDestinationComponent } from './pe-ad-c-approval-assets-destination/pe-ad-c-approval-assets-destination.component';
 
-
 @NgModule({
-  declarations: [
-    PeAdCApprovalAssetsDestinationComponent
-  ],
+  declarations: [PeAdCApprovalAssetsDestinationComponent],
   imports: [
     CommonModule,
     PeAdMApprovalAssetsDestinationRoutingModule,
     SharedModule,
-  ]
+  ],
 })
-export class PeAdMApprovalAssetsDestinationModule { }
+export class PeAdMApprovalAssetsDestinationModule {}

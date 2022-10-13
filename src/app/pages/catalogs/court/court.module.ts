@@ -7,17 +7,13 @@ import { CourtRoutingModule } from './court-routing.module';
 import { CourtFormComponent } from './court-form/court-form.component';
 import { CourtListComponent } from './court-list/court-list.component';
 
-
 @NgModule({
-  declarations: [
-    CourtFormComponent,
-    CourtListComponent
-  ],
+  declarations: [CourtFormComponent, CourtListComponent],
   imports: [
     CommonModule,
     CourtRoutingModule,
     SharedModule,
-    ModalModule.forChild()
-  ]
+    ModalModule.forChild(),
+  ],
 })
-export class CourtModule { }
+export class CourtModule {}

@@ -5,12 +5,12 @@ import { PeRddxdeesCReceptionAreaSeraComponent } from './pe-rddxdees-c-reception
 const routes: Routes = [
   {
     path: '',
-    component: PeRddxdeesCReceptionAreaSeraComponent
-  }
+    component: PeRddxdeesCReceptionAreaSeraComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PeRddxdeesMReceptionAreaSeraRoutingModule { }
+export class PeRddxdeesMReceptionAreaSeraRoutingModule {}

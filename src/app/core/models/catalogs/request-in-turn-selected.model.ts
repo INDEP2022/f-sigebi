@@ -1,5 +1,5 @@
 export interface IRequestInTurnSelected {
-    id?: number,
-    user?: string,
-    email?: string,
+  id?: number;
+  user?: string;
+  email?: string;
 }

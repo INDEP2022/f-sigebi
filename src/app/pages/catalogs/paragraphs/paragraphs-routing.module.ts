@@ -5,12 +5,12 @@ import { ParagraphsListComponent } from './paragraphs-list/paragraphs-list.compo
 const routes: Routes = [
   {
     path: '',
-    component: ParagraphsListComponent
-  }
+    component: ParagraphsListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ParagraphsRoutingModule { }
+export class ParagraphsRoutingModule {}

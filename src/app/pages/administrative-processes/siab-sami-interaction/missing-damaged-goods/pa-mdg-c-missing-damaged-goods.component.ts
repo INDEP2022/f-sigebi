@@ -9,17 +9,18 @@ import { COLUMNS } from './columns';
 @Component({
   selector: 'app-pa-mdg-c-missing-damaged-goods',
   templateUrl: './pa-mdg-c-missing-damaged-goods.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class PaMdgCMissingDamagedGoodsComponent extends BasePage implements OnInit {
-
+export class PaMdgCMissingDamagedGoodsComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
   settings = {
     ...TABLE_SETTINGS,
-    actions: false
+    actions: false,
   };
-  data:any[]=[];
+  data: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -41,10 +42,9 @@ export class PaMdgCMissingDamagedGoodsComponent extends BasePage implements OnIn
     });
   }
 
-  showInfo(){
-  }
+  showInfo() {}
 
-  delete(data:any) {
+  delete(data: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -56,8 +56,7 @@ export class PaMdgCMissingDamagedGoodsComponent extends BasePage implements OnIn
     });
   }
 
-  settingsChange($event:any): void {
-    this.settings=$event;
+  settingsChange($event: any): void {
+    this.settings = $event;
   }
-
 }

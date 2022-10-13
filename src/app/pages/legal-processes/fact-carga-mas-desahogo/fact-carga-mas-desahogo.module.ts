@@ -20,11 +20,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FactCargaMasDesahogoComponent } from './fact-carga-mas-desahogo/fact-carga-mas-desahogo.component';
 import { SharedLegalProcessModule } from '../shared-legal-process/shared-legal-process.module';
 
-@NgModule({ 
-  declarations: [ 
-    FactCargaMasDesahogoComponent,
-    
-  ],
+@NgModule({
+  declarations: [FactCargaMasDesahogoComponent],
   imports: [
     CommonModule,
     FactCargaMasDesahogoRoutingModule,
@@ -47,14 +44,11 @@ import { SharedLegalProcessModule } from '../shared-legal-process/shared-legal-p
     // NbCheckboxModule,
     SharedModule,
 
-    SharedLegalProcessModule
+    SharedLegalProcessModule,
   ],
-  exports:[
-    
-    // ComponentsModule, 
-    NgSelectModule
-    
-  ]
+  exports: [
+    // ComponentsModule,
+    NgSelectModule,
+  ],
 })
-export class FactCargaMasDesahogoModule { }
-
+export class FactCargaMasDesahogoModule {}

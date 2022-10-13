@@ -18,7 +18,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
     UsersSelectedToTurnComponent,
     RequestListComponent,
     RegistrationOfRequestsComponent,
-    RequestRecordTabComponent
+    RequestRecordTabComponent,
   ],
   imports: [
     CommonModule,
@@ -27,6 +27,5 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
     ModalModule.forChild(),
     TabsModule.forRoot(),
   ],
-
 })
-export class TransferRequestModule { }
+export class TransferRequestModule {}

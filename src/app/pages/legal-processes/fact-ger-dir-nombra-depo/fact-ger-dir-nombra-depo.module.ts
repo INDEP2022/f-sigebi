@@ -19,11 +19,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // import { MatInputModule } from '@angular/material/input';
 import { FactGerDirNombraDepoComponent } from './fact-ger-dir-nombra-depo/fact-ger-dir-nombra-depo.component';
 
-@NgModule({ 
-  declarations: [ 
-    FactGerDirNombraDepoComponent,
-    
-  ],
+@NgModule({
+  declarations: [FactGerDirNombraDepoComponent],
   imports: [
     CommonModule,
     FactGerDirNombraDepoRoutingModule,
@@ -45,12 +42,9 @@ import { FactGerDirNombraDepoComponent } from './fact-ger-dir-nombra-depo/fact-g
     NgSelectModule,
     SharedModule,
   ],
-  exports:[
-    
-    // ComponentsModule, 
-    NgSelectModule
-    
-  ]
+  exports: [
+    // ComponentsModule,
+    NgSelectModule,
+  ],
 })
-export class FactGerDirNombraDepoModule { }
-
+export class FactGerDirNombraDepoModule {}

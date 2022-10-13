@@ -5,12 +5,12 @@ import { CourtListComponent } from './court-list/court-list.component';
 const routes: Routes = [
   {
     path: '',
-    component: CourtListComponent
-  }
+    component: CourtListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CourtRoutingModule { }
+export class CourtRoutingModule {}

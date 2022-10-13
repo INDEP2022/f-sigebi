@@ -5,12 +5,12 @@ import { CBmFEdfCInvoiceStatusComponent } from './c-bm-f-edf-c-invoice-status/c-
 const routes: Routes = [
   {
     path: '',
-    component: CBmFEdfCInvoiceStatusComponent
-  }
+    component: CBmFEdfCInvoiceStatusComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CBmFEdfMInvoiceStatusRoutingModule { }
+export class CBmFEdfMInvoiceStatusRoutingModule {}

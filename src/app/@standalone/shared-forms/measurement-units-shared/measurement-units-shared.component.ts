@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { AbstractControl, FormGroup } from "@angular/forms";
+import { AbstractControl, FormGroup } from '@angular/forms';
 //Rxjs
 import { BehaviorSubject, takeUntil } from 'rxjs';
 //Params
@@ -19,13 +19,14 @@ import { unitsData } from './unitsData';
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './measurement-units-shared.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class MeasurementUnitsSharedComponent extends BasePage implements OnInit {
-
+export class MeasurementUnitsSharedComponent
+  extends BasePage
+  implements OnInit
+{
   @Input() form: FormGroup;
-  @Input() measurementUnitField: string = "measurementUnit";
+  @Input() measurementUnitField: string = 'measurementUnit';
 
   @Input() showMeasurementUnits: boolean = true;
 
@@ -36,17 +37,16 @@ export class MeasurementUnitsSharedComponent extends BasePage implements OnInit 
   }
 
   constructor(/*private service: WarehouseService*/) {
-    super()
+    super();
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   getUnits(params: ListParams) {
     //Provisional data
-    let data=unitsData;
-    let count= data.length;
-    this.measurementUnits = new DefaultSelect(data,count);
+    let data = unitsData;
+    let count = data.length;
+    this.measurementUnits = new DefaultSelect(data, count);
     /*this.service.getAll(params).subscribe(data => {
         this.status = new DefaultSelect(data.data,data.count);
       },err => {
@@ -66,14 +66,12 @@ export class MeasurementUnitsSharedComponent extends BasePage implements OnInit 
     //this.resetFields([this.subdelegation]);
     this.form.updateValueAndValidity();
   }
-  
+
   resetFields(fields: AbstractControl[]) {
-    fields.forEach((field) => {
+    fields.forEach(field => {
       //field.setValue(null);
-      field=null;
+      field = null;
     });
     this.form.updateValueAndValidity();
   }
-
 }
-

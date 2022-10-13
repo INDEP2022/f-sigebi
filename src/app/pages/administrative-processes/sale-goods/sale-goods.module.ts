@@ -10,11 +10,8 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { SaleGoodsGamesParticipantsPaymentsModule } from './sale-goods-games-participants-payments/sale-goods-games-participants-payments.module';
 
-
 @NgModule({
-  declarations: [
-    SaleGoodsComponent
-  ],
+  declarations: [SaleGoodsComponent],
   imports: [
     CommonModule,
     SaleGoodsRoutingModule,
@@ -23,7 +20,7 @@ import { SaleGoodsGamesParticipantsPaymentsModule } from './sale-goods-games-par
     ModalModule.forChild(),
     Ng2SmartTableModule,
     TabsModule,
-    SaleGoodsGamesParticipantsPaymentsModule
-  ]
+    SaleGoodsGamesParticipantsPaymentsModule,
+  ],
 })
-export class SaleGoodsModule { }
+export class SaleGoodsModule {}

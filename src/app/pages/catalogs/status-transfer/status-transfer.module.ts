@@ -7,17 +7,13 @@ import { StatusTransferFormComponent } from './status-transfer-form/status-trans
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
-  declarations: [
-    StatusTransferListComponent,
-    StatusTransferFormComponent
-  ],
+  declarations: [StatusTransferListComponent, StatusTransferFormComponent],
   imports: [
     CommonModule,
     SharedModule,
     ModalModule.forChild(),
-    StatusTransferRoutingModule
-  ]
+    StatusTransferRoutingModule,
+  ],
 })
-export class StatusTransferModule { }
+export class StatusTransferModule {}
