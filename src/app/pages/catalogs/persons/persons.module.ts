@@ -7,17 +7,13 @@ import { PersonListComponent } from './person-list/person-list.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
-  declarations: [
-    PersonFormComponent,
-    PersonListComponent
-  ],
+  declarations: [PersonFormComponent, PersonListComponent],
   imports: [
     CommonModule,
     PersonsRoutingModule,
     SharedModule,
     ModalModule.forChild(),
-  ]
+  ],
 })
-export class PersonsModule { }
+export class PersonsModule {}

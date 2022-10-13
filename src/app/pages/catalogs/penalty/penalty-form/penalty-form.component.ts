@@ -9,8 +9,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-penalty-form',
   templateUrl: './penalty-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PenaltyFormComponent extends BasePage implements OnInit {
   penaltyForm: ModelForm<IPenalty>;
@@ -37,7 +36,7 @@ export class PenaltyFormComponent extends BasePage implements OnInit {
       equivalentDays: [null, [Validators.required]],
       version: [
         null,
-        Validators.compose([Validators.pattern(""), Validators.required]),
+        Validators.compose([Validators.pattern(''), Validators.required]),
       ],
       status: [null, Validators.compose([Validators.required])],
       contractNumber: [null, Validators.required],

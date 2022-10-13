@@ -12,11 +12,9 @@ import { SISI_PROCESS_COLUMNS } from './sisi-process-columns';
 @Component({
   selector: 'app-sise-process-list',
   templateUrl: './sise-process-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class SiseProcessListComponent extends BasePage implements OnInit {
-
   settings = TABLE_SETTINGS;
   siseProcess: ISiseProcess[] = [];
   totalItems: number = 0;
@@ -74,5 +72,4 @@ export class SiseProcessListComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }

@@ -8,17 +8,13 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { StateRepuvesListComponent } from './state-repuves-list/state-repuves-list.component';
 
-
 @NgModule({
-  declarations: [
-    StateRepuvesListComponent,
-    StateRepuvesFormComponent
-  ],
+  declarations: [StateRepuvesListComponent, StateRepuvesFormComponent],
   imports: [
     CommonModule,
     SharedModule,
     ModalModule.forChild(),
-    StateRepuvesRoutingModule
-  ]
+    StateRepuvesRoutingModule,
+  ],
 })
-export class StateRepuvesModule { }
+export class StateRepuvesModule {}

@@ -4,14 +4,14 @@ import { FdpAddCReturnActsComponent } from './return-acts/fdp-add-c-return-acts.
 
 const routes: Routes = [
   {
-    path: "",
+    path: '',
     component: FdpAddCReturnActsComponent,
-    data: { Title: 'Actas de Devolución' }
+    data: { Title: 'Actas de Devolución' },
   },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class FdpAddMReturnActsRoutingModule { }
+export class FdpAddMReturnActsRoutingModule {}

@@ -12,11 +12,9 @@ import { RESPONSE_REPUVE_COLUMNS } from './response-repuve-columns';
 @Component({
   selector: 'app-response-repuve-list',
   templateUrl: './response-repuve-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ResponseRepuveListComponent extends BasePage implements OnInit {
-
   settings = TABLE_SETTINGS;
   responseRepuves: IResponseRepuve[] = [];
   totalItems: number = 0;
@@ -74,5 +72,4 @@ export class ResponseRepuveListComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }

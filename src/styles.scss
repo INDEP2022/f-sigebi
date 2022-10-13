@@ -182,3 +182,16 @@ tr.ng2-smart-titles input:checked[type='checkbox'] {
 .txt-primary {
   color: #9d2449;
 }
+
+i {
+  font-style: normal !important;
+}
+
+.table-bordered tbody tr.selected {
+  background: #f0e4d1 !important;
+}
+
+.table-bordered tbody tr:hover {
+  background: #f0e4d1 !important;
+  cursor: pointer;
+}

@@ -17,10 +17,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   templateUrl: './good-type-form.component.html',
   styles: [],
 })
-export class GoodTypeFormComponent
-  extends BasePage
-  implements OnInit
-{
+export class GoodTypeFormComponent extends BasePage implements OnInit {
   goodTypeForm: FormGroup = new FormGroup({});
   title: string = 'Tipo Bien';
   edit: boolean = false;

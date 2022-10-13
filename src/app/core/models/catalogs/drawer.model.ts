@@ -1,4 +1,4 @@
-import { ISafe } from "./safe.model";
+import { ISafe } from './safe.model';
 
 export interface IDrawer {
   noBobeda?: number | ISafe;

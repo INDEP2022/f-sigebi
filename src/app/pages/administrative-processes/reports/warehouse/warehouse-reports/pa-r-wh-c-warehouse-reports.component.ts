@@ -7,17 +7,15 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-pa-r-wh-c-warehouse-reports',
   templateUrl: './pa-r-wh-c-warehouse-reports.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-
-export class PaRWhCWarehouseReportsComponent extends BasePage implements OnInit {
-
+export class PaRWhCWarehouseReportsComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
 
-  constructor(
-    private fb: FormBuilder
-  ) {
+  constructor(private fb: FormBuilder) {
     super();
   }
 
@@ -28,20 +26,19 @@ export class PaRWhCWarehouseReportsComponent extends BasePage implements OnInit 
   private prepareForm(): void {
     this.form = this.fb.group({
       delegation: [null, [Validators.required]],
-      warehouse:  [null, [Validators.required]],
-      goodStatus:  [null, [Validators.required]],
+      warehouse: [null, [Validators.required]],
+      goodStatus: [null, [Validators.required]],
       from: [null, [Validators.required]],
-      to: [null, [Validators.required]]
+      to: [null, [Validators.required]],
     });
   }
 
   confirm(): void {
     this.loading = true;
     //console.log(this.checkedListFA,this.checkedListFI)
-    console.log(this.form.value)
-    setTimeout(st=>{
+    console.log(this.form.value);
+    setTimeout(st => {
       this.loading = false;
-    },5000);
+    }, 5000);
   }
-
 }

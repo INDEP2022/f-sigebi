@@ -5,12 +5,12 @@ import { CBVdpCPaymentDispersionValidationComponent } from './c-b-vdp-c-payment-
 const routes: Routes = [
   {
     path: '',
-    component: CBVdpCPaymentDispersionValidationComponent
-  }
+    component: CBVdpCPaymentDispersionValidationComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CBVdpMPaymentDispersionValidationRoutingModule { }
+export class CBVdpMPaymentDispersionValidationRoutingModule {}

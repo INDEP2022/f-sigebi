@@ -12,11 +12,9 @@ import { RevisionReasonFormComponent } from '../revision-reason-form/revision-re
 @Component({
   selector: 'app-revision-reason-list',
   templateUrl: './revision-reason-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class RevisionReasonListComponent extends BasePage implements OnInit {
-
   settings = TABLE_SETTINGS;
   columns: IRevisionReason[] = [];
   totalItems: number = 0;
@@ -25,7 +23,7 @@ export class RevisionReasonListComponent extends BasePage implements OnInit {
   constructor(
     private revisionReasonService: RevisionReasonService,
     private modalService: BsModalService
-  ) { 
+  ) {
     super();
     this.settings.columns = REVISION_REASON_COLUMNS;
     this.settings.actions.delete = true;

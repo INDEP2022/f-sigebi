@@ -12,11 +12,9 @@ import { PERSON_COLUMNS } from './person-columns';
 @Component({
   selector: 'app-person-list',
   templateUrl: './person-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PersonListComponent extends BasePage implements OnInit {
-
   settings = TABLE_SETTINGS;
   persons: IPerson[] = [];
   totalItems: number = 0;
@@ -74,5 +72,4 @@ export class PersonListComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }

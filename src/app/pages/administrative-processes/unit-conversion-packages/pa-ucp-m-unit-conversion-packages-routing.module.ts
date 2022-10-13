@@ -6,12 +6,12 @@ import { PaUcpmcCMassiveConversionComponent } from './massive-conversion/pa-ucpm
 const routes: Routes = [
   {
     path: '',
-    component: PaUcpmcCMassiveConversionComponent
-  }
+    component: PaUcpmcCMassiveConversionComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PaUcpMUnitConversionPackagesRoutingModule { }
+export class PaUcpMUnitConversionPackagesRoutingModule {}

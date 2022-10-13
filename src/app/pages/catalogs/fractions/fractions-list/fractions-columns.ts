@@ -1,8 +1,7 @@
-import { INorm } from "src/app/core/models/catalogs/norm.model";
-import { ISiabClasification } from "src/app/core/models/catalogs/siab-clasification.model";
+import { INorm } from 'src/app/core/models/catalogs/norm.model';
+import { ISiabClasification } from 'src/app/core/models/catalogs/siab-clasification.model';
 
 export const FRACTIONS_COLUMNS = {
-
   id: {
     title: 'Registro',
     type: 'string',
@@ -29,9 +28,9 @@ export const FRACTIONS_COLUMNS = {
 
   normId: {
     title: 'Norma',
-    type:'string',
+    type: 'string',
     valuePrepareFunction: (nom: INorm) => {
-        return nom?.norm;
+      return nom?.norm;
     },
     sort: false,
   },
@@ -90,7 +89,5 @@ export const FRACTIONS_COLUMNS = {
     title: 'Codigo de fracción',
     type: 'string',
     sort: false,
-  }
-
-
+  },
 };

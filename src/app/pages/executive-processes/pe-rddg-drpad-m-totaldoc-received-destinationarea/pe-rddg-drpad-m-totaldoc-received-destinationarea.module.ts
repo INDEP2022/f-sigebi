@@ -9,18 +9,15 @@ import { DateRangeSharedComponent } from 'src/app/@standalone/shared-forms/date-
 import { PeRddgDrpadMTotaldocReceivedDestinationareaRoutingModule } from './pe-rddg-drpad-m-totaldoc-received-destinationarea-routing.module';
 import { PeRddgDrpadCTotaldocReceivedDestinationareaComponent } from './pe-rddg-drpad-c-totaldoc-received-destinationarea/pe-rddg-drpad-c-totaldoc-received-destinationarea.component';
 
-
 @NgModule({
-  declarations: [
-    PeRddgDrpadCTotaldocReceivedDestinationareaComponent
-  ],
+  declarations: [PeRddgDrpadCTotaldocReceivedDestinationareaComponent],
   imports: [
     CommonModule,
     PeRddgDrpadMTotaldocReceivedDestinationareaRoutingModule,
     SharedModule,
     BsDatepickerModule,
     DelegationSharedComponent,
-    DateRangeSharedComponent
-  ]
+    DateRangeSharedComponent,
+  ],
 })
-export class PeRddgDrpadMTotaldocReceivedDestinationareaModule { }
+export class PeRddgDrpadMTotaldocReceivedDestinationareaModule {}

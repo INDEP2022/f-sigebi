@@ -15,14 +15,13 @@ import { PaRmCRevenueManagementComponent } from './revenue-management/pa-rm-c-re
 import { PaPgCPaymentGoodsComponent } from './payment-goods/pa-pg-c-payment-goods.component';
 import { PaVgCValueGoodsComponent } from './value-goods/pa-vg-c-value-goods.component';
 
-
 @NgModule({
   declarations: [
     PaGrCGoodsRelationshipComponent,
     PaMdgCMissingDamagedGoodsComponent,
     PaRmCRevenueManagementComponent,
     PaPgCPaymentGoodsComponent,
-    PaVgCValueGoodsComponent
+    PaVgCValueGoodsComponent,
   ],
   imports: [
     CommonModule,
@@ -30,7 +29,7 @@ import { PaVgCValueGoodsComponent } from './value-goods/pa-vg-c-value-goods.comp
     SharedModule,
     FormsModule,
     ReactiveFormsModule,
-    TabsModule
-  ]
+    TabsModule,
+  ],
 })
-export class PaSsiMSiabSamiInteractionModule { }
+export class PaSsiMSiabSamiInteractionModule {}

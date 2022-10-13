@@ -11,11 +11,9 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-sise-process-form',
   templateUrl: './sise-process-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class SiseProcessFormComponent extends BasePage implements OnInit {
-
   form: ModelForm<ISiseProcess>;
   title: string = 'Proceso Sise';
   edit: boolean = false;
@@ -24,7 +22,7 @@ export class SiseProcessFormComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private siseProcessService: SiseProcessService,
+    private siseProcessService: SiseProcessService
   ) {
     super();
   }
@@ -59,21 +57,16 @@ export class SiseProcessFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.siseProcessService
-      .create(this.form.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.siseProcessService.create(this.form.getRawValue()).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   update() {
     this.loading = true;
     this.siseProcessService
-      .update(
-        this.sisi.id,
-        this.form.getRawValue()
-      )
+      .update(this.sisi.id, this.form.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
@@ -87,5 +80,4 @@ export class SiseProcessFormComponent extends BasePage implements OnInit {
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
-
 }

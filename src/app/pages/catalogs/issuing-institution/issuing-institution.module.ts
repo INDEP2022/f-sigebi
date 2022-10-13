@@ -7,17 +7,16 @@ import { IssuingInstitutionRoutingModule } from './issuing-institution-routing.m
 import { IssuingInstitutionFormComponent } from './issuing-institution-form/issuing-institution-form.component';
 import { IssuingInstitutionListComponent } from './issuing-institution-list/issuing-institution-list.component';
 
-
 @NgModule({
   declarations: [
     IssuingInstitutionFormComponent,
-    IssuingInstitutionListComponent
+    IssuingInstitutionListComponent,
   ],
   imports: [
     CommonModule,
     IssuingInstitutionRoutingModule,
     SharedModule,
-    ModalModule.forChild()
-  ]
+    ModalModule.forChild(),
+  ],
 })
-export class IssuingInstitutionModule { }
+export class IssuingInstitutionModule {}

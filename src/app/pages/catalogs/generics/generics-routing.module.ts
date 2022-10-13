@@ -5,12 +5,12 @@ import { GenericsListComponent } from './generics-list/generics-list.component';
 const routes: Routes = [
   {
     path: '',
-    component: GenericsListComponent
-  }
+    component: GenericsListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class GenericsRoutingModule { }
+export class GenericsRoutingModule {}

@@ -1,13 +1,12 @@
-import { Component, OnInit } from '@angular/core';  
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'ngx-fact-bie-val-pos-tercero',
   templateUrl: './fact-bie-val-pos-tercero.component.html',
-  styleUrls: ['./fact-bie-val-pos-tercero.component.scss']
+  styleUrls: ['./fact-bie-val-pos-tercero.component.scss'],
 })
-export class FactBieValPosTerceroComponent  {
-
+export class FactBieValPosTerceroComponent {
   // Table settings
   tableSettingsNotificaciones = {
     actions: {
@@ -16,7 +15,7 @@ export class FactBieValPosTerceroComponent  {
       edit: false,
       delete: false,
     },
-    hideSubHeader: true,//oculta subheaader de filtro
+    hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
 
     columns: {
@@ -46,7 +45,6 @@ export class FactBieValPosTerceroComponent  {
       averiguacionPrevia: 'DATA',
       causaPenal: 'DATA',
     },
-
   ];
 
   // Table settings
@@ -57,13 +55,13 @@ export class FactBieValPosTerceroComponent  {
       edit: false,
       delete: false,
     },
-    hideSubHeader: true,//oculta subheaader de filtro
+    hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
 
     columns: {
-      noBien:  { title: 'No. Bien' },
-      estatus:  { title: 'Estatus' },
-      descripcion:  { title: 'Descripción' },
+      noBien: { title: 'No. Bien' },
+      estatus: { title: 'Estatus' },
+      descripcion: { title: 'Descripción' },
     },
   };
   // Data table
@@ -73,7 +71,6 @@ export class FactBieValPosTerceroComponent  {
       estatus: 'DATA',
       descripcion: 'DATA',
     },
-
   ];
 
   // Table settings
@@ -84,13 +81,13 @@ export class FactBieValPosTerceroComponent  {
       edit: false,
       delete: false,
     },
-    hideSubHeader: true,//oculta subheaader de filtro
+    hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
 
     columns: {
-      noBien:  { title: 'No. Bien' },
-      estatus:  { title: 'Estatus' },
-      descripcion:  { title: 'Descripción' },
+      noBien: { title: 'No. Bien' },
+      estatus: { title: 'Estatus' },
+      descripcion: { title: 'Descripción' },
     },
   };
   // Data table
@@ -100,15 +97,12 @@ export class FactBieValPosTerceroComponent  {
       estatus: 'DATA',
       descripcion: 'DATA',
     },
-
   ];
 
   public form: FormGroup;
   public formCcpOficio: FormGroup;
 
-  constructor(
-    private fb: FormBuilder) {  
-  }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();
@@ -120,32 +114,31 @@ export class FactBieValPosTerceroComponent  {
       destinatario: '', // Detalle destinatario
       texto: '',
     });
-    
+
     this.formCcpOficio = this.fb.group({
       ccp1: '',
       ccp2: '',
-      firma: ''
+      firma: '',
     });
   }
-  
-mostrarInfo(form: any): any{
-  console.log(form.value)
-}
 
-mostrarInfoDepositario(formDepositario: any): any{
-  console.log(formDepositario.value)
-}
+  mostrarInfo(form: any): any {
+    console.log(form.value);
+  }
 
-sendForm() {
-  console.log("Send form log");
-}
+  mostrarInfoDepositario(formDepositario: any): any {
+    console.log(formDepositario.value);
+  }
 
-/**
- * Formulario
- */
-//  public returnField(form, field) { return form.get(field); }
-//  public returnShowRequirements(form, field) { 
-//    return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched; 
-//  }
+  sendForm() {
+    console.log('Send form log');
+  }
 
+  /**
+   * Formulario
+   */
+  //  public returnField(form, field) { return form.get(field); }
+  //  public returnShowRequirements(form, field) {
+  //    return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched;
+  //  }
 }

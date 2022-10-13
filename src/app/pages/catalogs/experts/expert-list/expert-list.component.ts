@@ -12,11 +12,9 @@ import { ExpertFormComponent } from '../experts-form/expert-form.component';
 @Component({
   selector: 'app-expert-list',
   templateUrl: './expert-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class ExpertListComponent  extends BasePage implements OnInit 
-{
+export class ExpertListComponent extends BasePage implements OnInit {
   settings = TABLE_SETTINGS;
   proficients: IProficient[] = [];
   totalItems: number = 0;
@@ -75,4 +73,3 @@ export class ExpertListComponent  extends BasePage implements OnInit
     });
   }
 }
-

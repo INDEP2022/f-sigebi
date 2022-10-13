@@ -8,9 +8,8 @@ describe('FactGerJurrecDerevComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FactGerJurrecDerevComponent ]
-    })
-    .compileComponents();
+      declarations: [FactGerJurrecDerevComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

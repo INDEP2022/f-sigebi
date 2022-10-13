@@ -12,8 +12,7 @@ import { SAT_CLASSIFICATION_COLUMNS } from './sat-classification-columns';
 @Component({
   selector: 'app-sat-classification-list',
   templateUrl: './sat-classification-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class SatClassificationListComponent extends BasePage implements OnInit {
   settings = TABLE_SETTINGS;

@@ -9,8 +9,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-status-code-form',
   templateUrl: './status-code-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class StatusCodeFormComponent extends BasePage implements OnInit {
   statusCodeForm: ModelForm<IStatusCode>;
@@ -20,7 +19,7 @@ export class StatusCodeFormComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private statusCodeService: StatusCodeService,
+    private statusCodeService: StatusCodeService
   ) {
     super();
   }
@@ -31,9 +30,31 @@ export class StatusCodeFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.statusCodeForm = this.fb.group({
-      id: [null, Validators.compose([ Validators.required , Validators.minLength(1), Validators.maxLength(5), Validators.pattern('STRING_PATTERN') ])],
-      descCode: [null, Validators.compose([ Validators.minLength(1), Validators.maxLength(50), Validators.pattern('STRING_PATTERN') ])],
-      order: [null, Validators.compose([ Validators.minLength(1), Validators.maxLength(3), Validators.pattern('NUMBERS_PATTERN') ])],
+      id: [
+        null,
+        Validators.compose([
+          Validators.required,
+          Validators.minLength(1),
+          Validators.maxLength(5),
+          Validators.pattern('STRING_PATTERN'),
+        ]),
+      ],
+      descCode: [
+        null,
+        Validators.compose([
+          Validators.minLength(1),
+          Validators.maxLength(50),
+          Validators.pattern('STRING_PATTERN'),
+        ]),
+      ],
+      order: [
+        null,
+        Validators.compose([
+          Validators.minLength(1),
+          Validators.maxLength(3),
+          Validators.pattern('NUMBERS_PATTERN'),
+        ]),
+      ],
     });
     if (this.statusCode != null) {
       this.edit = true;

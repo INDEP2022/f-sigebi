@@ -11,33 +11,19 @@ const routes: Routes = [
   {
     path: '',
     component: PaGrCGoodsRelationshipComponent,
-    /*children: [
-      {
-        path: '',
-        redirectTo: 'missing-damaged-goods'
-      },
-      {
-        path: 'missing-damaged-goods',
-        component:PaMdgCMissingDamagedGoodsComponent
-      },
-      {
-        path: 'revenue-management',
-        component: PaRmCRevenueManagementComponent
-      }
-    ]*/
   },
   {
     path: 'payment-goods',
-    component: PaPgCPaymentGoodsComponent
+    component: PaPgCPaymentGoodsComponent,
   },
   {
-    path:'value-goods',
-    component: PaVgCValueGoodsComponent
-  }
+    path: 'value-goods',
+    component: PaVgCValueGoodsComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PaSsiMSiabSamiInteractionRoutingModule { }
+export class PaSsiMSiabSamiInteractionRoutingModule {}

@@ -1,6 +1,9 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Listado de Paquetes (Lotes) para incorporar al proceso de enajenación como partidas</h5>
+    <h5 class="modal-title">
+      Listado de Paquetes (Lotes) para incorporar al proceso de enajenación como
+      partidas
+    </h5>
   </div>
   <div body>
     <div class="row">
@@ -14,8 +17,8 @@
         </div>
       </div>
       <app-pagination
-      [params]="params"
-      [totalItems]="totalItems"></app-pagination>
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
     </div>
     <div class="row">
       <div class="col-md-8"></div>
@@ -25,9 +28,12 @@
         </button>
       </div>
       <div class="col-md-2">
-          <button type="submit" class="btn btn-danger btn-sm active" (click)="close()">
-            Cerrar
-          </button>
+        <button
+          type="submit"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cerrar
+        </button>
       </div>
     </div>
   </div>

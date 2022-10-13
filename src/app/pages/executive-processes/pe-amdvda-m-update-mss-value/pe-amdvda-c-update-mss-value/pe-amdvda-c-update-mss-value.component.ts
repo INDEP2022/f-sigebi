@@ -11,19 +11,21 @@ import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-pe-amdvda-c-update-mss-value',
   templateUrl: './pe-amdvda-c-update-mss-value.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class PeAmdvdaCUpdateMssValueComponent extends BasePage implements OnInit {
+export class PeAmdvdaCUpdateMssValueComponent
+  extends BasePage
+  implements OnInit
+{
   settings = {
     ...TABLE_SETTINGS,
-    actions: false
+    actions: false,
   };
-  ExcelData:any;
-  form: FormGroup = new FormGroup({}); 
+  ExcelData: any;
+  form: FormGroup = new FormGroup({});
   constructor(private fb: FormBuilder) {
     super();
-    this.settings.columns = UPDATE_MASS_VALUE_COLUMNS
+    this.settings.columns = UPDATE_MASS_VALUE_COLUMNS;
   }
 
   ngOnInit(): void {
@@ -34,24 +36,20 @@ export class PeAmdvdaCUpdateMssValueComponent extends BasePage implements OnInit
     this.form = this.fb.group({
       readRecords: ['', []],
       processedRecords: ['', []],
-      
     });
   }
 
-  ReadExcel(event:any){
-
+  ReadExcel(event: any) {
     let file = event.target.files[0];
 
     let fileReader = new FileReader();
     fileReader.readAsBinaryString(file);
 
-    fileReader.onload = (e)=>{
-      var workbook = XLSX.read(fileReader.result, {type: 'binary'});
+    fileReader.onload = e => {
+      var workbook = XLSX.read(fileReader.result, { type: 'binary' });
       var sheetNames = workbook.SheetNames;
-      this.ExcelData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetNames[0]])
+      this.ExcelData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetNames[0]]);
       console.log(this.ExcelData);
-    }
-
+    };
   }
-
 }

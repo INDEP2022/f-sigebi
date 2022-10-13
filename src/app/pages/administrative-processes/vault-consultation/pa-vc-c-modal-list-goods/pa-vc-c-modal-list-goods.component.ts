@@ -7,11 +7,9 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-pa-vc-c-modal-list-goods',
   templateUrl: './pa-vc-c-modal-list-goods.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PaVcCModalListGoodsComponent extends BasePage implements OnInit {
-
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   //Data Table
@@ -20,44 +18,45 @@ export class PaVcCModalListGoodsComponent extends BasePage implements OnInit {
     actions: {
       add: false,
       edit: false,
-      delete: false
+      delete: false,
     },
-    hideSubHeader: true,//oculta subheaader de filtro
-    noDataMessage: "No se encontrarón registros",
+    hideSubHeader: true, //oculta subheaader de filtro
+    noDataMessage: 'No se encontrarón registros',
     mode: 'external', // ventana externa
     columns: {
       numberGood: {
         title: 'No Bien',
         width: '10%',
-        sort: false
+        sort: false,
       },
       description: {
         title: 'Descripcion',
         width: '20%',
-        sort: false
+        sort: false,
       },
       quantity: {
         title: 'Cantidad',
         width: '10%',
-        sort: false
+        sort: false,
       },
       dossier: {
         title: 'Expediente',
         width: '10%',
-        sort: false
-      }
+        sort: false,
+      },
     },
   };
 
   data1: any;
-  constructor(private bsModalRef: BsModalRef, private opcion: ModalOptions) { super() }
+  constructor(private bsModalRef: BsModalRef, private opcion: ModalOptions) {
+    super();
+  }
 
   ngOnInit(): void {
     this.data1 = this.opcion.initialState;
   }
-  
-  return(){
+
+  return() {
     this.bsModalRef.hide();
   }
-
 }

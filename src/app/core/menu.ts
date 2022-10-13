@@ -233,10 +233,6 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-folder',
     subItems: [
       {
-        label: 'Indicador Reportes',
-        link: '/pages/catalogs/indicatorReport',
-      },
-      {
         label: 'Numerario Físico',
         link: '/pages/administrative-processes/numerary-physics',
       },
@@ -271,27 +267,20 @@ export const MENU: IMenuItem[] = [
       },
       {
         label: 'Ubicación de Bienes',
-        link: '/pages/administrative-processes/location-goods'
+        link: '/pages/administrative-processes/location-goods',
       },
       {
         label: 'Consulta de Almacenes',
-        link: '/pages/administrative-processes/warehouse-inquiries'
+        link: '/pages/administrative-processes/warehouse-inquiries',
       },
       {
         label: 'Consulta de Bóvedas',
-        link: '/pages/administrative-processes/vault-consultation'
+        link: '/pages/administrative-processes/vault-consultation',
       },
       {
         label: 'Registro de mensaje del Bien',
-        link: '/pages/administrative-processes/property-registration'
+        link: '/pages/administrative-processes/property-registration',
       },
-      {
-        label: 'Solicitud de cambio a numeración',
-        link: '/pages/administrative-processes/request-numbering-change'
-      },
-      /**
-       * Seguros **Legaspi**
-       **/
       {
         label: 'Solicitud de Avalúos',
         link: '/pages/administrative-processes/appraisal-request',
@@ -316,6 +305,20 @@ export const MENU: IMenuItem[] = [
         label: 'Venta de Bienes',
         link: '/pages/administrative-processes/sale-goods',
       },
+      {
+        label: 'Administracion Terceros',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Contratos',
+            link: '/pages/administrative-processes/contracts',
+          },
+          {
+            label: 'Costo unitario',
+            link: '/pages/administrative-processes/unit-cost',
+          },
+        ]
+      },
     ],
   },
   {
@@ -327,7 +330,7 @@ export const MENU: IMenuItem[] = [
         link: '/pages/administrative-processes/goods-tracking',
       },
       {
-        label: 'Gestión bienes Gab-Soc',
+        label: 'Gestión Bienes Gab-Soc',
         link: '/pages/administrative-processes/goods-management',
       },
       {
@@ -383,14 +386,39 @@ export const MENU: IMenuItem[] = [
         ],
       },
       /**
-       * Seguros **Legaspi**
+       * ADMIN PROCESS-SEGUROS LEGASPI
+       **/
+      /**
+       * ADMIN PROCESS-SERVICES LEGASPI
+       **/
+      {
+        label: 'Servicios',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Registro de Pago de Servicios',
+            link: '/pages/administrative-processes/services/',
+          },
+        ],
+      },
+      /**
+       * ADMIN PROCESS-SERVICES LEGASPI
        **/
     ],
   },
   {
     label: 'Solicitudes',
     icon: 'bx-folder',
-    subItems: [],
+    subItems: [
+      {
+        label: 'Solicitudes a turno',
+        link: '/pages/request/request-in-turn',
+      },
+      {
+        label: 'Solicitudes de transferencia',
+        link: '/pages/request/transfer-request',
+      },
+    ],
   },
   {
     label: 'Proceso Destino final',
@@ -423,7 +451,7 @@ export const MENU: IMenuItem[] = [
             label: 'Actas de Donación/Destrucción/Destino',
             link: '/pages/final-destination-process/report-of-acts/donation-destruction-destination',
           },
-        ]
+        ],
       },
     ],
   },
@@ -632,7 +660,7 @@ export const MENU: IMenuItem[] = [
             label: 'Consulta de bienes',
             link: '/pages/commercialization/consultation-goods-commercial-process-tabs',
           },
-          {  
+          {
             label: 'Conceptos de Gasto',
             link: '/pages/commercialization/expense-concepts',
           },
@@ -651,7 +679,16 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Catálogos',
         icon: 'folder',
-        subItems: [],
+        subItems: [
+          {
+            label: 'Tipos de penalización',
+            link: '/pages/commercialization/catalogs/penalty-types',
+          },
+          {
+            label: 'Claves autorización envío ext. OIs',
+            link: '/pages/commercialization/catalogs/authorization-keys-ois',
+          },
+        ],
       },
     ],
   },

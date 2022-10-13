@@ -12,8 +12,7 @@ import { TYPESERVICES_COLUMS } from './type-services-columns';
 @Component({
   selector: 'app-type-services-list',
   templateUrl: './type-services-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class TypeServicesListComponent extends BasePage implements OnInit {
   settings = TABLE_SETTINGS;

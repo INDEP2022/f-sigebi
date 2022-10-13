@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { AbstractControl, FormGroup } from "@angular/forms";
+import { AbstractControl, FormGroup } from '@angular/forms';
 //Rxjs
 import { BehaviorSubject, takeUntil } from 'rxjs';
 //Params
@@ -19,13 +19,14 @@ import { goodsClassData } from './goodsClassData';
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './goods-classification-shared.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class GoodsClasificationSharedComponent extends BasePage implements OnInit {
-
+export class GoodsClasificationSharedComponent
+  extends BasePage
+  implements OnInit
+{
   @Input() form: FormGroup;
-  @Input() goodClassificationField: string = "goodClassification";
+  @Input() goodClassificationField: string = 'goodClassification';
 
   @Input() showGoodClassification: boolean = true;
 
@@ -36,17 +37,16 @@ export class GoodsClasificationSharedComponent extends BasePage implements OnIni
   }
 
   constructor(/*private service: WarehouseService*/) {
-    super()
+    super();
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   getGoodClassification(params: ListParams) {
     //Provisional data
-    let data=goodsClassData;
-    let count= data.length;
-    this.classifications = new DefaultSelect(data,count);
+    let data = goodsClassData;
+    let count = data.length;
+    this.classifications = new DefaultSelect(data, count);
     /*this.service.getAll(params).subscribe(data => {
         this.classification = new DefaultSelect(data.data,data.count);
       },err => {
@@ -66,13 +66,12 @@ export class GoodsClasificationSharedComponent extends BasePage implements OnIni
     //this.resetFields([this.subdelegation]);
     this.form.updateValueAndValidity();
   }
-  
+
   resetFields(fields: AbstractControl[]) {
-    fields.forEach((field) => {
+    fields.forEach(field => {
       //field.setValue(null);
-      field=null;
+      field = null;
     });
     this.form.updateValueAndValidity();
   }
-
 }

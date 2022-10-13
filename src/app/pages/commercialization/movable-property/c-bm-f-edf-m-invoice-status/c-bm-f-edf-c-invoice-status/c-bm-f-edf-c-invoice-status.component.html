@@ -1,10 +1,13 @@
 <app-card [header]="true">
-    <div header>
-        <div class="ch-content">
-            <h5 class="title">ESTATUS DE LA FACTURACIÓN</h5>
-        </div>
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">ESTATUS DE LA FACTURACIÓN</h5>
     </div>
-    <div body>
-        <ng2-smart-table [settings]="settings" [source]="data" (edit)="openModal()"></ng2-smart-table>
-    </div>
+  </div>
+  <div body>
+    <ng2-smart-table
+      [settings]="settings"
+      [source]="data"
+      (edit)="openModal()"></ng2-smart-table>
+  </div>
 </app-card>

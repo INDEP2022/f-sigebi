@@ -12,11 +12,9 @@ import { PhotographMediaFormComponent } from '../photograph-media-form/photograp
 @Component({
   selector: 'app-photograph-media-list',
   templateUrl: './photograph-media-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PhotographMediaListComponent extends BasePage implements OnInit {
-
   settings = TABLE_SETTINGS;
   columns: IPhotographMedia[] = [];
   totalItems: number = 0;
@@ -25,7 +23,7 @@ export class PhotographMediaListComponent extends BasePage implements OnInit {
   constructor(
     private photographMediaService: PhotographMediaService,
     private modalService: BsModalService
-  ) { 
+  ) {
     super();
     this.settings.columns = PHOTOGRAPH_MEDIA_COLUMNS;
     this.settings.actions.delete = true;

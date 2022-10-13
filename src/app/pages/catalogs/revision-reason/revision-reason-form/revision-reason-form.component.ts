@@ -9,11 +9,9 @@ import { RevisionReasonService } from 'src/app/core/services/catalogs/revision-r
 @Component({
   selector: 'app-revision-reason-form',
   templateUrl: './revision-reason-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class RevisionReasonFormComponent extends BasePage implements OnInit {
-
   revisionReasonForm: FormGroup = new FormGroup({});
   title: string = 'Motivo Revisión';
   edit: boolean = false;
@@ -27,7 +25,7 @@ export class RevisionReasonFormComponent extends BasePage implements OnInit {
     private revisionReasonService: RevisionReasonService
   ) {
     super();
-   }
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -43,7 +41,7 @@ export class RevisionReasonFormComponent extends BasePage implements OnInit {
       area_responsable: [null, [Validators.required]],
       estatus_fin: [null, [Validators.required, Validators.maxLength(3)]],
       pantalla: [null, [Validators.required]],
-      parametro: [null, [Validators.required]]
+      parametro: [null, [Validators.required]],
     });
     if (this.revisionReason != null) {
       this.edit = true;

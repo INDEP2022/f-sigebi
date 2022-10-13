@@ -5,12 +5,12 @@ import { CBRpCReferencedPaymentComponent } from './referenced-payment/c-b-rp-c-r
 const routes: Routes = [
   {
     path: '',
-    component: CBRpCReferencedPaymentComponent
-  }
+    component: CBRpCReferencedPaymentComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CBRpMReferencedPaymentRoutingModule { }
+export class CBRpMReferencedPaymentRoutingModule {}

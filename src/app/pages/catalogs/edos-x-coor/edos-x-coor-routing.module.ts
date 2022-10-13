@@ -4,12 +4,13 @@ import { EdosXCoorListComponent } from './edos-x-coor-list/edos-x-coor-list.comp
 
 const routes: Routes = [
   {
-    path:'',component:EdosXCoorListComponent
-  }
+    path: '',
+    component: EdosXCoorListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class EdosXCoorRoutingModule { }
+export class EdosXCoorRoutingModule {}

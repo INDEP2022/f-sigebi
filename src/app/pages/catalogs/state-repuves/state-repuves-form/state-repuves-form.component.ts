@@ -9,8 +9,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-state-repuves-form',
   templateUrl: './state-repuves-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class StateRepuvesFormComponent extends BasePage implements OnInit {
   stateRepuveForm: ModelForm<IStateRepuve>;
@@ -50,10 +49,12 @@ export class StateRepuvesFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.stateRepuveService.create(this.stateRepuveForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.stateRepuveService
+      .create(this.stateRepuveForm.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   update() {

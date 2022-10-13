@@ -12,11 +12,9 @@ import { BATCH_COLUMNS } from './batch-columns';
 @Component({
   selector: 'app-batch-list',
   templateUrl: './batch-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class BatchListComponent extends BasePage implements OnInit {
-
   settings = TABLE_SETTINGS;
   columns: IBatch[] = [];
   totalItems: number = 0;
@@ -25,7 +23,7 @@ export class BatchListComponent extends BasePage implements OnInit {
   constructor(
     private batchService: BatchService,
     private modalService: BsModalService
-  ) { 
+  ) {
     super();
     this.settings.columns = BATCH_COLUMNS;
     this.settings.actions.delete = true;
@@ -75,5 +73,4 @@ export class BatchListComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }

@@ -13,7 +13,10 @@ import { IWarehouse } from '../../models/catalogs/warehouse.model';
 export class RackService implements ICrudMethods<IRack> {
   private readonly route: string = ENDPOINT_LINKS.Rack;
   private readonly warehouseRoute: string = ENDPOINT_LINKS.Warehouse;
-  constructor(private rackRepository: Repository<IRack>, private warehouseRepository: Repository<IWarehouse> ) {}
+  constructor(
+    private rackRepository: Repository<IRack>,
+    private warehouseRepository: Repository<IWarehouse>
+  ) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IRack>> {
     return this.rackRepository.getAllPaginated(this.route, params);
@@ -36,6 +39,9 @@ export class RackService implements ICrudMethods<IRack> {
   }
 
   getWarehouse(params?: ListParams): Observable<Object> {
-    return this.warehouseRepository.getAllPaginated(this.warehouseRoute, params);
+    return this.warehouseRepository.getAllPaginated(
+      this.warehouseRoute,
+      params
+    );
   }
 }

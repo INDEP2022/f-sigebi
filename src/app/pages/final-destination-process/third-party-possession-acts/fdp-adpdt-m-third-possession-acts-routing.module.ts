@@ -4,14 +4,14 @@ import { FdpAdpdtCThirdPossessionActsComponent } from './third-party-possession-
 
 const routes: Routes = [
   {
-    path: "",
+    path: '',
     component: FdpAdpdtCThirdPossessionActsComponent,
-    data: { Title: 'Actas de Posesión de Terceros' }
+    data: { Title: 'Actas de Posesión de Terceros' },
   },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class FdpAdpdtMThirdPossessionActsRoutingModule { }
+export class FdpAdpdtMThirdPossessionActsRoutingModule {}

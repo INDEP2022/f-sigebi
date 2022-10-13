@@ -5,12 +5,12 @@ import { RevisionReasonListComponent } from './../revision-reason/revision-reaso
 const routes: Routes = [
   {
     path: '',
-    component: RevisionReasonListComponent
-  }
+    component: RevisionReasonListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class RevisionReasonRoutingModule { }
+export class RevisionReasonRoutingModule {}

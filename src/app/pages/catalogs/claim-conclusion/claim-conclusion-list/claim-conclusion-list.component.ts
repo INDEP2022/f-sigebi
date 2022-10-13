@@ -12,8 +12,7 @@ import { CLAIMCONCLUSION_COLUMS } from './claim-conclusion-columns';
 @Component({
   selector: 'app-claim-conclusion-list',
   templateUrl: './claim-conclusion-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ClaimConclusionListComponent extends BasePage implements OnInit {
   settings = TABLE_SETTINGS;

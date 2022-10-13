@@ -9,8 +9,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-type-docto-form',
   templateUrl: './type-docto-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class TypeDoctoFormComponent extends BasePage implements OnInit {
   typeDoctoForm: ModelForm<ITypeDocto>;
@@ -32,9 +31,12 @@ export class TypeDoctoFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.typeDoctoForm = this.fb.group({
       id: [null, [Validators.required]],
-      description: [null, Validators.compose([Validators.required, Validators.maxLength(200)])],
+      description: [
+        null,
+        Validators.compose([Validators.required, Validators.maxLength(200)]),
+      ],
       version: [null, Validators.compose([Validators.required])],
-      estatus: [null, Validators.compose([Validators.required])]
+      estatus: [null, Validators.compose([Validators.required])],
     });
     if (this.typeDocto != null) {
       this.edit = true;

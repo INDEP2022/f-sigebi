@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';  
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'ngx-fact-jur-abandonos',
   templateUrl: './fact-jur-abandonos.component.html',
-  styleUrls: ['./fact-jur-abandonos.component.scss']
+  styleUrls: ['./fact-jur-abandonos.component.scss'],
 })
-export class FactJurAbonadosComponent  {
+export class FactJurAbonadosComponent {
   public optionsTipoVolante = [
     { value: 'Administrativo', label: 'Administrativo' },
     { value: 'Procesal', label: 'Procesal' },
@@ -24,24 +24,24 @@ export class FactJurAbonadosComponent  {
   data1 = [
     {
       noBien: 12345,
-      description: "UNA BOLSA",
+      description: 'UNA BOLSA',
       cantidad: 1,
-      est: "ENGD",
-      proceso: "ASEGURADO",
+      est: 'ENGD',
+      proceso: 'ASEGURADO',
     },
     {
       noBien: 12345,
-      description: "UNA BOLSA",
+      description: 'UNA BOLSA',
       cantidad: 1,
-      est: "ENGD",
-      proceso: "ASEGURADO",
+      est: 'ENGD',
+      proceso: 'ASEGURADO',
     },
     {
       noBien: 12345,
-      description: "UNA BOLSA",
+      description: 'UNA BOLSA',
       cantidad: 1,
-      est: "ENGD",
-      proceso: "ASEGURADO",
+      est: 'ENGD',
+      proceso: 'ASEGURADO',
     },
   ];
   settings1 = {
@@ -51,34 +51,34 @@ export class FactJurAbonadosComponent  {
     hideSubHeader: true,
     actions: false,
     selectedRowIndex: -1,
-    mode: "external",
+    mode: 'external',
     columns: {
       noBien: {
-        title: "No. Bien",
-        type: "number",
+        title: 'No. Bien',
+        type: 'number',
       },
       description: {
-        title: "Descripcion",
-        type: "string",
+        title: 'Descripcion',
+        type: 'string',
       },
       cantidad: {
-        title: "Cantidad",
-        type: "string",
+        title: 'Cantidad',
+        type: 'string',
       },
       ident: {
-        title: "Ident.",
-        type: "string",
+        title: 'Ident.',
+        type: 'string',
       },
       est: {
-        title: "Est",
-        type: "string",
+        title: 'Est',
+        type: 'string',
       },
       proceso: {
-        title: "Proceso",
-        type: "string",
+        title: 'Proceso',
+        type: 'string',
       },
     },
-    noDataMessage: "No se encontrarón registros",
+    noDataMessage: 'No se encontrarón registros',
   };
   /** Tabla bienes */
 
@@ -86,7 +86,7 @@ export class FactJurAbonadosComponent  {
   data2 = [
     {
       cveDocumento: 25,
-      description: "UNA BOLSA",
+      description: 'UNA BOLSA',
     },
   ];
   settings2 = {
@@ -96,24 +96,22 @@ export class FactJurAbonadosComponent  {
     hideSubHeader: true,
     actions: false,
     selectedRowIndex: -1,
-    mode: "external",
+    mode: 'external',
     columns: {
       cveDocumento: {
-        title: "No. Bien",
-        type: "number",
+        title: 'No. Bien',
+        type: 'number',
       },
       description: {
-        title: "Descripcion",
-        type: "string",
+        title: 'Descripcion',
+        type: 'string',
       },
     },
-    noDataMessage: "No se encontrarón registros",
+    noDataMessage: 'No se encontrarón registros',
   };
   /** Tabla bienes */
 
-  constructor(
-    private fb: FormBuilder) {  
-  }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();
@@ -124,7 +122,7 @@ export class FactJurAbonadosComponent  {
       noVolante: ['', [Validators.required]], //*
       tipoVolante: ['', [Validators.required]], //*
       fechaRecepcion: ['', [Validators.required]], //*
-      consecutivoDiario:['', [Validators.required]], //*
+      consecutivoDiario: ['', [Validators.required]], //*
       actaCircunst: [''],
       averigPrevia: [''],
       causaPenal: [''],
@@ -173,7 +171,7 @@ export class FactJurAbonadosComponent  {
       inicio: ['', [Validators.required]], //*
       fin: ['', [Validators.required]], //*
     });
-    
+
     this.formOficio = this.fb.group({
       tipoOficio: [''],
       remitente: [''],
@@ -186,48 +184,46 @@ export class FactJurAbonadosComponent  {
       fechaCaptura: ['', [Validators.required]], //*
       estatus: ['', [Validators.required]], //*
     });
-    
+
     this.formCcpOficio = this.fb.group({
       ccp: ['', [Validators.minLength(1)]], //*
       usuario: ['', [Validators.minLength(1)]], //*
       nombreUsuario: '',
       ccp2: ['', [Validators.minLength(1)]], //*
       usuario2: ['', [Validators.minLength(1)]], //*
-      nombreUsuario2: ''
+      nombreUsuario2: '',
     });
-
   }
-  
-mostrarInfo(form: FormGroup): any{
-  console.log(form.value)
-}
 
-mostrarInfoOficio(allFormsOficio: any): any{
-  console.log(allFormsOficio)
-  
-  // this.allForms.formOficio = this.formOficio;
-  // this.allForms.formCcpOficio = this.formCcpOficio;
-  // this.allForms.formOficioInicioFin = this.formOficioInicioFin;
-}
+  mostrarInfo(form: FormGroup): any {
+    console.log(form.value);
+  }
 
-mostrarInfoDeclaratoria(formDeclaratoria: FormGroup): any{
-  console.log(formDeclaratoria.value)
-}
+  mostrarInfoOficio(allFormsOficio: any): any {
+    console.log(allFormsOficio);
 
-oficioRelacionado(event: any) {
-  console.log("Oficio Relacionado", event);
-}
+    // this.allForms.formOficio = this.formOficio;
+    // this.allForms.formCcpOficio = this.formCcpOficio;
+    // this.allForms.formOficioInicioFin = this.formOficioInicioFin;
+  }
 
-capturaCopias(event: any) {
-  console.log("Captura copias", event);
-}
+  mostrarInfoDeclaratoria(formDeclaratoria: FormGroup): any {
+    console.log(formDeclaratoria.value);
+  }
 
-/**
- * Formulario
- */
-// public returnField(form, field) { return form.get(field); }
-// public returnShowRequirements(form, field) { 
-//   return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched; 
-// }
+  oficioRelacionado(event: any) {
+    console.log('Oficio Relacionado', event);
+  }
 
+  capturaCopias(event: any) {
+    console.log('Captura copias', event);
+  }
+
+  /**
+   * Formulario
+   */
+  // public returnField(form, field) { return form.get(field); }
+  // public returnShowRequirements(form, field) {
+  //   return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched;
+  // }
 }

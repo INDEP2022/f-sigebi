@@ -11,11 +11,9 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-rasunt-dic-form',
   templateUrl: './rasunt-dic-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class RAsuntDicFormComponent extends BasePage implements OnInit {
-
   form: ModelForm<IRAsuntDic>;
   title: string = 'R Asunt Dic';
   edit: boolean = false;
@@ -24,7 +22,7 @@ export class RAsuntDicFormComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private rAsuntDicService: RAsuntDicService,
+    private rAsuntDicService: RAsuntDicService
   ) {
     super();
   }
@@ -66,21 +64,16 @@ export class RAsuntDicFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.rAsuntDicService
-      .create(this.form.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.rAsuntDicService.create(this.form.getRawValue()).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   update() {
     this.loading = true;
     this.rAsuntDicService
-      .update(
-        this.rAsuntDic.code,
-        this.form.getRawValue()
-      )
+      .update(this.rAsuntDic.code, this.form.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
@@ -94,6 +87,4 @@ export class RAsuntDicFormComponent extends BasePage implements OnInit {
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
-
-
 }

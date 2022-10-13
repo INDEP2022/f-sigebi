@@ -9,21 +9,21 @@ import { COLUMNS } from './columns';
 @Component({
   selector: 'app-pa-pg-c-payment-goods',
   templateUrl: './pa-pg-c-payment-goods.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PaPgCPaymentGoodsComponent extends BasePage implements OnInit {
-
   form: FormGroup = new FormGroup({});
-  settings = TABLE_SETTINGS;
-  data:any[]=[];
+  settings = {
+    ...TABLE_SETTINGS,
+    actions: false,
+  };
+  data: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(private fb: FormBuilder) {
     super();
     this.settings.columns = COLUMNS;
-    this.settings.actions.delete = false;
   }
 
   ngOnInit(): void {
@@ -35,7 +35,7 @@ export class PaPgCPaymentGoodsComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.form = this.fb.group({
-      option: [null]
+      option: [null],
     });
   }
 
@@ -43,13 +43,13 @@ export class PaPgCPaymentGoodsComponent extends BasePage implements OnInit {
     //this.openModal();
   }
 
-  edit(data:any) {
+  edit(data: any) {
     //console.log(data)
     //this.openModal({ edit: true, paragraph });
   }
 
-  delete(data:any) {
-    console.log(data)
+  delete(data: any) {
+    console.log(data);
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -61,8 +61,7 @@ export class PaPgCPaymentGoodsComponent extends BasePage implements OnInit {
     });
   }
 
-  settingsChange($event:any): void {
-    this.settings=$event;
+  settingsChange($event: any): void {
+    this.settings = $event;
   }
-
 }

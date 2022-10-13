@@ -11,11 +11,9 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 @Component({
   selector: 'app-regulatoy-form',
   templateUrl: './regulatoy-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class RegulatoyFormComponent extends BasePage implements OnInit {
-
   form: ModelForm<IRegulatory>;
   title: string = 'Regulacion';
   edit: boolean = false;
@@ -24,7 +22,7 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private regulatoryService: RegulatoryService,
+    private regulatoryService: RegulatoryService
   ) {
     super();
   }
@@ -68,21 +66,16 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.regulatoryService
-      .create(this.form.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.regulatoryService.create(this.form.getRawValue()).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   update() {
     this.loading = true;
     this.regulatoryService
-      .update(
-        this.regulatory.id,
-        this.form.getRawValue()
-      )
+      .update(this.regulatory.id, this.form.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
@@ -96,6 +89,4 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
-
-
 }

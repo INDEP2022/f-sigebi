@@ -7,17 +7,13 @@ import { RackListComponent } from './rack-list/rack-list.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
-  declarations: [
-    RackFormComponent,
-    RackListComponent
-  ],
+  declarations: [RackFormComponent, RackListComponent],
   imports: [
     CommonModule,
     RackRoutingModule,
     SharedModule,
     ModalModule.forChild(),
-  ]
+  ],
 })
-export class RackModule { }
+export class RackModule {}

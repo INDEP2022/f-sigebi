@@ -9,8 +9,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-type-services-form',
   templateUrl: './type-services-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class TypeServicesFormComponent extends BasePage implements OnInit {
   typeServiceForm: ModelForm<ITypeService>;
@@ -32,9 +31,15 @@ export class TypeServicesFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.typeServiceForm = this.fb.group({
       id: [null],
-      type: [null, Validators.compose([Validators.required, Validators.maxLength(200)])],
-      concept: [null, Validators.compose([Validators.required, Validators.maxLength(200)])],
-      version: [null, Validators.compose([Validators.required])]
+      type: [
+        null,
+        Validators.compose([Validators.required, Validators.maxLength(200)]),
+      ],
+      concept: [
+        null,
+        Validators.compose([Validators.required, Validators.maxLength(200)]),
+      ],
+      version: [null, Validators.compose([Validators.required])],
     });
     if (this.typeService != null) {
       this.edit = true;
@@ -51,10 +56,12 @@ export class TypeServicesFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.typeServicesService.create(this.typeServiceForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.typeServicesService
+      .create(this.typeServiceForm.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   update() {

@@ -14,18 +14,11 @@ import { DocumentationExamplesRoutingModule } from './documentation-examples-rou
 /** COMPONENTS IMPORTS */
 import { DocumentationExamplesComponent } from './base-page-documentation/documentation-examples.component';
 
-
 /** IMPORT COMPONENTS DOCUMENTATION */
-export const declarationsComponents: any[] = [
-    DocumentationExamplesComponent
-];
+export const declarationsComponents: any[] = [DocumentationExamplesComponent];
 
 @NgModule({
   declarations: [declarationsComponents],
-  imports: [
-    CommonModule,
-    DocumentationExamplesRoutingModule,
-    SharedModule,
-  ],
+  imports: [CommonModule, DocumentationExamplesRoutingModule, SharedModule],
 })
 export class DocumentationExamplesModule {}
