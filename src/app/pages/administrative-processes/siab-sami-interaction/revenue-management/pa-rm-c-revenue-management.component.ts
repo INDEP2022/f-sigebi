@@ -15,13 +15,18 @@ import { COLUMNS2, COLUMNS3 } from './columns';
 export class PaRmCRevenueManagementComponent extends BasePage implements OnInit {
 
   form: FormGroup = new FormGroup({});
-
-  settings2 = {...TABLE_SETTINGS};
+  settings2 = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
   data2:any[]=[];
   totalItems2: number = 0;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
 
-  settings3 = {...TABLE_SETTINGS};
+  settings3 = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
   data3:any[]=[];
   totalItems3: number = 0;
   params3 = new BehaviorSubject<ListParams>(new ListParams());
@@ -29,14 +34,7 @@ export class PaRmCRevenueManagementComponent extends BasePage implements OnInit 
   constructor(private fb: FormBuilder) {
     super();
     this.settings2.columns = COLUMNS2;
-    this.settings2.actions.add=false;
-    this.settings2.actions.edit=false;
-    this.settings2.actions.delete=false;
-
     this.settings3.columns = COLUMNS3;
-    this.settings3.actions.add=false;
-    this.settings3.actions.edit=false;
-    this.settings3.actions.delete=false;
   }
 
   ngOnInit(): void {

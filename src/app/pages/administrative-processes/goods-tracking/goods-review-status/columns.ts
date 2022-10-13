@@ -3,30 +3,30 @@ import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.co
 export const COLUMNS = {
     good: {
         title: 'No.Bien',
-        width: '10%'
+        sort: false
     },
     reason1: {
         title: 'Motivo 1',
-        width: '15%'
+        sort: false
     },
     reason2: {
         title: 'Motivo 2',
-        width: '15%'
+        sort: false
     },
     reason3: {
         title: 'Motivo 3',
-        width: '15%'
+        sort: false
     },
-      reason4: {
+    reason4: {
         title: 'Motivo 4',
-        width: '15%'
+        sort: false
     },
-      reason5: {
+    reason5: {
         title: 'Motivo 5',
-        width: '15%'
+        sort: false
     },
     description: {
         title: 'Descripción',
-        width: '15%'
+        sort: false
     },
 }

@@ -15,7 +15,10 @@ import { COLUMNS } from './columns';
 export class PaMdgCMissingDamagedGoodsComponent extends BasePage implements OnInit {
 
   form: FormGroup = new FormGroup({});
-  settings = TABLE_SETTINGS;
+  settings = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
   data:any[]=[];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -23,9 +26,6 @@ export class PaMdgCMissingDamagedGoodsComponent extends BasePage implements OnIn
   constructor(private fb: FormBuilder) {
     super();
     this.settings.columns = COLUMNS;
-    this.settings.actions.add=false;
-    this.settings.actions.edit=false;
-    this.settings.actions.delete=false;
   }
 
   ngOnInit(): void {

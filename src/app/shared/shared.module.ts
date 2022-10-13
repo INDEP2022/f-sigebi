@@ -23,6 +23,7 @@ import { FormCheckComponent } from './components/form-check/form-check.component
 import { FormRadioComponent } from './components/form-radio/form-radio.component';
 import { SearchBarSimpleComponent } from './components/search-bar-simple/search-bar-simple.component';
 import { DividerComponent } from './components/divider/divider.component';
+import { CheckboxElementComponent } from './components/checkbox-element-smarttable/checkbox-element';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { DividerComponent } from './components/divider/divider.component';
     FormRadioComponent,
     SearchBarSimpleComponent,
     DividerComponent,
+    CheckboxElementComponent
   ],
   imports: [
     CommonModule,
@@ -72,6 +74,7 @@ import { DividerComponent } from './components/divider/divider.component';
     FormCheckComponent,
     FormRadioComponent,
     CommonModule,
+    CheckboxElementComponent
   ],
 })
 export class SharedModule {
