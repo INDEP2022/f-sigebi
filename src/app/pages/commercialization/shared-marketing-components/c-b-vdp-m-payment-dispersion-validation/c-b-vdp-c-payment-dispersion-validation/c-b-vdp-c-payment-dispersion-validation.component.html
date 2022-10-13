@@ -18,7 +18,7 @@
                             control="idEvento">
 				    	</ngx-select>
                     </form-field>
-                </div>
+                </div> 
                 <div class="col-md-2">
                     <form-field [control]="form.get('blackList')" label="Lista Negra">
                         <input type="text" class="form-control" formControlName="blackList">
@@ -58,7 +58,7 @@
             
     </div>
     <div footer>
-        <button type="button" class="btn btn-sm btn-success dropdown-toggle" (click)="exportAsXLSXLotes()">Exportar a Excel</button>
+        <button type="button" class="btn btn-success btn-sm active" (click)="exportAsXLSXLotes()">Exportar a Excel</button>
     </div>
 </app-card>
 
@@ -79,7 +79,7 @@
         </ng2-smart-table>  
     </div>
     <div footer>
-        <button type="button" class="btn btn-sm btn-success dropdown-toggle" (click)="exportAsXLSXBienes()">Exportar a Excel</button>
+        <button type="button" class="btn btn-success btn-sm active" (click)="exportAsXLSXBienes()">Exportar a Excel</button>
     </div>
 </app-card>
 
@@ -100,7 +100,7 @@
             </ng2-smart-table> 
     </div>
     <div footer>
-        <button type="button" class="btn btn-sm btn-success dropdown-toggle" (click)="exportAsXLSXPagosBanco()">Exportar a Excel</button>
+        <button type="button" class="btn btn-success btn-sm active" (click)="exportAsXLSXPagosBanco()">Exportar a Excel</button>
     </div>
 </app-card>
 
@@ -121,6 +121,6 @@
         </ng2-smart-table>
     </div>
     <div footer>
-        <button type="button" class="btn btn-sm btn-success dropdown-toggle" (click)="exportAsXLSXCompos()">Exportar a Excel</button>
+        <button type="button" class="btn btn-success btn-sm active" (click)="exportAsXLSXCompos()">Exportar a Excel</button>
     </div>
 </app-card>

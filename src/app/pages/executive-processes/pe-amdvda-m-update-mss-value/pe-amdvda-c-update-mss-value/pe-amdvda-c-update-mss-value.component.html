@@ -8,7 +8,7 @@
     <div body>        
             <div class="row">
                 <div class="col-md-2">
-                    <button type="button" class="btn-sm btn-primary active" (click)="fileExcel.click()">Abrir archivo Excel o CSV</button>
+                    <button type="button" class="btn btn-success btn-sm active" (click)="fileExcel.click()">Abrir archivo Excel o CSV</button>
                     <input type="file" (change)="ReadExcel($event)" name="fileExcel" #fileExcel class="d-none"
                             accept=".xlsx, .xls, .csv, application/vnd.ms-excel">
                 </div>    

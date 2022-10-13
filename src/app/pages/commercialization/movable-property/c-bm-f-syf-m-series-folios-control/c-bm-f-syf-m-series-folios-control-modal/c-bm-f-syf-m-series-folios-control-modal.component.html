@@ -109,16 +109,17 @@
     </div>
     <div footer>
         <div class="d-flex justify-content-center">
-    		<div class="m-3">
-        		<button type="button" class="btn btn-danger active" (click)="close()">
-          			Cancelar
-        		</button>
-      		</div>
-		    <div class="m-3">
-		        <button type="button" class="btn btn-success active" (click)="close()">
-		          Aceptar
-		        </button>
-		    </div>
-		</div>
+            <div class="m-3">
+              <confirm-button
+                [disabled]="!form.valid"
+                [loading]="loading"
+                ></confirm-button>
+            </div>
+            <div class="m-3">
+              <button type="button" class="btn btn-danger active" (click)="close()">
+                Cancelar
+              </button>
+            </div>
+          </div>
     </div>
 </app-modal>
