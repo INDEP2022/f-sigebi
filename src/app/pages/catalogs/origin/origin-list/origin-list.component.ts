@@ -4,7 +4,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { IOrigin } from '../../../../core/models/catalogs/origin.model';
 import { OriginService } from 'src/app/core/services/catalogs/origin.service';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { OriginFormComponent } from '../origin-form/origin-form.component';
 import { ORIGIN_COLUMNS } from './origin-columns';
@@ -17,7 +17,7 @@ import { ORIGIN_COLUMNS } from './origin-columns';
 })
 export class OriginListComponent extends BasePage implements OnInit {
 
-  settings = TABLE_SETTINGS;
+  
   origins: IOrigin[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

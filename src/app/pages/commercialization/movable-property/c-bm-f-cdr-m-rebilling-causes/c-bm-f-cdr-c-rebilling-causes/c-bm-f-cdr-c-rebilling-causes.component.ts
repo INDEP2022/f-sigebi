@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { BasePage } from 'src/app/core/shared/base-page';
 import { REBILLING_CAUSES_COLUMNS } from './rebilling-causes-columns';
 import { BsModalService } from 'ngx-bootstrap/modal';

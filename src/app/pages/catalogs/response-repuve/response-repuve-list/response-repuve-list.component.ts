@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { IResponseRepuve } from 'src/app/core/models/catalogs/response-repuve.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -17,7 +17,7 @@ import { RESPONSE_REPUVE_COLUMNS } from './response-repuve-columns';
 })
 export class ResponseRepuveListComponent extends BasePage implements OnInit {
 
-  settings = TABLE_SETTINGS;
+  
   responseRepuves: IResponseRepuve[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

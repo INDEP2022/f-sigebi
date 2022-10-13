@@ -45,8 +45,8 @@ class SweetalertModel implements SweetAlertOptions {
   }
 }
 interface TableSettings {
-  selectMode: '';
-  actions: Action | boolean;
+  selectMode: string;
+  actions: any;
   attr: Object;
   pager: Object;
   hideSubHeader: boolean;
@@ -98,7 +98,7 @@ export abstract class BasePage implements OnDestroy {
   $unSubscribe = new Subject<void>();
   minMode: BsDatepickerViewMode = 'day';
   bsConfig?: Partial<BsDatepickerConfig>;
-  settings = TABLE_SETTINGS;
+  settings = { ...TABLE_SETTINGS };
 
   constructor() {
     this.bsConfig = {

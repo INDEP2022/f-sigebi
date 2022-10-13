@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IPenalty } from 'src/app/core/models/catalogs/penalty.model';
 import { PenaltyService } from 'src/app/core/services/catalogs/penalty.service';
@@ -16,7 +16,7 @@ import { PENALTY_COLUMNS } from './penalty-columns';
   ]
 })
 export class PenaltyListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
+  
   paragraphs: IPenalty[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

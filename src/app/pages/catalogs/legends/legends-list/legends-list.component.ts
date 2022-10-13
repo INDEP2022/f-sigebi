@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ILegend } from 'src/app/core/models/catalogs/legend.model';
 import { LegendService } from 'src/app/core/services/catalogs/legend.service';
@@ -16,7 +16,7 @@ import { LEGENDS_COLUMS } from './legends-columns';
   styles: [],
 })
 export class LegendsListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
+  
   legends: ILegend[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

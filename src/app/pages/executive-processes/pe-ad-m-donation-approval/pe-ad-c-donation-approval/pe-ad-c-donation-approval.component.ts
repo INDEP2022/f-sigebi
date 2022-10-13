@@ -3,7 +3,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { DONATION_APPROVAL_COLUMNS } from './donation-approval-columns';
 
 @Component({

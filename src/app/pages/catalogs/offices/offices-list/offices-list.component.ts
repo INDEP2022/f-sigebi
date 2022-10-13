@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IOffice } from 'src/app/core/models/catalogs/office.model';
 import { OfficeService } from 'src/app/core/services/catalogs/office.service';
@@ -16,7 +16,7 @@ import { OFFICES_COLUMNS } from './offices-columns';
   styles: [],
 })
 export class OfficesListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
+  
   offices: IOffice[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

@@ -3,7 +3,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { INotary } from './../../../../core/models/catalogs/notary.model';
 import { NotaryService } from './../../../../core/services/catalogs/notary.service';
 import { NOTARY_COLUMNS } from './notary-columns';
@@ -17,7 +17,7 @@ import { NotaryFormComponent } from '../notary-form/notary-form.component';
 })
 export class NotaryListComponent extends BasePage implements OnInit {
 
-  settings = TABLE_SETTINGS;
+  
   columns: INotary[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

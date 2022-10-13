@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ILawyer } from 'src/app/core/models/catalogs/lawyer.model';
 import { LawyerService } from '../../../../core/services/catalogs/lawyer.service';
@@ -15,7 +15,7 @@ import { LawyerDetailComponent } from '../lawyer-detail/lawyer-detail.component'
   styles: [],
 })
 export class LawyerListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
+  
   lawyers: ILawyer[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

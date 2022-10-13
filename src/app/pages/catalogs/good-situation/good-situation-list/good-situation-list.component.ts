@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGoodSituation } from 'src/app/core/models/catalogs/good-situation.model';
 import { GoodSituationService } from 'src/app/core/services/catalogs/good-situation.service';
@@ -15,7 +15,7 @@ import { GOOD_SITUATION_COLUMS } from './good-situation-columns';
   styles: [],
 })
 export class GoodSituationListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
+  
   paragraphs: IGoodSituation[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

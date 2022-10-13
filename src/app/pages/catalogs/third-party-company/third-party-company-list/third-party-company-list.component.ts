@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IThirdPartyCompany } from 'src/app/core/models/catalogs/third-party-company.model';
 import { ThirdPartyService } from 'src/app/core/services/catalogs/third-party-company.service';
@@ -16,7 +16,7 @@ import { THIRDPARTYCOMPANY_COLUMS } from './third-party-company-columns';
   ]
 })
 export class ThirdPartyCompanyListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
+  
   paragraphs: IThirdPartyCompany[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

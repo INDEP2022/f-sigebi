@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { EVENT_TYPE_THIRD_COLUMNS } from './event-types-third-columns';
 import { THIRD_PARTY_MARKETERS_COLUMNS } from './third-party-marketers-columns';
 import { THIRD_PARTY_MARKETERS2_COLUMNS } from './third-party-marketers2-columns';

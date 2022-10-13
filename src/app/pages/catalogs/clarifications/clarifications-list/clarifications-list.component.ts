@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IClarification } from '../../../../core/models/catalogs/clarification.model';
 import { ClarificationService } from '../../../../core/services/catalogs/clarification.service';
@@ -15,7 +15,7 @@ import { ClarificationsDetailComponent } from '../clarifications-detail/clarific
   styles: [],
 })
 export class ClarificationsListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
+  
   clarifications: IClarification[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

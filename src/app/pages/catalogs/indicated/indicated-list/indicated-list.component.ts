@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IIndiciados } from 'src/app/core/models/catalogs/indiciados.model';
 import { IndiciadosService } from 'src/app/core/services/catalogs/indiciados.service';
@@ -15,7 +15,7 @@ import { INDICATED_COLUMNS } from './indicated-columns';
   styles: [],
 })
 export class IndicatedListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
+  
   paragraphs: IIndiciados[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IStateRepuve } from 'src/app/core/models/catalogs/state-repuve.model';
 import { StateRepuveService } from 'src/app/core/services/catalogs/state-repuve.service';
@@ -16,7 +16,7 @@ import { STATEREPUVES_COLUMS } from './state-repuves-columns';
   ]
 })
 export class StateRepuvesListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
+  
   paragraphs: IStateRepuve[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

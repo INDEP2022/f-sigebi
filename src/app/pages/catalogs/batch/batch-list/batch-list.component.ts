@@ -17,7 +17,7 @@ import { BATCH_COLUMNS } from './batch-columns';
 })
 export class BatchListComponent extends BasePage implements OnInit {
 
-  settings = TABLE_SETTINGS;
+  
   columns: IBatch[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

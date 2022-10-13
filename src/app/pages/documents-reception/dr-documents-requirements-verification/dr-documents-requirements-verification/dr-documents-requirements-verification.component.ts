@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import {
   DOCUMENTS_REQUIREMENTS_VERIFICATION_COLUMNS,
   DOCUMENTS_REQUIREMENTS_VERIFICATION_EXAMPLE_DATA,

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { BasePage } from 'src/app/core/shared/base-page';
 import { INVOICE_STATUS_COLUMNS } from './invoice-status-columns';
 import { BsModalService } from 'ngx-bootstrap/modal';

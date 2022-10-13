@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { DISPERSION_COLUMNS } from './dispersion-columns';
 import { BILLS_COLUMNS } from './bills-columns';
 

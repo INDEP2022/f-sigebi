@@ -17,7 +17,7 @@ import { SISI_PROCESS_COLUMNS } from './sisi-process-columns';
 })
 export class SiseProcessListComponent extends BasePage implements OnInit {
 
-  settings = TABLE_SETTINGS;
+  
   siseProcess: ISiseProcess[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

@@ -17,7 +17,7 @@ import { PhotographMediaFormComponent } from '../photograph-media-form/photograp
 })
 export class PhotographMediaListComponent extends BasePage implements OnInit {
 
-  settings = TABLE_SETTINGS;
+  
   columns: IPhotographMedia[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

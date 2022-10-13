@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IStatusClaims } from 'src/app/core/models/catalogs/status-claims.model';
 import { StatusClaimsService } from 'src/app/core/services/catalogs/claim-status.service';
@@ -17,7 +17,7 @@ import { STATUSCLAIMS_COLUMS } from './status-claims-columns';
   ]
 })
 export class StatusClaimsListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
+  
   paragraphs: IStatusClaims[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

@@ -3,7 +3,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { INorm } from './../../../../core/models/catalogs/norm.model';
 import { NormService } from './../../../../core/services/catalogs/norm.service';
 import { NORMS_COLUMNS } from './norms-columns';
@@ -17,7 +17,7 @@ import { NormsFormComponent } from '../norms-form/norms-form.component';
 })
 export class NormsListComponent extends BasePage implements OnInit {
 
-  settings = TABLE_SETTINGS;
+  
   columns: INorm[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

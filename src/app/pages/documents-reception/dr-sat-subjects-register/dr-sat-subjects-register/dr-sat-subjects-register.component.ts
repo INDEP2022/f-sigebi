@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
   SAT_PAPERWORK_MAILBOX_COLUMNS,

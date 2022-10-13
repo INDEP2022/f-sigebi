@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { GOODS_BULK_LOAD_COLUMNS } from './goods-bulk-load-columns';
 
 @Component({
@@ -18,7 +18,7 @@ import { GOODS_BULK_LOAD_COLUMNS } from './goods-bulk-load-columns';
 })
 export class DrGoodsBulkLoadComponent implements OnInit {
   assetsForm: FormGroup;
-  settings = TABLE_SETTINGS;
+  
   actionsTypes = ACTION_TYPES;
 
   get bulkId() {

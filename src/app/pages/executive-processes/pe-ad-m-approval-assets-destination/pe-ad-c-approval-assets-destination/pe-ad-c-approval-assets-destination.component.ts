@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings'; 
+ 
 import { ASSETS_DESTINATION_COLUMNS } from './approval-assets-destination-columns';
 
 @Component({

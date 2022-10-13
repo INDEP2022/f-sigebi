@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGeneric } from '../../../../core/models/catalogs/generic.model';
 import { GenericService } from './../../../../core/services/catalogs/generic.service';
@@ -17,7 +17,7 @@ import { GenericsFormComponent } from '../generics-form/generics-form.component'
 })
 export class GenericsListComponent extends BasePage implements OnInit {
 
-  settings = TABLE_SETTINGS;
+  
   columns: IGeneric[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

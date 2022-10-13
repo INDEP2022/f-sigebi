@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { UPDATE_MASS_VALUE_COLUMNS } from './update-mss-value-columns';
 
 //XLSX

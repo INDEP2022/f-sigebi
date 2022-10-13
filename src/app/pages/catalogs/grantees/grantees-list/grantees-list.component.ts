@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGrantee } from 'src/app/core/models/catalogs/grantees.model';
 import { GranteeService } from 'src/app/core/services/catalogs/grantees.service';
@@ -15,7 +15,7 @@ import { GRANTEES_COLUMNS } from './grantee-columns';
   styles: [],
 })
 export class GranteesListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
+  
   paragraphs: IGrantee[] = [];
   totalItems = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

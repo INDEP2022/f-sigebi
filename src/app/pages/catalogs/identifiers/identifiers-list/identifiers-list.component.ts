@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IIdentifier } from 'src/app/core/models/catalogs/identifier.model';
 import { IdentifierService } from 'src/app/core/services/catalogs/identifier.service';
@@ -15,7 +15,7 @@ import { IDENTIFIER_COLUMNS } from './identifier-columns';
   styles: [],
 })
 export class IdentifiersListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
+  
   paragraphs: IIdentifier[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

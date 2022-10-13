@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { SAT_SAE_GOODS_LOAD_COLUMNS } from './sat-sae-goods-load-columns';
 
 @Component({

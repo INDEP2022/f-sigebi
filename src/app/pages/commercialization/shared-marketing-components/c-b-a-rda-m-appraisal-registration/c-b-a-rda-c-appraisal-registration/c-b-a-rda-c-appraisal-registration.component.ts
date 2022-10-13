@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
  
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { APPRAISAL_REGISTRATION_DETAIL_COLUMNS } from './appraisal-registration-detail-columns';
 import { APPRAISAL_REGISTRATION_APPRAISALS_COLUMNS } from './appraisal-registration-appraisals-columns';
 import { APPRAISAL_REGISTRATION_GOODS_COLUMNS } from './appraisal-registration-goods-columns';

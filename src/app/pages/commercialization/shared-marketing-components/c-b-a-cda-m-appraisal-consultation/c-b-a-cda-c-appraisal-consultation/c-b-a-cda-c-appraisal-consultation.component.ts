@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { APPRAISAL_COLUMNS } from './appraisal-columns';
 import { ExcelService } from 'src/app/common/services/exportToExcel.service';
 

@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Example } from 'src/app/core/models/catalogs/example';
 import { ExampleService } from 'src/app/core/services/catalogs/example.service';
@@ -15,7 +15,7 @@ import { EXAMPLE_COLUMNS } from './example-columns';
   styles: [],
 })
 export class ExampleComponent extends BasePage implements OnInit, OnDestroy {
-  settings = TABLE_SETTINGS;
+  
   paragraphs: Example[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IImageMedia } from '../../../../core/models/catalogs/image-media.model';
 import { ImageMediaService } from '../../../../core/services/catalogs/image-media.service';
@@ -17,7 +17,7 @@ import { ImageMediaFormComponent } from '../image-media-form/image-media-form.co
 })
 export class ImageMediaListComponent extends BasePage implements OnInit {
 
-  settings = TABLE_SETTINGS;
+  
   columns: IImageMedia[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

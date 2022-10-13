@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { APPRAISAL_COLUMNS } from './appraisal-monitor-columns';
@@ -13,7 +13,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
   styles: [],
 })
 export class AppraisalMonitorComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
+  
   appraisals: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

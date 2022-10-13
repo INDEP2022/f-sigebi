@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISaveValue } from 'src/app/core/models/catalogs/save-value.model';
 import { SaveValueService } from 'src/app/core/services/catalogs/save-value.service';
@@ -17,7 +17,7 @@ import { SAVE_VALUES_COLUMNS } from './save-values-columns';
 })
 export class SaveValuesListComponent extends BasePage implements OnInit {
 
-  settings = TABLE_SETTINGS;
+  
   paragraphs: ISaveValue[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ITypeSiniester } from 'src/app/core/models/catalogs/type-siniester.model';
 import { TypeSiniesterService } from 'src/app/core/services/catalogs/type-siniester.service';
@@ -16,7 +16,7 @@ import { TYPESINISTER_COLUMS } from './type-sinister-columns';
   ]
 })
 export class TypeSinisterListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
+  
   paragraphs: ITypeSiniester[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { BasePage } from 'src/app/core/shared/base-page';
 
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { EXPENSE_CAPTURE_BILLS_COLUMNS } from './expense-captura-bills-columns';
 import { EXPENSE_CAPTURE_INCOME_COLUMNS } from './expense-captura-income-columns';
 

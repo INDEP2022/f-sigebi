@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISiabClasification } from 'src/app/core/models/catalogs/siab-clasification.model';
 import { SIABClasificationService } from 'src/app/core/services/catalogs/siab-clasification.service';
@@ -15,7 +15,7 @@ import { SiabClasificationDetailComponent } from '../siab-clasification-detail/s
   styles: [],
 })
 export class SiabClasificationListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
+  
   clasifications: ISiabClasification[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

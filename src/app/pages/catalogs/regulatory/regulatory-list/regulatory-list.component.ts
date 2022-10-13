@@ -17,7 +17,7 @@ import { REGULATORY_COLUMNS } from './regulatory-columns';
 })
 export class RegulatoryListComponent extends BasePage implements OnInit {
 
-  settings = TABLE_SETTINGS;
+  
   regulatorys: IRegulatory[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

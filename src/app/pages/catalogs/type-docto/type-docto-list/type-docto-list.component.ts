@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ITypeDocto } from 'src/app/core/models/catalogs/type-docto.model';
 import { TypeDoctoService } from 'src/app/core/services/catalogs/type-docto.service';
@@ -16,7 +16,7 @@ import { TYPEDOCTO_COLUMS } from './type-docto-columns';
   ]
 })
 export class TypeDoctoListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
+  
   paragraphs: ITypeDocto[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
