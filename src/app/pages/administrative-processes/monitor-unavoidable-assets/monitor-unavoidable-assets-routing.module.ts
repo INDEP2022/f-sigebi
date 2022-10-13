@@ -4,12 +4,13 @@ import { MonitorUnavoidableAssetsComponent } from './monitor-unavoidable-assets/
 
 const routes: Routes = [
   {
-    path:'',component:MonitorUnavoidableAssetsComponent
-  }
+    path: '',
+    component: MonitorUnavoidableAssetsComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class MonitorUnavoidableAssetsRoutingModule { }
+export class MonitorUnavoidableAssetsRoutingModule {}

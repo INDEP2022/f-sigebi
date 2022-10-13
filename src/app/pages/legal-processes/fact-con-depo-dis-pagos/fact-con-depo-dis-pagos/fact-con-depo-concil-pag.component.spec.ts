@@ -8,9 +8,8 @@ describe('FactCondepoConcilPagComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FactCondepoConcilPagComponent ]
-    })
-    .compileComponents();
+      declarations: [FactCondepoConcilPagComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

@@ -1,62 +1,70 @@
 <app-card [header]="true" [footer]="true">
-    <div class="ch-content" header>
-      <h5 class="title">CONTROL MENSUAL DE RECEPCIÓN DOCUMENTAL</h5>
-     
-    </div>
-  
-    <div body>
-      
-        <form class="form-material" [formGroup]="form">
-         
-            <div class="row pt-5">
-                <div class="col-md-3">
-                    <app-delegation-shared [form]="form" [showSubdelegation]="false" > </app-delegation-shared>
-                </div>
-                <div class="col-md-3 mt-3">
-                    <app-delegation-shared [form]="form" [showDelegation]="false" > </app-delegation-shared>
-                </div>
-                <div class="col-md-2">
-                    <form-field [control]="form.get('fromYear')" label="Recepciones del año">
-                            <input type="text"
-                            class="form-control"
-                            [bsConfig]="bsConfigYear"
-                            #dp="bsDatepicker"
-                            formControlName="fromYear"
-                            bsDatepicker [(bsValue)]="bsValueYear">
-                    </form-field>
-                </div>
-                <div class="col-md-2">
-                    <form-field [control]="form.get('fromMonth')" label="Del mes de">
-                        <input type="text"
-                            class="form-control"
-                            [bsConfig]="(bsConfigFromMonth)"
-                            #dp="bsDatepicker"
-                            formControlName="fromMonth"
-                            bsDatepicker [(bsValue)]="bsValueFromMonth"
-                            >
-                    </form-field>
-                </div>
-                <div class="col-md-2">
-                    <form-field [control]="form.get('toMonth')" label="Al mes de">
-                        <input type="text"
-                            class="form-control"
-                            [bsConfig]="bsConfigToMonth"
-                            #dp="bsDatepicker"
-                            formControlName="toMonth"
-                            bsDatepicker [(bsValue)]="bsValueToMonth">
-                    </form-field>
-                </div>
-            </div>
-        </form>
-    </div> 
-    <div footer>
-        <div class="d-flex justify-content-center">
-            <div class="m-3">
-                <button type="button" class="btn btn-primary active" [disabled]="!form.valid">
-                  Imprimir
-                </button>
-            </div>
+  <div class="ch-content" header>
+    <h5 class="title">CONTROL MENSUAL DE RECEPCIÓN DOCUMENTAL</h5>
+  </div>
+
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <app-delegation-shared [form]="form" [showSubdelegation]="false">
+          </app-delegation-shared>
+        </div>
+        <div class="col-md-3 mt-3">
+          <app-delegation-shared [form]="form" [showDelegation]="false">
+          </app-delegation-shared>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('fromYear')"
+            label="Recepciones del año">
+            <input
+              type="text"
+              class="form-control"
+              [bsConfig]="bsConfigYear"
+              #dp="bsDatepicker"
+              formControlName="fromYear"
+              bsDatepicker
+              [(bsValue)]="bsValueYear" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('fromMonth')" label="Del mes de">
+            <input
+              type="text"
+              class="form-control"
+              [bsConfig]="bsConfigFromMonth"
+              #dp="bsDatepicker"
+              formControlName="fromMonth"
+              bsDatepicker
+              [(bsValue)]="bsValueFromMonth" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('toMonth')" label="Al mes de">
+            <input
+              type="text"
+              class="form-control"
+              [bsConfig]="bsConfigToMonth"
+              #dp="bsDatepicker"
+              formControlName="toMonth"
+              bsDatepicker
+              [(bsValue)]="bsValueToMonth" />
+          </form-field>
         </div>
       </div>
-  </app-card>
-  
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary active"
+          [disabled]="!form.valid">
+          Imprimir
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

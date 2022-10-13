@@ -9,10 +9,12 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-doc-compensation-sat-form',
   templateUrl: './doc-compensation-sat-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class DocCompensationSatFormComponent extends BasePage implements OnInit {
+export class DocCompensationSatFormComponent
+  extends BasePage
+  implements OnInit
+{
   docCompesationSatForm: ModelForm<IDocCompesationSat>;
   title: string = 'Tipo de Almacenes';
   edit: boolean = false;
@@ -20,7 +22,7 @@ export class DocCompensationSatFormComponent extends BasePage implements OnInit 
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private docCompesationSatService: DocCompensationSATService,
+    private docCompesationSatService: DocCompensationSATService
   ) {
     super();
   }
@@ -52,16 +54,21 @@ export class DocCompensationSatFormComponent extends BasePage implements OnInit 
 
   create() {
     this.loading = true;
-    this.docCompesationSatService.create(this.docCompesationSatForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.docCompesationSatService
+      .create(this.docCompesationSatForm.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   update() {
     this.loading = true;
     this.docCompesationSatService
-      .update(this.docCompesationSat.id, this.docCompesationSatForm.getRawValue())
+      .update(
+        this.docCompesationSat.id,
+        this.docCompesationSatForm.getRawValue()
+      )
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

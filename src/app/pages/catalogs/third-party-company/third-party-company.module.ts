@@ -7,17 +7,16 @@ import { ThirdPartyCompanyFormComponent } from './third-party-company-form/third
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
   declarations: [
     ThirdPartyCompanyListComponent,
-    ThirdPartyCompanyFormComponent
+    ThirdPartyCompanyFormComponent,
   ],
   imports: [
     CommonModule,
     SharedModule,
     ModalModule.forChild(),
-    ThirdPartyCompanyRoutingModule
-  ]
+    ThirdPartyCompanyRoutingModule,
+  ],
 })
-export class ThirdPartyCompanyModule { }
+export class ThirdPartyCompanyModule {}

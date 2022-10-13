@@ -37,7 +37,7 @@ import { PaPdmSpCSirsaePaymentsComponent } from './dispersion-payment-details/si
     PaPdmCpCCustomersPaymentsComponent,
     PaPdmDbCDesertedBatchComponent,
     PaPdmOwobCOrderWOBillingComponent,
-    PaPdmSpCSirsaePaymentsComponent
+    PaPdmSpCSirsaePaymentsComponent,
   ],
   imports: [
     CommonModule,
@@ -49,6 +49,6 @@ import { PaPdmSpCSirsaePaymentsComponent } from './dispersion-payment-details/si
     BsDropdownModule,
     ModalModule.forChild(),
     EventsSharedComponent,
-  ]
+  ],
 })
-export class CBPdmMPaymentDispersionMonitorModule { }
+export class CBPdmMPaymentDispersionMonitorModule {}

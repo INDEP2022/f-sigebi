@@ -1,79 +1,92 @@
 <app-card [header]="true" [footer]="true">
-  	<div class="ch-content" header>
-  		<h5 class="title">RESUMEN DE INFORMACIÓN FINANCIERA</h5>
-	</div>
-	<div body>
-	    <form class="form-material" [formGroup]="form">
-	    	<div class="row mb-3 mt-3">
-		        <!--Goods Types Component-->
-		        <div class="col-xs-12 col-12 col-md-6 mb-3">
-		            <app-goods-types-shared [form]="form" 
-		            	[subTypeShow]="false" [ssubTypeShow]="false" [sssubTypeShow]="false">
-		            </app-goods-types-shared>
-		        </div>
-		    </div>
-	    	<div class="row mb-3 mt-3">
-	    		<!--Date Form-->
-	    		<div class="col-xs-12 col-12 col-md-3 mb-3">
-	    			<form-field [control]="form.get('from')" label="Del">
-	    				<input 
-	    					formControlName="from"
-				            placeholder="Selección de fecha"
-				            class="form-control"
-	           				bsDatepicker>
-	          		</form-field>
-	        	</div>
-	        	<div class="col-xs-12 col-12 col-md-3 mb-3">
-	        		<form-field [control]="form.get('to')" label="Al">
-		            	<input 
-		              		formControlName="to"
-		              		placeholder="Selección de fecha"
-		              		class="form-control"
-		           			bsDatepicker>
-		           	</form-field>
-		        </div>
-	       		 <!--Financial Info Options-->
-		        <div class="col-xs-12 col-12 col-md-3 mb-3 align-self-center">
-		        	<button class="btn btn-primary active btn-sm w-100" (click)="openModal()">
-		        		Selección de Atributos
-				    </button>
-		        </div>
-	        </div>
-	        <div class="row mb-3">
-	        	<div class="col-md-6" *ngIf="checkedListFA.length>0">
-		            <h4 class="card-title mb-5">Atributos Financieros</h4>
-		            <div class="flex-row">
-		              <div class="mb-3" *ngFor="let finAtt of checkedListFA; let i=index">
-		                <span class="badge-pill badge-info badge" >
-		                  {{finAtt.description}}
-		                  <i class="bi bi-x-circle align-self-center" (click)="removeItem(finAtt.id,'financialAtribs')"></i>
-		                </span>
-		              </div>
-		            </div>
-		        </div>
-	          
-	          	<div class="col-md-6" *ngIf="checkedListFI.length>0">
-		            <h4 class="card-title mb-5">Indicadores Financieros</h4>
-		            <div class="flex-row">
-		              <div class="mb-3" *ngFor="let finInd of checkedListFI;let i=index">
-		                <span class="badge-pill badge-info badge">
-		                  {{finInd.description}}
-		                  <i class="bi bi-x-circle align-self-center" (click)="removeItem(finInd.id, 'financialIndicators')"></i>
-		                </span>
-		              </div>
-		            </div>
-		        </div>
-	        </div>
-	    </form>
-  	</div>
-  	<div footer class="d-flex justify-content-end">
-	    <div class="m-3">
-	        <confirm-button
-	          text="Imprimir"
-	          [disabled]="form.invalid"
-	          [loading]="loading"
-	          (confirm)="confirm()">
-	        </confirm-button>
-	    </div>
-	</div>
+  <div class="ch-content" header>
+    <h5 class="title">RESUMEN DE INFORMACIÓN FINANCIERA</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mb-3 mt-3">
+        <!--Goods Types Component-->
+        <div class="col-xs-12 col-12 col-md-6 mb-3">
+          <app-goods-types-shared
+            [form]="form"
+            [subTypeShow]="false"
+            [ssubTypeShow]="false"
+            [sssubTypeShow]="false">
+          </app-goods-types-shared>
+        </div>
+      </div>
+      <div class="row mb-3 mt-3">
+        <!--Date Form-->
+        <div class="col-xs-12 col-12 col-md-3 mb-3">
+          <form-field [control]="form.get('from')" label="Del">
+            <input
+              formControlName="from"
+              placeholder="Selección de fecha"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-xs-12 col-12 col-md-3 mb-3">
+          <form-field [control]="form.get('to')" label="Al">
+            <input
+              formControlName="to"
+              placeholder="Selección de fecha"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <!--Financial Info Options-->
+        <div class="col-xs-12 col-12 col-md-3 mb-3 align-self-center">
+          <button
+            class="btn btn-primary active btn-sm w-100"
+            (click)="openModal()">
+            Selección de Atributos
+          </button>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-6" *ngIf="checkedListFA.length > 0">
+          <h4 class="card-title mb-5">Atributos Financieros</h4>
+          <div class="flex-row">
+            <div
+              class="mb-3"
+              *ngFor="let finAtt of checkedListFA; let i = index">
+              <span class="badge-pill badge-info badge">
+                {{ finAtt.description }}
+                <i
+                  class="bi bi-x-circle align-self-center"
+                  (click)="removeItem(finAtt.id, 'financialAtribs')"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6" *ngIf="checkedListFI.length > 0">
+          <h4 class="card-title mb-5">Indicadores Financieros</h4>
+          <div class="flex-row">
+            <div
+              class="mb-3"
+              *ngFor="let finInd of checkedListFI; let i = index">
+              <span class="badge-pill badge-info badge">
+                {{ finInd.description }}
+                <i
+                  class="bi bi-x-circle align-self-center"
+                  (click)="removeItem(finInd.id, 'financialIndicators')"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer class="d-flex justify-content-end">
+    <div class="m-3">
+      <confirm-button
+        text="Imprimir"
+        [disabled]="form.invalid"
+        [loading]="loading"
+        (confirm)="confirm()">
+      </confirm-button>
+    </div>
+  </div>
 </app-card>

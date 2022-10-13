@@ -1,19 +1,15 @@
-import { Component, OnInit } from '@angular/core';  
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'ngx-fact-ger-jurrec-derev',
   templateUrl: './fact-ger-jurrec-derev.component.html',
-  styleUrls: ['./fact-ger-jurrec-derev.component.scss']
+  styleUrls: ['./fact-ger-jurrec-derev.component.scss'],
 })
-export class FactGerJurrecDerevComponent  {
-
-
+export class FactGerJurrecDerevComponent {
   public form: FormGroup;
 
-  constructor(
-    private fb: FormBuilder) {  
-  }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();
@@ -30,16 +26,14 @@ export class FactGerJurrecDerevComponent  {
   }
 
   btnEjecutar() {
-    console.log("Ejecutar");
+    console.log('Ejecutar');
   }
-  
 
-/**
- * Formulario
- */
-//  public returnField(form, field) { return form.get(field); }
-//  public returnShowRequirements(form, field) { 
-//    return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched; 
-//  }
-
+  /**
+   * Formulario
+   */
+  //  public returnField(form, field) { return form.get(field); }
+  //  public returnShowRequirements(form, field) {
+  //    return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched;
+  //  }
 }

@@ -8,9 +8,8 @@ describe('FactAdbSolDestLegComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FactAdbSolDestLegComponent ]
-    })
-    .compileComponents();
+      declarations: [FactAdbSolDestLegComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

@@ -11,17 +11,18 @@ import { COLUMNS } from './columns';
 @Component({
   selector: 'app-pa-rsp-c-record-service-payment',
   templateUrl: './pa-rsp-c-record-service-payment.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class PaRspCRecordServicePaymentComponent extends BasePage implements OnInit {
-
+export class PaRspCRecordServicePaymentComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
   settings = {
-    ...TABLE_SETTINGS
+    ...TABLE_SETTINGS,
   };
 
-  data:any[]=[
+  data: any[] = [
     {
       request: 'Solictu1234',
       goodNumber: '2563',
@@ -29,7 +30,7 @@ export class PaRspCRecordServicePaymentComponent extends BasePage implements OnI
       requestDate: '29-12-1999',
       paymentDate: 'FEC_PAGO',
       amount: '$10000000',
-      isPayment: false
+      isPayment: false,
     },
     {
       request: 'abc3422',
@@ -38,7 +39,7 @@ export class PaRspCRecordServicePaymentComponent extends BasePage implements OnI
       requestDate: '29-12-2020',
       paymentDate: 'FEC_PAGO',
       amount: '$10000000',
-      isPayment: true
+      isPayment: true,
     },
   ];
 
@@ -52,7 +53,7 @@ export class PaRspCRecordServicePaymentComponent extends BasePage implements OnI
   ) {
     super();
     this.settings.columns = COLUMNS;
-    this.settings.actions.add=true;
+    this.settings.actions.add = true;
   }
 
   ngOnInit(): void {
@@ -66,7 +67,7 @@ export class PaRspCRecordServicePaymentComponent extends BasePage implements OnI
   private prepareForm(): void {
     this.form = this.fb.group({
       applicationDate: [null, [Validators.required]],
-      pb_type: ['pb_lista', [Validators.required]]
+      pb_type: ['pb_lista', [Validators.required]],
     });
   }
 
@@ -74,12 +75,15 @@ export class PaRspCRecordServicePaymentComponent extends BasePage implements OnI
     this.modalRef.hide();
   }
 
-  settingsChange($event:any): void {
-    this.settings=$event;
+  settingsChange($event: any): void {
+    this.settings = $event;
   }
 
-  openGlobal(requestId:string) {
+  openGlobal(requestId: string) {
     //Change Routing
-    this.router.navigate(['pages/administrative-processes/services/global',requestId]);
+    this.router.navigate([
+      'pages/administrative-processes/services/global',
+      requestId,
+    ]);
   }
 }

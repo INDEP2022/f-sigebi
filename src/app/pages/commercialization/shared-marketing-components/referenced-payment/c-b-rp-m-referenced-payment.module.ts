@@ -13,9 +13,7 @@ import { EventsSharedComponent } from 'src/app/@standalone/shared-forms/events-s
 import { BanksSharedComponent } from 'src/app/@standalone/shared-forms/banks-shared/banks-shared.component';
 
 @NgModule({
-  declarations: [
-    CBRpCReferencedPaymentComponent
-  ],
+  declarations: [CBRpCReferencedPaymentComponent],
   imports: [
     CommonModule,
     SharedModule,
@@ -23,7 +21,7 @@ import { BanksSharedComponent } from 'src/app/@standalone/shared-forms/banks-sha
     ReactiveFormsModule,
     CBRpMReferencedPaymentRoutingModule,
     EventsSharedComponent,
-    BanksSharedComponent
-  ]
+    BanksSharedComponent,
+  ],
 })
-export class CBRpMReferencedPaymentModule { }
+export class CBRpMReferencedPaymentModule {}

@@ -8,42 +8,39 @@ import { COLUMNS } from './columns';
 @Component({
   selector: 'app-pa-pdm-bp-c-batch-payments',
   templateUrl: './pa-pdm-bp-c-batch-payments.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PaPdmBpCBatchPaymentsComponent extends BasePage implements OnInit {
-
   settings = {
     ...TABLE_SETTINGS,
-    actions: false
+    actions: false,
   };
 
-  data:any[]=[];
+  data: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  amountV: number= 0.00;
-  total: number= 10566395.52;
+  amountV: number = 0.0;
+  total: number = 10566395.52;
 
   constructor() {
     super();
     this.settings.columns = COLUMNS;
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   add() {
     //this.openModal();
   }
 
-  edit(data:any) {
+  edit(data: any) {
     //console.log(data)
     //this.openModal({ edit: true, paragraph });
   }
 
-  delete(data:any) {
-    console.log(data)
+  delete(data: any) {
+    console.log(data);
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -55,8 +52,7 @@ export class PaPdmBpCBatchPaymentsComponent extends BasePage implements OnInit {
     });
   }
 
-  settingsChange($event:any): void {
-    this.settings=$event;
+  settingsChange($event: any): void {
+    this.settings = $event;
   }
-
 }

@@ -1,13 +1,12 @@
-import { Component, OnInit } from '@angular/core';  
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'ngx-fact-jur-bienes-x-amp',
   templateUrl: './fact-jur-bienes-x-amp.component.html',
-  styleUrls: ['./fact-jur-bienes-x-amp.component.scss']
+  styleUrls: ['./fact-jur-bienes-x-amp.component.scss'],
 })
-export class FactJurBienesXAmpComponent  {
-
+export class FactJurBienesXAmpComponent {
   tableSettings = {
     actions: {
       columnTitle: '',
@@ -15,7 +14,7 @@ export class FactJurBienesXAmpComponent  {
       edit: false,
       delete: false,
     },
-    hideSubHeader: true,//oculta subheaader de filtro
+    hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
 
     columns: {
@@ -30,7 +29,6 @@ export class FactJurBienesXAmpComponent  {
       noBien: 'No. Bien',
       descripcion: 'Descripción',
     },
-
   ];
 
   tableSettings2 = {
@@ -40,7 +38,7 @@ export class FactJurBienesXAmpComponent  {
       edit: false,
       delete: false,
     },
-    hideSubHeader: true,//oculta subheaader de filtro
+    hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
 
     columns: {
@@ -55,16 +53,13 @@ export class FactJurBienesXAmpComponent  {
       noBien: 'No. Bien',
       descripcion: 'Descripción',
     },
-
   ];
 
   public form: FormGroup;
   public formTipoSuspersion: FormGroup;
   public formAmparo: FormGroup;
 
-  constructor(
-    private fb: FormBuilder) {  
-  }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();
@@ -92,27 +87,24 @@ export class FactJurBienesXAmpComponent  {
       actoReclamado: '',
     });
   }
-  
-mostrarInfo(): any{
-  console.log(this.form.value)
-}
 
-btnAgregar() {
-  console.log("Agregar");
-  
-}
+  mostrarInfo(): any {
+    console.log(this.form.value);
+  }
 
-btnEliminar() {
-  console.log("Eliminar");
-  
-}
+  btnAgregar() {
+    console.log('Agregar');
+  }
 
-/**
- * Formulario
- */
-//  public returnField(form, field) { return form.get(field); }
-//  public returnShowRequirements(form, field) { 
-//    return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched; 
-//  }
+  btnEliminar() {
+    console.log('Eliminar');
+  }
 
+  /**
+   * Formulario
+   */
+  //  public returnField(form, field) { return form.get(field); }
+  //  public returnShowRequirements(form, field) {
+  //    return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched;
+  //  }
 }

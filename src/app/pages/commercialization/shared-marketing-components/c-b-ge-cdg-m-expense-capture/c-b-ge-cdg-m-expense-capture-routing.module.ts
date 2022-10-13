@@ -5,12 +5,12 @@ import { CBGeCdgCExpenseCaptureComponent } from './c-b-ge-cdg-c-expense-capture/
 const routes: Routes = [
   {
     path: '',
-    component: CBGeCdgCExpenseCaptureComponent
-  }
+    component: CBGeCdgCExpenseCaptureComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CBGeCdgMExpenseCaptureRoutingModule { }
+export class CBGeCdgMExpenseCaptureRoutingModule {}

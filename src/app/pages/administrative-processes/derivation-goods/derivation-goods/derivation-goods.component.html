@@ -133,58 +133,53 @@
 
       <div class="row mt-5">
         <div class="col-md-3 col-sm-12 col-xs-12">
-            <form-field
-              [control]="form.get('quantity')"
-              label="Cantidad">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="quantity" />
-            </form-field>
-          </div>
-  
-          <div class="col-md-3 col-sm-12 col-xs-12">
-            <form-field
-              [control]="form.get('classifier')"
-              label="Clasificador">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="classifier" />
-            </form-field>
-          </div>
-          
-          <div class="col-md-3 col-sm-12 col-xs-12">
-            <form-field 
-                [control]="form.get('unitOfMeasure')" 
-                label="Unidad de medida">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="unitOfMeasure" />
-            </form-field>
-          </div>
+          <form-field [control]="form.get('quantity')" label="Cantidad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="quantity" />
+          </form-field>
+        </div>
 
-          <div class="col-md-3 col-sm-12 col-xs-12">
-            <form-field
-              [control]="form.get('destinationLabel')"
-              label="Etiqueta de destino">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="destinationLabel" />
-            </form-field>
-          </div>
-  
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('classifier')" label="Clasificador">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="classifier" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('unitOfMeasure')"
+            label="Unidad de medida">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="unitOfMeasure" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('destinationLabel')"
+            label="Etiqueta de destino">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="destinationLabel" />
+          </form-field>
+        </div>
       </div>
 
       <div class="row mt-5">
         <div class="col-md-12 col-sm-12 col-xs-12">
-            <button 
-                class="btn btn-success btn-sm active" 
-                (click)="updateStatus()">
-                Cambiar Status
-            </button>     
+          <button
+            class="btn btn-success btn-sm active"
+            (click)="updateStatus()">
+            Cambiar Status
+          </button>
         </div>
       </div>
     </div>
@@ -192,72 +187,62 @@
 </form>
 
 <div class="row">
-    <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
-      <app-card [header]="true">
-        <div class="ch-content" header>
-            <h5 class="title">No Bien Hijo</h5>
-          </div>
-          <div body>
-                 <button 
-                    class="btn btn-danger btn-sm active" 
-                    (click)="openModal()">
-                    +
-                </button>
-                &nbsp;
-                <button 
-                    class="btn btn-danger btn-sm active" 
-                    (click)="openModal()">
-                    -
-                </button>
-          </div>
-      </app-card>
-    </div>
-    <div class="col-md-8 col-sm-12 col-xs-12 mt-2">
-      <app-card [header]="true">
-        <div class="ch-content" header>
-            <h5 class="title">Atributos del Bien</h5>
-          </div>
-          <div body>
-            
-          </div>
-      </app-card>
-    </div>
+  <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
+    <app-card [header]="true">
+      <div class="ch-content" header>
+        <h5 class="title">No Bien Hijo</h5>
+      </div>
+      <div body>
+        <button class="btn btn-danger btn-sm active" (click)="openModal()">
+          +
+        </button>
+        &nbsp;
+        <button class="btn btn-danger btn-sm active" (click)="openModal()">
+          -
+        </button>
+      </div>
+    </app-card>
+  </div>
+  <div class="col-md-8 col-sm-12 col-xs-12 mt-2">
+    <app-card [header]="true">
+      <div class="ch-content" header>
+        <h5 class="title">Atributos del Bien</h5>
+      </div>
+      <div body></div>
+    </app-card>
+  </div>
 </div>
 
 <app-card>
-      <div body>
-        <div class="row">
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <button 
-                    class="btn btn-success btn-sm active" 
-                    (click)="actConversionBtn()">
-                    Actas conversión
-                </button>     
-            </div>
-
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <button 
-                    class="btn btn-info btn-sm active" 
-                    (click)="bulkUpload()">
-                    Carga masiva
-                </button>     
-            </div>
-
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <button 
-                    class="btn btn-danger btn-sm active" 
-                    (click)="finishConversion()">
-                    Finalizar conversión
-                </button>     
-            </div>
-
-            <div class="col-md-3 col-sm-6 col-xs-12">
-                <button 
-                    class="btn btn-info btn-sm active" 
-                    (click)="imgUpload()">
-                    Carga Imagenes
-                </button>     
-            </div>
-        </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-3 col-sm-6 col-xs-12">
+        <button
+          class="btn btn-success btn-sm active"
+          (click)="actConversionBtn()">
+          Actas conversión
+        </button>
       </div>
-  </app-card>
+
+      <div class="col-md-3 col-sm-6 col-xs-12">
+        <button class="btn btn-info btn-sm active" (click)="bulkUpload()">
+          Carga masiva
+        </button>
+      </div>
+
+      <div class="col-md-3 col-sm-6 col-xs-12">
+        <button
+          class="btn btn-danger btn-sm active"
+          (click)="finishConversion()">
+          Finalizar conversión
+        </button>
+      </div>
+
+      <div class="col-md-3 col-sm-6 col-xs-12">
+        <button class="btn btn-info btn-sm active" (click)="imgUpload()">
+          Carga Imagenes
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

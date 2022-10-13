@@ -9,8 +9,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-status-transfer-form',
   templateUrl: './status-transfer-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class StatusTransferFormComponent extends BasePage implements OnInit {
   statusTransferForm: ModelForm<IStatusTransfer>;
@@ -51,10 +50,12 @@ export class StatusTransferFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.statusTransferService.create(this.statusTransferForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.statusTransferService
+      .create(this.statusTransferForm.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   update() {

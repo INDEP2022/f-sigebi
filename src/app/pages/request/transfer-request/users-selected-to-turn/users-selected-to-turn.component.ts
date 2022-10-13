@@ -11,23 +11,19 @@ import { TURN_SELECTED_COLUMNS } from '../../request-in-turn/request-in-turn-sel
 @Component({
   selector: 'app-users-selected-to-turn',
   templateUrl: './users-selected-to-turn.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
-  title:string = '¿DESEAS TURNAR LAS SOLICITUDES SELECCIONAS?';
-  settings = TABLE_SETTINGS
+  title: string = '¿DESEAS TURNAR LAS SOLICITUDES SELECCIONAS?';
+  settings = TABLE_SETTINGS;
   paragraphs: IRequestInTurnSelected[] = [];
-  params = new BehaviorSubject<ListParams>(new ListParams);
+  params = new BehaviorSubject<ListParams>(new ListParams());
   public event: EventEmitter<any> = new EventEmitter();
   totalItems: number = 0;
   typeTurn: string;
-  
-  constructor(
-    public modalRef: BsModalRef,
-    public fb: FormBuilder
-    ) { 
-    super()
+
+  constructor(public modalRef: BsModalRef, public fb: FormBuilder) {
+    super();
     this.settings.columns = TURN_SELECTED_COLUMNS;
     this.settings.actions = {
       columnTitle: 'Acciones',
@@ -35,28 +31,26 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
       add: false,
       edit: false,
       delete: false,
-    }
+    };
   }
 
   ngOnInit(): void {
     //todo: search users by the type user and display
     console.log(this.typeTurn);
-    
   }
 
-  triggerEvent(item:IRequestInTurnSelected){
-    this.event.emit(item)
+  triggerEvent(item: IRequestInTurnSelected) {
+    this.event.emit(item);
   }
 
-  confirm():void{
-    let user = {user:'Jon Estragos', email: 'email.com'};
+  confirm(): void {
+    let user = { user: 'Jon Estragos', email: 'email.com' };
 
     this.triggerEvent(user);
     this.close();
   }
 
-  close():void{
+  close(): void {
     this.modalRef.hide();
   }
-
 }

@@ -6,12 +6,12 @@ import { CBEclCExpenseConceptsListComponent } from './expense-concepts-list/c-b-
 const routes: Routes = [
   {
     path: '',
-    component: CBEclCExpenseConceptsListComponent
-  }
+    component: CBEclCExpenseConceptsListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CBEcMPaymentsConceptsRoutingModule { }
+export class CBEcMPaymentsConceptsRoutingModule {}

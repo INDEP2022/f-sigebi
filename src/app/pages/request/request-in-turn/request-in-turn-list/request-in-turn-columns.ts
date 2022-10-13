@@ -1,4 +1,4 @@
-import { CheckboxColumnComponent } from "src/app/shared/components/checkbox-column/checkbox-column.component";
+import { CheckboxColumnComponent } from 'src/app/shared/components/checkbox-column/checkbox-column.component';
 
 export const REQUEST_IN_TURN_COLUMNS = {
   noRequest: {

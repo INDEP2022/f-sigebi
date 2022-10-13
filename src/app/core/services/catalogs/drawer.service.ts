@@ -30,6 +30,6 @@ export class DrawerService implements ICrudMethods<IDrawer> {
   }
 
   removeByIds(ids: Partial<IDrawer>): Observable<Object> {
-    return this.drawerRepository.removeByIds(this.route,ids);
+    return this.drawerRepository.removeByIds(this.route, ids);
   }
 }

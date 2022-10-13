@@ -5,12 +5,12 @@ import { PeAmdvdaCUpdateMssValueComponent } from './pe-amdvda-c-update-mss-value
 const routes: Routes = [
   {
     path: '',
-    component: PeAmdvdaCUpdateMssValueComponent
-  }
+    component: PeAmdvdaCUpdateMssValueComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PeAmdvdaMUpdateMssValueRoutingModule { }
+export class PeAmdvdaMUpdateMssValueRoutingModule {}

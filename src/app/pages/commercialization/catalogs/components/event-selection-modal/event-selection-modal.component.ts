@@ -9,15 +9,14 @@ import { EVENT_COLUMNS } from './event-selection-columns';
 @Component({
   selector: 'app-event-selection-modal',
   templateUrl: './event-selection-modal.component.html',
-  styles: []
+  styles: [],
 })
 export class EventSelectionModalComponent extends BasePage implements OnInit {
-
   // tipo any hasta que existan modelos o interfaces de la respuesta del backend
   settings = {
     ...TABLE_SETTINGS,
     selectedRowIndex: -1,
-    actions: false
+    actions: false,
   };
   rowSelected: boolean = false;
   selectedRow: any = null;
@@ -32,33 +31,31 @@ export class EventSelectionModalComponent extends BasePage implements OnInit {
     {
       id: 1,
       event: 'DECBM 01/07',
-      description: 'EJEMPLO DESCRIPCION PARA EVENTO'
+      description: 'EJEMPLO DESCRIPCION PARA EVENTO',
     },
     {
       id: 2,
       event: 'DECBM 01/08',
-      description: 'EJEMPLO DESCRIPCION PARA EVENTO'
+      description: 'EJEMPLO DESCRIPCION PARA EVENTO',
     },
     {
       id: 3,
       event: 'DECBM 01/09',
-      description: 'EJEMPLO DESCRIPCION PARA EVENTO'
+      description: 'EJEMPLO DESCRIPCION PARA EVENTO',
     },
     {
       id: 4,
       event: 'DECBM 01/10',
-      description: 'EJEMPLO DESCRIPCION PARA EVENTO'
+      description: 'EJEMPLO DESCRIPCION PARA EVENTO',
     },
     {
       id: 5,
       event: 'DECBM 01/11',
-      description: 'EJEMPLO DESCRIPCION PARA EVENTO'
+      description: 'EJEMPLO DESCRIPCION PARA EVENTO',
     },
-  ]
+  ];
 
-  constructor(
-    private modalRef: BsModalRef,
-  ) { 
+  constructor(private modalRef: BsModalRef) {
     super();
     this.settings.columns = EVENT_COLUMNS;
   }
@@ -86,10 +83,9 @@ export class EventSelectionModalComponent extends BasePage implements OnInit {
     this.rowSelected = true;
   }
 
-  confirm () {
+  confirm() {
     if (!this.rowSelected) return;
     this.refresh.emit(this.selectedRow);
     this.modalRef.hide();
   }
-
 }

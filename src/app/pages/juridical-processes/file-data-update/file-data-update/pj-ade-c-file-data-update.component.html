@@ -1,298 +1,375 @@
 <app-card [header]="true">
-    <div class="ch-content" header>
-        <h5 class="title">
-            ACTUALIZACI&Oacute;N DE DATOS DEL EXPEDIENTE
-        </h5>
-    </div>
+  <div class="ch-content" header>
+    <h5 class="title">ACTUALIZACI&Oacute;N DE DATOS DEL EXPEDIENTE</h5>
+  </div>
 
-    <div body>
-        
-        
-        <form [formGroup]="flyerForm" class="container-fluid form-material">
-            <div class="row">
-                <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-                    <div class="row">
-                        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-                            <h6 class="title">
-                                DATOS DEL ASUNTO
-                            </h6>
-                            <hr class="row">
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <form-field [control]="flyerForm.get('noVolante')" label="No. Volante">
-                                <input class="form-control" formControlName="noVolante" />
-                            </form-field>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <form-field [control]="flyerForm.get('fecRecepcion')" label="Fec. Recepción.">
-                                <input 
-                                    formControlName="fecRecepcion"
-                                    placeholder="Selección de Fecha Recepción."
-                                    class="form-control"
-                                        bsDatepicker>
-                            </form-field>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <form-field [control]="flyerForm.get('noConsecutivoDiario')" label="Consecutivo Diario">
-                                <input class="form-control" formControlName="noConsecutivoDiario" />
-                            </form-field>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
-                            <!-- <form-field [control]="flyerForm.get('tipoVolante')" label="Tipo de Volante"> -->
-                                <div class="row w-100 pl-4">
-                                    <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-                                        <form-radio label="Administrativo">
-                                            <input type="radio" formControlName="tipoVolante" value="Admin_Transfe" />
-                                        </form-radio>
-                                    </div>
-                                    <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-                                        <form-radio label="Procesal">
-                                            <input type="radio" formControlName="tipoVolante" value="Procesal" />
-                                        </form-radio>
-                                    </div>
-                                    <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-                                        <form-radio label="Admin. Trans">
-                                            <input type="radio" formControlName="tipoVolante" value="Admin" />
-                                        </form-radio>
-                                    </div>
-                                    <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-                                        <form-radio label="Transferente">
-                                            <input type="radio" formControlName="tipoVolante" value="Transferente" />
-                                        </form-radio>
-                                    </div>
-                                </div>
-                            <!-- </form-field> -->
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-                            <form-field [control]="flyerForm.get('actaCircunst')" label="Acta Circunst">
-                                <input class="form-control" formControlName="actaCircunst" />
-                            </form-field>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-                            <form-field [control]="flyerForm.get('averiguacionPrevia')" label="Averig. Previa">
-                                <input class="form-control" formControlName="averiguacionPrevia" />
-                            </form-field>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <form-field [control]="flyerForm.get('causaPenal')" label="Causa Penal">
-                                <input class="form-control" formControlName="causaPenal" />
-                            </form-field>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <form-field [control]="flyerForm.get('cveAmparo')" label="No. Amparo">
-                                <input class="form-control" formControlName="cveAmparo" />
-                            </form-field>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2 text-center">
-                            <button type="button" class="btn btn-primary btn-sm active">Observaciones</button>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <form-field [control]="flyerForm.get('cveTocaPenal')" label="Toca Penal">
-                                <input class="form-control" formControlName="cveTocaPenal" />
-                            </form-field>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <form-field [control]="flyerForm.get('cveOficioExterno')" label="No. Oficio">
-                                <input class="form-control" formControlName="cveOficioExterno" />
-                            </form-field>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <form-field [control]="flyerForm.get('fecOficioExterno')" label="Fecha Oficio">
-                                <input 
-                                    formControlName="fecOficioExterno"
-                                    placeholder="Selección de Fecha Oficio"
-                                    class="form-control"
-                                        bsDatepicker>
-                            </form-field>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
-                            <form-field
-                              [control]="flyerForm.get('observaciones')"
-                              label="Descripción del Asunto">
-                              <textarea class="form-control" formControlName="observaciones"></textarea>
-                            </form-field>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mt-5">
-                            <h6 class="title">
-                                DATOS DEL EXPEDIENTE
-                            </h6>
-                            <hr class="row">
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <form-field [control]="flyerForm.get('noExpediente')" label="No. Expediente">
-                                <input class="form-control" formControlName="noExpediente" />
-                            </form-field>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-                            <form-field [control]="flyerForm.get('remitenteExterno')" label="Remitente">
-                                <input class="form-control" formControlName="remitenteExterno" />
-                            </form-field>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <form-field [control]="flyerForm.get('asunto')" label="Asunto">
-                                <input class="form-control" formControlName="asunto" />
-                            </form-field>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2">
-                            <form-field [control]="flyerForm.get('desahogoAsunto')" label="Desahogo Asunto">
-                                <textarea class="form-control" formControlName="desahogoAsunto"></textarea>
-                            </form-field>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 text-center">
-                            <button type="button" class="btn btn-primary btn-sm active">Oficio de desahogo</button>
-                            <button type="button" class="btn btn-link btn-sm" [routerLink]="[linkDictaminacionesJuridicas, flyerId]">
-                                Dictaminación Jurídicca
-                            </button>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <form-field [control]="flyerForm.get('claveUnica')" label="Clave única">
-                                <input class="form-control" formControlName="claveUnica" />
-                            </form-field>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <!-- <label class="label form-control-label">Ciudad</label> -->
-                            <ngx-select 
-                                [data]="items"
-                                bindLabel="cityName"
-                                label="Ciudad"
-                                value="id"
-                                (fetchItems)="getFromSelect($event)"
-                                [form]="flyerForm" control="ciudad"></ngx-select>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <!-- <label class="label form-control-label">Entidad Federativa</label> -->
-                            <ngx-select 
-                                [data]="items"
-                                bindLabel="federativeEntityName"
-                                label="Entidad Federativa"
-                                value="id"
-                                (fetchItems)="getFromSelect($event)"
-                                [form]="flyerForm" control="entidadFed"></ngx-select>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <!-- <label class="label form-control-label">Transferente</label> -->
-                            <ngx-select 
-                                [data]="items"
-                                bindLabel="transferName"
-                                label="Transferente"
-                                value="id"
-                                (fetchItems)="getFromSelect($event)"
-                                [form]="flyerForm" control="transferente"></ngx-select>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <!-- <label class="label form-control-label">Emisora</label> -->
-                            <ngx-select 
-                                [data]="items"
-                                bindLabel="emiterName"
-                                label="Emisora"
-                                value="id"
-                                (fetchItems)="getFromSelect($event)"
-                                [form]="flyerForm" control="emisora"></ngx-select>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <!-- <label class="label form-control-label">Autoridad</label> -->
-                            <ngx-select 
-                                [data]="items"
-                                bindLabel="autorityName"
-                                label="Autoridad"
-                                value="id"
-                                (fetchItems)="getFromSelect($event)"
-                                [form]="flyerForm" control="autoridad"></ngx-select>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <!-- <label class="label form-control-label">Autoridad Emisora</label> -->
-                            <ngx-select 
-                                [data]="items"
-                                bindLabel="autorityEmiterName"
-                                label="Autoridad Emisora"
-                                value="id"
-                                (fetchItems)="getFromSelect($event)"
-                                [form]="flyerForm" control="institucion"></ngx-select>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <!-- <label class="label form-control-label">Ministerio público</label> -->
-                            <ngx-select 
-                                [data]="items"
-                                bindLabel="publicMinisteryName"
-                                label="Ministerio público"
-                                value="id"
-                                (fetchItems)="getFromSelect($event)"
-                                [form]="flyerForm" control="minPub"></ngx-select>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <!-- <label class="label form-control-label">Juzgado</label> -->
-                            <ngx-select 
-                                [data]="items"
-                                bindLabel="judeName"
-                                label="Juzgado"
-                                value="id"
-                                (fetchItems)="getFromSelect($event)"
-                                [form]="flyerForm" control="juzgado"></ngx-select>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <!-- <label class="label form-control-label">Indicado</label> -->
-                            <ngx-select 
-                                [data]="items"
-                                bindLabel="indicadoName"
-                                label="Indicado"
-                                value="id"
-                                (fetchItems)="getFromSelect($event)"
-                                [form]="flyerForm" control="indicado"></ngx-select>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <!-- <label class="label form-control-label">Delito</label> -->
-                            <ngx-select 
-                                [data]="items"
-                                bindLabel="delitoName"
-                                label="Delito"
-                                value="id"
-                                (fetchItems)="getFromSelect($event)"
-                                [form]="flyerForm" control="delito"></ngx-select>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <!-- <label class="label form-control-label">Vía Recepción</label> -->
-                            <ngx-select 
-                                [data]="items"
-                                bindLabel="viaReceptionName"
-                                label="Vía Recepción"
-                                value="id"
-                                (fetchItems)="getFromSelect($event)"
-                                [form]="flyerForm" control="recepcion"></ngx-select>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <!-- <label class="label form-control-label">Área Destino</label> -->
-                            <ngx-select 
-                                [data]="items"
-                                bindLabel="destinityAreaName"
-                                label="Área Destino"
-                                value="id"
-                                (fetchItems)="getFromSelect($event)"
-                                [form]="flyerForm" control="area"></ngx-select>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-                            <form-field [control]="flyerForm.get('destinatario')" label="Destinatario">
-                                <input class="form-control" formControlName="destinatario" />
-                            </form-field>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-7 col-lg-7 p-2">
-                            <form-field
-                              [control]="flyerForm.get('justificacion')"
-                              label="Justificación del conocimiento">
-                              <textarea class="form-control" formControlName="justificacion"></textarea>
-                            </form-field>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 text-center">
-                            <button type="button" class="btn btn-link btn-sm" [routerLink]="[linkReaccionacionTurno, flyerId]">
-                                Reasignación de Turno
-                            </button>
-                            <button type="button" class="btn btn-link btn-sm" [routerLink]="[linkOficioRelacionado, flyerId]">
-                                Oficio Relacionado
-                            </button>
-                            <button type="button" class="btn btn-primary btn-sm active">Captura de Copias</button>
-                        </div>
-                    </div>
-                </div>
+  <div body>
+    <form [formGroup]="flyerForm" class="container-fluid form-material">
+      <div class="row">
+        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+          <div class="row">
+            <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+              <h6 class="title">DATOS DEL ASUNTO</h6>
+              <hr class="row" />
             </div>
-        </form>
-    </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <form-field
+                [control]="flyerForm.get('noVolante')"
+                label="No. Volante">
+                <input class="form-control" formControlName="noVolante" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <form-field
+                [control]="flyerForm.get('fecRecepcion')"
+                label="Fec. Recepción.">
+                <input
+                  formControlName="fecRecepcion"
+                  placeholder="Selección de Fecha Recepción."
+                  class="form-control"
+                  bsDatepicker />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <form-field
+                [control]="flyerForm.get('noConsecutivoDiario')"
+                label="Consecutivo Diario">
+                <input
+                  class="form-control"
+                  formControlName="noConsecutivoDiario" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+              <!-- <form-field [control]="flyerForm.get('tipoVolante')" label="Tipo de Volante"> -->
+              <div class="row w-100 pl-4">
+                <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                  <form-radio label="Administrativo">
+                    <input
+                      type="radio"
+                      formControlName="tipoVolante"
+                      value="Admin_Transfe" />
+                  </form-radio>
+                </div>
+                <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                  <form-radio label="Procesal">
+                    <input
+                      type="radio"
+                      formControlName="tipoVolante"
+                      value="Procesal" />
+                  </form-radio>
+                </div>
+                <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                  <form-radio label="Admin. Trans">
+                    <input
+                      type="radio"
+                      formControlName="tipoVolante"
+                      value="Admin" />
+                  </form-radio>
+                </div>
+                <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                  <form-radio label="Transferente">
+                    <input
+                      type="radio"
+                      formControlName="tipoVolante"
+                      value="Transferente" />
+                  </form-radio>
+                </div>
+              </div>
+              <!-- </form-field> -->
+            </div>
+            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+              <form-field
+                [control]="flyerForm.get('actaCircunst')"
+                label="Acta Circunst">
+                <input class="form-control" formControlName="actaCircunst" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+              <form-field
+                [control]="flyerForm.get('averiguacionPrevia')"
+                label="Averig. Previa">
+                <input
+                  class="form-control"
+                  formControlName="averiguacionPrevia" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <form-field
+                [control]="flyerForm.get('causaPenal')"
+                label="Causa Penal">
+                <input class="form-control" formControlName="causaPenal" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <form-field
+                [control]="flyerForm.get('cveAmparo')"
+                label="No. Amparo">
+                <input class="form-control" formControlName="cveAmparo" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2 text-center">
+              <button type="button" class="btn btn-primary btn-sm active">
+                Observaciones
+              </button>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <form-field
+                [control]="flyerForm.get('cveTocaPenal')"
+                label="Toca Penal">
+                <input class="form-control" formControlName="cveTocaPenal" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <form-field
+                [control]="flyerForm.get('cveOficioExterno')"
+                label="No. Oficio">
+                <input
+                  class="form-control"
+                  formControlName="cveOficioExterno" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <form-field
+                [control]="flyerForm.get('fecOficioExterno')"
+                label="Fecha Oficio">
+                <input
+                  formControlName="fecOficioExterno"
+                  placeholder="Selección de Fecha Oficio"
+                  class="form-control"
+                  bsDatepicker />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+              <form-field
+                [control]="flyerForm.get('observaciones')"
+                label="Descripción del Asunto">
+                <textarea
+                  class="form-control"
+                  formControlName="observaciones"></textarea>
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mt-5">
+              <h6 class="title">DATOS DEL EXPEDIENTE</h6>
+              <hr class="row" />
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <form-field
+                [control]="flyerForm.get('noExpediente')"
+                label="No. Expediente">
+                <input class="form-control" formControlName="noExpediente" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+              <form-field
+                [control]="flyerForm.get('remitenteExterno')"
+                label="Remitente">
+                <input
+                  class="form-control"
+                  formControlName="remitenteExterno" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <form-field [control]="flyerForm.get('asunto')" label="Asunto">
+                <input class="form-control" formControlName="asunto" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2">
+              <form-field
+                [control]="flyerForm.get('desahogoAsunto')"
+                label="Desahogo Asunto">
+                <textarea
+                  class="form-control"
+                  formControlName="desahogoAsunto"></textarea>
+              </form-field>
+            </div>
+            <div
+              class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 text-center">
+              <button type="button" class="btn btn-primary btn-sm active">
+                Oficio de desahogo
+              </button>
+              <button
+                type="button"
+                class="btn btn-link btn-sm"
+                [routerLink]="[linkDictaminacionesJuridicas, flyerId]">
+                Dictaminación Jurídicca
+              </button>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <form-field
+                [control]="flyerForm.get('claveUnica')"
+                label="Clave única">
+                <input class="form-control" formControlName="claveUnica" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <!-- <label class="label form-control-label">Ciudad</label> -->
+              <ngx-select
+                [data]="items"
+                bindLabel="cityName"
+                label="Ciudad"
+                value="id"
+                (fetchItems)="getFromSelect($event)"
+                [form]="flyerForm"
+                control="ciudad"></ngx-select>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <!-- <label class="label form-control-label">Entidad Federativa</label> -->
+              <ngx-select
+                [data]="items"
+                bindLabel="federativeEntityName"
+                label="Entidad Federativa"
+                value="id"
+                (fetchItems)="getFromSelect($event)"
+                [form]="flyerForm"
+                control="entidadFed"></ngx-select>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <!-- <label class="label form-control-label">Transferente</label> -->
+              <ngx-select
+                [data]="items"
+                bindLabel="transferName"
+                label="Transferente"
+                value="id"
+                (fetchItems)="getFromSelect($event)"
+                [form]="flyerForm"
+                control="transferente"></ngx-select>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <!-- <label class="label form-control-label">Emisora</label> -->
+              <ngx-select
+                [data]="items"
+                bindLabel="emiterName"
+                label="Emisora"
+                value="id"
+                (fetchItems)="getFromSelect($event)"
+                [form]="flyerForm"
+                control="emisora"></ngx-select>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <!-- <label class="label form-control-label">Autoridad</label> -->
+              <ngx-select
+                [data]="items"
+                bindLabel="autorityName"
+                label="Autoridad"
+                value="id"
+                (fetchItems)="getFromSelect($event)"
+                [form]="flyerForm"
+                control="autoridad"></ngx-select>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <!-- <label class="label form-control-label">Autoridad Emisora</label> -->
+              <ngx-select
+                [data]="items"
+                bindLabel="autorityEmiterName"
+                label="Autoridad Emisora"
+                value="id"
+                (fetchItems)="getFromSelect($event)"
+                [form]="flyerForm"
+                control="institucion"></ngx-select>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <!-- <label class="label form-control-label">Ministerio público</label> -->
+              <ngx-select
+                [data]="items"
+                bindLabel="publicMinisteryName"
+                label="Ministerio público"
+                value="id"
+                (fetchItems)="getFromSelect($event)"
+                [form]="flyerForm"
+                control="minPub"></ngx-select>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <!-- <label class="label form-control-label">Juzgado</label> -->
+              <ngx-select
+                [data]="items"
+                bindLabel="judeName"
+                label="Juzgado"
+                value="id"
+                (fetchItems)="getFromSelect($event)"
+                [form]="flyerForm"
+                control="juzgado"></ngx-select>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <!-- <label class="label form-control-label">Indicado</label> -->
+              <ngx-select
+                [data]="items"
+                bindLabel="indicadoName"
+                label="Indicado"
+                value="id"
+                (fetchItems)="getFromSelect($event)"
+                [form]="flyerForm"
+                control="indicado"></ngx-select>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <!-- <label class="label form-control-label">Delito</label> -->
+              <ngx-select
+                [data]="items"
+                bindLabel="delitoName"
+                label="Delito"
+                value="id"
+                (fetchItems)="getFromSelect($event)"
+                [form]="flyerForm"
+                control="delito"></ngx-select>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <!-- <label class="label form-control-label">Vía Recepción</label> -->
+              <ngx-select
+                [data]="items"
+                bindLabel="viaReceptionName"
+                label="Vía Recepción"
+                value="id"
+                (fetchItems)="getFromSelect($event)"
+                [form]="flyerForm"
+                control="recepcion"></ngx-select>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <!-- <label class="label form-control-label">Área Destino</label> -->
+              <ngx-select
+                [data]="items"
+                bindLabel="destinityAreaName"
+                label="Área Destino"
+                value="id"
+                (fetchItems)="getFromSelect($event)"
+                [form]="flyerForm"
+                control="area"></ngx-select>
+            </div>
+            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+              <form-field
+                [control]="flyerForm.get('destinatario')"
+                label="Destinatario">
+                <input class="form-control" formControlName="destinatario" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-7 col-lg-7 p-2">
+              <form-field
+                [control]="flyerForm.get('justificacion')"
+                label="Justificación del conocimiento">
+                <textarea
+                  class="form-control"
+                  formControlName="justificacion"></textarea>
+              </form-field>
+            </div>
+            <div
+              class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 text-center">
+              <button
+                type="button"
+                class="btn btn-link btn-sm"
+                [routerLink]="[linkReaccionacionTurno, flyerId]">
+                Reasignación de Turno
+              </button>
+              <button
+                type="button"
+                class="btn btn-link btn-sm"
+                [routerLink]="[linkOficioRelacionado, flyerId]">
+                Oficio Relacionado
+              </button>
+              <button type="button" class="btn btn-primary btn-sm active">
+                Captura de Copias
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
 </app-card>

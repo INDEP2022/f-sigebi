@@ -390,7 +390,7 @@ export const MENU: IMenuItem[] = [
        **/
       /**
        * ADMIN PROCESS-SERVICES LEGASPI
-      **/
+       **/
       {
         label: 'Servicios',
         icon: 'bx-folder',
@@ -398,12 +398,12 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Registro de Pago de Servicios',
             link: '/pages/administrative-processes/services/',
-          }
+          },
         ],
       },
       /**
        * ADMIN PROCESS-SERVICES LEGASPI
-      **/
+       **/
     ],
   },
   {
@@ -412,13 +412,13 @@ export const MENU: IMenuItem[] = [
     subItems: [
       {
         label: 'Solicitudes a turno',
-        link: '/pages/request/request-in-turn'
+        link: '/pages/request/request-in-turn',
       },
       {
         label: 'Solicitudes de transferencia',
-        link: '/pages/request/transfer-request'
-      }
-    ]
+        link: '/pages/request/transfer-request',
+      },
+    ],
   },
   {
     label: 'Proceso Destino final',

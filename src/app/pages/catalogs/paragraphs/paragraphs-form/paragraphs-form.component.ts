@@ -9,11 +9,9 @@ import { ParagraphService } from './../../../../core/services/catalogs/paragraph
 @Component({
   selector: 'app-paragraphs-form',
   templateUrl: './paragraphs-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ParagraphsFormComponent extends BasePage implements OnInit {
-
   paragraphForm: FormGroup = new FormGroup({});
   title: string = 'Párrafo';
   edit: boolean = false;
@@ -27,7 +25,7 @@ export class ParagraphsFormComponent extends BasePage implements OnInit {
     private paragraphService: ParagraphService
   ) {
     super();
-   }
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -36,8 +34,8 @@ export class ParagraphsFormComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.paragraphForm = this.fb.group({
       paragraph: [null, [Validators.required]],
-      reportName: [null, [Validators.required]], 
-      version: [null, [Validators.required]] 
+      reportName: [null, [Validators.required]],
+      version: [null, [Validators.required]],
     });
     if (this.paragraph != null) {
       this.edit = true;
@@ -79,5 +77,4 @@ export class ParagraphsFormComponent extends BasePage implements OnInit {
     this.refresh.emit(true);
     this.modalRef.hide();
   }
-
 }

@@ -8,32 +8,29 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-request-record-tab',
   templateUrl: './request-record-tab.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class RequestRecordTabComponent extends BasePage implements OnInit {
   receptionForm: ModelForm<IRequest>;
-  selectTypeExpedient = new DefaultSelect<IRequest>;
+  selectTypeExpedient = new DefaultSelect<IRequest>();
 
-  constructor(
-    public fb:FormBuilder
-  ) {
+  constructor(public fb: FormBuilder) {
     super();
-   }
+  }
 
-  ngOnInit(): void {   
+  ngOnInit(): void {
     this.getCurrentDate();
     this.prepareForm();
   }
 
-  prepareForm():void{
+  prepareForm(): void {
     let fecha = this.getCurrentDate();
     this.receptionForm = this.fb.group({
-      priority:[null],
-      infoProvenance:[null],
-      receptDate:[{value:fecha, disabled: true}],
+      priority: [null],
+      infoProvenance: [null],
+      receptDate: [{ value: fecha, disabled: true }],
       officeDate: [null, Validators.required],
-      typeExpedient:[null],
+      typeExpedient: [null],
       indiciado: [null],
       nameSender: [null],
       roleSender: [null],
@@ -43,34 +40,33 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
       sender: [null],
       tribunal: [null],
       crime: [null],
-      typeReception: [{value:'FISICO', disabled: true}], //esta campo depende de que tipo de recepcion es el formulario
+      typeReception: [{ value: 'FISICO', disabled: true }], //esta campo depende de que tipo de recepcion es el formulario
       destinationManage: [null],
       contributor: [null],
-      subject: [{value: 'SOLICITUD DE TRANSFERENCIA DE BIENES', disabled: true}],
+      subject: [
+        { value: 'SOLICITUD DE TRANSFERENCIA DE BIENES', disabled: true },
+      ],
       transExpedient: [null],
       typeTransfer: [null],
       transferEntityNotes: [null],
-      observations: [null]
+      observations: [null],
     });
   }
 
-  getCurrentDate(): string{
+  getCurrentDate(): string {
     var today = new Date();
     var year = today.getFullYear();
-    var mes = today.getMonth()+1;
+    var mes = today.getMonth() + 1;
     var dia = today.getDate();
-    var fecha =dia+"/"+mes+""+year;
+    var fecha = dia + '/' + mes + '' + year;
     console.log(fecha);
-    return fecha
+    return fecha;
   }
 
-  getTypeExpedient(event: any){
-
-  }
+  getTypeExpedient(event: any) {}
 
   confirm() {
     this.loading = true;
     console.log(this.receptionForm.value);
-    
   }
 }

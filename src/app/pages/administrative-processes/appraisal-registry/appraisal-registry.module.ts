@@ -6,16 +6,13 @@ import { AppraisalRegistryComponent } from './appraisal-registry/appraisal-regis
 import { SharedModule } from '../../../shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 
-
 @NgModule({
-  declarations: [
-    AppraisalRegistryComponent
-  ],
+  declarations: [AppraisalRegistryComponent],
   imports: [
     CommonModule,
     AppraisalRegistryRoutingModule,
     SharedModule,
-    ReactiveFormsModule
-  ]
+    ReactiveFormsModule,
+  ],
 })
-export class AppraisalRegistryModule { }
+export class AppraisalRegistryModule {}

@@ -5,12 +5,12 @@ import { CBmGeCdcTcCThirdPartyMarketersComponent } from './c-bm-ge-cdc-tc-c-thir
 const routes: Routes = [
   {
     path: '',
-    component: CBmGeCdcTcCThirdPartyMarketersComponent
-  }
+    component: CBmGeCdcTcCThirdPartyMarketersComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CBmGeCdcTcMThirdPartyMarketersRoutingModule { }
+export class CBmGeCdcTcMThirdPartyMarketersRoutingModule {}

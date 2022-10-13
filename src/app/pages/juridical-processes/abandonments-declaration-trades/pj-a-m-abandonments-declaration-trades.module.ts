@@ -17,9 +17,7 @@ import { PJAAbandonmentsDeclarationTradesRoutingModule } from './pj-a-m-abandonm
 import { PJAAbandonmentsDeclarationTradesComponent } from './abandonments-declaration-trades/pj-a-c-abandonments-declaration-trades.component';
 
 @NgModule({
-  declarations: [
-    PJAAbandonmentsDeclarationTradesComponent
-  ],
+  declarations: [PJAAbandonmentsDeclarationTradesComponent],
   imports: [
     CommonModule,
     PJAAbandonmentsDeclarationTradesRoutingModule,

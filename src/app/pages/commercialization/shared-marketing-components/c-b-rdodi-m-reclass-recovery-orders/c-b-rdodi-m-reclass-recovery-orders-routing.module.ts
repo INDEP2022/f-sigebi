@@ -5,12 +5,12 @@ import { CBRdodiCReclassRecoveryOrdersComponent } from './c-b-rdodi-c-reclass-re
 const routes: Routes = [
   {
     path: '',
-    component: CBRdodiCReclassRecoveryOrdersComponent
-  }
+    component: CBRdodiCReclassRecoveryOrdersComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CBRdodiMReclassRecoveryOrdersRoutingModule { }
+export class CBRdodiMReclassRecoveryOrdersRoutingModule {}

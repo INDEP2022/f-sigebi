@@ -8,15 +8,12 @@ import { MunicipalityFormComponent } from './municipality-form/municipality-form
 import { MunicipalityListComponent } from './municipality-list/municipality-list.component';
 
 @NgModule({
-  declarations: [
-    MunicipalityFormComponent,
-    MunicipalityListComponent
-  ],
+  declarations: [MunicipalityFormComponent, MunicipalityListComponent],
   imports: [
-  CommonModule,
+    CommonModule,
     MunicipalitiesRoutingModule,
     SharedModule,
-    ModalModule.forChild()
-  ]
+    ModalModule.forChild(),
+  ],
 })
-export class MunicipalitiesModule { }
+export class MunicipalitiesModule {}

@@ -5,12 +5,12 @@ import { PaWiCWarehouseInquiriesComponent } from './pa-wi-c-warehouse-inquiries/
 const routes: Routes = [
   {
     path: '',
-    component: PaWiCWarehouseInquiriesComponent
-  }
+    component: PaWiCWarehouseInquiriesComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PaMWarehouseInquiriesRoutingModule { }
+export class PaMWarehouseInquiriesRoutingModule {}

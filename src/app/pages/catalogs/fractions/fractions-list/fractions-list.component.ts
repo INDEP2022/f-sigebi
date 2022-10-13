@@ -48,7 +48,7 @@ export class FractionsListComponent extends BasePage implements OnInit {
 
   openForm(fraction?: IFraction) {
     console.log(fraction);
-    
+
     let config: ModalOptions = {
       initialState: {
         fraction,

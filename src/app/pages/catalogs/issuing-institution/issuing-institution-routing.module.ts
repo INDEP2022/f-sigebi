@@ -5,12 +5,12 @@ import { IssuingInstitutionListComponent } from './issuing-institution-list/issu
 const routes: Routes = [
   {
     path: '',
-    component: IssuingInstitutionListComponent
-  }
+    component: IssuingInstitutionListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class IssuingInstitutionRoutingModule { }
+export class IssuingInstitutionRoutingModule {}

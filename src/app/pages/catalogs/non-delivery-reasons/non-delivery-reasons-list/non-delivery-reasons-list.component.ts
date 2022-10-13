@@ -13,11 +13,12 @@ import { NonDeliveryReasonsFormComponent } from '../non-delivery-reasons-form/no
 @Component({
   selector: 'app-non-delivery-reasons-list',
   templateUrl: './non-delivery-reasons-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class NonDeliveryReasonsListComponent extends BasePage implements OnInit {
-
+export class NonDeliveryReasonsListComponent
+  extends BasePage
+  implements OnInit
+{
   settings = TABLE_SETTINGS;
   columns: INonDeliveryReason[] = [];
   totalItems: number = 0;

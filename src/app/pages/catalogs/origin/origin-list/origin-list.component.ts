@@ -12,11 +12,9 @@ import { ORIGIN_COLUMNS } from './origin-columns';
 @Component({
   selector: 'app-origin-list',
   templateUrl: './origin-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class OriginListComponent extends BasePage implements OnInit {
-
   settings = TABLE_SETTINGS;
   origins: IOrigin[] = [];
   totalItems: number = 0;
@@ -74,5 +72,4 @@ export class OriginListComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }

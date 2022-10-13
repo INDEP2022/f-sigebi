@@ -5,12 +5,12 @@ import { RequestListComponent } from './request-list/request-list.component';
 const routes: Routes = [
   {
     path: '',
-    component: RequestListComponent
-  }
+    component: RequestListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class TransferRequestRoutingModule { }
+export class TransferRequestRoutingModule {}

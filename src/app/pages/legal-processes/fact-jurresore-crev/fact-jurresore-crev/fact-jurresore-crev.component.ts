@@ -1,13 +1,12 @@
-import { Component, OnInit } from '@angular/core';  
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'ngx-fact-jurresore-crev',
   templateUrl: './fact-jurresore-crev.component.html',
-  styleUrls: ['./fact-jurresore-crev.component.scss']
+  styleUrls: ['./fact-jurresore-crev.component.scss'],
 })
-export class FactJurresoreCrevComponent  {
-
+export class FactJurresoreCrevComponent {
   tableSettings = {
     actions: {
       columnTitle: '',
@@ -15,36 +14,36 @@ export class FactJurresoreCrevComponent  {
       edit: false,
       delete: false,
     },
-    hideSubHeader: true,//oculta subheaader de filtro
+    hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
 
     columns: {
-      cveDocumento:{
+      cveDocumento: {
         title: 'Cve. Documento',
       },
-      
-      noBien:{
+
+      noBien: {
         title: 'No. Bien',
       },
-      descripcion:{
+      descripcion: {
         title: 'Descripción',
       },
-      cantidad:{
+      cantidad: {
         title: 'Cantidad',
       },
-      estatus:{
+      estatus: {
         title: 'Estatus',
       },
-      motivoRecursoRevision:{
+      motivoRecursoRevision: {
         title: 'Motivo de Recurso de Revisión',
       },
-      fechaRecepcion:{
+      fechaRecepcion: {
         title: 'Fecha Recepción',
       },
-      fechaEmisionResolucion:{
+      fechaEmisionResolucion: {
         title: 'Fecha de Emisión de Resolución',
       },
-      observacionesRecursoRevision:{
+      observacionesRecursoRevision: {
         title: 'Observaciones del Recurso de Revisión',
       },
     },
@@ -61,26 +60,23 @@ export class FactJurresoreCrevComponent  {
       fechaEmisionResolucion: 'DATA',
       observacionesRecursoRevision: 'DATA',
     },
-
   ];
 
   public form: FormGroup;
 
-  constructor(
-    private fb: FormBuilder) {  
-  }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();
   }
   private prepareForm() {
     this.form = this.fb.group({
-      noExpediente: '', 
+      noExpediente: '',
       averiguacionPrevia: '',
       causaPenal: '',
       fechaPresentacionRecursoRevision: '',
       noAmparo: '',
-      
+
       noBien: '',
       descripcion: '',
       fechaAcuerdoInicial: '',
@@ -93,16 +89,14 @@ export class FactJurresoreCrevComponent  {
   }
 
   btnAprobar() {
-    console.log("Aprobar");
+    console.log('Aprobar');
   }
-  
 
-/**
- * Formulario
- */
-//  public returnField(form, field) { return form.get(field); }
-//  public returnShowRequirements(form, field) { 
-//    return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched; 
-//  }
-
+  /**
+   * Formulario
+   */
+  //  public returnField(form, field) { return form.get(field); }
+  //  public returnShowRequirements(form, field) {
+  //    return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched;
+  //  }
 }

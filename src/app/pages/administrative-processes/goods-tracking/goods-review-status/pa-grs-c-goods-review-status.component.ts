@@ -9,18 +9,19 @@ import { COLUMNS } from './columns';
 @Component({
   selector: 'app-pa-grs-c-goods-review-status',
   templateUrl: './pa-grs-c-goods-review-status.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class PaGrsCGoodsReviewStatusComponent extends BasePage implements OnInit {
-
+export class PaGrsCGoodsReviewStatusComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
   settings = {
     ...TABLE_SETTINGS,
     actions: false,
-    selectMode: 'multi'
+    selectMode: 'multi',
   };
-  data:any[]=[];
+  data: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -38,14 +39,13 @@ export class PaGrsCGoodsReviewStatusComponent extends BasePage implements OnInit
 
   private prepareForm(): void {
     this.form = this.fb.group({
-      option: [null, [Validators.required]]
+      option: [null, [Validators.required]],
     });
   }
 
-  showInfo(){
-  }
+  showInfo() {}
 
-  delete(data:any) {
+  delete(data: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -57,8 +57,7 @@ export class PaGrsCGoodsReviewStatusComponent extends BasePage implements OnInit
     });
   }
 
-  settingsChange($event:any): void {
-    this.settings=$event;
+  settingsChange($event: any): void {
+    this.settings = $event;
   }
-
 }

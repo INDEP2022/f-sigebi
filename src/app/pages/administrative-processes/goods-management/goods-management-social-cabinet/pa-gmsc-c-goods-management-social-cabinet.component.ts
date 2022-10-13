@@ -9,17 +9,18 @@ import { COLUMNS } from './columns';
 @Component({
   selector: 'app-pa-gmsc-c-goods-management-social-cabinet',
   templateUrl: './pa-gmsc-c-goods-management-social-cabinet.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class PaGmscCGoodsManagementSocialCabinetComponent extends BasePage implements OnInit {
-
+export class PaGmscCGoodsManagementSocialCabinetComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
   settings = {
     ...TABLE_SETTINGS,
-    actions: false
+    actions: false,
   };
-  data:any[]=[];
+  data: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -44,10 +45,9 @@ export class PaGmscCGoodsManagementSocialCabinetComponent extends BasePage imple
     });
   }
 
-  showInfo(){
-  }
+  showInfo() {}
 
-  delete(data:any) {
+  delete(data: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -59,8 +59,7 @@ export class PaGmscCGoodsManagementSocialCabinetComponent extends BasePage imple
     });
   }
 
-  settingsChange($event:any): void {
-    this.settings=$event;
+  settingsChange($event: any): void {
+    this.settings = $event;
   }
-
 }

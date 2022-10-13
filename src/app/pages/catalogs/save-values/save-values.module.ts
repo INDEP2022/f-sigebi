@@ -1,21 +1,19 @@
-import { CommonModule } from "@angular/common";
-import { NgModule } from "@angular/core";
-import { ModalModule } from "ngx-bootstrap/modal";
-import { SharedModule } from "src/app/shared/shared.module";
-import { SaveValuesListComponent } from "./save-values-list/save-values-list.component";
-import { SaveValuesRoutingModule } from "./save-values-routing.module";
+import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { SaveValuesListComponent } from './save-values-list/save-values-list.component';
+import { SaveValuesRoutingModule } from './save-values-routing.module';
 import { SaveValueFormComponent } from './save-value-form/save-value-form.component';
 
-
 @NgModule({
-    declarations: [SaveValuesListComponent, SaveValueFormComponent],
+  declarations: [SaveValuesListComponent, SaveValueFormComponent],
 
-    imports: [
-        CommonModule,
-        SaveValuesRoutingModule,
-        SharedModule,
-        ModalModule.forChild(),
-    ],
+  imports: [
+    CommonModule,
+    SaveValuesRoutingModule,
+    SharedModule,
+    ModalModule.forChild(),
+  ],
 })
-
 export class SaveValuesModule {}

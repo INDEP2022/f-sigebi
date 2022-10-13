@@ -7,49 +7,59 @@
       <div class="row">
         <div class="col-md-6">
           <form-field
-                [control]="zoneGeographicForm.get('descripcion')"
-                label="Descripción">
-                <textarea
-                  class="form-control"
-                  type="text"
-                  rows="2"
-                  formControlName="descripcion"
-                  placeholder="Descripción"></textarea>
+            [control]="zoneGeographicForm.get('descripcion')"
+            label="Descripción">
+            <textarea
+              class="form-control"
+              type="text"
+              rows="2"
+              formControlName="descripcion"
+              placeholder="Descripción"></textarea>
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field
-                [control]="zoneGeographicForm.get('no_contrato')"
-                label="No de contrato">
-                <input type="number" class="form-control" formControlName="no_contrato" />
+            [control]="zoneGeographicForm.get('no_contrato')"
+            label="No de contrato">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="no_contrato" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field
-                [control]="zoneGeographicForm.get('version')"
-                label="Versión">
-                <input type="number" class="form-control" formControlName="version" />
+            [control]="zoneGeographicForm.get('version')"
+            label="Versión">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="version" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field
             [control]="zoneGeographicForm.get('tercero_especializado')"
             label="Tercero especializado">
-            <input type="text" class="form-control" formControlName="tercero_especializado" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="tercero_especializado" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="zoneGeographicForm.get('iva')" label="Iva">
+            <input type="number" class="form-control" formControlName="iva" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field
-                [control]="zoneGeographicForm.get('iva')"
-                label="Iva">
-                <input type="number" class="form-control" formControlName="iva" />
-          </form-field>
-        </div>
-        <div class="col-md-6">
-          <form-field
-                [control]="zoneGeographicForm.get('estatus')"
-                label="Estatus">
-                <input type="number" class="form-control" formControlName="estatus" />
+            [control]="zoneGeographicForm.get('estatus')"
+            label="Estatus">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="estatus" />
           </form-field>
         </div>
       </div>

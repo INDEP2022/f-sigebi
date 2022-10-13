@@ -7,16 +7,16 @@ import { PaGspCGlobalServicePaymentComponent } from './global-service-payments/p
 const routes: Routes = [
   {
     path: '',
-    component: PaRspCRecordServicePaymentComponent
+    component: PaRspCRecordServicePaymentComponent,
   },
   {
-        path:'global/:requestId',
-        component: PaGspCGlobalServicePaymentComponent
-  }
+    path: 'global/:requestId',
+    component: PaGspCGlobalServicePaymentComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PaSMServicesRoutingModule { }
+export class PaSMServicesRoutingModule {}

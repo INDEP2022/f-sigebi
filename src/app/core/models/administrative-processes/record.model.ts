@@ -1,4 +1,4 @@
-//Interface Provisional sin Validar 
+//Interface Provisional sin Validar
 export interface IRecord {
   no_expediente: number;
   fec_acuerdo_aseg: Date;
@@ -36,7 +36,7 @@ export interface IRecord {
   fec_decomiso_dictaminacion: Date;
   fec_devolucion_dictaminacion: Date;
   fec_enajenacion: Date;
-  cve_entfed:number;
+  cve_entfed: number;
   fec_recrev_dictaminacion: Date;
   no_registro: number;
   fec_destruccion: Date;

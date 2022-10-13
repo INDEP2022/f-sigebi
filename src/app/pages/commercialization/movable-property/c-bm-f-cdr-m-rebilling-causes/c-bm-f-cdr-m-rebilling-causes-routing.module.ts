@@ -5,12 +5,12 @@ import { CBmFCdrCRebillingCausesComponent } from './c-bm-f-cdr-c-rebilling-cause
 const routes: Routes = [
   {
     path: '',
-    component: CBmFCdrCRebillingCausesComponent
-  }
+    component: CBmFCdrCRebillingCausesComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CBmFCdrMRebillingCausesRoutingModule { }
+export class CBmFCdrMRebillingCausesRoutingModule {}

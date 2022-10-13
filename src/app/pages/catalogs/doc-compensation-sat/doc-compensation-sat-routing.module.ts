@@ -4,12 +4,13 @@ import { DocCompensationSatListComponent } from './doc-compensation-sat-list/doc
 
 const routes: Routes = [
   {
-    path:'',component:DocCompensationSatListComponent
-  }
+    path: '',
+    component: DocCompensationSatListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class DocCompensationSatRoutingModule { }
+export class DocCompensationSatRoutingModule {}

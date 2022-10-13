@@ -14,16 +14,16 @@ const routes: Routes = [
   },
   {
     path: 'payment-goods',
-    component: PaPgCPaymentGoodsComponent
+    component: PaPgCPaymentGoodsComponent,
   },
   {
-    path:'value-goods',
-    component: PaVgCValueGoodsComponent
-  }
+    path: 'value-goods',
+    component: PaVgCValueGoodsComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PaSsiMSiabSamiInteractionRoutingModule { }
+export class PaSsiMSiabSamiInteractionRoutingModule {}

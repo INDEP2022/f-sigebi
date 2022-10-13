@@ -9,17 +9,18 @@ import { COLUMNS } from './columns';
 @Component({
   selector: 'app-c-b-rp-c-referenced-payment',
   templateUrl: './c-b-rp-c-referenced-payment.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CBRpCReferencedPaymentComponent extends BasePage implements OnInit {
-
+export class CBRpCReferencedPaymentComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
   settings = {
     ...TABLE_SETTINGS,
-    actions: false
+    actions: false,
   };
-  data:any[]=[];
+  data: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -39,7 +40,7 @@ export class CBRpCReferencedPaymentComponent extends BasePage implements OnInit 
     this.form = this.fb.group({
       event: [null, [Validators.required]],
       bank: [null, [Validators.required]],
-      from: [null, [Validators.required]]
+      from: [null, [Validators.required]],
     });
   }
 
@@ -47,13 +48,13 @@ export class CBRpCReferencedPaymentComponent extends BasePage implements OnInit 
     //this.openModal();
   }
 
-  edit(data:any) {
+  edit(data: any) {
     //console.log(data)
     //this.openModal({ edit: true, paragraph });
   }
 
-  delete(data:any) {
-    console.log(data)
+  delete(data: any) {
+    console.log(data);
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -65,8 +66,7 @@ export class CBRpCReferencedPaymentComponent extends BasePage implements OnInit 
     });
   }
 
-  settingsChange($event:any): void {
-    this.settings=$event;
+  settingsChange($event: any): void {
+    this.settings = $event;
   }
-
 }

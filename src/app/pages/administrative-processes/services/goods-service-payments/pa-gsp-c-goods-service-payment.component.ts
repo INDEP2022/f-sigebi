@@ -5,18 +5,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 @Component({
   selector: 'app-pa-gsp-c-goods-service-payment',
   templateUrl: './pa-gsp-c-goods-service-payment.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PaGspCGoodsServicePaymentComponent implements OnInit {
-  
   @Output() data = new EventEmitter<any>();
 
   form: FormGroup = new FormGroup({});
 
-  constructor(
-    private fb: FormBuilder,
-    private modalRef: BsModalRef) { }
+  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {}
 
   ngOnInit(): void {
     this.prepareForm();
@@ -26,8 +22,8 @@ export class PaGspCGoodsServicePaymentComponent implements OnInit {
     this.form = this.fb.group({
       record: [null, [Validators.required]],
       type: [null, [Validators.required]],
-      subtype : [null, [Validators.required]],
-      ssubtype : [null, [Validators.required]],
+      subtype: [null, [Validators.required]],
+      ssubtype: [null, [Validators.required]],
       sssubtype: [null, [Validators.required]],
     });
   }
@@ -35,5 +31,4 @@ export class PaGspCGoodsServicePaymentComponent implements OnInit {
   close() {
     this.modalRef.hide();
   }
-  
 }

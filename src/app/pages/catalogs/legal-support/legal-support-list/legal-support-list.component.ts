@@ -12,8 +12,7 @@ import { LEGAL_SUPPORT_COLUMS } from './legal-support-columns';
 @Component({
   selector: 'app-legal-support-list',
   templateUrl: './legal-support-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class LegalSupportListComponent extends BasePage implements OnInit {
   settings = TABLE_SETTINGS;

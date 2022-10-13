@@ -12,23 +12,19 @@ import { TURN_SELECTED_COLUMNS } from './request-in-turn-selected-columns';
 @Component({
   selector: 'app-request-in-turn-selected',
   templateUrl: './request-in-turn-selected.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   requestForm: FormGroup;
-  title:string = '¿DESEAS TURNAR LAS SOLICITUDES SELECCIONAS?';
-  settings = TABLE_SETTINGS
+  title: string = '¿DESEAS TURNAR LAS SOLICITUDES SELECCIONAS?';
+  settings = TABLE_SETTINGS;
   paragraphs: IRequestInTurnSelected[] = [];
-  params = new BehaviorSubject<ListParams>(new ListParams);
+  params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   requestInTurn: any;
 
-  constructor(
-    public modalRef: BsModalRef,
-    public fb: FormBuilder
-    ) { 
-    super()
+  constructor(public modalRef: BsModalRef, public fb: FormBuilder) {
+    super();
     this.settings.columns = TURN_SELECTED_COLUMNS;
     this.settings.actions = {
       columnTitle: 'Acciones',
@@ -36,26 +32,26 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       add: false,
       edit: false,
       delete: false,
-    }
+    };
   }
 
   ngOnInit(): void {
-    this.prepareForm();   
+    this.prepareForm();
     console.log(this.requestInTurn);
   }
 
-  prepareForm(){
+  prepareForm() {
     this.requestForm = this.fb.group({
       typeUser: ['te'],
     });
   }
 
-  confirm(){
+  confirm() {
     //this.loading=true;
-    console.log(this.requestForm)
+    console.log(this.requestForm);
   }
 
-  close(){
+  close() {
     this.modalRef.hide();
   }
 }

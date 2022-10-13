@@ -11,11 +11,9 @@ import { ListParams } from '../../../../common/repository/interfaces/list-params
 @Component({
   selector: 'app-rack-form',
   templateUrl: './rack-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class RackFormComponent extends BasePage implements OnInit {
-
   form: ModelForm<IRack>;
   title: string = 'Estante';
   edit: boolean = false;
@@ -25,14 +23,14 @@ export class RackFormComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private rackService: RackService,
+    private rackService: RackService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getWarehouse(new ListParams() );
+    this.getWarehouse(new ListParams());
   }
 
   private prepareForm() {
@@ -65,25 +63,18 @@ export class RackFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.rackService
-      .create(this.form.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.rackService.create(this.form.getRawValue()).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   update() {
     this.loading = true;
-    this.rackService
-      .update(
-        this.rack.id,
-        this.form.getRawValue()
-      )
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.rackService.update(this.rack.id, this.form.getRawValue()).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   handleSuccess() {
@@ -98,8 +89,7 @@ export class RackFormComponent extends BasePage implements OnInit {
     this.rackService.getWarehouse(params).subscribe({
       next: (types: any) => {
         this.warehouse = new DefaultSelect(types.data, types.count);
-      }
+      },
     });
   }
-
 }

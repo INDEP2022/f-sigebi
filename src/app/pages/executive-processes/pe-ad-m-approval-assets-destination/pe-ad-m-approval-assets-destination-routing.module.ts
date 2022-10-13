@@ -4,13 +4,13 @@ import { PeAdCApprovalAssetsDestinationComponent } from './pe-ad-c-approval-asse
 
 const routes: Routes = [
   {
-    path:'',
-    component: PeAdCApprovalAssetsDestinationComponent
-  }
+    path: '',
+    component: PeAdCApprovalAssetsDestinationComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PeAdMApprovalAssetsDestinationRoutingModule { }
+export class PeAdMApprovalAssetsDestinationRoutingModule {}

@@ -9,25 +9,26 @@ import { COLUMNS2, COLUMNS3 } from './columns';
 @Component({
   selector: 'app-pa-rm-c-revenue-management',
   templateUrl: './pa-rm-c-revenue-management.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class PaRmCRevenueManagementComponent extends BasePage implements OnInit {
-
+export class PaRmCRevenueManagementComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
   settings2 = {
     ...TABLE_SETTINGS,
-    actions: false
+    actions: false,
   };
-  data2:any[]=[];
+  data2: any[] = [];
   totalItems2: number = 0;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
 
   settings3 = {
     ...TABLE_SETTINGS,
-    actions: false
+    actions: false,
   };
-  data3:any[]=[];
+  data3: any[] = [];
   totalItems3: number = 0;
   params3 = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -50,10 +51,9 @@ export class PaRmCRevenueManagementComponent extends BasePage implements OnInit 
     });
   }
 
-  showInfo(){
-  }
+  showInfo() {}
 
-  delete2(data:any) {
+  delete2(data: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -65,7 +65,7 @@ export class PaRmCRevenueManagementComponent extends BasePage implements OnInit 
     });
   }
 
-  delete3(data:any) {
+  delete3(data: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -77,12 +77,11 @@ export class PaRmCRevenueManagementComponent extends BasePage implements OnInit 
     });
   }
 
-  settingsChange2($event:any): void {
-    this.settings2=$event;
+  settingsChange2($event: any): void {
+    this.settings2 = $event;
   }
 
-  settingsChange3($event:any): void {
-    this.settings3=$event;
+  settingsChange3($event: any): void {
+    this.settings3 = $event;
   }
-
 }

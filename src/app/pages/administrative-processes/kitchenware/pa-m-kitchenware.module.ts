@@ -15,11 +15,8 @@ import { PaMKitchenwareRoutingModule } from './pa-m-kitchenware-routing.module';
 import { PaKCPropertyRegistrationComponent } from './pa-k-c-property-registration/pa-k-c-property-registration.component';
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
 
-
 @NgModule({
-  declarations: [
-    PaKCPropertyRegistrationComponent
-  ],
+  declarations: [PaKCPropertyRegistrationComponent],
   imports: [
     CommonModule,
     SharedModule,
@@ -32,7 +29,7 @@ import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/good
     BsDatepickerModule,
     TabsModule,
     ModalModule.forChild(),
-    GoodsTypesSharedComponent
-  ]
+    GoodsTypesSharedComponent,
+  ],
 })
-export class PaMKitchenwareModule { }
+export class PaMKitchenwareModule {}
