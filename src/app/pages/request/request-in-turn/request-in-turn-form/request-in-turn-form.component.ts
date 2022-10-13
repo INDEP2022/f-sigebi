@@ -21,6 +21,7 @@ export class RequestInTurnFormComponent implements OnInit {
   title:string = 'SOliCITUD A TURNO';
   requestForm: ModelForm<IRequestInTurn>;
   requestInTurn: IRequestInTurn;
+  checked:string = 'checked';
 
   loading:boolean = false
 
@@ -66,7 +67,7 @@ export class RequestInTurnFormComponent implements OnInit {
       acta: [null],
       ascertainment: [null], 
       cause: [null],
-      typeMach: ['All'],
+      typeMach: ['all'],
     });
     if (this.requestInTurn != null) {
       this.edit = true;

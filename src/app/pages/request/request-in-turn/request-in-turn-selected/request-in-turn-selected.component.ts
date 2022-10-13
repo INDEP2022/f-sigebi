@@ -39,7 +39,8 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.prepareForm();       
+    this.prepareForm();   
+    console.log(this.requestInTurn);
   }
 
   prepareForm(){
@@ -49,6 +50,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   }
 
   confirm(){
+    //this.loading=true;
     console.log(this.requestForm)
   }
 

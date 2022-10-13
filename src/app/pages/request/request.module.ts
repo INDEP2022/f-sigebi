@@ -10,7 +10,7 @@ import { BsDatepickerModule, BsDatepickerConfig  } from 'ngx-bootstrap/datepicke
   imports: [
     CommonModule,
     RequestRoutingModule,
-    BsDatepickerModule.forRoot(),
+    BsDatepickerModule.forRoot()
   ],
   providers: [BsDatepickerConfig]
 })

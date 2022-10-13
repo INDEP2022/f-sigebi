@@ -11,16 +11,16 @@ import { UsersSelectedToTurnComponent } from '../users-selected-to-turn/users-se
 
 @Component({
   selector: 'app-create-request',
-  templateUrl: './create-request.component.html',
-  styles: [],
+  templateUrl: './request-form.component.html',
+  styleUrls: ['./request-form.component.scss'],
 })
-export class CreateRequestComponent extends BasePage implements OnInit {
+export class RequestFormComponent extends BasePage implements OnInit {
   requestForm: ModelForm<IRequest>;
   title: string = 'SOLICITUD';
   edit: boolean = false;
   typeTurn: String = '';
   bsModalRef: BsModalRef;
-  checked:string = 'checked'
+  checked: string = 'checked';
 
   selectRegionalDeleg = new DefaultSelect<IRequest>();
   selectTransmitter = new DefaultSelect<IRequest>();
@@ -45,8 +45,8 @@ export class CreateRequestComponent extends BasePage implements OnInit {
       tranfe: [null],
       transmitter: [null],
       authority: [null],
-      typeUser: [null],
-      receiUser: [{ value: '', disabled: true }]
+      typeUser: ['all'],
+      receiUser: [{ value: '', disabled: true }],
     });
   }
 
@@ -61,43 +61,45 @@ export class CreateRequestComponent extends BasePage implements OnInit {
   getTransfe(event: any): void {}
 
   openModalSelectUser() {
-    if (this.typeTurn != '') {
-      let config: ModalOptions = {
-        initialState: {
-          typeTurn: this.typeTurn,
-          callback: (next: boolean) => {
-            //if (next) this.getExample();
-          },
+    let config: ModalOptions = {
+      initialState: {
+        typeTurn: this.requestForm.get('typeUser').value,
+        callback: (next: boolean) => {
+          //if (next) this.getExample();
         },
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      };
-      this.bsModalRef = this.modalServise.show(
-        UsersSelectedToTurnComponent,
-        config
-      );
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.bsModalRef = this.modalServise.show(
+      UsersSelectedToTurnComponent,
+      config
+    );
 
-      this.bsModalRef.content.event.subscribe((res: IRequestInTurnSelected) => {
-        console.log(res);
-        this.requestForm.get('receiUser').patchValue(res.user);
-      });
-    } else {
-      this.msgModal('','Tiene que seleccionar el tipo de usuario','','info');
-    }
+    this.bsModalRef.content.event.subscribe((res: IRequestInTurnSelected) => {
+      console.log(res);
+      this.requestForm.get('receiUser').patchValue(res.user);
+    });
+  }
+
+  close():void{
+    this.modalServise.hide();
   }
 
   confirm(): void {
-    console.log(this.requestForm)
-    this.msgModal('Turnar','Desea crear el registro de solicitud?','Confirmacion','info');
+    console.log(this.requestForm);
+    this.msgModal(
+      'Turnar',
+      'Desea turnar la solicitud con el Folio '
+        .concat('53009')
+        .concat(' al usuario Ramiro'),
+      'Confirmacion',
+      'info'
+    );
   }
 
-  msgModal(btnTitle:string, message:string,title:string,typeMsg:any){
-    this.alertQuestion(
-      typeMsg,
-      title,
-      message,
-      btnTitle
-    ).then(question => {
+  msgModal(btnTitle: string, message: string, title: string, typeMsg: any) {
+    this.alertQuestion(typeMsg, title, message, btnTitle).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
       }

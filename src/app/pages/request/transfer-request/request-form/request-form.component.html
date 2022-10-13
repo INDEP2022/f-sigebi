@@ -34,11 +34,11 @@
                     <div class="col-md-4">
                         <ngx-select
                             [form]="requestForm"
-                            control="tranfe"
+                            control="transmitter"
                             (fetchItems)="getTransmitter($event)"
                             [data]="selectTransmitter"
                             label="Emisora"
-                            value="tranfe"></ngx-select>
+                            value="transmitter"></ngx-select>
                     </div>
         
                     <div class="col-md-3">
@@ -58,7 +58,7 @@
                             control="entity"
                             (fetchItems)="getEntity($event)"
                             [data]="selectEntity"
-                            label="Delegacion Regional"
+                            label="Entidad"
                             value="regDelega"></ngx-select>
                     </div>
                     <div class="col-md-3">
@@ -76,7 +76,7 @@
                             control="tranfe"
                             (fetchItems)="getTransfe($event)"
                             [data]="selectTransfe"
-                            label="Autoridad"
+                            label="Transferencia"
                             value="regDelega"></ngx-select>
                     </div>
                 </div>
@@ -89,15 +89,14 @@
             </div>
             <div body>
                 <div class="row pt-5">
-                    <div class="col-md-2" style="line-height: 2.5;">
+                    <div class="col-md-3" style="line-height: 2.5;">
                         Tipo de Usuario:
                     </div>
                     <div class="col-sm-1">
                         <form-radio label="All">
                           <input 
-                            type="radio" 
-                            [(ngModel)]="typeTurn" 
-                            [ngModelOptions]="{standalone: true}"  
+                            type="radio"                          
+                            formControlName="typeUser"                 
                             value="all" 
                             id="all"
                             [checked]="checked" />
@@ -107,8 +106,7 @@
                         <form-radio label="Any">
                             <input 
                                 type="radio" 
-                                [(ngModel)]="typeTurn" 
-                                [ngModelOptions]="{standalone: true}"  
+                                formControlName="typeUser"
                                 value="any" 
                                 id="any"/>
                         </form-radio>   
@@ -121,7 +119,7 @@
                 </div>
                 
                 <div class="row pt-5">
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         Usuario Recepción:
                     </div>
                     <div class="col-md-3">
@@ -155,11 +153,11 @@
                 Turnar
             </button>
         </div>
-       <!--  <div class="m-3">
+        <div class="m-3">
           <button type="button" class="btn btn-danger active" (click)="close()">
             Cancelar
           </button>
-        </div> -->
+        </div>
       </div>
     </div>
 </app-modal>

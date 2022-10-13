@@ -1,0 +1,30 @@
+<app-card [header]="true">
+    <div class="ch-content" header>
+        <div class="row mb-3">
+            <h5 class="title">Filtar solicitudes</h5>
+        </div>
+    </div>
+        
+    <div body>
+        <div class="row pt-3">
+            <h5><strong>Informacion de Recepción de Solicitud</strong></h5>
+        </div>
+        <form [formGroup]="receptionForm" class="form-material">
+            <div class="row pt-5">
+                <div class="col-sm-2">
+                    <span style="line-height: 3;">Prioridad</span>
+                </div>
+                <div class="col-sm-2">
+                    <form-radio label="All">
+                      <input 
+                        type="radio" 
+                        formControlName="priority" 
+                        value="true" 
+                        id="priority" />
+                    </form-radio>   
+                </div>
+            </div>
+        </form>
+    </div>
+</app-card>
+

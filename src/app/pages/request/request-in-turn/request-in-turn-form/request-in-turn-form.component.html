@@ -14,12 +14,21 @@
             </div>
             <div class="col-sm-2">
               <form-radio label="All">
-                <input type="radio" [(ngModel)]="match" formControlName="typeMach" value="all" />
+                <input 
+                  type="radio" 
+                  formControlName="typeMach" 
+                  value="all" 
+                  id="all"
+                  [checked]="checked" />
               </form-radio>   
             </div>
             <div class="col-sm-2">
               <form-radio label="Any">
-                <input type="radio" [(ngModel)]="match"  formControlName="typeMach" value="any" />
+                <input 
+                  type="radio"  
+                  formControlName="typeMach" 
+                  value="any" 
+                  id="any"/>
               </form-radio>   
             </div>
           </div>
@@ -137,6 +146,15 @@
                 label="Asunto"
                 value="asunto"></ngx-select>
             </div>
+            <div class="col-md-3">
+              <form-field [control]="requestForm.get('contributor')" label="Contribuyente y/o Indiciado">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="contributor"
+                  placeholder=""/>
+              </form-field>
+            </div>
           </div>
           <div class="row mb-3">
             <div class="col-md-5">
@@ -147,15 +165,6 @@
                 [data]="selectTransfer"
                 label="Transferencia"
                 value="transferencia"></ngx-select>
-            </div>
-            <div class="col-md-3">
-              <form-field [control]="requestForm.get('contributor')" label="Contribuyente y/o Indiciado">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="contributor"
-                  placeholder=""/>
-              </form-field>
             </div>
           </div>
           <div class="row ">
