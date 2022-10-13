@@ -285,6 +285,10 @@ export const MENU: IMenuItem[] = [
         label: 'Registro de mensaje del Bien',
         link: '/pages/administrative-processes/property-registration'
       },
+      {
+        label: 'Solicitud de cambio a numeración',
+        link: '/pages/administrative-processes/request-numbering-change'
+      },
       /**
        * Seguros **Legaspi**
        **/
