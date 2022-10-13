@@ -8,10 +8,16 @@
     <div body>
         
         
-        <form [formGroup]="flyerForm" class="container-fluid">
+        <form [formGroup]="flyerForm" class="container-fluid form-material">
             <div class="row">
                 <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
                     <div class="row">
+                        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+                            <h6 class="title">
+                                DATOS DEL ASUNTO
+                            </h6>
+                            <hr class="row">
+                        </div>
                         <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
                             <form-field [control]="flyerForm.get('noVolante')" label="No. Volante">
                                 <input class="form-control" formControlName="noVolante" />
@@ -32,7 +38,7 @@
                             </form-field>
                         </div>
                         <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
-                            <form-field [control]="flyerForm.get('tipoVolante')" label="Tipo de Volante">
+                            <!-- <form-field [control]="flyerForm.get('tipoVolante')" label="Tipo de Volante"> -->
                                 <div class="row w-100 pl-4">
                                     <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
                                         <form-radio label="Administrativo">
@@ -55,19 +61,19 @@
                                         </form-radio>
                                     </div>
                                 </div>
-                            </form-field>
+                            <!-- </form-field> -->
                         </div>
                         <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
                             <form-field [control]="flyerForm.get('actaCircunst')" label="Acta Circunst">
                                 <input class="form-control" formControlName="actaCircunst" />
                             </form-field>
                         </div>
-                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
                             <form-field [control]="flyerForm.get('averiguacionPrevia')" label="Averig. Previa">
                                 <input class="form-control" formControlName="averiguacionPrevia" />
                             </form-field>
                         </div>
-                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
                             <form-field [control]="flyerForm.get('causaPenal')" label="Causa Penal">
                                 <input class="form-control" formControlName="causaPenal" />
                             </form-field>
@@ -76,6 +82,9 @@
                             <form-field [control]="flyerForm.get('cveAmparo')" label="No. Amparo">
                                 <input class="form-control" formControlName="cveAmparo" />
                             </form-field>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2 text-center">
+                            <button type="button" class="btn btn-primary btn-sm active">Observaciones</button>
                         </div>
                         <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
                             <form-field [control]="flyerForm.get('cveTocaPenal')" label="Toca Penal">
@@ -96,15 +105,18 @@
                                         bsDatepicker>
                             </form-field>
                         </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <button nbButton type="button" size="tiny">Observaciones</button>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+                        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
                             <form-field
                               [control]="flyerForm.get('observaciones')"
                               label="Descripción del Asunto">
                               <textarea class="form-control" formControlName="observaciones"></textarea>
                             </form-field>
+                        </div>
+                        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mt-5">
+                            <h6 class="title">
+                                DATOS DEL EXPEDIENTE
+                            </h6>
+                            <hr class="row">
                         </div>
                         <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
                             <form-field [control]="flyerForm.get('noExpediente')" label="No. Expediente">
@@ -121,19 +133,16 @@
                                 <input class="form-control" formControlName="asunto" />
                             </form-field>
                         </div>
-                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+                        <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2">
                             <form-field [control]="flyerForm.get('desahogoAsunto')" label="Desahogo Asunto">
-                                <input class="form-control" formControlName="desahogoAsunto" />
+                                <textarea class="form-control" formControlName="desahogoAsunto"></textarea>
                             </form-field>
                         </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <button nbButton type="button" size="tiny">Oficio de desahogo</button>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <a [routerLink]="['/pages/documents-reception/flyers-registration/juridical-dictums', flyerId]"
-                                nbButton outline type="button" size="tiny">
+                        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 text-center">
+                            <button type="button" class="btn btn-primary btn-sm active">Oficio de desahogo</button>
+                            <button type="button" class="btn btn-link btn-sm" [routerLink]="[linkDictaminacionesJuridicas, flyerId]">
                                 Dictaminación Jurídicca
-                            </a>
+                            </button>
                         </div>
                         <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
                             <form-field [control]="flyerForm.get('claveUnica')" label="Clave única">
@@ -141,7 +150,7 @@
                             </form-field>
                         </div>
                         <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <label class="label form-control-label">Ciudad</label>
+                            <!-- <label class="label form-control-label">Ciudad</label> -->
                             <ngx-select 
                                 [data]="items"
                                 bindLabel="cityName"
@@ -151,7 +160,7 @@
                                 [form]="flyerForm" control="ciudad"></ngx-select>
                         </div>
                         <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <label class="label form-control-label">Entidad Federativa</label>
+                            <!-- <label class="label form-control-label">Entidad Federativa</label> -->
                             <ngx-select 
                                 [data]="items"
                                 bindLabel="federativeEntityName"
@@ -161,7 +170,7 @@
                                 [form]="flyerForm" control="entidadFed"></ngx-select>
                         </div>
                         <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <label class="label form-control-label">Transferente</label>
+                            <!-- <label class="label form-control-label">Transferente</label> -->
                             <ngx-select 
                                 [data]="items"
                                 bindLabel="transferName"
@@ -171,7 +180,7 @@
                                 [form]="flyerForm" control="transferente"></ngx-select>
                         </div>
                         <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <label class="label form-control-label">Emisora</label>
+                            <!-- <label class="label form-control-label">Emisora</label> -->
                             <ngx-select 
                                 [data]="items"
                                 bindLabel="emiterName"
@@ -181,7 +190,7 @@
                                 [form]="flyerForm" control="emisora"></ngx-select>
                         </div>
                         <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <label class="label form-control-label">Autoridad</label>
+                            <!-- <label class="label form-control-label">Autoridad</label> -->
                             <ngx-select 
                                 [data]="items"
                                 bindLabel="autorityName"
@@ -191,7 +200,7 @@
                                 [form]="flyerForm" control="autoridad"></ngx-select>
                         </div>
                         <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <label class="label form-control-label">Autoridad Emisora</label>
+                            <!-- <label class="label form-control-label">Autoridad Emisora</label> -->
                             <ngx-select 
                                 [data]="items"
                                 bindLabel="autorityEmiterName"
@@ -201,7 +210,7 @@
                                 [form]="flyerForm" control="institucion"></ngx-select>
                         </div>
                         <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <label class="label form-control-label">Ministerio público</label>
+                            <!-- <label class="label form-control-label">Ministerio público</label> -->
                             <ngx-select 
                                 [data]="items"
                                 bindLabel="publicMinisteryName"
@@ -211,7 +220,7 @@
                                 [form]="flyerForm" control="minPub"></ngx-select>
                         </div>
                         <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <label class="label form-control-label">Juzgado</label>
+                            <!-- <label class="label form-control-label">Juzgado</label> -->
                             <ngx-select 
                                 [data]="items"
                                 bindLabel="judeName"
@@ -221,7 +230,7 @@
                                 [form]="flyerForm" control="juzgado"></ngx-select>
                         </div>
                         <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <label class="label form-control-label">Indicado</label>
+                            <!-- <label class="label form-control-label">Indicado</label> -->
                             <ngx-select 
                                 [data]="items"
                                 bindLabel="indicadoName"
@@ -231,7 +240,7 @@
                                 [form]="flyerForm" control="indicado"></ngx-select>
                         </div>
                         <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <label class="label form-control-label">Delito</label>
+                            <!-- <label class="label form-control-label">Delito</label> -->
                             <ngx-select 
                                 [data]="items"
                                 bindLabel="delitoName"
@@ -241,7 +250,7 @@
                                 [form]="flyerForm" control="delito"></ngx-select>
                         </div>
                         <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <label class="label form-control-label">Vía Recepción</label>
+                            <!-- <label class="label form-control-label">Vía Recepción</label> -->
                             <ngx-select 
                                 [data]="items"
                                 bindLabel="viaReceptionName"
@@ -251,7 +260,7 @@
                                 [form]="flyerForm" control="recepcion"></ngx-select>
                         </div>
                         <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <label class="label form-control-label">Área Destino</label>
+                            <!-- <label class="label form-control-label">Área Destino</label> -->
                             <ngx-select 
                                 [data]="items"
                                 bindLabel="destinityAreaName"
@@ -265,27 +274,21 @@
                                 <input class="form-control" formControlName="destinatario" />
                             </form-field>
                         </div>
-                        <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2">
+                        <div class="col-sm-12 col-12 col-md-7 col-lg-7 p-2">
                             <form-field
                               [control]="flyerForm.get('justificacion')"
                               label="Justificación del conocimiento">
                               <textarea class="form-control" formControlName="justificacion"></textarea>
                             </form-field>
                         </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <a [routerLink]="['/pages/documents-reception/flyers-registration/shift-change', flyerId]"
-                                nbButton outline type="button" size="tiny" class="mr-2">
+                        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mb-5 text-center">
+                            <button type="button" class="btn btn-link btn-sm" [routerLink]="[linkReaccionacionTurno, flyerId]">
                                 Reasignación de Turno
-                            </a>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <a [routerLink]="['/pages/documents-reception/flyers-registration/related-document-management', flyerId]"
-                                nbButton outline type="button" size="tiny" class="mr-2">
+                            </button>
+                            <button type="button" class="btn btn-link btn-sm" [routerLink]="[linkOficioRelacionado, flyerId]">
                                 Oficio Relacionado
-                            </a>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <button nbButton type="button" size="tiny">Captura de Copias</button>
+                            </button>
+                            <button type="button" class="btn btn-primary btn-sm active">Captura de Copias</button>
                         </div>
                     </div>
                 </div>
