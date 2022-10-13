@@ -88,6 +88,7 @@
           class="col-md-6"
           label="Parrafo Inicial">
           <textarea
+            rows="3"
             class="form-control"
             formControlName="parrafoInicial"></textarea>
         </form-field>
@@ -123,10 +124,10 @@
             <button type="button" class="btn btn-secondary active btn-sm mr-2">
               Imprimir
             </button>
-            <button type="button" class="btn btn-danger btn-sm mr-2">
+            <button type="button" class="btn btn-danger btn-sm mr-2 active">
               Borrar
             </button>
-            <button type="submit" class="btn btn-primary btn-sm">
+            <button type="submit" class="btn btn-primary btn-sm active">
               Guardar
             </button>
           </div>
@@ -182,6 +183,7 @@
               [control]="managementForm.get('parrafoFinal')"
               label="Parrafo Final">
               <textarea
+                rows="3"
                 class="form-control"
                 formControlName="parrafoFinal"></textarea>
             </form-field>
@@ -192,6 +194,7 @@
               [control]="managementForm.get('parrafoAusencia')"
               label="Parrafo pro Ausencia">
               <textarea
+                rows="3"
                 class="form-control"
                 formControlName="parrafoAusencia"></textarea>
             </form-field>

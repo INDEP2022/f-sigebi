@@ -9,7 +9,10 @@
         <div class="col-md-4">
           <app-delegation-shared
             [form]="notificationsForm"></app-delegation-shared>
-          <div class="form-group">
+        </div>
+
+        <div class="col-md-4">
+          <div class="row pt-3">
             <form-field
               [control]="notificationsForm.get('from')"
               label="Fecha Desde">
@@ -17,7 +20,7 @@
             </form-field>
           </div>
 
-          <div class="form-group">
+          <div class="row pt-3">
             <form-field [control]="notificationsForm.get('from')" label="Hasta">
               <input class="form-control" formControlName="to" bsDatepicker />
             </form-field>
@@ -27,7 +30,7 @@
 
       <div class="row">
         <div class="col-md-12">
-          <button type="submit" class="btn btn-primary">Generar</button>
+          <button type="submit" class="btn btn-primary active">Generar</button>
         </div>
       </div>
     </form>

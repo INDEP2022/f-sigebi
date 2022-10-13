@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 
 interface IReportRanges {
   code: 'daily' | 'monthly' | 'yearly';
@@ -13,6 +14,11 @@ interface IReportRanges {
 })
 export class DrReportComponent implements OnInit {
   reportForm: FormGroup;
+  datePickerConfig: Partial<BsDatepickerConfig> = {
+    minMode: 'month',
+    adaptivePosition: true,
+    dateInputFormat: 'MMMM YYYY',
+  };
   ranges: IReportRanges[] = [
     { code: 'daily', name: 'Diario' },
     { code: 'monthly', name: 'Mensual' },
@@ -48,8 +54,19 @@ export class DrReportComponent implements OnInit {
 
   save() {}
 
-  rangeChange(range: 'daily' | 'monthly' | 'yearly') {
+  rangeChange() {
+    this.changeCalendarFormat();
     this.from.setValue(null);
     this.to.setValue(null);
+  }
+
+  changeCalendarFormat() {
+    if (this.range.value === 'yearly') {
+      this.datePickerConfig.minMode = 'year';
+      this.datePickerConfig.dateInputFormat = 'YYYY';
+    } else {
+      this.datePickerConfig.minMode = 'month';
+      this.datePickerConfig.dateInputFormat = 'MMMM YYYY';
+    }
   }
 }

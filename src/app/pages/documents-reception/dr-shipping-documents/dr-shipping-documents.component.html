@@ -97,10 +97,13 @@
         <div class="col-md-6">
           <div class="row">
             <form-field
-              class="col-md-10"
+              class="col-md-11"
               [control]="documentsForm.get('descripcion')"
               label="Descripción">
-              <textarea formControlName="descripcion" class="form-control">
+              <textarea
+                formControlName="descripcion"
+                class="form-control"
+                rows="4">
               </textarea>
             </form-field>
           </div>
@@ -164,9 +167,11 @@
         </ng2-smart-table>
       </div>
 
-      <div class="row">
+      <div class="row pt-4">
         <div class="col-md-12 text-right">
-          <button status="success" type="submit">Guardar</button>
+          <button type="submit" class="btn btn-primary btn-sm active">
+            Guardar
+          </button>
         </div>
       </div>
     </form>

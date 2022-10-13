@@ -1094,7 +1094,7 @@ $background-checkbox-bg-color: $primary, $secondary, $success, $info, $warning,
 
   // TODO GAMG-STYLES quitar esta linea para que el textarea se pueda cambiar tamaño
   textarea {
-    height: 100px !important;
+    height: auto !important;
   }
 
   .form-bar {
