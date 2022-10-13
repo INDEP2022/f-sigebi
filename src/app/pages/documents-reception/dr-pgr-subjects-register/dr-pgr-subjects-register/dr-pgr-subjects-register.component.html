@@ -52,7 +52,7 @@
       </div>
       <div class="row pb-4">
         <div class="col-md-12">
-          <button type="submit" class="btn btn-primary btn-sm">
+          <button type="submit" class="btn btn-primary active btn-sm">
             Consultar
           </button>
           <button type="button" class="ml-2 btn btn-success btn-sm">
@@ -63,8 +63,10 @@
       <hr class="row" />
       <div class="row">
         <div class="col-md-12">
-          <app-columns-select
-            [(settings)]="mailboxSettings"></app-columns-select>
+          <div class="row pb-3">
+            <app-columns-select
+              [(settings)]="mailboxSettings"></app-columns-select>
+          </div>
           <ng2-smart-table [settings]="mailboxSettings"></ng2-smart-table>
         </div>
       </div>
@@ -103,7 +105,7 @@
       </div>
       <div class="row pb-4">
         <div class="col-md-12">
-          <button type="submit" class="btn btn-primary btn-sm">
+          <button type="submit" class="btn btn-primary active btn-sm">
             Consultar
           </button>
           <button type="button" class="ml-2 btn btn-success btn-sm">
@@ -114,8 +116,10 @@
       <hr class="row" />
       <div class="row">
         <div class="col-md-12">
-          <app-columns-select
-            [(settings)]="transfersSettings"></app-columns-select>
+          <div class="row pb-3">
+            <app-columns-select
+              [(settings)]="transfersSettings"></app-columns-select>
+          </div>
           <ng2-smart-table [settings]="transfersSettings"></ng2-smart-table>
         </div>
       </div>

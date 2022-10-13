@@ -99,7 +99,7 @@
       </div>
       <div class="row pt-4">
         <div class="col-md-3 text-center">
-          <button type="button" class="btn btn-danger">Rechazar</button>
+          <button type="button" class="btn btn-danger active">Rechazar</button>
         </div>
         <div class="col-md-6">
           <form-field
@@ -107,12 +107,13 @@
             [control]="requirementsForm.get('observaciones')"
             label="Observaciones">
             <textarea
+              rows="6"
               formControlName="observaciones"
               class="form-control"></textarea>
           </form-field>
         </div>
         <div class="col-md-3 text-center">
-          <button class="btn btn-primary">Aprobar</button>
+          <button class="btn btn-primary active">Aprobar</button>
         </div>
       </div>
       <div class="row pt-4">

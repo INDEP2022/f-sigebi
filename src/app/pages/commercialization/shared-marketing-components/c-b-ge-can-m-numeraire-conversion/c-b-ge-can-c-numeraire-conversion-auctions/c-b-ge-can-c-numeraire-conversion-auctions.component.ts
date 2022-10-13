@@ -14,21 +14,22 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   ]
 })
 export class CBGeCanCNumeraireConversionAuctionsComponent extends BasePage implements OnInit {
-  settings = {...TABLE_SETTINGS};
-  settings2 = {...TABLE_SETTINGS};
+  
+  settings = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
+  settings2 = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
   form: FormGroup = new FormGroup({}); 
 
   constructor(private fb: FormBuilder) {
     super();
     this.settings.columns =  BILLS_COLUMNS;
-    this.settings.actions.edit = false;
-    this.settings.actions.add = false;
-    this.settings.actions.delete = false;
 
     this.settings2.columns = DISPERSION_COLUMNS;
-    this.settings2.actions.edit = false;
-    this.settings2.actions.add = false;
-    this.settings2.actions.delete = false;
   }
 
   ngOnInit(): void {

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-pe-rddxdees-c-reception-area-sera',
@@ -10,7 +11,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class PeRddxdeesCReceptionAreaSeraComponent implements OnInit {
 
   form: FormGroup = new FormGroup({}); 
-
+  select = new DefaultSelect();
   constructor(private fb: FormBuilder) { }
 
   ngOnInit(): void {
@@ -21,11 +22,12 @@ export class PeRddxdeesCReceptionAreaSeraComponent implements OnInit {
     this.form = this.fb.group({
       delegation: ['', [Validators.required]],
       delegationDes: ['', [Validators.required]],
-      subDelegation: ['', [Validators.required]],
+      subdelegation: ['', [Validators.required]],
       subDelegationDes: ['', [Validators.required]],
       idArea: ['', [Validators.required]],
-      fromMonth: ['', [Validators.required]],
-      toMonth: ['', [Validators.required]],
+      rangeDate: ['', [Validators.required]],
+      // fromMonth: ['', [Validators.required]],
+      // toMonth: ['', [Validators.required]],
     });
   }
 

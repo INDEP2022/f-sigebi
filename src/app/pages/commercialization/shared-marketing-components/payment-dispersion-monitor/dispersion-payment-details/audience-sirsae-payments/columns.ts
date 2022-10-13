@@ -4,9 +4,14 @@ import { PaPdmCeCCheckboxElementComponent } from '../checkbox-element/pa-pdm-ce-
 export const COLUMNS={
     user: {
         title: 'Usuario',
+        type: 'string',
+        sort: false,
     },
+    
     username: {
         title: 'Nombre',
+        type: 'string',
+        sort: false,
     },
     distributionMail: {
         title: 'Correo de dist.',
@@ -16,7 +21,8 @@ export const COLUMNS={
           instance.toggle.subscribe((data:any)=> {
             data.row.distributionMail=data.toggle;
           });
-        }
+        },
+        sort: false,
     },
     noSendMail: {
         title: 'No enviar a SIRSAE',
@@ -26,7 +32,8 @@ export const COLUMNS={
           instance.toggle.subscribe((data:any) => {
             data.row.noSendMail=data.toggle;
           });
-        }
+        },
+        sort: false,
     },
     batchEnable: {
         title: 'Hab. Lote Disp. Pagos',
@@ -36,6 +43,7 @@ export const COLUMNS={
           instance.toggle.subscribe((data:any) => {
             data.row.batchEnable=data.toggle;
           });
-        }
+        },
+        sort: false,
     }
 };

@@ -14,12 +14,18 @@ import { COLUMNS1,COLUMNS2 } from './columns';
 })
 export class CBEclCExpenseConceptsListComponent extends BasePage implements OnInit {
 
-  settings = {...TABLE_SETTINGS};
+  settings = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
   data:any[]=[];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  settings2 = {...TABLE_SETTINGS};
+  settings2 = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
   data2:any[]=[];
   totalItems2: number = 0;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
@@ -27,14 +33,8 @@ export class CBEclCExpenseConceptsListComponent extends BasePage implements OnIn
   constructor(private modalRef: BsModalRef) {
     super();
     this.settings.columns = COLUMNS1;
-    this.settings.actions.delete = false;
-    this.settings.actions.add = false
-    this.settings.actions.edit = false
 
     this.settings2.columns = COLUMNS2;
-    this.settings2.actions.delete = false;
-    this.settings2.actions.add = false
-    this.settings2.actions.edit = false
 
   }
 

@@ -87,12 +87,21 @@
                     </div>
                 </div>
             </div>
-        </form>
+        
         <div class="ch-content">
-            <h5 class="title"></h5>
-            <app-columns-select [(settings)]="settings"></app-columns-select>
+            <h5 class="title">&nbsp;</h5>
+            <div class="row justify-content-end mr-1">
+              <div class="col-12">
+                  <app-columns-select 
+                    [(settings)]="settings" 
+                    class="row justify-content-end">
+                </app-columns-select>
+              </div>
+            </div>
         </div>
-        <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
+        <div class="row pt-3">
+            <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
+        </div>
 
         <div class="row pt-5">
             <div class="col-md-2">
@@ -120,12 +129,11 @@
         </div>
 
         <div class="form-group row pt-5">
-  
-            <label class="col-sm-2 col-form-label">Folio de escaneo</label>
-            <div class="col-sm-1">
-              <input class="form-control" type="" >
+            <div class="col-md-3">
+                <form-field [control]="form.get('scanFolio')" label="Folio de escaneo">
+                    <input type="text" class="form-control" formControlName="scanFolio">
+                </form-field>
             </div>
-    
             <div class="col-sm-1">
               <button type="submit" class="btn-sm btn-primary active">Solicitud</button>
             </div>
@@ -138,9 +146,10 @@
               <button type="submit" class="btn-sm btn-primary active" >Ver IMG</button>
             </div>
     
-            <label class="col-sm-2 col-form-label">Folio de Cancelación</label>
-            <div class="col-sm-1">
-              <input class="form-control" type="" >
+            <div class="col-md-3">
+                <form-field [control]="form.get('cancelSheet')" label="Folio de Cancelación">
+                    <input type="text" class="form-control" formControlName="cancelSheet">
+                </form-field>
             </div>
     
             <div class="col-sm-1">
@@ -156,7 +165,7 @@
             </div>
     
           </div>
-        
+        </form>
     </div>
 
 </app-card>

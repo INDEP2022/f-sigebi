@@ -93,6 +93,7 @@
               [control]="assetsForm.get('descripcion')"
               label="Descripción">
               <textarea
+                rows="3"
                 class="form-control"
                 formControlName="descripcion"></textarea>
             </form-field>
@@ -108,7 +109,7 @@
             (click)="showObservations(modal)">
             Observaciones
           </button>
-          <button class="btn btn-primary btn-sm ml-3" type="submit">
+          <button class="btn btn-primary btn-sm ml-3 active" type="submit">
             Guardar
           </button>
         </div>
@@ -121,7 +122,7 @@
           </div>
           <div body>
             <div class="row">
-              <textarea class="form-control"></textarea>
+              <textarea class="form-control" rows="5"></textarea>
             </div>
           </div>
 

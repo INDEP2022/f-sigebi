@@ -13,15 +13,16 @@ import { DONATION_APPROVAL_COLUMNS } from './donation-approval-columns';
   ]
 })
 export class PeAdCDonationApprovalComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
+  settings = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
+
   form: FormGroup = new FormGroup({}); 
 
   constructor(private fb: FormBuilder) {
     super();
     this.settings.columns = DONATION_APPROVAL_COLUMNS;
-    this.settings.actions.edit = false;
-    this.settings.actions.add = false;
-    this.settings.actions.delete = false;
   }
 
   ngOnInit(): void {

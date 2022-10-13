@@ -5,10 +5,24 @@
 
     <div body>
 
-        <form class="form-material" [formGroup]="form">
+        <form class="form-material" [formGroup]="form"> 
 
             <div class="row">
-                <div class="col-md-2">
+                <div class="col-md-4">
+                    <app-date-range-shared [form]="form"></app-date-range-shared>
+                </div>
+                <!-- <div class="col-md-4">
+                    <form-field [control]="form.get('rangeDate')" label="Fechas de recepción">
+                        <input class="form-control"
+                            formControlName="rangeDate"
+                            placeholder="Seleccione el rango de fechas"
+                            ngModel
+                            bsDaterangepicker
+                            [maxDate]="today"
+                            [bsConfig]="{ dateInputFormat: 'DD-MM-YYYY',  displayOneMonthRange: true }">
+                    </form-field>
+                </div> -->
+                <!-- <div class="col-md-2">
                     <form-field [control]="form.get('fromDate')" label="Acumulado del">
                         <input type="text" 
                                placeholder=""
@@ -27,7 +41,7 @@
                                formControlName="toDate"
                                [bsConfig]="{ isAnimated: true }">
                     </form-field>
-                </div>
+                </div> -->
                 <div class="col-md-2">
                     <form-field [control]="form.get('report')" label="¿Reporte Detallado?">
                         <select class="form-control"  formControlName="report">

@@ -21,10 +21,19 @@
             </div>
             <div class="row pt-5">
                 <div class="ch-content">
-                    <h5 class="title"></h5>
-                    <app-columns-select [(settings)]="settings"></app-columns-select>
+                    <h5 class="title">&nbsp;</h5>
+                    <div class="row justify-content-end mr-1">
+                      <div class="col-12">
+                          <app-columns-select 
+                            [(settings)]="settings" 
+                            class="row justify-content-end">
+                        </app-columns-select>
+                      </div>
+                    </div>
                 </div>
-                <ng2-smart-table class="my-table" [settings]="settings" [source]="ExcelData"></ng2-smart-table> 
+                <div class="row pt-3">
+                    <ng2-smart-table class="my-table" [settings]="settings" [source]="ExcelData"></ng2-smart-table> 
+                </div>
             </div>
     </div>
 

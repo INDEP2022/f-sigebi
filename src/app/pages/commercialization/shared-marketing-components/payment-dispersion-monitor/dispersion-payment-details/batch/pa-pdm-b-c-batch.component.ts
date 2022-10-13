@@ -16,7 +16,11 @@ export class PaPdmBCBatchComponent extends BasePage implements OnInit {
 
   form: FormGroup = new FormGroup({});
 
-  settings = {...TABLE_SETTINGS};
+  settings = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
+
   data:any[]=[
     {
       batch: '1008',
@@ -39,9 +43,6 @@ export class PaPdmBCBatchComponent extends BasePage implements OnInit {
   constructor(private fb: FormBuilder) {
     super();
     this.settings.columns = COLUMNS;
-    this.settings.actions.delete = false;
-    this.settings.actions.add = false
-    this.settings.actions.edit = false
     //this.settings.selectMode='multi';
   }
 

@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Actualización de datos del expediente</h5>
+    <h5 class="title">Reasignación de turno</h5>
   </div>
 
   <div body>
@@ -24,14 +24,14 @@
           class="col-md-3"
           [control]="turnForm.get('fecRec')"
           label="Fec. Recepción">
-          <input class="form-control" formControlName="fecRec" />
+          <input class="form-control" formControlName="fecRec" bsDatepicker />
         </form-field>
 
         <form-field
           class="col-md-3"
           [control]="turnForm.get('fecCap')"
           label="Fec. Captura">
-          <input class="form-control" formControlName="fecCap" />
+          <input class="form-control" formControlName="fecCap" bsDatepicker />
         </form-field>
       </div>
       <div class="row pt-4">
@@ -88,7 +88,7 @@
           [control]="turnForm.get('argumento')"
           label="Argumento"
           class="col-md-8">
-          <textarea class="form-control" formControlName="argumento">
+          <textarea class="form-control" rows="3" formControlName="argumento">
           </textarea>
         </form-field>
 

@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Resumen diario de recepción documental</h5>
+    <h5 class="title">Reporte de recepción documental</h5>
   </div>
 
   <div body>
@@ -8,41 +8,50 @@
       <div class="row">
         <div class="col-md-4">
           <app-delegation-shared [form]="reportForm"></app-delegation-shared>
-          <div class="row">
+        </div>
+
+        <div class="col-md-4">
+          <div class="row pt-4">
             <div class="d-flex">
               <form-radio *ngFor="let range of ranges" [label]="range.name">
                 <input
                   type="radio"
                   formControlName="range"
-                  [value]="range.code" />
+                  [value]="range.code"
+                  (change)="rangeChange()" />
               </form-radio>
             </div>
           </div>
           <div class="row">
             <form-field
+              [class]="range.value == 'daily' ? '' : 'col-md-6'"
               [control]="reportForm.get('from')"
-              [label]="range.value == 'yearly' ? 'Al año' : 'Al mes'">
+              [label]="range.value == 'yearly' ? 'Del año' : 'Del mes'">
               <input
-                [type]="range.value == 'yearly' ? 'number' : 'month'"
                 class="form-control"
-                formControlName="from" />
+                formControlName="from"
+                bsDatepicker
+                [bsConfig]="datePickerConfig" />
             </form-field>
-          </div>
-          <div class="row pt-4" *ngIf="range.value != 'daily'">
+
             <form-field
+              *ngIf="range.value != 'daily'"
+              class="col-md-6"
               [control]="reportForm.get('to')"
               [label]="range.value == 'yearly' ? 'Al año' : 'Al mes'">
               <input
-                [type]="range.value == 'yearly' ? 'number' : 'month'"
                 class="form-control"
-                formControlName="to" />
+                formControlName="to"
+                bsDatepicker
+                [bsConfig]="datePickerConfig" />
             </form-field>
           </div>
-          <div class="row">
-            <div class="col-md-12">
-              <button type="submit" class="btn btn-primary">Imprimir</button>
-            </div>
-          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <button type="submit" class="btn btn-primary active">Imprimir</button>
         </div>
       </div>
     </form>
