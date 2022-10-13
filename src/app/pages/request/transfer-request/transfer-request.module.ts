@@ -1,0 +1,32 @@
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+import { TransferRequestRoutingModule } from './transfer-request-routing.module';
+import { RequestFormComponent } from './request-form/request-form.component';
+import { RequestListComponent } from './request-list/request-list.component';
+import { UsersSelectedToTurnComponent } from './users-selected-to-turn/users-selected-to-turn.component';
+import { RegistrationOfRequestsComponent } from './registration-of-requests/registration-of-requests.component';
+import { RequestRecordTabComponent } from './tabs/request-record-tab/request-record-tab.component';
+
+import { SharedModule } from 'src/app/shared/shared.module';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { TabsModule } from 'ngx-bootstrap/tabs';
+
+@NgModule({
+  declarations: [
+    RequestFormComponent,
+    UsersSelectedToTurnComponent,
+    RequestListComponent,
+    RegistrationOfRequestsComponent,
+    RequestRecordTabComponent
+  ],
+  imports: [
+    CommonModule,
+    TransferRequestRoutingModule,
+    SharedModule,
+    ModalModule.forChild(),
+    TabsModule.forRoot(),
+  ],
+
+})
+export class TransferRequestModule { }

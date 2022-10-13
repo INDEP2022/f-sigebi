@@ -396,7 +396,16 @@ export const MENU: IMenuItem[] = [
   {
     label: 'Solicitudes',
     icon: 'bx-folder',
-    subItems: [],
+    subItems: [
+      {
+        label: 'Solicitudes a turno',
+        link: '/pages/request/request-in-turn'
+      },
+      {
+        label: 'Solicitudes de transferencia',
+        link: '/pages/request/transfer-request'
+      }
+    ]
   },
   {
     label: 'Proceso Destino final',

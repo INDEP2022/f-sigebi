@@ -1,0 +1,228 @@
+<div >
+    <div class="row">
+        <div class="d-flex bd-highlight">
+            <div class="p-2 flex-grow-1 bd-highlight">
+                <h5 class="title"><strong>Informacion de Recepción de Solicitud</strong></h5>
+            </div>
+            <div class="p-2 bd-highlight buttons">
+                <button
+                    class="btn btn-primary btn-sm active"
+                    [disabled]="receptionForm.invalid"      
+                    (click)="confirm()">
+                    Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+    <form [formGroup]="receptionForm" class="form-material">
+        <div class="row pt-3">
+            <div class="col-sm-2">
+                <span style="line-height: 3;">Prioridad</span>
+            </div>
+            <div class="col-sm-2">
+                <form-radio label="">
+                    <input 
+                    type="radio" 
+                    formControlName="priority" 
+                    value="true" 
+                    id="priority" />
+                </form-radio>   
+            </div>
+            <div class="col-md-3">
+                <form-field [control]="receptionForm.get('infoProvenance')" label="Procedencia Información">
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="infoProvenance"
+                      placeholder=""/>
+                </form-field> 
+            </div>
+        </div>
+        <div class="row pt-3">       
+            <div class="col-md-2">
+                <form-field [control]="receptionForm.get('receptDate')" label="Fecha de Recepcion">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="receptDate"
+                    placeholder="" 
+                    bsDatepicker />
+                </form-field>
+              </div>
+              <div class="col-md-2">
+                <form-field [control]="receptionForm.get('officeDate')" label="*Fecha de Oficion">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="officeDate"
+                    placeholder="" 
+                    bsDatepicker />
+                </form-field>
+              </div>
+            <div class="col-md-4">
+                <ngx-select
+                  [form]="receptionForm"
+                  control="typeExpedient"
+                  (fetchItems)="getTypeExpedient($event)"
+                  [data]="selectTypeExpedient"
+                  label="Tipo Expediente"
+                  bindLabel=""  
+                  value="id">
+                </ngx-select> <!-- bindLabel = name field -->
+            </div>
+            <div class="col-md-3">
+                <form-field [control]="receptionForm.get('indiciado')" label="Indicado">
+                    <input
+                    type="text"
+                    class="form-control"
+                    formControlName="indiciado"
+                    placeholder=""/>
+                </form-field>
+            </div>
+        </div>
+        <div class="row pt-3">
+            <div class="col-md-3">
+                <form-field [control]="receptionForm.get('nameSender')" label="Nombre del Remitente">
+                    <input
+                    type="text"
+                    class="form-control"
+                    formControlName="nameSender"
+                    placeholder=""/>
+                </form-field>
+            </div>
+            <div class="col-md-3">
+                <form-field [control]="receptionForm.get('roleSender')" label="Cargo del Remitente">
+                    <input
+                    type="text"
+                    class="form-control"
+                    formControlName="roleSender"
+                    placeholder=""/>
+                </form-field>
+            </div>
+            <div class="col-md-3">
+                <form-field [control]="receptionForm.get('phoneSender')" label="Telefono del Remitente">
+                    <input
+                    type="number"
+                    class="form-control"
+                    formControlName="phoneSender"
+                    placeholder=""/>
+                </form-field>
+            </div>
+            <div class="col-md-3">
+                <form-field [control]="receptionForm.get('emailSender')" label="Email del Remitente">
+                    <input
+                    type="email"
+                    class="form-control"
+                    formControlName="emailSender"
+                    placeholder=""/>
+                </form-field>
+            </div>
+        </div>
+        <div class="row pt-3">
+            <div class="col-md-3">
+                <form-field [control]="receptionForm.get('sender')" label="Remitente">
+                    <input
+                    type="text"
+                    class="form-control"
+                    formControlName="sender"
+                    placeholder=""/>
+                </form-field>
+            </div>
+            <div class="col-md-3">
+                <form-field [control]="receptionForm.get('tribunal')" label="Jusgado">
+                    <input
+                    type="text"
+                    class="form-control"
+                    formControlName="tribunal"
+                    placeholder=""/>
+                </form-field>
+            </div>
+            <div class="col-md-3">
+                <form-field [control]="receptionForm.get('crime')" label="Delito">
+                    <input
+                    type="text"
+                    class="form-control"
+                    formControlName="crime"
+                    placeholder=""/>
+                </form-field>
+            </div>
+            <div class="col-md-3">
+                <form-field [control]="receptionForm.get('typeReception')" label="Via de Recepción">
+                    <input
+                    type="text"
+                    class="form-control"
+                    formControlName="typeReception"
+                    placeholder=""/>
+                </form-field>
+            </div>
+        </div>
+        <div class="row pt-3">
+            <div class="col-md-3">
+                <form-field [control]="receptionForm.get('destinationManage')" label="Gestión de Destino">
+                    <input
+                    type="text"
+                    class="form-control"
+                    formControlName="destinationManage"
+                    placeholder=""/>
+                </form-field>
+            </div>
+            <div class="col-md-3">
+                <form-field [control]="receptionForm.get('contributor')" label="Contribuyente y/o Indiciado">
+                    <input
+                    type="text"
+                    class="form-control"
+                    formControlName="contributor"
+                    placeholder=""/>
+                </form-field>
+            </div>
+            <div class="col-md-5">
+                <form-field [control]="receptionForm.get('subject')" label="Asunto">
+                    <input
+                    type="text"
+                    class="form-control"
+                    formControlName="subject"
+                    placeholder=""/>
+                </form-field>
+            </div>
+        </div>
+        <div class="row pt-3">
+            <div class="col-md-3">
+                <form-field [control]="receptionForm.get('transExpedient')" label="Expediente Transferente/PAMA">
+                    <input
+                    type="text"
+                    class="form-control"
+                    formControlName="transExpedient"
+                    placeholder=""/>
+                </form-field>
+            </div>
+            <div class="col-md-3">
+                <form-field [control]="receptionForm.get('typeTransfer')" label="Tipo Transferencia">
+                    <input
+                    type="text"
+                    class="form-control"
+                    formControlName="typeTransfer"
+                    placeholder=""/>
+                </form-field>
+            </div>
+            <div class="col-md-3">
+                <form-field [control]="receptionForm.get('transferEntityNotes')" label="Notas Entidad Transferente">
+                    <input
+                    type="text"
+                    class="form-control"
+                    formControlName="transferEntityNotes"
+                    placeholder=""/>
+                </form-field>
+            </div>
+            <div class="col-md-3">
+                <form-field [control]="receptionForm.get('observations')" label="Observaciones">
+                    <textarea 
+                        class="form-control" 
+                        placeholder="" 
+                        id=""
+                        formControlName="observations">
+                    </textarea>
+                </form-field>
+            </div>
+        </div>
+    </form>
+</div>

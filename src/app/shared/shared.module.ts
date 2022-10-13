@@ -21,6 +21,7 @@ import { PaginationComponent } from './components/pagination/pagination.componen
 import { PaginateComponent } from './components/pagination/paginate.component';
 import { FormCheckComponent } from './components/form-check/form-check.component';
 import { FormRadioComponent } from './components/form-radio/form-radio.component';
+import { CheckboxColumnComponent } from './components/checkbox-column/checkbox-column.component';
 import { SearchBarSimpleComponent } from './components/search-bar-simple/search-bar-simple.component';
 import { DividerComponent } from './components/divider/divider.component';
 import { CheckboxElementComponent } from './components/checkbox-element-smarttable/checkbox-element';
@@ -39,6 +40,7 @@ import { CheckboxElementComponent } from './components/checkbox-element-smarttab
     PaginateComponent,
     FormCheckComponent,
     FormRadioComponent,
+    CheckboxColumnComponent,
     SearchBarSimpleComponent,
     DividerComponent,
     CheckboxElementComponent
@@ -75,6 +77,7 @@ import { CheckboxElementComponent } from './components/checkbox-element-smarttab
     FormRadioComponent,
     CommonModule,
     CheckboxElementComponent
+    CheckboxColumnComponent,
   ],
 })
 export class SharedModule {
