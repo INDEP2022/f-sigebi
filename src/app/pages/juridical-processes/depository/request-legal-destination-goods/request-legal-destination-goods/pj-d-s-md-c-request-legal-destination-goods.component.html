@@ -8,7 +8,7 @@
     <div body>
         
         <!-- form No Bien -->
-        <form [formGroup]="form" (submit)="mostrarInfo()">
+        <form [formGroup]="form" (submit)="mostrarInfo()" class="container-fluid form-material">
             <div class="row w-100">
                 <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
                     <form-field [control]="form.get('noBien')" label="No. Bien">
