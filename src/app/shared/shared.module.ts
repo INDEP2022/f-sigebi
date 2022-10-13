@@ -76,8 +76,8 @@ import { CheckboxElementComponent } from './components/checkbox-element-smarttab
     FormCheckComponent,
     FormRadioComponent,
     CommonModule,
-    CheckboxElementComponent
-    CheckboxColumnComponent,
+    CheckboxElementComponent,
+    CheckboxColumnComponent
   ],
 })
 export class SharedModule {
