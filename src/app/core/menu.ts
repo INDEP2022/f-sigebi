@@ -542,6 +542,14 @@ export const MENU: IMenuItem[] = [
         label: 'Catálogos',
         icon: 'folder',
         subItems:[
+          {
+            label: 'Tipos de penalización',
+            link: '/pages/commercialization/catalogs/penalty-types'
+          },
+          {
+            label: 'Claves autorización envío ext. OIs',
+            link: '/pages/commercialization/catalogs/authorization-keys-ois'
+          },
         ]
       }
       

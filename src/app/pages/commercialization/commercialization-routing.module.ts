@@ -44,7 +44,12 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./shared-marketing-components/c-b-ge-cdg-m-expense-capture/c-b-ge-cdg-m-expense-capture.module')).CBGeCdgMExpenseCaptureModule,
     data: { title: 'Captura de gastos' },
-  }
+  },
+  {
+    path: 'catalogs',
+    loadChildren: async () =>
+      (await import('./catalogs/catalogs.module')).CatalogsModule,
+  },
 ];
 
 @NgModule({
