@@ -233,10 +233,6 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-folder',
     subItems: [
       {
-        label: 'Indicador Reportes',
-        link: '/pages/catalogs/indicatorReport',
-      },
-      {
         label: 'Numerario Físico',
         link: '/pages/administrative-processes/numerary-physics',
       },
@@ -311,6 +307,20 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Venta de Bienes',
         link: '/pages/administrative-processes/sale-goods',
+      },
+      {
+        label: 'Administracion Terceros',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Contratos',
+            link: '/pages/administrative-processes/contracts',
+          },
+          {
+            label: 'Costo unitario',
+            link: '/pages/administrative-processes/unit-cost',
+          },
+        ]
       },
     ],
   },
@@ -628,7 +638,7 @@ export const MENU: IMenuItem[] = [
             label: 'Consulta de bienes',
             link: '/pages/commercialization/consultation-goods-commercial-process-tabs',
           },
-          {  
+          {
             label: 'Conceptos de Gasto',
             link: '/pages/commercialization/expense-concepts',
           },
