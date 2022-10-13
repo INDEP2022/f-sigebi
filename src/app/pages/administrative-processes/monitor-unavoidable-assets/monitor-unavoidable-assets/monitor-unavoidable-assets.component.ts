@@ -17,7 +17,7 @@ import { MONITORUNAVOIDABLEASSETS_COLUMNS } from './monitor-unavoidable-assets-c
 })
 export class MonitorUnavoidableAssetsComponent extends BasePage implements OnInit {
 
-  settings = TABLE_SETTINGS;
+  settings = { ...TABLE_SETTINGS, actions: false };
   data1: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
@@ -27,7 +27,6 @@ export class MonitorUnavoidableAssetsComponent extends BasePage implements OnIni
   {
     super();
     this.settings.columns = MONITORUNAVOIDABLEASSETS_COLUMNS;
-    this.settings.actions.delete = true;
   }
 
   ngOnInit(): void {

@@ -233,10 +233,6 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-folder',
     subItems: [
       {
-        label: 'Indicador Reportes',
-        link: '/pages/catalogs/indicatorReport',
-      },
-      {
         label: 'Numerario Físico',
         link: '/pages/administrative-processes/numerary-physics',
       },
@@ -309,9 +305,26 @@ export const MENU: IMenuItem[] = [
         label: 'Venta de Bienes',
         link: '/pages/administrative-processes/sale-goods',
       },
-      /**
-       * ADMIN PROCESS-SEGUROS LEGASPI
-       **/
+      {
+        label: 'Administracion Terceros',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Contratos',
+            link: '/pages/administrative-processes/contracts',
+          },
+          {
+            label: 'Costo unitario',
+            link: '/pages/administrative-processes/unit-cost',
+          },
+        ]
+      },
+    ],
+  },
+  {
+    label: 'Reportes',
+    icon: 'bx-folder',
+    subItems: [
       {
         label: 'Atención Bienes',
         link: '/pages/administrative-processes/goods-tracking',

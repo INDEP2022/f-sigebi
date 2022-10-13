@@ -217,6 +217,20 @@ const routes: Routes = [
       /**
        * Services Pages Legaspi
       **/
+      {
+        path: 'contracts',
+        loadChildren: async () =>
+          (await import('./administration-third/contracts/contracts.module'))
+            .ContractsModule,
+        data: { title: 'Registro de contratos' },
+      },
+      {
+        path: 'unit-cost',
+        loadChildren: async () =>
+          (await import('./administration-third/unit-cost/unit-cost.module'))
+            .UnitCostModule,
+        data: { title: 'Costo unitario' },
+      },
     ],
   },
 ];
