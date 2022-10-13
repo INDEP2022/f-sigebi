@@ -15,7 +15,12 @@ import { COLUMNS } from './columns';
 export class CBEpcCEventPermissionControlComponent extends BasePage implements OnInit {
 
   form: FormGroup = new FormGroup({});
-  settings = TABLE_SETTINGS;
+
+  settings = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
+
   data:any[]=[
     {
       user: 'RONOFRE',
@@ -29,9 +34,6 @@ export class CBEpcCEventPermissionControlComponent extends BasePage implements O
   constructor(private fb: FormBuilder) {
     super();
     this.settings.columns = COLUMNS;
-    this.settings.actions.delete = false;
-    this.settings.actions.add = false;
-    this.settings.actions.edit = false;
   }
 
   ngOnInit(): void {

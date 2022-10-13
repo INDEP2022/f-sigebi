@@ -1,0 +1,35 @@
+<app-modal>
+    <div header>
+        <h5 class="modal-title">Editar</h5>
+    </div>
+    <div body>
+        <form class="form-material" [formGroup]="form">
+            <div class="row">
+                <div class="col-md-2">
+                    <form-field [control]="form.get('idStatus')" label="ID">
+                        <input type="text" class="form-control" formControlName="idStatus">
+                    </form-field>
+                </div>
+                <div class="col-md-10">
+                    <form-field [control]="form.get('description')" label="Descripción">
+                        <input type="text" class="form-control" formControlName="description">
+                    </form-field>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div footer>
+        <div class="d-flex justify-content-center">
+    		<div class="m-3">
+        		<button type="button" class="btn btn-danger active" (click)="close()">
+          			Cancelar
+        		</button>
+      		</div>
+		    <div class="m-3">
+		        <button type="button" class="btn btn-success active" (click)="close()">
+		          Aceptar
+		        </button>
+		    </div>
+		</div>
+    </div>
+</app-modal>

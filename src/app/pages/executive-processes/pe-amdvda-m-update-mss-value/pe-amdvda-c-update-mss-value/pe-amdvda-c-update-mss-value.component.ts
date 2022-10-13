@@ -15,15 +15,15 @@ import * as XLSX from 'xlsx';
   ]
 })
 export class PeAmdvdaCUpdateMssValueComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS
+  settings = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
   ExcelData:any;
   form: FormGroup = new FormGroup({}); 
   constructor(private fb: FormBuilder) {
     super();
-    this.settings.columns = UPDATE_MASS_VALUE_COLUMNS,
-    this.settings.actions.edit = false;
-    this.settings.actions.delete = false;
-    this.settings.actions.add = false;
+    this.settings.columns = UPDATE_MASS_VALUE_COLUMNS
   }
 
   ngOnInit(): void {

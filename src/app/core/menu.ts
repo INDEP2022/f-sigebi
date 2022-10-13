@@ -424,6 +424,7 @@ export const MENU: IMenuItem[] = [
     ],
   },
   ...DOCUMENTS_RECEPTION_ROUTES,
+  //Procesos ejecutivos
   {
     label: 'Procesos Ejecutivos',
     icon: 'bx-folder',
@@ -453,10 +454,6 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Acumulado Trimestral de Bienes',
         link: '/pages/executive-processes/pe-atb-m-quarterly-accumulated-assets',
-      },
-      {
-        label: 'Acumulado Bienes',
-        link: '/pages/executive-processes/acumulative-asset-tabs',
       },
       {
         label: 'Control Mensual de Recepción Documental',
@@ -550,6 +547,30 @@ export const MENU: IMenuItem[] = [
             link: '/pages/commercialization/c-b-ge-cdg-m-expense-capture',
           },
           {
+            label: 'Terceros comercializadores',
+            link: '/pages/commercialization/c-bm-ge-cdc-tc-m-third-party-marketers',
+          },
+          {
+            label: 'Consulta de bienes',
+            link: '/pages/commercialization/consultation-goods-commercial-process-tabs',
+          },
+          {
+            label: 'Calcular comisión',
+            link: '/pages/commercialization/c-bm-ge-cdc-clc-m-calculate-commission',
+          },
+          {
+            label: 'Folios y Series',
+            link: '/pages/commercialization/c-bm-f-syf-m-series-folios-control',
+          },
+          {
+            label: 'Causas y Refacturación',
+            link: '/pages/commercialization/c-bm-f-cdr-m-rebilling-causes',
+          },
+          {
+            label: 'Estatus de la facturación',
+            link: '/pages/commercialization/c-bm-f-edf-m-invoice-status',
+          },
+          {
             label: 'Conceptos de Gasto',
             link: '/pages/commercialization/expense-concepts',
           },
@@ -604,6 +625,10 @@ export const MENU: IMenuItem[] = [
             link: '/pages/commercialization/c-b-ge-cdg-m-expense-capture',
           },
           {
+            label: 'Consulta de bienes',
+            link: '/pages/commercialization/consultation-goods-commercial-process-tabs',
+          },
+          {  
             label: 'Conceptos de Gasto',
             link: '/pages/commercialization/expense-concepts',
           },

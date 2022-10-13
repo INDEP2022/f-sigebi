@@ -78,13 +78,12 @@
     <div header>
         <div class="ch-content">
             <h5 class="title">BIENES</h5>
+            <div class="row justify-content-end mr-5">
+               <app-columns-select [(settings)]="settings1"></app-columns-select>  
+            </div>
         </div>
     </div>
     <div body>
-        <div class="ch-content">
-            <h5 class="title"></h5>
-            <app-columns-select [(settings)]="settings1"></app-columns-select>
-        </div>
         <ng2-smart-table [settings]="settings1" [source]="data1"></ng2-smart-table>
     </div>
 </app-card>
@@ -93,13 +92,12 @@
     <div header>
         <div class="ch-content">
             <h5 class="title">AVALÚOS</h5>
+            <div class="row justify-content-end mr-5">
+                <app-columns-select [(settings)]="settings2"></app-columns-select>
+            </div>
         </div>
     </div>
     <div body>
-        <div class="ch-content">
-            <h5 class="title"></h5>
-            <app-columns-select [(settings)]="settings2"></app-columns-select>
-        </div>
         <ng2-smart-table [settings]="settings2" [source]="data2"></ng2-smart-table>
     </div>
 </app-card>
@@ -108,42 +106,51 @@
     <div header>
         <div class="ch-content">
             <h5 class="title">DETALLE AVALÚO</h5>
+            <div class="row justify-content-end mr-5">
+                <app-columns-select [(settings)]="settings3"></app-columns-select>
+            </div>
         </div>
     </div>
     <div body>
-        <div class="ch-content">
-            <h5 class="title"></h5>
-            <div class="btn-group" role="group">
-                <button id="btnGroupDownload" type="button" class="btn btn-sm btn-primary active dropdown-toggle" data-toggle="dropdown">
-                  Descargar
-                </button>
-                <div class="dropdown-menu" aria-labelledby="btnGroupDownload">
-                  <a class="dropdown-item">Formato</a>
-                  <a class="dropdown-item">Formato descuento</a>
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="btn-group" role="group">
+                        <button id="btnGroupDownload" type="button" class="btn btn-sm btn-primary active dropdown-toggle" data-toggle="dropdown">
+                          Descargar
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="btnGroupDownload">
+                          <a class="dropdown-item">Formato</a>
+                          <a class="dropdown-item">Formato descuento</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="btn-group" role="group">
+                        <button id="btnGrouValidate" type="button" class="btn btn-sm btn-warning active dropdown-toggle" data-toggle="dropdown">
+                          Validar
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="btnGroupValidate">
+                          <a class="dropdown-item">Archivo</a>
+                          <a class="dropdown-item">Archivo Descuento</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="btn-group" role="group">
+                        <button id="btnGroupExcel" type="button" class="btn btn-sm btn-success active dropdown-toggle " data-toggle="dropdown">
+                          Excel
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="btnGroupExcel">
+                          <a class="dropdown-item">Insertar</a>
+                          <a class="dropdown-item">Agregar</a>
+                          <a class="dropdown-item">Actualizar</a>
+                          <a class="dropdown-item">Aplicar descuento</a>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="btn-group" role="group">
-                <button id="btnGrouValidate" type="button" class="btn btn-sm btn-warning active dropdown-toggle" data-toggle="dropdown">
-                  Validar
-                </button>
-                <div class="dropdown-menu" aria-labelledby="btnGroupValidate">
-                  <a class="dropdown-item">Archivo</a>
-                  <a class="dropdown-item">Archivo Descuento</a>
-                </div>
-            </div>
-            <div class="btn-group" role="group">
-                <button id="btnGroupExcel" type="button" class="btn btn-sm btn-success active dropdown-toggle " data-toggle="dropdown">
-                  Excel
-                </button>
-                <div class="dropdown-menu" aria-labelledby="btnGroupExcel">
-                  <a class="dropdown-item">Insertar</a>
-                  <a class="dropdown-item">Agregar</a>
-                  <a class="dropdown-item">Actualizar</a>
-                  <a class="dropdown-item">Aplicar descuento</a>
-                </div>
-            </div>
-            <app-columns-select [(settings)]="settings3"></app-columns-select>
-        </div>
+            
+        
         <br>
         <ng2-smart-table [settings]="settings3" [source]="data3"></ng2-smart-table>
     </div>

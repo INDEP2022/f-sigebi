@@ -10,7 +10,10 @@ import { EVENTO_ERROR_COLUMNS } from './numeraire-conversion-error-columns';
   ]
 })
 export class CBGeCanCNumeraireConversionErrorComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
+  settings = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
   list: any;
   
   constructor() {
