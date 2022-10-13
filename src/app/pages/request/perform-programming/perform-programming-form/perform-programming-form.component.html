@@ -1,0 +1,252 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Realizar programación</h5>
+  </div>
+  <div body>
+    <form [formGroup]="performForm" class="form-material">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="performForm.get('regionalDelegation')">
+            <ngx-select
+              [form]="performForm"
+              control="regionalDelegation"
+              [data]="regionalsDelegations"
+              value="id"
+              bindLabel="id"
+              label="Selecciona una delegación regional"
+              (fetchItems)="getRegionalDelegationSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field [control]="performForm.get('address')" label="Dirección">
+            <input type="text" class="form-control" formControlName="address" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field [control]="performForm.get('state')">
+            <ngx-select
+              [form]="performForm"
+              control="state"
+              [data]="states"
+              value="id"
+              bindLabel="id"
+              label="Selecciona un estado"
+              (fetchItems)="getStateSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field [control]="performForm.get('city')" label="Ciudad">
+            <input type="text" class="form-control" formControlName="city" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="performForm.get('startDate')"
+            label="Fecha inicio operativo">
+            <input
+              type="datetime-local"
+              class="form-control"
+              formControlName="startDate" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="performForm.get('endDate')"
+            label="Fecha fin operativo">
+            <input
+              type="datetime-local"
+              class="form-control"
+              formControlName="endDate" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field [control]="performForm.get('transference')">
+            <ngx-select
+              [form]="performForm"
+              control="transference"
+              [data]="transferences"
+              value="id"
+              bindLabel="id"
+              label="Selecciona transferencía"
+              (fetchItems)="getTransferenceSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field [control]="performForm.get('station')">
+            <ngx-select
+              [form]="performForm"
+              control="station"
+              [data]="stations"
+              value="id"
+              bindLabel="id"
+              label="Selecciona emisora"
+              (fetchItems)="getStationSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field [control]="performForm.get('authority')">
+            <ngx-select
+              [form]="performForm"
+              control="authority"
+              [data]="authority"
+              value="id"
+              bindLabel="id"
+              label="Selecciona una autoridad"
+              (fetchItems)="getAuthoritySelect($event)"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-2">
+        <div class="col-md-4">
+          <form-field [control]="performForm.get('typeRelevant')">
+            <ngx-select
+              [form]="performForm"
+              control="typeRelevant"
+              [data]="typeRelevant"
+              value="id"
+              bindLabel="id"
+              label="Selecciona un tipo relevante"
+              (fetchItems)="getTypeRelevantSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="performForm.get('email')"
+            label="Correo electronico">
+            <input type="text" class="form-control" formControlName="email" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="performForm.get('observation')"
+            label="Observación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="observation" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <h5 class="title">Almacén</h5>
+
+        <div class="form-inline justify-content-end btn-toolbar">
+          <button (click)="newWarehouse()" class="btn btn-primary btn-sm active">
+            Solicitar alta almacén
+          </button>
+        </div>
+
+        <div class="col-sm-12 pt-4">
+          <form-field [control]="performForm.get('warehouse')">
+            <ngx-select
+              [form]="performForm"
+              control="warehouse"
+              [data]="warehouse"
+              value="id"
+              bindLabel="id"
+              label="Selecciona un almacén"
+              (fetchItems)="getWarehouseSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-5">
+        <h5 class="title">Usuarios al operativo</h5>
+        <div class="form-inline justify-content-end btn-toolbar">
+          <button (click)="newUser()" class="btn btn-primary btn-sm active">
+            Nuevo usuario
+          </button>
+        </div>
+        <div class="col-sm-12 pt-4">
+          <form-field [control]="performForm.get('userId')">
+            <ngx-select
+              [form]="performForm"
+              control="userId"
+              [data]="users"
+              value="id"
+              bindLabel="id"
+              label="Selecciona un usuario"
+              (fetchItems)="getUsersSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">Usuario</th>
+              <th scope="col">Correo electronico</th>
+              <th scope="col">Cargo de usuario</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Usuario Prueba</td>
+              <td>Correo usuario</td>
+              <td>Cargo usuario</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="row pt-5">
+        <h5 class="title">Bienes seleccionados</h5>
+        <div class="form-inline justify-content-end">
+          <button
+            (click)="estateSearch()"
+            class="btn btn-primary btn-sm active">
+            Buscar Bienens
+          </button>
+        </div>
+        <div>
+          <div class="md-tabs">
+            <tabset>
+              <tab heading="Transportable" id="tab1">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th scope="col">No° Gestión</th>
+                      <th scope="col">Clave Única</th>
+                      <th scope="col">Expediente</th>
+                      <th scope="col">Descripción?</th>
+                      <th scope="col">Descripción bien sae?</th>
+                      <th scope="col">Cantidad transferente?</th>
+                      <th scope="col">Unidad medida transferente?</th>
+                      <th scope="col">Estado fisico transferente?</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Usuario Prueba</td>
+                      <td>Correo usuario</td>
+                      <td>Cargo usuario</td>
+                      <td>Descripcion</td>
+                      <td>Descripcion sae</td>
+                      <td>Cantidad transfereme</td>
+                      <td>Unidad de medida</td>
+                      <td>Estado fisico</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </tab>
+              <tab heading="Resguardo">Basic content 1</tab>
+              <tab heading="Almacén SAT">Basic content 2</tab>
+            </tabset>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

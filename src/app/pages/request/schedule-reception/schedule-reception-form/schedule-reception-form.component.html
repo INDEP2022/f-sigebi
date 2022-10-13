@@ -1,0 +1,62 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Programar Recepción</h5>
+  </div>
+  <div body>
+    <form [formGroup]="scheduleForm" class="form-horizontal form-material">
+      <div class="form-group">
+        <label class="control-label col-sm-2"
+          >Tipo de usuario:</label>
+
+        <div class="col-sm-6">
+          <form-radio label="T.E" class="radio-inline">
+            <input type="radio" formControlName="radio" value="T.E" (change)="typeUser($event)"/>
+          </form-radio>
+          <form-radio label="SAE" class="radio-inline">
+            <input type="radio" formControlName="radio" value="SAE" (change)="typeUser($event)"/>
+          </form-radio>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-2">Selecciona usuario:</label>
+          
+        <div class="col-sm-7">
+          <form-field [control]="scheduleForm.get('userId')">
+            <ngx-select
+              [form]="scheduleForm"
+              control="userId"
+              [data]="users"
+              value="id"
+              bindLabel="id"
+              (fetchItems)="getUserSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <button class="btn btn-primary btn-sm active">Buscar usuario</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-2" for="pwd">Tipo de evento:</label>
+        <div class="col-sm-6">
+          <label class="control-label">Recepción Fisica</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-2" for="pwd">Fecha:</label>
+        <div class="col-sm-6">
+          <label class="control-label">11-ene-2021 19:31</label>
+        </div>
+      </div>
+    </form>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button class="btn btn-primary btn-sm active">Turnar</button>
+      </div>
+      <div class="m-3">
+      </div>
+    </div>
+  </div>
+</app-card>
