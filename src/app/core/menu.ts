@@ -1,4 +1,4 @@
-import { DOCUMENTS_RECEPTION_ROUTES } from '../common/constants/documents-reception-routes';
+import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception.routes';
 import { menuOptionsJuridicalProcesses } from '../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
 import { IMenuItem } from './interfaces/menu.interface';
 
