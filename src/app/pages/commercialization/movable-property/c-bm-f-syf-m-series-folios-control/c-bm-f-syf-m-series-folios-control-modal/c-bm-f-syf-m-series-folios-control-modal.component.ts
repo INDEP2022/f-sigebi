@@ -14,21 +14,20 @@ import { SERIES_FOLIOS_CONTROL_SEPARATE_PAGES_COLUMNS } from './series-folios-co
 })
 export class CBmFSyfMSeriesFoliosControlModalComponent extends BasePage implements OnInit {
 
-  settings1 = {...TABLE_SETTINGS};
-  settings2 = {...TABLE_SETTINGS};
+  settings1 = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
+  settings2 = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
   form : FormGroup = new FormGroup({});
 
   constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
     this.settings1.columns = SERIES_FOLIOS_CONTROL_TYPE_EVENT_COLUMNS;
-    this.settings1.actions.edit = false;
-    this.settings1.actions.delete = false;
-    this.settings1.actions.add = false;
-
     this.settings2.columns = SERIES_FOLIOS_CONTROL_SEPARATE_PAGES_COLUMNS;
-    this.settings2.actions.edit = false;
-    this.settings2.actions.delete = false;
-    this.settings2.actions.add = false;
   }
 
   ngOnInit(): void {

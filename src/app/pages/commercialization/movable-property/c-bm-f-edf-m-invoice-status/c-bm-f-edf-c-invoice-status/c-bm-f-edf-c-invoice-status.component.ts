@@ -13,7 +13,14 @@ import { CBmFEdfCInvoiceStatusModalComponent } from '../c-bm-f-edf-c-invoice-sta
 })
 export class CBmFEdfCInvoiceStatusComponent extends BasePage implements OnInit {
 
-  settings = TABLE_SETTINGS;
+  settings = {
+    ...TABLE_SETTINGS,
+    actions: {
+      edit : true,
+      delete: false,
+      position: 'right'
+    }
+  };
   constructor(private modalService: BsModalService) { 
     super();
     this.settings.columns = INVOICE_STATUS_COLUMNS;

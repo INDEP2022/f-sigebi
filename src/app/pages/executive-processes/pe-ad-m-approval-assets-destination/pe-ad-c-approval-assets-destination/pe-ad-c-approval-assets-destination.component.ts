@@ -14,15 +14,15 @@ import { ASSETS_DESTINATION_COLUMNS } from './approval-assets-destination-column
 })
 export class PeAdCApprovalAssetsDestinationComponent extends BasePage implements OnInit {
   
-  settings = TABLE_SETTINGS;
+  settings = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
   form: FormGroup = new FormGroup({}); 
 
   constructor(private fb: FormBuilder) {
     super();
-    this.settings.columns = ASSETS_DESTINATION_COLUMNS;
-    this.settings.actions.edit = false;
-    this.settings.actions.add = false;
-    this.settings.actions.add = false;
+    this.settings.columns = ASSETS_DESTINATION_COLUMNS
   }
 
   ngOnInit(): void {

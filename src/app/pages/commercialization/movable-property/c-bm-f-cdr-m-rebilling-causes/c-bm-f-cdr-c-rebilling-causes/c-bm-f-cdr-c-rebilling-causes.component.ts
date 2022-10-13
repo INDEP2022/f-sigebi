@@ -13,7 +13,15 @@ import { CBmFCdrCRebillingCausesModalComponent } from '../c-bm-f-cdr-c-rebilling
 })
 export class CBmFCdrCRebillingCausesComponent extends BasePage implements OnInit {
 
-  settings = TABLE_SETTINGS;
+  settings = {
+    ...TABLE_SETTINGS,
+    actions: {
+      edit : true,
+      delete: false,
+      position: 'right'
+    }
+  };
+
   constructor(private modalService: BsModalService) {
     super();
     this.settings.columns = REBILLING_CAUSES_COLUMNS;

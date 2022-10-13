@@ -22,7 +22,10 @@ export class PaPdmCbpCCompositionBatchPaymentsComponent extends BasePage impleme
 
   form: FormGroup = new FormGroup({});
 
-  settings = {...TABLE_SETTINGS};
+  settings = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
 
   lastDate:string='29/08/2022';
   data:any[]=[
@@ -49,9 +52,6 @@ export class PaPdmCbpCCompositionBatchPaymentsComponent extends BasePage impleme
     private fb: FormBuilder) {
     super();
     this.settings.columns = COLUMNS;
-    this.settings.actions.delete = false;
-    this.settings.actions.add = false
-    this.settings.actions.edit = false
     //this.settings.selectMode='multi';
   }
 

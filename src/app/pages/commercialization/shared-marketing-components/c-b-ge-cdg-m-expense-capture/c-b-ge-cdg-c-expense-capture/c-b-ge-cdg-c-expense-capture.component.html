@@ -263,20 +263,15 @@
                 </div>
             </div>
             <br>
-            <div class="ch-content">
-                <h5 class="title">Datos de ingreso</h5>
-                
-            </div>
             <div class="row pt-5">
                 <div class="col-md-6">
                     <div class="ch-content">
-                        <h5 class="title"></h5>
-                        <app-columns-select [(settings)]="settings1"></app-columns-select>
+                        <h5 class="title">Datos de ingreso</h5>
+                        <!-- <app-columns-select [(settings)]="settings1"></app-columns-select> -->
                     </div>
-                    <ng2-smart-table 
-                        [settings]="settings1" 
-                        [source]="list1" >
-                    </ng2-smart-table>
+                    <div class="row pt-3">
+                        <ng2-smart-table [settings]="settings1" [source]="list1" > </ng2-smart-table>
+                    </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group row">

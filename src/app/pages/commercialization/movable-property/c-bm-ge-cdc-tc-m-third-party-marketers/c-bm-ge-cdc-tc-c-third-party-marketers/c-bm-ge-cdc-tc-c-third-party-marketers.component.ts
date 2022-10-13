@@ -13,29 +13,26 @@ import { THIRD_PARTY_MARKETERS2_COLUMNS } from './third-party-marketers2-columns
   ]
 })
 export class CBmGeCdcTcCThirdPartyMarketersComponent extends BasePage implements OnInit {
-
-  settings1 = {...TABLE_SETTINGS};
-  settings2 = {...TABLE_SETTINGS};
-  settings3 = {...TABLE_SETTINGS};
+  settings1 = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
+  settings2 = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
+  settings3 = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
 
   data2 : any;
   data3 : any;
   constructor() {
     super();
     this.settings1.columns = THIRD_PARTY_MARKETERS_COLUMNS;
-    this.settings1.actions.add = false;
-    this.settings1.actions.edit = false;
-    this.settings1.actions.delete = false;
-
     this.settings2.columns = THIRD_PARTY_MARKETERS2_COLUMNS;
-    this.settings2.actions.add = false;
-    this.settings2.actions.edit = false;
-    this.settings2.actions.delete = false;
-
     this.settings3.columns = EVENT_TYPE_THIRD_COLUMNS;
-    this.settings3.actions.add = false;
-    this.settings3.actions.edit = false;
-    this.settings3.actions.delete = false;
   }
 
   ngOnInit(): void {

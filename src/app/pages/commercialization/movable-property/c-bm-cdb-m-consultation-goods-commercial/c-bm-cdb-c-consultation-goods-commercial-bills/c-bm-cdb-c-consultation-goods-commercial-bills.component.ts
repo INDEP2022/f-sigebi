@@ -12,7 +12,7 @@ import { ExcelService } from 'src/app/common/services/exportToExcel.service';
 })
 export class CBmCdbCConsultationGoodsCommercialBillsComponent extends BasePage implements OnInit {
 
-  settings = TABLE_SETTINGS;
+  settings = {...TABLE_SETTINGS};
   form: FormGroup = new FormGroup({}); 
 
   constructor(private fb: FormBuilder, private excelService:ExcelService) {

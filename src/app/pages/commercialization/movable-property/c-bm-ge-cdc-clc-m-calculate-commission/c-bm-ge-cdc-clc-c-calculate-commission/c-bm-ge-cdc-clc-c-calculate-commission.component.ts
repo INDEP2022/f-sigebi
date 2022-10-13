@@ -15,7 +15,11 @@ export class CBmGeCdcClcCCalculateCommissionComponent extends BasePage implement
 
   form : FormGroup = new FormGroup({});
   data: any;
-  settings = TABLE_SETTINGS;
+  
+  settings = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
 
   constructor(private fb: FormBuilder) {
     super();

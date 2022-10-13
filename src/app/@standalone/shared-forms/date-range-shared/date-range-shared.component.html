@@ -1,0 +1,11 @@
+<div class="col-md-12">
+    <form-field [control]="form.get('rangeDate')" label="Fechas de recepción">
+        <input class="form-control"
+            formControlName="rangeDate"
+            placeholder="Seleccione el rango de fechas"
+            ngModel
+            bsDaterangepicker
+            [maxDate]="today" 
+            [bsConfig]="{ dateInputFormat: 'DD-MM-YYYY',  displayOneMonthRange: true }">
+    </form-field>
+</div>

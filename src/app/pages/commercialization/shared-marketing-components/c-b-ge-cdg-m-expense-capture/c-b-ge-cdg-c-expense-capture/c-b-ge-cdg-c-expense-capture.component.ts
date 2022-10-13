@@ -14,9 +14,14 @@ import { EXPENSE_CAPTURE_INCOME_COLUMNS } from './expense-captura-income-columns
   ]
 })
 export class CBGeCdgCExpenseCaptureComponent extends BasePage implements OnInit {
-  
-  settings1 = {...TABLE_SETTINGS};
-  settings2 = {...TABLE_SETTINGS};
+  settings1 = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
+  settings2 = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
 
   list1 : any;
   list2: any;

@@ -14,8 +14,11 @@ import { COLUMNS } from './columns';
 })
 export class CBUpCUnreconciledPaymentComponent extends BasePage implements OnInit {
 
+  settings = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
   form: FormGroup = new FormGroup({});
-  settings = TABLE_SETTINGS;
   data:any[]=[];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -23,7 +26,6 @@ export class CBUpCUnreconciledPaymentComponent extends BasePage implements OnIni
   constructor(private fb: FormBuilder) {
     super();
     this.settings.columns = COLUMNS;
-    this.settings.actions.delete = false;
   }
 
   ngOnInit(): void {

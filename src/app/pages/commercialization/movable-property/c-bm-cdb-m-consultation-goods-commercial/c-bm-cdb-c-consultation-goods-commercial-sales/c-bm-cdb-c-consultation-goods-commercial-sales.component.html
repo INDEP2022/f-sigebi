@@ -145,10 +145,14 @@
     <div class="row">
         <div class="ch-content">
             <h5 class="title">Datos</h5>
-            <app-columns-select [(settings)]="settings"></app-columns-select>
+            <div class="row justify-content-end mr-3">
+                <app-columns-select [(settings)]="settings"></app-columns-select>    
+            </div>
         </div>
-        <ng2-smart-table [settings]="settings" [source]="data"> </ng2-smart-table>
-        <div class="col-md-2">
+        <div class="row pt-3">
+            <ng2-smart-table [settings]="settings" [source]="data"> </ng2-smart-table>
+        </div>
+        <div class="col-md-2 mt-4">
             <button type="button" class="btn btn-sm btn-success dropdown-toggle" (click)="exportAsXLSX()">Exportar a Excel</button>
         </div>
         

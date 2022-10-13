@@ -383,6 +383,7 @@ export const MENU: IMenuItem[] = [
     ],
   },
   ...DOCUMENTS_RECEPTION_ROUTES,
+  //Procesos ejecutivos
   {
     label: 'Procesos Ejecutivos',
     icon: 'bx-folder',
@@ -412,10 +413,6 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Acumulado Trimestral de Bienes',
         link: '/pages/executive-processes/pe-atb-m-quarterly-accumulated-assets',
-      },
-      {
-        label: 'Acumulado Bienes',
-        link: '/pages/executive-processes/acumulative-asset-tabs',
       },
       {
         label: 'Control Mensual de Recepción Documental',

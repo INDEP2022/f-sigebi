@@ -14,27 +14,25 @@ import { APPRAISAL_REGISTRATION_GOODS_COLUMNS } from './appraisal-registration-g
   ]
 })
 export class CBARdaCAppraisalRegistrationComponent extends BasePage implements OnInit {
+  settings1 = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
+  settings2 = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
+  settings3 = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
   
-  settings1 = {...TABLE_SETTINGS};
-  settings2 = {...TABLE_SETTINGS};
-  settings3 = {...TABLE_SETTINGS};
   form: FormGroup = new FormGroup({});
   constructor(private fb: FormBuilder) {
     super();
     this.settings1.columns = APPRAISAL_REGISTRATION_GOODS_COLUMNS;
-    this.settings1.actions.edit = false;
-    this.settings1.actions.add = false;
-    this.settings1.actions.delete= false;
-
     this.settings2.columns = APPRAISAL_REGISTRATION_APPRAISALS_COLUMNS;
-    this.settings2.actions.edit = false;
-    this.settings2.actions.add = false;
-    this.settings2.actions.delete= false;
-
     this.settings3.columns = APPRAISAL_REGISTRATION_DETAIL_COLUMNS;
-    this.settings3.actions.edit = false;
-    this.settings3.actions.add = false;
-    this.settings3.actions.delete= false;
   }
 
   ngOnInit(): void {

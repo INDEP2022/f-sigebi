@@ -13,7 +13,10 @@ import * as XLSX from 'xlsx';
   ]
 })
 export class CBBedvCValidationExemptedGoodsComponent extends BasePage implements OnInit {
-  settings =  TABLE_SETTINGS;
+  settings = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
   ExcelData: any;
   CsvData:any;
   form: FormGroup = new FormGroup({}); 
@@ -23,9 +26,6 @@ export class CBBedvCValidationExemptedGoodsComponent extends BasePage implements
     ) {
       super();
       this.settings.columns = VALIDATION_EXEMPTED_GOODS_COLUMS;
-      this.settings.actions.add = false;
-      this.settings.actions.edit = false;
-      this.settings.actions.delete = false;
      }
 
   ngOnInit(): void {

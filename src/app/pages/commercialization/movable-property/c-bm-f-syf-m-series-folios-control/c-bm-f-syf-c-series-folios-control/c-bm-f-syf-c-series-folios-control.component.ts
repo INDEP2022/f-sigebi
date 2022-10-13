@@ -14,14 +14,17 @@ import { CBmFSyfMSeriesFoliosControlModalComponent } from '../c-bm-f-syf-m-serie
 })
 export class CBmFSyfCSeriesFoliosControlComponent extends BasePage implements OnInit {
 
-  settings = TABLE_SETTINGS;
+  settings = {
+    ...TABLE_SETTINGS,
+    actions: {
+      edit : true,
+      delete : false,
+      position: 'right',
+    },
+  };
   constructor( private modalService: BsModalService) {
     super();
     this.settings.columns = SERIES_FOLIOS_CONTROL_COLUMNS;
-    this.settings.actions.columnTitle = "Detalles"
-    this.settings.actions.edit = true;
-    this.settings.actions.delete = false;
-    this.settings.actions.add = false;
    }
 
   ngOnInit(): void {

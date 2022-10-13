@@ -11,15 +11,24 @@ import { ExcelService } from 'src/app/common/services/exportToExcel.service';
   ]
 })
 export class CBACdaCAppraisalConsultationComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
+  
+  settings = {
+    ...TABLE_SETTINGS,
+    actions: {
+      columnTitle: 'Exportar',
+      edit: true,
+      delete: false,
+      position: 'right',
+    },
+    edit: {
+      editButtonContent: '<span class="bi bi-file-earmark-excel"></span>',
+    },
+  };
   constructor(
     private excelService:ExcelService
     ) {
       super();
       this.settings.columns = APPRAISAL_COLUMNS;
-      this.settings.actions.columnTitle = "Exportar";
-      this.settings.edit.editButtonContent = '<span class="icon-caret-down"></span>';
-      this.settings.actions.edit = true;
     }
 
   ngOnInit(): void {

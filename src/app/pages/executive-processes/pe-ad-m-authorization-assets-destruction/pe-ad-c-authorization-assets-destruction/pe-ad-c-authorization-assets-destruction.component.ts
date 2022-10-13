@@ -14,15 +14,15 @@ import { ASSETS_DESTRUCTION_COLUMLNS } from './authorization-assets-destruction-
 })
 export class PeAdCAuthorizationAssetsDestructionComponent extends BasePage implements OnInit {
 
-  settings = TABLE_SETTINGS;
+  settings = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
   form: FormGroup = new FormGroup({}); 
 
   constructor(private fb: FormBuilder) {
     super();
     this.settings.columns = ASSETS_DESTRUCTION_COLUMLNS;
-    this.settings.actions.edit = false;
-    this.settings.actions.add = false;
-    this.settings.actions.delete = false;
   }
 
   ngOnInit(): void {
@@ -39,6 +39,8 @@ export class PeAdCAuthorizationAssetsDestructionComponent extends BasePage imple
       noAuth: ['', [Validators.required, Validators.maxLength(10), Validators.minLength(1), Validators.pattern(NUMBERS_PATTERN)]],
       authNotice: ['', [Validators.required]],
       fromDate: ['', [Validators.required]],
+      scanFolio: ['', [Validators.required]],
+      cancelSheet: ['', [Validators.required]],
     });
   }
 

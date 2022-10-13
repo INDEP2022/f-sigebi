@@ -69,11 +69,9 @@
                     <app-columns-select [(settings)]="settings"></app-columns-select>
                 </div> 
             </div>
-            <ng2-smart-table
-                [settings]="settings"
-                [source]="data">
-
-            </ng2-smart-table>
+            <div class="row pt-3">
+                <ng2-smart-table [settings]="settings" [source]="data"> </ng2-smart-table>
+            </div>
         </div>
     </div>
 </app-card>

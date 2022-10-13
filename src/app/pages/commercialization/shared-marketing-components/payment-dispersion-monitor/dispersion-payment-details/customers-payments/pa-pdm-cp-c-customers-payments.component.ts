@@ -13,7 +13,10 @@ import { COLUMNS } from './columns';
 })
 export class PaPdmCpCCustomersPaymentsComponent extends BasePage implements OnInit {
 
-  settings = {...TABLE_SETTINGS};
+  settings = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
   data:any[]=[];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -24,9 +27,6 @@ export class PaPdmCpCCustomersPaymentsComponent extends BasePage implements OnIn
   constructor() {
     super();
     this.settings.columns = COLUMNS;
-    this.settings.actions.delete = false;
-    this.settings.actions.add = false
-    this.settings.actions.edit = false
   }
 
   ngOnInit(): void {

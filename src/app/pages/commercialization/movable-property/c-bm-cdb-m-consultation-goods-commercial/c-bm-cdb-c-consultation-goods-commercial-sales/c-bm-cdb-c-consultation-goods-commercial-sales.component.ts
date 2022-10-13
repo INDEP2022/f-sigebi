@@ -14,15 +14,15 @@ import { ExcelService } from 'src/app/common/services/exportToExcel.service';
 })
 export class CBmCdbCConsultationGoodsCommercialSalesComponent extends BasePage implements OnInit {
 
-  settings = TABLE_SETTINGS;
+  settings = {
+    ...TABLE_SETTINGS,
+    actions: false
+  };
   form: FormGroup = new FormGroup({}); 
 
   constructor(private fb: FormBuilder, private excelService:ExcelService) {
     super();
     this.settings.columns = CONSUL_GOODS_COMMER_SALES_COLUMNS;
-    this.settings.actions.edit = false;
-    this.settings.actions.delete = false;
-    this.settings.actions.add = false;
   }
 
   ngOnInit(): void {
