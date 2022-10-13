@@ -21,6 +21,7 @@ import { PaginationComponent } from './components/pagination/pagination.componen
 import { PaginateComponent } from './components/pagination/paginate.component';
 import { FormCheckComponent } from './components/form-check/form-check.component';
 import { FormRadioComponent } from './components/form-radio/form-radio.component';
+import { CheckboxColumnComponent } from './components/checkbox-column/checkbox-column.component';
 import { SearchBarSimpleComponent } from './components/search-bar-simple/search-bar-simple.component';
 import { DividerComponent } from './components/divider/divider.component';
 
@@ -38,6 +39,7 @@ import { DividerComponent } from './components/divider/divider.component';
     PaginateComponent,
     FormCheckComponent,
     FormRadioComponent,
+    CheckboxColumnComponent,
     SearchBarSimpleComponent,
     DividerComponent,
   ],
@@ -72,6 +74,7 @@ import { DividerComponent } from './components/divider/divider.component';
     FormCheckComponent,
     FormRadioComponent,
     CommonModule,
+    CheckboxColumnComponent,
   ],
 })
 export class SharedModule {

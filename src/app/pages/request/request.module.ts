@@ -2,13 +2,16 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { RequestRoutingModule } from './request-routing.module';
-
+import { BsDatepickerModule, BsDatepickerConfig  } from 'ngx-bootstrap/datepicker';
 
 @NgModule({
-  declarations: [],
+  declarations: [
+  ],
   imports: [
     CommonModule,
-    RequestRoutingModule
-  ]
+    RequestRoutingModule,
+    BsDatepickerModule.forRoot()
+  ],
+  providers: [BsDatepickerConfig]
 })
 export class RequestModule { }
