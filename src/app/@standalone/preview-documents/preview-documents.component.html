@@ -4,7 +4,8 @@
   [style.backgroundColor]="config.containerBackgroundColor"
   (wheel)="scrollZoom($event)"
   (dragover)="onDragOver($event)">
-  <img *ngIf="documento.type=='img'"
+  <img
+    *ngIf="documento.type == 'img'"
     [src]="documento.urlDoc"
     [ngStyle]="style"
     alt="Image not found..."
@@ -12,6 +13,13 @@
     (load)="onLoad()"
     (loadstart)="onLoadStart()"
     style="min-height: 500px !important" />
+  <pdf-viewer
+    *ngIf="documento.type == 'pdf'"
+    [src]="documento.urlDoc"
+    [render-text]="true"
+    [original-size]="false"
+    [rotation]="rotation"
+    style="min-height: 500px"></pdf-viewer>
   <div class="spinner-container" *ngIf="loading">
     <div class="spinner"></div>
   </div>
