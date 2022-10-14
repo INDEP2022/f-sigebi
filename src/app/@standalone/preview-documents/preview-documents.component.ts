@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 import { ImageViewerConfig } from './image-viewer.config';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { PreviewFullscreenDirective } from './preview-fullscreen.directive';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 const DEFAULT_CONFIG: ImageViewerConfig = {
   btnClass: 'default',
@@ -42,19 +43,19 @@ const DEFAULT_CONFIG: ImageViewerConfig = {
 @Component({
   selector: 'app-preview-documents',
   standalone: true,
-  imports: [PreviewFullscreenDirective, CommonModule],
+  imports: [PreviewFullscreenDirective, CommonModule, PdfViewerModule],
   templateUrl: './preview-documents.component.html',
   styleUrls: ['./preview-documents.component.scss'],
 })
 export class PreviewDocumentsComponent implements OnInit {
-  public documento: any;
+   documento: any;
   private zoom?: number = 0;
   private translateX?: number = 0;
   private translateY?: number = 0;
-  public src: string[];
-  public index = 0;
-  public config: ImageViewerConfig;
-  private rotation: number = 0;
+   src: string[];
+   index = 0;
+   config: ImageViewerConfig;
+  public rotation: number = 0;
   // @Output() indexChange: EventEmitter<number> = new EventEmitter();
   // @Output() configChange: EventEmitter<ImageViewerConfig> = new EventEmitter();
   // @Output() customEvent: EventEmitter<CustomEvent> = new EventEmitter();
@@ -62,22 +63,22 @@ export class PreviewDocumentsComponent implements OnInit {
   // @Output() zoomEvent: EventEmitter<number> = new EventEmitter();
   // @Output() prevXEvent: EventEmitter<number> = new EventEmitter();
   // @Output() prevYEvent: EventEmitter<number> = new EventEmitter();
-  public style = {
+   style = {
     transform: '',
     msTransform: '',
     oTransform: '',
     webkitTransform: '',
   };
-  public fullscreen = false;
-  public loading = true;
+   fullscreen = false;
+   loading = true;
   private scale = 1;
   private prevX: number;
   private prevY: number;
   private hovered = false;
   private rotate: boolean = true;
   constructor(
-    @Optional() @Inject('config') public moduleConfig: ImageViewerConfig,
-    public modalRef: BsModalRef
+    @Optional() @Inject('config') public  moduleConfig: ImageViewerConfig,
+     public modalRef: BsModalRef
   ) {}
 
   ngOnInit() {
@@ -89,7 +90,7 @@ export class PreviewDocumentsComponent implements OnInit {
   }
 
   @HostListener('window:keyup.ArrowRight', ['$event'])
-  public nextImage(event: any) {
+   nextImage(event: any) {
     if (this.canNavigate(event) && this.index < this.src.length - 1) {
       this.loading = true;
       this.index++;
@@ -99,7 +100,7 @@ export class PreviewDocumentsComponent implements OnInit {
   }
 
   @HostListener('window:keyup.ArrowLeft', ['$event'])
-  public prevImage(event: any) {
+   prevImage(event: any) {
     if (this.canNavigate(event) && this.index > 0) {
       this.loading = true;
       this.index--;
@@ -107,25 +108,25 @@ export class PreviewDocumentsComponent implements OnInit {
       this.reset();
     }
   }
-  public zoomInit(zoom: number) {
+   zoomInit(zoom: number) {
     if (this.config != undefined) {
       this.scale *= zoom + this.config.zoomFactor;
       this.updateStyle();
     }
   }
-  public zoomIn() {
+   zoomIn() {
     this.scale *= 1 + this.config.zoomFactor;
     this.updateFirstStyle();
   }
 
-  public zoomOut() {
+   zoomOut() {
     if (this.scale > this.config.zoomFactor) {
       this.scale /= 1 + this.config.zoomFactor;
     }
     this.updateFirstStyle();
   }
 
-  public scrollZoom(evt: any): boolean {
+   scrollZoom(evt: any): boolean {
     if (this.config.wheelZoom) {
       evt.deltaY > 0 ? this.zoomOut() : this.zoomIn();
       return false;
@@ -133,27 +134,27 @@ export class PreviewDocumentsComponent implements OnInit {
     return true;
   }
 
-  public rotateClockwise() {
+   rotateClockwise() {
     this.rotation += 90;
     this.rotate = true;
     this.updateStyle();
   }
 
-  public rotateCounterClockwise() {
+   rotateCounterClockwise() {
     this.rotation -= 90;
     this.rotate = true;
     this.updateStyle();
   }
 
-  public onLoad() {
+   onLoad() {
     this.loading = false;
   }
 
-  public onLoadStart() {
+   onLoadStart() {
     this.loading = true;
   }
 
-  public onDragOver(evt: any) {
+   onDragOver(evt: any) {
     this.translateX += evt.clientX - this.prevX;
     this.translateY += evt.clientY - this.prevY;
     this.prevX = evt.clientX;
@@ -161,7 +162,7 @@ export class PreviewDocumentsComponent implements OnInit {
     this.updateStyle();
   }
 
-  public onDragStart(evt: any) {
+   onDragStart(evt: any) {
     if (evt.dataTransfer && evt.dataTransfer.setDragImage) {
       evt.dataTransfer.setDragImage(evt.target.nextElementSibling, 0, 0);
     }
@@ -169,20 +170,20 @@ export class PreviewDocumentsComponent implements OnInit {
     this.prevY = evt.clientY;
   }
 
-  public toggleFullscreen() {
+   toggleFullscreen() {
     this.fullscreen = !this.fullscreen;
     if (!this.fullscreen) {
       this.reset();
     }
   }
 
-  public triggerIndexBinding() {}
+   triggerIndexBinding() {}
 
-  public triggerConfigBinding() {}
+   triggerConfigBinding() {}
 
-  public fireCustomEvent(name: any, imageIndex: any) {}
+   fireCustomEvent(name: any, imageIndex: any) {}
 
-  public reset() {
+   reset() {
     this.scale = 1;
     this.rotation = 0;
     this.translateX = 0;
