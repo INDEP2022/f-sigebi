@@ -27,6 +27,7 @@ export class PJAAbandonmentsDeclarationTradesComponent
   ];
   public form: FormGroup;
   public formOficio: FormGroup;
+  public formFolioEscaneo: FormGroup;
   public formCcpOficio: FormGroup;
   public formDeclaratoria: FormGroup;
   public formDeclaratoriaTabla: FormGroup;
@@ -149,9 +150,13 @@ export class PJAAbandonmentsDeclarationTradesComponent
       fechaOficio: ['', [Validators.required]], //*
       descripcionAsunto: ['', [Validators.required]], //*
       remitente: ['', [Validators.required]], //*
+      // idAsunto: [''], 
       asunto: [''],
+      // idDesahogoAsunto: [''], 
       desahogoAsunto: ['', [Validators.required]], //*
+      // idCiudad: [''], 
       ciudad: ['', [Validators.required]], //*
+      // idEntidadFederativa: [''], 
       entidadFederativa: ['', [Validators.required]], //*
       claveUnica: ['', [Validators.required]], //*
       transferente: ['', [Validators.required]], //*
@@ -202,6 +207,7 @@ export class PJAAbandonmentsDeclarationTradesComponent
       noVolante: ['', [Validators.required]], //*
       noExpediente: ['', [Validators.required]], //*
       cveOficio: ['', [Validators.required]], //*
+      oficio: [''],
       fechaCaptura: ['', [Validators.required]], //*
       estatus: ['', [Validators.required]], //*
     });
@@ -213,6 +219,9 @@ export class PJAAbandonmentsDeclarationTradesComponent
       ccp2: ['', [Validators.minLength(1)]], //*
       usuario2: ['', [Validators.minLength(1)]], //*
       nombreUsuario2: '',
+    });
+    this.formFolioEscaneo = this.fb.group({
+      folioEscaneo: ['', [Validators.required]], //*
     });
   }
 

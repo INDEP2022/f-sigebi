@@ -26,10 +26,9 @@
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-1">
-      <div class="form-group">
-        <input class="form-control" placeholder="Oficio" />
-        <label class="form-control-label w-100">Oficio</label>
-      </div>
+      <form-field [control]="form.get('oficio')" label="Oficio">
+        <input class="form-control" placeholder="Oficio" formControlName="oficio"/>
+      </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-1">
       <form-field [control]="form.get('tipoOficio')" label="Tipo Oficio">
@@ -41,12 +40,6 @@
           placeholder="Tipo Oficio" />
       </form-field>
     </div>
-    <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-1">
-      <div class="form-group">
-        <input class="form-control" placeholder="Detalle Oficio" />
-        <label class="form-control-label w-100">Detalle Oficio</label>
-      </div>
-    </div>
     <div class="col-sm-12 col-12 col-md-2 p-1">
       <form-field [control]="form.get('remitente')" label="Remitente">
         <!-- <label class="label w-100">Remitente</label> -->
@@ -56,12 +49,6 @@
           placeholder="Remitente" />
       </form-field>
     </div>
-    <div class="col-sm-12 col-12 col-md-4 p-1">
-      <div class="form-group">
-        <input class="form-control" placeholder="Detalle Remitente" />
-        <label class="form-control-label w-100">Detalle Remitente</label>
-      </div>
-    </div>
     <div class="col-sm-12 col-12 col-md-2 p-1">
       <form-field [control]="form.get('destinatario')" label="Destinatario">
         <!-- <label class="label w-100">Destinatario</label> -->
@@ -70,18 +57,6 @@
           formControlName="destinatario"
           placeholder="Destinatario" />
       </form-field>
-    </div>
-    <div class="col-sm-12 col-12 col-md-4 p-1">
-      <div class="form-group">
-        <input class="form-control" placeholder="Detalle Destinatario" />
-        <label class="form-control-label w-100">Detalle Destinatario</label>
-      </div>
-    </div>
-    <div class="col-sm-12 col-12 col-md-2 p-1">
-      <div class="form-group">
-        <input id="idCiudad" class="form-control" placeholder="Ciudad" />
-        <label class="form-control-label w-100">Ciudad ID</label>
-      </div>
     </div>
     <div class="col-sm-12 col-12 col-md-4 p-1">
       <form-field [control]="form.get('ciudad')" label="Ciudad">
