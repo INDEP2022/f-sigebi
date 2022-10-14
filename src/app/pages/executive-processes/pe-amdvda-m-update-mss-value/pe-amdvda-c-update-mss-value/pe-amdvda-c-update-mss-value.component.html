@@ -49,4 +49,49 @@
       </div>
     </div>
   </div>
+
+  <div body>
+    <div class="row">
+      <div class="col-md-2">
+        <button
+          type="button"
+          class="btn btn-success btn-sm active"
+          (click)="fileExcel.click()">
+          Abrir archivo Excel o CSV
+        </button>
+        <input
+          type="file"
+          (change)="ReadExcel($event)"
+          name="fileExcel"
+          #fileExcel
+          class="d-none"
+          accept=".xlsx, .xls, .csv, application/vnd.ms-excel" />
+      </div>
+      <div class="col-md-2">
+        <label for="" class="form-group">Registros Leidos: 0</label>
+      </div>
+      <div class="col-md-2">
+        <label for="" class="form-group">Registros Procesados: 0</label>
+      </div>
+    </div>
+    <div class="row pt-5">
+      <div class="ch-content">
+        <h5 class="title">&nbsp;</h5>
+        <div class="row justify-content-end mr-1">
+          <div class="col-12">
+            <app-columns-select
+              [(settings)]="settings"
+              class="row justify-content-end">
+            </app-columns-select>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <ng2-smart-table
+          class="my-table"
+          [settings]="settings"
+          [source]="ExcelData"></ng2-smart-table>
+      </div>
+    </div>
+  </div>
 </app-card>

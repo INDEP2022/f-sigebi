@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IBank } from '../../../../core/models/catalogs/bank.model';
@@ -15,7 +14,6 @@ import { BanksDetailComponent } from '../banks-detail/banks-detail.component';
   styles: [],
 })
 export class BanksListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
   lawyers: IBank[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -26,7 +24,7 @@ export class BanksListComponent extends BasePage implements OnInit {
   ) {
     super();
     this.settings.columns = BANKS_COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings.actions = true;
   }
 
   ngOnInit(): void {

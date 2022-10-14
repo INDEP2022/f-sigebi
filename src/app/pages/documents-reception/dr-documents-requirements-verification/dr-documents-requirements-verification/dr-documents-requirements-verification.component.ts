@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { BasePage } from 'src/app/core/shared/base-page';
+
 import {
   DOCUMENTS_REQUIREMENTS_VERIFICATION_COLUMNS,
   DOCUMENTS_REQUIREMENTS_VERIFICATION_EXAMPLE_DATA,
@@ -11,13 +12,21 @@ import {
   templateUrl: './dr-documents-requirements-verification.component.html',
   styles: [],
 })
-export class DrDocumentsRequirementsVerificationComponent implements OnInit {
+export class DrDocumentsRequirementsVerificationComponent
+  extends BasePage
+  implements OnInit
+{
   requirementsForm: FormGroup;
-  settings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
   data = DOCUMENTS_REQUIREMENTS_VERIFICATION_EXAMPLE_DATA;
 
   constructor(private fb: FormBuilder) {
-    this.settings.columns = DOCUMENTS_REQUIREMENTS_VERIFICATION_COLUMNS;
+    super();
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      selectMode: 'multi',
+      columns: { ...DOCUMENTS_REQUIREMENTS_VERIFICATION_COLUMNS },
+    };
   }
 
   ngOnInit(): void {

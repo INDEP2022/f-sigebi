@@ -4,12 +4,13 @@ import { UnitCostComponent } from './unit-cost/unit-cost.component';
 
 const routes: Routes = [
   {
-    path:'',component:UnitCostComponent
-  }
+    path: '',
+    component: UnitCostComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class UnitCostRoutingModule { }
+export class UnitCostRoutingModule {}

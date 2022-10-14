@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -25,13 +25,16 @@ import {
 })
 export class RdFRelatedDocumentsComponent extends BasePage implements OnInit {
   managementForm: FormGroup;
-  settings = { ...TABLE_SETTINGS, actions: false };
   select = new DefaultSelect();
   data = RELATED_DOCUMENTS_EXAMPLE_DATA;
   params = new BehaviorSubject<ListParams>(new ListParams());
   constructor(private fb: FormBuilder) {
     super();
-    this.settings.columns = RELATED_DOCUMENTS_COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...RELATED_DOCUMENTS_COLUMNS },
+    };
   }
 
   ngOnInit(): void {

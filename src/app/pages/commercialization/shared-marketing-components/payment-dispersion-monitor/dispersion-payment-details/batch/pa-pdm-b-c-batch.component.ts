@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { COLUMNS } from './columns';
 
@@ -13,11 +13,6 @@ import { COLUMNS } from './columns';
 })
 export class PaPdmBCBatchComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
-
-  settings = {
-    ...TABLE_SETTINGS,
-    actions: false,
-  };
 
   data: any[] = [
     {
@@ -40,8 +35,11 @@ export class PaPdmBCBatchComponent extends BasePage implements OnInit {
 
   constructor(private fb: FormBuilder) {
     super();
-    this.settings.columns = COLUMNS;
-    //this.settings.selectMode='multi';
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...COLUMNS },
+    };
   }
 
   ngOnInit(): void {

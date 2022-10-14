@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { COLUMNS } from './columns';
 
@@ -15,7 +15,6 @@ export class PaPdmAspCAudienceSirsaePaymentsComponent
   extends BasePage
   implements OnInit
 {
-  settings = { ...TABLE_SETTINGS };
   data: any[] = [
     {
       user: 'TFARFAN',

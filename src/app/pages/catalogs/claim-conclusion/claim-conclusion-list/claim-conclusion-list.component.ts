@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IClaimConclusion } from 'src/app/core/models/catalogs/claim-conclusion.model';
 import { ClaimConclusionService } from 'src/app/core/services/catalogs/claim-conclusion.service';
@@ -15,7 +15,6 @@ import { CLAIMCONCLUSION_COLUMS } from './claim-conclusion-columns';
   styles: [],
 })
 export class ClaimConclusionListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
   paragraphs: IClaimConclusion[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

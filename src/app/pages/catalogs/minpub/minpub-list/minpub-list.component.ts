@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from '../../../../common/constants/table-settings';
+
 import { ListParams } from '../../../../common/repository/interfaces/list-params';
 import { IMinpub } from '../../../../core/models/catalogs/minpub.model';
 import { MinPubService } from '../../../../core/services/catalogs/minpub.service';
@@ -15,7 +15,6 @@ import { MinpubFormComponent } from './../minpub-form/minpub-form.component';
   styles: [],
 })
 export class MinpubListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
   columns: IMinpub[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

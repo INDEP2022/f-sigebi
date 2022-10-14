@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { BasePage } from 'src/app/core/shared/base-page';
 import { REBILLING_CAUSES_COLUMNS } from './rebilling-causes-columns';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -14,18 +14,17 @@ export class CBmFCdrCRebillingCausesComponent
   extends BasePage
   implements OnInit
 {
-  settings = {
-    ...TABLE_SETTINGS,
-    actions: {
-      edit: true,
-      delete: false,
-      position: 'right',
-    },
-  };
-
   constructor(private modalService: BsModalService) {
     super();
-    this.settings.columns = REBILLING_CAUSES_COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: {
+        edit: true,
+        delete: false,
+        position: 'right',
+      },
+      columns: { ...REBILLING_CAUSES_COLUMNS },
+    };
   }
 
   ngOnInit(): void {}
