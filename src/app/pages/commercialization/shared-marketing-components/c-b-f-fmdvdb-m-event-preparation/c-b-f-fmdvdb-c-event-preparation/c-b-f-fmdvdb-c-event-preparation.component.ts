@@ -4,6 +4,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { EVENT_PREPARATION_ALLOTMENT_COLUMNS } from './event-preparation-allotment-columns';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { SelectEventModalComponent } from '../select-event-modal/select-event-modal.component';
+import { CreateNewEventModalComponent } from '../create-new-event-modal/create-new-event-modal.component';
 import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
@@ -56,6 +57,16 @@ export class CBFFmdvdbCEventPreparationComponent
         this.authKey = '';
       }
     });
+  }
+
+  openModal2(): void {
+    const modalRef = this.modalService.show(
+      CreateNewEventModalComponent,
+      {
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
   }
 
   data = [
