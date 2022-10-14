@@ -299,11 +299,11 @@
                 <div class="col-sm-12 col-12 col-md-3 p-1">
                     <ngx-select 
                                 [data]="items"
-                                bindLabel="autoridademisoraName"
+                                bindLabel="autoridadEmisoraName"
                                 label="Autoridad Emisora"
                                 value="id"
                                 (fetchItems)="getFromSelect($event)"
-                                [form]="form" control="autoridademisora"></ngx-select>
+                                [form]="form" control="autoridadEmisora"></ngx-select>
                     <!-- <form-field [control]="form.get('autoridadEmisora')" label="Autoridad Emisora">
                         <input class="form-control" formControlName="autoridadEmisora"
                                 placeholder="Autoridad Emisora">
@@ -429,7 +429,7 @@
                     </div>
                 </div> -->
                 <div class="col-sm-12 col-12 col-md-12 p-1 text-center">
-                    <button type="submit" class="btn btn-primary btn-sm active" [disabled]="!form.valid">
+                    <button type="submit" class="btn btn-primary btn-sm active">
                         Resignación de Turno
                     </button>
                     <button *ngIf="botonOficio" type="button" class="btn btn-primary btn-sm active" (click)="oficioRelacionado()">
