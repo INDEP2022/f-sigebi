@@ -11,11 +11,9 @@ import { ListParams } from '../../../../common/repository/interfaces/list-params
 @Component({
   selector: 'app-response-repuve-form',
   templateUrl: './response-repuve-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ResponseRepuveFormComponent extends BasePage implements OnInit {
-
   form: ModelForm<IResponseRepuve>;
   title: string = 'Respuesta Repuve';
   edit: boolean = false;
@@ -24,7 +22,7 @@ export class ResponseRepuveFormComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private responseRepuveService: ResponseRepuveService,
+    private responseRepuveService: ResponseRepuveService
   ) {
     super();
   }
@@ -59,21 +57,16 @@ export class ResponseRepuveFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.responseRepuveService
-      .create(this.form.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.responseRepuveService.create(this.form.getRawValue()).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   update() {
     this.loading = true;
     this.responseRepuveService
-      .update(
-        this.responseRepuve.id,
-        this.form.getRawValue()
-      )
+      .update(this.responseRepuve.id, this.form.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

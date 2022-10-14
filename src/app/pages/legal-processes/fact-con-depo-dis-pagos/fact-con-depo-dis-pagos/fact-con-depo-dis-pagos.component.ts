@@ -1,13 +1,12 @@
-import { Component, OnInit } from '@angular/core';  
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'ngx-fact-con-depo-dis-pagos',
   templateUrl: './fact-con-depo-dis-pagos.component.html',
-  styleUrls: ['./fact-con-depo-dis-pagos.component.scss']
+  styleUrls: ['./fact-con-depo-dis-pagos.component.scss'],
 })
-export class FactConDepoDisPagosComponent  {
-
+export class FactConDepoDisPagosComponent {
   // Pagos Recibidos en el Banco
   // ------
   tableSettingsPagosBanco = {
@@ -17,7 +16,7 @@ export class FactConDepoDisPagosComponent  {
       edit: false,
       delete: false,
     },
-    hideSubHeader: true,//oculta subheaader de filtro
+    hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
 
     columns: {
@@ -45,7 +44,6 @@ export class FactConDepoDisPagosComponent  {
       noPago: {
         title: 'No. Pago',
       },
-      
     },
   };
   dataPagosBanco = [
@@ -58,7 +56,7 @@ export class FactConDepoDisPagosComponent  {
       noOrdenIngreso: 'Data',
       fechaOI: 'Data',
       noPago: 'Data',
-    }
+    },
   ];
 
   // Composicion de Pagos Recibidos
@@ -70,54 +68,53 @@ export class FactConDepoDisPagosComponent  {
       edit: false,
       delete: false,
     },
-    hideSubHeader: true,//oculta subheaader de filtro
+    hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
     columns: {
-      
-        pagDet: {
-          title: 'Pag. Det.',
-        },
-        pagoOrigen: {
-          title: 'Pago Origen',
-        },
-        montoMensual: {
-          title: 'Monto Mensual',
-        },
-        referencia: {
-          title: 'Referencia',
-        },
-        montoSinIva: {
-          title: 'Monto Sin Iva',
-        },
-        iva: {
-          title: 'Iva',
-        },
-        montoIva: {
-          title: 'Monto Iva',
-        },
-        abonoComp: {
-          title: 'Abondo Comp.',
-        },
-        pagoActual: {
-          title: 'Pago Actual',
-        },
-        recGastPorcentaje: {
-          title: 'Rec. Gast. (%)',
-        },
-        recGastValor: {
-          title: 'Rec. Gast.',
-        },
-        fechaProceso: {
-          title: 'Fecha Proceso',
-        },
-        estatus: {
-          title: 'Estatus',
-        },
-        observacionesPago: {
-          title: 'Observaciones Pago',
-        },
-    }
-  }
+      pagDet: {
+        title: 'Pag. Det.',
+      },
+      pagoOrigen: {
+        title: 'Pago Origen',
+      },
+      montoMensual: {
+        title: 'Monto Mensual',
+      },
+      referencia: {
+        title: 'Referencia',
+      },
+      montoSinIva: {
+        title: 'Monto Sin Iva',
+      },
+      iva: {
+        title: 'Iva',
+      },
+      montoIva: {
+        title: 'Monto Iva',
+      },
+      abonoComp: {
+        title: 'Abondo Comp.',
+      },
+      pagoActual: {
+        title: 'Pago Actual',
+      },
+      recGastPorcentaje: {
+        title: 'Rec. Gast. (%)',
+      },
+      recGastValor: {
+        title: 'Rec. Gast.',
+      },
+      fechaProceso: {
+        title: 'Fecha Proceso',
+      },
+      estatus: {
+        title: 'Estatus',
+      },
+      observacionesPago: {
+        title: 'Observaciones Pago',
+      },
+    },
+  };
   dataPagosRecibidos = [
     {
       pagDet: 'Data',
@@ -140,9 +137,7 @@ export class FactConDepoDisPagosComponent  {
   public form: FormGroup;
   public formDepositario: FormGroup;
 
-  constructor(
-    private fb: FormBuilder) {  
-  }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();
@@ -160,37 +155,36 @@ export class FactConDepoDisPagosComponent  {
       fechaEjecucion: ['', [Validators.required]], //*
     });
   }
-  
-mostrarInfo(form: any): any{
-  console.log(form.value)
-}
 
-mostrarInfoDepositario(formDepositario: any): any{
-  console.log(formDepositario.value)
-}
- 
-btnExportarExcel(): any{
-  console.log("Exportar Excel");
-}
+  mostrarInfo(form: any): any {
+    console.log(form.value);
+  }
 
-btnEnviarSIRSAE(): any{
-  console.log("Envíar a SIRSAE");
-}
+  mostrarInfoDepositario(formDepositario: any): any {
+    console.log(formDepositario.value);
+  }
 
-btnImprimir(): any{
-  console.log("Imprimir");
-}
+  btnExportarExcel(): any {
+    console.log('Exportar Excel');
+  }
 
-btnActualizarPago(): any{
-  console.log("Actualizar Pago");
-}
+  btnEnviarSIRSAE(): any {
+    console.log('Envíar a SIRSAE');
+  }
 
-/**
- * Formulario
- */
-//  public returnField(form, field) { return form.get(field); }
-//  public returnShowRequirements(form, field) { 
-//    return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched; 
-//  }
+  btnImprimir(): any {
+    console.log('Imprimir');
+  }
 
+  btnActualizarPago(): any {
+    console.log('Actualizar Pago');
+  }
+
+  /**
+   * Formulario
+   */
+  //  public returnField(form, field) { return form.get(field); }
+  //  public returnShowRequirements(form, field) {
+  //    return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched;
+  //  }
 }

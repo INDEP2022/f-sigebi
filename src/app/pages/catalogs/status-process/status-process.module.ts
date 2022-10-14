@@ -7,17 +7,13 @@ import { StatusProcessFormComponent } from './status-process-form/status-process
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
-  declarations: [
-    StatusProcessListComponent,
-    StatusProcessFormComponent
-  ],
+  declarations: [StatusProcessListComponent, StatusProcessFormComponent],
   imports: [
     CommonModule,
     SharedModule,
     ModalModule.forChild(),
-    StatusProcessRoutingModule
-  ]
+    StatusProcessRoutingModule,
+  ],
 })
-export class StatusProcessModule { }
+export class StatusProcessModule {}

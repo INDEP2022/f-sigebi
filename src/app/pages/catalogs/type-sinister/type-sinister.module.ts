@@ -7,17 +7,13 @@ import { TypeSinisterFormComponent } from './type-sinister-form/type-sinister-fo
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
-  declarations: [
-    TypeSinisterListComponent,
-    TypeSinisterFormComponent
-  ],
+  declarations: [TypeSinisterListComponent, TypeSinisterFormComponent],
   imports: [
     CommonModule,
     SharedModule,
     ModalModule.forChild(),
-    TypeSinisterRoutingModule
-  ]
+    TypeSinisterRoutingModule,
+  ],
 })
-export class TypeSinisterModule { }
+export class TypeSinisterModule {}

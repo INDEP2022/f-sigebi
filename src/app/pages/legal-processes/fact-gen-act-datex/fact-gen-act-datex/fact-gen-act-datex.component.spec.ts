@@ -8,9 +8,8 @@ describe('FactGenActDatexComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FactGenActDatexComponent ]
-    })
-    .compileComponents();
+      declarations: [FactGenActDatexComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

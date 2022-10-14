@@ -1,23 +1,23 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { FormGroup } from "@angular/forms";
+import { FormGroup } from '@angular/forms';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
-  selector: 'app-date-range-shared', 
+  selector: 'app-date-range-shared',
   templateUrl: './date-range-shared.component.html',
   standalone: true,
   imports: [CommonModule, SharedModule],
-  styles: [
-  ]
+  styles: [],
 })
 export class DateRangeSharedComponent implements OnInit {
-
   @Input() form: FormGroup;
-  @Input() rangeDateField: string = "rangeDate";
+  @Input() rangeDateField: string = 'rangeDate';
 
-  get rangeDate() {return this.form.get(this.rangeDateField);}
+  get rangeDate() {
+    return this.form.get(this.rangeDateField);
+  }
 
   today: Date;
   maxDate: Date;
@@ -29,7 +29,5 @@ export class DateRangeSharedComponent implements OnInit {
     // this.maxDate = new Date(this.today.getFullYear(), this.today.getMonth(), 25);
   }
 
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

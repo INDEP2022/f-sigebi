@@ -1,18 +1,15 @@
-import { Component, OnInit } from '@angular/core';  
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'ngx-pj-d-generationofficialfiles',
   templateUrl: './pj-d-generationofficialfiles.component.html',
-  styleUrls: ['./pj-d-generationofficialfiles.component.scss']
+  styleUrls: ['./pj-d-generationofficialfiles.component.scss'],
 })
-export class PJDGenerationOfficialFilesComponent  {
-
+export class PJDGenerationOfficialFilesComponent {
   public form: FormGroup;
 
-  constructor(
-    private fb: FormBuilder) {  
-  }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();
@@ -29,10 +26,10 @@ export class PJDGenerationOfficialFilesComponent  {
       remitente: '',
       destinatario: '',
       nomPerExt: '', // Campo extenso
-    });}
+    });
+  }
 
-mostrarInfo(): any{
-  console.log(this.form.value)
-}
-
+  mostrarInfo(): any {
+    console.log(this.form.value);
+  }
 }

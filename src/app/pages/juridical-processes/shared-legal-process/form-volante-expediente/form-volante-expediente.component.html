@@ -1,424 +1,512 @@
-<form [formGroup]="form" (submit)="mostrarInfo()" class="container-fluid form-material">
-    <div class="row w-100">
-        <div class="col-sm-12 col-12 col-md-6 p-2 pr-5">
-            <div class="row">
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <form-field [control]="form.get('noVolante')" label="No Volante">
-                        <!-- <label class="label w-100">No Volante</label> -->
-                        <input type="number" class="form-control" formControlName="noVolante"
-                                placeholder="No Volante">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <form-field [control]="form.get('fechaRecepcion')" label="Fec. Recepción">
-                        <!-- <label class="label w-100">Fec. Recepción</label> -->
-                        <input class="form-control" formControlName="fechaRecepcion"
-                                placeholder="Fec. Recepción" bsDatepicker>
-                                <!-- [nbDatepicker]="formpicker1">
+<form
+  [formGroup]="form"
+  (submit)="mostrarInfo()"
+  class="container-fluid form-material">
+  <div class="row w-100">
+    <div class="col-sm-12 col-12 col-md-6 p-2 pr-5">
+      <div class="row">
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <form-field [control]="form.get('noVolante')" label="No Volante">
+            <!-- <label class="label w-100">No Volante</label> -->
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noVolante"
+              placeholder="No Volante" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <form-field
+            [control]="form.get('fechaRecepcion')"
+            label="Fec. Recepción">
+            <!-- <label class="label w-100">Fec. Recepción</label> -->
+            <input
+              class="form-control"
+              formControlName="fechaRecepcion"
+              placeholder="Fec. Recepción"
+              bsDatepicker />
+            <!-- [nbDatepicker]="formpicker1">
                         <nb-datepicker #formpicker1></nb-datepicker> -->
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <form-field [control]="form.get('consecutivoDiario')" label="Consecutivo Diario">
-                        <!-- <label class="label w-100">Consecutivo Diario</label> -->
-                        <input type="number" class="form-control" formControlName="consecutivoDiario"
-                                placeholder="Consecutivo Diario">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-12 p-1">
-                    <form-field [control]="form.get('tipoVolante')" label="Tipo Volante">
-                        <!-- <label class="label w-100">Tipo Volante</label> -->
-                        <div class="row w-100 pl-4">
-                            <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2" *ngFor="let option of optionsTipoVolante">
-                                <form-radio label="{{ option.label }}">
-                                    <input type="radio" formControlName="tipoVolante" [value]="option.value" />
-                                </form-radio>
-                            </div>
-                        </div>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <form-field
+            [control]="form.get('consecutivoDiario')"
+            label="Consecutivo Diario">
+            <!-- <label class="label w-100">Consecutivo Diario</label> -->
+            <input
+              type="number"
+              class="form-control"
+              formControlName="consecutivoDiario"
+              placeholder="Consecutivo Diario" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-1">
+          <form-field [control]="form.get('tipoVolante')" label="Tipo Volante">
+            <!-- <label class="label w-100">Tipo Volante</label> -->
+            <div class="row w-100 pl-4">
+              <div
+                class="col-sm-12 col-12 col-md-6 col-lg-6 p-2"
+                *ngFor="let option of optionsTipoVolante">
+                <form-radio label="{{ option.label }}">
+                  <input
+                    type="radio"
+                    formControlName="tipoVolante"
+                    [value]="option.value" />
+                </form-radio>
+              </div>
+            </div>
 
-                        <!-- <nb-radio-group formControlName="tipoVolante" class="form-control">
+            <!-- <nb-radio-group formControlName="tipoVolante" class="form-control">
                             <nb-radio class="p-2"
                                 *ngFor="let option of optionsTipoVolante"
                                 [value]="option.value">
                                 {{ option.label }}
                             </nb-radio>
                         </nb-radio-group> -->
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <form-field [control]="form.get('actaCircunst')" label="Acta Circunst.">
-                        <!-- <label class="label w-100">Acta Circunst.</label> -->
-                        <input class="form-control" formControlName="actaCircunst"
-                                placeholder="Acta Circunst.">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <form-field [control]="form.get('averigPrevia')" label="Averig. Previa">
-                        <!-- <label class="label w-100">Averig. Previa</label> -->
-                        <input class="form-control" formControlName="averigPrevia"
-                                placeholder="Averig. Previa">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <form-field [control]="form.get('causaPenal')" label="Causa Penal">
-                        <!-- <label class="label w-100">Causa Penal</label> -->
-                        <input class="form-control" formControlName="causaPenal"
-                                placeholder="Causa Penal">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <form-field [control]="form.get('noAmparo')" label="No. Amparo">
-                        <!-- <label class="label w-100">No. Amparo</label> -->
-                        <input class="form-control" formControlName="noAmparo"
-                                placeholder="No. Amparo">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <form-field [control]="form.get('tocaPenal')" label="Toca Penal">
-                        <!-- <label class="label w-100">Toca Penal</label> -->
-                        <input class="form-control" formControlName="tocaPenal"
-                                placeholder="Toca Penal">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <form-field [control]="form.get('noOficio')" label="No. Oficio">
-                        <!-- <label class="label w-100">No. Oficio</label> -->
-                        <input class="form-control" formControlName="noOficio"
-                                placeholder="No. Oficio">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <form-field [control]="form.get('fechaOficio')" label="Fecha Oficio">
-                        <!-- <label class="label w-100">Fecha Oficio</label> -->
-                        <input class="form-control" formControlName="fechaOficio"
-                                placeholder="Fecha Oficio">
-                                 <!-- [nbDatepicker]="formpicker2">
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <form-field
+            [control]="form.get('actaCircunst')"
+            label="Acta Circunst.">
+            <!-- <label class="label w-100">Acta Circunst.</label> -->
+            <input
+              class="form-control"
+              formControlName="actaCircunst"
+              placeholder="Acta Circunst." />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <form-field
+            [control]="form.get('averigPrevia')"
+            label="Averig. Previa">
+            <!-- <label class="label w-100">Averig. Previa</label> -->
+            <input
+              class="form-control"
+              formControlName="averigPrevia"
+              placeholder="Averig. Previa" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <form-field [control]="form.get('causaPenal')" label="Causa Penal">
+            <!-- <label class="label w-100">Causa Penal</label> -->
+            <input
+              class="form-control"
+              formControlName="causaPenal"
+              placeholder="Causa Penal" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <form-field [control]="form.get('noAmparo')" label="No. Amparo">
+            <!-- <label class="label w-100">No. Amparo</label> -->
+            <input
+              class="form-control"
+              formControlName="noAmparo"
+              placeholder="No. Amparo" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <form-field [control]="form.get('tocaPenal')" label="Toca Penal">
+            <!-- <label class="label w-100">Toca Penal</label> -->
+            <input
+              class="form-control"
+              formControlName="tocaPenal"
+              placeholder="Toca Penal" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <form-field [control]="form.get('noOficio')" label="No. Oficio">
+            <!-- <label class="label w-100">No. Oficio</label> -->
+            <input
+              class="form-control"
+              formControlName="noOficio"
+              placeholder="No. Oficio" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <form-field [control]="form.get('fechaOficio')" label="Fecha Oficio">
+            <!-- <label class="label w-100">Fecha Oficio</label> -->
+            <input
+              class="form-control"
+              formControlName="fechaOficio"
+              placeholder="Fecha Oficio" />
+            <!-- [nbDatepicker]="formpicker2">
                         <nb-datepicker #formpicker2></nb-datepicker> -->
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-8 p-1">
-                    <form-field [control]="form.get('descripcionAsunto')" label="Descripción del Asunto">
-                        <!-- <label class="label w-100">Descripción del Asunto</label> -->
-                        <textarea fullWidth placeholder="Descripción del Asunto"
-                        class="form-control" formControlName="descripcionAsunto"></textarea>
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-2 p-1">
-                    <form-field [control]="form.get('noExpediente')" label="No. Expediente">
-                        <!-- <label class="label w-100">No. Expediente</label> -->
-                        <input type="number" class="form-control" formControlName="noExpediente"
-                                placeholder="No. Expediente">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <form-field [control]="form.get('remitente')" label="Remitente">
-                        <!-- <label class="label w-100">Remitente</label> -->
-                        <input class="form-control" formControlName="remitente"
-                                placeholder="Remitente">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-2 p-1">
-                    <div class="form-group">
-                        <input id="idAsunto" class="form-control"
-                                placeholder="Asunto">
-                        <label class="form-control-label w-100">Asunto ID</label>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <form-field [control]="form.get('asunto')" label="Asunto">
-                        <!-- <label class="label w-100">Asunto</label> -->
-                        <input class="form-control" formControlName="asunto"
-                                placeholder="Asunto">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-2 p-1">
-                    <div class="form-group">
-                        <input id="idDesahogo" class="form-control"
-                                placeholder="Desahogo Asunto">
-                        <label class="form-control-label w-100">Desahogo Asunto ID</label>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <form-field [control]="form.get('desahogoAsunto')" label="Desahogo Asunto">
-                        <!-- <label class="label w-100">Desahogo Asunto</label> -->
-                        <input class="form-control" formControlName="desahogoAsunto"
-                                placeholder="Desahogo Asunto">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-2 p-1">
-                    <div class="form-group">
-                        <input id="idCiudad" class="form-control"
-                                placeholder="Ciudad">
-                        <label class="form-control-label w-100">Ciudad ID</label>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <form-field [control]="form.get('ciudad')" label="Ciudad">
-                        <!-- <label class="label w-100">Ciudad</label> -->
-                        <input class="form-control" formControlName="ciudad"
-                                placeholder="Ciudad">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-2 p-1">
-                    <div class="form-group">
-                        <input id="idEntidadFederativa" class="form-control"
-                                placeholder="Entidad Federativa">
-                        <label class="form-control-label w-100">Entidad Federativa ID</label>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <form-field [control]="form.get('entidadFederativa')" label="Entidad Federativa">
-                        <!-- <label class="label w-100">Entidad Federativa</label> -->
-                        <input class="form-control" formControlName="entidadFederativa"
-                                placeholder="Entidad Federativa">
-                        
-                    </form-field>
-                </div>
-            </div>
+          </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 p-2 pl-4">
-            <div class="row">
-                <div class="col-sm-12 col-12 col-md-6 offset-md-6 col-lg-6 offset-lg-6 p-1">
-                    <form-field [control]="form.get('claveUnica')" label="Clave Única">
-                        <!-- <label class="label w-100">Clave Única</label> -->
-                        <input class="form-control" formControlName="claveUnica"
-                                placeholder="Clave Única">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-2 p-1">
-                    <div class="form-group">
-                        <input id="idTransferente" class="form-control"
-                                placeholder="Transferente ID">
-                        <label class="form-control-label w-100">Transferente ID</label>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <form-field [control]="form.get('transferente')" label="Transferente">
-                        <!-- <label class="label w-100">Transferente</label> -->
-                        <input class="form-control" formControlName="transferente"
-                                placeholder="Transferente">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-2 p-1">
-                    <div class="form-group">
-                        <input id="idEmisora" class="form-control"
-                                placeholder="Emisora ID">
-                        <label class="form-control-label w-100">Emisora ID</label>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <form-field [control]="form.get('emisora')" label="Emisora">
-                        <!-- <label class="label w-100">Emisora</label> -->
-                        <input class="form-control" formControlName="emisora"
-                                placeholder="Emisora">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-2 p-1">
-                    <div class="form-group">
-                        <input id="idAutoridad" class="form-control"
-                                placeholder="Autoridad ID">
-                        <label class="form-control-label w-100">Autoridad ID</label>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <form-field [control]="form.get('autoridad')" label="Autoridad">
-                        <!-- <label class="label w-100">Autoridad</label> -->
-                        <input class="form-control" formControlName="autoridad"
-                                placeholder="Autoridad">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-2 p-1">
-                    <div class="form-group">
-                        <input id="idAutoridadEmisora" class="form-control"
-                                placeholder="Autoridad Emisora">
-                        <label class="form-control-label w-100">Autoridad Emisora</label>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <form-field [control]="form.get('autoridadEmisora')" label="Autoridad Emisora">
-                        <!-- <label class="label w-100">Autoridad Emisora</label> -->
-                        <input class="form-control" formControlName="autoridadEmisora"
-                                placeholder="Autoridad Emisora">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-2 p-1">
-                    <div class="form-group">
-                        <input id="idMinisterioPublico" class="form-control"
-                                placeholder="Ministerio Publico">
-                        <label class="form-control-label w-100">Ministerio Publico</label>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <form-field [control]="form.get('ministerioPublico')" label="Ministerio Público">
-                        <!-- <label class="label w-100">Ministerio Público</label> -->
-                        <input class="form-control" formControlName="ministerioPublico"
-                                placeholder="Ministerio Publico">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-2 p-1">
-                    <div class="form-group">
-                        <input id="idJuzgado" class="form-control"
-                                placeholder="Juzgado">
-                        <label class="form-control-label w-100">Juzgado</label>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <form-field [control]="form.get('juzgado')" label="Juzgado">
-                        <!-- <label class="label w-100">Juzgado</label> -->
-                        <input class="form-control" formControlName="juzgado"
-                                placeholder="Juzgado">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-2 p-1">
-                    <div class="form-group">
-                        <input id="idIndiciado" class="form-control"
-                                placeholder="Indiciado">
-                        <label class="form-control-label w-100">Indiciado</label>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <form-field [control]="form.get('indiciado')" label="Indiciado">
-                        <!-- <label class="label w-100">Indiciado</label> -->
-                        <input class="form-control" formControlName="indiciado"
-                                placeholder="Indiciado">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-2 p-1">
-                    <div class="form-group">
-                        <input id="idDelito" class="form-control"
-                                placeholder="Delito">
-                        <label class="form-control-label w-100">Delito</label>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <form-field [control]="form.get('delito')" label="Delito">
-                        <!-- <label class="label w-100">Delito</label> -->
-                        <input class="form-control" formControlName="delito"
-                                placeholder="Delito">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-2 p-1">
-                    <div class="form-group">
-                        <input id="idViaRecepcion" class="form-control"
-                                placeholder="Vía Recepción">
-                        <label class="form-control-label w-100">Vía Recepción</label>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <form-field [control]="form.get('viaRecepcion')" label="Vía Recepción">
-                        <!-- <label class="label w-100">Vía Recepción</label> -->
-                        <input class="form-control" formControlName="viaRecepcion"
-                                placeholder="Vía Recepción">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-2 p-1">
-                    <form-field [control]="form.get('areaDestino')" label="Área Destino">
-                        <!-- <label class="label w-100">Ärea Destino</label> -->
-                        <input class="form-control" formControlName="areaDestino"
-                                placeholder="Ärea Destino">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <div class="form-group">
-                        <input class="form-control" placeholder="Ärea Destino">
-                        <label class="form-control-label w-100">Ärea Destino</label>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-2 p-1">
-                    <div class="form-group">
-                        <input class="form-control" placeholder="Ärea Destino">
-                        <label class="form-control-label w-100">Ärea Destino</label>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <div class="form-group">
-                        <input class="form-control" placeholder="Ärea Destino">
-                        <label class="form-control-label w-100">Ärea Destino</label>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-2 p-1">
-                    <div class="form-group">
-                        <input id="idDestinatario" class="form-control"
-                                placeholder="Destinatario">
-                        <label class="form-control-label w-100">Destinatario</label>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-1">
-                    <form-field [control]="form.get('destinatario')" label="Destinatario">
-                        <!-- <label class="label w-100">Destinatario</label> -->
-                        <input class="form-control" formControlName="destinatario"
-                                placeholder="Destinatario">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-12 p-1">
-                    <form-field [control]="form.get('justificacionConocimiento')" label="Justificación del Conocimiento">
-                        <!-- <label class="label w-100">Justificación del Conocimiento</label> -->
-                        <textarea fullWidth placeholder="Justificación del Conocimiento"
-                        class="form-control" formControlName="justificacionConocimiento"></textarea>
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-12 p-1">
-                    <div class="form-group">
-                        <div class="d-flex justify-content-center">
-                            <label class="form-control-label">&nbsp;</label>&nbsp;  
-                            <button type="submit" status="primary" [disabled]="!form.valid">
-                                Resignación de Turno
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div *ngIf="botonOficio" class="col-sm-12 col-12 col-md-12 p-1">
-                    <div class="form-group">
-                        <div class="d-flex justify-content-center">
-                            <label class="form-control-label">&nbsp;</label>&nbsp;  
-                            <button type="button" status="primary" (click)="oficioRelacionado()">
-                                Oficio Relacionado
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div *ngIf="botonCaptura" class="col-sm-12 col-12 col-md-12 p-1">
-                    <div class="form-group">
-                        <div class="d-flex justify-content-center">
-                            <button type="button" status="primary" (click)="capturaCopias()">
-                            <label class="form-control-label">&nbsp;</label>&nbsp;  
-                                Captura de Copias
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="col-sm-12 col-12 col-md-8 p-1">
+          <form-field
+            [control]="form.get('descripcionAsunto')"
+            label="Descripción del Asunto">
+            <!-- <label class="label w-100">Descripción del Asunto</label> -->
+            <textarea
+              fullWidth
+              placeholder="Descripción del Asunto"
+              class="form-control"
+              formControlName="descripcionAsunto"></textarea>
+          </form-field>
         </div>
-
+        <div class="col-sm-12 col-12 col-md-2 p-1">
+          <form-field
+            [control]="form.get('noExpediente')"
+            label="No. Expediente">
+            <!-- <label class="label w-100">No. Expediente</label> -->
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noExpediente"
+              placeholder="No. Expediente" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <form-field [control]="form.get('remitente')" label="Remitente">
+            <!-- <label class="label w-100">Remitente</label> -->
+            <input
+              class="form-control"
+              formControlName="remitente"
+              placeholder="Remitente" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-1">
+          <div class="form-group">
+            <input id="idAsunto" class="form-control" placeholder="Asunto" />
+            <label class="form-control-label w-100">Asunto ID</label>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <form-field [control]="form.get('asunto')" label="Asunto">
+            <!-- <label class="label w-100">Asunto</label> -->
+            <input
+              class="form-control"
+              formControlName="asunto"
+              placeholder="Asunto" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-1">
+          <div class="form-group">
+            <input
+              id="idDesahogo"
+              class="form-control"
+              placeholder="Desahogo Asunto" />
+            <label class="form-control-label w-100">Desahogo Asunto ID</label>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <form-field
+            [control]="form.get('desahogoAsunto')"
+            label="Desahogo Asunto">
+            <!-- <label class="label w-100">Desahogo Asunto</label> -->
+            <input
+              class="form-control"
+              formControlName="desahogoAsunto"
+              placeholder="Desahogo Asunto" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-1">
+          <div class="form-group">
+            <input id="idCiudad" class="form-control" placeholder="Ciudad" />
+            <label class="form-control-label w-100">Ciudad ID</label>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <form-field [control]="form.get('ciudad')" label="Ciudad">
+            <!-- <label class="label w-100">Ciudad</label> -->
+            <input
+              class="form-control"
+              formControlName="ciudad"
+              placeholder="Ciudad" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-1">
+          <div class="form-group">
+            <input
+              id="idEntidadFederativa"
+              class="form-control"
+              placeholder="Entidad Federativa" />
+            <label class="form-control-label w-100"
+              >Entidad Federativa ID</label
+            >
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <form-field
+            [control]="form.get('entidadFederativa')"
+            label="Entidad Federativa">
+            <!-- <label class="label w-100">Entidad Federativa</label> -->
+            <input
+              class="form-control"
+              formControlName="entidadFederativa"
+              placeholder="Entidad Federativa" />
+          </form-field>
+        </div>
+      </div>
     </div>
+    <div class="col-sm-12 col-12 col-md-6 p-2 pl-4">
+      <div class="row">
+        <div
+          class="col-sm-12 col-12 col-md-6 offset-md-6 col-lg-6 offset-lg-6 p-1">
+          <form-field [control]="form.get('claveUnica')" label="Clave Única">
+            <!-- <label class="label w-100">Clave Única</label> -->
+            <input
+              class="form-control"
+              formControlName="claveUnica"
+              placeholder="Clave Única" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-1">
+          <div class="form-group">
+            <input
+              id="idTransferente"
+              class="form-control"
+              placeholder="Transferente ID" />
+            <label class="form-control-label w-100">Transferente ID</label>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <form-field [control]="form.get('transferente')" label="Transferente">
+            <!-- <label class="label w-100">Transferente</label> -->
+            <input
+              class="form-control"
+              formControlName="transferente"
+              placeholder="Transferente" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-1">
+          <div class="form-group">
+            <input
+              id="idEmisora"
+              class="form-control"
+              placeholder="Emisora ID" />
+            <label class="form-control-label w-100">Emisora ID</label>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <form-field [control]="form.get('emisora')" label="Emisora">
+            <!-- <label class="label w-100">Emisora</label> -->
+            <input
+              class="form-control"
+              formControlName="emisora"
+              placeholder="Emisora" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-1">
+          <div class="form-group">
+            <input
+              id="idAutoridad"
+              class="form-control"
+              placeholder="Autoridad ID" />
+            <label class="form-control-label w-100">Autoridad ID</label>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <form-field [control]="form.get('autoridad')" label="Autoridad">
+            <!-- <label class="label w-100">Autoridad</label> -->
+            <input
+              class="form-control"
+              formControlName="autoridad"
+              placeholder="Autoridad" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-1">
+          <div class="form-group">
+            <input
+              id="idAutoridadEmisora"
+              class="form-control"
+              placeholder="Autoridad Emisora" />
+            <label class="form-control-label w-100">Autoridad Emisora</label>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <form-field
+            [control]="form.get('autoridadEmisora')"
+            label="Autoridad Emisora">
+            <!-- <label class="label w-100">Autoridad Emisora</label> -->
+            <input
+              class="form-control"
+              formControlName="autoridadEmisora"
+              placeholder="Autoridad Emisora" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-1">
+          <div class="form-group">
+            <input
+              id="idMinisterioPublico"
+              class="form-control"
+              placeholder="Ministerio Publico" />
+            <label class="form-control-label w-100">Ministerio Publico</label>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <form-field
+            [control]="form.get('ministerioPublico')"
+            label="Ministerio Público">
+            <!-- <label class="label w-100">Ministerio Público</label> -->
+            <input
+              class="form-control"
+              formControlName="ministerioPublico"
+              placeholder="Ministerio Publico" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-1">
+          <div class="form-group">
+            <input id="idJuzgado" class="form-control" placeholder="Juzgado" />
+            <label class="form-control-label w-100">Juzgado</label>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <form-field [control]="form.get('juzgado')" label="Juzgado">
+            <!-- <label class="label w-100">Juzgado</label> -->
+            <input
+              class="form-control"
+              formControlName="juzgado"
+              placeholder="Juzgado" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-1">
+          <div class="form-group">
+            <input
+              id="idIndiciado"
+              class="form-control"
+              placeholder="Indiciado" />
+            <label class="form-control-label w-100">Indiciado</label>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <form-field [control]="form.get('indiciado')" label="Indiciado">
+            <!-- <label class="label w-100">Indiciado</label> -->
+            <input
+              class="form-control"
+              formControlName="indiciado"
+              placeholder="Indiciado" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-1">
+          <div class="form-group">
+            <input id="idDelito" class="form-control" placeholder="Delito" />
+            <label class="form-control-label w-100">Delito</label>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <form-field [control]="form.get('delito')" label="Delito">
+            <!-- <label class="label w-100">Delito</label> -->
+            <input
+              class="form-control"
+              formControlName="delito"
+              placeholder="Delito" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-1">
+          <div class="form-group">
+            <input
+              id="idViaRecepcion"
+              class="form-control"
+              placeholder="Vía Recepción" />
+            <label class="form-control-label w-100">Vía Recepción</label>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <form-field
+            [control]="form.get('viaRecepcion')"
+            label="Vía Recepción">
+            <!-- <label class="label w-100">Vía Recepción</label> -->
+            <input
+              class="form-control"
+              formControlName="viaRecepcion"
+              placeholder="Vía Recepción" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-1">
+          <form-field [control]="form.get('areaDestino')" label="Área Destino">
+            <!-- <label class="label w-100">Ärea Destino</label> -->
+            <input
+              class="form-control"
+              formControlName="areaDestino"
+              placeholder="Ärea Destino" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <div class="form-group">
+            <input class="form-control" placeholder="Ärea Destino" />
+            <label class="form-control-label w-100">Ärea Destino</label>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-1">
+          <div class="form-group">
+            <input class="form-control" placeholder="Ärea Destino" />
+            <label class="form-control-label w-100">Ärea Destino</label>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <div class="form-group">
+            <input class="form-control" placeholder="Ärea Destino" />
+            <label class="form-control-label w-100">Ärea Destino</label>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-1">
+          <div class="form-group">
+            <input
+              id="idDestinatario"
+              class="form-control"
+              placeholder="Destinatario" />
+            <label class="form-control-label w-100">Destinatario</label>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-1">
+          <form-field [control]="form.get('destinatario')" label="Destinatario">
+            <!-- <label class="label w-100">Destinatario</label> -->
+            <input
+              class="form-control"
+              formControlName="destinatario"
+              placeholder="Destinatario" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-1">
+          <form-field
+            [control]="form.get('justificacionConocimiento')"
+            label="Justificación del Conocimiento">
+            <!-- <label class="label w-100">Justificación del Conocimiento</label> -->
+            <textarea
+              fullWidth
+              placeholder="Justificación del Conocimiento"
+              class="form-control"
+              formControlName="justificacionConocimiento"></textarea>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-1">
+          <div class="form-group">
+            <div class="d-flex justify-content-center">
+              <label class="form-control-label">&nbsp;</label>&nbsp;
+              <button type="submit" status="primary" [disabled]="!form.valid">
+                Resignación de Turno
+              </button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="botonOficio" class="col-sm-12 col-12 col-md-12 p-1">
+          <div class="form-group">
+            <div class="d-flex justify-content-center">
+              <label class="form-control-label">&nbsp;</label>&nbsp;
+              <button
+                type="button"
+                status="primary"
+                (click)="oficioRelacionado()">
+                Oficio Relacionado
+              </button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="botonCaptura" class="col-sm-12 col-12 col-md-12 p-1">
+          <div class="form-group">
+            <div class="d-flex justify-content-center">
+              <button type="button" status="primary" (click)="capturaCopias()">
+                <label class="form-control-label">&nbsp;</label>&nbsp; Captura
+                de Copias
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </form>

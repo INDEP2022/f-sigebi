@@ -11,11 +11,9 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-expert-form',
   templateUrl: './expert-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class ExpertFormComponent  extends BasePage implements OnInit {
-
+export class ExpertFormComponent extends BasePage implements OnInit {
   form: ModelForm<IProficient>;
   title: string = 'Perito';
   edit: boolean = false;
@@ -24,7 +22,7 @@ export class ExpertFormComponent  extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private proeficientService: ProeficientService,
+    private proeficientService: ProeficientService
   ) {
     super();
   }
@@ -61,21 +59,16 @@ export class ExpertFormComponent  extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.proeficientService
-      .create(this.form.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.proeficientService.create(this.form.getRawValue()).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   update() {
     this.loading = true;
     this.proeficientService
-      .update(
-        this.proficient.id,
-        this.form.getRawValue() 
-      )
+      .update(this.proficient.id, this.form.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

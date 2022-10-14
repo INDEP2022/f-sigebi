@@ -1,33 +1,29 @@
 <app-card [header]="true" [footer]="true">
-    <div class="ch-content" header>
-      <h5 class="title">
-            Lista de bienes dentro de la Bóbeda
-      </h5>
+  <div class="ch-content" header>
+    <h5 class="title">Lista de bienes dentro de la Bóbeda</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="form-material col-md-5">
+        <search-bar [params]="params"></search-bar>
+      </div>
     </div>
-    <div body>
-        <div class="row">
-            <div class="form-material col-md-5">
-                <search-bar [params]="params"></search-bar>
-            </div>
-        </div>
-        <div [class]="loading ? 'table-loading' : ''">
-        <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings"
-              [source]="data1">
-            </ng2-smart-table>
-            <app-pagination
-          [params]="params"
-          [totalItems]="totalItems"></app-pagination>
-          </div>
+    <div [class]="loading ? 'table-loading' : ''">
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settings"
+        [source]="data1">
+      </ng2-smart-table>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
     </div>
-    <div footer>
-        <div class="space justify-content-center">
-        <button
-        class="btn btn-primary btn-sm active"
-        (click)="return()">
-            regresar
-        </button>
-        </div>
+  </div>
+  <div footer>
+    <div class="space justify-content-center">
+      <button class="btn btn-primary btn-sm active" (click)="return()">
+        regresar
+      </button>
     </div>
-    </app-card>
+  </div>
+</app-card>

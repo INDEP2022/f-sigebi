@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { AbstractControl, FormGroup } from "@angular/forms";
+import { AbstractControl, FormGroup } from '@angular/forms';
 //Rxjs
 import { BehaviorSubject, takeUntil } from 'rxjs';
 //Params
@@ -11,7 +11,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //import { MeasurementUnitsService } from 'src/app/core/services/catalogs/measurement-units.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
-import { IPackages } from 'src/app/core/models/catalogs/packages.model';
+import { IPackage } from 'src/app/core/models/catalogs/package.model';
 import { packagesData } from './packagesData';
 
 @Component({
@@ -19,34 +19,31 @@ import { packagesData } from './packagesData';
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './packages-shared.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PackagesSharedComponent extends BasePage implements OnInit {
-
   @Input() form: FormGroup;
-  @Input() packageField: string = "package";
+  @Input() packageField: string = 'package';
 
   @Input() showPackages: boolean = true;
 
-  packages = new DefaultSelect<IPackages>();
+  packages = new DefaultSelect<IPackage>();
 
   get measurementUnit() {
     return this.form.get(this.packageField);
   }
 
   constructor(/*private service: WarehouseService*/) {
-    super()
+    super();
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   getPackages(params: ListParams) {
     //Provisional data
-    let data=packagesData;
-    let count= data.length;
-    this.packages = new DefaultSelect(data,count);
+    let data = packagesData;
+    let count = data.length;
+    this.packages = new DefaultSelect(data, count);
     /*this.service.getAll(params).subscribe(data => {
         this.status = new DefaultSelect(data.data,data.count);
       },err => {
@@ -66,15 +63,12 @@ export class PackagesSharedComponent extends BasePage implements OnInit {
     //this.resetFields([this.subdelegation]);
     this.form.updateValueAndValidity();
   }
-  
+
   resetFields(fields: AbstractControl[]) {
-    fields.forEach((field) => {
+    fields.forEach(field => {
       //field.setValue(null);
-      field=null;
+      field = null;
     });
     this.form.updateValueAndValidity();
   }
-
 }
-
-

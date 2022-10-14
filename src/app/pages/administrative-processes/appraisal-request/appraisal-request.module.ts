@@ -7,17 +7,14 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../../../shared/shared.module';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
-
 @NgModule({
-  declarations: [
-    AppraisalRequestComponent
-  ],
+  declarations: [AppraisalRequestComponent],
   imports: [
     CommonModule,
     AppraisalRequestRoutingModule,
     ReactiveFormsModule,
     SharedModule,
     BsDatepickerModule.forRoot(),
-  ]
+  ],
 })
-export class AppraisalRequestModule { }
+export class AppraisalRequestModule {}

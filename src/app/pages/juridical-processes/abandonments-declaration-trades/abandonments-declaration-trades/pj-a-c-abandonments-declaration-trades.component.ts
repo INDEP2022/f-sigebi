@@ -11,134 +11,135 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 /** COMPONENTS IMPORTS */
 
 @Component({
-    selector: 'app-pj-a-c-abandonments-declaration-trades',
-    templateUrl: './pj-a-c-abandonments-declaration-trades.component.html',
-    styleUrls: ['./pj-a-c-abandonments-declaration-trades.component.scss']
+  selector: 'app-pj-a-c-abandonments-declaration-trades',
+  templateUrl: './pj-a-c-abandonments-declaration-trades.component.html',
+  styleUrls: ['./pj-a-c-abandonments-declaration-trades.component.scss'],
 })
-export class PJAAbandonmentsDeclarationTradesComponent extends BasePage implements OnInit, OnDestroy{
-    public optionsTipoVolante = [
-        { value: 'Administrativo', label: 'Administrativo' },
-        { value: 'Procesal', label: 'Procesal' },
-        { value: 'Admin. Trans', label: 'Admin. Trans' },
-        { value: 'Transferente', label: 'Transferente' },
-      ];
-      public form: FormGroup;
-      public formOficio: FormGroup;
-      public formCcpOficio: FormGroup;
-      public formDeclaratoria: FormGroup;
-      public formDeclaratoriaTabla: FormGroup;
-      public formOficioInicioFin: FormGroup;
-      public formDeclaratoriaInicioFin: FormGroup;
-    
-      /** Tabla bienes */
-      data1 = [
-        {
-          noBien: 12345,
-          description: "UNA BOLSA",
-          cantidad: 1,
-          est: "ENGD",
-          proceso: "ASEGURADO",
-        },
-        {
-          noBien: 12345,
-          description: "UNA BOLSA",
-          cantidad: 1,
-          est: "ENGD",
-          proceso: "ASEGURADO",
-        },
-        {
-          noBien: 12345,
-          description: "UNA BOLSA",
-          cantidad: 1,
-          est: "ENGD",
-          proceso: "ASEGURADO",
-        },
-      ];
-      settings1 = {
-        pager: {
-          display: false,
-        },
-        hideSubHeader: true,
-        actions: false,
-        selectedRowIndex: -1,
-        mode: "external",
-        columns: {
-          noBien: {
-            title: "No. Bien",
-            type: "number",
-          },
-          description: {
-            title: "Descripcion",
-            type: "string",
-          },
-          cantidad: {
-            title: "Cantidad",
-            type: "string",
-          },
-          ident: {
-            title: "Ident.",
-            type: "string",
-          },
-          est: {
-            title: "Est",
-            type: "string",
-          },
-          proceso: {
-            title: "Proceso",
-            type: "string",
-          },
-        },
-        noDataMessage: "No se encontrarón registros",
-      };
-      /** Tabla bienes */
-    
-      /** Tabla bienes */
-      data2 = [
-        {
-          cveDocumento: 25,
-          description: "UNA BOLSA",
-        },
-      ];
-      settings2 = {
-        pager: {
-          display: false,
-        },
-        hideSubHeader: true,
-        actions: false,
-        selectedRowIndex: -1,
-        mode: "external",
-        columns: {
-          cveDocumento: {
-            title: "No. Bien",
-            type: "number",
-          },
-          description: {
-            title: "Descripcion",
-            type: "string",
-          },
-        },
-        noDataMessage: "No se encontrarón registros",
-      };
-      /** Tabla bienes */
-    
-    constructor(
-        private fb: FormBuilder
-    ) {
-        super();
-    }
-  
-    ngOnInit(): void {
-        this.prepareForm();
-        this.loading = true;
-    }
-    
+export class PJAAbandonmentsDeclarationTradesComponent
+  extends BasePage
+  implements OnInit, OnDestroy
+{
+  public optionsTipoVolante = [
+    { value: 'Administrativo', label: 'Administrativo' },
+    { value: 'Procesal', label: 'Procesal' },
+    { value: 'Admin. Trans', label: 'Admin. Trans' },
+    { value: 'Transferente', label: 'Transferente' },
+  ];
+  public form: FormGroup;
+  public formOficio: FormGroup;
+  public formCcpOficio: FormGroup;
+  public formDeclaratoria: FormGroup;
+  public formDeclaratoriaTabla: FormGroup;
+  public formOficioInicioFin: FormGroup;
+  public formDeclaratoriaInicioFin: FormGroup;
+
+  /** Tabla bienes */
+  data1 = [
+    {
+      noBien: 12345,
+      description: 'UNA BOLSA',
+      cantidad: 1,
+      est: 'ENGD',
+      proceso: 'ASEGURADO',
+    },
+    {
+      noBien: 12345,
+      description: 'UNA BOLSA',
+      cantidad: 1,
+      est: 'ENGD',
+      proceso: 'ASEGURADO',
+    },
+    {
+      noBien: 12345,
+      description: 'UNA BOLSA',
+      cantidad: 1,
+      est: 'ENGD',
+      proceso: 'ASEGURADO',
+    },
+  ];
+  settings1 = {
+    pager: {
+      display: false,
+    },
+    hideSubHeader: true,
+    actions: false,
+    selectedRowIndex: -1,
+    mode: 'external',
+    columns: {
+      noBien: {
+        title: 'No. Bien',
+        type: 'number',
+      },
+      description: {
+        title: 'Descripcion',
+        type: 'string',
+      },
+      cantidad: {
+        title: 'Cantidad',
+        type: 'string',
+      },
+      ident: {
+        title: 'Ident.',
+        type: 'string',
+      },
+      est: {
+        title: 'Est',
+        type: 'string',
+      },
+      proceso: {
+        title: 'Proceso',
+        type: 'string',
+      },
+    },
+    noDataMessage: 'No se encontrarón registros',
+  };
+  /** Tabla bienes */
+
+  /** Tabla bienes */
+  data2 = [
+    {
+      cveDocumento: 25,
+      description: 'UNA BOLSA',
+    },
+  ];
+  settings2 = {
+    pager: {
+      display: false,
+    },
+    hideSubHeader: true,
+    actions: false,
+    selectedRowIndex: -1,
+    mode: 'external',
+    columns: {
+      cveDocumento: {
+        title: 'No. Bien',
+        type: 'number',
+      },
+      description: {
+        title: 'Descripcion',
+        type: 'string',
+      },
+    },
+    noDataMessage: 'No se encontrarón registros',
+  };
+  /** Tabla bienes */
+
+  constructor(private fb: FormBuilder) {
+    super();
+  }
+
+  ngOnInit(): void {
+    this.prepareForm();
+    this.loading = true;
+  }
+
   private prepareForm() {
     this.form = this.fb.group({
       noExpediente: [''],
       noVolante: ['', [Validators.required]], //*
       tipoVolante: ['', [Validators.required]], //*
       fechaRecepcion: ['', [Validators.required]], //*
-      consecutivoDiario:['', [Validators.required]], //*
+      consecutivoDiario: ['', [Validators.required]], //*
       actaCircunst: [''],
       averigPrevia: [''],
       causaPenal: [''],
@@ -191,7 +192,7 @@ export class PJAAbandonmentsDeclarationTradesComponent extends BasePage implemen
       inicio: ['', [Validators.required]], //*
       fin: ['', [Validators.required]], //*
     });
-    
+
     this.formOficio = this.fb.group({
       tipoOficio: [''],
       remitente: [''],
@@ -204,40 +205,34 @@ export class PJAAbandonmentsDeclarationTradesComponent extends BasePage implemen
       fechaCaptura: ['', [Validators.required]], //*
       estatus: ['', [Validators.required]], //*
     });
-    
+
     this.formCcpOficio = this.fb.group({
       ccp: ['', [Validators.minLength(1)]], //*
       usuario: ['', [Validators.minLength(1)]], //*
       nombreUsuario: '',
       ccp2: ['', [Validators.minLength(1)]], //*
       usuario2: ['', [Validators.minLength(1)]], //*
-      nombreUsuario2: ''
+      nombreUsuario2: '',
     });
-
   }
-  
-mostrarInfo(form: FormGroup): any{
-  console.log(form.value)
+
+  mostrarInfo(form: FormGroup): any {
+    console.log(form.value);
+  }
+
+  mostrarInfoOficio(allFormsOficio: any): any {
+    console.log(allFormsOficio);
+  }
+
+  mostrarInfoDeclaratoria(formDeclaratoria: FormGroup): any {
+    console.log(formDeclaratoria.value);
+  }
+
+  oficioRelacionado(event: any) {
+    console.log('Oficio Relacionado', event);
+  }
+
+  capturaCopias(event: any) {
+    console.log('Captura copias', event);
+  }
 }
-
-mostrarInfoOficio(allFormsOficio: any): any{
-  console.log(allFormsOficio)
-  
-}
-
-mostrarInfoDeclaratoria(formDeclaratoria: FormGroup): any{
-  console.log(formDeclaratoria.value)
-}
-
-oficioRelacionado(event: any) {
-  console.log("Oficio Relacionado", event);
-}
-
-capturaCopias(event: any) {
-  console.log("Captura copias", event);
-}
-
-
-}
-
-  

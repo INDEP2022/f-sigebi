@@ -4,8 +4,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 @Component({
   selector: 'app-fdp-add-c-return-acts',
   templateUrl: './fdp-add-c-return-acts.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class FdpAddCReturnActsComponent implements OnInit {
   response: boolean = false;
@@ -13,37 +12,37 @@ export class FdpAddCReturnActsComponent implements OnInit {
 
   settings1 = {
     rowClassFunction: (row: any) =>
-      row.data.status ? "available" : "not-available",
+      row.data.status ? 'available' : 'not-available',
     pager: {
       display: false,
     },
     hideSubHeader: true,
     actions: false,
     selectedRowIndex: -1,
-    mode: "external",
+    mode: 'external',
     columns: {
       noBien: {
-        title: "No. Bien",
-        type: "number",
+        title: 'No. Bien',
+        type: 'number',
       },
       description: {
-        title: "Descripcion",
-        type: "string",
+        title: 'Descripcion',
+        type: 'string',
       },
       proceso: {
-        title: "Proceso",
-        type: "string",
+        title: 'Proceso',
+        type: 'string',
       },
       cantidad: {
-        title: "Cantidad",
-        type: "number",
+        title: 'Cantidad',
+        type: 'number',
       },
       importe: {
-        title: "Importe",
-        type: "string",
+        title: 'Importe',
+        type: 'string',
       },
     },
-    noDataMessage: "No se encontrarón registros",
+    noDataMessage: 'No se encontrarón registros',
   };
 
   settings2 = {
@@ -53,52 +52,48 @@ export class FdpAddCReturnActsComponent implements OnInit {
     hideSubHeader: true,
     actions: false,
     selectedRowIndex: -1,
-    mode: "external",
+    mode: 'external',
     columns: {
       noBien: {
-        title: "No. Bien",
-        type: "number",
+        title: 'No. Bien',
+        type: 'number',
       },
       descripcion: {
-        title: "Descripción",
-        type: "string",
+        title: 'Descripción',
+        type: 'string',
       },
       proceso: {
-        title: "Proceso",
-        type: "string",
+        title: 'Proceso',
+        type: 'string',
       },
       cantidad: {
-        title: "Cantidad",
-        type: "number",
+        title: 'Cantidad',
+        type: 'number',
       },
       importe: {
-        title: "Importe",
-        type: "number",
-      }
+        title: 'Importe',
+        type: 'number',
+      },
     },
-    noDataMessage: "No se encontrarón registros",
+    noDataMessage: 'No se encontrarón registros',
   };
 
   data = EXAMPLE_DATA;
   data2 = EXAMPLE_DATA2;
 
-  constructor(
-    private fb: FormBuilder
-  ) { }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.initForm();
   }
 
-  search(term: string){
+  search(term: string) {
     this.response = !this.response;
   }
 
-  onSubmit(){
+  onSubmit() {}
 
-  }
-
-  initForm(){
+  initForm() {
     this.actForm = this.fb.group({
       statusAct: [null, [Validators.required]],
       preliminaryAscertainment: [null, [Validators.required]],
@@ -123,69 +118,66 @@ export class FdpAddCReturnActsComponent implements OnInit {
       auditor: [null, [Validators.required]],
     });
   }
-
 }
 
 const EXAMPLE_DATA = [
   {
     noBien: 123,
-    description: "INMUEBLE UBICADO EN CALLE",
-    proceso: "1",
+    description: 'INMUEBLE UBICADO EN CALLE',
+    proceso: '1',
     cantidad: 1,
-    importe: "1"
+    importe: '1',
   },
   {
     noBien: 123,
-    description: "INMUEBLE UBICADO EN CALLE",
-    proceso: "1",
+    description: 'INMUEBLE UBICADO EN CALLE',
+    proceso: '1',
     cantidad: 1,
-    importe: "1"
+    importe: '1',
   },
   {
     noBien: 123,
-    description: "INMUEBLE UBICADO EN CALLE",
-    proceso: "1",
+    description: 'INMUEBLE UBICADO EN CALLE',
+    proceso: '1',
     cantidad: 1,
-    importe: "1"
+    importe: '1',
   },
   {
     noBien: 123,
-    description: "INMUEBLE UBICADO EN CALLE",
-    proceso: "1",
+    description: 'INMUEBLE UBICADO EN CALLE',
+    proceso: '1',
     cantidad: 1,
-    importe: "1"
+    importe: '1',
   },
 ];
 
-
 const EXAMPLE_DATA2 = [
   {
-    noBien: 543.,
-    description: "INMUEBLE UBICADO EN LA CIUDAD",
-    proceso: "2",
+    noBien: 543,
+    description: 'INMUEBLE UBICADO EN LA CIUDAD',
+    proceso: '2',
     cantidad: 3,
-    importe: 5
+    importe: 5,
   },
   {
-    noBien: 543.,
-    description: "INMUEBLE UBICADO EN LA CIUDAD",
-    proceso: "2",
+    noBien: 543,
+    description: 'INMUEBLE UBICADO EN LA CIUDAD',
+    proceso: '2',
     cantidad: 3,
-    importe: 5
+    importe: 5,
   },
   {
-    noBien: 543.,
-    description: "INMUEBLE UBICADO EN LA CIUDAD",
-    proceso: "2",
+    noBien: 543,
+    description: 'INMUEBLE UBICADO EN LA CIUDAD',
+    proceso: '2',
     cantidad: 3,
-    importe: 5
+    importe: 5,
   },
   {
-    noBien: 543.,
-    description: "INMUEBLE UBICADO EN LA CIUDAD",
-    proceso: "2",
+    noBien: 543,
+    description: 'INMUEBLE UBICADO EN LA CIUDAD',
+    proceso: '2',
     cantidad: 3,
-    importe: 5
+    importe: 5,
   },
-
 ];

@@ -10,25 +10,24 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { SaleGoodsGamesIncorporatePackagesComponent } from './sale-goods-games-incorporate-packages/sale-goods-games-incorporate-packages.component';
 import { SaleGoodsGamesEstateComponent } from './sale-goods-games-estate/sale-goods-games-estate.component';
 
-
 @NgModule({
   declarations: [
     SaleGoodsGamesComponent,
     SaleGoodsParticipantsComponent,
     SaleGoodsPaymentsComponent,
     SaleGoodsGamesIncorporatePackagesComponent,
-    SaleGoodsGamesEstateComponent
+    SaleGoodsGamesEstateComponent,
   ],
   exports: [
     SaleGoodsGamesComponent,
     SaleGoodsParticipantsComponent,
-    SaleGoodsPaymentsComponent
+    SaleGoodsPaymentsComponent,
   ],
   imports: [
     CommonModule,
     SharedModule,
     SaleGoodsGamesParticipantsPaymentsRoutingModule,
     Ng2SmartTableModule,
-  ]
+  ],
 })
-export class SaleGoodsGamesParticipantsPaymentsModule { }
+export class SaleGoodsGamesParticipantsPaymentsModule {}

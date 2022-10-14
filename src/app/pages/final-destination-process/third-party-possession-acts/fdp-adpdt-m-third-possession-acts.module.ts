@@ -9,13 +9,13 @@ import { FdpAdpdtDetailDelegationsComponent } from './detail-delegations/fdp-adp
 @NgModule({
   declarations: [
     FdpAdpdtCThirdPossessionActsComponent,
-    FdpAdpdtDetailDelegationsComponent
+    FdpAdpdtDetailDelegationsComponent,
   ],
   imports: [
     CommonModule,
     FdpAdpdtMThirdPossessionActsRoutingModule,
     SharedModule,
-    ReactiveFormsModule
-  ]
+    ReactiveFormsModule,
+  ],
 })
-export class FdpAdpdtMThirdPossessionActsModule { }
+export class FdpAdpdtMThirdPossessionActsModule {}

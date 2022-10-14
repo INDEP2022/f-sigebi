@@ -17,12 +17,11 @@ import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/good
 import { PaLgCTrackerGoodsComponent } from './pa-lg-c-tracker-goods/pa-lg-c-tracker-goods.component';
 import { PaLgCModalSelectsGoodsComponent } from './pa-lg-c-modal-selects-goods/pa-lg-c-modal-selects-goods.component';
 
-
 @NgModule({
   declarations: [
     PaLgCLocationGoodsWarehousesStorageComponent,
     PaLgCTrackerGoodsComponent,
-    PaLgCModalSelectsGoodsComponent
+    PaLgCModalSelectsGoodsComponent,
   ],
   imports: [
     CommonModule,
@@ -36,7 +35,7 @@ import { PaLgCModalSelectsGoodsComponent } from './pa-lg-c-modal-selects-goods/p
     BsDatepickerModule,
     TabsModule,
     ModalModule.forChild(),
-    GoodsTypesSharedComponent
-  ]
+    GoodsTypesSharedComponent,
+  ],
 })
-export class PaLgMLocationGoodsWarehousesStorageModule { }
+export class PaLgMLocationGoodsWarehousesStorageModule {}

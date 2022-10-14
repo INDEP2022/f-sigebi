@@ -4,12 +4,13 @@ import { ThirdPartyCompanyListComponent } from './third-party-company-list/third
 
 const routes: Routes = [
   {
-    path:'',component:ThirdPartyCompanyListComponent
-  }
+    path: '',
+    component: ThirdPartyCompanyListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ThirdPartyCompanyRoutingModule { }
+export class ThirdPartyCompanyRoutingModule {}

@@ -8,9 +8,8 @@ describe('FactGerDirNombraDepoComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FactGerDirNombraDepoComponent ]
-    })
-    .compileComponents();
+      declarations: [FactGerDirNombraDepoComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

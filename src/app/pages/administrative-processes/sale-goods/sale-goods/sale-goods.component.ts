@@ -5,12 +5,11 @@ import { ModelForm } from 'src/app/core/interfaces/ModelForm';
 @Component({
   selector: 'app-sale-goods',
   templateUrl: './sale-goods.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class SaleGoodsComponent implements OnInit {
   alienationForm: ModelForm<any>;
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();

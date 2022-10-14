@@ -6,12 +6,12 @@ import { PaGmscCGoodsManagementSocialCabinetComponent } from './goods-management
 const routes: Routes = [
   {
     path: '',
-    component: PaGmscCGoodsManagementSocialCabinetComponent
-  }
+    component: PaGmscCGoodsManagementSocialCabinetComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PaGmMGoodsManagementRoutingModule { }
+export class PaGmMGoodsManagementRoutingModule {}

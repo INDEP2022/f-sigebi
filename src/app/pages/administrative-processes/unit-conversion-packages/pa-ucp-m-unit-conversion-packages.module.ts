@@ -13,15 +13,13 @@ import { DelegationSharedComponent } from 'src/app/@standalone/shared-forms/dele
 import { WarehouseSharedComponent } from 'src/app/@standalone/shared-forms/warehouse-shared/warehouse-shared.component';
 import { GoodsStatusSharedComponent } from 'src/app/@standalone/shared-forms/goods-status-shared/goods-status-shared.component';
 import { TransferenteSharedComponent } from 'src/app/@standalone/shared-forms/transferents-shared/transferents-shared.component';
-import { MeasurementUnitsSharedComponent  } from 'src/app/@standalone/shared-forms/measurement-units-shared/measurement-units-shared.component';
+import { MeasurementUnitsSharedComponent } from 'src/app/@standalone/shared-forms/measurement-units-shared/measurement-units-shared.component';
 import { GoodsClasificationSharedComponent } from 'src/app/@standalone/shared-forms/goods-classification-shared/goods-classification-shared.component';
 import { TargetTagsSharedComponent } from 'src/app/@standalone/shared-forms/target-tags-shared/target-tags-shared.component';
 import { PackagesSharedComponent } from 'src/app/@standalone/shared-forms/packages-shared/packages-shared.component';
 
 @NgModule({
-  declarations: [
-    PaUcpmcCMassiveConversionComponent
-  ],
+  declarations: [PaUcpmcCMassiveConversionComponent],
   imports: [
     CommonModule,
     PaUcpMUnitConversionPackagesRoutingModule,
@@ -35,7 +33,7 @@ import { PackagesSharedComponent } from 'src/app/@standalone/shared-forms/packag
     MeasurementUnitsSharedComponent,
     GoodsClasificationSharedComponent,
     TargetTagsSharedComponent,
-    PackagesSharedComponent
-  ]
+    PackagesSharedComponent,
+  ],
 })
-export class PaUcpMUnitConversionPackagesModule { }
+export class PaUcpMUnitConversionPackagesModule {}

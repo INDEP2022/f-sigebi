@@ -5,12 +5,12 @@ import { NonDeliveryReasonsListComponent } from './non-delivery-reasons-list/non
 const routes: Routes = [
   {
     path: '',
-    component: NonDeliveryReasonsListComponent
-  }
+    component: NonDeliveryReasonsListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class NonDeliveryReasonsRoutingModule { }
+export class NonDeliveryReasonsRoutingModule {}

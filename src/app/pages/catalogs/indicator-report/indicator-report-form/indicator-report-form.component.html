@@ -1,36 +1,66 @@
 <app-modal>
-    <div header>
-        <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
-    </div>
-    <div body>
-        <form class="form-material" [formGroup]="form">
-            <div class="row">
-                <div class="col-md-12">
-                    <form-field [control]="form.get('tipo_servicio')" label="Tipo Servicio">
-                        <input type="text" class="form-control" formControlName="tipo_servicio" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-4">
-                    <form-field [control]="form.get('rango_porcentaje_inicial')" label="Rango Porcentaje Inicial">
-                        <input type="number" class="form-control" formControlName="rango_porcentaje_inicial" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-4">
-                    <form-field [control]="form.get('rango_porcentaje_final')" label="Rango Porcentaje Final">
-                        <input type="number" class="form-control" formControlName="rango_porcentaje_final" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-4">
-                    <form-field [control]="form.get('pena_convencional')" label="Pena Convencional">
-                        <input type="number" class="form-control" formControlName="pena_convencional" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-4">
-                    <form-field [control]="form.get('no_contrato')" label="Numero de Registro">
-                        <input type="text" class="form-control" formControlName="no_contrato" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <!--
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('tipo_servicio')"
+            label="Tipo Servicio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="tipo_servicio"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('rango_porcentaje_inicial')"
+            label="Rango Porcentaje Inicial">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="rango_porcentaje_inicial"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('rango_porcentaje_final')"
+            label="Rango Porcentaje Final">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="rango_porcentaje_final"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('pena_convencional')"
+            label="Pena Convencional">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="pena_convencional"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('no_contrato')"
+            label="Numero de Registro">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="no_contrato"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+        <!--
                 <div class="col-md-12">
                     <form-field [control]="form.get('usuario_creacion')" label="Usuario Creacion">
                         <input type="text" class="form-control" formControlName="usuario_creacion" placeholder="ejemplo" />
@@ -52,30 +82,41 @@
                     </form-field>
                 </div>
                 -->
-                <div class="col-md-4">
-                    <form-field [control]="form.get('estatus')" label="Estado">
-                        <input type="number" class="form-control" formControlName="estatus" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-                <div class="col-md-4">
-                    <form-field [control]="form.get('version')" label="Version">
-                        <input type="number" class="form-control" formControlName="version" placeholder="ejemplo" />
-                    </form-field>
-                </div>
-            </div>
-        </form>
-    </div>
-    <div footer>
-        <div class="d-flex justify-content-center">
-            <div class="m-3">
-                <confirm-button [disabled]="form.invalid" [loading]="loading" (confirm)="confirm()">
-                </confirm-button>
-            </div>
-            <div class="m-3">
-                <button type="button" class="btn btn-danger active" (click)="close()">
-                    Cancelar
-                </button>
-            </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('estatus')" label="Estado">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="estatus"
+              placeholder="ejemplo" />
+          </form-field>
         </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('version')" label="Version">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="version"
+              placeholder="ejemplo" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="form.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
     </div>
+  </div>
 </app-modal>

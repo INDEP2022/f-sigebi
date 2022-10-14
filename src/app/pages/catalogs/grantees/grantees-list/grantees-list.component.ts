@@ -20,7 +20,10 @@ export class GranteesListComponent extends BasePage implements OnInit {
   totalItems = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  constructor(private granteeService: GranteeService, private modalService: BsModalService) {
+  constructor(
+    private granteeService: GranteeService,
+    private modalService: BsModalService
+  ) {
     super();
     this.settings.columns = GRANTEES_COLUMNS;
     this.settings.actions.delete = true;
@@ -34,25 +37,23 @@ export class GranteesListComponent extends BasePage implements OnInit {
 
   getExample(): void {
     this.loading = true;
-    this.granteeService.getAll(this.params.getValue()).subscribe(
-      {
-        next: response => {
-          this.paragraphs = response.data;
-          this.totalItems = response.count;
-          this.loading = false;
-        },
-        error: error => this.loading = false
-      }
-    )
+    this.granteeService.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        this.paragraphs = response.data;
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
   }
 
   openForm(grantee?: IGrantee): void {
     let config: ModalOptions = {
-      initialState:{
+      initialState: {
         grantee,
         callback: (next: boolean) => {
-          if(next) this.getExample()
-        }
+          if (next) this.getExample();
+        },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,

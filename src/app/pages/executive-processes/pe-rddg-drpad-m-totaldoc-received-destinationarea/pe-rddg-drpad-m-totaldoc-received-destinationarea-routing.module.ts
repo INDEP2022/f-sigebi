@@ -5,12 +5,12 @@ import { PeRddgDrpadCTotaldocReceivedDestinationareaComponent } from './pe-rddg-
 const routes: Routes = [
   {
     path: '',
-    component: PeRddgDrpadCTotaldocReceivedDestinationareaComponent
-  }
+    component: PeRddgDrpadCTotaldocReceivedDestinationareaComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PeRddgDrpadMTotaldocReceivedDestinationareaRoutingModule { }
+export class PeRddgDrpadMTotaldocReceivedDestinationareaRoutingModule {}

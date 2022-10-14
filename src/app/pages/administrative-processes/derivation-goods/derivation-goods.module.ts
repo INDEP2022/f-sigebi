@@ -17,14 +17,12 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
 import { PaDgCGoodsComponent } from './pa-dg-c-goods/pa-dg-c-goods.component';
 
-
-
 @NgModule({
   declarations: [
     DerivationGoodsComponent,
     BulkUploadComponent,
     PaDgCActsComponent,
-    PaDgCGoodsComponent
+    PaDgCGoodsComponent,
   ],
   imports: [
     CommonModule,
@@ -39,6 +37,6 @@ import { PaDgCGoodsComponent } from './pa-dg-c-goods/pa-dg-c-goods.component';
     TabsModule,
     ModalModule.forChild(),
     GoodsTypesSharedComponent,
-  ]
+  ],
 })
-export class DerivationGoodsModule { }
+export class DerivationGoodsModule {}
