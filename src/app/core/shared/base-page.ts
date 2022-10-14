@@ -66,6 +66,7 @@ interface Action {
 }
 const TABLE_SETTINGS: TableSettings = {
   selectMode: '',
+  selectedRowIndex: -1,
   actions: {
     columnTitle: 'Acciones',
     position: 'right',
