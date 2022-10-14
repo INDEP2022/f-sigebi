@@ -43,7 +43,7 @@ import { CheckboxElementComponent } from './components/checkbox-element-smarttab
     CheckboxColumnComponent,
     SearchBarSimpleComponent,
     DividerComponent,
-    CheckboxElementComponent
+    CheckboxElementComponent,
   ],
   imports: [
     CommonModule,
@@ -77,7 +77,7 @@ import { CheckboxElementComponent } from './components/checkbox-element-smarttab
     FormRadioComponent,
     CommonModule,
     CheckboxElementComponent,
-    CheckboxColumnComponent
+    CheckboxColumnComponent,
   ],
 })
 export class SharedModule {
