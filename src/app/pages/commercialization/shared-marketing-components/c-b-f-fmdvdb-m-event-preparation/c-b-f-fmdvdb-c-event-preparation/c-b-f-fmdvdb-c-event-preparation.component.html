@@ -1,71 +1,72 @@
 <app-card [header]="true">
-    <div header>
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">PREPARACIÓN DE EVENTOS</h5>
+      <div class="col-md-5 buttons">
+        <button type="button" class="btn btn-primary btn-sm active ml-3">
+          Crear
+        </button>
+        <div *ngIf="event == null">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active ml-3"
+            (click)="openModal()">
+            Abrir
+          </button>
+        </div>
+        <div *ngIf="event != null">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active ml-3"
+            (click)="openModal()">
+            Cambiar Evento
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <div *ngIf="event == null" @OnEventSelected>
+      <span>Seleccione una opción...</span>
+    </div>
+    <div *ngIf="event != null" @OnEventSelected>
+      <div class="row">
+        <div class="col-md-1">
+          <h5 class="font-size-14">No.</h5>
+          <p class="text-muted">{{ event.id_evento }}</p>
+        </div>
+        <div class="col-md-2">
+          <h5 class="font-size-14">Clave</h5>
+          <p class="text-muted">{{ event.cve_proceso }}</p>
+        </div>
+        <div class="col-md-2">
+          <h5 class="font-size-14">Tipo</h5>
+          <p class="text-muted">{{ event.tipo }}</p>
+        </div>
+        <div class="col-md-2">
+          <h5 class="font-size-14">Lugar</h5>
+          <p class="text-muted">{{ event.lugar }}</p>
+        </div>
+        <div class="col-md-3">
+          <h5 class="font-size-14">Observaciones</h5>
+          <p class="text-muted">{{ event.observaciones }}</p>
+        </div>
+        <div class="col-md-1">
+          <h5 class="font-size-14">Fecha</h5>
+          <p class="text-muted">{{ event.fecha }}</p>
+        </div>
+      </div>
+      <div class="row pt-5">
         <div class="ch-content">
-            <h5 class="title">PREPARACIÓN DE EVENTOS</h5>
-            <div class="col-md-5 buttons">
-                  <button type="button" class="btn btn-primary btn-sm active ml-3">Crear</button>   
-                  <div *ngIf="event == null">
-                    <button type="button" class="btn btn-primary btn-sm active ml-3" (click)="openModal()">Abrir</button>
-                  </div>
-                  <div *ngIf="event != null">
-                    <button type="button" class="btn btn-primary btn-sm active ml-3" (click)="openModal()">Cambiar Evento</button>
-                  </div>
-            </div>
-        </div> 
-    </div>
-    <div body>
-        <div *ngIf="event == null" @OnEventSelected>
-            <span>Seleccione una opción...</span>
+          <h5 class="title"></h5>
+          <div class="justify-content-end m-4">
+            <app-columns-select [(settings)]="settings"></app-columns-select>
+          </div>
         </div>
-        <div *ngIf="event != null" @OnEventSelected>
-            <div class="row">
-                <div class="col-md-1">
-                    <h5 class="font-size-14">
-                        No.
-                    </h5>
-                    <p class="text-muted">{{ event.id_evento }}</p>
-                </div>
-                <div class="col-md-2">
-                    <h5 class="font-size-14">
-                        Clave
-                    </h5>
-                    <p class="text-muted">{{event.cve_proceso}}</p>
-                </div>
-                <div class="col-md-2">
-                    <h5 class="font-size-14">
-                        Tipo
-                    </h5>
-                    <p class="text-muted">{{event.tipo}}</p>
-                </div>
-                <div class="col-md-2">
-                    <h5 class="font-size-14">
-                        Lugar
-                    </h5>
-                    <p class="text-muted">{{event.lugar}}</p>
-                </div>
-                <div class="col-md-3">
-                    <h5 class="font-size-14">
-                        Observaciones
-                    </h5>
-                    <p class="text-muted">{{event.observaciones}}</p>
-                </div>
-                <div class="col-md-1">
-                    <h5 class="font-size-14">
-                        Fecha
-                    </h5>
-                    <p class="text-muted">{{event.fecha}}</p>
-                </div>
-            </div>
-            <div class="row pt-5">
-                <div class="ch-content">
-                    <h5 class="title"></h5>
-                    <div class="justify-content-end m-4">
-                        <app-columns-select [(settings)]="settings"></app-columns-select>  
-                     </div>
-                    
-                </div>
-                <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
-            </div>
-        </div>
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="data"></ng2-smart-table>
+      </div>
     </div>
+  </div>
 </app-card>

@@ -8,17 +8,16 @@ import { CBmFSyfMSeriesFoliosControlRoutingModule } from './c-bm-f-syf-m-series-
 import { CBmFSyfCSeriesFoliosControlComponent } from './c-bm-f-syf-c-series-folios-control/c-bm-f-syf-c-series-folios-control.component';
 import { CBmFSyfMSeriesFoliosControlModalComponent } from './c-bm-f-syf-m-series-folios-control-modal/c-bm-f-syf-m-series-folios-control-modal.component';
 
-
 @NgModule({
   declarations: [
     CBmFSyfCSeriesFoliosControlComponent,
-    CBmFSyfMSeriesFoliosControlModalComponent
+    CBmFSyfMSeriesFoliosControlModalComponent,
   ],
   imports: [
     CommonModule,
     CBmFSyfMSeriesFoliosControlRoutingModule,
     SharedModule,
     ModalModule.forChild(),
-  ]
+  ],
 })
-export class CBmFSyfMSeriesFoliosControlModule { }
+export class CBmFSyfMSeriesFoliosControlModule {}

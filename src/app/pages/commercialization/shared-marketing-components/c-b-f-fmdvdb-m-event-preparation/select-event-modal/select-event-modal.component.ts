@@ -9,13 +9,10 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 @Component({
   selector: 'app-select-event-modal',
   templateUrl: './select-event-modal.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class SelectEventModalComponent extends BasePage implements OnInit {
-
-  settings = {...TABLE_SETTINGS,
-  actions: false}
+  settings = { ...TABLE_SETTINGS, actions: false };
 
   rowSelected: boolean = false;
   selectedRow: any = null;
@@ -26,8 +23,7 @@ export class SelectEventModalComponent extends BasePage implements OnInit {
   @Output() refresh = new EventEmitter<true>();
   table: HTMLElement;
 
-  
-  constructor(private modalRef: BsModalRef,) {
+  constructor(private modalRef: BsModalRef) {
     super();
     this.settings.columns = LIST_EVENT_COLUMNS;
   }
@@ -37,7 +33,7 @@ export class SelectEventModalComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getData());
   }
-  
+
   getData() {
     this.loading = true;
     this.columns = this.data;
@@ -51,7 +47,7 @@ export class SelectEventModalComponent extends BasePage implements OnInit {
     this.rowSelected = true;
   }
 
-  confirm () {
+  confirm() {
     if (!this.rowSelected) return;
     this.refresh.emit(this.selectedRow);
     this.modalRef.hide();
@@ -116,6 +112,6 @@ export class SelectEventModalComponent extends BasePage implements OnInit {
       usuario: 'JFELIX',
       no_delegacion: '4',
       id_estatusvta: 'PREP',
-    }
-  ]
+    },
+  ];
 }

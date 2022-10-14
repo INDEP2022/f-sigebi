@@ -5,12 +5,12 @@ import { CBFFmdvdbCEventPreparationComponent } from './c-b-f-fmdvdb-c-event-prep
 const routes: Routes = [
   {
     path: '',
-    component: CBFFmdvdbCEventPreparationComponent
-  }
+    component: CBFFmdvdbCEventPreparationComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CBFFmdvdbMEventPreparationRoutingModule { }
+export class CBFFmdvdbMEventPreparationRoutingModule {}

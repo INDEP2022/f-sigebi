@@ -1,103 +1,102 @@
+<form class="form-material" [formGroup]="form">
+  <div class="row pt-5">
+    <div class="col-md-1">
+      <form-field [control]="form.get('idEvent')" label="ID Evento">
+        <input type="text" class="form-control" formControlName="idEvent" />
+      </form-field>
+    </div>
+    <div class="col-md-3">
+      <form-field [control]="form.get('nameEvent')" label="Nombre de Evento">
+        <input type="text" class="form-control" formControlName="idEvent" />
+      </form-field>
+    </div>
+    <div class="col-md-2">
+      <form-field [control]="form.get('cveEvent')" label="Clave de Evento">
+        <input type="text" class="form-control" formControlName="idEvent" />
+      </form-field>
+    </div>
+    <div class="col-md-6">
+      <form-field [control]="form.get('obsEvent')" label="Observaciones">
+        <input type="text" class="form-control" formControlName="obsEvent" />
+      </form-field>
+    </div>
+  </div>
+  <div class="row pt-5">
+    <div class="col-md-2">
+      <form-field [control]="form.get('place')" label="Lugar">
+        <input type="text" class="form-control" formControlName="place" />
+      </form-field>
+    </div>
+    <div class="col-md-2">
+      <form-field [control]="form.get('eventDate')" label="Fecha de Evento">
+        <input
+          type="text"
+          placeholder=""
+          class="form-control"
+          bsDatepicker
+          formControlName="eventDate"
+          [bsConfig]="{ isAnimated: true }" />
+      </form-field>
+    </div>
+    <div class="col-md-2">
+      <form-field [control]="form.get('failureDate')" label="Fecha de fallo">
+        <input
+          type="text"
+          placeholder=""
+          class="form-control"
+          bsDatepicker
+          formControlName="failureDate"
+          [bsConfig]="{ isAnimated: true }" />
+      </form-field>
+    </div>
+    <div class="col-md-2">
+      <button type="button" class="btn btn-primary btn-sm active">
+        Convertir
+      </button>
+    </div>
+  </div>
+</form>
 
-        <form class="form-material" [formGroup]="form">
-            <div class="row pt-5">
-                <div class="col-md-1">  
-                    <form-field [control]="form.get('idEvent')" label="ID Evento">
-                        <input type="text" class="form-control" formControlName="idEvent">
-                    </form-field>
-                </div>
-                <div class="col-md-3">  
-                    <form-field [control]="form.get('nameEvent')" label="Nombre de Evento">
-                        <input type="text" class="form-control" formControlName="idEvent">
-                    </form-field>
-                </div>
-                <div class="col-md-2">  
-                    <form-field [control]="form.get('cveEvent')" label="Clave de Evento">
-                        <input type="text" class="form-control" formControlName="idEvent">
-                    </form-field>
-                </div>
-                <div class="col-md-6">  
-                    <form-field [control]="form.get('obsEvent')" label="Observaciones">
-                        <input type="text" class="form-control" formControlName="obsEvent">
-                    </form-field>
-                </div>
-            </div>
-            <div class="row pt-5">
-                <div class="col-md-2">  
-                    <form-field [control]="form.get('place')" label="Lugar">
-                        <input type="text" class="form-control" formControlName="place">
-                    </form-field>
-                </div>
-                <div class="col-md-2">  
-                    <form-field [control]="form.get('eventDate')" label="Fecha de Evento">
-                        <input type="text"
-                               placeholder=""
-                               class="form-control"
-                               bsDatepicker
-                               formControlName="eventDate"
-                               [bsConfig]="{ isAnimated: true }">
-                    </form-field>
-                </div>
-                <div class="col-md-2">  
-                    <form-field [control]="form.get('failureDate')" label="Fecha de fallo">
-                        <input type="text"
-                               placeholder=""
-                               class="form-control"
-                               bsDatepicker
-                               formControlName="failureDate"
-                               [bsConfig]="{ isAnimated: true }">
-                    </form-field>
-                </div>
-                <div class="col-md-2">
-                    <button type="button" class="btn btn-primary btn-sm active">Convertir</button>
-                </div>
-            </div>
-        </form>
+<div class="row">
+  <div class="ch-content">
+    <h5 class="title">Gastos</h5>
+    <div class="row justify-content-end mr-3">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+    </div>
+  </div>
+  <ng2-smart-table class="mt-3" [settings]="settings" [source]="data">
+  </ng2-smart-table>
+</div>
+<br />
+<br />
+<div class="row pt-5">
+  <div class="ch-content">
+    <h5 class="title">Dispersión</h5>
+    <div class="row justify-content-end mr-3">
+      <app-columns-select [(settings)]="settings2"></app-columns-select>
+    </div>
+  </div>
+  <ng2-smart-table class="mt-3" [settings]="settings2" [source]="data2">
+  </ng2-smart-table>
+</div>
 
-        <div class="row">
-            <div class="ch-content">
-                <h5 class="title">Gastos</h5>
-                <div class="row justify-content-end mr-3">
-                <app-columns-select [(settings)]="settings"></app-columns-select>    
-                </div>
-            </div>
-            <ng2-smart-table class="mt-3" 
-                [settings]="settings" 
-                [source]="data">
-            </ng2-smart-table>
-        </div>
-        <br>
-        <br>
-       <div class="row pt-5">
-            <div class="ch-content">
-                <h5 class="title">Dispersión</h5>
-                <div class="row justify-content-end mr-3">
-                <app-columns-select [(settings)]="settings2"></app-columns-select>    
-                </div>
-            </div>
-            <ng2-smart-table class="mt-3"
-                [settings]="settings2" 
-                [source]="data2">
-            </ng2-smart-table>
-       </div>
-
-       
-
-       <div class="row pt-5">
-        <div class="ch-content">
-            <h5 class="title">Conversión total</h5>
-        </div>
-        <div class="col-md-2">
-            <button type="button" class="btn btn-secondary btn-sm active">Calcula</button>
-        </div>
-        <div class="col-md-2">
-            <button type="button" class="btn btn-secondary btn-sm active">Convertir</button>
-        </div>
-        <div class="col-md-2">
-            <button type="button" class="btn btn-secondary btn-sm active">Reporte</button>
-        </div>
-       </div>
-
-
-
-        
+<div class="row pt-5">
+  <div class="ch-content">
+    <h5 class="title">Conversión total</h5>
+  </div>
+  <div class="col-md-2">
+    <button type="button" class="btn btn-secondary btn-sm active">
+      Calcula
+    </button>
+  </div>
+  <div class="col-md-2">
+    <button type="button" class="btn btn-secondary btn-sm active">
+      Convertir
+    </button>
+  </div>
+  <div class="col-md-2">
+    <button type="button" class="btn btn-secondary btn-sm active">
+      Reporte
+    </button>
+  </div>
+</div>

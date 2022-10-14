@@ -6,29 +6,29 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-c-bm-f-edf-c-invoice-status-modal',
   templateUrl: './c-bm-f-edf-c-invoice-status-modal.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CBmFEdfCInvoiceStatusModalComponent extends BasePage implements OnInit {
-
-  form : FormGroup = new FormGroup({});
+export class CBmFEdfCInvoiceStatusModalComponent
+  extends BasePage
+  implements OnInit
+{
+  form: FormGroup = new FormGroup({});
   constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
   }
 
   ngOnInit(): void {
-    this.prepareForm()
+    this.prepareForm();
   }
 
-  private prepareForm(){
+  private prepareForm() {
     this.form = this.fb.group({
       idStatus: ['', [Validators.required]],
       description: ['', [Validators.required]],
-    })
+    });
   }
 
   close() {
     this.modalRef.hide();
   }
-
 }

@@ -9,27 +9,28 @@ import { COLUMNS } from './columns';
 @Component({
   selector: 'app-pa-pdm-asp-c-audience-sirsae-payments',
   templateUrl: './pa-pdm-asp-c-audience-sirsae-payments.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class PaPdmAspCAudienceSirsaePaymentsComponent extends BasePage implements OnInit {
-
-  settings = {...TABLE_SETTINGS};
-  data:any[]=[
+export class PaPdmAspCAudienceSirsaePaymentsComponent
+  extends BasePage
+  implements OnInit
+{
+  settings = { ...TABLE_SETTINGS };
+  data: any[] = [
     {
       user: 'TFARFAN',
       username: 'Tania Beatriz Farfan',
       distributionMail: true,
       noSendMail: false,
-      batchEnable: true
+      batchEnable: true,
     },
     {
       user: 'TFARFAN',
       username: 'Tania Beatriz Farfan',
       distributionMail: true,
       noSendMail: false,
-      batchEnable: true
-    }
+      batchEnable: true,
+    },
   ];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -38,20 +39,17 @@ export class PaPdmAspCAudienceSirsaePaymentsComponent extends BasePage implement
     super();
     this.settings.columns = COLUMNS;
     this.settings.actions.delete = false;
-    this.settings.actions.add = false
-    this.settings.actions.edit = false
-
+    this.settings.actions.add = false;
+    this.settings.actions.edit = false;
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   close() {
     this.modalRef.hide();
   }
 
-  settingsChange($event:any): void {
-    this.settings=$event;
+  settingsChange($event: any): void {
+    this.settings = $event;
   }
-
 }

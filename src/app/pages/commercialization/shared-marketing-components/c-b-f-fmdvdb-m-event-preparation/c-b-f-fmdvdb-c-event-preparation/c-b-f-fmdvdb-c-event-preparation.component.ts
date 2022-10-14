@@ -2,47 +2,46 @@ import { Component, OnInit } from '@angular/core';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { EVENT_PREPARATION_ALLOTMENT_COLUMNS } from './event-preparation-allotment-columns';
-import { BsModalService } from 'ngx-bootstrap/modal'; 
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { SelectEventModalComponent } from '../select-event-modal/select-event-modal.component';
-import { animate, style, transition, trigger } from '@angular/animations'; 
+import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-c-b-f-fmdvdb-c-event-preparation',
   templateUrl: './c-b-f-fmdvdb-c-event-preparation.component.html',
   styles: [
     `
-    .bg-key {
-      background-color: #e3e3e3;
-      border-radius: 8px !important;
-    }
-  `],
+      .bg-key {
+        background-color: #e3e3e3;
+        border-radius: 8px !important;
+      }
+    `,
+  ],
   animations: [
     trigger('OnEventSelected', [
       transition(':enter', [
         style({ opacity: 0 }),
         animate('500ms', style({ opacity: 1 })),
       ]),
-      transition(':leave', [
-        animate('500ms', style({ opacity: 0 }))
-      ])
+      transition(':leave', [animate('500ms', style({ opacity: 0 }))]),
     ]),
-  ]
+  ],
 })
-export class CBFFmdvdbCEventPreparationComponent extends BasePage implements OnInit {
-
+export class CBFFmdvdbCEventPreparationComponent
+  extends BasePage
+  implements OnInit
+{
   event: any = null;
   authKey: string = '';
 
-  settings = {...TABLE_SETTINGS,
-  actions: false};
-  
+  settings = { ...TABLE_SETTINGS, actions: false };
+
   constructor(private modalService: BsModalService) {
     super();
-    this.settings.columns = EVENT_PREPARATION_ALLOTMENT_COLUMNS
+    this.settings.columns = EVENT_PREPARATION_ALLOTMENT_COLUMNS;
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   openModal(context?: Partial<SelectEventModalComponent>) {
     const modalRef = this.modalService.show(SelectEventModalComponent, {
@@ -50,7 +49,7 @@ export class CBFFmdvdbCEventPreparationComponent extends BasePage implements OnI
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    modalRef.content.refresh.subscribe( (next: any) => {
+    modalRef.content.refresh.subscribe((next: any) => {
       if (next) {
         console.log(next);
         this.event = next;
@@ -88,6 +87,5 @@ export class CBFFmdvdbCEventPreparationComponent extends BasePage implements OnI
       idcliente: '1507',
       rfc: 'MOAR670630',
     },
-  ]
-
+  ];
 }

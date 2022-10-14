@@ -8,17 +8,16 @@ import { CBFFmdvdbMEventPreparationRoutingModule } from './c-b-f-fmdvdb-m-event-
 import { CBFFmdvdbCEventPreparationComponent } from './c-b-f-fmdvdb-c-event-preparation/c-b-f-fmdvdb-c-event-preparation.component';
 import { SelectEventModalComponent } from './select-event-modal/select-event-modal.component';
 
-
 @NgModule({
   declarations: [
     CBFFmdvdbCEventPreparationComponent,
-    SelectEventModalComponent
+    SelectEventModalComponent,
   ],
   imports: [
     CommonModule,
     CBFFmdvdbMEventPreparationRoutingModule,
     SharedModule,
-    ModalModule.forChild()
-  ]
+    ModalModule.forChild(),
+  ],
 })
-export class CBFFmdvdbMEventPreparationModule { }
+export class CBFFmdvdbMEventPreparationModule {}

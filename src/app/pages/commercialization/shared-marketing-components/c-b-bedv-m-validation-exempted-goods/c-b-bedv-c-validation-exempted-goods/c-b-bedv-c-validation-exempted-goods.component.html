@@ -1,18 +1,31 @@
 <app-card [header]="true" [footer]="true">
-    <div header>
-        <div class="ch-content">
-            <h5 class="title">Composición de pagos recibidos</h5>
-            <!-- <app-columns-select [(settings)]="settingsCompos"></app-columns-select> -->
-        </div>
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Composición de pagos recibidos</h5>
+      <!-- <app-columns-select [(settings)]="settingsCompos"></app-columns-select> -->
     </div>
+  </div>
 
-    <div body>
-        <ng2-smart-table class="my-table" [settings]="settings" [source]="list"></ng2-smart-table>
-    </div>
-    
-    <div footer>
-        <button type="button" class="btn btn-success btn-sm active" (click)="fileExcel.click()">Insertar vía archivo plano</button>
-            <input type="file" (change)="ReadExcel($event)" name="fileExcel" #fileExcel class="d-none"
-            accept=".xlsx, .xls, .csv, application/vnd.ms-excel"> 
-    </div>
+  <div body>
+    <ng2-smart-table
+      class="my-table"
+      [settings]="settings"
+      [source]="list"></ng2-smart-table>
+  </div>
+
+  <div footer>
+    <button
+      type="button"
+      class="btn btn-success btn-sm active"
+      (click)="fileExcel.click()">
+      Insertar vía archivo plano
+    </button>
+    <input
+      type="file"
+      (change)="ReadExcel($event)"
+      name="fileExcel"
+      #fileExcel
+      class="d-none"
+      accept=".xlsx, .xls, .csv, application/vnd.ms-excel" />
+  </div>
 </app-card>
