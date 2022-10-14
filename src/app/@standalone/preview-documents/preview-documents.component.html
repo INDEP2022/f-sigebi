@@ -4,14 +4,14 @@
   [style.backgroundColor]="config.containerBackgroundColor"
   (wheel)="scrollZoom($event)"
   (dragover)="onDragOver($event)">
-  <img
+  <img *ngIf="documento.type=='img'"
     [src]="documento.urlDoc"
     [ngStyle]="style"
     alt="Image not found..."
     (dragstart)="onDragStart($event)"
     (load)="onLoad()"
     (loadstart)="onLoadStart()"
-    style="min-height: 300px !important" />
+    style="min-height: 500px !important" />
   <div class="spinner-container" *ngIf="loading">
     <div class="spinner"></div>
   </div>
