@@ -75,7 +75,10 @@
         <div class="col-md-3 col-sm-12 col-xs-12">
           <div class="d-flex justify-content-center">
             <div class="m-3">
-              <button type="button" class="btn btn-primary btn-sm active">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                (click)="openQuestion()">
                 &nbsp; Reclasificar &nbsp;
               </button>
             </div>
@@ -95,7 +98,6 @@
       <!--CAN WORK1 TABLE-->
       <div class="row justify-content-end mr-1">
         <div class="ch-content">
-          <h5 class="title">CAN_WORK1</h5>
           <div class="row justify-content-end pt-3 mr-3">
             <app-columns-select
               (settingsChange)="settingsChange($event)"

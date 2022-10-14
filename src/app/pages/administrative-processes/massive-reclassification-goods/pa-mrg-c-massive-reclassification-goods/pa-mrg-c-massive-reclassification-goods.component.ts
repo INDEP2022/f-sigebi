@@ -89,4 +89,19 @@ export class PaMrgCMassiveReclassificationGoodsComponent
   settingsChange($event: any): void {
     this.settings = $event;
   }
+
+  openQuestion() {
+    this.alertQuestion(
+      'question',
+      '¿ Desea cambiar la calsificación de los bienes Seleccionado ?',
+      '',
+      'Cambiar'
+    ).then(resp => {
+      resp.isConfirmed ? this.changeClassification() : undefined;
+    });
+  }
+
+  changeClassification() {
+    console.log('Se cambiaron los datos de forma masiva');
+  }
 }
