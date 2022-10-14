@@ -148,9 +148,13 @@ export class PJAAbandonmentsDeclarationTradesComponent extends BasePage implemen
       fechaOficio: ['', [Validators.required]], //*
       descripcionAsunto: ['', [Validators.required]], //*
       remitente: ['', [Validators.required]], //*
+      // idAsunto: [''], 
       asunto: [''],
+      // idDesahogoAsunto: [''], 
       desahogoAsunto: ['', [Validators.required]], //*
+      // idCiudad: [''], 
       ciudad: ['', [Validators.required]], //*
+      // idEntidadFederativa: [''], 
       entidadFederativa: ['', [Validators.required]], //*
       claveUnica: ['', [Validators.required]], //*
       transferente: ['', [Validators.required]], //*
