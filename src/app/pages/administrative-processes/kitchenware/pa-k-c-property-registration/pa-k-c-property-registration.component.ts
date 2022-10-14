@@ -35,41 +35,11 @@ export class PaKCPropertyRegistrationComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   //Data Table
-  settings = {
-    //selectMode: 'multi',
-    actions: {
-      add: false,
-      edit: false,
-      delete: false,
-    },
-    hideSubHeader: true, //oculta subheaader de filtro
-    noDataMessage: 'No se encontrarón registros',
-    mode: 'external', // ventana externa
-    columns: {
-      kitchenware: {
-        title: 'Menaje',
-        width: '20%',
-        sort: false,
-      },
-      description: {
-        title: 'Descripcion',
-        width: '40%',
-        sort: false,
-      },
-    },
-  };
 
   //Data Table bien padre
   settings1 = {
-    //selectMode: 'multi',
-    actions: {
-      add: false,
-      edit: false,
-      delete: false,
-    },
-    hideSubHeader: true, //oculta subheaader de filtro
-    noDataMessage: 'No se encontrarón registros',
-    mode: 'external', // ventana externa
+    ...this.settings,
+    actions: false,
     columns: {
       numberGood: {
         title: 'No Bien',
@@ -136,6 +106,22 @@ export class PaKCPropertyRegistrationComponent
 
   constructor(private fb: FormBuilder) {
     super();
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: {
+        kitchenware: {
+          title: 'Menaje',
+          width: '20%',
+          sort: false,
+        },
+        description: {
+          title: 'Descripcion',
+          width: '40%',
+          sort: false,
+        },
+      },
+    };
   }
 
   ngOnInit(): void {

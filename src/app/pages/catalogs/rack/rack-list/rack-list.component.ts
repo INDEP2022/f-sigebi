@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { RackService } from 'src/app/core/services/catalogs/rack.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -15,7 +15,6 @@ import { RACK_COLUMNS } from './rack-columns';
   styles: [],
 })
 export class RackListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
   racks: IRack[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

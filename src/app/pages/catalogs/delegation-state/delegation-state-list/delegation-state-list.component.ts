@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDelegationState } from 'src/app/core/models/catalogs/delegation-state.model';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
@@ -16,7 +16,6 @@ import { DELEGATION_STATE_COLUMNS } from './delegation-state-columns';
   styles: [],
 })
 export class DelegationStateListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
   delegationsState: IDelegationState[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

@@ -8,21 +8,17 @@ import { CONTRACTS_COLUMNS } from './contracts-columns';
 @Component({
   selector: 'app-contracts',
   templateUrl: './contracts.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ContractsComponent extends BasePage implements OnInit {
-  settings = { ...TABLE_SETTINGS, actions: false,selectMode: 'multi'};
+  settings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
   data1: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-  constructor()
-  {
+  constructor() {
     super();
     this.settings.columns = CONTRACTS_COLUMNS;
   }
 
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

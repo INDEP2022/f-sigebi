@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ASSETS_DESTRUCTION_COLUMLNS } from './authorization-assets-destruction-columns';
 
 @Component({
@@ -15,15 +14,12 @@ export class PeAdCAuthorizationAssetsDestructionComponent
   extends BasePage
   implements OnInit
 {
-  settings = {
-    ...TABLE_SETTINGS,
-    actions: false,
-  };
   form: FormGroup = new FormGroup({});
 
   constructor(private fb: FormBuilder) {
     super();
     this.settings.columns = ASSETS_DESTRUCTION_COLUMLNS;
+    this.settings.actions = false;
   }
 
   ngOnInit(): void {

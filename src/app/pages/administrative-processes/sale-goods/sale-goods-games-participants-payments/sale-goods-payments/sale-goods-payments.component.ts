@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SALEGOODSPAYMENTS_COLUMNS } from './sale-goods-payments-columns';
@@ -11,13 +11,16 @@ import { SALEGOODSPAYMENTS_COLUMNS } from './sale-goods-payments-columns';
   styles: [],
 })
 export class SaleGoodsPaymentsComponent extends BasePage implements OnInit {
-  settings = { ...TABLE_SETTINGS, actions: false };
   data1: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   constructor() {
     super();
-    this.settings.columns = SALEGOODSPAYMENTS_COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...SALEGOODSPAYMENTS_COLUMNS },
+    };
   }
 
   ngOnInit(): void {}

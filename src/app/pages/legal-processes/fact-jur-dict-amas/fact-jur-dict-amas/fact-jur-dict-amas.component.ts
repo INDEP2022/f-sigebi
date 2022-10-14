@@ -160,9 +160,8 @@ export class FactJurDictAmasComponent
   };
 
   constructor(
-    private fb: FormBuilder
-  ) //  private dialogService: NbDialogService
-  {
+    private fb: FormBuilder //  private dialogService: NbDialogService
+  ) {
     super();
   }
 

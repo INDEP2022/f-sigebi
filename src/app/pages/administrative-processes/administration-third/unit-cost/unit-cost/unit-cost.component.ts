@@ -8,8 +8,7 @@ import { COSTKEY_COLUMNS, VALIDITYCOST_COLUMNS } from './unit-cost-columns';
 @Component({
   selector: 'app-unit-cost',
   templateUrl: './unit-cost.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class UnitCostComponent extends BasePage implements OnInit {
   settings = { ...TABLE_SETTINGS, actions: false };
@@ -20,14 +19,11 @@ export class UnitCostComponent extends BasePage implements OnInit {
   data2: any[] = [];
   params1 = new BehaviorSubject<ListParams>(new ListParams());
   totalItems1: number = 0;
-  constructor()
-  {
+  constructor() {
     super();
     this.settings.columns = COSTKEY_COLUMNS;
     this.settings1.columns = VALIDITYCOST_COLUMNS;
   }
 
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

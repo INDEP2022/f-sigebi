@@ -2,7 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { takeUntil } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IManagement } from 'src/app/core/models/catalogs/management.model';
 import { ManagementService } from 'src/app/core/services/catalogs/management.service';
@@ -16,7 +16,6 @@ import { MANAGEMENT_COLUMNS } from './management-columns';
   styles: [],
 })
 export class ManagementsListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
   paragraphs: IManagement[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
