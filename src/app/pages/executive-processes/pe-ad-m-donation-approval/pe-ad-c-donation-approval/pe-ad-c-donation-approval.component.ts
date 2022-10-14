@@ -3,7 +3,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { DONATION_APPROVAL_COLUMNS } from './donation-approval-columns';
 
 @Component({
@@ -12,16 +12,15 @@ import { DONATION_APPROVAL_COLUMNS } from './donation-approval-columns';
   styles: [],
 })
 export class PeAdCDonationApprovalComponent extends BasePage implements OnInit {
-  settings = {
-    ...TABLE_SETTINGS,
-    actions: false,
-  };
-
   form: FormGroup = new FormGroup({});
 
   constructor(private fb: FormBuilder) {
     super();
-    this.settings.columns = DONATION_APPROVAL_COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...DONATION_APPROVAL_COLUMNS },
+    };
   }
 
   ngOnInit(): void {

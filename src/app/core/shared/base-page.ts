@@ -1,5 +1,8 @@
 import { Component, OnDestroy } from '@angular/core';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import {
+  BsDatepickerConfig,
+  BsDatepickerViewMode,
+} from 'ngx-bootstrap/datepicker';
 import { Subject } from 'rxjs';
 import Swal, {
   SweetAlertIcon,
@@ -41,14 +44,72 @@ class SweetalertModel implements SweetAlertOptions {
     this.buttonsStyling = false;
   }
 }
-
+interface TableSettings {
+  selectMode: string;
+  actions: any;
+  attr: Object;
+  pager: Object;
+  hideSubHeader: boolean;
+  mode: string;
+  edit: Object;
+  delete: Object;
+  columns: Object;
+  noDataMessage: string;
+  selectedRowIndex?: number;
+}
+interface Action {
+  columnTitle: string;
+  position: string;
+  add: boolean;
+  edit: boolean;
+  delete: boolean;
+}
+const TABLE_SETTINGS: TableSettings = {
+  selectMode: '',
+  selectedRowIndex: -1,
+  actions: {
+    columnTitle: 'Acciones',
+    position: 'right',
+    add: true,
+    edit: true,
+    delete: false,
+  },
+  attr: {
+    class: 'table-bordered',
+  },
+  pager: {
+    display: false,
+  },
+  hideSubHeader: true,
+  mode: 'external',
+  edit: {
+    editButtonContent: '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
+  },
+  delete: {
+    deleteButtonContent: '<i class="fa fa-trash text-danger mx-2"></i>',
+    confirmDelete: true,
+  },
+  columns: {},
+  noDataMessage: 'No se encontrarón registros',
+};
 @Component({
   template: '',
 })
 export abstract class BasePage implements OnDestroy {
   loading: boolean = false;
   $unSubscribe = new Subject<void>();
-  constructor() {}
+  minMode: BsDatepickerViewMode = 'day';
+  bsConfig?: Partial<BsDatepickerConfig>;
+  settings = { ...TABLE_SETTINGS };
+
+  constructor() {
+    this.bsConfig = {
+      minMode: this.minMode,
+      isAnimated: true,
+      // minDate: new Date(),
+      // maxDate: new Date(),
+    };
+  }
 
   protected onLoadToast(icon: SweetAlertIcon, title: string, text: string) {
     let sweetalert = new SweetalertModel();

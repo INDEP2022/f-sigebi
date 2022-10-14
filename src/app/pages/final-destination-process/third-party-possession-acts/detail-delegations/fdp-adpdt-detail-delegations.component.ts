@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { BasePage } from 'src/app/core/shared/base-page';
+
 import { DELEGATIONS_COLUMNS } from '../delegations-columns';
 
 @Component({
@@ -8,13 +9,16 @@ import { DELEGATIONS_COLUMNS } from '../delegations-columns';
   templateUrl: './fdp-adpdt-detail-delegations.component.html',
   styles: [],
 })
-export class FdpAdpdtDetailDelegationsComponent implements OnInit {
-  settings = TABLE_SETTINGS;
+export class FdpAdpdtDetailDelegationsComponent
+  extends BasePage
+  implements OnInit
+{
   title?: string = '';
   columns?: typeof DELEGATIONS_COLUMNS;
   data = EXAMPLE_DATA;
 
   constructor(public bsModalRef: BsModalRef) {
+    super();
     Object.assign(this.settings, { actions: false });
   }
 

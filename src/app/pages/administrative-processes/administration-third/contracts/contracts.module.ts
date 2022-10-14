@@ -5,15 +5,8 @@ import { ContractsRoutingModule } from './contracts-routing.module';
 import { ContractsComponent } from './contracts/contracts.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 
-
 @NgModule({
-  declarations: [
-    ContractsComponent
-  ],
-  imports: [
-    CommonModule,
-    ContractsRoutingModule,
-    SharedModule,
-  ]
+  declarations: [ContractsComponent],
+  imports: [CommonModule, ContractsRoutingModule, SharedModule],
 })
-export class ContractsModule { }
+export class ContractsModule {}

@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { APPRAISAL_REGISTRATION_DETAIL_COLUMNS } from './appraisal-registration-detail-columns';
 import { APPRAISAL_REGISTRATION_APPRAISALS_COLUMNS } from './appraisal-registration-appraisals-columns';
 import { APPRAISAL_REGISTRATION_GOODS_COLUMNS } from './appraisal-registration-goods-columns';
@@ -17,15 +16,15 @@ export class CBARdaCAppraisalRegistrationComponent
   implements OnInit
 {
   settings1 = {
-    ...TABLE_SETTINGS,
+    ...this.settings,
     actions: false,
   };
   settings2 = {
-    ...TABLE_SETTINGS,
+    ...this.settings,
     actions: false,
   };
   settings3 = {
-    ...TABLE_SETTINGS,
+    ...this.settings,
     actions: false,
   };
 

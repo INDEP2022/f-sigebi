@@ -15,11 +15,8 @@ import { PaMResquestNumberingChangeRoutingModule } from './pa-m-resquest-numberi
 import { PaRncCResquestNumberingChangeComponent } from './pa-rnc-c-resquest-numbering-change/pa-rnc-c-resquest-numbering-change.component';
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
 
-
 @NgModule({
-  declarations: [
-    PaRncCResquestNumberingChangeComponent
-  ],
+  declarations: [PaRncCResquestNumberingChangeComponent],
   imports: [
     CommonModule,
     SharedModule,
@@ -32,7 +29,7 @@ import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/good
     BsDatepickerModule,
     TabsModule,
     ModalModule.forChild(),
-    GoodsTypesSharedComponent
-  ]
+    GoodsTypesSharedComponent,
+  ],
 })
-export class PaMResquestNumberingChangeModule { }
+export class PaMResquestNumberingChangeModule {}

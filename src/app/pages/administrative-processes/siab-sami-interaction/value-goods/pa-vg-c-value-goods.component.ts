@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { COLUMNS, COLUMNS2 } from './columns';
 
@@ -14,25 +14,22 @@ import { COLUMNS, COLUMNS2 } from './columns';
 export class PaVgCValueGoodsComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
 
-  settings = {
-    ...TABLE_SETTINGS,
-    actions: false,
-  };
   data: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  settings2 = {
-    ...TABLE_SETTINGS,
-    actions: false,
-  };
+  settings2 = { ...this.settings, actions: false };
   data2: any[] = [];
   totalItems2: number = 0;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(private fb: FormBuilder) {
     super();
-    this.settings.columns = COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...COLUMNS },
+    };
     this.settings2.columns = COLUMNS2;
   }
 

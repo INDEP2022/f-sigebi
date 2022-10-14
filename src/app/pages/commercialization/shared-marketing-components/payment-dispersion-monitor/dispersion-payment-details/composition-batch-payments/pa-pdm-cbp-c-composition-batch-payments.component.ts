@@ -3,7 +3,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { COLUMNS } from './columns';
 //Components
@@ -21,11 +21,6 @@ export class PaPdmCbpCCompositionBatchPaymentsComponent
   implements OnInit
 {
   form: FormGroup = new FormGroup({});
-
-  settings = {
-    ...TABLE_SETTINGS,
-    actions: false,
-  };
 
   lastDate: string = '29/08/2022';
   data: any[] = [
@@ -49,8 +44,11 @@ export class PaPdmCbpCCompositionBatchPaymentsComponent
 
   constructor(private modalService: BsModalService, private fb: FormBuilder) {
     super();
-    this.settings.columns = COLUMNS;
-    //this.settings.selectMode='multi';
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...COLUMNS },
+    };
   }
 
   ngOnInit(): void {

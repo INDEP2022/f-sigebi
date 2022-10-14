@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { EVENT_PREPARATION_ALLOTMENT_COLUMNS } from './event-preparation-allotment-columns';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -42,18 +41,19 @@ export class CBFFmdvdbCEventPreparationComponent
   columns: any[] = [];
   totalItems: number = 0;
 
-  settings = { ...TABLE_SETTINGS, 
-    actions: {
-      columnTitle: "Detalles", 
-      add: false,
-      delete: true,
-      position: 'right',
-    }
-  };
-
   constructor(private modalService: BsModalService, private excelService: ExcelService) {
     super();
-    this.settings.columns = EVENT_PREPARATION_ALLOTMENT_COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: {
+        columnTitle: "Detalles", 
+        add: false,
+        delete: true,
+        position: 'right',
+    },
+    columns: {...EVENT_PREPARATION_ALLOTMENT_COLUMNS}
+    }
+    
   }
 
   ngOnInit(): void {}

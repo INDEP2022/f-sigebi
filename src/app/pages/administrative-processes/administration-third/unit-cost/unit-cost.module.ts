@@ -5,15 +5,8 @@ import { UnitCostRoutingModule } from './unit-cost-routing.module';
 import { UnitCostComponent } from './unit-cost/unit-cost.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 
-
 @NgModule({
-  declarations: [
-    UnitCostComponent
-  ],
-  imports: [
-    CommonModule,
-    UnitCostRoutingModule,
-    SharedModule,
-  ]
+  declarations: [UnitCostComponent],
+  imports: [CommonModule, UnitCostRoutingModule, SharedModule],
 })
-export class UnitCostModule { }
+export class UnitCostModule {}

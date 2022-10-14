@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { GOODS_COLUMNS } from './destruction-authorization-management-goods-columns';
@@ -18,23 +18,23 @@ export class PeGdaddCDestructionAuthorizationManagementComponent
   extends BasePage
   implements OnInit
 {
-  settings = {
-    ...TABLE_SETTINGS,
-    actions: false,
-  };
   settings2 = {
-    ...TABLE_SETTINGS,
+    ...this.settings,
     actions: false,
   };
   settings3 = {
-    ...TABLE_SETTINGS,
+    ...this.settings,
     actions: false,
   };
   form: FormGroup = new FormGroup({});
 
   constructor(private fb: FormBuilder) {
     super();
-    this.settings.columns = GOODS_COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...GOODS_COLUMNS },
+    };
     this.settings2.columns = RULINGS_COLUMNS;
     this.settings3.columns = PROCEEDINGS_COLUMNS;
   }

@@ -2,99 +2,99 @@ export const COSTKEY_COLUMNS = {
   noProcess: {
     title: 'N°',
     width: '5%',
-    sort:false
+    sort: false,
   },
   process: {
     title: 'Proceso',
     width: '10%',
-    sort:false
+    sort: false,
   },
   noService: {
     title: 'N°',
     width: '5%',
-    sort:false
+    sort: false,
   },
   service: {
     title: 'Servicio',
     width: '10%',
-    sort:false
+    sort: false,
   },
   noSpecification: {
     title: 'N°',
     width: '5%',
-    sort:false
+    sort: false,
   },
   specification: {
     title: 'Especificación',
     width: '10%',
-    sort:false
+    sort: false,
   },
-  noTurnType:{
+  noTurnType: {
     title: 'N°',
     width: '5%',
-    sort:false
+    sort: false,
   },
-  turnType:{
+  turnType: {
     title: 'Turno/Tipo',
     width: '10%',
-    sort:false
+    sort: false,
   },
-  noVariableCost:{
+  noVariableCost: {
     title: 'N°',
     width: '5%',
-    sort:false
+    sort: false,
   },
-  variableCost:{
+  variableCost: {
     title: 'Variable costo',
     width: '15%',
-    sort:false
+    sort: false,
   },
-  idCost:{
+  idCost: {
     title: 'Id Costo',
     width: '10%',
-    sort:false
-  }
+    sort: false,
+  },
 };
 export const VALIDITYCOST_COLUMNS = {
-  cve:{
+  cve: {
     title: 'CVE',
     width: '5%',
-    sort:false
+    sort: false,
   },
   zone: {
     title: 'Zona',
     width: '15%',
-    sort:false
+    sort: false,
   },
   startDate: {
     title: 'Fecha inicio',
     width: '10%',
-    sort:false
+    sort: false,
   },
 
   finalDate: {
     title: 'Fecha final',
     width: '10%',
-    sort:false
+    sort: false,
   },
   unitCost: {
     title: 'Costo unitario',
     width: '10%',
-    sort:false
+    sort: false,
   },
-  inflammationIndex:{
+  inflammationIndex: {
     title: '% Indice inflamacion',
     width: '10%',
-    sort:false
+    sort: false,
   },
   amount: {
     title: 'Importe',
     width: '10%',
-    sort:false
+    sort: false,
   },
-  vig:{
+  vig: {
     title: 'Vig.',
     width: '5%',
-    sort:false
-  }
+    sort: false,
+  },
 };
