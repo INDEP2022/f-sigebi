@@ -30,6 +30,8 @@ export class CBBedvCValidationExemptedGoodsComponent
 
   ngOnInit(): void {
     this.prepareForm();
+  }
+  private prepareForm() {
     this.form = this.fb.group({
       idEvento: ['', [Validators.required]],
       blackList: ['', [Validators.required]],
@@ -37,7 +39,6 @@ export class CBBedvCValidationExemptedGoodsComponent
       penaltyAmount: ['', [Validators.required]],
     });
   }
-
   list = [
     {
       bien: '791',

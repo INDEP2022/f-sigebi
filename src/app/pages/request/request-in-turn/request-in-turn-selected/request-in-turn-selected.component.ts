@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/ModelForm';
 import { IRequestInTurnSelected } from 'src/app/core/models/catalogs/request-in-turn-selected.model';
@@ -17,7 +16,6 @@ import { TURN_SELECTED_COLUMNS } from './request-in-turn-selected-columns';
 export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
   requestForm: FormGroup;
   title: string = '¿DESEAS TURNAR LAS SOLICITUDES SELECCIONAS?';
-  settings = TABLE_SETTINGS;
   paragraphs: IRequestInTurnSelected[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;

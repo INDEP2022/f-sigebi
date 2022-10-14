@@ -2,10 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, takeUntil } from 'rxjs';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { COLUMNS } from './columns';
 //Provisional Data
@@ -23,10 +21,6 @@ export class PaGspCGlobalServicePaymentComponent
   implements OnInit
 {
   form: FormGroup = new FormGroup({});
-  settings = {
-    ...TABLE_SETTINGS,
-    actions: false,
-  };
 
   data: any[] = data;
 
@@ -44,7 +38,11 @@ export class PaGspCGlobalServicePaymentComponent
     private modalService: BsModalService
   ) {
     super();
-    this.settings.columns = COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: COLUMNS,
+    };
   }
 
   ngOnInit(): void {

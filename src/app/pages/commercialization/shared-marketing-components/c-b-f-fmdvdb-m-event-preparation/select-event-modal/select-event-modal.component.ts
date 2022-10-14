@@ -1,6 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { LIST_EVENT_COLUMNS } from './list-event-columns';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -12,8 +11,6 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
   styles: [],
 })
 export class SelectEventModalComponent extends BasePage implements OnInit {
-  settings = { ...TABLE_SETTINGS, actions: false };
-
   rowSelected: boolean = false;
   selectedRow: any = null;
   columns: any[] = [];
@@ -25,7 +22,11 @@ export class SelectEventModalComponent extends BasePage implements OnInit {
 
   constructor(private modalRef: BsModalRef) {
     super();
-    this.settings.columns = LIST_EVENT_COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: LIST_EVENT_COLUMNS,
+    };
   }
 
   ngOnInit(): void {

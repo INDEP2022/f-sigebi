@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CONTRACTS_COLUMNS } from './contracts-columns';
@@ -11,13 +10,17 @@ import { CONTRACTS_COLUMNS } from './contracts-columns';
   styles: [],
 })
 export class ContractsComponent extends BasePage implements OnInit {
-  settings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
   data1: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   constructor() {
     super();
-    this.settings.columns = CONTRACTS_COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      selectMode: 'multi',
+      columns: CONTRACTS_COLUMNS,
+    };
   }
 
   ngOnInit(): void {}

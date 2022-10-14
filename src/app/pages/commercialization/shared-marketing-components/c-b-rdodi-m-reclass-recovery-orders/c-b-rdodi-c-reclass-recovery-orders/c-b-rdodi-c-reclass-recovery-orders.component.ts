@@ -27,6 +27,8 @@ export class CBRdodiCReclassRecoveryOrdersComponent
 
   ngOnInit(): void {
     this.prepareForm();
+  }
+  private prepareForm() {
     this.form = this.fb.group({
       idOi: [
         '',
@@ -53,7 +55,6 @@ export class CBRdodiCReclassRecoveryOrdersComponent
       idPayment: ['', [Validators.required]],
     });
   }
-
   data = [
     {
       lote: 'lote 1',
