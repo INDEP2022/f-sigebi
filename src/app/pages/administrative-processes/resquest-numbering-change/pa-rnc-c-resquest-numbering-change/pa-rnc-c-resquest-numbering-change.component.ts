@@ -41,81 +41,10 @@ export class PaRncCResquestNumberingChangeComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   //Data Table
-  settings = {
-    //selectMode: 'multi',
-    actions: {
-      add: false,
-      edit: false,
-      delete: false,
-    },
-    hideSubHeader: true, //oculta subheaader de filtro
-    noDataMessage: 'No se encontrarón registros',
-    mode: 'external', // ventana externa
-    columns: {
-      numberGood: {
-        title: 'No Bien',
-        width: '10%',
-        sort: false,
-      },
-      description: {
-        title: 'Descripcion',
-        width: '30%',
-        sort: false,
-      },
-      quantity: {
-        title: 'Cantidad',
-        width: '10%',
-        sort: false,
-      },
-      status: {
-        title: 'Estatus',
-        width: '10%',
-        sort: false,
-      },
-      appraisedVig: {
-        title: 'Avaluó Vig',
-        width: '10%',
-        sort: false,
-      },
-      amount: {
-        title: 'Mon.',
-        width: '10%',
-        sort: false,
-      },
-      totalExpenses: {
-        title: 'Total Gastos',
-        width: '20%',
-        sort: false,
-      },
-      numberFile: {
-        title: 'No Exp.',
-        width: '10%',
-        sort: false,
-      },
-      preliminaryInquiry: {
-        title: 'Averiguacion prev.',
-        width: '40%',
-        sort: false,
-      },
-      causePenal: {
-        title: 'Causa Penal',
-        width: '40%',
-        sort: false,
-      },
-    },
-  };
 
   //Data Table final
   settings1 = {
-    //selectMode: 'multi',
-    actions: {
-      add: false,
-      edit: false,
-      delete: false,
-    },
-    hideSubHeader: true, //oculta subheaader de filtro
-    noDataMessage: 'No se encontrarón registros',
-    mode: 'external', // ventana externa
+    ...this.settings,
     columns: {
       numberGood: {
         title: 'No Bien',
@@ -266,6 +195,62 @@ export class PaRncCResquestNumberingChangeComponent
 
   constructor(private fb: FormBuilder) {
     super();
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: {
+        numberGood: {
+          title: 'No Bien',
+          width: '10%',
+          sort: false,
+        },
+        description: {
+          title: 'Descripcion',
+          width: '30%',
+          sort: false,
+        },
+        quantity: {
+          title: 'Cantidad',
+          width: '10%',
+          sort: false,
+        },
+        status: {
+          title: 'Estatus',
+          width: '10%',
+          sort: false,
+        },
+        appraisedVig: {
+          title: 'Avaluó Vig',
+          width: '10%',
+          sort: false,
+        },
+        amount: {
+          title: 'Mon.',
+          width: '10%',
+          sort: false,
+        },
+        totalExpenses: {
+          title: 'Total Gastos',
+          width: '20%',
+          sort: false,
+        },
+        numberFile: {
+          title: 'No Exp.',
+          width: '10%',
+          sort: false,
+        },
+        preliminaryInquiry: {
+          title: 'Averiguacion prev.',
+          width: '40%',
+          sort: false,
+        },
+        causePenal: {
+          title: 'Causa Penal',
+          width: '40%',
+          sort: false,
+        },
+      },
+    };
   }
 
   ngOnInit(): void {

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRequestInTurn } from 'src/app/core/models/catalogs/request-in-turn.model';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -65,7 +64,6 @@ var ejemplo: IRequestInTurn[] = [
   styles: [],
 })
 export class RequestInTurnListComponent extends BasePage implements OnInit {
-  settings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
   totalItems: number = 0;
   paragraphs: IRequestInTurn[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -74,7 +72,12 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
 
   constructor(private modalService: BsModalService, public fb: FormBuilder) {
     super();
-    this.settings.columns = REQUEST_IN_TURN_COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      selectMode: 'multi',
+      columns: REQUEST_IN_TURN_COLUMNS,
+    };
   }
 
   ngOnInit(): void {
