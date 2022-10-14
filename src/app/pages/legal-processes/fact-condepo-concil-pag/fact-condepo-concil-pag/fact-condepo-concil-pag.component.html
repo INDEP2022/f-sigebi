@@ -1,31 +1,26 @@
-<app-card [header]="true" class="cat-card mt-5"> 
-    <div class="ch-content" header>
-  
-        <div class="row w-100">
-            <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
-                <span class="title">
-                    CONCILIACIÓN DE PAGOS DEPOSITARIAS
-                </span>
-            </div>
-            
-        </div>
-
+<app-card [header]="true" class="cat-card mt-5">
+  <div class="ch-content" header>
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
+        <span class="title"> CONCILIACIÓN DE PAGOS DEPOSITARIAS </span>
+      </div>
     </div>
-  
-    <div body>
+  </div>
 
-        <!-- Forms DEPOSITARIA -->
-        <ngx-form-depositaria [form]="form" [formDepositario]="formDepositario" (formValues)="mostrarInfo($event)"
-        (formDepositariaValues)="mostrarInfoDepositario($event)" [nombrePantalla]="'concil-pag'"
-        ></ngx-form-depositaria>
-        <!-- Forms DEPOSITARIA -->
+  <div body>
+    <!-- Forms DEPOSITARIA -->
+    <ngx-form-depositaria
+      [form]="form"
+      [formDepositario]="formDepositario"
+      (formValues)="mostrarInfo($event)"
+      (formDepositariaValues)="mostrarInfoDepositario($event)"
+      [nombrePantalla]="'concil-pag'"></ngx-form-depositaria>
+    <!-- Forms DEPOSITARIA -->
 
-        <!-- <div class="row w-100">
+    <!-- <div class="row w-100">
             <div class="col-sm-12 col-12 col-md-12 p-2">
                 <ng2-smart-table class="my-table" [settings]="tableFactGenSettings" [source]="dataFactGen"></ng2-smart-table>
             </div>
         </div> -->
-  
-    </div>
-  
-  </app-card>
+  </div>
+</app-card>

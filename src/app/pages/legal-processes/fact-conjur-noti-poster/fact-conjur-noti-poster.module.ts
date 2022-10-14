@@ -20,11 +20,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FactConjurNotiPosterComponent } from './fact-conjur-noti-poster/fact-conjur-noti-poster.component';
 import { SharedLegalProcessModule } from '../shared-legal-process/shared-legal-process.module';
 
-@NgModule({ 
-  declarations: [ 
-    FactConjurNotiPosterComponent,
-    
-  ],
+@NgModule({
+  declarations: [FactConjurNotiPosterComponent],
   imports: [
     CommonModule,
     FactConjurNotiPosterRoutingModule,
@@ -46,14 +43,11 @@ import { SharedLegalProcessModule } from '../shared-legal-process/shared-legal-p
     NgSelectModule,
     SharedModule,
 
-    SharedLegalProcessModule
+    SharedLegalProcessModule,
   ],
-  exports:[
-    
-    // ComponentsModule, 
-    NgSelectModule
-    
-  ]
+  exports: [
+    // ComponentsModule,
+    NgSelectModule,
+  ],
 })
-export class FactConjurNotiPosterModule { }
-
+export class FactConjurNotiPosterModule {}

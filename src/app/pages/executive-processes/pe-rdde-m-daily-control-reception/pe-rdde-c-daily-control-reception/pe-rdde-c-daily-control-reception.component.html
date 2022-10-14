@@ -1,40 +1,44 @@
 <app-card [header]="true" [footer]="true">
-    <div class="ch-content" header>
-      <h5 class="title">CONTROL DIARIO DE RECEPCIÓN DOCUMENTAL</h5>
-     
-    </div>
-  
-    <div body>
-      
-        <form class="form-material" [formGroup]="form">
-            <div class="row">
-                <div class="col-md-4">
-                    <app-delegation-shared [form]="form" [showSubdelegation]="false" > </app-delegation-shared>
-                </div>
-                <div class="col-md-4 mt-3">
-                    <app-delegation-shared [form]="form" [showDelegation]="false" > </app-delegation-shared>
-                </div>
-                <div class="col-md-2 mt-3">
-                    <form-field [control]="form.get('monthYear')" label="Seleccionar mes">
-                        <input type="text"
-                            class="form-control"
-                            [bsConfig]="bsConfig"
-                            #dp="bsDatepicker"
-                            formControlName="monthYear"
-                            bsDatepicker [(bsValue)]="bsValue">
-                    </form-field>
-                </div>
-            </div>
-        </form>
-    </div>
-    <div footer>
-        <div class="d-flex justify-content-center">
-            <div class="m-3">
-                <button type="button" class="btn btn-primary active" [disabled]="!form.valid">
-                  Imprimir
-                </button>
-            </div>
+  <div class="ch-content" header>
+    <h5 class="title">CONTROL DIARIO DE RECEPCIÓN DOCUMENTAL</h5>
+  </div>
+
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-4">
+          <app-delegation-shared [form]="form" [showSubdelegation]="false">
+          </app-delegation-shared>
+        </div>
+        <div class="col-md-4 mt-3">
+          <app-delegation-shared [form]="form" [showDelegation]="false">
+          </app-delegation-shared>
+        </div>
+        <div class="col-md-2 mt-3">
+          <form-field [control]="form.get('monthYear')" label="Seleccionar mes">
+            <input
+              type="text"
+              class="form-control"
+              [bsConfig]="bsConfig"
+              #dp="bsDatepicker"
+              formControlName="monthYear"
+              bsDatepicker
+              [(bsValue)]="bsValue" />
+          </form-field>
         </div>
       </div>
-  </app-card>
-  
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary active"
+          [disabled]="!form.valid">
+          Imprimir
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

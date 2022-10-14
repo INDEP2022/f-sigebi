@@ -12,8 +12,7 @@ import { DOCCOMPENSATIONSAT_COLUMS } from './doc-compensation-sat-columns';
 @Component({
   selector: 'app-doc-compensation-sat-list',
   templateUrl: './doc-compensation-sat-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class DocCompensationSatListComponent extends BasePage implements OnInit {
   

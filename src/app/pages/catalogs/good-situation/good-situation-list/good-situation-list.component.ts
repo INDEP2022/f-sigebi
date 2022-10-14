@@ -62,7 +62,6 @@ export class GoodSituationListComponent extends BasePage implements OnInit {
   }
 
   delete(goodSituation: IGoodSituation) {
-
     this.alertQuestion(
       'warning',
       'Eliminar',

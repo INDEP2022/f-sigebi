@@ -6,12 +6,12 @@ import { CBUpCUnreconciledPaymentComponent } from './unreconciled-payment/c-b-up
 const routes: Routes = [
   {
     path: '',
-    component: CBUpCUnreconciledPaymentComponent
-  }
+    component: CBUpCUnreconciledPaymentComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CBUpMUnreconciledPaymentRoutingModule { }
+export class CBUpMUnreconciledPaymentRoutingModule {}

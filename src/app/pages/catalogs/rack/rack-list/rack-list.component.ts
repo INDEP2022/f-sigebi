@@ -12,8 +12,7 @@ import { RACK_COLUMNS } from './rack-columns';
 @Component({
   selector: 'app-rack-list',
   templateUrl: './rack-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class RackListComponent extends BasePage implements OnInit {
 
@@ -74,5 +73,4 @@ export class RackListComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }

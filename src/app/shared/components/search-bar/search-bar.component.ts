@@ -22,7 +22,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
   selector: 'search-bar',
   template: `
     <div class="form-group form-secondary d-flex">
-      <label class="search-label">{{label}}</label>
+      <label class="search-label">{{ label }}</label>
       <div class="text-search ">
         <input
           type="text"

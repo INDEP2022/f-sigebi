@@ -12,8 +12,7 @@ import { TYPESINISTER_COLUMS } from './type-sinister-columns';
 @Component({
   selector: 'app-type-sinister-list',
   templateUrl: './type-sinister-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class TypeSinisterListComponent extends BasePage implements OnInit {
   

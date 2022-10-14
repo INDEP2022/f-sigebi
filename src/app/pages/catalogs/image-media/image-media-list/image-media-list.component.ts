@@ -12,8 +12,7 @@ import { ImageMediaFormComponent } from '../image-media-form/image-media-form.co
 @Component({
   selector: 'app-image-media-list',
   templateUrl: './image-media-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ImageMediaListComponent extends BasePage implements OnInit {
 
@@ -25,7 +24,7 @@ export class ImageMediaListComponent extends BasePage implements OnInit {
   constructor(
     private imageMediaService: ImageMediaService,
     private modalService: BsModalService
-  ) { 
+  ) {
     super();
     this.settings.columns = IMAGE_MEDIA_COLUMNS;
     this.settings.actions.delete = true;

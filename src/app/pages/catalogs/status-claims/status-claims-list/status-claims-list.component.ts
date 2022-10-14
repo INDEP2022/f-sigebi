@@ -9,12 +9,10 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { StatusClaimsFormComponent } from '../status-claims-form/status-claims-form.component';
 import { STATUSCLAIMS_COLUMS } from './status-claims-columns';
 
-
 @Component({
   selector: 'app-status-claims-list',
   templateUrl: './status-claims-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class StatusClaimsListComponent extends BasePage implements OnInit {
   

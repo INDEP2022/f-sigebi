@@ -7,17 +7,13 @@ import { TypeOrderServiceFormComponent } from './type-order-service-form/type-or
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
-  declarations: [
-    TypeOrderServiceListComponent,
-    TypeOrderServiceFormComponent
-  ],
+  declarations: [TypeOrderServiceListComponent, TypeOrderServiceFormComponent],
   imports: [
     CommonModule,
     SharedModule,
     ModalModule.forChild(),
-    TypeOrderServiceRoutingModule
-  ]
+    TypeOrderServiceRoutingModule,
+  ],
 })
-export class TypeOrderServiceModule { }
+export class TypeOrderServiceModule {}

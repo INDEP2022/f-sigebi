@@ -13,7 +13,6 @@ import { EVENT_COLUMNS } from './event-selection-columns';
 })
 export class EventSelectionModalComponent extends BasePage implements OnInit {
   // tipo any hasta que existan modelos o interfaces de la respuesta del backend
-
   rowSelected: boolean = false;
   selectedRow: any = null;
   columns: any[] = [];

@@ -12,8 +12,7 @@ import { TYPERELEVANT_COLUMS } from './type-relevant-columns';
 @Component({
   selector: 'app-type-relevant-list',
   templateUrl: './type-relevant-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class TypeRelevantListComponent extends BasePage implements OnInit {
   

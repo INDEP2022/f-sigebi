@@ -10,11 +10,10 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { MonitorUnavoidableAssetsParametersComponent } from './monitor-unavoidable-assets-parameters/monitor-unavoidable-assets-parameters.component';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
   declarations: [
     MonitorUnavoidableAssetsComponent,
-    MonitorUnavoidableAssetsParametersComponent
+    MonitorUnavoidableAssetsParametersComponent,
   ],
   imports: [
     CommonModule,
@@ -24,7 +23,6 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     BsDatepickerModule.forRoot(),
     ModalModule.forChild(),
     Ng2SmartTableModule,
-
-  ]
+  ],
 })
-export class MonitorUnavoidableAssetsModule { }
+export class MonitorUnavoidableAssetsModule {}

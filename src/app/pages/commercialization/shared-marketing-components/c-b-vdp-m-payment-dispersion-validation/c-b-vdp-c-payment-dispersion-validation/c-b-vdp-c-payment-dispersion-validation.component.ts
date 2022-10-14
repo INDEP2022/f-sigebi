@@ -10,14 +10,15 @@ import { RECEIVED_COLUMNS } from './payment-dispersion-validation-received-colum
 
 import { ExcelService } from 'src/app/common/services/exportToExcel.service';
 
-
 @Component({
   selector: 'app-c-b-vdp-c-payment-dispersion-validation',
   templateUrl: './c-b-vdp-c-payment-dispersion-validation.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CBVdpCPaymentDispersionValidationComponent extends BasePage implements OnInit {
+export class CBVdpCPaymentDispersionValidationComponent
+  extends BasePage
+  implements OnInit
+{
   settingsLotes = {
     ...this.settings,
     actions: false
@@ -34,14 +35,14 @@ export class CBVdpCPaymentDispersionValidationComponent extends BasePage impleme
     ...this.settings,
     actions: false
   };
-  form: FormGroup = new FormGroup({}); 
+  form: FormGroup = new FormGroup({});
 
-  constructor(private fb: FormBuilder, private excelService:ExcelService) {
+  constructor(private fb: FormBuilder, private excelService: ExcelService) {
     super();
     this.settingsLotes.columns = EVENT_COLUMNS;
     this.settingsBienes.columns = ALLOTMENT_COLUMNS;
     this.settingsPagosBanco.columns = BANK_COLUMNS;
-    this.settingsCompos.columns = RECEIVED_COLUMNS
+    this.settingsCompos.columns = RECEIVED_COLUMNS;
   }
 
   ngOnInit(): void {
@@ -69,26 +70,24 @@ export class CBVdpCPaymentDispersionValidationComponent extends BasePage impleme
       cliente: 'QUCS721008RX4',
       descripcion: 'SENTRA',
       precio: '$16,000.00',
-    }
-  ]
-  exportAsXLSXLotes():void {
+    },
+  ];
+  exportAsXLSXLotes(): void {
     this.excelService.exportAsExcelFile(this.dataLotes, 'lotes_de_evento');
   }
 
-  
   dataBienes = [
     {
       noBien: '78778',
       descripcion: 'VEHICULO DODGE SUBMARIN',
       precio: '$42,000.00',
-      iva: '$5,478.26'      
+      iva: '$5,478.26',
     },
-  ]
+  ];
 
-  exportAsXLSXBienes():void {
+  exportAsXLSXBienes(): void {
     this.excelService.exportAsExcelFile(this.dataBienes, 'bienes_x_lote');
   }
-
 
   dataPagosBanco = [
     {
@@ -98,7 +97,7 @@ export class CBVdpCPaymentDispersionValidationComponent extends BasePage impleme
       referencia: 'L8206340000069067L16',
       deposito: '$21,000.00',
       noOrdenIngreso: '8077',
-      noPago: '14136'  
+      noPago: '14136',
     },
     {
       noMov: '27',
@@ -107,14 +106,13 @@ export class CBVdpCPaymentDispersionValidationComponent extends BasePage impleme
       referencia: 'L8206340000069067L35',
       deposito: '$21,000.00',
       noOrdenIngreso: '8094',
-      noPago: '14154'  
+      noPago: '14154',
     },
-  ]
+  ];
 
-  exportAsXLSXPagosBanco():void {
+  exportAsXLSXPagosBanco(): void {
     this.excelService.exportAsExcelFile(this.dataPagosBanco, 'Pagos_banco');
   }
-
 
   dataCompos = [
     {
@@ -124,7 +122,7 @@ export class CBVdpCPaymentDispersionValidationComponent extends BasePage impleme
       noIva: '$.00',
       transferente: '820634',
       tipo: 'NORMAL',
-      pagoOrigen: '$14136'  
+      pagoOrigen: '$14136',
     },
     {
       referencia: 'G8206340000069067L35',
@@ -133,11 +131,14 @@ export class CBVdpCPaymentDispersionValidationComponent extends BasePage impleme
       noIva: '$.00',
       transferente: '820634',
       tipo: 'NORMAL',
-      pagoOrigen: '$14136'  
+      pagoOrigen: '$14136',
     },
-  ]
+  ];
 
-  exportAsXLSXCompos():void {
-    this.excelService.exportAsExcelFile(this.dataCompos, 'Composicion_pagos_recibidos');
+  exportAsXLSXCompos(): void {
+    this.excelService.exportAsExcelFile(
+      this.dataCompos,
+      'Composicion_pagos_recibidos'
+    );
   }
 }

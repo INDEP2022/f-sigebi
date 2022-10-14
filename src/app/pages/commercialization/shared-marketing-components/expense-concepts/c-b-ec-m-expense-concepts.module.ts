@@ -8,13 +8,7 @@ import { CBEcMPaymentsConceptsRoutingModule } from './c-b-ec-m-expense-concepts-
 import { CBEclCExpenseConceptsListComponent } from './expense-concepts-list/c-b-ecl-c-expense-concepts-list.component';
 
 @NgModule({
-  declarations: [
-    CBEclCExpenseConceptsListComponent
-  ],
-  imports: [
-    CommonModule,
-    CBEcMPaymentsConceptsRoutingModule,
-    SharedModule
-  ]
+  declarations: [CBEclCExpenseConceptsListComponent],
+  imports: [CommonModule, CBEcMPaymentsConceptsRoutingModule, SharedModule],
 })
-export class CBEcMPaymentsConceptsModule { }
+export class CBEcMPaymentsConceptsModule {}

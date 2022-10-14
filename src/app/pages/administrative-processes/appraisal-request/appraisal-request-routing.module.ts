@@ -5,12 +5,12 @@ import { AppraisalRequestComponent } from './appraisal-request.component';
 const routes: Routes = [
   {
     path: '',
-    component: AppraisalRequestComponent
-  }
+    component: AppraisalRequestComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppraisalRequestRoutingModule { }
+export class AppraisalRequestRoutingModule {}

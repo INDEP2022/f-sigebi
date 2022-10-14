@@ -12,8 +12,7 @@ import { MunicipalityFormComponent } from '../municipality-form/municipality-for
 @Component({
   selector: 'app-municipality-list',
   templateUrl: './municipality-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class MunicipalityListComponent extends BasePage implements OnInit {
 
@@ -27,7 +26,7 @@ export class MunicipalityListComponent extends BasePage implements OnInit {
     private modalService: BsModalService
   ) {
     super();
-    this.settings.columns =   MUNICIPALITIES_COLUMNS;
+    this.settings.columns = MUNICIPALITIES_COLUMNS;
     this.settings.actions.delete = true;
   }
 

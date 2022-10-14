@@ -50,6 +50,5 @@ export class PaVcCModalListGoodsComponent extends BasePage implements OnInit {
   }
 
   return() {
-    this.bsModalRef.hide();
   }
 }

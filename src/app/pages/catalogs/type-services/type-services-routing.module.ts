@@ -4,12 +4,13 @@ import { TypeServicesListComponent } from './type-services-list/type-services-li
 
 const routes: Routes = [
   {
-    path:'',component:TypeServicesListComponent
-  }
+    path: '',
+    component: TypeServicesListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class TypeServicesRoutingModule { }
+export class TypeServicesRoutingModule {}

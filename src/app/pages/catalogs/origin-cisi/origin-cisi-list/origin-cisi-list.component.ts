@@ -13,8 +13,7 @@ import { OrignCisiFormComponent } from '../orign-cisi-form/orign-cisi-form.compo
 @Component({
   selector: 'app-origin-cisi-list',
   templateUrl: './origin-cisi-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class OriginCisiListComponent extends BasePage implements OnInit {
 
@@ -75,5 +74,4 @@ export class OriginCisiListComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }

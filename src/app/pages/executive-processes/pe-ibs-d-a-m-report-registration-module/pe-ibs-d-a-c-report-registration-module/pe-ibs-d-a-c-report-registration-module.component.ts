@@ -5,15 +5,13 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-pe-ibs-d-a-c-report-registration-module',
   templateUrl: './pe-ibs-d-a-c-report-registration-module.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PeIbsDACReportRegistrationModuleComponent implements OnInit {
-
-  form: FormGroup = new FormGroup({}); 
+  form: FormGroup = new FormGroup({});
   select = new DefaultSelect();
-  
-  constructor(private fb: FormBuilder) { }
+
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();
@@ -29,8 +27,7 @@ export class PeIbsDACReportRegistrationModuleComponent implements OnInit {
     });
   }
 
-send(){
-  console.log(this.form.value)
-}
-
+  send() {
+    console.log(this.form.value);
+  }
 }

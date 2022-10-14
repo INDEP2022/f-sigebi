@@ -28,17 +28,16 @@ export const declarationsExports: any[] = [
   FormDeclaratoriaComponent,
   FormOficioComponent,
   FormDepositariaComponent,
-  FormFactAbandonosOficioComponent
+  FormFactAbandonosOficioComponent,
 ];
-@NgModule({ 
-  declarations: [ 
+@NgModule({
+  declarations: [
     declarationsExports,
     // FormVolanteExpedienteComponent,
     // FormDeclaratoriaComponent,
     // FormOficioComponent,
     // FormDepositariaComponent,
     // FormFactAbandonosOficioComponent
-    
   ],
   imports: [
     CommonModule,
@@ -60,16 +59,14 @@ export const declarationsExports: any[] = [
     NgSelectModule,
     // NbTabsetModule,
     // NbRadioModule
-    SharedModule
+    SharedModule,
   ],
-  exports:[
+  exports: [
     declarationsExports,
     // FormVolanteExpedienteComponent,
     // FormDeclaratoriaComponent,
     // FormOficioComponent,
     // FormDepositariaComponent
-    
-  ]
+  ],
 })
-export class SharedLegalProcessModule { }
-
+export class SharedLegalProcessModule {}

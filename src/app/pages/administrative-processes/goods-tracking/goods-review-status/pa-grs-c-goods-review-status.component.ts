@@ -9,11 +9,12 @@ import { COLUMNS } from './columns';
 @Component({
   selector: 'app-pa-grs-c-goods-review-status',
   templateUrl: './pa-grs-c-goods-review-status.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class PaGrsCGoodsReviewStatusComponent extends BasePage implements OnInit {
-
+export class PaGrsCGoodsReviewStatusComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
   
   data:any[]=[];
@@ -23,9 +24,6 @@ export class PaGrsCGoodsReviewStatusComponent extends BasePage implements OnInit
   constructor(private fb: FormBuilder) {
     super();
     this.settings.columns = COLUMNS;
-    this.settings.actions.add=false;
-    this.settings.actions.edit=false;
-    this.settings.actions.delete=false;
   }
 
   ngOnInit(): void {
@@ -37,14 +35,13 @@ export class PaGrsCGoodsReviewStatusComponent extends BasePage implements OnInit
 
   private prepareForm(): void {
     this.form = this.fb.group({
-      option: [null, [Validators.required]]
+      option: [null, [Validators.required]],
     });
   }
 
-  showInfo(){
-  }
+  showInfo() {}
 
-  delete(data:any) {
+  delete(data: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -56,8 +53,7 @@ export class PaGrsCGoodsReviewStatusComponent extends BasePage implements OnInit
     });
   }
 
-  settingsChange($event:any): void {
-    this.settings=$event;
+  settingsChange($event: any): void {
+    this.settings = $event;
   }
-
 }

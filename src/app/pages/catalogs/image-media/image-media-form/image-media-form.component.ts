@@ -9,11 +9,9 @@ import { ImageMediaService } from '../../../../core/services/catalogs/image-medi
 @Component({
   selector: 'app-image-media-form',
   templateUrl: './image-media-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ImageMediaFormComponent extends BasePage implements OnInit {
-
   imageMediaForm: FormGroup = new FormGroup({});
   title: string = 'Medio Imagen';
   edit: boolean = false;
@@ -27,7 +25,7 @@ export class ImageMediaFormComponent extends BasePage implements OnInit {
     private imageMediaService: ImageMediaService
   ) {
     super();
-   }
+  }
 
   ngOnInit(): void {
     this.prepareForm();

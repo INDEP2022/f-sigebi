@@ -7,16 +7,13 @@ import { ExcelService } from 'src/app/common/services/exportToExcel.service';
 import { CBACdaMAppraisalConsultationRoutingModule } from './c-b-a-cda-m-appraisal-consultation-routing.module';
 import { CBACdaCAppraisalConsultationComponent } from './c-b-a-cda-c-appraisal-consultation/c-b-a-cda-c-appraisal-consultation.component';
 
-
 @NgModule({
-  declarations: [
-    CBACdaCAppraisalConsultationComponent
-  ],
+  declarations: [CBACdaCAppraisalConsultationComponent],
   imports: [
     CommonModule,
     CBACdaMAppraisalConsultationRoutingModule,
-    SharedModule
+    SharedModule,
   ],
   providers: [ExcelService],
 })
-export class CBACdaMAppraisalConsultationModule { }
+export class CBACdaMAppraisalConsultationModule {}

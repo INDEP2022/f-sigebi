@@ -8,17 +8,16 @@ import { CBmFEdfMInvoiceStatusRoutingModule } from './c-bm-f-edf-m-invoice-statu
 import { CBmFEdfCInvoiceStatusComponent } from './c-bm-f-edf-c-invoice-status/c-bm-f-edf-c-invoice-status.component';
 import { CBmFEdfCInvoiceStatusModalComponent } from './c-bm-f-edf-c-invoice-status-modal/c-bm-f-edf-c-invoice-status-modal.component';
 
-
 @NgModule({
   declarations: [
     CBmFEdfCInvoiceStatusComponent,
-    CBmFEdfCInvoiceStatusModalComponent
+    CBmFEdfCInvoiceStatusModalComponent,
   ],
   imports: [
     CommonModule,
     CBmFEdfMInvoiceStatusRoutingModule,
     SharedModule,
-    ModalModule.forChild()
-  ]
+    ModalModule.forChild(),
+  ],
 })
-export class CBmFEdfMInvoiceStatusModule { }
+export class CBmFEdfMInvoiceStatusModule {}

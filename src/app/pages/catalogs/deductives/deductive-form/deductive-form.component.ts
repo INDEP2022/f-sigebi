@@ -9,8 +9,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-deductive-form',
   templateUrl: './deductive-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class DeductiveFormComponent extends BasePage implements OnInit {
   deductiveForm: ModelForm<IDeductive>;

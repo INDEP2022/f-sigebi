@@ -12,8 +12,7 @@ import { SAVE_VALUES_COLUMNS } from './save-values-columns';
 @Component({
   selector: 'app-save-values-list',
   templateUrl: './save-values-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class SaveValuesListComponent extends BasePage implements OnInit {
 
@@ -21,11 +20,11 @@ export class SaveValuesListComponent extends BasePage implements OnInit {
   paragraphs: ISaveValue[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  
+
   constructor(
     private saveValueService: SaveValueService,
     private modalService: BsModalService
-  ) { 
+  ) {
     super();
     this.settings.columns = SAVE_VALUES_COLUMNS;
     this.settings.actions.delete = true;
@@ -37,7 +36,7 @@ export class SaveValuesListComponent extends BasePage implements OnInit {
       .subscribe(() => this.getSaveValues());
   }
 
-  getSaveValues(){
+  getSaveValues() {
     this.loading = true;
     this.saveValueService.getAll(this.params.getValue()).subscribe({
       next: response => {
@@ -69,13 +68,12 @@ export class SaveValuesListComponent extends BasePage implements OnInit {
       'Eliminar',
       '¿Desea eliminar este registro?'
     ).then(question => {
-      if(question.isConfirmed){
+      if (question.isConfirmed) {
         this.saveValueService.remove(saveValue.cve).subscribe({
           next: data => this.getSaveValues(),
           error: error => (this.loading = false),
         });
       }
     });
-  } 
+  }
 }
-

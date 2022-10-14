@@ -5,12 +5,12 @@ import { CCCaeeoCAuthorizationKeysFormComponent } from './c-c-caeeo-c-authorizat
 const routes: Routes = [
   {
     path: '',
-    component: CCCaeeoCAuthorizationKeysFormComponent
-  }
+    component: CCCaeeoCAuthorizationKeysFormComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CCMAuthorizationKeysOisRoutingModule { }
+export class CCMAuthorizationKeysOisRoutingModule {}

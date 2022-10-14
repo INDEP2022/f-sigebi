@@ -12,8 +12,7 @@ import { TYPESWHAREHOUSE_COLUMS } from './type-wharehouse-columns';
 @Component({
   selector: 'app-type-wharehouse-list',
   templateUrl: './type-wharehouse-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class TypeWharehouseListComponent extends BasePage implements OnInit {
   

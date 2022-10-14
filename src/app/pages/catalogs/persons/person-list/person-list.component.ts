@@ -12,8 +12,7 @@ import { PERSON_COLUMNS } from './person-columns';
 @Component({
   selector: 'app-person-list',
   templateUrl: './person-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PersonListComponent extends BasePage implements OnInit {
 
@@ -74,5 +73,4 @@ export class PersonListComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }

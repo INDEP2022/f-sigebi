@@ -13,8 +13,7 @@ import { IndicatorReportFormComponent } from '../indicator-report-form/indicator
 @Component({
   selector: 'app-indicator-report-list',
   templateUrl: './indicator-report-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class IndicatorReportListComponent extends BasePage implements OnInit {
 
@@ -75,5 +74,4 @@ export class IndicatorReportListComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }

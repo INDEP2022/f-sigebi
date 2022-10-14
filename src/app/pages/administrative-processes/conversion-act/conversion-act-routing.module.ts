@@ -5,17 +5,17 @@ import { ConversionActComponent } from './conversion-act/conversion-act.componen
 
 const routes: Routes = [
   {
-    path:'',
-    component: ConversionActComponent
+    path: '',
+    component: ConversionActComponent,
   },
   {
     path: 'act-detail',
-    component: ConversionActDetailComponent
-  }
+    component: ConversionActDetailComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ConversionActRoutingModule { }
+export class ConversionActRoutingModule {}

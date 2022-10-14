@@ -10,10 +10,12 @@ import { APPRAISAL_REGISTRATION_GOODS_COLUMNS } from './appraisal-registration-g
 @Component({
   selector: 'app-c-b-a-rda-c-appraisal-registration',
   templateUrl: './c-b-a-rda-c-appraisal-registration.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CBARdaCAppraisalRegistrationComponent extends BasePage implements OnInit {
+export class CBARdaCAppraisalRegistrationComponent
+  extends BasePage
+  implements OnInit
+{
   settings1 = {
     ...this.settings,
     actions: false
@@ -26,7 +28,7 @@ export class CBARdaCAppraisalRegistrationComponent extends BasePage implements O
     ...this.settings,
     actions: false
   };
-  
+
   form: FormGroup = new FormGroup({});
   constructor(private fb: FormBuilder) {
     super();
@@ -50,7 +52,6 @@ export class CBARdaCAppraisalRegistrationComponent extends BasePage implements O
       status: ['', [Validators.required]],
       reference: ['', [Validators.required]],
       typeEvent: ['', [Validators.required]],
-
     });
   }
 
@@ -62,7 +63,7 @@ export class CBARdaCAppraisalRegistrationComponent extends BasePage implements O
       valorAvaluo: '$369,553.18',
       descripcion: 'ESCURRIDORES DE PLATOS',
       situacionJuridica: ' ',
-      incidencia: ' '
+      incidencia: ' ',
     },
     {
       noBienes: '3651460',
@@ -70,8 +71,8 @@ export class CBARdaCAppraisalRegistrationComponent extends BasePage implements O
       valorAvaluo: '$440,496.63',
       descripcion: 'ESCURRIDORES DE PLATOS',
       situacionJuridica: ' ',
-      incidencia: ' '
-    }
+      incidencia: ' ',
+    },
   ];
 
   //Datos de prueba de avaluos
@@ -81,7 +82,7 @@ export class CBARdaCAppraisalRegistrationComponent extends BasePage implements O
       claveAvaluo: 'IEV_DIV_186_E21673',
       claveOficio: '77',
       fechaInsert: '10/09/2020',
-    }
+    },
   ];
 
   //Datos de prueba de detalles de avaluo
@@ -105,7 +106,6 @@ export class CBARdaCAppraisalRegistrationComponent extends BasePage implements O
       sub3tipo: 'ARTICULOS',
       sub2tipo: 'REFACCIONES',
       subTipo: 'REFACCIONES',
-    }
+    },
   ];
-
 }

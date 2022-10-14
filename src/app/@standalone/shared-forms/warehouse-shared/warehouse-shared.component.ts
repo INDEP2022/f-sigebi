@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { AbstractControl, FormGroup } from "@angular/forms";
+import { AbstractControl, FormGroup } from '@angular/forms';
 //Rxjs
 import { BehaviorSubject, takeUntil } from 'rxjs';
 //Params
@@ -18,40 +18,42 @@ import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './warehouse-shared.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class WarehouseSharedComponent extends BasePage implements OnInit {
-
   @Input() form: FormGroup;
-  @Input() warehouseField: string = "warehouse";
+  @Input() warehouseField: string = 'warehouse';
 
   @Input() showWarehouse: boolean = true;
 
   warehouses = new DefaultSelect<IWarehouse>();
 
-  get warehouse() {return this.form.get(this.warehouseField);}
+  get warehouse() {
+    return this.form.get(this.warehouseField);
+  }
 
   constructor(private service: WarehouseService) {
-    super()
+    super();
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
-  getWarehouses(params: ListParams) { 
-    this.service.getAll(params).subscribe(data => {
-        this.warehouses = new DefaultSelect(data.data,data.count);
-    },err => {
-      let error = '';
-      if (err.status === 0) {
-        error = 'Revise su conexión de Internet.';
-      } else {
-        error = err.message;
-      }
-      this.onLoadToast('error', 'Error', error);
-
-    }, () => {});
+  getWarehouses(params: ListParams) {
+    this.service.getAll(params).subscribe(
+      data => {
+        this.warehouses = new DefaultSelect(data.data, data.count);
+      },
+      err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          error = err.message;
+        }
+        this.onLoadToast('error', 'Error', error);
+      },
+      () => {}
+    );
   }
 
   onWarehouseChange(type: any) {
@@ -61,11 +63,10 @@ export class WarehouseSharedComponent extends BasePage implements OnInit {
   }
 
   resetFields(fields: AbstractControl[]) {
-    fields.forEach((field) => {
+    fields.forEach(field => {
       //field.setValue(null);
-      field=null;
+      field = null;
     });
     this.form.updateValueAndValidity();
   }
-
 }

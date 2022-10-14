@@ -27,9 +27,6 @@ export class CBRdodiCReclassRecoveryOrdersComponent
 
   ngOnInit(): void {
     this.prepareForm();
-  }
-
-  private prepareForm() {
     this.form = this.fb.group({
       idOi: [
         '',

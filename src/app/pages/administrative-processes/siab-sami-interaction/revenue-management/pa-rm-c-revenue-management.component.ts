@@ -17,12 +17,12 @@ export class PaRmCRevenueManagementComponent
 {
   form: FormGroup = new FormGroup({});
 
-  settings2 = { ...this.settings };
+  settings2 = { ...this.settings, actions: false };
   data2: any[] = [];
   totalItems2: number = 0;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
 
-  settings3 = { ...this.settings };
+  settings3 = { ...this.settings, actions: false };
   data3: any[] = [];
   totalItems3: number = 0;
   params3 = new BehaviorSubject<ListParams>(new ListParams());
@@ -30,14 +30,8 @@ export class PaRmCRevenueManagementComponent
   constructor(private fb: FormBuilder) {
     super();
     this.settings2.columns = COLUMNS2;
-    this.settings2.actions.add = false;
-    this.settings2.actions.edit = false;
-    this.settings2.actions.delete = false;
 
     this.settings3.columns = COLUMNS3;
-    this.settings3.actions.add = false;
-    this.settings3.actions.edit = false;
-    this.settings3.actions.delete = false;
   }
 
   ngOnInit(): void {

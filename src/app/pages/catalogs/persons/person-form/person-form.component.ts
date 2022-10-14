@@ -11,11 +11,9 @@ import { PersonService } from '../../../../core/services/catalogs/person.service
 @Component({
   selector: 'app-person-form',
   templateUrl: './person-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PersonFormComponent extends BasePage implements OnInit {
-
   form: ModelForm<IPerson>;
   title: string = 'Persona';
   edit: boolean = false;
@@ -24,7 +22,7 @@ export class PersonFormComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private personService: PersonService,
+    private personService: PersonService
   ) {
     super();
   }
@@ -87,21 +85,16 @@ export class PersonFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.personService
-      .create(this.form.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.personService.create(this.form.getRawValue()).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   update() {
     this.loading = true;
     this.personService
-      .update(
-        this.person.id,
-        this.form.getRawValue()
-      )
+      .update(this.person.id, this.form.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
@@ -115,5 +108,4 @@ export class PersonFormComponent extends BasePage implements OnInit {
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
-
 }

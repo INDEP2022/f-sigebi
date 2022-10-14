@@ -12,8 +12,7 @@ import { TYPEORDERSERVICE_COLUMS } from './type-order-service-columns';
 @Component({
   selector: 'app-type-order-service-list',
   templateUrl: './type-order-service-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class TypeOrderServiceListComponent extends BasePage implements OnInit {
   

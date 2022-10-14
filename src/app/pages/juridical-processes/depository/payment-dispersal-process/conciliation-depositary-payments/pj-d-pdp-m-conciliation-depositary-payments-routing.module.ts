@@ -10,16 +10,14 @@ import { RouterModule, Routes } from '@angular/router';
 /** COMPONENTS IMPORTS */
 import { PJDPDPConciliationDepositaryPaymentsComponent } from './conciliation-depositary-payments/pj-d-pdp-c-conciliation-depositary-payments.component';
 
-
-
 const routes: Routes = [
-    {
-        path: '',
-        component: PJDPDPConciliationDepositaryPaymentsComponent
-    }
-]
+  {
+    path: '',
+    component: PJDPDPConciliationDepositaryPaymentsComponent,
+  },
+];
 @NgModule({
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule]
-  })
-  export class PJDPDPConciliationDepositaryPaymentsRoutingModule { }
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
+})
+export class PJDPDPConciliationDepositaryPaymentsRoutingModule {}

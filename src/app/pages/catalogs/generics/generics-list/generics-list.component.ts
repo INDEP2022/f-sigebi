@@ -12,8 +12,7 @@ import { GenericsFormComponent } from '../generics-form/generics-form.component'
 @Component({
   selector: 'app-generics-list',
   templateUrl: './generics-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class GenericsListComponent extends BasePage implements OnInit {
 
@@ -75,5 +74,4 @@ export class GenericsListComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }

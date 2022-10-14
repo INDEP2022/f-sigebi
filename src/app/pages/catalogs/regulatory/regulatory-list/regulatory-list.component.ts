@@ -12,8 +12,7 @@ import { REGULATORY_COLUMNS } from './regulatory-columns';
 @Component({
   selector: 'app-regulatory-list',
   templateUrl: './regulatory-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class RegulatoryListComponent extends BasePage implements OnInit {
 
@@ -74,5 +73,4 @@ export class RegulatoryListComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }

@@ -9,11 +9,12 @@ import { COLUMNS } from './columns';
 @Component({
   selector: 'app-pa-mdg-c-missing-damaged-goods',
   templateUrl: './pa-mdg-c-missing-damaged-goods.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class PaMdgCMissingDamagedGoodsComponent extends BasePage implements OnInit {
-
+export class PaMdgCMissingDamagedGoodsComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
   
   data:any[]=[];
@@ -23,9 +24,6 @@ export class PaMdgCMissingDamagedGoodsComponent extends BasePage implements OnIn
   constructor(private fb: FormBuilder) {
     super();
     this.settings.columns = COLUMNS;
-    this.settings.actions.add=false;
-    this.settings.actions.edit=false;
-    this.settings.actions.delete=false;
   }
 
   ngOnInit(): void {
@@ -41,10 +39,9 @@ export class PaMdgCMissingDamagedGoodsComponent extends BasePage implements OnIn
     });
   }
 
-  showInfo(){
-  }
+  showInfo() {}
 
-  delete(data:any) {
+  delete(data: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -56,8 +53,7 @@ export class PaMdgCMissingDamagedGoodsComponent extends BasePage implements OnIn
     });
   }
 
-  settingsChange($event:any): void {
-    this.settings=$event;
+  settingsChange($event: any): void {
+    this.settings = $event;
   }
-
 }

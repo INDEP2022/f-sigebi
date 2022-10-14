@@ -5,12 +5,12 @@ import { PeRddgTddrCReportDocReceivedComponent } from './pe-rddg-tddr-c-report-d
 const routes: Routes = [
   {
     path: '',
-    component: PeRddgTddrCReportDocReceivedComponent
-  }
+    component: PeRddgTddrCReportDocReceivedComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PeRddgTddrMReportDocReceivedRoutingModule { }
+export class PeRddgTddrMReportDocReceivedRoutingModule {}

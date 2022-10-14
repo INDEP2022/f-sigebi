@@ -12,8 +12,7 @@ import { ZONEGEOGRAPHIC_COLUMS } from './zone-geographic-columnc';
 @Component({
   selector: 'app-zone-geographic-list',
   templateUrl: './zone-geographic-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ZoneGeographicListComponent extends BasePage implements OnInit {
   
@@ -73,4 +72,4 @@ export class ZoneGeographicListComponent extends BasePage implements OnInit {
       }
     });
   }
-  }
+}

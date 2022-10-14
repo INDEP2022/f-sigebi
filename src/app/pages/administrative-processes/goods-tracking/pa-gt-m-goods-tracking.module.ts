@@ -11,18 +11,15 @@ import { PaGtMGoodsTrackingRoutingModule } from './pa-gt-m-goods-tracking-routin
 //Components
 import { PaGrsCGoodsReviewStatusComponent } from './goods-review-status/pa-grs-c-goods-review-status.component';
 
-
 @NgModule({
-  declarations: [
-    PaGrsCGoodsReviewStatusComponent
-  ],
+  declarations: [PaGrsCGoodsReviewStatusComponent],
   imports: [
     CommonModule,
     PaGtMGoodsTrackingRoutingModule,
     SharedModule,
     FormsModule,
     ReactiveFormsModule,
-    TabsModule
-  ]
+    TabsModule,
+  ],
 })
-export class PaGtMGoodsTrackingModule { }
+export class PaGtMGoodsTrackingModule {}

@@ -10,10 +10,12 @@ import { EXPENSE_CAPTURE_INCOME_COLUMNS } from './expense-captura-income-columns
 @Component({
   selector: 'app-c-b-ge-cdg-c-expense-capture',
   templateUrl: './c-b-ge-cdg-c-expense-capture.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CBGeCdgCExpenseCaptureComponent extends BasePage implements OnInit {
+export class CBGeCdgCExpenseCaptureComponent
+  extends BasePage
+  implements OnInit
+{
   settings1 = {
     ...this.settings,
     actions: false
@@ -23,15 +25,15 @@ export class CBGeCdgCExpenseCaptureComponent extends BasePage implements OnInit 
     actions: false
   };
 
-  list1 : any;
+  list1: any;
   list2: any;
 
-  form: FormGroup = new FormGroup({}); 
+  form: FormGroup = new FormGroup({});
   ngOnInit(): void {
     this.prepareForm();
   }
 
-  constructor(private fb: FormBuilder){
+  constructor(private fb: FormBuilder) {
     super();
     this.settings1.columns = EXPENSE_CAPTURE_INCOME_COLUMNS;
     this.settings2.columns = EXPENSE_CAPTURE_BILLS_COLUMNS;
@@ -66,7 +68,6 @@ export class CBGeCdgCExpenseCaptureComponent extends BasePage implements OnInit 
       idSol: ['', [Validators.required]],
       dateAdmon: ['', [Validators.required]],
       scanFol: ['', [Validators.required]],
-
     });
   }
 }

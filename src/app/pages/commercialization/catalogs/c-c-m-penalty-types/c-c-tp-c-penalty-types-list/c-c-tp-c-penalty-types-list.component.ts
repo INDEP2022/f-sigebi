@@ -10,11 +10,9 @@ import { CCTpCPenaltyTypesFormComponent } from '../c-c-tp-c-penalty-types-form/c
 @Component({
   selector: 'app-c-c-tp-c-penalty-types-list',
   templateUrl: './c-c-tp-c-penalty-types-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CCTpCPenaltyTypesListComponent extends BasePage implements OnInit {
-
   // tipo any hasta que existan modelos o interfaces de la respuesta del backend
   
   columns: any[] = [];
@@ -26,37 +24,35 @@ export class CCTpCPenaltyTypesListComponent extends BasePage implements OnInit {
       id: 1,
       description: 'NO PAGO EL CLIENTE',
       days: 720,
-      process: 'M'
+      process: 'M',
     },
     {
       id: 2,
       description: 'DOLO',
       days: 1800,
-      process: 'M'
+      process: 'M',
     },
     {
       id: 3,
       description: 'NO RETIRO CLIENTE',
       days: 720,
-      process: 'M'
+      process: 'M',
     },
     {
       id: 4,
       description: 'INCUMPLIMIENTO POR PRIMERA VEZ GARANTIA DE CUMPLIMIENTO',
       days: 30,
-      process: 'A'
+      process: 'A',
     },
     {
       id: 5,
       description: 'INCUMPLIMIENTO POR PRIMERA VEZ EN EL ANTICIPO DE 25%',
       days: 30,
-      process: 'A'
+      process: 'A',
     },
-  ]
+  ];
 
-  constructor(
-    private modalService: BsModalService
-  ) { 
+  constructor(private modalService: BsModalService) {
     super();
     this.settings.columns = PENALTY_TYPE_COLUMNS;
     this.settings.actions.delete = true;
@@ -101,5 +97,4 @@ export class CCTpCPenaltyTypesListComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }

@@ -12,8 +12,7 @@ import { STATUSPROCESS_COLUMS } from './status-process-columns';
 @Component({
   selector: 'app-status-process-list',
   templateUrl: './status-process-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class StatusProcessListComponent extends BasePage implements OnInit {
   

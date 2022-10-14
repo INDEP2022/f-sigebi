@@ -6,12 +6,12 @@ import { PaEFiCSummaryFinancialInfoComponent } from './summary-financial-info/pa
 const routes: Routes = [
   {
     path: '',
-    component: PaEFiCSummaryFinancialInfoComponent
-  }
+    component: PaEFiCSummaryFinancialInfoComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PaEFiMFinancialInfoRoutingModule { }
+export class PaEFiMFinancialInfoRoutingModule {}
