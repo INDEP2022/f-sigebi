@@ -8,41 +8,38 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //Services
-//import { MeasurementUnitsService } from 'src/app/core/services/catalogs/measurement-units.service';
+import { ServiceCatService} from 'src/app/core/services/catalogs/service-cat.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
-import { IRecord } from 'src/app/core/models/administrative-processes/record.model';
-import { recordsData } from './recordsData';
+import { IServiceCat } from 'src/app/core/models/catalogs/service-cat.model';
 
 @Component({
-  selector: 'app-records-shared',
+  selector: 'app-services-shared',
   standalone: true,
   imports: [CommonModule, SharedModule],
-  templateUrl: './records-shared.component.html',
-  styles: [],
+  templateUrl: './services-shared.component.html',
+  styles: [
+  ]
 })
-export class RecordsSharedComponent extends BasePage implements OnInit {
+export class ServicesSharedComponent extends BasePage implements OnInit {
   
   @Input() form: FormGroup;
-  @Input() recordField: string = 'record';
+  @Input() serviceField: string = 'service';
 
-  @Input() showRecords: boolean = true;
+  @Input() showServices: boolean = true;
 
-  records = new DefaultSelect<IRecord>();
+  services = new DefaultSelect<IServiceCat>();
 
-  constructor(/*private service: WarehouseService*/) {
+  constructor(private service: ServiceCatService) {
     super();
   }
 
   ngOnInit(): void {}
 
-  getRecords(params: ListParams) {
-    //Provisional data
-    let data = recordsData;
-    let count = data.length;
-    this.records = new DefaultSelect(data, count);
-    /*this.service.getAll(params).subscribe(data => {
-        this.status = new DefaultSelect(data.data,data.count);
+  getServices(params: ListParams) {
+
+    this.service.getAll(params).subscribe(data => {
+        this.services = new DefaultSelect(data.data,data.count);
       },err => {
         let error = '';
         if (err.status === 0) {
@@ -53,10 +50,10 @@ export class RecordsSharedComponent extends BasePage implements OnInit {
         this.onLoadToast('error', 'Error', error);
 
       }, () => {}
-    );*/
+    );
   }
 
-  onRecordsChange(type: any) {
+  onServicesChange(type: any) {
     this.form.updateValueAndValidity();
   }
 

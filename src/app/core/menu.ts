@@ -208,6 +208,10 @@ export const MENU: IMenuItem[] = [
             label: 'Registro de Pago de Servicios',
             link: '/pages/administrative-processes/services/',
           },
+          {
+            label: 'Solicitud de Pago de Servicios',
+            link: '/pages/administrative-processes/services/request',
+          },
         ],
       },
       /**

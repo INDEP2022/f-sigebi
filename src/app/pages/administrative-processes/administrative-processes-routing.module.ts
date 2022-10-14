@@ -176,9 +176,6 @@ const routes: Routes = [
             .PaMKitchenwareModule,
         data: { title: 'Registro de mensaje del bien' },
       },
-      /**
-       * Seguros **Legaspi**
-       **/
       {
         path: 'appraisal-request',
         loadChildren: async () =>
@@ -228,10 +225,10 @@ const routes: Routes = [
        **/
       {
         path: 'services',
-        loadChildren: () =>
-          import('./services/pa-s-m-services.module').then(
-            m => m.PaSMServicesModule
-          ),
+        loadChildren: async () =>
+          (await import('./services/pa-s-m-services.module'))
+          .PaSMServicesModule,
+          data: { title: 'Servicios' },
       },
       /**
        * Services Pages Legaspi
