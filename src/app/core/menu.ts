@@ -115,6 +115,10 @@ export const MENU: IMenuItem[] = [
         link: '/pages/administrative-processes/sale-goods',
       },
       {
+        label: 'Reclasificación masiva de bienes',
+        link: '/pages/administrative-processes/massive-reclassification-goods',
+      },
+      {
         label: 'Administracion Terceros',
         icon: 'bx-folder',
         subItems: [
