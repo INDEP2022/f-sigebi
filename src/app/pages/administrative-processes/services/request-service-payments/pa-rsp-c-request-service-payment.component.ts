@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { COLUMNS } from './columns';
 //Components
@@ -21,9 +20,6 @@ import { PaRsfCRequestServiceFormComponent } from '../request-service-form/pa-rs
 export class PaRspCRequestServicePaymentComponent extends BasePage implements OnInit{
 
   form: FormGroup = new FormGroup({});
-  settings = {
-    ...TABLE_SETTINGS,
-  };
 
   data: any[] = [
       {
@@ -55,9 +51,11 @@ export class PaRspCRequestServicePaymentComponent extends BasePage implements On
     private modalService: BsModalService
   ) {
     super();
-    this.settings.columns = COLUMNS;
-    this.settings.actions.add = true;
-    this.settings.actions.delete = true;
+    this.settings = {
+      ...this.settings,
+      actions: { add: true, delete: true},
+      columns: COLUMNS,
+    };
   }
 
   ngOnInit(): void {
