@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+//import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { COLUMNS } from './columns';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
@@ -16,9 +16,6 @@ export class PaMrgCMassiveReclassificationGoodsComponent
   extends BasePage
   implements OnInit
 {
-  settings = {
-    ...TABLE_SETTINGS,
-  };
   data: any[] = [
     {
       reclassify: false,
@@ -64,7 +61,7 @@ export class PaMrgCMassiveReclassificationGoodsComponent
   constructor(private fb: FormBuilder, private router: Router) {
     super();
     this.settings.columns = COLUMNS;
-    //this.settings.actions. = false;
+    this.settings.actions = false;
   }
 
   ngOnInit(): void {
@@ -76,7 +73,6 @@ export class PaMrgCMassiveReclassificationGoodsComponent
    * @author:  Alexander Alvarez
    * @since: 27/09/2022
    */
-
   private buildForm() {
     this.form = this.fb.group({
       mode: [null, [Validators.required]],
