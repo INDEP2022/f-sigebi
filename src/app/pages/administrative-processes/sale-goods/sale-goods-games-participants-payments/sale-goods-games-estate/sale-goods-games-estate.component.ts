@@ -11,19 +11,20 @@ import { SALEGOODSGAMESESTATE_COLUMNS } from './sale-goods-games-estate-columns'
 @Component({
   selector: 'app-sale-goods-games-estate',
   templateUrl: './sale-goods-games-estate.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class SaleGoodsGamesEstateComponent extends BasePage implements OnInit {
   estateForm: ModelForm<any>;
-  settings = { ...TABLE_SETTINGS, actions: false };
   data1: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-  constructor(private fb: FormBuilder, private modalRef: BsModalRef)
-  {
+  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
     super();
-    this.settings.columns = SALEGOODSGAMESESTATE_COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...SALEGOODSGAMESESTATE_COLUMNS },
+    };
   }
 
   ngOnInit(): void {

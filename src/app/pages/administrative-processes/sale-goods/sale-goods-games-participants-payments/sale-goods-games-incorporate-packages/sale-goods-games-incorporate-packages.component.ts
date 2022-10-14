@@ -9,22 +9,25 @@ import { SALEGOODSINCORPORATEPACKAGES_COLUMNS } from './sale-goods-games-incorpo
 @Component({
   selector: 'app-sale-goods-games-incorporate-packages',
   templateUrl: './sale-goods-games-incorporate-packages.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class SaleGoodsGamesIncorporatePackagesComponent extends BasePage implements OnInit {
-  settings = { ...TABLE_SETTINGS, actions: false };
+export class SaleGoodsGamesIncorporatePackagesComponent
+  extends BasePage
+  implements OnInit
+{
   data1: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-  constructor(private modalRef: BsModalRef)
-  {
+  constructor(private modalRef: BsModalRef) {
     super();
-    this.settings.columns = SALEGOODSINCORPORATEPACKAGES_COLUMNS;
-   }
-
-  ngOnInit(): void {
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...SALEGOODSINCORPORATEPACKAGES_COLUMNS },
+    };
   }
+
+  ngOnInit(): void {}
   close() {
     this.modalRef.hide();
   }

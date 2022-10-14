@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BasePage } from 'src/app/core/shared/base-page';
 
 import { GOODS_BULK_LOAD_COLUMNS } from './goods-bulk-load-columns';
 
@@ -16,16 +17,15 @@ import { GOODS_BULK_LOAD_COLUMNS } from './goods-bulk-load-columns';
     `,
   ],
 })
-export class DrGoodsBulkLoadComponent implements OnInit {
+export class DrGoodsBulkLoadComponent extends BasePage implements OnInit {
   assetsForm: FormGroup;
-  
   actionsTypes = ACTION_TYPES;
-
   get bulkId() {
     return this.assetsForm.get('idCarga');
   }
 
   constructor(private fb: FormBuilder) {
+    super();
     this.settings.columns = GOODS_BULK_LOAD_COLUMNS;
   }
 

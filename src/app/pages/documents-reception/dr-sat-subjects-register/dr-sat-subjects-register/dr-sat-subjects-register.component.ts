@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { BasePage } from 'src/app/core/shared/base-page';
 
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
@@ -12,15 +13,17 @@ import {
   templateUrl: './dr-sat-subjects-register.component.html',
   styles: [],
 })
-export class DrSatSubjectsRegisterComponent implements OnInit {
+export class DrSatSubjectsRegisterComponent extends BasePage implements OnInit {
   satForm: FormGroup;
-  mailboxSettings = { ...TABLE_SETTINGS };
-  transfersSettings = { ...TABLE_SETTINGS };
+  mailboxSettings = {
+    ...this.settings,
+    columns: SAT_PAPERWORK_MAILBOX_COLUMNS,
+  };
+  transfersSettings = { ...this.settings, columns: SAT_TRANSFER_COLUMNS };
   cordinators = new DefaultSelect();
 
   constructor(private fb: FormBuilder) {
-    this.mailboxSettings.columns = SAT_PAPERWORK_MAILBOX_COLUMNS;
-    this.transfersSettings.columns = SAT_TRANSFER_COLUMNS;
+    super();
   }
 
   ngOnInit(): void {

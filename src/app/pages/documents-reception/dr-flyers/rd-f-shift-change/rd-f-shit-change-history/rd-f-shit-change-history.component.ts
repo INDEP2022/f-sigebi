@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BasePage } from 'src/app/core/shared/base-page';
 
 import { SHIFT_CHANGE_HISTORY_COLUMNS } from './shift-change-history-columns';
 
@@ -14,10 +15,9 @@ import { SHIFT_CHANGE_HISTORY_COLUMNS } from './shift-change-history-columns';
     `,
   ],
 })
-export class RdFShitChangeHistoryComponent implements OnInit {
-  
-
+export class RdFShitChangeHistoryComponent extends BasePage implements OnInit {
   constructor(private modalRef: BsModalRef) {
+    super();
     this.settings.columns = SHIFT_CHANGE_HISTORY_COLUMNS;
   }
 

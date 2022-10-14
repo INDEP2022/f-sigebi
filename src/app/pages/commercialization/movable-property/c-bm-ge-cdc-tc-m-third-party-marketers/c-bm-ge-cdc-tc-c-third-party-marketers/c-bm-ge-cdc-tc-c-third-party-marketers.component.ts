@@ -14,15 +14,15 @@ import { THIRD_PARTY_MARKETERS2_COLUMNS } from './third-party-marketers2-columns
 })
 export class CBmGeCdcTcCThirdPartyMarketersComponent extends BasePage implements OnInit {
   settings1 = {
-    ...TABLE_SETTINGS,
+    ...this.settings,
     actions: false
   };
   settings2 = {
-    ...TABLE_SETTINGS,
+    ...this.settings,
     actions: false
   };
   settings3 = {
-    ...TABLE_SETTINGS,
+    ...this.settings,
     actions: false
   };
 

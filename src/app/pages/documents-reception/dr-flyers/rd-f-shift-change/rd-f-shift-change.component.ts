@@ -18,12 +18,16 @@ import {
 })
 export class RdFShiftChangeComponent extends BasePage implements OnInit {
   turnForm: FormGroup;
-  settings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
   atentions = new DefaultSelect();
   data = SHIFT_CHANGE_EXAMPLE_DATA;
   constructor(private fb: FormBuilder, private modalService: BsModalService) {
     super();
-    this.settings.columns = SHIFT_CHANGE_COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      selectMode: 'multi',
+      columns: { ...SHIFT_CHANGE_COLUMNS },
+    };
   }
 
   ngOnInit(): void {

@@ -11,48 +11,44 @@ import { PaPdmAspCAudienceSirsaePaymentsComponent } from '../../dispersion-payme
 import { PaPdmOwobCOrderWOBillingComponent } from '../../dispersion-payment-details/order-w-o-billing-audience/pa-pdm-owob-c-order-w-o-billing.component';
 import { PaPdmSpCSirsaePaymentsComponent } from '../../dispersion-payment-details/sirsae-payments/pa-pdm-sp-c-sirsae-payments.component';
 
-
 @Component({
   selector: 'app-pa-pdm-cbp-c-composition-batch-payments',
   templateUrl: './pa-pdm-cbp-c-composition-batch-payments.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class PaPdmCbpCCompositionBatchPaymentsComponent extends BasePage implements OnInit {
-
+export class PaPdmCbpCCompositionBatchPaymentsComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
 
-  settings = {
-    ...TABLE_SETTINGS,
-    actions: false
-  };
-
-  lastDate:string='29/08/2022';
-  data:any[]=[
+  lastDate: string = '29/08/2022';
+  data: any[] = [
     {
       batch: '1008',
       customerTaxId: 'ACM030407M3A',
-      description:'Vehículo apto para circulación',
+      description: 'Vehículo apto para circulación',
       status: 'VEND',
       warranty: 180000,
       advance: 50000,
       address: 'KM 1.0 Carr',
-    }
+    },
   ];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  definitive:boolean = false;
+  definitive: boolean = false;
   total: number = 105666395.52;
-  warranty: number = 0.00;
+  warranty: number = 0.0;
   amountL: number = 633983.31;
 
-  constructor(
-    private modalService: BsModalService,
-    private fb: FormBuilder) {
+  constructor(private modalService: BsModalService, private fb: FormBuilder) {
     super();
-    this.settings.columns = COLUMNS;
-    //this.settings.selectMode='multi';
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...COLUMNS },
+    };
   }
 
   ngOnInit(): void {
@@ -61,7 +57,7 @@ export class PaPdmCbpCCompositionBatchPaymentsComponent extends BasePage impleme
 
   private prepareForm(): void {
     this.form = this.fb.group({
-      option: [null]
+      option: [null],
     });
   }
 
@@ -69,13 +65,13 @@ export class PaPdmCbpCCompositionBatchPaymentsComponent extends BasePage impleme
     //this.openModal();
   }
 
-  edit(data:any) {
+  edit(data: any) {
     //console.log(data)
     //this.openModal({ edit: true, paragraph });
   }
 
-  delete(data:any) {
-    console.log(data)
+  delete(data: any) {
+    console.log(data);
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -87,16 +83,15 @@ export class PaPdmCbpCCompositionBatchPaymentsComponent extends BasePage impleme
     });
   }
 
-  settingsChange($event:any): void {
-    this.settings=$event;
+  settingsChange($event: any): void {
+    this.settings = $event;
   }
 
-  definitiveChange($event:any): void {
+  definitiveChange($event: any): void {
     //console.log(this.definitive)
   }
 
   sirsaePayment(): void {
-
     const modalRef = this.modalService.show(PaPdmSpCSirsaePaymentsComponent, {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -104,10 +99,13 @@ export class PaPdmCbpCCompositionBatchPaymentsComponent extends BasePage impleme
   }
 
   audienceSirsae(): void {
-    const modalRef = this.modalService.show(PaPdmAspCAudienceSirsaePaymentsComponent, {
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
+    const modalRef = this.modalService.show(
+      PaPdmAspCAudienceSirsaePaymentsComponent,
+      {
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
   }
 
   audienceSirsaeOrderWOBilling(): void {
@@ -116,5 +114,4 @@ export class PaPdmCbpCCompositionBatchPaymentsComponent extends BasePage impleme
       ignoreBackdropClick: true,
     });
   }
-
 }

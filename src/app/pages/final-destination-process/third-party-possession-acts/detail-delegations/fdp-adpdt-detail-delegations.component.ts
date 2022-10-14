@@ -1,51 +1,51 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { BsModalRef} from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BasePage } from 'src/app/core/shared/base-page';
 
 import { DELEGATIONS_COLUMNS } from '../delegations-columns';
 
 @Component({
   selector: 'app-fdp-adpdt-detail-delegations',
   templateUrl: './fdp-adpdt-detail-delegations.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class FdpAdpdtDetailDelegationsComponent implements OnInit {
-  
+export class FdpAdpdtDetailDelegationsComponent
+  extends BasePage
+  implements OnInit
+{
   title?: string = '';
   columns?: typeof DELEGATIONS_COLUMNS;
   data = EXAMPLE_DATA;
-  
-  constructor(
-    public bsModalRef: BsModalRef
-  ) {
-    Object.assign( this.settings, {actions: false} );
+
+  constructor(public bsModalRef: BsModalRef) {
+    super();
+    Object.assign(this.settings, { actions: false });
   }
 
   ngOnInit(): void {
     this.settings.columns = this.columns;
   }
-  
-  selected( e:any ){
-    console.log( e )
-  }
 
+  selected(e: any) {
+    console.log(e);
+  }
 }
 
 const EXAMPLE_DATA = [
   {
     id: '5',
-    description: "RPA",
+    description: 'RPA',
   },
   {
     id: '5',
-    description: "RPA",
+    description: 'RPA',
   },
   {
     id: '5',
-    description: "RPA",
+    description: 'RPA',
   },
   {
     id: '5',
-    description: "RPA",
+    description: 'RPA',
   },
 ];

@@ -19,19 +19,19 @@ import { ExcelService } from 'src/app/common/services/exportToExcel.service';
 })
 export class CBVdpCPaymentDispersionValidationComponent extends BasePage implements OnInit {
   settingsLotes = {
-    ...TABLE_SETTINGS,
+    ...this.settings,
     actions: false
   };
   settingsBienes = {
-    ...TABLE_SETTINGS,
+    ...this.settings,
     actions: false
   };
   settingsPagosBanco = {
-    ...TABLE_SETTINGS,
+    ...this.settings,
     actions: false
   };
   settingsCompos = {
-    ...TABLE_SETTINGS,
+    ...this.settings,
     actions: false
   };
   form: FormGroup = new FormGroup({}); 

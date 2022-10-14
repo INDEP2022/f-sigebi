@@ -10,24 +10,25 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 @Component({
   selector: 'app-c-b-ge-can-c-numeraire-conversion-auctions',
   templateUrl: './c-b-ge-can-c-numeraire-conversion-auctions.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CBGeCanCNumeraireConversionAuctionsComponent extends BasePage implements OnInit {
-  
-  settings = {
-    ...TABLE_SETTINGS,
-    actions: false
-  };
+export class CBGeCanCNumeraireConversionAuctionsComponent
+  extends BasePage
+  implements OnInit
+{
   settings2 = {
-    ...TABLE_SETTINGS,
-    actions: false
+    ...this.settings,
+    actions: false,
   };
-  form: FormGroup = new FormGroup({}); 
+  form: FormGroup = new FormGroup({});
 
   constructor(private fb: FormBuilder) {
     super();
-    this.settings.columns =  BILLS_COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...BILLS_COLUMNS },
+    };
 
     this.settings2.columns = DISPERSION_COLUMNS;
   }
@@ -48,25 +49,23 @@ export class CBGeCanCNumeraireConversionAuctionsComponent extends BasePage imple
     });
   }
 
-
- data = [
-  {
-    idGasto: '159',
-    descrIdGasto: 'Gastos 159',
-    monto: ' 132564',
-    solPago: '147',
-    mandato: 'mandato 1',
-    total: '132711',
-  }
- ]
-data2 = [
-  {
-    noBien: '147',
-    monto: '7894',
-    partConver: 'mxn',
-    solPago: '147',
-    fecha: '31-05-2020',
-  }
- ]
-
+  data = [
+    {
+      idGasto: '159',
+      descrIdGasto: 'Gastos 159',
+      monto: ' 132564',
+      solPago: '147',
+      mandato: 'mandato 1',
+      total: '132711',
+    },
+  ];
+  data2 = [
+    {
+      noBien: '147',
+      monto: '7894',
+      partConver: 'mxn',
+      solPago: '147',
+      fecha: '31-05-2020',
+    },
+  ];
 }

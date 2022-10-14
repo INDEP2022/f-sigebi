@@ -25,13 +25,16 @@ import {
 })
 export class RdFRelatedDocumentsComponent extends BasePage implements OnInit {
   managementForm: FormGroup;
-  settings = { ...TABLE_SETTINGS, actions: false };
   select = new DefaultSelect();
   data = RELATED_DOCUMENTS_EXAMPLE_DATA;
   params = new BehaviorSubject<ListParams>(new ListParams());
   constructor(private fb: FormBuilder) {
     super();
-    this.settings.columns = RELATED_DOCUMENTS_COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...RELATED_DOCUMENTS_COLUMNS },
+    };
   }
 
   ngOnInit(): void {

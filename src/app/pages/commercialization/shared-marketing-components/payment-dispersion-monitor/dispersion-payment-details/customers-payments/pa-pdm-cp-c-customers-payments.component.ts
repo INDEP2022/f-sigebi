@@ -8,41 +8,41 @@ import { COLUMNS } from './columns';
 @Component({
   selector: 'app-pa-pdm-cp-c-customers-payments',
   templateUrl: './pa-pdm-cp-c-customers-payments.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class PaPdmCpCCustomersPaymentsComponent extends BasePage implements OnInit {
-
-  settings = {
-    ...TABLE_SETTINGS,
-    actions: false
-  };
-  data:any[]=[];
+export class PaPdmCpCCustomersPaymentsComponent
+  extends BasePage
+  implements OnInit
+{
+  data: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  amountV: number= 0.00;
-  total: number= 10566395.52;
+  amountV: number = 0.0;
+  total: number = 10566395.52;
 
   constructor() {
     super();
-    this.settings.columns = COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...COLUMNS },
+    };
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   add() {
     //this.openModal();
   }
 
-  edit(data:any) {
+  edit(data: any) {
     //console.log(data)
     //this.openModal({ edit: true, paragraph });
   }
 
-  delete(data:any) {
-    console.log(data)
+  delete(data: any) {
+    console.log(data);
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -54,8 +54,7 @@ export class PaPdmCpCCustomersPaymentsComponent extends BasePage implements OnIn
     });
   }
 
-  settingsChange($event:any): void {
-    this.settings=$event;
+  settingsChange($event: any): void {
+    this.settings = $event;
   }
-
 }

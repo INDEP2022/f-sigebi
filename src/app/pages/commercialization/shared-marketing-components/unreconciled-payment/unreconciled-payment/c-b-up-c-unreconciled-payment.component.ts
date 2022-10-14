@@ -9,23 +9,24 @@ import { COLUMNS } from './columns';
 @Component({
   selector: 'app-c-b-up-c-unreconciled-payment',
   templateUrl: './c-b-up-c-unreconciled-payment.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CBUpCUnreconciledPaymentComponent extends BasePage implements OnInit {
-
-  settings = {
-    ...TABLE_SETTINGS,
-    actions: false
-  };
+export class CBUpCUnreconciledPaymentComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
-  data:any[]=[];
+  data: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(private fb: FormBuilder) {
     super();
-    this.settings.columns = COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...COLUMNS },
+    };
   }
 
   ngOnInit(): void {
@@ -34,9 +35,7 @@ export class CBUpCUnreconciledPaymentComponent extends BasePage implements OnIni
       .subscribe(() => this.getExample());*/
   }
 
-
-  settingsChange($event:any): void {
-    this.settings=$event;
+  settingsChange($event: any): void {
+    this.settings = $event;
   }
-
 }

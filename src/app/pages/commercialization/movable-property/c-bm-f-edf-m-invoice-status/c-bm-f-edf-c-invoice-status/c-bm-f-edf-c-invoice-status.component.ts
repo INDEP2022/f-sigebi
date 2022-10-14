@@ -8,55 +8,50 @@ import { CBmFEdfCInvoiceStatusModalComponent } from '../c-bm-f-edf-c-invoice-sta
 @Component({
   selector: 'app-c-bm-f-edf-c-invoice-status',
   templateUrl: './c-bm-f-edf-c-invoice-status.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CBmFEdfCInvoiceStatusComponent extends BasePage implements OnInit {
-
-  settings = {
-    ...TABLE_SETTINGS,
-    actions: {
-      edit : true,
-      delete: false,
-      position: 'right'
-    }
-  };
-  constructor(private modalService: BsModalService) { 
+  constructor(private modalService: BsModalService) {
     super();
-    this.settings.columns = INVOICE_STATUS_COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: {
+        edit: true,
+        delete: false,
+        position: 'right',
+      },
+      columns: { ...INVOICE_STATUS_COLUMNS },
+    };
   }
 
-  ngOnInit(): void {
-
-  }
+  ngOnInit(): void {}
 
   openModal(): void {
-
-    const modalRef = this.modalService.show(CBmFEdfCInvoiceStatusModalComponent, {
-      
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-
+    const modalRef = this.modalService.show(
+      CBmFEdfCInvoiceStatusModalComponent,
+      {
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
   }
 
   data = [
     {
-      id: "CER",
-      descripcion: "Documento cerrado se terminó su función",
+      id: 'CER',
+      descripcion: 'Documento cerrado se terminó su función',
     },
     {
-      id: "CEDI",
-      descripcion: "Documento en espera de timbrado",
+      id: 'CEDI',
+      descripcion: 'Documento en espera de timbrado',
     },
     {
-      id: "ACT",
-      descripcion: "Documento Activo",
+      id: 'ACT',
+      descripcion: 'Documento Activo',
     },
     {
-      id: "FOL",
-      descripcion: "Documento foliado",
+      id: 'FOL',
+      descripcion: 'Documento foliado',
     },
   ];
-
 }

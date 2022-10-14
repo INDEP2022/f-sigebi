@@ -14,7 +14,6 @@ import { COLUMNS } from './columns';
 })
 export class PaPdmAspCAudienceSirsaePaymentsComponent extends BasePage implements OnInit {
 
-  settings = {...TABLE_SETTINGS};
   data:any[]=[
     {
       user: 'TFARFAN',

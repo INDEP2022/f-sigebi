@@ -9,20 +9,19 @@ import { DONATION_APPROVAL_COLUMNS } from './donation-approval-columns';
 @Component({
   selector: 'app-pe-ad-c-donation-approval',
   templateUrl: './pe-ad-c-donation-approval.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PeAdCDonationApprovalComponent extends BasePage implements OnInit {
-  settings = {
-    ...TABLE_SETTINGS,
-    actions: false
-  };
 
-  form: FormGroup = new FormGroup({}); 
+  form: FormGroup = new FormGroup({});
 
   constructor(private fb: FormBuilder) {
     super();
-    this.settings.columns = DONATION_APPROVAL_COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...DONATION_APPROVAL_COLUMNS },
+    };
   }
 
   ngOnInit(): void {
@@ -31,7 +30,15 @@ export class PeAdCDonationApprovalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      idExp: ['', [Validators.required, Validators.maxLength(10), Validators.minLength(1), Validators.pattern(NUMBERS_PATTERN)]],
+      idExp: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(10),
+          Validators.minLength(1),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
       preInquiry: ['', [Validators.required]],
       criminalCase: ['', [Validators.required]],
       circumstAct: ['', [Validators.required]],
@@ -42,30 +49,28 @@ export class PeAdCDonationApprovalComponent extends BasePage implements OnInit {
   data = [
     {
       noBien: 1448,
-      description: "CUARENTA Y DOS CHAMARRAS",
-      ubiExact: "ALMACEN",
-      direction: "PROLONGACIÓN MORELOS",
-      status: "ADE",
-      extraDom: "DECOMISO",
+      description: 'CUARENTA Y DOS CHAMARRAS',
+      ubiExact: 'ALMACEN',
+      direction: 'PROLONGACIÓN MORELOS',
+      status: 'ADE',
+      extraDom: 'DECOMISO',
     },
     {
       noBien: 1449,
-      description: "SETENTA Y DOS CELULARES",
-      ubiExact: "ALMACEN",
-      direction: "PROLONGACIÓN MORELOS",
-      status: "ADE",
-      extraDom: "DECOMISO",
+      description: 'SETENTA Y DOS CELULARES',
+      ubiExact: 'ALMACEN',
+      direction: 'PROLONGACIÓN MORELOS',
+      status: 'ADE',
+      extraDom: 'DECOMISO',
     },
     {
       noBien: 1450,
-      description: "CUARENTA Y TRES CABLES USB",
-      ubiExact: "ALMACEN",
-      direction: "PROLONGACIÓN MORELOS",
+      description: 'CUARENTA Y TRES CABLES USB',
+      ubiExact: 'ALMACEN',
+      direction: 'PROLONGACIÓN MORELOS',
 
-      status: "ADE",
-      extraDom: "DECOMISO",
+      status: 'ADE',
+      extraDom: 'DECOMISO',
     },
   ];
-
-
 }

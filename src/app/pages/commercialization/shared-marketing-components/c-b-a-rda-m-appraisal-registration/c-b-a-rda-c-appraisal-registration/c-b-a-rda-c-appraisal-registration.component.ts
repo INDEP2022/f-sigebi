@@ -15,15 +15,15 @@ import { APPRAISAL_REGISTRATION_GOODS_COLUMNS } from './appraisal-registration-g
 })
 export class CBARdaCAppraisalRegistrationComponent extends BasePage implements OnInit {
   settings1 = {
-    ...TABLE_SETTINGS,
+    ...this.settings,
     actions: false
   };
   settings2 = {
-    ...TABLE_SETTINGS,
+    ...this.settings,
     actions: false
   };
   settings3 = {
-    ...TABLE_SETTINGS,
+    ...this.settings,
     actions: false
   };
   

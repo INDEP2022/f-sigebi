@@ -9,31 +9,31 @@ import { COLUMNS } from './columns';
 @Component({
   selector: 'app-c-b-epc-c-event-permission-control',
   templateUrl: './c-b-epc-c-event-permission-control.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CBEpcCEventPermissionControlComponent extends BasePage implements OnInit {
-
+export class CBEpcCEventPermissionControlComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
 
-  settings = {
-    ...TABLE_SETTINGS,
-    actions: false
-  };
-
-  data:any[]=[
+  data: any[] = [
     {
       user: 'RONOFRE',
       username: 'Rodolfo No Fre',
-      date: '19-Feb-2022'
-    }
+      date: '19-Feb-2022',
+    },
   ];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(private fb: FormBuilder) {
     super();
-    this.settings.columns = COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...COLUMNS },
+    };
   }
 
   ngOnInit(): void {
@@ -47,7 +47,7 @@ export class CBEpcCEventPermissionControlComponent extends BasePage implements O
     this.form = this.fb.group({
       event: [null, [Validators.required]],
       user: [null, [Validators.required]],
-      area: [null, [Validators.required]]
+      area: [null, [Validators.required]],
     });
   }
 
@@ -55,13 +55,13 @@ export class CBEpcCEventPermissionControlComponent extends BasePage implements O
     //this.openModal();
   }
 
-  edit(data:any) {
+  edit(data: any) {
     //console.log(data)
     //this.openModal({ edit: true, paragraph });
   }
 
-  delete(data:any) {
-    console.log(data)
+  delete(data: any) {
+    console.log(data);
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -73,8 +73,7 @@ export class CBEpcCEventPermissionControlComponent extends BasePage implements O
     });
   }
 
-  settingsChange($event:any): void {
-    this.settings=$event;
+  settingsChange($event: any): void {
+    this.settings = $event;
   }
-
 }

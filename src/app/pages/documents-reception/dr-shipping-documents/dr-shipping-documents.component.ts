@@ -15,13 +15,16 @@ import {
 })
 export class DrShippingDocumentsComponent extends BasePage implements OnInit {
   documentsForm: FormGroup;
-  settings = { ...TABLE_SETTINGS, actions: false };
   select = new DefaultSelect();
   data = SHIPPING_DOCUMENTS_EXAMPLE_DATA;
 
   constructor(private fb: FormBuilder) {
     super();
-    this.settings.columns = SHIPPING_DOCUMENTS_COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...SHIPPING_DOCUMENTS_COLUMNS },
+    };
   }
 
   ngOnInit(): void {

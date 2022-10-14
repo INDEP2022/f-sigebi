@@ -15,11 +15,11 @@ import { SERIES_FOLIOS_CONTROL_SEPARATE_PAGES_COLUMNS } from './series-folios-co
 export class CBmFSyfMSeriesFoliosControlModalComponent extends BasePage implements OnInit {
 
   settings1 = {
-    ...TABLE_SETTINGS,
+    ...this.settings,
     actions: false
   };
   settings2 = {
-    ...TABLE_SETTINGS,
+    ...this.settings,
     actions: false
   };
   form : FormGroup = new FormGroup({});

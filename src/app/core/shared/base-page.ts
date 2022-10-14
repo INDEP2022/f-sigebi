@@ -55,6 +55,7 @@ interface TableSettings {
   delete: Object;
   columns: Object;
   noDataMessage: string;
+  selectedRowIndex?: number;
 }
 interface Action {
   columnTitle: string;
