@@ -10,16 +10,14 @@ import { RouterModule, Routes } from '@angular/router';
 /** COMPONENTS IMPORTS */
 import { PJDRDAppointmentsComponent } from './appointments/pj-d-rd-c-appointments.component';
 
-
-
 const routes: Routes = [
-    {
-        path: '',
-        component: PJDRDAppointmentsComponent
-    }
-]
+  {
+    path: '',
+    component: PJDRDAppointmentsComponent,
+  },
+];
 @NgModule({
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule]
-  })
-  export class PJDRDAppointmentsRoutingModule { }
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
+})
+export class PJDRDAppointmentsRoutingModule {}

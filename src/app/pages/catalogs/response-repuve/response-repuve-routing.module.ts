@@ -6,6 +6,6 @@ const routes: Routes = [{ path: '', component: ResponseRepuveListComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ResponseRepuveRoutingModule { }
+export class ResponseRepuveRoutingModule {}

@@ -5,16 +5,13 @@ import { FdpAddCDonationActsComponent } from './donation-acts/fdp-add-c-donation
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 
-
 @NgModule({
-  declarations: [
-    FdpAddCDonationActsComponent
-  ],
+  declarations: [FdpAddCDonationActsComponent],
   imports: [
     CommonModule,
     FdpAddMDonationActsRoutingModule,
     SharedModule,
-    ReactiveFormsModule
-  ]
+    ReactiveFormsModule,
+  ],
 })
-export class FdpAddMDonationActsModule { }
+export class FdpAddMDonationActsModule {}

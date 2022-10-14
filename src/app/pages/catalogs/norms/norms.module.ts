@@ -7,17 +7,13 @@ import { NormsRoutingModule } from './norms-routing.module';
 import { NormsFormComponent } from './norms-form/norms-form.component';
 import { NormsListComponent } from './norms-list/norms-list.component';
 
-
 @NgModule({
-  declarations: [
-    NormsFormComponent,
-    NormsListComponent
-  ],
+  declarations: [NormsFormComponent, NormsListComponent],
   imports: [
     CommonModule,
     NormsRoutingModule,
     SharedModule,
-    ModalModule.forChild()
-  ]
+    ModalModule.forChild(),
+  ],
 })
-export class NormsModule { }
+export class NormsModule {}

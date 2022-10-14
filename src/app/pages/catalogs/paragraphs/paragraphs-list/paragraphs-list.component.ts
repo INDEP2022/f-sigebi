@@ -12,11 +12,9 @@ import { ParagraphsFormComponent } from '../paragraphs-form/paragraphs-form.comp
 @Component({
   selector: 'app-paragraphs-list',
   templateUrl: './paragraphs-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ParagraphsListComponent extends BasePage implements OnInit {
-
   settings = TABLE_SETTINGS;
   columns: IParagraph[] = [];
   totalItems: number = 0;
@@ -25,7 +23,7 @@ export class ParagraphsListComponent extends BasePage implements OnInit {
   constructor(
     private paragraphService: ParagraphService,
     private modalService: BsModalService
-  ) { 
+  ) {
     super();
     this.settings.columns = PARAGRAPHS_COLUMNS;
     this.settings.actions.delete = true;
@@ -75,5 +73,4 @@ export class ParagraphsListComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }

@@ -12,8 +12,7 @@ import { STATUSCODE_COLUMS } from './status-code-columns';
 @Component({
   selector: 'app-status-code-list',
   templateUrl: './status-code-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class StatusCodeListComponent extends BasePage implements OnInit {
   settings = TABLE_SETTINGS;

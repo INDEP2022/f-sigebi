@@ -9,8 +9,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-type-order-service-form',
   templateUrl: './type-order-service-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class TypeOrderServiceFormComponent extends BasePage implements OnInit {
   typeOrderServiceForm: ModelForm<ITypeOrderService>;
@@ -32,8 +31,14 @@ export class TypeOrderServiceFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.typeOrderServiceForm = this.fb.group({
       id: [null],
-      cve: [null, Validators.compose([Validators.required, Validators.maxLength(50)])],
-      description: [null, Validators.compose([Validators.required, Validators.maxLength(50)])],
+      cve: [
+        null,
+        Validators.compose([Validators.required, Validators.maxLength(50)]),
+      ],
+      description: [
+        null,
+        Validators.compose([Validators.required, Validators.maxLength(50)]),
+      ],
     });
     if (this.typeOrderService != null) {
       this.edit = true;
@@ -50,10 +55,12 @@ export class TypeOrderServiceFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.typeOrderServicesService.create(this.typeOrderServiceForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.typeOrderServicesService
+      .create(this.typeOrderServiceForm.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   update() {

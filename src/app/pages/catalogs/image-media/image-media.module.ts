@@ -7,17 +7,13 @@ import { ImageMediaRoutingModule } from './image-media-routing.module';
 import { ImageMediaFormComponent } from './image-media-form/image-media-form.component';
 import { ImageMediaListComponent } from './image-media-list/image-media-list.component';
 
-
 @NgModule({
-  declarations: [
-    ImageMediaFormComponent,
-    ImageMediaListComponent
-  ],
+  declarations: [ImageMediaFormComponent, ImageMediaListComponent],
   imports: [
     CommonModule,
     ImageMediaRoutingModule,
     SharedModule,
-    ModalModule.forChild()
-  ]
+    ModalModule.forChild(),
+  ],
 })
-export class ImageMediaModule { }
+export class ImageMediaModule {}

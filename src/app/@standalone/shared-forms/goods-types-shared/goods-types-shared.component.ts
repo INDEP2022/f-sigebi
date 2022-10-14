@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { AbstractControl, FormGroup } from "@angular/forms";
+import { AbstractControl, FormGroup } from '@angular/forms';
 //Rxjs
 import { BehaviorSubject, takeUntil } from 'rxjs';
 //Params
@@ -18,21 +18,19 @@ import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './goods-types-shared.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class GoodsTypesSharedComponent extends BasePage implements OnInit {
-
   @Input() form: FormGroup;
-  @Input() typeField: string = "type";
-  @Input() subtypeField: string = "subtype";
-  @Input() ssubtypeField: string = "ssubtype";
-  @Input() sssubtypeField: string = "sssubtype";
+  @Input() typeField: string = 'type';
+  @Input() subtypeField: string = 'subtype';
+  @Input() ssubtypeField: string = 'ssubtype';
+  @Input() sssubtypeField: string = 'sssubtype';
 
-  @Input() goodTypeShow: boolean= true;
-  @Input() subTypeShow: boolean= true;
-  @Input() ssubTypeShow: boolean= true;
-  @Input() sssubTypeShow: boolean= true;
+  @Input() goodTypeShow: boolean = true;
+  @Input() subTypeShow: boolean = true;
+  @Input() ssubTypeShow: boolean = true;
+  @Input() sssubTypeShow: boolean = true;
 
   params = new BehaviorSubject<ListParams>(new ListParams());
   types = new DefaultSelect<IGoodType>();
@@ -53,27 +51,29 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     return this.form.get(this.sssubtypeField);
   }
 
-  constructor(private service:GoodTypeService){
+  constructor(private service: GoodTypeService) {
     super();
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   getTypes(params: ListParams) {
-    this.service.getAll(params).subscribe(data=> {
-        this.types = new DefaultSelect(data.data,data.count);
-    },err => {
-      let error = '';
-      if (err.status === 0) {
-        error = 'Revise su conexión de Internet.';
-      } else {
-        error = err.message;
-      }
-      
-      this.onLoadToast('error', 'Error', error);
-      
-    }, () => {});
+    this.service.getAll(params).subscribe(
+      data => {
+        this.types = new DefaultSelect(data.data, data.count);
+      },
+      err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          error = err.message;
+        }
+
+        this.onLoadToast('error', 'Error', error);
+      },
+      () => {}
+    );
   }
 
   getSubtypes(params: ListParams) {
@@ -143,9 +143,9 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
   }
 
   resetFields(fields: AbstractControl[]) {
-    fields.forEach((field) => {
+    fields.forEach(field => {
       //field.setValue(null);
-      field=null;
+      field = null;
     });
     this.form.updateValueAndValidity();
   }

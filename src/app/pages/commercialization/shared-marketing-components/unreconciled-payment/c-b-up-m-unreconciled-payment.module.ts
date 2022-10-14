@@ -7,15 +7,8 @@ import { CBUpMUnreconciledPaymentRoutingModule } from './c-b-up-m-unreconciled-p
 //Components
 import { CBUpCUnreconciledPaymentComponent } from './unreconciled-payment/c-b-up-c-unreconciled-payment.component';
 
-
 @NgModule({
-  declarations: [
-    CBUpCUnreconciledPaymentComponent
-  ],
-  imports: [
-    CommonModule,
-    CBUpMUnreconciledPaymentRoutingModule,
-    SharedModule
-  ]
+  declarations: [CBUpCUnreconciledPaymentComponent],
+  imports: [CommonModule, CBUpMUnreconciledPaymentRoutingModule, SharedModule],
 })
-export class CBUpMUnreconciledPaymentModule { }
+export class CBUpMUnreconciledPaymentModule {}

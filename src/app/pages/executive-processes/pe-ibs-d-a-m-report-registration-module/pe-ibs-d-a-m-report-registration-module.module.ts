@@ -9,18 +9,15 @@ import { DateRangeSharedComponent } from 'src/app/@standalone/shared-forms/date-
 import { PeIbsDAMReportRegistrationModuleRoutingModule } from './pe-ibs-d-a-m-report-registration-module-routing.module';
 import { PeIbsDACReportRegistrationModuleComponent } from './pe-ibs-d-a-c-report-registration-module/pe-ibs-d-a-c-report-registration-module.component';
 
-
 @NgModule({
-  declarations: [
-    PeIbsDACReportRegistrationModuleComponent
-  ],
+  declarations: [PeIbsDACReportRegistrationModuleComponent],
   imports: [
     CommonModule,
     PeIbsDAMReportRegistrationModuleRoutingModule,
     BsDatepickerModule,
     SharedModule,
     DelegationSharedComponent,
-    DateRangeSharedComponent
-  ]
+    DateRangeSharedComponent,
+  ],
 })
-export class PeIbsDAMReportRegistrationModuleModule { }
+export class PeIbsDAMReportRegistrationModuleModule {}

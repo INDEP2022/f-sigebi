@@ -12,11 +12,9 @@ import { NormsFormComponent } from '../norms-form/norms-form.component';
 @Component({
   selector: 'app-norms-list',
   templateUrl: './norms-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class NormsListComponent extends BasePage implements OnInit {
-
   settings = TABLE_SETTINGS;
   columns: INorm[] = [];
   totalItems: number = 0;
@@ -25,7 +23,7 @@ export class NormsListComponent extends BasePage implements OnInit {
   constructor(
     private normService: NormService,
     private modalService: BsModalService
-  ) { 
+  ) {
     super();
     this.settings.columns = NORMS_COLUMNS;
     this.settings.actions.delete = true;
@@ -75,5 +73,4 @@ export class NormsListComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }

@@ -10,18 +10,16 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 
-
 //Components
 import { PaMWarehouseInquiriesRoutingModule } from './pa-m-warehouse-inquiries-routing.module';
 import { PaWiCWarehouseInquiriesComponent } from './pa-wi-c-warehouse-inquiries/pa-wi-c-warehouse-inquiries.component';
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
 import { PaWiCModalListGoodsComponent } from './pa-wi-c-modal-list-goods/pa-wi-c-modal-list-goods.component';
 
-
 @NgModule({
   declarations: [
     PaWiCWarehouseInquiriesComponent,
-    PaWiCModalListGoodsComponent
+    PaWiCModalListGoodsComponent,
   ],
   imports: [
     CommonModule,
@@ -35,7 +33,7 @@ import { PaWiCModalListGoodsComponent } from './pa-wi-c-modal-list-goods/pa-wi-c
     BsDatepickerModule,
     TabsModule,
     ModalModule.forChild(),
-    GoodsTypesSharedComponent
-  ]
+    GoodsTypesSharedComponent,
+  ],
 })
-export class PaMWarehouseInquiriesModule { }
+export class PaMWarehouseInquiriesModule {}

@@ -5,12 +5,12 @@ import { PeAdCDonationApprovalComponent } from './pe-ad-c-donation-approval/pe-a
 const routes: Routes = [
   {
     path: '',
-    component: PeAdCDonationApprovalComponent
-  }
+    component: PeAdCDonationApprovalComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PeAdMDonationApprovalRoutingModule { }
+export class PeAdMDonationApprovalRoutingModule {}

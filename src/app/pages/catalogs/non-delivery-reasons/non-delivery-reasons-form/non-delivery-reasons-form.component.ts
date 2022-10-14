@@ -8,10 +8,12 @@ import { NonDeliveryReasonService } from '../../../../core/services/catalogs/non
 @Component({
   selector: 'app-non-delivery-reasons-form',
   templateUrl: './non-delivery-reasons-form.component.html',
-  styles: []
+  styles: [],
 })
-export class NonDeliveryReasonsFormComponent extends BasePage implements OnInit {
-
+export class NonDeliveryReasonsFormComponent
+  extends BasePage
+  implements OnInit
+{
   nonDeliveryReasonsForm: FormGroup = new FormGroup({});
   title: string = 'Motivo No Entrega';
   edit: boolean = false;
@@ -24,7 +26,7 @@ export class NonDeliveryReasonsFormComponent extends BasePage implements OnInit 
     private nonDeliveryReasonsService: NonDeliveryReasonService
   ) {
     super();
-   }
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -39,7 +41,7 @@ export class NonDeliveryReasonsFormComponent extends BasePage implements OnInit 
       userCreation: [null, [Validators.required]],
       userModification: [null, [Validators.required]],
       version: [null, [Validators.required]],
-      status: [null, [Validators.required]]
+      status: [null, [Validators.required]],
     });
     if (this.nonDeliveryReasons != null) {
       this.edit = true;
@@ -58,10 +60,12 @@ export class NonDeliveryReasonsFormComponent extends BasePage implements OnInit 
   create() {
     this.loading = true;
     console.log(this.nonDeliveryReasonsForm.value);
-    this.nonDeliveryReasonsService.create(this.nonDeliveryReasonsForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.nonDeliveryReasonsService
+      .create(this.nonDeliveryReasonsForm.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   update() {

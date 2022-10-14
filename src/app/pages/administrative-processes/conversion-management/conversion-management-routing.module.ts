@@ -5,12 +5,12 @@ import { ConversionManagementComponent } from './conversion-management/conversio
 const routes: Routes = [
   {
     path: '',
-    component: ConversionManagementComponent
-  }
+    component: ConversionManagementComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ConversionManagementRoutingModule { }
+export class ConversionManagementRoutingModule {}

@@ -12,8 +12,7 @@ import { PENALTY_COLUMNS } from './penalty-columns';
 @Component({
   selector: 'app-penalty-list',
   templateUrl: './penalty-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PenaltyListComponent extends BasePage implements OnInit {
   settings = TABLE_SETTINGS;

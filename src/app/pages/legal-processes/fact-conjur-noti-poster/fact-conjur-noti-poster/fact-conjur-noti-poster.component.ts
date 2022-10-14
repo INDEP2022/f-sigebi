@@ -1,18 +1,15 @@
-import { Component, OnInit } from '@angular/core';  
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'ngx-fact-conjur-noti-poster',
   templateUrl: './fact-conjur-noti-poster.component.html',
-  styleUrls: ['./fact-conjur-noti-poster.component.scss']
+  styleUrls: ['./fact-conjur-noti-poster.component.scss'],
 })
-export class FactConjurNotiPosterComponent  {
-
+export class FactConjurNotiPosterComponent {
   public form: FormGroup;
 
-  constructor(
-    private fb: FormBuilder) {  
-  }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();
@@ -24,14 +21,17 @@ export class FactConjurNotiPosterComponent  {
       fecha: ['', [Validators.required]], //*
     });
   }
-  
 
-/**
- * Formulario
- */
- public returnField(form, field) { return form.get(field); }
- public returnShowRequirements(form, field) { 
-   return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched; 
- }
-
+  /**
+   * Formulario
+   */
+  public returnField(form, field) {
+    return form.get(field);
+  }
+  public returnShowRequirements(form, field) {
+    return (
+      this.returnField(form, field)?.errors?.required &&
+      this.returnField(form, field).touched
+    );
+  }
 }

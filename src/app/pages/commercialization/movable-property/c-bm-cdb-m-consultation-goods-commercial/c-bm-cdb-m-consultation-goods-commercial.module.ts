@@ -10,24 +10,21 @@ import { CBmCdbMConsultationGoodsCommercialRoutingModule } from './c-bm-cdb-m-co
 import { CBmCdbCConsultationGoodsCommercialSalesComponent } from './c-bm-cdb-c-consultation-goods-commercial-sales/c-bm-cdb-c-consultation-goods-commercial-sales.component';
 import { CBmCdbCConsultationGoodsCommercialBillsComponent } from './c-bm-cdb-c-consultation-goods-commercial-bills/c-bm-cdb-c-consultation-goods-commercial-bills.component';
 
-
 @NgModule({
   declarations: [
     CBmCdbCConsultationGoodsCommercialSalesComponent,
-    CBmCdbCConsultationGoodsCommercialBillsComponent
+    CBmCdbCConsultationGoodsCommercialBillsComponent,
   ],
   imports: [
     CommonModule,
     CBmCdbMConsultationGoodsCommercialRoutingModule,
     SharedModule,
-    BsDatepickerModule
+    BsDatepickerModule,
   ],
   exports: [
     CBmCdbCConsultationGoodsCommercialSalesComponent,
-    CBmCdbCConsultationGoodsCommercialBillsComponent
+    CBmCdbCConsultationGoodsCommercialBillsComponent,
   ],
-  providers: [
-    ExcelService
-  ]
+  providers: [ExcelService],
 })
-export class CBmCdbMConsultationGoodsCommercialModule { }
+export class CBmCdbMConsultationGoodsCommercialModule {}

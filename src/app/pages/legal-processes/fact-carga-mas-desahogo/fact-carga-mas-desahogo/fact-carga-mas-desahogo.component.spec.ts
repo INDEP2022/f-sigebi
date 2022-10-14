@@ -8,9 +8,8 @@ describe('FactCargaMasDesahogoComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FactCargaMasDesahogoComponent ]
-    })
-    .compileComponents();
+      declarations: [FactCargaMasDesahogoComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

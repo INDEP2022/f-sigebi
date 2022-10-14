@@ -7,8 +7,7 @@ import { DELEGATIONS_COLUMNS } from '../delegations-columns';
 @Component({
   selector: 'app-fdp-adpdt-c-third-possession-acts',
   templateUrl: './fdp-adpdt-c-third-possession-acts.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class FdpAdpdtCThirdPossessionActsComponent implements OnInit {
   response: boolean = false;
@@ -17,33 +16,33 @@ export class FdpAdpdtCThirdPossessionActsComponent implements OnInit {
 
   settings1 = {
     rowClassFunction: (row: any) =>
-      row.data.status ? "available" : "not-available",
+      row.data.status ? 'available' : 'not-available',
     pager: {
       display: false,
     },
     hideSubHeader: true,
     actions: false,
     selectedRowIndex: -1,
-    mode: "external",
+    mode: 'external',
     columns: {
       noBien: {
-        title: "No. Bien",
-        type: "number",
+        title: 'No. Bien',
+        type: 'number',
       },
       description: {
-        title: "Descripcion",
-        type: "string",
+        title: 'Descripcion',
+        type: 'string',
       },
       cantidad: {
-        title: "Cantidad",
-        type: "number",
+        title: 'Cantidad',
+        type: 'number',
       },
       importe: {
-        title: "Importe",
-        type: "string",
+        title: 'Importe',
+        type: 'string',
       },
     },
-    noDataMessage: "No se encontrarón registros",
+    noDataMessage: 'No se encontrarón registros',
   };
 
   settings2 = {
@@ -53,42 +52,38 @@ export class FdpAdpdtCThirdPossessionActsComponent implements OnInit {
     hideSubHeader: true,
     actions: false,
     selectedRowIndex: -1,
-    mode: "external",
+    mode: 'external',
     columns: {
       noBien: {
-        title: "No. Bien",
-        type: "number",
+        title: 'No. Bien',
+        type: 'number',
       },
       description: {
-        title: "Descripcion",
-        type: "string",
+        title: 'Descripcion',
+        type: 'string',
       },
       cantidad: {
-        title: "Cantidad",
-        type: "number",
+        title: 'Cantidad',
+        type: 'number',
       },
       importe: {
-        title: "Importe",
-        type: "string",
+        title: 'Importe',
+        type: 'string',
       },
     },
-    noDataMessage: "No se encontrarón registros",
+    noDataMessage: 'No se encontrarón registros',
   };
 
   data = EXAMPLE_DATA;
   data2 = EXAMPLE_DATA2;
 
-
-  constructor(
-    private fb: FormBuilder,
-    private modalService: BsModalService
-    ) { }
+  constructor(private fb: FormBuilder, private modalService: BsModalService) {}
 
   ngOnInit(): void {
     this.initForm();
   }
 
-  initForm(){
+  initForm() {
     this.actForm = this.fb.group({
       statusAct: [null, [Validators.required]],
       preliminaryAscertainment: [null, [Validators.required]],
@@ -114,79 +109,77 @@ export class FdpAdpdtCThirdPossessionActsComponent implements OnInit {
     });
   }
 
-  search(term: string){
+  search(term: string) {
     this.response = !this.response;
   }
 
-  onSubmit(){
+  onSubmit() {}
 
-  }
-
-  openModal(){
+  openModal() {
     const initialState: ModalOptions = {
       initialState: {
         title: 'Delegación Administra',
-        columns: DELEGATIONS_COLUMNS
-      }
+        columns: DELEGATIONS_COLUMNS,
+      },
     };
-    this.bsModalRef = this.modalService.show(FdpAdpdtDetailDelegationsComponent, initialState);
+    this.bsModalRef = this.modalService.show(
+      FdpAdpdtDetailDelegationsComponent,
+      initialState
+    );
     this.bsModalRef.content.closeBtnName = 'Close';
   }
-
 }
 
 const EXAMPLE_DATA = [
   {
     noBien: 123,
-    description: "INMUEBLE UBICADO EN CALLE",
+    description: 'INMUEBLE UBICADO EN CALLE',
     cantidad: 1,
-    importe: "1"
+    importe: '1',
   },
   {
     noBien: 123,
-    description: "INMUEBLE UBICADO EN CALLE",
+    description: 'INMUEBLE UBICADO EN CALLE',
     cantidad: 1,
-    importe: "1"
+    importe: '1',
   },
   {
     noBien: 123,
-    description: "INMUEBLE UBICADO EN CALLE",
+    description: 'INMUEBLE UBICADO EN CALLE',
     cantidad: 1,
-    importe: "1"
+    importe: '1',
   },
   {
     noBien: 123,
-    description: "INMUEBLE UBICADO EN CALLE",
+    description: 'INMUEBLE UBICADO EN CALLE',
     cantidad: 1,
-    importe: "1"
+    importe: '1',
   },
 ];
 
-
 const EXAMPLE_DATA2 = [
   {
-    noBien: 543.,
-    description: "INMUEBLE UBICADO EN LA CIUDAD",
+    noBien: 543,
+    description: 'INMUEBLE UBICADO EN LA CIUDAD',
     cantidad: 3,
-    importe: 5
+    importe: 5,
   },
   {
-    noBien: 543.,
-    description: "INMUEBLE UBICADO EN LA CIUDAD",
+    noBien: 543,
+    description: 'INMUEBLE UBICADO EN LA CIUDAD',
     cantidad: 3,
-    importe: 5
+    importe: 5,
   },
   {
-    noBien: 543.,
-    description: "INMUEBLE UBICADO EN LA CIUDAD",
+    noBien: 543,
+    description: 'INMUEBLE UBICADO EN LA CIUDAD',
     cantidad: 3,
-    importe: 5
+    importe: 5,
   },
   {
-    noBien: 543.,
-    description: "INMUEBLE UBICADO EN LA CIUDAD",
+    noBien: 543,
+    description: 'INMUEBLE UBICADO EN LA CIUDAD',
     cantidad: 3,
-    importe: 5
+    importe: 5,
   },
-
 ];

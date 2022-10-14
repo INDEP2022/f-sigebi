@@ -7,20 +7,20 @@ import { PaDgCActsComponent } from './pa-dg-c-acts/pa-dg-c-acts.component';
 const routes: Routes = [
   {
     path: '',
-    component: DerivationGoodsComponent
+    component: DerivationGoodsComponent,
   },
   {
     path: 'bulk-upload',
-    component: BulkUploadComponent
+    component: BulkUploadComponent,
   },
   {
     path: 'act',
-    component: PaDgCActsComponent
-  }
+    component: PaDgCActsComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class DerivationGoodsRoutingModule { }
+export class DerivationGoodsRoutingModule {}

@@ -12,8 +12,7 @@ import { STATEREPUVES_COLUMS } from './state-repuves-columns';
 @Component({
   selector: 'app-state-repuves-list',
   templateUrl: './state-repuves-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class StateRepuvesListComponent extends BasePage implements OnInit {
   settings = TABLE_SETTINGS;

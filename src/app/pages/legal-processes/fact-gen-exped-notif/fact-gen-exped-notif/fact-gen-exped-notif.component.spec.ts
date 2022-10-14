@@ -8,9 +8,8 @@ describe('FactGenExpedNotifComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FactGenExpedNotifComponent ]
-    })
-    .compileComponents();
+      declarations: [FactGenExpedNotifComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

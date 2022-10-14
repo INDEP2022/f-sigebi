@@ -20,11 +20,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FactGenaDBBienesXDepComponent } from './fact-gena-db-bienes-dep/fact-gena-db-bienes-dep.component';
 import { SharedLegalProcessModule } from '../shared-legal-process/shared-legal-process.module';
 
-@NgModule({ 
-  declarations: [ 
-    FactGenaDBBienesXDepComponent,
-    
-  ],
+@NgModule({
+  declarations: [FactGenaDBBienesXDepComponent],
   imports: [
     CommonModule,
     FactGenaDBBienesXDepRoutingModule,
@@ -47,14 +44,11 @@ import { SharedLegalProcessModule } from '../shared-legal-process/shared-legal-p
     // NbCheckboxModule,
     SharedModule,
 
-    SharedLegalProcessModule
+    SharedLegalProcessModule,
   ],
-  exports:[
-    
-    // ComponentsModule, 
-    NgSelectModule
-    
-  ]
+  exports: [
+    // ComponentsModule,
+    NgSelectModule,
+  ],
 })
-export class FactGenaDBBienesXDepModule { }
-
+export class FactGenaDBBienesXDepModule {}

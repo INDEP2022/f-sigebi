@@ -9,17 +9,18 @@ import { COLUMNS } from './columns';
 @Component({
   selector: 'app-c-b-up-c-unreconciled-payment',
   templateUrl: './c-b-up-c-unreconciled-payment.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CBUpCUnreconciledPaymentComponent extends BasePage implements OnInit {
-
+export class CBUpCUnreconciledPaymentComponent
+  extends BasePage
+  implements OnInit
+{
   settings = {
     ...TABLE_SETTINGS,
-    actions: false
+    actions: false,
   };
   form: FormGroup = new FormGroup({});
-  data:any[]=[];
+  data: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -34,9 +35,7 @@ export class CBUpCUnreconciledPaymentComponent extends BasePage implements OnIni
       .subscribe(() => this.getExample());*/
   }
 
-
-  settingsChange($event:any): void {
-    this.settings=$event;
+  settingsChange($event: any): void {
+    this.settings = $event;
   }
-
 }

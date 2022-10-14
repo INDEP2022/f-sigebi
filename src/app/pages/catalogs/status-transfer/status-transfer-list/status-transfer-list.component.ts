@@ -12,8 +12,7 @@ import { STATUSTRANSFER_COLUMS } from './status-transfer-columns';
 @Component({
   selector: 'app-status-transfer-list',
   templateUrl: './status-transfer-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class StatusTransferListComponent extends BasePage implements OnInit {
   settings = TABLE_SETTINGS;

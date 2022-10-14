@@ -6,13 +6,15 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SaleGoodsGamesEstateComponent } from '../sale-goods-games-estate/sale-goods-games-estate.component';
 import { SaleGoodsGamesIncorporatePackagesComponent } from '../sale-goods-games-incorporate-packages/sale-goods-games-incorporate-packages.component';
-import { ALIENATIONSALEGOODSGAMES_COLUMNS, ESTATESALEGOODSGAMES_COLUMNS } from './sale-goods-games-columns';
+import {
+  ALIENATIONSALEGOODSGAMES_COLUMNS,
+  ESTATESALEGOODSGAMES_COLUMNS,
+} from './sale-goods-games-columns';
 
 @Component({
   selector: 'app-sale-goods-games',
   templateUrl: './sale-goods-games.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class SaleGoodsGamesComponent extends BasePage implements OnInit {
   settings = { ...TABLE_SETTINGS, actions: false };
@@ -27,28 +29,23 @@ export class SaleGoodsGamesComponent extends BasePage implements OnInit {
     this.settings2.columns = ESTATESALEGOODSGAMES_COLUMNS;
   }
 
-  ngOnInit(): void {
-  }
-  openIncorporatePackages(data:any) {
+  ngOnInit(): void {}
+  openIncorporatePackages(data: any) {
     let config: ModalOptions = {
       initialState: {
         data,
-        callback: (next: boolean) => {
-
-        },
+        callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.modalService.show(SaleGoodsGamesIncorporatePackagesComponent, config);
   }
-  openEstate(data:any) {
+  openEstate(data: any) {
     let config: ModalOptions = {
       initialState: {
         data,
-        callback: (next: boolean) => {
-
-        },
+        callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,

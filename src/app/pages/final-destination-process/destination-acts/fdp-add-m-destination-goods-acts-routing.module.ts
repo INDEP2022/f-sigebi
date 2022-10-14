@@ -4,14 +4,14 @@ import { FdpAddCDestinationGoodsActsComponent } from './destination-acts/fdp-add
 
 const routes: Routes = [
   {
-    path: "",
+    path: '',
     component: FdpAddCDestinationGoodsActsComponent,
-    data: { Title: 'Actas de destino' }
+    data: { Title: 'Actas de destino' },
   },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class FdpAddMDestinationGoodsActsRoutingModule { }
+export class FdpAddMDestinationGoodsActsRoutingModule {}

@@ -5,12 +5,12 @@ import { CBDpCDispersionPaymentComponent } from './dispersion-payment/c-b-dp-c-d
 const routes: Routes = [
   {
     path: '',
-    component: CBDpCDispersionPaymentComponent
-  }
+    component: CBDpCDispersionPaymentComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CBPdmMPaymentDispersionMonitorRoutingModule { }
+export class CBPdmMPaymentDispersionMonitorRoutingModule {}

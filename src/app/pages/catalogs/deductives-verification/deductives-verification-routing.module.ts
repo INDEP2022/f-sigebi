@@ -5,12 +5,12 @@ import { DeductivesVerificationListComponent } from './deductives-verification-l
 const routes: Routes = [
   {
     path: '',
-    component: DeductivesVerificationListComponent
-  }
+    component: DeductivesVerificationListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class DeductivesVerificationRoutingModule { }
+export class DeductivesVerificationRoutingModule {}

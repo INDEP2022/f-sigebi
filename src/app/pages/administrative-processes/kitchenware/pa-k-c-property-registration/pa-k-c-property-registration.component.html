@@ -10,8 +10,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="numberFile" 
-              (change)="searchGoodFather()"/>
+              formControlName="numberFile"
+              (change)="searchGoodFather()" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
@@ -33,7 +33,7 @@
           </form-field>
         </div>
       </div>
-      <hr>
+      <hr />
       <div class="container">
         <div class="row mt-3">
           <ng2-smart-table
@@ -46,7 +46,7 @@
         <div class="container mt-4" *ngIf="searched">
           <span>Seleccione un bien</span>
         </div>
-        <hr>
+        <hr />
         <div class="container">
           <ng2-smart-table
             [attr.class]="'table-bordered'"

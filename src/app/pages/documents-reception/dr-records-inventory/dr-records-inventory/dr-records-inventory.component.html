@@ -1,0 +1,49 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Inventario por Expediente</h5>
+  </div>
+
+  <div body>
+    <div class="row form-material">
+      <form-field [control]="record" label="Expediente" class="col-md-3">
+        <input type="text" class="form-control" [formControl]="record" />
+      </form-field>
+
+      <div class="col">
+        <button class="btn btn-info active btn-sm">Registrar inventario</button>
+      </div>
+    </div>
+    <hr />
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <form-field
+          [control]="form.get('fecha')"
+          label="Fecha Registro Inventario"
+          class="col-md-3">
+          <input class="form-control" formControlName="fecha" bsDatepicker />
+        </form-field>
+
+        <form-field
+          [control]="record"
+          label="Realizo"
+          class="col-md-6"
+          [control]="form.get('realizo')">
+          <input class="form-control" formControlName="realizo" />
+        </form-field>
+      </div>
+
+      <div class="row">
+        <ng2-smart-table [settings]="settings"></ng2-smart-table>
+      </div>
+
+      <div class="row pt-5">
+        <form-field
+          [control]="form.get('anexar')"
+          label="Anexar"
+          class="col-md-3">
+          <input class="form-control" formControlName="anexar" />
+        </form-field>
+      </div>
+    </form>
+  </div>
+</app-card>

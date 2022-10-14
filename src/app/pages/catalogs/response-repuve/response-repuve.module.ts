@@ -7,17 +7,13 @@ import { ResponseRepuveFormComponent } from './response-repuve-form/response-rep
 import { SharedModule } from '../../../shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
-  declarations: [
-    ResponseRepuveListComponent,
-    ResponseRepuveFormComponent
-  ],
+  declarations: [ResponseRepuveListComponent, ResponseRepuveFormComponent],
   imports: [
     CommonModule,
     ResponseRepuveRoutingModule,
     SharedModule,
     ModalModule.forChild(),
-  ]
+  ],
 })
-export class ResponseRepuveModule { }
+export class ResponseRepuveModule {}

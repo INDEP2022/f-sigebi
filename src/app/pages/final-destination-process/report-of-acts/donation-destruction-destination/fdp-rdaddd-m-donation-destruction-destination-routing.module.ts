@@ -4,14 +4,14 @@ import { FdpRdadddCDonationDestructionDestinationComponent } from './donation-de
 
 const routes: Routes = [
   {
-    path: "",
+    path: '',
     component: FdpRdadddCDonationDestructionDestinationComponent,
-    data: { Title: 'Donación Destrucción Destino' }
-  }
+    data: { Title: 'Donación Destrucción Destino' },
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class FdpRdadddMDonationDestructionDestinationRoutingModule { }
+export class FdpRdadddMDonationDestructionDestinationRoutingModule {}

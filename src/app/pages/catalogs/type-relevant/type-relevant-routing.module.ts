@@ -4,12 +4,13 @@ import { TypeRelevantListComponent } from './type-relevant-list/type-relevant-li
 
 const routes: Routes = [
   {
-    path:'',component:TypeRelevantListComponent
-  }
+    path: '',
+    component: TypeRelevantListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class TypeRelevantRoutingModule { }
+export class TypeRelevantRoutingModule {}

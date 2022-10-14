@@ -8,11 +8,8 @@ import { ExcelService } from 'src/app/common/services/exportToExcel.service';
 import { CBVdpMPaymentDispersionValidationRoutingModule } from './c-b-vdp-m-payment-dispersion-validation-routing.module';
 import { CBVdpCPaymentDispersionValidationComponent } from './c-b-vdp-c-payment-dispersion-validation/c-b-vdp-c-payment-dispersion-validation.component';
 
-
 @NgModule({
-  declarations: [
-    CBVdpCPaymentDispersionValidationComponent
-  ],
+  declarations: [CBVdpCPaymentDispersionValidationComponent],
   imports: [
     CommonModule,
     CBVdpMPaymentDispersionValidationRoutingModule,
@@ -20,4 +17,4 @@ import { CBVdpCPaymentDispersionValidationComponent } from './c-b-vdp-c-payment-
   ],
   providers: [ExcelService],
 })
-export class CBVdpMPaymentDispersionValidationModule { }
+export class CBVdpMPaymentDispersionValidationModule {}

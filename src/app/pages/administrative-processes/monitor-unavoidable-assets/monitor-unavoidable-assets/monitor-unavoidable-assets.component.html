@@ -18,25 +18,35 @@
         </div>
       </div>
       <app-pagination
-      [params]="params"
-      [totalItems]="totalItems"></app-pagination>
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
     </div>
     <div class="row">
       <div class="col-md-12">
-          <p>.
-              <span class="text-success mr-5"><i class="fa fa-square"></i> Administrativos</span>
-              <span class="text-danger mr-5"><i class="fa fa-square"></i> Valor Salario </span>
-              <span class="text-yellow"><i class="fa fa-square"></i> No Administrativos </span>
-          </p>
+        <p>
+          .
+          <span class="text-success mr-5"
+            ><i class="fa fa-square"></i> Administrativos</span
+          >
+          <span class="text-danger mr-5"
+            ><i class="fa fa-square"></i> Valor Salario
+          </span>
+          <span class="text-yellow"
+            ><i class="fa fa-square"></i> No Administrativos
+          </span>
+        </p>
       </div>
     </div>
 
-      <div class="col-md-2 pt-4">
-        <div >
-          <button type="submit" class="btn btn-primary btn-sm active" (click)="openForm('')">
-            Ver parametros
-          </button>
-        </div>
+    <div class="col-md-2 pt-4">
+      <div>
+        <button
+          type="submit"
+          class="btn btn-primary btn-sm active"
+          (click)="openForm('')">
+          Ver parametros
+        </button>
       </div>
+    </div>
   </div>
 </app-card>

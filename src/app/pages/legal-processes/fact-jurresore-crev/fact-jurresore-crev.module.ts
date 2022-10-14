@@ -20,11 +20,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FactJurresoreCrevComponent } from './fact-jurresore-crev/fact-jurresore-crev.component';
 import { SharedLegalProcessModule } from '../shared-legal-process/shared-legal-process.module';
 
-@NgModule({ 
-  declarations: [ 
-    FactJurresoreCrevComponent,
-    
-  ],
+@NgModule({
+  declarations: [FactJurresoreCrevComponent],
   imports: [
     CommonModule,
     FactJurresoreCrevRoutingModule,
@@ -46,14 +43,11 @@ import { SharedLegalProcessModule } from '../shared-legal-process/shared-legal-p
     NgSelectModule,
     SharedModule,
 
-    SharedLegalProcessModule
+    SharedLegalProcessModule,
   ],
-  exports:[
-    
+  exports: [
     // ComponentsModule,
-     NgSelectModule
-    
-  ]
+    NgSelectModule,
+  ],
 })
-export class FactJurresoreCrevModule { }
-
+export class FactJurresoreCrevModule {}

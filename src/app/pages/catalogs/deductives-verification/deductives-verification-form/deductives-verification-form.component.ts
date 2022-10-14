@@ -9,10 +9,12 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-deductives-verification-form',
   templateUrl: './deductives-verification-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class DeductivesVerificationFormComponent extends BasePage implements OnInit {
+export class DeductivesVerificationFormComponent
+  extends BasePage
+  implements OnInit
+{
   deductiveForm: ModelForm<IDeductiveVerification>;
   title: string = 'Deductiva Verifiación';
   edit: boolean = false;
@@ -34,12 +36,12 @@ export class DeductivesVerificationFormComponent extends BasePage implements OnI
       id: [null, Validators.required],
       description: [null, Validators.required],
       percentagePena: [null, Validators.required],
-      verificationType: [null, Validators.required]
+      verificationType: [null, Validators.required],
     });
     if (this.deductive != null) {
       this.edit = true;
       this.deductiveForm.patchValue(this.deductive);
-      this.deductiveForm.controls.id.disable()
+      this.deductiveForm.controls.id.disable();
     }
   }
   close() {
@@ -52,10 +54,12 @@ export class DeductivesVerificationFormComponent extends BasePage implements OnI
 
   create() {
     this.loading = true;
-    this.deductiveVerificationService.create(this.deductiveForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.deductiveVerificationService
+      .create(this.deductiveForm.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   update() {

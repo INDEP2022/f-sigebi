@@ -1,13 +1,12 @@
-import { Component, OnInit } from '@angular/core';  
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'ngx-fact-jur-dictam-recr',
   templateUrl: './fact-jur-dictam-recr.component.html',
-  styleUrls: ['./fact-jur-dictam-recr.component.scss']
+  styleUrls: ['./fact-jur-dictam-recr.component.scss'],
 })
-export class FactJurDictamRecrComponent  {
-
+export class FactJurDictamRecrComponent {
   tableSettings = {
     actions: {
       columnTitle: '',
@@ -15,23 +14,23 @@ export class FactJurDictamRecrComponent  {
       edit: false,
       delete: false,
     },
-    hideSubHeader: true,//oculta subheaader de filtro
+    hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
 
     columns: {
-      cveDocumento:{
+      cveDocumento: {
         title: 'Cve. Documento',
       },
-      descripcion:{
+      descripcion: {
         title: 'Descripción',
       },
-      fechaRecibo:{
+      fechaRecibo: {
         title: 'Fecha Recibió',
       },
-      status:{
+      status: {
         title: 'Status',
       },
-      solicitarDocumentacion:{
+      solicitarDocumentacion: {
         title: 'Solicitar Documentación?',
       },
     },
@@ -45,26 +44,23 @@ export class FactJurDictamRecrComponent  {
       status: 'DATA',
       solicitarDocumentacion: 'DATA',
     },
-
   ];
 
   public form: FormGroup;
 
-  constructor(
-    private fb: FormBuilder) {  
-  }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();
   }
   private prepareForm() {
     this.form = this.fb.group({
-      noExpediente: '', 
+      noExpediente: '',
       averiguacionPrevia: '',
       causaPenal: '',
       fechaPresentacionRecursoRevision: '',
       noAmparo: '',
-      
+
       noBien: '',
       descripcion: '',
       fechaAcuerdoInicial: '',
@@ -77,16 +73,14 @@ export class FactJurDictamRecrComponent  {
   }
 
   btnAprobar() {
-    console.log("Aprobar");
+    console.log('Aprobar');
   }
-  
 
-/**
- * Formulario
- */
-//  public returnField(form, field) { return form.get(field); }
-//  public returnShowRequirements(form, field) { 
-//    return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched; 
-//  }
-
+  /**
+   * Formulario
+   */
+  //  public returnField(form, field) { return form.get(field); }
+  //  public returnShowRequirements(form, field) {
+  //    return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched;
+  //  }
 }

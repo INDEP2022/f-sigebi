@@ -5,12 +5,12 @@ import { PhotographMediaListComponent } from './photograph-media-list/photograph
 const routes: Routes = [
   {
     path: '',
-    component: PhotographMediaListComponent
-  }
+    component: PhotographMediaListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PhotographMediaRoutingModule { }
+export class PhotographMediaRoutingModule {}

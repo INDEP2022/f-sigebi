@@ -19,11 +19,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // import { MatInputModule } from '@angular/material/input';
 import { PJDGenerationOfficialFilesComponent } from './pj-d-generationofficialfiles/pj-d-generationofficialfiles.component';
 
-@NgModule({ 
-  declarations: [ 
-    PJDGenerationOfficialFilesComponent,
-    
-  ],
+@NgModule({
+  declarations: [PJDGenerationOfficialFilesComponent],
   imports: [
     CommonModule,
     PJDGenerationOfficialFilesRoutingModule,
@@ -43,15 +40,12 @@ import { PJDGenerationOfficialFilesComponent } from './pj-d-generationofficialfi
     // MatFormFieldModule,
     // NbDatepickerModule,
     NgSelectModule,
-    
+
     SharedModule,
   ],
-  exports:[
-    
-    // ComponentsModule, 
-    NgSelectModule
-    
-  ]
+  exports: [
+    // ComponentsModule,
+    NgSelectModule,
+  ],
 })
-export class PJDGenerationOfficialFilesModule { }
-
+export class PJDGenerationOfficialFilesModule {}

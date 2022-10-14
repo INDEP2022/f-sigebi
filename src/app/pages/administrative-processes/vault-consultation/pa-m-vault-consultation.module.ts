@@ -16,12 +16,8 @@ import { PaVcCVaultConsultationComponent } from './pa-vc-c-vault-consultation/pa
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
 import { PaVcCModalListGoodsComponent } from './pa-vc-c-modal-list-goods/pa-vc-c-modal-list-goods.component';
 
-
 @NgModule({
-  declarations: [
-    PaVcCVaultConsultationComponent,
-    PaVcCModalListGoodsComponent
-  ],
+  declarations: [PaVcCVaultConsultationComponent, PaVcCModalListGoodsComponent],
   imports: [
     CommonModule,
     SharedModule,
@@ -34,7 +30,7 @@ import { PaVcCModalListGoodsComponent } from './pa-vc-c-modal-list-goods/pa-vc-c
     BsDatepickerModule,
     TabsModule,
     ModalModule.forChild(),
-    GoodsTypesSharedComponent
-  ]
+    GoodsTypesSharedComponent,
+  ],
 })
-export class PaMVaultConsultationModule { }
+export class PaMVaultConsultationModule {}

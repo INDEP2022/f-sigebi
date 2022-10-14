@@ -11,12 +11,17 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 /** COMPONENTS IMPORTS */
 
 @Component({
-    selector: 'app-pj-d-pdp-c-query-related-payments-depositories',
-    templateUrl: './pj-d-pdp-c-query-related-payments-depositories.component.html',
-    styleUrls: ['./pj-d-pdp-c-query-related-payments-depositories.component.scss']
+  selector: 'app-pj-d-pdp-c-query-related-payments-depositories',
+  templateUrl:
+    './pj-d-pdp-c-query-related-payments-depositories.component.html',
+  styleUrls: [
+    './pj-d-pdp-c-query-related-payments-depositories.component.scss',
+  ],
 })
-export class PJDPDPQueryRelatedPaymentsDepositoriesComponent extends BasePage implements OnInit, OnDestroy{
-    
+export class PJDPDPQueryRelatedPaymentsDepositoriesComponent
+  extends BasePage
+  implements OnInit, OnDestroy
+{
   // Pagos Recibidos en el Banco
   // ------
   tableSettingsPagosBanco = {
@@ -26,7 +31,7 @@ export class PJDPDPQueryRelatedPaymentsDepositoriesComponent extends BasePage im
       edit: false,
       delete: false,
     },
-    hideSubHeader: true,//oculta subheaader de filtro
+    hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
 
     columns: {
@@ -54,7 +59,6 @@ export class PJDPDPQueryRelatedPaymentsDepositoriesComponent extends BasePage im
       noPago: {
         title: 'No. Pago',
       },
-      
     },
   };
   dataPagosBanco = [
@@ -67,7 +71,7 @@ export class PJDPDPQueryRelatedPaymentsDepositoriesComponent extends BasePage im
       noOrdenIngreso: 'Data',
       fechaOI: 'Data',
       noPago: 'Data',
-    }
+    },
   ];
 
   // Composicion de Pagos Recibidos
@@ -79,54 +83,53 @@ export class PJDPDPQueryRelatedPaymentsDepositoriesComponent extends BasePage im
       edit: false,
       delete: false,
     },
-    hideSubHeader: true,//oculta subheaader de filtro
+    hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
     columns: {
-      
-        pagDet: {
-          title: 'Pag. Det.',
-        },
-        pagoOrigen: {
-          title: 'Pago Origen',
-        },
-        montoMensual: {
-          title: 'Monto Mensual',
-        },
-        referencia: {
-          title: 'Referencia',
-        },
-        montoSinIva: {
-          title: 'Monto Sin Iva',
-        },
-        iva: {
-          title: 'Iva',
-        },
-        montoIva: {
-          title: 'Monto Iva',
-        },
-        abonoComp: {
-          title: 'Abondo Comp.',
-        },
-        pagoActual: {
-          title: 'Pago Actual',
-        },
-        recGastPorcentaje: {
-          title: 'Rec. Gast. (%)',
-        },
-        recGastValor: {
-          title: 'Rec. Gast.',
-        },
-        fechaProceso: {
-          title: 'Fecha Proceso',
-        },
-        estatus: {
-          title: 'Estatus',
-        },
-        observacionesPago: {
-          title: 'Observaciones Pago',
-        },
-    }
-  }
+      pagDet: {
+        title: 'Pag. Det.',
+      },
+      pagoOrigen: {
+        title: 'Pago Origen',
+      },
+      montoMensual: {
+        title: 'Monto Mensual',
+      },
+      referencia: {
+        title: 'Referencia',
+      },
+      montoSinIva: {
+        title: 'Monto Sin Iva',
+      },
+      iva: {
+        title: 'Iva',
+      },
+      montoIva: {
+        title: 'Monto Iva',
+      },
+      abonoComp: {
+        title: 'Abondo Comp.',
+      },
+      pagoActual: {
+        title: 'Pago Actual',
+      },
+      recGastPorcentaje: {
+        title: 'Rec. Gast. (%)',
+      },
+      recGastValor: {
+        title: 'Rec. Gast.',
+      },
+      fechaProceso: {
+        title: 'Fecha Proceso',
+      },
+      estatus: {
+        title: 'Estatus',
+      },
+      observacionesPago: {
+        title: 'Observaciones Pago',
+      },
+    },
+  };
   dataPagosRecibidos = [
     {
       pagDet: 'Data',
@@ -149,18 +152,15 @@ export class PJDPDPQueryRelatedPaymentsDepositoriesComponent extends BasePage im
   public form: FormGroup;
   public formDepositario: FormGroup;
 
+  constructor(private fb: FormBuilder) {
+    super();
+  }
 
-    constructor(
-        private fb: FormBuilder
-    ) {
-        super();
-    }
-  
-    ngOnInit(): void {
-        this.prepareForm();
-        this.loading = true;
-    }
-    
+  ngOnInit(): void {
+    this.prepareForm();
+    this.loading = true;
+  }
+
   private prepareForm() {
     this.form = this.fb.group({
       noBien: ['', [Validators.required]], //*
@@ -174,32 +174,28 @@ export class PJDPDPQueryRelatedPaymentsDepositoriesComponent extends BasePage im
       fechaEjecucion: ['', [Validators.required]], //*
     });
   }
-  
-mostrarInfo(form: any): any{
-  console.log(form.value)
-}
 
-mostrarInfoDepositario(formDepositario: any): any{
-  console.log(formDepositario.value)
-}
- 
-btnExportarExcel(): any{
-  console.log("Exportar Excel");
-}
+  mostrarInfo(form: any): any {
+    console.log(form.value);
+  }
 
-btnEnviarSIRSAE(): any{
-  console.log("Envíar a SIRSAE");
-}
+  mostrarInfoDepositario(formDepositario: any): any {
+    console.log(formDepositario.value);
+  }
 
-btnImprimir(): any{
-  console.log("Imprimir");
-}
+  btnExportarExcel(): any {
+    console.log('Exportar Excel');
+  }
 
-btnActualizarPago(): any{
-  console.log("Actualizar Pago");
-}
+  btnEnviarSIRSAE(): any {
+    console.log('Envíar a SIRSAE');
+  }
 
-    
-}
+  btnImprimir(): any {
+    console.log('Imprimir');
+  }
 
-  
+  btnActualizarPago(): any {
+    console.log('Actualizar Pago');
+  }
+}

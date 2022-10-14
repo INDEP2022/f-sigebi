@@ -12,8 +12,7 @@ import { THIRDPARTYCOMPANY_COLUMS } from './third-party-company-columns';
 @Component({
   selector: 'app-third-party-company-list',
   templateUrl: './third-party-company-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ThirdPartyCompanyListComponent extends BasePage implements OnInit {
   settings = TABLE_SETTINGS;

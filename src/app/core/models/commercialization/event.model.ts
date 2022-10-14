@@ -1,4 +1,4 @@
-//Interface Provisional sin Validar 
+//Interface Provisional sin Validar
 export interface IEvent {
   id?: number;
   typeEventId: number;

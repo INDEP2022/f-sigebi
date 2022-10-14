@@ -19,11 +19,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // import { MatInputModule } from '@angular/material/input';
 import { FactGenExpedNotifComponent } from './fact-gen-exped-notif/fact-gen-exped-notif.component';
 
-@NgModule({ 
-  declarations: [ 
-    FactGenExpedNotifComponent,
-    
-  ],
+@NgModule({
+  declarations: [FactGenExpedNotifComponent],
   imports: [
     CommonModule,
     FactGenExpedNotifRoutingModule,
@@ -45,12 +42,9 @@ import { FactGenExpedNotifComponent } from './fact-gen-exped-notif/fact-gen-expe
     NgSelectModule,
     SharedModule,
   ],
-  exports:[
-    
-    // ComponentsModule, 
-    NgSelectModule
-    
-  ]
+  exports: [
+    // ComponentsModule,
+    NgSelectModule,
+  ],
 })
-export class FactGenExpedNotifModule { }
-
+export class FactGenExpedNotifModule {}

@@ -7,16 +7,13 @@ import { DelegationSharedComponent } from 'src/app/@standalone/shared-forms/dele
 import { PeCmrdMCumulativeGoodsRoutingModule } from './pe-cmrd-m-cumulative-goods-routing.module';
 import { PeCmrdCCumulativeGoodsComponent } from './pe-cmrd-c-cumulative-goods/pe-cmrd-c-cumulative-goods.component';
 
-
 @NgModule({
-  declarations: [
-    PeCmrdCCumulativeGoodsComponent,
-  ],
+  declarations: [PeCmrdCCumulativeGoodsComponent],
   imports: [
     CommonModule,
     PeCmrdMCumulativeGoodsRoutingModule,
     SharedModule,
-    DelegationSharedComponent
-  ]
+    DelegationSharedComponent,
+  ],
 })
-export class PeCmrdMCumulativeGoodsModule { }
+export class PeCmrdMCumulativeGoodsModule {}

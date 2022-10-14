@@ -7,38 +7,37 @@ import { EventSelectionModalComponent } from '../../components/event-selection-m
 @Component({
   selector: 'app-c-c-caeeo-c-authorization-keys-form',
   templateUrl: './c-c-caeeo-c-authorization-keys-form.component.html',
-  styles: [`
-    .bg-key {
-      background-color: #e3e3e3;
-      border-radius: 8px !important;
-    }
-  `], 
+  styles: [
+    `
+      .bg-key {
+        background-color: #e3e3e3;
+        border-radius: 8px !important;
+      }
+    `,
+  ],
   animations: [
     trigger('OnEventSelected', [
       transition(':enter', [
         style({ opacity: 0 }),
         animate('500ms', style({ opacity: 1 })),
       ]),
-      transition(':leave', [
-        animate('500ms', style({ opacity: 0 }))
-      ])
+      transition(':leave', [animate('500ms', style({ opacity: 0 }))]),
     ]),
-  ]
+  ],
 })
-export class CCCaeeoCAuthorizationKeysFormComponent extends BasePage implements OnInit {
-
+export class CCCaeeoCAuthorizationKeysFormComponent
+  extends BasePage
+  implements OnInit
+{
   // tipo any hasta que existan modelos o interfaces de la respuesta del backend
   event: any = null;
   authKey: string = '';
 
-  constructor(
-    private modalService: BsModalService
-  ) {
+  constructor(private modalService: BsModalService) {
     super();
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   openModal(context?: Partial<EventSelectionModalComponent>) {
     const modalRef = this.modalService.show(EventSelectionModalComponent, {
@@ -46,7 +45,7 @@ export class CCCaeeoCAuthorizationKeysFormComponent extends BasePage implements 
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    modalRef.content.refresh.subscribe( (next: any) => {
+    modalRef.content.refresh.subscribe((next: any) => {
       if (next) {
         console.log(next);
         this.event = next;
@@ -60,18 +59,22 @@ export class CCCaeeoCAuthorizationKeysFormComponent extends BasePage implements 
     this.event = {
       id: 1,
       event: 'DECBM 01/07',
-      description: 'SI ESTOY ENTRANDO 3 1 M T PRUEBA PRUEBA PRUEBA PRUEBA PRUEBA PRUEBA'
-    }
+      description:
+        'SI ESTOY ENTRANDO 3 1 M T PRUEBA PRUEBA PRUEBA PRUEBA PRUEBA PRUEBA',
+    };
   }
 
   generateKey() {
-    console.log( 'Key generated' );
-    this.authKey = '5G5A9G45HR83QD9S7WN0N1VY2'
+    console.log('Key generated');
+    this.authKey = '5G5A9G45HR83QD9S7WN0N1VY2';
   }
 
   copy() {
     navigator.clipboard.writeText(this.authKey);
-    this.onLoadToast('success', 'Clave de autorización', 'copiada al portapapeles')
+    this.onLoadToast(
+      'success',
+      'Clave de autorización',
+      'copiada al portapapeles'
+    );
   }
-
 }

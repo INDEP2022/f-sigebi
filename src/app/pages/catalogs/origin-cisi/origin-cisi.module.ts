@@ -7,17 +7,13 @@ import { OriginCisiListComponent } from './origin-cisi-list/origin-cisi-list.com
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
-  declarations: [
-    OrignCisiFormComponent,
-    OriginCisiListComponent
-  ],
+  declarations: [OrignCisiFormComponent, OriginCisiListComponent],
   imports: [
     CommonModule,
     OriginCisiRoutingModule,
     SharedModule,
     ModalModule.forChild(),
-  ]
+  ],
 })
-export class OriginCisiModule { }
+export class OriginCisiModule {}

@@ -5,12 +5,12 @@ import { ImageMediaListComponent } from './image-media-list/image-media-list.com
 const routes: Routes = [
   {
     path: '',
-    component: ImageMediaListComponent
-  }
+    component: ImageMediaListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ImageMediaRoutingModule { }
+export class ImageMediaRoutingModule {}

@@ -11,19 +11,15 @@ import { PeAabMAnnualAccumulatedAssetsModule } from '../pe-aab-m-annual-accumula
 import { AcumulativeAssetTabsRoutingModule } from './acumulative-asset-tabs-routing.module';
 import { AcumulativeAssetTabsComponent } from './acumulative-asset-tabs/acumulative-asset-tabs.component';
 
-
-
 @NgModule({
-  declarations: [
-    AcumulativeAssetTabsComponent
-  ],
+  declarations: [AcumulativeAssetTabsComponent],
   imports: [
     CommonModule,
     AcumulativeAssetTabsRoutingModule,
     TabsModule.forRoot(),
     RouterLink,
     RouterLinkActive,
-    PeAabMAnnualAccumulatedAssetsModule
-  ]
+    PeAabMAnnualAccumulatedAssetsModule,
+  ],
 })
-export class AcumulativeAssetTabsModule { }
+export class AcumulativeAssetTabsModule {}

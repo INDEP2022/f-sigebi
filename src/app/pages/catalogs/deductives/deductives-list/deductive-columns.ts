@@ -2,42 +2,42 @@ export const DEDUCTIVE_COLUMNS = {
   id: {
     title: 'Registro',
     type: 'number',
-    sort: false
+    sort: false,
   },
   serviceType: {
     title: 'Tipo de servicio',
     type: 'string',
-    sort: false
+    sort: false,
   },
   weightedDeduction: {
     title: 'Ponderación',
     type: 'number',
-    sort: false
+    sort: false,
   },
   startingRankPercentage: {
     title: 'Porcentaje inicial',
     type: 'number',
-    sort: false
+    sort: false,
   },
   finalRankPercentage: {
     title: 'Porcentaje final',
     type: 'number',
-    sort: false
+    sort: false,
   },
   creationUser: {
     title: 'Creado por',
     type: 'string',
-    sort: false
+    sort: false,
   },
   editionUser: {
     title: 'Modificado por',
     type: 'string',
-    sort: false
+    sort: false,
   },
   version: {
     title: 'Version',
     type: 'number',
-    sort: false
+    sort: false,
   },
   status: {
     title: 'Estatus',
@@ -47,11 +47,11 @@ export const DEDUCTIVE_COLUMNS = {
         ? '<strong><span class="badge badge-pill badge-success">Activo</span></strong>'
         : '<strong><span class="badge badge-pill badge-warning">Inactivo</span></strong>';
     },
-    sort: false
+    sort: false,
   },
   contractNumber: {
     title: 'No. de contrato',
     type: 'number',
-    sort: false
+    sort: false,
   },
 };

@@ -12,11 +12,9 @@ import { R_ASUNT_DIC_COLUMNS } from './rasunt-dic-columns';
 @Component({
   selector: 'app-rasunt-dic-list',
   templateUrl: './rasunt-dic-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class RAsuntDicListComponent extends BasePage implements OnInit {
-
   settings = TABLE_SETTINGS;
   rAsuntDics: IRAsuntDic[] = [];
   totalItems: number = 0;
@@ -74,5 +72,4 @@ export class RAsuntDicListComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }

@@ -5,12 +5,12 @@ import { MunicipalityListComponent } from './municipality-list/municipality-list
 const routes: Routes = [
   {
     path: '',
-    component: MunicipalityListComponent
-  }
+    component: MunicipalityListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class MunicipalitiesRoutingModule { }
+export class MunicipalitiesRoutingModule {}

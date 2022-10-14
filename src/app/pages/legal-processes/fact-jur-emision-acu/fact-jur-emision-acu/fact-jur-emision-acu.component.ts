@@ -1,13 +1,12 @@
-import { Component, OnInit } from '@angular/core';  
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'ngx-fact-jur-emision-acu',
   templateUrl: './fact-jur-emision-acu.component.html',
-  styleUrls: ['./fact-jur-emision-acu.component.scss']
+  styleUrls: ['./fact-jur-emision-acu.component.scss'],
 })
-export class FactJurEmisionAcuComponent  {
-
+export class FactJurEmisionAcuComponent {
   tableSettings = {
     actions: {
       columnTitle: '',
@@ -15,7 +14,7 @@ export class FactJurEmisionAcuComponent  {
       edit: false,
       delete: false,
     },
-    hideSubHeader: true,//oculta subheaader de filtro
+    hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
 
     columns: {
@@ -65,15 +64,12 @@ export class FactJurEmisionAcuComponent  {
       observacionesAcuerdoInicial: 'Observaciones Acuerdo Inicial',
       aceptaSuspencion: 'Acepta Suspención',
     },
-
   ];
 
   public form: FormGroup;
   public formDepositario: FormGroup;
 
-  constructor(
-    private fb: FormBuilder) {  
-  }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();
@@ -91,21 +87,20 @@ export class FactJurEmisionAcuComponent  {
       fechaEjecucion: ['', [Validators.required]], //*
     });
   }
-  
-mostrarInfo(form: FormGroup): any{
-  console.log(form.value)
-}
 
-mostrarInfoDepositario(formDepositario: FormGroup): any{
-  console.log(formDepositario.value)
-}
+  mostrarInfo(form: FormGroup): any {
+    console.log(form.value);
+  }
 
-/**
- * Formulario
- */
-//  public returnField(form, field) { return form.get(field); }
-//  public returnShowRequirements(form, field) { 
-//    return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched; 
-//  }
+  mostrarInfoDepositario(formDepositario: FormGroup): any {
+    console.log(formDepositario.value);
+  }
 
+  /**
+   * Formulario
+   */
+  //  public returnField(form, field) { return form.get(field); }
+  //  public returnShowRequirements(form, field) {
+  //    return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched;
+  //  }
 }
