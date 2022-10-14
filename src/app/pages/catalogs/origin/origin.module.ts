@@ -7,17 +7,13 @@ import { OriginListComponent } from './origin-list/origin-list.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
-  declarations: [
-    OriginFormComponent,
-    OriginListComponent
-  ],
+  declarations: [OriginFormComponent, OriginListComponent],
   imports: [
     CommonModule,
     OriginRoutingModule,
     SharedModule,
     ModalModule.forChild(),
-  ]
+  ],
 })
-export class OriginModule { }
+export class OriginModule {}

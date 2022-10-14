@@ -1,208 +1,240 @@
-<app-card [header]="true" class="cat-card mt-5"> 
-    <div class="ch-content" header>
-  
-        <div class="row w-100">
-            <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
-                <span class="title">
-                    VALIDACIÓN DE POSESIÓN A TERCEROS
-                </span>
-            </div>
-            
-        </div>
-
+<app-card [header]="true" class="cat-card mt-5">
+  <div class="ch-content" header>
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
+        <span class="title"> VALIDACIÓN DE POSESIÓN A TERCEROS </span>
+      </div>
     </div>
-  
-    <div body>
+  </div>
 
-        <!-- TABLA----NOTIFICACIONES RELACIONADAS CON EL EXPEDIENTE -->
-        <div class="row w-100">
-            <div class="col-sm-12 col-12 col-md-6 p-2">
+  <div body>
+    <!-- TABLA----NOTIFICACIONES RELACIONADAS CON EL EXPEDIENTE -->
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-6 p-2"></div>
+      <div class="col-sm-12 col-12 col-md-6 p-2 text-center">
+        <span class="title">
+          NOTIFICACIONES RELACIONADAS CON EL EXPEDIENTE
+        </span>
+      </div>
+      <div class="col-sm-12 col-12 col-md-12 p-2">
+        <ng2-smart-table
+          class="my-table"
+          [settings]="tableSettingsNotificaciones"
+          [source]="dataTableNotificaciones">
+        </ng2-smart-table>
+      </div>
+    </div>
+    <!-- TABLA----NOTIFICACIONES RELACIONADAS CON EL EXPEDIENTE -->
 
-            </div>
-            <div class="col-sm-12 col-12 col-md-6 p-2 text-center">
-                <span class="title">
-                    NOTIFICACIONES RELACIONADAS CON EL EXPEDIENTE
-                </span>
-            </div>
-            <div class="col-sm-12 col-12 col-md-12 p-2">
-                <ng2-smart-table class="my-table" [settings]="tableSettingsNotificaciones" 
-                    [source]="dataTableNotificaciones">
-                </ng2-smart-table>
-            </div>
-        </div>
-        <!-- TABLA----NOTIFICACIONES RELACIONADAS CON EL EXPEDIENTE -->
-  
-        <!-- TABLA----BIENES RELACIONADOS CON EL EXPEDIENTE -->
-        <div class="row w-100">
-            <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2">
-                <ng2-smart-table class="my-table" [settings]="tableSettingsBienes" 
-                    [source]="dataTableBienes">
-                </ng2-smart-table>
-            <!-- </div>
+    <!-- TABLA----BIENES RELACIONADOS CON EL EXPEDIENTE -->
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2">
+        <ng2-smart-table
+          class="my-table"
+          [settings]="tableSettingsBienes"
+          [source]="dataTableBienes">
+        </ng2-smart-table>
+        <!-- </div>
             <div class="col-sm-12 col-12 col-md-12 p-2"> -->
-                <br>
-                <span class="badge m-2 badge-pill badge-success">**Disponibles</span>
-                <span class="badge m-2 badge-pill badge-dark">**No Disponibles</span>
-            </div>
-        <!-- </div> -->
-        <!-- TABLA----BIENES RELACIONADOS CON EL EXPEDIENTE -->
-            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                <div class="form-group">
-                    <button nbButton class="mx-2">
-                        <!-- <nb-icon icon="arrow-circle-right-outline"></nb-icon>
+        <br />
+        <span class="badge m-2 badge-pill badge-success">**Disponibles</span>
+        <span class="badge m-2 badge-pill badge-dark">**No Disponibles</span>
+      </div>
+      <!-- </div> -->
+      <!-- TABLA----BIENES RELACIONADOS CON EL EXPEDIENTE -->
+      <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+        <div class="form-group">
+          <button nbButton class="mx-2">
+            <!-- <nb-icon icon="arrow-circle-right-outline"></nb-icon>
                         <br> -->
-                        <label class="label w-100">Agregar</label>
-                    </button>
-                </div>
-                <br>
-                <div class="form-group">
-                    <button nbButton class="mx-2">
-                        <!-- <nb-icon icon="arrow-circle-left-outline"></nb-icon>
+            <label class="label w-100">Agregar</label>
+          </button>
+        </div>
+        <br />
+        <div class="form-group">
+          <button nbButton class="mx-2">
+            <!-- <nb-icon icon="arrow-circle-left-outline"></nb-icon>
                         <br> -->
-                        <label class="label w-100">Eliminar</label>
-                    </button>
-                </div>
-            </div>
-        <!-- TABLA----BIENES RELACIONADOS CON EL OFICIO -->
-        <!-- <div class="row w-100"> -->
-            <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2">
-                <ng2-smart-table class="my-table" [settings]="tableSettingsBienesOficio" 
-                    [source]="dataTableBienesOficio">
-                </ng2-smart-table>
-            </div>
+            <label class="label w-100">Eliminar</label>
+          </button>
         </div>
-        <!-- TABLA----BIENES RELACIONADOS CON EL OFICIO -->
+      </div>
+      <!-- TABLA----BIENES RELACIONADOS CON EL OFICIO -->
+      <!-- <div class="row w-100"> -->
+      <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2">
+        <ng2-smart-table
+          class="my-table"
+          [settings]="tableSettingsBienesOficio"
+          [source]="dataTableBienesOficio">
+        </ng2-smart-table>
+      </div>
+    </div>
+    <!-- TABLA----BIENES RELACIONADOS CON EL OFICIO -->
 
-        <!-- FORM----VOLATE Y TEXTO -->
-        <form [formGroup]="form">
-            <div class="row w-100">
-                <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-1">
-                    <div class="form-group">
-                        <label class="label w-100">No Volante</label>
-                        <input nbInput fullWidth type="number" class="w-100" formControlName="noVolante"
-                                placeholder="No Volante">
-                        
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-1">
-                    <div class="form-group">
-                        <label class="label w-100">Clave Oficio</label>
-                        <input nbInput fullWidth type="number" class="w-100" formControlName="claveOficio"
-                                placeholder="Clave Oficio">
-                        
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-1">
-                    <div class="form-group">
-                        <label class="label w-100">Destinatario</label>
-                        <input nbInput fullWidth class="w-100" formControlName="destinatario"
-                                placeholder="Destinatario">
-                        
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-1">
-                    <div class="form-group">
-                        <label class="label w-100">Destinatario Detalle</label>
-                        <input nbInput fullWidth class="w-100"
-                                placeholder="Destinatario Detalle">
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-1">
-                    <div class="form-group">
-                        <button nbButton class="mx-2">
-                            <label class="label w-100">Insertar Texto Predefinido</label>
-                        </button>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-1">
-                    <div class="form-group">
-                        <button nbButton class="mx-2">
-                            <label class="label w-100">Reemplazar Marcadores</label>
-                        </button>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-1">
-                    <div class="form-group">
-                        <button nbButton class="mx-2">
-                            <label class="label w-100">Imprimir</label>
-                        </button>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-1">
-                    <div class="form-group">
-                        <label class="label w-100">Texto</label>
-                        <textarea nbInput fullWidth fullWidth placeholder="Texto"
-                            class="w-100" formControlName="texto" rows="10"></textarea>
-                        
-                    </div>
-                </div>
-            </div>
-        </form>
-        <!-- FORM----VOLATE Y TEXTO -->
+    <!-- FORM----VOLATE Y TEXTO -->
+    <form [formGroup]="form">
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-1">
+          <div class="form-group">
+            <label class="label w-100">No Volante</label>
+            <input
+              nbInput
+              fullWidth
+              type="number"
+              class="w-100"
+              formControlName="noVolante"
+              placeholder="No Volante" />
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-1">
+          <div class="form-group">
+            <label class="label w-100">Clave Oficio</label>
+            <input
+              nbInput
+              fullWidth
+              type="number"
+              class="w-100"
+              formControlName="claveOficio"
+              placeholder="Clave Oficio" />
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-1">
+          <div class="form-group">
+            <label class="label w-100">Destinatario</label>
+            <input
+              nbInput
+              fullWidth
+              class="w-100"
+              formControlName="destinatario"
+              placeholder="Destinatario" />
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-1">
+          <div class="form-group">
+            <label class="label w-100">Destinatario Detalle</label>
+            <input
+              nbInput
+              fullWidth
+              class="w-100"
+              placeholder="Destinatario Detalle" />
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-1">
+          <div class="form-group">
+            <button nbButton class="mx-2">
+              <label class="label w-100">Insertar Texto Predefinido</label>
+            </button>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-1">
+          <div class="form-group">
+            <button nbButton class="mx-2">
+              <label class="label w-100">Reemplazar Marcadores</label>
+            </button>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-1">
+          <div class="form-group">
+            <button nbButton class="mx-2">
+              <label class="label w-100">Imprimir</label>
+            </button>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-1">
+          <div class="form-group">
+            <label class="label w-100">Texto</label>
+            <textarea
+              nbInput
+              fullWidth
+              fullWidth
+              placeholder="Texto"
+              class="w-100"
+              formControlName="texto"
+              rows="10"></textarea>
+          </div>
+        </div>
+      </div>
+    </form>
+    <!-- FORM----VOLATE Y TEXTO -->
 
-        <!-- Form CON COPIA PARA -->
-<form [formGroup]="formCcpOficio">
-    <div class="row tp-2 mb-2">
+    <!-- Form CON COPIA PARA -->
+    <form [formGroup]="formCcpOficio">
+      <div class="row tp-2 mb-2">
         <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-1 pt-0 pb-0">
-            <div class="form-group pt-1 pb-1 mb-1">
-                <label class="label w-100">C.P.P 1</label>
-                <input nbInput fullWidth class="w-100" formControlName="ccp1"
-                        placeholder="C.P.P 1">
-                
-            </div>
+          <div class="form-group pt-1 pb-1 mb-1">
+            <label class="label w-100">C.P.P 1</label>
+            <input
+              nbInput
+              fullWidth
+              class="w-100"
+              formControlName="ccp1"
+              placeholder="C.P.P 1" />
+          </div>
         </div>
         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-1 pt-0 pb-0">
-            <div class="form-group">
-                <label class="label w-100">C.P.P 1 Detalle</label>
-                <input nbInput fullWidth class="w-100"
-                        placeholder="C.P.P 1 Detalle">
-            </div>
+          <div class="form-group">
+            <label class="label w-100">C.P.P 1 Detalle</label>
+            <input
+              nbInput
+              fullWidth
+              class="w-100"
+              placeholder="C.P.P 1 Detalle" />
+          </div>
         </div>
         <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-1 pt-0 pb-0">
-            <div class="form-group">
-                <label class="label w-100">C.P.P 2</label>
-                <input nbInput fullWidth class="w-100" formControlName="ccp2"
-                        placeholder="C.P.P 2">
-                
-            </div>
+          <div class="form-group">
+            <label class="label w-100">C.P.P 2</label>
+            <input
+              nbInput
+              fullWidth
+              class="w-100"
+              formControlName="ccp2"
+              placeholder="C.P.P 2" />
+          </div>
         </div>
         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-1 pt-0 pb-0">
-            <div class="form-group">
-                <label class="label w-100">C.P.P 2 Detalle</label>
-                <input nbInput fullWidth class="w-100"
-                        placeholder="C.P.P 2 Detalle">
-            </div>
+          <div class="form-group">
+            <label class="label w-100">C.P.P 2 Detalle</label>
+            <input
+              nbInput
+              fullWidth
+              class="w-100"
+              placeholder="C.P.P 2 Detalle" />
+          </div>
         </div>
         <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-1 pt-0 pb-0">
-            <div class="form-group">
-                <label class="label w-100">Firma</label>
-                <input nbInput fullWidth class="w-100" formControlName="firma"
-                        placeholder="Firma">
-                
-            </div>
+          <div class="form-group">
+            <label class="label w-100">Firma</label>
+            <input
+              nbInput
+              fullWidth
+              class="w-100"
+              formControlName="firma"
+              placeholder="Firma" />
+          </div>
         </div>
         <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-1 pt-0 pb-0">
-            <div class="form-group">
-                <label class="label w-100">Firma</label>
-                <input nbInput fullWidth class="w-100"
-                        placeholder="Firma">
-            </div>
+          <div class="form-group">
+            <label class="label w-100">Firma</label>
+            <input nbInput fullWidth class="w-100" placeholder="Firma" />
+          </div>
         </div>
         <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-1 pt-0 pb-0">
-            <div class="form-group">
-                <label class="label">&nbsp;</label>&nbsp;  
-                <div class="d-flex justify-content-center">
-                    <button type="button" nbButton status="primary" (click)="sendForm()">
-                        Enviar
-                    </button>
-                </div>
+          <div class="form-group">
+            <label class="label">&nbsp;</label>&nbsp;
+            <div class="d-flex justify-content-center">
+              <button
+                type="button"
+                nbButton
+                status="primary"
+                (click)="sendForm()">
+                Enviar
+              </button>
             </div>
+          </div>
         </div>
-    </div>
-</form>
-<!-- Form CON COPIA PARA -->
-
-
-    </div>
-  
-  </app-card>
+      </div>
+    </form>
+    <!-- Form CON COPIA PARA -->
+  </div>
+</app-card>

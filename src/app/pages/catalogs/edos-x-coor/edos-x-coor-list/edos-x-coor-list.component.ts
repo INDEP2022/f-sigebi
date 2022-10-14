@@ -12,8 +12,7 @@ import { EDOSXCOOR_COLUMS } from './edos-x-coor-columns';
 @Component({
   selector: 'app-edos-x-coor-list',
   templateUrl: './edos-x-coor-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class EdosXCoorListComponent extends BasePage implements OnInit {
   settings = TABLE_SETTINGS;

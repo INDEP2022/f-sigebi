@@ -4,12 +4,13 @@ import { ZoneGeographicListComponent } from './zone-geographic-list/zone-geograp
 
 const routes: Routes = [
   {
-    path:'',component:ZoneGeographicListComponent
-  }
+    path: '',
+    component: ZoneGeographicListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ZoneGeographicRoutingModule { }
+export class ZoneGeographicRoutingModule {}

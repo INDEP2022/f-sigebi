@@ -4,14 +4,14 @@ import { FdpAddCDonationActsComponent } from './donation-acts/fdp-add-c-donation
 
 const routes: Routes = [
   {
-    path: "",
+    path: '',
     component: FdpAddCDonationActsComponent,
-    data: { Title: 'Actas de donación' }
+    data: { Title: 'Actas de donación' },
   },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class FdpAddMDonationActsRoutingModule { }
+export class FdpAddMDonationActsRoutingModule {}

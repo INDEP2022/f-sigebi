@@ -9,8 +9,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-edos-x-coor-form',
   templateUrl: './edos-x-coor-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class EdosXCoorFormComponent extends BasePage implements OnInit {
   edosXCoorForm: ModelForm<IEdosXCoor>;

@@ -7,17 +7,13 @@ import { NotaryRoutingModule } from './notary-routing.module';
 import { NotaryFormComponent } from './notary-form/notary-form.component';
 import { NotaryListComponent } from './notary-list/notary-list.component';
 
-
 @NgModule({
-  declarations: [
-    NotaryFormComponent,
-    NotaryListComponent
-  ],
+  declarations: [NotaryFormComponent, NotaryListComponent],
   imports: [
     CommonModule,
     NotaryRoutingModule,
     SharedModule,
-    ModalModule.forChild()
-  ]
+    ModalModule.forChild(),
+  ],
 })
-export class NotaryModule { }
+export class NotaryModule {}

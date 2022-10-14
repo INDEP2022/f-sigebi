@@ -1,14 +1,14 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';  
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'ngx-form-volante-expediente',
   templateUrl: './form-volante-expediente.component.html',
-  styleUrls: ['./form-volante-expediente.component.scss']
+  styleUrls: ['./form-volante-expediente.component.scss'],
 })
-export class FormVolanteExpedienteComponent  {
-    @Input() form: FormGroup;
-    @Input() nombrePantalla: string;
+export class FormVolanteExpedienteComponent {
+  @Input() form: FormGroup;
+  @Input() nombrePantalla: string;
 
   public optionsTipoVolante = [
     { value: 'Administrativo', label: 'Administrativo' },
@@ -19,35 +19,32 @@ export class FormVolanteExpedienteComponent  {
   public botonOficio = false;
   public botonCaptura = false;
 
-//   public form: FormGroup;
-@Output() formValues = new EventEmitter<any>();
-@Output() oficioRelacionadoEvent = new EventEmitter<any>();
-@Output() capturaCopiasEvent = new EventEmitter<any>();
-  constructor() {  
+  //   public form: FormGroup;
+  @Output() formValues = new EventEmitter<any>();
+  @Output() oficioRelacionadoEvent = new EventEmitter<any>();
+  @Output() capturaCopiasEvent = new EventEmitter<any>();
+  constructor() {}
+
+  ngOnInit(): void {}
+
+  mostrarInfo(): any {
+    console.log(this.form.value);
+    this.formValues.emit(this.form);
   }
 
-  ngOnInit(): void {
-  }
-  
-mostrarInfo(): any{
-  console.log(this.form.value);
-  this.formValues.emit(this.form);
-}
-
-oficioRelacionado() {
-    console.log("Oficio Relacionado");
+  oficioRelacionado() {
+    console.log('Oficio Relacionado');
     this.oficioRelacionadoEvent.emit(true);
-}
+  }
 
-capturaCopias() {
-    console.log("Captura copias");
+  capturaCopias() {
+    console.log('Captura copias');
     this.capturaCopiasEvent.emit(true);
-}
+  }
 
-/**
- * Formulario
- */
-// public returnField(field) { return this.form.get(field); }
-// public returnShowRequirements(field) { return this.returnField(field)?.errors?.required && this.returnField(field).touched; }
-
+  /**
+   * Formulario
+   */
+  // public returnField(field) { return this.form.get(field); }
+  // public returnShowRequirements(field) { return this.returnField(field)?.errors?.required && this.returnField(field).touched; }
 }

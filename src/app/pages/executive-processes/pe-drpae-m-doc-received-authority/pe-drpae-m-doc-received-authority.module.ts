@@ -9,18 +9,15 @@ import { DateRangeSharedComponent } from 'src/app/@standalone/shared-forms/date-
 import { PeDrpaeMDocReceivedAuthorityRoutingModule } from './pe-drpae-m-doc-received-authority-routing.module';
 import { PeDrpaeCDocReceivedAuthorityComponent } from './pe-drpae-c-doc-received-authority/pe-drpae-c-doc-received-authority.component';
 
-
 @NgModule({
-  declarations: [
-    PeDrpaeCDocReceivedAuthorityComponent
-  ],
+  declarations: [PeDrpaeCDocReceivedAuthorityComponent],
   imports: [
     CommonModule,
     PeDrpaeMDocReceivedAuthorityRoutingModule,
     SharedModule,
     BsDatepickerModule,
     DelegationSharedComponent,
-    DateRangeSharedComponent
-  ]
+    DateRangeSharedComponent,
+  ],
 })
-export class PeDrpaeMDocReceivedAuthorityModule { }
+export class PeDrpaeMDocReceivedAuthorityModule {}

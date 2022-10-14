@@ -7,17 +7,13 @@ import { TypeRelevantListComponent } from './type-relevant-list/type-relevant-li
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
-  declarations: [
-    TypeRelevantFormComponent,
-    TypeRelevantListComponent
-  ],
+  declarations: [TypeRelevantFormComponent, TypeRelevantListComponent],
   imports: [
     CommonModule,
     SharedModule,
     ModalModule.forChild(),
-    TypeRelevantRoutingModule
-  ]
+    TypeRelevantRoutingModule,
+  ],
 })
-export class TypeRelevantModule { }
+export class TypeRelevantModule {}

@@ -30,7 +30,8 @@ export class FractionsFormComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private fractionService: FractionService,
     private normService: NormService,
-    private clasificationService:SIABClasificationService) {
+    private clasificationService: SIABClasificationService
+  ) {
     super();
   }
 

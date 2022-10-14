@@ -20,11 +20,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FactCondepoConcilPagComponent } from './fact-condepo-concil-pag/fact-condepo-concil-pag.component';
 import { SharedLegalProcessModule } from '../shared-legal-process/shared-legal-process.module';
 
-@NgModule({ 
-  declarations: [ 
-    FactCondepoConcilPagComponent,
-    
-  ],
+@NgModule({
+  declarations: [FactCondepoConcilPagComponent],
   imports: [
     CommonModule,
     FactCondepoConcilPagRoutingModule,
@@ -46,14 +43,11 @@ import { SharedLegalProcessModule } from '../shared-legal-process/shared-legal-p
     NgSelectModule,
     SharedModule,
 
-    SharedLegalProcessModule
+    SharedLegalProcessModule,
   ],
-  exports:[
-    
-    // ComponentsModule, 
-    NgSelectModule
-    
-  ]
+  exports: [
+    // ComponentsModule,
+    NgSelectModule,
+  ],
 })
-export class FactCondepoConcilPagModule { }
-
+export class FactCondepoConcilPagModule {}

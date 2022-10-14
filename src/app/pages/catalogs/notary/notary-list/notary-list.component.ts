@@ -12,11 +12,9 @@ import { NotaryFormComponent } from '../notary-form/notary-form.component';
 @Component({
   selector: 'app-notary-list',
   templateUrl: './notary-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class NotaryListComponent extends BasePage implements OnInit {
-
   settings = TABLE_SETTINGS;
   columns: INotary[] = [];
   totalItems: number = 0;
@@ -25,7 +23,7 @@ export class NotaryListComponent extends BasePage implements OnInit {
   constructor(
     private notaryService: NotaryService,
     private modalService: BsModalService
-  ) { 
+  ) {
     super();
     this.settings.columns = NOTARY_COLUMNS;
     this.settings.actions.delete = true;
@@ -75,5 +73,4 @@ export class NotaryListComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }

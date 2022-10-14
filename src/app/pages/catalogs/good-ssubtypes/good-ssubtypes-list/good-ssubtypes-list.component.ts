@@ -12,8 +12,7 @@ import { GOOD_SSUBTYPES_COLUMNS } from './good-ssubtype-columns';
 @Component({
   selector: 'app-good-ssubtypes-list',
   templateUrl: './good-ssubtypes-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class GoodSsubtypesListComponent extends BasePage implements OnInit {
   settings = TABLE_SETTINGS;

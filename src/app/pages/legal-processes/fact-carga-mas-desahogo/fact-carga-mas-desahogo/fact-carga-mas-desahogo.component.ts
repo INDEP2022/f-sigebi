@@ -1,13 +1,12 @@
-import { Component, OnInit } from '@angular/core';  
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'ngx-fact-carga-mas-desahogo',
   templateUrl: './fact-carga-mas-desahogo.component.html',
-  styleUrls: ['./fact-carga-mas-desahogo.component.scss']
+  styleUrls: ['./fact-carga-mas-desahogo.component.scss'],
 })
-export class FactCargaMasDesahogoComponent  {
-
+export class FactCargaMasDesahogoComponent {
   tableSettings = {
     actions: {
       columnTitle: '',
@@ -15,14 +14,14 @@ export class FactCargaMasDesahogoComponent  {
       edit: false,
       delete: false,
     },
-    hideSubHeader: true,//oculta subheaader de filtro
+    hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
 
     columns: {
-      noBien:{
+      noBien: {
         title: 'No. Bien',
       },
-      noExpediente:{
+      noExpediente: {
         title: 'No. Expediente',
       },
     },
@@ -33,10 +32,8 @@ export class FactCargaMasDesahogoComponent  {
       noBien: 'DATA',
       noExpediente: 'DATA',
     },
-
   ];
 
-  
   tableSettings1 = {
     actions: {
       columnTitle: '',
@@ -44,11 +41,11 @@ export class FactCargaMasDesahogoComponent  {
       edit: false,
       delete: false,
     },
-    hideSubHeader: true,//oculta subheaader de filtro
+    hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
 
     columns: {
-      erroresProceso:{
+      erroresProceso: {
         title: 'Errores del proceso',
       },
     },
@@ -58,15 +55,12 @@ export class FactCargaMasDesahogoComponent  {
     {
       erroresProceso: 'DATA',
     },
-
   ];
 
   public form: FormGroup;
   public formCargaMasiva: FormGroup;
 
-  constructor(
-    private fb: FormBuilder) {  
-  }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();
@@ -85,59 +79,51 @@ export class FactCargaMasDesahogoComponent  {
       eliminar: '', // Check
     });
     this.formCargaMasiva = this.fb.group({
-      identificadorCargaMasiva: ''
+      identificadorCargaMasiva: '',
     });
   }
 
   btnBienesDictamen() {
-    console.log("Bienes Dictamen");
+    console.log('Bienes Dictamen');
   }
 
   btnDictamenes() {
-    console.log("Dictamenes");
+    console.log('Dictamenes');
   }
 
   btnCargarIdentificador() {
-    console.log("Identificador");
-    
+    console.log('Identificador');
   }
-  
+
   btnExpedientesCsv() {
-    console.log("Expedientes csv");
-    
+    console.log('Expedientes csv');
   }
 
   btnExpedientesXls() {
-    console.log("Expedientes xls");
-    
+    console.log('Expedientes xls');
   }
 
   btnCrearDictamenes() {
-    console.log("Dictamenes");
-    
+    console.log('Dictamenes');
   }
 
   btnImprimeOficio() {
-    console.log("Oficio");
-    
+    console.log('Oficio');
   }
 
   btnImprimeRelacionBienes() {
-    console.log("Relacion Bienes");
-    
+    console.log('Relacion Bienes');
   }
-  
+
   btnImprimeRelacionExpediente() {
-    console.log("Relacion Expediente");
-    
+    console.log('Relacion Expediente');
   }
 
-/**
- * Formulario
- */
-//  public returnField(form, field) { return form.get(field); }
-//  public returnShowRequirements(form, field) { 
-//    return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched; 
-//  }
-
+  /**
+   * Formulario
+   */
+  //  public returnField(form, field) { return form.get(field); }
+  //  public returnShowRequirements(form, field) {
+  //    return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched;
+  //  }
 }

@@ -6,14 +6,12 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { FormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [
-    FdpRdadddCDonationDestructionDestinationComponent
-  ],
+  declarations: [FdpRdadddCDonationDestructionDestinationComponent],
   imports: [
     CommonModule,
     FdpRdadddMDonationDestructionDestinationRoutingModule,
     SharedModule,
-    FormsModule
-  ]
+    FormsModule,
+  ],
 })
-export class FdpRdadddMDonationDestructionDestinationModule { }
+export class FdpRdadddMDonationDestructionDestinationModule {}

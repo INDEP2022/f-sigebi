@@ -17,7 +17,9 @@ export class SATSubclassificationService
     private satSubclasificationRepository: Repository<ISatSubclassification>
   ) {}
 
-  getAll(params?: ListParams): Observable<IListResponse<ISatSubclassification>> {
+  getAll(
+    params?: ListParams
+  ): Observable<IListResponse<ISatSubclassification>> {
     return this.satSubclasificationRepository.getAllPaginated(
       this.route,
       params
@@ -32,7 +34,10 @@ export class SATSubclassificationService
     return this.satSubclasificationRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: ISatSubclassification): Observable<Object> {
+  update(
+    id: string | number,
+    model: ISatSubclassification
+  ): Observable<Object> {
     return this.satSubclasificationRepository.update(this.route, id, model);
   }
 

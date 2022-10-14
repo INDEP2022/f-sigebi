@@ -4,12 +4,13 @@ import { PenaltyListComponent } from './penalty-list/penalty-list.component';
 
 const routes: Routes = [
   {
-    path:'',component:PenaltyListComponent
-  }
+    path: '',
+    component: PenaltyListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PenaltyRoutingModule { }
+export class PenaltyRoutingModule {}

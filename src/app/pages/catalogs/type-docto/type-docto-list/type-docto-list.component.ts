@@ -12,8 +12,7 @@ import { TYPEDOCTO_COLUMS } from './type-docto-columns';
 @Component({
   selector: 'app-type-docto-list',
   templateUrl: './type-docto-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class TypeDoctoListComponent extends BasePage implements OnInit {
   settings = TABLE_SETTINGS;
@@ -73,5 +72,4 @@ export class TypeDoctoListComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }

@@ -11,11 +11,9 @@ import { ListParams } from '../../../../common/repository/interfaces/list-params
 @Component({
   selector: 'app-indicator-report-form',
   templateUrl: './indicator-report-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class IndicatorReportFormComponent extends BasePage implements OnInit {
-
   form: ModelForm<IIndicatorReport>;
   title: string = 'Indicador';
   edit: boolean = false;
@@ -24,7 +22,7 @@ export class IndicatorReportFormComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private proeficientService: ProeficientService,
+    private proeficientService: ProeficientService
   ) {
     super();
   }
@@ -69,21 +67,16 @@ export class IndicatorReportFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.proeficientService
-      .create(this.form.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.proeficientService.create(this.form.getRawValue()).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   update() {
     this.loading = true;
     this.proeficientService
-      .update(
-        this.indicatorReport.id,
-        this.form.getRawValue() 
-      )
+      .update(this.indicatorReport.id, this.form.getRawValue())
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
@@ -97,5 +90,4 @@ export class IndicatorReportFormComponent extends BasePage implements OnInit {
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
-
 }

@@ -5,27 +5,24 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 @Component({
   selector: 'app-c-bm-f-edf-c-invoice-status-modal',
   templateUrl: './c-bm-f-edf-c-invoice-status-modal.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CBmFEdfCInvoiceStatusModalComponent implements OnInit {
-
-  form : FormGroup = new FormGroup({});
-  constructor(private modalRef: BsModalRef, private fb: FormBuilder) { }
+  form: FormGroup = new FormGroup({});
+  constructor(private modalRef: BsModalRef, private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    this.prepareForm()
+    this.prepareForm();
   }
 
-  private prepareForm(){
+  private prepareForm() {
     this.form = this.fb.group({
       idStatus: ['', [Validators.required]],
       description: ['', [Validators.required]],
-    })
+    });
   }
 
   close() {
     this.modalRef.hide();
   }
-
 }

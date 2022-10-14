@@ -9,8 +9,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-station-form',
   templateUrl: './station-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class StationFormComponent extends BasePage implements OnInit {
   stationForm: ModelForm<IStation>;
@@ -31,13 +30,13 @@ export class StationFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.stationForm = this.fb.group({
-      id:[null],
-      idTransferor:[null],
-      idEntity:[null],
+      id: [null],
+      idTransferor: [null],
+      idEntity: [null],
       stationName: [null, Validators.required],
       keyState: [null, Validators.required],
       version: [null, Validators.required],
-      status: [null, Validators.required]
+      status: [null, Validators.required],
     });
     if (this.station != null) {
       this.edit = true;

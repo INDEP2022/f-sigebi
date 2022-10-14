@@ -63,7 +63,10 @@ export class SatClassificationFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.satClassificationService
-      .update(this.satclassification.id, this.satClassificationForm.getRawValue())
+      .update(
+        this.satclassification.id,
+        this.satClassificationForm.getRawValue()
+      )
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

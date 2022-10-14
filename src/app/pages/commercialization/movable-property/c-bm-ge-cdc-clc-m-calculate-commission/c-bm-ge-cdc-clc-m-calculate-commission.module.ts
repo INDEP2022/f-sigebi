@@ -7,16 +7,13 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { CBmGeCdcClcMCalculateCommissionRoutingModule } from './c-bm-ge-cdc-clc-m-calculate-commission-routing.module';
 import { CBmGeCdcClcCCalculateCommissionComponent } from './c-bm-ge-cdc-clc-c-calculate-commission/c-bm-ge-cdc-clc-c-calculate-commission.component';
 
-
 @NgModule({
-  declarations: [
-    CBmGeCdcClcCCalculateCommissionComponent
-  ],
+  declarations: [CBmGeCdcClcCCalculateCommissionComponent],
   imports: [
     CommonModule,
     CBmGeCdcClcMCalculateCommissionRoutingModule,
     SharedModule,
-    BsDatepickerModule
-  ]
+    BsDatepickerModule,
+  ],
 })
-export class CBmGeCdcClcMCalculateCommissionModule { }
+export class CBmGeCdcClcMCalculateCommissionModule {}

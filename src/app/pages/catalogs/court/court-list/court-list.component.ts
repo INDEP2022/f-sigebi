@@ -12,11 +12,9 @@ import { CourtFormComponent } from '../court-form/court-form.component';
 @Component({
   selector: 'app-court-list',
   templateUrl: './court-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CourtListComponent extends BasePage implements OnInit {
-
   settings = TABLE_SETTINGS;
   columns: ICourt[] = [];
   totalItems: number = 0;
@@ -25,7 +23,7 @@ export class CourtListComponent extends BasePage implements OnInit {
   constructor(
     private courtService: CourtService,
     private modalService: BsModalService
-  ) { 
+  ) {
     super();
     this.settings.columns = COURT_COLUMNS;
     this.settings.actions.delete = true;
@@ -75,5 +73,4 @@ export class CourtListComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }

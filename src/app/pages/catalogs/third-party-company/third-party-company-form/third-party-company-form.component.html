@@ -6,37 +6,41 @@
     <form [formGroup]="thirdPartyCompanyForm">
       <div class="row">
         <div class="col-md-4">
-          <form-field
-                  [control]="thirdPartyCompanyForm.get('id')"
-                  label="Id">
-                  <input type="number" class="form-control" formControlName="id" />
+          <form-field [control]="thirdPartyCompanyForm.get('id')" label="Id">
+            <input type="number" class="form-control" formControlName="id" />
           </form-field>
         </div>
         <div class="col-md-4"></div>
         <div class="col-md-4">
           <form-field
-                  [control]="thirdPartyCompanyForm.get('keyCompany')"
-                  label="Clave empresa">
-                  <input type="text" class="form-control" formControlName="keyCompany" />
+            [control]="thirdPartyCompanyForm.get('keyCompany')"
+            label="Clave empresa">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="keyCompany" />
           </form-field>
         </div>
         <div class="col-md-12">
           <form-field
-          [control]="thirdPartyCompanyForm.get('description')"
-          label="Descripción">
-          <textarea
-            class="form-control"
-            type="text"
-            rows="2"
-            formControlName="description"
-            placeholder="Descripción"></textarea>
+            [control]="thirdPartyCompanyForm.get('description')"
+            label="Descripción">
+            <textarea
+              class="form-control"
+              type="text"
+              rows="2"
+              formControlName="description"
+              placeholder="Descripción"></textarea>
           </form-field>
         </div>
         <div class="col-md-12">
           <form-field
-                  [control]="thirdPartyCompanyForm.get('cveZoneContract')"
-                  label="Clave zona de contrato">
-                  <input type="number" class="form-control" formControlName="cveZoneContract" />
+            [control]="thirdPartyCompanyForm.get('cveZoneContract')"
+            label="Clave zona de contrato">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="cveZoneContract" />
           </form-field>
         </div>
       </div>
@@ -59,5 +63,3 @@
     </div>
   </div>
 </app-modal>
-
-

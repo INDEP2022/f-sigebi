@@ -9,17 +9,14 @@ import { DelegationSharedComponent } from 'src/app/@standalone/shared-forms/dele
 import { PeAtbMQuarterlyAccumulatedAssetsRoutingModule } from './pe-atb-m-quarterly-accumulated-assets-routing.module';
 import { PeAtbCQuarterlyAccumulatedAssetsComponent } from './pe-atb-c-quarterly-accumulated-assets/pe-atb-c-quarterly-accumulated-assets.component';
 
-
 @NgModule({
-  declarations: [
-    PeAtbCQuarterlyAccumulatedAssetsComponent
-  ],
+  declarations: [PeAtbCQuarterlyAccumulatedAssetsComponent],
   imports: [
     CommonModule,
     PeAtbMQuarterlyAccumulatedAssetsRoutingModule,
     BsDatepickerModule,
     SharedModule,
-    DelegationSharedComponent
-  ]
+    DelegationSharedComponent,
+  ],
 })
-export class PeAtbMQuarterlyAccumulatedAssetsModule { }
+export class PeAtbMQuarterlyAccumulatedAssetsModule {}

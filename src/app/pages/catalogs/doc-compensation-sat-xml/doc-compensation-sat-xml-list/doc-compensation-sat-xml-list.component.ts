@@ -13,10 +13,12 @@ import { DocCompensationSatXmlFormComponent } from '../doc-compensation-sat-xml-
 @Component({
   selector: 'app-doc-compensation-sat-xml-list',
   templateUrl: './doc-compensation-sat-xml-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class DocCompensationSatXmlListComponent extends BasePage implements OnInit {
+export class DocCompensationSatXmlListComponent
+  extends BasePage
+  implements OnInit
+{
   settings = TABLE_SETTINGS;
   paragraphs: IDocCompensationSatXml[] = [];
   totalItems: number = 0;

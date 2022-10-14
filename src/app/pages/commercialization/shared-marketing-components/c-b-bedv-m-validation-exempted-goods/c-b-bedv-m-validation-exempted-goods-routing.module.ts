@@ -5,12 +5,12 @@ import { CBBedvCValidationExemptedGoodsComponent } from './c-b-bedv-c-validation
 const routes: Routes = [
   {
     path: '',
-    component: CBBedvCValidationExemptedGoodsComponent
-  }
+    component: CBBedvCValidationExemptedGoodsComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CBBedvMValidationExemptedGoodsRoutingModule { }
+export class CBBedvMValidationExemptedGoodsRoutingModule {}

@@ -7,17 +7,13 @@ import { RegulatoryListComponent } from './regulatory-list/regulatory-list.compo
 import { SharedModule } from '../../../shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
-  declarations: [
-    RegulatoyFormComponent,
-    RegulatoryListComponent,
-  ],
+  declarations: [RegulatoyFormComponent, RegulatoryListComponent],
   imports: [
     CommonModule,
     RegulatoryRoutingModule,
     SharedModule,
     ModalModule.forChild(),
-  ]
+  ],
 })
-export class RegulatoryModule { }
+export class RegulatoryModule {}

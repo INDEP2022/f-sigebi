@@ -9,8 +9,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-zone-geographic-form',
   templateUrl: './zone-geographic-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ZoneGeographicFormComponent extends BasePage implements OnInit {
   zoneGeographicForm: ModelForm<IZoneGeographic>;
@@ -20,7 +19,7 @@ export class ZoneGeographicFormComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private zoneGeographicService: ZoneGeographicService,
+    private zoneGeographicService: ZoneGeographicService
   ) {
     super();
   }
@@ -32,12 +31,18 @@ export class ZoneGeographicFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.zoneGeographicForm = this.fb.group({
       id_zona_geografica: [null],
-      descripcion: [null, Validators.compose([Validators.required, Validators.maxLength(200)])],
+      descripcion: [
+        null,
+        Validators.compose([Validators.required, Validators.maxLength(200)]),
+      ],
       no_contrato: [null, Validators.compose([Validators.required])],
       version: [null, Validators.compose([Validators.required])],
-      tercero_especializado: [null, Validators.compose([Validators.required, Validators.maxLength(20)])],
+      tercero_especializado: [
+        null,
+        Validators.compose([Validators.required, Validators.maxLength(20)]),
+      ],
       iva: [null, Validators.compose([Validators.required])],
-      estatus: [null, Validators.compose([Validators.required])]
+      estatus: [null, Validators.compose([Validators.required])],
     });
     if (this.zoneGeographic != null) {
       this.edit = true;
@@ -54,16 +59,21 @@ export class ZoneGeographicFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.zoneGeographicService.create(this.zoneGeographicForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.zoneGeographicService
+      .create(this.zoneGeographicForm.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   update() {
     this.loading = true;
     this.zoneGeographicService
-      .update(this.zoneGeographic.id_zona_geografica, this.zoneGeographicForm.getRawValue())
+      .update(
+        this.zoneGeographic.id_zona_geografica,
+        this.zoneGeographicForm.getRawValue()
+      )
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

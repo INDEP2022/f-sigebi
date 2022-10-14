@@ -1,120 +1,120 @@
 import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
 
 export const COLUMNS = {
-    processId:{
-        title: 'Id. Proceso',
-        width: '10%'
-    },
-    status:{
-        title: 'Estatus',
-        width: '10%'
-    },
-    registerDate:{
-        title: 'Fecha Reg.',
-        width: '10%'
-    },
-    taxId:{
-        title: 'RFC',
-        width: '10%'
-    },
-    beneficiary:{
-        title: 'Beneficiario',
-        width: '10%'
-    },
-    reference:{
-        title: 'Referencia',
-        width: '10%'
-    },
-    referenceDate:{
-        title: 'Fecha Ref.',
-        width: '10%'
-    },
-    amount:{
-        title: 'Monto',
-        width: '10%'
-    },
-    paymentDate:{
-        title: 'Fecha Pag.',
-        width: '10%'
-    },
-    bankId:{
-        title: 'Cve. Banco',
-        width: '10%'
-    },
-    account:{
-        title: 'Cuenta',
-        width: '10%'
-    },
-    office:{
-        title: 'Sucursal',
-        width: '10%'
-    },
-    paymentCode:{
-        title: 'Cód. Pago',
-        width: '10%'
-    },
-    area:{
-        title: 'Área',
-        width: '10%'
-    },
-    document:{
-        title: 'Documento',
-        width: '10%'
-    },
-    userR:{
-        title: 'User Resp.',
-        width: '10%'
-    },
-    concept:{
-        title: 'Concepto',
-        width: '10%'
-    },
-    attached:{
-        title: 'Anexo',
-        width: '10%'
-    },
-    date:{
-        title: 'Fecha',
-        width: '10%'
-    },
-    opType:{
-        title: 'Tipo Op',
-        width: '10%'
-    },
-    payDate:{
-        title: 'F.Pago',
-        width: '10%'
-    },
-    authUser:{
-        title: 'User Autho.',
-        width: '10%'
-    },
-    numberMove:{
-        title: 'No. Mov.',
-        width: '10%'
-    },
-    ordenInId:{
-        title: 'Id. Órden de Ing.',
-        width: '10%'
-    },
-    invoiceOi:{
-        title: 'Folio OI',
-        width: '10%'
-    },
-    dateOi:{
-        title: 'Fecha OI',
-        width: '10%'
-    },
-    statusOi:{
-        title: 'Estatus OI',
-        width: '10%'
-    },
-    satType:{
-        title: 'Tipo SAT',
-        width: '10%'
-    },
-    originInfo:{
-        title: 'Orig. Info.',
-        width: '10%'
-    }
+  processId: {
+    title: 'Id. Proceso',
+    sort: false,
+  },
+  status: {
+    title: 'Estatus',
+    sort: false,
+  },
+  registerDate: {
+    title: 'Fecha Reg.',
+    sort: false,
+  },
+  taxId: {
+    title: 'RFC',
+    sort: false,
+  },
+  beneficiary: {
+    title: 'Beneficiario',
+    sort: false,
+  },
+  reference: {
+    title: 'Referencia',
+    sort: false,
+  },
+  referenceDate: {
+    title: 'Fecha Ref.',
+    sort: false,
+  },
+  amount: {
+    title: 'Monto',
+    sort: false,
+  },
+  paymentDate: {
+    title: 'Fecha Pag.',
+    sort: false,
+  },
+  bankId: {
+    title: 'Cve. Banco',
+    sort: false,
+  },
+  account: {
+    title: 'Cuenta',
+    sort: false,
+  },
+  office: {
+    title: 'Sucursal',
+    sort: false,
+  },
+  paymentCode: {
+    title: 'Cód. Pago',
+    sort: false,
+  },
+  area: {
+    title: 'Área',
+    sort: false,
+  },
+  document: {
+    title: 'Documento',
+    sort: false,
+  },
+  userR: {
+    title: 'User Resp.',
+    sort: false,
+  },
+  concept: {
+    title: 'Concepto',
+    sort: false,
+  },
+  attached: {
+    title: 'Anexo',
+    sort: false,
+  },
+  date: {
+    title: 'Fecha',
+    sort: false,
+  },
+  opType: {
+    title: 'Tipo Op',
+    sort: false,
+  },
+  payDate: {
+    title: 'F.Pago',
+    sort: false,
+  },
+  authUser: {
+    title: 'User Autho.',
+    sort: false,
+  },
+  numberMove: {
+    title: 'No. Mov.',
+    sort: false,
+  },
+  ordenInId: {
+    title: 'Id. Órden de Ing.',
+    sort: false,
+  },
+  invoiceOi: {
+    title: 'Folio OI',
+    sort: false,
+  },
+  dateOi: {
+    title: 'Fecha OI',
+    sort: false,
+  },
+  statusOi: {
+    title: 'Estatus OI',
+    sort: false,
+  },
+  satType: {
+    title: 'Tipo SAT',
+    sort: false,
+  },
+  originInfo: {
+    title: 'Orig. Info.',
+    sort: false,
+  },
 };

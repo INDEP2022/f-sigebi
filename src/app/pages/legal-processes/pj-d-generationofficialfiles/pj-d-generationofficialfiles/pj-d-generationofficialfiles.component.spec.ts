@@ -8,9 +8,8 @@ describe('PJDGenerationOfficialFilesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PJDGenerationOfficialFilesComponent ]
-    })
-    .compileComponents();
+      declarations: [PJDGenerationOfficialFilesComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

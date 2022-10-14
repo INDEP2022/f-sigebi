@@ -5,12 +5,12 @@ import { PaKCPropertyRegistrationComponent } from './pa-k-c-property-registratio
 const routes: Routes = [
   {
     path: '',
-    component: PaKCPropertyRegistrationComponent
-  }
+    component: PaKCPropertyRegistrationComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PaMKitchenwareRoutingModule { }
+export class PaMKitchenwareRoutingModule {}

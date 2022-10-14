@@ -16,9 +16,7 @@ import { WarehouseSharedComponent } from 'src/app/@standalone/shared-forms/wareh
 import { GoodsStatusSharedComponent } from 'src/app/@standalone/shared-forms/goods-status-shared/goods-status-shared.component';
 
 @NgModule({
-  declarations: [
-    PaRWhCWarehouseReportsComponent
-  ],
+  declarations: [PaRWhCWarehouseReportsComponent],
   imports: [
     CommonModule,
     PaRWhMWarehouseRoutingModule,
@@ -28,7 +26,7 @@ import { GoodsStatusSharedComponent } from 'src/app/@standalone/shared-forms/goo
     BsDatepickerModule,
     DelegationSharedComponent,
     WarehouseSharedComponent,
-    GoodsStatusSharedComponent
-  ]
+    GoodsStatusSharedComponent,
+  ],
 })
-export class PaRWhMWarehouseModule { }
+export class PaRWhMWarehouseModule {}
