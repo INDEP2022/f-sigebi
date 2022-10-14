@@ -3,7 +3,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { DELEGATIONS_COLUMNS } from '../delegations-columns';
-
+import { COLUMNS_STATUS_HISTORY } from './../../delivery-schedule/schedule-of-events/generate-estrategy/columns_status-history';
 @Component({
   selector: 'app-fdp-adpdt-detail-delegations',
   templateUrl: './fdp-adpdt-detail-delegations.component.html',
@@ -14,24 +14,39 @@ export class FdpAdpdtDetailDelegationsComponent
   implements OnInit
 {
   title?: string = '';
-  columns?: typeof DELEGATIONS_COLUMNS;
-  data = EXAMPLE_DATA;
+  data: any[] = [];
+  optionColumn?: string = '';
 
   constructor(public bsModalRef: BsModalRef) {
     super();
-    Object.assign(this.settings, { actions: false });
+    this.settings = { ...this.settings, actions: false };
+    this.setData(this.optionColumn);
   }
 
   ngOnInit(): void {
-    this.settings.columns = this.columns;
+    this.setData(this.optionColumn);
   }
 
   selected(e: any) {
     console.log(e);
   }
+
+  setData(option: string) {
+    console.log(option);
+    switch (option) {
+      case 'delegations':
+        this.settings.columns = DELEGATIONS_COLUMNS;
+        this.data = EXAMPLE_DATA1;
+        break;
+      case 'status-history':
+        this.settings.columns = COLUMNS_STATUS_HISTORY;
+        this.data = EXAMPLE_DATA2;
+        break;
+    }
+  }
 }
 
-const EXAMPLE_DATA = [
+const EXAMPLE_DATA1 = [
   {
     id: '5',
     description: 'RPA',
@@ -47,5 +62,14 @@ const EXAMPLE_DATA = [
   {
     id: '5',
     description: 'RPA',
+  },
+];
+
+const EXAMPLE_DATA2 = [
+  {
+    changeDate: '20/10/2022',
+    justification: 'abc...',
+    status: '....',
+    user: 'TLPGOR...',
   },
 ];

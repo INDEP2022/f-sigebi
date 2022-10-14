@@ -120,6 +120,7 @@ export class FdpAdpdtCThirdPossessionActsComponent implements OnInit {
       initialState: {
         title: 'Delegación Administra',
         columns: DELEGATIONS_COLUMNS,
+        optionColumn: 'delegations',
       },
     };
     this.bsModalRef = this.modalService.show(
