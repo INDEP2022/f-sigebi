@@ -286,6 +286,10 @@ export const MENU: IMenuItem[] = [
         link: '/pages/administrative-processes/appraisal-request',
       },
       {
+        label: 'Solicitud de cambio a numeración',
+        link: '/pages/administrative-processes/request-numbering-change'
+      },
+      {
         label: 'Registro de Avalúos',
         link: '/pages/administrative-processes/appraisal-registry',
       },
