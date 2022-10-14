@@ -3,8 +3,11 @@
     <div class="ch-content">
       <h5 class="title">PREPARACIÓN DE EVENTO</h5>
       <div class="col-md-5 buttons">
-        <button type="button" class="btn btn-primary btn-sm active ml-3" (click)="openModal2()">
-          Crear
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active ml-3"
+          (click)="openModal2()">
+          Nuevo
         </button>
         <div *ngIf="event == null">
           <button
@@ -32,7 +35,7 @@
     <div *ngIf="event != null" @OnEventSelected>
       <div class="row">
         <div class="col-md-1">
-          <h5 class="font-size-14">No.</h5>
+          <h5 class="font-size-14">No. Evento</h5>
           <p class="text-muted">{{ event.id_evento }}</p>
         </div>
         <div class="col-md-2">
@@ -58,14 +61,51 @@
       </div>
       <div class="row pt-5">
         <div class="ch-content">
-          <h5 class="title"></h5>
+          <div class="col-md-3 btn-group">
+            <button
+              id="btnGroupExcel"
+              type="button"
+              class="btn btn-success btn-sm active"
+              data-toggle="dropdown">
+              Excel
+            </button>
+            <div class="dropdown-menu" aria-labelledby="btnGroupExcel">
+              <a class="dropdown-item" (click)="exportAsXLSX()"
+                >Exportar a Excel</a
+              >
+              <a class="dropdown-item" (click)="fileExcel.click()"
+                >Lotificar bienes desde Archivo Excel</a
+              >
+              <input
+                type="file"
+                (change)="ReadExcel($event)"
+                name="fileExcel"
+                #fileExcel
+                class="d-none"
+                accept=".xlsx, .xls, .csv, application/vnd.ms-excel" />
+            </div>
+          </div>
+
+          <div class="col-md-5 buttons">
+            <div *ngIf="event != null">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active ml-3"
+                (click)="openForm()">
+                Agregar Lote
+              </button>
+            </div>
+          </div>
+
           <div class="justify-content-end m-4">
             <app-columns-select [(settings)]="settings"></app-columns-select>
           </div>
         </div>
         <ng2-smart-table
           [settings]="settings"
-          [source]="data"></ng2-smart-table>
+          [source]="data"
+          (delete)="delete($event.data)"
+          (edit)="openForm($event.data)"></ng2-smart-table>
       </div>
     </div>
   </div>

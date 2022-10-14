@@ -7,8 +7,8 @@
           [data]="events"
           [form]="form"
           value="id"
-          bindLabel="keyProcess"
-          label="Eventos"
+          [bindLabel]="bindLabel"
+          [label]="label"
           [control]="eventField"
           (change)="onEventsChange($event)">
         </ngx-select>
