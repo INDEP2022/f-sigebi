@@ -2,23 +2,23 @@ export const CONTRACTS_COLUMNS = {
   contract: {
     title: 'Contrato',
     width: '10%',
-    sort:false
+    sort: false,
   },
   zones: {
     title: 'Zonas',
     width: '30%',
-    sort:false
+    sort: false,
   },
   startDate: {
     title: 'Fecha inicio',
     width: '30%',
-    sort:false
+    sort: false,
   },
 
   finalDate: {
     title: 'Fecha final',
     width: '30%',
-    sort:false
+    sort: false,
   },
   // valid: {
   //   title: 'Vigente',

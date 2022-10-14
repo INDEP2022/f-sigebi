@@ -92,7 +92,7 @@ export const MENU: IMenuItem[] = [
       },
       {
         label: 'Solicitud de cambio a numeración',
-        link: '/pages/administrative-processes/request-numbering-change'
+        link: '/pages/administrative-processes/request-numbering-change',
       },
       {
         label: 'Registro de Avalúos',
@@ -351,6 +351,10 @@ export const MENU: IMenuItem[] = [
         label: 'Bienes Muebles',
         icon: 'bx-folder',
         subItems: [
+          {
+            label: 'Preparación del evento',
+            link: '/pages/commercialization/c-b-f-fmdvdb-m-event-preparation',
+          },
           {
             label: 'Bienes exentos de validación',
             link: '/pages/commercialization/c-b-bedv-m-validation-exempted-goods',

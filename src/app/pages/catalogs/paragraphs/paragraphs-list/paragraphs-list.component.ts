@@ -3,7 +3,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { IParagraph } from './../../../../core/models/catalogs/paragraph.model';
 import { ParagraphService } from './../../../../core/services/catalogs/paragraph.service';
 import { PARAGRAPHS_COLUMNS } from './paragraphs-columns';
@@ -15,7 +15,6 @@ import { ParagraphsFormComponent } from '../paragraphs-form/paragraphs-form.comp
   styles: [],
 })
 export class ParagraphsListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
   columns: IParagraph[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

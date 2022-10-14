@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDrawer } from 'src/app/core/models/catalogs/drawer.model';
 import { ISafe } from 'src/app/core/models/catalogs/safe.model';
@@ -16,7 +16,6 @@ import { DRAWERS_COLUMNS } from './drawers-columns';
   styles: [],
 })
 export class DrawersListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
   paragraphs: IDrawer[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

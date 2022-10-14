@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SERIES_FOLIOS_CONTROL_TYPE_EVENT_COLUMNS } from './series-folios-control-type-event-columns';
 import { SERIES_FOLIOS_CONTROL_SEPARATE_PAGES_COLUMNS } from './series-folios-control-separate-pages-columns';
@@ -16,11 +16,11 @@ export class CBmFSyfMSeriesFoliosControlModalComponent
   implements OnInit
 {
   settings1 = {
-    ...TABLE_SETTINGS,
+    ...this.settings,
     actions: false,
   };
   settings2 = {
-    ...TABLE_SETTINGS,
+    ...this.settings,
     actions: false,
   };
   form: FormGroup = new FormGroup({});

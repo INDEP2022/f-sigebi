@@ -5,7 +5,7 @@
   <div class="row w-100">
     <div class="col-sm-12 col-12 col-md-12 p-2 pr-3">
       <!-- <div class="row"> -->
-      <div class="col-sm-12 col-12 col-md-3 p-2">
+      <div class="col-sm-12 col-12 col-md-2 p-2">
         <form-field [control]="form.get('noExpediente')" label="No Expediente">
           <!-- <label class="label w-100">No Expediente</label> -->
           <input
@@ -13,6 +13,15 @@
             class="form-control"
             formControlName="noExpediente"
             placeholder="No Expediente" />
+        </form-field>
+      </div>
+      <div class="col-sm-12 col-12 col-md-4 p-2">
+        <form-field [control]="form.get('cveOficio')" label="Cve. Oficio">
+          <!-- <label class="label w-100">Cve. Oficio</label> -->
+          <input
+            class="form-control"
+            formControlName="cveOficio"
+            placeholder="Cve. Oficio" />
         </form-field>
       </div>
       <div class="col-sm-12 col-12 col-md-3 p-2">
@@ -50,7 +59,7 @@
       <!-- </div>
         <div class="col-sm-12 col-12 col-md-12 p-2 pl-3"> -->
       <!-- <div class="row"> -->
-      <div class="col-sm-12 col-12 col-md-2 p-2">
+      <div class="col-sm-12 col-12 col-md-4 p-2">
         <form-field [control]="form.get('remitente')" label="Remitente">
           <!-- <label class="label w-100">Remitente</label> -->
           <input
@@ -59,13 +68,13 @@
             placeholder="Remitente" />
         </form-field>
       </div>
-      <div class="col-sm-12 col-12 col-md-4 p-2">
+      <!-- <div class="col-sm-12 col-12 col-md-4 p-2">
         <div class="form-group">
           <input class="form-control" placeholder="Detalle Remitente" />
           <label class="form-control-label w-100">Detalle Remitente</label>
         </div>
-      </div>
-      <div class="col-sm-12 col-12 col-md-2 p-2">
+      </div> -->
+      <div class="col-sm-12 col-12 col-md-4 p-2">
         <form-field [control]="form.get('destinatario')" label="Destinatario">
           <!-- <label class="label w-100">Destinatario</label> -->
           <input
@@ -74,27 +83,18 @@
             placeholder="Destinatario" />
         </form-field>
       </div>
-      <div class="col-sm-12 col-12 col-md-4 p-2">
+      <!-- <div class="col-sm-12 col-12 col-md-4 p-2">
         <div class="form-group">
           <input class="form-control" placeholder="Detalle Destinatario" />
           <label class="form-control-label w-100">Detalle Destinatario</label>
         </div>
-      </div>
-      <div class="col-sm-12 col-12 col-md-2 p-2">
-        <form-field [control]="form.get('cveOficio')" label="Cve. Oficio">
-          <!-- <label class="label w-100">Cve. Oficio</label> -->
-          <input
-            class="form-control"
-            formControlName="cveOficio"
-            placeholder="Cve. Oficio" />
-        </form-field>
-      </div>
-      <div class="col-sm-12 col-12 col-md-4 p-2">
+      </div> -->
+      <!-- <div class="col-sm-12 col-12 col-md-4 p-2">
         <div class="form-group">
           <input class="form-control" placeholder="Detalle Cve. Oficio" />
           <label class="form-control-label w-100">Detalle Cve. Oficio</label>
         </div>
-      </div>
+      </div> -->
       <!-- </div> -->
     </div>
   </div>

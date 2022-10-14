@@ -3,7 +3,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ListParams } from '../../../../common/repository/interfaces/list-params';
-import { TABLE_SETTINGS } from '../../../../common/constants/table-settings';
+
 import { IPhotographMedia } from '../../../../core/models/catalogs/photograph-media.model';
 import { PhotographMediaService } from '../../../../core/services/catalogs/photograph-media.service';
 import { PHOTOGRAPH_MEDIA_COLUMNS } from './photograph-media-columns';
@@ -15,7 +15,6 @@ import { PhotographMediaFormComponent } from '../photograph-media-form/photograp
   styles: [],
 })
 export class PhotographMediaListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
   columns: IPhotographMedia[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

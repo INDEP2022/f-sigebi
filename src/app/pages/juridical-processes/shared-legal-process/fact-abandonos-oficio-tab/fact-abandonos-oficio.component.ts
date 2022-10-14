@@ -56,34 +56,7 @@ export class FormFactAbandonosOficioComponent
     super();
   }
 
-  ngOnInit(): void {
-    this.formOficioInicioFin = this.fb.group({
-      inicio: ['', [Validators.required]], //*
-      fin: ['', [Validators.required]], //*
-    });
-
-    this.formOficio = this.fb.group({
-      tipoOficio: [''],
-      remitente: [''],
-      destinatario: [''],
-      ciudad: [''],
-
-      noVolante: ['', [Validators.required]], //*
-      noExpediente: ['', [Validators.required]], //*
-      cveOficio: ['', [Validators.required]], //*
-      fechaCaptura: ['', [Validators.required]], //*
-      estatus: ['', [Validators.required]], //*
-    });
-
-    this.formCcpOficio = this.fb.group({
-      ccp: ['', [Validators.minLength(1)]], //*
-      usuario: ['', [Validators.minLength(1)]], //*
-      nombreUsuario: '',
-      ccp2: ['', [Validators.minLength(1)]], //*
-      usuario2: ['', [Validators.minLength(1)]], //*
-      nombreUsuario2: '',
-    });
-  }
+  ngOnInit(): void {}
 
   getDataFormOficio(formOficio: FormGroup): any {
     this.formOficio = formOficio;

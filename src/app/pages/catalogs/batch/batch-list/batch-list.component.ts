@@ -3,7 +3,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ListParams } from '../../../../common/repository/interfaces/list-params';
-import { TABLE_SETTINGS } from '../../../../common/constants/table-settings';
+
 import { IBatch } from '../../../../core/models/catalogs/batch.model';
 import { BatchService } from './../../../../core/services/catalogs/batch.service';
 import { BatchFormComponent } from '../batch-form/batch-form.component';
@@ -15,7 +15,6 @@ import { BATCH_COLUMNS } from './batch-columns';
   styles: [],
 })
 export class BatchListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
   columns: IBatch[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

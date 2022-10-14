@@ -31,11 +31,14 @@
           <!-- Forms DECLARATORIA -->
 
           <!-- Tabla de bienes DECLARATORIA -->
-          <hr class="row" />
           <form
             [formGroup]="formDeclaratoriaTabla"
             class="container-fluid form-material">
             <div class="row">
+              <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2 mt-5">
+                <h6 class="title">BIENES</h6>
+                <hr class="row" />
+              </div>
               <div class="col-sm-12 col-12 col-md-2">
                 <form-field
                   [control]="formDeclaratoriaTabla.get('noExpediente')"
@@ -65,19 +68,21 @@
           </form>
 
           <div class="row pt-2 mb-2">
-            <ng2-smart-table
-              class="col-md-12"
-              [settings]="settings1"
-              [source]="data1"></ng2-smart-table>
+            <div class="col-sm-12 col-12 col-md-6 pr-3">
+              <ng2-smart-table
+                class="col-md-12"
+                [settings]="settings1"
+                [source]="data1"></ng2-smart-table>
+            </div>
           </div>
           <div class="row">
             <div class="col-sm-12 col-12 col-md-6">
-              <label class="label w-100 text-danger"
-                >Bien entregado en administración</label
-              >
+              <span class="badge bagde-danger">
+                Bien entregado en administración
+              </span>
             </div>
           </div>
-          <hr class="row" />
+          <br />
           <!-- Tabla de bienes DECLARATORIA -->
 
           <!-- Forms DECLARATORIA INICIO FIN -->
@@ -85,6 +90,7 @@
             [formGroup]="formDeclaratoriaInicioFin"
             class="container-fluid form-material">
             <div class="row w-100">
+              <hr class="row" />
               <div class="col-sm-12 col-12 col-md-6 pr-3">
                 <form-field
                   [control]="formDeclaratoriaInicioFin.get('inicio')"
@@ -112,79 +118,59 @@
           <!-- Forms DECLARATORIA INICIO FIN -->
 
           <!-- Apartado folio de escaneo -->
-          <hr class="row" />
           <div class="row">
-            <div class="col-sm-12 col-12 col-md-6">
+            <div class="col-sm-12 col-12 col-md-8">
               <div class="row">
-                <div class="col-sm-12 col-12 col-md-2">
-                  <button class="mx-2">
-                    ICONO
-                    <!-- <nb-icon icon="arrow-ios-upward-outline"></nb-icon> -->
+                <div class="col-sm-12 col-12 col-md-3 text-center">
+                  <button class="btn btn-secondary btn-sm active m-1">
+                    <i class="bx bxs-file-find"></i>
+                  </button>
+                  <button class="btn btn-secondary btn-sm active m-1">
+                    <i class="bx bxs-file"></i>
                   </button>
                 </div>
-                <div class="col-sm-12 col-12 col-md-2">
-                  <button class="mx-2">
-                    ICONO
-                    <!-- <nb-icon icon="arrowhead-up-outline"></nb-icon> -->
-                  </button>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 w-100">
-                  <div class="form-group">
-                    <label class="label w-100">Folio Escaneo</label>
+                <div class="col-sm-12 col-12 col-md-6 w-100">
+                  <form-field
+                    [control]="formFolioEscaneo.get('folioEscaneo')"
+                    label="Folio Escaneo">
                     <input
                       nbInput
                       fullWidth
                       type="number"
                       class="w-100"
                       placeholder="Folio Escaneo" />
-                  </div>
+                  </form-field>
                 </div>
-                <div class="col-sm-12 col-12 col-md-2">
-                  <button class="mx-2">
-                    ICONO
-                    <!-- <nb-icon icon="arrow-ios-upward-outline"></nb-icon> -->
+                <div class="col-sm-12 col-12 col-md-3 text-center">
+                  <button class="btn btn-secondary btn-sm active m-1">
+                    <i class="bx bxs-file"></i>
                   </button>
-                </div>
-                <div class="col-sm-12 col-12 col-md-2">
-                  <button class="mx-2">
-                    ICONO
-                    <!-- <nb-icon icon="arrowhead-up-outline"></nb-icon> -->
+                  <button class="btn btn-secondary btn-sm active m-1">
+                    <i class="bx bxs-file-find"></i>
                   </button>
                 </div>
               </div>
             </div>
-            <div class="col-sm-12 col-12 col-md-6">
+            <div class="col-sm-12 col-12 col-md-4">
               <div class="row">
-                <div class="col-sm-12 col-12 col-md-3">
-                  <div class="form-group">
-                    <!-- <label class="label">&nbsp;</label>&nbsp;   -->
-                    <!-- <div class="d-flex justify-content-center"> -->
-                    <button type="button" class="btn btn-primary btn-md">
-                      Aprobar
-                    </button>
-                    <!-- </div> -->
-                  </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-3">
-                  <div class="form-group">
-                    <!-- <label class="label">&nbsp;</label>&nbsp;  
-                                    <div class="d-flex justify-content-center"> -->
-                    <button type="button" class="btn btn-danger btn-md">
-                      Eliminar
-                    </button>
-                    <!-- </div> -->
-                  </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-3">
-                  <button class="mx-2">
-                    ICONO
-                    <!-- <nb-icon icon="arrow-ios-upward-outline"></nb-icon> -->
+                <div class="col-sm-12 col-12 col-md-6 text-center">
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-sm active ml-2 mr-2">
+                    Aprobar
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-danger btn-sm active ml-2 mr-2">
+                    Eliminar
                   </button>
                 </div>
-                <div class="col-sm-12 col-12 col-md-3">
-                  <button class="mx-2">
-                    ICONO
-                    <!-- <nb-icon icon="arrowhead-up-outline"></nb-icon> -->
+                <div class="col-sm-12 col-12 col-md-6 text-center">
+                  <button class="btn btn-secondary btn-sm active ml-2 mr-2">
+                    <i class="bx bxs-printer"></i>
+                  </button>
+                  <button class="btn btn-secondary btn-sm active ml-2 mr-2">
+                    <i class="bx bx-send"></i>
                   </button>
                 </div>
               </div>

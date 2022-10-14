@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ITypeOrderService } from 'src/app/core/models/catalogs/typeorderservices.model';
 import { TypeOrderServicesService } from 'src/app/core/services/catalogs/typeorderservices.service';
@@ -15,7 +15,6 @@ import { TYPEORDERSERVICE_COLUMS } from './type-order-service-columns';
   styles: [],
 })
 export class TypeOrderServiceListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
   paragraphs: ITypeOrderService[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
