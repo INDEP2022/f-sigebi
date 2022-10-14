@@ -15,7 +15,6 @@ import { IFAI_SERIE_COLUMNS } from './ifai-serie-columns';
   styles: [],
 })
 export class IfaiSeriesListComponent extends BasePage implements OnInit {
-  
   paragraphs: IIfaiSerie[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

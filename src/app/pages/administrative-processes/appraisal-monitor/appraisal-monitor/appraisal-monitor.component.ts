@@ -13,7 +13,6 @@ import { FormGroup, FormBuilder } from '@angular/forms';
   styles: [],
 })
 export class AppraisalMonitorComponent extends BasePage implements OnInit {
-  
   appraisals: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

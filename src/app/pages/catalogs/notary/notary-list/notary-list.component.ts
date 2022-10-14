@@ -15,8 +15,6 @@ import { NotaryFormComponent } from '../notary-form/notary-form.component';
   styles: [],
 })
 export class NotaryListComponent extends BasePage implements OnInit {
-
-  
   columns: INotary[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

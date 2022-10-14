@@ -16,7 +16,6 @@ import { DRAWERS_COLUMNS } from './drawers-columns';
   styles: [],
 })
 export class DrawersListComponent extends BasePage implements OnInit {
-  
   paragraphs: IDrawer[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

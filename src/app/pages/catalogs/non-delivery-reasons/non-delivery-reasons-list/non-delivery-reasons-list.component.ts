@@ -15,9 +15,10 @@ import { NonDeliveryReasonsFormComponent } from '../non-delivery-reasons-form/no
   templateUrl: './non-delivery-reasons-list.component.html',
   styles: [],
 })
-export class NonDeliveryReasonsListComponent extends BasePage implements OnInit {
-
-  
+export class NonDeliveryReasonsListComponent
+  extends BasePage
+  implements OnInit
+{
   columns: INonDeliveryReason[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

@@ -15,7 +15,6 @@ import { EXAMPLE_COLUMNS } from './example-columns';
   styles: [],
 })
 export class ExampleComponent extends BasePage implements OnInit, OnDestroy {
-  
   paragraphs: Example[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

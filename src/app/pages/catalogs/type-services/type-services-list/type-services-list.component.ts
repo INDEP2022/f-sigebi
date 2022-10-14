@@ -15,7 +15,6 @@ import { TYPESERVICES_COLUMS } from './type-services-columns';
   styles: [],
 })
 export class TypeServicesListComponent extends BasePage implements OnInit {
-  
   paragraphs: ITypeService[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

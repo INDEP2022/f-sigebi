@@ -16,7 +16,6 @@ import { DOC_COMPENSATION_COLUMNNS } from './doc-compensation-columns';
   styles: [],
 })
 export class DocCompensationListComponent extends BasePage implements OnInit {
-  
   docCompensation: IDocCompensation[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

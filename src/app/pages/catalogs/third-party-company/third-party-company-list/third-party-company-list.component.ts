@@ -15,7 +15,6 @@ import { THIRDPARTYCOMPANY_COLUMS } from './third-party-company-columns';
   styles: [],
 })
 export class ThirdPartyCompanyListComponent extends BasePage implements OnInit {
-  
   paragraphs: IThirdPartyCompany[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

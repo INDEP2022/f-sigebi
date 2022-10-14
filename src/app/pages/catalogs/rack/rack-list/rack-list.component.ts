@@ -15,8 +15,6 @@ import { RACK_COLUMNS } from './rack-columns';
   styles: [],
 })
 export class RackListComponent extends BasePage implements OnInit {
-
-  
   racks: IRack[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

@@ -17,11 +17,11 @@ export class CBmFSyfMSeriesFoliosControlModalComponent
 {
   settings1 = {
     ...this.settings,
-    actions: false
+    actions: false,
   };
   settings2 = {
     ...this.settings,
-    actions: false
+    actions: false,
   };
   form: FormGroup = new FormGroup({});
 

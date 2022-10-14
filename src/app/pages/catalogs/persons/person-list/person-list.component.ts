@@ -15,8 +15,6 @@ import { PERSON_COLUMNS } from './person-columns';
   styles: [],
 })
 export class PersonListComponent extends BasePage implements OnInit {
-
-  
   persons: IPerson[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

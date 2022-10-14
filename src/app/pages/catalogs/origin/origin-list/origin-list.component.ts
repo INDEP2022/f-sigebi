@@ -15,8 +15,6 @@ import { ORIGIN_COLUMNS } from './origin-columns';
   styles: [],
 })
 export class OriginListComponent extends BasePage implements OnInit {
-
-  
   origins: IOrigin[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

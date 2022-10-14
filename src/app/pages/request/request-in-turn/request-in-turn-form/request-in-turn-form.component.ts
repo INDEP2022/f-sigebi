@@ -35,9 +35,8 @@ export class RequestInTurnFormComponent implements OnInit {
 
   constructor(
     public modalRef: BsModalRef,
-    public fb: FormBuilder
-  ) //public requestService: ResquestService
-  {}
+    public fb: FormBuilder //public requestService: ResquestService
+  ) {}
 
   ngOnInit(): void {
     this.initialForm();

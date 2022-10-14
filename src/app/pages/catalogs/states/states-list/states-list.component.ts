@@ -16,7 +16,6 @@ import { STATES_COLUMNS } from './states-columns';
   styles: [],
 })
 export class StatesListComponent extends BasePage implements OnInit {
-  
   states: IStateOfRepublic[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

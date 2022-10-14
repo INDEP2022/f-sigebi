@@ -15,7 +15,6 @@ import { VaultDetailComponent } from '../vault-detail/vault-detail.component';
   styles: [],
 })
 export class VaultListComponent extends BasePage implements OnInit {
-  
   vaults: ISafe[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

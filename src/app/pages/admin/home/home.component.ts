@@ -16,7 +16,11 @@ export class HomeComponent extends BasePage implements OnInit {
   pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
   imagenurl =
     'https://images.ctfassets.net/txhaodyqr481/6gyslCh8jbWbh9zYs5Dmpa/a4a184b2d1eda786bf14e050607b80df/plantillas-de-factura-profesional-suscripcion-gratis-con-sumup-facturas.jpg?fm=webp&q=85&w=743&h=892';
-  constructor(private modalService: BsModalService, private fb: FormBuilder,private sanitizer:DomSanitizer) {
+  constructor(
+    private modalService: BsModalService,
+    private fb: FormBuilder,
+    private sanitizer: DomSanitizer
+  ) {
     super();
   }
 

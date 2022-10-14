@@ -15,8 +15,6 @@ import { ImageMediaFormComponent } from '../image-media-form/image-media-form.co
   styles: [],
 })
 export class ImageMediaListComponent extends BasePage implements OnInit {
-
-  
   columns: IImageMedia[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

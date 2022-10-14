@@ -15,8 +15,6 @@ import { GenericsFormComponent } from '../generics-form/generics-form.component'
   styles: [],
 })
 export class GenericsListComponent extends BasePage implements OnInit {
-
-  
   columns: IGeneric[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

@@ -15,7 +15,6 @@ import { GOOD_TYPES_COLUMS } from './good-types-colums';
   styles: [],
 })
 export class GoodTypesListComponent extends BasePage implements OnInit {
-  
   paragraphs: IGoodType[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

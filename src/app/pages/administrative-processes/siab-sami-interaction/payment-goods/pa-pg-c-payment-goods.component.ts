@@ -13,8 +13,8 @@ import { COLUMNS } from './columns';
 })
 export class PaPgCPaymentGoodsComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
-  
-  data:any[]=[];
+
+  data: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 

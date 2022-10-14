@@ -14,9 +14,7 @@ import { ExpertFormComponent } from '../experts-form/expert-form.component';
   templateUrl: './expert-list.component.html',
   styles: [],
 })
-export class ExpertListComponent  extends BasePage implements OnInit 
-{
-  
+export class ExpertListComponent extends BasePage implements OnInit {
   proficients: IProficient[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

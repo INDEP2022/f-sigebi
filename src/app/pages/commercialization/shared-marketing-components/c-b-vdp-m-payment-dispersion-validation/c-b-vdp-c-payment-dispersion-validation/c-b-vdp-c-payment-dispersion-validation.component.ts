@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 
-
 import { ALLOTMENT_COLUMNS } from './payment-dispersion-validation-allotment-columns';
 import { BANK_COLUMNS } from './payment-dispersion-validation-bank-columns';
 import { EVENT_COLUMNS } from './payment-dispersion-validation-event-columns';
@@ -21,19 +20,19 @@ export class CBVdpCPaymentDispersionValidationComponent
 {
   settingsLotes = {
     ...this.settings,
-    actions: false
+    actions: false,
   };
   settingsBienes = {
     ...this.settings,
-    actions: false
+    actions: false,
   };
   settingsPagosBanco = {
     ...this.settings,
-    actions: false
+    actions: false,
   };
   settingsCompos = {
     ...this.settings,
-    actions: false
+    actions: false,
   };
   form: FormGroup = new FormGroup({});
 

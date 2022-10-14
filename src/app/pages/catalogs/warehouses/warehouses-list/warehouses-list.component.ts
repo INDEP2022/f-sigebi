@@ -15,7 +15,6 @@ import { WarehousesDetailComponent } from '../warehouses-detail/warehouses-detai
   styles: [],
 })
 export class WarehousesListComponent extends BasePage implements OnInit {
-  
   warehouses: IWarehouse[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

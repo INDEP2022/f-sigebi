@@ -19,7 +19,6 @@ export class RegionalDelegationsListComponent
   extends BasePage
   implements OnInit
 {
-  
   regionalDelegations: IRegionalDelegation[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

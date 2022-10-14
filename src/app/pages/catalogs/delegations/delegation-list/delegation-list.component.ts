@@ -16,7 +16,6 @@ import { DELEGATION_COLUMS } from './delegation-columns';
   styles: [],
 })
 export class DelegationListComponent extends BasePage implements OnInit {
-  
   paragraphs: IDelegation[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

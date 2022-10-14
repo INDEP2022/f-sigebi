@@ -15,7 +15,6 @@ import { PENALTY_COLUMNS } from './penalty-columns';
   styles: [],
 })
 export class PenaltyListComponent extends BasePage implements OnInit {
-  
   paragraphs: IPenalty[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

@@ -15,7 +15,6 @@ import { LABEL_OKEY_COLUMNS } from './label-okey-columns';
   styles: [],
 })
 export class LabelOkeyListComponent extends BasePage implements OnInit {
-  
   paragraphs: ILabelOKey[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

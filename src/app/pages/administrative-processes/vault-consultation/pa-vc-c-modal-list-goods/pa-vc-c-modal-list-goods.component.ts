@@ -49,6 +49,5 @@ export class PaVcCModalListGoodsComponent extends BasePage implements OnInit {
     this.data1 = this.opcion.initialState;
   }
 
-  return() {
-  }
+  return() {}
 }

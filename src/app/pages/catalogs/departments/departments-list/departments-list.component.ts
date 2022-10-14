@@ -16,7 +16,6 @@ import { DEPARTMENT_COLUMNS } from './department-columns';
   styles: [],
 })
 export class DepartmentsListComponent extends BasePage implements OnInit {
-  
   departments: IDepartment[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

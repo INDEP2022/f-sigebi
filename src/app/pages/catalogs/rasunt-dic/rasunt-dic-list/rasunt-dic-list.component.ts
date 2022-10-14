@@ -15,8 +15,6 @@ import { R_ASUNT_DIC_COLUMNS } from './rasunt-dic-columns';
   styles: [],
 })
 export class RAsuntDicListComponent extends BasePage implements OnInit {
-
-  
   rAsuntDics: IRAsuntDic[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

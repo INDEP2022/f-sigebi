@@ -16,8 +16,8 @@ export class PaGmscCGoodsManagementSocialCabinetComponent
   implements OnInit
 {
   form: FormGroup = new FormGroup({});
-  
-  data:any[]=[];
+
+  data: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 

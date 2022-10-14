@@ -15,7 +15,6 @@ import { LEGAL_SUPPORT_COLUMS } from './legal-support-columns';
   styles: [],
 })
 export class LegalSupportListComponent extends BasePage implements OnInit {
-  
   paragraphs: ILegalSupport[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

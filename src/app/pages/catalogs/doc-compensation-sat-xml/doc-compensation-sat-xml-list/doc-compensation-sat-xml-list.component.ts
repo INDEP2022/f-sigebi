@@ -15,8 +15,10 @@ import { DocCompensationSatXmlFormComponent } from '../doc-compensation-sat-xml-
   templateUrl: './doc-compensation-sat-xml-list.component.html',
   styles: [],
 })
-export class DocCompensationSatXmlListComponent extends BasePage implements OnInit {
-  
+export class DocCompensationSatXmlListComponent
+  extends BasePage
+  implements OnInit
+{
   paragraphs: IDocCompensationSatXml[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

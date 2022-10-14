@@ -15,7 +15,6 @@ import { CLAIMCONCLUSION_COLUMS } from './claim-conclusion-columns';
   styles: [],
 })
 export class ClaimConclusionListComponent extends BasePage implements OnInit {
-  
   paragraphs: IClaimConclusion[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

@@ -15,7 +15,6 @@ import { IDENTIFIER_COLUMNS } from './identifier-columns';
   styles: [],
 })
 export class IdentifiersListComponent extends BasePage implements OnInit {
-  
   paragraphs: IIdentifier[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

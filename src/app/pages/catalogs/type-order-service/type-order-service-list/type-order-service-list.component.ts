@@ -15,7 +15,6 @@ import { TYPEORDERSERVICE_COLUMS } from './type-order-service-columns';
   styles: [],
 })
 export class TypeOrderServiceListComponent extends BasePage implements OnInit {
-  
   paragraphs: ITypeOrderService[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

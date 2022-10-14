@@ -16,7 +16,6 @@ import { DELEGATION_STATE_COLUMNS } from './delegation-state-columns';
   styles: [],
 })
 export class DelegationStateListComponent extends BasePage implements OnInit {
-  
   delegationsState: IDelegationState[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

@@ -15,7 +15,6 @@ import { SiabClasificationDetailComponent } from '../siab-clasification-detail/s
   styles: [],
 })
 export class SiabClasificationListComponent extends BasePage implements OnInit {
-  
   clasifications: ISiabClasification[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

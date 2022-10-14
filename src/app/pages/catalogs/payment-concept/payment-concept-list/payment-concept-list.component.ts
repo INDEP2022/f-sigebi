@@ -15,7 +15,6 @@ import { PaymentConceptDetailComponent } from '../payment-concept-detail/payment
   styles: [],
 })
 export class PaymentConceptListComponent extends BasePage implements OnInit {
-  
   payments: IPaymentConcept[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

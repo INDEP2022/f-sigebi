@@ -15,7 +15,6 @@ import { TYPEDOCTO_COLUMS } from './type-docto-columns';
   styles: [],
 })
 export class TypeDoctoListComponent extends BasePage implements OnInit {
-  
   paragraphs: ITypeDocto[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

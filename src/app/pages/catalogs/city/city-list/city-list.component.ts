@@ -15,7 +15,6 @@ import { CityDetailComponent } from '../city-detail/city-detail.component';
   styles: [],
 })
 export class CityListComponent extends BasePage implements OnInit {
-  
   cities: ICity[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

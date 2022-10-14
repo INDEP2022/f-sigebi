@@ -15,8 +15,6 @@ import { ParagraphsFormComponent } from '../paragraphs-form/paragraphs-form.comp
   styles: [],
 })
 export class ParagraphsListComponent extends BasePage implements OnInit {
-
-  
   columns: IParagraph[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

@@ -14,9 +14,10 @@ import { IssuingInstitutionFormComponent } from '../issuing-institution-form/iss
   templateUrl: './issuing-institution-list.component.html',
   styles: [],
 })
-export class IssuingInstitutionListComponent extends BasePage implements OnInit {
-
-  
+export class IssuingInstitutionListComponent
+  extends BasePage
+  implements OnInit
+{
   columns: IIssuingInstitution[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

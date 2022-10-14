@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
- 
 
 import { APPRAISAL_REGISTRATION_DETAIL_COLUMNS } from './appraisal-registration-detail-columns';
 import { APPRAISAL_REGISTRATION_APPRAISALS_COLUMNS } from './appraisal-registration-appraisals-columns';
@@ -18,15 +17,15 @@ export class CBARdaCAppraisalRegistrationComponent
 {
   settings1 = {
     ...this.settings,
-    actions: false
+    actions: false,
   };
   settings2 = {
     ...this.settings,
-    actions: false
+    actions: false,
   };
   settings3 = {
     ...this.settings,
-    actions: false
+    actions: false,
   };
 
   form: FormGroup = new FormGroup({});

@@ -15,7 +15,6 @@ import { ClarificationsDetailComponent } from '../clarifications-detail/clarific
   styles: [],
 })
 export class ClarificationsListComponent extends BasePage implements OnInit {
-  
   clarifications: IClarification[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

@@ -15,8 +15,6 @@ import { NormsFormComponent } from '../norms-form/norms-form.component';
   styles: [],
 })
 export class NormsListComponent extends BasePage implements OnInit {
-
-  
   columns: INorm[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

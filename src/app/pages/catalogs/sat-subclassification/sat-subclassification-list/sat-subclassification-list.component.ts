@@ -18,7 +18,6 @@ export class SatSubclassificationListComponent
   extends BasePage
   implements OnInit
 {
-  
   paragraphs: ISatSubclassification[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

@@ -15,8 +15,6 @@ import { RESPONSE_REPUVE_COLUMNS } from './response-repuve-columns';
   styles: [],
 })
 export class ResponseRepuveListComponent extends BasePage implements OnInit {
-
-  
   responseRepuves: IResponseRepuve[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

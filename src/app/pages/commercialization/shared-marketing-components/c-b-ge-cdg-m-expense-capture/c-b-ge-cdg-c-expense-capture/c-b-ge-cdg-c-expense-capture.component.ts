@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { BasePage } from 'src/app/core/shared/base-page';
 
-
 import { EXPENSE_CAPTURE_BILLS_COLUMNS } from './expense-captura-bills-columns';
 import { EXPENSE_CAPTURE_INCOME_COLUMNS } from './expense-captura-income-columns';
 
@@ -18,11 +17,11 @@ export class CBGeCdgCExpenseCaptureComponent
 {
   settings1 = {
     ...this.settings,
-    actions: false
+    actions: false,
   };
   settings2 = {
     ...this.settings,
-    actions: false
+    actions: false,
   };
 
   list1: any;

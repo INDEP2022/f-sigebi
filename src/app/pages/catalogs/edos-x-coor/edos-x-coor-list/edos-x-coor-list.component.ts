@@ -15,7 +15,6 @@ import { EDOSXCOOR_COLUMS } from './edos-x-coor-columns';
   styles: [],
 })
 export class EdosXCoorListComponent extends BasePage implements OnInit {
-  
   paragraphs: IEdosXCoor[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

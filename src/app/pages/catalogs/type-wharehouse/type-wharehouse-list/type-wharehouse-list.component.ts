@@ -15,7 +15,6 @@ import { TYPESWHAREHOUSE_COLUMS } from './type-wharehouse-columns';
   styles: [],
 })
 export class TypeWharehouseListComponent extends BasePage implements OnInit {
-  
   paragraphs: ITypeWarehouse[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

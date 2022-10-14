@@ -16,8 +16,6 @@ import { OrignCisiFormComponent } from '../orign-cisi-form/orign-cisi-form.compo
   styles: [],
 })
 export class OriginCisiListComponent extends BasePage implements OnInit {
-
-  
   originCisis: IOriginCisi[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

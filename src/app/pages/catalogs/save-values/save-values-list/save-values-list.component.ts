@@ -15,8 +15,6 @@ import { SAVE_VALUES_COLUMNS } from './save-values-columns';
   styles: [],
 })
 export class SaveValuesListComponent extends BasePage implements OnInit {
-
-  
   paragraphs: ISaveValue[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

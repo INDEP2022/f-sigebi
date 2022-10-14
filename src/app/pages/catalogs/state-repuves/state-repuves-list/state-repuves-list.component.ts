@@ -15,7 +15,6 @@ import { STATEREPUVES_COLUMS } from './state-repuves-columns';
   styles: [],
 })
 export class StateRepuvesListComponent extends BasePage implements OnInit {
-  
   paragraphs: IStateRepuve[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

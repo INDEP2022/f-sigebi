@@ -18,7 +18,6 @@ export class InstitutionClassificationListComponent
   extends BasePage
   implements OnInit
 {
-  
   institutions: IInstitutionClassification[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

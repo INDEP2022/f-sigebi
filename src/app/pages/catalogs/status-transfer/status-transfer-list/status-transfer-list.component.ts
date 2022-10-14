@@ -15,7 +15,6 @@ import { STATUSTRANSFER_COLUMS } from './status-transfer-columns';
   styles: [],
 })
 export class StatusTransferListComponent extends BasePage implements OnInit {
-  
   paragraphs: IStatusTransfer[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

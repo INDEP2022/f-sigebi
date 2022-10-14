@@ -15,8 +15,6 @@ import { RevisionReasonFormComponent } from '../revision-reason-form/revision-re
   styles: [],
 })
 export class RevisionReasonListComponent extends BasePage implements OnInit {
-
-  
   columns: IRevisionReason[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

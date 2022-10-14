@@ -19,7 +19,7 @@ export class PeAdCAuthorizationAssetsDestructionComponent
   constructor(private fb: FormBuilder) {
     super();
     this.settings.columns = ASSETS_DESTRUCTION_COLUMLNS;
-    this.settings.actions=false;
+    this.settings.actions = false;
   }
 
   ngOnInit(): void {

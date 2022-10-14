@@ -15,8 +15,6 @@ import { MinpubFormComponent } from './../minpub-form/minpub-form.component';
   styles: [],
 })
 export class MinpubListComponent extends BasePage implements OnInit {
-
-  
   columns: IMinpub[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

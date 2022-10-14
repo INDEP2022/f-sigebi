@@ -16,7 +16,6 @@ import { OPINION_COLUMNS } from './opinion-columns';
   styles: [],
 })
 export class OpinionsListComponent extends BasePage implements OnInit {
-  
   opinions: IOpinion[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

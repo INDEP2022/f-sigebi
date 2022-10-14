@@ -15,7 +15,6 @@ import { FRACTIONS_COLUMNS } from './fractions-columns';
   styles: [],
 })
 export class FractionsListComponent extends BasePage implements OnInit {
-  
   paragraphs: IFraction[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

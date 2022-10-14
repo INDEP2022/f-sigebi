@@ -15,7 +15,6 @@ import { STATION_COLUMS } from './station-columns';
   styles: [],
 })
 export class StationListComponent extends BasePage implements OnInit {
-  
   paragraphs: IStation[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

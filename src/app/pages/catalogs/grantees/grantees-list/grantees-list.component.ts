@@ -15,7 +15,6 @@ import { GRANTEES_COLUMNS } from './grantee-columns';
   styles: [],
 })
 export class GranteesListComponent extends BasePage implements OnInit {
-  
   paragraphs: IGrantee[] = [];
   totalItems = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

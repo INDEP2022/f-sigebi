@@ -15,7 +15,6 @@ import { GOOD_SITUATION_COLUMS } from './good-situation-columns';
   styles: [],
 })
 export class GoodSituationListComponent extends BasePage implements OnInit {
-  
   paragraphs: IGoodSituation[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

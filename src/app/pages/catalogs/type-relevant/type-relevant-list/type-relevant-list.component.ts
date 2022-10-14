@@ -15,7 +15,6 @@ import { TYPERELEVANT_COLUMS } from './type-relevant-columns';
   styles: [],
 })
 export class TypeRelevantListComponent extends BasePage implements OnInit {
-  
   paragraphs: ITypeRelevant[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

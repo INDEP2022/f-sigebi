@@ -15,7 +15,6 @@ import { StorehouseDetailComponent } from '../storehouse-detail/storehouse-detai
   styles: [],
 })
 export class StorehouseListComponent extends BasePage implements OnInit {
-  
   lawyers: IStorehouse[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

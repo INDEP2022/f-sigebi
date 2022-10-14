@@ -15,7 +15,6 @@ import { LawyerDetailComponent } from '../lawyer-detail/lawyer-detail.component'
   styles: [],
 })
 export class LawyerListComponent extends BasePage implements OnInit {
-  
   lawyers: ILawyer[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

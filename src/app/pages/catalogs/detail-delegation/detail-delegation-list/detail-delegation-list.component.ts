@@ -16,7 +16,6 @@ import { DETAIL_DELEGATION_COLUMNS } from './detail-delegation-columns';
   styles: [],
 })
 export class DetailDelegationListComponent extends BasePage implements OnInit {
-  
   detailDelegations: IDetailDelegation[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

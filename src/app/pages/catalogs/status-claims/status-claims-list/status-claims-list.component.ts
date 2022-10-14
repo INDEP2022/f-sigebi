@@ -15,7 +15,6 @@ import { STATUSCLAIMS_COLUMS } from './status-claims-columns';
   styles: [],
 })
 export class StatusClaimsListComponent extends BasePage implements OnInit {
-  
   paragraphs: IStatusClaims[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

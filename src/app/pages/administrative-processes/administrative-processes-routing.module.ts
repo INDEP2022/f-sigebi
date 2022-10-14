@@ -83,8 +83,11 @@ const routes: Routes = [
       {
         path: 'request-numbering-change',
         loadChildren: async () =>
-          (await import('./resquest-numbering-change/pa-m-resquest-numbering-change.module'))
-            .PaMResquestNumberingChangeModule,
+          (
+            await import(
+              './resquest-numbering-change/pa-m-resquest-numbering-change.module'
+            )
+          ).PaMResquestNumberingChangeModule,
         data: { title: 'Solicitud de cambio a numeracion' },
       },
       /**
@@ -235,7 +238,7 @@ const routes: Routes = [
       },
       /**
        * Services Pages Legaspi
-      **/
+       **/
       {
         path: 'contracts',
         loadChildren: async () =>

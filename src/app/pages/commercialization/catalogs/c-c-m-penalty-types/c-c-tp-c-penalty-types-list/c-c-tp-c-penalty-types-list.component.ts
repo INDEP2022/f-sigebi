@@ -14,7 +14,7 @@ import { CCTpCPenaltyTypesFormComponent } from '../c-c-tp-c-penalty-types-form/c
 })
 export class CCTpCPenaltyTypesListComponent extends BasePage implements OnInit {
   // tipo any hasta que existan modelos o interfaces de la respuesta del backend
-  
+
   columns: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

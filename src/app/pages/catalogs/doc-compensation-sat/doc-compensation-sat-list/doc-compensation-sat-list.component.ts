@@ -14,8 +14,10 @@ import { DOCCOMPENSATIONSAT_COLUMS } from './doc-compensation-sat-columns';
   templateUrl: './doc-compensation-sat-list.component.html',
   styles: [],
 })
-export class DocCompensationSatListComponent extends BasePage implements OnInit {
-  
+export class DocCompensationSatListComponent
+  extends BasePage
+  implements OnInit
+{
   paragraphs: IDocCompesationSat[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

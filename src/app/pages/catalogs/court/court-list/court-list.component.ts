@@ -15,8 +15,6 @@ import { CourtFormComponent } from '../court-form/court-form.component';
   styles: [],
 })
 export class CourtListComponent extends BasePage implements OnInit {
-
-  
   columns: ICourt[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

@@ -92,7 +92,7 @@ export const MENU: IMenuItem[] = [
       },
       {
         label: 'Solicitud de cambio a numeración',
-        link: '/pages/administrative-processes/request-numbering-change'
+        link: '/pages/administrative-processes/request-numbering-change',
       },
       {
         label: 'Registro de Avalúos',

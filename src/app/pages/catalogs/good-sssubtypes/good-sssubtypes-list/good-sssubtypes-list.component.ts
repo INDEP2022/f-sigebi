@@ -15,7 +15,6 @@ import { GOOD_SSSUBTYPE_COLUMNS } from './good-sssubtype-columns';
   styles: [],
 })
 export class GoodSssubtypesListComponent extends BasePage implements OnInit {
-  
   paragraphs: IGoodSssubtype[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

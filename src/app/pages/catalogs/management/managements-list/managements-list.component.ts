@@ -16,7 +16,6 @@ import { MANAGEMENT_COLUMNS } from './management-columns';
   styles: [],
 })
 export class ManagementsListComponent extends BasePage implements OnInit {
-  
   paragraphs: IManagement[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

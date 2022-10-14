@@ -15,8 +15,6 @@ import { MunicipalityFormComponent } from '../municipality-form/municipality-for
   styles: [],
 })
 export class MunicipalityListComponent extends BasePage implements OnInit {
-
-  
   columns: IMunicipality[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

@@ -15,7 +15,6 @@ import { ZONEGEOGRAPHIC_COLUMS } from './zone-geographic-columnc';
   styles: [],
 })
 export class ZoneGeographicListComponent extends BasePage implements OnInit {
-  
   paragraphs: IZoneGeographic[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

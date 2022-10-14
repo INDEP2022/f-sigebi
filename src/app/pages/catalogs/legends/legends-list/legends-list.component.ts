@@ -16,7 +16,6 @@ import { LEGENDS_COLUMS } from './legends-columns';
   styles: [],
 })
 export class LegendsListComponent extends BasePage implements OnInit {
-  
   legends: ILegend[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

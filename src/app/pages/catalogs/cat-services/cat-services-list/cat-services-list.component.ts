@@ -15,7 +15,6 @@ import { SERVICES_COLUMS } from './cat-service-columns';
   styles: [],
 })
 export class CatServicesListComponent extends BasePage implements OnInit {
-  
   paragraphs: IServiceCat[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

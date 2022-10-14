@@ -4,12 +4,13 @@ import { ContractsComponent } from './contracts/contracts.component';
 
 const routes: Routes = [
   {
-    path:'',component:ContractsComponent
-  }
+    path: '',
+    component: ContractsComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ContractsRoutingModule { }
+export class ContractsRoutingModule {}

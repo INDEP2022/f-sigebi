@@ -15,7 +15,6 @@ import { STATUSCODE_COLUMS } from './status-code-columns';
   styles: [],
 })
 export class StatusCodeListComponent extends BasePage implements OnInit {
-  
   paragraphs: IStatusCode[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

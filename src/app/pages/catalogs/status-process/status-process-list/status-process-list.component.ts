@@ -15,7 +15,6 @@ import { STATUSPROCESS_COLUMS } from './status-process-columns';
   styles: [],
 })
 export class StatusProcessListComponent extends BasePage implements OnInit {
-  
   paragraphs: IStatusProcess[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

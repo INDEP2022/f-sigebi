@@ -11,9 +11,11 @@ import { COLUMNS } from './columns';
   templateUrl: './pa-pdm-asp-c-audience-sirsae-payments.component.html',
   styles: [],
 })
-export class PaPdmAspCAudienceSirsaePaymentsComponent extends BasePage implements OnInit {
-
-  data:any[]=[
+export class PaPdmAspCAudienceSirsaePaymentsComponent
+  extends BasePage
+  implements OnInit
+{
+  data: any[] = [
     {
       user: 'TFARFAN',
       username: 'Tania Beatriz Farfan',

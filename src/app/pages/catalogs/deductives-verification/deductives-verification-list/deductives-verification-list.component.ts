@@ -19,7 +19,6 @@ export class DeductivesVerificationListComponent
   extends BasePage
   implements OnInit
 {
-  
   deductives: IDeductiveVerification[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

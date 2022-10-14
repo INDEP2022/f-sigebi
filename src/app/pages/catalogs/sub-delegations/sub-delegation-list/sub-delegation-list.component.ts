@@ -15,7 +15,6 @@ import { SUB_DELEGATION_COLUMS } from './sub-delegation-columns';
   styles: [],
 })
 export class SubDelegationListComponent extends BasePage implements OnInit {
-  
   paragraphs: ISubdelegation[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

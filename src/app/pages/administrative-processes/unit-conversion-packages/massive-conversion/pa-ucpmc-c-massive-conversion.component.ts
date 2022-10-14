@@ -17,8 +17,8 @@ export class PaUcpmcCMassiveConversionComponent
 {
   form: FormGroup = new FormGroup({});
   form2: FormGroup = new FormGroup({});
-  
-  data:any[]=[];
+
+  data: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 

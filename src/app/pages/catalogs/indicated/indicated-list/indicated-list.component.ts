@@ -15,7 +15,6 @@ import { INDICATED_COLUMNS } from './indicated-columns';
   styles: [],
 })
 export class IndicatedListComponent extends BasePage implements OnInit {
-  
   paragraphs: IIndiciados[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

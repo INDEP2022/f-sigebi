@@ -15,7 +15,6 @@ import { TYPESINISTER_COLUMS } from './type-sinister-columns';
   styles: [],
 })
 export class TypeSinisterListComponent extends BasePage implements OnInit {
-  
   paragraphs: ITypeSiniester[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

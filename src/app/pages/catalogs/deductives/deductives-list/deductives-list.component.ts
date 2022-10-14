@@ -16,7 +16,6 @@ import { DEDUCTIVE_COLUMNS } from './deductive-columns';
   styles: [],
 })
 export class DeductivesListComponent extends BasePage implements OnInit {
-  
   deductives: IDeductive[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

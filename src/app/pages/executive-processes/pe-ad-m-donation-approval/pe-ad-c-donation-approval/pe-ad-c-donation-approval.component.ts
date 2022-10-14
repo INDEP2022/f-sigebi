@@ -12,7 +12,6 @@ import { DONATION_APPROVAL_COLUMNS } from './donation-approval-columns';
   styles: [],
 })
 export class PeAdCDonationApprovalComponent extends BasePage implements OnInit {
-
   form: FormGroup = new FormGroup({});
 
   constructor(private fb: FormBuilder) {

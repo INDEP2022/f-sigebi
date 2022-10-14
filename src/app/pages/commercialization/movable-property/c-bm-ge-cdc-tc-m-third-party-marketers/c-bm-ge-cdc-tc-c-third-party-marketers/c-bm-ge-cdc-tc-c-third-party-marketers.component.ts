@@ -16,15 +16,15 @@ export class CBmGeCdcTcCThirdPartyMarketersComponent
 {
   settings1 = {
     ...this.settings,
-    actions: false
+    actions: false,
   };
   settings2 = {
     ...this.settings,
-    actions: false
+    actions: false,
   };
   settings3 = {
     ...this.settings,
-    actions: false
+    actions: false,
   };
 
   data2: any;

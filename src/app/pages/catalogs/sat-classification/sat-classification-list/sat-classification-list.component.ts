@@ -15,7 +15,6 @@ import { SAT_CLASSIFICATION_COLUMNS } from './sat-classification-columns';
   styles: [],
 })
 export class SatClassificationListComponent extends BasePage implements OnInit {
-  
   paragraphs: ISatClassification[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

@@ -16,7 +16,6 @@ import { OFFICES_COLUMNS } from './offices-columns';
   styles: [],
 })
 export class OfficesListComponent extends BasePage implements OnInit {
-  
   offices: IOffice[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

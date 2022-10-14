@@ -16,8 +16,6 @@ import { IndicatorReportFormComponent } from '../indicator-report-form/indicator
   styles: [],
 })
 export class IndicatorReportListComponent extends BasePage implements OnInit {
-
-  
   indicatorReports: IIndicatorReport[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
