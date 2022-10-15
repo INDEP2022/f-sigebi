@@ -47,7 +47,7 @@ const routes: Routes = [
           './pe-ibs-d-a-m-report-registration-module/pe-ibs-d-a-m-report-registration-module.module'
         )
       ).PeIbsDAMReportRegistrationModuleModule,
-    data: { title: 'Información Bienes' },
+    data: { title: 'Información Bienes Asegurados/Decomisos/Abandonos' },
   },
   {
     path: 'pe-drpae-m-doc-received-authority',
@@ -57,7 +57,7 @@ const routes: Routes = [
           './pe-drpae-m-doc-received-authority/pe-drpae-m-doc-received-authority.module'
         )
       ).PeDrpaeMDocReceivedAuthorityModule,
-    data: { title: 'Reporte de documentación recibida por autoridad emisora' },
+    data: { title: 'Recepción de Doctos. Por Autoridad Emisora' },
   },
   {
     path: 'pe-rdde-m-daily-control-reception',
@@ -67,7 +67,7 @@ const routes: Routes = [
           './pe-rdde-m-daily-control-reception/pe-rdde-m-daily-control-reception.module'
         )
       ).PeRddeMDailyControlReceptionModule,
-    data: { title: 'Control diario de recepción de expedientes' },
+    data: { title: 'Recepción Diaria de Expedientes' },
   },
   {
     path: 'pe-gdadd-m-destruction-authorization-management',
@@ -87,7 +87,7 @@ const routes: Routes = [
           './pe-ad-m-authorization-assets-destruction/pe-ad-m-authorization-assets-destruction.module'
         )
       ).PeAdMAuthorizationAssetsDestructionModule,
-    data: { title: 'Autorización de bienes para destrucción ' },
+    data: { title: 'Aprobación destrucción' },
   },
   {
     path: 'pe-ad-m-approval-assets-destination',
@@ -97,7 +97,7 @@ const routes: Routes = [
           './pe-ad-m-approval-assets-destination/pe-ad-m-approval-assets-destination.module'
         )
       ).PeAdMApprovalAssetsDestinationModule,
-    data: { title: 'Aprobación de bienes para destino' },
+    data: { title: 'Aprobación destino' },
   },
   {
     path: 'pe-rddxdees-m-reception-area-sera',
@@ -107,7 +107,7 @@ const routes: Routes = [
           './pe-rddxdees-m-reception-area-sera/pe-rddxdees-m-reception-area-sera.module'
         )
       ).PeRddxdeesMReceptionAreaSeraModule,
-    data: { title: 'Recepción recibida por área en el SERA ' },
+    data: { title: 'Recepción de Doctos. x Destino en el SERA' },
   },
   {
     path: 'pe-rddg-drpad-m-totaldoc-received-destinationarea',
@@ -117,7 +117,7 @@ const routes: Routes = [
           './pe-rddg-drpad-m-totaldoc-received-destinationarea/pe-rddg-drpad-m-totaldoc-received-destinationarea.module'
         )
       ).PeRddgDrpadMTotaldocReceivedDestinationareaModule,
-    data: { title: 'Total de documentos recibidos vs área destino ' },
+    data: { title: 'Documentación recibida X Área Destino' },
   },
   {
     path: 'pe-rddg-tddr-m-report-doc-received',
@@ -127,7 +127,7 @@ const routes: Routes = [
           './pe-rddg-tddr-m-report-doc-received/pe-rddg-tddr-m-report-doc-received.module'
         )
       ).PeRddgTddrMReportDocReceivedModule,
-    data: { title: 'Reporte Documentación Recibida' },
+    data: { title: 'Total de Documentación Recibida' },
   },
   {
     path: 'pe-rddg-brea-m-assets-received-admon',
@@ -137,7 +137,7 @@ const routes: Routes = [
           './pe-rddg-brea-m-assets-received-admon/pe-rddg-brea-m-assets-received-admon.module'
         )
       ).PeRddgBreaMAssetsReceivedAdmonModule,
-    data: { title: 'Reporte de bienes recibidos en administración ' },
+    data: { title: 'Bienes recibidos en Administración' },
   },
   {
     path: 'pe-amdvda-m-update-mss-value',
@@ -147,7 +147,7 @@ const routes: Routes = [
           './pe-amdvda-m-update-mss-value/pe-amdvda-m-update-mss-value.module'
         )
       ).PeAmdvdaMUpdateMssValueModule,
-    data: { title: 'Proceso de actualización masiva de valor avaluó' },
+    data: { title: 'Actualización masiva de Valor de Avalúo' },
   },
   {
     path: 'pe-ad-m-donation-approval',

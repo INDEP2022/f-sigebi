@@ -29,7 +29,7 @@ export class PeAdCAuthorizationAssetsDestructionComponent
   private prepareForm() {
     this.form = this.fb.group({
       idExp: [
-        '',
+        null,
         [
           Validators.required,
           Validators.maxLength(10),
@@ -37,23 +37,15 @@ export class PeAdCAuthorizationAssetsDestructionComponent
           Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
-      preInquiry: ['', [Validators.required]],
-      criminalCase: ['', [Validators.required]],
-      circumstAct: ['', [Validators.required]],
-      touchPenalty: ['', [Validators.required]],
-      noAuth: [
-        '',
-        [
-          Validators.required,
-          Validators.maxLength(10),
-          Validators.minLength(1),
-          Validators.pattern(NUMBERS_PATTERN),
-        ],
-      ],
-      authNotice: ['', [Validators.required]],
-      fromDate: ['', [Validators.required]],
-      scanFolio: ['', [Validators.required]],
-      cancelSheet: ['', [Validators.required]],
+      preInquiry: [null],
+      criminalCase: [null],
+      circumstAct: [null],
+      touchPenalty: [null],
+      noAuth: [null],
+      authNotice: [null],
+      fromDate: [null],
+      scanFolio: [null],
+      cancelSheet: [null],
     });
   }
 
@@ -63,6 +55,7 @@ export class PeAdCAuthorizationAssetsDestructionComponent
       description: 'CUARENTA Y DOS CHAMARRAS',
       ubiExact: 'ALMACEN',
       direction: 'PROLONGACIÓN MORELOS',
+      passed: true,
       noOficio: 'DG/006/2004',
       fecha: '12/12/2005',
       status: 'ADE',
@@ -73,6 +66,7 @@ export class PeAdCAuthorizationAssetsDestructionComponent
       description: 'SETENTA Y DOS CELULARES',
       ubiExact: 'ALMACEN',
       direction: 'PROLONGACIÓN MORELOS',
+      passed: true,
       noOficio: 'DG/006/2004',
       fecha: '12/12/2005',
       status: 'ADE',
@@ -83,6 +77,7 @@ export class PeAdCAuthorizationAssetsDestructionComponent
       description: 'CUARENTA Y TRES CABLES USB',
       ubiExact: 'ALMACEN',
       direction: 'PROLONGACIÓN MORELOS',
+      passed: false,
       noOficio: 'DG/006/2004',
       fecha: '12/12/2005',
       status: 'ADE',
