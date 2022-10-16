@@ -128,6 +128,28 @@ export const MENU: IMenuItem[] = [
           },
         ],
       },
+      {
+        label: 'Seguros y Vigilancia',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Mantenimiento de Pólizas',
+            link: '/pages/administrative-processes/policy-maintenance',
+          },
+          {
+            label: 'Pólizas de Seguro',
+            link: '/pages/administrative-processes/insurance-policy',
+          },
+          {
+            label: 'Altas de bienes en Pólizas',
+            link: '/pages/administrative-processes/registration-of-policy',
+          },
+          {
+            label: 'Baja de bienes en Pólizas',
+            link: '/pages/administrative-processes/loss-of-policy',
+          },
+        ],
+      },
     ],
   },
   {
