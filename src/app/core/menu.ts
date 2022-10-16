@@ -63,6 +63,18 @@ export const MENU: IMenuItem[] = [
         link: '/pages/administrative-processes/apply-lif',
       },
       {
+        label: 'Actas Conversión',
+        link: '/pages/administrative-processes/conversion-act',
+      },
+      {
+        label: 'Regulaciones',
+        link: '/pages/catalogs/regulatory',
+      },
+      {
+        label: 'Respuestas Repuve',
+        link: '/pages/catalogs/responseRepuve',
+      },
+      {
         label: 'Administración Conversión',
         link: '/pages/administrative-processes/conversion-management',
       },
@@ -174,6 +186,20 @@ export const MENU: IMenuItem[] = [
           },
         ],
       },
+      {
+        label: 'Seguros y Vigilancia',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Reportes de Pólizas',
+            link: '/pages/administrative-processes/policies-report',
+          },
+          {
+            label: 'Mantenimiento a Pólizas',
+            link: '/pages/administrative-processes/policy-maintenance',
+          },
+        ],
+      },
     ],
   },
   {
@@ -242,9 +268,6 @@ export const MENU: IMenuItem[] = [
       },
       /**
        * ADMIN PROCESS-SEGUROS LEGASPI
-       **/
-      /**
-       * ADMIN PROCESS-SERVICES LEGASPI
        **/
       {
         label: 'Servicios',

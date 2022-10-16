@@ -230,8 +230,8 @@ const routes: Routes = [
         path: 'services',
         loadChildren: async () =>
           (await import('./services/pa-s-m-services.module'))
-          .PaSMServicesModule,
-          data: { title: 'Servicios' },
+            .PaSMServicesModule,
+        data: { title: 'Servicios' },
       },
       /**
        * Services Pages Legaspi
@@ -260,8 +260,11 @@ const routes: Routes = [
       {
         path: 'services-unit-prices',
         loadChildren: async () =>
-          (await import('./administration-third/services-unit-prices/services-unit-prices.module'))
-            .ServicesUnitPricesModule,
+          (
+            await import(
+              './administration-third/services-unit-prices/services-unit-prices.module'
+            )
+          ).ServicesUnitPricesModule,
         data: { title: 'Servicios para precios unitarios' },
       },
       {
@@ -281,16 +284,32 @@ const routes: Routes = [
       {
         path: 'measurement-units',
         loadChildren: async () =>
-          (await import('./administration-third/measurement-units/measurement-units.module'))
-            .MeasurementUnitsModule,
+          (
+            await import(
+              './administration-third/measurement-units/measurement-units.module'
+            )
+          ).MeasurementUnitsModule,
         data: { title: 'Unidades de medida' },
       },
       {
         path: 'variable-cost',
         loadChildren: async () =>
-          (await import('./administration-third/variable-cost/variable-cost.module'))
-            .VariableCostModule,
+          (
+            await import(
+              './administration-third/variable-cost/variable-cost.module'
+            )
+          ).VariableCostModule,
         data: { title: 'Variable costo' },
+      },
+      /**
+       * Seguros David Lucas
+       */
+      {
+        path: 'policies-report',
+        loadChildren: async () =>
+          (await import('./policies-report/policies-report.module'))
+            .PoliciesReportModule,
+        data: { title: 'Reportes de Pólizas' },
       },
     ],
   },
