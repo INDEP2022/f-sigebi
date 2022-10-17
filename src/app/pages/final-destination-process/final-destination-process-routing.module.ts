@@ -45,12 +45,19 @@ const routes: Routes = [
       ),
   },
   {
-    path: "delivery-schedule",
+    path: 'delivery-schedule',
     loadChildren: () =>
-      import("./delivery-schedule/delivery-schedule.module").then(
-        (m) => m.DeliveryScheduleModule
+      import('./delivery-schedule/delivery-schedule.module').then(
+        m => m.DeliveryScheduleModule
       ),
-  }
+  },
+  {
+    path: 'donation-process',
+    loadChildren: () =>
+      import('./donation-process/donation-process.module').then(
+        m => m.DonationProcessModule
+      ),
+  },
 ];
 
 @NgModule({

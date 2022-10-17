@@ -92,6 +92,15 @@ export const MENU: IMenuItem[] = [
           },
         ],
       },
+      {
+        label: 'Exportación de Bienes para Donación a Excel',
+        subItems: [
+          {
+            label: 'Exportación de Bienes para Donación',
+            link: '/pages/final-destination-process/donation-process/export-goods-donation',
+          },
+        ],
+      },
     ],
   },
   ...DOCUMENTS_RECEPTION_ROUTES,
