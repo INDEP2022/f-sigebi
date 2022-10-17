@@ -7,7 +7,7 @@ import { CreateNewEventModalComponent } from '../create-new-event-modal/create-n
 import { animate, style, transition, trigger } from '@angular/animations';
 //XLSX
 import * as XLSX from 'xlsx';
-import { ExcelService } from 'src/app/common/services/exportToExcel.service';
+import { ExcelService } from 'src/app/common/services/exporttoexcel.service';
 import { AddEditLoteModalComponent } from '../add-edit-lote-modal/add-edit-lote-modal.component';
 
 @Component({
