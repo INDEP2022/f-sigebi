@@ -87,32 +87,48 @@
         [settings]="settings"
         [source]="usersData">
       </ng2-smart-table>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
     </div>
 
     <div class="row pt-5">
       <h5 class="title">Bienes seleccionados</h5>
       <div class="md-tabs">
         <tabset>
-          <tab heading="Transportable" id="tab1">
+          <div class="d-flex justify-content-end">
+            <app-columns-select
+              [(settings)]="estateSettings"></app-columns-select>
+          </div>
+          <tab heading="Transportable(0)" id="tab1">
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="estateSettings"
               [source]="estateData">
             </ng2-smart-table>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"></app-pagination>
           </tab>
-          <tab heading="Resguardo">
+          <tab heading="Resguardo(0)">
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="estateSettings"
               [source]="estateData">
             </ng2-smart-table>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"></app-pagination>
           </tab>
-          <tab heading="Almacén SAT">
+          <tab heading="Almacén SAT(0)">
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="estateSettings"
               [source]="estateData">
             </ng2-smart-table>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"></app-pagination>
           </tab>
         </tabset>
       </div>
@@ -122,14 +138,9 @@
         <button (click)="signOffice()" class="btn btn-info active">
           Firmar oficio
         </button>
-        <button class="btn btn-primary active">
-          Aprobar
-        </button>
-        <button class="btn btn-danger active">
-          Cancelar
-        </button>
+        <button class="btn btn-primary active">Aprobar</button>
+        <button class="btn btn-danger active">Cancelar</button>
       </div>
     </div>
-    
   </div>
 </app-card>

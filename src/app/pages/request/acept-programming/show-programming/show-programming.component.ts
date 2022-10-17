@@ -6,22 +6,24 @@ import { ElectronicSignatureListComponent } from '../electronic-signature-list/e
 @Component({
   selector: 'app-show-programming',
   templateUrl: './show-programming.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ShowProgrammingComponent extends BasePage implements OnInit {
-
   constructor(
     private modalService: BsModalService,
-    private modalRef: BsModalRef) { 
+    private modalRef: BsModalRef
+  ) {
     super();
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void {}
+
+  signReport(signReport?: Event) {
+    this.modalRef.content.callback(true);
+    this.modalRef.hide();
   }
 
-  signReport(signReport?: Event){
-    this.modalRef.content.callback(true);
+  close() {
     this.modalRef.hide();
   }
 }

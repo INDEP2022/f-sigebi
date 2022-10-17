@@ -6,12 +6,12 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
-  selector: 'app-documents-form',
-  templateUrl: './documents-form.component.html',
+  selector: 'app-document-form',
+  templateUrl: './document-form.component.html',
   styles: [
   ]
 })
-export class DocumentsFormComponent extends BasePage implements OnInit {
+export class DocumentFormComponent extends BasePage implements OnInit {
 
   documentForm: FormGroup = new FormGroup({});
   typesDocuments = new DefaultSelect();

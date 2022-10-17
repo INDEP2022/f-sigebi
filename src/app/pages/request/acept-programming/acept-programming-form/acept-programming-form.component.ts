@@ -1,7 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ESTATE_COLUMNS } from '../columns/estate-columns';
 import { IUser, USER_COLUMNS } from '../columns/users-columns';
@@ -13,19 +15,19 @@ import { ShowSignatureProgrammingComponent } from '../show-signature-programming
 @Component({
   selector: 'app-acept-programming-form',
   templateUrl: './acept-programming-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class AceptProgrammingFormComponent extends BasePage implements OnInit {
+  settings = { ...TABLE_SETTINGS, actions: false };
+  estateSettings = { ...TABLE_SETTINGS, actions: false };
 
-  settings = {...TABLE_SETTINGS, actions: false};
-  estateSettings = {...TABLE_SETTINGS, actions: false};
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems: number = 0;
 
   usersData: IUser[] = [];
   estateData: [] = [];
-  
 
-  constructor(private modalService: BsModalService) { 
+  constructor(private modalService: BsModalService) {
     super();
   }
 
@@ -34,46 +36,59 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
     this.estateSettings.columns = ESTATE_COLUMNS;
   }
 
-  confirm(){
+  confirm() {}
 
+  signOffice() {
+    const config = MODAL_CONFIG;
+    config.initialState = {
+      callback: (next: boolean) => {
+        if (next) {
+          this.showProg();
+        }
+      },
+    };
+
+    const confirmPro = this.modalService.show(
+      ConfirmProgrammingComponent,
+      config
+    );
   }
 
-  signOffice(){
+  showProg() {
     const config = MODAL_CONFIG;
-    config.initialState = { callback: (next: boolean) => {
-      if(next){
-        this.showProg();
-      }
-    }};
-
-    const confirmPro = this.modalService.show(ConfirmProgrammingComponent,config);
-  }
-
-  showProg(){
-    const config = MODAL_CONFIG;
-    config.initialState = { callback: (next: boolean) => {
-      if(next){
-        this.electronicSign();
-      }
-    }};
+    config.initialState = {
+      callback: (next: boolean) => {
+        if (next) {
+          this.electronicSign();
+        }
+      },
+    };
     const showProg = this.modalService.show(ShowProgrammingComponent, config);
   }
 
-  electronicSign(){
+  electronicSign() {
     const config = MODAL_CONFIG;
-    config.initialState = { callback: (next: boolean) => {
-      if(next){
-        this.showSignProg();
-      }
-    }};
+    config.initialState = {
+      callback: (next: boolean) => {
+        if (next) {
+          this.showSignProg();
+        }
+      },
+    };
 
-    const electronicSign = this.modalService.show(ElectronicSignatureListComponent,config);
+    const electronicSign = this.modalService.show(
+      ElectronicSignatureListComponent,
+      config
+    );
   }
 
-  showSignProg(){
-    const showSignProg = this.modalService.show(ShowSignatureProgrammingComponent, {
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    })
+  showSignProg() {
+    const showSignProg = this.modalService.show(
+      ShowSignatureProgrammingComponent,
+      {
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
   }
 }

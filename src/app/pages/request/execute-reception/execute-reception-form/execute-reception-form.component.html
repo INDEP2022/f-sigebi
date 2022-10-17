@@ -113,10 +113,58 @@
       <h5 class="title">Bienes transportables</h5>
 
       <div class="form-inline justify-content-end">
-        <a style="cursor: pointer" (click)="uploadDocuments()" class="p-4"><i class="fa fa-file-archive"></i><b> Adjutar documentos</b></a>
-        <a style="cursor: pointer" ><i class="fa fa-camera"></i><b> Integrar fotografía</b></a>
-        <a style="cursor: pointer" class="p-4"><i class="fa fa-retweet"></i><b> Actualizar</b></a>
-        <a style="cursor: pointer" class="p-4"><i class="fa fa-save"></i><b> Guardar</b></a>
+        <div class="btn-group" dropdown>
+          <button type="button" class="btn btn-primary btn-sm active">
+            Acciones
+          </button>
+          <button
+            id="button-split"
+            type="button"
+            dropdownToggle
+            class="btn btn-primary btn-sm active dropdown-toggle dropdown-toggle-start"
+            aria-controls="dropdown-split">
+            <span class="caret"></span>
+          </button>
+          <ul
+            id="dropdown-split"
+            *dropdownMenu
+            class="dropdown-menu fix text-small shadow dropdown-menu-right"
+            role="menu"
+            aria-labelledby="button-split">
+            <li role="menuitem">
+              <a
+                class="dropdown-item"
+                style="cursor: pointer"
+                (click)="uploadDocuments()"
+                ><i class="fa fa-file-archive"></i> Adjuntar documentos</a
+              >
+            </li>
+
+            <li role="menuitem">
+              <a
+                class="dropdown-item"
+                style="cursor: pointer"
+                (click)="uploadPicture()"
+                ><i class="fa fa-camera"></i> Integrar fotografía</a
+              >
+            </li>
+
+            <li role="menuitem">
+              <a class="dropdown-item" style="cursor: pointer"
+                ><i class="fa fa-retweet"></i> Actualizar</a
+              >
+            </li>
+            <li class="divider dropdown-divider"></li>
+            <li role="menuitem">
+              <a
+                class="dropdown-item"
+                style="cursor: pointer"
+                (click)="uploadPicture()"
+                ><i class="fa fa-save"></i> Guardar</a
+              >
+            </li>
+          </ul>
+        </div>
       </div>
 
       <div class="col-lg-5">
@@ -126,17 +174,215 @@
 
     <div class="row">
       <div class="btn-toolbar pt-5">
-        <button class="btn btn-primary btn-sm active">Asignar recibo</button>
-        <button class="btn btn-primary btn-sm active">Resguardo</button>
-        <button class="btn btn-primary btn-sm active">Almacén</button>
-        <button class="btn btn-primary btn-sm active">Reprogramación</button>
-        <button class="btn btn-primary btn-sm active">Cancelación</button>
+        <button (click)="assignReceipt()" class="btn btn-primary btn-sm active">
+          Asignar recibo
+        </button>
+        <button class="btn btn-info btn-sm active">Resguardo</button>
+        <button class="btn btn-pink btn-sm active">Almacén</button>
+        <button (click)="rescheduling()" class="btn btn-info btn-sm active">
+          Reprogramación
+        </button>
+        <button class="btn btn-danger btn-sm active">Cancelación</button>
       </div>
-      <ng2-smart-table
-        [attr.class]="'table-bordered'"
-        [settings]="settingsTranGoods"
-        [source]="tranGoods">
-      </ng2-smart-table>
+    </div>
+
+    <form [formGroup]="executeForm">
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <col style="width: 60%" />
+          <col style="width: 80%" />
+          <col style="width: 60%" />
+          <thead>
+            <tr>
+              <th scope="col" class="text-center">
+                <input
+                  id="label"
+                  type="checkbox"
+                  formControlName="selectColumn" />
+              </th>
+              <th scope="col">N. gestión</th>
+              <th scope="col">Clave única</th>
+              <th scope="col">Expediente</th>
+              <th scope="col">Descripción transferente</th>
+              <th scope="col">Descripción SAE</th>
+              <th scope="col">Cantidad transferente</th>
+              <th scope="col">Cantidad SAE</th>
+              <th scope="col">Medida transferente</th>
+              <th scope="col">Medida SAE</th>
+              <th scope="col">Estado transferente</th>
+              <th scope="col">Estado físico SAE</th>
+              <th scope="col">Conservación transferente</th>
+              <th scope="col">Estado conservación SAE</th>
+              <th scope="col">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="align-baseline">
+                <input
+                  id="label"
+                  type="checkbox"
+                  formControlName="selectColumn" />
+              </th>
+              <td scope="row" class="align-baseline">5296016</td>
+              <td class="align-baseline">2019/02/20501</td>
+              <td class="align-baseline">2019/04/20504</td>
+              <td>Cables tomados</td>
+              <td>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="saeDescription"
+                  style="width: 150px" />
+              </td>
+              <td class="text-right align-baseline">
+                <div class="align-items">4</div>
+              </td>
+              <td>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="saeAmount"
+                  style="width: 150px" />
+              </td>
+              <td class="text-center align-baseline">Pieza</td>
+              <td>
+                <select
+                  class="form-control"
+                  style="width: 150px; font-size: 13px !important"
+                  formControlName="satUnit">
+                  <option [value]="null">Seleccione un valor</option>
+                  <option [value]="1">Pieza</option>
+                </select>
+              </td>
+              <td class="text-center align-baseline">Bueno</td>
+
+              <td>
+                <select
+                  class="form-control"
+                  style="width: 150px; font-size: 13px !important"
+                  formControlName="stateFisicSae">
+                  <option [value]="null">Seleccione un valor</option>
+                  <option [value]="1">Bueno</option>
+                </select>
+              </td>
+
+              <td></td>
+              <td>
+                <select
+                  class="form-control"
+                  style="width: 150px; font-size: 13px !important"
+                  formControlName="stateConservationSae">
+                  <option [value]="null">Seleccione un valor</option>
+                  <option [value]="1">Bueno</option>
+                </select>
+              </td>
+              <td class="text-center align-baseline">
+                <a class="text-center">
+                  <i
+                    (click)="showEstate()"
+                    class="fa fa-file"
+                    style="cursor: pointer"></i
+                ></a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </form>
+
+    <div class="row pt-5">
+      <h5 class="title">Bienes seleccionados</h5>
+      <div class="md-tabs">
+        <tabset>
+          <tab heading="Transportable(0)" id="tab1">
+            <div class="row">
+              <div class="d-flex justify-content-end">
+                <app-columns-select
+                  [(settings)]="settingsTranGoods"></app-columns-select>
+              </div>
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsReceipt"
+                [source]="receipts"
+                (edit)="createReceipt()"
+                (delete)="delete()">
+              </ng2-smart-table>
+              <app-pagination
+                [params]="params"
+                [totalItems]="totalItems"></app-pagination>
+            </div>
+            <div class="row pt-5">
+              <div class="btn-toolbar pt-5">
+                <button
+                  (click)="uploadDocuments()"
+                  class="btn btn-primary btn-sm active">
+                  <i class="fa fa-file-archive"></i> Adjuntar documentos
+                </button>
+                <button
+                  (click)="uploadPicture()"
+                  class="btn btn-info btn-sm active">
+                  <i class="fa fa-camera"></i> Integrar fotografía
+                </button>
+
+                <button class="btn btn-danger btn-sm active">
+                  <i class="fa fa-trash"></i> Eliminar
+                </button>
+              </div>
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsTranGoods"
+                [source]="tranGoods">
+              </ng2-smart-table>
+              <app-pagination
+                [params]="params"
+                [totalItems]="totalItems"></app-pagination>
+            </div>
+          </tab>
+          <tab heading="Resguardo(0)">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settingsTranGoods"
+              [source]="tranGoods">
+            </ng2-smart-table>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"></app-pagination>
+          </tab>
+          <tab heading="Almacén SAE(0)">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settingsTranGoods"
+              [source]="tranGoods">
+            </ng2-smart-table>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"></app-pagination>
+          </tab>
+
+          <tab heading="Reprogramación(0)">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settingsTranGoods"
+              [source]="tranGoods">
+            </ng2-smart-table>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"></app-pagination>
+          </tab>
+
+          <tab heading="Cancelación(0)">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settingsTranGoods"
+              [source]="tranGoods">
+            </ng2-smart-table>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"></app-pagination>
+          </tab>
+        </tabset>
+      </div>
     </div>
 
     <div class="d-flex justify-content-center">

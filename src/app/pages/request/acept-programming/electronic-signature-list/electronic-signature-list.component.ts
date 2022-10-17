@@ -10,16 +10,18 @@ import { ELECTRONIC_SGIGNATURE_COLUMNS } from './electronic-signature-columns';
 @Component({
   selector: 'app-electronic-signature-list',
   templateUrl: './electronic-signature-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class ElectronicSignatureListComponent extends BasePage implements OnInit {
-  
-  settings = {...TABLE_SETTINGS, actions: false};
+export class ElectronicSignatureListComponent
+  extends BasePage
+  implements OnInit
+{
+  settings = { ...TABLE_SETTINGS, actions: false };
   usersData: IUser[] = [];
   constructor(
     private modalService: BsModalService,
-    private modalRef: BsModalRef) { 
+    private modalRef: BsModalRef
+  ) {
     super();
   }
 
@@ -27,16 +29,19 @@ export class ElectronicSignatureListComponent extends BasePage implements OnInit
     this.settings.columns = ELECTRONIC_SGIGNATURE_COLUMNS;
   }
 
-  uploadFiles(){
-    const uploadFile = this.modalService.show(UploadFilesFormComponent,{
+  uploadFiles() {
+    const uploadFile = this.modalService.show(UploadFilesFormComponent, {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
-    })
+    });
   }
 
-  showSignProg(){
+  showSignProg() {
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 
+  close() {
+    this.modalRef.hide();
+  }
 }

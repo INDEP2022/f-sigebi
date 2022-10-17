@@ -8,38 +8,34 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-schedule-reception-form',
   templateUrl: './schedule-reception-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ScheduleReceptionFormComponent implements OnInit {
   scheduleForm: FormGroup = new FormGroup({});
   loading: boolean = false;
   users = new DefaultSelect<IUser>();
-
-  constructor(private fb: FormBuilder) { }
+  date = new Date();
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.schedule();
   }
 
-  schedule(){
+  schedule() {
     this.scheduleForm = this.fb.group({
       radio: ['T.E'],
       userId: [null, [Validators.required]],
-      check: [false] 
-    })
-  }  
+      check: [false],
+    });
+  }
 
-  typeUser(event: Event): string{
+  typeUser(event: Event): string {
     return (event.target as HTMLInputElement).value;
   }
 
-  confirm(){
-    alert("Please enter");
+  confirm() {
+    alert('Please enter');
   }
 
-  
-  getUserSelect(user: ListParams){
-
-  }
+  getUserSelect(user: ListParams) {}
 }

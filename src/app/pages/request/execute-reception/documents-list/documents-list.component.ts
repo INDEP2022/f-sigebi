@@ -5,7 +5,8 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { DocumentsFormComponent } from '../documents-form/documents-form.component';
+import { DocumentFormComponent } from '../document-form/document-form.component';
+import { DocumentShowComponent } from '../document-show/document-show.component';
 import { DOCUMENTS_LIST_COLUMNS } from './documents-list-columns';
 
 @Component({
@@ -14,7 +15,7 @@ import { DOCUMENTS_LIST_COLUMNS } from './documents-list-columns';
   styles: [],
 })
 export class DocumentsListComponent extends BasePage implements OnInit {
-  settings = { ...TABLE_SETTINGS };
+  settings = {...TABLE_SETTINGS};
   documentsData: any;
   showForm: boolean = false;
   documentForm: FormGroup = new FormGroup({});
@@ -25,16 +26,13 @@ export class DocumentsListComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef
   ) {
     super();
-  }
-
-  ngOnInit(): void {
-    this.prepareForm();
     this.settings.columns = DOCUMENTS_LIST_COLUMNS;
+    this.settings.actions.delete = true;
     this.settings = {
       ...this.settings,
-      edit: { editButtonContent: '<i class="fa fa-eye text-info mx-2"></i>' },
+      edit: { editButtonContent: '<i class="fa fa fa-file"></i>' },
       delete: {
-        deleteButtonContent: '<i class="fa fa-eye text-warning mx-2"></i>',
+        deleteButtonContent: '<i class="fa fa-eye text-info mx-2"></i>',
         confirmDelete: false,
       },
     };
@@ -48,6 +46,11 @@ export class DocumentsListComponent extends BasePage implements OnInit {
         creationDate: '12-11-1999',
       },
     ];
+  }
+
+  ngOnInit(): void {
+    this.prepareForm();
+    
   }
 
   prepareForm() {
@@ -67,7 +70,7 @@ export class DocumentsListComponent extends BasePage implements OnInit {
   }
 
   uploadFiles() {
-    const uploadFiles = this.modalService.show(DocumentsFormComponent, {
+    const uploadFiles = this.modalService.show(DocumentFormComponent, {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
@@ -75,9 +78,20 @@ export class DocumentsListComponent extends BasePage implements OnInit {
 
   getTypeDocumentSelect(typeDocument: ListParams) {}
 
-  confirm() {}
-
   close() {
     this.modalRef.hide();
   }
+
+  showDocument(){
+    const showDocument = this.modalService.show(DocumentShowComponent,{
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+  } 
+
+  viewDocument(){
+    alert("Se abrira el documento");
+  }
+
+  confirm(){}
 }

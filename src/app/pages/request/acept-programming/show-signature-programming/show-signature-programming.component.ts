@@ -4,17 +4,18 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 @Component({
   selector: 'app-show-signature-programming',
   templateUrl: './show-signature-programming.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ShowSignatureProgrammingComponent implements OnInit {
+  constructor(private modalRef: BsModalRef) {}
 
-  constructor(private modalRef: BsModalRef) { }
+  ngOnInit(): void {}
 
-  ngOnInit(): void {
+  AttachDocument() {
+    this.modalRef.hide();
   }
 
-  AttachDocument(){
+  close() {
     this.modalRef.hide();
   }
 }

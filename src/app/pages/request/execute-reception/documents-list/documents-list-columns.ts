@@ -19,7 +19,7 @@ export const DOCUMENTS_LIST_COLUMNS = {
     },
 
     typeDocument: {
-        title: 'Titulo del documento',
+        title: 'Tipo de documento',
         type: 'string',
         sort: false
     },

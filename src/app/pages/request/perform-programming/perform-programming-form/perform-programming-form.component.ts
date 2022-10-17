@@ -14,16 +14,24 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { EstateSearchFormComponent } from '../estate-search-form/estate-search-form.component';
 import { UserFormComponent } from '../user-form/user-form.component';
 import { WarehouseFormComponent } from '../../warehouse/warehouse-form/warehouse-form.component';
-
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { ESTATE_COLUMNS } from '../../acept-programming/columns/estate-columns';
+import { USER_COLUMNS } from '../../acept-programming/columns/users-columns';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-perform-programming-form',
   templateUrl: './perform-programming-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class PerformProgrammingFormComponent extends BasePage implements OnInit {
-
+export class PerformProgrammingFormComponent
+  extends BasePage
+  implements OnInit
+{
+  settingEstate = { ...TABLE_SETTINGS, actions: false };
+  settingUser = { ...TABLE_SETTINGS, actions: false };
+  estates: any[] = [];
+  usersData: any[] = [];
   performForm: FormGroup = new FormGroup({});
   users = new DefaultSelect<IUser>();
   regionalsDelegations = new DefaultSelect<IRegionalDelegation>();
@@ -33,18 +41,20 @@ export class PerformProgrammingFormComponent extends BasePage implements OnInit 
   authority = new DefaultSelect<IAuthority>();
   typeRelevant = new DefaultSelect();
   warehouse = new DefaultSelect();
-  
-  constructor(
-    private fb:FormBuilder,
-    private modalService: BsModalService) { 
-      super();
-    }
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems: number = 0;
+
+  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+    super();
+    this.settingEstate.columns = ESTATE_COLUMNS;
+    this.settingUser.columns = USER_COLUMNS;
+  }
 
   ngOnInit(): void {
     this.prepareForm();
   }
 
-  prepareForm(){
+  prepareForm() {
     this.performForm = this.fb.group({
       email: [null, [Validators.required]],
       address: [null, [Validators.required]],
@@ -52,7 +62,7 @@ export class PerformProgrammingFormComponent extends BasePage implements OnInit 
       startDate: [null],
       endDate: [null],
       observation: [null],
-      regionalDelegation:[null],
+      regionalDelegation: [null],
       state: [null],
       transference: [null],
       station: [null],
@@ -60,59 +70,49 @@ export class PerformProgrammingFormComponent extends BasePage implements OnInit 
       typeRelevant: [null],
       warehouse: [null],
       userId: [null],
-    })
+    });
   }
 
-  newUser(){
-    const newUser = this.modalService.show(UserFormComponent,{
+  newUser() {
+    const newUser = this.modalService.show(UserFormComponent, {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
   }
 
-  newWarehouse(){
-    const newWarehouse = this.modalService.show(WarehouseFormComponent,{
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    })
-  }
-
-  estateSearch(){
-    const estateSearch = this.modalService.show(EstateSearchFormComponent,{
+  newWarehouse() {
+    const newWarehouse = this.modalService.show(WarehouseFormComponent, {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
   }
 
-  getUsersSelect(user: ListParams){
-
+  estateSearch() {
+    const estateSearch = this.modalService.show(EstateSearchFormComponent, {
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
   }
 
-  getRegionalDelegationSelect(regionalDelegation: ListParams){
-    
-  }
+  getUsersSelect(user: ListParams) {}
 
-  getStateSelect(state: ListParams){
-    
-  }
+  getRegionalDelegationSelect(regionalDelegation: ListParams) {}
 
-  getTransferenceSelect(transference: ListParams){
-    
-  }
+  getStateSelect(state: ListParams) {}
 
-  getStationSelect(station: ListParams){
+  getTransferenceSelect(transference: ListParams) {}
 
-  }
+  getStationSelect(station: ListParams) {}
 
-  getAuthoritySelect(authority: ListParams){
+  getAuthoritySelect(authority: ListParams) {}
 
-  }
+  getTypeRelevantSelect(typeRelevant: ListParams) {}
 
-  getTypeRelevantSelect(typeRelevant: ListParams){
+  getWarehouseSelect(warehouse: ListParams) {}
 
-  }
+  confirm() {}
 
-  getWarehouseSelect(warehouse: ListParams){
-
+  close() {
+    this.modalService.hide();
   }
 }

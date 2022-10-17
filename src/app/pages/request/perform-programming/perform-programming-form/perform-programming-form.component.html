@@ -50,9 +50,9 @@
             [control]="performForm.get('startDate')"
             label="Fecha inicio operativo">
             <input
-              type="datetime-local"
               class="form-control"
-              formControlName="startDate" />
+              formControlName="startDate"
+              bsDatepicker />
           </form-field>
         </div>
 
@@ -61,7 +61,7 @@
             [control]="performForm.get('endDate')"
             label="Fecha fin operativo">
             <input
-              type="datetime-local"
+              bsDatepicker
               class="form-control"
               formControlName="endDate" />
           </form-field>
@@ -144,7 +144,9 @@
         <h5 class="title">Almacén</h5>
 
         <div class="form-inline justify-content-end btn-toolbar">
-          <button (click)="newWarehouse()" class="btn btn-primary btn-sm active">
+          <button
+            (click)="newWarehouse()"
+            class="btn btn-primary btn-sm active">
             Solicitar alta almacén
           </button>
         </div>
@@ -183,22 +185,17 @@
           </form-field>
         </div>
 
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">Usuario</th>
-              <th scope="col">Correo electronico</th>
-              <th scope="col">Cargo de usuario</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Usuario Prueba</td>
-              <td>Correo usuario</td>
-              <td>Cargo usuario</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="d-flex justify-content-end">
+          <app-columns-select [(settings)]="settingUser"></app-columns-select>
+        </div>
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settingUser"
+          [source]="usersData">
+        </ng2-smart-table>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
       </div>
 
       <div class="row pt-5">
@@ -210,43 +207,70 @@
             Buscar Bienens
           </button>
         </div>
+
         <div>
           <div class="md-tabs">
             <tabset>
-              <tab heading="Transportable" id="tab1">
-                <table class="table table-striped">
-                  <thead>
-                    <tr>
-                      <th scope="col">No° Gestión</th>
-                      <th scope="col">Clave Única</th>
-                      <th scope="col">Expediente</th>
-                      <th scope="col">Descripción?</th>
-                      <th scope="col">Descripción bien sae?</th>
-                      <th scope="col">Cantidad transferente?</th>
-                      <th scope="col">Unidad medida transferente?</th>
-                      <th scope="col">Estado fisico transferente?</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Usuario Prueba</td>
-                      <td>Correo usuario</td>
-                      <td>Cargo usuario</td>
-                      <td>Descripcion</td>
-                      <td>Descripcion sae</td>
-                      <td>Cantidad transfereme</td>
-                      <td>Unidad de medida</td>
-                      <td>Estado fisico</td>
-                    </tr>
-                  </tbody>
-                </table>
+              <tab heading="Transportable(0)" id="tab1">
+                <div class="d-flex justify-content-end">
+                  <app-columns-select
+                    [(settings)]="settingEstate"></app-columns-select>
+                </div>
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settingEstate"
+                  [source]="estates">
+                </ng2-smart-table>
+                <app-pagination
+                  [params]="params"
+                  [totalItems]="totalItems"></app-pagination>
               </tab>
-              <tab heading="Resguardo">Basic content 1</tab>
-              <tab heading="Almacén SAT">Basic content 2</tab>
+              <tab heading="Resguardo(0)">
+                <div class="d-flex justify-content-end">
+                  <app-columns-select
+                    [(settings)]="settingEstate"></app-columns-select>
+                </div>
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settingEstate"
+                  [source]="estates">
+                </ng2-smart-table>
+                <app-pagination
+                  [params]="params"
+                  [totalItems]="totalItems"></app-pagination>
+              </tab>
+              <tab heading="Almacén SAT(0)">
+                <div class="d-flex justify-content-end">
+                  <app-columns-select
+                    [(settings)]="settingEstate"></app-columns-select>
+                </div>
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settingEstate"
+                  [source]="estates">
+                </ng2-smart-table>
+                <app-pagination
+                  [params]="params"
+                  [totalItems]="totalItems"></app-pagination>
+              </tab>
             </tabset>
           </div>
         </div>
       </div>
     </form>
+
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!performForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
   </div>
 </app-card>
