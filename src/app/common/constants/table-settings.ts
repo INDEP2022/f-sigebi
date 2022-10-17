@@ -2,7 +2,7 @@ export const TABLE_SETTINGS = {
   selectMode: '',
   actions: {
     columnTitle: 'Acciones',
-    position: 'left',
+    position: 'right',
     add: true,
     edit: true,
     delete: false,
