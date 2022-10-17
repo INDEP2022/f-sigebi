@@ -93,9 +93,22 @@ const routes: Routes = [
       {
         path: 'massive-reclassification-goods',
         loadChildren: async () =>
-          (await import('./massive-reclassification-goods/pa-m-massive-reclassification-goods.module'))
-            .PaMMassiveReclassificationGoodsModule,
+          (
+            await import(
+              './massive-reclassification-goods/pa-m-massive-reclassification-goods.module'
+            )
+          ).PaMMassiveReclassificationGoodsModule,
         data: { title: 'Reclasificación masiva de bienes' },
+      },
+      {
+        path: 'change-destination-goods-indicators',
+        loadChildren: async () =>
+          (
+            await import(
+              './change-destination-goods-indicators/pa-m-change-destination-goods-indicators.module'
+            )
+          ).PaMChangeDestinationGoodsIndicatorsModule,
+        data: { title: 'Cambio de indicadores de destino de bienes' },
       },
       /**
        * Seguros **Legaspi**
