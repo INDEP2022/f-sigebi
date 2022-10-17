@@ -1,3 +1,5 @@
+import { CheckboxElementComponent } from "src/app/shared/components/checkbox-element-smarttable/checkbox-element";
+
 export const ASSETS_DESTINATION_COLUMNS = {
   noBien: {
     title: 'No. Bien',
@@ -15,8 +17,19 @@ export const ASSETS_DESTINATION_COLUMNS = {
     sort: false,
   },
   direction: {
-    title: '',
+    title: 'Dirección',
     type: 'string',
+    sort: false,
+  },
+  passed: {
+    title: 'Aprobado',
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
     sort: false,
   },
   noOficio: {

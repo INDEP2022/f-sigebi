@@ -2,7 +2,9 @@ import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception
 import { menuOptionsJuridicalProcesses } from '../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
 import { IMenuItem } from './interfaces/menu.interface';
 import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
+import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
 import { ADMINISTRATIVE_PROCESSES_ROUTES } from '../common/routes/administrative-processes.routes'
+
 export const MENU: IMenuItem[] = [
   {
     label: 'Menu',
@@ -94,78 +96,7 @@ export const MENU: IMenuItem[] = [
   },
   ...DOCUMENTS_RECEPTION_ROUTES,
   //Procesos ejecutivos
-  {
-    label: 'Procesos Ejecutivos',
-    icon: 'bx-folder',
-    subItems: [
-      {
-        label: 'Reportes del Director Gral',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Total de documentos recibidos vs área destino',
-            link: '/pages/executive-processes/pe-rddg-drpad-m-totaldoc-received-destinationarea',
-          },
-          {
-            label: 'Reporte Documentación Recibida',
-            link: '/pages/executive-processes/pe-rddg-tddr-m-report-doc-received',
-          },
-          {
-            label: 'Reporte de bienes recibidos en administración',
-            link: '/pages/executive-processes/pe-rddg-brea-m-assets-received-admon',
-          },
-        ],
-      },
-      {
-        label: 'Acumulado Anual de Bienes',
-        link: '/pages/executive-processes/pe-aab-m-annual-accumulated-assets',
-      },
-      {
-        label: 'Acumulado Trimestral de Bienes',
-        link: '/pages/executive-processes/pe-atb-m-quarterly-accumulated-assets',
-      },
-      {
-        label: 'Control Mensual de Recepción Documental',
-        link: '/pages/executive-processes/pe-cmrd-m-cumulative-goods',
-      },
-      {
-        label: 'Control diario de recepción de expedientes',
-        link: '/pages/executive-processes/pe-rdde-m-daily-control-reception',
-      },
-      {
-        label: 'información Bienes',
-        link: '/pages/executive-processes/pe-ibs-d-a-m-report-registration-module',
-      },
-      {
-        label: 'Reporte de documentación recibida por autoridad emisora ',
-        link: '/pages/executive-processes/pe-drpae-m-doc-received-authority',
-      },
-      {
-        label: 'Gestión de Autorización de Destrucción',
-        link: '/pages/executive-processes/pe-gdadd-m-destruction-authorization-management',
-      },
-      {
-        label: 'Autorización de bienes para destrucción ',
-        link: '/pages/executive-processes/pe-ad-m-authorization-assets-destruction',
-      },
-      {
-        label: 'Aprobación de bienes para destino',
-        link: '/pages/executive-processes/pe-ad-m-approval-assets-destination',
-      },
-      {
-        label: 'Recepción recibida por área en el SERA ',
-        link: '/pages/executive-processes/pe-rddxdees-m-reception-area-sera',
-      },
-      {
-        label: 'Proceso de actualización masiva de valor avaluó',
-        link: '/pages/executive-processes/pe-amdvda-m-update-mss-value',
-      },
-      {
-        label: 'Aprobación donación',
-        link: '/pages/executive-processes/pe-ad-m-donation-approval',
-      },
-    ],
-  },
+  ...EXECUTIVE_PROCESSES_ROUTES,
   //Comercialización
   {
     label: 'Comercialización',
