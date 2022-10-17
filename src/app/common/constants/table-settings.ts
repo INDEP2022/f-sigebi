@@ -2,7 +2,7 @@ export const TABLE_SETTINGS = {
   selectMode: '',
   actions: {
     columnTitle: 'Acciones',
-    position: 'right',
+    position: 'left',
     add: true,
     edit: true,
     delete: false,
@@ -24,4 +24,5 @@ export const TABLE_SETTINGS = {
   },
   columns: {},
   noDataMessage: 'No se encontrarón registros',
+  selectedRowIndex: -1,
 };

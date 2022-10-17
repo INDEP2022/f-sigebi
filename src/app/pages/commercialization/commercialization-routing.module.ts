@@ -188,6 +188,16 @@ const routes: Routes = [
       ).CBEMEventsModule,
     data: { title: 'Permisos a Eventos' },
   },
+  {
+    path: 'numeraire-exchange',
+    loadChildren: async () =>
+      (
+        await import(
+          './numeraire-exchange/numeraire-exchange.module'
+        )
+      ).NumeraireExchangeModule,
+    data: { title: 'Cambio a Numerario' },
+  },
 ];
 
 @NgModule({

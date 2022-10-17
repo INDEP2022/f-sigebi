@@ -225,6 +225,46 @@ export const MENU: IMenuItem[] = [
         label: 'Indicador Reportes',
         link: '/pages/catalogs/indicatorReport',
       },
+      {
+        label: 'Lotes',
+        link: '/pages/catalogs/batch',
+      },
+      {
+        label: 'Minpub',
+        link: '/pages/catalogs/minpub',
+      },
+      {
+        label: 'Medio Fotografía',
+        link: '/pages/catalogs/photograph-media',
+      },
+      {
+        label: 'Medio Imagen',
+        link: '/pages/catalogs/image-media',
+      },
+      {
+        label: 'Motivo Revisión',
+        link: '/pages/catalogs/revision-reason',
+      },
+      {
+        label: 'Motivo No Entrega',
+        link: '/pages/catalogs/non-delivery-reasons',
+      },
+      {
+        label: 'Municipios',
+        link: '/pages/catalogs/municipalities',
+      },
+      {
+        label: 'Normas',
+        link: '/pages/catalogs/norms',
+      },
+      {
+        label: 'notary',
+        link: '/pages/catalogs/Notarios',
+      },
+      {
+        label: 'Párrafos',
+        link: '/pages/catalogs/paragraphs',
+      },
     ],
   },
   //Administración
@@ -638,12 +678,6 @@ export const MENU: IMenuItem[] = [
           },
         ],
       },
-
-      {
-        label: 'Activos Financieros',
-        icon: 'credit-card-outline',
-        subItems: [],
-      },
       {
         label: 'Catálogos',
         icon: 'folder',
@@ -657,6 +691,15 @@ export const MENU: IMenuItem[] = [
             link: '/pages/commercialization/catalogs/authorization-keys-ois',
           },
         ],
+      },
+      {
+        label: 'Activos Financieros',
+        icon: 'credit-card-outline',
+        subItems: [],
+      },
+      {
+        label: 'Conversión a numerario',
+        link: '/pages/commercialization/numeraire-exchange',
       },
     ],
   },

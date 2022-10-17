@@ -29,6 +29,7 @@ export class SelectComponent<T> implements OnInit {
   @Input() value: string = '';
   @Input() bindLabel: string = '';
   @Input() label: string = '';
+  @Input() placeholder: string = '';
   @Input() data = new DefaultSelect<T>();
   @Output() fetchItems = new EventEmitter<ListParams>();
   @Output() change = new EventEmitter<any>();
