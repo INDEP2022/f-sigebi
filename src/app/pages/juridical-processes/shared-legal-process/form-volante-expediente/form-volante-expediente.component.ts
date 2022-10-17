@@ -1,15 +1,28 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';  
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+/** BASE IMPORT */
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { FormGroup } from '@angular/forms';
+/** LIBRERÍAS EXTERNAS IMPORTS */
+import { Example } from 'src/app/core/models/catalogs/example';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+
+/** SERVICE IMPORTS */
+import { ExampleService } from 'src/app/core/services/catalogs/example.service';
+
+/** ROUTING MODULE */
+
+/** COMPONENTS IMPORTS */
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'ngx-form-volante-expediente',
   templateUrl: './form-volante-expediente.component.html',
-  styleUrls: ['./form-volante-expediente.component.scss']
+  styleUrls: ['./form-volante-expediente.component.scss'],
 })
-export class FormVolanteExpedienteComponent extends BasePage implements OnInit{
-    @Input() form: FormGroup;
-    @Input() nombrePantalla: string;
+export class FormVolanteExpedienteComponent extends BasePage implements OnInit {
+  @Input() form: FormGroup;
+  @Input() nombrePantalla: string;
+  items = new DefaultSelect<Example>();
 
   public optionsTipoVolante = [
     { value: 'Administrativo', label: 'Administrativo' },
@@ -20,36 +33,40 @@ export class FormVolanteExpedienteComponent extends BasePage implements OnInit{
   public botonOficio = false;
   public botonCaptura = false;
 
-//   public form: FormGroup;
-@Output() formValues = new EventEmitter<any>();
-@Output() oficioRelacionadoEvent = new EventEmitter<any>();
-@Output() capturaCopiasEvent = new EventEmitter<any>();
-  constructor() {  
+  //   public form: FormGroup;
+  @Output() formValues = new EventEmitter<any>();
+  @Output() oficioRelacionadoEvent = new EventEmitter<any>();
+  @Output() capturaCopiasEvent = new EventEmitter<any>();
+  constructor(private exampleService: ExampleService) {
     super();
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void {}
+
+  mostrarInfo(): any {
+    console.log(this.form.value);
+    this.formValues.emit(this.form);
   }
-  
-mostrarInfo(): any{
-  console.log(this.form.value);
-  this.formValues.emit(this.form);
-}
 
-oficioRelacionado() {
-    console.log("Oficio Relacionado");
+  oficioRelacionado() {
+    console.log('Oficio Relacionado');
     this.oficioRelacionadoEvent.emit(true);
-}
+  }
 
-capturaCopias() {
-    console.log("Captura copias");
+  capturaCopias() {
+    console.log('Captura copias');
     this.capturaCopiasEvent.emit(true);
-}
+  }
 
-/**
- * Formulario
- */
-// public returnField(field) { return this.form.get(field); }
-// public returnShowRequirements(field) { return this.returnField(field)?.errors?.required && this.returnField(field).touched; }
+  getFromSelect(params: ListParams) {
+    this.exampleService.getAll(params).subscribe(data => {
+      this.items = new DefaultSelect(data.data, data.count);
+    });
+  }
 
+  /**
+   * Formulario
+   */
+  // public returnField(field) { return this.form.get(field); }
+  // public returnShowRequirements(field) { return this.returnField(field)?.errors?.required && this.returnField(field).touched; }
 }

@@ -4,12 +4,13 @@ import { ClaimConclusionListComponent } from './claim-conclusion-list/claim-conc
 
 const routes: Routes = [
   {
-    path:'',component:ClaimConclusionListComponent
-  }
+    path: '',
+    component: ClaimConclusionListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ClaimConclusionRoutingModule { }
+export class ClaimConclusionRoutingModule {}

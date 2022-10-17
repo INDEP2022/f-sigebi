@@ -20,11 +20,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FactJurEmisionAcuComponent } from './fact-jur-emision-acu/fact-jur-emision-acu.component';
 import { SharedLegalProcessModule } from '../shared-legal-process/shared-legal-process.module';
 
-@NgModule({ 
-  declarations: [ 
-    FactJurEmisionAcuComponent,
-    
-  ],
+@NgModule({
+  declarations: [FactJurEmisionAcuComponent],
   imports: [
     CommonModule,
     FactJurEmisionAcuRoutingModule,
@@ -46,14 +43,11 @@ import { SharedLegalProcessModule } from '../shared-legal-process/shared-legal-p
     NgSelectModule,
     SharedModule,
 
-    SharedLegalProcessModule
+    SharedLegalProcessModule,
   ],
-  exports:[
-    
-    // ComponentsModule, 
-    NgSelectModule
-    
-  ]
+  exports: [
+    // ComponentsModule,
+    NgSelectModule,
+  ],
 })
-export class FactJurEmisionAcuModule { }
-
+export class FactJurEmisionAcuModule {}

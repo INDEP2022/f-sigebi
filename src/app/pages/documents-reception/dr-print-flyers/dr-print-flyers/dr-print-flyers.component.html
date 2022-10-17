@@ -8,35 +8,9 @@
       <div class="row">
         <div class="col-md-4">
           <app-delegation-shared [form]="flyersForm"></app-delegation-shared>
-          <div class="row">
-            <form-field [control]="flyersForm.get('area')">
-              <ngx-select
-                [form]="flyersForm"
-                control="area"
-                label="Área de destino"
-                [data]="select"></ngx-select>
-            </form-field>
-          </div>
-
-          <div class="row pt-4">
-            <form-field
-              [control]="flyersForm.get('type')"
-              label="Tipo de Asunto">
-              <select class="form-control" formControlName="noOficio">
-                <option value="Administrativo">Administrativo</option>
-                <option value="Procesal">Procesal</option>
-              </select>
-            </form-field>
-          </div>
-
-          <div class="row pt-3">
-            <div class="col-md-12">
-              <button type="submit" class="btn btn-primary">Imprimir</button>
-            </div>
-          </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-2">
           <div class="row pt-3">
             <form-field
               [control]="flyersForm.get('from')"
@@ -53,20 +27,58 @@
               <input class="form-control" type="number" formControlName="to" />
             </form-field>
           </div>
-          <div class="row pt-4">
+        </div>
+
+        <div class="col-md-2">
+          <div class="row pt-3">
             <form-field
               [control]="flyersForm.get('fromDate')"
               label="Fecha desde: ">
-              <input class="form-control" formControlName="fromDate" />
+              <input
+                class="form-control"
+                formControlName="fromDate"
+                bsDatepicker />
             </form-field>
             <div></div>
           </div>
-          <div class="row pt-4">
+          <div class="row pt-3">
             <form-field [control]="flyersForm.get('toDate')" label="Hasta:">
-              <input class="form-control" formControlName="toDate" />
+              <input
+                class="form-control"
+                formControlName="toDate"
+                bsDatepicker />
             </form-field>
             <div></div>
           </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="row pt-3">
+            <form-field [control]="flyersForm.get('area')">
+              <ngx-select
+                [form]="flyersForm"
+                control="area"
+                label="Área de destino"
+                [data]="select"></ngx-select>
+            </form-field>
+          </div>
+
+          <div class="row pt-3">
+            <form-field
+              [control]="flyersForm.get('type')"
+              label="Tipo de Asunto">
+              <select class="form-control" formControlName="type">
+                <option value="Administrativo">Administrativo</option>
+                <option value="Procesal">Procesal</option>
+              </select>
+            </form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <div class="col-md-12">
+          <button type="submit" class="btn btn-primary active">Imprimir</button>
         </div>
       </div>
     </form>

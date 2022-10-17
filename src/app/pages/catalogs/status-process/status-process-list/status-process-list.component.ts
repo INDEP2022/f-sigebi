@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IStatusProcess } from 'src/app/core/models/catalogs/status-process.model';
 import { StatusProcessService } from 'src/app/core/services/catalogs/status-process.service';
@@ -12,11 +12,9 @@ import { STATUSPROCESS_COLUMS } from './status-process-columns';
 @Component({
   selector: 'app-status-process-list',
   templateUrl: './status-process-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class StatusProcessListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
   paragraphs: IStatusProcess[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

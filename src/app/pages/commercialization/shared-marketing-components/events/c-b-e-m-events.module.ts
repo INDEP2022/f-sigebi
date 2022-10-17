@@ -12,16 +12,14 @@ import { CBEpcCEventPermissionControlComponent } from './event-permission-contro
 import { EventsSharedComponent } from 'src/app/@standalone/shared-forms/events-shared/events-shared.component';
 
 @NgModule({
-  declarations: [
-    CBEpcCEventPermissionControlComponent
-  ],
+  declarations: [CBEpcCEventPermissionControlComponent],
   imports: [
     CommonModule,
     CBEMEventsRoutingModule,
     SharedModule,
     FormsModule,
     ReactiveFormsModule,
-    EventsSharedComponent
-  ]
+    EventsSharedComponent,
+  ],
 })
-export class CBEMEventsModule { }
+export class CBEMEventsModule {}

@@ -1,13 +1,12 @@
-import { Component, OnInit } from '@angular/core';  
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'ngx-fact-gen-exped-notif',
   templateUrl: './fact-gen-exped-notif.component.html',
-  styleUrls: ['./fact-gen-exped-notif.component.scss']
+  styleUrls: ['./fact-gen-exped-notif.component.scss'],
 })
-export class FactGenExpedNotifComponent  {
-
+export class FactGenExpedNotifComponent {
   tableFactGenSettings = {
     actions: {
       columnTitle: '',
@@ -15,7 +14,7 @@ export class FactGenExpedNotifComponent  {
       edit: false,
       delete: false,
     },
-    hideSubHeader: true,//oculta subheaader de filtro
+    hideSubHeader: true, //oculta subheaader de filtro
     mode: 'external', // ventana externa
 
     columns: {
@@ -48,23 +47,20 @@ export class FactGenExpedNotifComponent  {
 
   dataFactGen = [
     {
-      noVolante: 1466449, 
-      asunto: "5", 
-      descripcion: "DOCUMENTACION COMPLEMENTARIA", 
-      fechaCaptura: "18-10-2018 09:50", 
-      claveAmparo: "", 
-      averiguacionPrevia: "FED/JAL/GDN", 
-      causaPenal: "", 
-      noExpediente: "1"
+      noVolante: 1466449,
+      asunto: '5',
+      descripcion: 'DOCUMENTACION COMPLEMENTARIA',
+      fechaCaptura: '18-10-2018 09:50',
+      claveAmparo: '',
+      averiguacionPrevia: 'FED/JAL/GDN',
+      causaPenal: '',
+      noExpediente: '1',
     },
-
   ];
 
   public form: FormGroup;
 
-  constructor(
-    private fb: FormBuilder) {  
-  }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();
@@ -72,12 +68,14 @@ export class FactGenExpedNotifComponent  {
   private prepareForm() {
     this.form = this.fb.group({
       noExpediente: ['', [Validators.required]],
-    });}
+    });
+  }
 
-  public get noExpediente() { return this.form.get('noExpediente'); }
-  
-mostrarInfo(): any{
-  console.log(this.form.value)
-}
+  public get noExpediente() {
+    return this.form.get('noExpediente');
+  }
 
+  mostrarInfo(): any {
+    console.log(this.form.value);
+  }
 }

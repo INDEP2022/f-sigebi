@@ -1,29 +1,36 @@
 import { Component, OnInit } from '@angular/core';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { APPRAISAL_COLUMNS } from './appraisal-columns';
-import { ExcelService } from 'src/app/common/services/exportToExcel.service';
+import { ExcelService } from 'src/app/common/services/exporttoexcel.service';
 
 @Component({
   selector: 'app-c-b-a-cda-c-appraisal-consultation',
   templateUrl: './c-b-a-cda-c-appraisal-consultation.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CBACdaCAppraisalConsultationComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
-  constructor(
-    private excelService:ExcelService
-    ) {
-      super();
-      this.settings.columns = APPRAISAL_COLUMNS;
-      this.settings.actions.columnTitle = "Exportar";
-      this.settings.edit.editButtonContent = '<span class="icon-caret-down"></span>';
-      this.settings.actions.edit = true;
-    }
-
-  ngOnInit(): void {
+export class CBACdaCAppraisalConsultationComponent
+  extends BasePage
+  implements OnInit
+{
+  constructor(private excelService: ExcelService) {
+    super();
+    this.settings = {
+      ...this.settings,
+      actions: {
+        columnTitle: 'Exportar',
+        edit: true,
+        delete: false,
+        position: 'right',
+      },
+      edit: {
+        editButtonContent: '<span class="bi bi-file-earmark-excel"></span>',
+      },
+      columns: { ...APPRAISAL_COLUMNS },
+    };
   }
+
+  ngOnInit(): void {}
 
   data = [
     {
@@ -45,7 +52,6 @@ export class CBACdaCAppraisalConsultationComponent extends BasePage implements O
       fechaAvaluo: '',
       fechaVigAvaluo: '',
       estatusAvaluo: '',
-
     },
     {
       idEvento: '21673',
@@ -60,11 +66,10 @@ export class CBACdaCAppraisalConsultationComponent extends BasePage implements O
       estatus: '',
       noClasif: '',
       descsssubtipo: '',
-    }
+    },
   ];
 
-  exportAsXLSX():void {
+  exportAsXLSX(): void {
     this.excelService.exportAsExcelFile(this.data, 'Consulta_Avaluos');
   }
-
 }

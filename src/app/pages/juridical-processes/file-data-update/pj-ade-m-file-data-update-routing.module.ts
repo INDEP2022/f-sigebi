@@ -10,16 +10,14 @@ import { RouterModule, Routes } from '@angular/router';
 /** COMPONENTS IMPORTS */
 import { PJADEFileDataUpdateComponent } from './file-data-update/pj-ade-c-file-data-update.component';
 
-
-
 const routes: Routes = [
-    {
-        path: '',
-        component: PJADEFileDataUpdateComponent
-    }
-]
+  {
+    path: '',
+    component: PJADEFileDataUpdateComponent,
+  },
+];
 @NgModule({
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule]
-  })
-  export class PJADEFileDataUpdateRoutingModule { }
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
+})
+export class PJADEFileDataUpdateRoutingModule {}

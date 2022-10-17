@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IFraction } from 'src/app/core/models/catalogs/fraction.model';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
@@ -15,7 +15,6 @@ import { FRACTIONS_COLUMNS } from './fractions-columns';
   styles: [],
 })
 export class FractionsListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
   paragraphs: IFraction[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -48,7 +47,7 @@ export class FractionsListComponent extends BasePage implements OnInit {
 
   openForm(fraction?: IFraction) {
     console.log(fraction);
-    
+
     let config: ModalOptions = {
       initialState: {
         fraction,

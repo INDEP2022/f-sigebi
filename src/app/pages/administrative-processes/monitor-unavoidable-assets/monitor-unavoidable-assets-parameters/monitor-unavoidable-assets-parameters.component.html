@@ -1,0 +1,57 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Parametros</h5>
+  </div>
+  <div body>
+    <form [formGroup]="parametersForm" class="form-material">
+      <div class="row">
+        <div class="col-md-12">
+          <form-field
+            [control]="parametersForm.get('waterproofPercentage')"
+            label="Porcentaje de Incosteabilidad anual">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="waterproofPercentage" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="parametersForm.get('monthsIncosteability')"
+            label="Meses para Incosteabilidad">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="monthsIncosteability" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="parametersForm.get('unaffordableMinimunWage')"
+            label="Salario Minimo Mensual">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="unaffordableMinimunWage" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="parametersForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

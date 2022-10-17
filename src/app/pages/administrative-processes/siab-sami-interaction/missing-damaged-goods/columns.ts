@@ -1,34 +1,34 @@
 import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
 
 export const COLUMNS = {
-    flowId:{
-        title: 'Flow ID',
-        width: '10%'
-    },
-    loadRef:{
-        title: 'Ref.Carga',
-        width: '10%'
-    },
-    good:{
-        title: 'No.Bien',
-        width: '10%'
-    },
-    samiStock:{
-        title: 'Inventario SAMI',
-        width: '10%'
-    },
-    description:{
-        title: 'Descripción',
-        width: '10%'
-    },
-    taxId:{
-        title: 'R.F.C',
-        width: '10%'
-    },
-    incident:{
-        title: 'Incidente',
-        width: '10%'
-    },/*
+  flowId: {
+    title: 'Flow ID',
+    sort: false,
+  },
+  loadRef: {
+    title: 'Ref.Carga',
+    sort: false,
+  },
+  good: {
+    title: 'No.Bien',
+    sort: false,
+  },
+  samiStock: {
+    title: 'Inventario SAMI',
+    sort: false,
+  },
+  description: {
+    title: 'Descripción',
+    sort: false,
+  },
+  taxId: {
+    title: 'R.F.C',
+    sort: false,
+  },
+  incident: {
+    title: 'Incidente',
+    sort: false,
+  } /*
       beneficiary:{
         title: 'No.Bien',
         width: '10%'
@@ -52,5 +52,5 @@ export const COLUMNS = {
       mistake:{
         title: 'No.Bien',
         width: '10%'
-      },*/
-}
+      },*/,
+};

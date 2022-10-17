@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { AbstractControl, FormGroup } from "@angular/forms";
+import { AbstractControl, FormGroup } from '@angular/forms';
 //Rxjs
 import { BehaviorSubject, takeUntil } from 'rxjs';
 //Params
@@ -19,16 +19,14 @@ import { eventsData } from './eventsData';
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './events-shared.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class EventsSharedComponent extends BasePage implements OnInit {
-
-  @Input() form: FormGroup;
-  @Input() eventField: string = "event";
-
+ @Input() form: FormGroup;
+  @Input() eventField: string = 'event';
+  @Input() label: string ="Eventos";
+  @Input() bindLabel: string ="keyProcess"
   @Input() showEvents: boolean = true;
-
   params = new BehaviorSubject<ListParams>(new ListParams());
   events = new DefaultSelect<IEvent>();
 
@@ -36,18 +34,17 @@ export class EventsSharedComponent extends BasePage implements OnInit {
     return this.form.get(this.eventField);
   }*/
 
-  constructor(){
+  constructor() {
     super();
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   getEvents(params: ListParams) {
     //Provisional data
-    let data=eventsData;
-    let count= data.length;
-    this.events = new DefaultSelect(data,count);
+    let data = eventsData;
+    let count = data.length;
+    this.events = new DefaultSelect(data, count);
     /*this.service.getAll(params).subscribe(data => {
         this.delegations = new DefaultSelect(data.data,data.count);
     },err => {
@@ -68,12 +65,10 @@ export class EventsSharedComponent extends BasePage implements OnInit {
   }
 
   resetFields(fields: AbstractControl[]) {
-    fields.forEach((field) => {
+    fields.forEach(field => {
       //field.setValue(null);
-      field=null;
+      field = null;
     });
     this.form.updateValueAndValidity();
   }
-
 }
-

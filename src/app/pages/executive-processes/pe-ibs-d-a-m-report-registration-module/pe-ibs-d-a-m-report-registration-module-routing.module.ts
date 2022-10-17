@@ -4,13 +4,13 @@ import { PeIbsDACReportRegistrationModuleComponent } from './pe-ibs-d-a-c-report
 
 const routes: Routes = [
   {
-    path:'',
-    component: PeIbsDACReportRegistrationModuleComponent
-  }
+    path: '',
+    component: PeIbsDACReportRegistrationModuleComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PeIbsDAMReportRegistrationModuleRoutingModule { }
+export class PeIbsDAMReportRegistrationModuleRoutingModule {}

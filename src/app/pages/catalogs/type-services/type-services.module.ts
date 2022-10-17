@@ -7,17 +7,13 @@ import { TypeServicesFormComponent } from './type-services-form/type-services-fo
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
-  declarations: [
-    TypeServicesListComponent,
-    TypeServicesFormComponent
-  ],
+  declarations: [TypeServicesListComponent, TypeServicesFormComponent],
   imports: [
     CommonModule,
     SharedModule,
     ModalModule.forChild(),
-    TypeServicesRoutingModule
-  ]
+    TypeServicesRoutingModule,
+  ],
 })
-export class TypeServicesModule { }
+export class TypeServicesModule {}

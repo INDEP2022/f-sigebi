@@ -1,37 +1,27 @@
 <app-card [header]="true" [footer]="true">
-    <div header>
-        <div class="ch-content">
-            <h5 class="title">REPORTE DE DOCUMENTACIÓN RECIBIDA POR AUTORIDAD EMISORA</h5>
-        </div>
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">
+        REPORTE DE DOCUMENTACIÓN RECIBIDA POR AUTORIDAD EMISORA
+      </h5>
     </div>
+  </div>
 
-    <div body>
-
-        <form class="form-material" [formGroup]="form">
-            <div class="row">
-                <div class="col-md-2">
-                    <form-field [control]="form.get('delegation')" >
-                        <ngx-select
-			            	typeToSearchText="Escriba 3 o más caracteres" 
-                            label="Delegación"
-                            [form]="form"
-                            control="delegation">
-				    	</ngx-select>
-                    </form-field>
-                </div>
-                <div class="col-md-2">
-                    <form-field [control]="form.get('subDelegation')" >
-                        <ngx-select
-			            	typeToSearchText="Escriba 3 o más caracteres" 
-                            label="Sub Delegación"
-                            [form]="form"
-                            control="subDelegation">
-				    	</ngx-select>
-                    </form-field>
-                </div>
-            </div>
-            <div class="row pt-5">
-                <div class="col-md-2">
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-3">
+          <app-delegation-shared [form]="form" [showSubdelegation]="false">
+          </app-delegation-shared>
+        </div>
+        <div class="col-md-3 mt-3">
+          <app-delegation-shared [form]="form" [showDelegation]="false">
+          </app-delegation-shared>
+        </div>
+        <div class="col-md-4 mt-3">
+          <app-date-range-shared [form]="form"></app-date-range-shared>
+        </div>
+        <!-- <div class="col-md-2 mt-3">
                     <form-field [control]="form.get('fromDate')" label="Recepción del:">
                         <input type="text"
                                placeholder=""
@@ -41,7 +31,7 @@
                                [bsConfig]="{ isAnimated: true }">
                     </form-field>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-2 mt-3">
                     <form-field [control]="form.get('toDate')" label="Al">
                         <input type="text"
                                placeholder=""
@@ -50,19 +40,21 @@
                                formControlName="toDate"
                                [bsConfig]="{ isAnimated: true }">
                     </form-field>
-                </div>
-            </div>
-        </form>
+                </div> -->
+      </div>
+    </form>
+  </div>
 
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary active"
+          [disabled]="!form.valid">
+          Imprimir
+        </button>
+      </div>
     </div>
-
-    <div footer>
-        <div class="d-flex justify-content-center">
-            <div class="m-3">
-                <button type="button" class="btn btn-primary active" [disabled]="!form.valid">
-                Imprimir
-                </button>
-            </div>
-        </div>
-    </div>
+  </div>
 </app-card>

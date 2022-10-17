@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
@@ -16,7 +16,6 @@ import { DEPARTMENT_COLUMNS } from './department-columns';
   styles: [],
 })
 export class DepartmentsListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
   departments: IDepartment[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

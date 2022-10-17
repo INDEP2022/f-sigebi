@@ -7,17 +7,13 @@ import { ClaimConclusionListComponent } from './claim-conclusion-list/claim-conc
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
-  declarations: [
-    ClaimConclusionFormComponent,
-    ClaimConclusionListComponent
-  ],
+  declarations: [ClaimConclusionFormComponent, ClaimConclusionListComponent],
   imports: [
     CommonModule,
     SharedModule,
     ModalModule.forChild(),
-    ClaimConclusionRoutingModule
-  ]
+    ClaimConclusionRoutingModule,
+  ],
 })
-export class ClaimConclusionModule { }
+export class ClaimConclusionModule {}

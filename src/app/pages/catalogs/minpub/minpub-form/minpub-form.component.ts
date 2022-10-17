@@ -12,11 +12,9 @@ import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
 @Component({
   selector: 'app-minpub-form',
   templateUrl: './minpub-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class MinpubFormComponent extends BasePage implements OnInit {
-
   minpubForm: FormGroup = new FormGroup({});
   title: string = 'MinPub';
   edit: boolean = false;
@@ -28,7 +26,7 @@ export class MinpubFormComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private minpubService: MinPubService
-  ) { 
+  ) {
     super();
   }
 
@@ -54,9 +52,9 @@ export class MinpubFormComponent extends BasePage implements OnInit {
     if (this.minpub != null) {
       this.edit = true;
       let city: ICity = this.minpub.no_ciudad as ICity;
-      this.minpubForm.patchValue({...this.minpub, no_ciudad: city?.idCity});
-      ( this.minpub.no_ciudad ) 
-        ? this.items = new DefaultSelect([city], 1) 
+      this.minpubForm.patchValue({ ...this.minpub, no_ciudad: city?.idCity });
+      this.minpub.no_ciudad
+        ? (this.items = new DefaultSelect([city], 1))
         : this.getFromSelect({ inicio: 1, text: '' });
     } else {
       this.getFromSelect({ inicio: 1, text: '' });
@@ -81,12 +79,10 @@ export class MinpubFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.minpubService
-      .update(this.minpub.id, this.minpubForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.minpubService.update(this.minpub.id, this.minpubForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   handleSuccess() {

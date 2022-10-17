@@ -1,19 +1,19 @@
 export const STATUSPROCESS_COLUMS = {
   status: {
-    title: "Estatus",
-    type: "string",
-    sort:false
+    title: 'Estatus',
+    type: 'string',
+    sort: false,
   },
   process: {
-    title: "Proceso",
-    type: "string",
+    title: 'Proceso',
+    type: 'string',
     editable: true,
-    sort:false
+    sort: false,
   },
   description: {
-    title: "Descripción",
-    type: "string",
+    title: 'Descripción',
+    type: 'string',
     editable: true,
-    sort:false
+    sort: false,
   },
-}
+};

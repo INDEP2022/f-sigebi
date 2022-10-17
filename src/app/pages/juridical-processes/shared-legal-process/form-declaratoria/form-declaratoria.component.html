@@ -1,90 +1,101 @@
-<form [formGroup]="form" (submit)="mostrarInfoDeclaratoria()">
-    <div class="row w-100">
-        <div class="col-sm-12 col-12 col-md-12 p-2 pr-3">
-            <!-- <div class="row"> -->
-                <div class="col-sm-12 col-12 col-md-3 p-2">
-                    <form-field [control]="form.get('noExpediente')" label="No Expediente">
-                        <!-- <label class="label w-100">No Expediente</label> -->
-                        <input type="number" class="form-control" formControlName="noExpediente"
-                                placeholder="No Expediente">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-3 p-2">
-                    <form-field [control]="form.get('averiPrevia')" label="Averi. Previa">
-                        <!-- <label class="label w-100">Averi. Previa</label> -->
-                        <input class="form-control" formControlName="averiPrevia"
-                                placeholder="Averi. Previa">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-3 p-2">
-                    <form-field [control]="form.get('causaPenal')" label="Causa Penal">
-                        <!-- <label class="label w-100">Causa Penal</label> -->
-                        <input class="form-control" formControlName="causaPenal"
-                                placeholder="Causa Penal">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-3 p-2">
-                    <!-- <label class="label form-control-label">Declaratoria Abandono Bienes</label> -->
-                    <!-- <form-field [control]="form.get('tipoOficio')" label="Declaratoria Abandono Bienes"> -->
-                        <ngx-select 
-                            [data]="items"
-                            bindLabel="tipoOficio"
-                            label="Declaratoria Abandono Bienes"
-                            value="id"
-                            (fetchItems)="getFromSelect($event)"
-                            [form]="form" control="tipoOficio"></ngx-select>
-                    <!-- </form-field> -->
-                </div>
-            <!-- </div> -->
-        <!-- </div>
+<form
+  [formGroup]="form"
+  (submit)="mostrarInfoDeclaratoria()"
+  class="container-fluid form-material">
+  <div class="row w-100">
+    <div class="col-sm-12 col-12 col-md-12 p-2 pr-3">
+      <!-- <div class="row"> -->
+      <div class="col-sm-12 col-12 col-md-2 p-2">
+        <form-field [control]="form.get('noExpediente')" label="No Expediente">
+          <!-- <label class="label w-100">No Expediente</label> -->
+          <input
+            type="number"
+            class="form-control"
+            formControlName="noExpediente"
+            placeholder="No Expediente" />
+        </form-field>
+      </div>
+      <div class="col-sm-12 col-12 col-md-4 p-2">
+        <form-field [control]="form.get('cveOficio')" label="Cve. Oficio">
+          <!-- <label class="label w-100">Cve. Oficio</label> -->
+          <input
+            class="form-control"
+            formControlName="cveOficio"
+            placeholder="Cve. Oficio" />
+        </form-field>
+      </div>
+      <div class="col-sm-12 col-12 col-md-3 p-2">
+        <form-field [control]="form.get('averiPrevia')" label="Averi. Previa">
+          <!-- <label class="label w-100">Averi. Previa</label> -->
+          <input
+            class="form-control"
+            formControlName="averiPrevia"
+            placeholder="Averi. Previa" />
+        </form-field>
+      </div>
+      <div class="col-sm-12 col-12 col-md-3 p-2">
+        <form-field [control]="form.get('causaPenal')" label="Causa Penal">
+          <!-- <label class="label w-100">Causa Penal</label> -->
+          <input
+            class="form-control"
+            formControlName="causaPenal"
+            placeholder="Causa Penal" />
+        </form-field>
+      </div>
+      <div class="col-sm-12 col-12 col-md-3 p-2">
+        <!-- <label class="label form-control-label">Declaratoria Abandono Bienes</label> -->
+        <!-- <form-field [control]="form.get('tipoOficio')" label="Declaratoria Abandono Bienes"> -->
+        <ngx-select
+          [data]="items"
+          bindLabel="tipoOficio"
+          label="Declaratoria Abandono Bienes"
+          value="id"
+          (fetchItems)="getFromSelect($event)"
+          [form]="form"
+          control="tipoOficio"></ngx-select>
+        <!-- </form-field> -->
+      </div>
+      <!-- </div> -->
+      <!-- </div>
         <div class="col-sm-12 col-12 col-md-12 p-2 pl-3"> -->
-            <!-- <div class="row"> -->
-                <div class="col-sm-12 col-12 col-md-2 p-2">
-                    <form-field [control]="form.get('remitente')" label="Remitente">
-                        <!-- <label class="label w-100">Remitente</label> -->
-                        <input class="form-control" formControlName="remitente"
-                                placeholder="Remitente">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-2">
-                    <div class="form-group">
-                        <input class="form-control" placeholder="Detalle Remitente">
-                        <label class="form-control-label w-100">Detalle Remitente</label>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-2 p-2">
-                    <form-field [control]="form.get('destinatario')" label="Destinatario">
-                        <!-- <label class="label w-100">Destinatario</label> -->
-                        <input class="form-control" formControlName="destinatario"
-                                placeholder="Destinatario">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-2">
-                    <div class="form-group">
-                        <input class="form-control" placeholder="Detalle Destinatario">
-                        <label class="form-control-label w-100">Detalle Destinatario</label>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-2 p-2">
-                    <form-field [control]="form.get('cveOficio')" label="Cve. Oficio">
-                        <!-- <label class="label w-100">Cve. Oficio</label> -->
-                        <input class="form-control" formControlName="cveOficio"
-                                placeholder="Cve. Oficio">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 p-2">
-                    <div class="form-group">
-                        <input class="form-control" placeholder="Detalle Cve. Oficio">
-                        <label class="form-control-label w-100">Detalle Cve. Oficio</label>
-                    </div>
-                </div>
-            <!-- </div> -->
+      <!-- <div class="row"> -->
+      <div class="col-sm-12 col-12 col-md-4 p-2">
+        <form-field [control]="form.get('remitente')" label="Remitente">
+          <!-- <label class="label w-100">Remitente</label> -->
+          <input
+            class="form-control"
+            formControlName="remitente"
+            placeholder="Remitente" />
+        </form-field>
+      </div>
+      <!-- <div class="col-sm-12 col-12 col-md-4 p-2">
+        <div class="form-group">
+          <input class="form-control" placeholder="Detalle Remitente" />
+          <label class="form-control-label w-100">Detalle Remitente</label>
         </div>
+      </div> -->
+      <div class="col-sm-12 col-12 col-md-4 p-2">
+        <form-field [control]="form.get('destinatario')" label="Destinatario">
+          <!-- <label class="label w-100">Destinatario</label> -->
+          <input
+            class="form-control"
+            formControlName="destinatario"
+            placeholder="Destinatario" />
+        </form-field>
+      </div>
+      <!-- <div class="col-sm-12 col-12 col-md-4 p-2">
+        <div class="form-group">
+          <input class="form-control" placeholder="Detalle Destinatario" />
+          <label class="form-control-label w-100">Detalle Destinatario</label>
+        </div>
+      </div> -->
+      <!-- <div class="col-sm-12 col-12 col-md-4 p-2">
+        <div class="form-group">
+          <input class="form-control" placeholder="Detalle Cve. Oficio" />
+          <label class="form-control-label w-100">Detalle Cve. Oficio</label>
+        </div>
+      </div> -->
+      <!-- </div> -->
     </div>
+  </div>
 </form>

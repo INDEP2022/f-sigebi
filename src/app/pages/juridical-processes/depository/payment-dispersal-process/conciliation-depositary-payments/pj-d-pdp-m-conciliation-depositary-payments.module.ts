@@ -16,9 +16,7 @@ import { PJDPDPConciliationDepositaryPaymentsRoutingModule } from './pj-d-pdp-m-
 import { PJDPDPConciliationDepositaryPaymentsComponent } from './conciliation-depositary-payments/pj-d-pdp-c-conciliation-depositary-payments.component';
 
 @NgModule({
-  declarations: [
-    PJDPDPConciliationDepositaryPaymentsComponent
-  ],
+  declarations: [PJDPDPConciliationDepositaryPaymentsComponent],
   imports: [
     CommonModule,
     PJDPDPConciliationDepositaryPaymentsRoutingModule,

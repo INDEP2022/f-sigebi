@@ -7,17 +7,13 @@ import { RevisionReasonRoutingModule } from './revision-reason-routing.module';
 import { RevisionReasonListComponent } from './revision-reason-list/revision-reason-list.component';
 import { RevisionReasonFormComponent } from './revision-reason-form/revision-reason-form.component';
 
-
 @NgModule({
-  declarations: [
-    RevisionReasonListComponent,
-    RevisionReasonFormComponent
-  ],
+  declarations: [RevisionReasonListComponent, RevisionReasonFormComponent],
   imports: [
     CommonModule,
     RevisionReasonRoutingModule,
     SharedModule,
-    ModalModule.forChild()
-  ]
+    ModalModule.forChild(),
+  ],
 })
-export class RevisionReasonModule { }
+export class RevisionReasonModule {}

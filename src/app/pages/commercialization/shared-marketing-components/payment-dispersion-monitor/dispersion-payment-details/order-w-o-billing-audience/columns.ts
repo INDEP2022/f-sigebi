@@ -1,44 +1,53 @@
 //Components
 import { PaPdmCeCCheckboxElementComponent } from '../checkbox-element/pa-pdm-ce-c-checkbox-element.component';
 
-export const COLUMNS={
-    username: {
-        title: 'Nombre',
+export const COLUMNS = {
+  username: {
+    title: 'Nombre',
+    type: 'string',
+    sort: false,
+  },
+  email: {
+    title: 'Email',
+    type: 'string',
+    sort: false,
+  },
+  mandato: {
+    title: 'Mandato',
+    type: 'string',
+    sort: false,
+  },
+  to: {
+    title: 'Para',
+    type: 'custom',
+    renderComponent: PaPdmCeCCheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
     },
-    email: {
-        title: 'Email',
+    sort: false,
+  },
+  withCopy: {
+    title: 'CC',
+    type: 'custom',
+    renderComponent: PaPdmCeCCheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.withCopy = data.toggle;
+      });
     },
-    mandato: {
-        title: 'Mandato',
+    sort: false,
+  },
+  sendMail: {
+    title: 'Enviar',
+    type: 'custom',
+    renderComponent: PaPdmCeCCheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.sendMail = data.toggle;
+      });
     },
-    to: {
-        title: 'Para',
-        type: 'custom',
-        renderComponent: PaPdmCeCCheckboxElementComponent ,
-        onComponentInitFunction(instance:any) {
-          instance.toggle.subscribe((data:any) => {
-            data.row.to=data.toggle;
-          });
-        }
-    },
-    withCopy: {
-        title: 'CC',
-        type: 'custom',
-        renderComponent: PaPdmCeCCheckboxElementComponent ,
-        onComponentInitFunction(instance:any) {
-          instance.toggle.subscribe((data:any) => {
-            data.row.withCopy=data.toggle;
-          });
-        }
-    },
-    sendMail: {
-        title: 'Enviar',
-        type: 'custom',
-        renderComponent: PaPdmCeCCheckboxElementComponent ,
-        onComponentInitFunction(instance:any) {
-          instance.toggle.subscribe((data:any) => {
-            data.row.sendMail=data.toggle;
-          });
-        }
-    }
-    }
+    sort: false,
+  },
+};

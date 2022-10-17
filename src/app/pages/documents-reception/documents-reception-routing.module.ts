@@ -87,6 +87,42 @@ const routes: Routes = [
         )
       ).DrDocumentsRequirementsVerificationModule,
   },
+  {
+    path: 'closing-of-confiscation-and-return-records',
+    loadChildren: async () =>
+      (
+        await import(
+          './dr-closing-confiscation-and-return-records/dr-closing-confiscation-and-return-records.module'
+        )
+      ).DrClosingConfiscationAndReturnRecordsModule,
+  },
+  {
+    path: 'records-inventory',
+    loadChildren: async () =>
+      (await import('./dr-records-inventory/dr-records-inventory.module'))
+        .DrRecordsInventoryModule,
+  },
+  {
+    path: 'goods-forecast',
+    loadChildren: async () =>
+      (await import('./dr-goods-forecast/dr-goods-forecast.module'))
+        .DrGoodsForecastModule,
+  },
+  {
+    path: 'records-validation',
+    loadChildren: async () =>
+      (await import('./dr-records-validation/dr-records-validation.module'))
+        .DrRecordsValidationModule,
+  },
+  {
+    path: 'goods-vigilance-service',
+    loadChildren: async () =>
+      (
+        await import(
+          './dr-goods-vigilance-service/dr-goods-vigilance-service.module'
+        )
+      ).DrGoodsVigilanceServiceModule,
+  },
 ];
 
 @NgModule({

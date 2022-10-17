@@ -1,0 +1,40 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">
+      Listado de Paquetes (Lotes) para incorporar al proceso de enajenación como
+      partidas
+    </h5>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data1">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+    <div class="row">
+      <div class="col-md-8"></div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-primary btn-sm active">
+          Aceptar
+        </button>
+      </div>
+      <div class="col-md-2">
+        <button
+          type="submit"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

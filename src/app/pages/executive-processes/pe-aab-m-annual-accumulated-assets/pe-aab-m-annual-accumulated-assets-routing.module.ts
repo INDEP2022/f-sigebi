@@ -5,12 +5,12 @@ import { PeAabCAnnualAccumulatedAssetsComponent } from './pe-aab-c-annual-accumu
 const routes: Routes = [
   {
     path: '',
-    component: PeAabCAnnualAccumulatedAssetsComponent
-  }
+    component: PeAabCAnnualAccumulatedAssetsComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PeAabMAnnualAccumulatedAssetsRoutingModule { }
+export class PeAabMAnnualAccumulatedAssetsRoutingModule {}

@@ -1,0 +1,20 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-12">
+        <div class="form-material col-md-5">
+          <search-bar></search-bar>
+        </div>
+      </div>
+    </div>
+    <ng2-smart-table
+      [attr.class]="'table-bordered'"
+      [settings]="settings"
+      [source]="data"
+      (userRowSelect)="selected($event)">
+    </ng2-smart-table>
+  </div>
+</app-modal>

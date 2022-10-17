@@ -1,8 +1,10 @@
-export const COLUMNS={
-    batch: {
-        title: 'Lote',
-    },
-    description: {
-        title: 'Descripción', 
-    }
-}
+export const COLUMNS = {
+  batch: {
+    title: 'Lote',
+    sort: false,
+  },
+  description: {
+    title: 'Descripción',
+    sort: false,
+  },
+};

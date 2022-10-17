@@ -47,10 +47,42 @@
         <input type="radio" formControlName="radio" value="dog2" />
       </form-radio>
     </form>
+
+    <br />
+    <button class="btn btn-secondary btn-sm active" (click)="openPrevImg()">
+      Prev. imagen
+    </button>
+    <button class="btn btn-secondary btn-sm active" (click)="openPrevPdf()">
+      Prev. pdf
+    </button>
   </div>
-  <div footer class="d-flex justify-content-center">
+  <div footer class="d-flex justify-content-around">
     <div>
-      <button class="btn btn-secondary btn-sm active">Guardar</button>
+      <button class="btn btn-primary btn-sm active">Primary</button>
+    </div>
+    <div>
+      <button class="btn btn-secondary btn-sm active">Secondary</button>
+    </div>
+    <div>
+      <button class="btn btn-success btn-sm active">Success</button>
+    </div>
+    <div>
+      <button class="btn btn-info btn-sm active">Info</button>
+    </div>
+    <div>
+      <button class="btn btn-warning btn-sm active">Warning</button>
+    </div>
+    <div>
+      <button class="btn btn-danger btn-sm active">Danger</button>
+    </div>
+    <div>
+      <button class="btn btn-pink btn-sm active">Pink</button>
+    </div>
+    <div>
+      <button class="btn btn-light btn-sm active">Light</button>
+    </div>
+    <div>
+      <button class="btn btn-dark btn-sm active">Dark</button>
     </div>
   </div>
 </app-card>

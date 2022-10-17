@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ILegalSupport } from 'src/app/core/models/catalogs/legal-suport.model';
 import { LegalSupportService } from 'src/app/core/services/catalogs/legal-suport.service';
@@ -12,11 +12,9 @@ import { LEGAL_SUPPORT_COLUMS } from './legal-support-columns';
 @Component({
   selector: 'app-legal-support-list',
   templateUrl: './legal-support-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class LegalSupportListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
   paragraphs: ILegalSupport[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

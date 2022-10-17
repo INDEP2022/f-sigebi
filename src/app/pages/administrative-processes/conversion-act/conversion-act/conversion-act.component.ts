@@ -1,49 +1,80 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 
 export interface ExampleActa {
-  idConversion: number,
-  numberAsset: number,
-  numberDossier: number,
-  numberDossierI: number,
-  previousInvestigation: string,
-  penalCause: string,
-  act: number,
-  state: string,
-  actDescription: string,
-  address: string,
-  responsible: string,
-  witness: string,
-  witnessI: string,
-  contractWitness: string
+  idConversion: number;
+  numberAsset: number;
+  numberDossier: number;
+  numberDossierI: number;
+  previousInvestigation: string;
+  penalCause: string;
+  act: number;
+  state: string;
+  actDescription: string;
+  address: string;
+  responsible: string;
+  witness: string;
+  witnessI: string;
+  contractWitness: string;
 }
 
 @Component({
   selector: 'app-conversion-act',
   templateUrl: './conversion-act.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ConversionActComponent implements OnInit {
+  totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
 
   form: FormGroup;
   //Geters del Encabezado
-  get idConversion() { return this.form.get('idConversion'); }
-  get numberAsset() { return this.form.get('numberAsset'); }
-  get numberDossier() { return this.form.get('numberDossier'); }
-  get numberDossierI() { return this.form.get('numberDossierI'); }
-  get previousInvestigation() { return this.form.get('previousInvestigation'); }
-  get penalCause() { return this.form.get('penalCause'); }
+  get idConversion() {
+    return this.form.get('idConversion');
+  }
+  get numberAsset() {
+    return this.form.get('numberAsset');
+  }
+  get numberDossier() {
+    return this.form.get('numberDossier');
+  }
+  get numberDossierI() {
+    return this.form.get('numberDossierI');
+  }
+  get previousInvestigation() {
+    return this.form.get('previousInvestigation');
+  }
+  get penalCause() {
+    return this.form.get('penalCause');
+  }
 
-  get act() { return this.form.get('act'); }
-  get state() { return this.form.get('state'); }
-  get actDescription() { return this.form.get('actDescription'); }
-  get address() { return this.form.get('address'); }
-  get responsible() { return this.form.get('responsible'); }
-  get witness() { return this.form.get('witness'); }
-  get witnessI() { return this.form.get('witnessI'); }
-  get contractWitness() { return this.form.get('contractWitness'); }
+  get act() {
+    return this.form.get('act');
+  }
+  get state() {
+    return this.form.get('state');
+  }
+  get actDescription() {
+    return this.form.get('actDescription');
+  }
+  get address() {
+    return this.form.get('address');
+  }
+  get responsible() {
+    return this.form.get('responsible');
+  }
+  get witness() {
+    return this.form.get('witness');
+  }
+  get witnessI() {
+    return this.form.get('witnessI');
+  }
+  get contractWitness() {
+    return this.form.get('contractWitness');
+  }
 
   // Acta Example
   actsExample: ExampleActa[] = [
@@ -61,9 +92,9 @@ export class ConversionActComponent implements OnInit {
       responsible: 'Responsbale 1',
       witness: 'Testigo 1',
       witnessI: 'Testigo 2',
-      contractWitness: 'Testigo del contrato 1'
-    }
-  ]
+      contractWitness: 'Testigo del contrato 1',
+    },
+  ];
   // Acta
   actExample: ExampleActa;
   //Data Table
@@ -72,28 +103,32 @@ export class ConversionActComponent implements OnInit {
     actions: {
       add: false,
       edit: false,
-      delete: false
+      delete: false,
     },
-    hideSubHeader: true,//oculta subheaader de filtro
-    noDataMessage: "No se encontrarón registros",
+    hideSubHeader: true, //oculta subheaader de filtro
+    noDataMessage: 'No se encontrarón registros',
     mode: 'external', // ventana externa
     columns: {
       numberGood: {
         title: 'No Bien',
-        width: '10%'
+        width: '10%',
+        sort: false,
       },
       description: {
         title: 'Descripcion',
-        width: '20%'
+        width: '20%',
+        sort: false,
       },
       amount: {
         title: 'Cantidad',
-        width: '10%'
+        width: '10%',
+        sort: false,
       },
       act: {
         title: 'Acta',
-        width: '10%'
-      }
+        width: '10%',
+        sort: false,
+      },
     },
   };
 
@@ -102,14 +137,14 @@ export class ConversionActComponent implements OnInit {
       numberGood: '1',
       description: 'Descripción 1',
       amount: 'Cant. 1',
-      act: 'Act 1'
+      act: 'Act 1',
     },
     {
       numberGood: '2',
       description: 'Descripción 2',
       amount: 'Cant. 2',
-      act: 'Act 2'
-    }
+      act: 'Act 2',
+    },
   ];
 
   //Data Table
@@ -118,41 +153,43 @@ export class ConversionActComponent implements OnInit {
     actions: {
       add: false,
       edit: false,
-      delete: false
+      delete: false,
     },
-    hideSubHeader: true,//oculta subheaader de filtro
-    noDataMessage: "No se encontrarón registros",
+    hideSubHeader: true, //oculta subheaader de filtro
+    noDataMessage: 'No se encontrarón registros',
     mode: 'external', // ventana externa
     columns: {
       numberGood: {
         title: 'No Bien',
-        width: '10%'
+        width: '10%',
+        sort: false,
       },
       description: {
         title: 'Descripcion',
-        width: '30%'
+        width: '30%',
+        sort: false,
       },
       amount: {
         title: 'Cantidad',
-        width: '10%'
-      }
+        width: '10%',
+        sort: false,
+      },
     },
   };
 
   data1: any[] = [];
 
-  constructor(private fb: FormBuilder,
-    private router: Router) { }
+  constructor(private fb: FormBuilder, private router: Router) {}
 
   ngOnInit(): void {
     this.buildFormHeader();
   }
 
   /**
-     * @method: metodo para iniciar el formulario de Encabezado
-     * @author:  Alexander Alvarez
-    * @since: 27/09/2022
-     */
+   * @method: metodo para iniciar el formulario de Encabezado
+   * @author:  Alexander Alvarez
+   * @since: 27/09/2022
+   */
   private buildFormHeader() {
     this.form = this.fb.group({
       idConversion: [null, [Validators.required]],
@@ -168,14 +205,13 @@ export class ConversionActComponent implements OnInit {
       responsible: [null, [Validators.required]],
       witness: [null, [Validators.required]],
       witnessI: [null, [Validators.required]],
-      contractWitness: [null, [Validators.required]]
-
+      contractWitness: [null, [Validators.required]],
     });
   }
 
   shearConversionById() {
     // buscar el bien
-    const idConversion = Number(this.idConversion.value)
+    const idConversion = Number(this.idConversion.value);
     this.actsExample.forEach(element => {
       if (element.idConversion === idConversion) {
         this.actExample = element;
@@ -199,20 +235,17 @@ export class ConversionActComponent implements OnInit {
     this.contractWitness.setValue(act.contractWitness);
   }
 
-  print() {
+  print() {}
 
-  }
-
-  close() {
-
-  }
+  close() {}
 
   detail() {
-    this.router.navigate(['pages/administrative-processes/conversion-act/act-detail']);
+    this.router.navigate([
+      'pages/administrative-processes/conversion-act/act-detail',
+    ]);
   }
 
   add() {
     this.data1 = this.data;
   }
-
 }

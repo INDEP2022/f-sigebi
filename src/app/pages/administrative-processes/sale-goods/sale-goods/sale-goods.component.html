@@ -1,0 +1,164 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Venta de bienes</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="alienationForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-2">
+          <form-field
+            [control]="alienationForm.get('nuProccess')"
+            label="No. Proceso">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="nuProccess"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="alienationForm.get('cveProcess')"
+            label="CVE Proceso">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="cveProcess"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="alienationForm.get('typeAlienation')"
+            label="Tipo Enajenacion">
+            <select class="form-control" formControlName="typeAlienation">
+              <option [value]="null">Seleccione un tipo</option>
+              <option value="NO">NO TIPO EN</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="alienationForm.get('place')" label="lugar">
+            <input type="text" class="form-control" formControlName="place" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field
+            [control]="alienationForm.get('dateAnnouncement')"
+            label="Fecha convocatoria">
+            <input
+              type="text"
+              formControlName="dateAnnouncement"
+              placeholder="Fecha convocatoria"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="alienationForm.get('dateBasicPayment')"
+            label="Fecha pago de bases">
+            <input
+              type="text"
+              formControlName="dateBasicPayment"
+              placeholder="Fecha pago de bases"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="alienationForm.get('dateClarificationBoard')"
+            label="Fecha junta de aclaraciones">
+            <input
+              type="text"
+              formControlName="dateClarificationBoard"
+              placeholder="Fecha junta de aclaraciones"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="alienationForm.get('datePresentationProposals')"
+            label="Fecha presentación propuestas">
+            <input
+              type="text"
+              formControlName="datePresentationProposals"
+              placeholder="Fecha presentación propuestas"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field
+            [control]="alienationForm.get('dateEconomicOpening')"
+            label="Fecha apertura económica">
+            <input
+              type="text"
+              formControlName="dateEconomicOpening"
+              placeholder="Fecha apertura económica"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="alienationForm.get('dateFailed')"
+            label="Fecha fallo">
+            <input
+              type="text"
+              formControlName="dateFailed"
+              placeholder="Fecha fallo"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="alienationForm.get('dateEvent')"
+            label="Fecha evento">
+            <input
+              type="text"
+              formControlName="dateEvent"
+              placeholder="Fecha evento"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-12">
+          <form-field
+            [control]="alienationForm.get('observations')"
+            label="Observaciones">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="observations" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="md-tabs">
+      <tabset>
+        <tab heading="PARTIDAS">
+          <app-sale-goods-games></app-sale-goods-games>
+        </tab>
+        <tab heading="PARTICIPANTES">
+          <app-sale-goods-participants></app-sale-goods-participants>
+        </tab>
+        <tab heading="PAGOS">
+          <app-sale-goods-payments></app-sale-goods-payments>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</app-card>

@@ -4,7 +4,6 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISiseProcess } from 'src/app/core/models/catalogs/sise-process.model';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from '../../../../common/constants/table-settings';
 import { SiseProcessService } from '../../../../core/services/catalogs/sise-process.service';
 import { SiseProcessFormComponent } from '../sise-process-form/sise-process-form.component';
 import { SISI_PROCESS_COLUMNS } from './sisi-process-columns';
@@ -12,12 +11,9 @@ import { SISI_PROCESS_COLUMNS } from './sisi-process-columns';
 @Component({
   selector: 'app-sise-process-list',
   templateUrl: './sise-process-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class SiseProcessListComponent extends BasePage implements OnInit {
-
-  settings = TABLE_SETTINGS;
   siseProcess: ISiseProcess[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -74,5 +70,4 @@ export class SiseProcessListComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }

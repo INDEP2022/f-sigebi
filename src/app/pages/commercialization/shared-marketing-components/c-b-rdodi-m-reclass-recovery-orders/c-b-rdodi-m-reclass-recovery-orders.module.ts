@@ -7,16 +7,13 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { CBRdodiMReclassRecoveryOrdersRoutingModule } from './c-b-rdodi-m-reclass-recovery-orders-routing.module';
 import { CBRdodiCReclassRecoveryOrdersComponent } from './c-b-rdodi-c-reclass-recovery-orders/c-b-rdodi-c-reclass-recovery-orders.component';
 
-
 @NgModule({
-  declarations: [
-    CBRdodiCReclassRecoveryOrdersComponent
-  ],
+  declarations: [CBRdodiCReclassRecoveryOrdersComponent],
   imports: [
     CommonModule,
     CBRdodiMReclassRecoveryOrdersRoutingModule,
     SharedModule,
-    BsDatepickerModule
-  ]
+    BsDatepickerModule,
+  ],
 })
-export class CBRdodiMReclassRecoveryOrdersModule { }
+export class CBRdodiMReclassRecoveryOrdersModule {}

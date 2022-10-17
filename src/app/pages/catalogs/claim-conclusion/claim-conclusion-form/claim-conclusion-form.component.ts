@@ -9,8 +9,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-claim-conclusion-form',
   templateUrl: './claim-conclusion-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ClaimConclusionFormComponent extends BasePage implements OnInit {
   ClaimConclusionForm: ModelForm<IClaimConclusion>;
@@ -64,10 +63,12 @@ export class ClaimConclusionFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.claimConclusionService.create(this.ClaimConclusionForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.claimConclusionService
+      .create(this.ClaimConclusionForm.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   update() {

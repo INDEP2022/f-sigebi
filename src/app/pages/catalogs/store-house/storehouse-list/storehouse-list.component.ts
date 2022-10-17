@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IStorehouse } from '../../../../core/models/catalogs/storehouse.model';
@@ -15,7 +15,6 @@ import { StorehouseDetailComponent } from '../storehouse-detail/storehouse-detai
   styles: [],
 })
 export class StorehouseListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
   lawyers: IStorehouse[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

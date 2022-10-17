@@ -6,9 +6,7 @@
     <form [formGroup]="edosXCoorForm">
       <div class="row">
         <div class="col-md-4">
-          <form-field
-            [control]="edosXCoorForm.get('id')"
-            label="Id">
+          <form-field [control]="edosXCoorForm.get('id')" label="Id">
             <input type="number" class="form-control" formControlName="id" />
           </form-field>
         </div>
@@ -32,16 +30,12 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="edosXCoorForm.get('state')"
-            label="Estado">
+          <form-field [control]="edosXCoorForm.get('state')" label="Estado">
             <input type="text" class="form-control" formControlName="state" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="edosXCoorForm.get('stage')"
-            label="Etapa">
+          <form-field [control]="edosXCoorForm.get('stage')" label="Etapa">
             <input type="number" class="form-control" formControlName="stage" />
           </form-field>
         </div>

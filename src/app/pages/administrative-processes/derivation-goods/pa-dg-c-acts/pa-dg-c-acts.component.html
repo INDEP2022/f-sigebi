@@ -1,0 +1,119 @@
+<app-card>
+  <div body>
+    <div class="row">
+      <div class="col-md-9 col-sm-12 col-xs-12">
+        <ul class="list-group">
+          <li
+            class="list-group-item d-flex justify-content-between align-items-start">
+            <div class="ms-2 me-auto">
+              <div class="fw-bold">&nbsp;</div>
+            </div>
+            <div class="ms-2 mr-3">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                [(ngModel)]="masterSelectedFA"
+                id="flexCheckDefault"
+                (change)="checkUncheckAllFA()" />
+            </div>
+          </li>
+          <li
+            class="list-group-item d-flex justify-content-between align-items-start"
+            *ngFor="let atribF of checkedListFA; let i = index">
+            <div class="ms-2 me-auto">
+              <div class="fw-bold">{{ atribF.description }}</div>
+            </div>
+            <div class="ms-2 mr-3">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                [(ngModel)]="atribF.isSelected"
+                id="flexCheckDefault{{ i }}"
+                (change)="isAllSelected()" />
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="col-md-3 col-sm-12 col-xs-12">
+        <button class="btn btn-danger btn-sm active mt-5">Generar Actas</button>
+        &nbsp;
+        <button class="btn btn-info btn-sm active mt-5">Asignar Actas</button>
+        <br />
+        <button class="btn btn-primary btn-sm active mt-5">Regresar</button>
+      </div>
+    </div>
+  </div>
+</app-card>
+<form [formGroup]="form" class="form-material">
+  <app-card>
+    <div body>
+      <div class="row">
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('scannerFolio')"
+            label="Folio Escaner">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="scannerFolio" />
+          </form-field>
+        </div>
+      </div>
+    </div>
+  </app-card>
+
+  <app-card>
+    <div body>
+      <div class="row">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <button class="btn btn-info btn-sm active mt-5">
+            Insertar Párrafos
+          </button>
+        </div>
+
+        <br />
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <button class="btn btn-primary btn-sm active mt-5">
+            Imprime Acta
+          </button>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('openingParagraph')"
+            label="Primer Párrafo">
+            <textarea
+              type="text"
+              class="form-control"
+              formControlName="openingParagraph"
+              placeholder="Escribe aqui el primer párrafo"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-12 col-sm-12 col-xs-12 mt-5">
+          <form-field
+            [control]="form.get('middleParagraph')"
+            label="Primer Intermedio">
+            <textarea
+              type="text"
+              class="form-control"
+              formControlName="middleParagraph"
+              placeholder="Escribe aqui el párrafo intermedio"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-12 col-sm-12 col-xs-12 mt-5">
+          <form-field
+            [control]="form.get('concludingParagraph')"
+            label="Primer Final">
+            <textarea
+              type="text"
+              class="form-control"
+              formControlName="concludingParagraph"
+              placeholder="Escribe aqui el párrafo final"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </div>
+  </app-card>
+</form>

@@ -1,51 +1,84 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { PaDgCActsComponent } from '../pa-dg-c-acts/pa-dg-c-acts.component';
+import { PaDgCGoodsComponent } from '../pa-dg-c-goods/pa-dg-c-goods.component';
 
 @Component({
   selector: 'app-derivation-goods',
   templateUrl: './derivation-goods.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class DerivationGoodsComponent implements OnInit {
+  //Reactive Forms
+  form: FormGroup;
 
-  
-    //Reactive Forms
-    form: FormGroup;
+  // Variable para la contraseña
+  private _password: string;
 
-    // Variable para la contraseña
-    private _password: string;
-  
-     get idConversion() { return this.form.get('idConversion'); }
-     get numberGoodFather() { return this.form.get('numberGoodFather'); }
-     get tipo() { return this.form.get('tipo'); }
-     get numberDossier() { return this.form.get('numberDossier'); }
-     get status() { return this.form.get('status'); }
-     get situation() { return this.form.get('situation'); }
-     get actConvertion() { return this.form.get('actConvertion'); }
-     get description() { return this.form.get('description')}
-     get numberGoodSon() { return this.form.get('numberGoodSon')}
-     get observation() { return this.form.get('observation')}
-     get descriptionSon() { return this.form.get('descriptionSon')}
-     get quantity() { return this.form.get('quantity')}
-     get classifier() { return this.form.get('classifier')}
-     get unitOfMeasure() { return this.form.get('unitOfMeasure')}
-     get destinationLabel() { return this.form.get('destinationLabel')}
+  get idConversion() {
+    return this.form.get('idConversion');
+  }
+  get numberGoodFather() {
+    return this.form.get('numberGoodFather');
+  }
+  get tipo() {
+    return this.form.get('tipo');
+  }
+  get numberDossier() {
+    return this.form.get('numberDossier');
+  }
+  get status() {
+    return this.form.get('status');
+  }
+  get situation() {
+    return this.form.get('situation');
+  }
+  get actConvertion() {
+    return this.form.get('actConvertion');
+  }
+  get description() {
+    return this.form.get('description');
+  }
+  get numberGoodSon() {
+    return this.form.get('numberGoodSon');
+  }
+  get observation() {
+    return this.form.get('observation');
+  }
+  get descriptionSon() {
+    return this.form.get('descriptionSon');
+  }
+  get quantity() {
+    return this.form.get('quantity');
+  }
+  get classifier() {
+    return this.form.get('classifier');
+  }
+  get unitOfMeasure() {
+    return this.form.get('unitOfMeasure');
+  }
+  get destinationLabel() {
+    return this.form.get('destinationLabel');
+  }
 
-
-  constructor(private fb: FormBuilder, private router: Router) { }
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private modalService: BsModalService
+  ) {}
 
   ngOnInit(): void {
     this.buildForm();
   }
 
   /**
-      * @method: metodo para iniciar el formulario
-      * @author:  Alexander Alvarez
-     * @since: 27/09/2022
-      */
-   private buildForm() {
+   * @method: metodo para iniciar el formulario
+   * @author:  Alexander Alvarez
+   * @since: 27/09/2022
+   */
+  private buildForm() {
     this.form = this.fb.group({
       idConversion: [null, [Validators.required]],
       numberGoodFather: [null, [Validators.required]],
@@ -65,34 +98,33 @@ export class DerivationGoodsComponent implements OnInit {
     });
   }
 
+  searchGoods() {}
 
-  searchGoods(){
-
-  }
-
-  updateStatus(){
-    
+  updateStatus() {
     //this.showToast('success')
   }
 
-  actConversionBtn(){
+  actConversionBtn() {}
 
+  finishConversion() {}
+
+  bulkUpload() {
+    this.router.navigate([
+      'pages/administrative-processes/derivation-goods/bulk-upload',
+    ]);
   }
 
-  finishConversion(){
+  imgUpload() {}
 
-  }
-
-  bulkUpload(){
-    this.router.navigate(['pages/administrative-processes/derivation-goods/bulk-upload']);
-  }
-
-  imgUpload(){
-    
+  openModal(): void {
+    this.modalService.show(PaDgCGoodsComponent, {
+      initialState: {},
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
   }
 
   /* showToast(status: NbComponentStatus) {
     this.toastrService.show(status, 'Estado cambiado exitosamente !!', { status });
   } */
-
 }

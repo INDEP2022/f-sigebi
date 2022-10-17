@@ -10,16 +10,14 @@ import { RouterModule, Routes } from '@angular/router';
 /** COMPONENTS IMPORTS */
 import { PJAAbandonmentsDeclarationTradesComponent } from './abandonments-declaration-trades/pj-a-c-abandonments-declaration-trades.component';
 
-
-
 const routes: Routes = [
-    {
-        path: '',
-        component: PJAAbandonmentsDeclarationTradesComponent
-    }
-]
+  {
+    path: '',
+    component: PJAAbandonmentsDeclarationTradesComponent,
+  },
+];
 @NgModule({
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule]
-  })
-  export class PJAAbandonmentsDeclarationTradesRoutingModule { }
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
+})
+export class PJAAbandonmentsDeclarationTradesRoutingModule {}

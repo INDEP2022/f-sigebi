@@ -5,12 +5,11 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-appraisal-request',
   templateUrl: './appraisal-request.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class AppraisalRequestComponent implements OnInit {
   form: FormGroup;
-  
+
   public peritos = new DefaultSelect();
   public institutions = new DefaultSelect();
   public delegation = new DefaultSelect();
@@ -18,9 +17,9 @@ export class AppraisalRequestComponent implements OnInit {
   public department = new DefaultSelect();
   public appraisalCurrency = new DefaultSelect();
 
-  constructor(private fb: FormBuilder,
-    // private peritosService: PeritosService
-  ) { }
+  constructor(
+    private fb: FormBuilder // private peritosService: PeritosService
+  ) {}
 
   ngOnInit(): void {
     this.prepareForm();
@@ -45,14 +44,14 @@ export class AppraisalRequestComponent implements OnInit {
       observations: [null, Validators.required],
 
       costCurrency: [null, Validators.required],
-      appraisalCurrency:[null, Validators.required],
+      appraisalCurrency: [null, Validators.required],
       elements: [],
-      registers: []
-    })
+      registers: [],
+    });
   }
 
   send() {
-    console.log(this.form.value)
+    console.log(this.form.value);
   }
 
   public getPeritos(event: any) {
@@ -72,7 +71,7 @@ export class AppraisalRequestComponent implements OnInit {
     //   this.banks = new DefaultSelect(data.data, data.count);
     // });
   }
-  
+
   public getSubdelegations(event: any) {
     // this.bankService.getAll(params).subscribe(data => {
     //   this.banks = new DefaultSelect(data.data, data.count);
@@ -84,12 +83,10 @@ export class AppraisalRequestComponent implements OnInit {
     //   this.banks = new DefaultSelect(data.data, data.count);
     // });
   }
-  
+
   public getCurrencies(event: any) {
     // this.currencyService.getAll(params).subscribe(data => {
     //   this.currency = new DefaultSelect(data.data, data.count);
     // });
   }
-
-
-}     
+}
