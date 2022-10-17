@@ -90,6 +90,13 @@ const routes: Routes = [
           ).PaMResquestNumberingChangeModule,
         data: { title: 'Solicitud de cambio a numeracion' },
       },
+      {
+        path: 'massive-reclassification-goods',
+        loadChildren: async () =>
+          (await import('./massive-reclassification-goods/pa-m-massive-reclassification-goods.module'))
+            .PaMMassiveReclassificationGoodsModule,
+        data: { title: 'Reclasificación masiva de bienes' },
+      },
       /**
        * Seguros **Legaspi**
        **/
@@ -230,8 +237,8 @@ const routes: Routes = [
         path: 'services',
         loadChildren: async () =>
           (await import('./services/pa-s-m-services.module'))
-          .PaSMServicesModule,
-          data: { title: 'Servicios' },
+            .PaSMServicesModule,
+        data: { title: 'Servicios' },
       },
       /**
        * Services Pages Legaspi
@@ -249,6 +256,67 @@ const routes: Routes = [
           (await import('./administration-third/unit-cost/unit-cost.module'))
             .UnitCostModule,
         data: { title: 'Costo unitario' },
+      },
+      {
+        path: 'process',
+        loadChildren: async () =>
+          (await import('./administration-third/process/process.module'))
+            .ProcessModule,
+        data: { title: 'Procesos para precios unitarios' },
+      },
+      {
+        path: 'services-unit-prices',
+        loadChildren: async () =>
+          (
+            await import(
+              './administration-third/services-unit-prices/services-unit-prices.module'
+            )
+          ).ServicesUnitPricesModule,
+        data: { title: 'Servicios para precios unitarios' },
+      },
+      {
+        path: 'specs',
+        loadChildren: async () =>
+          (await import('./administration-third/specs/specs.module'))
+            .SpecsModule,
+        data: { title: 'Especificaciones para precios unitarios' },
+      },
+      {
+        path: 'turn-type',
+        loadChildren: async () =>
+          (await import('./administration-third/turn-type/turn-type.module'))
+            .TurnTypeModule,
+        data: { title: 'Turno y tipo' },
+      },
+      {
+        path: 'measurement-units',
+        loadChildren: async () =>
+          (
+            await import(
+              './administration-third/measurement-units/measurement-units.module'
+            )
+          ).MeasurementUnitsModule,
+        data: { title: 'Unidades de medida' },
+      },
+      {
+        path: 'variable-cost',
+        loadChildren: async () =>
+          (
+            await import(
+              './administration-third/variable-cost/variable-cost.module'
+            )
+          ).VariableCostModule,
+        data: { title: 'Variable costo' },
+      },
+      /**
+       * Seguros David Lucas
+       */
+      {
+        path: 'policies-report',
+        loadChildren: async () =>
+          (await import('./policies-report/policies-report.module'))
+            .PoliciesReportModule,
+        data: { title: 'Reportes de Pólizas' },
       },
     ],
   },

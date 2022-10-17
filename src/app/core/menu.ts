@@ -81,6 +81,15 @@ export const MENU: IMenuItem[] = [
           },
         ],
       },
+      {
+        label: 'Programación de Entregas',
+        subItems: [
+          {
+            label: 'Programación de Eventos',
+            link: '/pages/final-destination-process/delivery-schedule/schedule-of-events',
+          },
+        ]
+      },
     ],
   },
   ...DOCUMENTS_RECEPTION_ROUTES,
