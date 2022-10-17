@@ -56,6 +56,7 @@ interface TableSettings {
   columns: Object;
   noDataMessage: string;
   selectedRowIndex?: number;
+  rowClassFunction?: any;
 }
 interface Action {
   columnTitle: string;
@@ -91,6 +92,7 @@ const TABLE_SETTINGS: TableSettings = {
   },
   columns: {},
   noDataMessage: 'No se encontrarón registros',
+  rowClassFunction: (row:any) =>{}
 };
 @Component({
   template: '',
