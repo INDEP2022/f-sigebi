@@ -98,7 +98,7 @@ const routes: Routes = [
         data: { title: 'Reclasificación masiva de bienes' },
       },
       /**
-       * Seguros **Legaspi**
+       *Legaspi
        **/
       {
         path: 'summary-financial-info',
@@ -150,7 +150,7 @@ const routes: Routes = [
           ).then(m => m.PaSsiMSiabSamiInteractionModule),
       },
       /**
-       * Seguros **Legaspi**
+       *Legaspi
        **/
       {
         path: 'location-goods',
