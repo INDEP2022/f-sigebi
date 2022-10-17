@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-import { ExcelService } from 'src/app/common/services/exporttoexcel.service';
+import { ExcelService } from 'src/app/common/services/excel.service';
 
 import { EventsSharedComponent } from 'src/app/@standalone/shared-forms/events-shared/events-shared.component';
 
@@ -19,15 +19,15 @@ import { AddEditLoteModalComponent } from './add-edit-lote-modal/add-edit-lote-m
     CBFFmdvdbCEventPreparationComponent,
     SelectEventModalComponent,
     CreateNewEventModalComponent,
-    AddEditLoteModalComponent
+    AddEditLoteModalComponent,
   ],
   imports: [
     CommonModule,
     CBFFmdvdbMEventPreparationRoutingModule,
     SharedModule,
     ModalModule.forChild(),
-    EventsSharedComponent
+    EventsSharedComponent,
   ],
-  providers: [ExcelService], 
+  providers: [ExcelService],
 })
 export class CBFFmdvdbMEventPreparationModule {}

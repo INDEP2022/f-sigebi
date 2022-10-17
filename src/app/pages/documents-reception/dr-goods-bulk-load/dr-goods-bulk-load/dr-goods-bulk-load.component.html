@@ -73,7 +73,8 @@
                 name="file"
                 #file
                 class="d-none"
-                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                (change)="onFileChange($event)" />
             </div>
           </div>
           <div class="row pt-4">

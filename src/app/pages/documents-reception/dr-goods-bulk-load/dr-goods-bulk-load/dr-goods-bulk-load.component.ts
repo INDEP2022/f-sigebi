@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { GOODS_BULK_LOAD_COLUMNS } from './goods-bulk-load-columns';
@@ -24,7 +25,7 @@ export class DrGoodsBulkLoadComponent extends BasePage implements OnInit {
     return this.assetsForm.get('idCarga');
   }
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private excelService: ExcelService) {
     super();
     this.settings.columns = GOODS_BULK_LOAD_COLUMNS;
   }
@@ -44,6 +45,23 @@ export class DrGoodsBulkLoadComponent extends BasePage implements OnInit {
 
   save() {
     this.assetsForm.markAllAsTouched();
+  }
+
+  onFileChange(event: Event) {
+    const files = (event.target as HTMLInputElement).files;
+    if (files.length != 1) throw 'No files selected, or more than of allowed';
+    const fileReader = new FileReader();
+    fileReader.readAsBinaryString(files[0]);
+    fileReader.onload = () => this.readExcel(fileReader.result);
+  }
+
+  async readExcel(binaryExcel: string | ArrayBuffer) {
+    try {
+      const data = await this.excelService.getData(binaryExcel);
+      console.log(data);
+    } catch (error) {
+      this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
+    }
   }
 
   desalojoChange() {
