@@ -27,7 +27,7 @@
     "ng2-smart-table": "^1.7.2",
     "ngx-bootstrap": "^9.0.0",
     "rxjs": "~7.5.0",
-    "screenfull": "^5.0.2",
+    "screenfull": "^5.2.0",
     "simplebar-angular": "^2.4.0",
     "sweetalert2": "^11.4.34",
     "tslib": "^2.3.0",

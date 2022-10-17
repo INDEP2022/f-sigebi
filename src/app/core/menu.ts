@@ -50,6 +50,7 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
+  //Proceso Destino final
   {
     label: 'Proceso Destino final',
     icon: 'bx-share-alt',
@@ -278,5 +279,27 @@ export const MENU: IMenuItem[] = [
   },
   // PROCESOS JURIDICOS
   menuOptionsJuridicalProcesses,
-  // PROCESOS JURIDICOS
+  // Recepcion Fisica Judicial
+  {
+    label: 'Recepcion Fisica Judicial',
+    icon: 'bx-folder',
+    subItems: [
+      {
+        label: 'Complemento Arituclo',
+        link: '/pages/judicial-physical-reception/articles-complement',
+      },
+      {
+        label: 'Recepcion de Decomisos',
+        link: '/pages/judicial-physical-reception/confiscated-reception',
+      },
+      {
+        label: 'Reporte de Actas',
+        link: '/pages/judicial-physical-reception/records-report',
+      },
+      {
+        label: 'Actas de Recepcion',
+        link: '/pages/judicial-physical-reception/confiscated-records',
+      },
+    ],
+  },
 ];
