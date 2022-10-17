@@ -722,7 +722,7 @@
     padding: 20px !important;
 
     table {
-      tr {
+      tr:not(.row-no-pad) {
         padding-bottom: 20px !important;
       }
     }

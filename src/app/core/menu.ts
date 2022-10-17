@@ -3,7 +3,7 @@ import { menuOptionsJuridicalProcesses } from '../common/constants/juridical-pro
 import { IMenuItem } from './interfaces/menu.interface';
 import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
 import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
-import { ADMINISTRATIVE_PROCESSES_ROUTES } from '../common/routes/administrative-processes.routes'
+import { ADMINISTRATIVE_PROCESSES_ROUTES } from '../common/routes/administrative-processes.routes';
 
 export const MENU: IMenuItem[] = [
   {
@@ -90,7 +90,7 @@ export const MENU: IMenuItem[] = [
             label: 'Programación de Eventos',
             link: '/pages/final-destination-process/delivery-schedule/schedule-of-events',
           },
-        ]
+        ],
       },
     ],
   },
@@ -242,12 +242,6 @@ export const MENU: IMenuItem[] = [
           },
         ],
       },
-
-      {
-        label: 'Activos Financieros',
-        icon: 'credit-card-outline',
-        subItems: [],
-      },
       {
         label: 'Catálogos',
         icon: 'folder',
@@ -261,6 +255,15 @@ export const MENU: IMenuItem[] = [
             link: '/pages/commercialization/catalogs/authorization-keys-ois',
           },
         ],
+      },
+      {
+        label: 'Activos Financieros',
+        icon: 'credit-card-outline',
+        subItems: [],
+      },
+      {
+        label: 'Conversión a numerario',
+        link: '/pages/commercialization/numeraire-exchange',
       },
     ],
   },
