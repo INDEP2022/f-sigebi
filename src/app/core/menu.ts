@@ -2,7 +2,7 @@ import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception
 import { menuOptionsJuridicalProcesses } from '../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
 import { IMenuItem } from './interfaces/menu.interface';
 import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
-
+import { ADMINISTRATIVE_PROCESSES_ROUTES } from '../common/routes/administrative-processes.routes'
 export const MENU: IMenuItem[] = [
   {
     label: 'Menu',
@@ -33,7 +33,8 @@ export const MENU: IMenuItem[] = [
   // * CATALOGOS
   ...CATALOGS_ROUTES,
   //Administración
-  {
+  ...ADMINISTRATIVE_PROCESSES_ROUTES,
+  /*{
     label: 'Procesos Administrativos',
     icon: 'bx-folder',
     subItems: [
@@ -194,31 +195,26 @@ export const MENU: IMenuItem[] = [
           },
         ],
       },
-      /**
-       * ADMIN PROCESS-SEGUROS LEGASPI
-       **/
-      /**
-       * ADMIN PROCESS-SERVICES LEGASPI
-       **/
       {
         label: 'Servicios',
         icon: 'bx-folder',
         subItems: [
           {
-            label: 'Registro de Pago de Servicios',
-            link: '/pages/administrative-processes/services/',
+            label: 'Monitor de Servicios',
+            link: '/pages/administrative-processes/services/service-monitoring',
           },
           {
             label: 'Solicitud de Pago de Servicios',
-            link: '/pages/administrative-processes/services/request',
+            link: '/pages/administrative-processes/services/request-service-payments',
           },
+          {
+            label: 'Registro de Pago de Servicios',
+            link: '/pages/administrative-processes/services/record-service-payments',
+          }
         ],
       },
-      /**
-       * ADMIN PROCESS-SERVICES LEGASPI
-       **/
     ],
-  },
+  },*/
   {
     label: 'Solicitudes',
     icon: 'bx-folder',
