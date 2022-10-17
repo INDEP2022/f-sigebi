@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { CONFISCATED_RECEPCION_COLUMNS } from './confiscated-recepcion-columns';
 
 @Component({
@@ -11,22 +12,14 @@ export class JprConfiscatedReceptionComponent implements OnInit {
 
   form: FormGroup;
   data= EXAMPLE_DATA;
-  settings = {
+  settings =  {
+    ...TABLE_SETTINGS,
+    actions:false, 
+    columns: CONFISCATED_RECEPCION_COLUMNS,
     rowClassFunction: function (row: { data: { status: any; }; }): "available" | "not-available" {
       return row.data.status ? "available" : "not-available";
     },
-    pager: {
-      display: false,
-      perPage: 10
-    },
-    hideSubHeader: true,
-    actions: false,
-    selectedRowIndex: -1,
-    mode: "external",
-    columns: CONFISCATED_RECEPCION_COLUMNS,
-    noDataMessage: "No se encontrarón registros",
-  };
-
+  }
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {

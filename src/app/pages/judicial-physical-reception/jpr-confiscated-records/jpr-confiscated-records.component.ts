@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -10,16 +11,11 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class JprConfiscatedRecordsComponent implements OnInit {
 
-  settings1 = {
+  
+  settings1 = {... TABLE_SETTINGS,
     rowClassFunction: (row: { data: { status: any; }; }) =>
       row.data.status ? "available" : "not-available",
-    pager: {
-      display: false,
-    },
-    hideSubHeader: true,
     actions: false,
-    selectedRowIndex: -1,
-    mode: "external",
     columns: {
       noBien: {
         title: "No. Bien",
@@ -55,13 +51,8 @@ export class JprConfiscatedRecordsComponent implements OnInit {
     noDataMessage: "No se encontrarón registros",
   };
 
-  settings2 = {
-    pager: {
-      display: false,
-    },
-    hideSubHeader: true,
+  settings2 = {... TABLE_SETTINGS,
     actions: false,
-    selectedRowIndex: -1,
     mode: "external",
     columns: {
       noBien: {
