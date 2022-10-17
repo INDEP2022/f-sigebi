@@ -1,5 +1,3 @@
-// import { ReportOfActsModule } from './report-of-acts/report-of-acts.module';
-// import { FdpAdpdtMThirdPossessionActsModule } from './third-party-possession-acts/fdp-adpdt-m-third-possession-acts.module';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
@@ -46,6 +44,13 @@ const routes: Routes = [
         m => m.ReportOfActsModule
       ),
   },
+  {
+    path: "delivery-schedule",
+    loadChildren: () =>
+      import("./delivery-schedule/delivery-schedule.module").then(
+        (m) => m.DeliveryScheduleModule
+      ),
+  }
 ];
 
 @NgModule({

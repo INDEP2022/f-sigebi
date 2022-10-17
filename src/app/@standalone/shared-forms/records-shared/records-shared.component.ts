@@ -22,6 +22,7 @@ import { recordsData } from './recordsData';
   styles: [],
 })
 export class RecordsSharedComponent extends BasePage implements OnInit {
+  
   @Input() form: FormGroup;
   @Input() recordField: string = 'record';
 

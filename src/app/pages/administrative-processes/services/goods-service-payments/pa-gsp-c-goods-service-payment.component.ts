@@ -20,6 +20,7 @@ export class PaGspCGoodsServicePaymentComponent implements OnInit {
 
   private prepareForm(): void {
     this.form = this.fb.group({
+      applicationDate: [null, [Validators.required]],
       record: [null, [Validators.required]],
       type: [null, [Validators.required]],
       subtype: [null, [Validators.required]],
