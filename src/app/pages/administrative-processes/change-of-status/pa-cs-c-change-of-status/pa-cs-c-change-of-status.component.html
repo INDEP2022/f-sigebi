@@ -1,0 +1,151 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Cambio de estatus bienes</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('numberGood')" label="Numero de Bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberGood" />
+          </form-field>
+        </div>
+        <div class="col-md-8 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('descriptionGood')"
+            label="Descripcion del bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descriptionGood" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('currentStatus')"
+            label="Estatus actual">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="currentStatus" />
+          </form-field>
+        </div>
+        <div class="col-md-8 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('descriptionStatus')"
+            label="Descripcion del estatus">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descriptionStatus" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('processes')" label="Proceso">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="processes" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <hr />
+    <form [formGroup]="formNew" class="form-material">
+      <div class="row mt-5">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formNew.get('newStatus')"
+            label="Nuevo Estatus">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="newStatus" />
+          </form-field>
+        </div>
+        <div class="col-md-8 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formNew.get('newDescripcionStatus')"
+            label="Descripción del Estatus">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="newDescripcionStatus" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field [control]="formNew.get('dateStatus')" label="Fecha">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateStatus"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formNew.get('newProcesses')"
+            label="Nuevo Proceso">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="newProcesses" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formNew.get('userRequesting')"
+            label="Solicita">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userRequesting" />
+          </form-field>
+        </div>
+        <div class="col-md-8 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formNew.get('userName')"
+            label="Nombre usuario">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userName" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formNew.get('description')"
+            label="Descripcion">
+            <textarea
+              type="text"
+              class="form-control"
+              formControlName="description"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="row">
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <button type="button" class="btn btn-success btn-sm active">
+            &nbsp; &nbsp; Aceptar &nbsp; &nbsp;
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>
