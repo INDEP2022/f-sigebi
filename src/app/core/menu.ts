@@ -130,6 +130,52 @@ export const MENU: IMenuItem[] = [
             label: 'Costo unitario',
             link: '/pages/administrative-processes/unit-cost',
           },
+          {
+            label: 'Procesos para precios unitarios',
+            link: '/pages/administrative-processes/process',
+          },
+          {
+            label: 'Servicios para precios unitarios',
+            link: '/pages/administrative-processes/services-unit-prices',
+          },
+          {
+            label: 'Especificaciones para precios unitarios',
+            link: '/pages/administrative-processes/specs',
+          },
+          {
+            label: 'Turno y Tipo',
+            link: '/pages/administrative-processes/turn-type',
+          },
+          {
+            label: 'Unidades de medida',
+            link: '/pages/administrative-processes/measurement-units',
+          },
+          {
+            label: 'Variable costo',
+            link: '/pages/administrative-processes/variable-cost',
+          },
+        ],
+      },
+      {
+        label: 'Seguros y Vigilancia',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Mantenimiento de Pólizas',
+            link: '/pages/administrative-processes/policy-maintenance',
+          },
+          {
+            label: 'Pólizas de Seguro',
+            link: '/pages/administrative-processes/insurance-policy',
+          },
+          {
+            label: 'Altas de bienes en Pólizas',
+            link: '/pages/administrative-processes/registration-of-policy',
+          },
+          {
+            label: 'Baja de bienes en Pólizas',
+            link: '/pages/administrative-processes/loss-of-policy',
+          },
         ],
       },
     ],
@@ -212,6 +258,10 @@ export const MENU: IMenuItem[] = [
             label: 'Registro de Pago de Servicios',
             link: '/pages/administrative-processes/services/',
           },
+          {
+            label: 'Solicitud de Pago de Servicios',
+            link: '/pages/administrative-processes/services/request',
+          },
         ],
       },
       /**
@@ -265,6 +315,15 @@ export const MENU: IMenuItem[] = [
             link: '/pages/final-destination-process/report-of-acts/donation-destruction-destination',
           },
         ],
+      },
+      {
+        label: 'Programación de Entregas',
+        subItems: [
+          {
+            label: 'Programación de Eventos',
+            link: '/pages/final-destination-process/delivery-schedule/schedule-of-events',
+          },
+        ]
       },
     ],
   },
