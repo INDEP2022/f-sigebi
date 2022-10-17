@@ -23,6 +23,9 @@ const routes: Routes = [
     redirectTo: 'auth',
     pathMatch: 'full',
   },
+  { path: 'jprConfiscatedReception', loadChildren: () => import('./pages/judicial-physical-reception/jpr-confiscated-reception/jpr-confiscated-reception.module').then(m => m.JprConfiscatedReceptionModule) },
+  { path: 'jprRecordsReport', loadChildren: () => import('./pages/judicial-physical-reception/jpr-records-report/jpr-records-report.module').then(m => m.JprRecordsReportModule) },
+  { path: 'jprConfiscatedRecords', loadChildren: () => import('./pages/judicial-physical-reception/jpr-confiscated-records/jpr-confiscated-records.module').then(m => m.JprConfiscatedRecordsModule) },
 
 ];
 

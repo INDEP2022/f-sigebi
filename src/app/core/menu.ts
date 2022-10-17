@@ -602,6 +602,18 @@ export const MENU: IMenuItem[] = [
         label: 'Complemento Arituclo',
         link: '/pages/judicial-physical-reception/articles-complement',
       },
+      {
+        label: 'Recepcion de Decomisos',
+        link: '/pages/judicial-physical-reception/confiscated-reception',
+      },
+      {
+        label: 'Reporte de Actas',
+        link: '/pages/judicial-physical-reception/records-report',
+      },
+      {
+        label: 'Actas de Recepcion',
+        link: '/pages/judicial-physical-reception/confiscated-records',
+      },
     ],
       
   }

@@ -9,6 +9,27 @@ const routes: Routes = [
         (m) => m.JprComplementArticleModule
       ),
   },
+  {
+    path: "confiscated-reception",
+    loadChildren: () =>
+      import("./jpr-confiscated-reception/jpr-confiscated-reception.module").then(
+        (m) => m.JprConfiscatedReceptionModule
+      ),
+  },
+  {
+    path: "records-report",
+    loadChildren: () =>
+      import("./jpr-records-report/jpr-records-report.module").then(
+        (m) => m.JprRecordsReportModule
+      ),
+  },
+  {
+    path: "confiscated-records",
+    loadChildren: () =>
+      import("./jpr-confiscated-records/jpr-confiscated-records.module").then(
+        (m) => m.JprConfiscatedRecordsModule
+      ),
+  },
 ];
 
 @NgModule({
