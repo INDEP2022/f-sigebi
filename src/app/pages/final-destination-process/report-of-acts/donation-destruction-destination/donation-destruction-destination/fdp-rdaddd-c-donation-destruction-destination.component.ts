@@ -39,8 +39,6 @@ export class FdpRdadddCDonationDestructionDestinationComponent
 
   onSubmit() {}
 
-  onClick() {}
-
   openModal(title: string, columns: string) {
     const initialState: ModalOptions = {
       initialState: {
