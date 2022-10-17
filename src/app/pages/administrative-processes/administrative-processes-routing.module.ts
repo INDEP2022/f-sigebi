@@ -90,6 +90,13 @@ const routes: Routes = [
           ).PaMResquestNumberingChangeModule,
         data: { title: 'Solicitud de cambio a numeracion' },
       },
+      {
+        path: 'massive-reclassification-goods',
+        loadChildren: async () =>
+          (await import('./massive-reclassification-goods/pa-m-massive-reclassification-goods.module'))
+            .PaMMassiveReclassificationGoodsModule,
+        data: { title: 'Reclasificación masiva de bienes' },
+      },
       /**
        * Seguros **Legaspi**
        **/
