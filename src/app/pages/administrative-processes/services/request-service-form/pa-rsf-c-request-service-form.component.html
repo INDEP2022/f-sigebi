@@ -1,24 +1,27 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Agregar Bienes</h5>
+    <h5 class="modal-title">Nueva Solicitud</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row mb-3 mt-3">
-        <div class="form-material col-xs-12 col-12 col-md-3">
+      	<div class="col-md-6">
+      		<!--Service Component-->
+      		<app-services-shared [form]="form"></app-services-shared>
+      	</div>
+        <div class="col-xs-12 col-12 col-md-3 align-self-center">
           <form-field
             label="Fecha de Solicitud"
             [control]="form.get('applicationDate')">
             <input class="form-control"  formControlName="applicationDate" bsDatepicker/>
           </form-field>
         </div>
-      </div>
-      <div class="row mb-3 mt-3">
-        <!--Records Shared Component-->
-        <app-records-shared [form]="form"></app-records-shared>
-        <!--Goods Shared Component-->
-        <div class="col-md-12 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-goods-types-shared [form]="form"></app-goods-types-shared>
+        <div class="col-xs-12 col-12 col-md-3 align-self-center">
+          <form-field
+            label="Importe"
+            [control]="form.get('amount')">
+            <input class="form-control"  formControlName="amount" type="number" />
+          </form-field>
         </div>
       </div>
     </form>

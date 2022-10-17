@@ -3,11 +3,13 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
-  selector: 'app-pa-gsp-c-goods-service-payment',
-  templateUrl: './pa-gsp-c-goods-service-payment.component.html',
-  styles: [],
+  selector: 'app-pa-rsf-c-request-service-form',
+  templateUrl: './pa-rsf-c-request-service-form.component.html',
+  styles: [
+  ]
 })
-export class PaGspCGoodsServicePaymentComponent implements OnInit {
+export class PaRsfCRequestServiceFormComponent implements OnInit {
+
   @Output() data = new EventEmitter<any>();
 
   form: FormGroup = new FormGroup({});
@@ -21,11 +23,8 @@ export class PaGspCGoodsServicePaymentComponent implements OnInit {
   private prepareForm(): void {
     this.form = this.fb.group({
       applicationDate: [null, [Validators.required]],
-      record: [null, [Validators.required]],
-      type: [null, [Validators.required]],
-      subtype: [null, [Validators.required]],
-      ssubtype: [null, [Validators.required]],
-      sssubtype: [null, [Validators.required]],
+      service: [null, [Validators.required]],
+      amount: [null, [Validators.required]],
     });
   }
 
