@@ -3,11 +3,8 @@
   (submit)="mostrarInfo()"
   class="container-fluid form-material">
   <div class="row w-100">
-    <!-- <div class="col-sm-12 col-12 col-md-6 p-2 pr-3"> -->
-    <!-- <div class="row"> -->
-    <div class="col-sm-12 col-12 col-md-2 p-1">
+    <div class="col-sm-12 col-12 col-md-3 p-1">
       <form-field [control]="form.get('noVolante')" label="No. Volante">
-        <!-- <label class="label w-100">No. Volante</label> -->
         <input
           type="number"
           class="form-control"
@@ -15,9 +12,8 @@
           placeholder="No Volante" />
       </form-field>
     </div>
-    <div class="col-sm-12 col-12 col-md-2 p-1">
+    <div class="col-sm-12 col-12 col-md-3 p-1">
       <form-field [control]="form.get('noExpediente')" label="No. Expediente">
-        <!-- <label class="label w-100">No. Expediente</label> -->
         <input
           type="number"
           class="form-control"
@@ -25,14 +21,16 @@
           placeholder="No Expediente" />
       </form-field>
     </div>
-    <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-1">
+    <div class="col-sm-12 col-12 col-md-3 p-1">
       <form-field [control]="form.get('oficio')" label="Oficio">
-        <input class="form-control" placeholder="Oficio" formControlName="oficio"/>
+        <input
+          class="form-control"
+          placeholder="Oficio"
+          formControlName="oficio" />
       </form-field>
     </div>
-    <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-1">
+    <div class="col-sm-12 col-12 col-md-3 p-1">
       <form-field [control]="form.get('tipoOficio')" label="Tipo Oficio">
-        <!-- <label class="label w-100">Tipo Oficio</label> -->
         <input
           type="number"
           class="form-control"
@@ -40,56 +38,47 @@
           placeholder="Tipo Oficio" />
       </form-field>
     </div>
-    <div class="col-sm-12 col-12 col-md-2 p-1">
+    <div class="col-sm-12 col-12 col-md-3 p-1">
       <form-field [control]="form.get('remitente')" label="Remitente">
-        <!-- <label class="label w-100">Remitente</label> -->
         <input
           class="form-control"
           formControlName="remitente"
           placeholder="Remitente" />
       </form-field>
     </div>
-    <div class="col-sm-12 col-12 col-md-2 p-1">
+    <div class="col-sm-12 col-12 col-md-3 p-1">
       <form-field [control]="form.get('destinatario')" label="Destinatario">
-        <!-- <label class="label w-100">Destinatario</label> -->
         <input
           class="form-control"
           formControlName="destinatario"
           placeholder="Destinatario" />
       </form-field>
     </div>
-    <div class="col-sm-12 col-12 col-md-4 p-1">
+    <div class="col-sm-12 col-12 col-md-3 p-1">
       <form-field [control]="form.get('ciudad')" label="Ciudad">
-        <!-- <label class="label w-100">Ciudad</label> -->
         <input
           class="form-control"
           formControlName="ciudad"
           placeholder="Ciudad" />
       </form-field>
     </div>
-    <!-- </div> -->
-    <!-- </div>
-        <div class="col-sm-12 col-12 col-md-6 p-2 pl-3"> -->
-    <!-- <div class="row"> -->
-    <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-1">
+    <div class="col-sm-12 col-12 col-md-3 p-1">
       <div class="form-group">
         <label class="form-control-label w-100">DATA DE OFICIO</label>
         <label class="form-control-label w-100">Clave Oficio</label>
       </div>
     </div>
-    <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-1">
+    <div class="col-sm-12 col-12 col-md-3 p-1">
       <div class="form-group">
         <label class="form-control-label w-100">FECHA DE CAPTURA</label>
         <label class="form-control-label w-100">Fecha Captura</label>
       </div>
     </div>
-    <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-1">
+    <div class="col-sm-12 col-12 col-md-3 p-1">
       <div class="form-group">
         <label class="form-control-label w-100">ESTATUS</label>
         <label class="form-control-label w-100">Estatus</label>
       </div>
     </div>
-    <!-- </div> -->
-    <!-- </div> -->
   </div>
 </form>

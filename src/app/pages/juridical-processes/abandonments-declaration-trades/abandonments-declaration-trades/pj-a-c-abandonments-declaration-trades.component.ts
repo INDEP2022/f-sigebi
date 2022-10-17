@@ -3,12 +3,16 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 /** LIBRERÍAS EXTERNAS IMPORTS */
+import { Example } from 'src/app/core/models/catalogs/example';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 
 /** SERVICE IMPORTS */
+import { ExampleService } from 'src/app/core/services/catalogs/example.service';
 
 /** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-pj-a-c-abandonments-declaration-trades',
@@ -125,7 +129,10 @@ export class PJAAbandonmentsDeclarationTradesComponent
   };
   /** Tabla bienes */
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private exampleService: ExampleService
+    ) {
     super();
   }
 
@@ -213,10 +220,10 @@ export class PJAAbandonmentsDeclarationTradesComponent
     });
 
     this.formCcpOficio = this.fb.group({
-      ccp: ['', [Validators.minLength(1)]], //*
+      ccp: [null, [Validators.minLength(1)]], //*
       usuario: ['', [Validators.minLength(1)]], //*
       nombreUsuario: '',
-      ccp2: ['', [Validators.minLength(1)]], //*
+      ccp2: [null, [Validators.minLength(1)]], //*
       usuario2: ['', [Validators.minLength(1)]], //*
       nombreUsuario2: '',
     });
@@ -244,4 +251,6 @@ export class PJAAbandonmentsDeclarationTradesComponent
   capturaCopias(event: any) {
     console.log('Captura copias', event);
   }
+  
+
 }

@@ -8,7 +8,6 @@
     </div>
     <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
       <form-field [control]="form.get('noBien')" label="No. Bien">
-        <!-- <label class="label w-100">No. Bien</label> -->
         <input
           class="form-control"
           formControlName="noBien"
@@ -23,7 +22,6 @@
     </div>
     <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
       <form-field [control]="form.get('nombramiento')" label="Nombramiento">
-        <!-- <label class="label w-100">Nombramiento</label> -->
         <input
           class="form-control"
           formControlName="nombramiento"
@@ -38,14 +36,11 @@
     </div>
     <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
       <form-field [control]="form.get('fecha')" label="Fecha">
-        <!-- <label class="label w-100">Fecha</label> -->
         <input
           class="form-control"
           formControlName="fecha"
           placeholder="Fecha"
           bsDatapicker />
-        <!-- [nbDatepicker]="formpicker1">
-                <nb-datepicker #formpicker1></nb-datepicker> -->
       </form-field>
     </div>
     <div
@@ -55,9 +50,6 @@
         <button type="button" status="primary" (click)="btnEjecutar()">
           Ejecutar
         </button>
-        <!-- <label class="label">&nbsp;</label>&nbsp;  
-                <div class="d-flex justify-content-center">
-                </div> -->
       </div>
     </div>
     <div
@@ -67,9 +59,6 @@
         <button type="button" status="primary" (click)="btnDeshacer()">
           Deshacer
         </button>
-        <!-- <label class="label">&nbsp;</label>&nbsp;  
-                <div class="d-flex justify-content-center">
-                </div> -->
       </div>
     </div>
   </div>
@@ -86,7 +75,6 @@
       <form-field
         [control]="formDepositario.get('idDepositario')"
         label="Id Depositario">
-        <!-- <label class="label w-100">Id Depositario</label> -->
         <input
           class="form-control"
           formControlName="idDepositario"
@@ -97,7 +85,6 @@
       <form-field
         [control]="formDepositario.get('depositario')"
         label="Depositario">
-        <!-- <label class="label w-100">Depositario</label> -->
         <input
           class="form-control"
           formControlName="depositario"
@@ -112,14 +99,6 @@
           <option [value]="'NO'">NO</option>
         </select>
       </form-field>
-      <!-- <div class="form-group">
-                <label class="label w-100">Procesar</label>
-                <ngx-select fullWidth selected="No" formControlName="procesar" [status]="''">
-                    <nb-option value="SI">SI</nb-option>
-                    <nb-option value="NO">NO</nb-option>
-                </ngx-select>
-                
-            </div> -->
     </div>
     <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
       <form-field
@@ -130,8 +109,6 @@
           class="form-control"
           formControlName="fechaEjecucion"
           placeholder="Fecha Ejecución" />
-        <!-- [nbDatepicker]="formpicker2">
-                <nb-datepicker #formpicker2></nb-datepicker> -->
       </form-field>
     </div>
     <div

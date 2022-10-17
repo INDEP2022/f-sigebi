@@ -6,61 +6,60 @@
   <div body>
     <form [formGroup]="form" class="container-fluid form-material">
       <div class="row w-100">
-        <!-- <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">    
-                    <div class="row w-100"> -->
-        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+        <div class="col-sm-12 col-12 col-md-12 P-2">
+          <div class="row">
+            <div class="col-sm-12 col-12 col-md-6 p-2">
+              <h6>DATOS DEL BIEN</h6>
+            </div>
+            <div class="col-sm-12 col-12 col-md-6 p-2 text-center">
+              <div class="form-group">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active"
+                  (click)="btnBienes()">
+                  Bienes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('noBien')" label="No. Bien">
-            <!-- <label class="label w-100">No. Bien</label> -->
             <input
               class="form-control"
               formControlName="noBien"
               placeholder="No. Bien" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-          <div class="form-group">
-            <input class="form-control" placeholder="Detalle No. Bien" />
-            <label class="form-control-label w-100">Detalle No. Bien</label>
-          </div>
-        </div>
-        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-          <div class="form-group">
-            <input class="form-control" placeholder="Codigo No. Bien" />
-            <label class="form-control-label w-100">Codigo No. Bien</label>
-          </div>
-        </div>
-        <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-2">
+        <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('averiguacionPrevia')"
             label="Averiguación Previa">
-            <!-- <label class="label w-100">Averiguación Previa</label> -->
             <input
               class="form-control"
               formControlName="averiguacionPrevia"
               placeholder="Averiguación Previa" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-2">
+        <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('causaPenal')" label="Causa Penal">
-            <!-- <label class="label w-100">Causa Penal</label> -->
             <input
               class="form-control"
               formControlName="causaPenal"
               placeholder="Causa Penal" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-2">
+        <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('estatusBien')"
             label="Estatus del Bien">
-            <!-- <label class="label w-100">Estatus del Bien</label> -->
             <input
               class="form-control"
               formControlName="estatusBien"
               placeholder="Estatus del Bien" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-2">
+        <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
             [control]="form.get('fechaAcuerdoAsegurado')"
             label="Fecha de Acuerdo Asegurado">
@@ -71,7 +70,7 @@
               bsDatepicker />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-2">
+        <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
             [control]="form.get('fechaRecepcion')"
             label="Fecha de Recepcion">
@@ -82,7 +81,7 @@
               bsDatepicker />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-2">
+        <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
             [control]="form.get('fechaDecomiso')"
             label="Fecha de Decomiso">
@@ -93,12 +92,7 @@
               bsDatepicker />
           </form-field>
         </div>
-        <!-- </div>
-                    <hr class="row">
-                </div> -->
-        <!-- <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-                    <div class="row w-100"> -->
-        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+        <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('tipoNombramiento')"
             label="Tipo de Nombramiento">
@@ -114,7 +108,7 @@
             </select>
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+        <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('estatus')" label="Estatus">
             <select class="form-control" formControlName="estatus">
               <option [value]="null">Seleccione un valor</option>
@@ -123,286 +117,217 @@
             </select>
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+        <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('tipoDepositaria')"
             label="Tipo de Depositaria">
-            <!-- <label class="label w-100">Tipo de Depositaria</label> -->
             <input
               class="form-control"
               formControlName="tipoDepositaria"
               placeholder="Tipo de Depositaria" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
-          <div class="form-group">
-            <input
-              class="form-control"
-              placeholder="Detalle Tipo Depositaria" />
-            <label class="form-control-label w-100"
-              >Detalle Tipo Depositaria</label
-            >
-          </div>
-        </div>
-        <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-2">
+        <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('representanteSAE')"
             label="Representante SAE">
-            <label class="form-control-label w-100">Representante SAE</label>
             <input
               class="form-control"
               formControlName="representanteSAE"
               placeholder="Representante SAE" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-2">
+        <div class="col-sm-12 col-12 col-md-6 p-2">
           <form-field [control]="form.get('nombre')" label="Nombre">
-            <label class="form-control-label w-100">Nombre</label>
             <input
               class="form-control"
               formControlName="nombre"
               placeholder="Nombre" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-2">
-          <form-radio label="Sin Mensaje" for="sinMensaje">
-            <input
-              id="sinMensaje"
-              type="radio"
-              formControlName="bienesMensaje"
-              value="Sin Mensaje" />
-          </form-radio>
-          <form-radio label="Con Mensaje" for="conMensaje">
-            <input
-              id="conMensaje"
-              type="radio"
-              formControlName="bienesMensaje"
-              value="Con Mensaje" />
-          </form-radio>
-
-          <!-- <div class="form-group">
-                                <nb-radio-group formControlName="bienesMensaje" class="form-control">
-                                    <nb-radio class="p-2" value="Sin Mensaje">Sin Mensaje</nb-radio>
-                                    <nb-radio class="p-2" value="Con Mensaje">Con Mensaje</nb-radio>
-                                </nb-radio-group>
-                                
-                            </div> -->
-        </div>
-        <div class="col-sm-12 col-12 col-md-6 col-lg-4 p-2">
-          <div class="form-group">
-            <button
-              type="button"
-              nbButton
-              status="primary"
-              (click)="btnBienes()">
-              Bienes
-            </button>
-            <!-- <label class="label">&nbsp;</label>&nbsp;  
-                                <div class="d-flex justify-content-center">
-                                </div> -->
+        <div class="col-sm-12 col-12 col-md-6 p-2">
+          <div class="row w-100 pl-4">
+            <label class="form-control-label">Tipo Volante</label>
+            <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2 text-center">
+              <form-radio label="Sin Mensaje" for="sinMensaje">
+                <input
+                  id="sinMensaje"
+                  type="radio"
+                  formControlName="bienesMensaje"
+                  value="Sin Mensaje" />
+              </form-radio>
+            </div>
+            <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2 text-center">
+              <form-radio label="Con Mensaje" for="conMensaje">
+                <input
+                  id="conMensaje"
+                  type="radio"
+                  formControlName="bienesMensaje"
+                  value="Con Mensaje" />
+              </form-radio>
+            </div>
           </div>
         </div>
-        <!-- </div>
-                    <hr class="row">
-                </div> -->
-        <!-- <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-                    <div class="row w-100"> -->
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+        <div class="col-sm-12 col-12 col-md-12 P-2">
+          <div class="row">
+            <div class="col-sm-12 col-12 col-md-6 p-2">
+              <h6>DATOS DE LA DIRECCIÓN</h6>
+            </div>
+            <div class="col-sm-12 col-12 col-md-6 p-2 text-center">
+              <div class="form-group">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active"
+                  (click)="btnCatalogoDepositarias()">
+                  Catálogo Depositarías
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('depositaria')" label="Depositaria">
-            <!-- <label class="label w-100">Depositaria</label> -->
             <input
               class="form-control"
               formControlName="depositaria"
               placeholder="Depositaria" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2">
-          <div class="form-group">
-            <input class="form-control" placeholder="Detalle Depositaria" />
-            <label class="form-control-label w-100">Detalle Depositaria</label>
-          </div>
-        </div>
-        <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2">
+        <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('representante')"
             label="Representante">
-            <!-- <label class="label w-100">Representante</label> -->
             <input
               class="form-control"
               formControlName="representante"
               placeholder="Representante" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
+        <div class="col-sm-12 col-12 col-md-6 p-2">
           <form-field [control]="form.get('calle')" label="Calle">
-            <!-- <label class="label w-100">Calle</label> -->
             <input
               class="form-control"
               formControlName="calle"
               placeholder="Calle" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+        <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field [control]="form.get('noExterno')" label="No. Externo">
-            <!-- <label class="label w-100">No. Externo</label> -->
             <input
               class="form-control"
               formControlName="noExterno"
               placeholder="No. Externo" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+        <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field [control]="form.get('noInterno')" label="No. Interno">
-            <!-- <label class="label w-100">No. Interno</label> -->
             <input
               class="form-control"
               formControlName="noInterno"
               placeholder="No. Interno" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
-          <form-field [control]="form.get('colonia')" label="Colonia">
-            <!-- <label class="label w-100">Colonia</label> -->
-            <input
-              class="form-control"
-              formControlName="colonia"
-              placeholder="Colonia" />
-          </form-field>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <ngx-select
+            [data]="items"
+            bindLabel="coloniaName"
+            label="Colonia"
+            value="id"
+            (fetchItems)="getFromSelect($event)"
+            [form]="form"
+            control="colonia"></ngx-select>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
-          <form-field
-            [control]="form.get('delegacionMunicipio')"
-            label="Delegacion/Municipio">
-            <!-- <label class="label w-100">Delegación/Municipio</label> -->
-            <input
-              class="form-control"
-              formControlName="delegacionMunicipio"
-              placeholder="Delegación/Municipio" />
-          </form-field>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <ngx-select
+            [data]="items"
+            bindLabel="delegacionMunicipioName"
+            label="Delegación/Municipio"
+            value="id"
+            (fetchItems)="getFromSelect($event)"
+            [form]="form"
+            control="delegacionMunicipio"></ngx-select>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+        <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
             [control]="form.get('codigoPostal')"
             label="Codigo Postal">
-            <!-- <label class="label w-100">Codigo Postal</label> -->
             <input
               class="form-control"
               formControlName="codigoPostal"
               placeholder="Codigo Postal" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-          <form-field
-            [control]="form.get('entidadFederativa')"
-            label="Entidad Federativa">
-            <!-- <label class="label w-100">Entidad Federativa</label> -->
-            <input
-              class="form-control"
-              formControlName="entidadFederativa"
-              placeholder="Entidad Federativa" />
-          </form-field>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <ngx-select
+            [data]="items"
+            bindLabel="entidadFederativaName"
+            label="Entidad Federativa"
+            value="id"
+            (fetchItems)="getFromSelect($event)"
+            [form]="form"
+            control="entidadFederativa"></ngx-select>
         </div>
-        <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
-          <div class="form-group">
-            <input
-              class="form-control"
-              placeholder="Detalle Entidad Federativa" />
-            <label class="form-control-label w-100"
-              >Detalle Entidad Federativa</label
-            >
-          </div>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+        <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('telefono')" label="Teléfono">
-            <!-- <label class="label w-100">Teléfono</label> -->
             <input
               class="form-control"
               formControlName="telefono"
               placeholder="Teléfono" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+        <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('rfc')" label="RFC">
-            <!-- <label class="label w-100">RFC</label> -->
             <input
               class="form-control"
               formControlName="rfc"
               placeholder="RFC" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+        <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('curp')" label="CURP">
-            <!-- <label class="label w-100">CURP</label> -->
             <input
               class="form-control"
               formControlName="curp"
               placeholder="CURP" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-          <form-field [control]="form.get('tipoPersona')" label="Tipo Persona">
-            <!-- <label class="label w-100">Tipo Persona (Legal)</label> -->
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field
+            [control]="form.get('tipoPersona')"
+            label="Tipo Persona (FÍSICA/MORAL)">
             <input
               class="form-control"
               formControlName="tipoPersona"
-              placeholder="Tipo Persona" />
+              placeholder="Tipo Persona (FÍSICA/MORAL)" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-          <form-field [control]="form.get('tipoPersona')" label="Tipo Persona">
-            <!-- <label class="label w-100">Tipo Persona (Trabajo)</label> -->
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field
+            [control]="form.get('tipoPersona2')"
+            label="Tipo Persona (DEDICACIÓN)">
             <input
               class="form-control"
-              formControlName="tipoPersona"
-              placeholder="Tipo Persona 2" />
+              formControlName="tipoPersona2"
+              placeholder="Tipo Persona (DEDICACIÓN) 2" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-          <form-field [control]="form.get('giro')" label="Giro">
-            <!-- <label class="label w-100">Giro</label> -->
-            <input
-              class="form-control"
-              formControlName="giro"
-              placeholder="Giro" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-7 col-lg-7 p-2">
-          <div class="form-group">
-            <input class="form-control" placeholder="Detalle Giro" />
-            <label class="form-control-label w-100">Detalle Giro</label>
-          </div>
-        </div>
-        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+        <div class="col-sm-12 col-12 col-md-6 p-2">
           <form-field [control]="form.get('referencia')" label="Referencia">
-            <label class="form-control-label w-100">Referencia</label>
             <input
               class="form-control"
               formControlName="referencia"
               placeholder="Referencia" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
-          <div class="form-group">
-            <button
-              type="button"
-              nbButton
-              status="primary"
-              (click)="btnCatalogoDepositarias()">
-              Catálogo Depositarías
-            </button>
-            <!-- <label class="label">&nbsp;</label>&nbsp;  
-                                <div class="d-flex justify-content-center">
-                                </div> -->
-          </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field [control]="form.get('giro')" label="Giro">
+            <input
+              class="form-control"
+              formControlName="giro"
+              placeholder="Giro" />
+          </form-field>
         </div>
-        <!-- </div>
-                    <hr class="row">
-                </div> -->
-        <!-- <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
-                    <div class="row w-100"> -->
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-          <!-- <div class="form-group"> -->
-
+        <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-check label="Con Remoción" for="remocion">
             <input
               id="remocion"
@@ -410,13 +335,8 @@
               formControlName="remocion"
               (click)="toggleRemocion($event)" />
           </form-check>
-          <!-- <label class="label w-100">Con Remoción</label>
-                                <nb-checkbox fullWidth class="form-control" formControlName="remocion" 
-                                (checkedChange)="toggleRemocion($event)">Remoción</nb-checkbox> -->
-
-          <!-- </div> -->
         </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+        <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('fecha')" label="Fecha">
             <input
               class="form-control"
@@ -425,29 +345,21 @@
               bsDatepicker />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+        <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field [control]="form.get('noOficio')" label="No. Oficio">
-            <!-- <label class="label w-100">No. Oficio</label> -->
             <input
               class="form-control"
               formControlName="noOficio"
               placeholder="No. Oficio" />
           </form-field>
         </div>
-        <!-- </div>
-                    <div class="row w-100"> -->
-        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-0 text-center">
-          <div class="form-group m-1">
-            <label class="form-control-label w-100 fs-3"
-              >Acuerdo Junta Gobierno</label
-            >
-          </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2">
+          <h6>Acuerdo Junta Gobierno</h6>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+        <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field
             [control]="form.get('fechaAcuerdo')"
             label="Fecha Acuerdo">
-            <!-- <label class="label w-100">Fecha Acuerdo</label> -->
             <input
               class="form-control"
               formControlName="fechaAcuerdo"
@@ -455,272 +367,209 @@
               bsDatapicker />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
+        <div class="col-sm-12 col-12 col-md-8 p-2">
           <form-field [control]="form.get('noAcuerdo')" label="No. Acuerdo">
-            <!-- <label class="label w-100">No. Acuerdo</label> -->
             <input
               class="form-control"
               formControlName="noAcuerdo"
               placeholder="No. Acuerdo" />
           </form-field>
         </div>
-        <!-- </div>
-                </div> -->
-        <!-- <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
-                    <div class="row w-100"> -->
-        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+        <div class="col-sm-12 col-12 col-md-12 p-2">
+          <h6>Contrapresentación/Nombramiento</h6>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
           <div class="form-group m-1">
             <input class="form-control" placeholder="Contrapresentación" />
             <label class="label w-100">Contrapresentación</label>
           </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+        <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field [control]="form.get('honorarios')" label="Honorarios">
-            <!-- <label class="label w-100">Honorarios</label> -->
             <input
               class="form-control"
               formControlName="honorarios"
               placeholder="Honorarios" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+        <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field [control]="form.get('iva')" label="Iva">
-            <!-- <label class="label w-100">Iva</label> -->
             <input
               class="form-control"
               formControlName="iva"
               placeholder="Iva" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+        <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field [control]="form.get('fechaInicio')" label="Fecha Inicio">
-            <!-- <label class="label w-100">Fecha Inicio</label> -->
             <input
               class="form-control"
               formControlName="fechaInicio"
               placeholder="Fecha Inicio" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
+        <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field
             [control]="form.get('noNombramiento')"
             label="No. Nombramiento">
-            <!-- <label class="label w-100">No. Nombramiento</label> -->
             <input
               class="form-control"
               formControlName="noNombramiento"
               placeholder="No. Nombramiento" />
           </form-field>
         </div>
-        <!-- </div>
-                </div> -->
-        <!-- <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-                    <hr class="row">
-                    <div class="row w-100"> -->
-        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+        <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('anexo')" label="Anexo">
-            <!-- <label class="label w-100">Anexo</label> -->
             <textarea
               placeholder="Anexo"
               class="form-control"
               formControlName="anexo"></textarea>
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+        <div class="col-sm-12 col-12 col-md-9 p-2">
           <form-field
             [control]="form.get('observaciones')"
             label="Observaciones">
-            <!-- <label class="label w-100">Observaciones</label> -->
             <textarea
               placeholder="Observaciones"
               class="form-control"
               formControlName="observaciones"></textarea>
           </form-field>
         </div>
-        <!-- </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-                    <hr class="row">
-                    <div class="row w-100"> -->
-        <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2">
-          <form-field
-            [control]="form.get('folioRemocion')"
-            label="Folio de Remoción">
-            <!-- <label class="label w-100">Folio de Remoción</label> -->
-            <input
-              class="form-control"
-              formControlName="folioRemocion"
-              placeholder="Folio de Remoción" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2">
-          <form-field
-            [control]="form.get('folioActaDepositaria')"
-            label="Folio Acta Depositaria">
-            <!-- <label class="label w-100">Folio Acta Depositaria</label> -->
-            <input
-              class="form-control"
-              formControlName="folioActaDepositaria"
-              placeholder="Folio Acta Depositaria" />
-          </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-          <div class="form-group">
-            <!-- <label class="label">&nbsp;</label>&nbsp;   -->
-            <!-- <div class="d-flex justify-content-center"> -->
-            <button
-              type="button"
-              nbButton
-              status="primary"
-              (click)="btnReplicarFolio()"
-              class="text-wrap">
-              Replicar Folio
-            </button>
-            <!-- </div> -->
+        <div class="col-sm-12 col-12 col-md-12 P-2">
+          <div class="row">
+            <div class="col-sm-12 col-12 col-md-12 p-2">
+              <h6>DATOS DE LA DIRECCIÓN</h6>
+            </div>
+            <div class="col-sm-12 col-12 col-md-5 p-2">
+              <form-field
+                [control]="form.get('folioRemocion')"
+                label="Folio de Remoción">
+                <input
+                  class="form-control"
+                  formControlName="folioRemocion"
+                  placeholder="Folio de Remoción" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-5 p-2">
+              <form-field
+                [control]="form.get('folioActaDepositaria')"
+                label="Folio Acta Depositaria">
+                <input
+                  class="form-control"
+                  formControlName="folioActaDepositaria"
+                  placeholder="Folio Acta Depositaria" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-6 p-2 text-center">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active text-wrap"
+                (click)="btnReplicarFolio()">
+                Replicar Folio
+              </button>
+            </div>
           </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-          <div class="form-group">
-            <!-- <label class="label">&nbsp;</label>&nbsp;   -->
-            <!-- <div class="d-flex justify-content-center"> -->
-            <button
-              type="button"
-              nbButton
-              status="primary"
-              (click)="btnCatalogoDepositariasPersona()"
-              class="text-wrap">
-              Cátalogo Depositarias
-            </button>
-            <!-- </div> -->
+        <div class="col-sm-12 col-12 col-md-6 P-2">
+          <div class="row">
+            <div class="col-sm-12 col-12 col-md-12 p-2">
+              <h6>CONSULTAS</h6>
+            </div>
+            <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+              <div class="form-group">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active text-wrap h-100"
+                  (click)="btnCatalogoDepositariasPersona()">
+                  Cátalogo Depositarias
+                </button>
+              </div>
+              <div class="form-group">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active text-wrap h-100"
+                  (click)="btnConsultarImagenesEscaneadas()">
+                  Consultar Imágenes Escaneadas
+                </button>
+              </div>
+              <div class="form-group">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active text-wrap h-100"
+                  (click)="btnCatalogoConceptosPagos()">
+                  Cátalogo Conceptos de Pagos
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+        <div class="col-sm-12 col-12 col-md-6 P-2">
+          <div class="row">
+            <div class="col-sm-12 col-12 col-md-12 p-2">
+              <h6>REPORTES</h6>
+            </div>
+            <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+              <div class="form-group">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active text-wrap h-100"
+                  (click)="btnReportesJuridicos()">
+                  Reportes Jurídicos
+                </button>
+              </div>
+              <div class="form-group">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active text-wrap h-100"
+                  (click)="btnReportesAdministrativos()">
+                  Reportes Administrativos
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-12 col-12 col-md-4 col-lg-3 p-2">
           <div class="form-group">
-            <!-- <label class="label">&nbsp;</label>&nbsp;   -->
-            <!-- <div class="d-flex justify-content-center"> -->
             <button
               type="button"
-              nbButton
-              status="primary"
-              (click)="btnFolioEscaneoSolicitud()"
-              class="text-wrap">
+              class="btn btn-primary btn-sm active text-wrap h-100"
+              (click)="btnFolioEscaneoSolicitud()">
               Generar Folio de Escaneo y Solicitud
             </button>
-            <!-- </div> -->
           </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+        <div class="col-sm-12 col-12 col-md-4 col-lg-3 p-2">
           <div class="form-group">
-            <!-- <label class="label">&nbsp;</label>&nbsp;   -->
-            <!-- <div class="d-flex justify-content-center"> -->
             <button
               type="button"
-              nbButton
-              status="primary"
-              (click)="btnImprimirSolicitudEscaneo()"
-              class="text-wrap">
+              class="btn btn-primary btn-sm active text-wrap h-100"
+              (click)="btnImprimirSolicitudEscaneo()">
               Imprimir Solicitud de Escaneo
             </button>
-            <!-- </div> -->
           </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+        <div class="col-sm-12 col-12 col-md-4 col-lg-3 p-2">
           <div class="form-group">
-            <!-- <label class="label">&nbsp;</label>&nbsp;   -->
-            <!-- <div class="d-flex justify-content-center"> -->
             <button
               type="button"
-              nbButton
-              status="primary"
-              (click)="btnConsultarImagenesEscaneadas()"
-              class="text-wrap">
-              Consultar Imágenes Escaneadas
-            </button>
-            <!-- </div> -->
-          </div>
-        </div>
-        <!-- </div>
-                </div> -->
-        <!-- <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-                    <hr class="row">
-                    <div class="row w-100"> -->
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-          <div class="form-group">
-            <!-- <label class="label">&nbsp;</label>&nbsp;   -->
-            <!-- <div class="d-flex justify-content-center"> -->
-            <button
-              type="button"
-              nbButton
-              status="primary"
-              (click)="btnDetallesPago()"
-              class="text-wrap">
+              class="btn btn-primary btn-sm active text-wrap h-100"
+              (click)="btnDetallesPago()">
               Detalles de Pagos
             </button>
-            <!-- </div> -->
           </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+        <div class="col-sm-12 col-12 col-md-4 col-lg-3 p-2">
           <div class="form-group">
-            <!-- <label class="label">&nbsp;</label>&nbsp;   -->
-            <!-- <div class="d-flex justify-content-center"> -->
             <button
               type="button"
-              nbButton
-              status="primary"
-              (click)="btnReportesJuridicos()"
-              class="text-wrap">
-              Reportes Jurídicos
-            </button>
-            <!-- </div> -->
-          </div>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-          <div class="form-group">
-            <!-- <label class="label">&nbsp;</label>&nbsp;   -->
-            <!-- <div class="d-flex justify-content-center"> -->
-            <button
-              type="button"
-              nbButton
-              status="primary"
-              (click)="btnReportesAdministrativos()"
-              class="text-wrap">
-              Reportes Administrativos
-            </button>
-            <!-- </div> -->
-          </div>
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-          <div class="form-group">
-            <!-- <label class="label">&nbsp;</label>&nbsp;   -->
-            <!-- <div class="d-flex justify-content-center"> -->
-            <button
-              type="button"
-              nbButton
-              status="primary"
-              (click)="btnIngresoMasivoPagos()"
-              class="text-wrap">
+              class="btn btn-primary btn-sm active text-wrap h-100"
+              (click)="btnIngresoMasivoPagos()">
               Ingreso Masivo de Pagos
             </button>
-            <!-- </div> -->
           </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-          <div class="form-group">
-            <!-- <label class="label">&nbsp;</label>&nbsp;   -->
-            <!-- <div class="d-flex justify-content-center"> -->
-            <button
-              type="button"
-              nbButton
-              status="primary"
-              (click)="btnCatalogoConceptosPagos()"
-              class="text-wrap">
-              Cátalogo Conceptos de Pagos
-            </button>
-            <!-- </div> -->
-          </div>
-        </div>
-        <!-- </div>
-                </div> -->
       </div>
     </form>
   </div>
