@@ -8,9 +8,8 @@ describe('FactJurregDestLegComponet', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FactJurregDestLegComponent ]
-    })
-    .compileComponents();
+      declarations: [FactJurregDestLegComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDocCompesationSat } from 'src/app/core/models/catalogs/doc-compesation-sat.model';
 import { DocCompensationSATService } from 'src/app/core/services/catalogs/doc-compesation-sat.service';
@@ -12,11 +12,12 @@ import { DOCCOMPENSATIONSAT_COLUMS } from './doc-compensation-sat-columns';
 @Component({
   selector: 'app-doc-compensation-sat-list',
   templateUrl: './doc-compensation-sat-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class DocCompensationSatListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
+export class DocCompensationSatListComponent
+  extends BasePage
+  implements OnInit
+{
   paragraphs: IDocCompesationSat[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

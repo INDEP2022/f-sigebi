@@ -5,12 +5,12 @@ import { ConsultationGoodsCommercialProcessTabsComponent } from './consultation-
 const routes: Routes = [
   {
     path: '',
-    component: ConsultationGoodsCommercialProcessTabsComponent
-  }
+    component: ConsultationGoodsCommercialProcessTabsComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ConsultationGoodsCommercialProcessTabsRoutingModule { }
+export class ConsultationGoodsCommercialProcessTabsRoutingModule {}

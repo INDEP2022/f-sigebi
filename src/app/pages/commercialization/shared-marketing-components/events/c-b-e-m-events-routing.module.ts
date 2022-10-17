@@ -6,12 +6,12 @@ import { CBEpcCEventPermissionControlComponent } from './event-permission-contro
 const routes: Routes = [
   {
     path: '',
-    component: CBEpcCEventPermissionControlComponent
-  }
+    component: CBEpcCEventPermissionControlComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CBEMEventsRoutingModule { }
+export class CBEMEventsRoutingModule {}

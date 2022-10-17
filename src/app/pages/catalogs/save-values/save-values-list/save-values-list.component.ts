@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISaveValue } from 'src/app/core/models/catalogs/save-value.model';
 import { SaveValueService } from 'src/app/core/services/catalogs/save-value.service';
@@ -12,20 +12,17 @@ import { SAVE_VALUES_COLUMNS } from './save-values-columns';
 @Component({
   selector: 'app-save-values-list',
   templateUrl: './save-values-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class SaveValuesListComponent extends BasePage implements OnInit {
-
-  settings = TABLE_SETTINGS;
   paragraphs: ISaveValue[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  
+
   constructor(
     private saveValueService: SaveValueService,
     private modalService: BsModalService
-  ) { 
+  ) {
     super();
     this.settings.columns = SAVE_VALUES_COLUMNS;
     this.settings.actions.delete = true;
@@ -37,7 +34,7 @@ export class SaveValuesListComponent extends BasePage implements OnInit {
       .subscribe(() => this.getSaveValues());
   }
 
-  getSaveValues(){
+  getSaveValues() {
     this.loading = true;
     this.saveValueService.getAll(this.params.getValue()).subscribe({
       next: response => {
@@ -69,13 +66,12 @@ export class SaveValuesListComponent extends BasePage implements OnInit {
       'Eliminar',
       '¿Desea eliminar este registro?'
     ).then(question => {
-      if(question.isConfirmed){
+      if (question.isConfirmed) {
         this.saveValueService.remove(saveValue.cve).subscribe({
           next: data => this.getSaveValues(),
           error: error => (this.loading = false),
         });
       }
     });
-  } 
+  }
 }
-

@@ -8,15 +8,12 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
 @NgModule({
-  declarations: [
-    GranteesListComponent,
-    GranteesFormComponent
-  ],
+  declarations: [GranteesListComponent, GranteesFormComponent],
   imports: [
     CommonModule,
     GrateesRoutingModule,
     SharedModule,
-    ModalModule.forChild()
-  ]
+    ModalModule.forChild(),
+  ],
 })
-export class GranteesModule { }
+export class GranteesModule {}

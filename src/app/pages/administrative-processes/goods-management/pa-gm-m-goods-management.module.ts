@@ -9,17 +9,14 @@ import { PaGmMGoodsManagementRoutingModule } from './pa-gm-m-goods-management-ro
 //Components
 import { PaGmscCGoodsManagementSocialCabinetComponent } from './goods-management-social-cabinet/pa-gmsc-c-goods-management-social-cabinet.component';
 
-
 @NgModule({
-  declarations: [
-    PaGmscCGoodsManagementSocialCabinetComponent
-  ],
+  declarations: [PaGmscCGoodsManagementSocialCabinetComponent],
   imports: [
     CommonModule,
     PaGmMGoodsManagementRoutingModule,
     SharedModule,
     FormsModule,
-    ReactiveFormsModule
-  ]
+    ReactiveFormsModule,
+  ],
 })
-export class PaGmMGoodsManagementModule { }
+export class PaGmMGoodsManagementModule {}

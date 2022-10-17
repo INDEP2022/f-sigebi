@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IOriginCisi } from 'src/app/core/models/catalogs/origin-cisi.model';
 import { OiriginCisiService } from 'src/app/core/services/catalogs/origin-cisi.service';
@@ -13,12 +13,9 @@ import { OrignCisiFormComponent } from '../orign-cisi-form/orign-cisi-form.compo
 @Component({
   selector: 'app-origin-cisi-list',
   templateUrl: './origin-cisi-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class OriginCisiListComponent extends BasePage implements OnInit {
-
-  settings = TABLE_SETTINGS;
   originCisis: IOriginCisi[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -75,5 +72,4 @@ export class OriginCisiListComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }

@@ -1,28 +1,30 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { CONSUL_GOODS_COMMER_SALES_COLUMNS } from './consul-goods-commer-sales-columns';
 
-import { ExcelService } from 'src/app/common/services/exportToExcel.service'; 
+import { ExcelService } from 'src/app/common/services/exporttoexcel.service';
 
 @Component({
   selector: 'app-c-bm-cdb-c-consultation-goods-commercial-sales',
-  templateUrl: './c-bm-cdb-c-consultation-goods-commercial-sales.component.html',
-  styles: [
-  ]
+  templateUrl:
+    './c-bm-cdb-c-consultation-goods-commercial-sales.component.html',
+  styles: [],
 })
-export class CBmCdbCConsultationGoodsCommercialSalesComponent extends BasePage implements OnInit {
+export class CBmCdbCConsultationGoodsCommercialSalesComponent
+  extends BasePage
+  implements OnInit
+{
+  form: FormGroup = new FormGroup({});
 
-  settings = {
-    ...TABLE_SETTINGS,
-    actions: false
-  };
-  form: FormGroup = new FormGroup({}); 
-
-  constructor(private fb: FormBuilder, private excelService:ExcelService) {
+  constructor(private fb: FormBuilder, private excelService: ExcelService) {
     super();
-    this.settings.columns = CONSUL_GOODS_COMMER_SALES_COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...CONSUL_GOODS_COMMER_SALES_COLUMNS },
+    };
   }
 
   ngOnInit(): void {
@@ -47,7 +49,6 @@ export class CBmCdbCConsultationGoodsCommercialSalesComponent extends BasePage i
       reference: ['', [Validators.required]],
       dateFromEvent: ['', [Validators.required]],
       dateToEvent: ['', [Validators.required]],
-
     });
   }
 
@@ -60,32 +61,31 @@ export class CBmCdbCConsultationGoodsCommercialSalesComponent extends BasePage i
       cantidad: '1 PIEZA. ESMERIL ELECTRICO MARCA HDC',
       eventoPublico: '1.00',
       lotePublico: '1491',
-      estatus: 'CNE'
+      estatus: 'CNE',
     },
-     {
-       evento: '1491 - SUBASTA ELECTRÓNICA',
-       lote: '170940',
-       expediente: '394029',
-       noSiab: '794676',
-       cantidad: '1 PIEZA. ESMERIL ELECTRICO MARCA HDC',
-       eventoPublico: '',
-       lotePublico: '',
-       estatus: 'CNE'
-     },
-     {
-       evento: '1491 - SUBASTA ELECTRÓNICA',
-       lote: '170940',
-       expediente: '394029',
-       noSiab: '794676',
-       cantidad: '1 PIEZA. ESMERIL ELECTRICO MARCA HDC',
-       eventoPublico: '',
-       lotePublico: '',
-       estatus: 'CNE'
-     }
-   ]
+    {
+      evento: '1491 - SUBASTA ELECTRÓNICA',
+      lote: '170940',
+      expediente: '394029',
+      noSiab: '794676',
+      cantidad: '1 PIEZA. ESMERIL ELECTRICO MARCA HDC',
+      eventoPublico: '',
+      lotePublico: '',
+      estatus: 'CNE',
+    },
+    {
+      evento: '1491 - SUBASTA ELECTRÓNICA',
+      lote: '170940',
+      expediente: '394029',
+      noSiab: '794676',
+      cantidad: '1 PIEZA. ESMERIL ELECTRICO MARCA HDC',
+      eventoPublico: '',
+      lotePublico: '',
+      estatus: 'CNE',
+    },
+  ];
 
-   exportAsXLSX():void {
+  exportAsXLSX(): void {
     this.excelService.exportAsExcelFile(this.data, 'ventas');
   }
-
 }

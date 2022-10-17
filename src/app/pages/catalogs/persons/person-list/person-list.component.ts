@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IPerson } from 'src/app/core/models/catalogs/person.model';
 import { PersonService } from 'src/app/core/services/catalogs/person.service';
@@ -12,12 +12,9 @@ import { PERSON_COLUMNS } from './person-columns';
 @Component({
   selector: 'app-person-list',
   templateUrl: './person-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PersonListComponent extends BasePage implements OnInit {
-
-  settings = TABLE_SETTINGS;
   persons: IPerson[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -74,5 +71,4 @@ export class PersonListComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }

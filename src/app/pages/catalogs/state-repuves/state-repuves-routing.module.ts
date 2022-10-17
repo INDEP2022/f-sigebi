@@ -4,12 +4,13 @@ import { StateRepuvesListComponent } from './state-repuves-list/state-repuves-li
 
 const routes: Routes = [
   {
-    path:'',component:StateRepuvesListComponent
-  }
+    path: '',
+    component: StateRepuvesListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class StateRepuvesRoutingModule { }
+export class StateRepuvesRoutingModule {}

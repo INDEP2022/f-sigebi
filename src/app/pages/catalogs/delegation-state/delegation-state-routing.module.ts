@@ -5,12 +5,12 @@ import { DelegationStateListComponent } from './delegation-state-list/delegation
 const routes: Routes = [
   {
     path: '',
-    component: DelegationStateListComponent
-  }
+    component: DelegationStateListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class DelegationStateRoutingModule { }
+export class DelegationStateRoutingModule {}

@@ -5,12 +5,12 @@ import { AppraisalRegistryComponent } from './appraisal-registry/appraisal-regis
 const routes: Routes = [
   {
     path: '',
-    component: AppraisalRegistryComponent
-  }
+    component: AppraisalRegistryComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppraisalRegistryRoutingModule { }
+export class AppraisalRegistryRoutingModule {}

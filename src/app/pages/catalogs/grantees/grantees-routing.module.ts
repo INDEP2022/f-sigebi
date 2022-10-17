@@ -5,12 +5,12 @@ import { GranteesListComponent } from './grantees-list/grantees-list.component';
 const routes: Routes = [
   {
     path: '',
-    component: GranteesListComponent
-  }
+    component: GranteesListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class GrateesRoutingModule { }
+export class GrateesRoutingModule {}

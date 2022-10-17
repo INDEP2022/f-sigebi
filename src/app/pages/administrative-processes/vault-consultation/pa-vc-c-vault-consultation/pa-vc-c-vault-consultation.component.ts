@@ -6,90 +6,37 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { ExampleGood } from '../../kitchenware/pa-k-c-property-registration/pa-k-c-property-registration.component';
 import { PaVcCModalListGoodsComponent } from '../pa-vc-c-modal-list-goods/pa-vc-c-modal-list-goods.component';
 
-export interface ExampleVault{
-  number: number,
-  description: string,
-  location: string,
-  responsible: string,
-  entity: string,
-  municipality: string,
-  city: string,
-  locality: string,
-  goods?: ExapleGoods[]
+export interface ExampleVault {
+  number: number;
+  description: string;
+  location: string;
+  responsible: string;
+  entity: string;
+  municipality: string;
+  city: string;
+  locality: string;
+  goods?: ExapleGoods[];
 }
 
-
-export interface ExapleGoods{
-  numberGood: number,
-  description: string,
-  quantity: number,
-  dossier: string,
+export interface ExapleGoods {
+  numberGood: number;
+  description: string;
+  quantity: number;
+  dossier: string;
 }
 
 @Component({
   selector: 'app-pa-vc-c-vault-consultation',
   templateUrl: './pa-vc-c-vault-consultation.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class PaVcCVaultConsultationComponent extends BasePage implements OnInit {
-
+export class PaVcCVaultConsultationComponent
+  extends BasePage
+  implements OnInit
+{
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   //Data Table
-  settings = {
-    //selectMode: 'multi',
-    actions: {
-      add: false,
-      edit: false,
-      delete: false
-    },
-    hideSubHeader: true,//oculta subheaader de filtro
-    noDataMessage: "No se encontrarón registros",
-    mode: 'external', // ventana externa
-    columns: {
-      number: {
-        title: 'No',
-        width: '10%',
-        sort: false
-      },
-      description: {
-        title: 'Descripcion',
-        width: '20%',
-        sort: false
-      },
-      location: {
-        title: 'Ubicacion',
-        width: '10%',
-        sort: false
-      },
-      responsible: {
-        title: 'Responsable',
-        width: '10%',
-        sort: false
-      },
-      entity: {
-        title: 'Entidad',
-        width: '10%',
-        sort: false
-      },
-      municipality: {
-        title: 'Municipio',
-        width: '10%',
-        sort: false
-      },
-      city: {
-        title: 'Ciudad',
-        width: '10%',
-        sort: false
-      },
-      locality: {
-        title: 'Localidad',
-        width: '10%',
-        sort: false
-      }
-    },
-  };
 
   data: ExampleVault[] = [
     {
@@ -119,8 +66,8 @@ export class PaVcCVaultConsultationComponent extends BasePage implements OnInit 
           description: 'Descripción 3',
           quantity: 3000,
           dossier: 'Expediente 3',
-        }
-      ]
+        },
+      ],
     },
     {
       number: 2,
@@ -130,22 +77,70 @@ export class PaVcCVaultConsultationComponent extends BasePage implements OnInit 
       entity: 'Entidad 2',
       municipality: 'Municipio 2',
       city: 'Ciudad 2',
-      locality: 'Localidad 2'
-    }
+      locality: 'Localidad 2',
+    },
   ];
 
-  
-  constructor(private modalService: BsModalService) { super() }
-
-  ngOnInit(): void {
+  constructor(private modalService: BsModalService) {
+    super();
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: {
+        number: {
+          title: 'No',
+          width: '10%',
+          sort: false,
+        },
+        description: {
+          title: 'Descripcion',
+          width: '20%',
+          sort: false,
+        },
+        location: {
+          title: 'Ubicacion',
+          width: '10%',
+          sort: false,
+        },
+        responsible: {
+          title: 'Responsable',
+          width: '10%',
+          sort: false,
+        },
+        entity: {
+          title: 'Entidad',
+          width: '10%',
+          sort: false,
+        },
+        municipality: {
+          title: 'Municipio',
+          width: '10%',
+          sort: false,
+        },
+        city: {
+          title: 'Ciudad',
+          width: '10%',
+          sort: false,
+        },
+        locality: {
+          title: 'Localidad',
+          width: '10%',
+          sort: false,
+        },
+      },
+    };
   }
 
+  ngOnInit(): void {}
+
   select(event: any) {
-    event.data.goods ? this.openModal(event.data.goods) : this.alert('info','Ooop...','Esta Bóveda no contiene Bines');
+    event.data.goods
+      ? this.openModal(event.data.goods)
+      : this.alert('info', 'Ooop...', 'Esta Bóveda no contiene Bines');
   }
 
   openModal(data: any): void {
-    this.modalService.show( PaVcCModalListGoodsComponent , {
+    this.modalService.show(PaVcCModalListGoodsComponent, {
       initialState: data,
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,

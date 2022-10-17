@@ -4,12 +4,13 @@ import { TypeWharehouseListComponent } from './type-wharehouse-list/type-whareho
 
 const routes: Routes = [
   {
-    path:'',component:TypeWharehouseListComponent
-  }
+    path: '',
+    component: TypeWharehouseListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class TypeWharehouseRoutingModule { }
+export class TypeWharehouseRoutingModule {}

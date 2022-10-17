@@ -51,6 +51,26 @@ export const DOCUMENTS_RECEPTION_ROUTES = [
         label: 'Comprobación de Requisitos Documentales',
         link: '/pages/documents-reception/documents-requirements-verification',
       },
+      {
+        label: 'Cierre de Actas de Decomiso y Devolución',
+        link: '/pages/documents-reception/closing-of-confiscation-and-return-records',
+      },
+      {
+        label: 'Inventario por Expediente',
+        link: '/pages/documents-reception/records-inventory',
+      },
+      {
+        label: 'Previsión de Bienes',
+        link: '/pages/documents-reception/goods-forecast',
+      },
+      {
+        label: 'Validadores de Actas',
+        link: '/pages/documents-reception/records-validation',
+      },
+      {
+        label: 'Servicio de vigilancia para Bienes',
+        link: '/pages/documents-reception/goods-vigilance-service',
+      },
     ],
   },
 ];

@@ -4,13 +4,13 @@ import { PaVcCVaultConsultationComponent } from './pa-vc-c-vault-consultation/pa
 
 const routes: Routes = [
   {
-    path:'',
-    component: PaVcCVaultConsultationComponent
-  }
+    path: '',
+    component: PaVcCVaultConsultationComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PaMVaultConsultationRoutingModule { }
+export class PaMVaultConsultationRoutingModule {}

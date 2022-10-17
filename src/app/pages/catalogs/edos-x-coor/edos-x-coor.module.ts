@@ -8,17 +8,13 @@ import { EdosXCoorListComponent } from './edos-x-coor-list/edos-x-coor-list.comp
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
-  declarations: [
-    EdosXCoorListComponent,
-    EdosXCoorFormComponent
-  ],
+  declarations: [EdosXCoorListComponent, EdosXCoorFormComponent],
   imports: [
     CommonModule,
     EdosXCoorRoutingModule,
     SharedModule,
     ModalModule.forChild(),
-  ]
+  ],
 })
-export class EdosXCoorModule { }
+export class EdosXCoorModule {}

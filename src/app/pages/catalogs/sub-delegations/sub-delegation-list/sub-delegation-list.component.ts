@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
 import { SubdelegationService } from 'src/app/core/services/catalogs/subdelegation.service';
@@ -15,7 +15,6 @@ import { SUB_DELEGATION_COLUMS } from './sub-delegation-columns';
   styles: [],
 })
 export class SubDelegationListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
   paragraphs: ISubdelegation[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

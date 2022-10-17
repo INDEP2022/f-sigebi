@@ -15,13 +15,7 @@ import { PJDJJuridicalRulingRoutingModule } from './pj-dj-m-juridical-ruling-rou
 import { PJDJJuridicalRulingComponent } from './juridical-ruling/pj-dj-c-juridical-ruling.component';
 
 @NgModule({
-  declarations: [
-    PJDJJuridicalRulingComponent
-  ],
-  imports: [
-    CommonModule,
-    PJDJJuridicalRulingRoutingModule,
-    SharedModule,
-  ],
+  declarations: [PJDJJuridicalRulingComponent],
+  imports: [CommonModule, PJDJJuridicalRulingRoutingModule, SharedModule],
 })
 export class PJDJJuridicalRulingModule {}

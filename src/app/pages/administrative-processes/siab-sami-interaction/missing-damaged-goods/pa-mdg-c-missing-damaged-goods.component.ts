@@ -2,30 +2,28 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { COLUMNS } from './columns';
 
 @Component({
   selector: 'app-pa-mdg-c-missing-damaged-goods',
   templateUrl: './pa-mdg-c-missing-damaged-goods.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class PaMdgCMissingDamagedGoodsComponent extends BasePage implements OnInit {
-
+export class PaMdgCMissingDamagedGoodsComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
-  settings = TABLE_SETTINGS;
-  data:any[]=[];
+
+  data: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(private fb: FormBuilder) {
     super();
     this.settings.columns = COLUMNS;
-    this.settings.actions.add=false;
-    this.settings.actions.edit=false;
-    this.settings.actions.delete=false;
   }
 
   ngOnInit(): void {
@@ -41,10 +39,9 @@ export class PaMdgCMissingDamagedGoodsComponent extends BasePage implements OnIn
     });
   }
 
-  showInfo(){
-  }
+  showInfo() {}
 
-  delete(data:any) {
+  delete(data: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -56,8 +53,7 @@ export class PaMdgCMissingDamagedGoodsComponent extends BasePage implements OnIn
     });
   }
 
-  settingsChange($event:any): void {
-    this.settings=$event;
+  settingsChange($event: any): void {
+    this.settings = $event;
   }
-
 }

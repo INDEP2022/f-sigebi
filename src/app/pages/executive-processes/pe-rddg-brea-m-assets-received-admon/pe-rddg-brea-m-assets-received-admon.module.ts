@@ -9,18 +9,15 @@ import { DateRangeSharedComponent } from 'src/app/@standalone/shared-forms/date-
 import { PeRddgBreaMAssetsReceivedAdmonRoutingModule } from './pe-rddg-brea-m-assets-received-admon-routing.module';
 import { PeRddgBreaCAssetsReceivedAdmonComponent } from './pe-rddg-brea-c-assets-received-admon/pe-rddg-brea-c-assets-received-admon.component';
 
-
 @NgModule({
-  declarations: [
-    PeRddgBreaCAssetsReceivedAdmonComponent
-  ],
+  declarations: [PeRddgBreaCAssetsReceivedAdmonComponent],
   imports: [
     CommonModule,
     PeRddgBreaMAssetsReceivedAdmonRoutingModule,
     SharedModule,
     BsDatepickerModule,
     DelegationSharedComponent,
-    DateRangeSharedComponent
-  ]
+    DateRangeSharedComponent,
+  ],
 })
-export class PeRddgBreaMAssetsReceivedAdmonModule { }
+export class PeRddgBreaMAssetsReceivedAdmonModule {}

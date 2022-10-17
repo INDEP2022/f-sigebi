@@ -6,6 +6,6 @@ const routes: Routes = [{ path: '', component: RackListComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class RackRoutingModule { }
+export class RackRoutingModule {}

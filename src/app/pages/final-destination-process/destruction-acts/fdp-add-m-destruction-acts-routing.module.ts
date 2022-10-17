@@ -4,14 +4,14 @@ import { FdpAddCDestructionActsComponent } from './destruction-acts/fdp-add-c-de
 
 const routes: Routes = [
   {
-    path: "",
+    path: '',
     component: FdpAddCDestructionActsComponent,
-    data: { Title: 'Actas de destrucción' }
+    data: { Title: 'Actas de destrucción' },
   },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class FdpAddMDestructionActsRoutingModule { }
+export class FdpAddMDestructionActsRoutingModule {}

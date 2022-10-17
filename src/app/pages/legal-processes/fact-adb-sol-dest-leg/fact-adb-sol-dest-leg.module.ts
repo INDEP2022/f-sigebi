@@ -19,11 +19,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // import { MatInputModule } from '@angular/material/input';
 import { FactAdbSolDestLegComponent } from './fact-adb-sol-dest-leg/fact-adb-sol-dest-leg.component';
 
-@NgModule({ 
-  declarations: [ 
-    FactAdbSolDestLegComponent,
-    
-  ],
+@NgModule({
+  declarations: [FactAdbSolDestLegComponent],
   imports: [
     CommonModule,
     FactAdbSolDestLegRoutingModule,
@@ -43,14 +40,11 @@ import { FactAdbSolDestLegComponent } from './fact-adb-sol-dest-leg/fact-adb-sol
     // MatFormFieldModule,
     // NbDatepickerModule,
     NgSelectModule,
-    SharedModule
+    SharedModule,
   ],
-  exports:[
-    
+  exports: [
     // ComponentsModule,
-     NgSelectModule
-    
-  ]
+    NgSelectModule,
+  ],
 })
-export class FactAdbSolDestLegModule { }
-
+export class FactAdbSolDestLegModule {}

@@ -9,8 +9,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-status-process-form',
   templateUrl: './status-process-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class StatusProcessFormComponent extends BasePage implements OnInit {
   statusProcessForm: ModelForm<IStatusProcess>;
@@ -35,7 +34,7 @@ export class StatusProcessFormComponent extends BasePage implements OnInit {
         null,
         [
           Validators.pattern(
-            "[a-zA-Z]((.|_|-)?[a-zA-ZáéíóúÁÉÍÓÚ\u0020]+){0,255}"
+            '[a-zA-Z]((.|_|-)?[a-zA-ZáéíóúÁÉÍÓÚ\u0020]+){0,255}'
           ),
           Validators.required,
         ],
@@ -44,7 +43,7 @@ export class StatusProcessFormComponent extends BasePage implements OnInit {
         null,
         [
           Validators.pattern(
-            "[a-zA-Z]((.|_|-)?[a-zA-ZáéíóúÁÉÍÓÚ\u0020]+){0,255}"
+            '[a-zA-Z]((.|_|-)?[a-zA-ZáéíóúÁÉÍÓÚ\u0020]+){0,255}'
           ),
           Validators.required,
         ],
@@ -66,10 +65,12 @@ export class StatusProcessFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.statusProcessService.create(this.statusProcessForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.statusProcessService
+      .create(this.statusProcessForm.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   update() {

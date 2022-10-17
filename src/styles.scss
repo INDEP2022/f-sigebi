@@ -150,6 +150,7 @@ hr {
 }
 
 $checkbox_image: "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e";
+
 %table-checked-check {
   background-image: url($checkbox_image);
   background-color: #9d2449;
@@ -159,6 +160,7 @@ $checkbox_image: "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' v
 .ng2-smart-actions input[type='checkbox'] {
   @extend %table-check;
 }
+
 .ng2-smart-actions input:checked[type='checkbox'] {
   @extend %table-checked-check;
 }
@@ -255,4 +257,12 @@ table:not(.normal-hover) tbody tr:hover {
 
 .custom-file-input ~ .custom-file-label::after {
   content: 'Examinar' !important;
+}
+
+.btn-warning {
+  color: #fff !important;
+}
+
+.btn.active:hover {
+  opacity: 0.8;
 }

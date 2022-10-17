@@ -6,16 +6,16 @@ import { PaLgCTrackerGoodsComponent } from './pa-lg-c-tracker-goods/pa-lg-c-trac
 const routes: Routes = [
   {
     path: '',
-    component: PaLgCLocationGoodsWarehousesStorageComponent
+    component: PaLgCLocationGoodsWarehousesStorageComponent,
   },
   {
     path: 'tracker-goods',
-    component: PaLgCTrackerGoodsComponent
-  }
+    component: PaLgCTrackerGoodsComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PaLgMLocationGoodsWarehousesStorageRoutingModule { }
+export class PaLgMLocationGoodsWarehousesStorageRoutingModule {}

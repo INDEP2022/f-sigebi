@@ -7,17 +7,13 @@ import { TypeWharehouseFromComponent } from './type-wharehouse-from/type-whareho
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
-  declarations: [
-    TypeWharehouseListComponent,
-    TypeWharehouseFromComponent
-  ],
+  declarations: [TypeWharehouseListComponent, TypeWharehouseFromComponent],
   imports: [
     CommonModule,
     SharedModule,
     ModalModule.forChild(),
-    TypeWharehouseRoutingModule
-  ]
+    TypeWharehouseRoutingModule,
+  ],
 })
-export class TypeWharehouseModule { }
+export class TypeWharehouseModule {}

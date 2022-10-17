@@ -9,11 +9,9 @@ import { BatchService } from './../../../../core/services/catalogs/batch.service
 @Component({
   selector: 'app-batch-form',
   templateUrl: './batch-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class BatchFormComponent extends BasePage implements OnInit {
-
   batchForm: FormGroup = new FormGroup({});
   title: string = 'Lote';
   edit: boolean = false;
@@ -65,12 +63,10 @@ export class BatchFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.batchService
-      .update(this.batch.id, this.batchForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.batchService.update(this.batch.id, this.batchForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   handleSuccess() {
@@ -80,5 +76,4 @@ export class BatchFormComponent extends BasePage implements OnInit {
     this.refresh.emit(true);
     this.modalRef.hide();
   }
-
 }

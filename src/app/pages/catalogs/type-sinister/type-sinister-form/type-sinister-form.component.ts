@@ -9,8 +9,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-type-sinister-form',
   templateUrl: './type-sinister-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class TypeSinisterFormComponent extends BasePage implements OnInit {
   typeSinisterForm: ModelForm<ITypeSiniester>;
@@ -34,7 +33,7 @@ export class TypeSinisterFormComponent extends BasePage implements OnInit {
       id: [null, [Validators.required]],
       description: [null, [Validators.required, Validators.maxLength(200)]],
       flag: [null, [Validators.required]],
-      noRegistre: [null, [Validators.required]]
+      noRegistre: [null, [Validators.required]],
     });
     if (this.typeSiniester != null) {
       this.edit = true;
@@ -51,10 +50,12 @@ export class TypeSinisterFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.typeSinisterService.create(this.typeSinisterForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.typeSinisterService
+      .create(this.typeSinisterForm.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   update() {
@@ -74,5 +75,4 @@ export class TypeSinisterFormComponent extends BasePage implements OnInit {
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
-
 }

@@ -2,31 +2,31 @@ export const SALEGOODSGAMESESTATE_COLUMNS = {
   estate: {
     title: 'Bien',
     width: '10%',
-    sort:false
+    sort: false,
   },
   description: {
     title: 'Descripción',
     width: '30%',
-    sort:false
+    sort: false,
   },
-  status:{
+  status: {
     title: 'Estatus',
     width: '10%',
-    sort:false
+    sort: false,
   },
-  numExp:{
+  numExp: {
     title: 'Núm.Exp',
     width: '10%',
-    sort:false
+    sort: false,
   },
-  clasif:{
+  clasif: {
     title: 'Clasif.',
     width: '10%',
-    sort:false
+    sort: false,
   },
-  appraisedValue:{
+  appraisedValue: {
     title: 'Valor avalúo',
     width: '20%',
-    sort:false
-  }
+    sort: false,
+  },
 };

@@ -4,12 +4,13 @@ import { TypeOrderServiceListComponent } from './type-order-service-list/type-or
 
 const routes: Routes = [
   {
-    path:'',component:TypeOrderServiceListComponent
-  }
+    path: '',
+    component: TypeOrderServiceListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class TypeOrderServiceRoutingModule { }
+export class TypeOrderServiceRoutingModule {}

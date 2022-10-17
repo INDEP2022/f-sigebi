@@ -4,6 +4,16 @@ import { CommercializationComponent } from './commercialization.component';
 
 const routes: Routes = [
   {
+    path: 'c-b-f-fmdvdb-m-event-preparation',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/c-b-f-fmdvdb-m-event-preparation/c-b-f-fmdvdb-m-event-preparation.module'
+        )
+      ).CBFFmdvdbMEventPreparationModule,
+    data: { title: 'Preparación del evento' },
+  },
+  {
     path: 'c-b-vdp-m-payment-dispersion-validation',
     loadChildren: async () =>
       (

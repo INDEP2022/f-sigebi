@@ -5,12 +5,12 @@ import { PeAdCAuthorizationAssetsDestructionComponent } from './pe-ad-c-authoriz
 const routes: Routes = [
   {
     path: '',
-    component: PeAdCAuthorizationAssetsDestructionComponent
-  }
+    component: PeAdCAuthorizationAssetsDestructionComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PeAdMAuthorizationAssetsDestructionRoutingModule { }
+export class PeAdMAuthorizationAssetsDestructionRoutingModule {}

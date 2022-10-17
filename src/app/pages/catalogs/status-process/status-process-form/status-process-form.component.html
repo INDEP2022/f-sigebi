@@ -3,24 +3,24 @@
     <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-      <form [formGroup]="statusProcessForm">
-        <div class="row">
-          <div class="col-md-6">
-            <form-field
-                    [control]="statusProcessForm.get('status')"
-                    label="Estatus">
-                    <input type="text" class="form-control" formControlName="status" />
-            </form-field>
-          </div>
-          <div class="col-md-6">
-            <form-field
-              [control]="statusProcessForm.get('process')"
-              label="Proceso">
-              <input type="text" class="form-control" formControlName="process" />
-            </form-field>
-          </div>
-          <div class="col-md-12">
-            <form-field
+    <form [formGroup]="statusProcessForm">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field
+            [control]="statusProcessForm.get('status')"
+            label="Estatus">
+            <input type="text" class="form-control" formControlName="status" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="statusProcessForm.get('process')"
+            label="Proceso">
+            <input type="text" class="form-control" formControlName="process" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
             [control]="statusProcessForm.get('description')"
             label="Descripción">
             <textarea
@@ -28,11 +28,11 @@
               type="text"
               rows="2"
               formControlName="description"
-            placeholder="Descripción"></textarea>
+              placeholder="Descripción"></textarea>
           </form-field>
-          </div>
         </div>
-      </form>
+      </div>
+    </form>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">

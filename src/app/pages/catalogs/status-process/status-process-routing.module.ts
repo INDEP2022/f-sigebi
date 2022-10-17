@@ -4,12 +4,13 @@ import { StatusProcessListComponent } from './status-process-list/status-process
 
 const routes: Routes = [
   {
-    path:'',component:StatusProcessListComponent
-  }
+    path: '',
+    component: StatusProcessListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class StatusProcessRoutingModule { }
+export class StatusProcessRoutingModule {}
