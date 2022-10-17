@@ -19,6 +19,7 @@ import { PaGspCGlobalServicePaymentComponent } from './global-service-payments/p
 import { PaGspCGoodsServicePaymentComponent } from './goods-service-payments/pa-gsp-c-goods-service-payment.component';
 import { PaRspCRequestServicePaymentComponent } from './request-service-payments/pa-rsp-c-request-service-payment.component';
 import { PaRsfCRequestServiceFormComponent } from './request-service-form/pa-rsf-c-request-service-form.component';
+import { PaSmCServiceMonitoringComponent } from './service-monitoring/pa-sm-c-service-monitoring.component';
 
 
 @NgModule({
@@ -28,6 +29,7 @@ import { PaRsfCRequestServiceFormComponent } from './request-service-form/pa-rsf
     PaGspCGoodsServicePaymentComponent,
     PaRspCRequestServicePaymentComponent,
     PaRsfCRequestServiceFormComponent,
+    PaSmCServiceMonitoringComponent,
   ],
   imports: [
     CommonModule,
