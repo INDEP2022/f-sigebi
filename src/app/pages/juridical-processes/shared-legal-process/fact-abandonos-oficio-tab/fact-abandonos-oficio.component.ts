@@ -72,8 +72,7 @@ export class FormFactAbandonosOficioComponent
     super();
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   getDataFormOficio(formOficio: FormGroup): any {
     this.formOficio = formOficio;

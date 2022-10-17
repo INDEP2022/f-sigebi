@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
@@ -15,13 +15,16 @@ import {
 })
 export class DrShippingDocumentsComponent extends BasePage implements OnInit {
   documentsForm: FormGroup;
-  settings = { ...TABLE_SETTINGS, actions: false };
   select = new DefaultSelect();
   data = SHIPPING_DOCUMENTS_EXAMPLE_DATA;
 
   constructor(private fb: FormBuilder) {
     super();
-    this.settings.columns = SHIPPING_DOCUMENTS_COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...SHIPPING_DOCUMENTS_COLUMNS },
+    };
   }
 
   ngOnInit(): void {

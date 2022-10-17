@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { VALIDATION_EXEMPTED_GOODS_COLUMS } from './c-b-bedv-c-validation-exempted-goods-columns';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { BasePage } from 'src/app/core/shared/base-page';
 //XLSX
 import * as XLSX from 'xlsx';
@@ -15,23 +15,22 @@ export class CBBedvCValidationExemptedGoodsComponent
   extends BasePage
   implements OnInit
 {
-  settings = {
-    ...TABLE_SETTINGS,
-    actions: false,
-  };
   ExcelData: any;
   CsvData: any;
   form: FormGroup = new FormGroup({});
 
   constructor(private fb: FormBuilder) {
     super();
-    this.settings.columns = VALIDATION_EXEMPTED_GOODS_COLUMS;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...VALIDATION_EXEMPTED_GOODS_COLUMS },
+    };
   }
 
   ngOnInit(): void {
     this.prepareForm();
   }
-
   private prepareForm() {
     this.form = this.fb.group({
       idEvento: ['', [Validators.required]],
@@ -40,7 +39,6 @@ export class CBBedvCValidationExemptedGoodsComponent
       penaltyAmount: ['', [Validators.required]],
     });
   }
-
   list = [
     {
       bien: '791',

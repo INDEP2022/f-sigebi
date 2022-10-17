@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { EVENT_PREPARATION_ALLOTMENT_COLUMNS } from './event-preparation-allotment-columns';
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -34,11 +33,13 @@ export class CBFFmdvdbCEventPreparationComponent
   event: any = null;
   authKey: string = '';
 
-  settings = { ...TABLE_SETTINGS, actions: false };
-
   constructor(private modalService: BsModalService) {
     super();
-    this.settings.columns = EVENT_PREPARATION_ALLOTMENT_COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: EVENT_PREPARATION_ALLOTMENT_COLUMNS,
+    };
   }
 
   ngOnInit(): void {}

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { CLOSING_RECORDS_COLUMNS } from './closing-records-columns';
 
 @Component({
@@ -8,11 +8,15 @@ import { CLOSING_RECORDS_COLUMNS } from './closing-records-columns';
   templateUrl: './dr-closing-records.component.html',
   styles: [],
 })
-export class DrClosingRecordsComponent implements OnInit {
-  settings = { ...TABLE_SETTINGS, actions: false };
+export class DrClosingRecordsComponent extends BasePage implements OnInit {
   form: FormGroup;
   constructor(private fb: FormBuilder) {
-    this.settings.columns = CLOSING_RECORDS_COLUMNS;
+    super();
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: CLOSING_RECORDS_COLUMNS,
+    };
   }
 
   ngOnInit(): void {

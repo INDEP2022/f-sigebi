@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IIssuingInstitution } from '../../../../core/models/catalogs/issuing-institution.model';
 import { IssuingInstitutionService } from './../../../../core/services/catalogs/issuing-institution.service';
@@ -18,7 +18,6 @@ export class IssuingInstitutionListComponent
   extends BasePage
   implements OnInit
 {
-  settings = TABLE_SETTINGS;
   columns: IIssuingInstitution[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

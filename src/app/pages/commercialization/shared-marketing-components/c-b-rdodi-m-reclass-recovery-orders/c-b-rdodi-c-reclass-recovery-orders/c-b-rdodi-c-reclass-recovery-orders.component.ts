@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { DETAILS_OI_COLUMNS } from './c-b-rdodi-c-reclass-recovery-orders-columns';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 
@@ -14,21 +14,20 @@ export class CBRdodiCReclassRecoveryOrdersComponent
   extends BasePage
   implements OnInit
 {
-  settings = {
-    ...TABLE_SETTINGS,
-    actions: false,
-  };
   form: FormGroup = new FormGroup({});
 
   constructor(private fb: FormBuilder) {
     super();
-    this.settings.columns = DETAILS_OI_COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...DETAILS_OI_COLUMNS },
+    };
   }
 
   ngOnInit(): void {
     this.prepareForm();
   }
-
   private prepareForm() {
     this.form = this.fb.group({
       idOi: [
@@ -56,7 +55,6 @@ export class CBRdodiCReclassRecoveryOrdersComponent
       idPayment: ['', [Validators.required]],
     });
   }
-
   data = [
     {
       lote: 'lote 1',

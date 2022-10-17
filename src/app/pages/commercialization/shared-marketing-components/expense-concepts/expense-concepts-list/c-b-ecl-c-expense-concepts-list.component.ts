@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { COLUMNS1, COLUMNS2 } from './columns';
 
@@ -15,16 +15,12 @@ export class CBEclCExpenseConceptsListComponent
   extends BasePage
   implements OnInit
 {
-  settings = {
-    ...TABLE_SETTINGS,
-    actions: false,
-  };
   data: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   settings2 = {
-    ...TABLE_SETTINGS,
+    ...this.settings,
     actions: false,
   };
   data2: any[] = [];
@@ -33,7 +29,11 @@ export class CBEclCExpenseConceptsListComponent
 
   constructor(private modalRef: BsModalRef) {
     super();
-    this.settings.columns = COLUMNS1;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...COLUMNS1 },
+    };
 
     this.settings2.columns = COLUMNS2;
   }

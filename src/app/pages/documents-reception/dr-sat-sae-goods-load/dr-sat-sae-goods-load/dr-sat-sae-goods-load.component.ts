@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { BasePage } from 'src/app/core/shared/base-page';
+
 import { SAT_SAE_GOODS_LOAD_COLUMNS } from './sat-sae-goods-load-columns';
 
 @Component({
@@ -8,11 +9,15 @@ import { SAT_SAE_GOODS_LOAD_COLUMNS } from './sat-sae-goods-load-columns';
   templateUrl: './dr-sat-sae-goods-load.component.html',
   styles: [],
 })
-export class DrSatSaeGoodsLoadComponent implements OnInit {
+export class DrSatSaeGoodsLoadComponent extends BasePage implements OnInit {
   satForm: FormGroup;
-  settings = { ...TABLE_SETTINGS, actions: false };
   constructor(private fb: FormBuilder) {
-    this.settings.columns = SAT_SAE_GOODS_LOAD_COLUMNS;
+    super();
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...SAT_SAE_GOODS_LOAD_COLUMNS },
+    };
   }
 
   ngOnInit(): void {

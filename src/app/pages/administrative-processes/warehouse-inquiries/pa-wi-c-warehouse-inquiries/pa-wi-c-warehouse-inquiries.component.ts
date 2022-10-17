@@ -36,59 +36,6 @@ export class PaWiCWarehouseInquiriesComponent
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   //Data Table
-  settings = {
-    //selectMode: 'multi',
-    actions: {
-      add: false,
-      edit: false,
-      delete: false,
-    },
-    hideSubHeader: true, //oculta subheaader de filtro
-    noDataMessage: 'No se encontrarón registros',
-    mode: 'external', // ventana externa
-    columns: {
-      number: {
-        title: 'No',
-        width: '10%',
-        sort: false,
-      },
-      description: {
-        title: 'Descripcion',
-        width: '20%',
-        sort: false,
-      },
-      location: {
-        title: 'Ubicacion',
-        width: '10%',
-        sort: false,
-      },
-      responsible: {
-        title: 'Responsable',
-        width: '10%',
-        sort: false,
-      },
-      entity: {
-        title: 'Entidad',
-        width: '10%',
-        sort: false,
-      },
-      municipality: {
-        title: 'Municipio',
-        width: '10%',
-        sort: false,
-      },
-      city: {
-        title: 'Ciudad',
-        width: '10%',
-        sort: false,
-      },
-      locality: {
-        title: 'Localidad',
-        width: '10%',
-        sort: false,
-      },
-    },
-  };
 
   data: ExampleWarehouse[] = [
     {
@@ -135,6 +82,52 @@ export class PaWiCWarehouseInquiriesComponent
 
   constructor(private modalService: BsModalService) {
     super();
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: {
+        number: {
+          title: 'No',
+          width: '10%',
+          sort: false,
+        },
+        description: {
+          title: 'Descripcion',
+          width: '20%',
+          sort: false,
+        },
+        location: {
+          title: 'Ubicacion',
+          width: '10%',
+          sort: false,
+        },
+        responsible: {
+          title: 'Responsable',
+          width: '10%',
+          sort: false,
+        },
+        entity: {
+          title: 'Entidad',
+          width: '10%',
+          sort: false,
+        },
+        municipality: {
+          title: 'Municipio',
+          width: '10%',
+          sort: false,
+        },
+        city: {
+          title: 'Ciudad',
+          width: '10%',
+          sort: false,
+        },
+        locality: {
+          title: 'Localidad',
+          width: '10%',
+          sort: false,
+        },
+      },
+    };
   }
 
   ngOnInit(): void {}

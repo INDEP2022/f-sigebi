@@ -5,12 +5,12 @@ import { PaRncCResquestNumberingChangeComponent } from './pa-rnc-c-resquest-numb
 const routes: Routes = [
   {
     path: '',
-    component: PaRncCResquestNumberingChangeComponent
-  }
+    component: PaRncCResquestNumberingChangeComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PaMResquestNumberingChangeRoutingModule { }
+export class PaMResquestNumberingChangeRoutingModule {}

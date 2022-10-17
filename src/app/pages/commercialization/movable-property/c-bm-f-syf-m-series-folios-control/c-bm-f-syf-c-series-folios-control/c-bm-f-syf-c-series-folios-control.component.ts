@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SERIES_FOLIOS_CONTROL_COLUMNS } from './series-folios-control-columns';
 
@@ -15,17 +15,17 @@ export class CBmFSyfCSeriesFoliosControlComponent
   extends BasePage
   implements OnInit
 {
-  settings = {
-    ...TABLE_SETTINGS,
-    actions: {
-      edit: true,
-      delete: false,
-      position: 'right',
-    },
-  };
   constructor(private modalService: BsModalService) {
     super();
-    this.settings.columns = SERIES_FOLIOS_CONTROL_COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: {
+        edit: true,
+        delete: false,
+        position: 'right',
+      },
+      columns: { ...SERIES_FOLIOS_CONTROL_COLUMNS },
+    };
   }
 
   ngOnInit(): void {}

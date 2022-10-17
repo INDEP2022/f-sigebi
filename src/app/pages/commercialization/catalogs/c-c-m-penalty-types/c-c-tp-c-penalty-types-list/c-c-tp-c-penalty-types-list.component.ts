@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { PENALTY_TYPE_COLUMNS } from './c-c-tp-penalty-types-columns';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -14,7 +14,7 @@ import { CCTpCPenaltyTypesFormComponent } from '../c-c-tp-c-penalty-types-form/c
 })
 export class CCTpCPenaltyTypesListComponent extends BasePage implements OnInit {
   // tipo any hasta que existan modelos o interfaces de la respuesta del backend
-  settings = TABLE_SETTINGS;
+
   columns: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

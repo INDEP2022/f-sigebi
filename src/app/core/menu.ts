@@ -63,6 +63,18 @@ export const MENU: IMenuItem[] = [
         link: '/pages/administrative-processes/apply-lif',
       },
       {
+        label: 'Actas Conversión',
+        link: '/pages/administrative-processes/conversion-act',
+      },
+      {
+        label: 'Regulaciones',
+        link: '/pages/catalogs/regulatory',
+      },
+      {
+        label: 'Respuestas Repuve',
+        link: '/pages/catalogs/responseRepuve',
+      },
+      {
         label: 'Administración Conversión',
         link: '/pages/administrative-processes/conversion-management',
       },
@@ -92,7 +104,7 @@ export const MENU: IMenuItem[] = [
       },
       {
         label: 'Solicitud de cambio a numeración',
-        link: '/pages/administrative-processes/request-numbering-change'
+        link: '/pages/administrative-processes/request-numbering-change',
       },
       {
         label: 'Registro de Avalúos',
@@ -115,6 +127,10 @@ export const MENU: IMenuItem[] = [
         link: '/pages/administrative-processes/sale-goods',
       },
       {
+        label: 'Reclasificación masiva de bienes',
+        link: '/pages/administrative-processes/massive-reclassification-goods',
+      },
+      {
         label: 'Administracion Terceros',
         icon: 'bx-folder',
         subItems: [
@@ -125,6 +141,66 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Costo unitario',
             link: '/pages/administrative-processes/unit-cost',
+          },
+          {
+            label: 'Procesos para precios unitarios',
+            link: '/pages/administrative-processes/process',
+          },
+          {
+            label: 'Servicios para precios unitarios',
+            link: '/pages/administrative-processes/services-unit-prices',
+          },
+          {
+            label: 'Especificaciones para precios unitarios',
+            link: '/pages/administrative-processes/specs',
+          },
+          {
+            label: 'Turno y Tipo',
+            link: '/pages/administrative-processes/turn-type',
+          },
+          {
+            label: 'Unidades de medida',
+            link: '/pages/administrative-processes/measurement-units',
+          },
+          {
+            label: 'Variable costo',
+            link: '/pages/administrative-processes/variable-cost',
+          },
+        ],
+      },
+      {
+        label: 'Seguros y Vigilancia',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Mantenimiento de Pólizas',
+            link: '/pages/administrative-processes/policy-maintenance',
+          },
+          {
+            label: 'Pólizas de Seguro',
+            link: '/pages/administrative-processes/insurance-policy',
+          },
+          {
+            label: 'Altas de bienes en Pólizas',
+            link: '/pages/administrative-processes/registration-of-policy',
+          },
+          {
+            label: 'Baja de bienes en Pólizas',
+            link: '/pages/administrative-processes/loss-of-policy',
+          },
+        ],
+      },
+      {
+        label: 'Seguros y Vigilancia',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Reportes de Pólizas',
+            link: '/pages/administrative-processes/policies-report',
+          },
+          {
+            label: 'Mantenimiento a Pólizas',
+            link: '/pages/administrative-processes/policy-maintenance',
           },
         ],
       },
@@ -197,9 +273,6 @@ export const MENU: IMenuItem[] = [
       /**
        * ADMIN PROCESS-SEGUROS LEGASPI
        **/
-      /**
-       * ADMIN PROCESS-SERVICES LEGASPI
-       **/
       {
         label: 'Servicios',
         icon: 'bx-folder',
@@ -207,6 +280,10 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Registro de Pago de Servicios',
             link: '/pages/administrative-processes/services/',
+          },
+          {
+            label: 'Solicitud de Pago de Servicios',
+            link: '/pages/administrative-processes/services/request',
           },
         ],
       },
@@ -261,6 +338,15 @@ export const MENU: IMenuItem[] = [
             link: '/pages/final-destination-process/report-of-acts/donation-destruction-destination',
           },
         ],
+      },
+      {
+        label: 'Programación de Entregas',
+        subItems: [
+          {
+            label: 'Programación de Eventos',
+            link: '/pages/final-destination-process/delivery-schedule/schedule-of-events',
+          },
+        ]
       },
     ],
   },

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IMunicipality } from './../../../../core/models/catalogs/municipality.model';
 import { MunicipalityService } from './../../../../core/services/catalogs/municipality.service';
@@ -15,7 +15,6 @@ import { MunicipalityFormComponent } from '../municipality-form/municipality-for
   styles: [],
 })
 export class MunicipalityListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
   columns: IMunicipality[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

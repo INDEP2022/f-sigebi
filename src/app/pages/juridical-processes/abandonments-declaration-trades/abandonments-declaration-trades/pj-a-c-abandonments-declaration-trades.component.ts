@@ -157,13 +157,13 @@ export class PJAAbandonmentsDeclarationTradesComponent
       fechaOficio: ['', [Validators.required]], //*
       descripcionAsunto: ['', [Validators.required]], //*
       remitente: ['', [Validators.required]], //*
-      // idAsunto: [''], 
+      // idAsunto: [''],
       asunto: [''],
-      // idDesahogoAsunto: [''], 
+      // idDesahogoAsunto: [''],
       desahogoAsunto: ['', [Validators.required]], //*
-      // idCiudad: [''], 
+      // idCiudad: [''],
       ciudad: ['', [Validators.required]], //*
-      // idEntidadFederativa: [''], 
+      // idEntidadFederativa: [''],
       entidadFederativa: ['', [Validators.required]], //*
       claveUnica: ['', [Validators.required]], //*
       transferente: ['', [Validators.required]], //*
