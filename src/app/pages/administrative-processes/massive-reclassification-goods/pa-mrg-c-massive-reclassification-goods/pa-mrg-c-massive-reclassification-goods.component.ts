@@ -6,6 +6,8 @@ import { COLUMNS } from './columns';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { PaMrgCModalClassificationGoodsComponent } from '../pa-mrg-c-modal-classification-goods/pa-mrg-c-modal-classification-goods.component';
 
 @Component({
   selector: 'app-pa-mrg-c-massive-reclassification-goods',
@@ -16,30 +18,9 @@ export class PaMrgCMassiveReclassificationGoodsComponent
   extends BasePage
   implements OnInit
 {
-  data: any[] = [
-    {
-      reclassify: false,
-      goodNumber: '1',
-      DescriptionClassification: 'Descripcion de la clasificacion 1',
-      status: 'Estatus 1',
-      descriptionGood: 'Descripcion del bien 1',
-    },
-    {
-      reclassify: false,
-      goodNumber: '2',
-      DescriptionClassification: 'Descripcion de la clasificacion 2',
-      status: 'Estatus 1',
-      descriptionGood: 'Descripcion del bien 2',
-    },
-    {
-      reclassify: false,
-      goodNumber: '3',
-      DescriptionClassification: 'Descripcion de la clasificacion 3',
-      status: 'Estatus 3',
-      descriptionGood: 'Descripcion del bien 3',
-    },
-  ];
+  data: any[] = [];
 
+  included: boolean = false;
   form: FormGroup;
 
   get mode() {
@@ -54,11 +35,16 @@ export class PaMrgCMassiveReclassificationGoodsComponent
   get filterByStatus() {
     return this.form.get('filterByStatus');
   }
-
+  get numberClassificationGoodAlterning() {
+    return this.form.get('numberClassificationGoodAlterning');
+  }
+  get descriptionAlternating() {
+    return this.form.get('descriptionAlternating');
+  }
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  constructor(private fb: FormBuilder, private router: Router) {
+  constructor(private fb: FormBuilder, private modalService: BsModalService) {
     super();
     this.settings.columns = COLUMNS;
     this.settings.actions = false;
@@ -79,6 +65,8 @@ export class PaMrgCMassiveReclassificationGoodsComponent
       numberClassificationGood: [null, [Validators.required]],
       description: [null, [Validators.required]],
       filterByStatus: [null, [Validators.required]],
+      numberClassificationGoodAlterning: [null, [Validators.required]],
+      descriptionAlternating: [null, [Validators.required]],
     });
   }
 
@@ -99,5 +87,43 @@ export class PaMrgCMassiveReclassificationGoodsComponent
 
   changeClassification() {
     console.log('Se cambiaron los datos de forma masiva');
+  }
+
+  inludedRabio() {
+    this.included = true;
+  }
+
+  listGoods() {
+    if (this.mode.value === 'include') {
+      this.data = [
+        {
+          reclassify: false,
+          goodNumber: '1',
+          DescriptionClassification: 'Descripcion de la clasificacion 1',
+          status: 'Estatus 1',
+          descriptionGood: 'Descripcion del bien 1',
+        },
+        {
+          reclassify: false,
+          goodNumber: '2',
+          DescriptionClassification: 'Descripcion de la clasificacion 2',
+          status: 'Estatus 1',
+          descriptionGood: 'Descripcion del bien 2',
+        },
+        {
+          reclassify: false,
+          goodNumber: '3',
+          DescriptionClassification: 'Descripcion de la clasificacion 3',
+          status: 'Estatus 3',
+          descriptionGood: 'Descripcion del bien 3',
+        },
+      ];
+    }
+  }
+  openModal(): void {
+    this.modalService.show(PaMrgCModalClassificationGoodsComponent, {
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
   }
 }

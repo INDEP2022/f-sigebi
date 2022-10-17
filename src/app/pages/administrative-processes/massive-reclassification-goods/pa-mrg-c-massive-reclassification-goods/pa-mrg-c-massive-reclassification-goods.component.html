@@ -12,7 +12,11 @@
               <input type="radio" formControlName="mode" value="exclude" />
             </form-radio>
             <form-radio label="Incluir">
-              <input type="radio" formControlName="mode" value="include" />
+              <input
+                type="radio"
+                formControlName="mode"
+                value="include"
+                (change)="inludedRabio()" />
             </form-radio>
           </div>
         </div>
@@ -28,7 +32,7 @@
                   formControlName="numberClassificationGood" />
               </form-field>
             </div>
-            <div class="col-md-8 col-sm-12 col-xs-12">
+            <div class="col-md-6 col-sm-12 col-xs-12">
               <form-field
                 [control]="form.get('description')"
                 label="Descripción">
@@ -37,6 +41,18 @@
                   class="form-control"
                   formControlName="description" />
               </form-field>
+            </div>
+            <div class="col-md-2 col-sm-12 col-xs-12">
+              <div class="d-flex justify-content-center">
+                <div class="m-3">
+                  <button
+                    type="button"
+                    class="btn btn-success btn-sm active"
+                    (click)="openModal()">
+                    mostrar
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
           <div class="row mt-5">
@@ -53,11 +69,48 @@
             <div class="col-md-4 col-sm-12 col-xs-12">
               <div class="d-flex justify-content-center">
                 <div class="m-3">
-                  <button type="button" class="btn btn-danger btn-sm active">
+                  <button
+                    type="button"
+                    class="btn btn-danger btn-sm active"
+                    (click)="listGoods()">
                     &nbsp; Listar &nbsp;
                   </button>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-4" *ngIf="included">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('numberClassificationGoodAlterning')"
+            label="No de Clasificación de Bien ALTERNA">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberClassificationGoodAlterning" />
+          </form-field>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('descriptionAlternating')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descriptionAlternating" />
+          </form-field>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button
+                type="button"
+                class="btn btn-success btn-sm active"
+                (click)="openModal()">
+                mostrar
+              </button>
             </div>
           </div>
         </div>

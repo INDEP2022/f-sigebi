@@ -14,11 +14,13 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { PaMMassiveReclassificationGoodsRoutingModule } from './pa-m-massive-reclassification-goods-routing.module';
 import { PaMrgCMassiveReclassificationGoodsComponent } from './pa-mrg-c-massive-reclassification-goods/pa-mrg-c-massive-reclassification-goods.component';
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
+import { PaMrgCModalClassificationGoodsComponent } from './pa-mrg-c-modal-classification-goods/pa-mrg-c-modal-classification-goods.component';
 
 
 @NgModule({
   declarations: [
-    PaMrgCMassiveReclassificationGoodsComponent
+    PaMrgCMassiveReclassificationGoodsComponent,
+    PaMrgCModalClassificationGoodsComponent
   ],
   imports: [
     CommonModule,
