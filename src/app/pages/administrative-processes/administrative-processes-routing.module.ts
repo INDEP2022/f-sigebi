@@ -253,6 +253,48 @@ const routes: Routes = [
             .UnitCostModule,
         data: { title: 'Costo unitario' },
       },
+      {
+        path: 'process',
+        loadChildren: async () =>
+          (await import('./administration-third/process/process.module'))
+            .ProcessModule,
+        data: { title: 'Procesos para precios unitarios' },
+      },
+      {
+        path: 'services-unit-prices',
+        loadChildren: async () =>
+          (await import('./administration-third/services-unit-prices/services-unit-prices.module'))
+            .ServicesUnitPricesModule,
+        data: { title: 'Servicios para precios unitarios' },
+      },
+      {
+        path: 'specs',
+        loadChildren: async () =>
+          (await import('./administration-third/specs/specs.module'))
+            .SpecsModule,
+        data: { title: 'Especificaciones para precios unitarios' },
+      },
+      {
+        path: 'turn-type',
+        loadChildren: async () =>
+          (await import('./administration-third/turn-type/turn-type.module'))
+            .TurnTypeModule,
+        data: { title: 'Turno y tipo' },
+      },
+      {
+        path: 'measurement-units',
+        loadChildren: async () =>
+          (await import('./administration-third/measurement-units/measurement-units.module'))
+            .MeasurementUnitsModule,
+        data: { title: 'Unidades de medida' },
+      },
+      {
+        path: 'variable-cost',
+        loadChildren: async () =>
+          (await import('./administration-third/variable-cost/variable-cost.module'))
+            .VariableCostModule,
+        data: { title: 'Variable costo' },
+      },
     ],
   },
 ];

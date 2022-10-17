@@ -126,6 +126,30 @@ export const MENU: IMenuItem[] = [
             label: 'Costo unitario',
             link: '/pages/administrative-processes/unit-cost',
           },
+          {
+            label: 'Procesos para precios unitarios',
+            link: '/pages/administrative-processes/process',
+          },
+          {
+            label: 'Servicios para precios unitarios',
+            link: '/pages/administrative-processes/services-unit-prices',
+          },
+          {
+            label: 'Especificaciones para precios unitarios',
+            link: '/pages/administrative-processes/specs',
+          },
+          {
+            label: 'Turno y Tipo',
+            link: '/pages/administrative-processes/turn-type',
+          },
+          {
+            label: 'Unidades de medida',
+            link: '/pages/administrative-processes/measurement-units',
+          },
+          {
+            label: 'Variable costo',
+            link: '/pages/administrative-processes/variable-cost',
+          },
         ],
       },
     ],
