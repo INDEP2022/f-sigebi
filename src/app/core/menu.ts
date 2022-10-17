@@ -258,8 +258,8 @@ export const MENU: IMenuItem[] = [
         link: '/pages/catalogs/norms',
       },
       {
-        label: 'notary',
-        link: '/pages/catalogs/Notarios',
+        label: 'Notarios',
+        link: '/pages/catalogs/notary',
       },
       {
         label: 'Párrafos',
