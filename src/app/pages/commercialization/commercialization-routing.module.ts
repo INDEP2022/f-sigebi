@@ -201,12 +201,19 @@ const routes: Routes = [
   {
     path: 'numeraire-exchange',
     loadChildren: async () =>
+      (await import('./numeraire-exchange/numeraire-exchange.module'))
+        .NumeraireExchangeModule,
+    data: { title: 'Cambio a Numerario' },
+  },
+  {
+    path: 'sirsae-payment-consultation',
+    loadChildren: async () =>
       (
         await import(
-          './numeraire-exchange/numeraire-exchange.module'
+          './c-m-sirsae-payment-consultation/c-m-sirsae-payment-consultation.module'
         )
-      ).NumeraireExchangeModule,
-    data: { title: 'Cambio a Numerario' },
+      ).CMSirsaePaymentConsultationModule,
+    data: { title: 'Consulta de Pagos Sirsae' },
   },
 ];
 
