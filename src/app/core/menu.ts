@@ -275,6 +275,10 @@ export const MENU: IMenuItem[] = [
         label: 'Conversión a numerario',
         link: '/pages/commercialization/numeraire-exchange',
       },
+      {
+        label: 'Consulta de Pagos Sirsae',
+        link: '/pages/commercialization/sirsae-payment-consultation',
+      },
     ],
   },
   // PROCESOS JURIDICOS
