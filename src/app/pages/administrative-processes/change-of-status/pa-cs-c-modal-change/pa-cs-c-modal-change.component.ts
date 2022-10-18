@@ -10,47 +10,27 @@ import { BasePage } from 'src/app/core/shared/base-page';
   styles: [],
 })
 export class PaCsCModalChangeComponent extends BasePage implements OnInit {
-  @Input() columns!: Object;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   //Data Table
 
-  data1: any;
+  data: any = [];
+  columns: any;
   constructor(private bsModalRef: BsModalRef, private opcion: ModalOptions) {
     super();
     this.settings = {
       ...this.settings,
       actions: false,
-      columns: {} /* {
-        numberGood: {
-          title: 'No Bien',
-          width: '10%',
-          sort: false,
-        },
-        description: {
-          title: 'Descripcion',
-          width: '20%',
-          sort: false,
-        },
-        quantity: {
-          title: 'Cantidad',
-          width: '10%',
-          sort: false,
-        },
-        dossier: {
-          title: 'Expediente',
-          width: '10%',
-          sort: false,
-        },
-      } */,
+      columns: { ...this.columns },
     };
   }
 
   ngOnInit(): void {
-    this.data1 = this.opcion.initialState;
+    this.columns = this.opcion.initialState;
   }
 
   mostrar() {}
+
   return() {
     this.bsModalRef.hide();
   }

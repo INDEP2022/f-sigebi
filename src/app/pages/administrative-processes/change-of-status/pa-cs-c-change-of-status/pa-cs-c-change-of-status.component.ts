@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { PaCsCModalChangeComponent } from '../pa-cs-c-modal-change/pa-cs-c-modal-change.component';
+import { COLUMNS_STATUS, COLUMNS_USER } from './columns';
 
 @Component({
   selector: 'app-pa-cs-c-change-of-status',
@@ -11,6 +13,8 @@ export class PaCsCChangeOfStatusComponent implements OnInit {
   //Reactive Forms
   form: FormGroup;
 
+  columns: any = COLUMNS_STATUS;
+  columnsUser: any = COLUMNS_USER;
   //Criterio por clasificación de bienes
   get numberGood() {
     return this.form.get('numberGood');
@@ -85,6 +89,22 @@ export class PaCsCChangeOfStatusComponent implements OnInit {
       userRequesting: [null, [Validators.required]],
       userName: [null, [Validators.required]],
       description: [null, [Validators.required]],
+    });
+  }
+
+  openModalStatus(): void {
+    this.modalService.show(PaCsCModalChangeComponent, {
+      initialState: this.columns,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+  }
+
+  openModalUser(): void {
+    this.modalService.show(PaCsCModalChangeComponent, {
+      initialState: this.columnsUser,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
     });
   }
 }

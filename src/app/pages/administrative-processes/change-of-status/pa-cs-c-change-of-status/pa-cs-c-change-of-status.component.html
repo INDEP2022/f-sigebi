@@ -6,7 +6,7 @@
   <div body>
     <form [formGroup]="form" class="form-material">
       <div class="row">
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field [control]="form.get('numberGood')" label="Numero de Bien">
             <input
               type="text"
@@ -14,7 +14,7 @@
               formControlName="numberGood" />
           </form-field>
         </div>
-        <div class="col-md-8 col-sm-12 col-xs-12">
+        <div class="col-md-7 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('descriptionGood')"
             label="Descripcion del bien">
@@ -23,6 +23,18 @@
               class="form-control"
               formControlName="descriptionGood" />
           </form-field>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button
+                type="button"
+                class="btn btn-success btn-sm active"
+                (click)="openModalUser()">
+                seleccionar
+              </button>
+            </div>
+          </div>
         </div>
       </div>
       <div class="row mt-5">
@@ -61,7 +73,7 @@
     <hr />
     <form [formGroup]="formNew" class="form-material">
       <div class="row mt-5">
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
             [control]="formNew.get('newStatus')"
             label="Nuevo Estatus">
@@ -71,7 +83,7 @@
               formControlName="newStatus" />
           </form-field>
         </div>
-        <div class="col-md-8 col-sm-12 col-xs-12">
+        <div class="col-md-7 col-sm-12 col-xs-12">
           <form-field
             [control]="formNew.get('newDescripcionStatus')"
             label="Descripción del Estatus">
@@ -80,6 +92,18 @@
               class="form-control"
               formControlName="newDescripcionStatus" />
           </form-field>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button
+                type="button"
+                class="btn btn-success btn-sm active"
+                (click)="openModalStatus()">
+                seleccionar
+              </button>
+            </div>
+          </div>
         </div>
       </div>
       <div class="row mt-5">
