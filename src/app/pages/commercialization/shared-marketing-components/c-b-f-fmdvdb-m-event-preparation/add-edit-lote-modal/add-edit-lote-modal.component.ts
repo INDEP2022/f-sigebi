@@ -19,6 +19,10 @@ export class AddEditLoteModalComponent extends BasePage implements OnInit {
 
   @Output() refresh = new EventEmitter<true>();
 
+  get check(){
+    return this.form.get('check')
+  }
+
   constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
   }
@@ -34,7 +38,7 @@ export class AddEditLoteModalComponent extends BasePage implements OnInit {
       valorbase: [null, [Validators.required]],
       idcliente: [null, ],
       rfc: [null, ],
-      check2: [false],
+      check: [false],
     });
     if (this.allotment != null) {
       this.edit = true;

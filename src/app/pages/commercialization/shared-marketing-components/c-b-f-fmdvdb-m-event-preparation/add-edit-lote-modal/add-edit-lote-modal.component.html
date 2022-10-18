@@ -42,8 +42,11 @@
       </div>
       <div class="row">
         <form-check label="Ver clientes" for="label2">
-          <input id="label2" type="checkbox" formControlName="check2" />
+          <input id="label2" type="checkbox" formControlName="check" />
         </form-check>
+      </div>
+      <div class="row" *ngIf="check.value">
+        <app-customer-catalogs-table></app-customer-catalogs-table>
       </div>
     </form>
   </div>
