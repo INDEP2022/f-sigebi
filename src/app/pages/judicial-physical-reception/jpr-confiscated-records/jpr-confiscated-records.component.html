@@ -1,0 +1,279 @@
+<app-card [header]="true">
+    <div class="ch-content" header>
+        <h5 class="title">
+            Actas de Entrega Recepción
+        </h5>
+    </div>
+
+    <div body>
+        <form class="form-material" [formGroup]="form">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <form-field [control]="form.get('expediente')" label="Expediente">
+                                <input type="number" class="form-control" formControlName="expediente" placeholder="expediente"/>
+                            </form-field>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <form-field [control]="form.get('averPrev')" label="Averiguación Previa">
+                                <input type="number" class="form-control" formControlName="averPrev" placeholder="Aver Prev"/>
+                            </form-field>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <form-field [control]="form.get('causaPenal')" label="Causa Penal">
+                                <input type="number" class="form-control" formControlName="causaPenal" placeholder="Causa Penal"/>
+                            </form-field>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col">
+                            <form-field [control]="form.get('acta')" label="Acta 1">
+                                <select class="form-control" formControlName="acta">
+                                    <option *ngFor="let record of records" [value]="1">{{record}}</option>
+                                </select>
+                            </form-field>
+                        </div>
+
+                        <div class="col">
+                            <form-field [control]="form.get('transfer')" label="Transfer">
+                                <input type="number" class="form-control" formControlName="transfer" placeholder="Transfer"/>
+                            </form-field>
+                        </div>
+
+                        <div class="col">
+                            <form-field [control]="form.get('ident')" label="Ident">
+                                <input type="number" class="form-control" formControlName="ident" placeholder="Ident"/>
+                            </form-field>
+                        </div>
+
+                        <div class="col">
+                            <form-field [control]="form.get('recibe')" label="Recibe">
+                                <input type="number" class="form-control" formControlName="recibe" placeholder="Recibe"/>
+                            </form-field>
+                        </div>
+
+                        <div class="col">
+                            <form-field [control]="form.get('admin')" label="Admin">
+                                <input type="number" class="form-control" formControlName="admin" placeholder="Admin"/>
+                            </form-field>
+                        </div>
+
+                        <div class="col">
+                            <form-field [control]="form.get('folio')" label="Folio">
+                                <input type="number" class="form-control" formControlName="folio" placeholder="Folio"/>
+                            </form-field>
+                        </div>
+                        <div class="col">
+                            <form-field [control]="form.get('year')" label="Año">
+                                <input type="number" class="form-control" formControlName="year" placeholder="Año"/>
+                            </form-field>
+                        </div>
+                        <div class="col">
+                            <form-field [control]="form.get('mes')" label="Mes">
+                                <input type="number" class="form-control" formControlName="mes" placeholder="Mes"/>
+                            </form-field>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row">
+                        <form-field [control]="form.get('acta2')" label="Acta 2">
+                            <input type="number" class="form-control" formControlName="acta2" placeholder="Acta"/>
+                        </form-field>
+                    </div>
+
+                    <div class="row pt-4">
+                        <div class="col-md-9">
+                            <form-field [control]="form.get('direccion')" label="Dirección">
+                                <textarea rows="2" class="form-control" formControlName="direccion"></textarea>
+                            </form-field>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-9">
+                            <form-field [control]="form.get('entrega')" label="Entrega">
+                                <input type="text" class="form-control" formControlName="entrega" placeholder="Entrega"/>
+                            </form-field>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-9">
+                            <form-field [control]="form.get('fecElabRec')" label="Fecha Elaboración Recibo">
+                                <input bsDatepicker class="form-control" formControlName="fecElabRec" placeholder="Fecha Elaboración Recibo"/>
+                            </form-field>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-9">
+                            <form-field [control]="form.get('fecEntBien')" label="Fecha Entrega de Bienes">
+                                <input bsDatepicker class="form-control" formControlName="fecEntBien" placeholder="Fecha Entrega de Bienes"/>
+                            </form-field>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-5">
+                            <form-field [control]="form.get('folioEscaneo')" label="Folio de Escaneo">
+                                <input type="text" class="form-control" formControlName="folioEscaneo" placeholder="Folio de Escaneo"/>
+                            </form-field>
+                        </div>
+
+                        <div class="col-md-4 pt-3">
+                            <button type="button" size="small">Replicar Folio</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <form-field [control]="form.get('fecElab')" label="Fecha Elaboración">
+                                <input bsDatepicker class="form-control" formControlName="fecElab" placeholder="Fecha Elaboración"/>
+                            </form-field>
+                        </div>
+
+                        <div class="col-md-4">
+                            <form-field [control]="form.get('fecReception')" label="Fecha Recepción Física">
+                                <input bsDatepicker class="form-control" formControlName="fecReception" placeholder="Fecha Recepción Física"/>
+                            </form-field>
+                        </div>
+
+                        <div class="col-md-4">
+                            <form-field [control]="form.get('fecCaptura')" label="Fecha Captura">
+                                <input bsDatepicker class="form-control" formControlName="fecCaptura" placeholder="Fecha Captura"/>
+                            </form-field>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-9">
+                            <form-field [control]="form.get('observaciones')" label="Observaciones">
+                                <textarea rows="2" class="form-control" formControlName="observaciones"></textarea>
+                            </form-field>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-9">
+                            <form-field [control]="form.get('recibe2')" label="Recibe">
+                                <input type="text" class="form-control" formControlName="recibe2" placeholder="Recibe"/>
+                            </form-field>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-9">
+                            <form-field [control]="form.get('testigo')" label="Testigo de la Contr.">
+                                <input type="text" class="form-control" formControlName="testigo" placeholder="Testigo de la Contr"/>
+                            </form-field>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button type="button" class="my-1 mx-2 btn btn-info active btn-sm">Abrir Carta</button>
+                            <a [routerLink]="['partialization']" class="my-1 mx-2 btn btn-warning active btn-sm"
+                                size="small">Parcialización
+                            </a>
+
+                            <button type="button"  class="my-1 mx-2 btn btn-danger active btn-sm">Eliminar Acta</button>
+                            <button type="button"  class="my-1 mx-2 btn btn-secondary active btn-sm">Carga Masiva</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="row">
+            <div class="row pt-2 scroll-table">
+                <ng2-smart-table class="col-md-12" [settings]="settings1" [source]="data"></ng2-smart-table>
+            </div>
+            <hr class="row">
+            <div class="row ">
+                <div class="d-flex justify-content-center">
+                    <form-field  class="col-md-3" [control]="form.get('estatusPrueba')" label="Prueba ">
+                        <input type="text" class="form-control" formControlName="estatusPrueba" placeholder="prueba"/>
+                    </form-field>
+
+                    <p class="pt-4">
+                        <span class="text-success mr-5"><i class="fa fa-square"></i> Disponibles</span>
+                        <span class="text-danger"><i class="fa fa-square"></i> No disponibles</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="row pt-2">
+                <div class="col-md-12 text-center">
+                    <button type="button" class="mx-2 btn btn-secondary btn-sm active">
+                        <i class="fa fa-angle-up"></i>
+                    </button>
+                    <button type="button" class="mx-2 btn btn-secondary btn-sm active">
+                        <i class="fa fa-angle-down"></i>
+                    </button>
+                </div>
+            </div>
+            <hr class="row">
+            <div class="row pt-2 scroll-table">
+                <ng2-smart-table class="col-md-12" [settings]="settings2" [source]="data2"></ng2-smart-table>
+            </div>
+            <hr class="row">
+            <div class="row">
+                <div class="d-flex justify-content-center">
+                    <form-field class="col-md-3" [control]="form.get('edoFisico')" label="Estado Físico">
+                        <input type="text" class="form-control" formControlName="edoFisico" placeholder="Estado Físico"/>
+                    </form-field>
+                    <form-check label="Requerido" for="label">
+                        <input id="label" type="checkbox" formControlName="requerido" />
+                    </form-check>
+                    <form-field class="col-md-3" [control]="form.get('etiqueta')" label="Etiqueta">
+                        <input type="text" class="form-control" formControlName="etiqueta" placeholder="Etiqueta"/>
+                    </form-field>
+                </div>
+            </div>
+           
+
+            <hr class="row">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <form-field [control]="form.get('almacen')" label="Almacen">
+                                <ngx-select control="almacen" [form]="form" [data]="itemsSelect"></ngx-select>
+                            </form-field>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-9">
+                            <form-field [control]="form.get('boveda')" label="Bóveda">
+                                <ngx-select control="boveda" [form]="form" [data]="itemsSelect"></ngx-select>
+                            </form-field>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <button type="button" size="small" class="mx-2 my-1">Especifica Edo. Físico</button>
+                    <button type="button" size="small" class="mx-2 my-1">Aplica Alm./Bov.</button>
+                    <a [routerLink]="['flat-file']" type="button" nbButton size="small" class="mx-2 my-1">Exportar
+                        Datos</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</app-card>

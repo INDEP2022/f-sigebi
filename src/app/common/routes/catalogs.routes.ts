@@ -116,6 +116,10 @@ export const CATALOGS_ROUTES = [
         link: '/pages/catalogs/label-okey',
       },
       {
+        label: 'Peritos',
+        link: '/pages/catalogs/expert',
+      },
+      {
         label: 'Personas',
         link: '/pages/catalogs/person',
       },
@@ -194,6 +198,46 @@ export const CATALOGS_ROUTES = [
       {
         label: 'Indicador Reportes',
         link: '/pages/catalogs/indicatorReport',
+      },
+      {
+        label: 'Lotes',
+        link: '/pages/catalogs/batch',
+      },
+      {
+        label: 'Minpub',
+        link: '/pages/catalogs/minpub',
+      },
+      {
+        label: 'Medio Fotografía',
+        link: '/pages/catalogs/photograph-media',
+      },
+      {
+        label: 'Medio Imagen',
+        link: '/pages/catalogs/image-media',
+      },
+      {
+        label: 'Motivo Revisión',
+        link: '/pages/catalogs/revision-reason',
+      },
+      {
+        label: 'Motivo No Entrega',
+        link: '/pages/catalogs/non-delivery-reasons',
+      },
+      {
+        label: 'Municipios',
+        link: '/pages/catalogs/municipalities',
+      },
+      {
+        label: 'Normas',
+        link: '/pages/catalogs/norms',
+      },
+      {
+        label: 'Notarios',
+        link: '/pages/catalogs/notary',
+      },
+      {
+        label: 'Párrafos',
+        link: '/pages/catalogs/paragraphs',
       },
     ],
   },

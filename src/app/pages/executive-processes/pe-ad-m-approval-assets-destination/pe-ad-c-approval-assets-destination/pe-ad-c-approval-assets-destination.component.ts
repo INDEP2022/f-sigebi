@@ -32,7 +32,7 @@ export class PeAdCApprovalAssetsDestinationComponent
   private prepareForm() {
     this.form = this.fb.group({
       idExp: [
-        '',
+        null,
         [
           Validators.required,
           Validators.maxLength(10),
@@ -40,10 +40,10 @@ export class PeAdCApprovalAssetsDestinationComponent
           Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
-      preInquiry: ['', [Validators.required]],
-      criminalCase: ['', [Validators.required]],
-      circumstAct: ['', [Validators.required]],
-      touchPenalty: ['', [Validators.required]],
+      preInquiry: [null],
+      criminalCase: [null],
+      circumstAct: [null],
+      touchPenalty: [null],
     });
   }
 
@@ -53,6 +53,7 @@ export class PeAdCApprovalAssetsDestinationComponent
       description: 'CUARENTA Y DOS CHAMARRAS',
       ubiExact: 'ALMACEN',
       direction: 'PROLONGACIÓN MORELOS',
+      passed: false,
       noOficio: 'DG/006/2004',
       fecha: '12/12/2005',
     },
@@ -61,6 +62,7 @@ export class PeAdCApprovalAssetsDestinationComponent
       description: 'SETENTA Y DOS CELULARES',
       ubiExact: 'ALMACEN',
       direction: 'PROLONGACIÓN MORELOS',
+      passed: true,
       noOficio: 'DG/006/2004',
       fecha: '12/12/2005',
     },
@@ -69,6 +71,7 @@ export class PeAdCApprovalAssetsDestinationComponent
       description: 'CUARENTA Y TRES CABLES USB',
       ubiExact: 'ALMACEN',
       direction: 'PROLONGACIÓN MORELOS',
+      passed: true,
       noOficio: 'DG/006/2004',
       fecha: '12/12/2005',
     },

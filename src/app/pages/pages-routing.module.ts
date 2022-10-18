@@ -89,6 +89,12 @@ const routes: Routes = [
       (await import('./commercialization/commercialization.module'))
         .CommercializationModule,
   },
+  {
+    path: 'judicial-physical-reception',
+    loadChildren: async () =>
+      (await import('./judicial-physical-reception/judicial-physical-reception.module'))
+        .JudicialPhysicalReceptionModule,
+  },
 ];
 
 @NgModule({
