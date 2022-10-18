@@ -39,6 +39,12 @@ const routes: Routes = [
             .LossOfGoodsPolicyModule,
         data: { title: 'Baja de bienes en pólizas' },
       },
+      {
+        path: 'maintenance',
+        loadChildren: async () =>
+          (await import('./maintenance/maintenance.module')).MaintenanceModule,
+        data: { title: 'Mantenimiento' },
+      },
     ],
   },
 ];
