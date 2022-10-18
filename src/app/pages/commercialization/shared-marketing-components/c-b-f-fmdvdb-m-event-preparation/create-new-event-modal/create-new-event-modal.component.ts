@@ -21,13 +21,13 @@ export class CreateNewEventModalComponent implements OnInit {
   private prepareForm(){
     this.form = this.fb.group(
       {
-        id_event: ['', [Validators.required]],
-        cve: [{value:null, disabled:true}],
-        type: ['', [Validators.required]],
+        id_event: [{value:null, disabled:true}],
+        cve: ['', [Validators.required]],
         event: ['', [Validators.required]],
         place: ['', [Validators.required]],
         observ: ['', [Validators.required]],
-        date: ['', [Validators.required]],
+        dateEvent: ['', [Validators.required]],
+        dateClose: ['', [Validators.required]],
       })
   }
 

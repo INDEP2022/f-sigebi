@@ -1,14 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { EVENT_PREPARATION_ALLOTMENT_COLUMNS } from './event-preparation-allotment-columns';
+import { EVENT_PREPARATION_GOODS_COLUMNS } from './even-preparation-goods-columns';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { SelectEventModalComponent } from '../select-event-modal/select-event-modal.component';
 import { CreateNewEventModalComponent } from '../create-new-event-modal/create-new-event-modal.component';
 import { animate, style, transition, trigger } from '@angular/animations';
 //XLSX
 import * as XLSX from 'xlsx';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/exporttoexcel.service';
 import { AddEditLoteModalComponent } from '../add-edit-lote-modal/add-edit-lote-modal.component';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-c-b-f-fmdvdb-c-event-preparation',
@@ -23,11 +27,11 @@ import { AddEditLoteModalComponent } from '../add-edit-lote-modal/add-edit-lote-
   ],
   animations: [
     trigger('OnEventSelected', [
-      transition(':enter', [
-        style({ opacity: 0 }),
-        animate('500ms', style({ opacity: 1 })),
-      ]),
-      transition(':leave', [animate('500ms', style({ opacity: 0 }))]),
+    //  transition(':enter', [
+    //    style({ opacity: 0 }),
+    //    animate('500ms', style({ opacity: 1 })),
+    //  ]),
+    //  transition(':leave', [animate('500ms', style({ opacity: 0 }))]),
     ]),
   ],
 })
@@ -35,28 +39,54 @@ export class CBFFmdvdbCEventPreparationComponent
   extends BasePage
   implements OnInit
 {
+  form: FormGroup = new FormGroup({});
+
   event: any = null;
   authKey: string = '';
 
   columns: any[] = [];
-  totalItems: number = 0;
 
-  constructor(private modalService: BsModalService, private excelService: ExcelService) {
+  settings2 = {
+    ...this.settings,
+    actions: false,
+  };
+  
+  totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+
+  get check(){
+    return this.form.get('check')
+  }
+
+  constructor(private modalService: BsModalService, private excelService: ExcelService, private fb: FormBuilder) {
     super();
     this.settings = {
       ...this.settings,
       actions: {
         columnTitle: "Detalles", 
-        add: false,
+        add: true,
         delete: true,
         position: 'right',
     },
-    columns: {...EVENT_PREPARATION_ALLOTMENT_COLUMNS}
-    }
+    columns: {...EVENT_PREPARATION_ALLOTMENT_COLUMNS},
+    },
+
+    this.settings2.columns = EVENT_PREPARATION_GOODS_COLUMNS;
     
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // this.params
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(() => this.getData());
+    this.prepareForm();
+  }
+
+  private prepareForm (){
+    this.form = this.fb.group({
+      check: [false]
+    });
+  }
 
   openModal(context?: Partial<SelectEventModalComponent>) {
     const modalRef = this.modalService.show(SelectEventModalComponent, {
@@ -136,8 +166,8 @@ export class CBFFmdvdbCEventPreparationComponent
     fileReader.onload = e => {
       var workbook = XLSX.read(fileReader.result, { type: 'binary' });
       var sheetNames = workbook.SheetNames;
-      this.data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetNames[0]]);
-      console.log(this.data);
+      this.data2 = XLSX.utils.sheet_to_json(workbook.Sheets[sheetNames[0]]);
+      console.log(this.data2);
     };
   }
 
@@ -145,6 +175,7 @@ export class CBFFmdvdbCEventPreparationComponent
     this.excelService.exportAsExcelFile(this.data, 'lotes_preparando_evento');
   }
 
+  //Datos de prueba para lotes
   data = [
     {
       lote: '1148',
@@ -173,6 +204,85 @@ export class CBFFmdvdbCEventPreparationComponent
       valorbase: '0',
       idcliente: '1507',
       rfc: 'MOAR670630',
+    },
+  ];
+
+  //Datos prueba de bienesdescripcion
+  data2 = [
+    { no_bien: '78946',
+      descripcion: 'PIEZA, LLAVES PARA DADOS, MARCA PITTSBURGH',
+      transferente: '451',
+      estatus : 'CPV',
+      cantidad : '2',
+      valorAvaluo : '',
+      eventoParticipante: '',
+      loteParticipante: '',
+      eventoRemPre : '',
+      loteRemPre: '',
+      valorBase: '',
+      precioFinal: '',
+      precioSIva: '',
+      ivaFinal: '',
+    },
+    { no_bien: '14789',
+      descripcion: '17 PIEZAS, CARTUCHOS DE VIDEO JUEGOS, 6 DE GAME CUBE, 7 GAME BOY ADVANCE Y 4 NINTENDO DS, EN BUEN ESTADO FISICO',
+      transferente: '32',
+      estatus : 'CPV',
+      cantidad : '17',
+      valorAvaluo : '',
+      eventoParticipante: '',
+      loteParticipante: '',
+      eventoRemPre : '',
+      loteRemPre: '',
+      valorBase: '',
+      precioFinal: '',
+      precioSIva: '',
+      ivaFinal: '',
+    },
+    { no_bien: '9874',
+      descripcion: '140 PIEZAS, GORRAS BEISBOLERAS, MARCA BIG, EN BUEN ESTADO FISICO',
+      transferente: '321',
+      estatus : 'CPV',
+      cantidad : '140',
+      valorAvaluo : '',
+      eventoParticipante: '',
+      loteParticipante: '',
+      eventoRemPre : '',
+      loteRemPre: '',
+      valorBase: '',
+      precioFinal: '',
+      precioSIva: '',
+      ivaFinal: '',
+    },
+    { no_bien: '25849',
+      descripcion: '50 PIEZAS DE LENTES, EN REGULAR ESTADO FÍSICO.',
+      transferente: '357',
+      estatus : 'CPV',
+      cantidad : '9',
+      valorAvaluo : '',
+      eventoParticipante: '',
+      loteParticipante: '',
+      eventoRemPre : '',
+      loteRemPre: '',
+      valorBase: '',
+      precioFinal: '',
+      precioSIva: '',
+      ivaFinal: '',
+    },
+    { no_bien: '98541',
+      descripcion: 'PIEZAS DE BALATAS',
+      transferente: '1874',
+      estatus : 'CPV',
+      cantidad : '1',
+      valorAvaluo : '',
+      eventoParticipante: '',
+      loteParticipante: '',
+      eventoRemPre : '',
+      loteRemPre: '',
+      valorBase: '',
+      precioFinal: '',
+      precioSIva: '',
+      ivaFinal: '',
     },
   ];
 }
