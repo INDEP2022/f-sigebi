@@ -115,6 +115,10 @@ export const MENU: IMenuItem[] = [
         link: '/pages/administrative-processes/sale-goods',
       },
       {
+        label: 'Firma Electrónica',
+        link: '/pages/administrative-processes/electronic-signature',
+      },
+      {
         label: 'Administracion Terceros',
         icon: 'bx-folder',
         subItems: [
@@ -149,6 +153,10 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Variable costo',
             link: '/pages/administrative-processes/variable-cost',
+          },
+          {
+            label: 'Coordinacion por zonas',
+            link: '/pages/administrative-processes/zones',
           },
         ],
       },
