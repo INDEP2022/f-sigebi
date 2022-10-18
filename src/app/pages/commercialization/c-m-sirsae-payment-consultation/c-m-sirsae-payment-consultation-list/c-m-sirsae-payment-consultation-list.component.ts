@@ -6,6 +6,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { DefaultSelect } from './../../../../shared/components/select/default-select';
 import { CONSULT_SIRSAE_COLUMNS } from './c-m-sirsae-payment-consultation-columns';
+import { LocalDataSource } from 'ng2-smart-table';
 
 @Component({
   selector: 'app-c-m-sirsae-payment-consultation-list',
@@ -18,15 +19,19 @@ export class CMSirsaePaymentConsultationListComponent
 {
   // Usando tipo any hasta tener disponibles los servicios de la api
   params = new BehaviorSubject<ListParams>(new ListParams());
-  totalItems: number = 0;
+  goodSelected: boolean = false;
   consultForm: FormGroup = new FormGroup({});
+  filterForm: FormGroup = new FormGroup({});
   columns: any[] = [];
+  totalItems: number = 0;
   goodItems = new DefaultSelect();
   maxDate: Date = new Date();
+  toggleFilter: boolean = false;
   consultSettings = {
     ...TABLE_SETTINGS,
     actions: false,
   };
+  tableSource: LocalDataSource;
 
   goodTestData: any = [
     {
@@ -79,7 +84,7 @@ export class CMSirsaePaymentConsultationListComponent
   paymentTestData: any = [
     {
       account: 1234567,
-      bank: 'BANMEX',
+      bank: 'BANAMEX',
       reference: '069012189COM PDTE C COMPRA',
       moveDate: 130411,
       amount: 10000,
@@ -89,7 +94,7 @@ export class CMSirsaePaymentConsultationListComponent
     },
     {
       account: 1254786,
-      bank: 'BANMEX',
+      bank: 'BANAMEX',
       reference: '069012189COM PDTE C COMPRA',
       moveDate: 100811,
       amount: 5000,
@@ -99,7 +104,7 @@ export class CMSirsaePaymentConsultationListComponent
     },
     {
       account: 2457841,
-      bank: 'BANMEX',
+      bank: 'BANCO SANTANDER',
       reference: '069012189COM PDTE C COMPRA',
       moveDate: 120912,
       amount: 7000,
@@ -109,28 +114,29 @@ export class CMSirsaePaymentConsultationListComponent
     },
     {
       account: 2514638,
-      bank: 'BANMEX',
+      bank: 'BANCO SANTANDER',
       reference: '069012189COM PDTE C COMPRA',
       moveDate: 181112,
       amount: 11000,
       cve: 2226,
-      status: 0,
-      description: 'PAGADO',
+      status: 1,
+      description: 'CHEQUE SALVO BUEN COBRO',
     },
     {
       account: 3452986,
-      bank: 'BANMEX',
+      bank: 'BANORTE',
       reference: '069012189COM PDTE C COMPRA',
       moveDate: 280113,
       amount: 4000,
       cve: 2226,
-      status: 0,
-      description: 'PAGADO',
+      status: 2,
+      description: 'CHEQUE DEVUELTO',
     },
   ];
 
   constructor(private fb: FormBuilder) {
     super();
+    this.tableSource = new LocalDataSource(this.columns);
   }
 
   ngOnInit(): void {
@@ -151,10 +157,12 @@ export class CMSirsaePaymentConsultationListComponent
   private prepareForm(): void {
     this.consultForm = this.fb.group({
       id: [null, [Validators.required]],
-      bank: [null, [Validators.required]],
-      status: [null, [Validators.required]],
       startDate: [null, [Validators.required]],
       endDate: [null, [Validators.required]],
+    });
+    this.filterForm = this.fb.group({
+      bank: [null],
+      status: [null],
     });
   }
 
@@ -168,10 +176,39 @@ export class CMSirsaePaymentConsultationListComponent
     }
   }
 
+  filterBank(query: string) {
+    this.filterTable(query, 'bank');
+  }
+
+  filterStatus(query: string) {
+    this.filterTable(query, 'status');
+  }
+
+  filterTable(query: string, column: string) {
+    this.tableSource.setFilter(
+      [
+        {
+          field: column,
+          search: query,
+        },
+      ],
+      false
+    );
+    this.totalItems = this.tableSource.count();
+  }
+
+  resetFilter() {
+    this.tableSource.reset();
+    this.tableSource.refresh();
+  }
+
   consult() {
     console.log(this.consultForm.value);
     this.loading = true;
     this.columns = this.getData();
+    this.totalItems = this.columns.length;
+    this.tableSource = new LocalDataSource(this.columns);
+    this.goodSelected = true;
     this.loading = false;
   }
 
