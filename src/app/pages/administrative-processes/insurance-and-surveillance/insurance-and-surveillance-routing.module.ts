@@ -45,6 +45,23 @@ const routes: Routes = [
           (await import('./maintenance/maintenance.module')).MaintenanceModule,
         data: { title: 'Mantenimiento' },
       },
+      {
+        path: 'surveillance-log',
+        loadChildren: async () =>
+          (await import('./surveillance-log/surveillance-log.module'))
+            .SurveillanceLogModule,
+        data: { title: 'Bitacora de vigilancia' },
+      },
+      {
+        path: 'maintenance-mail-configuration',
+        loadChildren: async () =>
+          (
+            await import(
+              './maintenance-mail-configuration/maintenance-mail-configuration.module'
+            )
+          ).MaintenanceMailConfigurationModule,
+        data: { title: 'Configuración de correos de mantenimiento' },
+      },
     ],
   },
 ];
