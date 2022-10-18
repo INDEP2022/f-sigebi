@@ -8,12 +8,15 @@ import { ExcelService } from 'src/app/common/services/exporttoexcel.service';
 import { CBVdpMPaymentDispersionValidationRoutingModule } from './c-b-vdp-m-payment-dispersion-validation-routing.module';
 import { CBVdpCPaymentDispersionValidationComponent } from './c-b-vdp-c-payment-dispersion-validation/c-b-vdp-c-payment-dispersion-validation.component';
 
+import { EventsSharedComponent } from 'src/app/@standalone/shared-forms/events-shared/events-shared.component';
+
 @NgModule({
   declarations: [CBVdpCPaymentDispersionValidationComponent],
   imports: [
     CommonModule,
     CBVdpMPaymentDispersionValidationRoutingModule,
     SharedModule,
+    EventsSharedComponent
   ],
   providers: [ExcelService],
 })
