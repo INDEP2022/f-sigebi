@@ -461,22 +461,22 @@
                   placeholder="Folio Acta Depositaria" />
               </form-field>
             </div>
-            <div class="col-sm-12 col-12 col-md-6 p-2 text-center">
+            <div class="col-sm-12 col-12 col-md-2 p-4 text-center">
               <button
                 type="button"
-                class="btn btn-primary btn-sm active text-wrap"
+                class="btn btn-primary btn-sm active"
                 (click)="btnReplicarFolio()">
                 Replicar Folio
               </button>
             </div>
           </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 P-2">
+        <div class="col-sm-12 col-12 col-md-8 P-2">
           <div class="row">
-            <div class="col-sm-12 col-12 col-md-12 p-2">
+            <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
               <h6>CONSULTAS</h6>
             </div>
-            <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+            <div class="col-sm-12 col-12 col-md-4 p-4">
               <div class="form-group">
                 <button
                   type="button"
@@ -485,6 +485,8 @@
                   Cátalogo Depositarias
                 </button>
               </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 p-4">
               <div class="form-group">
                 <button
                   type="button"
@@ -493,6 +495,8 @@
                   Consultar Imágenes Escaneadas
                 </button>
               </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 p-4">
               <div class="form-group">
                 <button
                   type="button"
@@ -504,12 +508,12 @@
             </div>
           </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 P-2">
+        <div class="col-sm-12 col-12 col-md-4 P-2">
           <div class="row">
-            <div class="col-sm-12 col-12 col-md-12 p-2">
+            <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
               <h6>REPORTES</h6>
             </div>
-            <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+            <div class="col-sm-12 col-12 col-md-6 p-4">
               <div class="form-group">
                 <button
                   type="button"
@@ -518,6 +522,8 @@
                   Reportes Jurídicos
                 </button>
               </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-6 p-4">
               <div class="form-group">
                 <button
                   type="button"
@@ -529,45 +535,58 @@
             </div>
           </div>
         </div>
-
-        <div class="col-sm-12 col-12 col-md-4 col-lg-3 p-2">
-          <div class="form-group">
-            <button
-              type="button"
-              class="btn btn-primary btn-sm active text-wrap h-100"
-              (click)="btnFolioEscaneoSolicitud()">
-              Generar Folio de Escaneo y Solicitud
-            </button>
+        <div class="col-sm-12 col-12 col-md-8 p-2">
+          <div class="row">
+            <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+              <h6>ESCANEOS</h6>
+            </div>
+            <div class="col-sm-12 col-12 col-md-6 p-4">
+              <div class="form-group">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active text-wrap h-100"
+                  (click)="btnFolioEscaneoSolicitud()">
+                  Generar Folio de Escaneo y Solicitud
+                </button>
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-6 p-4">
+              <div class="form-group">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active text-wrap h-100"
+                  (click)="btnImprimirSolicitudEscaneo()">
+                  Imprimir Solicitud de Escaneo
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 col-lg-3 p-2">
-          <div class="form-group">
-            <button
-              type="button"
-              class="btn btn-primary btn-sm active text-wrap h-100"
-              (click)="btnImprimirSolicitudEscaneo()">
-              Imprimir Solicitud de Escaneo
-            </button>
-          </div>
-        </div>
-        <div class="col-sm-12 col-12 col-md-4 col-lg-3 p-2">
-          <div class="form-group">
-            <button
-              type="button"
-              class="btn btn-primary btn-sm active text-wrap h-100"
-              (click)="btnDetallesPago()">
-              Detalles de Pagos
-            </button>
-          </div>
-        </div>
-        <div class="col-sm-12 col-12 col-md-4 col-lg-3 p-2">
-          <div class="form-group">
-            <button
-              type="button"
-              class="btn btn-primary btn-sm active text-wrap h-100"
-              (click)="btnIngresoMasivoPagos()">
-              Ingreso Masivo de Pagos
-            </button>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <div class="row">
+            <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+              <h6>PAGOS</h6>
+            </div>
+            <div class="col-sm-12 col-12 col-md-6 p-4">
+              <div class="form-group">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active text-wrap h-100"
+                  (click)="btnDetallesPago()">
+                  Detalles de Pagos
+                </button>
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 col-lg-3 p-4">
+              <div class="form-group">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-sm active text-wrap h-100"
+                  (click)="btnIngresoMasivoPagos()">
+                  Ingreso Masivo de Pagos
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

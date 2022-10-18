@@ -1,8 +1,8 @@
 import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception.routes';
-import { menuOptionsJuridicalProcesses } from '../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
+import { MENU_OPTIONS_JURIDICAL_PROCESSES } from '../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
 import { IMenuItem } from './interfaces/menu.interface';
 import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
-import { ADMINISTRATIVE_PROCESSES_ROUTES } from '../common/routes/administrative-processes.routes'
+import { ADMINISTRATIVE_PROCESSES_ROUTES } from '../common/routes/administrative-processes.routes';
 export const MENU: IMenuItem[] = [
   {
     label: 'Menu',
@@ -88,7 +88,7 @@ export const MENU: IMenuItem[] = [
             label: 'Programación de Eventos',
             link: '/pages/final-destination-process/delivery-schedule/schedule-of-events',
           },
-        ]
+        ],
       },
     ],
   },
@@ -334,6 +334,6 @@ export const MENU: IMenuItem[] = [
     ],
   },
   // PROCESOS JURIDICOS
-  menuOptionsJuridicalProcesses,
+  ...MENU_OPTIONS_JURIDICAL_PROCESSES,
   // PROCESOS JURIDICOS
 ];

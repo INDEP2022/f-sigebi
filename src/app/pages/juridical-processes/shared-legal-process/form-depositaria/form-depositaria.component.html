@@ -1,12 +1,12 @@
 <!-- form Conciliacion de pagos recibidos -->
 <form [formGroup]="form" class="container-fluid form-material">
   <div class="row w-100">
-    <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+    <div class="col-sm-12 col-12 col-md-12 p-2">
       <span class="subtitle">
         Ejecutar la conciliacion de pagos recibidos
       </span>
     </div>
-    <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+    <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field [control]="form.get('noBien')" label="No. Bien">
         <input
           class="form-control"
@@ -14,13 +14,13 @@
           placeholder="No. Bien" />
       </form-field>
     </div>
-    <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
+    <div class="col-sm-12 col-12 col-md-4 p-2">
       <div class="form-group">
         <input class="form-control" placeholder="Detalle No. Bien" />
         <label class="label w-100">Detalle No. Bien</label>
       </div>
     </div>
-    <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+    <div class="col-sm-12 col-12 col-md-4 p-2">
       <form-field [control]="form.get('nombramiento')" label="Nombramiento">
         <input
           class="form-control"
@@ -28,13 +28,7 @@
           placeholder="Nombramiento" />
       </form-field>
     </div>
-    <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
-      <div class="form-group">
-        <input class="form-control" placeholder="Detalle Nombramiento" />
-        <label class="label w-100">Detalle Nombramiento</label>
-      </div>
-    </div>
-    <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+    <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field [control]="form.get('fecha')" label="Fecha">
         <input
           class="form-control"
@@ -45,18 +39,18 @@
     </div>
     <div
       *ngIf="nombrePantalla == 'concil-pag'"
-      class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+      class="col-sm-12 col-12 col-md-3 p-2">
       <div class="form-group">
-        <button type="button" status="primary" (click)="btnEjecutar()">
+        <button class="btn btn-primary btn-sm active" (click)="btnEjecutar()">
           Ejecutar
         </button>
       </div>
     </div>
     <div
       *ngIf="nombrePantalla == 'concil-pag'"
-      class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+      class="col-sm-12 col-12 col-md-3 p-2">
       <div class="form-group">
-        <button type="button" status="primary" (click)="btnDeshacer()">
+        <button class="btn btn-primary btn-sm active" (click)="btnDeshacer()">
           Deshacer
         </button>
       </div>
@@ -68,10 +62,10 @@
 <!-- form Conciliacion de pagos recibidos -->
 <form [formGroup]="formDepositario" class="container-fluid form-material">
   <div class="row w-100">
-    <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+    <div class="col-sm-12 col-12 col-md-12 p-2">
       <span class="subtitle"> Depositario </span>
     </div>
-    <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+    <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field
         [control]="formDepositario.get('idDepositario')"
         label="Id Depositario">
@@ -81,7 +75,7 @@
           placeholder="Id Depositario" />
       </form-field>
     </div>
-    <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
+    <div class="col-sm-12 col-12 col-md-4 p-2">
       <form-field
         [control]="formDepositario.get('depositario')"
         label="Depositario">
@@ -91,7 +85,18 @@
           placeholder="Depositario" />
       </form-field>
     </div>
-    <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field
+        [control]="formDepositario.get('fechaEjecucion')"
+        label="Fecha Ejecución">
+        <!-- <label class="label w-100">Fecha Ejecución</label> -->
+        <input
+          class="form-control"
+          formControlName="fechaEjecucion"
+          placeholder="Fecha Ejecución" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-2">
       <form-field [control]="formDepositario.get('procesar')" label="Procesar">
         <select class="form-control" formControlName="procesar">
           <option [value]="null">Seleccione un valor</option>
@@ -100,42 +105,26 @@
         </select>
       </form-field>
     </div>
-    <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-      <form-field
-        [control]="formDepositario.get('fechaEjecucion')"
-        label="Fecha Ejecución">
-        <label class="label w-100">Fecha Ejecución</label>
-        <input
-          class="form-control"
-          formControlName="fechaEjecucion"
-          placeholder="Fecha Ejecución" />
-      </form-field>
-    </div>
     <div
       *ngIf="nombrePantalla == 'concil-pag'"
       class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
       <div class="form-group">
-        <label class="label">&nbsp;</label>&nbsp;
-        <div class="d-flex justify-content-center">
-          <button
-            type="button"
-            status="primary"
-            (click)="btnRecargaDepositario()">
-            Recarga Depositario
-          </button>
-        </div>
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="btnRecargaDepositario()">
+          Recarga Depositario
+        </button>
       </div>
     </div>
     <div
       *ngIf="nombrePantalla == 'concil-pag'"
       class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
       <div class="form-group">
-        <label class="label">&nbsp;</label>&nbsp;
-        <div class="d-flex justify-content-center">
-          <button type="button" status="primary" (click)="btnValidacionPagos()">
-            Validación de Pagos
-          </button>
-        </div>
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="btnValidacionPagos()">
+          Validación de Pagos
+        </button>
       </div>
     </div>
   </div>
