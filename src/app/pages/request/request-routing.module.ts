@@ -39,6 +39,12 @@ const routes: Routes = [
         .ExecuteReceptionModule,
   },
   {
+    path: 'formalize-programming',
+    loadChildren: async () =>
+      (await import('./formalize-programming/formalize-programming.module'))
+        .FormalizeProgrammingModule,
+  },
+  {
     path: 'request-in-turn',
     loadChildren: async () =>
       (await import('./request-in-turn/request-in-turn.module'))
