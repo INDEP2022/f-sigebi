@@ -32,6 +32,7 @@ export class CMSirsaePaymentConsultationListComponent
     actions: false,
   };
   tableSource: LocalDataSource;
+  tableFilters: any[] = [];
 
   goodTestData: any = [
     {
@@ -177,23 +178,40 @@ export class CMSirsaePaymentConsultationListComponent
   }
 
   filterBank(query: string) {
-    this.filterTable(query, 'bank');
+    this.addFilter(query, 'bank');
   }
 
   filterStatus(query: string) {
-    this.filterTable(query, 'status');
+    this.addFilter(query, 'status');
   }
 
-  filterTable(query: string, column: string) {
-    this.tableSource.setFilter(
-      [
-        {
+  addFilter(query: string, column: string) {
+    if (this.tableFilters.length > 0) {
+      let hasFilter: boolean = false;
+      let filterIndex: number;
+      this.tableFilters.forEach((f, i) => {
+        if (f.field === column) {
+          hasFilter = true;
+          filterIndex = i;
+        }
+      });
+      if (hasFilter) {
+        this.tableFilters[filterIndex] = {
           field: column,
           search: query,
-        },
-      ],
-      false
-    );
+        };
+      } else {
+        this.tableFilters.push({ field: column, search: query });
+      }
+      this.filterTable();
+    } else {
+      this.tableFilters.push({ field: column, search: query });
+    }
+    this.filterTable();
+  }
+
+  filterTable() {
+    this.tableSource.setFilter(this.tableFilters, true);
     this.totalItems = this.tableSource.count();
   }
 
