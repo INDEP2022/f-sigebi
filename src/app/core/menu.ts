@@ -1,5 +1,5 @@
 import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception.routes';
-import { menuOptionsJuridicalProcesses } from '../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
+import { MENU_OPTIONS_JURIDICAL_PROCESSES } from '../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
 import { IMenuItem } from './interfaces/menu.interface';
 import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
 import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
@@ -278,7 +278,7 @@ export const MENU: IMenuItem[] = [
     ],
   },
   // PROCESOS JURIDICOS
-  menuOptionsJuridicalProcesses,
+  ...MENU_OPTIONS_JURIDICAL_PROCESSES,
   // Recepcion Fisica Judicial
   {
     label: 'Recepcion Fisica Judicial',
