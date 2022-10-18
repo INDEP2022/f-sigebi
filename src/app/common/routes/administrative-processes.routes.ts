@@ -74,6 +74,14 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Mantenimiento',
             link: '/pages/administrative-processes/maintenance',
           },
+          {
+            label: 'Bitacora de Vigilancia',
+            link: '/pages/administrative-processes/surveillance-log',
+          },
+          {
+            label: 'Configuracion de correos de mantenimiento',
+            link: '/pages/administrative-processes/maintenance-mail-configuration',
+          },
         ],
       },
       /**
