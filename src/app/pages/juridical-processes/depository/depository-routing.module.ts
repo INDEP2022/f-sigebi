@@ -39,6 +39,13 @@ const routes: Routes = [
       ).PJDRCNAppointmentCertificateModule,
     data: { title: routesJuridicalProcesses[8].label },
   },
+  {
+    path: routesJuridicalProcesses[9].link,
+    loadChildren: async () =>
+      (await import('./goods-depositary/pj-d-rbd-m-goods-depositary.module'))
+        .PJDRBDGoodsDepositaryModule,
+    data: { title: routesJuridicalProcesses[9].label },
+  },
   // DEPOSITARIA
 
   // PROCESO DE DISPERCION DE PAGOS

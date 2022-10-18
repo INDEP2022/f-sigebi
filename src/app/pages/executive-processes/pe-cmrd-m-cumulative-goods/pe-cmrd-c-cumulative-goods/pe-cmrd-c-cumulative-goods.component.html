@@ -14,7 +14,7 @@
           <app-delegation-shared [form]="form" [showDelegation]="false">
           </app-delegation-shared>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2 mt-3">
           <form-field
             [control]="form.get('fromYear')"
             label="Recepciones del año">
@@ -28,7 +28,7 @@
               [(bsValue)]="bsValueYear" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2 mt-3">
           <form-field [control]="form.get('fromMonth')" label="Del mes de">
             <input
               type="text"
@@ -40,7 +40,7 @@
               [(bsValue)]="bsValueFromMonth" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2 mt-3">
           <form-field [control]="form.get('toMonth')" label="Al mes de">
             <input
               type="text"

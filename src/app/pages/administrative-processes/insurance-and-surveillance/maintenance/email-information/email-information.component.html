@@ -1,0 +1,97 @@
+<div body>
+  <form [formGroup]="form" class="form-material">
+    <div class="row mt-4">
+      <div class="col-md-8">
+        <form-field
+          [control]="form.get('reasonForChange')"
+          label="Motivo de Cambio">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="reasonForChange" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field [control]="form.get('date')" label="Fecha de Solicitud">
+          <input
+            type="text"
+            formControlName="date"
+            class="form-control"
+            bsDatepicker />
+        </form-field>
+      </div>
+    </div>
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <form-field [control]="form.get('from')">
+          <ngx-select
+            [form]="form"
+            [data]="from"
+            bindLabel="name"
+            label="Envía"
+            value="id"
+            (fetchItems)="getFrom($event)"
+            control="from"></ngx-select>
+        </form-field>
+      </div>
+      <div class="col-md-6">
+        <form-field [control]="form.get('to')">
+          <ngx-select
+            [form]="form"
+            [data]="tos"
+            bindLabel="name"
+            label="Para"
+            value="id"
+            (fetchItems)="getTos($event)"
+            control="to"></ngx-select>
+        </form-field>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <form-field [control]="form.get('cc')">
+          <ngx-select
+            [form]="form"
+            [data]="ccs"
+            bindLabel="name"
+            label="CC"
+            value="id"
+            (fetchItems)="getCcs($event)"
+            control="cc"></ngx-select>
+        </form-field>
+      </div>
+      <div class="col-md-6">
+        <form-field [control]="form.get('type')" label="Tipo">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="type"
+            min="1"
+            pattern="^[0-9]+" />
+        </form-field>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <form-field [control]="form.get('issue')" label="Asunto">
+          <input type="text" class="form-control" formControlName="issue" />
+        </form-field>
+      </div>
+      <div class="col-md-6">
+        <form-field [control]="form.get('body')" label="Cuerpo">
+          <input type="text" class="form-control" formControlName="body" />
+        </form-field>
+      </div>
+    </div>
+
+    <div class="row mt-4 float-right">
+      <div class="">
+        <button type="submit" class="btn btn-primary btn-sm active mx-4">
+          ENVIAR
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

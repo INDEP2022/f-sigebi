@@ -1,6 +1,18 @@
+/** BASE IMPORT */
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+/** LIBRERÍAS EXTERNAS IMPORTS */
+import { Example } from 'src/app/core/models/catalogs/example';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+
+/** SERVICE IMPORTS */
+import { ExampleService } from 'src/app/core/services/catalogs/example.service';
+
+/** ROUTING MODULE */
+
+/** COMPONENTS IMPORTS */
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'ngx-fact-abandonos-oficio',
@@ -16,6 +28,7 @@ export class FormFactAbandonosOficioComponent
     formCcpOficio: FormGroup;
     formOficioInicioFin: FormGroup;
   };
+  items = new DefaultSelect<Example>();
 
   @Input() formOficio: FormGroup;
   @Input() formCcpOficio: FormGroup;
@@ -52,7 +65,10 @@ export class FormFactAbandonosOficioComponent
   };
   /** Tabla bienes */
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private exampleService: ExampleService
+    ) {
     super();
   }
 
@@ -67,6 +83,11 @@ export class FormFactAbandonosOficioComponent
     this.formValues.emit(this.allForms);
   }
 
+  getFromSelect(params: ListParams) {
+    this.exampleService.getAll(params).subscribe(data => {
+      this.items = new DefaultSelect(data.data, data.count);
+    });
+  }
   /**
    * Formulario
    */
