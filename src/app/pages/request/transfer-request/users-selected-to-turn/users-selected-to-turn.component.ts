@@ -2,7 +2,6 @@ import { Component, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRequestInTurnSelected } from 'src/app/core/models/catalogs/request-in-turn-selected.model';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -15,7 +14,6 @@ import { TURN_SELECTED_COLUMNS } from '../../request-in-turn/request-in-turn-sel
 })
 export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
   title: string = '¿DESEAS TURNAR LAS SOLICITUDES SELECCIONAS?';
-  settings = TABLE_SETTINGS;
   paragraphs: IRequestInTurnSelected[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   public event: EventEmitter<any> = new EventEmitter();

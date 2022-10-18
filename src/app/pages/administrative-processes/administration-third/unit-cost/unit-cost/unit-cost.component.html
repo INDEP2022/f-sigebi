@@ -1,14 +1,12 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">Clave de costo</h5>
-      <div class="col-md-5 buttons">
-        <app-columns-select [(settings)]="settings"></app-columns-select>
-      </div>
+    <div class="col-md-5 buttons">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+    </div>
   </div>
   <div body>
-    <button type="submit" class="btn btn-primary btn-sm active">
-      Reporte
-    </button>
+    <button type="submit" class="btn btn-primary btn-sm active">Reporte</button>
     <div class="row pt-4">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
@@ -20,8 +18,8 @@
         </div>
       </div>
       <app-pagination
-      [params]="params"
-      [totalItems]="totalItems"></app-pagination>
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
     </div>
   </div>
 </app-card>
@@ -47,8 +45,8 @@
         </div>
       </div>
       <app-pagination
-      [params]="params1"
-      [totalItems]="totalItems1"></app-pagination>
+        [params]="params1"
+        [totalItems]="totalItems1"></app-pagination>
     </div>
   </div>
 </app-card>

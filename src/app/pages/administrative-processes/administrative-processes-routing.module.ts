@@ -83,12 +83,22 @@ const routes: Routes = [
       {
         path: 'request-numbering-change',
         loadChildren: async () =>
-          (await import('./resquest-numbering-change/pa-m-resquest-numbering-change.module'))
-            .PaMResquestNumberingChangeModule,
+          (
+            await import(
+              './resquest-numbering-change/pa-m-resquest-numbering-change.module'
+            )
+          ).PaMResquestNumberingChangeModule,
         data: { title: 'Solicitud de cambio a numeracion' },
       },
+      {
+        path: 'massive-reclassification-goods',
+        loadChildren: async () =>
+          (await import('./massive-reclassification-goods/pa-m-massive-reclassification-goods.module'))
+            .PaMMassiveReclassificationGoodsModule,
+        data: { title: 'Reclasificación masiva de bienes' },
+      },
       /**
-       * Seguros **Legaspi**
+       *Legaspi
        **/
       {
         path: 'summary-financial-info',
@@ -140,7 +150,7 @@ const routes: Routes = [
           ).then(m => m.PaSsiMSiabSamiInteractionModule),
       },
       /**
-       * Seguros **Legaspi**
+       *Legaspi
        **/
       {
         path: 'location-goods',
@@ -176,9 +186,6 @@ const routes: Routes = [
             .PaMKitchenwareModule,
         data: { title: 'Registro de mensaje del bien' },
       },
-      /**
-       * Seguros **Legaspi**
-       **/
       {
         path: 'appraisal-request',
         loadChildren: async () =>
@@ -228,14 +235,14 @@ const routes: Routes = [
        **/
       {
         path: 'services',
-        loadChildren: () =>
-          import('./services/pa-s-m-services.module').then(
-            m => m.PaSMServicesModule
-          ),
+        loadChildren: async () =>
+          (await import('./services/pa-s-m-services.module'))
+            .PaSMServicesModule,
+        data: { title: 'Servicios' },
       },
       /**
        * Services Pages Legaspi
-      **/
+       **/
       {
         path: 'contracts',
         loadChildren: async () =>
@@ -249,6 +256,67 @@ const routes: Routes = [
           (await import('./administration-third/unit-cost/unit-cost.module'))
             .UnitCostModule,
         data: { title: 'Costo unitario' },
+      },
+      {
+        path: 'process',
+        loadChildren: async () =>
+          (await import('./administration-third/process/process.module'))
+            .ProcessModule,
+        data: { title: 'Procesos para precios unitarios' },
+      },
+      {
+        path: 'services-unit-prices',
+        loadChildren: async () =>
+          (
+            await import(
+              './administration-third/services-unit-prices/services-unit-prices.module'
+            )
+          ).ServicesUnitPricesModule,
+        data: { title: 'Servicios para precios unitarios' },
+      },
+      {
+        path: 'specs',
+        loadChildren: async () =>
+          (await import('./administration-third/specs/specs.module'))
+            .SpecsModule,
+        data: { title: 'Especificaciones para precios unitarios' },
+      },
+      {
+        path: 'turn-type',
+        loadChildren: async () =>
+          (await import('./administration-third/turn-type/turn-type.module'))
+            .TurnTypeModule,
+        data: { title: 'Turno y tipo' },
+      },
+      {
+        path: 'measurement-units',
+        loadChildren: async () =>
+          (
+            await import(
+              './administration-third/measurement-units/measurement-units.module'
+            )
+          ).MeasurementUnitsModule,
+        data: { title: 'Unidades de medida' },
+      },
+      {
+        path: 'variable-cost',
+        loadChildren: async () =>
+          (
+            await import(
+              './administration-third/variable-cost/variable-cost.module'
+            )
+          ).VariableCostModule,
+        data: { title: 'Variable costo' },
+      },
+      /**
+       * Seguros David Lucas
+       */
+      {
+        path: 'policies-report',
+        loadChildren: async () =>
+          (await import('./policies-report/policies-report.module'))
+            .PoliciesReportModule,
+        data: { title: 'Reportes de Pólizas' },
       },
     ],
   },

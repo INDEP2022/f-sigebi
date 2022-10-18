@@ -17,8 +17,9 @@ export class AppraisalRequestComponent implements OnInit {
   public department = new DefaultSelect();
   public appraisalCurrency = new DefaultSelect();
 
-  constructor(private fb: FormBuilder) // private peritosService: PeritosService
-  {}
+  constructor(
+    private fb: FormBuilder // private peritosService: PeritosService
+  ) {}
 
   ngOnInit(): void {
     this.prepareForm();

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { COLUMNS2, COLUMNS3 } from './columns';
 
@@ -16,18 +16,13 @@ export class PaRmCRevenueManagementComponent
   implements OnInit
 {
   form: FormGroup = new FormGroup({});
-  settings2 = {
-    ...TABLE_SETTINGS,
-    actions: false,
-  };
+
+  settings2 = { ...this.settings, actions: false };
   data2: any[] = [];
   totalItems2: number = 0;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
 
-  settings3 = {
-    ...TABLE_SETTINGS,
-    actions: false,
-  };
+  settings3 = { ...this.settings, actions: false };
   data3: any[] = [];
   totalItems3: number = 0;
   params3 = new BehaviorSubject<ListParams>(new ListParams());
@@ -35,6 +30,7 @@ export class PaRmCRevenueManagementComponent
   constructor(private fb: FormBuilder) {
     super();
     this.settings2.columns = COLUMNS2;
+
     this.settings3.columns = COLUMNS3;
   }
 

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRequestList } from 'src/app/core/models/catalogs/request-list.model';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -26,7 +25,6 @@ var usuario: IRequestList[] = [
   styleUrls: ['./request-list.component.scss'],
 })
 export class RequestListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
   params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: IRequestList[] = [];
   totalItems: number = 0;
@@ -35,7 +33,6 @@ export class RequestListComponent extends BasePage implements OnInit {
   constructor(public modalService: BsModalService) {
     super();
     this.settings.columns = REQUEST_LIST_COLUMNS;
-    this.settings.selectMode = '';
     this.settings.actions = {
       columnTitle: 'Acciones',
       position: 'right',

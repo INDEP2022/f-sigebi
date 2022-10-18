@@ -1,0 +1,156 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Generar recibo</h5>
+  </div>
+  <div body>
+    <form [formGroup]="generateReceiptForm" class="form-material">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field
+            [control]="generateReceiptForm.get('deliveryName')"
+            label="Nombre de quien entrega">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="deliveryName" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="generateReceiptForm.get('typeTransport')"
+            label="Tipo de transporte">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="typeTransport" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="generateReceiptForm.get('deliveryCharge')"
+            label="Cargo de quien entrega">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="deliveryCharge" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="generateReceiptForm.get('plateNumber')"
+            label="Número de placa">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="plateNumber" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-check label="Firma electrónica" for="eleSigDelivery">
+            <input
+              id="eleSigDelivery"
+              type="checkbox"
+              formControlName="eleSigDelivery" />
+          </form-check>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="generateReceiptForm.get('seal')"
+            label="Precinto">
+            <input type="text" class="form-control" formControlName="seal" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="generateReceiptForm.get('nameReceipt')"
+            label="Nombre quien recibe">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nameReceipt" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="generateReceiptForm.get('observations')"
+            label="Observaciones">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="observations" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="generateReceiptForm.get('chargeReceipt')"
+            label="Cargo quien recibe">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="chargeReceipt" />
+          </form-field>
+        </div>
+        <div class="col-md-6"></div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-check label="Firma electrónica" for="eleSigReceipt">
+            <input
+              id="eleSigReceipt"
+              type="checkbox"
+              formControlName="eleSigReceipt" />
+          </form-check>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <h5 class="title">Testigo del recibo</h5>
+
+        <div class="m-3 btn-toolbar">
+          <button (click)="newWitness()" class="btn btn-primary btn-sm active">
+            Nuevo Testigo
+          </button>
+        </div>
+
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings"
+          [source]="paragraphs"
+          (delete)="delete($event.data)">
+        </ng2-smart-table>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!generateReceiptForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

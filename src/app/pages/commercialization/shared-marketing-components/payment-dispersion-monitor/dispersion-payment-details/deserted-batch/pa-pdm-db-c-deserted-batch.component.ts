@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { COLUMNS } from './columns';
 
@@ -11,18 +11,17 @@ import { COLUMNS } from './columns';
   styles: [],
 })
 export class PaPdmDbCDesertedBatchComponent extends BasePage implements OnInit {
-  settings = {
-    ...TABLE_SETTINGS,
-    actions: false,
-  };
-
   data: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor() {
     super();
-    this.settings.columns = COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...COLUMNS },
+    };
   }
 
   ngOnInit(): void {}

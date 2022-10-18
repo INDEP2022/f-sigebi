@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDeductive } from 'src/app/core/models/catalogs/deductive.model';
 import { DeductiveService } from 'src/app/core/services/catalogs/deductive.service';
@@ -16,7 +16,6 @@ import { DEDUCTIVE_COLUMNS } from './deductive-columns';
   styles: [],
 })
 export class DeductivesListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
   deductives: IDeductive[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

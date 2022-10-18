@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { IRegulatory } from 'src/app/core/models/catalogs/regulatory.model';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from '../../../../common/constants/table-settings';
+
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { RegulatoryService } from 'src/app/core/services/catalogs/regulatory.service';
@@ -15,7 +15,6 @@ import { REGULATORY_COLUMNS } from './regulatory-columns';
   styles: [],
 })
 export class RegulatoryListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
   regulatorys: IRegulatory[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

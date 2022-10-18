@@ -7,6 +7,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { HomeRoutingModule } from './home-routing.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { ExampleModalComponent } from './example-modal.component';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 
 @NgModule({
   declarations: [HomeComponent, ExampleModalComponent],
@@ -17,6 +18,7 @@ import { ExampleModalComponent } from './example-modal.component';
     ModalModule.forChild(),
     TabsModule,
     HomeRoutingModule,
+    PreviewDocumentsComponent,
   ],
 })
 export class HomeModule {}

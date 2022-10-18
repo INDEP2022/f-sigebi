@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { CONSUL_GOODS_COMMER_SALES_COLUMNS } from './consul-goods-commer-sales-columns';
 
-import { ExcelService } from 'src/app/common/services/exportToExcel.service';
+import { ExcelService } from 'src/app/common/services/exporttoexcel.service';
 
 @Component({
   selector: 'app-c-bm-cdb-c-consultation-goods-commercial-sales',
@@ -16,15 +16,15 @@ export class CBmCdbCConsultationGoodsCommercialSalesComponent
   extends BasePage
   implements OnInit
 {
-  settings = {
-    ...TABLE_SETTINGS,
-    actions: false,
-  };
   form: FormGroup = new FormGroup({});
 
   constructor(private fb: FormBuilder, private excelService: ExcelService) {
     super();
-    this.settings.columns = CONSUL_GOODS_COMMER_SALES_COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...CONSUL_GOODS_COMMER_SALES_COLUMNS },
+    };
   }
 
   ngOnInit(): void {

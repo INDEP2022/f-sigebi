@@ -2,6 +2,8 @@ import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception
 import { menuOptionsJuridicalProcesses } from '../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
 import { IMenuItem } from './interfaces/menu.interface';
 import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
+import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
+import { ADMINISTRATIVE_PROCESSES_ROUTES } from '../common/routes/administrative-processes.routes';
 
 export const MENU: IMenuItem[] = [
   {
@@ -33,188 +35,7 @@ export const MENU: IMenuItem[] = [
   // * CATALOGOS
   ...CATALOGS_ROUTES,
   //Administración
-  {
-    label: 'Procesos Administrativos',
-    icon: 'bx-folder',
-    subItems: [
-      {
-        label: 'Numerario Físico',
-        link: '/pages/administrative-processes/numerary-physics',
-      },
-      {
-        label: 'Actas Conversión',
-        link: '/pages/administrative-processes/conversion-act',
-      },
-
-      {
-        label: 'Otras Monedas',
-        link: '/pages/administrative-processes/other-currencies',
-      },
-      {
-        label: 'Valores por Expediente',
-        link: '/pages/administrative-processes/values-per-file',
-      },
-      {
-        label: 'Movimientos Cuentas General',
-        link: '/pages/administrative-processes/general-account-movements',
-      },
-      {
-        label: 'Bienes conversión',
-        link: '/pages/administrative-processes/apply-lif',
-      },
-      {
-        label: 'Administración Conversión',
-        link: '/pages/administrative-processes/conversion-management',
-      },
-      {
-        label: 'Derivación Bienes',
-        link: '/pages/administrative-processes/derivation-goods',
-      },
-      {
-        label: 'Ubicación de Bienes',
-        link: '/pages/administrative-processes/location-goods',
-      },
-      {
-        label: 'Consulta de Almacenes',
-        link: '/pages/administrative-processes/warehouse-inquiries',
-      },
-      {
-        label: 'Consulta de Bóvedas',
-        link: '/pages/administrative-processes/vault-consultation',
-      },
-      {
-        label: 'Registro de mensaje del Bien',
-        link: '/pages/administrative-processes/property-registration',
-      },
-      {
-        label: 'Solicitud de Avalúos',
-        link: '/pages/administrative-processes/appraisal-request',
-      },
-      {
-        label: 'Solicitud de cambio a numeración',
-        link: '/pages/administrative-processes/request-numbering-change'
-      },
-      {
-        label: 'Registro de Avalúos',
-        link: '/pages/administrative-processes/appraisal-registry',
-      },
-      {
-        label: 'Monitor de Avalúos',
-        link: '/pages/administrative-processes/appraisal-monitor',
-      },
-      {
-        label: 'Bienes sin Avalúos',
-        link: '/pages/administrative-processes/appraisal-goods',
-      },
-      {
-        label: 'Monitor de bienes incosteables',
-        link: '/pages/administrative-processes/monitor-unavoidable-assets',
-      },
-      {
-        label: 'Venta de Bienes',
-        link: '/pages/administrative-processes/sale-goods',
-      },
-      {
-        label: 'Administracion Terceros',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Contratos',
-            link: '/pages/administrative-processes/contracts',
-          },
-          {
-            label: 'Costo unitario',
-            link: '/pages/administrative-processes/unit-cost',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    label: 'Reportes',
-    icon: 'bx-folder',
-    subItems: [
-      {
-        label: 'Atención Bienes',
-        link: '/pages/administrative-processes/goods-tracking',
-      },
-      {
-        label: 'Gestión Bienes Gab-Soc',
-        link: '/pages/administrative-processes/goods-management',
-      },
-      {
-        label: 'Empresas',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Resumen Info Financiera',
-            link: '/pages/administrative-processes/summary-financial-info',
-          },
-        ],
-      },
-      {
-        label: 'Reportes',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Almacenes',
-            link: '/pages/administrative-processes/warehouse-reports',
-          },
-          {
-            label: 'Expedientes',
-            link: '/pages/administrative-processes/record-details',
-          },
-        ],
-      },
-      {
-        label: 'Coversión de Paquetes',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Conversión Masiva',
-            link: '/pages/administrative-processes/unit-conversion-packages',
-          },
-        ],
-      },
-      {
-        label: 'Interacción SIAB-SAMI',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Relación de Bienes',
-            link: '/pages/administrative-processes/siab-sami-interaction/',
-          },
-          {
-            label: 'Pago de Bienes',
-            link: '/pages/administrative-processes/siab-sami-interaction/payment-goods',
-          },
-          {
-            label: 'Avalúo de Bienes',
-            link: '/pages/administrative-processes/siab-sami-interaction/value-goods',
-          },
-        ],
-      },
-      /**
-       * ADMIN PROCESS-SEGUROS LEGASPI
-       **/
-      /**
-       * ADMIN PROCESS-SERVICES LEGASPI
-       **/
-      {
-        label: 'Servicios',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Registro de Pago de Servicios',
-            link: '/pages/administrative-processes/services/',
-          },
-        ],
-      },
-      /**
-       * ADMIN PROCESS-SERVICES LEGASPI
-       **/
-    ],
-  },
+  ...ADMINISTRATIVE_PROCESSES_ROUTES,
   {
     label: 'Solicitudes',
     icon: 'bx-folder',
@@ -229,6 +50,7 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
+  //Proceso Destino final
   {
     label: 'Proceso Destino final',
     icon: 'bx-share-alt',
@@ -262,82 +84,29 @@ export const MENU: IMenuItem[] = [
           },
         ],
       },
-    ],
-  },
-  ...DOCUMENTS_RECEPTION_ROUTES,
-  //Procesos ejecutivos
-  {
-    label: 'Procesos Ejecutivos',
-    icon: 'bx-folder',
-    subItems: [
       {
-        label: 'Reportes del Director Gral',
-        icon: 'bx-folder',
+        label: 'Programación de Entregas',
         subItems: [
           {
-            label: 'Total de documentos recibidos vs área destino',
-            link: '/pages/executive-processes/pe-rddg-drpad-m-totaldoc-received-destinationarea',
-          },
-          {
-            label: 'Reporte Documentación Recibida',
-            link: '/pages/executive-processes/pe-rddg-tddr-m-report-doc-received',
-          },
-          {
-            label: 'Reporte de bienes recibidos en administración',
-            link: '/pages/executive-processes/pe-rddg-brea-m-assets-received-admon',
+            label: 'Programación de Eventos',
+            link: '/pages/final-destination-process/delivery-schedule/schedule-of-events',
           },
         ],
       },
       {
-        label: 'Acumulado Anual de Bienes',
-        link: '/pages/executive-processes/pe-aab-m-annual-accumulated-assets',
-      },
-      {
-        label: 'Acumulado Trimestral de Bienes',
-        link: '/pages/executive-processes/pe-atb-m-quarterly-accumulated-assets',
-      },
-      {
-        label: 'Control Mensual de Recepción Documental',
-        link: '/pages/executive-processes/pe-cmrd-m-cumulative-goods',
-      },
-      {
-        label: 'Control diario de recepción de expedientes',
-        link: '/pages/executive-processes/pe-rdde-m-daily-control-reception',
-      },
-      {
-        label: 'información Bienes',
-        link: '/pages/executive-processes/pe-ibs-d-a-m-report-registration-module',
-      },
-      {
-        label: 'Reporte de documentación recibida por autoridad emisora ',
-        link: '/pages/executive-processes/pe-drpae-m-doc-received-authority',
-      },
-      {
-        label: 'Gestión de Autorización de Destrucción',
-        link: '/pages/executive-processes/pe-gdadd-m-destruction-authorization-management',
-      },
-      {
-        label: 'Autorización de bienes para destrucción ',
-        link: '/pages/executive-processes/pe-ad-m-authorization-assets-destruction',
-      },
-      {
-        label: 'Aprobación de bienes para destino',
-        link: '/pages/executive-processes/pe-ad-m-approval-assets-destination',
-      },
-      {
-        label: 'Recepción recibida por área en el SERA ',
-        link: '/pages/executive-processes/pe-rddxdees-m-reception-area-sera',
-      },
-      {
-        label: 'Proceso de actualización masiva de valor avaluó',
-        link: '/pages/executive-processes/pe-amdvda-m-update-mss-value',
-      },
-      {
-        label: 'Aprobación donación',
-        link: '/pages/executive-processes/pe-ad-m-donation-approval',
+        label: 'Exportación de Bienes para Donación a Excel',
+        subItems: [
+          {
+            label: 'Exportación de Bienes para Donación',
+            link: '/pages/final-destination-process/donation-process/export-goods-donation',
+          },
+        ],
       },
     ],
   },
+  ...DOCUMENTS_RECEPTION_ROUTES,
+  //Procesos ejecutivos
+  ...EXECUTIVE_PROCESSES_ROUTES,
   //Comercialización
   {
     label: 'Comercialización',
@@ -347,6 +116,10 @@ export const MENU: IMenuItem[] = [
         label: 'Bienes Muebles',
         icon: 'bx-folder',
         subItems: [
+          {
+            label: 'Preparación del evento',
+            link: '/pages/commercialization/c-b-f-fmdvdb-m-event-preparation',
+          },
           {
             label: 'Bienes exentos de validación',
             link: '/pages/commercialization/c-b-bedv-m-validation-exempted-goods',
@@ -479,12 +252,6 @@ export const MENU: IMenuItem[] = [
           },
         ],
       },
-
-      {
-        label: 'Activos Financieros',
-        icon: 'credit-card-outline',
-        subItems: [],
-      },
       {
         label: 'Catálogos',
         icon: 'folder',
@@ -499,9 +266,40 @@ export const MENU: IMenuItem[] = [
           },
         ],
       },
+      {
+        label: 'Activos Financieros',
+        icon: 'credit-card-outline',
+        subItems: [],
+      },
+      {
+        label: 'Conversión a numerario',
+        link: '/pages/commercialization/numeraire-exchange',
+      },
     ],
   },
   // PROCESOS JURIDICOS
   menuOptionsJuridicalProcesses,
-  // PROCESOS JURIDICOS
+  // Recepcion Fisica Judicial
+  {
+    label: 'Recepcion Fisica Judicial',
+    icon: 'bx-folder',
+    subItems: [
+      {
+        label: 'Complemento Arituclo',
+        link: '/pages/judicial-physical-reception/articles-complement',
+      },
+      {
+        label: 'Recepcion de Decomisos',
+        link: '/pages/judicial-physical-reception/confiscated-reception',
+      },
+      {
+        label: 'Reporte de Actas',
+        link: '/pages/judicial-physical-reception/records-report',
+      },
+      {
+        label: 'Actas de Recepcion',
+        link: '/pages/judicial-physical-reception/confiscated-records',
+      },
+    ],
+  },
 ];

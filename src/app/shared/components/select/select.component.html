@@ -16,7 +16,8 @@
       [virtualScroll]="true"
       [formControlName]="control"
       (scrollToEnd)="fetchMore(select.searchTerm)"
-      (change)="onChange($event)">
+      (change)="onChange($event)"
+      [placeholder]="placeholder">
     </ng-select>
     <span class="form-bar"></span>
     <label class="float-label">{{ label }}</label>
