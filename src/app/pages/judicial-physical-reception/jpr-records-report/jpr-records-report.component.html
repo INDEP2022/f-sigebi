@@ -1,0 +1,105 @@
+<app-card [header]="true">
+    <div class="ch-content" header>
+        <h5 class="title">
+            Impresión de Actas de Entrega Recepción
+        </h5>
+    </div>
+
+    <div body>
+        <form class="form-material" [formGroup]="form">
+            <div class="row">
+                <div class="col-md-6">
+                   
+                    <div class="row">
+                        <form-radio label="Acta Entrega Recepción">
+                            <input type="radio" [formControl]="type" [value]="REPORT_TYPES.Reception" />
+                        </form-radio>
+                        <form-radio label="Acta Decomiso">
+                            <input type="radio" [formControl]="type" [value]="REPORT_TYPES.Confiscation" />
+                        </form-radio>
+                    </div>
+                   
+                    <div class="row">
+                        <div class="col-md-9">
+                            <form-field [control]="form.get('delegacionRecibe')" label="Delegación Recibe">
+                                <ngx-select control="delegacionRecibe" [form]="form" [data]="itemsSelect"></ngx-select>
+                            </form-field>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-9">
+                            <form-field [control]="form.get('delegacionAdministra')" label="Delegación Administrativa">
+                                <ngx-select control="delegacionAdministra" [form]="form" [data]="itemsSelect"></ngx-select>
+                            </form-field>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-9">
+                            <form-field [control]="form.get('estatusActa')" label="Estatus Acta">
+                                <select class="form-control" formControlName="estatusActa">
+                                    <option value="Abierta">Abierta</option>
+                                    <option value="Cerrada">Cerrada</option>
+                                    <option value="Todos">Todos</option>
+                                </select>
+                            </form-field>
+                        </div>
+                    </div>
+
+                    <div class="row" *ngIf="type.value === REPORT_TYPES.Reception">
+                        <div class="col-md-9">
+                            <form-field [control]="form.get('actaInicial')" label="Acta Inicial">
+                                <ngx-select control="actaInicial" [form]="form" [data]="itemsSelect"></ngx-select>
+                            </form-field>
+                        </div>
+                    </div>
+
+                    <div class="row" *ngIf="type.value === REPORT_TYPES.Reception">
+                        <div class="col-md-9">
+                            <form-field [control]="form.get('actaFinal')" label="Acta Final">
+                                <ngx-select control="actaFinal" [form]="form" [data]="itemsSelect"></ngx-select>
+                            </form-field>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <form-field [control]="form.get('desde')" label="No Expediente Desde el">
+                                <input type="number" class="form-control" formControlName="desde" placeholder="desde"/>
+                            </form-field>
+                        </div>
+
+                        <div class="col-md-6">
+                            <form-field [control]="form.get('hasta')" label="Hasta el">
+                                <input type="number" class="form-control" formControlName="hasta" placeholder="hasta"/>
+                            </form-field>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <form-field [control]="form.get('fechaDesde')" label="Fecha Elaboracion desde">
+                                <input bsDatepicker class="form-control" formControlName="fechaDesde" placeholder="Fecha elaboracion desde"/>
+                            </form-field>
+                        </div>
+
+                        <div class="col-md-6">
+                            <form-field [control]="form.get('fechaHasta')" label="Fecha Elaboracion Hasta">
+                                <input bsDatepicker class="form-control" formControlName="fechaHasta" placeholder="Fecha elaboracion hasta"/>
+                            </form-field>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <div>
+                            <button class="btn btn-primary active " type="submit" size="small">Imprimir</button>
+                        </div>
+                    </div>
+                   
+                </div>
+            </div>
+        </form>
+    </div>
+</app-card>
