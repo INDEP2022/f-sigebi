@@ -1,43 +1,41 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { BasePage } from 'src/app/core/shared/base-page'; 
-import { CALCULATE_COMISSION_COLUMNS } from './caculate-comission-columns';
 
+import { BasePage } from 'src/app/core/shared/base-page';
+import { CALCULATE_COMISSION_COLUMNS } from './caculate-comission-columns';
 
 @Component({
   selector: 'app-c-bm-ge-cdc-clc-c-calculate-commission',
   templateUrl: './c-bm-ge-cdc-clc-c-calculate-commission.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CBmGeCdcClcCCalculateCommissionComponent extends BasePage implements OnInit {
-
-  form : FormGroup = new FormGroup({});
+export class CBmGeCdcClcCCalculateCommissionComponent
+  extends BasePage
+  implements OnInit
+{
+  form: FormGroup = new FormGroup({});
   data: any;
-  
-  settings = {
-    ...TABLE_SETTINGS,
-    actions: false
-  };
 
   constructor(private fb: FormBuilder) {
     super();
-    this.settings.columns = CALCULATE_COMISSION_COLUMNS;
-   }
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...CALCULATE_COMISSION_COLUMNS },
+    };
+  }
 
   ngOnInit(): void {
     this.prepareForm();
   }
 
-  private prepareForm(){
+  private prepareForm() {
     this.form = this.fb.group({
       idName: ['', [Validators.required]],
       startDate: ['', [Validators.required]],
       endDate: ['', [Validators.required]],
       idEvent: ['', [Validators.required]],
-      typeChange: ['', [Validators.required]]
-    })
+      typeChange: ['', [Validators.required]],
+    });
   }
-
 }

@@ -7,17 +7,13 @@ import { GenericsRoutingModule } from './generics-routing.module';
 import { GenericsFormComponent } from './generics-form/generics-form.component';
 import { GenericsListComponent } from './generics-list/generics-list.component';
 
-
 @NgModule({
-  declarations: [
-    GenericsFormComponent,
-    GenericsListComponent
-  ],
+  declarations: [GenericsFormComponent, GenericsListComponent],
   imports: [
     CommonModule,
     GenericsRoutingModule,
     SharedModule,
-    ModalModule.forChild()
-  ]
+    ModalModule.forChild(),
+  ],
 })
-export class GenericsModule { }
+export class GenericsModule {}

@@ -2,15 +2,10 @@ import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-administrative-processes',
-  template: `
-    <router-outlet></router-outlet>
-  `
+  template: ` <router-outlet></router-outlet> `,
 })
 export class AdministrativeProcessesComponent implements OnInit {
+  constructor() {}
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

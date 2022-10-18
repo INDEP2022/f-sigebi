@@ -15,7 +15,7 @@ import { DOCUMENTS_LIST_COLUMNS } from './documents-list-columns';
   styles: [],
 })
 export class DocumentsListComponent extends BasePage implements OnInit {
-  settings = {...TABLE_SETTINGS};
+  override settings = { ...TABLE_SETTINGS };
   documentsData: any;
   showForm: boolean = false;
   documentForm: FormGroup = new FormGroup({});
@@ -50,7 +50,6 @@ export class DocumentsListComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    
   }
 
   prepareForm() {
@@ -82,16 +81,16 @@ export class DocumentsListComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  showDocument(){
-    const showDocument = this.modalService.show(DocumentShowComponent,{
+  showDocument() {
+    const showDocument = this.modalService.show(DocumentShowComponent, {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-  } 
-
-  viewDocument(){
-    alert("Se abrira el documento");
   }
 
-  confirm(){}
+  viewDocument() {
+    alert('Se abrira el documento');
+  }
+
+  confirm() {}
 }

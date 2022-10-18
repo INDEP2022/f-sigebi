@@ -5,12 +5,12 @@ import { MinpubListComponent } from './minpub-list/minpub-list.component';
 const routes: Routes = [
   {
     path: '',
-    component: MinpubListComponent
-  }
+    component: MinpubListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class MinpubRoutingModule { }
+export class MinpubRoutingModule {}

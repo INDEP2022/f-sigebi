@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { IDocCompensationSatXml } from 'src/app/core/models/catalogs/doc-compensation-sat-xml.model';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -13,11 +13,12 @@ import { DocCompensationSatXmlFormComponent } from '../doc-compensation-sat-xml-
 @Component({
   selector: 'app-doc-compensation-sat-xml-list',
   templateUrl: './doc-compensation-sat-xml-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class DocCompensationSatXmlListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
+export class DocCompensationSatXmlListComponent
+  extends BasePage
+  implements OnInit
+{
   paragraphs: IDocCompensationSatXml[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

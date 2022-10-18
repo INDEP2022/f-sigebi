@@ -5,13 +5,13 @@ import { DocCompensationSatXmlListComponent } from './doc-compensation-sat-xml-l
 
 const routes: Routes = [
   {
-    path: '', 
-    component: DocCompensationSatXmlListComponent 
+    path: '',
+    component: DocCompensationSatXmlListComponent,
   },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class DocCompensationSatXmlRoutingModule { }
+export class DocCompensationSatXmlRoutingModule {}

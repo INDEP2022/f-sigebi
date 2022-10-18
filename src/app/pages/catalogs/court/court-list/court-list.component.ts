@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ICourt } from '../../../../core/models/catalogs/court.model';
 import { CourtService } from './../../../../core/services/catalogs/court.service';
@@ -12,12 +12,9 @@ import { CourtFormComponent } from '../court-form/court-form.component';
 @Component({
   selector: 'app-court-list',
   templateUrl: './court-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CourtListComponent extends BasePage implements OnInit {
-
-  settings = TABLE_SETTINGS;
   columns: ICourt[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -25,7 +22,7 @@ export class CourtListComponent extends BasePage implements OnInit {
   constructor(
     private courtService: CourtService,
     private modalService: BsModalService
-  ) { 
+  ) {
     super();
     this.settings.columns = COURT_COLUMNS;
     this.settings.actions.delete = true;
@@ -75,5 +72,4 @@ export class CourtListComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }

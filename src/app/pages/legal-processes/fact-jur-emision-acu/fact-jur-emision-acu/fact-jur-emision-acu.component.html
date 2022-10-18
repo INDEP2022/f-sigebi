@@ -1,27 +1,22 @@
-<app-card [header]="true" class="cat-card mt-5"> 
-    <div class="ch-content" header>
-  
-        <div class="row w-100">
-            <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
-                <span class="title">
-                    EMISIÓN DE ACUERDOS
-                </span>
-            </div>
-            
-        </div>
-
+<app-card [header]="true" class="cat-card mt-5">
+  <div class="ch-content" header>
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
+        <span class="title"> EMISIÓN DE ACUERDOS </span>
+      </div>
     </div>
-  
-    <div body>
+  </div>
 
-        <!-- tabla Emisión Acuerdos -->
-        <div class="row w-100">
-            <div class="col-sm-12 col-12 col-md-12 p-2">
-                <ng2-smart-table class="my-table" [settings]="tableSettings" [source]="dataTable"></ng2-smart-table>
-            </div>
-        </div>
-        <!-- tabla Emisión Acuerdos -->
-  
+  <div body>
+    <!-- tabla Emisión Acuerdos -->
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 p-2">
+        <ng2-smart-table
+          class="my-table"
+          [settings]="tableSettings"
+          [source]="dataTable"></ng2-smart-table>
+      </div>
     </div>
-  
-  </app-card>
+    <!-- tabla Emisión Acuerdos -->
+  </div>
+</app-card>

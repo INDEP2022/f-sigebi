@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ICity } from '../../../../core/models/catalogs/city.model';
@@ -15,7 +15,6 @@ import { CityDetailComponent } from '../city-detail/city-detail.component';
   styles: [],
 })
 export class CityListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
   cities: ICity[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

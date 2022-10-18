@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { IIndicatorReport } from 'src/app/core/models/catalogs/indicator-report.model';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from '../../../../common/constants/table-settings';
+
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from '../../../../common/repository/interfaces/list-params';
 import { IndicatorReportService } from '../../../../core/services/catalogs/indicator-report.service';
@@ -13,12 +13,9 @@ import { IndicatorReportFormComponent } from '../indicator-report-form/indicator
 @Component({
   selector: 'app-indicator-report-list',
   templateUrl: './indicator-report-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class IndicatorReportListComponent extends BasePage implements OnInit {
-
-  settings = TABLE_SETTINGS;
   indicatorReports: IIndicatorReport[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -75,5 +72,4 @@ export class IndicatorReportListComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }

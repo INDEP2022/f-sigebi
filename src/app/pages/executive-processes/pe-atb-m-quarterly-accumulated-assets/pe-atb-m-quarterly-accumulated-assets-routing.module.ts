@@ -5,12 +5,12 @@ import { PeAtbCQuarterlyAccumulatedAssetsComponent } from './pe-atb-c-quarterly-
 const routes: Routes = [
   {
     path: '',
-    component: PeAtbCQuarterlyAccumulatedAssetsComponent
-  }
+    component: PeAtbCQuarterlyAccumulatedAssetsComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PeAtbMQuarterlyAccumulatedAssetsRoutingModule { }
+export class PeAtbMQuarterlyAccumulatedAssetsRoutingModule {}

@@ -6,11 +6,9 @@ import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 @Component({
   selector: 'app-c-c-tp-c-penalty-types-form',
   templateUrl: './c-c-tp-c-penalty-types-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CCTpCPenaltyTypesFormComponent extends BasePage implements OnInit {
-
   // tipo any hasta que existan modelos o interfaces de la respuesta del backend
   penaltyTypeForm: FormGroup = new FormGroup({});
   title: string = 'Tipo Penalización';
@@ -18,10 +16,7 @@ export class CCTpCPenaltyTypesFormComponent extends BasePage implements OnInit {
   penaltyType: any;
   @Output() refresh = new EventEmitter<true>();
 
-  constructor(
-    private modalRef: BsModalRef,
-    private fb: FormBuilder,
-  ) {
+  constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
   }
 
@@ -68,5 +63,4 @@ export class CCTpCPenaltyTypesFormComponent extends BasePage implements OnInit {
     this.refresh.emit(true);
     this.modalRef.hide();
   }
-
 }

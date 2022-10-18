@@ -4,12 +4,13 @@ import { StatusClaimsListComponent } from './status-claims-list/status-claims-li
 
 const routes: Routes = [
   {
-    path:'',component:StatusClaimsListComponent
-  }
+    path: '',
+    component: StatusClaimsListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class StatusClaimsRoutingModule { }
+export class StatusClaimsRoutingModule {}

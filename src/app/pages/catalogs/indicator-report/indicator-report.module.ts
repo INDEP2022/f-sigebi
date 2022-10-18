@@ -7,17 +7,13 @@ import { IndicatorReportListComponent } from './indicator-report-list/indicator-
 import { SharedModule } from '../../../shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
-  declarations: [
-    IndicatorReportFormComponent,
-    IndicatorReportListComponent
-  ],
+  declarations: [IndicatorReportFormComponent, IndicatorReportListComponent],
   imports: [
     CommonModule,
     IndicatorReportRoutingModule,
     SharedModule,
     ModalModule.forChild(),
-  ]
+  ],
 })
-export class IndicatorReportModule { }
+export class IndicatorReportModule {}

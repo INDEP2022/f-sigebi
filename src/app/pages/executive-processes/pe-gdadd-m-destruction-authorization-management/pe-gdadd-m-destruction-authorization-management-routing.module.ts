@@ -5,12 +5,12 @@ import { PeGdaddCDestructionAuthorizationManagementComponent } from './pe-gdadd-
 const routes: Routes = [
   {
     path: '',
-    component: PeGdaddCDestructionAuthorizationManagementComponent
-  }
+    component: PeGdaddCDestructionAuthorizationManagementComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PeGdaddMDestructionAuthorizationManagementRoutingModule { }
+export class PeGdaddMDestructionAuthorizationManagementRoutingModule {}

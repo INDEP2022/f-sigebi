@@ -8,48 +8,6 @@ const routes: Routes = [
     pathMatch: 'prefix',
     component: AdministrativeProcessesComponent,
     children: [
-      /*{
-        path: 'numerary-physics', loadChildren: () => import('./numerary-physics/numerary-physics.module')
-          .then(m => m.NumeraryPhysicsModule)
-      },*/
-      {
-        path: 'summary-financial-info',
-        loadChildren: () =>
-          import(
-            './companies/financial-info/pa-e-fi-m-financial-info.module'
-          ).then(m => m.PaEFiMFinancialInfoModule),
-      },
-      {
-        path: 'warehouse-reports',
-        loadChildren: () =>
-          import('./reports/warehouse/pa-r-wh-m-warehouse.module').then(
-            m => m.PaRWhMWarehouseModule
-          ),
-      },
-      /*{
-        path: 'storehouse', loadChildren: () => import('./storehouse/storehouse.module')
-          .then(m => m.StorehouseModule)
-      },
-      {
-        path: 'record', loadChildren: () => import('./record/record.module')
-          .then(m => m.RecordModule)
-      },
-      {
-        path: 'unit-conversion-packages', loadChildren: () => import('./unit-conversion-packages/unit-conversion-packages.module')
-          .then(m => m.UnitConversionPackagesModule)
-      },
-      {
-        path: 'goods-tracking', loadChildren: () => import('./goods-tracking/goods-tracking.module')
-          .then(m => m.GoodsTrackingModule)
-      },
-      {
-        path: 'goods-management', loadChildren: () => import('./goods-management/goods-management.module')
-          .then(m => m.GoodsManagementModule)
-      },
-      {
-        path: 'siab-sami-interaction', loadChildren: () => import('./siab-sami-interaction/siab-sami-interaction.module')
-          .then(m => m.SiabSamiInteractionModule)
-      }*/
       {
         path: 'numerary-operator',
         loadChildren: async () =>
@@ -122,8 +80,25 @@ const routes: Routes = [
             .DerivationGoodsModule,
         data: { title: 'Derivacion de bienes' },
       },
+      {
+        path: 'request-numbering-change',
+        loadChildren: async () =>
+          (
+            await import(
+              './resquest-numbering-change/pa-m-resquest-numbering-change.module'
+            )
+          ).PaMResquestNumberingChangeModule,
+        data: { title: 'Solicitud de cambio a numeracion' },
+      },
+      {
+        path: 'massive-reclassification-goods',
+        loadChildren: async () =>
+          (await import('./massive-reclassification-goods/pa-m-massive-reclassification-goods.module'))
+            .PaMMassiveReclassificationGoodsModule,
+        data: { title: 'Reclasificación masiva de bienes' },
+      },
       /**
-       * Seguros **Legaspi**
+       *Legaspi
        **/
       {
         path: 'summary-financial-info',
@@ -174,33 +149,43 @@ const routes: Routes = [
             './siab-sami-interaction/pa-ssi-m-siab-sami-interaction.module'
           ).then(m => m.PaSsiMSiabSamiInteractionModule),
       },
+      /**
+       *Legaspi
+       **/
       {
         path: 'location-goods',
         loadChildren: async () =>
-          (await import('./location-of-goods/location-goods-warehouses-storage/pa-lg-m-location-goods-warehouses-storage.module')).PaLgMLocationGoodsWarehousesStorageModule,
+          (
+            await import(
+              './location-of-goods/location-goods-warehouses-storage/pa-lg-m-location-goods-warehouses-storage.module'
+            )
+          ).PaLgMLocationGoodsWarehousesStorageModule,
         data: { title: 'Ubicacion de bienes' },
       },
       {
         path: 'warehouse-inquiries',
         loadChildren: async () =>
-         (await import('./warehouse-inquiries/pa-m-warehouse-inquiries.module')).PaMWarehouseInquiriesModule,
-         data: { title: 'Consulta Almacenes'}
+          (
+            await import(
+              './warehouse-inquiries/pa-m-warehouse-inquiries.module'
+            )
+          ).PaMWarehouseInquiriesModule,
+        data: { title: 'Consulta Almacenes' },
       },
       {
         path: 'vault-consultation',
         loadChildren: async () =>
-         (await import('./vault-consultation/pa-m-vault-consultation.module')).PaMVaultConsultationModule,
-         data: { title: 'Consulta Bovedas'}
+          (await import('./vault-consultation/pa-m-vault-consultation.module'))
+            .PaMVaultConsultationModule,
+        data: { title: 'Consulta Bovedas' },
       },
       {
         path: 'property-registration',
         loadChildren: async () =>
-         (await import('./kitchenware/pa-m-kitchenware.module')).PaMKitchenwareModule,
-         data: { title: 'Registro de mensaje del bien'}
+          (await import('./kitchenware/pa-m-kitchenware.module'))
+            .PaMKitchenwareModule,
+        data: { title: 'Registro de mensaje del bien' },
       },
-      /**
-       * Seguros **Legaspi**
-       **/
       {
         path: 'appraisal-request',
         loadChildren: async () =>
@@ -232,16 +217,106 @@ const routes: Routes = [
       {
         path: 'monitor-unavoidable-assets',
         loadChildren: async () =>
-          (await import('./monitor-unavoidable-assets/monitor-unavoidable-assets.module'))
-            .MonitorUnavoidableAssetsModule,
+          (
+            await import(
+              './monitor-unavoidable-assets/monitor-unavoidable-assets.module'
+            )
+          ).MonitorUnavoidableAssetsModule,
         data: { title: 'Monitor de bienes incosteables' },
       },
       {
         path: 'sale-goods',
         loadChildren: async () =>
-          (await import('./sale-goods/sale-goods.module'))
-            .SaleGoodsModule,
+          (await import('./sale-goods/sale-goods.module')).SaleGoodsModule,
         data: { title: 'VENTA DE BIENES' },
+      },
+      /**
+       *Services Pages Legaspi
+       **/
+      {
+        path: 'services',
+        loadChildren: async () =>
+          (await import('./services/pa-s-m-services.module'))
+            .PaSMServicesModule,
+        data: { title: 'Servicios' },
+      },
+      /**
+       * Services Pages Legaspi
+       **/
+      {
+        path: 'contracts',
+        loadChildren: async () =>
+          (await import('./administration-third/contracts/contracts.module'))
+            .ContractsModule,
+        data: { title: 'Registro de contratos' },
+      },
+      {
+        path: 'unit-cost',
+        loadChildren: async () =>
+          (await import('./administration-third/unit-cost/unit-cost.module'))
+            .UnitCostModule,
+        data: { title: 'Costo unitario' },
+      },
+      {
+        path: 'process',
+        loadChildren: async () =>
+          (await import('./administration-third/process/process.module'))
+            .ProcessModule,
+        data: { title: 'Procesos para precios unitarios' },
+      },
+      {
+        path: 'services-unit-prices',
+        loadChildren: async () =>
+          (
+            await import(
+              './administration-third/services-unit-prices/services-unit-prices.module'
+            )
+          ).ServicesUnitPricesModule,
+        data: { title: 'Servicios para precios unitarios' },
+      },
+      {
+        path: 'specs',
+        loadChildren: async () =>
+          (await import('./administration-third/specs/specs.module'))
+            .SpecsModule,
+        data: { title: 'Especificaciones para precios unitarios' },
+      },
+      {
+        path: 'turn-type',
+        loadChildren: async () =>
+          (await import('./administration-third/turn-type/turn-type.module'))
+            .TurnTypeModule,
+        data: { title: 'Turno y tipo' },
+      },
+      {
+        path: 'measurement-units',
+        loadChildren: async () =>
+          (
+            await import(
+              './administration-third/measurement-units/measurement-units.module'
+            )
+          ).MeasurementUnitsModule,
+        data: { title: 'Unidades de medida' },
+      },
+      {
+        path: 'variable-cost',
+        loadChildren: async () =>
+          (
+            await import(
+              './administration-third/variable-cost/variable-cost.module'
+            )
+          ).VariableCostModule,
+        data: { title: 'Variable costo' },
+      },
+      /**
+       * Seguros David Lucas
+       */
+      {
+        path: 'policies-report',
+        loadChildren: async () =>
+          (await import('./policies-report/policies-report.module'))
+            .PoliciesReportModule,
+        data: { title: 'Reportes de Pólizas' },
       },
     ],
   },

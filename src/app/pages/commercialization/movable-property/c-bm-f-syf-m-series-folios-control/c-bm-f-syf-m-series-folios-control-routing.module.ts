@@ -5,12 +5,12 @@ import { CBmFSyfCSeriesFoliosControlComponent } from './c-bm-f-syf-c-series-foli
 const routes: Routes = [
   {
     path: '',
-    component: CBmFSyfCSeriesFoliosControlComponent
-  }
+    component: CBmFSyfCSeriesFoliosControlComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CBmFSyfMSeriesFoliosControlRoutingModule { }
+export class CBmFSyfMSeriesFoliosControlRoutingModule {}

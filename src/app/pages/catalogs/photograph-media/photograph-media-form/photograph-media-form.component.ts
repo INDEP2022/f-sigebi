@@ -9,11 +9,9 @@ import { PhotographMediaService } from '../../../../core/services/catalogs/photo
 @Component({
   selector: 'app-photograph-media-form',
   templateUrl: './photograph-media-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PhotographMediaFormComponent extends BasePage implements OnInit {
-
   photographMediaForm: FormGroup = new FormGroup({});
   title: string = 'Medio Fotográfico';
   edit: boolean = false;
@@ -25,7 +23,7 @@ export class PhotographMediaFormComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef,
     private fb: FormBuilder,
     private photographMediaService: PhotographMediaService
-  ) { 
+  ) {
     super();
   }
 
@@ -55,10 +53,12 @@ export class PhotographMediaFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.photographMediaService.create(this.photographMediaForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.photographMediaService
+      .create(this.photographMediaForm.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   update() {

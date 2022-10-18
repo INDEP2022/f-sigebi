@@ -5,12 +5,12 @@ import { CCTpCPenaltyTypesListComponent } from './c-c-tp-c-penalty-types-list/c-
 const routes: Routes = [
   {
     path: '',
-    component: CCTpCPenaltyTypesListComponent
-  }
+    component: CCTpCPenaltyTypesListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CCMPenaltyTypesRoutingModule { }
+export class CCMPenaltyTypesRoutingModule {}

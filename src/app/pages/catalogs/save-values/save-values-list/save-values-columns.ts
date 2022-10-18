@@ -1,31 +1,31 @@
 export const SAVE_VALUES_COLUMNS = {
-    cve: {
-        title: 'Clave',
-        type: 'string',
-        sort: false,
-    },
+  cve: {
+    title: 'Clave',
+    type: 'string',
+    sort: false,
+  },
 
-    description: {
-        title: 'Descripción',
-        type: 'string',
-        sort: false,
-    },
+  description: {
+    title: 'Descripción',
+    type: 'string',
+    sort: false,
+  },
 
-    location: {
-        title: 'Ubicación',
-        type: 'string',
-        sort: false,
-    },
+  location: {
+    title: 'Ubicación',
+    type: 'string',
+    sort: false,
+  },
 
-    responsible: {
-        title: 'Responsable',
-        type: 'string',
-        sort: false,
-    },
+  responsible: {
+    title: 'Responsable',
+    type: 'string',
+    sort: false,
+  },
 
-    noRegistration: {
-        title: 'Número de registro',
-        type: 'string',
-        sort: false,
-    }
-}
+  noRegistration: {
+    title: 'Número de registro',
+    type: 'string',
+    sort: false,
+  },
+};

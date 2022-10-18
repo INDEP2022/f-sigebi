@@ -3,29 +3,27 @@
     <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-      <form [formGroup]="typeOrderServiceForm">
-          <div class="row">
-              <div class="col-md-12">
-                <form-field
-                [control]="typeOrderServiceForm.get('cve')"
-                label="CVE">
-                <input type="text" class="form-control" formControlName="cve" />
-              </form-field>
-              </div>
-              <div class="col-md-12">
-                <form-field
-                  [control]="typeOrderServiceForm.get('description')"
-                  label="Descripción">
-                  <textarea
-                    class="form-control"
-                    type="text"
-                    rows="2"
-                    formControlName="description"
-                    placeholder="Descripción"></textarea>
-                </form-field>
-              </div>
-          </div>
-      </form>
+    <form [formGroup]="typeOrderServiceForm">
+      <div class="row">
+        <div class="col-md-12">
+          <form-field [control]="typeOrderServiceForm.get('cve')" label="CVE">
+            <input type="text" class="form-control" formControlName="cve" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field
+            [control]="typeOrderServiceForm.get('description')"
+            label="Descripción">
+            <textarea
+              class="form-control"
+              type="text"
+              rows="2"
+              formControlName="description"
+              placeholder="Descripción"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">

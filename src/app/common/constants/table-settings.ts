@@ -24,4 +24,5 @@ export const TABLE_SETTINGS = {
   },
   columns: {},
   noDataMessage: 'No se encontrarón registros',
+  selectedRowIndex: -1,
 };

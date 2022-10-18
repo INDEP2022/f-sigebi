@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRAsuntDic } from 'src/app/core/models/catalogs/r-asunt-dic.model';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -12,12 +12,9 @@ import { R_ASUNT_DIC_COLUMNS } from './rasunt-dic-columns';
 @Component({
   selector: 'app-rasunt-dic-list',
   templateUrl: './rasunt-dic-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class RAsuntDicListComponent extends BasePage implements OnInit {
-
-  settings = TABLE_SETTINGS;
   rAsuntDics: IRAsuntDic[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -74,5 +71,4 @@ export class RAsuntDicListComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }

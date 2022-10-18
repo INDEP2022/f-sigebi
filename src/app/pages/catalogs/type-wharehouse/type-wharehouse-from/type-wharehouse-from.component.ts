@@ -9,8 +9,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-type-wharehouse-from',
   templateUrl: './type-wharehouse-from.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class TypeWharehouseFromComponent extends BasePage implements OnInit {
   typeWarehouseForm: ModelForm<ITypeWarehouse>;
@@ -20,7 +19,7 @@ export class TypeWharehouseFromComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private typeWarehouseService: TypeWarehouseService,
+    private typeWarehouseService: TypeWarehouseService
   ) {
     super();
   }
@@ -32,7 +31,10 @@ export class TypeWharehouseFromComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.typeWarehouseForm = this.fb.group({
       id: [null],
-      description: [null, Validators.compose([Validators.required, Validators.maxLength(80)])],
+      description: [
+        null,
+        Validators.compose([Validators.required, Validators.maxLength(80)]),
+      ],
       version: [null, Validators.compose([Validators.required])],
       estatus: [null, Validators.compose([Validators.required])],
     });
@@ -51,10 +53,12 @@ export class TypeWharehouseFromComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.typeWarehouseService.create(this.typeWarehouseForm.getRawValue()).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
+    this.typeWarehouseService
+      .create(this.typeWarehouseForm.getRawValue())
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
   }
 
   update() {

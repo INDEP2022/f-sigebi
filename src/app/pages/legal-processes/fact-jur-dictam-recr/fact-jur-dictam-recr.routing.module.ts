@@ -3,15 +3,14 @@ import { RouterModule, Routes } from '@angular/router';
 import { FactJurDictamRecrComponent } from './fact-jur-dictam-recr/fact-jur-dictam-recr.component';
 
 const routes: Routes = [
-  {  
-    path: '', component: FactJurDictamRecrComponent
+  {
+    path: '',
+    component: FactJurDictamRecrComponent,
   },
-  
-
-]; 
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class FactJurDictamRecrRoutingModule { }
+export class FactJurDictamRecrRoutingModule {}

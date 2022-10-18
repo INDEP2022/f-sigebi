@@ -6,18 +6,14 @@
     <form [formGroup]="statusTransferForm">
       <div class="row">
         <div class="col-md-6">
-          <form-field
-                  [control]="statusTransferForm.get('bank')"
-                  label="Banco">
-                  <input type="text" class="form-control" formControlName="bank" />
+          <form-field [control]="statusTransferForm.get('bank')" label="Banco">
+            <input type="text" class="form-control" formControlName="bank" />
           </form-field>
         </div>
 
         <div class="col-md-6">
-          <form-field
-                  [control]="statusTransferForm.get('code')"
-                  label="Código">
-                  <input type="number" class="form-control" formControlName="code" />
+          <form-field [control]="statusTransferForm.get('code')" label="Código">
+            <input type="number" class="form-control" formControlName="code" />
           </form-field>
         </div>
 
@@ -30,7 +26,7 @@
               type="text"
               rows="2"
               formControlName="description"
-            placeholder="Descripción"></textarea>
+              placeholder="Descripción"></textarea>
           </form-field>
         </div>
       </div>

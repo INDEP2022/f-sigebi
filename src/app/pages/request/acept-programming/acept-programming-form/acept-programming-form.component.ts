@@ -18,7 +18,7 @@ import { ShowSignatureProgrammingComponent } from '../show-signature-programming
   styles: [],
 })
 export class AceptProgrammingFormComponent extends BasePage implements OnInit {
-  settings = { ...TABLE_SETTINGS, actions: false };
+  override settings = { ...TABLE_SETTINGS, actions: false };
   estateSettings = { ...TABLE_SETTINGS, actions: false };
 
   params = new BehaviorSubject<ListParams>(new ListParams());

@@ -4,14 +4,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 @Component({
   selector: 'app-c-b-ge-can-c-numeraire-conversion-allotments',
   templateUrl: './c-b-ge-can-c-numeraire-conversion-allotments.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CBGeCanCNumeraireConversionAllotmentsComponent implements OnInit {
+  form: FormGroup = new FormGroup({});
 
-  form: FormGroup = new FormGroup({}); 
-
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();
@@ -28,5 +26,4 @@ export class CBGeCanCNumeraireConversionAllotmentsComponent implements OnInit {
       failureDate: ['', [Validators.required]],
     });
   }
-
 }

@@ -4,12 +4,13 @@ import { TypeDoctoListComponent } from '../type-docto/type-docto-list/type-docto
 
 const routes: Routes = [
   {
-    path:'',component:TypeDoctoListComponent
-  }
+    path: '',
+    component: TypeDoctoListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class TypeSinisterRoutingModule { }
+export class TypeSinisterRoutingModule {}

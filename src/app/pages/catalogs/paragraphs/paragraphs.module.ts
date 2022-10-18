@@ -7,17 +7,13 @@ import { ParagraphsRoutingModule } from './paragraphs-routing.module';
 import { ParagraphsFormComponent } from './paragraphs-form/paragraphs-form.component';
 import { ParagraphsListComponent } from './paragraphs-list/paragraphs-list.component';
 
-
 @NgModule({
-  declarations: [
-    ParagraphsFormComponent,
-    ParagraphsListComponent
-  ],
+  declarations: [ParagraphsFormComponent, ParagraphsListComponent],
   imports: [
     CommonModule,
     ParagraphsRoutingModule,
     SharedModule,
-    ModalModule.forChild()
-  ]
+    ModalModule.forChild(),
+  ],
 })
-export class ParagraphsModule { }
+export class ParagraphsModule {}

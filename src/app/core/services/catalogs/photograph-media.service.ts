@@ -9,9 +9,7 @@ import { IPhotographMedia } from '../../models/catalogs/photograph-media.model';
 @Injectable({
   providedIn: 'root',
 })
-export class PhotographMediaService
-  implements ICrudMethods<IPhotographMedia>
-{
+export class PhotographMediaService implements ICrudMethods<IPhotographMedia> {
   private readonly route: string = ENDPOINT_LINKS.MediumPhotography;
   constructor(
     private mediumPhotographyRepository: Repository<IPhotographMedia>

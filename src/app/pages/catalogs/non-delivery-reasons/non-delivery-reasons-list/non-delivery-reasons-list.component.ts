@@ -4,7 +4,7 @@ import { takeUntil } from 'rxjs/operators';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { INonDeliveryReason } from '../../../../core/models/catalogs/non-delivery-reason.model';
 import { NonDeliveryReasonService } from '../../../../core/services/catalogs/non-delivery-reason.service';
 import { NON_DELIVERY_REASONS_COLUMNS } from './non-delivery-reasons-columns';
@@ -13,12 +13,12 @@ import { NonDeliveryReasonsFormComponent } from '../non-delivery-reasons-form/no
 @Component({
   selector: 'app-non-delivery-reasons-list',
   templateUrl: './non-delivery-reasons-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class NonDeliveryReasonsListComponent extends BasePage implements OnInit {
-
-  settings = TABLE_SETTINGS;
+export class NonDeliveryReasonsListComponent
+  extends BasePage
+  implements OnInit
+{
   columns: INonDeliveryReason[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

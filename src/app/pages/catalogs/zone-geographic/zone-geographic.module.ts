@@ -7,17 +7,13 @@ import { ZoneGeographicListComponent } from './zone-geographic-list/zone-geograp
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
-  declarations: [
-    ZoneGeographicFormComponent,
-    ZoneGeographicListComponent
-  ],
+  declarations: [ZoneGeographicFormComponent, ZoneGeographicListComponent],
   imports: [
     CommonModule,
     SharedModule,
     ModalModule.forChild(),
-    ZoneGeographicRoutingModule
-  ]
+    ZoneGeographicRoutingModule,
+  ],
 })
-export class ZoneGeographicModule { }
+export class ZoneGeographicModule {}

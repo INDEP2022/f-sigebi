@@ -1,148 +1,177 @@
-<app-card [header]="true" class="cat-card mt-5"> 
-    <div class="ch-content" header>
-  
-        <div class="row w-100">
-            <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
-                <span class="title">
-                    ASIGNACIÓN DE BIENES POR AMPARO
-                </span>
-            </div>
-            
-        </div>
-
+<app-card [header]="true" class="cat-card mt-5">
+  <div class="ch-content" header>
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
+        <span class="title"> ASIGNACIÓN DE BIENES POR AMPARO </span>
+      </div>
     </div>
-  
-    <div body>
+  </div>
 
-        <div class="row w-100">
-            <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-1">
-                <!-- FORM Expediente -->
-                <form [formGroup]="form">
-                    <div class="row w-100">
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <div class="form-group">
-                                <label class="label w-100">No. Expediente</label>
-                                <input nbInput fullWidth class="w-100" formControlName="noExpediente"
-                                        placeholder="No. Expediente">
-                                
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-                            <div class="form-group">
-                                <label class="label w-100">Averiguación Previa</label>
-                                <input nbInput fullWidth class="w-100" formControlName="averiguacionPrevia"
-                                        placeholder="Averiguación Previa">
-                                
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-                            <div class="form-group">
-                                <label class="label w-100">Causa Penal</label>
-                                <input nbInput fullWidth class="w-100" formControlName="causaPenal"
-                                        placeholder="Causa Penal">
-                                
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-                            <div class="form-group">
-                                <label class="label">&nbsp;</label>&nbsp;  
-                                <div class="d-flex justify-content-center">
-                                    <button type="button" nbButton status="primary" (click)="mostrarInfo()">
-                                        Notificaciones Posteriores
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-                <!-- FORM Expediente -->
+  <div body>
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-1">
+        <!-- FORM Expediente -->
+        <form [formGroup]="form">
+          <div class="row w-100">
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <div class="form-group">
+                <label class="label w-100">No. Expediente</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  formControlName="noExpediente"
+                  placeholder="No. Expediente" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+              <div class="form-group">
+                <label class="label w-100">Averiguación Previa</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  formControlName="averiguacionPrevia"
+                  placeholder="Averiguación Previa" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+              <div class="form-group">
+                <label class="label w-100">Causa Penal</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  formControlName="causaPenal"
+                  placeholder="Causa Penal" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+              <div class="form-group">
+                <label class="label">&nbsp;</label>&nbsp;
+                <div class="d-flex justify-content-center">
+                  <button
+                    type="button"
+                    nbButton
+                    status="primary"
+                    (click)="mostrarInfo()">
+                    Notificaciones Posteriores
+                  </button>
                 </div>
-                <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-1">
-                    <hr class="row">
-                    <!-- FORM formTipoSuspersion -->
-                    <form [formGroup]="formTipoSuspersion">
-                        <div class="row w-100">
-                            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                                <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-                                    <div class="form-group">
-                                        <label class="label w-100">Tipo Suspensión</label>
-                                        <form-radio label="PROVISIONAL">
-                                            <input type="radio" formControlName="tipoSuspension" [value]="'PROVISIONAL'" />
-                                        </form-radio>
-                                        <form-radio label="DEFINITIVA">
-                                            <input type="radio" formControlName="tipoSuspension" [value]="'DEFINITIVA'" />
-                                        </form-radio>
-                                        <form-radio label="DE PLANO">
-                                            <input type="radio" formControlName="tipoSuspension" [value]="'DE PLANO'" />
-                                        </form-radio>
+              </div>
+            </div>
+          </div>
+        </form>
+        <!-- FORM Expediente -->
+      </div>
+      <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-1">
+        <hr class="row" />
+        <!-- FORM formTipoSuspersion -->
+        <form [formGroup]="formTipoSuspersion">
+          <div class="row w-100">
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+                <div class="form-group">
+                  <label class="label w-100">Tipo Suspensión</label>
+                  <form-radio label="PROVISIONAL">
+                    <input
+                      type="radio"
+                      formControlName="tipoSuspension"
+                      [value]="'PROVISIONAL'" />
+                  </form-radio>
+                  <form-radio label="DEFINITIVA">
+                    <input
+                      type="radio"
+                      formControlName="tipoSuspension"
+                      [value]="'DEFINITIVA'" />
+                  </form-radio>
+                  <form-radio label="DE PLANO">
+                    <input
+                      type="radio"
+                      formControlName="tipoSuspension"
+                      [value]="'DE PLANO'" />
+                  </form-radio>
 
-                                        <!-- <nb-radio-group fullWidth formControlName="tipoSuspension" class="w-100">
+                  <!-- <nb-radio-group fullWidth formControlName="tipoSuspension" class="w-100">
                                             <nb-radio class="p-2" value="Provisional">Provisional</nb-radio>
                                             <nb-radio class="p-2" value="Definitiva">Definitiva</nb-radio>
                                             <nb-radio class="p-2" value="De plano">De plano</nb-radio>
                                         </nb-radio-group> -->
-                                        
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-12 col-md-10 col-lg-10 p-2">
-                                <div class="row">
-                                    <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
-                                        <div class="form-group">
-                                            <label class="label w-100">Fecha Informe Previo</label>
-                                            <input nbInput fullWidth class="w-100" formControlName="fechaInformePrevio"
-                                                    placeholder="Fecha Informe Previo">
-                                                     <!-- [nbDatepicker]="formpicker1">
-                                            <nb-datepicker #formpicker1></nb-datepicker> -->
-                                            
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
-                                        <div class="form-group">
-                                            <label class="label w-100">Justificado</label>
-                                            <input nbInput fullWidth class="w-100" formControlName="justificado"
-                                                    placeholder="Justificado">
-                                                     <!-- [nbDatepicker]="formpicker2">
-                                            <nb-datepicker #formpicker2></nb-datepicker> -->
-                                            
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
-                                        <div class="form-group">
-                                            <label class="label w-100">Observaciones</label>
-                                            <textarea nbInput fullWidth placeholder="Observaciones"
-                                            class="w-100" formControlName="observaciones"></textarea>
-                                            
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                    <!-- FORM formTipoSuspersion -->
                 </div>
-                <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-1">
-                    <hr class="row">
-                    <!-- FORM formAmparo -->
-                    <form [formGroup]="formAmparo">
-                        <div class="row w-100">
-                            <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2">
-                                <div class="form-group">
-                                    <label class="label w-100">Amparo</label>
-                                    <input nbInput fullWidth class="w-100" formControlName="amparo"
-                                            placeholder="Amparo">
-                                    
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-                                <form-field [control]="formAmparo.get('tipoAmparo')" label="Tipo Amparo">
-                                    <select class="form-control" formControlName="tipoAmparo">
-                                      <option [value]="null">Seleccione un valor</option>
-                                      <option [value]="'DIRECTO'">DIRECTO</option>
-                                      <option [value]="'INDIRECTO'">INDIRECTO</option>
-                                    </select>
-                                  </form-field>
-                                <!-- <div class="form-group">
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-10 col-lg-10 p-2">
+              <div class="row">
+                <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+                  <div class="form-group">
+                    <label class="label w-100">Fecha Informe Previo</label>
+                    <input
+                      nbInput
+                      fullWidth
+                      class="w-100"
+                      formControlName="fechaInformePrevio"
+                      placeholder="Fecha Informe Previo" />
+                    <!-- [nbDatepicker]="formpicker1">
+                                            <nb-datepicker #formpicker1></nb-datepicker> -->
+                  </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+                  <div class="form-group">
+                    <label class="label w-100">Justificado</label>
+                    <input
+                      nbInput
+                      fullWidth
+                      class="w-100"
+                      formControlName="justificado"
+                      placeholder="Justificado" />
+                    <!-- [nbDatepicker]="formpicker2">
+                                            <nb-datepicker #formpicker2></nb-datepicker> -->
+                  </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+                  <div class="form-group">
+                    <label class="label w-100">Observaciones</label>
+                    <textarea
+                      nbInput
+                      fullWidth
+                      placeholder="Observaciones"
+                      class="w-100"
+                      formControlName="observaciones"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+        <!-- FORM formTipoSuspersion -->
+      </div>
+      <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-1">
+        <hr class="row" />
+        <!-- FORM formAmparo -->
+        <form [formGroup]="formAmparo">
+          <div class="row w-100">
+            <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2">
+              <div class="form-group">
+                <label class="label w-100">Amparo</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  formControlName="amparo"
+                  placeholder="Amparo" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+              <form-field
+                [control]="formAmparo.get('tipoAmparo')"
+                label="Tipo Amparo">
+                <select class="form-control" formControlName="tipoAmparo">
+                  <option [value]="null">Seleccione un valor</option>
+                  <option [value]="'DIRECTO'">DIRECTO</option>
+                  <option [value]="'INDIRECTO'">INDIRECTO</option>
+                </select>
+              </form-field>
+              <!-- <div class="form-group">
                                     <label class="label w-100">Tipo Amparo</label>
                                     <nb-select fullWidth selected="No" formControlName="tipoAmparo" class="w-100" [status]="''">
                                         <nb-option class="p-2" value="Directo">Directo</nb-option>
@@ -150,127 +179,176 @@
                                     </nb-select>
                                     
                                 </div> -->
-                            </div>
-                            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-                                <div class="form-group">
-                                    <label class="label w-100">Fecha Oficio</label>
-                                    <input nbInput fullWidth class="w-100" formControlName="fechaOficio"
-                                            placeholder="Fecha Oficio">
-                                             <!-- [nbDatepicker]="formpicker3">
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+              <div class="form-group">
+                <label class="label w-100">Fecha Oficio</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  formControlName="fechaOficio"
+                  placeholder="Fecha Oficio" />
+                <!-- [nbDatepicker]="formpicker3">
                                     <nb-datepicker #formpicker3></nb-datepicker> -->
-                                    
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                                <div class="form-group">
-                                    <label class="label w-100">Min. Pub.</label>
-                                    <input nbInput fullWidth class="w-100" formControlName="minPub"
-                                            placeholder="Min. Pub.">
-                                    
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-                                <div class="form-group">
-                                    <label class="label w-100">Detalle Min. Pub.</label>
-                                    <input nbInput fullWidth class="w-100" placeholder="Detalle Min. Pub.">
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                                <div class="form-group">
-                                    <label class="label w-100">No. Juzgado</label>
-                                    <input nbInput fullWidth class="w-100" formControlName="noJuzgado"
-                                            placeholder="No. Juzgado">
-                                    
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-                                <div class="form-group">
-                                    <label class="label w-100">Detalle No. Juzgado</label>
-                                    <input nbInput fullWidth class="w-100" placeholder="Detalle No. Juzgado">
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                                <div class="form-group">
-                                    <label class="label w-100">Delegación</label>
-                                    <input nbInput fullWidth class="w-100" formControlName="delegacion"
-                                            placeholder="Delegación">
-                                    
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                                <div class="form-group">
-                                    <label class="label w-100">Delegación 2</label>
-                                    <input nbInput fullWidth class="w-100" placeholder="Delegación 2">
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-                                <div class="form-group">
-                                    <label class="label w-100">Detalle Delegación 1</label>
-                                    <input nbInput fullWidth class="w-100" placeholder="Detalle Delegación 1">
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-                                <div class="form-group">
-                                    <label class="label w-100">Detalle Delegación 2</label>
-                                    <input nbInput fullWidth class="w-100" placeholder="Detalle Delegación 2">
-                                </div>
-                            </div>
-
-                            <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
-                                <div class="form-group">
-                                    <label class="label w-100">Quejosos</label>
-                                    <textarea nbInput fullWidth placeholder="Quejosos"
-                                    class="w-100" formControlName="quejosos"></textarea>
-                                    
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
-                                <div class="form-group">
-                                    <label class="label w-100">Acto Reclamado</label>
-                                    <textarea nbInput fullWidth placeholder="Acto Reclamado"
-                                    class="w-100" formControlName="actoReclamado"></textarea>
-                                    
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                    <!-- FORM formAmparo -->
-                    <hr class="row">
-                </div>
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <div class="form-group">
+                <label class="label w-100">Min. Pub.</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  formControlName="minPub"
+                  placeholder="Min. Pub." />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+              <div class="form-group">
+                <label class="label w-100">Detalle Min. Pub.</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  placeholder="Detalle Min. Pub." />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <div class="form-group">
+                <label class="label w-100">No. Juzgado</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  formControlName="noJuzgado"
+                  placeholder="No. Juzgado" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+              <div class="form-group">
+                <label class="label w-100">Detalle No. Juzgado</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  placeholder="Detalle No. Juzgado" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <div class="form-group">
+                <label class="label w-100">Delegación</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  formControlName="delegacion"
+                  placeholder="Delegación" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <div class="form-group">
+                <label class="label w-100">Delegación 2</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  placeholder="Delegación 2" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+              <div class="form-group">
+                <label class="label w-100">Detalle Delegación 1</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  placeholder="Detalle Delegación 1" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+              <div class="form-group">
+                <label class="label w-100">Detalle Delegación 2</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  placeholder="Detalle Delegación 2" />
+              </div>
             </div>
 
-
-        <!-- tabla Emisión Acuerdos -->
-        <div class="row w-100">
-            <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2">
-                <ng2-smart-table class="my-table" [settings]="tableSettings" [source]="dataTable"></ng2-smart-table>
+            <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+              <div class="form-group">
+                <label class="label w-100">Quejosos</label>
+                <textarea
+                  nbInput
+                  fullWidth
+                  placeholder="Quejosos"
+                  class="w-100"
+                  formControlName="quejosos"></textarea>
+              </div>
             </div>
-            <div class="col-sm-12 col-12 col-md-2 col-lg-2 text-center p-2">
-                <div class="row w-100">
-                    <div class="col-sm-12 col-12 col-md-12 col-lg-12 text-center p-1">
-                        <div class="form-group">
-                            <label class="label">&nbsp;</label>&nbsp;  
-                            <button type="button" nbButton status="primary" (click)="btnAgregar()">
-                                Agregar
-                            </button>
-                        </div>
-                    </div>
-                    <div class="col-sm-12 col-12 col-md-12 col-lg-12 text-center p-1">
-                        <div class="form-group">
-                            <label class="label">&nbsp;</label>&nbsp;  
-                            <button type="button" nbButton status="primary" (click)="btnEliminar()">
-                                Eliminar
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+              <div class="form-group">
+                <label class="label w-100">Acto Reclamado</label>
+                <textarea
+                  nbInput
+                  fullWidth
+                  placeholder="Acto Reclamado"
+                  class="w-100"
+                  formControlName="actoReclamado"></textarea>
+              </div>
             </div>
-            <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2">
-                <ng2-smart-table class="my-table" [settings]="tableSettings2" [source]="dataTable2"></ng2-smart-table>
-            </div>
-        </div>
-        <!-- tabla Emisión Acuerdos -->
-  
+          </div>
+        </form>
+        <!-- FORM formAmparo -->
+        <hr class="row" />
+      </div>
     </div>
-  
-  </app-card>
+
+    <!-- tabla Emisión Acuerdos -->
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2">
+        <ng2-smart-table
+          class="my-table"
+          [settings]="tableSettings"
+          [source]="dataTable"></ng2-smart-table>
+      </div>
+      <div class="col-sm-12 col-12 col-md-2 col-lg-2 text-center p-2">
+        <div class="row w-100">
+          <div class="col-sm-12 col-12 col-md-12 col-lg-12 text-center p-1">
+            <div class="form-group">
+              <label class="label">&nbsp;</label>&nbsp;
+              <button
+                type="button"
+                nbButton
+                status="primary"
+                (click)="btnAgregar()">
+                Agregar
+              </button>
+            </div>
+          </div>
+          <div class="col-sm-12 col-12 col-md-12 col-lg-12 text-center p-1">
+            <div class="form-group">
+              <label class="label">&nbsp;</label>&nbsp;
+              <button
+                type="button"
+                nbButton
+                status="primary"
+                (click)="btnEliminar()">
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2">
+        <ng2-smart-table
+          class="my-table"
+          [settings]="tableSettings2"
+          [source]="dataTable2"></ng2-smart-table>
+      </div>
+    </div>
+    <!-- tabla Emisión Acuerdos -->
+  </div>
+</app-card>

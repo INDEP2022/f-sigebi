@@ -6,10 +6,8 @@
     <form [formGroup]="docCompesationSatForm">
       <div class="row">
         <div class="col-md-4">
-          <form-field
-                [control]="docCompesationSatForm.get('id')"
-                label="Id">
-                <input type="number" class="form-control" formControlName="id" />
+          <form-field [control]="docCompesationSatForm.get('id')" label="Id">
+            <input type="number" class="form-control" formControlName="id" />
           </form-field>
         </div>
         <div class="col-md-4"></div>
@@ -24,26 +22,35 @@
       <div class="row">
         <div class="col-md-9">
           <form-field
-                [control]="docCompesationSatForm.get('typeDocSat')"
-                label="Tipo documento">
-                <input type="text" class="form-control" formControlName="typeDocSat" />
+            [control]="docCompesationSatForm.get('typeDocSat')"
+            label="Tipo documento">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="typeDocSat" />
           </form-field>
         </div>
         <div class="col-md-3">
-            <form-field
-              [control]="docCompesationSatForm.get('subjectCode')"
-              label="Asunto código">
-              <input type="number" class="form-control" formControlName="subjectCode" />
-            </form-field>
+          <form-field
+            [control]="docCompesationSatForm.get('subjectCode')"
+            label="Asunto código">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="subjectCode" />
+          </form-field>
         </div>
       </div>
 
       <div class="row">
         <div class="col-md-12">
           <form-field
-                [control]="docCompesationSatForm.get('addressee')"
-                label="Destinatario">
-                <input type="text" class="form-control" formControlName="addressee" />
+            [control]="docCompesationSatForm.get('addressee')"
+            label="Destinatario">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="addressee" />
           </form-field>
         </div>
       </div>
@@ -66,4 +73,3 @@
     </div>
   </div>
 </app-modal>
-

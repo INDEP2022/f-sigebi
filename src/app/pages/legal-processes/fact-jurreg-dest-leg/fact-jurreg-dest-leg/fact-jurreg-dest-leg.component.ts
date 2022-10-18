@@ -1,19 +1,16 @@
-import { Component, OnInit } from '@angular/core';  
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'ngx-fact-jurreg-dest-leg',
   templateUrl: './fact-jurreg-dest-leg.component.html',
-  styleUrls: ['./fact-jurreg-dest-leg.component.scss']
+  styleUrls: ['./fact-jurreg-dest-leg.component.scss'],
 })
-export class FactJurregDestLegComponent  {
-
+export class FactJurregDestLegComponent {
   public form: FormGroup;
   public checked = false;
 
-  constructor(
-    private fb: FormBuilder) {  
-  }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();
@@ -75,68 +72,67 @@ export class FactJurregDestLegComponent  {
     });
   }
 
-toggleRemocion(checked: any) {
-  this.checked = checked;
-}
-  
-mostrarInfo(): any{
-  console.log(this.form.value)
-}
+  toggleRemocion(checked: any) {
+    this.checked = checked;
+  }
 
-btnBienes() {
-  console.log("Bienes");
-}
+  mostrarInfo(): any {
+    console.log(this.form.value);
+  }
 
-btnCatalogoDepositarias() {
-  console.log("Depositarias");
-}
+  btnBienes() {
+    console.log('Bienes');
+  }
 
-btnDetallesPago() {
-  console.log("Detalle Pagos");
-}
+  btnCatalogoDepositarias() {
+    console.log('Depositarias');
+  }
 
-btnReportesJuridicos() {
-  console.log("Reportes Juridicos");
-}
+  btnDetallesPago() {
+    console.log('Detalle Pagos');
+  }
 
-btnReportesAdministrativos() {
-  console.log("Reportes Administrativos");
-}
+  btnReportesJuridicos() {
+    console.log('Reportes Juridicos');
+  }
 
-btnIngresoMasivoPagos() {
-  console.log("Ingresos Masivos Pagos");
-}
+  btnReportesAdministrativos() {
+    console.log('Reportes Administrativos');
+  }
 
-btnCatalogoConceptosPagos() {
-  console.log("Conceptos de Pagos");
-}
+  btnIngresoMasivoPagos() {
+    console.log('Ingresos Masivos Pagos');
+  }
 
-btnCatalogoDepositariasPersona() {
-  console.log("Cátalogo Depositarias");
-}
+  btnCatalogoConceptosPagos() {
+    console.log('Conceptos de Pagos');
+  }
 
-btnFolioEscaneoSolicitud() {
-  console.log("Escaneo Solicitud");
-}
+  btnCatalogoDepositariasPersona() {
+    console.log('Cátalogo Depositarias');
+  }
 
-btnReplicarFolio() {
-  console.log("Replicar Folio");
-}
+  btnFolioEscaneoSolicitud() {
+    console.log('Escaneo Solicitud');
+  }
 
-btnImprimirSolicitudEscaneo() {
-  console.log("Solicitud Escaneo");
-}
+  btnReplicarFolio() {
+    console.log('Replicar Folio');
+  }
 
-btnConsultarImagenesEscaneadas() {
-  console.log("Consultar Imágenes Escaneadas");
-}
+  btnImprimirSolicitudEscaneo() {
+    console.log('Solicitud Escaneo');
+  }
 
-/**
- * Formulario
- */
-//  public returnField(form, field) { return form.get(field); }
-//  public returnShowRequirements(form, field) { 
-//    return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched; 
-//  }
+  btnConsultarImagenesEscaneadas() {
+    console.log('Consultar Imágenes Escaneadas');
+  }
 
+  /**
+   * Formulario
+   */
+  //  public returnField(form, field) { return form.get(field); }
+  //  public returnShowRequirements(form, field) {
+  //    return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched;
+  //  }
 }

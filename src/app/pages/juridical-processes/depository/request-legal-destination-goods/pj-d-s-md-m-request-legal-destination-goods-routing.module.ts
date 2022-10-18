@@ -10,16 +10,14 @@ import { RouterModule, Routes } from '@angular/router';
 /** COMPONENTS IMPORTS */
 import { PJDSMDRequestLegalDestinationGoodsComponent } from './request-legal-destination-goods/pj-d-s-md-c-request-legal-destination-goods.component';
 
-
-
 const routes: Routes = [
-    {
-        path: '',
-        component: PJDSMDRequestLegalDestinationGoodsComponent
-    }
-]
+  {
+    path: '',
+    component: PJDSMDRequestLegalDestinationGoodsComponent,
+  },
+];
 @NgModule({
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule]
-  })
-  export class PJDSMDRequestLegalDestinationGoodsRoutingModule { }
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
+})
+export class PJDSMDRequestLegalDestinationGoodsRoutingModule {}

@@ -5,103 +5,164 @@ const routes: Routes = [
   {
     path: 'pe-atb-m-quarterly-accumulated-assets',
     loadChildren: async () =>
-      (await import('./pe-atb-m-quarterly-accumulated-assets/pe-atb-m-quarterly-accumulated-assets.module')).PeAtbMQuarterlyAccumulatedAssetsModule,
+      (
+        await import(
+          './pe-atb-m-quarterly-accumulated-assets/pe-atb-m-quarterly-accumulated-assets.module'
+        )
+      ).PeAtbMQuarterlyAccumulatedAssetsModule,
     data: { title: 'Acumulado Trimestral de Bienes' },
   },
   {
     path: 'pe-aab-m-annual-accumulated-assets',
     loadChildren: async () =>
-      (await import('./pe-aab-m-annual-accumulated-assets/pe-aab-m-annual-accumulated-assets.module')).PeAabMAnnualAccumulatedAssetsModule,
+      (
+        await import(
+          './pe-aab-m-annual-accumulated-assets/pe-aab-m-annual-accumulated-assets.module'
+        )
+      ).PeAabMAnnualAccumulatedAssetsModule,
     data: { title: 'Acumulado Anual de Bienes' },
   },
   {
     path: 'acumulative-asset-tabs',
     loadChildren: async () =>
-      (await import('./acumulative-asset-tabs/acumulative-asset-tabs.module')).AcumulativeAssetTabsModule,
+      (await import('./acumulative-asset-tabs/acumulative-asset-tabs.module'))
+        .AcumulativeAssetTabsModule,
     data: { title: 'Acumulado de Bienes' },
   },
   {
     path: 'pe-cmrd-m-cumulative-goods',
     loadChildren: async () =>
-      (await import('./pe-cmrd-m-cumulative-goods/pe-cmrd-m-cumulative-goods.module')).PeCmrdMCumulativeGoodsModule,
+      (
+        await import(
+          './pe-cmrd-m-cumulative-goods/pe-cmrd-m-cumulative-goods.module'
+        )
+      ).PeCmrdMCumulativeGoodsModule,
     data: { title: 'Control Mensual de Recepción Documental' },
   },
   {
     path: 'pe-ibs-d-a-m-report-registration-module',
     loadChildren: async () =>
-      (await import('./pe-ibs-d-a-m-report-registration-module/pe-ibs-d-a-m-report-registration-module.module')).PeIbsDAMReportRegistrationModuleModule,
-    data: { title: 'Información Bienes' },
+      (
+        await import(
+          './pe-ibs-d-a-m-report-registration-module/pe-ibs-d-a-m-report-registration-module.module'
+        )
+      ).PeIbsDAMReportRegistrationModuleModule,
+    data: { title: 'Información Bienes Asegurados/Decomisos/Abandonos' },
   },
   {
     path: 'pe-drpae-m-doc-received-authority',
     loadChildren: async () =>
-      (await import('./pe-drpae-m-doc-received-authority/pe-drpae-m-doc-received-authority.module')).PeDrpaeMDocReceivedAuthorityModule,
-    data: { title: 'Reporte de documentación recibida por autoridad emisora' },
+      (
+        await import(
+          './pe-drpae-m-doc-received-authority/pe-drpae-m-doc-received-authority.module'
+        )
+      ).PeDrpaeMDocReceivedAuthorityModule,
+    data: { title: 'Recepción de Doctos. Por Autoridad Emisora' },
   },
   {
     path: 'pe-rdde-m-daily-control-reception',
     loadChildren: async () =>
-      (await import('./pe-rdde-m-daily-control-reception/pe-rdde-m-daily-control-reception.module')).PeRddeMDailyControlReceptionModule,
-    data: { title: 'Control diario de recepción de expedientes' },
+      (
+        await import(
+          './pe-rdde-m-daily-control-reception/pe-rdde-m-daily-control-reception.module'
+        )
+      ).PeRddeMDailyControlReceptionModule,
+    data: { title: 'Recepción Diaria de Expedientes' },
   },
   {
     path: 'pe-gdadd-m-destruction-authorization-management',
     loadChildren: async () =>
-      (await import('./pe-gdadd-m-destruction-authorization-management/pe-gdadd-m-destruction-authorization-management.module')).PeGdaddMDestructionAuthorizationManagementModule,
+      (
+        await import(
+          './pe-gdadd-m-destruction-authorization-management/pe-gdadd-m-destruction-authorization-management.module'
+        )
+      ).PeGdaddMDestructionAuthorizationManagementModule,
     data: { title: 'Gestión de Autorización de Destrucción' },
   },
   {
     path: 'pe-ad-m-authorization-assets-destruction',
     loadChildren: async () =>
-      (await import('./pe-ad-m-authorization-assets-destruction/pe-ad-m-authorization-assets-destruction.module')).PeAdMAuthorizationAssetsDestructionModule,
-    data: { title: 'Autorización de bienes para destrucción ' },
+      (
+        await import(
+          './pe-ad-m-authorization-assets-destruction/pe-ad-m-authorization-assets-destruction.module'
+        )
+      ).PeAdMAuthorizationAssetsDestructionModule,
+    data: { title: 'Aprobación destrucción' },
   },
   {
     path: 'pe-ad-m-approval-assets-destination',
     loadChildren: async () =>
-      (await import('./pe-ad-m-approval-assets-destination/pe-ad-m-approval-assets-destination.module')).PeAdMApprovalAssetsDestinationModule,
-    data: { title: 'Aprobación de bienes para destino' },
+      (
+        await import(
+          './pe-ad-m-approval-assets-destination/pe-ad-m-approval-assets-destination.module'
+        )
+      ).PeAdMApprovalAssetsDestinationModule,
+    data: { title: 'Aprobación destino' },
   },
   {
     path: 'pe-rddxdees-m-reception-area-sera',
     loadChildren: async () =>
-      (await import('./pe-rddxdees-m-reception-area-sera/pe-rddxdees-m-reception-area-sera.module')).PeRddxdeesMReceptionAreaSeraModule,
-    data: { title: 'Recepción recibida por área en el SERA ' },
+      (
+        await import(
+          './pe-rddxdees-m-reception-area-sera/pe-rddxdees-m-reception-area-sera.module'
+        )
+      ).PeRddxdeesMReceptionAreaSeraModule,
+    data: { title: 'Recepción de Doctos. x Destino en el SERA' },
   },
   {
     path: 'pe-rddg-drpad-m-totaldoc-received-destinationarea',
     loadChildren: async () =>
-      (await import('./pe-rddg-drpad-m-totaldoc-received-destinationarea/pe-rddg-drpad-m-totaldoc-received-destinationarea.module')).PeRddgDrpadMTotaldocReceivedDestinationareaModule,
-    data: { title: 'Total de documentos recibidos vs área destino ' },
+      (
+        await import(
+          './pe-rddg-drpad-m-totaldoc-received-destinationarea/pe-rddg-drpad-m-totaldoc-received-destinationarea.module'
+        )
+      ).PeRddgDrpadMTotaldocReceivedDestinationareaModule,
+    data: { title: 'Documentación recibida X Área Destino' },
   },
   {
     path: 'pe-rddg-tddr-m-report-doc-received',
     loadChildren: async () =>
-      (await import('./pe-rddg-tddr-m-report-doc-received/pe-rddg-tddr-m-report-doc-received.module')).PeRddgTddrMReportDocReceivedModule,
-    data: { title: 'Reporte Documentación Recibida' },
+      (
+        await import(
+          './pe-rddg-tddr-m-report-doc-received/pe-rddg-tddr-m-report-doc-received.module'
+        )
+      ).PeRddgTddrMReportDocReceivedModule,
+    data: { title: 'Total de Documentación Recibida' },
   },
   {
     path: 'pe-rddg-brea-m-assets-received-admon',
     loadChildren: async () =>
-      (await import('./pe-rddg-brea-m-assets-received-admon/pe-rddg-brea-m-assets-received-admon.module')).PeRddgBreaMAssetsReceivedAdmonModule,
-    data: { title: 'Reporte de bienes recibidos en administración ' },
+      (
+        await import(
+          './pe-rddg-brea-m-assets-received-admon/pe-rddg-brea-m-assets-received-admon.module'
+        )
+      ).PeRddgBreaMAssetsReceivedAdmonModule,
+    data: { title: 'Bienes recibidos en Administración' },
   },
   {
     path: 'pe-amdvda-m-update-mss-value',
     loadChildren: async () =>
-      (await import('./pe-amdvda-m-update-mss-value/pe-amdvda-m-update-mss-value.module')).PeAmdvdaMUpdateMssValueModule,
-    data: { title: 'Proceso de actualización masiva de valor avaluó' },
+      (
+        await import(
+          './pe-amdvda-m-update-mss-value/pe-amdvda-m-update-mss-value.module'
+        )
+      ).PeAmdvdaMUpdateMssValueModule,
+    data: { title: 'Actualización masiva de Valor de Avalúo' },
   },
   {
     path: 'pe-ad-m-donation-approval',
     loadChildren: async () =>
-      (await import('./pe-ad-m-donation-approval/pe-ad-m-donation-approval.module')).PeAdMDonationApprovalModule,
+      (
+        await import(
+          './pe-ad-m-donation-approval/pe-ad-m-donation-approval.module'
+        )
+      ).PeAdMDonationApprovalModule,
     data: { title: 'Aprobación donación' },
   },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ExecutiveProcessesRoutingModule { }
+export class ExecutiveProcessesRoutingModule {}

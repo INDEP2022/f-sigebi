@@ -1,110 +1,112 @@
 <!-- Forms OFICIO -->
-<ngx-form-oficio [form]="formOficio" (formValues)="getDataFormOficio($event)"
-></ngx-form-oficio>
+<ngx-form-oficio
+  [form]="formOficio"
+  (formValues)="getDataFormOficio($event)"></ngx-form-oficio>
 <!-- Forms OFICIO -->
 
 <!-- Forms OFICIO INICIO FIN -->
 <form [formGroup]="formOficioInicioFin" class="container-fluid form-material">
-    <div class="row w-100">
-        <div class="col-sm-12 col-12 col-md-6 pr-3">
-            <form-field [control]="formOficioInicioFin.get('inicio')" label="Inicio">
-                <!-- <label class="label w-100">Inicio</label> -->
-                <textarea placeholder="Inicio"
-                class="form-control" formControlName="inicio"></textarea>
-                 
-            </form-field>
-        </div>
-        <div class="col-sm-12 col-12 col-md-6 pr-3">
-            <form-field [control]="formOficioInicioFin.get('fin')" label="Fin">
-                <!-- <label class="label w-100">Fin</label> -->
-                <textarea placeholder="Fin"
-                class="form-control" formControlName="fin"></textarea>
-                 
-            </form-field>
-        </div>
+  <div class="row w-100">
+    <div class="col-sm-12 col-12 col-md-6 pr-3">
+      <form-field [control]="formOficioInicioFin.get('inicio')" label="Inicio">
+        <!-- <label class="label w-100">Inicio</label> -->
+        <textarea
+          placeholder="Inicio"
+          class="form-control"
+          formControlName="inicio"></textarea>
+      </form-field>
     </div>
+    <div class="col-sm-12 col-12 col-md-6 pr-3">
+      <form-field [control]="formOficioInicioFin.get('fin')" label="Fin">
+        <!-- <label class="label w-100">Fin</label> -->
+        <textarea
+          placeholder="Fin"
+          class="form-control"
+          formControlName="fin"></textarea>
+      </form-field>
+    </div>
+  </div>
 </form>
 <!-- Forms OFICIO INICIO FIN -->
 
-<hr class="row">
+<hr class="row" />
 <div class="row">
-    <div class="col-sm-12 col-12 col-md-6">
-        <h3>Documentos</h3>
-    </div>
+  <div class="col-sm-12 col-12 col-md-6">
+    <h3>Documentos</h3>
+  </div>
 </div>
 <div class="row pt-2 mb-2">
-    <ng2-smart-table class="col-md-12" [settings]="settings2" [source]="data2"></ng2-smart-table>
+  <ng2-smart-table
+    class="col-md-12"
+    [settings]="settings2"
+    [source]="data2"></ng2-smart-table>
 </div>
-<hr class="row">
+<hr class="row" />
 
 <!-- C.C.P. -->
-<hr class="row">
+<hr class="row" />
 <div class="row">
-    <div class="col-sm-12 col-12 col-md-6">
-        <h3>Con Copia Para (C.C.P.)</h3>
-    </div>
+  <div class="col-sm-12 col-12 col-md-6">
+    <h3>Con Copia Para (C.C.P.)</h3>
+  </div>
 </div>
 <!-- Form CON COPIA PARA -->
 <form [formGroup]="formCcpOficio" class="container-fluid form-material">
-    <div class="row tp-2 mb-2">
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-1 pt-0 pb-0">
-            
-            <form-field [control]="formCcpOficio.get('ccp')" label="C.P.P">
-              <select class="form-control" formControlName="ccp">
-                <option [value]="null">Seleccione un valor</option>
-                <option [value]="'INTERNO'">INTERNO</option>
-                <option [value]="'EXTERNO'">EXTERNO</option>
-              </select>
-            </form-field>
-
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-1 pt-0 pb-0">
-            
-            <form-field [control]="formCcpOficio.get('usuario')" label="Usuario">
-                <select class="form-control" formControlName="usuario">
-                  <option [value]="null">Seleccione un valor</option>
-                  <option [value]="'USUARIO'">USUARIO</option>
-                </select>
-              </form-field>
-              
-        </div>
-        <div class="col-sm-12 col-12 col-md-7 col-lg-7 p-1 pt-0 pb-0">
-            <div class="form-group pt-1 pb-1 mb-1">
-                <input type="number" class="form-control" formControlName="nombreUsuario"
-                placeholder="Nombre Usuario">
-                <label class="form-control-label w-100">Nombre Usuario</label>
-                 
-            </div>
-        </div>
-        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-1 pt-0 pb-0">
-            
-            <form-field [control]="formCcpOficio.get('ccp2')" label="C.P.P">
-              <select class="form-control" formControlName="ccp2">
-                <option [value]="null">Seleccione un valor</option>
-                <option [value]="'INTERNO'">INTERNO</option>
-                <option [value]="'EXTERNO'">EXTERNO</option>
-              </select>
-            </form-field>
-            
-        </div>
-        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-1 pt-0 pb-0">
-            
-            <form-field [control]="formCcpOficio.get('usuario2')" label="Usuario">
-                <select class="form-control" formControlName="usuario2">
-                  <option [value]="null">Seleccione un valor</option>
-                  <option [value]="'USUARIO'">USUARIO</option>
-                </select>
-              </form-field>
-              
-        </div>
-        <div class="col-sm-12 col-12 col-md-7 col-lg-7 p-1 pt-0 pb-0">
-            <div class="form-group pt-1 pb-1 mb-1">
-                <input type="number" class="form-control" formControlName="nombreUsuario2"
-                placeholder="Nombre Usuario">
-                <label class="form-control-label w-100">Nombre Usuario</label>
-                 
-            </div>
-        </div>
+  <div class="row tp-2 mb-2">
+    <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-1 pt-0 pb-0">
+      <form-field [control]="formCcpOficio.get('ccp')" label="C.P.P">
+        <select class="form-control" formControlName="ccp">
+          <option [value]="null">Seleccione un valor</option>
+          <option [value]="'INTERNO'">INTERNO</option>
+          <option [value]="'EXTERNO'">EXTERNO</option>
+        </select>
+      </form-field>
     </div>
+    <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-1 pt-0 pb-0">
+      <form-field [control]="formCcpOficio.get('usuario')" label="Usuario">
+        <select class="form-control" formControlName="usuario">
+          <option [value]="null">Seleccione un valor</option>
+          <option [value]="'USUARIO'">USUARIO</option>
+        </select>
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-7 col-lg-7 p-1 pt-0 pb-0">
+      <div class="form-group pt-1 pb-1 mb-1">
+        <input
+          type="number"
+          class="form-control"
+          formControlName="nombreUsuario"
+          placeholder="Nombre Usuario" />
+        <label class="form-control-label w-100">Nombre Usuario</label>
+      </div>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-1 pt-0 pb-0">
+      <form-field [control]="formCcpOficio.get('ccp2')" label="C.P.P">
+        <select class="form-control" formControlName="ccp2">
+          <option [value]="null">Seleccione un valor</option>
+          <option [value]="'INTERNO'">INTERNO</option>
+          <option [value]="'EXTERNO'">EXTERNO</option>
+        </select>
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-1 pt-0 pb-0">
+      <form-field [control]="formCcpOficio.get('usuario2')" label="Usuario">
+        <select class="form-control" formControlName="usuario2">
+          <option [value]="null">Seleccione un valor</option>
+          <option [value]="'USUARIO'">USUARIO</option>
+        </select>
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-7 col-lg-7 p-1 pt-0 pb-0">
+      <div class="form-group pt-1 pb-1 mb-1">
+        <input
+          type="number"
+          class="form-control"
+          formControlName="nombreUsuario2"
+          placeholder="Nombre Usuario" />
+        <label class="form-control-label w-100">Nombre Usuario</label>
+      </div>
+    </div>
+  </div>
 </form>
 <!-- Form CON COPIA PARA -->

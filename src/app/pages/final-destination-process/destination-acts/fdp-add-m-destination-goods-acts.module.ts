@@ -6,14 +6,12 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [
-    FdpAddCDestinationGoodsActsComponent
-  ],
+  declarations: [FdpAddCDestinationGoodsActsComponent],
   imports: [
     CommonModule,
     FdpAddMDestinationGoodsActsRoutingModule,
     SharedModule,
-    ReactiveFormsModule
-  ]
+    ReactiveFormsModule,
+  ],
 })
-export class FdpAddMDestinationGoodsActsModule { }
+export class FdpAddMDestinationGoodsActsModule {}

@@ -7,57 +7,47 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-pa-vc-c-modal-list-goods',
   templateUrl: './pa-vc-c-modal-list-goods.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PaVcCModalListGoodsComponent extends BasePage implements OnInit {
-
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   //Data Table
-  settings = {
-    //selectMode: 'multi',
-    actions: {
-      add: false,
-      edit: false,
-      delete: false
-    },
-    hideSubHeader: true,//oculta subheaader de filtro
-    noDataMessage: "No se encontrarón registros",
-    mode: 'external', // ventana externa
-    columns: {
-      numberGood: {
-        title: 'No Bien',
-        width: '10%',
-        sort: false
-      },
-      description: {
-        title: 'Descripcion',
-        width: '20%',
-        sort: false
-      },
-      quantity: {
-        title: 'Cantidad',
-        width: '10%',
-        sort: false
-      },
-      dossier: {
-        title: 'Expediente',
-        width: '10%',
-        sort: false
-      }
-    },
-  };
 
   data1: any;
-  constructor(private bsModalRef: BsModalRef, private opcion: ModalOptions) { super() }
+  constructor(private bsModalRef: BsModalRef, private opcion: ModalOptions) {
+    super();
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: {
+        numberGood: {
+          title: 'No Bien',
+          width: '10%',
+          sort: false,
+        },
+        description: {
+          title: 'Descripcion',
+          width: '20%',
+          sort: false,
+        },
+        quantity: {
+          title: 'Cantidad',
+          width: '10%',
+          sort: false,
+        },
+        dossier: {
+          title: 'Expediente',
+          width: '10%',
+          sort: false,
+        },
+      },
+    };
+  }
 
   ngOnInit(): void {
     this.data1 = this.opcion.initialState;
   }
-  
-  return(){
-    this.bsModalRef.hide();
-  }
 
+  return() {}
 }

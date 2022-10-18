@@ -9,11 +9,9 @@ import { MunicipalityService } from './../../../../core/services/catalogs/munici
 @Component({
   selector: 'app-municipality-form',
   templateUrl: './municipality-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class MunicipalityFormComponent extends BasePage implements OnInit {
-
   municipalityForm: FormGroup = new FormGroup({});
   title: string = 'Municipio';
   edit: boolean = false;
@@ -27,7 +25,7 @@ export class MunicipalityFormComponent extends BasePage implements OnInit {
     private municipalityService: MunicipalityService
   ) {
     super();
-   }
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -40,7 +38,7 @@ export class MunicipalityFormComponent extends BasePage implements OnInit {
       userCreation: [null, [Validators.required]],
       municipalityName: [null, [Validators.required]],
       userModification: [null, [Validators.required]],
-      version: [null, [Validators.required]]
+      version: [null, [Validators.required]],
     });
     if (this.municipality != null) {
       this.edit = true;
@@ -82,5 +80,4 @@ export class MunicipalityFormComponent extends BasePage implements OnInit {
     this.refresh.emit(true);
     this.modalRef.hide();
   }
-
 }

@@ -16,7 +16,7 @@ export class ElectronicSignatureListComponent
   extends BasePage
   implements OnInit
 {
-  settings = { ...TABLE_SETTINGS, actions: false };
+  override settings = { ...TABLE_SETTINGS, actions: false };
   usersData: IUser[] = [];
   constructor(
     private modalService: BsModalService,

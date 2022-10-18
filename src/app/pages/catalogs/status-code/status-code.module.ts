@@ -7,17 +7,13 @@ import { StatusCodeFormComponent } from './status-code-form/status-code-form.com
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
-  declarations: [
-    StatusCodeListComponent,
-    StatusCodeFormComponent
-  ],
+  declarations: [StatusCodeListComponent, StatusCodeFormComponent],
   imports: [
     CommonModule,
     SharedModule,
     ModalModule.forChild(),
-    StatusCodeRoutingModule
-  ]
+    StatusCodeRoutingModule,
+  ],
 })
-export class StatusCodeModule { }
+export class StatusCodeModule {}

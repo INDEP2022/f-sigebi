@@ -5,12 +5,12 @@ import { DeductivesListComponent } from './deductives-list/deductives-list.compo
 const routes: Routes = [
   {
     path: '',
-    component: DeductivesListComponent
-  }
+    component: DeductivesListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class DeductivesRoutingModule { }
+export class DeductivesRoutingModule {}

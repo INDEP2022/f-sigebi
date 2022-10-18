@@ -15,9 +15,7 @@ import { PJDRCNAppointmentCertificateRoutingModule } from './pj-d-rcn-m-appointm
 import { PJDRCNAppointmentCertificateComponent } from './appointment-certificate/pj-d-rcn-c-appointment-certificate.component';
 
 @NgModule({
-  declarations: [
-    PJDRCNAppointmentCertificateComponent
-  ],
+  declarations: [PJDRCNAppointmentCertificateComponent],
   imports: [
     CommonModule,
     PJDRCNAppointmentCertificateRoutingModule,

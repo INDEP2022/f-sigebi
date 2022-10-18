@@ -3,7 +3,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { IParagraph } from './../../../../core/models/catalogs/paragraph.model';
 import { ParagraphService } from './../../../../core/services/catalogs/paragraph.service';
 import { PARAGRAPHS_COLUMNS } from './paragraphs-columns';
@@ -12,12 +12,9 @@ import { ParagraphsFormComponent } from '../paragraphs-form/paragraphs-form.comp
 @Component({
   selector: 'app-paragraphs-list',
   templateUrl: './paragraphs-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ParagraphsListComponent extends BasePage implements OnInit {
-
-  settings = TABLE_SETTINGS;
   columns: IParagraph[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -25,7 +22,7 @@ export class ParagraphsListComponent extends BasePage implements OnInit {
   constructor(
     private paragraphService: ParagraphService,
     private modalService: BsModalService
-  ) { 
+  ) {
     super();
     this.settings.columns = PARAGRAPHS_COLUMNS;
     this.settings.actions.delete = true;
@@ -75,5 +72,4 @@ export class ParagraphsListComponent extends BasePage implements OnInit {
       }
     });
   }
-
 }

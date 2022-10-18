@@ -20,4 +20,4 @@ export const TYPESWHAREHOUSE_COLUMS = {
     type: 'number',
     sort: false,
   },
-}
+};

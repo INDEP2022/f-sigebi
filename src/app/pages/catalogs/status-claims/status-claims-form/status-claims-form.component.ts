@@ -9,8 +9,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-status-claims-form',
   templateUrl: './status-claims-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class StatusClaimsFormComponent extends BasePage implements OnInit {
   statusClaimsForm: ModelForm<IStatusClaims>;
@@ -32,8 +31,22 @@ export class StatusClaimsFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.statusClaimsForm = this.fb.group({
       id: [null],
-      description: [null, Validators.compose([Validators.pattern(""), Validators.required, Validators.maxLength(80)])],
-      flag: [null, Validators.compose([Validators.pattern(""), Validators.required, Validators.maxLength(60)])],
+      description: [
+        null,
+        Validators.compose([
+          Validators.pattern(''),
+          Validators.required,
+          Validators.maxLength(80),
+        ]),
+      ],
+      flag: [
+        null,
+        Validators.compose([
+          Validators.pattern(''),
+          Validators.required,
+          Validators.maxLength(60),
+        ]),
+      ],
     });
     if (this.statusClaims != null) {
       this.edit = true;
@@ -50,7 +63,9 @@ export class StatusClaimsFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.StatusClaimsService.create(this.statusClaimsForm.getRawValue()).subscribe({
+    this.StatusClaimsService.create(
+      this.statusClaimsForm.getRawValue()
+    ).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -58,12 +73,13 @@ export class StatusClaimsFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.StatusClaimsService
-      .update(this.statusClaims.id, this.statusClaimsForm.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.StatusClaimsService.update(
+      this.statusClaims.id,
+      this.statusClaimsForm.getRawValue()
+    ).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   handleSuccess() {

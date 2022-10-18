@@ -6,12 +6,12 @@ import { PaGrsCGoodsReviewStatusComponent } from './goods-review-status/pa-grs-c
 const routes: Routes = [
   {
     path: '',
-    component: PaGrsCGoodsReviewStatusComponent
-  }
+    component: PaGrsCGoodsReviewStatusComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PaGtMGoodsTrackingRoutingModule { }
+export class PaGtMGoodsTrackingRoutingModule {}

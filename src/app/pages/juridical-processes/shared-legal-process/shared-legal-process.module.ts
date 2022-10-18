@@ -24,23 +24,18 @@ export const declarationsExports: any[] = [
   FormDeclaratoriaComponent,
   FormOficioComponent,
   FormDepositariaComponent,
-  FormFactAbandonosOficioComponent
+  FormFactAbandonosOficioComponent,
 ];
-@NgModule({ 
-  declarations: [ 
-    declarationsExports,
-  ],
+@NgModule({
+  declarations: [declarationsExports],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     Ng2SmartTableModule,
     NgSelectModule,
-    SharedModule
+    SharedModule,
   ],
-  exports:[
-    declarationsExports,
-  ]
+  exports: [declarationsExports],
 })
-export class SharedLegalProcessModule { }
-
+export class SharedLegalProcessModule {}

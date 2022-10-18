@@ -15,9 +15,7 @@ import { PJDSMDRequestLegalDestinationGoodsRoutingModule } from './pj-d-s-md-m-r
 import { PJDSMDRequestLegalDestinationGoodsComponent } from './request-legal-destination-goods/pj-d-s-md-c-request-legal-destination-goods.component';
 
 @NgModule({
-  declarations: [
-    PJDSMDRequestLegalDestinationGoodsComponent
-  ],
+  declarations: [PJDSMDRequestLegalDestinationGoodsComponent],
   imports: [
     CommonModule,
     PJDSMDRequestLegalDestinationGoodsRoutingModule,
