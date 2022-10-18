@@ -11,7 +11,6 @@ import { PHOTOGRAPHY_COLUMNS } from './photography-columns';
   styles: [],
 })
 export class PhotographyFormComponent extends BasePage implements OnInit {
-  override settings = { ...TABLE_SETTINGS, actions: false };
   imagesData: any[] = [];
   showForm: boolean = false;
   photographyForm: FormGroup = new FormGroup({});
@@ -22,6 +21,7 @@ export class PhotographyFormComponent extends BasePage implements OnInit {
     private fb: FormBuilder
   ) {
     super();
+    this.settings = { ...TABLE_SETTINGS, actions: false };
     this.settings.columns = PHOTOGRAPHY_COLUMNS;
   }
 

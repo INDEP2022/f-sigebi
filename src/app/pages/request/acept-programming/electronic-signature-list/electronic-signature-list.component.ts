@@ -16,13 +16,13 @@ export class ElectronicSignatureListComponent
   extends BasePage
   implements OnInit
 {
-  override settings = { ...TABLE_SETTINGS, actions: false };
   usersData: IUser[] = [];
   constructor(
     private modalService: BsModalService,
     private modalRef: BsModalRef
   ) {
     super();
+    this.settings = { ...TABLE_SETTINGS, actions: false };
   }
 
   ngOnInit(): void {

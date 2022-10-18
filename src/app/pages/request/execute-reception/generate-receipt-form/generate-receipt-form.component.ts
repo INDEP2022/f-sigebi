@@ -14,7 +14,7 @@ import { RECEIPT_WITNESS_COLUMNS } from './receipt-witness-columns';
 })
 export class GenerateReceiptFormComponent extends BasePage implements OnInit {
   generateReceiptForm: FormGroup = new FormGroup({});
-  override settings = TABLE_SETTINGS;
+
   paragraphs: any[] = [];
 
   constructor(
@@ -30,6 +30,8 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
         electronicSignature: 'si',
       },
     ];
+
+    this.settings = TABLE_SETTINGS;
   }
 
   ngOnInit(): void {

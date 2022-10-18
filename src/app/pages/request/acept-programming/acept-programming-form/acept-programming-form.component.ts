@@ -18,7 +18,6 @@ import { ShowSignatureProgrammingComponent } from '../show-signature-programming
   styles: [],
 })
 export class AceptProgrammingFormComponent extends BasePage implements OnInit {
-  override settings = { ...TABLE_SETTINGS, actions: false };
   estateSettings = { ...TABLE_SETTINGS, actions: false };
 
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -29,6 +28,7 @@ export class AceptProgrammingFormComponent extends BasePage implements OnInit {
 
   constructor(private modalService: BsModalService) {
     super();
+    this.settings = { ...TABLE_SETTINGS, actions: false };
   }
 
   ngOnInit(): void {
