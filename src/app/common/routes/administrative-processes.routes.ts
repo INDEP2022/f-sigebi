@@ -70,6 +70,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Baja de bienes en Pólizas',
             link: '/pages/administrative-processes/loss-of-policy',
           },
+          {
+            label: 'Mantenimiento',
+            link: '/pages/administrative-processes/maintenance',
+          },
         ],
       },
       /**
@@ -247,12 +251,12 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Registro de Pago de Servicios',
             link: '/pages/administrative-processes/services/record-service-payments',
-          }
+          },
         ],
       },
       /**
        * END LEGASPI
        **/
     ],
-  }
+  },
 ];
