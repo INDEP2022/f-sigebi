@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { CsvToArrayService } from 'src/app/common/services/csv-to-array.service';
+import { CsvService } from 'src/app/common/services/csv.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
 
@@ -41,7 +41,7 @@ export class PaMcsCMassiveChangeStatusComponent
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private services_csv_to_array: CsvToArrayService
+    private services_csv_to_array: CsvService
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -66,21 +66,16 @@ export class PaMcsCMassiveChangeStatusComponent
     });
   }
 
-  async getFile() {
+  async getFile(e: Event) {
     this.loading = true;
-    const csvFile = document.getElementById('csvFile') as HTMLInputElement;
-    if (csvFile.files[0]) this.fileName = csvFile.files[0].name;
-    this.services_csv_to_array
-      .csvToArray(csvFile, ',')
-      .then(data => {
-        this.data = data;
-        this.totalItems = data.length;
-        this.loading = false;
-        this.alert('success', 'Cargado con éxito', '');
-      })
-      .catch(error => {
-        this.alert('error', 'Ooop..', error);
-      });
+    let data = await this.services_csv_to_array.getData(e);
+    if (data.length > 0) {
+      this.totalItems = data.length;
+      this.loading = false;
+      this.alert('success', 'Cargado con éxito', '');
+    } else {
+      this.alert('error', 'Ooop..', '');
+    }
   }
 
   loandData() {
