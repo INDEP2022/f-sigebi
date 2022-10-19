@@ -129,6 +129,12 @@ export class VerifyComplianceTabComponent extends BasePage implements OnInit {
         'Confirmacion',
         ''
       );
+    } else {
+      this.alert(
+        'error',
+        'Error',
+        'Para que la solicitud sea procedente se deben seleccionar al menos los prmeros 3 cumplimientos del Articulo 3 Ley y 3 del Articulo 12'
+      );
     }
   }
 

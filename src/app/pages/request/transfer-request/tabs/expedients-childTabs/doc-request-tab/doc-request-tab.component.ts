@@ -29,7 +29,7 @@ interface searchTable {
 @Component({
   selector: 'app-doc-request-tab',
   templateUrl: './doc-request-tab.component.html',
-  styleUrls: ['doc-request-tab.component.scss'],
+  styleUrls: ['./doc-request-tab.component.scss'],
 })
 export class DocRequestTabComponent
   extends BasePage

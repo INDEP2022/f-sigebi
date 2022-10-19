@@ -1,4 +1,4 @@
-import { BtnRequestComponent } from "../btn-request/btn-request.component";
+import { BtnRequestComponent } from '../btn-request/btn-request.component';
 
 export const DOC_REQUEST_TAB_COLUMNS = {
   noDoc: {
@@ -34,9 +34,10 @@ export const DOC_REQUEST_TAB_COLUMNS = {
   button: {
     title: 'PDF',
     type: 'custom',
+    class: 'custom-field',
     filter: false,
     renderComponent: BtnRequestComponent,
-    onComponentInitFunction(instance?:any) {},
-    sort: false
-  }
-}
+    onComponentInitFunction(instance?: any) {},
+    sort: false,
+  },
+};

@@ -64,11 +64,44 @@ export class RegistrationOfRequestsComponent
   }
 
   confirm() {
-    console.log('turnar con los datos guardados');
+    this.msgAvertanceModal(
+      'Aceptar',
+      'Asegurse de tener guardado los formularios antes de turnar el folio',
+      'Confirmación',
+      ''
+    );
   }
 
   close() {
     //this.modalRef.hide();
     this.location.back();
+  }
+
+  msgAvertanceModal(
+    btnTitle: string,
+    message: string,
+    title: string,
+    typeMsg: any
+  ) {
+    this.alertQuestion(typeMsg, title, message, btnTitle).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.msgSaveModal(
+          'Clasificar Bien',
+          '¿Deseas turnar la solicitud con Folio:....?',
+          'Confirmación',
+          ''
+        );
+      }
+    });
+  }
+
+  msgSaveModal(btnTitle: string, message: string, title: string, typeMsg: any) {
+    this.alertQuestion(typeMsg, title, message, btnTitle).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        console.log('Guardar Solicitud');
+      }
+    });
   }
 }

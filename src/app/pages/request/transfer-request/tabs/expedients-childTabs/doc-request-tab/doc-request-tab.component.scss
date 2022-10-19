@@ -2,12 +2,13 @@
 
 
 :host ::ng-deep ng2-smart-table  {
-    .button {
-        width: 16rem;
+    app-btn-request {
+        padding-right: 4rem !important; 
+
+        button:hover {
+            text-decoration-line: underline !important;
+            color: #9d2449 !important;
+        }
     }
 
-    a:hover {
-        text-decoration-line: underline !important;
-        color: #9d2449 !important;
-    }
 }
