@@ -93,9 +93,22 @@ const routes: Routes = [
       {
         path: 'massive-reclassification-goods',
         loadChildren: async () =>
-          (await import('./massive-reclassification-goods/pa-m-massive-reclassification-goods.module'))
-            .PaMMassiveReclassificationGoodsModule,
+          (
+            await import(
+              './massive-reclassification-goods/pa-m-massive-reclassification-goods.module'
+            )
+          ).PaMMassiveReclassificationGoodsModule,
         data: { title: 'Reclasificación masiva de bienes' },
+      },
+      {
+        path: 'massive-change-status',
+        loadChildren: async () =>
+          (
+            await import(
+              './massive-change-status/pa-m-massive-change-status.module'
+            )
+          ).PaMMassiveChangeStatusModule,
+        data: { title: 'Cambio masivo de estatus' },
       },
       /**
        *Legaspi
@@ -322,7 +335,7 @@ const routes: Routes = [
           (await import('./electronic-signature/electronic-signature.module'))
             .ElectronicSignatureModule,
         data: { title: 'Firma Electrónica' },
-       },
+      },
       /**
        * Seguros David Lucas
        */
@@ -333,6 +346,27 @@ const routes: Routes = [
             .PoliciesReportModule,
         data: { title: 'Reportes de Pólizas' },
       },
+      {
+        path: 'accumulated-monthly-assets',
+        loadChildren: async () =>
+          (await import('./accumulated-monthly-assets/accumulated-monthly-assets.module'))
+            .AccumulatedMonthlyAssetsModule,
+        data: { title: 'Acumulado de bienes mensual' },
+      },
+      {
+        path: 'insured-numerary-account',
+        loadChildren: async () =>
+          (await import('./insured-numerary-account/insured-numerary-account.module'))
+            .InsuredNumeraryAccountModule,
+        data: { title: 'Cuenta de numerario asegurado' },
+      },
+      {
+        path: 'performance-evaluation-report',
+        loadChildren: async () =>
+          (await import('./performance-evaluation-report/performance-evaluation-report.module'))
+            .PerformanceEvaluationReportModule,
+        data: { title: 'Reporte de evaluación de desempeño' },
+      },
     ],
   },
 ];
@@ -341,4 +375,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class AdministrativeProcessesRoutingModule {}
+export class AdministrativeProcessesRoutingModule { }

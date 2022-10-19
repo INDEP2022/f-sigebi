@@ -216,6 +216,13 @@ table:not(.normal-hover) tbody tr:hover {
   max-width: 98%;
 }
 
+@media (max-width: 1400px) {
+  hr.mw-98 {
+    max-width: 95%;
+    margin-left: 8px;
+  }
+}
+
 .pointer:hover {
   cursor: pointer;
 }
@@ -265,4 +272,14 @@ table:not(.normal-hover) tbody tr:hover {
 
 .btn.active:hover {
   opacity: 0.8;
+}
+
+.dropdown-item.text-light {
+  &:hover {
+    color: #000 !important;
+  }
+}
+
+.bg-gray-card {
+  background-color: rgba(173, 181, 189, 0.25);
 }

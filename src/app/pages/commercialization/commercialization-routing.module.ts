@@ -215,6 +215,16 @@ const routes: Routes = [
       ).CMSirsaePaymentConsultationModule,
     data: { title: 'Consulta de Pagos Sirsae' },
   },
+  {
+    path: 'lcs-massive-conversion',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-m-lcs-massive-conversion/c-m-lcs-massive-conversion.module'
+        )
+      ).CMLcsMassiveConversionModule,
+    data: { title: 'Conversión Masiva de LCs' },
+  },
 ];
 
 @NgModule({
