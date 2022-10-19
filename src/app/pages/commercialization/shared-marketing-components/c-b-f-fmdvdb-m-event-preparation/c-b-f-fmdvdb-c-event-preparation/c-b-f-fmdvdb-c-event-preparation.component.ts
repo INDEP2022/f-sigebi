@@ -7,7 +7,7 @@ import { CreateNewEventModalComponent } from '../create-new-event-modal/create-n
 import { animate, style, transition, trigger } from '@angular/animations';
 //XLSX
 import * as XLSX from 'xlsx';
-import { ExcelService } from 'src/app/common/services/exporttoexcel.service';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import { AddEditLoteModalComponent } from '../add-edit-lote-modal/add-edit-lote-modal.component';
 
 @Component({
@@ -41,19 +41,21 @@ export class CBFFmdvdbCEventPreparationComponent
   columns: any[] = [];
   totalItems: number = 0;
 
-  constructor(private modalService: BsModalService, private excelService: ExcelService) {
+  constructor(
+    private modalService: BsModalService,
+    private excelService: ExcelService
+  ) {
     super();
     this.settings = {
       ...this.settings,
       actions: {
-        columnTitle: "Detalles", 
+        columnTitle: 'Detalles',
         add: false,
         delete: true,
         position: 'right',
-    },
-    columns: {...EVENT_PREPARATION_ALLOTMENT_COLUMNS}
-    }
-    
+      },
+      columns: { ...EVENT_PREPARATION_ALLOTMENT_COLUMNS },
+    };
   }
 
   ngOnInit(): void {}
@@ -74,13 +76,10 @@ export class CBFFmdvdbCEventPreparationComponent
   }
 
   openModal2(): void {
-    const modalRef = this.modalService.show(
-      CreateNewEventModalComponent,
-      {
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      }
-    );
+    const modalRef = this.modalService.show(CreateNewEventModalComponent, {
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
   }
 
   // openModal3(): void {
@@ -111,11 +110,11 @@ export class CBFFmdvdbCEventPreparationComponent
     });
   }
 
-   openForm(allotment?: any) {
-     this.openModal3({ allotment });
-   }
+  openForm(allotment?: any) {
+    this.openModal3({ allotment });
+  }
 
-   delete(allotment: any) {
+  delete(allotment: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
