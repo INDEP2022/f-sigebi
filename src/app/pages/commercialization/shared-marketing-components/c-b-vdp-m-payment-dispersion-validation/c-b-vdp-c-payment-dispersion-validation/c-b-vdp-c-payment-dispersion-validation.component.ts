@@ -7,7 +7,7 @@ import { BANK_COLUMNS } from './payment-dispersion-validation-bank-columns';
 import { EVENT_COLUMNS } from './payment-dispersion-validation-event-columns';
 import { RECEIVED_COLUMNS } from './payment-dispersion-validation-received-columns';
 
-import { ExcelService } from 'src/app/common/services/exporttoexcel.service';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({

@@ -9,8 +9,7 @@ import { CreateNewEventModalComponent } from '../create-new-event-modal/create-n
 import { animate, style, transition, trigger } from '@angular/animations';
 //XLSX
 import * as XLSX from 'xlsx';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ExcelService } from 'src/app/common/services/exporttoexcel.service';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import { AddEditLoteModalComponent } from '../add-edit-lote-modal/add-edit-lote-modal.component';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
@@ -52,8 +51,6 @@ export class CBFFmdvdbCEventPreparationComponent
   };
   
   totalItems: number = 0;
-  params = new BehaviorSubject<ListParams>(new ListParams());
-
   get check(){
     return this.form.get('check')
   }
@@ -104,13 +101,10 @@ export class CBFFmdvdbCEventPreparationComponent
   }
 
   openModal2(): void {
-    const modalRef = this.modalService.show(
-      CreateNewEventModalComponent,
-      {
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      }
-    );
+    const modalRef = this.modalService.show(CreateNewEventModalComponent, {
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
   }
 
   // openModal3(): void {
@@ -141,11 +135,11 @@ export class CBFFmdvdbCEventPreparationComponent
     });
   }
 
-   openForm(allotment?: any) {
-     this.openModal3({ allotment });
-   }
+  openForm(allotment?: any) {
+    this.openModal3({ allotment });
+  }
 
-   delete(allotment: any) {
+  delete(allotment: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',

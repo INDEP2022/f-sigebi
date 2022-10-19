@@ -5,7 +5,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 
-import { ExcelService } from 'src/app/common/services/exporttoexcel.service';
+import { ExcelService } from 'src/app/common/services/excel.service';
 
 import { EventsSharedComponent } from 'src/app/@standalone/shared-forms/events-shared/events-shared.component';
 import { EventTypeSharedComponent } from 'src/app/@standalone/shared-forms/event-type-shared/event-type-shared.component';
@@ -43,6 +43,6 @@ import { RejectedGoodsTableComponent } from './rejected-goods-table/rejected-goo
     AvailableGoodsTableComponent,
     RejectedGoodsTableComponent
   ],
-  providers: [ExcelService], 
+  providers: [ExcelService],
 })
 export class CBFFmdvdbMEventPreparationModule {}
