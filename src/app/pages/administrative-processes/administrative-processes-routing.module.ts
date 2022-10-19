@@ -321,6 +321,21 @@ const routes: Routes = [
           ).VariableCostModule,
         data: { title: 'Variable costo' },
       },
+
+      {
+        path: 'zones',
+        loadChildren: async () =>
+          (await import('./administration-third/zones/zones.module'))
+            .ZonesModule,
+        data: { title: 'Coordinacion por zonas' },
+      },
+      {
+        path: 'electronic-signature',
+        loadChildren: async () =>
+          (await import('./electronic-signature/electronic-signature.module'))
+            .ElectronicSignatureModule,
+        data: { title: 'Firma Electrónica' },
+       },
       /**
        * Seguros David Lucas
        */
