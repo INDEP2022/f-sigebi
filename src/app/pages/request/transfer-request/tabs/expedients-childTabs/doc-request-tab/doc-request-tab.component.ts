@@ -1,4 +1,10 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -14,7 +20,7 @@ import { DOC_REQUEST_TAB_COLUMNS } from './doc-request-tab-columns';
 interface searchTable {
   noDoc: string;
   noReq: string;
-  docTit: string
+  docTit: string;
   docType: string;
   author: string;
   dateCrea: string;
@@ -23,15 +29,17 @@ interface searchTable {
 @Component({
   selector: 'app-doc-request-tab',
   templateUrl: './doc-request-tab.component.html',
-  styleUrls: ['doc-request-tab.component.scss']
+  styleUrls: ['doc-request-tab.component.scss'],
 })
-export class DocRequestTabComponent extends BasePage implements OnInit, OnChanges {
-  @Input() typeDoc = "";
-  public selectDocType = new DefaultSelect<any>;
+export class DocRequestTabComponent
+  extends BasePage
+  implements OnInit, OnChanges
+{
+  @Input() typeDoc = '';
+  public selectDocType = new DefaultSelect<any>();
   public docRequestForm: ModelForm<any>;
 
-  public settings = {...TABLE_SETTINGS, actions: false};
-  public params = new BehaviorSubject<ListParams>(new ListParams);
+  public params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: searchTable[] = [];
   columns = DOC_REQUEST_TAB_COLUMNS;
 
@@ -45,7 +53,7 @@ export class DocRequestTabComponent extends BasePage implements OnInit, OnChange
       docTit: 'Solicitud_27448',
       docType: 'SOLICITUD DE TRANSFERENCIA',
       author: 'ALEJANDRO',
-      dateCrea: '10/10/2022'
+      dateCrea: '10/10/2022',
     },
     {
       noDoc: 'SAE15335',
@@ -54,43 +62,45 @@ export class DocRequestTabComponent extends BasePage implements OnInit, OnChange
       docType: 'SOLICITUD DE TRANSFERENCIA',
       author: 'ALEJANDRO',
       dateCrea: '01/10/2022',
-    }
-  ]
+    },
+  ];
 
-  constructor(
-    public fb: FormBuilder,
-    public modalService: BsModalService
-  ) { 
+  constructor(public fb: FormBuilder, public modalService: BsModalService) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
+    this.settings = { ...TABLE_SETTINGS, actions: false };
     this.settings.columns = DOC_REQUEST_TAB_COLUMNS;
-    
-    this.columns.button = {... this.columns.button, 
-                  onComponentInitFunction: (instance?:any) => {
-                    instance.btnclick1.subscribe((data:any)=> { 
-                      console.log(data);
-                      this.openDetail();
-                    }),
-                    instance.btnclick2.subscribe((data:any)=> { 
-                      this.openDoc();       
-                    }) 
-                  }
-      }
 
-      this.params
+    this.columns.button = {
+      ...this.columns.button,
+      onComponentInitFunction: (instance?: any) => {
+        instance.btnclick1.subscribe((data: any) => {
+          console.log(data);
+          this.openDetail();
+        }),
+          instance.btnclick2.subscribe((data: any) => {
+            this.openDoc();
+          });
+      },
+    };
+
+    this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getData());
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes['typeDoc'].currentValue); 
-    this.typeDoc = (changes['typeDoc'].currentValue == 'request')? 'Solicitudes':'Expediente';
+    console.log(changes['typeDoc'].currentValue);
+    this.typeDoc =
+      changes['typeDoc'].currentValue == 'request'
+        ? 'Solicitudes'
+        : 'Expediente';
   }
 
-  prepareForm():void{
+  prepareForm(): void {
     this.docRequestForm = this.fb.group({
       id: [null],
       text: [null],
@@ -103,42 +113,36 @@ export class DocRequestTabComponent extends BasePage implements OnInit, OnChange
       noOfice: [null],
       senderCharge: [null],
       comment: [null],
-      noRequest: [{value:157, disabled: true}],
-      responsible: [null]
-    })
+      noRequest: [{ value: 157, disabled: true }],
+      responsible: [null],
+    });
   }
 
   getData() {
     this.paragraphs = this.data;
   }
 
-  getDocType(event: any){
+  getDocType(event: any) {}
 
+  search(): void {}
+
+  cleanForm(): void {}
+
+  openDetail(): void {
+    console.log('open detail');
   }
 
-  search():void {
-
-  }
-
-  cleanForm():void {
-
-  }
-
-  openDetail():void {
-    console.log('open detail'); 
-  }
-
-  openDoc():void{
+  openDoc(): void {
     console.log('open document');
   }
 
-  openNewDocument(request?: IRequest){
+  openNewDocument(request?: IRequest) {
     let config: ModalOptions = {
       initialState: {
         request,
         callback: (next: boolean) => {
-          if(next) this.getData();
-        } 
+          if (next) this.getData();
+        },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,

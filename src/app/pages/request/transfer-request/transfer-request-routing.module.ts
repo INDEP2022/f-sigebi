@@ -7,20 +7,20 @@ import { RegistrationOfRequestsComponent } from './registration-of-requests/regi
 const routes: Routes = [
   {
     path: '',
-    component: RequestListComponent
+    component: RequestListComponent,
   },
   {
     path: 'new-transfer-request',
-    component: RequestFormComponent
+    component: RequestFormComponent,
   },
   {
     path: 'registration-request/:id',
-    component: RegistrationOfRequestsComponent
-  }
+    component: RegistrationOfRequestsComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class TransferRequestRoutingModule { }
+export class TransferRequestRoutingModule {}

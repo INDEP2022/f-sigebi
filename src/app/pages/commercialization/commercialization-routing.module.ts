@@ -4,6 +4,16 @@ import { CommercializationComponent } from './commercialization.component';
 
 const routes: Routes = [
   {
+    path: 'c-b-f-fmdvdb-m-event-preparation',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/c-b-f-fmdvdb-m-event-preparation/c-b-f-fmdvdb-m-event-preparation.module'
+        )
+      ).CBFFmdvdbMEventPreparationModule,
+    data: { title: 'Preparación del evento' },
+  },
+  {
     path: 'c-b-vdp-m-payment-dispersion-validation',
     loadChildren: async () =>
       (
@@ -187,6 +197,23 @@ const routes: Routes = [
         )
       ).CBEMEventsModule,
     data: { title: 'Permisos a Eventos' },
+  },
+  {
+    path: 'numeraire-exchange',
+    loadChildren: async () =>
+      (await import('./numeraire-exchange/numeraire-exchange.module'))
+        .NumeraireExchangeModule,
+    data: { title: 'Cambio a Numerario' },
+  },
+  {
+    path: 'sirsae-payment-consultation',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-m-sirsae-payment-consultation/c-m-sirsae-payment-consultation.module'
+        )
+      ).CMSirsaePaymentConsultationModule,
+    data: { title: 'Consulta de Pagos Sirsae' },
   },
 ];
 

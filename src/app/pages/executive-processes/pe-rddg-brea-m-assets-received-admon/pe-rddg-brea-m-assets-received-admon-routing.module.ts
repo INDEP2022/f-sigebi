@@ -4,13 +4,13 @@ import { PeRddgBreaCAssetsReceivedAdmonComponent } from './pe-rddg-brea-c-assets
 
 const routes: Routes = [
   {
-    path:'',
-    component: PeRddgBreaCAssetsReceivedAdmonComponent
-  }
+    path: '',
+    component: PeRddgBreaCAssetsReceivedAdmonComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PeRddgBreaMAssetsReceivedAdmonRoutingModule { }
+export class PeRddgBreaMAssetsReceivedAdmonRoutingModule {}

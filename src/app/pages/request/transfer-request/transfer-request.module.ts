@@ -35,7 +35,7 @@ import { NewDocumentComponent } from './tabs/expedients-childTabs/new-document/n
     GoodDocTabComponent,
     GeneralDocTabComponent,
     BtnRequestComponent,
-    NewDocumentComponent
+    NewDocumentComponent,
   ],
   imports: [
     CommonModule,
@@ -45,6 +45,5 @@ import { NewDocumentComponent } from './tabs/expedients-childTabs/new-document/n
     TabsModule.forRoot(),
     SimplebarAngularModule,
   ],
-
 })
-export class TransferRequestModule { }
+export class TransferRequestModule {}

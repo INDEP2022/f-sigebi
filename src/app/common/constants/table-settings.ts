@@ -23,5 +23,6 @@ export const TABLE_SETTINGS = {
     confirmDelete: true,
   },
   columns: {},
-  noDataMessage: 'No se encontrarón registros',
+  noDataMessage: 'No se encontraron registros',
+  selectedRowIndex: -1,
 };

@@ -2,29 +2,29 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { COLUMNS } from './columns';
 
 @Component({
   selector: 'app-pa-ucpmc-c-massive-conversion',
   templateUrl: './pa-ucpmc-c-massive-conversion.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class PaUcpmcCMassiveConversionComponent extends BasePage implements OnInit {
-
+export class PaUcpmcCMassiveConversionComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
   form2: FormGroup = new FormGroup({});
-  settings = TABLE_SETTINGS;
-  data:any[]=[];
+
+  data: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(private fb: FormBuilder) {
     super();
     this.settings.columns = COLUMNS;
-    this.settings.actions.delete = false;
   }
 
   ngOnInit(): void {
@@ -50,7 +50,7 @@ export class PaUcpmcCMassiveConversionComponent extends BasePage implements OnIn
       scanFolio: [null, [Validators.required]],
       paragraphF: [null, [Validators.required]],
       paragraphS: [null, [Validators.required]],
-      paragraphL: [null, [Validators.required]]
+      paragraphL: [null, [Validators.required]],
     });
 
     this.form2 = this.fb.group({
@@ -60,22 +60,21 @@ export class PaUcpmcCMassiveConversionComponent extends BasePage implements OnIn
       amount: [null, [Validators.required]],
       unit: [null, [Validators.required]],
       status: [null, [Validators.required]],
-      check: [false]
+      check: [false],
     });
-
   }
 
   add() {
     //this.openModal();
   }
 
-  edit(data:any) {
+  edit(data: any) {
     //console.log(data)
     //this.openModal({ edit: true, paragraph });
   }
 
-  delete(data:any) {
-    console.log(data)
+  delete(data: any) {
+    console.log(data);
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -87,8 +86,7 @@ export class PaUcpmcCMassiveConversionComponent extends BasePage implements OnIn
     });
   }
 
-  settingsChange($event:any): void {
-    this.settings=$event;
+  settingsChange($event: any): void {
+    this.settings = $event;
   }
-
 }

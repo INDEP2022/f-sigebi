@@ -1,0 +1,46 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Validadores de Actas</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <form-field
+          class="col-md-3"
+          [control]="form.get('noActa')"
+          label="No. Acta">
+          <input class="form-control" type="number" formControlName="noActa" />
+        </form-field>
+
+        <form-field
+          class="col-md-5"
+          [control]="form.get('clave')"
+          label="Clave">
+          <input class="form-control" type="number" formControlName="clave" />
+        </form-field>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="col-md-12 d-flex justify-content-around">
+          <div>
+            <p>
+              <i class="fa fa-lock text-warning" aria-hidden="true"></i>
+              Total Validaciones: <b>13456</b>
+            </p>
+          </div>
+          <div>
+            <p>
+              <i class="fa fa-check text-success" aria-hidden="true"></i>
+              Correctos: <b>123</b>
+            </p>
+          </div>
+        </div>
+      </div>
+      <hr />
+      <div class="row pt-3">
+        <ng2-smart-table [settings]="settings"></ng2-smart-table>
+      </div>
+    </form>
+  </div>
+</app-card>

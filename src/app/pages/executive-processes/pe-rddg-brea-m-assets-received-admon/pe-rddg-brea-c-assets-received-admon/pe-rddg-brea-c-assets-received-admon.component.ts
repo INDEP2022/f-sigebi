@@ -5,15 +5,13 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-pe-rddg-brea-c-assets-received-admon',
   templateUrl: './pe-rddg-brea-c-assets-received-admon.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PeRddgBreaCAssetsReceivedAdmonComponent implements OnInit {
-
-  form: FormGroup = new FormGroup({}); 
+  form: FormGroup = new FormGroup({});
   select = new DefaultSelect();
-  
-  constructor(private fb: FormBuilder) { }
+
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();
@@ -29,5 +27,4 @@ export class PeRddgBreaCAssetsReceivedAdmonComponent implements OnInit {
       status: ['', [Validators.required]],
     });
   }
-
 }

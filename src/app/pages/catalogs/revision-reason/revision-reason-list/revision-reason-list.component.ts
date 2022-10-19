@@ -3,7 +3,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ListParams } from '../../../../common/repository/interfaces/list-params';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { IRevisionReason } from '../../../../core/models/catalogs/revision-reason.model';
 import { RevisionReasonService } from 'src/app/core/services/catalogs/revision-reason.service';
 import { REVISION_REASON_COLUMNS } from './revision-reason-columns';
@@ -12,12 +12,9 @@ import { RevisionReasonFormComponent } from '../revision-reason-form/revision-re
 @Component({
   selector: 'app-revision-reason-list',
   templateUrl: './revision-reason-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class RevisionReasonListComponent extends BasePage implements OnInit {
-
-  settings = TABLE_SETTINGS;
   columns: IRevisionReason[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -25,7 +22,7 @@ export class RevisionReasonListComponent extends BasePage implements OnInit {
   constructor(
     private revisionReasonService: RevisionReasonService,
     private modalService: BsModalService
-  ) { 
+  ) {
     super();
     this.settings.columns = REVISION_REASON_COLUMNS;
     this.settings.actions.delete = true;

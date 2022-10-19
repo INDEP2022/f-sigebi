@@ -1,12 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
-
 @Component({
   selector: 'app-fdp-add-c-donation-acts',
   templateUrl: './fdp-add-c-donation-acts.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class FdpAddCDonationActsComponent implements OnInit {
   actForm: FormGroup;
@@ -14,41 +12,41 @@ export class FdpAddCDonationActsComponent implements OnInit {
 
   settings1 = {
     rowClassFunction: (row: any) =>
-      row.data.status ? "available" : "not-available",
+      row.data.status ? 'available' : 'not-available',
     pager: {
       display: false,
     },
     hideSubHeader: true,
     actions: false,
     selectedRowIndex: -1,
-    mode: "external",
+    mode: 'external',
     columns: {
       noBien: {
-        title: "No. Bien",
-        type: "number",
+        title: 'No. Bien',
+        type: 'number',
       },
       description: {
-        title: "Descripcion",
-        type: "string",
+        title: 'Descripcion',
+        type: 'string',
       },
       proceso: {
-        title: "Proceso",
-        type: "string",
+        title: 'Proceso',
+        type: 'string',
       },
       cantidad: {
-        title: "Cantidad",
-        type: "number",
+        title: 'Cantidad',
+        type: 'number',
       },
       unidad: {
-        title: "Unidad",
-        type: "string",
+        title: 'Unidad',
+        type: 'string',
       },
       acta: {
-        title: "Acta",
-        type: "string",
+        title: 'Acta',
+        type: 'string',
       },
     },
-    noDataMessage: "No se encontrarón registros",
+    noDataMessage: 'No se encontrarón registros',
   };
 
   settings2 = {
@@ -58,43 +56,40 @@ export class FdpAddCDonationActsComponent implements OnInit {
     hideSubHeader: true,
     actions: false,
     selectedRowIndex: -1,
-    mode: "external",
+    mode: 'external',
     columns: {
       noBien: {
-        title: "No. Bien",
-        type: "number",
+        title: 'No. Bien',
+        type: 'number',
       },
       descripcion: {
-        title: "Descripción",
-        type: "string",
+        title: 'Descripción',
+        type: 'string',
       },
       cantidad: {
-        title: "Cantidad",
-        type: "number",
-      }
+        title: 'Cantidad',
+        type: 'number',
+      },
     },
-    noDataMessage: "No se encontrarón registros",
+    noDataMessage: 'No se encontrarón registros',
   };
 
   data = EXAMPLE_DATA;
   data2 = EXAMPLE_DATA2;
 
-  constructor(
-    private fb: FormBuilder
-  ) { }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.initForm();
   }
 
-  search(term: string){
+  search(term: string) {
     this.response = !this.response;
   }
 
-  onSubmit(){
-  }
+  onSubmit() {}
 
-  initForm(){
+  initForm() {
     this.actForm = this.fb.group({
       statusAct: [null, [Validators.required]],
       preliminaryAscertainment: [null, [Validators.required]],
@@ -118,72 +113,70 @@ export class FdpAddCDonationActsComponent implements OnInit {
       folioScan: [null, [Validators.required]],
     });
   }
-
 }
 
 const EXAMPLE_DATA = [
   {
     noBien: 123,
-    description: "INMUEBLE UBICADO EN CALLE",
+    description: 'INMUEBLE UBICADO EN CALLE',
     cantidad: 1,
-    unidad: "UNIDAD",
+    unidad: 'UNIDAD',
     status: false,
   },
   {
     noBien: 123,
-    description: "INMUEBLE UBICADO EN CALLE",
+    description: 'INMUEBLE UBICADO EN CALLE',
     cantidad: 1,
-    unidad: "UNIDAD",
+    unidad: 'UNIDAD',
     status: false,
   },
   {
     noBien: 123,
-    description: "INMUEBLE UBICADO EN CALLE",
+    description: 'INMUEBLE UBICADO EN CALLE',
     cantidad: 1,
-    unidad: "UNIDAD",
+    unidad: 'UNIDAD',
     status: false,
   },
   {
     noBien: 123,
-    description: "INMUEBLE UBICADO EN CALLE",
+    description: 'INMUEBLE UBICADO EN CALLE',
     cantidad: 1,
-    unidad: "UNIDAD",
+    unidad: 'UNIDAD',
     status: false,
   },
   {
     noBien: 123,
-    description: "INMUEBLE UBICADO EN CALLE",
+    description: 'INMUEBLE UBICADO EN CALLE',
     cantidad: 1,
-    unidad: "UNIDAD",
+    unidad: 'UNIDAD',
     status: false,
   },
 ];
 
-
 const EXAMPLE_DATA2 = [
   {
     noBien: 321,
-    descripcion: "UN PAR DE ARETES, METAL FANTASIA",
+    descripcion: 'UN PAR DE ARETES, METAL FANTASIA',
     cantidad: 2,
   },
   {
     noBien: 321,
-    descripcion: "UN PAR DE ARETES, METAL FANTASIA",
+    descripcion: 'UN PAR DE ARETES, METAL FANTASIA',
     cantidad: 2,
   },
   {
     noBien: 321,
-    descripcion: "UN PAR DE ARETES, METAL FANTASIA",
+    descripcion: 'UN PAR DE ARETES, METAL FANTASIA',
     cantidad: 2,
   },
   {
     noBien: 321,
-    descripcion: "UN PAR DE ARETES, METAL FANTASIA",
+    descripcion: 'UN PAR DE ARETES, METAL FANTASIA',
     cantidad: 2,
   },
   {
     noBien: 321,
-    descripcion: "UN PAR DE ARETES, METAL FANTASIA",
+    descripcion: 'UN PAR DE ARETES, METAL FANTASIA',
     cantidad: 2,
   },
 ];

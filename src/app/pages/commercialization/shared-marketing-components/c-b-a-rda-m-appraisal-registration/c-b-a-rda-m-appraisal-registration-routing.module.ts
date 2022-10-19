@@ -5,12 +5,12 @@ import { CBARdaCAppraisalRegistrationComponent } from './c-b-a-rda-c-appraisal-r
 const routes: Routes = [
   {
     path: '',
-    component: CBARdaCAppraisalRegistrationComponent
-  }
+    component: CBARdaCAppraisalRegistrationComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CBARdaMAppraisalRegistrationRoutingModule { }
+export class CBARdaMAppraisalRegistrationRoutingModule {}

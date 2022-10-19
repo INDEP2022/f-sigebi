@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IZoneGeographic } from 'src/app/core/models/catalogs/zone-geographic.model';
 import { ZoneGeographicService } from 'src/app/core/services/catalogs/zone-geographic.service';
@@ -12,11 +12,9 @@ import { ZONEGEOGRAPHIC_COLUMS } from './zone-geographic-columnc';
 @Component({
   selector: 'app-zone-geographic-list',
   templateUrl: './zone-geographic-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ZoneGeographicListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
   paragraphs: IZoneGeographic[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -73,4 +71,4 @@ export class ZoneGeographicListComponent extends BasePage implements OnInit {
       }
     });
   }
-  }
+}

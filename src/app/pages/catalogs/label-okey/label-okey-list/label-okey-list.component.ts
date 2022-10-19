@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ILabelOKey } from 'src/app/core/models/catalogs/label-okey.model';
 import { LabelOkeyService } from 'src/app/core/services/catalogs/label-okey.service';
@@ -15,7 +15,6 @@ import { LABEL_OKEY_COLUMNS } from './label-okey-columns';
   styles: [],
 })
 export class LabelOkeyListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
   paragraphs: ILabelOKey[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -49,11 +48,11 @@ export class LabelOkeyListComponent extends BasePage implements OnInit {
 
   openForm(labelOKey?: ILabelOKey) {
     let config: ModalOptions = {
-      initialState:{
+      initialState: {
         labelOKey,
         callback: (next: boolean) => {
-          if(next) this.getLabelsOkey()
-        }
+          if (next) this.getLabelsOkey();
+        },
       },
       class: 'modal-md modal-dialog-centered',
       ignoreBackdropClick: true,

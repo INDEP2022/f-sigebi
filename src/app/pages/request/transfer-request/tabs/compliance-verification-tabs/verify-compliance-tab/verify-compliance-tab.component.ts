@@ -47,7 +47,6 @@ var bienes: IDetailEstate[] = [
 })
 export class VerifyComplianceTabComponent extends BasePage implements OnInit {
   verifComplianceForm: ModelForm<any>;
-  settings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
   settingsEstate = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
   paragraphsTable1: any[] = [];
   paragraphsTable2: any[] = [];
@@ -65,6 +64,7 @@ export class VerifyComplianceTabComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.settings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
     this.settings.columns = VERIRY_COMPLIANCE_COLUMNS;
     this.settingsEstate.columns = DETAIL_ESTATE_COLUMNS;
     this.params
@@ -119,7 +119,10 @@ export class VerifyComplianceTabComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    if (this.article3array.length == 3 &&this.article12and13array.length >= 3) {
+    if (
+      this.article3array.length == 3 &&
+      this.article12and13array.length >= 3
+    ) {
       this.msgModal(
         'Clasificar Bien',
         '¿Deseas turnar la solicitud con Folio: (Insertar el No. solicitud)',

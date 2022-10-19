@@ -24,6 +24,7 @@ import { FormRadioComponent } from './components/form-radio/form-radio.component
 import { CheckboxColumnComponent } from './components/checkbox-column/checkbox-column.component';
 import { SearchBarSimpleComponent } from './components/search-bar-simple/search-bar-simple.component';
 import { DividerComponent } from './components/divider/divider.component';
+import { CheckboxElementComponent } from './components/checkbox-element-smarttable/checkbox-element';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { DividerComponent } from './components/divider/divider.component';
     CheckboxColumnComponent,
     SearchBarSimpleComponent,
     DividerComponent,
+    CheckboxElementComponent,
   ],
   imports: [
     CommonModule,
@@ -74,6 +76,7 @@ import { DividerComponent } from './components/divider/divider.component';
     FormCheckComponent,
     FormRadioComponent,
     CommonModule,
+    CheckboxElementComponent,
     CheckboxColumnComponent,
   ],
 })

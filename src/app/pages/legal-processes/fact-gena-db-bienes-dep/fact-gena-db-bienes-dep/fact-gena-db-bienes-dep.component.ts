@@ -1,18 +1,15 @@
-import { Component, OnInit } from '@angular/core';  
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'ngx-fact-gena-db-bienes-dep',
   templateUrl: './fact-gena-db-bienes-dep.component.html',
-  styleUrls: ['./fact-gena-db-bienes-dep.component.scss']
+  styleUrls: ['./fact-gena-db-bienes-dep.component.scss'],
 })
-export class FactGenaDBBienesXDepComponent  {
-
+export class FactGenaDBBienesXDepComponent {
   public form: FormGroup;
 
-  constructor(
-    private fb: FormBuilder) {  
-  }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();
@@ -34,18 +31,21 @@ export class FactGenaDBBienesXDepComponent  {
       hastaFecha: ['', [Validators.required]], //*
     });
   }
-  
-btnImprimir(): any{
-  console.log(this.form.value)
-}
 
+  btnImprimir(): any {
+    console.log(this.form.value);
+  }
 
-/**
- * Formulario
- */
- public returnField(form, field) { return form.get(field); }
- public returnShowRequirements(form, field) { 
-   return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched; 
- }
-
+  /**
+   * Formulario
+   */
+  public returnField(form, field) {
+    return form.get(field);
+  }
+  public returnShowRequirements(form, field) {
+    return (
+      this.returnField(form, field)?.errors?.required &&
+      this.returnField(form, field).touched
+    );
+  }
 }

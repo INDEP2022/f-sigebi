@@ -1,165 +1,216 @@
-<app-card [header]="true" class="cat-card mt-5"> 
-    <div class="ch-content" header>
-  
-        <div class="row w-100">
-            <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
-                <span class="title">
-                    BIENES POR DEPOSITARÍA
-                </span>
+<app-card [header]="true" class="cat-card mt-5">
+  <div class="ch-content" header>
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
+        <span class="title"> BIENES POR DEPOSITARÍA </span>
+      </div>
+    </div>
+  </div>
+
+  <div body>
+    <!-- Forms Bienes DEPOSITARIA -->
+    <form [formGroup]="form">
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-1">
+          <div class="row w-100">
+            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+              <div class="form-group">
+                <label class="label w-100">Delegación</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  formControlName="delegacion"
+                  placeholder="Delegación" />
+              </div>
             </div>
-            
+            <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
+              <div class="form-group">
+                <label class="label w-100">Detalle Delegación</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  placeholder="Detalle Delegación" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+              <div class="form-group">
+                <label class="label w-100">SubDelegación</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  formControlName="subdelegacion"
+                  placeholder="SubDelegación" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
+              <div class="form-group">
+                <label class="label w-100">Detalle SubDelegación</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  placeholder="Detalle SubDelegación" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+              <div class="form-group">
+                <label class="label w-100">Depositaría</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  formControlName="depositaria"
+                  placeholder="Depositaría" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
+              <div class="form-group">
+                <label class="label w-100">Detalle Depositaría</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  placeholder="Detalle Depositaría" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+              <div class="form-group">
+                <label class="label w-100">Entidad Federativa</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  formControlName="entidadFederativa"
+                  placeholder="Entidad Federativa" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
+              <div class="form-group">
+                <label class="label w-100">Detalle Entidad Federativa</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  placeholder="Detalle Entidad Federativa" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+              <div class="form-group">
+                <label class="label w-100">Tipo Bien</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  formControlName="tipoBien"
+                  placeholder="Tipo Bien" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
+              <div class="form-group">
+                <label class="label w-100">Detalle Tipo Bien</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  placeholder="Detalle Tipo Bien" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+              <div class="form-group">
+                <label class="label w-100">Subtipo de Bienes</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  formControlName="subtipoBien"
+                  placeholder="Subtipo de Bienes" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
+              <div class="form-group">
+                <label class="label w-100">Detalle Subtipo de Bienes</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  placeholder="Detalle Subtipo de Bienes" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+              <div class="form-group">
+                <nb-checkbox
+                  fullWidth
+                  class="w-100"
+                  formControlName="fechaNombramientoProvicional">
+                  Fecha Nombramiento Provicional</nb-checkbox
+                >
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+              <div class="form-group">
+                <nb-checkbox
+                  fullWidth
+                  class="w-100"
+                  formControlName="fechaRemocion">
+                  Fecha Remoción</nb-checkbox
+                >
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+              <div class="form-group">
+                <nb-checkbox
+                  fullWidth
+                  class="w-100"
+                  formControlName="fechaNombramientoDefinitivo">
+                  Fecha Nombramiento Definitivo</nb-checkbox
+                >
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+              <div class="form-group">
+                <nb-checkbox
+                  fullWidth
+                  class="w-100"
+                  formControlName="todasFechas">
+                  Todas las Fechas</nb-checkbox
+                >
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+              <div class="form-group">
+                <label class="label w-100">Tipo</label>
+                <nb-select
+                  fullWidth
+                  selected="No"
+                  formControlName="tipo"
+                  [status]="''">
+                  <nb-option value="Administrador">Administrador</nb-option>
+                  <nb-option value="Depositaría">Depositaría</nb-option>
+                  <nb-option value="Interventor">Interventor</nb-option>
+                  <nb-option value="Todos">Todos</nb-option>
+                </nb-select>
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2 text-center">
+              <div class="form-group">
+                <label class="label">&nbsp;</label>&nbsp;
+                <button
+                  type="button"
+                  nbButton
+                  status="primary"
+                  (click)="btnImprimir()"
+                  class="text-wrap">
+                  Imprimir
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-
-    </div>
-  
-    <div body>
-
-        <!-- Forms Bienes DEPOSITARIA -->
-        <form [formGroup]="form">
-
-            <div class="row w-100">
-                <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-1">
-                    <div class="row w-100">
-                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-                            <div class="form-group">
-                                <label class="label w-100">Delegación</label>
-                                <input nbInput fullWidth class="w-100" formControlName="delegacion"
-                                        placeholder="Delegación">
-                                
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
-                            <div class="form-group">
-                                <label class="label w-100">Detalle Delegación</label>
-                                <input nbInput fullWidth class="w-100" placeholder="Detalle Delegación">
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-                            <div class="form-group">
-                                <label class="label w-100">SubDelegación</label>
-                                <input nbInput fullWidth class="w-100" formControlName="subdelegacion"
-                                        placeholder="SubDelegación">
-                                
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
-                            <div class="form-group">
-                                <label class="label w-100">Detalle SubDelegación</label>
-                                <input nbInput fullWidth class="w-100" placeholder="Detalle SubDelegación">
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-                            <div class="form-group">
-                                <label class="label w-100">Depositaría</label>
-                                <input nbInput fullWidth class="w-100" formControlName="depositaria"
-                                        placeholder="Depositaría">
-                                
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
-                            <div class="form-group">
-                                <label class="label w-100">Detalle Depositaría</label>
-                                <input nbInput fullWidth class="w-100" placeholder="Detalle Depositaría">
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-                            <div class="form-group">
-                                <label class="label w-100">Entidad Federativa</label>
-                                <input nbInput fullWidth class="w-100" formControlName="entidadFederativa"
-                                        placeholder="Entidad Federativa">
-                                
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
-                            <div class="form-group">
-                                <label class="label w-100">Detalle Entidad Federativa</label>
-                                <input nbInput fullWidth class="w-100" placeholder="Detalle Entidad Federativa">
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-                            <div class="form-group">
-                                <label class="label w-100">Tipo Bien</label>
-                                <input nbInput fullWidth class="w-100" formControlName="tipoBien"
-                                        placeholder="Tipo Bien">
-                                
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
-                            <div class="form-group">
-                                <label class="label w-100">Detalle Tipo Bien</label>
-                                <input nbInput fullWidth class="w-100" placeholder="Detalle Tipo Bien">
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-                            <div class="form-group">
-                                <label class="label w-100">Subtipo de Bienes</label>
-                                <input nbInput fullWidth class="w-100" formControlName="subtipoBien"
-                                        placeholder="Subtipo de Bienes">
-                                
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
-                            <div class="form-group">
-                                <label class="label w-100">Detalle Subtipo de Bienes</label>
-                                <input nbInput fullWidth class="w-100" placeholder="Detalle Subtipo de Bienes">
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-                            <div class="form-group">
-                                <nb-checkbox fullWidth class="w-100" formControlName="fechaNombramientoProvicional">
-                                    Fecha Nombramiento Provicional</nb-checkbox>
-                                
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-                            <div class="form-group">
-                                <nb-checkbox fullWidth class="w-100" formControlName="fechaRemocion">
-                                    Fecha Remoción</nb-checkbox>
-                                
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-                            <div class="form-group">
-                                <nb-checkbox fullWidth class="w-100" formControlName="fechaNombramientoDefinitivo">
-                                    Fecha Nombramiento Definitivo</nb-checkbox>
-                                
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-                            <div class="form-group">
-                                <nb-checkbox fullWidth class="w-100" formControlName="todasFechas">
-                                    Todas las Fechas</nb-checkbox>
-                                
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-                            <div class="form-group">
-                                <label class="label w-100">Tipo</label>
-                                <nb-select fullWidth selected="No" formControlName="tipo" [status]="''">
-                                    <nb-option value="Administrador">Administrador</nb-option>
-                                    <nb-option value="Depositaría">Depositaría</nb-option>
-                                    <nb-option value="Interventor">Interventor</nb-option>
-                                    <nb-option value="Todos">Todos</nb-option>
-                                </nb-select>
-                                
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2 text-center">
-                            <div class="form-group">
-                                <label class="label">&nbsp;</label>&nbsp;
-                                <button type="button" nbButton status="primary" (click)="btnImprimir()"
-                                class="text-wrap">
-                                    Imprimir
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </form>
-        <!-- Forms Bienes DEPOSITARIA -->
-  
-    </div>
-  
-  </app-card>
+      </div>
+    </form>
+    <!-- Forms Bienes DEPOSITARIA -->
+  </div>
+</app-card>

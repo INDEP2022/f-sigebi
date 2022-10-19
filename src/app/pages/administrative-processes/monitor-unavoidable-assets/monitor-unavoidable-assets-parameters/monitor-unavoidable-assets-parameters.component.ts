@@ -7,23 +7,37 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-monitor-unavoidable-assets-parameters',
   templateUrl: './monitor-unavoidable-assets-parameters.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class MonitorUnavoidableAssetsParametersComponent extends BasePage implements OnInit {
+export class MonitorUnavoidableAssetsParametersComponent
+  extends BasePage
+  implements OnInit
+{
   parametersForm: ModelForm<any>;
 
-    constructor(private modalService: BsModalService,private fb: FormBuilder,private modalRef: BsModalRef) {
+  constructor(
+    private modalService: BsModalService,
+    private fb: FormBuilder,
+    private modalRef: BsModalRef
+  ) {
     super();
     this.prepareForm();
   }
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
   private prepareForm() {
     this.parametersForm = this.fb.group({
-      waterproofPercentage: [null, Validators.compose([Validators.required, Validators.maxLength(7)])],
-      monthsIncosteability: [null, Validators.compose([Validators.required, Validators.maxLength(4)])],
-      unaffordableMinimunWage: [null, Validators.compose([Validators.required, Validators.maxLength(17)])],
+      waterproofPercentage: [
+        null,
+        Validators.compose([Validators.required, Validators.maxLength(7)]),
+      ],
+      monthsIncosteability: [
+        null,
+        Validators.compose([Validators.required, Validators.maxLength(4)]),
+      ],
+      unaffordableMinimunWage: [
+        null,
+        Validators.compose([Validators.required, Validators.maxLength(17)]),
+      ],
     });
   }
 
@@ -32,6 +46,6 @@ export class MonitorUnavoidableAssetsParametersComponent extends BasePage implem
   }
 
   confirm() {
-   //guaradar datos
+    //guaradar datos
   }
 }

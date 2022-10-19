@@ -3,15 +3,14 @@ import { RouterModule, Routes } from '@angular/router';
 import { FactJurAbonadosComponent } from './fact-jur-abandonos/fact-jur-abandonos.component';
 
 const routes: Routes = [
-  {  
-    path: '', component: FactJurAbonadosComponent
+  {
+    path: '',
+    component: FactJurAbonadosComponent,
   },
-  
-
-]; 
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class FactJurAbonadosRoutingModule { }
+export class FactJurAbonadosRoutingModule {}

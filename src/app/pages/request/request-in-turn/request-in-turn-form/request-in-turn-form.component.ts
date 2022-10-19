@@ -11,42 +11,40 @@ import { Output, EventEmitter } from '@angular/core';
 @Component({
   selector: 'app-request-in-turn-form',
   templateUrl: './request-in-turn-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class RequestInTurnFormComponent implements OnInit {
   @Output() sendSearchForm = new EventEmitter<ModelForm<IRequestInTurn>>();
 
   edit: boolean = false;
-  title:string = 'SOliCITUD A TURNO';
+  title: string = 'SOliCITUD A TURNO';
   requestForm: ModelForm<IRequestInTurn>;
   requestInTurn: IRequestInTurn;
-  checked:string = 'checked';
+  checked: string = 'checked';
 
-  loading:boolean = false
+  loading: boolean = false;
 
-  selectTransmitter = new DefaultSelect<IRequestInTurn>;
-  selectAuthority = new DefaultSelect<IRequestInTurn>;
-  selectDeleRegional = new DefaultSelect<IRequestInTurn>;
-  selectState = new DefaultSelect<IRequestInTurn>;
-  selectSubject = new DefaultSelect<IRequestInTurn>;
-  selectTransfer = new DefaultSelect<IRequestInTurn>;
+  selectTransmitter = new DefaultSelect<IRequestInTurn>();
+  selectAuthority = new DefaultSelect<IRequestInTurn>();
+  selectDeleRegional = new DefaultSelect<IRequestInTurn>();
+  selectState = new DefaultSelect<IRequestInTurn>();
+  selectSubject = new DefaultSelect<IRequestInTurn>();
+  selectTransfer = new DefaultSelect<IRequestInTurn>();
 
-  match:string  = '';
+  match: string = '';
 
   constructor(
     public modalRef: BsModalRef,
-    public fb: FormBuilder,
-    //public requestService: ResquestService
-  ) { }
+    public fb: FormBuilder //public requestService: ResquestService
+  ) {}
 
   ngOnInit(): void {
     this.initialForm();
   }
 
-  initialForm():void {
+  initialForm(): void {
     this.requestForm = this.fb.group({
-      check: [null,],
+      check: [null],
       noRequest: [null],
       dateRequest: [null],
       titularName: [null],
@@ -65,7 +63,7 @@ export class RequestInTurnFormComponent implements OnInit {
       appliStatus: [null],
       contributor: [null],
       acta: [null],
-      ascertainment: [null], 
+      ascertainment: [null],
       cause: [null],
       typeMach: ['all'],
     });
@@ -80,22 +78,20 @@ export class RequestInTurnFormComponent implements OnInit {
       this.station = new DefaultSelect(data.data, data.count);
     }); */
   }
-  
-  search():void{
+
+  search(): void {
     /* console.log(this.requestForm.getRawValue());
     console.log(this.selectTransmitter); */
-    
+
     if (this.match == 'all') {
       //retrieve all list
     } else {
       //retrieve data filtered
       this.sendSearchForm.emit(this.requestForm);
     }
-    
   }
 
-  reset():void{
+  reset(): void {
     this.requestForm.reset();
   }
-
 }

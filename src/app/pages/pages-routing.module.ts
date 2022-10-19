@@ -51,8 +51,12 @@ const routes: Routes = [
 
   {
     path: 'final-destination-process',
-    loadChildren: async() =>
-    (await import('./final-destination-process/final-destination-process.module')).FinalDestinationProcessModule,
+    loadChildren: async () =>
+      (
+        await import(
+          './final-destination-process/final-destination-process.module'
+        )
+      ).FinalDestinationProcessModule,
     data: { Title: 'Destino final' },
   },
   {
@@ -63,7 +67,8 @@ const routes: Routes = [
   {
     path: 'juridicos',
     loadChildren: async () =>
-      (await import('./juridical-processes/juridical-processes.module')).JuridicalProcessesModule,
+      (await import('./juridical-processes/juridical-processes.module'))
+        .JuridicalProcessesModule,
     data: { title: 'Juridicos' },
   },
   // {
@@ -83,6 +88,12 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./commercialization/commercialization.module'))
         .CommercializationModule,
+  },
+  {
+    path: 'judicial-physical-reception',
+    loadChildren: async () =>
+      (await import('./judicial-physical-reception/judicial-physical-reception.module'))
+        .JudicialPhysicalReceptionModule,
   },
 ];
 

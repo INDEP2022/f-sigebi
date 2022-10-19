@@ -7,17 +7,13 @@ import { StationFormComponent } from './station-form/station-form.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
-  declarations: [
-    StationListComponent,
-    StationFormComponent
-  ],
+  declarations: [StationListComponent, StationFormComponent],
   imports: [
     CommonModule,
     SharedModule,
     ModalModule.forChild(),
-    StationRoutingModule
-  ]
+    StationRoutingModule,
+  ],
 })
-export class StationModule { }
+export class StationModule {}

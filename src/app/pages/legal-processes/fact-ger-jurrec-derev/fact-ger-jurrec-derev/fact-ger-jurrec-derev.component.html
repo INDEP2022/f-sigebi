@@ -1,118 +1,148 @@
-<app-card [header]="true" class="cat-card mt-5"> 
-    <div class="ch-content" header>
-  
-        <div class="row w-100">
-            <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
-                <span class="title">
-                    BIENES CON RECURSO DE REVISIÓN
-                </span>
-            </div>
-            
-        </div>
-
+<app-card [header]="true" class="cat-card mt-5">
+  <div class="ch-content" header>
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 input-position text-center p-3">
+        <span class="title"> BIENES CON RECURSO DE REVISIÓN </span>
+      </div>
     </div>
-  
-    <div body>
+  </div>
 
-        <div class="row w-100">
-            <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-1">
-                <!-- FORM Expediente -->
-                <form [formGroup]="form">
-                    <div class="row w-100">
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <div class="form-group">
-                                <label class="label w-100">Delegación</label>
-                                <input nbInput fullWidth class="w-100" formControlName="delegacion"
-                                        placeholder="Delegación">
-                                
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-                            <div class="form-group">
-                                <label class="label w-100">Detalle Delegación</label>
-                                <input nbInput fullWidth class="w-100"
-                                        placeholder="Detalle Delegación">
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <div class="form-group">
-                                <label class="label w-100">SubDelegación</label>
-                                <input nbInput fullWidth class="w-100" formControlName="subdelegacion"
-                                        placeholder="SubDelegación">
-                                
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-                            <div class="form-group">
-                                <label class="label w-100">Detalle SubDelegación</label>
-                                <input nbInput fullWidth class="w-100"
-                                        placeholder="Detalle SubDelegación">
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <div class="form-group">
-                                <label class="label w-100">Desde No. Bien</label>
-                                <input nbInput fullWidth class="w-100" formControlName="delBien"
-                                        placeholder="Desde No. Bien">
-                                
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-                            <div class="form-group">
-                                <label class="label w-100">Detalle Del Bien</label>
-                                <input nbInput fullWidth class="w-100"
-                                        placeholder="Detalle Del Bien">
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
-                            <div class="form-group">
-                                <label class="label w-100">Hasta No. Bien</label>
-                                <input nbInput fullWidth class="w-100" formControlName="alBien"
-                                        placeholder="Hasta No. Bien">
-                                
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-                            <div class="form-group">
-                                <label class="label w-100">Detalle No. Bien</label>
-                                <input nbInput fullWidth class="w-100"
-                                        placeholder="Detalle No. Bien">
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-                            <div class="form-group">
-                                <label class="label w-100">Fecha Presentación Recurso Del:</label>
-                                <input nbInput fullWidth class="w-100" formControlName="fechaPresentacionRecursoDesde"
-                                        placeholder="Fecha Presentación Recurso Del:">
-                                         <!-- [nbDatepicker]="formpicker1">
+  <div body>
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-1">
+        <!-- FORM Expediente -->
+        <form [formGroup]="form">
+          <div class="row w-100">
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <div class="form-group">
+                <label class="label w-100">Delegación</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  formControlName="delegacion"
+                  placeholder="Delegación" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+              <div class="form-group">
+                <label class="label w-100">Detalle Delegación</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  placeholder="Detalle Delegación" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <div class="form-group">
+                <label class="label w-100">SubDelegación</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  formControlName="subdelegacion"
+                  placeholder="SubDelegación" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+              <div class="form-group">
+                <label class="label w-100">Detalle SubDelegación</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  placeholder="Detalle SubDelegación" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <div class="form-group">
+                <label class="label w-100">Desde No. Bien</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  formControlName="delBien"
+                  placeholder="Desde No. Bien" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+              <div class="form-group">
+                <label class="label w-100">Detalle Del Bien</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  placeholder="Detalle Del Bien" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+              <div class="form-group">
+                <label class="label w-100">Hasta No. Bien</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  formControlName="alBien"
+                  placeholder="Hasta No. Bien" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+              <div class="form-group">
+                <label class="label w-100">Detalle No. Bien</label>
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  placeholder="Detalle No. Bien" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+              <div class="form-group">
+                <label class="label w-100"
+                  >Fecha Presentación Recurso Del:</label
+                >
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  formControlName="fechaPresentacionRecursoDesde"
+                  placeholder="Fecha Presentación Recurso Del:" />
+                <!-- [nbDatepicker]="formpicker1">
                                     <nb-datepicker #formpicker1></nb-datepicker> -->
-                                
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-                            <div class="form-group">
-                                <label class="label w-100">Fecha Presentación Recurso Hasta:</label>
-                                <input nbInput fullWidth class="w-100" formControlName="fechaPresentacionRecursoHasta"
-                                        placeholder="Fecha Presentación Recurso Hasta:">
-                                         <!-- [nbDatepicker]="formpicker2">
-                                    <nb-datepicker #formpicker2></nb-datepicker> -->
-                                
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2 text-center">
-                            <div class="form-group">
-                                <label class="label">&nbsp;</label>&nbsp;
-                                <button type="button" nbButton status="primary" (click)="btnEjecutar()"
-                                class="text-wrap">
-                                    Ejecutar Reporte
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
+              </div>
             </div>
-        </div>
-  
+            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+              <div class="form-group">
+                <label class="label w-100"
+                  >Fecha Presentación Recurso Hasta:</label
+                >
+                <input
+                  nbInput
+                  fullWidth
+                  class="w-100"
+                  formControlName="fechaPresentacionRecursoHasta"
+                  placeholder="Fecha Presentación Recurso Hasta:" />
+                <!-- [nbDatepicker]="formpicker2">
+                                    <nb-datepicker #formpicker2></nb-datepicker> -->
+              </div>
+            </div>
+            <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2 text-center">
+              <div class="form-group">
+                <label class="label">&nbsp;</label>&nbsp;
+                <button
+                  type="button"
+                  nbButton
+                  status="primary"
+                  (click)="btnEjecutar()"
+                  class="text-wrap">
+                  Ejecutar Reporte
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
-  
-  </app-card>
+  </div>
+</app-card>

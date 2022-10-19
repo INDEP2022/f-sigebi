@@ -30,9 +30,10 @@ export class RequestFormComponent extends BasePage implements OnInit {
   selectTransfe = new DefaultSelect<IRequest>();
 
   constructor(
-    public fb: FormBuilder, 
+    public fb: FormBuilder,
     public modalServise: BsModalService,
-    public location: Location) {
+    public location: Location
+  ) {
     super();
   }
 
@@ -86,7 +87,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     });
   }
 
-  close():void{
+  close(): void {
     this.location.back();
   }
 

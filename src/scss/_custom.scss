@@ -722,7 +722,7 @@
     padding: 20px !important;
 
     table {
-      tr {
+      tr:not(.row-no-pad) {
         padding-bottom: 20px !important;
       }
     }
@@ -841,12 +841,12 @@
 input[type='checkbox'],
 input[type='radio'] {
   height: 2rem !important;
-  width: 2rem !important;
+  width : 2rem !important;
 }
 
 .modalSizeXL {
   min-width: 80vw !important;
-  width : 2rem !important;
+  width    : 2rem !important;
 }
 
 .badge-soft-success {
@@ -856,4 +856,8 @@ input[type='radio'] {
 
 .btn-sm.active {
   height: 35px;
+}
+
+.tab-content form .form-control {
+  margin-bottom: 0px !important;
 }

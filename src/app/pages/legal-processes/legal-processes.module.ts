@@ -1,11 +1,14 @@
-import { NgModule } from '@angular/core';  
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 // import { ComponentsModule } from '../../@components/components.module';
 
 import { NgSelectModule } from '@ng-select/ng-select';
 
-import { LegalProcessesRoutingModule, routedComponents } from './legal-processes.routing.module';
+import {
+  LegalProcessesRoutingModule,
+  routedComponents,
+} from './legal-processes.routing.module';
 
 import { Ng2SmartTableModule } from 'ng2-smart-table';
 // import { ThemeModule } from '../../@theme/theme.module';
@@ -16,14 +19,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // import { MatInputModule } from '@angular/material/input';
 // import { FlyersModule } from '../documents-reception/flyers/flyers.module';
 
-@NgModule({ 
-  declarations: [ 
-    ...routedComponents, 
-    
-  ],
+@NgModule({
+  declarations: [...routedComponents],
   imports: [
     // FlyersModule,
-    
+
     CommonModule,
     LegalProcessesRoutingModule,
     // ComponentsModule,
@@ -42,13 +42,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     // MatPaginatorModule,
     // MatInputModule,
     // MatFormFieldModule,
-    NgSelectModule
+    NgSelectModule,
   ],
-  exports:[
-    
-    // ComponentsModule, 
-    NgSelectModule
-    
-  ]
+  exports: [
+    // ComponentsModule,
+    NgSelectModule,
+  ],
 })
-export class LegalProcessesModule { }
+export class LegalProcessesModule {}

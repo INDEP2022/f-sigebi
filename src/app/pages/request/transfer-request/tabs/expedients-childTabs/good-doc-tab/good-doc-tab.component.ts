@@ -8,17 +8,16 @@ import { GOOD_DOCUMENTES_COLUMNS } from './good-doc-columns';
 @Component({
   selector: 'app-good-doc-tab',
   templateUrl: './good-doc-tab.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class GoodDocTabComponent extends BasePage implements OnInit {
-  settings = {...TABLE_SETTINGS, actions: false, selectMode:'multi'}
-  params = new BehaviorSubject<ListParams>(new ListParams);
+  params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: any = [];
   totalItems: number = 0;
 
-  constructor() { 
+  constructor() {
     super();
+    this.settings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
     this.settings.columns = GOOD_DOCUMENTES_COLUMNS;
   }
 
@@ -41,12 +40,11 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
     }); */
   }
 
-  selectTableColumns(event:any):void{
+  selectTableColumns(event: any): void {
     console.log(event);
-    
   }
 
-  showDocuments():void {
-    console.log("mostrar los documentos seleccionados");
+  showDocuments(): void {
+    console.log('mostrar los documentos seleccionados');
   }
 }

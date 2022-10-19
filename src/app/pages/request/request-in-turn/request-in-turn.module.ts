@@ -13,7 +13,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
   declarations: [
     RequestInTurnListComponent,
     RequestInTurnFormComponent,
-    RequestInTurnSelectedComponent
+    RequestInTurnSelectedComponent,
   ],
   imports: [
     CommonModule,
@@ -22,4 +22,4 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     RequestInTurnRoutingModule,
   ],
 })
-export class RequestInTurnModule { }
+export class RequestInTurnModule {}

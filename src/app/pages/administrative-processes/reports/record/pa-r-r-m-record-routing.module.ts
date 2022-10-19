@@ -6,12 +6,12 @@ import { PaRRCRecordDetailsComponent } from './record-details/pa-r-r-c-record-de
 const routes: Routes = [
   {
     path: '',
-    component: PaRRCRecordDetailsComponent
-  }
+    component: PaRRCRecordDetailsComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PaRRMRecordRoutingModule { }
+export class PaRRMRecordRoutingModule {}

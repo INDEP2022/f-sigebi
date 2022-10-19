@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGoodSsubType } from 'src/app/core/models/catalogs/good-ssubtype.model';
 import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtype.service';
@@ -12,11 +12,9 @@ import { GOOD_SSUBTYPES_COLUMNS } from './good-ssubtype-columns';
 @Component({
   selector: 'app-good-ssubtypes-list',
   templateUrl: './good-ssubtypes-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class GoodSsubtypesListComponent extends BasePage implements OnInit {
-  settings = TABLE_SETTINGS;
   paragraphs: IGoodSsubType[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());

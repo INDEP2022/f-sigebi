@@ -8,9 +8,8 @@ describe('FactGenaDBBienesXDepComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FactGenaDBBienesXDepComponent ]
-    })
-    .compileComponents();
+      declarations: [FactGenaDBBienesXDepComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

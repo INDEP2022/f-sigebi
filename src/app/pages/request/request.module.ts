@@ -3,17 +3,21 @@ import { CommonModule } from '@angular/common';
 import { SharedModule } from 'src/app/shared/shared.module';
 
 import { RequestRoutingModule } from './request-routing.module';
-import { BsDatepickerModule, BsDatepickerConfig  } from 'ngx-bootstrap/datepicker';
+
+import {
+  BsDatepickerModule,
+  BsDatepickerConfig,
+} from 'ngx-bootstrap/datepicker';
+import { from } from 'rxjs';
 
 @NgModule({
-  declarations: [
-  ],
+  declarations: [],
   imports: [
     CommonModule,
     RequestRoutingModule,
     BsDatepickerModule.forRoot(),
-    SharedModule
+    SharedModule,
   ],
-  providers: [BsDatepickerConfig]
+  providers: [BsDatepickerConfig],
 })
-export class RequestModule { }
+export class RequestModule {}

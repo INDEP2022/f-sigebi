@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IProficient } from 'src/app/core/models/catalogs/proficient.model';
 import { ProeficientService } from 'src/app/core/services/catalogs/proficient.service';
@@ -12,12 +12,9 @@ import { ExpertFormComponent } from '../experts-form/expert-form.component';
 @Component({
   selector: 'app-expert-list',
   templateUrl: './expert-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class ExpertListComponent  extends BasePage implements OnInit 
-{
-  settings = TABLE_SETTINGS;
+export class ExpertListComponent extends BasePage implements OnInit {
   proficients: IProficient[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -75,4 +72,3 @@ export class ExpertListComponent  extends BasePage implements OnInit
     });
   }
 }
-

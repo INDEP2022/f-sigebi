@@ -5,12 +5,12 @@ import { NumeraireConversionTabsComponent } from './numeraire-conversion-tabs/nu
 const routes: Routes = [
   {
     path: '',
-    component: NumeraireConversionTabsComponent
-  }
+    component: NumeraireConversionTabsComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class NumeraireConversionTabsRoutingModule { }
+export class NumeraireConversionTabsRoutingModule {}

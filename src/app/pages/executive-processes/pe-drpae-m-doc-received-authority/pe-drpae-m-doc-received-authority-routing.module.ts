@@ -5,12 +5,12 @@ import { PeDrpaeCDocReceivedAuthorityComponent } from './pe-drpae-c-doc-received
 const routes: Routes = [
   {
     path: '',
-    component: PeDrpaeCDocReceivedAuthorityComponent
-  }
+    component: PeDrpaeCDocReceivedAuthorityComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PeDrpaeMDocReceivedAuthorityRoutingModule { }
+export class PeDrpaeMDocReceivedAuthorityRoutingModule {}

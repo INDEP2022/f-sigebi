@@ -7,17 +7,13 @@ import { SiseProcessListComponent } from './sise-process-list/sise-process-list.
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 
-
 @NgModule({
-  declarations: [
-    SiseProcessFormComponent,
-    SiseProcessListComponent
-  ],
+  declarations: [SiseProcessFormComponent, SiseProcessListComponent],
   imports: [
     CommonModule,
     SiseProcessRoutingModule,
     SharedModule,
     ModalModule.forChild(),
-  ]
+  ],
 })
-export class SiseProcessModule { }
+export class SiseProcessModule {}

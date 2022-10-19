@@ -1,0 +1,112 @@
+<div body>
+  <form [formGroup]="form" class="form-material">
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <div class="ch-content" header>
+          <h5 class="title">ORIGEN</h5>
+        </div>
+        <div class="col-md-12 mt-4">
+          <form-field [control]="form.get('year')" label="Año">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="year"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('period')" label="Periodo">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="period"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('delegation')">
+            <ngx-select
+              [form]="form"
+              [data]="delegations"
+              bindLabel="name"
+              label="Delegación"
+              value="id"
+              (fetchItems)="getDelegations($event)"
+              control="delegation"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('process')">
+            <ngx-select
+              [form]="form"
+              [data]="procesess"
+              bindLabel="name"
+              label="Procesos"
+              value="id"
+              (fetchItems)="getProcesess($event)"
+              control="process"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="ch-content" header>
+          <h5 class="title">DESTINO</h5>
+        </div>
+        <div class="col-md-12 mt-4">
+          <form-field [control]="form.get('year')" label="Año">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="year"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('period')" label="Periodo">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="period"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('delegation')">
+            <ngx-select
+              [form]="form"
+              [data]="delegations"
+              bindLabel="name"
+              label="Delegación"
+              value="id"
+              (fetchItems)="getDelegations($event)"
+              control="delegation"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-12">
+          <form-field [control]="form.get('process')">
+            <ngx-select
+              [form]="form"
+              [data]="procesess"
+              bindLabel="name"
+              label="Procesos"
+              value="id"
+              (fetchItems)="getProcesess($event)"
+              control="process"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-4 float-right">
+      <div class="">
+        <button type="submit" class="btn btn-primary btn-sm active mx-4">
+          CAMBIAR
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

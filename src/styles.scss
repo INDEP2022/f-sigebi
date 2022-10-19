@@ -150,6 +150,7 @@ hr {
 }
 
 $checkbox_image: "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e";
+
 %table-checked-check {
   background-image: url($checkbox_image);
   background-color: #9d2449;
@@ -159,6 +160,7 @@ $checkbox_image: "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' v
 .ng2-smart-actions input[type='checkbox'] {
   @extend %table-check;
 }
+
 .ng2-smart-actions input:checked[type='checkbox'] {
   @extend %table-checked-check;
 }
@@ -187,11 +189,80 @@ i {
   font-style: normal !important;
 }
 
-.table-bordered tbody tr.selected {
+table:not(.normal-hover) tbody tr.selected {
   background: #f0e4d1 !important;
 }
 
-.table-bordered tbody tr:hover {
+table:not(.normal-hover) tbody tr:hover {
   background: #f0e4d1 !important;
   cursor: pointer;
+}
+
+.mh-80 {
+  max-height: 80px;
+}
+
+.table-overflow {
+  max-width: 100%;
+  overflow-x: scroll;
+}
+
+.float-icon {
+  position: relative;
+  top: 2px;
+}
+
+.mw-98 {
+  max-width: 98%;
+}
+
+.pointer:hover {
+  cursor: pointer;
+}
+
+.float-icon-md {
+  position: relative;
+  top: 4px;
+}
+
+.rotate-down {
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  transform: rotate(180deg);
+  transition: all 0.5s;
+}
+
+.rotate-up {
+  -webkit-transform: rotate(0deg);
+  -moz-transform: rotate(0deg);
+  transform: rotate(0deg);
+  transition: all 0.5s;
+}
+
+.text-black {
+  color: #000 !important;
+}
+
+.add-row-height td {
+  height: 40px !important;
+  white-space: nowrap;
+  vertical-align: middle !important;
+  padding-bottom: 0px !important;
+}
+
+.lower-select {
+  position: relative;
+  top: 32px;
+}
+
+.custom-file-input ~ .custom-file-label::after {
+  content: 'Examinar' !important;
+}
+
+.btn-warning {
+  color: #fff !important;
+}
+
+.btn.active:hover {
+  opacity: 0.8;
 }

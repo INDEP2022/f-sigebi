@@ -4,12 +4,13 @@ import { StatusCodeListComponent } from './status-code-list/status-code-list.com
 
 const routes: Routes = [
   {
-    path:'',component:StatusCodeListComponent
-  }
+    path: '',
+    component: StatusCodeListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class StatusCodeRoutingModule { }
+export class StatusCodeRoutingModule {}

@@ -1,164 +1,166 @@
 <app-modal>
-    <div header>
-      <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
-    </div>
-    <div body class="body" >
-      <form [formGroup]="requestForm" class="form-material">
-        <app-card [header]="true">
-            <div class="ch-content" header>
-                <h6 class="title">Informacion de la Solicitud</h6>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body class="body">
+    <form [formGroup]="requestForm" class="form-material">
+      <app-card [header]="true">
+        <div class="ch-content" header>
+          <h6 class="title">Informacion de la Solicitud</h6>
+        </div>
+        <div body>
+          <div class="row pt-5">
+            <div class="col-md-2">
+              <form-field
+                [control]="requestForm.get('date')"
+                label="Fecha de solicitud">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="date"
+                  placeholder=""
+                  bsDatepicker />
+              </form-field>
             </div>
-            <div body>
-                <div class="row pt-5">
-                    <div class="col-md-2">
-                        <form-field [control]="requestForm.get('date')" label="Fecha de solicitud">
-                            <input
-                            type="text"
-                            class="form-control"
-                            formControlName="date"
-                            placeholder="" 
-                            bsDatepicker />
-                        </form-field>
-                    </div>
-        
-                    <div class="col-md-3">
-                        <ngx-select
-                            [form]="requestForm"
-                            control="regDelega"
-                            (fetchItems)="getRegionalDeleg($event)"
-                            [data]="selectRegionalDeleg"
-                            label="Delegacion Regional"
-                            value="regDelega"></ngx-select>
-                    </div>
-            
-                    <div class="col-md-4">
-                        <ngx-select
-                            [form]="requestForm"
-                            control="transmitter"
-                            (fetchItems)="getTransmitter($event)"
-                            [data]="selectTransmitter"
-                            label="Emisora"
-                            value="transmitter"></ngx-select>
-                    </div>
-        
-                    <div class="col-md-3">
-                        <form-field [control]="requestForm.get('noOfi')" label="No. Oficina">
-                            <input
-                            type="text"
-                            class="form-control"
-                            formControlName="noOfi"
-                            placeholder=""/>
-                        </form-field>
-                    </div>
-                </div>
-                <div class="row pt-5">
-                    <div class="col-md-3">
-                        <ngx-select
-                            [form]="requestForm"
-                            control="entity"
-                            (fetchItems)="getEntity($event)"
-                            [data]="selectEntity"
-                            label="Entidad"
-                            value="regDelega"></ngx-select>
-                    </div>
-                    <div class="col-md-3">
-                        <ngx-select
-                            [form]="requestForm"
-                            control="authority"
-                            (fetchItems)="getAuthority($event)"
-                            [data]="selectAuthority"
-                            label="Autoridad"
-                            value="regDelega"></ngx-select>
-                    </div>
-                    <div class="col-md-3">
-                        <ngx-select
-                            [form]="requestForm"
-                            control="tranfe"
-                            (fetchItems)="getTransfe($event)"
-                            [data]="selectTransfe"
-                            label="Transferencia"
-                            value="regDelega"></ngx-select>
-                    </div>
-                </div>
-            </div>
-        </app-card>
 
-        <app-card [header]="true">
-            <div class="ch-content" header>
-                <h6 class="title">Seleccione Usuario a Turnar</h6>
+            <div class="col-md-3">
+              <ngx-select
+                [form]="requestForm"
+                control="regDelega"
+                (fetchItems)="getRegionalDeleg($event)"
+                [data]="selectRegionalDeleg"
+                label="Delegacion Regional"
+                value="regDelega"></ngx-select>
             </div>
-            <div body>
-                <div class="row pt-5">
-                    <div class="col-md-3" style="line-height: 2.5;">
-                        Tipo de Usuario:
-                    </div>
-                    <div class="col-sm-1">
-                        <form-radio label="All">
-                          <input 
-                            type="radio"                          
-                            formControlName="typeUser"                 
-                            value="all" 
-                            id="all"
-                            [checked]="checked" />
-                        </form-radio>   
-                      </div>
-                    <div class="col-sm-1">
-                        <form-radio label="Any">
-                            <input 
-                                type="radio" 
-                                formControlName="typeUser"
-                                value="any" 
-                                id="any"/>
-                        </form-radio>   
-                    </div>
-                    <div class="col-md-3">
-                        <button 
-                            class="btn btn-info active btn-sm ml-3"
-                            (click)="openModalSelectUser()">Seleccionar</button>
-                    </div>
-                </div>
-                
-                <div class="row pt-5">
-                    <div class="col-md-3">
-                        Usuario Recepción:
-                    </div>
-                    <div class="col-md-3">
-                        <input
-                            type="text"
-                            class="form-control"
-                            formControlName="receiUser"
-                            placeholder=""/>
-                    </div>
-                </div>
+
+            <div class="col-md-4">
+              <ngx-select
+                [form]="requestForm"
+                control="transmitter"
+                (fetchItems)="getTransmitter($event)"
+                [data]="selectTransmitter"
+                label="Emisora"
+                value="transmitter"></ngx-select>
             </div>
-        </app-card>
-        
-      </form>
-    </div>
-    <div footer>
-      <div class="d-flex justify-content-center">
-        <div class="m-3">
-          <confirm-button
-            [disabled]="requestForm.invalid"
-            [loading]="loading"
-            (confirm)="confirm()">
-          </confirm-button>
+
+            <div class="col-md-3">
+              <form-field
+                [control]="requestForm.get('noOfi')"
+                label="No. Oficina">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="noOfi"
+                  placeholder="" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-5">
+            <div class="col-md-3">
+              <ngx-select
+                [form]="requestForm"
+                control="entity"
+                (fetchItems)="getEntity($event)"
+                [data]="selectEntity"
+                label="Entidad"
+                value="regDelega"></ngx-select>
+            </div>
+            <div class="col-md-3">
+              <ngx-select
+                [form]="requestForm"
+                control="authority"
+                (fetchItems)="getAuthority($event)"
+                [data]="selectAuthority"
+                label="Autoridad"
+                value="regDelega"></ngx-select>
+            </div>
+            <div class="col-md-3">
+              <ngx-select
+                [form]="requestForm"
+                control="tranfe"
+                (fetchItems)="getTransfe($event)"
+                [data]="selectTransfe"
+                label="Transferencia"
+                value="regDelega"></ngx-select>
+            </div>
+          </div>
         </div>
-        <div class="m-3">
-            <button 
-                type="button" 
-                class="btn btn-secondary active" 
-                [disabled]="requestForm.invalid" 
-                (click)="confirm()">
-                Turnar
-            </button>
+      </app-card>
+
+      <app-card [header]="true">
+        <div class="ch-content" header>
+          <h6 class="title">Seleccione Usuario a Turnar</h6>
         </div>
-        <div class="m-3">
-          <button type="button" class="btn btn-danger active" (click)="close()">
-            Cancelar
-          </button>
+        <div body>
+          <div class="row pt-5">
+            <div class="col-md-3" style="line-height: 2.5">
+              Tipo de Usuario:
+            </div>
+            <div class="col-sm-1">
+              <form-radio label="All">
+                <input
+                  type="radio"
+                  formControlName="typeUser"
+                  value="all"
+                  id="all"
+                  [checked]="checked" />
+              </form-radio>
+            </div>
+            <div class="col-sm-1">
+              <form-radio label="Any">
+                <input
+                  type="radio"
+                  formControlName="typeUser"
+                  value="any"
+                  id="any" />
+              </form-radio>
+            </div>
+            <div class="col-md-3">
+              <button
+                class="btn btn-info active btn-sm ml-3"
+                (click)="openModalSelectUser()">
+                Seleccionar
+              </button>
+            </div>
+          </div>
+
+          <div class="row pt-5">
+            <div class="col-md-3">Usuario Recepción:</div>
+            <div class="col-md-3">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="receiUser"
+                placeholder="" />
+            </div>
+          </div>
         </div>
+      </app-card>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="requestForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-secondary active"
+          [disabled]="requestForm.invalid"
+          (click)="confirm()">
+          Turnar
+        </button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
       </div>
     </div>
+  </div>
 </app-modal>
-  

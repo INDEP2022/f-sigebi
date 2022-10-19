@@ -1,23 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 
-import { ExcelService } from 'src/app/common/services/exportToExcel.service'; 
+import { ExcelService } from 'src/app/common/services/exporttoexcel.service';
 @Component({
   selector: 'app-c-bm-cdb-c-consultation-goods-commercial-bills',
-  templateUrl: './c-bm-cdb-c-consultation-goods-commercial-bills.component.html',
-  styles: [
-  ]
+  templateUrl:
+    './c-bm-cdb-c-consultation-goods-commercial-bills.component.html',
+  styles: [],
 })
-export class CBmCdbCConsultationGoodsCommercialBillsComponent extends BasePage implements OnInit {
+export class CBmCdbCConsultationGoodsCommercialBillsComponent
+  extends BasePage
+  implements OnInit
+{
+  form: FormGroup = new FormGroup({});
 
-  settings = {...TABLE_SETTINGS};
-  form: FormGroup = new FormGroup({}); 
-
-  constructor(private fb: FormBuilder, private excelService:ExcelService) {
+  constructor(private fb: FormBuilder, private excelService: ExcelService) {
     super();
-    
   }
 
   ngOnInit(): void {
@@ -39,5 +38,4 @@ export class CBmCdbCConsultationGoodsCommercialBillsComponent extends BasePage i
       authorizes: ['', [Validators.required]],
     });
   }
-
 }

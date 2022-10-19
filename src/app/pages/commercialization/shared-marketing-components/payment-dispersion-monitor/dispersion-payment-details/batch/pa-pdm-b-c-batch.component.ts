@@ -2,48 +2,44 @@ import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { COLUMNS } from './columns';
 
 @Component({
   selector: 'app-pa-pdm-b-c-batch',
   templateUrl: './pa-pdm-b-c-batch.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PaPdmBCBatchComponent extends BasePage implements OnInit {
-
   form: FormGroup = new FormGroup({});
 
-  settings = {
-    ...TABLE_SETTINGS,
-    actions: false
-  };
-
-  data:any[]=[
+  data: any[] = [
     {
       batch: '1008',
       customerTaxId: 'ACM030407M3A',
-      description:'Vehículo apto para circulación',
+      description: 'Vehículo apto para circulación',
       status: 'VEND',
       warranty: 180000,
       advance: 50000,
       address: 'KM 1.0 Carr',
-    }
+    },
   ];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  definitive:boolean = false;
+  definitive: boolean = false;
   total: number = 105666395.52;
-  warranty: number = 0.00;
+  warranty: number = 0.0;
   amountL: number = 633983.31;
 
   constructor(private fb: FormBuilder) {
     super();
-    this.settings.columns = COLUMNS;
-    //this.settings.selectMode='multi';
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...COLUMNS },
+    };
   }
 
   ngOnInit(): void {
@@ -52,7 +48,7 @@ export class PaPdmBCBatchComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.form = this.fb.group({
-      option: [null]
+      option: [null],
     });
   }
 
@@ -60,13 +56,13 @@ export class PaPdmBCBatchComponent extends BasePage implements OnInit {
     //this.openModal();
   }
 
-  edit(data:any) {
+  edit(data: any) {
     //console.log(data)
     //this.openModal({ edit: true, paragraph });
   }
 
-  delete(data:any) {
-    console.log(data)
+  delete(data: any) {
+    console.log(data);
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -78,29 +74,28 @@ export class PaPdmBCBatchComponent extends BasePage implements OnInit {
     });
   }
 
-  settingsChange($event:any): void {
-    this.settings=$event;
+  settingsChange($event: any): void {
+    this.settings = $event;
   }
 
   runScatter(): void {
     this.alertQuestion(
       'question',
       'Ejecutar',
-      'Desea ejecutar el proceso de dispersión?').then(
-      question => {
+      'Desea ejecutar el proceso de dispersión?'
+    )
+      .then(question => {
         if (question.isConfirmed) {
           //console.log('Ejecutado')
-        }else {
-
+        } else {
         }
-      }
-    ).catch(e => {
-      console.error(e);
-    });
+      })
+      .catch(e => {
+        console.error(e);
+      });
   }
 
-  definitiveChange($event:any): void {
+  definitiveChange($event: any): void {
     //console.log(this.definitive)
   }
-
 }

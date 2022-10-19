@@ -10,13 +10,13 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 @NgModule({
   declarations: [
     DocCompensationSatXmlListComponent,
-    DocCompensationSatXmlFormComponent
+    DocCompensationSatXmlFormComponent,
   ],
   imports: [
     CommonModule,
     DocCompensationSatXmlRoutingModule,
     SharedModule,
-    ModalModule.forChild()
-  ]
+    ModalModule.forChild(),
+  ],
 })
-export class DocCompensationSatXmlModule { }
+export class DocCompensationSatXmlModule {}

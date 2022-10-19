@@ -8,9 +8,8 @@ describe('FactJurDictAmasComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FactJurDictAmasComponent ]
-    })
-    .compileComponents();
+      declarations: [FactJurDictAmasComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

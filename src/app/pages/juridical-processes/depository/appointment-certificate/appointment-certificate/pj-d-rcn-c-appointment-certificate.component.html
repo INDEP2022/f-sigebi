@@ -1,62 +1,62 @@
 <app-card [header]="true">
-    <div class="ch-content" header>
-        <h5 class="title">
-            REPORTE DE C&Eacute;DULA DE NOMBRAMIENTOS
-        </h5>
-    </div>
+  <div class="ch-content" header>
+    <h5 class="title">REPORTE DE C&Eacute;DULA DE NOMBRAMIENTOS</h5>
+  </div>
 
-    <div body>
-        
-        <form [formGroup]="form" (submit)="mostrarInfo()" class="container-fluid form-material">
-            <div class="row w-100">
-                <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-                    <form-field [control]="form.get('noBien')" label="No. Bien">
-                        <!-- <label class="form-control-label w-100">No. Bien</label> -->
-                        <input class="form-control w-100" formControlName="noBien"
-                                placeholder="No. Bien">
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
-                    <div class="form-group">
-                        <input class="form-control w-100" placeholder="Detalle No. Bien">
-                        <label class="form-control-label w-100">Detalle No. Bien</label>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-                    <form-field [control]="form.get('tipoAdministrador')" label="Tipo de Administrador">
-                        <!-- <label class="form-control-label w-100">Tipo de Administrador</label> -->
-                        <select class="form-control" formControlName="tipoAdministrador">
-                            <option [value]="null">Seleccione un valor</option>
-                            <option [value]="'Administrador'">Administrador</option>
-                            <option [value]="'Depositario'">Depositario</option>
-                            <option [value]="'Interventor'">Interventor</option>
-                        </select>
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-                    <form-field [control]="form.get('tipoDepositaria')" label="Tipo de Depositaria">
-                        <!-- <label class="form-control-label w-100">Tipo de Depositaria</label> -->
-                        <select class="form-control" formControlName="tipoDepositaria">
-                            <option [value]="null">Seleccione un valor</option>
-                            <option [value]="'Provisional'">Provisional</option>
-                            <option [value]="'Definitiva'">Definitiva</option>
-                        </select>
-                        
-                    </form-field>
-                </div>
-                <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
-                    <div class="form-group">
-                        <button type="button" nbButton status="primary">
-                            Imprimir
-                        </button>
-                        <!-- <label class="label">&nbsp;</label>&nbsp;  
-                        <div class="d-flex justify-content-center">
-                        </div> -->
-                    </div>
-                </div>
-            </div>
-        </form>
-
-    </div>
+  <div body>
+    <form
+      [formGroup]="form"
+      (submit)="mostrarInfo()"
+      class="container-fluid form-material">
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field [control]="form.get('noBien')" label="No. Bien">
+            <!-- <label class="form-control-label w-100">No. Bien</label> -->
+            <input
+              class="form-control w-100"
+              formControlName="noBien"
+              placeholder="No. Bien" />
+          </form-field>
+        </div>
+        <!-- <div class="col-sm-12 col-12 col-md-3 p-2">
+          <div class="form-group">
+            <input class="form-control w-100" placeholder="Detalle No. Bien" />
+            <label class="form-control-label w-100">Detalle No. Bien</label>
+          </div>
+        </div> -->
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field
+            [control]="form.get('tipoAdministrador')"
+            label="Tipo de Administrador">
+            <!-- <label class="form-control-label w-100">Tipo de Administrador</label> -->
+            <select class="form-control" formControlName="tipoAdministrador">
+              <option [value]="null">Seleccione un valor</option>
+              <option [value]="'Administrador'">Administrador</option>
+              <option [value]="'Depositario'">Depositario</option>
+              <option [value]="'Interventor'">Interventor</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field
+            [control]="form.get('tipoDepositaria')"
+            label="Tipo de Depositaria">
+            <!-- <label class="form-control-label w-100">Tipo de Depositaria</label> -->
+            <select class="form-control" formControlName="tipoDepositaria">
+              <option [value]="null">Seleccione un valor</option>
+              <option [value]="'Provisional'">Provisional</option>
+              <option [value]="'Definitiva'">Definitiva</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <div class="form-group">
+            <button type="button" class="btn btn-primary btn-sm active">
+              Imprimir
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
 </app-card>

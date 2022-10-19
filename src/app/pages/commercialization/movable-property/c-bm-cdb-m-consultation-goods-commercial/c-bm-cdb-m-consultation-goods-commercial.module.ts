@@ -4,30 +4,27 @@ import { CommonModule } from '@angular/common';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
-import { ExcelService } from 'src/app/common/services/exportToExcel.service';
+import { ExcelService } from 'src/app/common/services/exporttoexcel.service';
 
 import { CBmCdbMConsultationGoodsCommercialRoutingModule } from './c-bm-cdb-m-consultation-goods-commercial-routing.module';
 import { CBmCdbCConsultationGoodsCommercialSalesComponent } from './c-bm-cdb-c-consultation-goods-commercial-sales/c-bm-cdb-c-consultation-goods-commercial-sales.component';
 import { CBmCdbCConsultationGoodsCommercialBillsComponent } from './c-bm-cdb-c-consultation-goods-commercial-bills/c-bm-cdb-c-consultation-goods-commercial-bills.component';
 
-
 @NgModule({
   declarations: [
     CBmCdbCConsultationGoodsCommercialSalesComponent,
-    CBmCdbCConsultationGoodsCommercialBillsComponent
+    CBmCdbCConsultationGoodsCommercialBillsComponent,
   ],
   imports: [
     CommonModule,
     CBmCdbMConsultationGoodsCommercialRoutingModule,
     SharedModule,
-    BsDatepickerModule
+    BsDatepickerModule,
   ],
   exports: [
     CBmCdbCConsultationGoodsCommercialSalesComponent,
-    CBmCdbCConsultationGoodsCommercialBillsComponent
+    CBmCdbCConsultationGoodsCommercialBillsComponent,
   ],
-  providers: [
-    ExcelService
-  ]
+  providers: [ExcelService],
 })
-export class CBmCdbMConsultationGoodsCommercialModule { }
+export class CBmCdbMConsultationGoodsCommercialModule {}

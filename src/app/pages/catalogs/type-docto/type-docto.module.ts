@@ -8,17 +8,13 @@ import { TypeDoctoFormComponent } from './type-docto-form/type-docto-form.compon
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { SharedModule } from 'src/app/shared/shared.module';
 
-
 @NgModule({
-  declarations: [
-    TypeDoctoListComponent,
-    TypeDoctoFormComponent
-  ],
+  declarations: [TypeDoctoListComponent, TypeDoctoFormComponent],
   imports: [
     CommonModule,
     SharedModule,
     ModalModule.forChild(),
     TypeDoctoRoutingModule,
-  ]
+  ],
 })
-export class TypeDoctoModule { }
+export class TypeDoctoModule {}

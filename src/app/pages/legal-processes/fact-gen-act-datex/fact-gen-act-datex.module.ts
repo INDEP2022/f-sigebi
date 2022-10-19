@@ -21,8 +21,8 @@ import { FactGenActDatexComponent } from './fact-gen-act-datex/fact-gen-act-date
 // import { FlyersModule } from '../../documents-reception/flyers/flyers.module';
 // import { RecordUpdateComponent } from '../../documents-reception/flyers/record-update/record-update.component';
 
-@NgModule({ 
-  declarations: [ 
+@NgModule({
+  declarations: [
     FactGenActDatexComponent,
     // RecordUpdateComponent
   ],
@@ -51,12 +51,9 @@ import { FactGenActDatexComponent } from './fact-gen-act-datex/fact-gen-act-date
     // NbRadioModule,
     SharedModule,
   ],
-  exports:[
-    
-    // ComponentsModule, 
-    NgSelectModule
-    
-  ]
+  exports: [
+    // ComponentsModule,
+    NgSelectModule,
+  ],
 })
-export class FactGenActDatexModule { }
-
+export class FactGenActDatexModule {}

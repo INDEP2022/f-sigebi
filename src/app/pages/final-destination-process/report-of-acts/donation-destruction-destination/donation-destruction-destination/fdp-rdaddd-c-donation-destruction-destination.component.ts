@@ -8,23 +8,21 @@ import { SUBDELEGATIONS_COLUMNS } from '../../sub-delegations-columns';
 @Component({
   selector: 'app-fdp-rdaddd-c-donation-destruction-destination',
   templateUrl: './fdp-rdaddd-c-donation-destruction-destination.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class FdpRdadddCDonationDestructionDestinationComponent implements OnInit {
+export class FdpRdadddCDonationDestructionDestinationComponent
+  implements OnInit
+{
   actForm: FormGroup;
   bsModalRef?: BsModalRef;
 
-  constructor(
-    private fb: FormBuilder,
-    private modalService: BsModalService
-  ) { }
+  constructor(private fb: FormBuilder, private modalService: BsModalService) {}
 
   ngOnInit(): void {
     this.initForm();
   }
 
-  initForm(){
+  initForm() {
     this.actForm = this.fb.group({
       delegation: [null, []],
       descripDelegation: [null, []],
@@ -35,25 +33,26 @@ export class FdpRdadddCDonationDestructionDestinationComponent implements OnInit
       statusAct: [null, []],
       typeAct: [null, []],
       eventStartDate: [null, []],
-      eventEndDate: [null, []]
+      eventEndDate: [null, []],
     });
   }
 
-  onSubmit(){
+  onSubmit() {}
 
-  }
-
-  onClick(){
-  }
-
-  openModal( title: string, columns: string ){
+  openModal(title: string, columns: string) {
     const initialState: ModalOptions = {
       initialState: {
         title,
-        columns: columns === 'DELEGATIONS-COLUMNS'? DELEGATIONS_COLUMNS: SUBDELEGATIONS_COLUMNS
-      }
+        columns:
+          columns === 'DELEGATIONS-COLUMNS'
+            ? DELEGATIONS_COLUMNS
+            : SUBDELEGATIONS_COLUMNS,
+      },
     };
-    this.bsModalRef = this.modalService.show(FdpAdpdtDetailDelegationsComponent, initialState);
+    this.bsModalRef = this.modalService.show(
+      FdpAdpdtDetailDelegationsComponent,
+      initialState
+    );
     this.bsModalRef.content.closeBtnName = 'Close';
   }
 }

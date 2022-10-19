@@ -3,15 +3,14 @@ import { RouterModule, Routes } from '@angular/router';
 import { FactGerJurrecDerevComponent } from './fact-ger-jurrec-derev/fact-ger-jurrec-derev.component';
 
 const routes: Routes = [
-  {  
-    path: '', component: FactGerJurrecDerevComponent
+  {
+    path: '',
+    component: FactGerJurrecDerevComponent,
   },
-  
-
-]; 
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class FactGerJurrecDerevRoutingModule { }
+export class FactGerJurrecDerevRoutingModule {}

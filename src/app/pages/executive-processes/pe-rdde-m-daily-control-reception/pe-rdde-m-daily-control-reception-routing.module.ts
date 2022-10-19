@@ -4,13 +4,13 @@ import { PeRddeCDailyControlReceptionComponent } from './pe-rdde-c-daily-control
 
 const routes: Routes = [
   {
-    path:'',
-    component: PeRddeCDailyControlReceptionComponent
-  }
+    path: '',
+    component: PeRddeCDailyControlReceptionComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PeRddeMDailyControlReceptionRoutingModule { }
+export class PeRddeMDailyControlReceptionRoutingModule {}

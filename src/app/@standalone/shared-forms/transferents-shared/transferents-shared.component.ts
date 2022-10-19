@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { AbstractControl, FormGroup } from "@angular/forms";
+import { AbstractControl, FormGroup } from '@angular/forms';
 //Rxjs
 import { BehaviorSubject, takeUntil } from 'rxjs';
 //Params
@@ -18,44 +18,44 @@ import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './transferents-shared.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class TransferenteSharedComponent extends BasePage implements OnInit {
-
   @Input() form: FormGroup;
-  @Input() transferentField: string = "transferent";
+  @Input() transferentField: string = 'transferent';
 
   @Input() showTransferent: boolean = true;
 
   params = new BehaviorSubject<ListParams>(new ListParams());
   transferents = new DefaultSelect<ITransferente>();
 
-  get transferent() {return this.form.get(this.transferentField);}
+  get transferent() {
+    return this.form.get(this.transferentField);
+  }
 
-  constructor(
-    private service: TransferenteService){
+  constructor(private service: TransferenteService) {
     super();
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void {}
+
+  getTransferents(params: ListParams) {
+    this.service.getAll(params).subscribe(
+      data => {
+        this.transferents = new DefaultSelect(data.data, data.count);
+      },
+      err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          error = err.message;
+        }
+        this.onLoadToast('error', 'Error', error);
+      },
+      () => {}
+    );
   }
-
-  getTransferents(params: ListParams) { 
-    this.service.getAll(params).subscribe(data => {
-        this.transferents = new DefaultSelect(data.data,data.count);
-    },err => {
-      let error = '';
-      if (err.status === 0) {
-        error = 'Revise su conexión de Internet.';
-      } else {
-        error = err.message;
-      }
-      this.onLoadToast('error', 'Error', error);
-
-    }, () => {});
-  }
-
 
   onTransferentsChange(subdelegation: any) {
     //this.resetFields([this.transferent]);
@@ -63,11 +63,10 @@ export class TransferenteSharedComponent extends BasePage implements OnInit {
   }
 
   resetFields(fields: AbstractControl[]) {
-    fields.forEach((field) => {
+    fields.forEach(field => {
       //field.setValue(null);
-      field=null;
+      field = null;
     });
     this.form.updateValueAndValidity();
   }
-
 }

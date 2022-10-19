@@ -10,36 +10,41 @@ import { Location } from '@angular/common';
 @Component({
   selector: 'app-registration-of-requests',
   templateUrl: './registration-of-requests.component.html',
-  styleUrls: ['./registration-of-requests.component.scss']
+  styleUrls: ['./registration-of-requests.component.scss'],
 })
-export class RegistrationOfRequestsComponent extends BasePage implements OnInit {
+export class RegistrationOfRequestsComponent
+  extends BasePage
+  implements OnInit
+{
   registRequestForm: ModelForm<IRequest>;
-  edit:boolean = false;
+  edit: boolean = false;
   title: string = 'title';
   parameter: any;
-  
+
   //registro de bienes tab
-  state:boolean = false;
+  state: boolean = false;
   //verificacion de cumplimientos tab
-  complianceVerifi:boolean = true;
+  complianceVerifi: boolean = true;
 
   constructor(
     public fb: FormBuilder,
-    public modalRef:BsModalRef,
+    public modalRef: BsModalRef,
     public route: ActivatedRoute,
     public location: Location
-  ) { 
+  ) {
     super();
   }
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => { console.log(params) })
+    this.route.params.subscribe(params => {
+      console.log(params);
+    });
     //this.title = this.parameter.title;
-    //console.log(this.parameter);    
+    //console.log(this.parameter);
     this.prepareForm();
   }
 
-  prepareForm(){
+  prepareForm() {
     this.registRequestForm = this.fb.group({
       date: [],
       noOfi: ['400-10-00-01*00*2020-7824'],
@@ -47,18 +52,19 @@ export class RegistrationOfRequestsComponent extends BasePage implements OnInit 
       entity: ['Juan Pablo'],
       tranfe: ['SAT FISCO FEDERAL'],
       transmitter: ['ADMINISTRACION GENERAL DE RECAUDACION'],
-      authority: ['ADMINISTRACION DESCONCENTRADA DE RECAUDACION DE BAJA CALIFORNIA'],
+      authority: [
+        'ADMINISTRACION DESCONCENTRADA DE RECAUDACION DE BAJA CALIFORNIA',
+      ],
       typeUser: [''],
       receiUser: [''],
       noExpedient: ['24355'],
       typeExpedient: ['AGR'],
-      noRequest: ['27445']
+      noRequest: ['27445'],
     });
   }
 
   confirm() {
     console.log('turnar con los datos guardados');
-    
   }
 
   close() {

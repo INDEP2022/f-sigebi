@@ -51,6 +51,9 @@ export class IssuingInstitutionService
   }
 
   getTransfers(params?: ListParams): Observable<IListResponse<ITransferente>> {
-    return this.transferenteRepository.getAllPaginated(this.transferRoute, params);
+    return this.transferenteRepository.getAllPaginated(
+      this.transferRoute,
+      params
+    );
   }
 }
