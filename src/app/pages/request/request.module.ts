@@ -8,7 +8,6 @@ import {
   BsDatepickerModule,
   BsDatepickerConfig,
 } from 'ngx-bootstrap/datepicker';
-import { from } from 'rxjs';
 
 @NgModule({
   declarations: [],

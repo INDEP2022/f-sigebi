@@ -16,6 +16,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { NewDocumentComponent } from '../new-document/new-document.component';
 import { DOC_REQUEST_TAB_COLUMNS } from './doc-request-tab-columns';
+import { SeeInformationComponent } from './see-information/see-information.component';
 
 interface searchTable {
   noDoc: string;
@@ -129,11 +130,11 @@ export class DocRequestTabComponent
   cleanForm(): void {}
 
   openDetail(): void {
-    console.log('open detail');
+    this.openModalInformation('', 'detail');
   }
 
   openDoc(): void {
-    console.log('open document');
+    this.openModalInformation('', 'document');
   }
 
   openNewDocument(request?: IRequest) {
@@ -148,5 +149,20 @@ export class DocRequestTabComponent
       ignoreBackdropClick: true,
     };
     this.modalService.show(NewDocumentComponent, config);
+  }
+
+  private openModalInformation(info: any, typeInfo: string) {
+    let config: ModalOptions = {
+      initialState: {
+        info,
+        typeInfo,
+        callback: (next: boolean) => {
+          if (next) this.getData();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(SeeInformationComponent, config);
   }
 }
