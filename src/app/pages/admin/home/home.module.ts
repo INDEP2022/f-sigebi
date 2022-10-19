@@ -8,9 +8,10 @@ import { HomeRoutingModule } from './home-routing.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { ExampleModalComponent } from './example-modal.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { ChildComponent } from './child/child.component';
 
 @NgModule({
-  declarations: [HomeComponent, ExampleModalComponent],
+  declarations: [HomeComponent, ExampleModalComponent, ChildComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,

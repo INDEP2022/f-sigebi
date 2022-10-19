@@ -48,6 +48,9 @@ export class HomeComponent extends BasePage implements OnInit {
     };
     this.modalService.show(ExampleModalComponent, config);
   }
+  chargeFile(event: any) {
+    console.log(event.files);
+  }
   openPrevImg() {
     let config: ModalOptions = {
       initialState: {
