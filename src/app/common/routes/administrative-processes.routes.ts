@@ -82,6 +82,18 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Configuracion de correos de mantenimiento',
             link: '/pages/administrative-processes/maintenance-mail-configuration',
           },
+          {
+            label: 'Configuración de libreta de correos',
+            link: '/pages/administrative-processes/email-book-config',
+          },
+          {
+            label: 'Cotratos de Vigilancia',
+            link: '/pages/administrative-processes/surveillance-contracts',
+          },
+          {
+            label: 'Zonas de Vigilancia',
+            link: '/pages/administrative-processes/surveillance-zones',
+          },
         ],
       },
       /**
