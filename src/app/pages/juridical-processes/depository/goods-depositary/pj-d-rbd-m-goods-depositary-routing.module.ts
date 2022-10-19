@@ -8,22 +8,16 @@ import { RouterModule, Routes } from '@angular/router';
 /** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
-import { PJDJJuridicalRulingComponent } from './juridical-ruling/pj-dj-c-juridical-ruling.component';
+import { PJDRBDGoodsDepositaryComponent } from './goods-depositary/pj-d-rbd-c-goods-depositary.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: PJDJJuridicalRulingComponent,
+    component: PJDRBDGoodsDepositaryComponent,
   },
-  // {
-  //     path: 'pe-atb-m-quarterly-accumulated-assets',
-  //     loadChildren: async () =>
-  //       (await import('./pe-atb-m-quarterly-accumulated-assets/pe-atb-m-quarterly-accumulated-assets.module')).PeAtbMQuarterlyAccumulatedAssetsModule,
-  //     data: { title: 'Acumulado Trimestral de Bienes' },
-  //   },
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class PJDJJuridicalRulingRoutingModule {}
+export class PJDRBDGoodsDepositaryRoutingModule {}

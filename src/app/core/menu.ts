@@ -1,9 +1,9 @@
 import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception.routes';
-import { menuOptionsJuridicalProcesses } from '../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
+import { MENU_OPTIONS_JURIDICAL_PROCESSES } from '../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
 import { IMenuItem } from './interfaces/menu.interface';
 import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
 import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
-import { ADMINISTRATIVE_PROCESSES_ROUTES } from '../common/routes/administrative-processes.routes'
+import { ADMINISTRATIVE_PROCESSES_ROUTES } from '../common/routes/administrative-processes.routes';
 
 export const MENU: IMenuItem[] = [
   {
@@ -37,6 +37,95 @@ export const MENU: IMenuItem[] = [
   //Administración
   ...ADMINISTRATIVE_PROCESSES_ROUTES,
   {
+    label: 'Reportes',
+    icon: 'bx-folder',
+    subItems: [
+      {
+        label: 'Atención Bienes',
+        link: '/pages/administrative-processes/goods-tracking',
+      },
+      {
+        label: 'Gestión Bienes Gab-Soc',
+        link: '/pages/administrative-processes/goods-management',
+      },
+      {
+        label: 'Empresas',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Resumen Info Financiera',
+            link: '/pages/administrative-processes/summary-financial-info',
+          },
+        ],
+      },
+      {
+        label: 'Reportes',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Almacenes',
+            link: '/pages/administrative-processes/warehouse-reports',
+          },
+          {
+            label: 'Expedientes',
+            link: '/pages/administrative-processes/record-details',
+          },
+        ],
+      },
+      {
+        label: 'Coversión de Paquetes',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Conversión Masiva',
+            link: '/pages/administrative-processes/unit-conversion-packages',
+          },
+        ],
+      },
+      {
+        label: 'Interacción SIAB-SAMI',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Relación de Bienes',
+            link: '/pages/administrative-processes/siab-sami-interaction/',
+          },
+          {
+            label: 'Pago de Bienes',
+            link: '/pages/administrative-processes/siab-sami-interaction/payment-goods',
+          },
+          {
+            label: 'Avalúo de Bienes',
+            link: '/pages/administrative-processes/siab-sami-interaction/value-goods',
+          },
+        ],
+      },
+      /**
+       * ADMIN PROCESS-SEGUROS LEGASPI
+       **/
+      /**
+       * ADMIN PROCESS-SERVICES LEGASPI
+       **/
+      {
+        label: 'Servicios',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Registro de Pago de Servicios',
+            link: '/pages/administrative-processes/services/',
+          },
+          {
+            label: 'Solicitud de Pago de Servicios',
+            link: '/pages/administrative-processes/services/request',
+          },
+        ],
+      },
+      /**
+       * ADMIN PROCESS-SERVICES LEGASPI
+       **/
+    ],
+  },
+  {
     label: 'Solicitudes',
     icon: 'bx-folder',
     subItems: [
@@ -50,6 +139,7 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
+  //Proceso Destino final
   {
     label: 'Proceso Destino final',
     icon: 'bx-share-alt',
@@ -90,7 +180,16 @@ export const MENU: IMenuItem[] = [
             label: 'Programación de Eventos',
             link: '/pages/final-destination-process/delivery-schedule/schedule-of-events',
           },
-        ]
+        ],
+      },
+      {
+        label: 'Exportación de Bienes para Donación a Excel',
+        subItems: [
+          {
+            label: 'Exportación de Bienes para Donación',
+            link: '/pages/final-destination-process/donation-process/export-goods-donation',
+          },
+        ],
       },
     ],
   },
@@ -242,12 +341,6 @@ export const MENU: IMenuItem[] = [
           },
         ],
       },
-
-      {
-        label: 'Activos Financieros',
-        icon: 'credit-card-outline',
-        subItems: [],
-      },
       {
         label: 'Catálogos',
         icon: 'folder',
@@ -262,9 +355,44 @@ export const MENU: IMenuItem[] = [
           },
         ],
       },
+      {
+        label: 'Activos Financieros',
+        icon: 'credit-card-outline',
+        subItems: [],
+      },
+      {
+        label: 'Conversión a numerario',
+        link: '/pages/commercialization/numeraire-exchange',
+      },
+      {
+        label: 'Consulta de Pagos Sirsae',
+        link: '/pages/commercialization/sirsae-payment-consultation',
+      },
     ],
   },
   // PROCESOS JURIDICOS
-  menuOptionsJuridicalProcesses,
-  // PROCESOS JURIDICOS
+  ...MENU_OPTIONS_JURIDICAL_PROCESSES,
+  // Recepcion Fisica Judicial
+  {
+    label: 'Recepcion Fisica Judicial',
+    icon: 'bx-folder',
+    subItems: [
+      {
+        label: 'Complemento Arituclo',
+        link: '/pages/judicial-physical-reception/articles-complement',
+      },
+      {
+        label: 'Recepcion de Decomisos',
+        link: '/pages/judicial-physical-reception/confiscated-reception',
+      },
+      {
+        label: 'Reporte de Actas',
+        link: '/pages/judicial-physical-reception/records-report',
+      },
+      {
+        label: 'Actas de Recepcion',
+        link: '/pages/judicial-physical-reception/confiscated-records',
+      },
+    ],
+  },
 ];
