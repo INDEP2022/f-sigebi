@@ -76,7 +76,7 @@
               </div>
             </div>
             <div class="row mt-3" *ngIf="selectedGood != null" @OnGoodSelected>
-              <div class="ms-n4 mb-2">
+              <div class="ms-n2 mb-2">
                 <i class="bx bx-radio-circle bx-sm float-icon mx-1"></i>
                 <h6 class="d-inline">Datos de venta</h6>
               </div>
@@ -173,7 +173,7 @@
             </div>
             <div class="row" *ngIf="selectedGood != null" @OnGoodSelected>
               <div
-                class="ms-n4 mb-2 pointer"
+                class="ms-n2 mb-2 pointer"
                 (click)="toggleExpenses = !toggleExpenses"
                 [attr.aria-expanded]="!toggleExpenses"
                 aria-controls="collapseExpenses">
@@ -216,7 +216,7 @@
               </div>
             </div>
             <div class="row" *ngIf="selectedGood != null" @OnGoodSelected>
-              <div class="ms-n4 mb-2">
+              <div class="ms-n2 mb-2">
                 <i class="bx bx-radio-circle bx-sm float-icon mx-1"></i>
                 <h6 class="d-inline">Datos de cuenta</h6>
               </div>
@@ -272,7 +272,7 @@
               </div>
             </div>
             <div class="row" *ngIf="selectedGood != null" @OnGoodSelected>
-              <div class="ms-n4 mb-2">
+              <div class="ms-n2 mb-2">
                 <i class="bx bx-radio-circle bx-sm float-icon mx-1"></i>
                 <h6 class="d-inline">Datos de depósito</h6>
               </div>
@@ -313,7 +313,7 @@
               </div>
             </div>
             <div class="row" *ngIf="selectedGood != null" @OnGoodSelected>
-              <div class="ms-n4 mb-2">
+              <div class="ms-n2 mb-2">
                 <i class="bx bx-radio-circle bx-sm float-icon mx-1"></i>
                 <h6 class="d-inline">Conversión</h6>
               </div>
@@ -382,7 +382,7 @@
                   class="custom-file-input"
                   id="csvFile"
                   accept=".csv"
-                  (change)="getFile()" />
+                  (change)="getFile($event)" />
                 <label class="custom-file-label" for="inputFile">{{
                   fileName
                 }}</label>

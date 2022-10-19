@@ -546,6 +546,10 @@ export const MENU: IMenuItem[] = [
         label: 'Consulta de Pagos Sirsae',
         link: '/pages/commercialization/sirsae-payment-consultation',
       },
+      {
+        label: 'Conversión Masiva de LCs',
+        link: '/pages/commercialization/lcs-massive-conversion',
+      },
     ],
   },
   // PROCESOS JURIDICOS
