@@ -1,0 +1,231 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      Formalizar entrega con folio: R-METROPOLITANA-SAT-3468-OS
+    </h5>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-4">
+        <form class="form-horizontal" style="margin: 0 auto">
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Delegación regional:</label>
+            <span> NOROESTE </span>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Transferente:</label>
+            <span> SAT - comercio exterior </span>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Emisora:</label>
+            <span> AGA </span>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Autoridad:</label>
+            <span> Administración de la aduana de Nuevo Laredo </span>
+          </div>
+        </form>
+      </div>
+
+      <div class="col-md-4">
+        <form class="form-horizontal" style="margin: 0 auto">
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Correo transferente:</label>
+            <span> OST12363@SAE.GOB.MX </span>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Fecha inicio operativo:</label>
+            <span> 11-oct-2022 00:00 </span>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Fecha fin operativo:</label>
+            <span> 12-oct-2022 00:00 </span>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Dirección:</label>
+            <span> Domicilio desconocido </span>
+          </div>
+        </form>
+      </div>
+
+      <div class="col-md-4">
+        <form class="form-horizontal" style="margin: 0 auto">
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Tipo relevante:</label>
+            <span> Diverso </span>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Ciudad:</label>
+            <span> Nuevo Laredo </span>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Observación:</label>
+            <span> Ninguna </span>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <h5 class="title">Almacén</h5>
+      <div class="col-lg-6">
+        <div class="form-group">
+          <label class="text-right">Almacén:</label>
+          <span> Nombre de Almacén test </span>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="form-group">
+          <label class="text-right">Dirección almacén:</label>
+          <span>
+            Boulevard José López Portillo No° 200, Apodaca, Nuevo León, C.P.
+            66613
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <h5 class="title">Actas</h5>
+      <div class="btn-toolbar">
+        <button class="btn btn-primary btn-sm active">
+          <i class="fa fa-save"></i> Guardar
+        </button>
+
+        <button
+          (click)="uploadDocuments()"
+          class="btn btn-success btn-sm active">
+          <i class="fa fa-file-archive"></i> Adjuntar documentos
+        </button>
+
+        <button class="btn btn-info btn-sm active">
+          <i class="fa fa-retweet"></i> Actualizar
+        </button>
+      </div>
+
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settingsMinutes"
+        [source]="minutes"
+        (edit)="generateMinute()">
+      </ng2-smart-table>
+    </div>
+
+    <div class="row pt-5">
+      <h5 class="title">Bienes</h5>
+      <div class="md-tabs">
+        <tabset>
+          <tab heading="Recibos(0)" id="tab1">
+            <div class="row">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsReceipt"
+                [source]="receipts">
+              </ng2-smart-table>
+            </div>
+
+            <div class="row pt-4">
+              <div class="d-flex">
+                <app-columns-select
+                  [(settings)]="settingsTranGoods"></app-columns-select>
+              </div>
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsTranGoods"
+                [source]="tranGoods">
+              </ng2-smart-table>
+              <app-pagination
+                [params]="params"
+                [totalItems]="totalItems"></app-pagination>
+            </div>
+          </tab>
+
+          <tab heading="Resguardo(0)">
+            <div class="row pt-4">
+              <div class="d-flex">
+                <app-columns-select
+                  [(settings)]="settingsTranGoods"></app-columns-select>
+              </div>
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsTranGoods"
+                [source]="tranGoods">
+              </ng2-smart-table>
+              <app-pagination
+                [params]="params"
+                [totalItems]="totalItems"></app-pagination>
+            </div>
+          </tab>
+          <tab heading="Almacén SAE(0)">
+            <div class="row pt-4">
+              <div class="d-flex">
+                <app-columns-select
+                  [(settings)]="settingsTranGoods"></app-columns-select>
+              </div>
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsTranGoods"
+                [source]="tranGoods">
+              </ng2-smart-table>
+              <app-pagination
+                [params]="params"
+                [totalItems]="totalItems"></app-pagination>
+            </div>
+          </tab>
+          <tab heading="Reprogramación(0)">
+            <div class="row pt-4">
+              <div class="d-flex">
+                <app-columns-select
+                  [(settings)]="settingsTranGoods"></app-columns-select>
+              </div>
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsTranGoods"
+                [source]="tranGoods">
+              </ng2-smart-table>
+              <app-pagination
+                [params]="params"
+                [totalItems]="totalItems"></app-pagination>
+            </div>
+          </tab>
+          <tab heading="Cancelación(0)">
+            <div class="row pt-4">
+              <div class="d-flex">
+                <app-columns-select
+                  [(settings)]="settingsTranGoods"></app-columns-select>
+              </div>
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settingsTranGoods"
+                [source]="tranGoods">
+              </ng2-smart-table>
+              <app-pagination
+                [params]="params"
+                [totalItems]="totalItems"></app-pagination>
+            </div>
+          </tab>
+        </tabset>
+      </div>
+    </div>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>
