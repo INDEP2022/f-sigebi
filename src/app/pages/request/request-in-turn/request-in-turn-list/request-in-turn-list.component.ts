@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -78,7 +78,7 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
     public fb: FormBuilder
     ) {
     super();
-     this.settings.columns = REQUEST_IN_TURN_COLUMNS;
+      this.settings.columns = REQUEST_IN_TURN_COLUMNS;
    }
 
   ngOnInit(): void {

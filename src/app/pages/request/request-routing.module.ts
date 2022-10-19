@@ -1,5 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { RequestFormComponent } from './transfer-request/request-form/request-form.component';
+
+import { RequestListComponent } from './transfer-request/request-list/request-list.component';
 
 const routes: Routes = [
   {
@@ -10,7 +13,7 @@ const routes: Routes = [
       data: {title: "Solicitudes a turno"}
   },
   {
-    path: 'transfer-request',
+    path: 'list',
     loadChildren: async () =>
       (await import("./transfer-request/transfer-request.module"))
       .TransferRequestModule,

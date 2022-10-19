@@ -1,0 +1,166 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="newDocForm">
+      <div class="row">
+        <div class="col-md-6">
+          <ngx-select
+            [form]="newDocForm"
+            control="docType"
+            (fetchItems)="getTypeDoc($event)"
+            [data]="selectTypeDoc"
+            label="Tipo de Documento"
+            value="docType"></ngx-select>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-7">
+          <form-field
+            [control]="newDocForm.get('docFile')"
+            label="Cargo Remitento">
+            <input
+              type="file"
+              class="form-control"
+              formControlName="docFile"
+              (change)="selectFile($event)"
+              placeholder="" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-7">
+          <form-field
+            [control]="newDocForm.get('docTit')"
+            label="*Titulo del Documento">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="docTit"
+              placeholder="" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <p for="">
+            No. Expediente:
+            <span>{{ newDocForm.get('noExpedient').value }}</span>
+          </p>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="newDocForm.get('contributor')"
+            label="Contribuyente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="contributor"
+              placeholder="" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <p for="">
+            Delegación Regional:
+            <span>{{ newDocForm.get('regDelega').value }}</span>
+          </p>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="newDocForm.get('noOfi')" label="No. Oficina">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="noOfi"
+              placeholder="" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <p for="">
+            Estado: <span>{{ newDocForm.get('state').value }}</span>
+          </p>
+        </div>
+        <div class="col-md-6">
+          <p for="">
+            Transferente: <span>{{ newDocForm.get('tranfe').value }}</span>
+          </p>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field [control]="newDocForm.get('sender')" label="Remitente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="sender"
+              placeholder="" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="newDocForm.get('senderCharge')"
+            label="Cargo Remitente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="senderCharge"
+              placeholder="" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="newDocForm.get('responsible')"
+            label="Responsable">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="responsible"
+              placeholder="" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="newDocForm.get('observations')"
+            label="Comentarios">
+            <textarea
+              class="form-control"
+              formControlName="observations"
+              placeholder="">
+            </textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="newDocForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <!-- <div class="m-3">
+        <button 
+          type="button" 
+          class="btn btn-primary active" 
+          [disabled]="requestForm.invalid" 
+          (click)="confirm()">
+          Turnar
+        </button>
+      </div> -->
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

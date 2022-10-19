@@ -12,6 +12,9 @@ export interface IRequest {
     typeExpedient?: string;
     noRequest?: string;
 
+    //
+    responsible?: string;
+
     //Reception Requests
     priority?:boolean;
     infoProvenance?:string;

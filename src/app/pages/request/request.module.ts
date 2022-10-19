@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 import { RequestRoutingModule } from './request-routing.module';
 import { BsDatepickerModule, BsDatepickerConfig  } from 'ngx-bootstrap/datepicker';
@@ -10,7 +11,8 @@ import { BsDatepickerModule, BsDatepickerConfig  } from 'ngx-bootstrap/datepicke
   imports: [
     CommonModule,
     RequestRoutingModule,
-    BsDatepickerModule.forRoot()
+    BsDatepickerModule.forRoot(),
+    SharedModule
   ],
   providers: [BsDatepickerConfig]
 })

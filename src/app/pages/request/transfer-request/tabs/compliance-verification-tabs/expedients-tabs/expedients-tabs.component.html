@@ -1,0 +1,20 @@
+<div>
+    <tabset class="md-tabs">
+        <tab heading="Documentos Solicitud" id="tab1" (selectTab)="requestSelected(1)">
+            <app-doc-request-tab  [typeDoc]="typeDoc"></app-doc-request-tab>
+        </tab>
+        <tab heading="Documentos Bienes">
+            <app-good-doc-tab></app-good-doc-tab>
+        </tab>
+        <tab heading="Documentos generales" (selectTab)="requestExpedient(2)">
+            <tabset class="md-tabs">
+                <tab heading="Documento Expedientes" id="tab1" (selectTab)="requestSelected(2)">
+                    <app-doc-request-tab [typeDoc]="typeDoc"></app-doc-request-tab>
+                </tab>
+                <tab heading="Solicitudes del Expediente">
+                    <h5>Solicitudes del expediente</h5>
+                </tab>
+            </tabset>
+        </tab>
+    </tabset>  
+</div>

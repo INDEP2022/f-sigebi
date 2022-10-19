@@ -7,7 +7,7 @@ export const COMPENSATION_COLUMNS = {
   idOficioSat: {
     title: 'Id oficio sat',
     type: 'string',
-    sort: false,
+    sort: false
   },
   typeDocSatXml: {
     title: 'Tipo documento',
