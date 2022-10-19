@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { APPRAISAL_COLUMNS } from './appraisal-columns';
-import { ExcelService } from 'src/app/common/services/exporttoexcel.service';
+import { ExcelService } from 'src/app/common/services/excel.service';
 
 @Component({
   selector: 'app-c-b-a-cda-c-appraisal-consultation',
