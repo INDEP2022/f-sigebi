@@ -76,8 +76,11 @@ export class PaMcsCMassiveChangeStatusComponent
         this.data = data;
         this.totalItems = data.length;
         this.loading = false;
+        this.alert('success', 'Cargado con éxito', '');
       })
-      .catch();
+      .catch(error => {
+        this.alert('error', 'Ooop..', error);
+      });
   }
 
   loandData() {
