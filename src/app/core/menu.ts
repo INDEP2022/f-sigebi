@@ -183,11 +183,19 @@ export const MENU: IMenuItem[] = [
         ],
       },
       {
-        label: 'Exportación de Bienes para Donación a Excel',
+        label: 'Proceso de Donación',
         subItems: [
           {
             label: 'Exportación de Bienes para Donación',
             link: '/pages/final-destination-process/donation-process/export-goods-donation',
+          },
+          {
+            label: 'Propuesta de Inventarios para Donación Web',
+            link: '/pages/final-destination-process/donation-process/web-donation-inventories',
+          },
+          {
+            label: 'Propuesta de Inventarios para Donación Directa',
+            link: '/pages/final-destination-process/donation-process/direct-donation-inventories',
           },
         ],
       },
