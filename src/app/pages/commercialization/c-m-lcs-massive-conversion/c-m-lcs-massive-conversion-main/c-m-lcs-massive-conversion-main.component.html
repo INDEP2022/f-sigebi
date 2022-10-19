@@ -10,21 +10,21 @@
             <div class="col-sm-12 col-md-6 d-flex align-content-center">
               <div
                 class="d-flex flex-row justify-content-center align-items-center">
-                <div class="me-2">
-                  <h6 class="d-lg-inline">N° Operación:</h6>
-                  <p class="text-muted d-lg-inline mx-5 font-size-18">
+                <div class="px-3">
+                  <h6 class="d-lg-inline font-size-15">N° Operación</h6>
+                  <p class="text-muted d-xl-inline mx-5 font-size-18">
                     {{ operationId }}
                   </p>
                 </div>
-                <div class="me-2">
-                  <h6 class="d-lg-inline">Registros:</h6>
-                  <p class="text-muted d-lg-inline mx-5 font-size-18">
+                <div class="px-3">
+                  <h6 class="d-lg-inline font-size-15">Registros</h6>
+                  <p class="text-muted d-xl-inline mx-5 font-size-18">
                     {{ totalEntries }}
                   </p>
                 </div>
-                <div class="me-2">
-                  <h6 class="d-lg-inline">LCs Generadas:</h6>
-                  <p class="text-muted d-lg-inline mx-5 font-size-18">
+                <div class="px-3">
+                  <h6 class="d-lg-inline font-size-15">LCs Generadas</h6>
+                  <p class="text-muted d-xl-inline mx-5 font-size-18">
                     {{ generatedLcs }}
                   </p>
                 </div>
@@ -35,19 +35,10 @@
                 class="row row-cols-sm-2 row-cols-md-2 row-cols-lg-auto g-2 align-items-center">
                 <div class="col-12">
                   <button
-                    class="btn btn-sm btn-primary btn-block active me-2 font-size-14"
-                    (click)="generateLcs()">
-                    <i class="bx bx-send text-light float-icon"></i>
-                    Generar LCs
-                  </button>
-                </div>
-                <div class="col-12">
-                  <button
-                    class="btn btn-sm btn-secondary btn-block active me-2 font-size-14 dropdown-toggle"
-                    data-toggle="dropdown"
-                    (click)="loadChecks()">
-                    <i class="bx bx-upload text-light float-icon"></i>
-                    Cargar Cheques
+                    class="btn btn-sm btn-success btn-block active me-2 font-size-14"
+                    (click)="consult()">
+                    <i class="bx bx-search text-light float-icon"></i>
+                    Consultar Datos
                   </button>
                 </div>
                 <div class="col-12">
@@ -86,10 +77,20 @@
                 </div>
                 <div class="col-12">
                   <button
-                    class="btn btn-sm btn-success btn-block active me-2 font-size-14"
-                    (click)="consult()">
-                    <i class="bx bx-search text-light float-icon"></i>
-                    Consultar
+                    class="btn btn-sm btn-secondary btn-block active me-2 font-size-14 dropdown-toggle"
+                    data-toggle="dropdown"
+                    (click)="loadChecks()">
+                    <i class="bx bx-upload text-light float-icon"></i>
+                    Cargar Cheques
+                  </button>
+                </div>
+                <div class="col-12">
+                  <button
+                    class="btn btn-sm btn-primary btn-block active me-2 font-size-14"
+                    (click)="generateLcs()"
+                    [disabled]="dataColumns.length > 0">
+                    <i class="bx bx-send text-light float-icon"></i>
+                    Generar LCs
                   </button>
                 </div>
               </div>
