@@ -21,16 +21,50 @@ export class PaCsCModalChangeComponent extends BasePage implements OnInit {
     this.settings = {
       ...this.settings,
       actions: false,
-      columns: { ...this.columns },
+      columns: { ...this.opcion.initialState },
     };
   }
 
   ngOnInit(): void {
     this.columns = this.opcion.initialState;
+    console.log(this.columns);
   }
 
   mostrar() {}
 
+  loadDate() {
+    if (this.columns.username) {
+      this.data = [
+        {
+          name: 'US1',
+          username: 'Alejandro Martinez',
+        },
+        {
+          name: 'US2',
+          username: 'Edwin Armas',
+        },
+        {
+          name: 'US3',
+          username: 'Mariana Gomez',
+        },
+      ];
+    } else {
+      this.data = [
+        {
+          status: 'Estatus 1',
+          description: 'Descripcion 1',
+        },
+        {
+          status: 'Estatus 2',
+          description: 'Descripcion 2',
+        },
+        {
+          status: 'US3',
+          description: 'Descripcion 3',
+        },
+      ];
+    }
+  }
   return() {
     this.bsModalRef.hide();
   }

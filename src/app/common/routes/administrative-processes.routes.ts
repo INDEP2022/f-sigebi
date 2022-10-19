@@ -139,6 +139,11 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         link: '/pages/administrative-processes/request-numbering-change',
       },
       {
+        label: 'Cambio de Estatus',
+        link: '/pages/administrative-processes/change-of-status',
+      },
+
+      {
         label: 'Reclasificación masiva de bienes',
         link: '/pages/administrative-processes/massive-reclassification-goods',
       },
