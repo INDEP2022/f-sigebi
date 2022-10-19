@@ -4,8 +4,6 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRequestList } from 'src/app/core/models/catalogs/request-list.model';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { RegistrationOfRequestsComponent } from '../registration-of-requests/registration-of-requests.component';
-import { RequestFormComponent } from '../request-form/request-form.component';
 import { REQUEST_LIST_COLUMNS } from './request-list-columns';
 import { Router } from '@angular/router';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -57,9 +55,7 @@ export class RequestListComponent extends BasePage implements OnInit {
     this.lastClick += 1;
     setTimeout(() => {
       if (this.lastClick > 1) {
-        //this.openModel('modalSizeXL', RegistrationOfRequestsComponent, event.data);
         this.router.navigate(['pages/request/list/registration-request', 1]);
-        //this.router.createUrlTree(['pages/request/list/registration-request', {my_object: JSON.stringify(event.data)}]);
       }
       this.lastClick = 0;
     }, 500);

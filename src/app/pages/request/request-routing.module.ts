@@ -1,8 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { RequestFormComponent } from './transfer-request/request-form/request-form.component';
-
-import { RequestListComponent } from './transfer-request/request-list/request-list.component';
 
 const routes: Routes = [
   {
@@ -51,9 +48,9 @@ const routes: Routes = [
   {
     path: 'list',
     loadChildren: async () =>
-      (await import('./transfer-request/transfer-request.module'))
-        .TransferRequestModule,
-    data: { title: 'Solicitudes de transferencia' },
+      (await import('./view-of-requests/view-of-requests.module'))
+        .ViewOfRequestsModule,
+    data: { title: 'Vista de las Solicitudes' },
   },
 ];
 
