@@ -62,6 +62,30 @@ const routes: Routes = [
           ).MaintenanceMailConfigurationModule,
         data: { title: 'Configuración de correos de mantenimiento' },
       },
+      {
+        path: 'email-book-config',
+        loadChildren: async () =>
+          (await import('./email-book-config/email-book-config.module'))
+            .EmailBookConfigModule,
+        data: { title: 'Configuración de libreta de correos' },
+      },
+      {
+        path: 'surveillance-contracts',
+        loadChildren: async () =>
+          (
+            await import(
+              './surveillance-contracts/surveillance-contracts.module'
+            )
+          ).SurveillanceContractsModule,
+        data: { title: 'Contratos de Vigilancia' },
+      },
+      {
+        path: 'surveillance-zones',
+        loadChildren: async () =>
+          (await import('./surveillance-zones/surveillance-zones.module'))
+            .SurveillanceZonesModule,
+        data: { title: 'Zonas de Vigilancia' },
+      },
     ],
   },
 ];

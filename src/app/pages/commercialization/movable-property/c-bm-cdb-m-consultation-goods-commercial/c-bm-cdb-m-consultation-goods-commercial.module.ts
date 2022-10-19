@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
-import { ExcelService } from 'src/app/common/services/exporttoexcel.service';
+import { ExcelService } from 'src/app/common/services/excel.service';
 
 import { CBmCdbMConsultationGoodsCommercialRoutingModule } from './c-bm-cdb-m-consultation-goods-commercial-routing.module';
 import { CBmCdbCConsultationGoodsCommercialSalesComponent } from './c-bm-cdb-c-consultation-goods-commercial-sales/c-bm-cdb-c-consultation-goods-commercial-sales.component';
