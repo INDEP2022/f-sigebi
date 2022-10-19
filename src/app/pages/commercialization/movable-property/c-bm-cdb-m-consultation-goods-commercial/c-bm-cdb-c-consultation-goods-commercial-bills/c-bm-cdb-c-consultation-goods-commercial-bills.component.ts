@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 
-import { ExcelService } from 'src/app/common/services/exportToExcel.service';
+import { ExcelService } from 'src/app/common/services/excel.service';
 @Component({
   selector: 'app-c-bm-cdb-c-consultation-goods-commercial-bills',
   templateUrl:

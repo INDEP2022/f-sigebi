@@ -108,7 +108,7 @@ const routes: Routes = [
         data: { title: 'Cambio de estatus' },
       },
       /**
-       * Seguros **Legaspi**
+       *Legaspi
        **/
       {
         path: 'summary-financial-info',
@@ -160,7 +160,7 @@ const routes: Routes = [
           ).then(m => m.PaSsiMSiabSamiInteractionModule),
       },
       /**
-       * Seguros **Legaspi**
+       *Legaspi
        **/
       {
         path: 'location-goods',
@@ -318,6 +318,21 @@ const routes: Routes = [
           ).VariableCostModule,
         data: { title: 'Variable costo' },
       },
+
+      {
+        path: 'zones',
+        loadChildren: async () =>
+          (await import('./administration-third/zones/zones.module'))
+            .ZonesModule,
+        data: { title: 'Coordinacion por zonas' },
+      },
+      {
+        path: 'electronic-signature',
+        loadChildren: async () =>
+          (await import('./electronic-signature/electronic-signature.module'))
+            .ElectronicSignatureModule,
+        data: { title: 'Firma Electrónica' },
+       },
       /**
        * Seguros David Lucas
        */

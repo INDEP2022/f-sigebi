@@ -7,7 +7,7 @@ import { BANK_COLUMNS } from './payment-dispersion-validation-bank-columns';
 import { EVENT_COLUMNS } from './payment-dispersion-validation-event-columns';
 import { RECEIVED_COLUMNS } from './payment-dispersion-validation-received-columns';
 
-import { ExcelService } from 'src/app/common/services/exportToExcel.service';
+import { ExcelService } from 'src/app/common/services/excel.service';
 
 @Component({
   selector: 'app-c-b-vdp-c-payment-dispersion-validation',

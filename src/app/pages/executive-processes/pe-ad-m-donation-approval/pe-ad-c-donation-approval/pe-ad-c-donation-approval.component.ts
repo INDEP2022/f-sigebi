@@ -30,7 +30,7 @@ export class PeAdCDonationApprovalComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       idExp: [
-        '',
+        null,
         [
           Validators.required,
           Validators.maxLength(10),
@@ -38,10 +38,10 @@ export class PeAdCDonationApprovalComponent extends BasePage implements OnInit {
           Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
-      preInquiry: ['', [Validators.required]],
-      criminalCase: ['', [Validators.required]],
-      circumstAct: ['', [Validators.required]],
-      touchPenalty: ['', [Validators.required]],
+      preInquiry: [null],
+      criminalCase: [null],
+      circumstAct: [null],
+      touchPenalty: [null],
     });
   }
 
@@ -51,6 +51,7 @@ export class PeAdCDonationApprovalComponent extends BasePage implements OnInit {
       description: 'CUARENTA Y DOS CHAMARRAS',
       ubiExact: 'ALMACEN',
       direction: 'PROLONGACIÓN MORELOS',
+      passed: true,
       status: 'ADE',
       extraDom: 'DECOMISO',
     },
@@ -59,6 +60,7 @@ export class PeAdCDonationApprovalComponent extends BasePage implements OnInit {
       description: 'SETENTA Y DOS CELULARES',
       ubiExact: 'ALMACEN',
       direction: 'PROLONGACIÓN MORELOS',
+      passed: false,
       status: 'ADE',
       extraDom: 'DECOMISO',
     },
@@ -67,7 +69,7 @@ export class PeAdCDonationApprovalComponent extends BasePage implements OnInit {
       description: 'CUARENTA Y TRES CABLES USB',
       ubiExact: 'ALMACEN',
       direction: 'PROLONGACIÓN MORELOS',
-
+      passed: true,
       status: 'ADE',
       extraDom: 'DECOMISO',
     },

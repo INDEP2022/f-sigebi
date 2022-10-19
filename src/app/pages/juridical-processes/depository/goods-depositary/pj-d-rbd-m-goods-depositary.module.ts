@@ -9,13 +9,13 @@ import { SharedModule } from 'src/app/shared/shared.module';
 /** SERVICE IMPORTS */
 
 /** ROUTING MODULE */
-import { PJDJJuridicalRulingRoutingModule } from './pj-dj-m-juridical-ruling-routing.module';
+import { PJDRBDGoodsDepositaryRoutingModule } from './pj-d-rbd-m-goods-depositary-routing.module';
 
 /** COMPONENTS IMPORTS */
-import { PJDJJuridicalRulingComponent } from './juridical-ruling/pj-dj-c-juridical-ruling.component';
+import { PJDRBDGoodsDepositaryComponent } from './goods-depositary/pj-d-rbd-c-goods-depositary.component';
 
 @NgModule({
-  declarations: [PJDJJuridicalRulingComponent],
-  imports: [CommonModule, PJDJJuridicalRulingRoutingModule, SharedModule],
+  declarations: [PJDRBDGoodsDepositaryComponent],
+  imports: [CommonModule, PJDRBDGoodsDepositaryRoutingModule, SharedModule],
 })
-export class PJDJJuridicalRulingModule {}
+export class PJDRBDGoodsDepositaryModule {}
