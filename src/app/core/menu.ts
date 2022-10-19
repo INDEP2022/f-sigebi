@@ -184,6 +184,20 @@ export const MENU: IMenuItem[] = [
           },
         ],
       },
+      {
+        label: 'Cuenta de numerario asegurado',
+        link: '/pages/administrative-processes/insured-numerary-account',
+      },
+      {
+        label: 'Empresas',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Reporte de evaluación de desempeño',
+            link: '/pages/administrative-processes/performance-evaluation-report',
+          },
+        ]
+      }
     ],
   },
   {
@@ -270,6 +284,12 @@ export const MENU: IMenuItem[] = [
           },
         ],
       },
+      {
+        label: 'Acumulado de bienes mensual',
+        link: '/pages/administrative-processes/accumulated-monthly-assets',
+      },
+
+
       /**
        * ADMIN PROCESS-SERVICES LEGASPI
        **/
