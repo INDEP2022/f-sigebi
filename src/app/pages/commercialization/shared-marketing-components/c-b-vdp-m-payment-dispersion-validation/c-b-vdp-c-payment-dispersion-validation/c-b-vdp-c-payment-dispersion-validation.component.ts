@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Form, FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { ALLOTMENT_COLUMNS } from './payment-dispersion-validation-allotment-columns';

@@ -10,74 +10,96 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-1">
-          <form-field [control]="form.get('idOi')" label="OI">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="idOi"
-              maxlength="10"
-              minlength="1" />
-          </form-field>
+          <h5 class="font-size-14 d-inline">Ingrese OI</h5>
+          <ngx-select
+            [form]="form"
+            [data]="OItems"
+            value="idOi"
+            bindLabel="idOi"
+            (fetchItems)="getOI($event)"
+            (change)="selectOI($event)"
+            control="idOi">
+          </ngx-select>
         </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('idArea')" label="Área">
+        <div class="col-md-2" *ngIf="selectedOI != null">
+          <h5 class="font-size-14 d-inline">Área</h5>
+          <p class="mt-2 font-size-28 text-muted">{{ selectedOI.idArea }}</p>
+          <!-- <form-field [control]="form.get('idArea')" label="Área">
             <input type="text" class="form-control" formControlName="idArea" />
-          </form-field>
+          </form-field> -->
         </div>
-        <div class="col-md-1">
-          <form-field [control]="form.get('ur')" label="UR">
+        <div class="col-md-1" *ngIf="selectedOI != null">
+          <h5 class="font-size-14 d-inline">UR</h5>
+          <p class="mt-2 font-size-28 text-muted">{{ selectedOI.ur }}</p>
+          <!-- <form-field [control]="form.get('ur')" label="UR">
             <input type="text" class="form-control" formControlName="ur" />
-          </form-field>
+          </form-field> -->
         </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('clientRFC')" label="Cliente RFC">
+        <div class="col-md-2" *ngIf="selectedOI != null">
+          <h5 class="font-size-14 d-inline">Cliente RFC</h5>
+          <p class="mt-2 font-size-28 text-muted">{{ selectedOI.clientRFC }}</p>
+          <!-- <form-field [control]="form.get('clientRFC')" label="Cliente RFC">
             <input
               type="text"
               class="form-control"
               formControlName="clientRFC" />
-          </form-field>
+          </form-field> -->
         </div>
-        <div class="col-md-2">
-          <form-field
+        <div class="col-md-2" *ngIf="selectedOI != null">
+          <h5 class="font-size-14 d-inline">Descripción cliente</h5>
+          <p class="mt-2 font-size-28 text-muted">
+            {{ selectedOI.descripRFC }}
+          </p>
+          <!-- <form-field
             [control]="form.get('descripRFC')"
             label="Descripción Cliente">
             <input
               type="text"
               class="form-control"
               formControlName="descripRFC" />
-          </form-field>
+          </form-field> -->
         </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('anexo')" label="Anexo">
+        <div class="col-md-2" *ngIf="selectedOI != null">
+          <h5 class="font-size-14 d-inline">Anexo</h5>
+          <p class="mt-2 font-size-28 text-muted">{{ selectedOI.anexo }}</p>
+          <!-- <form-field [control]="form.get('anexo')" label="Anexo">
             <input type="text" class="form-control" formControlName="anexo" />
-          </form-field>
+          </form-field> -->
         </div>
-        <div class="col-md-1">
-          <form-field [control]="form.get('tiPe')" label="Tipo Pe">
+        <div class="col-md-1" *ngIf="selectedOI != null">
+          <h5 class="font-size-14 d-inline">Tipo Pe</h5>
+          <p class="mt-2 font-size-28 text-muted">{{ selectedOI.tiPe }}</p>
+          <!-- <form-field [control]="form.get('tiPe')" label="Tipo Pe">
             <input type="text" class="form-control" formControlName="tiPe" />
-          </form-field>
+          </form-field> -->
         </div>
-        <div class="col-md-1">
-          <form-field [control]="form.get('idEvent')" label="Evento">
+        <div class="col-md-1" *ngIf="selectedOI != null">
+          <h5 class="font-size-14 d-inline">Evento</h5>
+          <p class="mt-2 font-size-28 text-muted">{{ selectedOI.idEvent }}</p>
+          <!-- <form-field [control]="form.get('idEvent')" label="Evento">
             <input type="text" class="form-control" formControlName="idEvent" />
-          </form-field>
+          </form-field> -->
         </div>
       </div>
-      <div class="row pt-5">
+      <div class="row pt-5" *ngIf="selectedOI != null">
         <div class="col-md-6">
-          <form-field [control]="form.get('concept')" label="Concepto">
+          <h5 class="font-size-14 d-inline">Concepto</h5>
+          <p class="mt-2 font-size-28 text-muted">{{ selectedOI.concept }}</p>
+          <!-- <form-field [control]="form.get('concept')" label="Concepto">
             <input type="text" class="form-control" formControlName="concept" />
-          </form-field>
+          </form-field> -->
         </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-2">
-          <form-field [control]="form.get('idBank')" label="Banco">
+        <div class="col-md-2" *ngIf="selectedOI != null">
+          <h5 class="font-size-14 d-inline">Banco</h5>
+          <p class="mt-2 font-size-28 text-muted">{{ selectedOI.idBank }}</p>
+          <!-- <form-field [control]="form.get('idBank')" label="Banco">
             <input type="text" class="form-control" formControlName="idBank" />
-          </form-field>
+          </form-field> -->
         </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('ordenDate')" label="Fecha de orden">
+        <div class="col-md-2" *ngIf="selectedOI != null">
+          <h5 class="font-size-14 d-inline">Fecha de orden</h5>
+          <p class="mt-2 font-size-28 text-muted">{{ selectedOI.ordenDate }}</p>
+          <!-- <form-field [control]="form.get('ordenDate')" label="Fecha de orden">
             <input
               type="text"
               placeholder=""
@@ -85,39 +107,50 @@
               bsDatepicker
               formControlName="ordenDate"
               [bsConfig]="{ isAnimated: true }" />
-          </form-field>
+          </form-field> -->
         </div>
-        <div class="col-md-1">
-          <form-field [control]="form.get('numovto')" label="Numovto">
+        <div class="col-md-1" *ngIf="selectedOI != null">
+          <h5 class="font-size-14 d-inline">Numovto</h5>
+          <p class="mt-2 font-size-28 text-muted">{{ selectedOI.numovto }}</p>
+          <!-- <form-field [control]="form.get('numovto')" label="Numovto">
             <input type="text" class="form-control" formControlName="numovto" />
-          </form-field>
+          </form-field> -->
         </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('amount')" label="Monto">
-            <input type="text" class="form-control" formControlName="amount" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('reference')" label="Referencia">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="reference" />
-          </form-field>
-        </div>
-        <div class="col-md-1">
-          <form-field [control]="form.get('idPayment')" label="id Pago">
+        <div class="col-md-1" *ngIf="selectedOI != null">
+          <h5 class="font-size-14 d-inline">id Pago</h5>
+          <p class="mt-2 font-size-28 text-muted">{{ selectedOI.idPayment }}</p>
+          <!-- <form-field [control]="form.get('idPayment')" label="id Pago">
             <input
               type="text"
               class="form-control"
               formControlName="idPayment" />
-          </form-field>
+          </form-field> -->
         </div>
-        <div class="col-md-2">
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-1" *ngIf="selectedOI != null">
+          <h5 class="font-size-14 d-inline">Monto</h5>
+          <p class="mt-2 font-size-28 text-muted">{{ selectedOI.amount }}</p>
+          <!-- <form-field [control]="form.get('amount')" label="Monto">
+            <input type="text" class="form-control" formControlName="amount" />
+          </form-field> -->
+        </div>
+        <div class="col-md-2" *ngIf="selectedOI != null">
+          <h5 class="font-size-14 d-inline">Referencia</h5>
+          <p class="mt-2 font-size-28 text-muted">{{ selectedOI.reference }}</p>
+          <!-- <form-field [control]="form.get('reference')" label="Referencia">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="reference" />
+          </form-field> -->
+        </div>
+
+        <!-- <div class="col-md-2" *ngIf="selectedOI != null">
           <button type="button" class="btn btn-primary btn-sm active">
             Envar a SIRSAE
           </button>
-        </div>
+        </div> -->
       </div>
     </form>
   </div>
@@ -134,6 +167,7 @@
     </div>
   </div>
   <div body>
-    <ng2-smart-table [settings]="settings" [source]="data"> </ng2-smart-table>
+    <ng2-smart-table [settings]="settings" [source]="dataTable">
+    </ng2-smart-table>
   </div>
 </app-card>

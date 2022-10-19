@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core'; 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -42,7 +42,7 @@ export class CBmCdbCConsultationGoodsCommercialSalesComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      id: [null, [Validators.required]],
+      id: ['', [Validators.required]],
       // evento: [null, [Validators.required]],
       // lote: [null, [Validators.required]],
       // expediente: [null, [Validators.required]],
