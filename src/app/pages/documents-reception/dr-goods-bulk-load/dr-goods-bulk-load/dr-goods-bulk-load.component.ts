@@ -1,7 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  GOODS_BULK_LOAD_ACTIONS,
+  GOODS_BULK_LOAD_TARGETS,
+} from '../constants/good-bulk-load-data';
+import { IGoodsBulkLoadExampleData } from '../interfaces/goods-bulk-load-table';
 
 import { GOODS_BULK_LOAD_COLUMNS } from './goods-bulk-load-columns';
 
@@ -20,14 +30,18 @@ import { GOODS_BULK_LOAD_COLUMNS } from './goods-bulk-load-columns';
 })
 export class DrGoodsBulkLoadComponent extends BasePage implements OnInit {
   assetsForm: FormGroup;
-  actionsTypes = ACTION_TYPES;
+  tableSource: IGoodsBulkLoadExampleData[] = [];
+  actions = GOODS_BULK_LOAD_ACTIONS.general;
+  target = new FormControl<'general' | 'sat' | 'pgr'>('general');
+  targets = GOODS_BULK_LOAD_TARGETS;
   get bulkId() {
     return this.assetsForm.get('idCarga');
   }
 
   constructor(private fb: FormBuilder, private excelService: ExcelService) {
     super();
-    this.settings.columns = GOODS_BULK_LOAD_COLUMNS;
+    const _settings = { columns: GOODS_BULK_LOAD_COLUMNS, actions: false };
+    this.settings = { ...this.settings, ..._settings };
   }
 
   ngOnInit(): void {
@@ -55,10 +69,10 @@ export class DrGoodsBulkLoadComponent extends BasePage implements OnInit {
     fileReader.onload = () => this.readExcel(fileReader.result);
   }
 
-  async readExcel(binaryExcel: string | ArrayBuffer) {
+  readExcel(binaryExcel: string | ArrayBuffer) {
     try {
-      const data = await this.excelService.getData(binaryExcel);
-      console.log(data);
+      this.tableSource =
+        this.excelService.getData<IGoodsBulkLoadExampleData>(binaryExcel);
     } catch (error) {
       this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
     }
@@ -70,23 +84,9 @@ export class DrGoodsBulkLoadComponent extends BasePage implements OnInit {
     if (!value) this.bulkId.clearValidators();
     this.bulkId.updateValueAndValidity();
   }
-}
 
-const ACTION_TYPES = [
-  {
-    value: 'Inserción de bienes',
-    title: 'Inserción de bienes',
-  },
-  {
-    value: 'Inserción de mensaje',
-    title: 'Inserción de mensaje',
-  },
-  {
-    value: 'Actualización de datos de bienes',
-    title: 'Actualización de datos de bienes',
-  },
-  {
-    value: 'Inserción de volantes',
-    title: 'Inserción de volantes',
-  },
-];
+  targetChange() {
+    const target = this.target.value;
+    this.actions = GOODS_BULK_LOAD_ACTIONS[target] ?? [];
+  }
+}

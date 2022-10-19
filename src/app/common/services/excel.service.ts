@@ -11,12 +11,9 @@ const EXCEL_EXTENSION = '.xlsx';
 })
 export class ExcelService {
   getData<T = any>(binaryString: string | ArrayBuffer) {
-    return new Promise<T[]>(resolve => {
-      const workbook = read(binaryString, { type: 'binary' });
-      const sheetNames = workbook.SheetNames;
-      const data = utils.sheet_to_json<T>(workbook.Sheets[sheetNames[0]]);
-      resolve(data);
-    });
+    const workbook = read(binaryString, { type: 'binary' });
+    const sheetNames = workbook.SheetNames;
+    return utils.sheet_to_json<T>(workbook.Sheets[sheetNames[0]]);
   }
 
   public exportAsExcelFile(json: any[], excelFileName: string): void {
