@@ -1,4 +1,4 @@
-export const TRANSPORTABLE_GOODS = {
+export const ESTATE_COLUMNS = {
   gestionNumber: {
     title: 'No° gestión',
     type: 'string',
@@ -34,20 +34,8 @@ export const TRANSPORTABLE_GOODS = {
     sort: false,
   },
 
-  saeAmmount: {
-    title: 'Cantidad SAE',
-    type: 'string',
-    sort: false,
-  },
-
   transerUnit: {
     title: 'Unidad transferente',
-    type: 'string',
-    sort: false,
-  },
-
-  unitMedidSae: {
-    title: 'Unidad medida SAE',
     type: 'string',
     sort: false,
   },
@@ -58,20 +46,45 @@ export const TRANSPORTABLE_GOODS = {
     sort: false,
   },
 
-  stateSae: {
-    title: 'Estado Físico SAE',
+  addressDetail: {
+    title: 'Detalle dirección',
+    type: 'string',
+    sort: false,
+  },
+};
+
+export const ESTATE_COLUMNS_NOTIFY = {
+  gestionNumber: {
+    title: 'No° gestión',
     type: 'string',
     sort: false,
   },
 
-  transferConStatus: {
-    title: 'Estado conversación transferente',
+  uniqueKey: {
+    title: 'Clave única',
     type: 'string',
     sort: false,
   },
 
-  convrsationConStatus: {
-    title: 'Estado conversación SAE',
+  record: {
+    title: 'Expediente',
+    type: 'string',
+    sort: false,
+  },
+
+  description: {
+    title: 'Descripción',
+    sort: false,
+  },
+
+  transerAmount: {
+    title: 'Cantidad transferente',
+    type: 'string',
+    sort: false,
+  },
+
+  transerUnit: {
+    title: 'Unidad transferente',
     type: 'string',
     sort: false,
   },

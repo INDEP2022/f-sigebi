@@ -367,6 +367,10 @@ export const MENU: IMenuItem[] = [
             label: 'Propuesta de Inventarios para Donación Directa',
             link: '/pages/final-destination-process/donation-process/direct-donation-inventories',
           },
+          {
+            label: 'Mantenimiento Comprometer para Donación',
+            link: '/pages/final-destination-process/donation-process/maintenance-commitment-donation',
+          },
         ],
       },
     ],
