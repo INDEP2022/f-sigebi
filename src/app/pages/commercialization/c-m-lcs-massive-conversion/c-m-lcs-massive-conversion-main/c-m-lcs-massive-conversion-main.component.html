@@ -62,15 +62,25 @@
                         <a
                           class="dropdown-item bg-info text-light"
                           (click)="loadRFC()"
-                          >RFC</a
-                        >
+                          >RFC<input
+                            id="rfc-csv"
+                            hidden
+                            type="file"
+                            accept=".csv"
+                            (change)="getCsv($event)"
+                        /></a>
                       </li>
                       <li role="menuitem">
                         <a
                           class="dropdown-item bg-info text-light"
                           (click)="loadClientId()"
-                          >Id Cliente</a
-                        >
+                          >Id Cliente<input
+                            id="clientId-csv"
+                            hidden
+                            type="file"
+                            accept=".csv"
+                            (change)="getCsv($event)"
+                        /></a>
                       </li>
                     </ul>
                   </div>

@@ -6,6 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { CsvService } from '../../../../common/services/csv.service';
 
 @Component({
   selector: 'app-c-m-lcs-massive-conversion-main',
@@ -94,7 +95,7 @@ export class CMLcsMassiveConversionMainComponent
     },
   ];
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private csvService: CsvService) {
     super();
   }
 
@@ -154,9 +155,21 @@ export class CMLcsMassiveConversionMainComponent
 
   consult() {}
 
-  loadRFC() {}
+  loadRFC() {
+    const input = document.getElementById('rfc-csv');
+    input.click();
+  }
 
-  loadClientId() {}
+  loadClientId() {
+    const input = document.getElementById('clientId-csv');
+    input.click();
+  }
+
+  async getCsv(e: Event) {
+    let arr = await this.csvService.getData(e);
+    if (arr.length > 0) {
+    }
+  }
 
   loadChecks() {}
 

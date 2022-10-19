@@ -8,7 +8,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { TableSelectComponent } from '../components/table-select/table-select.component';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { CsvToArrayService } from '../../../../common/services/csv-to-array.service';
+import { CsvService } from '../../../../common/services/csv.service';
 import {
   EXPENSE_COLUMNS,
   NUMERAIRE_COLUMNS,
@@ -177,7 +177,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private csvService: CsvToArrayService
+    private csvService: CsvService
   ) {
     super();
   }
@@ -425,18 +425,14 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     );
   }
 
-  async getFile() {
+  async getFile(e: Event) {
     this.loading = true;
-    const csvFile = document.getElementById('csvFile') as HTMLInputElement;
-    if (csvFile.files[0]) this.fileName = csvFile.files[0].name;
-    this.csvService
-      .csvToArray(csvFile, ',')
-      .then(data => {
-        this.numeraireColumns = data;
-        this.totalItems = data.length;
-        this.loading = false;
-      })
-      .catch();
+    let arr = await this.csvService.getData(e);
+    if (arr.length > 0) {
+      this.numeraireColumns = arr;
+      this.totalItems = arr.length;
+      this.loading = false;
+    }
   }
 
   exchange() {
