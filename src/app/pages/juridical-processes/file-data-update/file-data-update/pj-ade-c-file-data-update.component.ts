@@ -38,6 +38,13 @@ export class PJADEFileDataUpdateComponent
   linkOficioRelacionado: string =
     '/pages/documents-reception/flyers-registration/related-document-management';
 
+    public optionsTipoVolante = [
+      { value: 'Administrativo', label: 'Administrativo' },
+      { value: 'Procesal', label: 'Procesal' },
+      { value: 'Admin. Trans', label: 'Admin. Trans' },
+      { value: 'Transferente', label: 'Transferente' },
+    ];
+    
   constructor(
     private fb: FormBuilder,
     private activateRoute: ActivatedRoute,

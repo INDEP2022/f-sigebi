@@ -1,0 +1,42 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">LIBRETA DE DIRECCIONES ELECTRONICAS</h5>
+  </div>
+
+  <div body>
+    <div class="ch-content">
+      <h5 class="title">DELEGACIONES</h5>
+    </div>
+    <form [formGroup]="form" class="form-material">
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('regionalDelegation')">
+            <ngx-select
+              [form]="form"
+              [data]="regionalDelegations"
+              bindLabel="name"
+              label="Delegación Regional"
+              value="id"
+              (fetchItems)="getRegionalDelegations($event)"
+              control="regionalDelegation"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="emailConfig">
+            </ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </form>
+  </div>
+</app-card>

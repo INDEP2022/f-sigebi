@@ -39,6 +39,53 @@ const routes: Routes = [
             .LossOfGoodsPolicyModule,
         data: { title: 'Baja de bienes en pólizas' },
       },
+      {
+        path: 'maintenance',
+        loadChildren: async () =>
+          (await import('./maintenance/maintenance.module')).MaintenanceModule,
+        data: { title: 'Mantenimiento' },
+      },
+      {
+        path: 'surveillance-log',
+        loadChildren: async () =>
+          (await import('./surveillance-log/surveillance-log.module'))
+            .SurveillanceLogModule,
+        data: { title: 'Bitacora de vigilancia' },
+      },
+      {
+        path: 'maintenance-mail-configuration',
+        loadChildren: async () =>
+          (
+            await import(
+              './maintenance-mail-configuration/maintenance-mail-configuration.module'
+            )
+          ).MaintenanceMailConfigurationModule,
+        data: { title: 'Configuración de correos de mantenimiento' },
+      },
+      {
+        path: 'email-book-config',
+        loadChildren: async () =>
+          (await import('./email-book-config/email-book-config.module'))
+            .EmailBookConfigModule,
+        data: { title: 'Configuración de libreta de correos' },
+      },
+      {
+        path: 'surveillance-contracts',
+        loadChildren: async () =>
+          (
+            await import(
+              './surveillance-contracts/surveillance-contracts.module'
+            )
+          ).SurveillanceContractsModule,
+        data: { title: 'Contratos de Vigilancia' },
+      },
+      {
+        path: 'surveillance-zones',
+        loadChildren: async () =>
+          (await import('./surveillance-zones/surveillance-zones.module'))
+            .SurveillanceZonesModule,
+        data: { title: 'Zonas de Vigilancia' },
+      },
     ],
   },
 ];

@@ -5,18 +5,34 @@
 
   <div body>
     <form [formGroup]="assetsForm" (submit)="save()" class="form-material">
+      <div class="row pb-0 mb-0">
+        <div class="col-md-12 d-flex">
+          <label class="mr-5">Destino: </label>
+          <form-radio
+            class="mt-2"
+            *ngFor="let _target of targets"
+            [label]="_target.label">
+            <input
+              type="radio"
+              [formControl]="target"
+              [value]="_target.value"
+              (change)="targetChange()" />
+          </form-radio>
+        </div>
+      </div>
+      <hr />
       <div class="row">
         <div class="col-md-7">
           <div class="row">
             <div class="col-md-7">
               <div>
                 <form-radio
-                  *ngFor="let action of actionsTypes"
-                  [label]="action.value">
+                  *ngFor="let action of actions"
+                  [label]="action.title">
                   <input
                     type="radio"
                     formControlName="actionType"
-                    [value]="action.title" />
+                    [value]="action.value" />
                 </form-radio>
               </div>
             </div>
@@ -73,7 +89,8 @@
                 name="file"
                 #file
                 class="d-none"
-                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                (change)="onFileChange($event)" />
             </div>
           </div>
           <div class="row pt-4">
@@ -94,7 +111,7 @@
 
     <div class="row">
       <div class="col-md-12">
-        <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings">
+        <ng2-smart-table [source]="tableSource" [settings]="settings">
         </ng2-smart-table>
       </div>
     </div>

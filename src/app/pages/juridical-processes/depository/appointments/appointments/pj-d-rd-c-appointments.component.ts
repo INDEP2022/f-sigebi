@@ -3,12 +3,16 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 /** LIBRERÍAS EXTERNAS IMPORTS */
+import { Example } from 'src/app/core/models/catalogs/example';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 
 /** SERVICE IMPORTS */
+import { ExampleService } from 'src/app/core/services/catalogs/example.service';
 
 /** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-pj-d-rd-c-appointments',
@@ -19,10 +23,11 @@ export class PJDRDAppointmentsComponent
   extends BasePage
   implements OnInit, OnDestroy
 {
+  items = new DefaultSelect<Example>();
   public form: FormGroup;
   public checked = false;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private exampleService: ExampleService) {
     super();
   }
 
@@ -141,5 +146,11 @@ export class PJDRDAppointmentsComponent
 
   btnConsultarImagenesEscaneadas() {
     console.log('Consultar Imágenes Escaneadas');
+  }
+
+  getFromSelect(params: ListParams) {
+    this.exampleService.getAll(params).subscribe(data => {
+      this.items = new DefaultSelect(data.data, data.count);
+    });
   }
 }

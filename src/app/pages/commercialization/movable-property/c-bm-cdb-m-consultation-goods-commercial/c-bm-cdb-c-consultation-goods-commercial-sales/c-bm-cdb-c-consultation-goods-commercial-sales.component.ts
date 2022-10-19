@@ -4,7 +4,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 
 import { CONSUL_GOODS_COMMER_SALES_COLUMNS } from './consul-goods-commer-sales-columns';
 
-import { ExcelService } from 'src/app/common/services/exporttoexcel.service';
+import { ExcelService } from 'src/app/common/services/excel.service';
 
 @Component({
   selector: 'app-c-bm-cdb-c-consultation-goods-commercial-sales',

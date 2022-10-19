@@ -70,6 +70,30 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Baja de bienes en Pólizas',
             link: '/pages/administrative-processes/loss-of-policy',
           },
+          {
+            label: 'Mantenimiento',
+            link: '/pages/administrative-processes/maintenance',
+          },
+          {
+            label: 'Bitacora de Vigilancia',
+            link: '/pages/administrative-processes/surveillance-log',
+          },
+          {
+            label: 'Configuracion de correos de mantenimiento',
+            link: '/pages/administrative-processes/maintenance-mail-configuration',
+          },
+          {
+            label: 'Configuración de libreta de correos',
+            link: '/pages/administrative-processes/email-book-config',
+          },
+          {
+            label: 'Cotratos de Vigilancia',
+            link: '/pages/administrative-processes/surveillance-contracts',
+          },
+          {
+            label: 'Zonas de Vigilancia',
+            link: '/pages/administrative-processes/surveillance-zones',
+          },
         ],
       },
       /**
@@ -247,12 +271,12 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Registro de Pago de Servicios',
             link: '/pages/administrative-processes/services/record-service-payments',
-          }
+          },
         ],
       },
       /**
        * END LEGASPI
        **/
     ],
-  }
+  },
 ];
