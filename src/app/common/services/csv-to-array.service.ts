@@ -32,9 +32,6 @@ export class CsvToArrayService {
           } catch (error) {
             reject([]);
           }
-          // const data = this.csvToArray(text);
-          // this.massiveTestData = data;
-          // this.totalItems = data.length;
         };
         reader.onerror = () => {
           reject([]);

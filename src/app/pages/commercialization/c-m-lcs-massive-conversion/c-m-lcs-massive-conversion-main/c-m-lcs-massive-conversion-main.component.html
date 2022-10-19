@@ -1,0 +1,336 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">conversión masiva de LC's</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <form class="form-material mb-0" [formGroup]="consultForm">
+        <div class="rounded-3 bg-gray-card px-3 py-3">
+          <div class="row">
+            <div class="col-sm-12 col-md-6 d-flex align-content-center">
+              <div
+                class="d-flex flex-row justify-content-center align-items-center">
+                <div class="me-2">
+                  <h6 class="d-lg-inline">N° Operación:</h6>
+                  <p class="text-muted d-lg-inline mx-5 font-size-18">
+                    {{ operationId }}
+                  </p>
+                </div>
+                <div class="me-2">
+                  <h6 class="d-lg-inline">Registros:</h6>
+                  <p class="text-muted d-lg-inline mx-5 font-size-18">
+                    {{ totalEntries }}
+                  </p>
+                </div>
+                <div class="me-2">
+                  <h6 class="d-lg-inline">LCs Generadas:</h6>
+                  <p class="text-muted d-lg-inline mx-5 font-size-18">
+                    {{ generatedLcs }}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-6">
+              <div
+                class="row row-cols-sm-2 row-cols-md-2 row-cols-lg-auto g-2 align-items-center">
+                <div class="col-12">
+                  <button
+                    class="btn btn-sm btn-primary btn-block active me-2 font-size-14"
+                    (click)="generateLcs()">
+                    <i class="bx bx-send text-light float-icon"></i>
+                    Generar LCs
+                  </button>
+                </div>
+                <div class="col-12">
+                  <button
+                    class="btn btn-sm btn-secondary btn-block active me-2 font-size-14 dropdown-toggle"
+                    data-toggle="dropdown"
+                    (click)="loadChecks()">
+                    <i class="bx bx-upload text-light float-icon"></i>
+                    Cargar Cheques
+                  </button>
+                </div>
+                <div class="col-12">
+                  <div class="btn-group d-block" dropdown>
+                    <button
+                      dropdownToggle
+                      id="loadBtn"
+                      type="button"
+                      class="btn btn-sm btn-info btn-block active me-2 font-size-14 dropdown-toggle"
+                      aria-controls="dropdown-animated">
+                      <i class="bx bx-file text-light float-icon"></i>
+                      Cargar Archivo <span class="caret"></span>
+                    </button>
+                    <ul
+                      id="dropdown-animated"
+                      *dropdownMenu
+                      class="dropdown-menu"
+                      role="menu"
+                      aria-labelledby="loadBtn">
+                      <li role="menuitem">
+                        <a
+                          class="dropdown-item bg-info text-light"
+                          (click)="loadRFC()"
+                          >RFC</a
+                        >
+                      </li>
+                      <li role="menuitem">
+                        <a
+                          class="dropdown-item bg-info text-light"
+                          (click)="loadClientId()"
+                          >Id Cliente</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <button
+                    class="btn btn-sm btn-success btn-block active me-2 font-size-14"
+                    (click)="consult()">
+                    <i class="bx bx-search text-light float-icon"></i>
+                    Consultar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-5 mb-0 d-block">
+          <div class="row d-flex justify-content-center align-content-center">
+            <div class="col-sm-6 col-md-6 mh-80">
+              <i
+                class="bx bx-list-ul text-success me-2 d-inline float-icon"></i>
+              <h5 class="font-size-14 mb-2 d-inline">Evento</h5>
+              <ngx-select
+                [form]="consultForm"
+                [data]="eventItems"
+                value="id"
+                bindLabel="id"
+                (fetchItems)="getEvents($event)"
+                (change)="selectEvent($event)"
+                control="id">
+              </ngx-select>
+            </div>
+            <div
+              class="col-sm-6 col-md-3"
+              *ngIf="selectedEvent != null"
+              @OnEventSelected>
+              <i
+                class="bx bx-font-family text-success me-2 d-inline float-icon"></i>
+              <h5 class="font-size-14 mb-2 d-inline">Cve. Proceso</h5>
+              <p class="text-muted">{{ selectedEvent.cve }}</p>
+            </div>
+            <div
+              class="col-sm-6 col-md-3"
+              *ngIf="selectedEvent != null"
+              @OnEventSelected>
+              <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+              <h5 class="font-size-14 mb-2 d-inline">Fecha Evento</h5>
+              <p class="text-muted">
+                {{ selectedEvent.date }}
+              </p>
+            </div>
+            <div
+              class="col-sm-12 col-md-6"
+              *ngIf="selectedEvent != null"
+              @OnEventSelected>
+              <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+              <h5 class="font-size-14 mb-2 d-inline">Lugar</h5>
+              <p class="text-muted">
+                {{ selectedEvent.place }}
+              </p>
+            </div>
+            <div
+              class="col-sm-6 col-md-3"
+              *ngIf="selectedEvent != null"
+              @OnEventSelected>
+              <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+              <h5 class="font-size-14 mb-2 d-inline">Fecha Fallo</h5>
+              <p class="text-muted">
+                {{ selectedEvent.rulingDate }}
+              </p>
+            </div>
+            <div
+              class="col-sm-6 col-md-3"
+              *ngIf="selectedEvent != null"
+              @OnEventSelected>
+              <i class="bx bx-detail text-success me-2 d-inline float-icon"></i>
+              <h5 class="font-size-14 mb-2 d-inline">Estatus</h5>
+              <p class="text-muted">
+                {{ selectedEvent.status }}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-5">
+          <div
+            class="ms-n2 mb-2 pointer"
+            (click)="toggleFilter = !toggleFilter"
+            [attr.aria-expanded]="!toggleFilter"
+            aria-controls="collapseFilter">
+            <i
+              class="bx bx-chevron-down bx-md float-icon-md"
+              [ngClass]="{
+                'rotate-down': toggleFilter,
+                'rotate-up': !toggleFilter
+              }"></i>
+            <h6 class="d-inline">Filtros</h6>
+          </div>
+          <hr class="mw-98" />
+          <div
+            class="row mt-5"
+            id="collapseFilter"
+            [isAnimated]="true"
+            [collapse]="!toggleFilter">
+            <div class="col-sm-4 col-md-2">
+              <form-field [control]="consultForm.get('batchId')">
+                <ngx-select
+                  [form]="consultForm"
+                  [data]="batchItems"
+                  value="id"
+                  bindLabel="id"
+                  label="Id Lote"
+                  (fetchItems)="getBatches($event)"
+                  control="batchId">
+                </ngx-select>
+              </form-field>
+            </div>
+            <div class="col-sm-4 col-md-2">
+              <form-field [control]="consultForm.get('status')" label="Estatus">
+                <ng-select
+                  formControlName="status"
+                  [searchable]="false"
+                  class="form-control"
+                  [clearable]="false">
+                  <ng-option value="0">LC SOLICITADA</ng-option>
+                  <ng-option value="1">LC GENERADA</ng-option>
+                </ng-select>
+              </form-field>
+            </div>
+            <div class="col-sm-4 col-md-2">
+              <form-field [control]="consultForm.get('operationId')">
+                <ngx-select
+                  [form]="consultForm"
+                  [data]="batchItems"
+                  value="id"
+                  bindLabel="id"
+                  label="Id Operación"
+                  (fetchItems)="getOperations($event)"
+                  control="operationId">
+                </ngx-select>
+              </form-field>
+            </div>
+            <div class="col-sm-4 col-md-2">
+              <form-field
+                [control]="consultForm.get('insertDate')"
+                label="Fecha Insert">
+                <input
+                  type="text"
+                  formControlName="insertDate"
+                  class="form-control"
+                  bsDatepicker />
+              </form-field>
+            </div>
+            <div class="col-sm-4 col-md-2">
+              <form-field
+                [control]="consultForm.get('validityDate')"
+                label="Fecha Fallo">
+                <input
+                  type="text"
+                  formControlName="validityDate"
+                  class="form-control"
+                  bsDatepicker />
+              </form-field>
+            </div>
+            <div class="col-sm-4 col-md-2">
+              <button
+                class="btn btn-sm btn-info active"
+                (click)="resetFilter()">
+                Resetear
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="row mt-5">
+      <div class="md-tabs mt-n3">
+        <tabset>
+          <tab heading="Datos" id="dataTab">
+            <div class="row">
+              <div class="form-material col-md-5">
+                <search-bar [params]="dataParams"></search-bar>
+              </div>
+            </div>
+            <div class="table-container">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  id="data-table"
+                  [attr.class]="'table-bordered'"
+                  [settings]="dataSettings"
+                  [source]="dataColumns">
+                </ng2-smart-table>
+              </div>
+            </div>
+            <app-pagination [params]="dataParams" [totalItems]="dataTotalItems">
+            </app-pagination>
+          </tab>
+          <tab heading="Líneas de Captura" id="lcsTab">
+            <div class="row">
+              <div class="col-sm-12 col-md-12 col-lg-6">
+                <div class="form-material">
+                  <search-bar [params]="lcsParams"></search-bar>
+                </div>
+              </div>
+              <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6">
+                <div class="d-flex flex-row-reverse my-3">
+                  <div>
+                    <button
+                      class="btn btn-sm btn-success active me-2 font-size-14"
+                      (click)="exportExcel()"
+                      [disabled]="!maintenance">
+                      <i class="fas fa-file-excel text-light me-1"></i>
+                      Exportar
+                    </button>
+                  </div>
+                  <div>
+                    <button
+                      class="btn btn-sm btn-primary active me-2 font-size-14"
+                      (click)="rework()"
+                      [disabled]="!maintenance">
+                      <i class="bx bx-history text-light float-icon"></i>
+                      Ingresar a reproceso
+                    </button>
+                  </div>
+                  <div>
+                    <button
+                      class="btn btn-sm btn-info active me-2 font-size-14"
+                      (click)="addRow()"
+                      [disabled]="!maintenance">
+                      <i class="bx bx-plus text-light float-icon"></i>
+                      Agregar Registro
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="table-container">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  id="lcs-table"
+                  [attr.class]="'table-bordered'"
+                  [settings]="lcsSettings"
+                  [source]="lcsColumns"
+                  (edit)="editRow()">
+                </ng2-smart-table>
+              </div>
+            </div>
+            <app-pagination [params]="lcsParams" [totalItems]="lcsTotalItems">
+            </app-pagination>
+          </tab>
+        </tabset>
+      </div>
+    </div>
+  </div>
+</app-card>
