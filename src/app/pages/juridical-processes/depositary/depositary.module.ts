@@ -9,12 +9,12 @@ import { SharedModule } from 'src/app/shared/shared.module';
 /** SERVICE IMPORTS */
 
 /** ROUTING MODULE */
-import { DepositoryRoutingModule } from './depository-routing.module';
+import { DepositaryRoutingModule } from './depositary-routing.module';
 
 /** COMPONENTS IMPORTS */
 
 @NgModule({
   declarations: [],
-  imports: [CommonModule, DepositoryRoutingModule, SharedModule],
+  imports: [CommonModule, DepositaryRoutingModule, SharedModule],
 })
-export class DepositoryModule {}
+export class DepositaryModule {}

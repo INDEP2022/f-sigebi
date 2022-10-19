@@ -46,6 +46,16 @@ const routes: Routes = [
         .PJDRBDGoodsDepositaryModule,
     data: { title: routesJuridicalProcesses[9].label },
   },
+  {
+    path: routesJuridicalProcesses[10].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './assignation-goods-protection/pj-d-ra-m-assignation-goods-protection.module'
+        )
+      ).PJDRAAssignationGoodsProtectionModule,
+    data: { title: routesJuridicalProcesses[10].label },
+  },
   // DEPOSITARIA
 
   // PROCESO DE DISPERCION DE PAGOS
@@ -65,4 +75,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class DepositoryRoutingModule {}
+export class DepositaryRoutingModule {}
