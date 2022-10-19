@@ -10,6 +10,8 @@ import { HttpErrorsInterceptor } from './common/interceptors/http-errors.interce
 import { JwtInterceptor, JwtModule } from '@auth0/angular-jwt';
 import { StoreModule } from '@ngrx/store';
 import { counterReducer } from './pages/admin/reducer/home.reducer';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from 'src/environments/environment.prod';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -28,6 +30,10 @@ export function tokenGetter() {
     }),
     StoreModule.forRoot({
       count: counterReducer,
+    }),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25,
+      logOnly: environment.production,
     }),
     AppRoutingModule,
     HttpClientModule,

@@ -1,6 +1,8 @@
+import { AppState } from './../../../app.reducers';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Store } from '@ngrx/store';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ExcelService } from 'src/app/common/services/excel.service';
@@ -16,12 +18,14 @@ interface IExcelToJson {
   column2: number;
   column3: string;
 }
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styles: [],
 })
 export class HomeComponent extends BasePage implements OnInit {
+  counter: number = 0;
   data: IExcelToJson[] = [];
   formExample: FormGroup;
   jsonToCsv = JSON_TO_CSV;
@@ -32,7 +36,8 @@ export class HomeComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private fb: FormBuilder,
     private sanitizer: DomSanitizer,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private store: Store<AppState>
   ) {
     super();
     this.settings = {
@@ -44,6 +49,14 @@ export class HomeComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.store.select('count').subscribe({
+      next: data => {
+        this.counter = data;
+      },
+      error: err => {
+        console.error(err);
+      },
+    });
   }
   private prepareForm() {
     this.formExample = this.fb.group({

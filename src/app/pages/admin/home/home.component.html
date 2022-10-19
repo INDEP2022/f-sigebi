@@ -47,7 +47,7 @@
         <input type="radio" formControlName="radio" value="dog2" />
       </form-radio>
     </form>
-    <input type="file" (change)="chargeFile($event.target)"/>
+    <input type="file" (change)="chargeFile($event.target)" />
     <br />
     <button class="btn btn-secondary btn-sm active" (click)="openPrevImg()">
       Prev. imagen
@@ -56,6 +56,14 @@
       Prev. pdf
     </button>
 
+    <hr />
+    <div class="text-center">
+      <h1>Contador ejemplo basico ngrx</h1>
+      <h2>{{ counter }}</h2>
+      <div class="container">
+        <app-child></app-child>
+      </div>
+    </div>
     <hr />
 
     <div class="row">
