@@ -4,6 +4,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { CsvService } from 'src/app/common/services/csv.service';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
 
@@ -41,7 +42,7 @@ export class PaMcsCMassiveChangeStatusComponent
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private services_csv_to_array: CsvService
+    private excelService: ExcelService
   ) {
     super();
     this.settings.columns = COLUMNS;
@@ -64,18 +65,6 @@ export class PaMcsCMassiveChangeStatusComponent
       observation: [null, [Validators.required]],
       csv: [null, [Validators.required]],
     });
-  }
-
-  async getFile(e: Event) {
-    this.loading = true;
-    let data = await this.services_csv_to_array.getData(e);
-    if (data.length > 0) {
-      this.totalItems = data.length;
-      this.loading = false;
-      this.alert('success', 'Cargado con éxito', '');
-    } else {
-      this.alert('error', 'Ooop..', '');
-    }
   }
 
   loandData() {
@@ -101,6 +90,22 @@ export class PaMcsCMassiveChangeStatusComponent
     ];
   }
 
+  onFileChange(event: Event) {
+    const files = (event.target as HTMLInputElement).files;
+    if (files.length != 1) throw 'No files selected, or more than of allowed';
+    const fileReader = new FileReader();
+    fileReader.readAsBinaryString(files[0]);
+    fileReader.onload = () => this.readExcel(fileReader.result);
+  }
+  readExcel(binaryExcel: string | ArrayBuffer) {
+    try {
+      this.data = this.excelService.getData(binaryExcel);
+      console.log(this.data);
+      this.onLoadToast('success', 'Archivo subido con Exito', 'Exitoso');
+    } catch (error) {
+      this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
+    }
+  }
   loadDescription() {
     console.log(this.status.value);
   }

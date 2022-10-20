@@ -47,7 +47,7 @@
         <input type="radio" formControlName="radio" value="dog2" />
       </form-radio>
     </form>
-
+    <input type="file" (change)="chargeFile($event.target)" />
     <br />
     <button class="btn btn-secondary btn-sm active" (click)="openPrevImg()">
       Prev. imagen
@@ -56,17 +56,76 @@
       Prev. pdf
     </button>
 
+    <hr />
+    <div class="text-center">
+      <h1>Contador ejemplo basico ngrx</h1>
+      <h2>{{ counter }}</h2>
+      <div class="container">
+        <app-child></app-child>
+      </div>
+    </div>
+    <hr />
+
     <div class="row">
-      <div class="col-md-12">
-        <h5>Array a CSV / XLSX</h5>
+      <div class="col-md-12 d-flex">
+        <div>
+          <h5>Array a CSV / XLSX</h5>
+        </div>
+        <div>
+          <button class="btn btn-success btn-sm mx-2" (click)="exportXlsx()">
+            Exportar XLSX
+          </button>
+        </div>
+        <div>
+          <button class="btn btn-success btn-sm mx-2" (click)="exportCsv()">
+            Exportar CSV
+          </button>
+        </div>
       </div>
     </div>
 
     <div class="row">
-      <div class="col-md-5"></div>
+      <div class="col-md-12" style="height: 250px; overflow-y: auto">
+        <pre>{{ jsonToCsv | json }}</pre>
+      </div>
+    </div>
+
+    <hr />
+    <div class="row">
+      <div class="col-md-12">
+        <h5>XLSX / CSV a JSON (Usar el archivo generado arriba)</h5>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <button
+          class="btn btn-success btn-sm ml-2"
+          type="button"
+          (click)="file.click()">
+          Abrir archivo Excel / CSV
+        </button>
+        <input
+          type="file"
+          name="file"
+          #file
+          class="d-none"
+          accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+          (change)="onFileChange($event)" />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="data"></ng2-smart-table>
+      </div>
     </div>
   </div>
+
   <div footer class="d-flex justify-content-around">
+    <hr />
     <div>
       <button class="btn btn-primary btn-sm active">Primary</button>
     </div>
