@@ -12,7 +12,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
 import { IEvent } from 'src/app/core/models/commercialization/event.model';
-import { eventsData } from './eventsData';
+import { eventsData } from './data';
 
 @Component({
   selector: 'app-events-shared',
@@ -22,11 +22,13 @@ import { eventsData } from './eventsData';
   styles: [],
 })
 export class EventsSharedComponent extends BasePage implements OnInit {
- @Input() form: FormGroup;
+
+  @Input() form: FormGroup;
   @Input() eventField: string = 'event';
   @Input() label: string ="Eventos";
   @Input() bindLabel: string ="keyProcess"
   @Input() showEvents: boolean = true;
+  
   params = new BehaviorSubject<ListParams>(new ListParams());
   events = new DefaultSelect<IEvent>();
 

@@ -12,7 +12,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
 import { IGoodClassification } from 'src/app/core/models/catalogs/good-classification.model';
-import { goodsClassData } from './goodsClassData';
+import { goodsClassData } from './data';
 
 @Component({
   selector: 'app-goods-classification-shared',

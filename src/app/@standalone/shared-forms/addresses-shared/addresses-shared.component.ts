@@ -11,27 +11,25 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //import { MeasurementUnitsService } from 'src/app/core/services/catalogs/measurement-units.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
-import { IPackage } from 'src/app/core/models/catalogs/package.model';
-import { packagesData } from './data';
+import { IAddress } from 'src/app/core/models/administrative-processes/siab-sami-interaction/address.model';
+import { addressesData } from './data';
 
 @Component({
-  selector: 'app-packages-shared',
+  selector: 'app-addresses-shared',
   standalone: true,
   imports: [CommonModule, SharedModule],
-  templateUrl: './packages-shared.component.html',
-  styles: [],
+  templateUrl: './addresses-shared.component.html',
+  styles: [
+  ]
 })
-export class PackagesSharedComponent extends BasePage implements OnInit {
+export class AddressesSharedComponent extends BasePage implements OnInit {
+  
   @Input() form: FormGroup;
-  @Input() packageField: string = 'package';
+  @Input() addressField: string = 'address';
 
-  @Input() showPackages: boolean = true;
+  @Input() showAddresses: boolean = true;
 
-  packages = new DefaultSelect<IPackage>();
-
-  get measurementUnit() {
-    return this.form.get(this.packageField);
-  }
+  addresses = new DefaultSelect<IAddress>();
 
   constructor(/*private service: WarehouseService*/) {
     super();
@@ -39,11 +37,11 @@ export class PackagesSharedComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {}
 
-  getPackages(params: ListParams) {
+  getAddresses(params: ListParams) {
     //Provisional data
-    let data = packagesData;
+    let data = addressesData;
     let count = data.length;
-    this.packages = new DefaultSelect(data, count);
+    this.addresses = new DefaultSelect(data, count);
     /*this.service.getAll(params).subscribe(data => {
         this.status = new DefaultSelect(data.data,data.count);
       },err => {
@@ -59,8 +57,7 @@ export class PackagesSharedComponent extends BasePage implements OnInit {
     );*/
   }
 
-  onPackagesChange(type: any) {
-    //this.resetFields([this.subdelegation]);
+  onAddressesChange(type: any) {
     this.form.updateValueAndValidity();
   }
 

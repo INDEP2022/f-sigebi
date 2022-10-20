@@ -11,27 +11,25 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //import { MeasurementUnitsService } from 'src/app/core/services/catalogs/measurement-units.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
-import { IPackage } from 'src/app/core/models/catalogs/package.model';
-import { packagesData } from './data';
+import { IUser } from 'src/app/core/models/administrative-processes/siab-sami-interaction/user.model';
+import { usersData } from './data';
 
 @Component({
-  selector: 'app-packages-shared',
+  selector: 'app-user-shared',
   standalone: true,
   imports: [CommonModule, SharedModule],
-  templateUrl: './packages-shared.component.html',
-  styles: [],
+  templateUrl: './user-shared.component.html',
+  styles: [
+  ]
 })
-export class PackagesSharedComponent extends BasePage implements OnInit {
+export class UsersSharedComponent extends BasePage implements OnInit {
+  
   @Input() form: FormGroup;
-  @Input() packageField: string = 'package';
+  @Input() userField: string = 'user';
+  @Input() label: string ="Usuarios";
+  @Input() showUsers: boolean = true;
 
-  @Input() showPackages: boolean = true;
-
-  packages = new DefaultSelect<IPackage>();
-
-  get measurementUnit() {
-    return this.form.get(this.packageField);
-  }
+  users = new DefaultSelect<IUser>();
 
   constructor(/*private service: WarehouseService*/) {
     super();
@@ -39,11 +37,11 @@ export class PackagesSharedComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {}
 
-  getPackages(params: ListParams) {
+  getUsers(params: ListParams) {
     //Provisional data
-    let data = packagesData;
+    let data = usersData;
     let count = data.length;
-    this.packages = new DefaultSelect(data, count);
+    this.users = new DefaultSelect(data, count);
     /*this.service.getAll(params).subscribe(data => {
         this.status = new DefaultSelect(data.data,data.count);
       },err => {
@@ -59,8 +57,7 @@ export class PackagesSharedComponent extends BasePage implements OnInit {
     );*/
   }
 
-  onPackagesChange(type: any) {
-    //this.resetFields([this.subdelegation]);
+  onUsersChange(type: any) {
     this.form.updateValueAndValidity();
   }
 

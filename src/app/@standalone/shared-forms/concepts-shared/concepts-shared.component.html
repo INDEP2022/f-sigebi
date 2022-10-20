@@ -1,0 +1,18 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showConcepts">
+    <div class="col-md-12">
+      <form-field [control]="form.get(conceptField)">
+        <ngx-select
+          (fetchItems)="getConcepts($event)"
+          [data]="concepts"
+          [form]="form"
+          value="conceptKey"
+          bindLabel="description"
+          label="Conceptos"
+          [control]="conceptField"
+          (change)="onConceptsChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

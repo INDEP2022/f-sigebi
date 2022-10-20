@@ -11,27 +11,25 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //import { MeasurementUnitsService } from 'src/app/core/services/catalogs/measurement-units.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
-import { IPackage } from 'src/app/core/models/catalogs/package.model';
-import { packagesData } from './data';
+import { IConcept } from 'src/app/core/models/administrative-processes/siab-sami-interaction/concept.model';
+import { conceptsData } from './data';
 
 @Component({
-  selector: 'app-packages-shared',
+  selector: 'app-concepts-shared',
   standalone: true,
   imports: [CommonModule, SharedModule],
-  templateUrl: './packages-shared.component.html',
-  styles: [],
+  templateUrl: './concepts-shared.component.html',
+  styles: [
+  ]
 })
-export class PackagesSharedComponent extends BasePage implements OnInit {
+export class ConceptsSharedComponent extends BasePage implements OnInit {
+  
   @Input() form: FormGroup;
-  @Input() packageField: string = 'package';
+  @Input() conceptField: string = 'concept';
 
-  @Input() showPackages: boolean = true;
+  @Input() showConcepts: boolean = true;
 
-  packages = new DefaultSelect<IPackage>();
-
-  get measurementUnit() {
-    return this.form.get(this.packageField);
-  }
+  concepts = new DefaultSelect<IConcept>();
 
   constructor(/*private service: WarehouseService*/) {
     super();
@@ -39,11 +37,11 @@ export class PackagesSharedComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {}
 
-  getPackages(params: ListParams) {
+  getConcepts(params: ListParams) {
     //Provisional data
-    let data = packagesData;
+    let data = conceptsData;
     let count = data.length;
-    this.packages = new DefaultSelect(data, count);
+    this.concepts = new DefaultSelect(data, count);
     /*this.service.getAll(params).subscribe(data => {
         this.status = new DefaultSelect(data.data,data.count);
       },err => {
@@ -59,8 +57,7 @@ export class PackagesSharedComponent extends BasePage implements OnInit {
     );*/
   }
 
-  onPackagesChange(type: any) {
-    //this.resetFields([this.subdelegation]);
+  onConceptsChange(type: any) {
     this.form.updateValueAndValidity();
   }
 

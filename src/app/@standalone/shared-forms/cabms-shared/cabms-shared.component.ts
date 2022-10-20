@@ -11,27 +11,27 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //import { MeasurementUnitsService } from 'src/app/core/services/catalogs/measurement-units.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
-import { IPackage } from 'src/app/core/models/catalogs/package.model';
-import { packagesData } from './data';
+import { ICabms } from 'src/app/core/models/administrative-processes/siab-sami-interaction/cabms.model';
+import { cabmsData } from './data';
 
 @Component({
-  selector: 'app-packages-shared',
+  selector: 'app-cabms-shared',
   standalone: true,
   imports: [CommonModule, SharedModule],
-  templateUrl: './packages-shared.component.html',
-  styles: [],
+  templateUrl: './cabms-shared.component.html',
+  styles: [
+  ]
 })
-export class PackagesSharedComponent extends BasePage implements OnInit {
+export class CabmsSharedComponent extends BasePage implements OnInit {
+  
   @Input() form: FormGroup;
-  @Input() packageField: string = 'package';
+  @Input() cabmsField: string = 'cabms';
 
-  @Input() showPackages: boolean = true;
+  @Input() showCabms: boolean = true;
+  //If Form PatchValue
+  @Input() patchValue: boolean= false;
 
-  packages = new DefaultSelect<IPackage>();
-
-  get measurementUnit() {
-    return this.form.get(this.packageField);
-  }
+  items = new DefaultSelect<ICabms>();
 
   constructor(/*private service: WarehouseService*/) {
     super();
@@ -39,11 +39,11 @@ export class PackagesSharedComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {}
 
-  getPackages(params: ListParams) {
+  getCabms(params: ListParams) {
     //Provisional data
-    let data = packagesData;
+    let data = cabmsData;
     let count = data.length;
-    this.packages = new DefaultSelect(data, count);
+    this.items = new DefaultSelect(data, count);
     /*this.service.getAll(params).subscribe(data => {
         this.status = new DefaultSelect(data.data,data.count);
       },err => {
@@ -59,8 +59,18 @@ export class PackagesSharedComponent extends BasePage implements OnInit {
     );*/
   }
 
-  onPackagesChange(type: any) {
-    //this.resetFields([this.subdelegation]);
+  onCabmsChange(type: any) {
+    if(this.patchValue){
+      this.form.patchValue({
+        cabmsId: type.cabmsId,
+        category: type.category,
+        itemDescription: type.itemDescription,
+        partId: type.partId,
+        opcode: type.opcode,
+        opDescription: type.opDescription,
+      });
+    }
+
     this.form.updateValueAndValidity();
   }
 
@@ -72,3 +82,4 @@ export class PackagesSharedComponent extends BasePage implements OnInit {
     this.form.updateValueAndValidity();
   }
 }
+

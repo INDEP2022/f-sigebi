@@ -1,0 +1,18 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showAreas">
+    <div class="col-md-12">
+      <form-field [control]="form.get(requestAreaField)">
+        <ngx-select
+          (fetchItems)="getAreas($event)"
+          [data]="areas"
+          [form]="form"
+          value="areaKey"
+          bindLabel="description"
+          label="Áreas"
+          [control]="requestAreaField"
+          (change)="onAreasChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>
