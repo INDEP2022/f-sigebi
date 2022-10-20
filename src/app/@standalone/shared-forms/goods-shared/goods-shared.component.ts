@@ -8,45 +8,49 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //Services
-//import { MeasurementUnitsService } from 'src/app/core/services/catalogs/measurement-units.service';
+/**import SERVICE**/
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
-import { IPackage } from 'src/app/core/models/catalogs/package.model';
-import { packagesData } from './data';
+import { IGood } from 'src/app/core/models/catalogs/goods.model';
+import { goodsData } from './data';
 
 @Component({
-  selector: 'app-packages-shared',
+  selector: 'app-goods-shared',
   standalone: true,
   imports: [CommonModule, SharedModule],
-  templateUrl: './packages-shared.component.html',
-  styles: [],
+  templateUrl: './goods-shared.component.html',
+  styles: [
+  ]
 })
-export class PackagesSharedComponent extends BasePage implements OnInit {
+export class GoodsSharedComponent extends BasePage implements OnInit {
+
   @Input() form: FormGroup;
-  @Input() packageField: string = 'package';
+  @Input() goodField: string = 'goodId';
 
-  @Input() showPackages: boolean = true;
+  @Input() showGoods: boolean = true;
+  //If Form PatchValue
+  @Input() patchValue: boolean= false;
 
-  packages = new DefaultSelect<IPackage>();
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  goods = new DefaultSelect<IGood>();
 
-  get measurementUnit() {
-    return this.form.get(this.packageField);
-  }
-
-  constructor(/*private service: WarehouseService*/) {
+  constructor() {
     super();
   }
 
   ngOnInit(): void {}
 
-  getPackages(params: ListParams) {
+  getGoods(params: ListParams) {
     //Provisional data
-    let data = packagesData;
+    let data = goodsData;
     let count = data.length;
-    this.packages = new DefaultSelect(data, count);
-    /*this.service.getAll(params).subscribe(data => {
-        this.status = new DefaultSelect(data.data,data.count);
-      },err => {
+    this.goods = new DefaultSelect(data, count);
+
+    /*this.service.getAll(params).subscribe(
+      data => {
+        this.goods = new DefaultSelect(data.data, data.count);
+      },
+      err => {
         let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
@@ -54,14 +58,22 @@ export class PackagesSharedComponent extends BasePage implements OnInit {
           error = err.message;
         }
         this.onLoadToast('error', 'Error', error);
-
-      }, () => {}
+      },
+      () => {}
     );*/
   }
 
-  onPackagesChange(type: any) {
-    //this.resetFields([this.subdelegation]);
+  onGoodsChange(type: any) {
+    if(this.patchValue){
+      this.form.patchValue({
+        goodId: type.goodId,
+        goodDescription: type.goodDescription
+      });
+    }
+
     this.form.updateValueAndValidity();
+    //this.resetFields([this.subgood]);
+    //this.subgoods = new DefaultSelect();
   }
 
   resetFields(fields: AbstractControl[]) {

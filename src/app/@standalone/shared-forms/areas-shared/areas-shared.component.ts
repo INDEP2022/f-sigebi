@@ -11,27 +11,25 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //import { MeasurementUnitsService } from 'src/app/core/services/catalogs/measurement-units.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
-import { IPackage } from 'src/app/core/models/catalogs/package.model';
-import { packagesData } from './data';
+import { IArea } from 'src/app/core/models/administrative-processes/siab-sami-interaction/area.model';
+import { areasData } from './data';
 
 @Component({
-  selector: 'app-packages-shared',
+  selector: 'app-areas-shared',
   standalone: true,
   imports: [CommonModule, SharedModule],
-  templateUrl: './packages-shared.component.html',
-  styles: [],
+  templateUrl: './areas-shared.component.html',
+  styles: [
+  ]
 })
-export class PackagesSharedComponent extends BasePage implements OnInit {
+export class AreasSharedComponent extends BasePage implements OnInit {
+  
   @Input() form: FormGroup;
-  @Input() packageField: string = 'package';
+  @Input() requestAreaField: string = 'requestArea';
 
-  @Input() showPackages: boolean = true;
+  @Input() showAreas: boolean = true;
 
-  packages = new DefaultSelect<IPackage>();
-
-  get measurementUnit() {
-    return this.form.get(this.packageField);
-  }
+  areas = new DefaultSelect<IArea>();
 
   constructor(/*private service: WarehouseService*/) {
     super();
@@ -39,11 +37,11 @@ export class PackagesSharedComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {}
 
-  getPackages(params: ListParams) {
+  getAreas(params: ListParams) {
     //Provisional data
-    let data = packagesData;
+    let data = areasData;
     let count = data.length;
-    this.packages = new DefaultSelect(data, count);
+    this.areas = new DefaultSelect(data, count);
     /*this.service.getAll(params).subscribe(data => {
         this.status = new DefaultSelect(data.data,data.count);
       },err => {
@@ -59,8 +57,7 @@ export class PackagesSharedComponent extends BasePage implements OnInit {
     );*/
   }
 
-  onPackagesChange(type: any) {
-    //this.resetFields([this.subdelegation]);
+  onAreasChange(type: any) {
     this.form.updateValueAndValidity();
   }
 

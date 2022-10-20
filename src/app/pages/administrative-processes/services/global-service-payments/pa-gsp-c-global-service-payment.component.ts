@@ -7,7 +7,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { COLUMNS } from './columns';
 //Provisional Data
-import { data } from './bienStatusData';
+import { data } from './data';
 //Components
 import { PaGspCGoodsServicePaymentComponent } from '../goods-service-payments/pa-gsp-c-goods-service-payment.component';
 
@@ -48,10 +48,6 @@ export class PaGspCGlobalServicePaymentComponent
   ngOnInit(): void {
     this.prepareForm();
     this.getGlobal();
-    /*this.form.get("pb_type").valueChanges.subscribe(x => {
-      console.log(x)
-       this.filter(x);
-    });*/
   }
 
   getGlobal(): void {

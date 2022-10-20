@@ -1,0 +1,18 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showUsers">
+    <div class="col-md-12">
+      <form-field [control]="form.get(userField)">
+        <ngx-select
+          (fetchItems)="getUsers($event)"
+          [data]="users"
+          [form]="form"
+          value="userId"
+          bindLabel="name"
+          [label]="label"
+          [control]="userField"
+          (change)="onUsersChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

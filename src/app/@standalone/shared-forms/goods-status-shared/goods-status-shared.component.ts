@@ -12,7 +12,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
 import { IGoodStatus } from 'src/app/core/models/catalogs/good-status.model';
-import { goodsStatuData } from './goodStatusdData';
+import { goodsStatuData } from './data';
 
 @Component({
   selector: 'app-goods-status-shared',

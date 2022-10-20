@@ -240,7 +240,7 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         subItems: [
           {
             label: 'Relación de Bienes',
-            link: '/pages/administrative-processes/siab-sami-interaction/',
+            link: '/pages/administrative-processes/siab-sami-interaction/goods-relationship',
           },
           {
             label: 'Pago de Bienes',
@@ -249,6 +249,13 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Avalúo de Bienes',
             link: '/pages/administrative-processes/siab-sami-interaction/value-goods',
+          },
+          /*label: 'Resarcimientos/Devoluciones',
+            icon: 'bx-folder',
+            subItems: [],*/
+          {
+            label: 'Solicitud de Pago',
+            link: '/pages/administrative-processes/siab-sami-interaction/refunds/payment-request',
           },
         ],
       },

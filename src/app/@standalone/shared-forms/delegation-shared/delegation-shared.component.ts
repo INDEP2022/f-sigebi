@@ -23,6 +23,7 @@ import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model
   styles: [],
 })
 export class DelegationSharedComponent extends BasePage implements OnInit {
+  
   @Input() form: FormGroup;
   @Input() delegationField: string = 'delegation';
   @Input() subdelegationField: string = 'subdelegation';
