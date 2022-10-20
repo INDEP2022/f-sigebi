@@ -101,6 +101,13 @@ const routes: Routes = [
         data: { title: 'Reclasificación masiva de bienes' },
       },
       {
+        path: 'change-of-status',
+        loadChildren: async () =>
+          (await import('./change-of-status/pa-m-change-of-status.module'))
+            .PaMChangeOfStatusModule,
+        data: { title: 'Cambio de estatus' },
+      },
+      {
         path: 'massive-change-status',
         loadChildren: async () =>
           (
@@ -349,22 +356,31 @@ const routes: Routes = [
       {
         path: 'accumulated-monthly-assets',
         loadChildren: async () =>
-          (await import('./accumulated-monthly-assets/accumulated-monthly-assets.module'))
-            .AccumulatedMonthlyAssetsModule,
+          (
+            await import(
+              './accumulated-monthly-assets/accumulated-monthly-assets.module'
+            )
+          ).AccumulatedMonthlyAssetsModule,
         data: { title: 'Acumulado de bienes mensual' },
       },
       {
         path: 'insured-numerary-account',
         loadChildren: async () =>
-          (await import('./insured-numerary-account/insured-numerary-account.module'))
-            .InsuredNumeraryAccountModule,
+          (
+            await import(
+              './insured-numerary-account/insured-numerary-account.module'
+            )
+          ).InsuredNumeraryAccountModule,
         data: { title: 'Cuenta de numerario asegurado' },
       },
       {
         path: 'performance-evaluation-report',
         loadChildren: async () =>
-          (await import('./performance-evaluation-report/performance-evaluation-report.module'))
-            .PerformanceEvaluationReportModule,
+          (
+            await import(
+              './performance-evaluation-report/performance-evaluation-report.module'
+            )
+          ).PerformanceEvaluationReportModule,
         data: { title: 'Reporte de evaluación de desempeño' },
       },
     ],
@@ -375,4 +391,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class AdministrativeProcessesRoutingModule { }
+export class AdministrativeProcessesRoutingModule {}

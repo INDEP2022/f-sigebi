@@ -6,15 +6,16 @@
   <div body>
     <form [formGroup]="form" class="form-material">
       <div class="row">
-        <div class="col-md-3 col-sm-12 col-xs-12">
+        <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field [control]="form.get('numberGood')" label="Numero de Bien">
             <input
               type="text"
               class="form-control"
-              formControlName="numberGood" />
+              formControlName="numberGood"
+              (change)="loandGood()" />
           </form-field>
         </div>
-        <div class="col-md-7 col-sm-12 col-xs-12">
+        <div class="col-md-8 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('descriptionGood')"
             label="Descripcion del bien">
@@ -23,18 +24,6 @@
               class="form-control"
               formControlName="descriptionGood" />
           </form-field>
-        </div>
-        <div class="col-md-2 col-sm-12 col-xs-12">
-          <div class="d-flex justify-content-center">
-            <div class="m-3">
-              <button
-                type="button"
-                class="btn btn-success btn-sm active"
-                (click)="openModalUser()">
-                seleccionar
-              </button>
-            </div>
-          </div>
         </div>
       </div>
       <div class="row mt-5">
@@ -130,7 +119,7 @@
         </div>
       </div>
       <div class="row mt-5">
-        <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
             [control]="formNew.get('userRequesting')"
             label="Solicita">
@@ -140,7 +129,7 @@
               formControlName="userRequesting" />
           </form-field>
         </div>
-        <div class="col-md-8 col-sm-12 col-xs-12">
+        <div class="col-md-7 col-sm-12 col-xs-12">
           <form-field
             [control]="formNew.get('userName')"
             label="Nombre usuario">
@@ -149,6 +138,18 @@
               class="form-control"
               formControlName="userName" />
           </form-field>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button
+                type="button"
+                class="btn btn-success btn-sm active"
+                (click)="openModalUser()">
+                seleccionar
+              </button>
+            </div>
+          </div>
         </div>
       </div>
       <div class="row mt-5">
@@ -167,7 +168,10 @@
     <div class="row">
       <div class="d-flex justify-content-center">
         <div class="m-3">
-          <button type="button" class="btn btn-success btn-sm active">
+          <button
+            type="button"
+            class="btn btn-success btn-sm active"
+            (click)="accept()">
             &nbsp; &nbsp; Aceptar &nbsp; &nbsp;
           </button>
         </div>

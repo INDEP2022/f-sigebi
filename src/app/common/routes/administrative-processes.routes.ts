@@ -143,6 +143,11 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         label: 'Cambio masivo de estatus',
         link: '/pages/administrative-processes/massive-change-status',
       },
+      {
+        label: 'Cambio de estatus',
+        link: '/pages/administrative-processes/change-of-status',
+      },
+
       /**
        * END ALEXANDER
        **/

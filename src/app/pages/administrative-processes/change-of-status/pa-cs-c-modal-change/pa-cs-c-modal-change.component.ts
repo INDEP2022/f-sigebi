@@ -27,7 +27,7 @@ export class PaCsCModalChangeComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.columns = this.opcion.initialState;
-    console.log(this.columns);
+    this.loadDate();
   }
 
   mostrar() {}
@@ -64,6 +64,11 @@ export class PaCsCModalChangeComponent extends BasePage implements OnInit {
         },
       ];
     }
+  }
+  select(event: any) {
+    console.log(event.data);
+    this.onLoadToast('success', 'Seleccionado', '');
+    this.return();
   }
   return() {
     this.bsModalRef.hide();

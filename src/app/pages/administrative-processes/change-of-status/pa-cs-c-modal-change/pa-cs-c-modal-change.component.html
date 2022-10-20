@@ -12,7 +12,8 @@
       <ng2-smart-table
         [attr.class]="'table-bordered'"
         [settings]="settings"
-        [source]="data">
+        [source]="data"
+        (userRowSelect)="select($event)">
       </ng2-smart-table>
       <app-pagination
         [params]="params"

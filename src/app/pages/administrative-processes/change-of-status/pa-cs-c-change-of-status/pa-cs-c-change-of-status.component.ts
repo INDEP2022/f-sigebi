@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { PaCsCModalChangeComponent } from '../pa-cs-c-modal-change/pa-cs-c-modal-change.component';
-import { COLUMNS_STATUS, COLUMNS_USER } from './columns';
+import { COLUMNS_STATUS, COLUMNS_USER, Data } from './columns';
 
 @Component({
   selector: 'app-pa-cs-c-change-of-status',
@@ -106,5 +106,27 @@ export class PaCsCChangeOfStatusComponent implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
+  }
+
+  loandGood() {
+    const good = this.numberGood.value;
+    const data = Data;
+    data.forEach(elemen => {
+      if (elemen.numberGood === good) {
+        this.setGood(elemen);
+      }
+    });
+  }
+
+  setGood(data: any) {
+    this.descriptionGood.setValue(data.description);
+    this.currentStatus.setValue(data.currentStatus);
+    this.currentStatus.setValue(data.currentStatus);
+    this.descriptionStatus.setValue(data.descriptionStatus);
+    this.processes.setValue(data.processes);
+  }
+
+  accept() {
+    console.log(this.formNew.value);
   }
 }
