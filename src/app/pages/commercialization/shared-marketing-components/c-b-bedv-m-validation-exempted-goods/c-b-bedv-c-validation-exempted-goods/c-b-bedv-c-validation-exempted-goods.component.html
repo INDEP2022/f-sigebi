@@ -1,7 +1,7 @@
 <app-card [header]="true" [footer]="true">
   <div header>
     <div class="ch-content">
-      <h5 class="title">Composición de pagos recibidos</h5>
+      <h5 class="title">Bienes exentos de verificación</h5>
       <!-- <app-columns-select [(settings)]="settingsCompos"></app-columns-select> -->
     </div>
   </div>
@@ -10,7 +10,8 @@
     <ng2-smart-table
       class="my-table"
       [settings]="settings"
-      [source]="list"></ng2-smart-table>
+      [source]="data"
+      (edit)="openForm($event.data)"></ng2-smart-table>
   </div>
 
   <div footer>

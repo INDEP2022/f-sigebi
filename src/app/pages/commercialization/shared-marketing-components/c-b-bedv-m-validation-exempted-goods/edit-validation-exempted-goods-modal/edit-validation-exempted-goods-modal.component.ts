@@ -1,44 +1,37 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { BasePage } from 'src/app/core/shared/base-page';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core'; 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
-  selector: 'app-add-edit-lote-modal',
-  templateUrl: './add-edit-lote-modal.component.html',
+  selector: 'app-edit-validation-exempted-goods-modal',
+  templateUrl: './edit-validation-exempted-goods-modal.component.html',
   styles: [
   ]
 })
-export class AddEditLoteModalComponent extends BasePage implements OnInit {
-  
-  form: FormGroup = new FormGroup ({});
-  allotment: any;
-  title: string = 'Lote';
-  edit: boolean = false;
+export class EditValidationExemptedGoodsModalComponent extends BasePage implements OnInit {
 
+  form : FormGroup = new FormGroup({});
+  allotment: any;
+  title: string = 'Bienes Exentos de validación';
+  edit: boolean = false;
   @Output() refresh = new EventEmitter<true>();
 
-  get check(){
-    return this.form.get('check')
-  }
-
-  constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
+  constructor(private modalRef: BsModalRef, private fb : FormBuilder) {
     super();
   }
-
+  
+  
   ngOnInit(): void {
     this.prepareForm();
   }
 
   private prepareForm(){
     this.form = this.fb.group({
-      lote: [null, [Validators.required, Validators.maxLength(10),  Validators.minLength(1), Validators.pattern(NUMBERS_PATTERN)]],
-      descripcion: [null, [Validators.required]],
-      valorbase: [null, [Validators.required]],
-      idcliente: [null, ],
-      rfc: [null, ],
-      check: [false],
+      noBien: [{value:null, disabled:true}],
+      unit: [{value:null, disabled:true}],
+      proccess : [null, [Validators.required]],
+      description: [{value:null, disabled:true}],
     });
     if (this.allotment != null) {
       this.edit = true;
