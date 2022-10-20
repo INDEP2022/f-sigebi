@@ -1,0 +1,18 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showTaxpayers">
+    <div class="col-md-12">
+      <form-field [control]="form.get(taxpayerField)">
+        <ngx-select
+          (fetchItems)="getTaxpayers($event)"
+          [data]="taxpayers"
+          [form]="form"
+          value="taxpayerKey"
+          bindLabel="description"
+          label="Contribuyentes"
+          [control]="taxpayerField"
+          (change)="onTaxpayersChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

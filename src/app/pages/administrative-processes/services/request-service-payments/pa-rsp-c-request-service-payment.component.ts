@@ -44,6 +44,8 @@ export class PaRspCRequestServicePaymentComponent extends BasePage implements On
 
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  //Columns
+  columns=COLUMNS;
 
   constructor(
     private fb: FormBuilder,
@@ -59,11 +61,19 @@ export class PaRspCRequestServicePaymentComponent extends BasePage implements On
   }
 
   ngOnInit(): void {
+
     this.prepareForm();
-    /*this.form.get("pb_type").valueChanges.subscribe(x => {
-      console.log(x)
-       this.filter(x);
-    });*/
+    /**
+     * Instance renderComponent
+     **/
+    /*this.columns.isPayment={
+      ...this.columns.isPayment,
+      onComponentInitFunction: (instance: any) => {
+        instance.toggle.subscribe((data: any) => {
+         this.otherFn(data);
+        });
+      }
+    }*/
   }
 
   private prepareForm(): void {

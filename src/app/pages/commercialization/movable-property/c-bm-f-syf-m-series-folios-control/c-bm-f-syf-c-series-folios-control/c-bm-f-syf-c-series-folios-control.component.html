@@ -8,9 +8,45 @@
     </div>
   </div>
   <div body>
-    <ng2-smart-table
-      [settings]="settings"
-      [source]="data"
-      (edit)="openModal()"></ng2-smart-table>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-4">
+          <h5 class="font-size-14 d-inline">Seleccione Coordinación</h5>
+          <ngx-select
+            [form]="form"
+            [data]="coordItems"
+            value="id"
+            bindLabel="name"
+            (fetchItems)="getCoord($event)"
+            (change)="selectCoord($event)"
+            control="id">
+          </ngx-select>
+        </div>
+      </div>
+    </form>
+    <div *ngIf="selectedCoord != null">
+      <div class="row pt-5">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="data"
+          (edit)="openForm($event.data)"></ng2-smart-table>
+      </div>
+      <div class="row pt-5">
+        <div class="ch-title">
+          <h5 class="title">Tipo de eventos por serie</h5>
+        </div>
+        <ng2-smart-table
+          [settings]="settings1"
+          [source]="data1"></ng2-smart-table>
+      </div>
+      <div class="row pt-5">
+        <div class="ch-title">
+          <h5 class="title">Folios apartados</h5>
+        </div>
+        <ng2-smart-table
+          [settings]="settings2"
+          [source]="data2"></ng2-smart-table>
+      </div>
+    </div>
   </div>
 </app-card>

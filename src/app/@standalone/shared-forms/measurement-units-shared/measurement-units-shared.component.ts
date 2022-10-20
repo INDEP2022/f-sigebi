@@ -12,7 +12,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
 import { IMeasurementUnits } from 'src/app/core/models/catalogs/measurement-units.model';
-import { unitsData } from './unitsData';
+import { unitsData } from './data';
 
 @Component({
   selector: 'app-measurement-units-shared',
