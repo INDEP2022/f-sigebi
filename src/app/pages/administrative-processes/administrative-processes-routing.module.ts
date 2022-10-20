@@ -127,6 +127,16 @@ const routes: Routes = [
           ).PaMChangeOfStatusStiModule,
         data: { title: 'Cambio de estatus sti' },
       },
+      {
+        path: 'payment-claim-process',
+        loadChildren: async () =>
+          (
+            await import(
+              './payment-claim-process/pa-m-payment-claim-process.module'
+            )
+          ).PaMPaymentClaimProcessModule,
+        data: { title: 'Proceso de reclamacion de pago' },
+      },
       /**
        *Legaspi
        **/
@@ -356,8 +366,11 @@ const routes: Routes = [
       {
         path: 'proceedings-conversion',
         loadChildren: async () =>
-          (await import('./proceedings-conversion/proceedings-conversion.module'))
-            .ProceedingsConversionModule,
+          (
+            await import(
+              './proceedings-conversion/proceedings-conversion.module'
+            )
+          ).ProceedingsConversionModule,
         data: { title: 'Detalle de actas de conversión' },
       },
       /**

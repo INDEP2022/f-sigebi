@@ -159,6 +159,14 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         label: 'Cambio de estatus',
         link: '/pages/administrative-processes/change-of-status',
       },
+      {
+        label: 'Cambio de estatus STI',
+        link: '/pages/administrative-processes/change-status-sti',
+      },
+      {
+        label: 'Proceso de reclamación de pago',
+        link: '/pages/administrative-processes/payment-claim-process',
+      },
 
       /**
        * END ALEXANDER
