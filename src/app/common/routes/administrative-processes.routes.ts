@@ -131,6 +131,11 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         link: '/pages/administrative-processes/request-numbering-change',
       },
       {
+        label: 'Cambio de Estatus',
+        link: '/pages/administrative-processes/change-of-status',
+      },
+
+      {
         label: 'Reclasificación masiva de bienes',
         link: '/pages/administrative-processes/massive-reclassification-goods',
       },
@@ -138,6 +143,11 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         label: 'Cambio masivo de estatus',
         link: '/pages/administrative-processes/massive-change-status',
       },
+      {
+        label: 'Cambio de estatus',
+        link: '/pages/administrative-processes/change-of-status',
+      },
+
       /**
        * END ALEXANDER
        **/
