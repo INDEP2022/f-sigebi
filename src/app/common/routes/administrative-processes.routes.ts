@@ -103,14 +103,6 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
        * ALEXANDER
        **/
       {
-        label: 'Regulaciones',
-        link: '/pages/catalogs/regulatory',
-      },
-      {
-        label: 'Respuestas Repuve',
-        link: '/pages/catalogs/responseRepuve',
-      },
-      {
         label: 'Administración Conversión',
         link: '/pages/administrative-processes/conversion-management',
       },
@@ -146,6 +138,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
       {
         label: 'Reclasificación masiva de bienes',
         link: '/pages/administrative-processes/massive-reclassification-goods',
+      },
+      {
+        label: 'Cambio masivo de estatus',
+        link: '/pages/administrative-processes/massive-change-status',
       },
       /**
        * END ALEXANDER

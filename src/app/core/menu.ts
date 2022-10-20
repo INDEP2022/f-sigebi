@@ -35,7 +35,171 @@ export const MENU: IMenuItem[] = [
   // * CATALOGOS
   ...CATALOGS_ROUTES,
   //Administración
-  ...ADMINISTRATIVE_PROCESSES_ROUTES,
+  {
+    label: 'Procesos Administrativos',
+    icon: 'bx-folder',
+    subItems: [
+      {
+        label: 'Numerario Físico',
+        link: '/pages/administrative-processes/numerary-physics',
+      },
+      {
+        label: 'Actas Conversión',
+        link: '/pages/administrative-processes/conversion-act',
+      },
+
+      {
+        label: 'Otras Monedas',
+        link: '/pages/administrative-processes/other-currencies',
+      },
+      {
+        label: 'Valores por Expediente',
+        link: '/pages/administrative-processes/values-per-file',
+      },
+      {
+        label: 'Movimientos Cuentas General',
+        link: '/pages/administrative-processes/general-account-movements',
+      },
+      {
+        label: 'Bienes conversión',
+        link: '/pages/administrative-processes/apply-lif',
+      },
+      {
+        label: 'Administración Conversión',
+        link: '/pages/administrative-processes/conversion-management',
+      },
+      {
+        label: 'Derivación Bienes',
+        link: '/pages/administrative-processes/derivation-goods',
+      },
+      {
+        label: 'Ubicación de Bienes',
+        link: '/pages/administrative-processes/location-goods',
+      },
+      {
+        label: 'Consulta de Almacenes',
+        link: '/pages/administrative-processes/warehouse-inquiries',
+      },
+      {
+        label: 'Consulta de Bóvedas',
+        link: '/pages/administrative-processes/vault-consultation',
+      },
+      {
+        label: 'Registro de mensaje del Bien',
+        link: '/pages/administrative-processes/property-registration',
+      },
+      {
+        label: 'Solicitud de Avalúos',
+        link: '/pages/administrative-processes/appraisal-request',
+      },
+      {
+        label: 'Solicitud de cambio a numeración',
+        link: '/pages/administrative-processes/request-numbering-change',
+      },
+      {
+        label: 'Registro de Avalúos',
+        link: '/pages/administrative-processes/appraisal-registry',
+      },
+      {
+        label: 'Monitor de Avalúos',
+        link: '/pages/administrative-processes/appraisal-monitor',
+      },
+      {
+        label: 'Bienes sin Avalúos',
+        link: '/pages/administrative-processes/appraisal-goods',
+      },
+      {
+        label: 'Monitor de bienes incosteables',
+        link: '/pages/administrative-processes/monitor-unavoidable-assets',
+      },
+      {
+        label: 'Venta de Bienes',
+        link: '/pages/administrative-processes/sale-goods',
+      },
+      {
+        label: 'Firma Electrónica',
+        link: '/pages/administrative-processes/electronic-signature',
+      },
+      {
+        label: 'Administracion Terceros',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Contratos',
+            link: '/pages/administrative-processes/contracts',
+          },
+          {
+            label: 'Costo unitario',
+            link: '/pages/administrative-processes/unit-cost',
+          },
+          {
+            label: 'Procesos para precios unitarios',
+            link: '/pages/administrative-processes/process',
+          },
+          {
+            label: 'Servicios para precios unitarios',
+            link: '/pages/administrative-processes/services-unit-prices',
+          },
+          {
+            label: 'Especificaciones para precios unitarios',
+            link: '/pages/administrative-processes/specs',
+          },
+          {
+            label: 'Turno y Tipo',
+            link: '/pages/administrative-processes/turn-type',
+          },
+          {
+            label: 'Unidades de medida',
+            link: '/pages/administrative-processes/measurement-units',
+          },
+          {
+            label: 'Variable costo',
+            link: '/pages/administrative-processes/variable-cost',
+          },
+          {
+            label: 'Coordinacion por zonas',
+            link: '/pages/administrative-processes/zones',
+          },
+        ],
+      },
+      {
+        label: 'Seguros y Vigilancia',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Mantenimiento de Pólizas',
+            link: '/pages/administrative-processes/policy-maintenance',
+          },
+          {
+            label: 'Pólizas de Seguro',
+            link: '/pages/administrative-processes/insurance-policy',
+          },
+          {
+            label: 'Altas de bienes en Pólizas',
+            link: '/pages/administrative-processes/registration-of-policy',
+          },
+          {
+            label: 'Baja de bienes en Pólizas',
+            link: '/pages/administrative-processes/loss-of-policy',
+          },
+        ],
+      },
+      {
+        label: 'Cuenta de numerario asegurado',
+        link: '/pages/administrative-processes/insured-numerary-account',
+      },
+      {
+        label: 'Empresas',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Reporte de evaluación de desempeño',
+            link: '/pages/administrative-processes/performance-evaluation-report',
+          },
+        ]
+      }
+    ],
+  },
   {
     label: 'Reportes',
     icon: 'bx-folder',
@@ -120,6 +284,12 @@ export const MENU: IMenuItem[] = [
           },
         ],
       },
+      {
+        label: 'Acumulado de bienes mensual',
+        link: '/pages/administrative-processes/accumulated-monthly-assets',
+      },
+
+
       /**
        * ADMIN PROCESS-SERVICES LEGASPI
        **/
@@ -183,11 +353,23 @@ export const MENU: IMenuItem[] = [
         ],
       },
       {
-        label: 'Exportación de Bienes para Donación a Excel',
+        label: 'Proceso de Donación',
         subItems: [
           {
             label: 'Exportación de Bienes para Donación',
             link: '/pages/final-destination-process/donation-process/export-goods-donation',
+          },
+          {
+            label: 'Propuesta de Inventarios para Donación Web',
+            link: '/pages/final-destination-process/donation-process/web-donation-inventories',
+          },
+          {
+            label: 'Propuesta de Inventarios para Donación Directa',
+            link: '/pages/final-destination-process/donation-process/direct-donation-inventories',
+          },
+          {
+            label: 'Mantenimiento Comprometer para Donación',
+            link: '/pages/final-destination-process/donation-process/maintenance-commitment-donation',
           },
         ],
       },
@@ -367,6 +549,10 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Consulta de Pagos Sirsae',
         link: '/pages/commercialization/sirsae-payment-consultation',
+      },
+      {
+        label: 'Conversión Masiva de LCs',
+        link: '/pages/commercialization/lcs-massive-conversion',
       },
     ],
   },
