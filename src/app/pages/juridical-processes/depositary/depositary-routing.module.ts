@@ -56,6 +56,23 @@ const routes: Routes = [
       ).PJDRAAssignationGoodsProtectionModule,
     data: { title: routesJuridicalProcesses[10].label },
   },
+  {
+    path: routesJuridicalProcesses[11].link,
+    loadChildren: async () =>
+      (await import('./issue-agreements/pj-d-ea-m-issue-agreements.module'))
+        .PJDEAIssueAgreementsModule,
+    data: { title: routesJuridicalProcesses[11].label },
+  },
+  {
+    path: routesJuridicalProcesses[12].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './historical-situation-goods/pj-d-ea-m-historical-situation-goods.module'
+        )
+      ).PJDAEHistoricalSituationGoodsModule,
+    data: { title: routesJuridicalProcesses[12].label },
+  },
   // DEPOSITARIA
 
   // PROCESO DE DISPERCION DE PAGOS

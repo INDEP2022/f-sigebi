@@ -71,6 +71,18 @@ export const routesJuridicalProcesses: any = [
     link: 'asignacion-bienes-amparo',
     menu: 'Relación de Amparos',
   },
+  {
+    // EMISIÓN DE ACUERDOS
+    label: 'Emisión de Acuerdos',
+    link: 'emision-acuerdos',
+    menu: 'Emisión de Acuerdos',
+  },
+  {
+    //HISTORICO SITUACION DEL BIEN
+    label: 'Histórico Situación del Bien',
+    link: 'historico-situacion-bien',
+    menu: 'Histórico Situación del Bien',
+  },
   // DEPOSITARIA
 ];
 export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
@@ -127,6 +139,7 @@ export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
               baseMenuProcesoDispercionPagos +
               routesJuridicalProcesses[6].link,
           },
+          // Proceso de Dispersión de Pagos
           {
             // SOLICITUD/MONITOR DE DEPOSITARIA
             label: routesJuridicalProcesses[7].menu,
@@ -153,7 +166,22 @@ export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
               baseMenuDepositaria +
               routesJuridicalProcesses[10].link,
           },
-          // Proceso de Dispersión de Pagos
+          {
+            // RELACIÓN DE AMPAROS
+            label: routesJuridicalProcesses[11].menu,
+            link:
+              baseMenu +
+              baseMenuDepositaria +
+              routesJuridicalProcesses[11].link,
+          },
+          {
+            // RELACIÓN DE AMPAROS
+            label: routesJuridicalProcesses[12].menu,
+            link:
+              baseMenu +
+              baseMenuDepositaria +
+              routesJuridicalProcesses[12].link,
+          },
         ],
       },
     ],

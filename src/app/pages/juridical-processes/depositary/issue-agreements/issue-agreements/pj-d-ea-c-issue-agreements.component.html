@@ -1,0 +1,18 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">EMISI&Oacute;N DE ACUERDOS</h5>
+  </div>
+
+  <div body>
+    <!-- tabla Emisión Acuerdos -->
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 p-2">
+        <ng2-smart-table
+          class="my-table"
+          [settings]="tableSettings"
+          [source]="dataTable"></ng2-smart-table>
+      </div>
+    </div>
+    <!-- tabla Emisión Acuerdos -->
+  </div>
+</app-card>

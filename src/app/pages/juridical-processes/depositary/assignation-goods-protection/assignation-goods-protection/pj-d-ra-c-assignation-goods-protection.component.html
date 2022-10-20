@@ -49,12 +49,13 @@
 
     <hr class="row" />
     <!-- FORM formTipoSuspersion -->
-    <form [formGroup]="formTipoSuspersion" class="form-material">
-      <div class="row w-100">
-        <div class="col-sm-12 col-12 col-md-10 p-2 pl-3">
+    <div class="row w-100">
+      <form [formGroup]="formTipoSuspersion" class="form-material">
+        <div class="col-sm-12 col-12 col-md-5 p-2 pl-3">
           <label class="form-control-label w-100">Tipo Suspensión</label>
           <div class="row">
-            <div class="col-sm-12 col-12 col-md-4 text-center p-2">
+            <div
+              class="col-sm-12 col-12 col-md-6 col-lg-6 col-xl-4 text-center p-2">
               <form-radio label="PROVISIONAL">
                 <input
                   class="p-2"
@@ -63,7 +64,8 @@
                   [value]="'PROVISIONAL'" />
               </form-radio>
             </div>
-            <div class="col-sm-12 col-12 col-md-4 text-center p-2">
+            <div
+              class="col-sm-12 col-12 col-md-6 col-lg-6 col-xl-4 text-center p-2">
               <form-radio label="DEFINITIVA">
                 <input
                   class="p-2"
@@ -72,7 +74,8 @@
                   [value]="'DEFINITIVA'" />
               </form-radio>
             </div>
-            <div class="col-sm-12 col-12 col-md-4 text-center p-2">
+            <div
+              class="col-sm-12 col-12 col-md-6 col-lg-6 col-xl-4 text-center p-2">
               <form-radio label="DE PLANO">
                 <input
                   class="p-2"
@@ -94,7 +97,7 @@
               bsDatepicker />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 p-2">
+        <div class="col-sm-12 col-12 col-md-5 p-2">
           <form-field
             [control]="formTipoSuspersion.get('justificado')"
             label="Justificado">
@@ -104,7 +107,7 @@
               placeholder="Justificado" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 p-2">
+        <div class="col-sm-12 col-12 col-md-7 p-2">
           <form-field
             [control]="formTipoSuspersion.get('observaciones')"
             label="Observaciones">
@@ -114,15 +117,14 @@
               formControlName="observaciones"></textarea>
           </form-field>
         </div>
-      </div>
-    </form>
-    <!-- FORM formTipoSuspersion -->
+      </form>
+      <!-- </div> -->
+      <!-- FORM formTipoSuspersion -->
 
-    <hr class="row" />
-    <!-- FORM formAmparo -->
-    <form [formGroup]="formAmparo" class="form-material">
-      <div class="row w-100">
-        <div class="col-sm-12 col-12 col-md-3 p-2">
+      <!-- FORM formAmparo -->
+      <form [formGroup]="formAmparo" class="form-material">
+        <!-- <div class="row w-100"> -->
+        <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field [control]="formAmparo.get('amparo')" label="Amparo">
             <input
               class="form-control"
@@ -152,7 +154,7 @@
               bsDatepicker />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-5 p-2">
+        <div class="col-sm-12 col-12 col-md-3 p-2">
           <ngx-select
             [data]="items"
             bindLabel="minPubName"
@@ -182,7 +184,7 @@
             [form]="formAmparo"
             control="delegacion"></ngx-select>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 p-2">
+        <div class="col-sm-12 col-12 col-md-5 p-2">
           <form-field [control]="formAmparo.get('quejosos')" label="Quejosos">
             <textarea
               placeholder="Quejosos"
@@ -190,7 +192,7 @@
               formControlName="quejosos"></textarea>
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 p-2">
+        <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field
             [control]="formAmparo.get('actoReclamado')"
             label="Acto Reclamado">
@@ -200,8 +202,8 @@
               formControlName="actoReclamado"></textarea>
           </form-field>
         </div>
-      </div>
-    </form>
+      </form>
+    </div>
     <!-- FORM formAmparo -->
     <hr class="row" />
 
@@ -212,33 +214,35 @@
           class="my-table"
           [settings]="tableSettings"
           [source]="dataTable"></ng2-smart-table>
-        <hr class="row" />
+        <br />
         <span class="badge bagde-3"> Apostilla </span>
+        <span class="badge primary-3"> Asignados a algun Amparo </span>
       </div>
-      <span class="badge primary-3"> Asignados a algun Amparo </span>
-      <!-- <div class="form-group"> -->
-      <button
-        type="button"
-        class="btn btn-primary btn-sm active"
-        (click)="btnAgregar()">
-        <i class="bx bxs-right-arrow-circle bx-md"></i>
-      </button>
-      <br />
-      <!-- </div>
-        <div class="form-group"> -->
-      <button
-        type="button"
-        class="btn btn-danger btn-sm active"
-        (click)="btnEliminar()">
-        <i class="bx bxs-left-arrow-circle bx-md"></i>
-      </button>
-      <!-- </div> -->
-    </div>
-    <div class="col-sm-12 col-12 col-md-5 p-2">
-      <ng2-smart-table
-        class="my-table"
-        [settings]="tableSettings2"
-        [source]="dataTable2"></ng2-smart-table>
+      <div class="col-sm-12 col-12 col-md-2 p-2 text-center">
+        <div class="form-group">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            (click)="btnAgregar()">
+            <i class="bx bxs-right-arrow-circle bx-md"></i>
+          </button>
+        </div>
+        <br />
+        <div class="form-group">
+          <button
+            type="button"
+            class="btn btn-danger btn-sm active"
+            (click)="btnEliminar()">
+            <i class="bx bxs-left-arrow-circle bx-md"></i>
+          </button>
+        </div>
+      </div>
+      <div class="col-sm-12 col-12 col-md-5 p-2">
+        <ng2-smart-table
+          class="my-table"
+          [settings]="tableSettings2"
+          [source]="dataTable2"></ng2-smart-table>
+      </div>
     </div>
   </div>
   <!-- tabla Emisión Acuerdos -->
