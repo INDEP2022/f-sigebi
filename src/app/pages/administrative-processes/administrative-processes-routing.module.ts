@@ -117,6 +117,16 @@ const routes: Routes = [
           ).PaMMassiveChangeStatusModule,
         data: { title: 'Cambio masivo de estatus' },
       },
+      {
+        path: 'change-status-sti',
+        loadChildren: async () =>
+          (
+            await import(
+              './change-of-status-sti/pa-m-change-of-status-sti.module'
+            )
+          ).PaMChangeOfStatusStiModule,
+        data: { title: 'Cambio de estatus sti' },
+      },
       /**
        *Legaspi
        **/
