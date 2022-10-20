@@ -61,9 +61,9 @@
                       <li role="menuitem">
                         <a
                           class="dropdown-item bg-info text-light"
-                          (click)="loadRFC()"
+                          (click)="rfc.click()"
                           >RFC<input
-                            id="rfc-csv"
+                            #rfc
                             hidden
                             type="file"
                             accept=".csv"
@@ -73,9 +73,9 @@
                       <li role="menuitem">
                         <a
                           class="dropdown-item bg-info text-light"
-                          (click)="loadClientId()"
+                          (click)="clientId.click()"
                           >Id Cliente<input
-                            id="clientId-csv"
+                            #clientId
                             hidden
                             type="file"
                             accept=".csv"
@@ -98,7 +98,7 @@
                   <button
                     class="btn btn-sm btn-primary btn-block active me-2 font-size-14"
                     (click)="generateLcs()"
-                    [disabled]="dataColumns.length > 0">
+                    [disabled]="dataColumns.length === 0">
                     <i class="bx bx-send text-light float-icon"></i>
                     Generar LCs
                   </button>
@@ -267,14 +267,24 @@
     </div>
     <div class="row mt-5">
       <div class="md-tabs mt-n3">
-        <tabset>
+        <tabset #lcsTabs>
           <tab heading="Datos" id="dataTab">
             <div class="row">
-              <div class="form-material col-md-5">
-                <search-bar [params]="dataParams"></search-bar>
+              <div class="col-sm-12 col-md-12 col-lg-6">
+                <div class="form-material">
+                  <search-bar [params]="dataParams"></search-bar>
+                </div>
+              </div>
+              <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6">
+                <div class="d-flex flex-row-reverse my-3">
+                  <div>
+                    <app-columns-select
+                      [(settings)]="dataSettings"></app-columns-select>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="table-container">
+            <div class="table-responsive">
               <div [class]="loading ? 'table-loading' : ''">
                 <ng2-smart-table
                   id="data-table"
@@ -288,57 +298,214 @@
             </app-pagination>
           </tab>
           <tab heading="Líneas de Captura" id="lcsTab">
-            <div class="row">
-              <div class="col-sm-12 col-md-12 col-lg-6">
-                <div class="form-material">
-                  <search-bar [params]="lcsParams"></search-bar>
-                </div>
-              </div>
-              <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6">
-                <div class="d-flex flex-row-reverse my-3">
-                  <div>
-                    <button
-                      class="btn btn-sm btn-success active me-2 font-size-14"
-                      (click)="exportExcel()"
-                      [disabled]="!maintenance">
-                      <i class="fas fa-file-excel text-light me-1"></i>
-                      Exportar
-                    </button>
-                  </div>
-                  <div>
-                    <button
-                      class="btn btn-sm btn-primary active me-2 font-size-14"
-                      (click)="rework()"
-                      [disabled]="!maintenance">
-                      <i class="bx bx-history text-light float-icon"></i>
-                      Ingresar a reproceso
-                    </button>
-                  </div>
-                  <div>
-                    <button
-                      class="btn btn-sm btn-info active me-2 font-size-14"
-                      (click)="addRow()"
-                      [disabled]="!maintenance">
-                      <i class="bx bx-plus text-light float-icon"></i>
-                      Agregar Registro
-                    </button>
-                  </div>
-                </div>
+            <div class="row mt-3">
+              <div class="md-tabs mt-n3">
+                <tabset>
+                  <tab heading="Visualización" id="displayTab">
+                    <div class="row">
+                      <div class="col-sm-12 col-md-12 col-lg-6">
+                        <div class="form-material">
+                          <search-bar [params]="lcsParams"></search-bar>
+                        </div>
+                      </div>
+                      <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6">
+                        <div class="d-flex flex-row-reverse my-3">
+                          <div class="mt-1">
+                            <app-columns-select
+                              [(settings)]="lcsSettings"></app-columns-select>
+                          </div>
+                          <div>
+                            <button
+                              class="btn btn-sm btn-success active me-2 font-size-14"
+                              (click)="exportExcel()"
+                              [disabled]="!maintenance">
+                              <i class="fas fa-file-excel text-light me-1"></i>
+                              Exportar
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="table-responsive">
+                      <div [class]="loading ? 'table-loading' : ''">
+                        <ng2-smart-table
+                          id="lcsTable"
+                          [attr.class]="'table-bordered'"
+                          [settings]="lcsSettings"
+                          [source]="lcsColumns">
+                        </ng2-smart-table>
+                      </div>
+                    </div>
+                    <app-pagination
+                      [params]="lcsParams"
+                      [totalItems]="lcsTotalItems">
+                    </app-pagination>
+                  </tab>
+                  <tab
+                    heading="Mantenimiento"
+                    id="maintenanceTab"
+                    [disabled]="!maintenance">
+                    <div class="row">
+                      <div class="col-sm-12 col-md-12 col-lg-6">
+                        <div class="form-material">
+                          <search-bar
+                            [params]="
+                              layout == 'RFC'
+                                ? rfcParams
+                                : layout == 'clientId'
+                                ? clientIdParams
+                                : null
+                            "></search-bar>
+                        </div>
+                      </div>
+                      <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6">
+                        <div class="d-flex flex-row-reverse my-3">
+                          <div class="mt-1" *ngIf="layout == 'RFC'">
+                            <app-columns-select
+                              [(settings)]="rfcSettings"></app-columns-select>
+                          </div>
+                          <div class="mt-1" *ngIf="layout == 'clientId'">
+                            <app-columns-select
+                              [(settings)]="
+                                clientIdSettings
+                              "></app-columns-select>
+                          </div>
+                          <div>
+                            <button
+                              class="btn btn-sm btn-primary active me-2 font-size-14"
+                              (click)="saveRows()"
+                              [disabled]="addRows.length == 0">
+                              <i class="bx bx-save text-light float-icon"></i>
+                              Guardar
+                            </button>
+                          </div>
+                          <div>
+                            <button
+                              class="btn btn-sm btn-success active me-2 font-size-14"
+                              (click)="openForm()">
+                              <i class="bx bx-plus text-light float-icon"></i>
+                              Agregar Registro
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="table-responsive" *ngIf="layout == 'RFC'">
+                      <div [class]="loading ? 'table-loading' : ''">
+                        <ng2-smart-table
+                          id="rfcTable"
+                          [attr.class]="'table-bordered'"
+                          [settings]="rfcSettings"
+                          [source]="lcSource"
+                          (edit)="openForm($event.data)"
+                          (delete)="delete($event.data)">
+                        </ng2-smart-table>
+                      </div>
+                    </div>
+                    <div class="table-responsive" *ngIf="layout == 'clientId'">
+                      <div [class]="loading ? 'table-loading' : ''">
+                        <ng2-smart-table
+                          id="clientIdTable"
+                          [attr.class]="'table-bordered'"
+                          [settings]="clientIdSettings"
+                          [source]="lcSource"
+                          (edit)="openForm($event.data)"
+                          (delete)="delete($event.data)">
+                        </ng2-smart-table>
+                      </div>
+                    </div>
+                    <app-pagination
+                      [params]="
+                        layout == 'RFC'
+                          ? rfcParams
+                          : layout == 'clientId'
+                          ? clientIdParams
+                          : null
+                      "
+                      [totalItems]="
+                        layout == 'RFC'
+                          ? rfcTotalItems
+                          : layout == 'clientId'
+                          ? clientIdTotalItems
+                          : 0
+                      ">
+                    </app-pagination>
+                  </tab>
+                  <tab
+                    heading="Reproceso"
+                    id="reworkTab"
+                    [disabled]="!maintenance">
+                    <div class="row">
+                      <div class="col-sm-12 col-md-12 col-lg-6">
+                        <div class="form-material">
+                          <search-bar
+                            [params]="
+                              reworkType == 'BATCH'
+                                ? batchReworkParams
+                                : reworkType == 'CLIENT'
+                                ? rfcReworkParams
+                                : null
+                            "></search-bar>
+                        </div>
+                      </div>
+                      <div class="col-sm-12 col-md-12 col-lg-12 col-xl-6">
+                        <div class="d-flex flex-row-reverse my-3">
+                          <div>
+                            <button
+                              class="btn btn-sm btn-primary active me-2 font-size-14"
+                              (click)="rework()">
+                              <i
+                                class="bx bx-history text-light float-icon"></i>
+                              Ejecutar Reproceso
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="table-responsive" *ngIf="reworkType == 'BATCH'">
+                      <div [class]="loading ? 'table-loading' : ''">
+                        <ng2-smart-table
+                          id="batchReworkTable"
+                          [attr.class]="'table-bordered'"
+                          [settings]="batchReworkSettings"
+                          [source]="batchReworkColumns"
+                          (userRowSelect)="reworkSelect($event.selected)">
+                        </ng2-smart-table>
+                      </div>
+                    </div>
+                    <div
+                      class="table-responsive"
+                      *ngIf="reworkType == 'CLIENT'">
+                      <div [class]="loading ? 'table-loading' : ''">
+                        <ng2-smart-table
+                          id="clientReworkTable"
+                          [attr.class]="'table-bordered'"
+                          [settings]="rfcReworkSettings"
+                          [source]="rfcReworkColumns"
+                          (userRowSelect)="reworkSelect($event.selected)">
+                        </ng2-smart-table>
+                      </div>
+                    </div>
+                    <app-pagination
+                      [params]="
+                        reworkType == 'BATCH'
+                          ? batchReworkParams
+                          : reworkType == 'CLIENT'
+                          ? rfcReworkParams
+                          : null
+                      "
+                      [totalItems]="
+                        reworkType == 'RFC'
+                          ? batchReworkTotalItems
+                          : reworkType == 'CLIENT'
+                          ? rfcReworkTotalItems
+                          : 0
+                      ">
+                    </app-pagination>
+                  </tab>
+                </tabset>
               </div>
             </div>
-            <div class="table-container">
-              <div [class]="loading ? 'table-loading' : ''">
-                <ng2-smart-table
-                  id="lcs-table"
-                  [attr.class]="'table-bordered'"
-                  [settings]="lcsSettings"
-                  [source]="lcsColumns"
-                  (edit)="editRow()">
-                </ng2-smart-table>
-              </div>
-            </div>
-            <app-pagination [params]="lcsParams" [totalItems]="lcsTotalItems">
-            </app-pagination>
           </tab>
         </tabset>
       </div>
