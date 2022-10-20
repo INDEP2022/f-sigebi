@@ -94,6 +94,18 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Zonas de Vigilancia',
             link: '/pages/administrative-processes/surveillance-zones',
           },
+          {
+            label: 'Conceptos de Vigilancia',
+            link: '/pages/administrative-processes/surveillance-concepts',
+          },
+          {
+            label: 'Calculo de Vigilancia',
+            link: '/pages/administrative-processes/surveillance-calculate',
+          },
+          {
+            label: 'Prorrateo de bienes de vigilancia comúm',
+            link: '/pages/administrative-processes/prorrateo-goods-surveillance',
+          },
         ],
       },
       /**

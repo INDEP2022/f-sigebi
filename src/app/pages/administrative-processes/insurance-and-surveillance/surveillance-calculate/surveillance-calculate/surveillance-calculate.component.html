@@ -1,0 +1,83 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">CALCULO DE VIGILANCIA</h5>
+  </div>
+
+  <div body>
+    <div class="ch-content">
+      <h5 class="title">EJECUTAR CALCULO DE VIGILANCIA</h5>
+    </div>
+    <form [formGroup]="form" class="form-material">
+      <div class="row mt-4">
+        <div class="col-md-2">
+          <form-field [control]="form.get('contract')" label="Contrato">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="contract"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('year')" label="Año">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="year"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+
+        <div class="col-md-2">
+          <form-field [control]="form.get('month')" label="Mes">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="month"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4 mb-4" style="padding-bottom: 40px">
+        <div class="col-md-2">
+          <button type="submit" class="btn btn-primary btn-sm active mx-4">
+            CALCULO
+          </button>
+        </div>
+        <div class="col-md-2">
+          <button type="submit" class="btn btn-primary btn-sm active mx-4">
+            CIERRE
+          </button>
+        </div>
+        <div class="col-md-2">
+          <button type="submit" class="btn btn-primary btn-sm active mx-4">
+            CONSULTAR
+          </button>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="md-tabs">
+          <tabset>
+            <tab heading="Resumen" id="tab1">
+              <app-resume></app-resume>
+            </tab>
+            <tab heading="Supervision" id="tab2">
+              <app-supervision></app-supervision>
+            </tab>
+            <tab heading="Desglose" id="tab3">
+              <app-breakdown></app-breakdown>
+            </tab>
+            <tab heading="Detalle" id="tab4">
+              <app-details></app-details>
+            </tab>
+          </tabset>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>
