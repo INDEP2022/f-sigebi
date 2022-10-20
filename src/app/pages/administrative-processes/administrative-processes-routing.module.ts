@@ -101,6 +101,13 @@ const routes: Routes = [
         data: { title: 'Reclasificación masiva de bienes' },
       },
       {
+        path: 'change-of-status',
+        loadChildren: async () =>
+          (await import('./change-of-status/pa-m-change-of-status.module'))
+            .PaMChangeOfStatusModule,
+        data: { title: 'Cambio de estatus' },
+      },
+      {
         path: 'massive-change-status',
         loadChildren: async () =>
           (
@@ -345,6 +352,13 @@ const routes: Routes = [
           (await import('./electronic-signature/electronic-signature.module'))
             .ElectronicSignatureModule,
         data: { title: 'Firma Electrónica' },
+      },
+      {
+        path: 'proceedings-conversion',
+        loadChildren: async () =>
+          (await import('./proceedings-conversion/proceedings-conversion.module'))
+            .ProceedingsConversionModule,
+        data: { title: 'Detalle de actas de conversión' },
       },
       /**
        * Seguros David Lucas

@@ -82,7 +82,7 @@
               </div>
               <hr class="mw-98" />
               <div class="row mt-2">
-                <div class="col-2">
+                <div class="col-sm-12 col-md-4">
                   <form-field
                     [control]="numeraireExchangeForm.get('salePrice')"
                     label="Precio de Venta">
@@ -95,7 +95,7 @@
                       (input)="calculateSaleTax()" />
                   </form-field>
                 </div>
-                <div class="col-1">
+                <div class="col-sm-6 col-md-4">
                   <form-field
                     [control]="numeraireExchangeForm.get('saleTaxPercent')"
                     label="% IVA">
@@ -108,7 +108,7 @@
                       (input)="calculateSaleTax()" />
                   </form-field>
                 </div>
-                <div class="col-2">
+                <div class="col-sm-6 col-md-4">
                   <form-field
                     [control]="numeraireExchangeForm.get('saleTax')"
                     label="Iva Venta">
@@ -119,7 +119,9 @@
                       readonly />
                   </form-field>
                 </div>
-                <div class="col-1">
+              </div>
+              <div class="row mt-5">
+                <div class="col-sm-6 col-md-3">
                   <form-field
                     [control]="numeraireExchangeForm.get('commissionPercent')"
                     label="% Comisión">
@@ -132,7 +134,7 @@
                       (input)="calculateCommission()" />
                   </form-field>
                 </div>
-                <div class="col-2">
+                <div class="col-sm-6 col-md-3">
                   <form-field
                     [control]="numeraireExchangeForm.get('commission')"
                     label="Comisión">
@@ -143,7 +145,7 @@
                       readonly />
                   </form-field>
                 </div>
-                <div class="col-2">
+                <div class="col-sm-6 col-md-3">
                   <form-field
                     [control]="
                       numeraireExchangeForm.get('commissionTaxPercent')
@@ -158,7 +160,7 @@
                       (input)="calculateCommissionTax()" />
                   </form-field>
                 </div>
-                <div class="col-2">
+                <div class="col-sm-6 col-md-3">
                   <form-field
                     [control]="numeraireExchangeForm.get('commissionTax')"
                     label="IVA Comisión">
@@ -371,22 +373,21 @@
           </form>
         </tab>
         <tab heading="Conversión Masiva" id="tabMassiveConversion">
-          <div class="text-muted">
-            Probar con el archivo example.csv en la carpeta del componente
-          </div>
           <div class="row d-flex justify-content-center">
-            <div class="col-sm-12 col-md-8">
-              <div class="custom-file">
-                <input
-                  type="file"
-                  class="custom-file-input"
-                  id="csvFile"
-                  accept=".csv"
-                  (change)="getFile($event)" />
-                <label class="custom-file-label" for="inputFile">{{
-                  fileName
-                }}</label>
-              </div>
+            <div class="col-sm-6 col-md-6 col-xl-4">
+              <button
+                class="btn btn-sm btn-block btn-primary active font-size-16"
+                (click)="file.click()">
+                Seleccionar
+              </button>
+              <input
+                #file
+                hidden
+                type="file"
+                class="custom-file-input"
+                id="csvFile"
+                accept=".csv"
+                (change)="getFile($event)" />
             </div>
           </div>
           <div class="mt-3">

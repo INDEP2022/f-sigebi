@@ -18,16 +18,23 @@
             <input type="text" class="form-control" formControlName="cve" />
           </form-field>
         </div>
-        <div class="col-md-2 mt-3">
-          <form-field [control]="form.get('type')" label="Tipo">
-            <input type="text" class="form-control" formControlName="type" />
-          </form-field>
-        </div>
         <div class="col-md-4">
-          <app-events-shared
+          <app-event-type-shared
             [form]="form"
-            [label]="'Tipo de Evento'"
-            [bindLabel]="'typeEventId'"></app-events-shared>
+            [bindLabel]="'descripcion'"></app-event-type-shared>
+        </div>
+        <div class="col-md-3 mt-3">
+          <form-field
+            [control]="form.get('dateEvent')"
+            label="Fecha del Evento">
+            <input
+              type="text"
+              placeholder=""
+              class="form-control"
+              bsDatepicker
+              formControlName="dateEvent"
+              [bsConfig]="{ isAnimated: true }" />
+          </form-field>
         </div>
       </div>
       <div class="row pt-5">
@@ -36,14 +43,22 @@
             <input type="text" class="form-control" formControlName="place" />
           </form-field>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-5">
           <form-field [control]="form.get('observ')" label="Observaciones">
             <input type="text" class="form-control" formControlName="observ" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('date')" label="Fecha">
-            <input type="text" class="form-control" formControlName="date" />
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('dateClose')"
+            label="Fecha del cierre">
+            <input
+              type="text"
+              placeholder=""
+              class="form-control"
+              bsDatepicker
+              formControlName="dateClose"
+              [bsConfig]="{ isAnimated: true }" />
           </form-field>
         </div>
       </div>
@@ -52,7 +67,7 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button (click)="close()"> </confirm-button>
+        <confirm-button [disabled]="!form.valid"> </confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

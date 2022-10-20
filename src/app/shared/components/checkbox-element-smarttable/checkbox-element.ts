@@ -7,13 +7,14 @@ import { ViewCell } from 'ng2-smart-table';
     <div class="row justify-content-center">
       <input
         [checked]="checked"
-        (checkedChange)="onToggle($event)"
+        (change)="onToggle($event)"
         type="checkbox" />
     </div>
   `,
   styles: [],
 })
 export class CheckboxElementComponent implements OnInit {
+
   checked: boolean;
 
   @Input() value: boolean;
@@ -28,7 +29,6 @@ export class CheckboxElementComponent implements OnInit {
   }
 
   onToggle($event: any) {
-    //console.log($event)
     let row = this.rowData;
     let toggle = $event;
     this.toggle.emit({ row, toggle });

@@ -1,24 +1,21 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Editar</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-2">
-          <form-field [control]="form.get('idStatus')" label="ID">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="idStatus" />
+          <form-field [control]="form.get('id')" label="ID">
+            <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
         <div class="col-md-10">
-          <form-field [control]="form.get('description')" label="Descripción">
+          <form-field [control]="form.get('descripcion')" label="Descripción">
             <input
               type="text"
               class="form-control"
-              formControlName="description" />
+              formControlName="descripcion" />
           </form-field>
         </div>
       </div>
