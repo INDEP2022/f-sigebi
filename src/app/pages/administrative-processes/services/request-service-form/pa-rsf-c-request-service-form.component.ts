@@ -22,7 +22,7 @@ export class PaRsfCRequestServiceFormComponent implements OnInit {
 
   private prepareForm(): void {
     this.form = this.fb.group({
-      applicationDate: [null, [Validators.required]],
+      requestDate: [null, [Validators.required]],
       service: [null, [Validators.required]],
       amount: [null, [Validators.required]],
     });

@@ -94,6 +94,18 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Zonas de Vigilancia',
             link: '/pages/administrative-processes/surveillance-zones',
           },
+          {
+            label: 'Conceptos de Vigilancia',
+            link: '/pages/administrative-processes/surveillance-concepts',
+          },
+          {
+            label: 'Calculo de Vigilancia',
+            link: '/pages/administrative-processes/surveillance-calculate',
+          },
+          {
+            label: 'Prorrateo de bienes de vigilancia comúm',
+            link: '/pages/administrative-processes/prorrateo-goods-surveillance',
+          },
         ],
       },
       /**
@@ -131,6 +143,11 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         link: '/pages/administrative-processes/request-numbering-change',
       },
       {
+        label: 'Cambio de Estatus',
+        link: '/pages/administrative-processes/change-of-status',
+      },
+
+      {
         label: 'Reclasificación masiva de bienes',
         link: '/pages/administrative-processes/massive-reclassification-goods',
       },
@@ -138,6 +155,11 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         label: 'Cambio masivo de estatus',
         link: '/pages/administrative-processes/massive-change-status',
       },
+      {
+        label: 'Cambio de estatus',
+        link: '/pages/administrative-processes/change-of-status',
+      },
+
       /**
        * END ALEXANDER
        **/
@@ -240,7 +262,7 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         subItems: [
           {
             label: 'Relación de Bienes',
-            link: '/pages/administrative-processes/siab-sami-interaction/',
+            link: '/pages/administrative-processes/siab-sami-interaction/goods-relationship',
           },
           {
             label: 'Pago de Bienes',
@@ -249,6 +271,13 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Avalúo de Bienes',
             link: '/pages/administrative-processes/siab-sami-interaction/value-goods',
+          },
+          /*label: 'Resarcimientos/Devoluciones',
+            icon: 'bx-folder',
+            subItems: [],*/
+          {
+            label: 'Solicitud de Pago',
+            link: '/pages/administrative-processes/siab-sami-interaction/refunds/payment-request',
           },
         ],
       },

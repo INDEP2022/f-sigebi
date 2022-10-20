@@ -546,7 +546,7 @@ export const MENU: IMenuItem[] = [
         subItems: [],
       },
       {
-        label: 'Conversión a numerario',
+        label: 'Conversión a Numerario',
         link: '/pages/commercialization/numeraire-exchange',
       },
       {
