@@ -283,3 +283,12 @@ table:not(.normal-hover) tbody tr:hover {
 .bg-gray-card {
   background-color: rgba(173, 181, 189, 0.25);
 }
+
+.center-checkbox thead tr th[ng2-st-checkbox-select-all] {
+  text-align: center !important;
+}
+
+.center-checkbox tbody tr td.ng2-smart-action-multiple-select input {
+  position: relative;
+  left: 12px;
+}

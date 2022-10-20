@@ -1,0 +1,49 @@
+<div body>
+  <form [formGroup]="form" class="form-material">
+    <div class="row mt-4">
+      <div class="col-md-3">
+        <form-field [control]="form.get('state')" label="Estado">
+          <input type="text" class="form-control" formControlName="state" />
+        </form-field>
+      </div>
+      <div class="col-md-3">
+        <form-field [control]="form.get('supervisors')" label="Supervisores">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="supervisors" />
+        </form-field>
+      </div>
+      <div class="col-md-2">
+        <form-field [control]="form.get('zone')" label="Zona">
+          <input type="text" class="form-control" formControlName="zone" />
+        </form-field>
+      </div>
+      <div class="col-md-2">
+        <form-field [control]="form.get('inmueble')" label="Inmueble">
+          <input type="text" class="form-control" formControlName="inmueble" />
+        </form-field>
+      </div>
+      <div class="col-md-2">
+        <form-field [control]="form.get('cost')" label="Costo">
+          <input type="text" class="form-control" formControlName="cost" />
+        </form-field>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-md-10 d-flex justify-content-end">TOTAL:</div>
+      <div class="col-md-2">
+        <form-field [control]="form.get('total')" label="Total">
+          <input
+            [disabled]="true"
+            type="number"
+            class="form-control"
+            formControlName="total"
+            min="1"
+            pattern="^[0-9]+" />
+        </form-field>
+      </div>
+    </div>
+  </form>
+</div>
