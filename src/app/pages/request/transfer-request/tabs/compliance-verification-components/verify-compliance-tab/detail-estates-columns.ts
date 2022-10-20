@@ -1,3 +1,5 @@
+import { SaeInputComponent } from './sae-input/sae-input.component';
+
 export const DETAIL_ESTATE_COLUMNS = {
   gestion: {
     title: 'Gestion',
@@ -11,7 +13,11 @@ export const DETAIL_ESTATE_COLUMNS = {
   },
   descriptionEstateSAE: {
     title: 'Descripción Bien SAE',
-    type: 'string',
+    type: 'custom',
+    class: 'custom-field',
+    filter: false,
+    renderComponent: SaeInputComponent,
+    onComponentInitFunction(instance?: any) {},
     sort: false,
   },
   typeEstate: {

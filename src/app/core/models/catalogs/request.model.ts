@@ -38,4 +38,7 @@ export interface IRequest {
   typeTransfer?: string;
   transferEntityNotes?: string;
   observations?: string;
+
+  //solicitud del expediente
+  status?: string;
 }

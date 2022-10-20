@@ -127,13 +127,16 @@
             <tab heading="Domicilio de la Transferencia">Basic content 2</tab>
           </tabset>
         </div>
+
         <div *ngIf="complianceVerifi" class="row pt-2">
           <tabset class="md-tabs">
             <tab heading="Detalle Solicitud" id="tab1">
-              <app-request-detail-tab></app-request-detail-tab>
+              <app-request-detail-tab
+                [dataObject]="object"></app-request-detail-tab>
             </tab>
             <tab heading="Verificar Cumplimiento">
-              <app-verify-compliance-tab></app-verify-compliance-tab>
+              <app-verify-compliance-tab
+                [dataObject]="object"></app-verify-compliance-tab>
             </tab>
             <tab heading="Expediente">
               <app-expedients-tabs></app-expedients-tabs>

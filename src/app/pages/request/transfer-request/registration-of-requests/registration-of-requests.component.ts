@@ -20,7 +20,7 @@ export class RegistrationOfRequestsComponent
   edit: boolean = false;
   title: string = 'title';
   parameter: any;
-
+  object: any = '';
   //registro de bienes tab
   state: boolean = false;
   //verificacion de cumplimientos tab
@@ -38,10 +38,9 @@ export class RegistrationOfRequestsComponent
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       console.log(params);
+      this.prepareForm();
+      this.object = this.registRequestForm.value;
     });
-    //this.title = this.parameter.title;
-    //console.log(this.parameter);
-    this.prepareForm();
   }
 
   prepareForm() {

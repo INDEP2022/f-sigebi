@@ -8,32 +8,32 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-request-detail-tab',
   templateUrl: './request-detail-tab.component.html',
-  styleUrls: ['./request-detail-tab.scss']
+  styleUrls: ['./request-detail-tab.scss'],
 })
 export class RequestDetailTabComponent extends BasePage implements OnInit {
   @Input() typeDoc = '';
+  @Input() dataObject: any;
   receptionForm: ModelForm<IRequest>;
-  selectTypeExpedient = new DefaultSelect<IRequest>;
+  selectTypeExpedient = new DefaultSelect<IRequest>();
 
-  constructor(
-    public fb:FormBuilder
-  ) {
+  constructor(public fb: FormBuilder) {
     super();
-   }
-
-  ngOnInit(): void {   
-    this.prepareForm();
-    console.log("buscar documentos del tipo " + this.typeDoc);
-    
   }
 
-  prepareForm():void{
+  ngOnInit(): void {
+    this.prepareForm();
+    //console.log('buscar documentos del tipo ' + this.typeDoc);
+    console.log('datos pasados desde el padre');
+    console.log(this.dataObject);
+  }
+
+  prepareForm(): void {
     this.receptionForm = this.fb.group({
-      priority:[null],
-      infoProvenance:['Mensajeria'],
-      receptDate:[{value:'', disabled: true}],
+      priority: [null],
+      infoProvenance: ['Mensajeria'],
+      receptDate: [{ value: '', disabled: true }],
       officeDate: [null, Validators.required],
-      typeExpedient:['PAMA'],
+      typeExpedient: ['PAMA'],
       nameSender: ['LUIS RENTERA'],
       senderCharge: ['ADMINISTRADOR'],
       phoneSender: [123456789],
@@ -41,24 +41,23 @@ export class RequestDetailTabComponent extends BasePage implements OnInit {
       publicMinister: ['MINISTRO TRANSFERENTE'],
       tribunal: ['JUZGADO TRANSFERENTE'],
       crime: ['DEUTO CAPTURA'],
-      typeReception: [{value:'FISICO', disabled: true}], //esta campo depende de que tipo de recepcion es el formulario
+      typeReception: [{ value: 'FISICO', disabled: true }], //esta campo depende de que tipo de recepcion es el formulario
       destinationManage: [null],
       contributor: [null],
-      subject: [{value: 'SOLICITUD DE TRANSFERENCIA DE BIENES', disabled: true}],
+      subject: [
+        { value: 'SOLICITUD DE TRANSFERENCIA DE BIENES', disabled: true },
+      ],
       transExpedient: [null],
       typeTransfer: [null],
       transferEntityNotes: [null],
-      observations: [null]
+      observations: [null],
     });
   }
 
-  getTypeExpedient(event: any){
-
-  }
+  getTypeExpedient(event: any) {}
 
   confirm() {
     this.loading = true;
     console.log(this.receptionForm.value);
-    
   }
 }

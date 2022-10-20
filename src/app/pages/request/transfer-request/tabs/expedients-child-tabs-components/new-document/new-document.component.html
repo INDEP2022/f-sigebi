@@ -45,7 +45,9 @@
       <div class="row pt-4">
         <div class="col-md-6">
           <p for="">
-            No. Expediente:
+            <span *ngIf="typeDoc === 'Solicitudes'">No. Solicitud:</span>
+            <span *ngIf="typeDoc === 'expedient'">No. Expediente:</span>
+            <span *ngIf="typeDoc === 'good'">No. Bien:</span>
             <span>{{ newDocForm.get('noExpedient').value }}</span>
           </p>
         </div>

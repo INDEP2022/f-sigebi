@@ -20,6 +20,8 @@ import { GeneralDocTabComponent } from '../transfer-request/tabs/expedients-chil
 import { BtnRequestComponent } from '../transfer-request/tabs/expedients-child-tabs-components/btn-request/btn-request.component';
 import { NewDocumentComponent } from '../transfer-request/tabs/expedients-child-tabs-components/new-document/new-document.component';
 import { SeeInformationComponent } from '../transfer-request/tabs/expedients-child-tabs-components/doc-request-tab/see-information/see-information.component';
+import { SaeInputComponent } from '../transfer-request/tabs/compliance-verification-components/verify-compliance-tab/sae-input/sae-input.component';
+import { ExpedientsRequestTabComponent } from '../transfer-request/tabs/expedients-child-tabs-components/expedients-request-tab/expedients-request-tab.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +39,8 @@ import { SeeInformationComponent } from '../transfer-request/tabs/expedients-chi
     BtnRequestComponent,
     NewDocumentComponent,
     SeeInformationComponent,
+    SaeInputComponent,
+    ExpedientsRequestTabComponent,
   ],
   imports: [
     CommonModule,

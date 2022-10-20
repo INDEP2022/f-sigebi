@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -12,17 +12,18 @@ import { IDetailEstate } from './detail-estates.model';
 var bienes: IDetailEstate[] = [
   {
     id: 4,
-    gestion: 'string',
-    descripEstateTransfe: 'string',
+    gestion: 'texto de prueba',
+    descripEstateTransfe: 'texto de prueba',
     descriptionEstateSAE: '',
-    typeEstate: 'string',
-    quantityTransfe: 'string',
-    measureUnit: 'string',
-    uniqueKey: 'string',
-    physicalState: 'string',
-    stateConservation: 'string',
-    destinyLigie: 'string',
-    transferDestina: 'string',
+    typeEstate: 'texto de prueba',
+    quantityTransfe: 'texto de prueba',
+    measureUnitLigia: 'texto de prueba',
+    measureUnit: 'texto de prueba',
+    uniqueKey: 'texto de prueba',
+    physicalState: 'texto de prueba',
+    stateConservation: 'texto de prueba',
+    destinyLigie: 'texto de prueba',
+    transferDestina: 'texto de prueba',
   },
   {
     id: 5,
@@ -31,6 +32,7 @@ var bienes: IDetailEstate[] = [
     descriptionEstateSAE: '',
     typeEstate: 'string',
     quantityTransfe: 'string',
+    measureUnitLigia: 'string',
     measureUnit: 'string',
     uniqueKey: 'string',
     physicalState: 'string',
@@ -46,11 +48,16 @@ var bienes: IDetailEstate[] = [
   styleUrls: ['./verify-compliance-tab.component.scss'],
 })
 export class VerifyComplianceTabComponent extends BasePage implements OnInit {
+  @Input() dataObject: any;
   verifComplianceForm: ModelForm<any>;
+
   settingsEstate = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
+  paragraphsEstate = new BehaviorSubject<ListParams>(new ListParams());
+  detallesBienes: IDetailEstate[] = [];
+  columns = DETAIL_ESTATE_COLUMNS;
+
   paragraphsTable1: any[] = [];
   paragraphsTable2: any[] = [];
-  detallesBienes: IDetailEstate[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
 
@@ -67,6 +74,18 @@ export class VerifyComplianceTabComponent extends BasePage implements OnInit {
     this.settings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
     this.settings.columns = VERIRY_COMPLIANCE_COLUMNS;
     this.settingsEstate.columns = DETAIL_ESTATE_COLUMNS;
+
+    console.log('datos del padre');
+    console.log(this.dataObject);
+
+    this.columns.descriptionEstateSAE = {
+      ...this.columns.descriptionEstateSAE,
+      onComponentInitFunction: (instance?: any) => {
+        instance.input.subscribe((data: any) => {
+          console.log(data);
+        });
+      },
+    };
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getData());
@@ -86,6 +105,11 @@ export class VerifyComplianceTabComponent extends BasePage implements OnInit {
   article12y13Selected(event: any): void {
     this.article12and13array = [];
     this.article12and13array = event.selected;
+  }
+
+  clicked(event: any) {
+    console.log('table');
+    console.log(event);
   }
 
   selectAll(event?: any) {
@@ -116,6 +140,10 @@ export class VerifyComplianceTabComponent extends BasePage implements OnInit {
       this.arreglo.splice(index, 1);
     }
     console.log(this.arreglo);
+  }
+
+  getTableElements(event: any) {
+    console.log(event);
   }
 
   confirm() {

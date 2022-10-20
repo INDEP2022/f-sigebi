@@ -4,9 +4,12 @@ import {
   OnChanges,
   OnInit,
   SimpleChanges,
+  TemplateRef,
+  ViewChild,
+  ViewContainerRef,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -36,17 +39,19 @@ export class DocRequestTabComponent
   extends BasePage
   implements OnInit, OnChanges
 {
+  @ViewChild('myTemplate', { static: true }) template: TemplateRef<any>;
+  @ViewChild('myTemplate', { static: true, read: ViewContainerRef })
+  container: ViewContainerRef;
   @Input() typeDoc = '';
-  public selectDocType = new DefaultSelect<any>();
-  public docRequestForm: ModelForm<any>;
-
-  public params = new BehaviorSubject<ListParams>(new ListParams());
+  title: string = '';
+  selectDocType = new DefaultSelect<any>();
+  docRequestForm: ModelForm<any>;
+  params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: searchTable[] = [];
   columns = DOC_REQUEST_TAB_COLUMNS;
-
   filterTable: string = '';
-  //totalItems: number = 0;
-
+  parameter: any;
+  type: string = '';
   public data: any[] = [
     {
       noDoc: 'SAE15545',
@@ -66,11 +71,23 @@ export class DocRequestTabComponent
     },
   ];
 
-  constructor(public fb: FormBuilder, public modalService: BsModalService) {
+  constructor(
+    public fb: FormBuilder,
+    public modalService: BsModalService,
+    private modalRef: BsModalRef
+  ) {
     super();
   }
 
   ngOnInit(): void {
+    console.log(this.type);
+    console.log(this.typeDoc);
+    this.typeDoc = this.type ? this.type : this.typeDoc;
+
+    if (this.typeDoc === 'Solicitudes') {
+      this.container.createEmbeddedView(this.template);
+    }
+
     this.prepareForm();
     this.settings = { ...TABLE_SETTINGS, actions: false };
     this.settings.columns = DOC_REQUEST_TAB_COLUMNS;
@@ -95,10 +112,11 @@ export class DocRequestTabComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     console.log(changes['typeDoc'].currentValue);
-    this.typeDoc =
+    this.title =
       changes['typeDoc'].currentValue == 'request'
         ? 'Solicitudes'
         : 'Expediente';
+    this.typeDoc = this.title;
   }
 
   prepareForm(): void {
@@ -127,7 +145,9 @@ export class DocRequestTabComponent
 
   search(): void {}
 
-  cleanForm(): void {}
+  cleanForm(): void {
+    this.docRequestForm.reset();
+  }
 
   openDetail(): void {
     this.openModalInformation('', 'detail');
@@ -137,10 +157,18 @@ export class DocRequestTabComponent
     this.openModalInformation('', 'document');
   }
 
+  close() {
+    this.modalRef.hide();
+  }
+
   openNewDocument(request?: IRequest) {
+    let typeDoc = this.typeDoc;
+    console.log(this.typeDoc);
+
     let config: ModalOptions = {
       initialState: {
         request,
+        typeDoc: typeDoc,
         callback: (next: boolean) => {
           if (next) this.getData();
         },

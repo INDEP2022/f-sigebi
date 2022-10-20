@@ -9,29 +9,30 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 @Component({
   selector: 'app-new-document',
   templateUrl: './new-document.component.html',
-  styleUrls: ['./new-document.component.scss']
+  styleUrls: ['./new-document.component.scss'],
 })
 export class NewDocumentComponent extends BasePage implements OnInit {
   title: string = 'Información Gneneral';
   newDocForm: ModelForm<IRequest>;
-  selectTypeDoc = new DefaultSelect<IRequest>;
-  request: IRequest
+  selectTypeDoc = new DefaultSelect<IRequest>();
+  request: IRequest;
+  typeDoc: string = '';
   selectedFile: File;
 
-  constructor(
-    public fb: FormBuilder,
-    public modalRef: BsModalRef
-  ) {
+  constructor(public fb: FormBuilder, public modalRef: BsModalRef) {
     super();
-   }
+  }
 
   ngOnInit(): void {
     this.initForm();
+    console.log('NEW DOC TIPO');
+
+    console.log(this.typeDoc);
   }
 
-  initForm():void {
+  initForm(): void {
     this.newDocForm = this.fb.group({
-      docType:[null],
+      docType: [null],
       docFile: [null],
       docTit: [null],
       noExpedient: ['23360'],
@@ -47,21 +48,17 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     });
   }
 
+  getTypeDoc(event: any) {}
 
-  getTypeDoc(event: any){
-
-  }
-
-  confirm(){
+  confirm() {
     console.log(this.newDocForm.getRawValue());
-    
   }
 
-  selectFile(event: any){
+  selectFile(event: any) {
     this.selectedFile = event.target.files;
   }
 
-  close(){
+  close() {
     this.modalRef.hide();
   }
 }

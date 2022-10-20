@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { DocRequestTabComponent } from '../doc-request-tab/doc-request-tab.component';
 import { GOOD_DOCUMENTES_COLUMNS } from './good-doc-columns';
 
 @Component({
@@ -15,7 +17,7 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
   paragraphs: any = [];
   totalItems: number = 0;
 
-  constructor() {
+  constructor(private modalService: BsModalService) {
     super();
     this.settings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
     this.settings.columns = GOOD_DOCUMENTES_COLUMNS;
@@ -46,5 +48,17 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
 
   showDocuments(): void {
     console.log('mostrar los documentos seleccionados');
+    let config: ModalOptions = {
+      initialState: {
+        parameter: '',
+        type: 'good',
+        callback: (next: boolean) => {
+          //if(next) this.getExample();
+        },
+      },
+      class: `modalSizeXL modal-dialog-centered`,
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(DocRequestTabComponent, config);
   }
 }

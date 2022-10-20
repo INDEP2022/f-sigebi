@@ -1,0 +1,21 @@
+<div>
+  <div class="row">
+    <div class="d-flex bd-highlight">
+      <div class="p-2 flex-grow-1 bd-highlight">
+        <h5 class="title"><strong>Verificación de Cumplimiento</strong></h5>
+      </div>
+    </div>
+  </div>
+  <div class="row pt-4">
+    <div class="col-md-12" style="overflow-x: scroll">
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settings"
+          [source]="paragraphs">
+        </ng2-smart-table>
+      </div>
+    </div>
+  </div>
+  <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+</div>
