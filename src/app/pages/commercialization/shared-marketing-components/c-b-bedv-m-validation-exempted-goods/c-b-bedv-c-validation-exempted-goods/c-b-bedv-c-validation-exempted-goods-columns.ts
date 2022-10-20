@@ -1,21 +1,21 @@
 export const VALIDATION_EXEMPTED_GOODS_COLUMS = {
-  bien: {
+  noBien: {
     title: 'Bien',
     width: '25px',
     type: 'string',
     sort: false,
   },
-  descripcion: {
+  description: {
     title: 'Descripción',
     type: 'string',
     sort: false,
   },
-  unidad: {
+  unit: {
     title: 'Unidad',
     type: 'string',
     sort: false,
   },
-  proceso: {
+  proccess: {
     title: 'Proceso',
     type: 'string',
     sort: false,

@@ -12,7 +12,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
 import { IRecord } from 'src/app/core/models/administrative-processes/record.model';
-import { recordsData } from './recordsData';
+import { recordsData } from './data';
 
 @Component({
   selector: 'app-records-shared',

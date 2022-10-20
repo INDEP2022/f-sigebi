@@ -41,26 +41,39 @@ export class PaRspCRecordServicePaymentComponent
 
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  //Columns
+  columns=COLUMNS;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private modalRef: BsModalRef
   ) {
+
     super();
     this.settings = {
       ...this.settings,
       actions: { add: true },
       columns: COLUMNS,
     };
+
   }
 
   ngOnInit(): void {
+    
     this.prepareForm();
-    /*this.form.get("pb_type").valueChanges.subscribe(x => {
-      console.log(x)
-       this.filter(x);
-    });*/
+
+    /**
+     * Instance renderComponent
+     **/
+    /*this.columns.isPayment={
+      ...this.columns.isPayment,
+      onComponentInitFunction: (instance: any) => {
+        instance.toggle.subscribe((data: any) => {
+         this.otherFn(data);
+        });
+      }
+    }*/
   }
 
   private prepareForm(): void {

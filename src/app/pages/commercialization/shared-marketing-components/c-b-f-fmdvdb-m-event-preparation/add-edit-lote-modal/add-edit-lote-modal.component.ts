@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-add-edit-lote-modal',
@@ -18,6 +19,10 @@ export class AddEditLoteModalComponent extends BasePage implements OnInit {
 
   @Output() refresh = new EventEmitter<true>();
 
+  get check(){
+    return this.form.get('check')
+  }
+
   constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
   }
@@ -28,11 +33,12 @@ export class AddEditLoteModalComponent extends BasePage implements OnInit {
 
   private prepareForm(){
     this.form = this.fb.group({
-      lote: [null, [Validators.required]],
+      lote: [null, [Validators.required, Validators.maxLength(10),  Validators.minLength(1), Validators.pattern(NUMBERS_PATTERN)]],
       descripcion: [null, [Validators.required]],
       valorbase: [null, [Validators.required]],
-      idcliente: [null, [Validators.required]],
-      rfc: [null, [Validators.required]]
+      idcliente: [null, ],
+      rfc: [null, ],
+      check: [false],
     });
     if (this.allotment != null) {
       this.edit = true;

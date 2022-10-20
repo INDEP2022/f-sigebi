@@ -23,6 +23,20 @@ const routes: Routes = [
         './proposal-inventories-donation/direct-donation-proposal/fdp-pidw-m-web-donation-inventory.module'
       ).then(m => m.FdpPidwMWebDonationInventoryModule),
   },
+  {
+    path: 'maintenance-commitment-donation',
+    loadChildren: () =>
+      import(
+        './maintenance-commitment-donation/fdp-mcpd-m-maintenance-commitment-donation.module'
+      ).then(m => m.FdpMcpdMMaintenanceCommitmentDonationModule),
+  },
+  {
+    path: 'approval-for-donation',
+    loadChildren: () =>
+      import(
+        './approval-for-donation/fdp-apd-m-approval-for-donation.module'
+      ).then(m => m.FdpApdMApprovalForDonationModule),
+  },
 ];
 
 @NgModule({

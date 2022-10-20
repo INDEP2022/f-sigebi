@@ -86,6 +86,33 @@ const routes: Routes = [
             .SurveillanceZonesModule,
         data: { title: 'Zonas de Vigilancia' },
       },
+      {
+        path: 'surveillance-concepts',
+        loadChildren: async () =>
+          (await import('./surveillance-concepts/surveillance-concepts.module'))
+            .SurveillanceConceptsModule,
+        data: { title: 'Conceptos de Vigilancia' },
+      },
+      {
+        path: 'surveillance-calculate',
+        loadChildren: async () =>
+          (
+            await import(
+              './surveillance-calculate/surveillance-calculate.module'
+            )
+          ).SurveillanceCalculateModule,
+        data: { title: 'Calculo de Vigilancia' },
+      },
+      {
+        path: 'prorrateo-goods-surveillance',
+        loadChildren: async () =>
+          (
+            await import(
+              './prorrateo-goods-surveillance/prorrateo-goods-surveillance.module'
+            )
+          ).ProrrateoGoodsSurveillanceModule,
+        data: { title: 'Prorrateo de vigilancia' },
+      },
     ],
   },
 ];

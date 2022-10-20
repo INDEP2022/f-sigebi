@@ -12,7 +12,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
 import { IPackage } from 'src/app/core/models/catalogs/package.model';
-import { packagesData } from './packagesData';
+import { packagesData } from './data';
 
 @Component({
   selector: 'app-packages-shared',
