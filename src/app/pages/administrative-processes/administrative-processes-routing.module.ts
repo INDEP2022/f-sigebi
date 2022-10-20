@@ -336,6 +336,13 @@ const routes: Routes = [
             .ElectronicSignatureModule,
         data: { title: 'Firma Electrónica' },
       },
+      {
+        path: 'proceedings-conversion',
+        loadChildren: async () =>
+          (await import('./proceedings-conversion/proceedings-conversion.module'))
+            .ProceedingsConversionModule,
+        data: { title: 'Detalle de actas de conversión' },
+      },
       /**
        * Seguros David Lucas
        */

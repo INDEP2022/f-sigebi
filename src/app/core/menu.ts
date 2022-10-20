@@ -197,6 +197,16 @@ export const MENU: IMenuItem[] = [
             link: '/pages/administrative-processes/performance-evaluation-report',
           },
         ]
+      },
+      {
+        label: 'Conversión de bienes',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Actas conversión',
+            link: '/pages/administrative-processes/proceedings-conversion',
+          },
+        ]
       }
     ],
   },
