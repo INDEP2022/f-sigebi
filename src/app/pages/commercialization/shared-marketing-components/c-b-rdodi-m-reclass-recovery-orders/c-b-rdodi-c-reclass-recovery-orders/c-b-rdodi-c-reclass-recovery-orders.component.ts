@@ -37,7 +37,7 @@ export class CBRdodiCReclassRecoveryOrdersComponent
   }
   private prepareForm() {
     this.form = this.fb.group({
-      idOi: ['',[Validators.required]],
+      id: [null,[Validators.required]],
       // idArea: ['', [Validators.required]],
       // ur: ['', [Validators.required]],
       // clientRFC: ['', [Validators.required]],
@@ -81,8 +81,8 @@ export class CBRdodiCReclassRecoveryOrdersComponent
   ];
 
 //Datos de prueba para autorrellenar los campos
-  data: any = [
-    { idOi: 1933,
+  data: any[] = [
+    { id: 1933,
       idArea: 182000,
       ur: 182000,
       clientRFC: 'MNA000314EX7',
@@ -98,7 +98,7 @@ export class CBRdodiCReclassRecoveryOrdersComponent
       reference: 'LB204000000010975L06',
       idPayment: 1407
     },
-    { idOi: 1478,
+    { id: 1478,
       idArea: 218000,
       ur: 11000,
       clientRFC: 'ZQA000741EZ8',
@@ -114,7 +114,7 @@ export class CBRdodiCReclassRecoveryOrdersComponent
       reference: 'LB104000000010975L07',
       idPayment: 714
     },
-    { idOi: 3214,
+    { id: 3214,
       idArea: 987000,
       ur: 987000,
       clientRFC: 'PAL0003149O7',

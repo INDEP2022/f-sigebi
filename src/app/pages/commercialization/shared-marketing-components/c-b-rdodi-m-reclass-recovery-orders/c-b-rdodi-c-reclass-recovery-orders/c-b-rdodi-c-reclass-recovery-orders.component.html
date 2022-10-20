@@ -10,15 +10,15 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-1">
-          <h5 class="font-size-14 d-inline">Ingrese OI</h5>
+          <h5 class="font-size-14 d-inline">Seleccione OI</h5>
           <ngx-select
             [form]="form"
             [data]="OItems"
-            value="idOi"
-            bindLabel="idOi"
+            value="id"
+            bindLabel="id"
             (fetchItems)="getOI($event)"
             (change)="selectOI($event)"
-            control="idOi">
+            control="id">
           </ngx-select>
         </div>
         <div class="col-md-2" *ngIf="selectedOI != null">
@@ -157,17 +157,19 @@
   <div></div>
 </app-card>
 
-<app-card [header]="true">
-  <div header>
-    <div class="ch-content">
-      <h5 class="title">DETALLES OI</h5>
-      <div class="row justify-content-end pt-3 mr-3">
-        <app-columns-select [(settings)]="settings"></app-columns-select>
+<div *ngIf="selectedOI != null">
+  <app-card [header]="true">
+    <div header>
+      <div class="ch-content">
+        <h5 class="title">DETALLES OI</h5>
+        <div class="row justify-content-end pt-3 mr-3">
+          <app-columns-select [(settings)]="settings"></app-columns-select>
+        </div>
       </div>
     </div>
-  </div>
-  <div body>
-    <ng2-smart-table [settings]="settings" [source]="dataTable">
-    </ng2-smart-table>
-  </div>
-</app-card>
+    <div body>
+      <ng2-smart-table [settings]="settings" [source]="dataTable">
+      </ng2-smart-table>
+    </div>
+  </app-card>
+</div>

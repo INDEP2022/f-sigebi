@@ -19,7 +19,9 @@ export class CBBedvCValidationExemptedGoodsComponent
 {
   ExcelData: any;
   CsvData: any;
+
   form: FormGroup = new FormGroup({});
+
   columns: any[] = [];
   totalItems: number = 0;
 
@@ -38,16 +40,9 @@ export class CBBedvCValidationExemptedGoodsComponent
   }
 
   ngOnInit(): void {
-    this.prepareForm();
+    
   }
-  private prepareForm() {
-    this.form = this.fb.group({
-      idEvento: ['', [Validators.required]],
-      blackList: ['', [Validators.required]],
-      refundAmount: ['', [Validators.required]],
-      penaltyAmount: ['', [Validators.required]],
-    });
-  }
+  
 
   data = [
     {
