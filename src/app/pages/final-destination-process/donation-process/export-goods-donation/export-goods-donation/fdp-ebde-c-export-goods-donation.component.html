@@ -1,0 +1,68 @@
+<app-card [header]="true">
+    <div class="ch-content" header>
+        <h5 class="title">Exportación de Bienes para Donación a Excel</h5>
+    </div>
+
+    <div body>
+        <div class="row">
+            <div class="col-12">
+                <h5>
+                    Selección de Bienes
+                </h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <button class="btn btn-secondary btn-sm active">
+                    Por Rastreador
+                </button>
+            </div>
+        </div>
+        <app-divider></app-divider>
+        <div class="row mt-5">
+            <div class="col-12">
+                <h5>
+                    Bienes Disponibles
+                </h5>
+            </div>
+        </div>
+
+        <div class="row justify-content-end mt-3">
+            <div class="col-md-5 buttons pt-3 text-right">
+                <app-columns-select (settingsChange)="settingsChange($event)" [settings]="settings">
+                </app-columns-select>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="data">
+                
+            </ng2-smart-table>
+        </div>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
+
+        <div class="row mt-5">
+            <div class="col-12 col-md-3 text-center text-left">
+                <button class="btn btn-success btn-sm active">
+                    Exportar a Excel
+                </button>
+            </div>
+            <div class="col-12 col-md-3 text-center text-left mt-3 mt-md-0">
+                <!-- <form-field>
+                    <input type="text" class="form-control" readonly />
+                </form-field> -->
+            </div>
+            <div class="col-12 col-md-3 text-center text-left mt-3 mt-md-0">
+                <button class="btn btn-success btn-sm active">
+                    Exportar a Excel y Cambiar Estatus
+                </button>
+            </div>
+            
+        </div>
+
+    </div>
+</app-card>

@@ -1,5 +1,3 @@
-import { IMenuItem } from 'src/app/core/interfaces/menu.interface';
-
 export const baseMenu: string = '/pages/juridicos/'; // Base url Menu
 export const baseMenuDepositaria: string = 'depositaria/'; // Base url Menu Depositaria
 export const baseMenuProcesoDispercionPagos: string =
@@ -52,9 +50,14 @@ export const routesJuridicalProcesses: any = [
     link: 'reporte-cedulas-nombramiento',
     menu: 'Reporte de Cédulas de Nombramiento',
   },
+  {
+    label: 'Bienes por Depositaría',
+    link: 'reporte-bienes-depositarias',
+    menu: 'Reporte de Bienes por Depositaría',
+  },
   // DEPOSITARIA
 ];
-export const menuOptionsJuridicalProcesses: IMenuItem =
+export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
   // PROCESOS JURIDICOS
   {
     label: 'Procesos Jurídicos',
@@ -111,9 +114,15 @@ export const menuOptionsJuridicalProcesses: IMenuItem =
             link:
               baseMenu + baseMenuDepositaria + routesJuridicalProcesses[8].link,
           },
+          {
+            label: routesJuridicalProcesses[9].menu,
+            link:
+              baseMenu + baseMenuDepositaria + routesJuridicalProcesses[9].link,
+          },
           // Proceso de Dispersión de Pagos
         ],
       },
     ],
-  };
-// PROCESOS JURIDICOS
+  },
+  // PROCESOS JURIDICOS
+];

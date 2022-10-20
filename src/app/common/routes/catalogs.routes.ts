@@ -116,6 +116,10 @@ export const CATALOGS_ROUTES = [
         link: '/pages/catalogs/label-okey',
       },
       {
+        label: 'Peritos',
+        link: '/pages/catalogs/expert',
+      },
+      {
         label: 'Personas',
         link: '/pages/catalogs/person',
       },
