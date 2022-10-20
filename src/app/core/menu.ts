@@ -196,8 +196,8 @@ export const MENU: IMenuItem[] = [
             label: 'Reporte de evaluación de desempeño',
             link: '/pages/administrative-processes/performance-evaluation-report',
           },
-        ]
-      }
+        ],
+      },
     ],
   },
   {
@@ -289,7 +289,6 @@ export const MENU: IMenuItem[] = [
         link: '/pages/administrative-processes/accumulated-monthly-assets',
       },
 
-
       /**
        * ADMIN PROCESS-SERVICES LEGASPI
        **/
@@ -370,6 +369,10 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Mantenimiento Comprometer para Donación',
             link: '/pages/final-destination-process/donation-process/maintenance-commitment-donation',
+          },
+          {
+            label: 'Aprobación para Donación',
+            link: '/pages/final-destination-process/donation-process/approval-for-donation',
           },
         ],
       },
