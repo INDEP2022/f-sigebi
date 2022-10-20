@@ -30,6 +30,13 @@ const routes: Routes = [
         './maintenance-commitment-donation/fdp-mcpd-m-maintenance-commitment-donation.module'
       ).then(m => m.FdpMcpdMMaintenanceCommitmentDonationModule),
   },
+  {
+    path: 'approval-for-donation',
+    loadChildren: () =>
+      import(
+        './approval-for-donation/fdp-apd-m-approval-for-donation.module'
+      ).then(m => m.FdpApdMApprovalForDonationModule),
+  },
 ];
 
 @NgModule({
