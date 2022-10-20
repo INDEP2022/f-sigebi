@@ -1,0 +1,18 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showCabms">
+    <div class="col-md-12">
+      <form-field [control]="form.get(cabmsField)">
+        <ngx-select
+          (fetchItems)="getCabms($event)"
+          [data]="items"
+          [form]="form"
+          value="cabms"
+          bindLabel="cabms"
+          label="CABMS"
+          [control]="cabmsField"
+          (change)="onCabmsChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

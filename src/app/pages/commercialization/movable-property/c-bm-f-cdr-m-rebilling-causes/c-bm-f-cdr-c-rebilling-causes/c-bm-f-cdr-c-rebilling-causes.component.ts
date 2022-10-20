@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core'; 
 
 import { BasePage } from 'src/app/core/shared/base-page';
 import { REBILLING_CAUSES_COLUMNS } from './rebilling-causes-columns';
@@ -14,11 +14,16 @@ export class CBmFCdrCRebillingCausesComponent
   extends BasePage
   implements OnInit
 {
+  
+  columns: any[] = [];
+  totalItems: number = 0;
+
   constructor(private modalService: BsModalService) {
     super();
     this.settings = {
       ...this.settings,
       actions: {
+        columnTitle: "Acciones",
         edit: true,
         delete: false,
         position: 'right',
@@ -28,16 +33,6 @@ export class CBmFCdrCRebillingCausesComponent
   }
 
   ngOnInit(): void {}
-
-  openModal(): void {
-    const modalRef = this.modalService.show(
-      CBmFCdrCRebillingCausesModalComponent,
-      {
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      }
-    );
-  }
 
   data = [
     {
@@ -69,4 +64,27 @@ export class CBmFCdrCRebillingCausesComponent
       comentarios: 'DATOS DEL CLIENTE INCORRECTOS',
     },
   ];
+
+  //Rellenar formulario con datos de la tabla
+  openForm(allotment?: any) {
+     this.openModal({ allotment });
+   }
+
+   openModal(context?: Partial<CBmFCdrCRebillingCausesModalComponent>) {
+    const modalRef = this.modalService.show(CBmFCdrCRebillingCausesModalComponent, {
+      initialState: { ...context },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.refresh.subscribe(next => {
+      if (next) this.getData();
+    });
+  }
+
+  getData() {
+    this.loading = true;
+    this.columns = this.data;
+    this.totalItems = this.data.length;
+    this.loading = false;
+  }
 }

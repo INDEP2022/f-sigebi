@@ -1,0 +1,55 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field [control]="form.get('noBien')" label="No. bien">
+            <input type="text" class="form-control" formControlName="noBien" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('description')" label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('unit')" label="Unidad">
+            <input type="text" class="form-control" formControlName="unit" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('proccess')" label="Proceso">
+            <ng-select
+              formControlName="proccess"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="REV">REV</ng-option>
+              <ng-option value="COMER">COMER</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          (click)="close()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

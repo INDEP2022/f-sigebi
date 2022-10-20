@@ -7,138 +7,128 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-2">
+        <div class="col-md-2 mt-3">
           <form-field [control]="form.get('idEvento')" label="Evento">
-            <ngx-select
-              typeToSearchText="Escriba 3 o más caracteres"
-              label="Evento"
-              [form]="form"
-              control="idEvento">
-            </ngx-select>
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('blackList')" label="Lista Negra">
             <input
               type="text"
               class="form-control"
-              formControlName="blackList" />
+              formControlName="idEvento" />
           </form-field>
         </div>
-        <div class="col-md-2">
-          <form-field
-            [control]="form.get('refundAmount')"
-            label="Monto devolución">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="refundAmount" />
-          </form-field>
+        <div class="col-md-4">
+          <app-events-shared
+            [label]="'Proceso'"
+            [form]="form"></app-events-shared>
         </div>
         <div class="col-md-2">
-          <form-field
-            [control]="form.get('penaltyAmount')"
-            label="Monto Penalización">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="penaltyAmount" />
-          </form-field>
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]="!form.valid"
+            (click)="show = !show">
+            {{ show ? 'Validar otro' : 'Validar' }}
+          </button>
         </div>
       </div>
     </form>
   </div>
 </app-card>
 
-<app-card [header]="true" [footer]="true">
-  <div header>
-    <div class="ch-content">
-      <h5 class="title">Lotes participantes en el evento</h5>
-      <div class="row justify-content-end pt-3 mr-3">
-        <app-columns-select [(settings)]="settingsLotes"></app-columns-select>
+<div *ngIf="show">
+  <app-card [header]="true" [footer]="true">
+    <div header>
+      <div class="ch-content">
+        <h5 class="title">Lotes participantes en el evento</h5>
+        <div class="row justify-content-end pt-3 mr-3">
+          <app-columns-select [(settings)]="settingsLotes"></app-columns-select>
+        </div>
       </div>
     </div>
-  </div>
-  <div body>
-    <ng2-smart-table [settings]="settingsLotes" [source]="dataLotes">
-    </ng2-smart-table>
-  </div>
-  <div footer>
-    <button
-      type="button"
-      class="btn btn-success btn-sm active"
-      (click)="exportAsXLSXLotes()">
-      Exportar a Excel
-    </button>
-  </div>
-</app-card>
+    <div body>
+      <ng2-smart-table [settings]="settingsLotes" [source]="dataLotes">
+      </ng2-smart-table>
+    </div>
+    <div footer>
+      <button
+        type="button"
+        class="btn btn-success btn-sm active"
+        (click)="exportAsXLSXLotes()">
+        Exportar a Excel
+      </button>
+    </div>
+  </app-card>
 
-<app-card [header]="true" [footer]="true">
-  <div header>
-    <div class="ch-content">
-      <h5 class="title">Bienes que conforman el lote</h5>
-      <div class="row justify-content-end pt-3 mr-3">
-        <app-columns-select [(settings)]="settingsBienes"></app-columns-select>
+  <app-card [header]="true" [footer]="true">
+    <div header>
+      <div class="ch-content">
+        <h5 class="title">Bienes que conforman el lote</h5>
+        <div class="row justify-content-end pt-3 mr-3">
+          <app-columns-select
+            [(settings)]="settingsBienes"></app-columns-select>
+        </div>
       </div>
     </div>
-  </div>
-  <div body>
-    <ng2-smart-table [settings]="settingsBienes" [source]="dataBienes">
-    </ng2-smart-table>
-  </div>
-  <div footer>
-    <button
-      type="button"
-      class="btn btn-success btn-sm active"
-      (click)="exportAsXLSXBienes()">
-      Exportar a Excel
-    </button>
-  </div>
-</app-card>
+    <div body>
+      <ng2-smart-table [settings]="settingsBienes" [source]="dataBienes">
+      </ng2-smart-table>
+    </div>
+    <div footer>
+      <button
+        type="button"
+        class="btn btn-success btn-sm active"
+        (click)="exportAsXLSXBienes()">
+        Exportar a Excel
+      </button>
+    </div>
+  </app-card>
 
-<app-card [header]="true" [footer]="true">
-  <div header>
-    <div class="ch-content">
-      <h5 class="title">Pagos recibidos en el Banco</h5>
-      <div class="row justify-content-end pt-3 mr-3">
-        <app-columns-select
-          [(settings)]="settingsPagosBanco"></app-columns-select>
+  <app-card [header]="true" [footer]="true">
+    <div header>
+      <div class="ch-content">
+        <h5 class="title">Pagos recibidos en el Banco</h5>
+        <div class="row justify-content-end pt-3 mr-3">
+          <app-columns-select
+            [(settings)]="settingsPagosBanco"></app-columns-select>
+        </div>
       </div>
     </div>
-  </div>
-  <div body>
-    <ng2-smart-table [settings]="settingsPagosBanco" [source]="dataPagosBanco">
-    </ng2-smart-table>
-  </div>
-  <div footer>
-    <button
-      type="button"
-      class="btn btn-success btn-sm active"
-      (click)="exportAsXLSXPagosBanco()">
-      Exportar a Excel
-    </button>
-  </div>
-</app-card>
+    <div body>
+      <ng2-smart-table
+        [settings]="settingsPagosBanco"
+        [source]="dataPagosBanco">
+      </ng2-smart-table>
+    </div>
+    <div footer>
+      <button
+        type="button"
+        class="btn btn-success btn-sm active"
+        (click)="exportAsXLSXPagosBanco()">
+        Exportar a Excel
+      </button>
+    </div>
+  </app-card>
 
-<app-card [header]="true" [footer]="true">
-  <div header>
-    <div class="ch-content">
-      <h5 class="title">Composición de pagos recibidos</h5>
-      <div class="row justify-content-end pt-3 mr-3">
-        <app-columns-select [(settings)]="settingsCompos"></app-columns-select>
+  <app-card [header]="true" [footer]="true">
+    <div header>
+      <div class="ch-content">
+        <h5 class="title">Composición de pagos recibidos</h5>
+        <div class="row justify-content-end pt-3 mr-3">
+          <app-columns-select
+            [(settings)]="settingsCompos"></app-columns-select>
+        </div>
       </div>
     </div>
-  </div>
-  <div body>
-    <ng2-smart-table [settings]="settingsCompos" [source]="dataCompos">
-    </ng2-smart-table>
-  </div>
-  <div footer>
-    <button
-      type="button"
-      class="btn btn-success btn-sm active"
-      (click)="exportAsXLSXCompos()">
-      Exportar a Excel
-    </button>
-  </div>
-</app-card>
+    <div body>
+      <ng2-smart-table [settings]="settingsCompos" [source]="dataCompos">
+      </ng2-smart-table>
+    </div>
+    <div footer>
+      <button
+        type="button"
+        class="btn btn-success btn-sm active"
+        (click)="exportAsXLSXCompos()">
+        Exportar a Excel
+      </button>
+    </div>
+  </app-card>
+</div>

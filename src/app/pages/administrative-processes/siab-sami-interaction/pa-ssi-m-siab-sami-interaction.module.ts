@@ -9,6 +9,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 //Routing
 import { PaSsiMSiabSamiInteractionRoutingModule } from './pa-ssi-m-siab-sami-interaction-routing.module';
 //Components
+import { PaSsiCSiabSamiInteractionComponent } from './pa-ssi-c-siab-sami-interaction.component';
 import { PaGrCGoodsRelationshipComponent } from './goods-relationship/pa-gr-c-goods-relationship.component';
 import { PaMdgCMissingDamagedGoodsComponent } from './missing-damaged-goods/pa-mdg-c-missing-damaged-goods.component';
 import { PaRmCRevenueManagementComponent } from './revenue-management/pa-rm-c-revenue-management.component';
@@ -22,6 +23,7 @@ import { PaVgCValueGoodsComponent } from './value-goods/pa-vg-c-value-goods.comp
     PaRmCRevenueManagementComponent,
     PaPgCPaymentGoodsComponent,
     PaVgCValueGoodsComponent,
+    PaSsiCSiabSamiInteractionComponent,
   ],
   imports: [
     CommonModule,

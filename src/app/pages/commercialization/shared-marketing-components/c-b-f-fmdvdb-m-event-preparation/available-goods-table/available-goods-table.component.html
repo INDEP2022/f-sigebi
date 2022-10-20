@@ -1,0 +1,29 @@
+<div class="row pt-5">
+  <div class="ch-content">
+    <h5 class="title">Evento de [Remesas]</h5>
+    <div class="row justify-content-end mr-3">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+    </div>
+  </div>
+  <ng2-smart-table [settings]="settings" [source]="data"> </ng2-smart-table>
+</div>
+
+<div class="row pt-5">
+  <div class="ch-content">
+    <h5 class="title">Lote</h5>
+    <div class="row justify-content-end mr-3">
+      <app-columns-select [(settings)]="settings2"></app-columns-select>
+    </div>
+  </div>
+  <ng2-smart-table [settings]="settings2" [source]="data2"> </ng2-smart-table>
+</div>
+
+<div class="row pt-5">
+  <div class="ch-content">
+    <h5 class="title">Bienes</h5>
+    <div class="row justify-content-end mr-3">
+      <app-columns-select [(settings)]="settings3"></app-columns-select>
+    </div>
+  </div>
+  <ng2-smart-table [settings]="settings3" [source]="data3"> </ng2-smart-table>
+</div>
