@@ -5,7 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 
-import { COLUMNS } from './columns';
+import { COLUMNS, expediente, Good, statusData } from './columns';
 
 @Component({
   selector: 'app-pa-cs-c-change-of-status-sti',
@@ -37,7 +37,7 @@ export class PaCsCChangeOfStatusStiComponent
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  data: any;
+  data: Good[];
   constructor(private fb: FormBuilder, private modalService: BsModalService) {
     super();
     this.settings.columns = COLUMNS;
@@ -67,27 +67,50 @@ export class PaCsCChangeOfStatusStiComponent
     this.settings = $event;
   }
 
-  accept() {}
+  accept() {
+    this.changeStatus();
+  }
+
   listGoods() {
-    this.data = [
-      {
-        goodNumber: '1',
-        DescriptionGood: 'Descripcion de la clasificacion 1',
-        status: 'Estatus 1',
-        check: false,
-      },
-      {
-        goodNumber: '1',
-        DescriptionGood: 'Descripcion de la clasificacion 1',
-        status: 'Estatus 1',
-        check: false,
-      },
-      {
-        goodNumber: '1',
-        DescriptionGood: 'Descripcion de la clasificacion 1',
-        status: 'Estatus 1',
-        check: false,
-      },
-    ];
+    const file = this.numberFile.value;
+    const files = expediente;
+    let buscar: boolean = false;
+    files.forEach(elemnt => {
+      if (elemnt.numberFile === file) {
+        this.data = elemnt.goods;
+        this.currentDate.setValue(new Date());
+        buscar = true;
+      }
+    });
+    !buscar ? this.onLoadToast('error', 'Expediente no existe', '') : undefined;
+  }
+
+  loadDatesStatus() {
+    const status = this.newStatus.value;
+    console.log(status);
+    const statusD = statusData;
+    statusD.forEach(elemnt => {
+      if (elemnt.numberStatus === status) {
+        this.descriptionStatus.setValue(elemnt.descriptionStatus);
+      }
+    });
+  }
+
+  changeStatus() {
+    console.log(this.data);
+
+    /*     this.alertQuestion(
+      'warning',
+      '¿Desea cambiar los estatus del bien ?',
+      ''
+    ).then(resp => {
+      if (resp.isConfirmed) {
+        const status = this.newStatus.value;
+        this.data.forEach(elemnt => {
+          elemnt.status = status;
+          this.onLoadToast('success', 'Estatus Actualizados', '');
+        });
+      }
+    }); */
   }
 }
