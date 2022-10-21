@@ -22,6 +22,7 @@ import { NewDocumentComponent } from '../transfer-request/tabs/expedients-child-
 import { SeeInformationComponent } from '../transfer-request/tabs/expedients-child-tabs-components/doc-request-tab/see-information/see-information.component';
 import { SaeInputComponent } from '../transfer-request/tabs/compliance-verification-components/verify-compliance-tab/sae-input/sae-input.component';
 import { ExpedientsRequestTabComponent } from '../transfer-request/tabs/expedients-child-tabs-components/expedients-request-tab/expedients-request-tab.component';
+import { RequestOfAssetsComponent } from '../transfer-request/tabs/expedients-child-tabs-components/request-of-assets/request-of-assets.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +42,7 @@ import { ExpedientsRequestTabComponent } from '../transfer-request/tabs/expedien
     SeeInformationComponent,
     SaeInputComponent,
     ExpedientsRequestTabComponent,
+    RequestOfAssetsComponent,
   ],
   imports: [
     CommonModule,

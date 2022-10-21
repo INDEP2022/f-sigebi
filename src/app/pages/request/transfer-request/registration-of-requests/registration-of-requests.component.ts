@@ -37,7 +37,6 @@ export class RegistrationOfRequestsComponent
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
-      console.log(params);
       this.prepareForm();
       this.object = this.registRequestForm.value;
     });
@@ -72,7 +71,6 @@ export class RegistrationOfRequestsComponent
   }
 
   close() {
-    //this.modalRef.hide();
     this.location.back();
   }
 

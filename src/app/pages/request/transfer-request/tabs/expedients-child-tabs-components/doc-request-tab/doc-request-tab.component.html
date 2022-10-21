@@ -11,9 +11,7 @@
       <form [formGroup]="docRequestForm" class="form-material">
         <div class="row pt-2">
           <div class="col-md-6">
-            <form-field
-              [control]="docRequestForm.get('text')"
-              label="Descripción">
+            <form-field [control]="docRequestForm.get('text')" label="Texto">
               <textarea
                 class="form-control"
                 type="text"
@@ -31,6 +29,44 @@
               [data]="selectDocType"
               label="Tipo de Documento"
               value="docType">
+            </ngx-select>
+          </div>
+        </div>
+        <div
+          class="row pt-2"
+          *ngIf="
+            typeDoc === 'doc-expedient' ||
+            typeDoc === 'request-expedient' ||
+            typeDoc === 'request-assets'
+          ">
+          <div class="col-md-4">
+            <ngx-select
+              [form]="docRequestForm"
+              control="regDelega"
+              (fetchItems)="getRegDelegation($event)"
+              [data]="selectRegDelegation"
+              label="Delegación Regional"
+              value="regDelega">
+            </ngx-select>
+          </div>
+          <div class="col-md-4">
+            <ngx-select
+              [form]="docRequestForm"
+              control="state"
+              (fetchItems)="getState($event)"
+              [data]="selectState"
+              label="Estado"
+              value="state">
+            </ngx-select>
+          </div>
+          <div class="col-md-4">
+            <ngx-select
+              [form]="docRequestForm"
+              control="tranfe"
+              (fetchItems)="getTransfe($event)"
+              [data]="selectTransfe"
+              label="Transferente"
+              value="tranfe">
             </ngx-select>
           </div>
         </div>
@@ -127,7 +163,9 @@
           </div>
         </div>
         <div class="row pt-4">
-          <div class="col-md-3" *ngIf="typeDoc === 'good'">
+          <div
+            class="col-md-3"
+            *ngIf="typeDoc === 'good' || typeDoc === 'request-assets'">
             <form-field
               [control]="docRequestForm.get('noRequest')"
               label="No. Bien">
@@ -139,10 +177,25 @@
             </form-field>
           </div>
 
-          <div class="col-md-3">
+          <div
+            class="col-md-3"
+            *ngIf="
+              typeDoc === 'doc-request' || typeDoc === 'request-expedient'
+            ">
             <form-field
               [control]="docRequestForm.get('noRequest')"
-              label="Numero Solicitud">
+              label="No. Solicitud">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="noRequest"
+                placeholder="" />
+            </form-field>
+          </div>
+          <div class="col-md-3" *ngIf="typeDoc === 'doc-expedient'">
+            <form-field
+              [control]="docRequestForm.get('noRequest')"
+              label="No. Expediente">
               <input
                 type="text"
                 class="form-control"
@@ -208,7 +261,7 @@
   </div>
 </ng-template>
 
-<app-modal *ngIf="typeDoc === 'good'">
+<app-modal *ngIf="typeDoc === 'good' || typeDoc === 'request-assets'">
   <div body *ngTemplateOutlet="myTemplate"></div>
   <div footer>
     <div class="d-flex flex-row-reverse">

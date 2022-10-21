@@ -47,7 +47,7 @@ export class GoodDocTabComponent extends BasePage implements OnInit {
   }
 
   showDocuments(): void {
-    console.log('mostrar los documentos seleccionados');
+    //console.log('mostrar los documentos seleccionados');
     let config: ModalOptions = {
       initialState: {
         parameter: '',

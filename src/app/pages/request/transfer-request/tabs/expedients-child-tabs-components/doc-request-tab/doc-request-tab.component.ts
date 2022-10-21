@@ -49,9 +49,12 @@ export class DocRequestTabComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: searchTable[] = [];
   columns = DOC_REQUEST_TAB_COLUMNS;
-  filterTable: string = '';
   parameter: any;
   type: string = '';
+  selectRegDelegation = new DefaultSelect<any>();
+  selectState = new DefaultSelect<any>();
+  selectTransfe = new DefaultSelect<any>();
+
   public data: any[] = [
     {
       noDoc: 'SAE15545',
@@ -80,15 +83,13 @@ export class DocRequestTabComponent
   }
 
   ngOnInit(): void {
-    console.log(this.type);
-    console.log(this.typeDoc);
     this.typeDoc = this.type ? this.type : this.typeDoc;
-
-    if (this.typeDoc === 'Solicitudes') {
+    if (this.typeDoc === 'doc-request') {
+      //hacer visible la vista principal y no el ng-template
       this.container.createEmbeddedView(this.template);
     }
-
     this.prepareForm();
+    this.setTypeColumn();
     this.settings = { ...TABLE_SETTINGS, actions: false };
     this.settings.columns = DOC_REQUEST_TAB_COLUMNS;
 
@@ -111,12 +112,9 @@ export class DocRequestTabComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes['typeDoc'].currentValue);
-    this.title =
-      changes['typeDoc'].currentValue == 'request'
-        ? 'Solicitudes'
-        : 'Expediente';
-    this.typeDoc = this.title;
+    let onChangeCurrentValue = changes['typeDoc'].currentValue;
+    this.typeDoc = onChangeCurrentValue;
+    this.setTitle(onChangeCurrentValue);
   }
 
   prepareForm(): void {
@@ -134,6 +132,11 @@ export class DocRequestTabComponent
       comment: [null],
       noRequest: [{ value: 157, disabled: true }],
       responsible: [null],
+
+      /* Solicitud Transferencia */
+      regDelega: [null],
+      state: [null],
+      tranfe: [null],
     });
   }
 
@@ -163,7 +166,7 @@ export class DocRequestTabComponent
 
   openNewDocument(request?: IRequest) {
     let typeDoc = this.typeDoc;
-    console.log(this.typeDoc);
+    //console.log(this.typeDoc);
 
     let config: ModalOptions = {
       initialState: {
@@ -192,5 +195,35 @@ export class DocRequestTabComponent
       ignoreBackdropClick: true,
     };
     this.modalService.show(SeeInformationComponent, config);
+  }
+
+  getRegDelegation(event: any) {}
+
+  getState(event: any) {}
+
+  getTransfe(event: any) {}
+
+  setTypeColumn() {
+    if (this.typeDoc === 'request-assets') {
+      this.columns.noReq.title = 'No. Bien';
+    } else {
+      this.columns.noReq.title = 'No. Solicitud';
+    }
+  }
+
+  setTitle(value: string) {
+    switch (value) {
+      case 'doc-request':
+        this.title = 'Solicitudes';
+        break;
+      case 'doc-expedient':
+        this.title = 'Expedientes';
+        break;
+      case 'request-expedient':
+        this.title = '';
+        break;
+      default:
+        break;
+    }
   }
 }

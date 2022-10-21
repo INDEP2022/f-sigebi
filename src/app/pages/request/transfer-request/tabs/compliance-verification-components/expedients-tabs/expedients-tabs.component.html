@@ -9,7 +9,8 @@
     <tab heading="Documentos Bienes">
       <app-good-doc-tab></app-good-doc-tab>
     </tab>
-    <tab heading="Documentos generales" (selectTab)="requestExpedient(2)">
+    <tab heading="Documentos generales" (selectTab)="requestSelected(2)">
+      <!--  -->
       <tabset class="md-tabs">
         <tab
           heading="Documento Expedientes"
@@ -17,10 +18,14 @@
           (selectTab)="requestSelected(2)">
           <app-doc-request-tab [typeDoc]="typeDoc"></app-doc-request-tab>
         </tab>
-        <tab heading="Solicitudes del Expediente">
-          <app-expedients-request-tab></app-expedients-request-tab>
+        <tab
+          heading="Solicitudes del Expediente"
+          (selectTab)="requestSelected(3)">
+          <app-expedients-request-tab
+            [typeDoc]="typeDoc"></app-expedients-request-tab>
         </tab>
       </tabset>
+      <!--  -->
     </tab>
   </tabset>
 </div>

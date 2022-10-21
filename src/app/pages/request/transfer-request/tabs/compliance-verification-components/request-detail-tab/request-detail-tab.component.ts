@@ -12,6 +12,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class RequestDetailTabComponent extends BasePage implements OnInit {
   @Input() typeDoc = '';
+  //datos pasados del padre
   @Input() dataObject: any;
   receptionForm: ModelForm<IRequest>;
   selectTypeExpedient = new DefaultSelect<IRequest>();
@@ -22,9 +23,6 @@ export class RequestDetailTabComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    //console.log('buscar documentos del tipo ' + this.typeDoc);
-    console.log('datos pasados desde el padre');
-    console.log(this.dataObject);
   }
 
   prepareForm(): void {

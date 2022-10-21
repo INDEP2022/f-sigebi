@@ -75,9 +75,6 @@ export class VerifyComplianceTabComponent extends BasePage implements OnInit {
     this.settings.columns = VERIRY_COMPLIANCE_COLUMNS;
     this.settingsEstate.columns = DETAIL_ESTATE_COLUMNS;
 
-    console.log('datos del padre');
-    console.log(this.dataObject);
-
     this.columns.descriptionEstateSAE = {
       ...this.columns.descriptionEstateSAE,
       onComponentInitFunction: (instance?: any) => {

@@ -32,7 +32,7 @@ export const DOC_REQUEST_TAB_COLUMNS = {
     sort: false,
   },
   button: {
-    title: 'PDF',
+    title: '',
     type: 'custom',
     class: 'custom-field',
     filter: false,
