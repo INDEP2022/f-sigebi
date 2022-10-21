@@ -88,6 +88,17 @@ export class PaPcpCPaymentClaimProcessComponent
     }
   }
 
+  changeStatus(): any {
+    if (this.goods) {
+      this.goods.forEach((element: any) => {
+        element.status = 'PRP';
+      });
+      console.log(this.goods);
+    } else {
+      this.onLoadToast('error', 'no hay datos para cambiar', 'Error');
+    }
+  }
+
   openModal(): void {
     const modal = this.modalService.show(ModalJustifier, {
       initialState: {},
