@@ -1,15 +1,28 @@
-<app-modal>
-  <div header>
-    <h5 class="modal-title">{{ title }}</h5>
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">{{ title }}</h5>
   </div>
-  <div body class="body">
-    <app-card [header]="true">
-      <div class="ch-content" header>
-        <h5 class="title">Información de la Solicitud</h5>
+  <div body>
+    <div class="row">
+      <div class="d-flex">
+        <div class="p-2" header>
+          <h5 class="title">Información de la Solicitud</h5>
+        </div>
+        <div class="ml-auto p-2">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]="registRequestForm.invalid"
+            (click)="confirm()">
+            Clasificar Bien
+          </button>
+        </div>
       </div>
-      <div body>
-        <form [formGroup]="registRequestForm" class="form-material">
-          <div>
+    </div>
+    <div>
+      <form [formGroup]="registRequestForm" class="form-material">
+        <app-card [header]="false">
+          <div body>
             <div class="row pt-2">
               <div class="col-md-3">
                 <label class="label" for=""
@@ -101,28 +114,46 @@
               </div>
             </div>
           </div>
-          <div class="row pt-4">
-            <tabset>
-              <tab heading="Registro de Solicitud" id="tab1">
-                <app-request-record-tab></app-request-record-tab>
-              </tab>
-              <tab heading="Bienes">Basic content 1</tab>
-              <tab heading="Domicilio de la Transferencia">Basic content 2</tab>
-            </tabset>
-          </div>
-        </form>
-      </div>
-    </app-card>
-  </div>
-  <div footer>
+        </app-card>
+
+        <!-- dynamic changes -->
+
+        <div *ngIf="state" class="row pt-2">
+          <tabset class="md-tabs">
+            <tab heading="Registro de Solicitud" id="tab1">
+              <app-request-record-tab></app-request-record-tab>
+            </tab>
+            <tab heading="Bienes">Basic content 1</tab>
+            <tab heading="Domicilio de la Transferencia">Basic content 2</tab>
+          </tabset>
+        </div>
+
+        <div *ngIf="complianceVerifi" class="row pt-2">
+          <tabset class="md-tabs">
+            <tab heading="Detalle Solicitud" id="tab1">
+              <app-request-detail-tab
+                [dataObject]="object"></app-request-detail-tab>
+            </tab>
+            <tab heading="Verificar Cumplimiento">
+              <app-verify-compliance-tab
+                [dataObject]="object"></app-verify-compliance-tab>
+            </tab>
+            <tab heading="Expediente">
+              <app-expedients-tabs></app-expedients-tabs>
+            </tab>
+          </tabset>
+        </div>
+      </form>
+    </div>
+
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <button
           type="button"
-          class="btn btn-secondary active"
+          class="btn btn-primary active"
           [disabled]="registRequestForm.invalid"
           (click)="confirm()">
-          Turnar
+          Clasificar Bien
         </button>
       </div>
       <div class="m-3">
@@ -132,4 +163,4 @@
       </div>
     </div>
   </div>
-</app-modal>
+</app-card>

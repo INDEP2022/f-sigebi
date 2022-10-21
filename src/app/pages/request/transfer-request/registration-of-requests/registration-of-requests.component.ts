@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequest } from 'src/app/core/models/catalogs/request.model';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-registration-of-requests',
@@ -16,17 +18,28 @@ export class RegistrationOfRequestsComponent
 {
   registRequestForm: ModelForm<IRequest>;
   edit: boolean = false;
-  title: string = '';
+  title: string = 'title';
   parameter: any;
+  object: any = '';
+  //registro de bienes tab
+  state: boolean = false;
+  //verificacion de cumplimientos tab
+  complianceVerifi: boolean = true;
 
-  constructor(public fb: FormBuilder, public modalRef: BsModalRef) {
+  constructor(
+    public fb: FormBuilder,
+    public modalRef: BsModalRef,
+    public route: ActivatedRoute,
+    public location: Location
+  ) {
     super();
   }
 
   ngOnInit(): void {
-    this.title = this.parameter.title;
-    console.log(this.parameter);
-    this.prepareForm();
+    this.route.params.subscribe(params => {
+      this.prepareForm();
+      this.object = this.registRequestForm.value;
+    });
   }
 
   prepareForm() {
@@ -48,9 +61,44 @@ export class RegistrationOfRequestsComponent
     });
   }
 
-  confirm() {}
+  confirm() {
+    this.msgAvertanceModal(
+      'Aceptar',
+      'Asegurse de tener guardado los formularios antes de turnar el folio',
+      'Confirmación',
+      ''
+    );
+  }
 
   close() {
-    this.modalRef.hide();
+    this.location.back();
+  }
+
+  msgAvertanceModal(
+    btnTitle: string,
+    message: string,
+    title: string,
+    typeMsg: any
+  ) {
+    this.alertQuestion(typeMsg, title, message, btnTitle).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.msgSaveModal(
+          'Clasificar Bien',
+          '¿Deseas turnar la solicitud con Folio:....?',
+          'Confirmación',
+          ''
+        );
+      }
+    });
+  }
+
+  msgSaveModal(btnTitle: string, message: string, title: string, typeMsg: any) {
+    this.alertQuestion(typeMsg, title, message, btnTitle).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        console.log('Guardar Solicitud');
+      }
+    });
   }
 }

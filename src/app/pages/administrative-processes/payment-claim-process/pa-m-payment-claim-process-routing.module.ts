@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { RequestListComponent } from './request-list/request-list.component';
+import { PaPcpCPaymentClaimProcessComponent } from './pa-pcp-c-payment-claim-process/pa-pcp-c-payment-claim-process.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: RequestListComponent,
+    component: PaPcpCPaymentClaimProcessComponent,
   },
 ];
 
@@ -13,4 +13,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class TransferRequestRoutingModule {}
+export class PaMPaymentClaimProcessRoutingModule {}
