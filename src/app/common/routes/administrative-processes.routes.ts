@@ -183,7 +183,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         label: 'Proceso de reclamación de pago',
         link: '/pages/administrative-processes/payment-claim-process',
       },
-
+      {
+        label: 'Regularización jurídica',
+        link: '/pages/administrative-processes/legal-regularization',
+      },
       /**
        * END ALEXANDER
        **/

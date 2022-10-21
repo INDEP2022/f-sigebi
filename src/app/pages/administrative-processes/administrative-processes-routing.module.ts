@@ -137,6 +137,16 @@ const routes: Routes = [
           ).PaMPaymentClaimProcessModule,
         data: { title: 'Proceso de reclamacion de pago' },
       },
+      {
+        path: 'legal-regularization',
+        loadChildren: async () =>
+          (
+            await import(
+              './legal-regularization/pa-m-legal-regularization.module'
+            )
+          ).PaMLegalRegularizationModule,
+        data: { title: 'Regularizacion Juridica' },
+      },
       /**
        *Legaspi
        **/
