@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core'; 
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { BehaviorSubject, takeUntil } from 'rxjs';
 
 import { CONSUL_GOODS_COMMER_SALES_COLUMNS } from './consul-goods-commer-sales-columns';
 
@@ -53,11 +53,10 @@ export class CBmCdbCConsultationGoodsCommercialSalesComponent
       // estatus: [null, [Validators.required]],
       // idTrans: [null, [Validators.required]],
       // idSerie: [null, [Validators.required]],
-      
     });
   }
 
-  datatable= [
+  datatable = [
     {
       evento: '1427 - REMESA',
       lote: '12',
@@ -91,7 +90,8 @@ export class CBmCdbCConsultationGoodsCommercialSalesComponent
   ];
 
   data: any = [
-    { id: 1427,
+    {
+      id: 1427,
       noSiab: 987,
       expediente: 321,
       idTrans: 147,
@@ -160,5 +160,4 @@ export class CBmCdbCConsultationGoodsCommercialSalesComponent
   selectGood(event: any) {
     this.selectedGood = event;
   }
-
 }

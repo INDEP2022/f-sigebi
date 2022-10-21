@@ -1,9 +1,9 @@
-import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception.routes';
 import { MENU_OPTIONS_JURIDICAL_PROCESSES } from '../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
-import { IMenuItem } from './interfaces/menu.interface';
-import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
-import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
 import { ADMINISTRATIVE_PROCESSES_ROUTES } from '../common/routes/administrative-processes.routes';
+import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
+import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception.routes';
+import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
+import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
   {
@@ -35,265 +35,7 @@ export const MENU: IMenuItem[] = [
   // * CATALOGOS
   ...CATALOGS_ROUTES,
   //Administración
-  {
-    label: 'Procesos Administrativos',
-    icon: 'bx-folder',
-    subItems: [
-      {
-        label: 'Numerario Físico',
-        link: '/pages/administrative-processes/numerary-physics',
-      },
-      {
-        label: 'Actas Conversión',
-        link: '/pages/administrative-processes/conversion-act',
-      },
-
-      {
-        label: 'Otras Monedas',
-        link: '/pages/administrative-processes/other-currencies',
-      },
-      {
-        label: 'Valores por Expediente',
-        link: '/pages/administrative-processes/values-per-file',
-      },
-      {
-        label: 'Movimientos Cuentas General',
-        link: '/pages/administrative-processes/general-account-movements',
-      },
-      {
-        label: 'Bienes conversión',
-        link: '/pages/administrative-processes/apply-lif',
-      },
-      {
-        label: 'Administración Conversión',
-        link: '/pages/administrative-processes/conversion-management',
-      },
-      {
-        label: 'Derivación Bienes',
-        link: '/pages/administrative-processes/derivation-goods',
-      },
-      {
-        label: 'Ubicación de Bienes',
-        link: '/pages/administrative-processes/location-goods',
-      },
-      {
-        label: 'Consulta de Almacenes',
-        link: '/pages/administrative-processes/warehouse-inquiries',
-      },
-      {
-        label: 'Consulta de Bóvedas',
-        link: '/pages/administrative-processes/vault-consultation',
-      },
-      {
-        label: 'Registro de mensaje del Bien',
-        link: '/pages/administrative-processes/property-registration',
-      },
-      {
-        label: 'Solicitud de Avalúos',
-        link: '/pages/administrative-processes/appraisal-request',
-      },
-      {
-        label: 'Solicitud de cambio a numeración',
-        link: '/pages/administrative-processes/request-numbering-change',
-      },
-      {
-        label: 'Registro de Avalúos',
-        link: '/pages/administrative-processes/appraisal-registry',
-      },
-      {
-        label: 'Monitor de Avalúos',
-        link: '/pages/administrative-processes/appraisal-monitor',
-      },
-      {
-        label: 'Bienes sin Avalúos',
-        link: '/pages/administrative-processes/appraisal-goods',
-      },
-      {
-        label: 'Monitor de bienes incosteables',
-        link: '/pages/administrative-processes/monitor-unavoidable-assets',
-      },
-      {
-        label: 'Venta de Bienes',
-        link: '/pages/administrative-processes/sale-goods',
-      },
-      {
-        label: 'Firma Electrónica',
-        link: '/pages/administrative-processes/electronic-signature',
-      },
-      {
-        label: 'Administracion Terceros',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Contratos',
-            link: '/pages/administrative-processes/contracts',
-          },
-          {
-            label: 'Costo unitario',
-            link: '/pages/administrative-processes/unit-cost',
-          },
-          {
-            label: 'Procesos para precios unitarios',
-            link: '/pages/administrative-processes/process',
-          },
-          {
-            label: 'Servicios para precios unitarios',
-            link: '/pages/administrative-processes/services-unit-prices',
-          },
-          {
-            label: 'Especificaciones para precios unitarios',
-            link: '/pages/administrative-processes/specs',
-          },
-          {
-            label: 'Turno y Tipo',
-            link: '/pages/administrative-processes/turn-type',
-          },
-          {
-            label: 'Unidades de medida',
-            link: '/pages/administrative-processes/measurement-units',
-          },
-          {
-            label: 'Variable costo',
-            link: '/pages/administrative-processes/variable-cost',
-          },
-          {
-            label: 'Coordinacion por zonas',
-            link: '/pages/administrative-processes/zones',
-          },
-        ],
-      },
-      {
-        label: 'Seguros y Vigilancia',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Mantenimiento de Pólizas',
-            link: '/pages/administrative-processes/policy-maintenance',
-          },
-          {
-            label: 'Pólizas de Seguro',
-            link: '/pages/administrative-processes/insurance-policy',
-          },
-          {
-            label: 'Altas de bienes en Pólizas',
-            link: '/pages/administrative-processes/registration-of-policy',
-          },
-          {
-            label: 'Baja de bienes en Pólizas',
-            link: '/pages/administrative-processes/loss-of-policy',
-          },
-        ],
-      },
-      {
-        label: 'Cuenta de numerario asegurado',
-        link: '/pages/administrative-processes/insured-numerary-account',
-      },
-      {
-        label: 'Empresas',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Reporte de evaluación de desempeño',
-            link: '/pages/administrative-processes/performance-evaluation-report',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    label: 'Reportes',
-    icon: 'bx-folder',
-    subItems: [
-      {
-        label: 'Atención Bienes',
-        link: '/pages/administrative-processes/goods-tracking',
-      },
-      {
-        label: 'Gestión Bienes Gab-Soc',
-        link: '/pages/administrative-processes/goods-management',
-      },
-      {
-        label: 'Empresas',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Resumen Info Financiera',
-            link: '/pages/administrative-processes/summary-financial-info',
-          },
-        ],
-      },
-      {
-        label: 'Reportes',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Almacenes',
-            link: '/pages/administrative-processes/warehouse-reports',
-          },
-          {
-            label: 'Expedientes',
-            link: '/pages/administrative-processes/record-details',
-          },
-        ],
-      },
-      {
-        label: 'Coversión de Paquetes',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Conversión Masiva',
-            link: '/pages/administrative-processes/unit-conversion-packages',
-          },
-        ],
-      },
-      {
-        label: 'Interacción SIAB-SAMI',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Relación de Bienes',
-            link: '/pages/administrative-processes/siab-sami-interaction/',
-          },
-          {
-            label: 'Pago de Bienes',
-            link: '/pages/administrative-processes/siab-sami-interaction/payment-goods',
-          },
-          {
-            label: 'Avalúo de Bienes',
-            link: '/pages/administrative-processes/siab-sami-interaction/value-goods',
-          },
-        ],
-      },
-      /**
-       * ADMIN PROCESS-SEGUROS LEGASPI
-       **/
-      /**
-       * ADMIN PROCESS-SERVICES LEGASPI
-       **/
-      {
-        label: 'Servicios',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Registro de Pago de Servicios',
-            link: '/pages/administrative-processes/services/',
-          },
-          {
-            label: 'Solicitud de Pago de Servicios',
-            link: '/pages/administrative-processes/services/request',
-          },
-        ],
-      },
-      {
-        label: 'Acumulado de bienes mensual',
-        link: '/pages/administrative-processes/accumulated-monthly-assets',
-      },
-
-      /**
-       * ADMIN PROCESS-SERVICES LEGASPI
-       **/
-    ],
-  },
+  ...ADMINISTRATIVE_PROCESSES_ROUTES,
   {
     label: 'Solicitudes',
     icon: 'bx-folder',
@@ -451,7 +193,7 @@ export const MENU: IMenuItem[] = [
             link: '/pages/commercialization/c-bm-f-syf-m-series-folios-control',
           },
           {
-            label: 'Causas y Refacturación',
+            label: 'Causas de Refacturación',
             link: '/pages/commercialization/c-bm-f-cdr-m-rebilling-causes',
           },
           {
@@ -465,6 +207,10 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Permisos a Eventos',
             link: '/pages/commercialization/events',
+          },
+          {
+            label: 'Facturación masiva de venta de bases ',
+            link: '/pages/commercialization/mass-biling-base-sales-tab',
           },
         ],
       },
@@ -556,6 +302,14 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Conversión Masiva de LCs',
         link: '/pages/commercialization/lcs-massive-conversion',
+      },
+      {
+        label: 'Parámetros por Lote',
+        link: '/pages/commercialization/batch-parameters',
+      },
+      {
+        label: 'Eventos Relacionados',
+        link: '/pages/commercialization/related-events',
       },
     ],
   },

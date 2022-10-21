@@ -1,0 +1,11 @@
+<div class="row">
+  <div class="ch-content">
+    <h5 class="title">Errores y datos nulos</h5>
+    <div class="row justify-content-end mr-1">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+    </div>
+  </div>
+</div>
+<div class="row pt-3">
+  <ng2-smart-table [source]="data" [settings]="settings"></ng2-smart-table>
+</div>

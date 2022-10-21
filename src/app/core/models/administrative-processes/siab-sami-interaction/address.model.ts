@@ -1,5 +1,5 @@
 //Interface Provisional sin Validar
 export interface IAddress {
-	addressKey: string;
-	description: string;
+  addressKey: string;
+  description: string;
 }

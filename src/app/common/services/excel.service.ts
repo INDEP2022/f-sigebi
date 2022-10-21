@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as FileSaver from 'file-saver';
-import { read, utils, WorkSheet, WorkBook, write } from 'xlsx';
+import { read, utils, WorkBook, WorkSheet, write } from 'xlsx';
 import { FileSaverService } from './file-saver.service';
 
 const EXCEL_TYPE =

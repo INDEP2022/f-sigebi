@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { APPRAISAL_COLUMNS } from './appraisal-monitor-columns';
-import { FormGroup, FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-appraisal-monitor',

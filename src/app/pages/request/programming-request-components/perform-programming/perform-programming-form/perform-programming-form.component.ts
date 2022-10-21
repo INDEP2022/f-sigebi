@@ -1,23 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
 import { IState } from 'src/app/core/models/catalogs/city.model';
 import { IRegionalDelegation } from 'src/app/core/models/catalogs/regional-delegation.model';
 import { IStation } from 'src/app/core/models/catalogs/station.model';
-import { ISubcategory } from 'src/app/core/models/catalogs/sub-category.model';
 import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { IUser } from 'src/app/core/models/catalogs/user.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { EstateSearchFormComponent } from '../estate-search-form/estate-search-form.component';
-import { UserFormComponent } from '../user-form/user-form.component';
-import { WarehouseFormComponent } from '../../warehouse/warehouse-form/warehouse-form.component';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ESTATE_COLUMNS } from '../../acept-programming/columns/estate-columns';
 import { USER_COLUMNS } from '../../acept-programming/columns/users-columns';
-import { BehaviorSubject } from 'rxjs';
+import { WarehouseFormComponent } from '../../warehouse/warehouse-form/warehouse-form.component';
+import { EstateSearchFormComponent } from '../estate-search-form/estate-search-form.component';
+import { UserFormComponent } from '../user-form/user-form.component';
 
 @Component({
   selector: 'app-perform-programming-form',

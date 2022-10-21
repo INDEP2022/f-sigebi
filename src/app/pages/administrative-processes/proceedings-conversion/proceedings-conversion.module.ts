@@ -1,22 +1,21 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
-import { ProceedingsConversionRoutingModule } from './proceedings-conversion-routing.module';
-import { ProceedingsConversionComponent } from './proceedings-conversion/proceedings-conversion.component';
-import { ProceedingsConversionDetailComponent } from './proceedings-conversion-detail/proceedings-conversion-detail.component';
-import { SharedModule } from 'src/app/shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ModalModule } from 'ngx-bootstrap/modal';
-
+import { SharedModule } from 'src/app/shared/shared.module';
+import { ProceedingsConversionDetailComponent } from './proceedings-conversion-detail/proceedings-conversion-detail.component';
+import { ProceedingsConversionRoutingModule } from './proceedings-conversion-routing.module';
+import { ProceedingsConversionComponent } from './proceedings-conversion/proceedings-conversion.component';
 
 @NgModule({
   declarations: [
     ProceedingsConversionComponent,
-    ProceedingsConversionDetailComponent
+    ProceedingsConversionDetailComponent,
   ],
   exports: [
     ProceedingsConversionComponent,
-    ProceedingsConversionDetailComponent
+    ProceedingsConversionDetailComponent,
   ],
   imports: [
     CommonModule,
@@ -24,6 +23,6 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     SharedModule,
     ReactiveFormsModule,
     ModalModule.forChild(),
-  ]
+  ],
 })
-export class ProceedingsConversionModule { }
+export class ProceedingsConversionModule {}

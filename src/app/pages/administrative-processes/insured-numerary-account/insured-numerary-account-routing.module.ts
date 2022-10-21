@@ -4,12 +4,13 @@ import { InsuredNumeraryAccountComponent } from './insured-numerary-account/insu
 
 const routes: Routes = [
   {
-    path: '', component: InsuredNumeraryAccountComponent
-  }
+    path: '',
+    component: InsuredNumeraryAccountComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class InsuredNumeraryAccountRoutingModule { }
+export class InsuredNumeraryAccountRoutingModule {}

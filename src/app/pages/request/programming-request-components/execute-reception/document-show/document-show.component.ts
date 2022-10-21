@@ -5,19 +5,16 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-document-show',
   templateUrl: './document-show.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class DocumentShowComponent extends BasePage implements OnInit {
-
-  constructor(private modalRef: BsModalRef) { 
+  constructor(private modalRef: BsModalRef) {
     super();
   }
 
-  ngOnInit(): void {
-  }
-  
-  close(){
+  ngOnInit(): void {}
+
+  close() {
     this.modalRef.hide();
   }
 }

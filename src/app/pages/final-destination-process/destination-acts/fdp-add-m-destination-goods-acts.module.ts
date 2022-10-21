@@ -1,9 +1,9 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FdpAddMDestinationGoodsActsRoutingModule } from './fdp-add-m-destination-goods-acts-routing.module';
-import { FdpAddCDestinationGoodsActsComponent } from './destination-acts/fdp-add-c-destination-goods-acts.component';
-import { SharedModule } from 'src/app/shared/shared.module';
+import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { FdpAddCDestinationGoodsActsComponent } from './destination-acts/fdp-add-c-destination-goods-acts.component';
+import { FdpAddMDestinationGoodsActsRoutingModule } from './fdp-add-m-destination-goods-acts-routing.module';
 
 @NgModule({
   declarations: [FdpAddCDestinationGoodsActsComponent],

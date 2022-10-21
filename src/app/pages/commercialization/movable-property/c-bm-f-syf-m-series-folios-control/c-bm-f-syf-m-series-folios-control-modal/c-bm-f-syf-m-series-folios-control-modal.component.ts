@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output, } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 
@@ -9,8 +9,10 @@ import { BasePage } from 'src/app/core/shared/base-page';
   templateUrl: './c-bm-f-syf-m-series-folios-control-modal.component.html',
   styles: [],
 })
-export class CBmFSyfMSeriesFoliosControlModalComponent extends BasePage implements OnInit {
-  
+export class CBmFSyfMSeriesFoliosControlModalComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
   allotment: any;
   title: string = 'Series y folios';
@@ -76,5 +78,4 @@ export class CBmFSyfMSeriesFoliosControlModalComponent extends BasePage implemen
     this.refresh.emit(true);
     this.modalRef.hide();
   }
-  
 }

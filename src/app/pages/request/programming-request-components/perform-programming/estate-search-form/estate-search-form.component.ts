@@ -7,11 +7,9 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-estate-search-form',
   templateUrl: './estate-search-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class EstateSearchFormComponent implements OnInit {
-  
   estateForm: FormGroup = new FormGroup({});
   loading: boolean = false;
   akaWarehouse = new DefaultSelect();
@@ -19,45 +17,33 @@ export class EstateSearchFormComponent implements OnInit {
   municipalities = new DefaultSelect();
   colonies = new DefaultSelect();
 
-  constructor(
-    private fb: FormBuilder,
-    private modalService: BsModalRef) { }
+  constructor(private fb: FormBuilder, private modalService: BsModalRef) {}
 
   ngOnInit(): void {
     this.prepareForm();
   }
 
-  prepareForm(){
+  prepareForm() {
     this.estateForm = this.fb.group({
       akaWarehouse: [null],
       state: [null],
       municipality: [null],
       colony: [null],
       cp: [null],
-    })
+    });
   }
 
-  confirm(){
+  confirm() {}
 
-  }
-
-  close(){
+  close() {
     this.modalService.hide();
   }
 
-  getAkaWarehouseSelect(akaWarehouse: ListParams){
+  getAkaWarehouseSelect(akaWarehouse: ListParams) {}
 
-  }
+  getStateSelect(state: ListParams) {}
 
-  getStateSelect(state: ListParams){
+  getMunicipalitySelect(municipality: ListParams) {}
 
-  }
-
-  getMunicipalitySelect(municipality: ListParams){
-
-  }
-
-  getColonySelect(colony: ListParams){
-
-  }
+  getColonySelect(colony: ListParams) {}
 }

@@ -1,11 +1,10 @@
-import { Component, OnInit } from '@angular/core'; 
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BasePage } from 'src/app/core/shared/base-page';
-import { DETAILS_OI_COLUMNS } from './c-b-rdodi-c-reclass-recovery-orders-columns';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { DETAILS_OI_COLUMNS } from './c-b-rdodi-c-reclass-recovery-orders-columns';
 
 @Component({
   selector: 'app-c-b-rdodi-c-reclass-recovery-orders',
@@ -37,7 +36,7 @@ export class CBRdodiCReclassRecoveryOrdersComponent
   }
   private prepareForm() {
     this.form = this.fb.group({
-      id: [null,[Validators.required]],
+      id: [null, [Validators.required]],
       // idArea: ['', [Validators.required]],
       // ur: ['', [Validators.required]],
       // clientRFC: ['', [Validators.required]],
@@ -80,9 +79,10 @@ export class CBRdodiCReclassRecoveryOrdersComponent
     },
   ];
 
-//Datos de prueba para autorrellenar los campos
+  //Datos de prueba para autorrellenar los campos
   data: any[] = [
-    { id: 1933,
+    {
+      id: 1933,
       idArea: 182000,
       ur: 182000,
       clientRFC: 'MNA000314EX7',
@@ -90,15 +90,17 @@ export class CBRdodiCReclassRecoveryOrdersComponent
       anexo: 'PANTALLA BANCARIA',
       tiPe: 2,
       idEvent: 13,
-      concept: 'DEPÓSITO POR VENTA DE BIENES, EVENTO DECBM0207 SIN DESCRIPCIÓNDEPÓSITO POR VENTA DE BIENES, EVENTO DECBM0207 SIN DESCRIPCIÓNDEPÓSITO POR VENTA DE BIENES, EVENTO DECBM0207 SIN DESCRIPCIÓNDEPÓSITO POR VENTA DE BIENES, EVENTO DECBM0207 SIN DESCRIPCIÓNDEPÓSITO POR VENTA DE BIENES, EVENTO DECBM0207 SIN DESCRIPCIÓN',
+      concept:
+        'DEPÓSITO POR VENTA DE BIENES, EVENTO DECBM0207 SIN DESCRIPCIÓNDEPÓSITO POR VENTA DE BIENES, EVENTO DECBM0207 SIN DESCRIPCIÓNDEPÓSITO POR VENTA DE BIENES, EVENTO DECBM0207 SIN DESCRIPCIÓNDEPÓSITO POR VENTA DE BIENES, EVENTO DECBM0207 SIN DESCRIPCIÓNDEPÓSITO POR VENTA DE BIENES, EVENTO DECBM0207 SIN DESCRIPCIÓN',
       idBank: 6968940,
       ordenDate: 20070328,
       numovto: 18,
       amount: 5000,
       reference: 'LB204000000010975L06',
-      idPayment: 1407
+      idPayment: 1407,
     },
-    { id: 1478,
+    {
+      id: 1478,
       idArea: 218000,
       ur: 11000,
       clientRFC: 'ZQA000741EZ8',
@@ -112,9 +114,10 @@ export class CBRdodiCReclassRecoveryOrdersComponent
       numovto: 11,
       amount: 3230,
       reference: 'LB104000000010975L07',
-      idPayment: 714
+      idPayment: 714,
     },
-    { id: 3214,
+    {
+      id: 3214,
       idArea: 987000,
       ur: 987000,
       clientRFC: 'PAL0003149O7',
@@ -128,7 +131,7 @@ export class CBRdodiCReclassRecoveryOrdersComponent
       numovto: 12,
       amount: 6010,
       reference: 'LB980000000094517L06',
-      idPayment: 8041
+      idPayment: 8041,
     },
   ];
 

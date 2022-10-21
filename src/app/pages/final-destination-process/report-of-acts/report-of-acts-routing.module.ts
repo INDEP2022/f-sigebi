@@ -1,4 +1,3 @@
-import { FdpRdadddMDonationDestructionDestinationModule } from './donation-destruction-destination/fdp-rdaddd-m-donation-destruction-destination.module';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 

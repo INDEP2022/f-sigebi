@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { MAIN_COLUMNS } from '../main-columns';
-import { inputSelect } from '../interfaces/input-select';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { inputSelect } from '../interfaces/input-select';
+import { MAIN_COLUMNS } from '../main-columns';
 
 @Component({
   selector: 'app-fdp-ds-et-c-event-tracking',

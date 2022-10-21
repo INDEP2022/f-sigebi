@@ -7,15 +7,13 @@ import { SERVICEUNITPRECES_COLUMNS } from './service-unit-preces-columns';
 @Component({
   selector: 'app-services-unit-prices',
   templateUrl: './services-unit-prices.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ServicesUnitPricesComponent extends BasePage implements OnInit {
   data1: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-  constructor()
-  {
+  constructor() {
     super();
     this.settings = {
       ...this.settings,
@@ -24,6 +22,5 @@ export class ServicesUnitPricesComponent extends BasePage implements OnInit {
     };
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 }

@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
 import { StateRepuvesRoutingModule } from './state-repuves-routing.module';
 
-import { StateRepuvesFormComponent } from './state-repuves-form/state-repuves-form.component';
-import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { StateRepuvesFormComponent } from './state-repuves-form/state-repuves-form.component';
 import { StateRepuvesListComponent } from './state-repuves-list/state-repuves-list.component';
 
 @NgModule({

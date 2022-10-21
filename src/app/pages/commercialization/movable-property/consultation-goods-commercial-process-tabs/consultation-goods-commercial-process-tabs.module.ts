@@ -1,7 +1,7 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SharedModule } from 'src/app/shared/shared.module';
+import { NgModule } from '@angular/core';
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 import { CBmCdbMConsultationGoodsCommercialModule } from '../c-bm-cdb-m-consultation-goods-commercial/c-bm-cdb-m-consultation-goods-commercial.module';
 

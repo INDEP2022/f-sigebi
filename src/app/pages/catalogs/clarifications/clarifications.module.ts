@@ -1,12 +1,12 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
-import { ClarificationsRoutingModule } from './clarifications-routing.module';
-import { SharedModule } from '../../../shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ModalModule } from 'ngx-bootstrap/modal';
-import { ClarificationsListComponent } from './clarifications-list/clarifications-list.component';
+import { SharedModule } from '../../../shared/shared.module';
 import { ClarificationsDetailComponent } from './clarifications-detail/clarifications-detail.component';
+import { ClarificationsListComponent } from './clarifications-list/clarifications-list.component';
+import { ClarificationsRoutingModule } from './clarifications-routing.module';
 
 @NgModule({
   declarations: [ClarificationsListComponent, ClarificationsDetailComponent],

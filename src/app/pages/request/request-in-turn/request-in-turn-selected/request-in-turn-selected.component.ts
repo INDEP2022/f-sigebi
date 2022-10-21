@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
 import { IRequestInTurnSelected } from 'src/app/core/models/catalogs/request-in-turn-selected.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { TURN_SELECTED_COLUMNS } from './request-in-turn-selected-columns';

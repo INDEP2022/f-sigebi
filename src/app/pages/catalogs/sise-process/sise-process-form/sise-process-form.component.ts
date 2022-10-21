@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ISiseProcess } from 'src/app/core/models/catalogs/sise-process.model';
 import { SiseProcessService } from 'src/app/core/services/catalogs/sise-process.service';
 import { BasePage } from 'src/app/core/shared/base-page';

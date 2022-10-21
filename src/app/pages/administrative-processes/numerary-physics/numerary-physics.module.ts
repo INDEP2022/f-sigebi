@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
+import { ReactiveFormsModule } from '@angular/forms';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { SharedModule } from '../../../shared/shared.module';
 import { NumeraryPhysicsRoutingModule } from './numerary-physics-routing.module';
 import { NumeraryPhysicsComponent } from './numerary-physics/numerary-physics.component';
-import { ReactiveFormsModule } from '@angular/forms';
-import { SharedModule } from '../../../shared/shared.module';
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 @NgModule({
   declarations: [NumeraryPhysicsComponent],

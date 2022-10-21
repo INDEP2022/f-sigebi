@@ -1,0 +1,65 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">RESUMEN DE GASTOS</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field [control]="form.get('gasto')">
+            <ngx-select
+              [form]="form"
+              [data]="concepts"
+              bindLabel="name"
+              label="Concepto Gasto"
+              value="id"
+              (fetchItems)="getCostConcept($event)"
+              control="gasto"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('al')">
+            <ngx-select
+              [form]="form"
+              [data]="concepts"
+              bindLabel="name"
+              label="Al"
+              value="id"
+              (fetchItems)="getCostConcept($event)"
+              control="al"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <form-field [control]="form.get('startDate')" label="Fecha inicio">
+            <input
+              type="text"
+              formControlName="startDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('finishDate')" label="Fecha Final">
+            <input
+              type="text"
+              formControlName="finishDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-4 float-right">
+        <div class="">
+          <button type="submit" class="btn btn-primary btn-sm active mx-4">
+            IMPRIMIR
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

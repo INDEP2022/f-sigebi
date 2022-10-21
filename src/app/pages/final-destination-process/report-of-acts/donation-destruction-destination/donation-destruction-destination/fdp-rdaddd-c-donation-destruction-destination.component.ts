@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { BsModalService, ModalOptions, BsModalRef } from 'ngx-bootstrap/modal';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { FdpAdpdtDetailDelegationsComponent } from '../../../third-party-possession-acts/detail-delegations/fdp-adpdt-detail-delegations.component';
-import { DELEGATIONS_COLUMNS } from './../../delegations-columns';
 import { SUBDELEGATIONS_COLUMNS } from '../../sub-delegations-columns';
+import { DELEGATIONS_COLUMNS } from './../../delegations-columns';
 
 @Component({
   selector: 'app-fdp-rdaddd-c-donation-destruction-destination',

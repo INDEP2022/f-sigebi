@@ -356,9 +356,19 @@ const routes: Routes = [
       {
         path: 'proceedings-conversion',
         loadChildren: async () =>
-          (await import('./proceedings-conversion/proceedings-conversion.module'))
-            .ProceedingsConversionModule,
+          (
+            await import(
+              './proceedings-conversion/proceedings-conversion.module'
+            )
+          ).ProceedingsConversionModule,
         data: { title: 'Detalle de actas de conversión' },
+      },
+      {
+        path: 'returns-confiscation',
+        loadChildren: async () =>
+          (await import('./returns-confiscation/returns-confiscation.module'))
+            .ReturnsConfiscationModule,
+        data: { title: 'Devoluciones y decomisos' },
       },
       /**
        * Seguros David Lucas

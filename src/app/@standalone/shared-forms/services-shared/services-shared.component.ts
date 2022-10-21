@@ -1,14 +1,13 @@
-import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SharedModule } from 'src/app/shared/shared.module';
+import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
+import { SharedModule } from 'src/app/shared/shared.module';
 //Rxjs
-import { BehaviorSubject, takeUntil } from 'rxjs';
 //Params
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //Services
-import { ServiceCatService} from 'src/app/core/services/catalogs/service-cat.service';
+import { ServiceCatService } from 'src/app/core/services/catalogs/service-cat.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
 import { IServiceCat } from 'src/app/core/models/catalogs/service-cat.model';
@@ -18,11 +17,9 @@ import { IServiceCat } from 'src/app/core/models/catalogs/service-cat.model';
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './services-shared.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ServicesSharedComponent extends BasePage implements OnInit {
-  
   @Input() form: FormGroup;
   @Input() serviceField: string = 'service';
 
@@ -37,10 +34,11 @@ export class ServicesSharedComponent extends BasePage implements OnInit {
   ngOnInit(): void {}
 
   getServices(params: ListParams) {
-
-    this.service.getAll(params).subscribe(data => {
-        this.services = new DefaultSelect(data.data,data.count);
-      },err => {
+    this.service.getAll(params).subscribe(
+      data => {
+        this.services = new DefaultSelect(data.data, data.count);
+      },
+      err => {
         let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
@@ -48,8 +46,8 @@ export class ServicesSharedComponent extends BasePage implements OnInit {
           error = err.message;
         }
         this.onLoadToast('error', 'Error', error);
-
-      }, () => {}
+      },
+      () => {}
     );
   }
 
