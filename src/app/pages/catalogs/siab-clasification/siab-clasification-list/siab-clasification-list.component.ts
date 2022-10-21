@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ISiabClasification } from 'src/app/core/models/catalogs/siab-clasification.model';
 import { SIABClasificationService } from 'src/app/core/services/catalogs/siab-clasification.service';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { SIAB_COLUMNS } from './siab-columns';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SiabClasificationDetailComponent } from '../siab-clasification-detail/siab-clasification-detail.component';
+import { SIAB_COLUMNS } from './siab-columns';
 
 @Component({
   selector: 'app-siab-clasification-list',

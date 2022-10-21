@@ -5,12 +5,12 @@ import { NumeraireExchangeFormComponent } from './numeraire-exchange-form/numera
 const routes: Routes = [
   {
     path: '',
-    component: NumeraireExchangeFormComponent
-  }
+    component: NumeraireExchangeFormComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class NumeraireExchangeRoutingModule { }
+export class NumeraireExchangeRoutingModule {}

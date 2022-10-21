@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
-import { ConversionActRoutingModule } from './conversion-act-routing.module';
-import { ConversionActComponent } from './conversion-act/conversion-act.component';
+import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ConversionActDetailComponent } from './conversion-act-detail/conversion-act-detail.component';
-import { Ng2SmartTableModule } from 'ng2-smart-table';
+import { ConversionActRoutingModule } from './conversion-act-routing.module';
+import { ConversionActComponent } from './conversion-act/conversion-act.component';
 
 @NgModule({
   declarations: [ConversionActComponent, ConversionActDetailComponent],

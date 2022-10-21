@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IOriginCisi } from 'src/app/core/models/catalogs/origin-cisi.model';
 import { OiriginCisiService } from 'src/app/core/services/catalogs/origin-cisi.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { ModelForm } from '../../../../core/interfaces/ModelForm';
-import { BsModalRef } from 'ngx-bootstrap/modal';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { FormBuilder, Validators } from '@angular/forms';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ModelForm } from '../../../../core/interfaces/model-form';
 
 @Component({
   selector: 'app-orign-cisi-form',

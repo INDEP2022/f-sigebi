@@ -1,5 +1,3 @@
-import { Component } from '@angular/core';
-
 export const LEGENDS_COLUMS = {
   id: {
     title: 'Registro',

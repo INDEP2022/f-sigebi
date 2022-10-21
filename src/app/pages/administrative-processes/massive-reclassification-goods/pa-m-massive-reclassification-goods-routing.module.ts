@@ -5,12 +5,12 @@ import { PaMrgCMassiveReclassificationGoodsComponent } from './pa-mrg-c-massive-
 const routes: Routes = [
   {
     path: '',
-    component: PaMrgCMassiveReclassificationGoodsComponent
-  }
+    component: PaMrgCMassiveReclassificationGoodsComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PaMMassiveReclassificationGoodsRoutingModule { }
+export class PaMMassiveReclassificationGoodsRoutingModule {}

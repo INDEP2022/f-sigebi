@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BsModalService } from 'ngx-bootstrap/modal';
 import { ActivatedRoute } from '@angular/router';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
-import { BasePage } from 'src/app/core/shared/base-page';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
 //Provisional Data
 import { data } from './data';

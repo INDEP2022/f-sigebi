@@ -6,8 +6,8 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IInstitutionClassification } from '../../../../core/models/catalogs/institution-classification.model';
 import { InstitutionClasificationService } from '../../../../core/services/catalogs/institution-classification.service';
-import { INSTITUTION_CLASIFICATION_COLUMNS } from './institution-columns';
 import { InstitutionClassificationDetailComponent } from '../institution-classification-detail/institution-classification-detail.component';
+import { INSTITUTION_CLASIFICATION_COLUMNS } from './institution-columns';
 
 @Component({
   selector: 'app-institution-classification-list',

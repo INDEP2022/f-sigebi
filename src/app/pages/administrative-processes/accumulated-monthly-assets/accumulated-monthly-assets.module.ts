@@ -1,24 +1,20 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
-import { AccumulatedMonthlyAssetsRoutingModule } from './accumulated-monthly-assets-routing.module';
-import { AccumulatedMonthlyAssetsComponent } from './accumulated-monthly-assets/accumulated-monthly-assets.component';
-import { SharedModule } from 'src/app/shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-
+import { SharedModule } from 'src/app/shared/shared.module';
+import { AccumulatedMonthlyAssetsRoutingModule } from './accumulated-monthly-assets-routing.module';
+import { AccumulatedMonthlyAssetsComponent } from './accumulated-monthly-assets/accumulated-monthly-assets.component';
 
 @NgModule({
-  declarations: [
-    AccumulatedMonthlyAssetsComponent
-  ],
+  declarations: [AccumulatedMonthlyAssetsComponent],
   imports: [
     CommonModule,
     AccumulatedMonthlyAssetsRoutingModule,
     SharedModule,
     ReactiveFormsModule,
     BsDatepickerModule,
-
-  ]
+  ],
 })
-export class AccumulatedMonthlyAssetsModule { }
+export class AccumulatedMonthlyAssetsModule {}

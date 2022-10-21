@@ -1,5 +1,3 @@
-import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
-
 export const COLUMNS = {
   flowId: {
     title: 'Flow ID',

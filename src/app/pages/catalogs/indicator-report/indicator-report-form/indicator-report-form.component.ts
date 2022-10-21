@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { IIndicatorReport } from '../../../../core/models/catalogs/indicator-report.model';
-import { ModelForm } from '../../../../core/interfaces/ModelForm';
-import { DefaultSelect } from '../../../../shared/components/select/default-select';
-import { BsModalRef } from 'ngx-bootstrap/modal';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ProeficientService } from '../../../../core/services/catalogs/proficient.service';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ListParams } from '../../../../common/repository/interfaces/list-params';
+import { ModelForm } from '../../../../core/interfaces/model-form';
+import { IIndicatorReport } from '../../../../core/models/catalogs/indicator-report.model';
+import { ProeficientService } from '../../../../core/services/catalogs/proficient.service';
+import { DefaultSelect } from '../../../../shared/components/select/default-select';
 
 @Component({
   selector: 'app-indicator-report-form',

@@ -5,8 +5,8 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { ListParams } from '../../../../common/repository/interfaces/list-params';
 
 import { IBatch } from '../../../../core/models/catalogs/batch.model';
-import { BatchService } from './../../../../core/services/catalogs/batch.service';
 import { BatchFormComponent } from '../batch-form/batch-form.component';
+import { BatchService } from './../../../../core/services/catalogs/batch.service';
 import { BATCH_COLUMNS } from './batch-columns';
 
 @Component({

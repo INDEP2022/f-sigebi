@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 
-import { IResponseRepuve } from 'src/app/core/models/catalogs/response-repuve.model';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IResponseRepuve } from 'src/app/core/models/catalogs/response-repuve.model';
 import { ResponseRepuveService } from 'src/app/core/services/catalogs/response-repuve.service';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { ResponseRepuveFormComponent } from '../response-repuve-form/response-repuve-form.component';
 import { RESPONSE_REPUVE_COLUMNS } from './response-repuve-columns';
 

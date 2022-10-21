@@ -3,7 +3,6 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { IUser } from 'src/app/core/models/catalogs/user.model';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { USER_COLUMNS } from '../columns/users-columns';
 import { UploadFilesFormComponent } from '../upload-files-form/upload-files-form.component';
 import { ELECTRONIC_SGIGNATURE_COLUMNS } from './electronic-signature-columns';
 

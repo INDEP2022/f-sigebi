@@ -1,9 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS_DATA_TABLE } from './columns-data-table';
 import { COLUMNS_USER_PERMISSIONS } from './columns-user-permissions';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 
 @Component({
   selector: 'app-fdp-dit-c-data-table',

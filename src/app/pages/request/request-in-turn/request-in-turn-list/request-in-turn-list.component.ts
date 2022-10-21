@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequestInTurn } from 'src/app/core/models/catalogs/request-in-turn.model';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { REQUEST_IN_TURN_COLUMNS } from './request-in-turn-columns';
-import { FormBuilder, Validators } from '@angular/forms';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
 import { RequestInTurnSelectedComponent } from '../request-in-turn-selected/request-in-turn-selected.component';
+import { REQUEST_IN_TURN_COLUMNS } from './request-in-turn-columns';
 
 var ejemplo: IRequestInTurn[] = [
   {

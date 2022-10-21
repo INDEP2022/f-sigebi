@@ -1,19 +1,19 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
-import { SharedModule } from 'src/app/shared/shared.module';
-import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Ng2SmartTableModule } from 'ng2-smart-table';
+import { SharedModule } from 'src/app/shared/shared.module';
 //Ngx Bootstrap
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ModalModule } from 'ngx-bootstrap/modal';
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 
 //Components
+import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
 import { PaMMassiveChangeStatusRoutingModule } from './pa-m-massive-change-status-routing.module';
 import { PaMcsCMassiveChangeStatusComponent } from './pa-mcs-c-massive-change-status/pa-mcs-c-massive-change-status.component';
-import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
 
 @NgModule({
   declarations: [PaMcsCMassiveChangeStatusComponent],

@@ -1,12 +1,12 @@
 /** BASE IMPORT */
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { SharedModule } from 'src/app/shared/shared.module';
 /** BASE IMPORT */
 
 /** LIBRERIAS EXTERNAS IMPORTS */
-import { SharedLegalProcessModule } from '../shared-legal-process/shared-legal-process.module';
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { SharedLegalProcessModule } from '../shared-legal-process/shared-legal-process.module';
 
 /** SERVICE IMPORTS */
 

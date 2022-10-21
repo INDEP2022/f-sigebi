@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { BsModalService } from 'ngx-bootstrap/modal';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { PaEFiCSelectAttributesComponent } from '../select-attributes/pa-e-fi-c-select-attributes.component';
 import {
-  financialIndicators,
   financialAtribs,
+  financialIndicators,
 } from '../select-attributes/info';
+import { PaEFiCSelectAttributesComponent } from '../select-attributes/pa-e-fi-c-select-attributes.component';
 
 export interface FinancialAtrib {
   id: string;

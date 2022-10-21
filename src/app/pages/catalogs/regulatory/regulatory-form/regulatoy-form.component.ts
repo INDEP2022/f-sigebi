@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { IRegulatory } from 'src/app/core/models/catalogs/regulatory.model';
-import { ModelForm } from '../../../../core/interfaces/ModelForm';
-import { DefaultSelect } from '../../../../shared/components/select/default-select';
-import { BsModalRef } from 'ngx-bootstrap/modal';
 import { FormBuilder, Validators } from '@angular/forms';
-import { RegulatoryService } from '../../../../core/services/catalogs/regulatory.service';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IRegulatory } from 'src/app/core/models/catalogs/regulatory.model';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { ModelForm } from '../../../../core/interfaces/model-form';
+import { RegulatoryService } from '../../../../core/services/catalogs/regulatory.service';
+import { DefaultSelect } from '../../../../shared/components/select/default-select';
 
 @Component({
   selector: 'app-regulatoy-form',

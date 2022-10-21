@@ -1,8 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { IClarification } from '../../../../core/models/catalogs/clarification.model';
 import { ClarificationService } from '../../../../core/services/catalogs/clarification.service';
 
 @Component({

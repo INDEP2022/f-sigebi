@@ -4,12 +4,13 @@ import { AccumulatedMonthlyAssetsComponent } from './accumulated-monthly-assets/
 
 const routes: Routes = [
   {
-    path: '', component: AccumulatedMonthlyAssetsComponent
-  }
+    path: '',
+    component: AccumulatedMonthlyAssetsComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AccumulatedMonthlyAssetsRoutingModule { }
+export class AccumulatedMonthlyAssetsRoutingModule {}

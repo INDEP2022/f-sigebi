@@ -22,5 +22,5 @@ export const COLUMNS = {
   delay: {
     title: 'Retraso en Días',
     sort: false,
-  }
+  },
 };
