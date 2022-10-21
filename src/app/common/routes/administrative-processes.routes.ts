@@ -51,6 +51,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         link: '/pages/administrative-processes/monitor-unavoidable-assets',
       },
       {
+        label: 'Devoluciones y decomisos',
+        link: '/pages/administrative-processes/returns-confiscation',
+      },
+      {
         label: 'Seguros y Vigilancia',
         icon: 'bx-folder',
         subItems: [
