@@ -30,7 +30,11 @@ export class PaVgCValueGoodsComponent extends BasePage implements OnInit {
       actions: false,
       columns: { ...COLUMNS },
     };
-    this.settings2.columns = COLUMNS2;
+    this.settings2 = {
+      ...this.settings2,
+      actions: false,
+      columns: { ...COLUMNS2 },
+    };
   }
 
   ngOnInit(): void {

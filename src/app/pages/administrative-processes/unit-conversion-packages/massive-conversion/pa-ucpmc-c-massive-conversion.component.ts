@@ -24,7 +24,11 @@ export class PaUcpmcCMassiveConversionComponent
 
   constructor(private fb: FormBuilder) {
     super();
-    this.settings.columns = COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: { add: false, delete: true, edit: true},
+      columns: COLUMNS,
+    };
   }
 
   ngOnInit(): void {

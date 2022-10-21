@@ -119,9 +119,17 @@ export class PaPrCPaymentRequestComponent extends BasePage implements OnInit {
   }
 
   removeItem(cabms: string): void {
-    const index= this.dataPartidas.indexOf((dp:any)=>dp.cabms == cabms);
-    this.dataPartidas.splice(index,1);
-    this.data.load(this.dataPartidas);
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar esta partida?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        const index= this.dataPartidas.indexOf((dp:any)=>dp.cabms == cabms);
+        this.dataPartidas.splice(index,1);
+        this.data.load(this.dataPartidas);
+      }
+    });
   }
 
   updateItem(partida?:any): void {
@@ -145,7 +153,15 @@ export class PaPrCPaymentRequestComponent extends BasePage implements OnInit {
   }
 
   removeCheck(): void {
-    this.check = null;
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este cheque?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.check = null;
+      }
+    });
   }
 
   updateCheck(check:ICheck): void {
