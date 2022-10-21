@@ -29,7 +29,7 @@ export class CBACdaCAppraisalConsultationComponent
         position: 'right',
       },
       edit: {
-        editButtonContent: '<span class="bi bi-file-earmark-excel"></span>',
+        editButtonContent: '<span class="bi bi-file-earmark-excel text-warning mx-2"></span>',
       },
       columns: { ...APPRAISAL_COLUMNS },
     };

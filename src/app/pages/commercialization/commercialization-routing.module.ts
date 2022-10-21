@@ -136,7 +136,7 @@ const routes: Routes = [
           './movable-property/c-bm-f-cdr-m-rebilling-causes/c-bm-f-cdr-m-rebilling-causes.module'
         )
       ).CBmFCdrMRebillingCausesModule,
-    data: { title: 'Causas y Refacturación' },
+    data: { title: 'Causas de Refacturación' },
   },
   {
     path: 'c-bm-f-edf-m-invoice-status',
@@ -224,6 +224,16 @@ const routes: Routes = [
         )
       ).CMLcsMassiveConversionModule,
     data: { title: 'Conversión Masiva de LCs' },
+  },
+  {
+    path: 'mass-biling-base-sales-tab',
+    loadChildren: async () =>
+      (
+        await import(
+          './movable-property/mass-biling-base-sales-tab/mass-biling-base-sales-tab.module'
+        )
+      ).MassBilingBaseSalesTabModule,
+    data: { title: 'Facturación masiva de VTA. de bases ' },
   },
 ];
 
