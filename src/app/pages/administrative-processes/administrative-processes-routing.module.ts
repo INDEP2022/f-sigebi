@@ -127,6 +127,16 @@ const routes: Routes = [
           ).PaMChangeOfStatusStiModule,
         data: { title: 'Cambio de estatus sti' },
       },
+      {
+        path: 'payment-claim-process',
+        loadChildren: async () =>
+          (
+            await import(
+              './payment-claim-process/pa-m-payment-claim-process.module'
+            )
+          ).PaMPaymentClaimProcessModule,
+        data: { title: 'Proceso de reclamacion de pago' },
+      },
       /**
        *Legaspi
        **/
