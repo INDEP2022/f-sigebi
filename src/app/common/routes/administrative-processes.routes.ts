@@ -106,6 +106,18 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Prorrateo de bienes de vigilancia comúm',
             link: '/pages/administrative-processes/prorrateo-goods-surveillance',
           },
+          {
+            label: 'Resumen de Gastos',
+            link: '/pages/administrative-processes/costs-resume',
+          },
+          {
+            label: 'Gastos aplicados a bienes',
+            link: '/pages/administrative-processes/costs-applied-goods',
+          },
+          {
+            label: 'Reportes de vigilancia',
+            link: '/pages/administrative-processes/surveillance-reports',
+          },
         ],
       },
       /**
