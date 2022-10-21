@@ -171,6 +171,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         link: '/pages/administrative-processes/sale-goods',
       },
       {
+        label: 'Firma Electrónica',
+        link: '/pages/administrative-processes/electronic-signature',
+      },
+      {
         label: 'Administracion Terceros',
         icon: 'bx-folder',
         subItems: [
@@ -206,7 +210,35 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Variable costo',
             link: '/pages/administrative-processes/variable-cost',
           },
+          {
+            label: 'Coordinacion por zonas',
+            link: '/pages/administrative-processes/zones',
+          },
         ],
+      },
+      {
+        label: 'Cuenta de numerario asegurado',
+        link: '/pages/administrative-processes/insured-numerary-account',
+      },
+      {
+        label: 'Empresas',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Reporte de evaluación de desempeño',
+            link: '/pages/administrative-processes/performance-evaluation-report',
+          },
+        ],
+      },
+      {
+        label: 'Conversión de bienes',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Actas conversión',
+            link: '/pages/administrative-processes/proceedings-conversion',
+          },
+        ]
       },
       /**
        * END FELIX
@@ -275,6 +307,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           /*label: 'Resarcimientos/Devoluciones',
             icon: 'bx-folder',
             subItems: [],*/
+          {
+            label: 'Bienes Relacionados',
+            link: '/pages/administrative-processes/siab-sami-interaction/refunds/goods-relationship',
+          },
           {
             label: 'Solicitud de Pago',
             link: '/pages/administrative-processes/siab-sami-interaction/refunds/payment-request',

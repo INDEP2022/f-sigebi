@@ -136,7 +136,7 @@ const routes: Routes = [
           './movable-property/c-bm-f-cdr-m-rebilling-causes/c-bm-f-cdr-m-rebilling-causes.module'
         )
       ).CBmFCdrMRebillingCausesModule,
-    data: { title: 'Causas y Refacturación' },
+    data: { title: 'Causas de Refacturación' },
   },
   {
     path: 'c-bm-f-edf-m-invoice-status',
@@ -226,13 +226,20 @@ const routes: Routes = [
     data: { title: 'Conversión Masiva de LCs' },
   },
   {
-    path: 'batch-parameters',
+    path: 'mass-biling-base-sales-tab',
     loadChildren: async () =>
       (
         await import(
-          './c-m-batch-parameters/c-m-batch-parameters.module'
+          './movable-property/mass-biling-base-sales-tab/mass-biling-base-sales-tab.module'
         )
-      ).CMBatchParametersModule,
+      ).MassBilingBaseSalesTabModule,
+    data: { title: 'Facturación masiva de VTA. de bases ' },
+  },
+  {
+    path: 'batch-parameters',
+    loadChildren: async () =>
+      (await import('./c-m-batch-parameters/c-m-batch-parameters.module'))
+        .CMBatchParametersModule,
     data: { title: 'Parámetros por Lote' },
   },
 ];

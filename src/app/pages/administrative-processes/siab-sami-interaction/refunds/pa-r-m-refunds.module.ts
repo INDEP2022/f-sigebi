@@ -19,16 +19,21 @@ import { CabmsSharedComponent } from 'src/app/@standalone/shared-forms/cabms-sha
 import { GoodsSharedComponent } from 'src/app/@standalone/shared-forms/goods-shared/goods-shared.component';
 import { TransferenteSharedComponent } from 'src/app/@standalone/shared-forms/transferents-shared/transferents-shared.component';
 import { BanksSharedComponent } from 'src/app/@standalone/shared-forms/banks-shared/banks-shared.component';
+import { DelegationSharedComponent } from 'src/app/@standalone/shared-forms/delegation-shared/delegation-shared.component'
 //Components
 import { PaPrCPaymentRequestComponent } from './payment-request/pa-pr-c-payment-request.component';
 import { PaPriCPaymentRequestItemsComponent } from './payment-request-items/pa-pri-c-payment-request-items.component';
 import { PaCdCCheckDetailComponent } from './check-detail/pa-cd-c-check-detail.component';
+import { PaGrCGoodsRelationshipComponent } from './goods-relationship/pa-gr-c-goods-relationship.component';
+import { PaAgCAddGoodsComponent } from './add-goods/pa-ag-c-add-goods.component';
 
 @NgModule({
   declarations: [
     PaPrCPaymentRequestComponent,
     PaPriCPaymentRequestItemsComponent,
-    PaCdCCheckDetailComponent
+    PaCdCCheckDetailComponent,
+    PaGrCGoodsRelationshipComponent,
+    PaAgCAddGoodsComponent
   ],
   imports: [
     CommonModule,
@@ -45,7 +50,8 @@ import { PaCdCCheckDetailComponent } from './check-detail/pa-cd-c-check-detail.c
     CabmsSharedComponent,
     GoodsSharedComponent,
     TransferenteSharedComponent,
-    BanksSharedComponent
+    BanksSharedComponent,
+    DelegationSharedComponent
   ]
 })
 export class PaRMRefundsModule { }
