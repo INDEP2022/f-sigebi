@@ -557,6 +557,10 @@ export const MENU: IMenuItem[] = [
         label: 'Conversión Masiva de LCs',
         link: '/pages/commercialization/lcs-massive-conversion',
       },
+      {
+        label: 'Parámetros por Lote',
+        link: '/pages/commercialization/batch-parameters',
+      },
     ],
   },
   // PROCESOS JURIDICOS

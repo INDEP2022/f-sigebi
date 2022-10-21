@@ -225,6 +225,16 @@ const routes: Routes = [
       ).CMLcsMassiveConversionModule,
     data: { title: 'Conversión Masiva de LCs' },
   },
+  {
+    path: 'batch-parameters',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-m-batch-parameters/c-m-batch-parameters.module'
+        )
+      ).CMBatchParametersModule,
+    data: { title: 'Parámetros por Lote' },
+  },
 ];
 
 @NgModule({
