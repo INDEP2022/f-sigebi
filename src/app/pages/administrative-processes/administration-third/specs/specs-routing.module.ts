@@ -4,12 +4,13 @@ import { SpecsComponent } from './specs/specs.component';
 
 const routes: Routes = [
   {
-    path:'',component:SpecsComponent
-  }
+    path: '',
+    component: SpecsComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class SpecsRoutingModule { }
+export class SpecsRoutingModule {}

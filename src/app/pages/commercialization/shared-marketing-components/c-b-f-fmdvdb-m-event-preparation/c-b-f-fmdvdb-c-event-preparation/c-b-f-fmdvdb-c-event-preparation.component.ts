@@ -1,17 +1,16 @@
+import { trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
-import { BasePage } from 'src/app/core/shared/base-page';
-import { BehaviorSubject, takeUntil } from 'rxjs';
-import { EVENT_PREPARATION_ALLOTMENT_COLUMNS } from './event-preparation-allotment-columns';
-import { EVENT_PREPARATION_GOODS_COLUMNS } from './even-preparation-goods-columns';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { SelectEventModalComponent } from '../select-event-modal/select-event-modal.component';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { CreateNewEventModalComponent } from '../create-new-event-modal/create-new-event-modal.component';
-import { animate, style, transition, trigger } from '@angular/animations';
+import { SelectEventModalComponent } from '../select-event-modal/select-event-modal.component';
+import { EVENT_PREPARATION_GOODS_COLUMNS } from './even-preparation-goods-columns';
+import { EVENT_PREPARATION_ALLOTMENT_COLUMNS } from './event-preparation-allotment-columns';
 //XLSX
-import * as XLSX from 'xlsx';
-import { ExcelService } from 'src/app/common/services/excel.service';
-import { AddEditLoteModalComponent } from '../add-edit-lote-modal/add-edit-lote-modal.component';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { ExcelService } from 'src/app/common/services/excel.service';
+import * as XLSX from 'xlsx';
+import { AddEditLoteModalComponent } from '../add-edit-lote-modal/add-edit-lote-modal.component';
 
 @Component({
   selector: 'app-c-b-f-fmdvdb-c-event-preparation',
@@ -26,11 +25,11 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   ],
   animations: [
     trigger('OnEventSelected', [
-    //  transition(':enter', [
-    //    style({ opacity: 0 }),
-    //    animate('500ms', style({ opacity: 1 })),
-    //  ]),
-    //  transition(':leave', [animate('500ms', style({ opacity: 0 }))]),
+      //  transition(':enter', [
+      //    style({ opacity: 0 }),
+      //    animate('500ms', style({ opacity: 1 })),
+      //  ]),
+      //  transition(':leave', [animate('500ms', style({ opacity: 0 }))]),
     ]),
   ],
 })
@@ -49,27 +48,29 @@ export class CBFFmdvdbCEventPreparationComponent
     ...this.settings,
     actions: false,
   };
-  
+
   totalItems: number = 0;
-  get check(){
-    return this.form.get('check')
+  get check() {
+    return this.form.get('check');
   }
 
-  constructor(private modalService: BsModalService, private excelService: ExcelService, private fb: FormBuilder) {
+  constructor(
+    private modalService: BsModalService,
+    private excelService: ExcelService,
+    private fb: FormBuilder
+  ) {
     super();
-    this.settings = {
+    (this.settings = {
       ...this.settings,
       actions: {
-        columnTitle: "Detalles", 
+        columnTitle: 'Detalles',
         add: true,
         delete: true,
         position: 'right',
-    },
-    columns: {...EVENT_PREPARATION_ALLOTMENT_COLUMNS},
-    },
-
-    this.settings2.columns = EVENT_PREPARATION_GOODS_COLUMNS;
-    
+      },
+      columns: { ...EVENT_PREPARATION_ALLOTMENT_COLUMNS },
+    }),
+      (this.settings2.columns = EVENT_PREPARATION_GOODS_COLUMNS);
   }
 
   ngOnInit(): void {
@@ -79,9 +80,9 @@ export class CBFFmdvdbCEventPreparationComponent
     this.prepareForm();
   }
 
-  private prepareForm (){
+  private prepareForm() {
     this.form = this.fb.group({
-      check: [false]
+      check: [false],
     });
   }
 
@@ -203,75 +204,82 @@ export class CBFFmdvdbCEventPreparationComponent
 
   //Datos prueba de bienesdescripcion
   data2 = [
-    { no_bien: '78946',
+    {
+      no_bien: '78946',
       descripcion: 'PIEZA, LLAVES PARA DADOS, MARCA PITTSBURGH',
       transferente: '451',
-      estatus : 'CPV',
-      cantidad : '2',
-      valorAvaluo : '',
+      estatus: 'CPV',
+      cantidad: '2',
+      valorAvaluo: '',
       eventoParticipante: '',
       loteParticipante: '',
-      eventoRemPre : '',
+      eventoRemPre: '',
       loteRemPre: '',
       valorBase: '',
       precioFinal: '',
       precioSIva: '',
       ivaFinal: '',
     },
-    { no_bien: '14789',
-      descripcion: '17 PIEZAS, CARTUCHOS DE VIDEO JUEGOS, 6 DE GAME CUBE, 7 GAME BOY ADVANCE Y 4 NINTENDO DS, EN BUEN ESTADO FISICO',
+    {
+      no_bien: '14789',
+      descripcion:
+        '17 PIEZAS, CARTUCHOS DE VIDEO JUEGOS, 6 DE GAME CUBE, 7 GAME BOY ADVANCE Y 4 NINTENDO DS, EN BUEN ESTADO FISICO',
       transferente: '32',
-      estatus : 'CPV',
-      cantidad : '17',
-      valorAvaluo : '',
+      estatus: 'CPV',
+      cantidad: '17',
+      valorAvaluo: '',
       eventoParticipante: '',
       loteParticipante: '',
-      eventoRemPre : '',
+      eventoRemPre: '',
       loteRemPre: '',
       valorBase: '',
       precioFinal: '',
       precioSIva: '',
       ivaFinal: '',
     },
-    { no_bien: '9874',
-      descripcion: '140 PIEZAS, GORRAS BEISBOLERAS, MARCA BIG, EN BUEN ESTADO FISICO',
+    {
+      no_bien: '9874',
+      descripcion:
+        '140 PIEZAS, GORRAS BEISBOLERAS, MARCA BIG, EN BUEN ESTADO FISICO',
       transferente: '321',
-      estatus : 'CPV',
-      cantidad : '140',
-      valorAvaluo : '',
+      estatus: 'CPV',
+      cantidad: '140',
+      valorAvaluo: '',
       eventoParticipante: '',
       loteParticipante: '',
-      eventoRemPre : '',
+      eventoRemPre: '',
       loteRemPre: '',
       valorBase: '',
       precioFinal: '',
       precioSIva: '',
       ivaFinal: '',
     },
-    { no_bien: '25849',
+    {
+      no_bien: '25849',
       descripcion: '50 PIEZAS DE LENTES, EN REGULAR ESTADO FÍSICO.',
       transferente: '357',
-      estatus : 'CPV',
-      cantidad : '9',
-      valorAvaluo : '',
+      estatus: 'CPV',
+      cantidad: '9',
+      valorAvaluo: '',
       eventoParticipante: '',
       loteParticipante: '',
-      eventoRemPre : '',
+      eventoRemPre: '',
       loteRemPre: '',
       valorBase: '',
       precioFinal: '',
       precioSIva: '',
       ivaFinal: '',
     },
-    { no_bien: '98541',
+    {
+      no_bien: '98541',
       descripcion: 'PIEZAS DE BALATAS',
       transferente: '1874',
-      estatus : 'CPV',
-      cantidad : '1',
-      valorAvaluo : '',
+      estatus: 'CPV',
+      cantidad: '1',
+      valorAvaluo: '',
       eventoParticipante: '',
       loteParticipante: '',
-      eventoRemPre : '',
+      eventoRemPre: '',
       loteRemPre: '',
       valorBase: '',
       precioFinal: '',

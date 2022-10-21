@@ -1,38 +1,31 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { BehaviorSubject, takeUntil } from 'rxjs';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { COLUMNS } from './columns';
 import { goodsData } from './data';
 //Models
-import { IGood } from 'src/app/core/models/catalogs/goods.model';
 
 @Component({
   selector: 'app-pa-ag-c-add-goods',
   templateUrl: './pa-ag-c-add-goods.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PaAgCAddGoodsComponent extends BasePage implements OnInit {
-
-  data:any[]=goodsData; //IGood[];
+  data: any[] = goodsData; //IGood[];
   title: string = 'Bienes';
 
-  selectedRows: any[]= [];
+  selectedRows: any[] = [];
 
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   @Output() refresh = new EventEmitter<any[]>();
 
-  constructor(
-    private fb: FormBuilder,
-    private modalRef: BsModalRef
-  ) {
-
+  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
     super();
     this.settings = {
       ...this.settings,
@@ -42,8 +35,7 @@ export class PaAgCAddGoodsComponent extends BasePage implements OnInit {
     };
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   close() {
     this.modalRef.hide();
@@ -62,5 +54,4 @@ export class PaAgCAddGoodsComponent extends BasePage implements OnInit {
   settingsChange($event: any): void {
     this.settings = $event;
   }
-
 }

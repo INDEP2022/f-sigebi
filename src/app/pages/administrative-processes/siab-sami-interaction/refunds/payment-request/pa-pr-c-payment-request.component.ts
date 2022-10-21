@@ -1,64 +1,59 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
-import { BasePage } from 'src/app/core/shared/base-page';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
-import { LocalDataSource } from 'ng2-smart-table';
 //Components
-import { PaPriCPaymentRequestItemsComponent } from '../payment-request-items/pa-pri-c-payment-request-items.component';
 import { PaCdCCheckDetailComponent } from '../check-detail/pa-cd-c-check-detail.component';
+import { PaPriCPaymentRequestItemsComponent } from '../payment-request-items/pa-pri-c-payment-request-items.component';
 //Models
 import { ICheck } from 'src/app/core/models/administrative-processes/siab-sami-interaction/check.model';
 //Provisional Data
-import { data } from './data';
 
 @Component({
   selector: 'app-pa-pr-c-payment-request',
   templateUrl: './pa-pr-c-payment-request.component.html',
-  styles: []
+  styles: [],
 })
 export class PaPrCPaymentRequestComponent extends BasePage implements OnInit {
-
   form: FormGroup = new FormGroup({});
-  check:ICheck;
+  check: ICheck;
 
   data: LocalDataSource = new LocalDataSource();
-  dataPartidas: any[] =[]
+  dataPartidas: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   //Range Picker
   dateSelected?: (Date | undefined)[];
   selectedClass: any[] = [];
-  maxDate=new Date(new Date().getFullYear(),11);
-  minDate=new Date(new Date().getFullYear(),0);
+  maxDate = new Date(new Date().getFullYear(), 11);
+  minDate = new Date(new Date().getFullYear(), 0);
 
-  constructor(
-    private fb: FormBuilder,
-    private modalService: BsModalService
-  ) {
+  constructor(private fb: FormBuilder, private modalService: BsModalService) {
     super();
     this.settings = {
       ...this.settings,
-      actions: { add: false, delete: true, edit: true},
+      actions: { add: false, delete: true, edit: true },
       columns: COLUMNS,
     };
   }
 
   ngOnInit(): void {
     this.prepareForm();
-    
-    this.form.get('requestDocs').valueChanges.subscribe(value=>{
-      if(value === 'rbt_post'){
+
+    this.form.get('requestDocs').valueChanges.subscribe(value => {
+      if (value === 'rbt_post') {
         this.form.controls['taxReceipts'].setValidators([Validators.required]);
         this.form.controls['taxReceipts'].updateValueAndValidity();
       }
-        
-        this.form.controls['taxReceipts'].clearValidators();
-        this.form.controls['taxReceipts'].setValue(null);
-        this.form.controls['taxReceipts'].updateValueAndValidity();
+
+      this.form.controls['taxReceipts'].clearValidators();
+      this.form.controls['taxReceipts'].setValue(null);
+      this.form.controls['taxReceipts'].updateValueAndValidity();
     });
   }
 
@@ -99,23 +94,24 @@ export class PaPrCPaymentRequestComponent extends BasePage implements OnInit {
   }
 
   openModal(context?: Partial<PaPriCPaymentRequestItemsComponent>): void {
+    const modalRef = this.modalService.show(
+      PaPriCPaymentRequestItemsComponent,
+      {
+        initialState: context,
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
 
-    const modalRef = this.modalService.show(PaPriCPaymentRequestItemsComponent, {
-      initialState: context,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-
-    modalRef.content.data.subscribe((data:any) => {
+    modalRef.content.data.subscribe((data: any) => {
       if (data)
-        if(!this.dataPartidas.find(dp=>dp.cabms == data.cabms)){
+        if (!this.dataPartidas.find(dp => dp.cabms == data.cabms)) {
           this.dataPartidas.push(data);
           this.data.load(this.dataPartidas);
-        }else{
+        } else {
           this.onLoadToast('info', 'Info', 'CABMS ya existe');
         }
-
-    });  
+    });
   }
 
   removeItem(cabms: string): void {
@@ -125,31 +121,28 @@ export class PaPrCPaymentRequestComponent extends BasePage implements OnInit {
       'Desea eliminar esta partida?'
     ).then(question => {
       if (question.isConfirmed) {
-        const index= this.dataPartidas.indexOf((dp:any)=>dp.cabms == cabms);
-        this.dataPartidas.splice(index,1);
+        const index = this.dataPartidas.indexOf((dp: any) => dp.cabms == cabms);
+        this.dataPartidas.splice(index, 1);
         this.data.load(this.dataPartidas);
       }
     });
   }
 
-  updateItem(partida?:any): void {
-    this.openModal({edit: true, partida })
+  updateItem(partida?: any): void {
+    this.openModal({ edit: true, partida });
   }
 
   openModalCheck(context?: Partial<PaCdCCheckDetailComponent>): void {
-
     const modalRef = this.modalService.show(PaCdCCheckDetailComponent, {
       initialState: context,
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
 
-    modalRef.content.data.subscribe((data:any) => {
-      if (data)
-        this.check=data;
-        this.onLoadToast('info', 'Info', 'Cheque agregado');
-
-    });  
+    modalRef.content.data.subscribe((data: any) => {
+      if (data) this.check = data;
+      this.onLoadToast('info', 'Info', 'Cheque agregado');
+    });
   }
 
   removeCheck(): void {
@@ -164,8 +157,8 @@ export class PaPrCPaymentRequestComponent extends BasePage implements OnInit {
     });
   }
 
-  updateCheck(check:ICheck): void {
-    this.openModalCheck({ edit: true, check })
+  updateCheck(check: ICheck): void {
+    this.openModalCheck({ edit: true, check });
   }
 
   /*getDateItem(date: Date): string {

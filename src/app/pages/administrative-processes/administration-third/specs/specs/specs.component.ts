@@ -7,15 +7,13 @@ import { SPECS_COLUMNS } from './specs-columns';
 @Component({
   selector: 'app-specs',
   templateUrl: './specs.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class SpecsComponent extends BasePage implements OnInit {
   data1: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-  constructor()
-  {
+  constructor() {
     super();
     this.settings = {
       ...this.settings,
@@ -23,7 +21,5 @@ export class SpecsComponent extends BasePage implements OnInit {
       columns: SPECS_COLUMNS,
     };
   }
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

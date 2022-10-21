@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { BATCH_PARAMETERS_COLUMNS } from './batch-parameters-columns';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { EventSelectionComponent } from '../components/event-selection/event-selection.component';
+import { BATCH_PARAMETERS_COLUMNS } from './batch-parameters-columns';
 
 @Component({
   selector: 'app-c-m-batch-parameters-list',

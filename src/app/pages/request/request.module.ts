@@ -1,14 +1,12 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
 import { RequestRoutingModule } from './request-routing.module';
 
-import { SharedModule } from 'src/app/shared/shared.module';
 import {
-  BsDatepickerModule,
   BsDatepickerConfig,
+  BsDatepickerModule,
 } from 'ngx-bootstrap/datepicker';
-import { from } from 'rxjs';
 
 @NgModule({
   declarations: [],

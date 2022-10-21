@@ -1,4 +1,4 @@
 export interface IChargeUser {
-    id: number;
-    name: string;
+  id: number;
+  name: string;
 }

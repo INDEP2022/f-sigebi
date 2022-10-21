@@ -5,12 +5,12 @@ import { MassBilingBaseSalesTabComponent } from './mass-biling-base-sales-tab/ma
 const routes: Routes = [
   {
     path: '',
-    component: MassBilingBaseSalesTabComponent
-  }
+    component: MassBilingBaseSalesTabComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class MassBilingBaseSalesTabRoutingModule { }
+export class MassBilingBaseSalesTabRoutingModule {}

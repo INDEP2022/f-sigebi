@@ -27,11 +27,9 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-      	<!--
+        <!--
           [disabled]="!rowSelected"-->
-        <confirm-button
-          [loading]="loading"
-          (confirm)="confirm()">
+        <confirm-button [loading]="loading" (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

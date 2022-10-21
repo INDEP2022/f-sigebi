@@ -150,10 +150,7 @@
       <div class="row pt-4">
         <div class="col-md-6">
           <form-field [control]="documentForm.get('sender')" label="Remitente">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="sender"/>
+            <input type="text" class="form-control" formControlName="sender" />
           </form-field>
         </div>
 
@@ -172,11 +169,13 @@
 
       <div class="row pt-4">
         <div class="col-md-6">
-          <form-field [control]="documentForm.get('senderCharge')" label="Cargo remitente">
+          <form-field
+            [control]="documentForm.get('senderCharge')"
+            label="Cargo remitente">
             <input
               type="text"
               class="form-control"
-              formControlName="senderCharge"/>
+              formControlName="senderCharge" />
           </form-field>
         </div>
 
@@ -184,7 +183,9 @@
           <form-field
             [control]="documentForm.get('comments')"
             label="Comentarios">
-            <textarea class="form-control" formControlName="comments"></textarea>
+            <textarea
+              class="form-control"
+              formControlName="comments"></textarea>
           </form-field>
         </div>
       </div>

@@ -1,8 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { COLUMNS_TABLE_1 } from './../columns-table-1';
 import { COLUMNS_TABLE_2 } from '../columns-table-2';
+import { COLUMNS_TABLE_1 } from './../columns-table-1';
 
 @Component({
   selector: 'app-fdp-pid-c-proposal-inventories-donation',

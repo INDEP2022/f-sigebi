@@ -4,12 +4,13 @@ import { TurnTypeComponent } from './turn-type/turn-type.component';
 
 const routes: Routes = [
   {
-    path:'',component:TurnTypeComponent
-  }
+    path: '',
+    component: TurnTypeComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class TurnTypeRoutingModule { }
+export class TurnTypeRoutingModule {}

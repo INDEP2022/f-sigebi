@@ -8,7 +8,9 @@
         <input type="text" class="form-control" formControlName="name" />
       </form-field>
       <div class="row pt-3">
-        <form-field [control]="userForm.get('email')" label="Correo electronico">
+        <form-field
+          [control]="userForm.get('email')"
+          label="Correo electronico">
           <input type="text" class="form-control" formControlName="email" />
         </form-field>
       </div>

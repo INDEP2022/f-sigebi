@@ -356,8 +356,11 @@ const routes: Routes = [
       {
         path: 'proceedings-conversion',
         loadChildren: async () =>
-          (await import('./proceedings-conversion/proceedings-conversion.module'))
-            .ProceedingsConversionModule,
+          (
+            await import(
+              './proceedings-conversion/proceedings-conversion.module'
+            )
+          ).ProceedingsConversionModule,
         data: { title: 'Detalle de actas de conversión' },
       },
       {
@@ -415,4 +418,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class AdministrativeProcessesRoutingModule { }
+export class AdministrativeProcessesRoutingModule {}

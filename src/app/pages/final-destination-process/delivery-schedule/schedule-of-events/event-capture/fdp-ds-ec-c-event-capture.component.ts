@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, takeUntil } from 'rxjs';
-import { FormGroup, FormBuilder } from '@angular/forms';
-import { BasePage } from 'src/app/core/shared/base-page';
-import { COLUMNS_CAPTURE_EVENTS } from './columns-capture-events';
-import { inputSelect } from '../interfaces/input-select';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { inputSelect } from '../interfaces/input-select';
+import { COLUMNS_CAPTURE_EVENTS } from './columns-capture-events';
 
 @Component({
   selector: 'app-fdp-ds-ec-c-event-capture',

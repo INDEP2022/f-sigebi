@@ -2,15 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { RETURNSCONFISCATION_COLUMNS } from './returns-confiscation-columns';
 
 @Component({
   selector: 'app-returns-confiscation',
   templateUrl: './returns-confiscation.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ReturnsConfiscationComponent extends BasePage implements OnInit {
   returnsConfiscationForm: ModelForm<any>;

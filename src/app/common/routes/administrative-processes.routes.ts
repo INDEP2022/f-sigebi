@@ -254,7 +254,7 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Actas conversión',
             link: '/pages/administrative-processes/proceedings-conversion',
           },
-        ]
+        ],
       },
       /**
        * END FELIX

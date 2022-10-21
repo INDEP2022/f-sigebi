@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   Component,
   HostListener,
@@ -5,9 +6,8 @@ import {
   OnInit,
   Optional,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ImageViewerConfig } from './image-viewer.config';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ImageViewerConfig } from './image-viewer.config';
 import { PreviewFullscreenDirective } from './preview-fullscreen.directive';
 
 const DEFAULT_CONFIG: ImageViewerConfig = {

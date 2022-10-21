@@ -7,34 +7,32 @@ import { SEPARATE_FOLIOS_COLUMNS } from './separate-folios-columns';
 @Component({
   selector: 'app-separate-folios-modal',
   templateUrl: './separate-folios-modal.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class SeparateFoliosModalComponent extends BasePage implements OnInit {
+  form: FormGroup = new FormGroup({});
 
-  form : FormGroup = new FormGroup({});
-
-  constructor(private modalRef: BsModalRef, private fb:FormBuilder) {
+  constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
     this.settings = {
       ...this.settings,
       actions: false,
-      columns: {...SEPARATE_FOLIOS_COLUMNS}
-    }
+      columns: { ...SEPARATE_FOLIOS_COLUMNS },
+    };
   }
 
   ngOnInit(): void {
     this.prepareForm();
   }
 
-  private prepareForm(){
+  private prepareForm() {
     this.form = this.fb.group({
       serie: [null, [Validators.required]],
       folio: [null, [Validators.required]],
       separate: [null, [Validators.required]],
       userRegister: [null, [Validators.required]],
       dateRegister: [null, [Validators.required]],
-    })
+    });
   }
 
   close() {
@@ -43,40 +41,39 @@ export class SeparateFoliosModalComponent extends BasePage implements OnInit {
 
   data = [
     {
-      serie :  "H",
-      folio:  17663,
-      separate:  "M",
-      userRegister:  "GBLANCO",
-      DateRegister :  "11-ENE-2011",
+      serie: 'H',
+      folio: 17663,
+      separate: 'M',
+      userRegister: 'GBLANCO',
+      DateRegister: '11-ENE-2011',
     },
     {
-      serie :  "H",
-      folio:  17664,
-      separate:  "M",
-      userRegister:  "GBLANCO",
-      DateRegister :  "11-ENE-2011",
+      serie: 'H',
+      folio: 17664,
+      separate: 'M',
+      userRegister: 'GBLANCO',
+      DateRegister: '11-ENE-2011',
     },
     {
-      serie :  "H",
-      folio:  17665,
-      separate:  "M",
-      userRegister:  "GBLANCO",
-      DateRegister :  "11-ENE-2011",
+      serie: 'H',
+      folio: 17665,
+      separate: 'M',
+      userRegister: 'GBLANCO',
+      DateRegister: '11-ENE-2011',
     },
     {
-      serie :  "H",
-      folio:  17666,
-      separate:  "M",
-      userRegister:  "GBLANCO",
-      DateRegister :  "11-ENE-2011",
+      serie: 'H',
+      folio: 17666,
+      separate: 'M',
+      userRegister: 'GBLANCO',
+      DateRegister: '11-ENE-2011',
     },
     {
-      serie :  "H",
-      folio:  17667,
-      separate:  "M",
-      userRegister:  "GBLANCO",
-      DateRegister :  "11-ENE-2011",
+      serie: 'H',
+      folio: 17667,
+      separate: 'M',
+      userRegister: 'GBLANCO',
+      DateRegister: '11-ENE-2011',
     },
-  ]
-
+  ];
 }

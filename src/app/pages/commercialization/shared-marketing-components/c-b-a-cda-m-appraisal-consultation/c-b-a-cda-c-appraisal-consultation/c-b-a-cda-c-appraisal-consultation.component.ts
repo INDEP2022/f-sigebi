@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { BasePage } from 'src/app/core/shared/base-page';
 
-import { APPRAISAL_COLUMNS } from './appraisal-columns';
-import { ExcelService } from 'src/app/common/services/excel.service';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
+import { APPRAISAL_COLUMNS } from './appraisal-columns';
 
 @Component({
   selector: 'app-c-b-a-cda-c-appraisal-consultation',
@@ -15,7 +15,6 @@ export class CBACdaCAppraisalConsultationComponent
   extends BasePage
   implements OnInit
 {
-
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(private excelService: ExcelService) {
@@ -29,7 +28,8 @@ export class CBACdaCAppraisalConsultationComponent
         position: 'right',
       },
       edit: {
-        editButtonContent: '<span class="bi bi-file-earmark-excel text-warning mx-2"></span>',
+        editButtonContent:
+          '<span class="bi bi-file-earmark-excel text-warning mx-2"></span>',
       },
       columns: { ...APPRAISAL_COLUMNS },
     };

@@ -1,7 +1,7 @@
-import { Store } from '@ngrx/store';
 import { Component, OnInit } from '@angular/core';
-import { decrement, increment } from '../../action/home.actions';
+import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/app.reducers';
+import { decrement, increment } from '../../action/home.actions';
 
 @Component({
   selector: 'app-child',

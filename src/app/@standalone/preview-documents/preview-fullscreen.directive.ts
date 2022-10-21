@@ -1,5 +1,5 @@
 import { Directive, ElementRef, Input, SimpleChanges } from '@angular/core';
-import { isEnabled, request, exit } from 'screenfull';
+import { exit, isEnabled, request } from 'screenfull';
 
 @Directive({
   selector: '[appPreviewFullscreen]',

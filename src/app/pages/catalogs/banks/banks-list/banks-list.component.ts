@@ -5,8 +5,8 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IBank } from '../../../../core/models/catalogs/bank.model';
 import { BankService } from '../../../../core/services/catalogs/bank.service';
-import { BANKS_COLUMNS } from './banks-columns';
 import { BanksDetailComponent } from '../banks-detail/banks-detail.component';
+import { BANKS_COLUMNS } from './banks-columns';
 
 @Component({
   selector: 'app-banks-list',

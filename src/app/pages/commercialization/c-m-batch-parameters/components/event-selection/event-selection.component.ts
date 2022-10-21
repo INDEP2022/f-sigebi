@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { DefaultEditor } from 'ng2-smart-table';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-event-selection',

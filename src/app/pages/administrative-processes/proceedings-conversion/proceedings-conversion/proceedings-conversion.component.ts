@@ -3,16 +3,18 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ProceedingsConversionDetailComponent } from '../proceedings-conversion-detail/proceedings-conversion-detail.component';
-import { PROCEEDINGSCONVERSIONS_COLUMNS, PROCEEDINGSCONVERSION_COLUMNS } from './proceedings-conversion-columns';
+import {
+  PROCEEDINGSCONVERSIONS_COLUMNS,
+  PROCEEDINGSCONVERSION_COLUMNS,
+} from './proceedings-conversion-columns';
 
 @Component({
   selector: 'app-proceedings-conversion',
   templateUrl: './proceedings-conversion.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ProceedingsConversionComponent extends BasePage implements OnInit {
   proceedingsConversionForm: ModelForm<any>;
@@ -62,7 +64,7 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
     let config: ModalOptions = {
       initialState: {
         data,
-        callback: (next: boolean) => { },
+        callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,

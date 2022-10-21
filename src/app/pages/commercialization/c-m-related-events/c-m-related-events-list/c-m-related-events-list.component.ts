@@ -1,11 +1,11 @@
+import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
-import { BasePage } from 'src/app/core/shared/base-page';
 import { FormGroup } from '@angular/forms';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { trigger, transition, style, animate } from '@angular/animations';
-import { TABLE_SETTINGS } from '../../../../common/constants/table-settings';
 import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { TABLE_SETTINGS } from '../../../../common/constants/table-settings';
 import { RELATED_EVENTS_COLUMNS } from './related-events-columns';
 
 @Component({

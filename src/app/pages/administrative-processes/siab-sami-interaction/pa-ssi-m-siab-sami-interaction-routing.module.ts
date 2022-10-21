@@ -2,8 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 //Components
 import { PaGrCGoodsRelationshipComponent } from './goods-relationship/pa-gr-c-goods-relationship.component';
-import { PaMdgCMissingDamagedGoodsComponent } from './missing-damaged-goods/pa-mdg-c-missing-damaged-goods.component';
-import { PaRmCRevenueManagementComponent } from './revenue-management/pa-rm-c-revenue-management.component';
 import { PaPgCPaymentGoodsComponent } from './payment-goods/pa-pg-c-payment-goods.component';
 import { PaVgCValueGoodsComponent } from './value-goods/pa-vg-c-value-goods.component';
 //FULL
@@ -30,12 +28,11 @@ const routes: Routes = [
       {
         path: 'refunds',
         loadChildren: async () =>
-          (await import('./refunds/pa-r-m-refunds.module'))
-            .PaRMRefundsModule,
+          (await import('./refunds/pa-r-m-refunds.module')).PaRMRefundsModule,
         data: { title: 'Resarcimientos/Devoluciones' },
       },
-    ]
-  }
+    ],
+  },
 ];
 
 @NgModule({

@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { IClarification } from '../../../../core/models/catalogs/clarification.model';
 import { ClarificationService } from '../../../../core/services/catalogs/clarification.service';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { BasePage } from 'src/app/core/shared/base-page';
-import { CLARIFICATION_COLUMNS } from './clarification-columns';
 import { ClarificationsDetailComponent } from '../clarifications-detail/clarifications-detail.component';
+import { CLARIFICATION_COLUMNS } from './clarification-columns';
 
 @Component({
   selector: 'app-clarifications-list',

@@ -2,13 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { IIndicatorReport } from 'src/app/core/models/catalogs/indicator-report.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from '../../../../common/repository/interfaces/list-params';
 import { IndicatorReportService } from '../../../../core/services/catalogs/indicator-report.service';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { IndicatedFormComponent } from '../../indicated/indicated-form/indicated-form.component';
-import { INDICATOR_REPORT_COLUMNS } from './indicator-report-columns';
 import { IndicatorReportFormComponent } from '../indicator-report-form/indicator-report-form.component';
+import { INDICATOR_REPORT_COLUMNS } from './indicator-report-columns';
 
 @Component({
   selector: 'app-indicator-report-list',

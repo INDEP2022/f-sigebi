@@ -19,7 +19,6 @@ export const COLUMNS = {
   cabms: {
     title: 'CABMS',
     sort: false,
-
   },
   amountR: {
     title: 'Monto',
@@ -28,7 +27,6 @@ export const COLUMNS = {
   taxes: {
     title: 'I.V.A',
     sort: false,
-
   },
   withholdingTax: {
     title: 'Retención I.V.A',
@@ -41,5 +39,5 @@ export const COLUMNS = {
   total: {
     title: 'Total',
     sort: false,
-  }
+  },
 };

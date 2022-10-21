@@ -7,8 +7,7 @@ import { COORDINATIONSZONES_COLUMNS, ZONES_COLUMNS } from './zones-columns';
 @Component({
   selector: 'app-zones',
   templateUrl: './zones.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ZonesComponent extends BasePage implements OnInit {
   data1: any[] = [];
@@ -18,8 +17,7 @@ export class ZonesComponent extends BasePage implements OnInit {
   data2: any[] = [];
   params1 = new BehaviorSubject<ListParams>(new ListParams());
   totalItems1: number = 0;
-  constructor()
-  {
+  constructor() {
     super();
     this.settings = {
       ...this.settings,
@@ -29,7 +27,5 @@ export class ZonesComponent extends BasePage implements OnInit {
     this.settings1.columns = COORDINATIONSZONES_COLUMNS;
   }
 
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

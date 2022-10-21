@@ -4,12 +4,13 @@ import { ReturnsConfiscationComponent } from './returns-confiscation/returns-con
 
 const routes: Routes = [
   {
-    path: '', component: ReturnsConfiscationComponent
-  }
+    path: '',
+    component: ReturnsConfiscationComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ReturnsConfiscationRoutingModule { }
+export class ReturnsConfiscationRoutingModule {}

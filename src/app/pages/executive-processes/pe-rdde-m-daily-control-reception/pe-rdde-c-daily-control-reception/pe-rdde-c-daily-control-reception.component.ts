@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,

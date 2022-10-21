@@ -1,4 +1,3 @@
-import { AppState } from './../../../app.reducers';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -7,6 +6,7 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { AppState } from './../../../app.reducers';
 import { EXCEL_TO_JSON_COLUMNS } from './constants/excel-to-json-columns';
 import { JSON_TO_CSV } from './constants/json-to-csv';
 import { ExampleModalComponent } from './example-modal.component';

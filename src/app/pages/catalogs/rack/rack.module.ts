@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
-import { RackRoutingModule } from './rack-routing.module';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { RackFormComponent } from './rack-form/rack-form.component';
 import { RackListComponent } from './rack-list/rack-list.component';
-import { SharedModule } from 'src/app/shared/shared.module';
-import { ModalModule } from 'ngx-bootstrap/modal';
+import { RackRoutingModule } from './rack-routing.module';
 
 @NgModule({
   declarations: [RackFormComponent, RackListComponent],

@@ -5,42 +5,41 @@ import { SAT_CATALOGS_COLUMNS } from './sat-catalogs-columns';
 @Component({
   selector: 'app-c-bm-f-fmdvdb-c-sat-catalogs',
   templateUrl: './c-bm-f-fmdvdb-c-sat-catalogs.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CBmFFmdvdbCSatCatalogsComponent extends BasePage implements OnInit {
-  
+export class CBmFFmdvdbCSatCatalogsComponent
+  extends BasePage
+  implements OnInit
+{
   constructor() {
     super();
     this.settings = {
       ...this.settings,
       actions: false,
-      columns : {...SAT_CATALOGS_COLUMNS}
-    }  
+      columns: { ...SAT_CATALOGS_COLUMNS },
+    };
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   data = [
     {
-      allotment: "1",
-      client: "IMPULSORA AZUCARERA",
-      use: "Error uso comprobante",
-      unit: "Error unidad de medida",
-      service: "Error clave producto o servicio",
-      payMeth: "Error forma de pago",
-      typeRelationship: "Error tipo de servicio",
+      allotment: '1',
+      client: 'IMPULSORA AZUCARERA',
+      use: 'Error uso comprobante',
+      unit: 'Error unidad de medida',
+      service: 'Error clave producto o servicio',
+      payMeth: 'Error forma de pago',
+      typeRelationship: 'Error tipo de servicio',
     },
     {
-      allotment: "2",
-      client: "BETA SAN MIGUEL S.A de C.V",
-      use: "Error uso comprobante",
-      unit: "Error unidad de medida",
-      service: "Error clave producto o servicio",
-      payMeth: "Error forma de pago",
-      typeRelationship: "Error tipo de servicio",
+      allotment: '2',
+      client: 'BETA SAN MIGUEL S.A de C.V',
+      use: 'Error uso comprobante',
+      unit: 'Error unidad de medida',
+      service: 'Error clave producto o servicio',
+      payMeth: 'Error forma de pago',
+      typeRelationship: 'Error tipo de servicio',
     },
-  ]
-
+  ];
 }

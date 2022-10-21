@@ -1,30 +1,26 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 //Models
 import { ICheck } from 'src/app/core/models/administrative-processes/siab-sami-interaction/check.model';
 
 @Component({
   selector: 'app-pa-cd-c-check-detail',
   templateUrl: './pa-cd-c-check-detail.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PaCdCCheckDetailComponent extends BasePage implements OnInit {
-
   form: FormGroup = new FormGroup({});
 
-  check: ICheck =null;
+  check: ICheck = null;
   edit: boolean = false;
   status: string = 'Nuevo';
   title: string = 'Cheque';
 
   @Output() data = new EventEmitter<{}>();
 
-  constructor(
-    private fb: FormBuilder,
-    private modalRef: BsModalRef) {
+  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
     super();
   }
 
@@ -51,11 +47,10 @@ export class PaCdCCheckDetailComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    let data={
-      ...this.form.value
+    let data = {
+      ...this.form.value,
     };
     this.data.emit(data);
     this.modalRef.hide();
   }
-
 }
