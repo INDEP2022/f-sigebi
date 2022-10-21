@@ -1,5 +1,5 @@
 /** BASE IMPORT */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 /** LIBRERÍAS EXTERNAS IMPORTS */
@@ -19,6 +19,7 @@ export class PJDAEHistoricalSituationGoodsComponent
   extends BasePage
   implements OnInit, OnDestroy
 {
+  @Input() noBien: string = '';
   tableSettings = {
     actions: {
       columnTitle: '',
@@ -79,7 +80,7 @@ export class PJDAEHistoricalSituationGoodsComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      noBien: ['', [Validators.required]], //*
+      noBien: [this.noBien != '' ? this.noBien : '', [Validators.required]], //*
       descripcion: ['', [Validators.required]], //*
     });
   }

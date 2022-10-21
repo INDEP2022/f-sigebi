@@ -1,4 +1,4 @@
-<app-card [header]="true">
+<app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">EMISI&Oacute;N DE ACUERDOS</h5>
   </div>
@@ -15,4 +15,23 @@
     </div>
     <!-- tabla Emisión Acuerdos -->
   </div>
+  <div footer *ngIf="mostrarHistoricalSituationGoods == true">
+    <div class="row">
+      <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+        <div class="form-group">
+          <button
+            type="button"
+            class="btn btn-danger btn-sm active p-3"
+            (click)="btnClose()">
+            Cerrar Ventana
+            <i class="bx bx-window-close"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </app-card>
+
+<app-pj-d-ea-c-historical-situation-goods
+  *ngIf="mostrarHistoricalSituationGoods == true"
+  [noBien]="noBien"></app-pj-d-ea-c-historical-situation-goods>

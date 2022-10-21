@@ -13,6 +13,7 @@ import { PJDAEHistoricalSituationGoodsRoutingModule } from './pj-d-ea-m-historic
 
 /** COMPONENTS IMPORTS */
 import { PJDAEHistoricalSituationGoodsComponent } from './historical-situation-goods/pj-d-ea-c-historical-situation-goods.component';
+import { EventEmitterService } from '../issue-agreements/issue-agreements/eventEmitter.service';
 
 @NgModule({
   declarations: [PJDAEHistoricalSituationGoodsComponent],
@@ -21,5 +22,7 @@ import { PJDAEHistoricalSituationGoodsComponent } from './historical-situation-g
     PJDAEHistoricalSituationGoodsRoutingModule,
     SharedModule,
   ],
+  exports: [PJDAEHistoricalSituationGoodsComponent],
+  providers: [EventEmitterService],
 })
 export class PJDAEHistoricalSituationGoodsModule {}

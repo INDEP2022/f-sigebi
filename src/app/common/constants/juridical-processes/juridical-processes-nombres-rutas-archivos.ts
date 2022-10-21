@@ -78,10 +78,17 @@ export const routesJuridicalProcesses: any = [
     menu: 'Emisión de Acuerdos',
   },
   {
+    // NO SE IMPORTA EN EL MENU
     //HISTORICO SITUACION DEL BIEN
     label: 'Histórico Situación del Bien',
     link: 'historico-situacion-bien',
     menu: 'Histórico Situación del Bien',
+  }, // NO SE IMPORTA EN EL MENU
+  {
+    // Resolución de Recursos de Revisión
+    label: 'Resolución de Recursos de Revisión',
+    link: 'relacion-recursos-revision',
+    menu: 'Resolución de Recursos de Revisión',
   },
   // DEPOSITARIA
 ];
@@ -175,12 +182,12 @@ export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
               routesJuridicalProcesses[11].link,
           },
           {
-            // RELACIÓN DE AMPAROS
-            label: routesJuridicalProcesses[12].menu,
+            // Resolución de Recursos de Revisión
+            label: routesJuridicalProcesses[13].menu,
             link:
               baseMenu +
               baseMenuDepositaria +
-              routesJuridicalProcesses[12].link,
+              routesJuridicalProcesses[13].link,
           },
         ],
       },
