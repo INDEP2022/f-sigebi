@@ -8,7 +8,7 @@ export interface IGood {
  	expiryDate: Date;
  	locationType: string;
  	status: string;
- }
+}
     /*val1: S/M,
     val2: NULL,
     val3: NULL,
