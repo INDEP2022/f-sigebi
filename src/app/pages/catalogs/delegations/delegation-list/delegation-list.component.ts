@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 

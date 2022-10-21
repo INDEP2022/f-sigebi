@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 
 @Component({
   selector: 'app-proceedings-conversion-detail',
   templateUrl: './proceedings-conversion-detail.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ProceedingsConversionDetailComponent implements OnInit {
   header: ModelForm<any>;
@@ -17,7 +16,7 @@ export class ProceedingsConversionDetailComponent implements OnInit {
   first: ModelForm<any>;
   closureOfMinutes: ModelForm<any>;
   antecedentThreeEnable: boolean = false;
-  constructor(private fb: FormBuilder, private modalRef: BsModalRef) { }
+  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {}
 
   ngOnInit(): void {
     this.prepareForm();

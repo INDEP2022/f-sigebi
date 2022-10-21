@@ -1,15 +1,13 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { BsModalRef } from 'ngx-bootstrap/modal';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-pa-rsf-c-request-service-form',
   templateUrl: './pa-rsf-c-request-service-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PaRsfCRequestServiceFormComponent implements OnInit {
-
   @Output() data = new EventEmitter<any>();
 
   form: FormGroup = new FormGroup({});

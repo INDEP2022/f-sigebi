@@ -5,19 +5,15 @@ import { DefaultSelect } from '../../../shared/components/select/default-select'
 @Component({
   selector: 'app-jpr-complement-article',
   templateUrl: './jpr-complement-article.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class JprComplementArticleComponent implements OnInit {
-
   form: FormGroup;
   itemsSelect = new DefaultSelect();
-  constructor(
-    private fb: FormBuilder
-  ) { }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    this.prepareForm()
+    this.prepareForm();
   }
 
   prepareForm() {
@@ -42,7 +38,6 @@ export class JprComplementArticleComponent implements OnInit {
       fechaAseg: [null, [Validators.required]],
       notificado: [null, [Validators.required]],
       lugar: [null, [Validators.required]],
-    })
+    });
   }
-
 }

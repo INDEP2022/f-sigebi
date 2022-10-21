@@ -7,15 +7,13 @@ import { MEASUREMENTUNITS_COLUMNS } from './measurement-units-columns';
 @Component({
   selector: 'app-measurement-units',
   templateUrl: './measurement-units.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class MeasurementUnitsComponent extends BasePage implements OnInit {
   data1: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-  constructor()
-  {
+  constructor() {
     super();
     this.settings = {
       ...this.settings,
@@ -23,7 +21,5 @@ export class MeasurementUnitsComponent extends BasePage implements OnInit {
       columns: MEASUREMENTUNITS_COLUMNS,
     };
   }
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

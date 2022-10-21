@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core'; 
+import { Component, OnInit } from '@angular/core';
 
-import { BasePage } from 'src/app/core/shared/base-page';
-import { REBILLING_CAUSES_COLUMNS } from './rebilling-causes-columns';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { CBmFCdrCRebillingCausesModalComponent } from '../c-bm-f-cdr-c-rebilling-causes-modal/c-bm-f-cdr-c-rebilling-causes-modal.component';
+import { REBILLING_CAUSES_COLUMNS } from './rebilling-causes-columns';
 
 @Component({
   selector: 'app-c-bm-f-cdr-c-rebilling-causes',
@@ -14,7 +14,6 @@ export class CBmFCdrCRebillingCausesComponent
   extends BasePage
   implements OnInit
 {
-  
   columns: any[] = [];
   totalItems: number = 0;
 
@@ -23,7 +22,7 @@ export class CBmFCdrCRebillingCausesComponent
     this.settings = {
       ...this.settings,
       actions: {
-        columnTitle: "Acciones",
+        columnTitle: 'Acciones',
         edit: true,
         delete: false,
         position: 'right',
@@ -67,15 +66,18 @@ export class CBmFCdrCRebillingCausesComponent
 
   //Rellenar formulario con datos de la tabla
   openForm(allotment?: any) {
-     this.openModal({ allotment });
-   }
+    this.openModal({ allotment });
+  }
 
-   openModal(context?: Partial<CBmFCdrCRebillingCausesModalComponent>) {
-    const modalRef = this.modalService.show(CBmFCdrCRebillingCausesModalComponent, {
-      initialState: { ...context },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
+  openModal(context?: Partial<CBmFCdrCRebillingCausesModalComponent>) {
+    const modalRef = this.modalService.show(
+      CBmFCdrCRebillingCausesModalComponent,
+      {
+        initialState: { ...context },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
     modalRef.content.refresh.subscribe(next => {
       if (next) this.getData();
     });

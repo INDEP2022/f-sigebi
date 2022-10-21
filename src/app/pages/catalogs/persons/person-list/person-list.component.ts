@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IPerson } from 'src/app/core/models/catalogs/person.model';
 import { PersonService } from 'src/app/core/services/catalogs/person.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PersonFormComponent } from '../person-form/person-form.component';
 import { PERSON_COLUMNS } from './person-columns';
 

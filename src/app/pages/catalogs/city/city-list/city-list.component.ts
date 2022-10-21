@@ -6,8 +6,8 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ICity } from '../../../../core/models/catalogs/city.model';
 import { CityService } from '../../../../core/services/catalogs/city.service';
-import { CITY_COLUMNS } from './city-columns';
 import { CityDetailComponent } from '../city-detail/city-detail.component';
+import { CITY_COLUMNS } from './city-columns';
 
 @Component({
   selector: 'app-city-list',

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS_EXPORT_GOODS } from './columns-export-goods';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 
 @Component({
   selector: 'app-fdp-ebde-c-export-goods-donation',

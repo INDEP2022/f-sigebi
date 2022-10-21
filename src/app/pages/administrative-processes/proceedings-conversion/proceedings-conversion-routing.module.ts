@@ -4,12 +4,13 @@ import { ProceedingsConversionComponent } from './proceedings-conversion/proceed
 
 const routes: Routes = [
   {
-    path: '', component: ProceedingsConversionComponent
-  }
+    path: '',
+    component: ProceedingsConversionComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ProceedingsConversionRoutingModule { }
+export class ProceedingsConversionRoutingModule {}

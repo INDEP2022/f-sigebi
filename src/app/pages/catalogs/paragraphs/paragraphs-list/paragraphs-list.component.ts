@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BasePage } from 'src/app/core/shared/base-page';
 
+import { ParagraphsFormComponent } from '../paragraphs-form/paragraphs-form.component';
 import { IParagraph } from './../../../../core/models/catalogs/paragraph.model';
 import { ParagraphService } from './../../../../core/services/catalogs/paragraph.service';
 import { PARAGRAPHS_COLUMNS } from './paragraphs-columns';
-import { ParagraphsFormComponent } from '../paragraphs-form/paragraphs-form.component';
 
 @Component({
   selector: 'app-paragraphs-list',

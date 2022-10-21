@@ -1,9 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SharedModule } from 'src/app/shared/shared.module';
+import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
+import { SharedModule } from 'src/app/shared/shared.module';
 //Rxjs
-import { BehaviorSubject, takeUntil } from 'rxjs';
 //Params
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -19,17 +18,15 @@ import { cabmsData } from './data';
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './cabms-shared.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CabmsSharedComponent extends BasePage implements OnInit {
-  
   @Input() form: FormGroup;
   @Input() cabmsField: string = 'cabms';
 
   @Input() showCabms: boolean = true;
   //If Form PatchValue
-  @Input() patchValue: boolean= false;
+  @Input() patchValue: boolean = false;
 
   items = new DefaultSelect<ICabms>();
 
@@ -60,7 +57,7 @@ export class CabmsSharedComponent extends BasePage implements OnInit {
   }
 
   onCabmsChange(type: any) {
-    if(this.patchValue){
+    if (this.patchValue) {
       this.form.patchValue({
         cabmsId: type.cabmsId,
         category: type.category,
@@ -82,4 +79,3 @@ export class CabmsSharedComponent extends BasePage implements OnInit {
     this.form.updateValueAndValidity();
   }
 }
-

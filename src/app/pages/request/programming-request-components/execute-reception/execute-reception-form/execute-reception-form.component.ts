@@ -13,7 +13,6 @@ import { DocumentsListComponent } from '../documents-list/documents-list.compone
 import { GenerateReceiptFormComponent } from '../generate-receipt-form/generate-receipt-form.component';
 import { PhotographyFormComponent } from '../photography-form/photography-form.component';
 import { ReschedulingFormComponent } from '../rescheduling-form/rescheduling-form.component';
-import { WitnessFormComponent } from '../witness-form/witness-form.component';
 import { RECEIPT_COLUMNS } from './columns/minute-columns';
 import { TRANSPORTABLE_GOODS } from './columns/transportable-goods-columns';
 

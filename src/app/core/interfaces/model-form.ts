@@ -1,9 +1,4 @@
-import {
-  AbstractControl,
-  FormArray,
-  FormControl,
-  FormGroup,
-} from '@angular/forms';
+import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
 
 export type FormControls<T> = {
   [key in keyof T]: T[key] extends ModelForm<any> | FormArray // If control value has type of TForm (nested form) or FormArray

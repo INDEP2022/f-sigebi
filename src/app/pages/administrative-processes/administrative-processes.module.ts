@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
 import { AdministrativeProcessesRoutingModule } from './administrative-processes-routing.module';
 import { AdministrativeProcessesComponent } from './administrative-processes.component';

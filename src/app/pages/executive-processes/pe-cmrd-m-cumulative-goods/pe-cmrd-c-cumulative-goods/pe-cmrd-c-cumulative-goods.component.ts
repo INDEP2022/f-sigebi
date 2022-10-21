@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-pe-cmrd-c-cumulative-goods',

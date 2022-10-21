@@ -113,6 +113,27 @@ const routes: Routes = [
           ).ProrrateoGoodsSurveillanceModule,
         data: { title: 'Prorrateo de vigilancia' },
       },
+      {
+        path: 'costs-resume',
+        loadChildren: async () =>
+          (await import('./costs-resume/costs-resume.module'))
+            .CostsResumeModule,
+        data: { title: 'Resumen de Gastos' },
+      },
+      {
+        path: 'costs-applied-goods',
+        loadChildren: async () =>
+          (await import('./costs-applied-goods/costs-applied-goods.module'))
+            .CostsAppliedGoodsModule,
+        data: { title: 'Gastos aplicados a Bienes' },
+      },
+      {
+        path: 'surveillance-reports',
+        loadChildren: async () =>
+          (await import('./surveillance-reports/surveillance-reports.module'))
+            .SurveillanceReportsModule,
+        data: { title: 'Reportes de Vigilancia' },
+      },
     ],
   },
 ];

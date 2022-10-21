@@ -1,15 +1,15 @@
 export interface IGood {
-	goodId?: number;
- 	stock: number;
- 	goodDescription: string;
- 	amount: number;
- 	inputDate: Date;
- 	outputDate: Date;
- 	expiryDate: Date;
- 	locationType: string;
- 	status: string;
- }
-    /*val1: S/M,
+  goodId?: number;
+  stock: number;
+  goodDescription: string;
+  amount: number;
+  inputDate: Date;
+  outputDate: Date;
+  expiryDate: Date;
+  locationType: string;
+  status: string;
+}
+/*val1: S/M,
     val2: NULL,
     val3: NULL,
     val4: NULL,

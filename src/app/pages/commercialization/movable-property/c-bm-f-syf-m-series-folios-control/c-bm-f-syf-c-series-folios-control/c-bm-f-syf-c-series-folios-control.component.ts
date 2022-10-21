@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { BasePage } from 'src/app/core/shared/base-page';
-import { SERIES_FOLIOS_CONTROL_COLUMNS } from './series-folios-control-columns';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { CBmFSyfMSeriesFoliosControlModalComponent } from '../c-bm-f-syf-m-series-folios-control-modal/c-bm-f-syf-m-series-folios-control-modal.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { BehaviorSubject, takeUntil } from 'rxjs';
-import { SERIES_FOLIOS_CONTROL_TYPE_EVENT_COLUMNS } from '../c-bm-f-syf-m-series-folios-control-modal/series-folios-control-type-event-columns';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { CBmFSyfMSeriesFoliosControlModalComponent } from '../c-bm-f-syf-m-series-folios-control-modal/c-bm-f-syf-m-series-folios-control-modal.component';
 import { SERIES_FOLIOS_CONTROL_SEPARATE_PAGES_COLUMNS } from '../c-bm-f-syf-m-series-folios-control-modal/series-folios-control-separate-pages-columns';
+import { SERIES_FOLIOS_CONTROL_TYPE_EVENT_COLUMNS } from '../c-bm-f-syf-m-series-folios-control-modal/series-folios-control-type-event-columns';
+import { SERIES_FOLIOS_CONTROL_COLUMNS } from './series-folios-control-columns';
 
 @Component({
   selector: 'app-c-bm-f-syf-c-series-folios-control',
@@ -39,14 +39,16 @@ export class CBmFSyfCSeriesFoliosControlComponent
 
   constructor(private modalService: BsModalService, private fb: FormBuilder) {
     super();
-    this.settings1.columns = {...SERIES_FOLIOS_CONTROL_TYPE_EVENT_COLUMNS};
-    this.settings2.columns = {...SERIES_FOLIOS_CONTROL_SEPARATE_PAGES_COLUMNS};
+    this.settings1.columns = { ...SERIES_FOLIOS_CONTROL_TYPE_EVENT_COLUMNS };
+    this.settings2.columns = {
+      ...SERIES_FOLIOS_CONTROL_SEPARATE_PAGES_COLUMNS,
+    };
 
     this.settings = {
       ...this.settings,
       actions: {
-        columnTitle: "Acciones",
-        position: "right",
+        columnTitle: 'Acciones',
+        position: 'right',
         edit: true,
         delete: false,
       },
@@ -59,10 +61,10 @@ export class CBmFSyfCSeriesFoliosControlComponent
     this.getCoord({ inicio: 1, text: '' });
   }
 
-  private prepareForm(){
+  private prepareForm() {
     this.form = this.fb.group({
-      id: [null, [Validators.required]]
-    })
+      id: [null, [Validators.required]],
+    });
   }
 
   //Datos de prueba para Tabla COORDINACIÓN
@@ -151,8 +153,8 @@ export class CBmFSyfCSeriesFoliosControlComponent
     {
       id: 2,
       name: '2 - COORD. REGIONAL HERMOSILLO',
-    },    
-  ]
+    },
+  ];
 
   getCoord(params: ListParams) {
     if (params.text == '') {
@@ -178,23 +180,20 @@ export class CBmFSyfCSeriesFoliosControlComponent
   }
 
   openModal(context?: Partial<CBmFSyfMSeriesFoliosControlModalComponent>) {
-      const modalRef = this.modalService.show(CBmFSyfMSeriesFoliosControlModalComponent, {
+    const modalRef = this.modalService.show(
+      CBmFSyfMSeriesFoliosControlModalComponent,
+      {
         initialState: { ...context },
         class: 'modal-lg modal-dialog-centered',
         ignoreBackdropClick: true,
-      });
-      modalRef.content.refresh.subscribe(next => {
-        if (next) this.getData();
-      });
-    }
+      }
+    );
+    modalRef.content.refresh.subscribe(next => {
+      if (next) this.getData();
+    });
+  }
 
   openForm(allotment?: any) {
     this.openModal({ allotment });
-
   }
-
-  
-
-  
-
 }

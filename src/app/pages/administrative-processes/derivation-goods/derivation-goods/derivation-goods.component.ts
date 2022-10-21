@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { PaDgCActsComponent } from '../pa-dg-c-acts/pa-dg-c-acts.component';
 import { PaDgCGoodsComponent } from '../pa-dg-c-goods/pa-dg-c-goods.component';
 
 @Component({

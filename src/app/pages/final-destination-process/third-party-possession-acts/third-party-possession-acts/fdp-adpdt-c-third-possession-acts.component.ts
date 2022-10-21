@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { BsModalService, ModalOptions, BsModalRef } from 'ngx-bootstrap/modal';
-import { FdpAdpdtDetailDelegationsComponent } from '../detail-delegations/fdp-adpdt-detail-delegations.component';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { DELEGATIONS_COLUMNS } from '../delegations-columns';
+import { FdpAdpdtDetailDelegationsComponent } from '../detail-delegations/fdp-adpdt-detail-delegations.component';
 
 @Component({
   selector: 'app-fdp-adpdt-c-third-possession-acts',

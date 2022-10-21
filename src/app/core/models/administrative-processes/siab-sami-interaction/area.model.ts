@@ -1,5 +1,5 @@
 //Interface Provisional sin Validar
 export interface IArea {
-	areaKey: string;
-	description: string;
+  areaKey: string;
+  description: string;
 }

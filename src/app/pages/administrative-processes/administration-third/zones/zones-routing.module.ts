@@ -4,12 +4,13 @@ import { ZonesComponent } from './zones/zones.component';
 
 const routes: Routes = [
   {
-    path:'',component:ZonesComponent
-  }
+    path: '',
+    component: ZonesComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ZonesRoutingModule { }
+export class ZonesRoutingModule {}

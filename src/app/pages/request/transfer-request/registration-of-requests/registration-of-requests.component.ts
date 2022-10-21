@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequest } from 'src/app/core/models/catalogs/request.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ActivatedRoute } from '@angular/router';

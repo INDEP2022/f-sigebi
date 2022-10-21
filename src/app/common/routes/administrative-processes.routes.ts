@@ -51,6 +51,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         link: '/pages/administrative-processes/monitor-unavoidable-assets',
       },
       {
+        label: 'Devoluciones y decomisos',
+        link: '/pages/administrative-processes/returns-confiscation',
+      },
+      {
         label: 'Seguros y Vigilancia',
         icon: 'bx-folder',
         subItems: [
@@ -105,6 +109,18 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Prorrateo de bienes de vigilancia comúm',
             link: '/pages/administrative-processes/prorrateo-goods-surveillance',
+          },
+          {
+            label: 'Resumen de Gastos',
+            link: '/pages/administrative-processes/costs-resume',
+          },
+          {
+            label: 'Gastos aplicados a bienes',
+            link: '/pages/administrative-processes/costs-applied-goods',
+          },
+          {
+            label: 'Reportes de vigilancia',
+            link: '/pages/administrative-processes/surveillance-reports',
           },
         ],
       },
@@ -171,6 +187,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         link: '/pages/administrative-processes/sale-goods',
       },
       {
+        label: 'Firma Electrónica',
+        link: '/pages/administrative-processes/electronic-signature',
+      },
+      {
         label: 'Administracion Terceros',
         icon: 'bx-folder',
         subItems: [
@@ -205,6 +225,34 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Variable costo',
             link: '/pages/administrative-processes/variable-cost',
+          },
+          {
+            label: 'Coordinacion por zonas',
+            link: '/pages/administrative-processes/zones',
+          },
+        ],
+      },
+      {
+        label: 'Cuenta de numerario asegurado',
+        link: '/pages/administrative-processes/insured-numerary-account',
+      },
+      {
+        label: 'Empresas',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Reporte de evaluación de desempeño',
+            link: '/pages/administrative-processes/performance-evaluation-report',
+          },
+        ],
+      },
+      {
+        label: 'Conversión de bienes',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Actas conversión',
+            link: '/pages/administrative-processes/proceedings-conversion',
           },
         ],
       },
@@ -275,6 +323,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           /*label: 'Resarcimientos/Devoluciones',
             icon: 'bx-folder',
             subItems: [],*/
+          {
+            label: 'Bienes Relacionados',
+            link: '/pages/administrative-processes/siab-sami-interaction/refunds/goods-relationship',
+          },
           {
             label: 'Solicitud de Pago',
             link: '/pages/administrative-processes/siab-sami-interaction/refunds/payment-request',

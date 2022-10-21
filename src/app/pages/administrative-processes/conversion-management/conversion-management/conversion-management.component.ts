@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BasePage } from 'src/app/core/shared/base-page';
 
 export interface Example {
   idConversion: number;

@@ -27,60 +27,100 @@
 
         <div class="row pt-4">
           <div class="col-md-4">
-            <form-field [control]="documentForm.get('titleDocument')" label="Titulo del documento">
-              <input type="text" class="form-control" formControlName="titleDocument" />
+            <form-field
+              [control]="documentForm.get('titleDocument')"
+              label="Titulo del documento">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="titleDocument" />
             </form-field>
           </div>
           <div class="col-md-4">
             <form-field [control]="documentForm.get('noSiab')" label="No° SIAB">
-              <input type="text" class="form-control" formControlName="noSiab" />
+              <input
+                type="text"
+                class="form-control"
+                formControlName="noSiab" />
             </form-field>
           </div>
           <div class="col-md-4">
-            <form-field [control]="documentForm.get('responsible')" label="Responsable">
-              <input type="text" class="form-control" formControlName="responsible" />
+            <form-field
+              [control]="documentForm.get('responsible')"
+              label="Responsable">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="responsible" />
             </form-field>
           </div>
         </div>
 
         <div class="row pt-4">
-
           <div class="col-md-4">
             <form-field [control]="documentForm.get('author')" label="Autor">
-              <input type="text" class="form-control" formControlName="author" />
+              <input
+                type="text"
+                class="form-control"
+                formControlName="author" />
             </form-field>
           </div>
 
           <div class="col-md-4">
-            <form-field [control]="documentForm.get('typeTransference')" label="Tipo transferencía">
-              <input type="text" class="form-control" formControlName="typeTransference" />
+            <form-field
+              [control]="documentForm.get('typeTransference')"
+              label="Tipo transferencía">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="typeTransference" />
             </form-field>
           </div>
 
           <div class="col-md-4">
-            <form-field [control]="documentForm.get('taxpayer')" label="Contribuyente">
-              <input type="text" class="form-control" formControlName="taxpayer" />
+            <form-field
+              [control]="documentForm.get('taxpayer')"
+              label="Contribuyente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="taxpayer" />
             </form-field>
           </div>
         </div>
 
         <div class="row pt-4">
-
           <div class="col-md-4">
-            <form-field [control]="documentForm.get('noGestion')" label="No° gestión">
-              <input type="text" class="form-control" formControlName="noGestion" readonly/>
+            <form-field
+              [control]="documentForm.get('noGestion')"
+              label="No° gestión">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="noGestion"
+                readonly />
             </form-field>
           </div>
 
           <div class="col-md-4">
-            <form-field [control]="documentForm.get('senderCharge')" label="Cargo remitente">
-              <input type="text" class="form-control" formControlName="senderCharge" />
+            <form-field
+              [control]="documentForm.get('senderCharge')"
+              label="Cargo remitente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="senderCharge" />
             </form-field>
           </div>
 
           <div class="col-md-4">
-            <form-field [control]="documentForm.get('comments')" label="Comentarios">
-              <input type="text" class="form-control" formControlName="comments" />
+            <form-field
+              [control]="documentForm.get('comments')"
+              label="Comentarios">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="comments" />
             </form-field>
           </div>
         </div>
@@ -96,11 +136,17 @@
       <button (click)="uploadFiles()" class="btn btn-primary btn-sm active">
         <i class="fa fa-paperclip"></i> Nuevo documento
       </button>
-      <button *ngIf="!showForm" (click)="showForm = !showForm" class="btn btn-info btn-sm active">
+      <button
+        *ngIf="!showForm"
+        (click)="showForm = !showForm"
+        class="btn btn-info btn-sm active">
         <i class="fa fa-search"></i> Buscar
       </button>
 
-      <button *ngIf="showForm" (click)="showForm = !showForm" class="btn btn-info btn-sm active">
+      <button
+        *ngIf="showForm"
+        (click)="showForm = !showForm"
+        class="btn btn-info btn-sm active">
         <i class="fa fa-times"></i> cancelar
       </button>
       <div class="d-flex justify-content-end">

@@ -6,15 +6,11 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-warehouse-confirm',
   templateUrl: './warehouse-confirm.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class WarehouseConfirmComponent extends BasePage implements OnInit {
-
   responseForm: FormGroup = new FormGroup({});
-  constructor(
-    private fb:FormBuilder,
-    private modalService: BsModalService) { 
+  constructor(private fb: FormBuilder, private modalService: BsModalService) {
     super();
   }
 
@@ -22,18 +18,16 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
     this.prepareForm();
   }
 
-  prepareForm(){
+  prepareForm() {
     this.responseForm = this.fb.group({
-      idWarehouse: [null,[Validators.required]],
-      observation: [null,[Validators.required]],
-    })
+      idWarehouse: [null, [Validators.required]],
+      observation: [null, [Validators.required]],
+    });
   }
 
-  confirm(){
+  confirm() {}
 
-  }
-
-  close(){
+  close() {
     this.modalService.hide();
   }
 }

@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { RackService } from 'src/app/core/services/catalogs/rack.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IRack } from '../../../../core/models/catalogs/rack.model';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { RackFormComponent } from '../rack-form/rack-form.component';
 import { RACK_COLUMNS } from './rack-columns';
 

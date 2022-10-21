@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { BasePage } from 'src/app/core/shared/base-page';
 
-import { PENALTY_TYPE_COLUMNS } from './c-c-tp-penalty-types-columns';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { BsModalService } from 'ngx-bootstrap/modal';
 import { CCTpCPenaltyTypesFormComponent } from '../c-c-tp-c-penalty-types-form/c-c-tp-c-penalty-types-form.component';
+import { PENALTY_TYPE_COLUMNS } from './c-c-tp-penalty-types-columns';
 
 @Component({
   selector: 'app-c-c-tp-c-penalty-types-list',

@@ -1,10 +1,10 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
+import { ReactiveFormsModule } from '@angular/forms';
+import { SharedModule } from '../../../../shared/shared.module';
 import { SurveillanceLogRoutingModule } from './surveillance-log-routing.module';
 import { SurveillanceLogComponent } from './surveillance-log/surveillance-log.component';
-import { SharedModule } from '../../../../shared/shared.module';
-import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [SurveillanceLogComponent],

@@ -6,25 +6,25 @@ import { CONFISCATED_RECEPCION_COLUMNS } from './confiscated-recepcion-columns';
 @Component({
   selector: 'app-jpr-confiscated-reception',
   templateUrl: './jpr-confiscated-reception.component.html',
-  styleUrls: ["./confiscated-reception.component.scss"],
+  styleUrls: ['./confiscated-reception.component.scss'],
 })
 export class JprConfiscatedReceptionComponent implements OnInit {
-
   form: FormGroup;
-  data= EXAMPLE_DATA;
-  settings =  {
+  data = EXAMPLE_DATA;
+  settings = {
     ...TABLE_SETTINGS,
-    actions:false, 
+    actions: false,
     columns: CONFISCATED_RECEPCION_COLUMNS,
-    rowClassFunction: function (row: { data: { status: any; }; }): "available" | "not-available" {
-      return row.data.status ? "available" : "not-available";
+    rowClassFunction: function (row: {
+      data: { status: any };
+    }): 'available' | 'not-available' {
+      return row.data.status ? 'available' : 'not-available';
     },
-  }
+  };
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();
-    
   }
 
   prepareForm() {
@@ -49,46 +49,44 @@ export class JprConfiscatedReceptionComponent implements OnInit {
 const EXAMPLE_DATA = [
   {
     noBien: 1,
-    description: "DISCOS DE MUSICA VARIOS ARTISTAS",
+    description: 'DISCOS DE MUSICA VARIOS ARTISTAS',
     cantidad: 1,
     fec: new Date().toDateString(),
-    status: false
+    status: false,
   },
   {
     noBien: 1,
-    description: "DISCOS DE MUSICA VARIOS ARTISTAS",
+    description: 'DISCOS DE MUSICA VARIOS ARTISTAS',
     cantidad: 1,
     fec: new Date().toDateString(),
-    status: true
+    status: true,
   },
   {
     noBien: 1,
-    description: "DISCOS DE MUSICA VARIOS ARTISTAS",
+    description: 'DISCOS DE MUSICA VARIOS ARTISTAS',
     cantidad: 1,
     fec: new Date().toDateString(),
-    status: false
+    status: false,
   },
   {
     noBien: 1,
-    description: "DISCOS DE MUSICA VARIOS ARTISTAS",
+    description: 'DISCOS DE MUSICA VARIOS ARTISTAS',
     cantidad: 1,
     fec: new Date().toDateString(),
-    status: true
+    status: true,
   },
   {
     noBien: 1,
-    description: "DISCOS DE MUSICA VARIOS ARTISTAS",
+    description: 'DISCOS DE MUSICA VARIOS ARTISTAS',
     cantidad: 1,
     fec: new Date().toDateString(),
-    status: false
+    status: false,
   },
   {
     noBien: 1,
-    description: "DISCOS DE MUSICA VARIOS ARTISTAS",
+    description: 'DISCOS DE MUSICA VARIOS ARTISTAS',
     cantidad: 1,
     fec: new Date().toDateString(),
-    status: true
+    status: true,
   },
-  
 ];
-

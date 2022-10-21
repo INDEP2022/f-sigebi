@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IImageMedia } from '../../../../core/models/catalogs/image-media.model';
 import { ImageMediaService } from '../../../../core/services/catalogs/image-media.service';
-import { IMAGE_MEDIA_COLUMNS } from './image-media-columns';
 import { ImageMediaFormComponent } from '../image-media-form/image-media-form.component';
+import { IMAGE_MEDIA_COLUMNS } from './image-media-columns';
 
 @Component({
   selector: 'app-image-media-list',

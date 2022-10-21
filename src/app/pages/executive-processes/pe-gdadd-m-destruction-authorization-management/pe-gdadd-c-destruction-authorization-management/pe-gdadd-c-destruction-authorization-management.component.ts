@@ -5,8 +5,8 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { GOODS_COLUMNS } from './destruction-authorization-management-goods-columns';
 
-import { RULINGS_COLUMNS } from './destruction-authorization-management-rulings-columns';
 import { PROCEEDINGS_COLUMNS } from './destruction-authorization-management-proceedings-columns';
+import { RULINGS_COLUMNS } from './destruction-authorization-management-rulings-columns';
 
 @Component({
   selector: 'app-pe-gdadd-c-destruction-authorization-management',

@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { MunicipalityFormComponent } from '../municipality-form/municipality-form.component';
 import { IMunicipality } from './../../../../core/models/catalogs/municipality.model';
 import { MunicipalityService } from './../../../../core/services/catalogs/municipality.service';
 import { MUNICIPALITIES_COLUMNS } from './municipality-columns';
-import { MunicipalityFormComponent } from '../municipality-form/municipality-form.component';
 
 @Component({
   selector: 'app-municipality-list',

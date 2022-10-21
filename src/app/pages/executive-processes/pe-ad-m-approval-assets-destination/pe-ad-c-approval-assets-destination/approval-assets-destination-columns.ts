@@ -1,4 +1,4 @@
-import { CheckboxElementComponent } from "src/app/shared/components/checkbox-element-smarttable/checkbox-element";
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 export const ASSETS_DESTINATION_COLUMNS = {
   noBien: {
