@@ -20,7 +20,7 @@ export class CBmFEdfCInvoiceStatusComponent extends BasePage implements OnInit {
     this.settings = {
       ...this.settings,
       actions: {
-        columTitle: "Acciones",
+        columnTitle: "Acciones",
         edit: true,
         delete: false,
         position: 'right',

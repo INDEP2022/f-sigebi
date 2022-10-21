@@ -193,7 +193,7 @@ export const MENU: IMenuItem[] = [
             link: '/pages/commercialization/c-bm-f-syf-m-series-folios-control',
           },
           {
-            label: 'Causas y Refacturación',
+            label: 'Causas de Refacturación',
             link: '/pages/commercialization/c-bm-f-cdr-m-rebilling-causes',
           },
           {
@@ -207,6 +207,10 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Permisos a Eventos',
             link: '/pages/commercialization/events',
+          },
+          {
+            label: 'Facturación masiva de venta de bases ',
+            link: '/pages/commercialization/mass-biling-base-sales-tab',
           },
         ],
       },
