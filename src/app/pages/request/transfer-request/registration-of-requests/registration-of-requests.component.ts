@@ -21,10 +21,16 @@ export class RegistrationOfRequestsComponent
   title: string = 'title';
   parameter: any;
   object: any = '';
+  //tabs
+  tab1: string = '';
+  tab2: string = '';
+  tab3: string = '';
   //registro de bienes tab
   state: boolean = false;
   //verificacion de cumplimientos tab
-  complianceVerifi: boolean = true;
+  complianceVerifi: boolean = false;
+  //clasificacion de bienes
+  classifyAssets: boolean = true;
 
   constructor(
     public fb: FormBuilder,
@@ -36,6 +42,7 @@ export class RegistrationOfRequestsComponent
   }
 
   ngOnInit(): void {
+    this.intiTabs();
     this.route.params.subscribe(params => {
       this.prepareForm();
       this.object = this.registRequestForm.value;
@@ -61,6 +68,21 @@ export class RegistrationOfRequestsComponent
     });
   }
 
+  intiTabs(): void {
+    if (this.state == true) {
+      this.tab1 = 'Registro de Solicitud';
+      this.tab2 = 'Bienes';
+      this.tab3 = 'Domicilio de la Transferencia';
+    } else if (this.complianceVerifi == true) {
+      this.tab1 = 'Detalle Solicitud';
+      this.tab2 = 'Verificar Cumplimiento';
+      this.tab3 = 'Expediente';
+    } else if (this.classifyAssets == true) {
+      this.tab1 = 'Detalle Solicitud';
+      this.tab2 = 'Clasificación de Bienes';
+      this.tab3 = 'Expediente';
+    }
+  }
   confirm() {
     this.msgAvertanceModal(
       'Aceptar',

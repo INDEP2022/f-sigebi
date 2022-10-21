@@ -1,0 +1,122 @@
+<div>
+  <div class="row">
+    <div class="col-md-12">
+      <h5 class="title">
+        <strong>{{ title }}</strong>
+      </h5>
+    </div>
+  </div>
+  <div class="row">
+    <div class="d-flex">
+      <div class="form-material col-md-5 mr-auto p-2">
+        <search-bar [params]="params"></search-bar>
+      </div>
+      <div class="p-2">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
+    </div>
+  </div>
+  <div class="row pt-3">
+    <div class="row pt-2">
+      <div class="col-md-12" style="overflow-x: scroll">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="paragraphs">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="d-flex">
+      <div class="mr-auto p-2">
+        <h5 class="title"><strong>Verificación de Cumplimiento</strong></h5>
+      </div>
+      <div class="p-2 buttons">
+        <button class="btn btn-secondary btn-sm active">
+          Busqueda Avanzada
+        </button>
+      </div>
+      <div class="p-2 buttons">
+        <button class="btn btn-primary btn-sm active">Guardar</button>
+      </div>
+      <div class="p-2 buttons">
+        <button class="btn btn-danger btn-sm active">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="row pt-4">
+      <div class="col-md-5">
+        <ngx-select
+          [form]="classiGoodsForm"
+          control="section"
+          (fetchItems)="getSection($event)"
+          [data]="selectSection"
+          label="Section"
+          value="section">
+        </ngx-select
+        ><span>A</span>
+      </div>
+      <div class="col-md-5">
+        <ngx-select
+          [form]="classiGoodsForm"
+          control="chapter"
+          (fetchItems)="getChapter($event)"
+          [data]="selectChapter"
+          label="Section"
+          value="section">
+        </ngx-select>
+      </div>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-5">
+        <ngx-select
+          [form]="classiGoodsForm"
+          control="level1"
+          (fetchItems)="getLevel1($event)"
+          [data]="selectLevel1"
+          label="Nivel 1"
+          value="level1">
+        </ngx-select
+        ><span>A</span>
+      </div>
+      <div class="col-md-5">
+        <ngx-select
+          [form]="classiGoodsForm"
+          control="level2"
+          (fetchItems)="getLevel2($event)"
+          [data]="selectLevel2"
+          label="Nivel 2"
+          value="level2">
+        </ngx-select>
+      </div>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-5">
+        <ngx-select
+          [form]="classiGoodsForm"
+          control="level3"
+          (fetchItems)="getLevel3($event)"
+          [data]="selectLevel3"
+          label="Nivel 3"
+          value="level3">
+        </ngx-select
+        ><span>A</span>
+      </div>
+      <div class="col-md-5">
+        <ngx-select
+          [form]="classiGoodsForm"
+          control="level4"
+          (fetchItems)="getLevel4($event)"
+          [data]="selectLevel4"
+          label="Nivel 4"
+          value="level4">
+        </ngx-select>
+      </div>
+    </div>
+  </div>
+</div>

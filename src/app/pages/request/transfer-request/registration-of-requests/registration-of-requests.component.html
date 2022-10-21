@@ -120,25 +120,35 @@
 
         <div *ngIf="state" class="row pt-2">
           <tabset class="md-tabs">
-            <tab heading="Registro de Solicitud" id="tab1">
+            <tab heading="{{ tab1 }}" id="tab1">
               <app-request-record-tab></app-request-record-tab>
             </tab>
-            <tab heading="Bienes">Basic content 1</tab>
-            <tab heading="Domicilio de la Transferencia">Basic content 2</tab>
+            <tab heading="{{ tab2 }}">Basic content 1</tab>
+            <tab heading="{{ tab3 }}">Basic content 2</tab>
           </tabset>
         </div>
 
-        <div *ngIf="complianceVerifi" class="row pt-2">
+        <div *ngIf="complianceVerifi || classifyAssets" class="row pt-2">
           <tabset class="md-tabs">
-            <tab heading="Detalle Solicitud" id="tab1">
+            <tab heading="{{ tab1 }}" id="tab1">
+              <!-- cumplimiento de verificacion y clasificacion de bienes-->
               <app-request-detail-tab
+                *ngIf="complianceVerifi || classifyAssets"
                 [dataObject]="object"></app-request-detail-tab>
+              <!-- fin -->
             </tab>
-            <tab heading="Verificar Cumplimiento">
+            <tab heading="{{ tab2 }}">
+              <!-- cumplimiento de verificacion -->
               <app-verify-compliance-tab
+                *ngIf="complianceVerifi"
                 [dataObject]="object"></app-verify-compliance-tab>
+              <!-- fin -->
+              <!-- clasificacion de bienes -->
+              <app-classification-assets-tab></app-classification-assets-tab>
+              <!-- fin -->
             </tab>
-            <tab heading="Expediente">
+            <tab heading="{{ tab3 }}" *ngIf="complianceVerifi">
+              <!-- cumplimiento de verificacion -->
               <app-expedients-tabs></app-expedients-tabs>
             </tab>
           </tabset>
