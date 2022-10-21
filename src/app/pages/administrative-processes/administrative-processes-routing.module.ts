@@ -360,6 +360,13 @@ const routes: Routes = [
             .ProceedingsConversionModule,
         data: { title: 'Detalle de actas de conversión' },
       },
+      {
+        path: 'returns-confiscation',
+        loadChildren: async () =>
+          (await import('./returns-confiscation/returns-confiscation.module'))
+            .ReturnsConfiscationModule,
+        data: { title: 'Devoluciones y decomisos' },
+      },
       /**
        * Seguros David Lucas
        */
@@ -408,4 +415,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class AdministrativeProcessesRoutingModule {}
+export class AdministrativeProcessesRoutingModule { }
