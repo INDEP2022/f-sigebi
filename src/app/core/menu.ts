@@ -209,8 +209,12 @@ export const MENU: IMenuItem[] = [
             link: '/pages/commercialization/events',
           },
           {
-            label: 'Facturación masiva de venta de bases ',
+            label: 'Facturación masiva de venta de bases',
             link: '/pages/commercialization/mass-biling-base-sales-tab',
+          },
+          {
+            label: 'Facturación normal',
+            link: '/pages/commercialization/regular-billing-tab',
           },
         ],
       },
