@@ -80,11 +80,11 @@ const routes: Routes = [
     data: { title: 'Solicitudes a turno' },
   },
   {
-    path: 'transfer-request',
+    path: 'list',
     loadChildren: async () =>
-      (await import('./transfer-request/transfer-request.module'))
-        .TransferRequestModule,
-    data: { title: 'Solicitudes de transferencia' },
+      (await import('./view-of-requests/view-of-requests.module'))
+        .ViewOfRequestsModule,
+    data: { title: 'Vista de las Solicitudes' },
   },
 ];
 

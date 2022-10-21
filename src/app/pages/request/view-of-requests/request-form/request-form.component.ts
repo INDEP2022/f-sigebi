@@ -7,6 +7,7 @@ import { IRequest } from 'src/app/core/models/catalogs/request.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { UsersSelectedToTurnComponent } from '../users-selected-to-turn/users-selected-to-turn.component';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-create-request',
@@ -27,7 +28,11 @@ export class RequestFormComponent extends BasePage implements OnInit {
   selectAuthority = new DefaultSelect<IRequest>();
   selectTransfe = new DefaultSelect<IRequest>();
 
-  constructor(public fb: FormBuilder, public modalServise: BsModalService) {
+  constructor(
+    public fb: FormBuilder,
+    public modalServise: BsModalService,
+    public location: Location
+  ) {
     super();
   }
 
@@ -82,7 +87,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   }
 
   close(): void {
-    this.modalServise.hide();
+    this.location.back();
   }
 
   confirm(): void {

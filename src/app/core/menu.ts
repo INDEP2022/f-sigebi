@@ -45,8 +45,8 @@ export const MENU: IMenuItem[] = [
         link: '/pages/request/request-in-turn',
       },
       {
-        label: 'Solicitudes de transferencia',
-        link: '/pages/request/transfer-request',
+        label: 'Solicitudes',
+        link: '/pages/request/list',
       },
     ],
   },
