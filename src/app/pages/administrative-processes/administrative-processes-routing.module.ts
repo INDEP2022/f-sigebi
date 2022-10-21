@@ -9,6 +9,13 @@ const routes: Routes = [
     component: AdministrativeProcessesComponent,
     children: [
       {
+        path: 'administration-assets',
+        loadChildren: async () =>
+          (await import('./administration-assets/administration-assets.module'))
+            .AdministrationAssetsModule,
+        data: { title: 'Administracion Bienes' },
+      },
+      {
         path: 'numerary-operator',
         loadChildren: async () =>
           (await import('./numerary-operator/numerary-operator.module'))

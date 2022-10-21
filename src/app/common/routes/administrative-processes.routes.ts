@@ -3,6 +3,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
     label: 'Procesos Administrativos',
     icon: 'bx-folder',
     subItems: [
+      {
+        label: 'Administracion Bienes',
+        link: '/pages/administrative-processes/administration-assets',
+      },
       /**
        * DAVID
        **/

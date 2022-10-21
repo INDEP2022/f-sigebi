@@ -1,0 +1,58 @@
+<form [formGroup]="searchTabForm" class="form-material">
+  <div class="row">
+    <div class="col-md-8">
+      <app-goods-types-shared
+        [form]="searchTabForm"
+        typeField="tipo"
+        subtypeField="subtipo"
+        ssubtypeField="ssubtipo"
+        sssubtypeField="sssubtipo"></app-goods-types-shared>
+      <div class="form-group row">
+        <form-field [control]="searchTabForm.get('noBien')" label="No. Bien">
+          <input
+            class="form-control"
+            type="text"
+            name="noBien"
+            formControlName="noBien" />
+        </form-field>
+      </div>
+      <div class="form-group row">
+        <form-field [control]="searchTabForm.get('estatus')" label="Estatus">
+          <input
+            class="form-control"
+            type="text"
+            name="estatus"
+            formControlName="estatus" />
+        </form-field>
+      </div>
+      <div class="form-group row">
+        <div class="col-md-6">
+          <form-field
+            [control]="searchTabForm.get('situacion')"
+            label="Situacion">
+            <input
+              class="form-control"
+              type="text"
+              name="situacion"
+              formControlName="situacion" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="searchTabForm.get('destino')" label="Destino">
+            <input
+              class="form-control"
+              type="text"
+              name="destino"
+              formControlName="destino" />
+          </form-field>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4"></div>
+  </div>
+  <div>
+    <app-columns-select [(settings)]="settings"></app-columns-select>
+    <br />
+    <ng2-smart-table [settings]="settings" [source]="list"> </ng2-smart-table>
+  </div>
+</form>
