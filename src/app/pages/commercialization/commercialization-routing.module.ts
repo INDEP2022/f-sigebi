@@ -242,6 +242,13 @@ const routes: Routes = [
         .CMBatchParametersModule,
     data: { title: 'Parámetros por Lote' },
   },
+  {
+    path: 'related-events',
+    loadChildren: async () =>
+      (await import('./c-m-related-events/c-m-related-events.module'))
+        .CMRelatedEventsModule,
+    data: { title: 'Eventos Relacionados' },
+  },
 ];
 
 @NgModule({

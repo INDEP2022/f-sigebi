@@ -307,6 +307,10 @@ export const MENU: IMenuItem[] = [
         label: 'Parámetros por Lote',
         link: '/pages/commercialization/batch-parameters',
       },
+      {
+        label: 'Eventos Relacionados',
+        link: '/pages/commercialization/related-events',
+      },
     ],
   },
   // PROCESOS JURIDICOS
