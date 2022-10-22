@@ -159,6 +159,26 @@ const routes: Routes = [
       ).PeAdMDonationApprovalModule,
     data: { title: 'Aprobación donación' },
   },
+  {
+    path: 'pe-gdadd-m-approval-change-numeraire',
+    loadChildren: async () =>
+      (
+        await import(
+          './pe-gdadd-m-approval-change-numeraire/pe-gdadd-m-approval-change-numeraire.module'
+        )
+      ).PeGdaddMApprovalChangeNumeraireModule,
+    data: { title: ' Aprobación de cambio a numerario' },
+  },
+  {
+    path: 'pe-gdadd-m-doc-received-sera',
+    loadChildren: async () =>
+      (
+        await import(
+          './pe-gdadd-m-doc-received-sera/pe-gdadd-m-doc-received-sera.module'
+        )
+      ).PeGdaddMDocReceivedSeraModule,
+    data: { title: 'Documentación recibida en sera' },
+  },
 ];
 
 @NgModule({

@@ -8,20 +8,26 @@ import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { PRE_INVOICING_COLUMNS } from './pre-invoicing-columns';
 //XLSX
 import { ExcelService } from 'src/app/common/services/excel.service';
-import { SeparateFoliosModalComponent } from '../separate-folios-modal/separate-folios-modal.component';
+import { SeparateFoliosModalComponent } from '../../c-bm-f-fmdvdb-m-mass-bill-base-sales/separate-folios-modal/separate-folios-modal.component';
+import { REGULAR_GOODS_COLUMN } from './regular-billing-invoice-goods-columns';
 
 @Component({
-  selector: 'app-c-bm-f-fmdvdb-c-base-sales-pre-invoicing',
-  templateUrl: './c-bm-f-fmdvdb-c-base-sales-pre-invoicing.component.html',
-  styles: [],
+  selector: 'app-c-bm-f-fn-c-regular-billing-invoice',
+  templateUrl: './c-bm-f-fn-c-regular-billing-invoice.component.html',
+  styles: [
+  ]
 })
-export class CBmFFmdvdbCBaseSalesPreInvoicingComponent extends BasePage implements OnInit
-{
+export class CBmFFnCRegularBillingInvoiceComponent extends BasePage implements OnInit {
   show1 = false;
 
   pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
 
   form: FormGroup = new FormGroup({});
+
+  settings2 = {
+    ...this.settings,
+    actions: false,
+  };
 
   get idAllotment() {
     return this.form.get('idAllotment');
@@ -34,6 +40,9 @@ export class CBmFFmdvdbCBaseSalesPreInvoicingComponent extends BasePage implemen
     private excelService: ExcelService
   ) {
     super();
+
+    this.settings2.columns = {...REGULAR_GOODS_COLUMN};
+
     this.settings = {
       ...this.settings,
       actions: {
@@ -63,47 +72,57 @@ export class CBmFFmdvdbCBaseSalesPreInvoicingComponent extends BasePage implemen
       allotment: 1,
       client: 'IMPULSORA AZUCARERA',
       regional: '0 - OFICINAS CENTRALES',
-      type: 'Venta de bases',
+      invoice: 'Venta de bases',
       serie: 'INGRA',
       folio: 12521,
       status: 'CAN',
       type2: 'FAC',
       date: '28/06/2010',
-      price: '25,000.00',
-      iva: '.00',
-      total: '25,000.00',
     },
     {
       event: 13244,
       allotment: 1,
       client: 'IMPULSORA AZUCARERA',
       regional: '0 - OFICINAS CENTRALES',
-      type: 'Venta de bases',
+      invoice: 'Venta de bases',
       serie: 'INGRA',
       folio: 12532,
       status: 'CAN',
       type2: 'FAC',
       date: '23/06/2010',
-      price: '25,000.00',
-      iva: '.00',
-      total: '25,000.00',
     },
     {
       event: 13244,
       allotment: 1,
       client: 'IMPULSORA AZUCARERA',
       regional: '0 - OFICINAS CENTRALES',
-      type: 'Venta de bases',
+      invoice: 'Venta de bases',
       serie: 'INGRA',
       folio: 12510,
       status: 'CAN',
       type2: 'FAC',
       date: '20/06/2010',
-      price: '25,000.00',
-      iva: '.00',
-      total: '25,000.00',
     },
   ];
+
+  data2 = [
+    {
+      noBien: 3747689,
+      amount: 1,
+      description: "UN ANILLO PARA DAMA EN ORO BLANCO DE 14K, CON 8 SIN",
+      sum: 10000,
+      iva: .00,
+      total: 10000,
+      brand: "",
+      subBrand: "",
+      model: "ND",
+      serie: "",
+      mandate: "SAT FISCO",
+      registration: "SM",
+      unit: "Pieza",
+      prod: "No existe",
+    }
+  ]
 
   ngOnInit(): void {
     this.prepareForm();
