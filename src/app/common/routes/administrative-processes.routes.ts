@@ -122,6 +122,14 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Reportes de vigilancia',
             link: '/pages/administrative-processes/surveillance-reports',
           },
+          {
+            label: 'Baja de bienes en polizas',
+            link: '/pages/administrative-processes/deregistration-of-goods',
+          },
+          {
+            label: 'Visitas a inmuebles',
+            link: '/pages/administrative-processes/expenses-format',
+          },
         ],
       },
       {
@@ -151,6 +159,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Gastos centralizados',
             link: '/pages/administrative-processes/centralized-expenses',
+          },
+          {
+            label: 'Registro de Gastos',
+            link: '/pages/administrative-processes/expenses-register',
           },
         ],
       },

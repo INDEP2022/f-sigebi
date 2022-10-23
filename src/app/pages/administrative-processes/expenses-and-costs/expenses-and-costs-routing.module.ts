@@ -52,6 +52,26 @@ const routes: Routes = [
           ).CostsResumeModule,
         data: { title: 'Resumen de Gastos' },
       },
+      {
+        path: 'expenses-format',
+        loadChildren: async () =>
+          (
+            await import(
+              './../insurance-and-surveillance/expenses-format/expenses-format.module'
+            )
+          ).ExpensesFormatModule,
+        data: { title: 'Visitas a inmuebles' },
+      },
+      {
+        path: 'expenses-register',
+        loadChildren: async () =>
+          (
+            await import(
+              './../insurance-and-surveillance/expenses-register/expenses-register.module'
+            )
+          ).ExpensesRegisterModule,
+        data: { title: 'Registro de Gasto' },
+      },
     ],
   },
 ];
