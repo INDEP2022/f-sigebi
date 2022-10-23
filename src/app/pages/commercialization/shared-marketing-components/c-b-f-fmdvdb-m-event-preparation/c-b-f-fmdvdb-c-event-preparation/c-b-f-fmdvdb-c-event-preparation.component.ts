@@ -6,8 +6,8 @@ import { CreateNewEventModalComponent } from '../create-new-event-modal/create-n
 import { SelectEventModalComponent } from '../select-event-modal/select-event-modal.component';
 import { EVENT_PREPARATION_GOODS_COLUMNS } from './even-preparation-goods-columns';
 import { EVENT_PREPARATION_ALLOTMENT_COLUMNS } from './event-preparation-allotment-columns';
-//XLSX
 import { FormBuilder, FormGroup } from '@angular/forms';
+//XLSX
 import { ExcelService } from 'src/app/common/services/excel.service';
 import * as XLSX from 'xlsx';
 import { AddEditLoteModalComponent } from '../add-edit-lote-modal/add-edit-lote-modal.component';
