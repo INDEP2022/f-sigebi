@@ -199,6 +199,13 @@ const routes: Routes = [
             './siab-sami-interaction/pa-ssi-m-siab-sami-interaction.module'
           ).then(m => m.PaSsiMSiabSamiInteractionModule),
       },
+      {
+        path: 'returns-confiscations',
+        loadChildren: async () =>
+          (await import('./returns-confiscations/pa-rc-m-returns-confications.module'))
+            .PaRcMReturnsConficationsModule,
+        data: { title: 'Devoluciones y Decomisos' },
+      },
       /**
        *Legaspi
        **/

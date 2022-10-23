@@ -362,6 +362,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           },
         ],
       },
+      {
+        label: 'Devoluciones y Decomisos',
+        link: '/pages/administrative-processes/returns-confiscations',
+      },
       /**
        * END LEGASPI
        **/
