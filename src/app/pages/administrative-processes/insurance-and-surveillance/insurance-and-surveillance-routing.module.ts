@@ -127,6 +127,16 @@ const routes: Routes = [
             .CentralizedExpensesModule,
         data: { title: 'Gastos centralizados' },
       },
+      {
+        path: 'deregistration-of-goods',
+        loadChildren: async () =>
+          (
+            await import(
+              './deregistration-of-goods/deregistration-of-goods.module'
+            )
+          ).DeregistrationOfGoodsModule,
+        data: { title: 'Baja de bienes en polizas' },
+      },
     ],
   },
 ];
