@@ -243,40 +243,28 @@
       <div class="row pt-5">
         <div class="col-md-6">
           <div class="form-group row">
-            <form-field
-              class="label col-sm-12 col-form-label"
-              [control]="form.get('idCapture')">
-              <ngx-select
-                typeToSearchText="Escriba 3 o más caracteres"
-                label="Captura"
+            <div class="col-md-12">
+              <app-user-shared
                 [form]="form"
-                control="idCapture">
-              </ngx-select>
-            </form-field>
+                [userField]="'idCapture'"
+                [label]="'Captura'"></app-user-shared>
+            </div>
           </div>
           <div class="form-group row">
-            <form-field
-              class="label col-sm-12 col-form-label"
-              [control]="form.get('idAuth')">
-              <ngx-select
-                typeToSearchText="Escriba 3 o más caracteres"
-                label="Autoriza"
+            <div class="col-md-12">
+              <app-user-shared
                 [form]="form"
-                control="idAuth">
-              </ngx-select>
-            </form-field>
+                [userField]="'idAuth'"
+                [label]="'Solicita'"></app-user-shared>
+            </div>
           </div>
           <div class="form-group row">
-            <form-field
-              class="label col-sm-12 col-form-label"
-              [control]="form.get('idSol')">
-              <ngx-select
-                typeToSearchText="Escriba 3 o más caracteres"
-                label="Solicito"
+            <div class="col-md-12">
+              <app-user-shared
                 [form]="form"
-                control="idSol">
-              </ngx-select>
-            </form-field>
+                [userField]="'idSol'"
+                [label]="'Solicita'"></app-user-shared>
+            </div>
           </div>
           <div class="form-group row">
             <div class="col-sm-6">
