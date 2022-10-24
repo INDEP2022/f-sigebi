@@ -8,7 +8,7 @@ import { FullModule } from './layouts/full/full.module';
 import { InputFormDirective } from './common/directives/input-form.directive';
 import { HttpErrorsInterceptor } from './common/interceptors/http-errors.interceptor';
 import { JwtInterceptor, JwtModule } from '@auth0/angular-jwt';
-
+import { DateFnsModule } from 'ngx-date-fns';
 export function tokenGetter() {
   return localStorage.getItem('token');
 }
@@ -26,6 +26,7 @@ export function tokenGetter() {
     }),
     AppRoutingModule,
     HttpClientModule,
+    DateFnsModule.forRoot(),
   ],
   providers: [
     {
