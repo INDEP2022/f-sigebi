@@ -137,6 +137,13 @@ const routes: Routes = [
           ).DeregistrationOfGoodsModule,
         data: { title: 'Baja de bienes en polizas' },
       },
+      {
+        path: 'goods-to-policies-reports',
+        loadChildren: async () =>
+          (await import('./goods-to-policies-reports/pa-is-gpr-m-goods-to-policies-reports.module'))
+            .PaIsGprMGoodsToPoliciesReportsModule,
+        data: { title: 'Reportes de Incorporación de Bienes a Pólizas' },
+      },
     ],
   },
 ];

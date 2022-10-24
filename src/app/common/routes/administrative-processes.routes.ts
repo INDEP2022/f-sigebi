@@ -130,6 +130,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Visitas a inmuebles',
             link: '/pages/administrative-processes/expenses-format',
           },
+          {
+            label: 'Reportes de Incorporación de Bienes a Pólizas',
+            link: '/pages/administrative-processes/goods-to-policies-reports'
+          }
         ],
       },
       {
@@ -345,6 +349,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Expedientes',
             link: '/pages/administrative-processes/record-details',
           },
+          {
+            label: 'Bienes por Tipo de Delito',
+            link: '/pages/administrative-processes/goods-type-crime-reports'
+          }
         ],
       },
       {
@@ -403,6 +411,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             link: '/pages/administrative-processes/services/record-service-payments',
           },
         ],
+      },
+      {
+        label: 'Devoluciones y Decomisos',
+        link: '/pages/administrative-processes/returns-confiscations',
       },
       /**
        * END LEGASPI

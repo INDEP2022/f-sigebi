@@ -172,6 +172,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'goods-type-crime-reports',
+        loadChildren: async () =>( 
+          await import( './reports/goods-type-crime/pa-gtc-m-goods-type-crime.module'))
+          .PaGtcMGoodsTypeCrimeModule,
+          data: { title: 'Reporte de Bienes por Tipo de Delito' },
+      },
+      {
         path: 'unit-conversion-packages',
         loadChildren: () =>
           import(
@@ -198,6 +205,13 @@ const routes: Routes = [
           import(
             './siab-sami-interaction/pa-ssi-m-siab-sami-interaction.module'
           ).then(m => m.PaSsiMSiabSamiInteractionModule),
+      },
+      {
+        path: 'returns-confiscations',
+        loadChildren: async () =>
+          (await import('./returns-confiscations/pa-rc-m-returns-confications.module'))
+            .PaRcMReturnsConficationsModule,
+        data: { title: 'Devoluciones y Decomisos' },
       },
       /**
        *Legaspi
