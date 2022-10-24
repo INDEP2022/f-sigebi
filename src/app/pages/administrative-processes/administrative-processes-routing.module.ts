@@ -213,6 +213,13 @@ const routes: Routes = [
             .PaRcMReturnsConficationsModule,
         data: { title: 'Devoluciones y Decomisos' },
       },
+      {
+        path: 'reg-warehouse-contract',
+        loadChildren: async () =>
+          (await import('./third-party-admin/warehouse/pa-tp-w-m-warehouse.module'))
+            .PaTpWMWarehouseModule,
+        data: { title: 'Alta de Almacenes por Contrato' },
+      },
       /**
        *Legaspi
        **/
