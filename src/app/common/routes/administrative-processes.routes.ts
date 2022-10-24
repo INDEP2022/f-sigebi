@@ -31,10 +31,6 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         link: '/pages/administrative-processes/apply-lif',
       },
       {
-        label: 'Actas Conversión',
-        link: '/pages/administrative-processes/conversion-act',
-      },
-      {
         label: 'Solicitud de Avalúos',
         link: '/pages/administrative-processes/appraisal-request',
       },
@@ -53,10 +49,6 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
       {
         label: 'Monitor de bienes incosteables',
         link: '/pages/administrative-processes/monitor-unavoidable-assets',
-      },
-      {
-        label: 'Devoluciones y decomisos',
-        link: '/pages/administrative-processes/returns-confiscation',
       },
       {
         label: 'Seguros y Vigilancia',
@@ -352,6 +344,14 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Bienes por Tipo de Delito',
             link: '/pages/administrative-processes/goods-type-crime-reports'
+          },
+          {
+            label: 'Histórico de situación procesal de los bienes',
+            link: '/pages/administrative-processes/procedural-history'
+          },
+          {
+            label: 'Generación de informacion para reporte COORD',
+            link: '/pages/administrative-processes/information-generation'
           }
         ],
       },
@@ -409,6 +409,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Registro de Pago de Servicios',
             link: '/pages/administrative-processes/services/record-service-payments',
+          },
+          {
+            label: 'Concentrado de bienes para contabilidad',
+            link: '/pages/administrative-processes/services/descripcion-of-the-matter',
           },
         ],
       },
