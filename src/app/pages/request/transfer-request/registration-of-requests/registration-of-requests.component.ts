@@ -1,11 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequest } from 'src/app/core/models/catalogs/request.model';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { ActivatedRoute } from '@angular/router';
-import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-registration-of-requests',
@@ -43,8 +43,8 @@ export class RegistrationOfRequestsComponent
 
   ngOnInit(): void {
     this.intiTabs();
+    this.prepareForm();
     this.route.params.subscribe(params => {
-      this.prepareForm();
       this.object = this.registRequestForm.value;
     });
   }

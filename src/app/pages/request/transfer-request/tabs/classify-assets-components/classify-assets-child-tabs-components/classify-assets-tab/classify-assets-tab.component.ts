@@ -1,7 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -11,7 +15,10 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   templateUrl: './classify-assets-tab.component.html',
   styles: [],
 })
-export class ClassifyAssetsTabComponent extends BasePage implements OnInit {
+export class ClassifyAssetsTabComponent
+  extends BasePage
+  implements OnInit, OnChanges
+{
   @Input() assetsId: any = '';
   public classiGoodsForm: ModelForm<any>;
 
@@ -27,7 +34,13 @@ export class ClassifyAssetsTabComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.assetsId);
+    this.initForm();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['assetsId'].currentValue != '') {
+      //cargar la clasificacion de bienes segun el id que se envio
+    }
   }
 
   initForm() {
@@ -40,6 +53,7 @@ export class ClassifyAssetsTabComponent extends BasePage implements OnInit {
       level4: [null],
     });
   }
+
   getSection(event: any) {
     /* this.delegationService.getZones(params).subscribe({
       next: data => (this.selectSection = new DefaultSelect(data.data, data.count)),

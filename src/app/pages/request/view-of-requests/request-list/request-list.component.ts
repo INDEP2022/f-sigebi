@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRequestList } from 'src/app/core/models/catalogs/request-list.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { REQUEST_LIST_COLUMNS } from './request-list-columns';
-import { Router } from '@angular/router';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 
 var usuario: IRequestList[] = [
   {
