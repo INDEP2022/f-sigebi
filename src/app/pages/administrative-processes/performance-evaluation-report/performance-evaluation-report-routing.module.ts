@@ -4,12 +4,13 @@ import { PerformanceEvaluationReportComponent } from './performance-evaluation-r
 
 const routes: Routes = [
   {
-    path: '', component: PerformanceEvaluationReportComponent
-  }
+    path: '',
+    component: PerformanceEvaluationReportComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PerformanceEvaluationReportRoutingModule { }
+export class PerformanceEvaluationReportRoutingModule {}

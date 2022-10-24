@@ -1,5 +1,5 @@
-import { IWarehouse } from './warehouse.model';
 import { IBatch } from './batch.model';
+import { IWarehouse } from './warehouse.model';
 
 export class IRack {
   id: number;

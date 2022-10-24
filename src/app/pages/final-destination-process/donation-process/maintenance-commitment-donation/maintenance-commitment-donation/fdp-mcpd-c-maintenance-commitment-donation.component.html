@@ -1,0 +1,27 @@
+<app-card [header]="true" class="cat-card mt-5">
+  <div class="ch-content" header>
+    <h5 class="title">Mantenimiento de Aprobación para Donación</h5>
+  </div>
+
+  <div body>
+    <div class="md-tabs">
+      <tabset>
+        <tab heading="COM. EXTERIOR KG">
+          <app-fdp-dit-c-data-table [type]="1"> </app-fdp-dit-c-data-table>
+        </tab>
+
+        <tab heading="DELITOS FEDERALES">
+          <app-fdp-dit-c-data-table [type]="2"> </app-fdp-dit-c-data-table>
+        </tab>
+
+        <tab heading="OTROS TRANS.">
+          <app-fdp-dit-c-data-table [type]="3"> </app-fdp-dit-c-data-table>
+        </tab>
+
+        <tab heading="PERMISOS RASTREADOR">
+          <app-fdp-dit-c-data-table [type]="4"> </app-fdp-dit-c-data-table>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</app-card>

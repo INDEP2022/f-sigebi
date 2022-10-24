@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-pe-atb-c-quarterly-accumulated-assets',

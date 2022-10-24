@@ -1,0 +1,480 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Detalles del Acta</h5>
+  </div>
+
+  <div body *ngIf="!antecedentThreeEnable">
+    <div class="row">
+      <div class="form-material col-md-5">
+        <h5 class="title">Encabezado</h5>
+      </div>
+    </div>
+    <form [formGroup]="header" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field [control]="header.get('destiny')" label="Destino">
+            <select class="form-control" formControlName="destiny">
+              <option value="NO">Donación</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+          <form-field
+            [control]="header.get('idConversion')"
+            label="Id conversión">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="idConversion"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field [control]="header.get('city')" label="Ciudad">
+            <input type="text" class="form-control" formControlName="city" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="header.get('status')" label="Estado">
+            <input type="text" class="form-control" formControlName="status" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="header.get('hour')" label="Hora">
+            <input type="text" class="form-control" formControlName="hour" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field [control]="header.get('date')" label="Fecha">
+            <input
+              type="text"
+              formControlName="date"
+              placeholder="Fecha"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="header.get('appointedBy')"
+            label="Designado por">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="appointedBy" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="header.get('titleOf')" label="Titular de">
+            <input type="text" class="form-control" formControlName="titleOf" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="header.get('officeNumber')"
+            label="Número Oficio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="officeNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="header.get('dateOfOffice')"
+            label="Fecha del Oficio">
+            <input
+              type="text"
+              formControlName="dateOfOffice"
+              placeholder="Fecha del Oficio"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="row">
+      <div class="form-material col-md-5">
+        <h5 class="title">Antecedentes I</h5>
+      </div>
+    </div>
+    <form [formGroup]="antecedent" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="antecedent.get('tradeEntity')"
+            label="Oficio Entidad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="tradeEntity" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="antecedent.get('officialDate')"
+            label="Fecha Oficio">
+            <input
+              type="text"
+              formControlName="officialDate"
+              placeholder="Fecha Oficio"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="antecedent.get('signedBy')"
+            label="Suscrito por">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="signedBy" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field [control]="antecedent.get('position')" label="Cargo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="position" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="antecedent.get('dependence')"
+            label="Dependencia">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dependence" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="antecedent.get('customs')" label="Aduana">
+            <input type="text" class="form-control" formControlName="customs" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="antecedent.get('container')"
+            label="Contenedor">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="container" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="antecedent.get('noContainer')"
+            label="No.Contenedor">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="noContainer" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="row">
+      <div class="form-material col-md-5">
+        <h5 class="title">Antecedentes II</h5>
+      </div>
+    </div>
+    <form [formGroup]="antecedentTwo" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field [control]="antecedentTwo.get('job')" label="Oficio">
+            <input type="text" class="form-control" formControlName="job" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="antecedentTwo.get('officialDate')"
+            label="Fecha Oficio">
+            <input
+              type="text"
+              formControlName="officialDate"
+              placeholder="Fecha Oficio"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="antecedentTwo.get('signedBy')"
+            label="Suscrito por">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="signedBy" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field [control]="antecedentTwo.get('position')" label="Cargo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="position" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="antecedentTwo.get('propertyOf')"
+            label="Propiedad de">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="propertyOf" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div body *ngIf="antecedentThreeEnable">
+    <div class="row">
+      <div class="form-material col-md-5">
+        <h5 class="title">Antecedentes III</h5>
+      </div>
+    </div>
+    <form [formGroup]="antecedentThree" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field [control]="antecedentThree.get('date')" label="Fecha">
+            <input
+              type="text"
+              formControlName="date"
+              placeholder="Fecha"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="antecedentThree.get('subscribe1')"
+            label="Suscribe 1">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="subscribe1" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="antecedentThree.get('position1')"
+            label="Cargo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="position1" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="antecedentThree.get('attachedA')"
+            label="Adscrito a">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="attachedA" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="antecedentThree.get('subscribe2')"
+            label="Suscribe 2">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="subscribe2" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="antecedentThree.get('position2')"
+            label="Cargo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="position2" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="antecedentThree.get('attachedB')"
+            label="Adscrito a">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="attachedB" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="antecedentThree.get('wineriesSAE')"
+            label="Bodega SAE">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="wineriesSAE" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="antecedentThree.get('verificationOf')"
+            label="Verificación de">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="verificationOf" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="antecedentThree.get('consistsIn')"
+            label="Consiste en">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="consistsIn" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="antecedentThree.get('correspondentA')"
+            label="Correspondientes a">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="correspondentA" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="antecedentThree.get('description')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="antecedentThree.get('status')"
+            label="Antec3 Estado">
+            <select class="form-control" formControlName="status">
+              <option value="NO">Bueno</option>
+            </select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="row">
+      <div class="form-material col-md-5">
+        <h5 class="title">Primera</h5>
+      </div>
+    </div>
+    <form [formGroup]="first" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="first.get('authorizedBy')"
+            label="Autorizado por">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="authorizedBy" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="first.get('addressee')" label="Destinatario">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="addressee" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="row">
+      <div class="form-material col-md-5">
+        <h5 class="title">Cierre de acta</h5>
+      </div>
+    </div>
+    <form [formGroup]="closureOfMinutes" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field [control]="closureOfMinutes.get('date')" label="Fecha">
+            <input
+              type="text"
+              formControlName="date"
+              placeholder="Fecha"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="closureOfMinutes.get('hour')" label="Hora">
+            <input type="text" class="form-control" formControlName="hour" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="closureOfMinutes.get('closePages')"
+            label="Cierre Fojas">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="closePages" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-end">
+      <div class="m-3" *ngIf="!antecedentThreeEnable">
+        <button class="btn btn-primary btn-sm active" (click)="close()">
+          Cerrar
+        </button>
+      </div>
+      <div class="m-3" *ngIf="antecedentThreeEnable">
+        <button class="btn btn-primary btn-sm active" (click)="previous()">
+          << Anterior
+        </button>
+      </div>
+      <div class="m-3">
+        <button class="btn btn-success btn-sm active">Salvar</button>
+      </div>
+      <div class="m-3">
+        <button class="btn btn-primary btn-sm active" (click)="next()">
+          Siguiente>>
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

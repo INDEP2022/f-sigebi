@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IOrigin } from 'src/app/core/models/catalogs/origin.model';
 import { OriginService } from 'src/app/core/services/catalogs/origin.service';
 import { BasePage } from 'src/app/core/shared/base-page';

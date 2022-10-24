@@ -1,12 +1,12 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
-import { VaultRoutingModule } from './vault-routing.module';
-import { VaultListComponent } from './vault-list/vault-list.component';
-import { VaultDetailComponent } from './vault-detail/vault-detail.component';
-import { SharedModule } from '../../../shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { SharedModule } from '../../../shared/shared.module';
+import { VaultDetailComponent } from './vault-detail/vault-detail.component';
+import { VaultListComponent } from './vault-list/vault-list.component';
+import { VaultRoutingModule } from './vault-routing.module';
 
 @NgModule({
   declarations: [VaultListComponent, VaultDetailComponent],

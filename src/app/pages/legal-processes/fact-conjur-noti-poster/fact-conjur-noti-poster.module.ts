@@ -1,6 +1,6 @@
 /** BASE IMPORT */
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { SharedModule } from 'src/app/shared/shared.module';
 /** BASE IMPORT */
 
@@ -17,8 +17,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // import { MatPaginatorModule } from '@angular/material/paginator';
 // import { MatFormFieldModule } from '@angular/material/form-field';
 // import { MatInputModule } from '@angular/material/input';
-import { FactConjurNotiPosterComponent } from './fact-conjur-noti-poster/fact-conjur-noti-poster.component';
 import { SharedLegalProcessModule } from '../shared-legal-process/shared-legal-process.module';
+import { FactConjurNotiPosterComponent } from './fact-conjur-noti-poster/fact-conjur-noti-poster.component';
 
 @NgModule({
   declarations: [FactConjurNotiPosterComponent],

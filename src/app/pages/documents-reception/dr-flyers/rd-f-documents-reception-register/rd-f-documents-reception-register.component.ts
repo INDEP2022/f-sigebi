@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { map, merge, takeUntil } from 'rxjs';
 import { DocumentsListComponent } from 'src/app/@standalone/documents-list/documents-list.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { FormBuilder, Validators } from '@angular/forms';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { DrFDocumentsReceptionFlyerSelectComponent } from './components/dr-f-documents-reception-flyer-select/dr-f-documents-reception-flyer-select.component';
 import { DOCUMENTS_RECEPTION_REGISTER_DEFAULT_IDENFIFIERS } from './constants/documents-reception-register-default-values';

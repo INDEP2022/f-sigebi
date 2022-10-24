@@ -1,14 +1,14 @@
+import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { trigger, transition, style, animate } from '@angular/animations';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { TableSelectComponent } from '../components/table-select/table-select.component';
-import { BehaviorSubject, takeUntil } from 'rxjs';
-import { CsvService } from '../../../../common/services/csv.service';
 import {
   EXPENSE_COLUMNS,
   NUMERAIRE_COLUMNS,
@@ -177,7 +177,7 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private csvService: CsvService
+    private excelService: ExcelService
   ) {
     super();
   }
@@ -425,13 +425,23 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
     );
   }
 
-  async getFile(e: Event) {
-    this.loading = true;
-    let arr = await this.csvService.getData(e);
-    if (arr.length > 0) {
-      this.numeraireColumns = arr;
-      this.totalItems = arr.length;
+  getFile(event: Event) {
+    const files = (event.target as HTMLInputElement).files;
+    if (files.length != 1)
+      throw 'No seleccionó ningún archivo o seleccionó más de la cantidad permitida (1)';
+    const fileReader = new FileReader();
+    fileReader.readAsBinaryString(files[0]);
+    fileReader.onload = () => this.readCsv(fileReader.result);
+  }
+
+  readCsv(binaryExcel: string | ArrayBuffer) {
+    try {
+      this.loading = true;
+      this.numeraireColumns = this.excelService.getData(binaryExcel);
+      this.totalItems = this.numeraireColumns.length;
       this.loading = false;
+    } catch (error) {
+      this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
     }
   }
 

@@ -6,6 +6,6 @@ const routes: Routes = [{ path: '', component: JprComplementArticleComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class JprComplementArticleRoutingModule { }
+export class JprComplementArticleRoutingModule {}

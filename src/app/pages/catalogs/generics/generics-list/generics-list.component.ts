@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGeneric } from '../../../../core/models/catalogs/generic.model';
+import { GenericsFormComponent } from '../generics-form/generics-form.component';
 import { GenericService } from './../../../../core/services/catalogs/generic.service';
 import { GENERICS_COLUMNS } from './generics-columns';
-import { GenericsFormComponent } from '../generics-form/generics-form.component';
 
 @Component({
   selector: 'app-generics-list',

@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { async } from 'rxjs';
 
 const routes: Routes = [
   {
@@ -92,8 +91,11 @@ const routes: Routes = [
   {
     path: 'judicial-physical-reception',
     loadChildren: async () =>
-      (await import('./judicial-physical-reception/judicial-physical-reception.module'))
-        .JudicialPhysicalReceptionModule,
+      (
+        await import(
+          './judicial-physical-reception/judicial-physical-reception.module'
+        )
+      ).JudicialPhysicalReceptionModule,
   },
 ];
 

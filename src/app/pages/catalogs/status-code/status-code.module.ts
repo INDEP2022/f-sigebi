@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
-import { StatusCodeRoutingModule } from './status-code-routing.module';
-import { StatusCodeListComponent } from './status-code-list/status-code-list.component';
-import { StatusCodeFormComponent } from './status-code-form/status-code-form.component';
-import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { StatusCodeFormComponent } from './status-code-form/status-code-form.component';
+import { StatusCodeListComponent } from './status-code-list/status-code-list.component';
+import { StatusCodeRoutingModule } from './status-code-routing.module';
 
 @NgModule({
   declarations: [StatusCodeListComponent, StatusCodeFormComponent],

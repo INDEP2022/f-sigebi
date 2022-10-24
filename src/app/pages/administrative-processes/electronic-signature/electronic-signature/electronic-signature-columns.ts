@@ -29,5 +29,5 @@ export const ELECTRONICSIGNATURE_COLUMNS = {
     title: 'Firma electrónica',
     width: '20%',
     sort: false,
-  }
+  },
 };

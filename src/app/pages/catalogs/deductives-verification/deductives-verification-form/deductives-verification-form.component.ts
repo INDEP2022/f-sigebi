@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDeductiveVerification } from 'src/app/core/models/catalogs/deductive-verification.model';
 import { DeductiveVerificationService } from 'src/app/core/services/catalogs/deductive-verification.service';
 import { BasePage } from 'src/app/core/shared/base-page';

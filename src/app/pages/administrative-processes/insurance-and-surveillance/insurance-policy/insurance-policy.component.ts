@@ -1,8 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'app-insurance-policy',

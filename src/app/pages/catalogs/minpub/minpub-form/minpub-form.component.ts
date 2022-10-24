@@ -1,13 +1,12 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BasePage } from 'src/app/core/shared/base-page';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { ListParams } from '../../../../common/repository/interfaces/list-params';
-import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { ICity } from 'src/app/core/models/catalogs/city.model';
 import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
 import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { ListParams } from '../../../../common/repository/interfaces/list-params';
 
 @Component({
   selector: 'app-minpub-form',

@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
-import { StationRoutingModule } from './station-routing.module';
-import { StationListComponent } from './station-list/station-list.component';
-import { StationFormComponent } from './station-form/station-form.component';
-import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { StationFormComponent } from './station-form/station-form.component';
+import { StationListComponent } from './station-list/station-list.component';
+import { StationRoutingModule } from './station-routing.module';
 
 @NgModule({
   declarations: [StationListComponent, StationFormComponent],

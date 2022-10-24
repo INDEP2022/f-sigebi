@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
-import { BasePage } from 'src/app/core/shared/base-page';
-import { INVOICE_STATUS_COLUMNS } from './invoice-status-columns';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { CBmFEdfCInvoiceStatusModalComponent } from '../c-bm-f-edf-c-invoice-status-modal/c-bm-f-edf-c-invoice-status-modal.component';
+import { INVOICE_STATUS_COLUMNS } from './invoice-status-columns';
 
 @Component({
   selector: 'app-c-bm-f-edf-c-invoice-status',
@@ -11,11 +11,15 @@ import { CBmFEdfCInvoiceStatusModalComponent } from '../c-bm-f-edf-c-invoice-sta
   styles: [],
 })
 export class CBmFEdfCInvoiceStatusComponent extends BasePage implements OnInit {
+  columns: any[] = [];
+  totalItems: number = 0;
+
   constructor(private modalService: BsModalService) {
     super();
     this.settings = {
       ...this.settings,
       actions: {
+        columnTitle: 'Acciones',
         edit: true,
         delete: false,
         position: 'right',
@@ -25,16 +29,6 @@ export class CBmFEdfCInvoiceStatusComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {}
-
-  openModal(): void {
-    const modalRef = this.modalService.show(
-      CBmFEdfCInvoiceStatusModalComponent,
-      {
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      }
-    );
-  }
 
   data = [
     {
@@ -54,4 +48,29 @@ export class CBmFEdfCInvoiceStatusComponent extends BasePage implements OnInit {
       descripcion: 'Documento foliado',
     },
   ];
+
+  openForm(allotment?: any) {
+    this.openModal({ allotment });
+  }
+
+  openModal(context?: Partial<CBmFEdfCInvoiceStatusModalComponent>) {
+    const modalRef = this.modalService.show(
+      CBmFEdfCInvoiceStatusModalComponent,
+      {
+        initialState: { ...context },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
+    modalRef.content.refresh.subscribe(next => {
+      if (next) this.getData();
+    });
+  }
+
+  getData() {
+    this.loading = true;
+    this.columns = this.data;
+    this.totalItems = this.data.length;
+    this.loading = false;
+  }
 }

@@ -6,25 +6,43 @@
     <form [formGroup]="accumulatedMonthlyAssetsForm" class="form-material">
       <div class="row margin-input">
         <div class="col-md-4">
-          <form-field [control]="accumulatedMonthlyAssetsForm.get('delegation')" label="Delegación">
-            <input type="text" class="form-control" formControlName="delegation" />
+          <form-field
+            [control]="accumulatedMonthlyAssetsForm.get('delegation')"
+            label="Delegación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegation" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="accumulatedMonthlyAssetsForm.get('subDelegation')" label="Sub Delegación">
-            <input type="text" class="form-control" formControlName="subDelegation" />
+          <form-field
+            [control]="accumulatedMonthlyAssetsForm.get('subDelegation')"
+            label="Sub Delegación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="subDelegation" />
           </form-field>
         </div>
-
       </div>
       <div class="row margin-input">
         <div class="col-md-4">
-          <form-field [control]="accumulatedMonthlyAssetsForm.get('year')" label="Año">
-            <input type="number" class="form-control" formControlName="year" min="1" pattern="^[0-9]+" />
+          <form-field
+            [control]="accumulatedMonthlyAssetsForm.get('year')"
+            label="Año">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="year"
+              min="1"
+              pattern="^[0-9]+" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="accumulatedMonthlyAssetsForm.get('ofMonth')" label="Del mes de:">
+          <form-field
+            [control]="accumulatedMonthlyAssetsForm.get('ofMonth')"
+            label="Del mes de:">
             <select class="form-control" formControlName="ofMonth">
               <option [value]="null">Seleccione un mes</option>
               <option value="Enero">Enero</option>
@@ -43,7 +61,9 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="accumulatedMonthlyAssetsForm.get('toMonth')" label="Al mes de:">
+          <form-field
+            [control]="accumulatedMonthlyAssetsForm.get('toMonth')"
+            label="Al mes de:">
             <select class="form-control" formControlName="toMonth">
               <option [value]="null">Seleccione un mes</option>
               <option value="Enero">Enero</option>

@@ -1,0 +1,267 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Detalle de actas de conversión</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="proceedingsConversionForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="proceedingsConversionForm.get('idConversion')"
+            label="Id conversión">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="idConversion"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="proceedingsConversionForm.get('noWellConverted')"
+            label="No Bien Convertido (Bien Padre)">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noWellConverted"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="proceedingsConversionForm.get('noProceedings')"
+            label="No expediente">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noProceedings"
+              min="1"
+              pattern="^[0-9]+" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="proceedingsConversionForm.get('priorInvestigation')"
+            label="Averiguación Previa">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="priorInvestigation" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="proceedingsConversionForm.get('criminalCase')"
+            label="Causa Penal">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="criminalCase" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-2">
+          <form-field
+            [control]="proceedingsConversionForm.get('proceedings')"
+            label="Acta">
+            <select class="form-control" formControlName="proceedings">
+              <option value="NO">CONV</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="proceedingsConversionForm.get('status')"
+            label="Estado">
+            <select class="form-control" formControlName="status">
+              <option value="NO">D</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="proceedingsConversionForm.get('trans')"
+            label="Trans">
+            <input type="text" class="form-control" formControlName="trans" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="proceedingsConversionForm.get('conv')"
+            label="Conv">
+            <input type="text" class="form-control" formControlName="conv" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="proceedingsConversionForm.get('admin')"
+            label="Admin">
+            <input type="text" class="form-control" formControlName="admin" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="proceedingsConversionForm.get('invoice')"
+            label="Folio">
+            <input type="text" class="form-control" formControlName="invoice" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="proceedingsConversionForm.get('year')"
+            label="Año">
+            <input type="text" class="form-control" formControlName="year" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="proceedingsConversionForm.get('month')"
+            label="Mes">
+            <input type="text" class="form-control" formControlName="month" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="proceedingsConversionForm.get('dateElaboration')"
+            label="Fec. Elab.">
+            <input
+              type="text"
+              formControlName="dateElaboration"
+              placeholder="Fec. Elab."
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-12">
+          <form-field
+            [control]="proceedingsConversionForm.get('proceedingsDesc')"
+            label="Acta">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="proceedingsDesc" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="proceedingsConversionForm.get('address')"
+            label="Derección">
+            <input type="text" class="form-control" formControlName="address" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="proceedingsConversionForm.get('responsible')"
+            label="Responsable">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="responsible" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="proceedingsConversionForm.get('witness')"
+            label="Testigo">
+            <input type="text" class="form-control" formControlName="witness" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="proceedingsConversionForm.get('witnessTwo')"
+            label="Testigo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="witnessTwo" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="proceedingsConversionForm.get('witnessContr')"
+            label="Testigo de la Contr.">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="witnessContr" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="row mt-5">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="justify-content-center">
+          <button
+            type="submit"
+            class="btn btn-primary btn-sm active"
+            (click)="openProceedingsConversionDetail('')">
+            Detalle de Acta
+          </button>
+          &nbsp;
+          <button type="submit" class="btn btn-secondary btn-sm active">
+            Cerrar Acta
+          </button>
+          &nbsp;
+          <button class="btn btn-danger btn-sm active">
+            Impresión del Acta
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="row pt-4">
+          <div class="col-md-12">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="data1">
+              </ng2-smart-table>
+            </div>
+          </div>
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="row pt-4">
+          <div class="col-md-12">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings2"
+                [source]="data1">
+              </ng2-smart-table>
+            </div>
+          </div>
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-5">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="justify-content-center">
+          <button type="submit" class="btn btn-primary btn-sm active">
+            Agregar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

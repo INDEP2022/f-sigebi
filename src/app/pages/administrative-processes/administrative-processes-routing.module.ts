@@ -101,6 +101,13 @@ const routes: Routes = [
         data: { title: 'Reclasificación masiva de bienes' },
       },
       {
+        path: 'change-of-status',
+        loadChildren: async () =>
+          (await import('./change-of-status/pa-m-change-of-status.module'))
+            .PaMChangeOfStatusModule,
+        data: { title: 'Cambio de estatus' },
+      },
+      {
         path: 'massive-change-status',
         loadChildren: async () =>
           (
@@ -109,6 +116,36 @@ const routes: Routes = [
             )
           ).PaMMassiveChangeStatusModule,
         data: { title: 'Cambio masivo de estatus' },
+      },
+      {
+        path: 'change-status-sti',
+        loadChildren: async () =>
+          (
+            await import(
+              './change-of-status-sti/pa-m-change-of-status-sti.module'
+            )
+          ).PaMChangeOfStatusStiModule,
+        data: { title: 'Cambio de estatus sti' },
+      },
+      {
+        path: 'payment-claim-process',
+        loadChildren: async () =>
+          (
+            await import(
+              './payment-claim-process/pa-m-payment-claim-process.module'
+            )
+          ).PaMPaymentClaimProcessModule,
+        data: { title: 'Proceso de reclamacion de pago' },
+      },
+      {
+        path: 'legal-regularization',
+        loadChildren: async () =>
+          (
+            await import(
+              './legal-regularization/pa-m-legal-regularization.module'
+            )
+          ).PaMLegalRegularizationModule,
+        data: { title: 'Regularizacion Juridica' },
       },
       /**
        *Legaspi
@@ -133,6 +170,13 @@ const routes: Routes = [
           import('./reports/record/pa-r-r-m-record.module').then(
             m => m.PaRRMRecordModule
           ),
+      },
+      {
+        path: 'goods-type-crime-reports',
+        loadChildren: async () =>( 
+          await import( './reports/goods-type-crime/pa-gtc-m-goods-type-crime.module'))
+          .PaGtcMGoodsTypeCrimeModule,
+          data: { title: 'Reporte de Bienes por Tipo de Delito' },
       },
       {
         path: 'unit-conversion-packages',
@@ -161,6 +205,13 @@ const routes: Routes = [
           import(
             './siab-sami-interaction/pa-ssi-m-siab-sami-interaction.module'
           ).then(m => m.PaSsiMSiabSamiInteractionModule),
+      },
+      {
+        path: 'returns-confiscations',
+        loadChildren: async () =>
+          (await import('./returns-confiscations/pa-rc-m-returns-confications.module'))
+            .PaRcMReturnsConficationsModule,
+        data: { title: 'Devoluciones y Decomisos' },
       },
       /**
        *Legaspi
@@ -336,6 +387,23 @@ const routes: Routes = [
             .ElectronicSignatureModule,
         data: { title: 'Firma Electrónica' },
       },
+      {
+        path: 'proceedings-conversion',
+        loadChildren: async () =>
+          (
+            await import(
+              './proceedings-conversion/proceedings-conversion.module'
+            )
+          ).ProceedingsConversionModule,
+        data: { title: 'Detalle de actas de conversión' },
+      },
+      {
+        path: 'returns-confiscation',
+        loadChildren: async () =>
+          (await import('./returns-confiscation/returns-confiscation.module'))
+            .ReturnsConfiscationModule,
+        data: { title: 'Devoluciones y decomisos' },
+      },
       /**
        * Seguros David Lucas
        */
@@ -349,22 +417,31 @@ const routes: Routes = [
       {
         path: 'accumulated-monthly-assets',
         loadChildren: async () =>
-          (await import('./accumulated-monthly-assets/accumulated-monthly-assets.module'))
-            .AccumulatedMonthlyAssetsModule,
+          (
+            await import(
+              './accumulated-monthly-assets/accumulated-monthly-assets.module'
+            )
+          ).AccumulatedMonthlyAssetsModule,
         data: { title: 'Acumulado de bienes mensual' },
       },
       {
         path: 'insured-numerary-account',
         loadChildren: async () =>
-          (await import('./insured-numerary-account/insured-numerary-account.module'))
-            .InsuredNumeraryAccountModule,
+          (
+            await import(
+              './insured-numerary-account/insured-numerary-account.module'
+            )
+          ).InsuredNumeraryAccountModule,
         data: { title: 'Cuenta de numerario asegurado' },
       },
       {
         path: 'performance-evaluation-report',
         loadChildren: async () =>
-          (await import('./performance-evaluation-report/performance-evaluation-report.module'))
-            .PerformanceEvaluationReportModule,
+          (
+            await import(
+              './performance-evaluation-report/performance-evaluation-report.module'
+            )
+          ).PerformanceEvaluationReportModule,
         data: { title: 'Reporte de evaluación de desempeño' },
       },
     ],
@@ -375,4 +452,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class AdministrativeProcessesRoutingModule { }
+export class AdministrativeProcessesRoutingModule {}

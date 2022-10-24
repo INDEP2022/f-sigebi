@@ -6,8 +6,8 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { PaymentConceptService } from 'src/app/core/services/catalogs/payment-concept.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IPaymentConcept } from '../../../../core/models/catalogs/payment-concept.model';
-import { PAYMENT_CONCEPT_COLUMNS } from './payment-concept-columns';
 import { PaymentConceptDetailComponent } from '../payment-concept-detail/payment-concept-detail.component';
+import { PAYMENT_CONCEPT_COLUMNS } from './payment-concept-columns';
 
 @Component({
   selector: 'app-payment-concept-list',

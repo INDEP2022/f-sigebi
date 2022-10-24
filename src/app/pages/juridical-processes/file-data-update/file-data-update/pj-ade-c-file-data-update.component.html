@@ -41,12 +41,17 @@
             </div>
             <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
               <div class="row w-100 pl-4">
-                  <label class="form-control-label">Tipo Volante</label>
-                  <div class="col-sm-12 col-12 col-md-6 col-lg-6 col-xl-3 p-2 text-center" *ngFor="let option of optionsTipoVolante">
-                      <form-radio label="{{ option.label }}">
-                          <input type="radio" formControlName="tipoVolante" [value]="option.value" />
-                      </form-radio>
-                  </div>
+                <label class="form-control-label">Tipo Volante</label>
+                <div
+                  class="col-sm-12 col-12 col-md-6 col-lg-6 col-xl-3 p-2 text-center"
+                  *ngFor="let option of optionsTipoVolante">
+                  <form-radio label="{{ option.label }}">
+                    <input
+                      type="radio"
+                      formControlName="tipoVolante"
+                      [value]="option.value" />
+                  </form-radio>
+                </div>
               </div>
             </div>
             <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">

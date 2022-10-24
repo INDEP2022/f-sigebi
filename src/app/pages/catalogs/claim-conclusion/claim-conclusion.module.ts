@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
-import { ClaimConclusionRoutingModule } from './claim-conclusion-routing.module';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { ClaimConclusionFormComponent } from './claim-conclusion-form/claim-conclusion-form.component';
 import { ClaimConclusionListComponent } from './claim-conclusion-list/claim-conclusion-list.component';
-import { SharedModule } from 'src/app/shared/shared.module';
-import { ModalModule } from 'ngx-bootstrap/modal';
+import { ClaimConclusionRoutingModule } from './claim-conclusion-routing.module';
 
 @NgModule({
   declarations: [ClaimConclusionFormComponent, ClaimConclusionListComponent],

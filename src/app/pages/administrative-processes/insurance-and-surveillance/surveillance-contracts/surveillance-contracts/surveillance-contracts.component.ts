@@ -26,4 +26,8 @@ export class SurveillanceContractsComponent implements OnInit {
       observations: [null, Validators.required],
     });
   }
+
+  save() {
+    console.log(this.form.value);
+  }
 }

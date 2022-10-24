@@ -1,16 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 
 @Component({
   selector: 'app-accumulated-monthly-assets',
   templateUrl: './accumulated-monthly-assets.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class AccumulatedMonthlyAssetsComponent implements OnInit {
   accumulatedMonthlyAssetsForm: ModelForm<any>;
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();

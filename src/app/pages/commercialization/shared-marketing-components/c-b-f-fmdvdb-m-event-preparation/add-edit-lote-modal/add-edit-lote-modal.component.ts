@@ -1,22 +1,25 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { BasePage } from 'src/app/core/shared/base-page';
-import { BsModalRef } from 'ngx-bootstrap/modal';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-add-edit-lote-modal',
   templateUrl: './add-edit-lote-modal.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class AddEditLoteModalComponent extends BasePage implements OnInit {
-  
-  form: FormGroup = new FormGroup ({});
+  form: FormGroup = new FormGroup({});
   allotment: any;
   title: string = 'Lote';
   edit: boolean = false;
 
   @Output() refresh = new EventEmitter<true>();
+
+  get check() {
+    return this.form.get('check');
+  }
 
   constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
@@ -26,13 +29,22 @@ export class AddEditLoteModalComponent extends BasePage implements OnInit {
     this.prepareForm();
   }
 
-  private prepareForm(){
+  private prepareForm() {
     this.form = this.fb.group({
-      lote: [null, [Validators.required]],
+      lote: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(10),
+          Validators.minLength(1),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
       descripcion: [null, [Validators.required]],
       valorbase: [null, [Validators.required]],
-      idcliente: [null, [Validators.required]],
-      rfc: [null, [Validators.required]]
+      idcliente: [null],
+      rfc: [null],
+      check: [false],
     });
     if (this.allotment != null) {
       this.edit = true;
@@ -66,5 +78,4 @@ export class AddEditLoteModalComponent extends BasePage implements OnInit {
     this.refresh.emit(true);
     this.modalRef.hide();
   }
-
 }

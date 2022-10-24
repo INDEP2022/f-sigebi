@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { IResponseRepuve } from 'src/app/core/models/catalogs/response-repuve.model';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { ModelForm } from '../../../../core/interfaces/ModelForm';
-import { DefaultSelect } from '../../../../shared/components/select/default-select';
-import { BsModalRef } from 'ngx-bootstrap/modal';
-import { FormBuilder, Validators } from '@angular/forms';
-import { ResponseRepuveService } from '../../../../core/services/catalogs/response-repuve.service';
 import { ListParams } from '../../../../common/repository/interfaces/list-params';
+import { ModelForm } from '../../../../core/interfaces/model-form';
+import { ResponseRepuveService } from '../../../../core/services/catalogs/response-repuve.service';
+import { DefaultSelect } from '../../../../shared/components/select/default-select';
 
 @Component({
   selector: 'app-response-repuve-form',
