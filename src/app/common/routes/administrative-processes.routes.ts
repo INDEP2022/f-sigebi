@@ -130,6 +130,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Visitas a inmuebles',
             link: '/pages/administrative-processes/expenses-format',
           },
+          {
+            label: 'Reportes de Incorporación de Bienes a Pólizas',
+            link: '/pages/administrative-processes/goods-to-policies-reports'
+          }
         ],
       },
       {
