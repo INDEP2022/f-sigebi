@@ -296,3 +296,15 @@ table:not(.normal-hover) tbody tr:hover {
 .dropdown-item.bg-primary {
   background-color: #9d2449 !important;
 }
+
+.bk-danger {
+  background-color: #bc955c;
+}
+
+.dismiss {
+  float: right;
+
+  &:hover {
+    cursor: pointer;
+  }
+}

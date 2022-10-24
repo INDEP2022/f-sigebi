@@ -315,6 +315,10 @@ export const MENU: IMenuItem[] = [
         label: 'Búsqueda de Pagos',
         link: '/pages/commercialization/payment-search',
       },
+      {
+        label: 'Gestión de Firmas Electrónicas',
+        link: '/pages/commercialization/electronic-signatures',
+      },
     ],
   },
   // PROCESOS JURIDICOS

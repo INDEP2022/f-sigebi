@@ -256,6 +256,16 @@ const routes: Routes = [
         .CMPaymentSearchModule,
     data: { title: 'Búsqueda y Procesamiento de Pagos' },
   },
+  {
+    path: 'electronic-signatures',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-m-electronic-signatures/c-m-electronic-signatures.module'
+        )
+      ).CMElectronicSignaturesModule,
+    data: { title: 'Gestión de Firmas Electrónicas' },
+  },
 ];
 
 @NgModule({
