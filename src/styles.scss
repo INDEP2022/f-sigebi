@@ -292,3 +292,7 @@ table:not(.normal-hover) tbody tr:hover {
   position: relative;
   left: 12px;
 }
+
+.dropdown-item.bg-primary {
+  background-color: #9d2449 !important;
+}

@@ -311,6 +311,10 @@ export const MENU: IMenuItem[] = [
         label: 'Eventos Relacionados',
         link: '/pages/commercialization/related-events',
       },
+      {
+        label: 'Búsqueda de Pagos',
+        link: '/pages/commercialization/payment-search',
+      },
     ],
   },
   // PROCESOS JURIDICOS

@@ -249,6 +249,13 @@ const routes: Routes = [
         .CMRelatedEventsModule,
     data: { title: 'Eventos Relacionados' },
   },
+  {
+    path: 'payment-search',
+    loadChildren: async () =>
+      (await import('./c-m-payment-search/c-m-payment-search.module'))
+        .CMPaymentSearchModule,
+    data: { title: 'Búsqueda y Procesamiento de Pagos' },
+  },
 ];
 
 @NgModule({

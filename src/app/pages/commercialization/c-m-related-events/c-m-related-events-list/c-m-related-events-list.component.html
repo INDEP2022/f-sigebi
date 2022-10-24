@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">conversión a numerario</h5>
+    <h5 class="title">eventos relacionados</h5>
   </div>
   <div body>
     <div class="row">
@@ -63,10 +63,22 @@
           </div>
         </div>
         <div class="row mt-3" *ngIf="selectedEvent != null" @OnEventSelected>
-          <div class="row">
-            <div class="col-sm-12 col-md-12 col-lg-6">
+          <div class="row pe-0">
+            <div class="col-sm-12 col-md-6">
               <div class="form-material">
                 <search-bar [params]="params"></search-bar>
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-6 pe-0">
+              <div class="d-flex flex-row-reverse mb-4 mt-0">
+                <div class="">
+                  <button
+                    class="btn btn-sm btn-success active font-size-14"
+                    (click)="addRow()"
+                    [disabled]="adding">
+                    Agregar Registro
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -76,7 +88,10 @@
                 id="lcsTable"
                 [attr.class]="'table-bordered'"
                 [settings]="relatedEventsSettings"
-                [source]="relatedEventsColumns">
+                [source]="relatedEventsColumns"
+                (createConfirm)="addEntry($event)"
+                (editConfirm)="editEntry($event)"
+                (deleteConfirm)="deleteEntry($event)">
               </ng2-smart-table>
             </div>
           </div>
