@@ -26,7 +26,7 @@ export class PeRddgTddrCReportDocReceivedComponent implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      rangeDate: ['', [Validators.required]],
+      rangeDate: ['', []],
       // fromDate: ['', [Validators.required]],
       // toDate: ['', [Validators.required]],
       report: ['', [Validators.required]],

@@ -249,6 +249,13 @@ const routes: Routes = [
         .CMRelatedEventsModule,
     data: { title: 'Eventos Relacionados' },
   },
+  {
+    path: 'regular-billing-tab',
+    loadChildren: async () =>
+      (await import('./movable-property/regular-billing-tab/regular-billing-tab.module'))
+        .RegularBillingTabModule,
+    data: { title: 'Facturación normal' },
+  },
 ];
 
 @NgModule({
