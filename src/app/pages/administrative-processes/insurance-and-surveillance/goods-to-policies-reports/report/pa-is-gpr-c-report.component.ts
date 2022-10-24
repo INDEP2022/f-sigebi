@@ -30,7 +30,8 @@ export class PaIsGprCReportComponent extends BasePage implements OnInit {
       policy: [null, [Validators.required]],
       from: [null, [Validators.required]],
       to: [null, [Validators.required]],
-      
+      requestFrom: [null, [Validators.required]],
+      requestTo: [null, [Validators.required]],
     });
   }
 
