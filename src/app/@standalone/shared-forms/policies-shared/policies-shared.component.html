@@ -1,0 +1,18 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showPolicies">
+    <div class="col-md-12">
+      <form-field [control]="form.get(policyField)">
+        <ngx-select
+          (fetchItems)="getPolicies($event)"
+          [data]="policies"
+          [form]="form"
+          value="id"
+          bindLabel="description"
+          label="Pólizas"
+          [control]="policyField"
+          (change)="onPoliciesChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>
