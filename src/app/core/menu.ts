@@ -315,6 +315,14 @@ export const MENU: IMenuItem[] = [
         label: 'Eventos Relacionados',
         link: '/pages/commercialization/related-events',
       },
+      {
+        label: 'Búsqueda de Pagos',
+        link: '/pages/commercialization/payment-search',
+      },
+      {
+        label: 'Gestión de Firmas Electrónicas',
+        link: '/pages/commercialization/electronic-signatures',
+      },
     ],
   },
   // PROCESOS JURIDICOS

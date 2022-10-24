@@ -252,9 +252,29 @@ const routes: Routes = [
   {
     path: 'regular-billing-tab',
     loadChildren: async () =>
-      (await import('./movable-property/regular-billing-tab/regular-billing-tab.module'))
-        .RegularBillingTabModule,
+      (
+        await import(
+          './movable-property/regular-billing-tab/regular-billing-tab.module'
+        )
+      ).RegularBillingTabModule,
     data: { title: 'Facturación normal' },
+  },
+  {
+    path: 'payment-search',
+    loadChildren: async () =>
+      (await import('./c-m-payment-search/c-m-payment-search.module'))
+        .CMPaymentSearchModule,
+    data: { title: 'Búsqueda y Procesamiento de Pagos' },
+  },
+  {
+    path: 'electronic-signatures',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-m-electronic-signatures/c-m-electronic-signatures.module'
+        )
+      ).CMElectronicSignaturesModule,
+    data: { title: 'Gestión de Firmas Electrónicas' },
   },
 ];
 

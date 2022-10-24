@@ -18,6 +18,7 @@ export class AddLcModalComponent extends BasePage implements OnInit {
   layout: string;
   rfcItems = new DefaultSelect();
   clientItems = new DefaultSelect();
+  @Output() refresh = new EventEmitter<any>();
   @Output() onAdd = new EventEmitter<any>();
   @Output() onEdit = new EventEmitter<any>();
 
