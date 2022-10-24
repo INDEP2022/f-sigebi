@@ -24,6 +24,7 @@ import { SaeInputComponent } from '../transfer-request/tabs/compliance-verificat
 import { ExpedientsRequestTabComponent } from '../transfer-request/tabs/expedients-child-tabs-components/expedients-request-tab/expedients-request-tab.component';
 import { RequestOfAssetsComponent } from '../transfer-request/tabs/expedients-child-tabs-components/request-of-assets/request-of-assets.component';
 import { ClassificationAssetsTabComponent } from '../transfer-request/tabs/classify-assets-components/good-classification-tab/classification-assets-tab.component';
+import { ClassifyAssetsTabComponent } from '../transfer-request/tabs/classify-assets-components/classify-assets-child-tabs-components/classify-assets-tab/classify-assets-tab.component';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { ClassificationAssetsTabComponent } from '../transfer-request/tabs/class
     ExpedientsRequestTabComponent,
     RequestOfAssetsComponent,
     ClassificationAssetsTabComponent,
+    ClassifyAssetsTabComponent,
   ],
   imports: [
     CommonModule,

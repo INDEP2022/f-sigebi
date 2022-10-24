@@ -18,43 +18,25 @@ export class ClassificationAssetsTabComponent
   implements OnInit
 {
   title: string = 'Bienes de la Solicitud';
-  public classiGoodsForm: ModelForm<any>;
   params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: any[] = [];
-  public selectSection = new DefaultSelect<any>();
-  public selectChapter = new DefaultSelect<any>();
-  public selectLevel1 = new DefaultSelect<any>();
-  public selectLevel2 = new DefaultSelect<any>();
-  public selectLevel3 = new DefaultSelect<any>();
-  public selectLevel4 = new DefaultSelect<any>();
+  assetsId: any = '1575';
 
-  constructor(private fb: FormBuilder) {
+  constructor() {
     super();
   }
 
   ngOnInit(): void {
-    this.initForm();
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
-      selectMode: 'multi',
+      selectMode: '',
       columns: REQUEST_OF_ASSETS_COLUMNS,
     };
 
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getData());
-  }
-
-  initForm() {
-    this.classiGoodsForm = this.fb.group({
-      section: [null],
-      chapter: [null],
-      level1: [null],
-      level2: [null],
-      level3: [null],
-      level4: [null],
-    });
   }
 
   getData() {
@@ -72,19 +54,7 @@ export class ClassificationAssetsTabComponent
     }, 2000);
   }
 
-  getSection(event: any) {
-    /* this.delegationService.getZones(params).subscribe({
-      next: data => (this.selectSection = new DefaultSelect(data.data, data.count)),
-    }); */
+  rowSelected(event: any) {
+    console.log(event);
   }
-
-  getChapter(event: any) {}
-
-  getLevel1(event: any) {}
-
-  getLevel2(event: any) {}
-
-  getLevel3(event: any) {}
-
-  getLevel4(event: any) {}
 }
