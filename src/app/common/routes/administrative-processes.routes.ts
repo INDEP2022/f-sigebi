@@ -349,6 +349,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Expedientes',
             link: '/pages/administrative-processes/record-details',
           },
+          {
+            label: 'Bienes por Tipo de Delito',
+            link: '/pages/administrative-processes/goods-type-crime-reports'
+          }
         ],
       },
       {

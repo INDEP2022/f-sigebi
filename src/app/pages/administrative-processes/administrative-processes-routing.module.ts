@@ -172,6 +172,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'goods-type-crime-reports',
+        loadChildren: async () =>( 
+          await import( './reports/goods-type-crime/pa-gtc-m-goods-type-crime.module'))
+          .PaGtcMGoodsTypeCrimeModule,
+          data: { title: 'Reporte de Bienes por Tipo de Delito' },
+      },
+      {
         path: 'unit-conversion-packages',
         loadChildren: () =>
           import(
