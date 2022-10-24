@@ -118,6 +118,10 @@ export const MENU: IMenuItem[] = [
           },
         ],
       },
+      {
+        label: 'Actas Circunstanciadas de Suspensión/Cancelación',
+        link: '/pages/final-destination-process/circumstantial-acts-suspension-cancellation',
+      },
     ],
   },
   ...DOCUMENTS_RECEPTION_ROUTES,
@@ -315,6 +319,14 @@ export const MENU: IMenuItem[] = [
         label: 'Eventos Relacionados',
         link: '/pages/commercialization/related-events',
       },
+      {
+        label: 'Búsqueda de Pagos',
+        link: '/pages/commercialization/payment-search',
+      },
+      {
+        label: 'Gestión de Firmas Electrónicas',
+        link: '/pages/commercialization/electronic-signatures',
+      },
     ],
   },
   // PROCESOS JURIDICOS
@@ -325,7 +337,7 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-folder',
     subItems: [
       {
-        label: 'Complemento Arituclo',
+        label: 'Complemento Aritculo',
         link: '/pages/judicial-physical-reception/articles-complement',
       },
       {
@@ -340,6 +352,28 @@ export const MENU: IMenuItem[] = [
         label: 'Actas de Recepcion',
         link: '/pages/judicial-physical-reception/confiscated-records',
       },
+      {
+        label: 'Parcializa Bienes Generales 1',
+        link: '/pages/judicial-physical-reception/partializes-general-goods-1',
+      },
+      
+      {
+        label: 'Parcializa Bienes Generales 2',
+        link: '/pages/judicial-physical-reception/partializes-general-goods-2',
+      },
+      {
+        label: 'Parcializaciond de Bienes',
+        link: '/pages/judicial-physical-reception/partializes-goods',
+      },
+      {
+        label: 'Recepcion Suspencion/Cancelacion',
+        link: '/pages/judicial-physical-reception/cancellation-recepcion',
+      },
+      {
+        label: 'Devolucion x Cancelacion de Venta',
+        link: '/pages/judicial-physical-reception/cancellation-sale',
+      },
+      
     ],
   },
 ];
