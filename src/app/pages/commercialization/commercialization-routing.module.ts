@@ -250,6 +250,16 @@ const routes: Routes = [
     data: { title: 'Eventos Relacionados' },
   },
   {
+    path: 'regular-billing-tab',
+    loadChildren: async () =>
+      (
+        await import(
+          './movable-property/regular-billing-tab/regular-billing-tab.module'
+        )
+      ).RegularBillingTabModule,
+    data: { title: 'Facturación normal' },
+  },
+  {
     path: 'payment-search',
     loadChildren: async () =>
       (await import('./c-m-payment-search/c-m-payment-search.module'))
