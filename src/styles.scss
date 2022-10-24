@@ -298,5 +298,34 @@ ng-scrollbar {
   --scrollbar-thumb-color      : rgba(94, 175, 255, 0.5);
   --scrollbar-thumb-hover-color: dodgerblue;
   --scrollbar-border-radius    : 4px;
-  border                       : 1px solid gray;
+}
+
+/** my css table*/
+.css-table {
+  display: table;
+
+  .css-table-header {
+    display            : table-header-group;
+    font-weight        : bold;
+    // background-color: rgb(191, 191, 191);
+
+    div {
+      text-align   : center;
+      // border    : 1px solid rgb(255, 255, 255);
+    }
+  }
+
+  .css-table-body {
+    display: table-row-group;
+
+    .css-table-row {
+      display: table-row;
+    }
+  }
+
+  .css-table-header div,
+  .css-table-row div {
+    display: table-cell;
+    padding: 0 6px;
+  }
 }
