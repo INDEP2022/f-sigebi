@@ -118,6 +118,10 @@ export const MENU: IMenuItem[] = [
           },
         ],
       },
+      {
+        label: 'Actas Circunstanciadas de Suspensión/Cancelación',
+        link: '/pages/final-destination-process/circumstantial-acts-suspension-cancellation',
+      },
     ],
   },
   ...DOCUMENTS_RECEPTION_ROUTES,
