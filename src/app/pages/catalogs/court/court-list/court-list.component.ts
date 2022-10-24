@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ICourt } from '../../../../core/models/catalogs/court.model';
+import { CourtFormComponent } from '../court-form/court-form.component';
 import { CourtService } from './../../../../core/services/catalogs/court.service';
 import { COURT_COLUMNS } from './court-columns';
-import { CourtFormComponent } from '../court-form/court-form.component';
 
 @Component({
   selector: 'app-court-list',

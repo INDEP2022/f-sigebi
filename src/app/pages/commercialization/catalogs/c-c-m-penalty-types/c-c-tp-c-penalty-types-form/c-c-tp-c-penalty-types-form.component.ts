@@ -1,7 +1,7 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { FormBuilder, Validators, FormGroup } from '@angular/forms';
+import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'app-c-c-tp-c-penalty-types-form',

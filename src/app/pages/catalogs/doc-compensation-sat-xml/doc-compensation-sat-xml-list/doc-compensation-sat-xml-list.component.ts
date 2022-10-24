@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 
-import { BehaviorSubject, takeUntil } from 'rxjs';
-import { IDocCompensationSatXml } from 'src/app/core/models/catalogs/doc-compensation-sat-xml.model';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { DocCompensationSATService } from 'src/app/core/services/catalogs/doc-compesation-sat.service';
-import { DocCompensationSatXmlService } from 'src/app/core/services/catalogs/doc-compensation-sat-xml.service';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IDocCompensationSatXml } from 'src/app/core/models/catalogs/doc-compensation-sat-xml.model';
+import { DocCompensationSatXmlService } from 'src/app/core/services/catalogs/doc-compensation-sat-xml.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { COMPENSATION_COLUMNS } from './doccompensationsatxml-columns';
 import { DocCompensationSatXmlFormComponent } from '../doc-compensation-sat-xml-form/doc-compensation-sat-xml-form.component';
+import { COMPENSATION_COLUMNS } from './doccompensationsatxml-columns';
 
 @Component({
   selector: 'app-doc-compensation-sat-xml-list',

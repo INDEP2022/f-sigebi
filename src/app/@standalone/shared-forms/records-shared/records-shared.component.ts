@@ -1,9 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SharedModule } from 'src/app/shared/shared.module';
+import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
+import { SharedModule } from 'src/app/shared/shared.module';
 //Rxjs
-import { BehaviorSubject, takeUntil } from 'rxjs';
 //Params
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -12,7 +11,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
 import { IRecord } from 'src/app/core/models/administrative-processes/record.model';
-import { recordsData } from './recordsData';
+import { recordsData } from './data';
 
 @Component({
   selector: 'app-records-shared',
@@ -22,7 +21,6 @@ import { recordsData } from './recordsData';
   styles: [],
 })
 export class RecordsSharedComponent extends BasePage implements OnInit {
-  
   @Input() form: FormGroup;
   @Input() recordField: string = 'record';
 

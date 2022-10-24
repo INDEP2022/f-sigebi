@@ -6,8 +6,8 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IProficient } from 'src/app/core/models/catalogs/proficient.model';
 import { ProeficientService } from 'src/app/core/services/catalogs/proficient.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { EXPERT_COLUMNS } from './expert-columns';
 import { ExpertFormComponent } from '../experts-form/expert-form.component';
+import { EXPERT_COLUMNS } from './expert-columns';
 
 @Component({
   selector: 'app-expert-list',

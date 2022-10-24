@@ -4,12 +4,13 @@ import { MeasurementUnitsComponent } from './measurement-units/measurement-units
 
 const routes: Routes = [
   {
-    path:'',component:MeasurementUnitsComponent
-  }
+    path: '',
+    component: MeasurementUnitsComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class MeasurementUnitsRoutingModule { }
+export class MeasurementUnitsRoutingModule {}

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({

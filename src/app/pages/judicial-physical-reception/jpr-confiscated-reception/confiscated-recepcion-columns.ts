@@ -1,27 +1,27 @@
 export const CONFISCATED_RECEPCION_COLUMNS = {
   noBien: {
-    title: "No. Bien",
-    type: "number",
+    title: 'No. Bien',
+    type: 'number',
     sort: false,
   },
   description: {
-    title: "Descripcion",
-    type: "string",
+    title: 'Descripcion',
+    type: 'string',
     sort: false,
   },
   cantidad: {
-    title: "Cantidad",
-    type: "string",
+    title: 'Cantidad',
+    type: 'string',
     sort: false,
   },
   fec: {
-    title: "Fec. Recibio",
-    type: "string",
+    title: 'Fec. Recibio',
+    type: 'string',
     sort: false,
   },
   status: {
-    title: "Estado",
-    type: "boolean",
+    title: 'Estado',
+    type: 'boolean',
     sort: false,
   },
 };

@@ -1,10 +1,10 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { StatesRoutingModule } from './states-routing.module';
-import { StatesListComponent } from './states-list/states-list.component';
-import { StateFormComponent } from './state-form/state-form.component';
-import { SharedModule } from 'src/app/shared/shared.module';
+import { NgModule } from '@angular/core';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { StateFormComponent } from './state-form/state-form.component';
+import { StatesListComponent } from './states-list/states-list.component';
+import { StatesRoutingModule } from './states-routing.module';
 
 @NgModule({
   declarations: [StatesListComponent, StateFormComponent],

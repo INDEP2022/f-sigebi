@@ -7,7 +7,8 @@ import { BANK_COLUMNS } from './payment-dispersion-validation-bank-columns';
 import { EVENT_COLUMNS } from './payment-dispersion-validation-event-columns';
 import { RECEIVED_COLUMNS } from './payment-dispersion-validation-received-columns';
 
-import { ExcelService } from 'src/app/common/services/exporttoexcel.service';
+import { ExcelService } from 'src/app/common/services/excel.service';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-c-b-vdp-c-payment-dispersion-validation',
@@ -35,6 +36,7 @@ export class CBVdpCPaymentDispersionValidationComponent
     actions: false,
   };
   form: FormGroup = new FormGroup({});
+  show = false;
 
   constructor(private fb: FormBuilder, private excelService: ExcelService) {
     super();
@@ -50,10 +52,16 @@ export class CBVdpCPaymentDispersionValidationComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      idEvento: ['', [Validators.required]],
-      blackList: ['', [Validators.required]],
-      refundAmount: ['', [Validators.required]],
-      penaltyAmount: ['', [Validators.required]],
+      idEvento: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(10),
+          Validators.minLength(1),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      event: ['', [Validators.required]],
     });
   }
 

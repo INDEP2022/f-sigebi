@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
-import { TypeSinisterRoutingModule } from './type-sinister-routing.module';
-import { TypeSinisterListComponent } from './type-sinister-list/type-sinister-list.component';
-import { TypeSinisterFormComponent } from './type-sinister-form/type-sinister-form.component';
-import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { TypeSinisterFormComponent } from './type-sinister-form/type-sinister-form.component';
+import { TypeSinisterListComponent } from './type-sinister-list/type-sinister-list.component';
+import { TypeSinisterRoutingModule } from './type-sinister-routing.module';
 
 @NgModule({
   declarations: [TypeSinisterListComponent, TypeSinisterFormComponent],

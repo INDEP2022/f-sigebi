@@ -1,10 +1,10 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RegionalDelegationsRoutingModule } from './regional-delegations-routing.module';
-import { RegionalDelegationsListComponent } from './regional-delegations-list/regional-delegations-list.component';
-import { RegionalDelegationFormComponent } from './regional-delegation-form/regional-delegation-form.component';
-import { SharedModule } from 'src/app/shared/shared.module';
+import { NgModule } from '@angular/core';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { RegionalDelegationFormComponent } from './regional-delegation-form/regional-delegation-form.component';
+import { RegionalDelegationsListComponent } from './regional-delegations-list/regional-delegations-list.component';
+import { RegionalDelegationsRoutingModule } from './regional-delegations-routing.module';
 
 @NgModule({
   declarations: [

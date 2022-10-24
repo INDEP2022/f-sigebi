@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { IWarehouse } from '../../../../core/models/catalogs/warehouse.model';
 import { WarehouseService } from '../../../../core/services/catalogs/warehouse.service';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { BasePage } from 'src/app/core/shared/base-page';
-import { WAREHOUSE_COLUMNS } from './warehouse-columns';
 import { WarehousesDetailComponent } from '../warehouses-detail/warehouses-detail.component';
+import { WAREHOUSE_COLUMNS } from './warehouse-columns';
 
 @Component({
   selector: 'app-warehouses-list',

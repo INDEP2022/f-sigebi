@@ -7,15 +7,13 @@ import { PROCESS_COLUMNS } from './process-columns';
 @Component({
   selector: 'app-process',
   templateUrl: './process.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ProcessComponent extends BasePage implements OnInit {
   data1: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-  constructor()
-  {
+  constructor() {
     super();
     this.settings = {
       ...this.settings,
@@ -24,7 +22,5 @@ export class ProcessComponent extends BasePage implements OnInit {
     };
   }
 
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

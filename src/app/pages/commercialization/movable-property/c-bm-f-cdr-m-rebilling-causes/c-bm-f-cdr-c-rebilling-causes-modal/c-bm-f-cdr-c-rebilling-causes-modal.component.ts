@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -13,6 +13,12 @@ export class CBmFCdrCRebillingCausesModalComponent
   implements OnInit
 {
   form: FormGroup = new FormGroup({});
+
+  allotment: any;
+  title: string = 'Causas para generar refacturación';
+  edit: boolean = false;
+  @Output() refresh = new EventEmitter<true>();
+
   constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
   }
@@ -23,12 +29,17 @@ export class CBmFCdrCRebillingCausesModalComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      idCauses: ['', [Validators.required]],
-      description: ['', [Validators.required]],
-      rebill: ['', [Validators.required]],
-      apply: ['', [Validators.required]],
-      comments: ['', [Validators.required]],
+      id: [{ value: null, disabled: true }],
+      descripcion: [{ value: null, disabled: true }],
+      refCan: [null, [Validators.required]],
+      aplica: [null, [Validators.required]],
+      comentarios: [{ value: null, disabled: true }],
     });
+    if (this.allotment != null) {
+      this.edit = true;
+      console.log(this.allotment);
+      this.form.patchValue(this.allotment);
+    }
   }
 
   close() {

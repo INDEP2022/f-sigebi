@@ -9,7 +9,7 @@
       (submit)="mostrarInfo()"
       class="container-fluid form-material">
       <div class="row w-100">
-        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+        <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field [control]="form.get('noBien')" label="No. Bien">
             <!-- <label class="form-control-label w-100">No. Bien</label> -->
             <input
@@ -18,13 +18,13 @@
               placeholder="No. Bien" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-8 col-lg-8 p-2">
+        <!-- <div class="col-sm-12 col-12 col-md-3 p-2">
           <div class="form-group">
             <input class="form-control w-100" placeholder="Detalle No. Bien" />
             <label class="form-control-label w-100">Detalle No. Bien</label>
           </div>
-        </div>
-        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+        </div> -->
+        <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('tipoAdministrador')"
             label="Tipo de Administrador">
@@ -37,7 +37,7 @@
             </select>
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+        <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('tipoDepositaria')"
             label="Tipo de Depositaria">
@@ -49,12 +49,11 @@
             </select>
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-4 col-lg-4 p-2">
+        <div class="col-sm-12 col-12 col-md-2 p-2">
           <div class="form-group">
-            <button type="button" nbButton status="primary">Imprimir</button>
-            <!-- <label class="label">&nbsp;</label>&nbsp;  
-                        <div class="d-flex justify-content-center">
-                        </div> -->
+            <button type="button" class="btn btn-primary btn-sm active">
+              Imprimir
+            </button>
           </div>
         </div>
       </div>

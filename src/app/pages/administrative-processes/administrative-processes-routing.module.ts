@@ -93,9 +93,59 @@ const routes: Routes = [
       {
         path: 'massive-reclassification-goods',
         loadChildren: async () =>
-          (await import('./massive-reclassification-goods/pa-m-massive-reclassification-goods.module'))
-            .PaMMassiveReclassificationGoodsModule,
+          (
+            await import(
+              './massive-reclassification-goods/pa-m-massive-reclassification-goods.module'
+            )
+          ).PaMMassiveReclassificationGoodsModule,
         data: { title: 'Reclasificación masiva de bienes' },
+      },
+      {
+        path: 'change-of-status',
+        loadChildren: async () =>
+          (await import('./change-of-status/pa-m-change-of-status.module'))
+            .PaMChangeOfStatusModule,
+        data: { title: 'Cambio de estatus' },
+      },
+      {
+        path: 'massive-change-status',
+        loadChildren: async () =>
+          (
+            await import(
+              './massive-change-status/pa-m-massive-change-status.module'
+            )
+          ).PaMMassiveChangeStatusModule,
+        data: { title: 'Cambio masivo de estatus' },
+      },
+      {
+        path: 'change-status-sti',
+        loadChildren: async () =>
+          (
+            await import(
+              './change-of-status-sti/pa-m-change-of-status-sti.module'
+            )
+          ).PaMChangeOfStatusStiModule,
+        data: { title: 'Cambio de estatus sti' },
+      },
+      {
+        path: 'payment-claim-process',
+        loadChildren: async () =>
+          (
+            await import(
+              './payment-claim-process/pa-m-payment-claim-process.module'
+            )
+          ).PaMPaymentClaimProcessModule,
+        data: { title: 'Proceso de reclamacion de pago' },
+      },
+      {
+        path: 'legal-regularization',
+        loadChildren: async () =>
+          (
+            await import(
+              './legal-regularization/pa-m-legal-regularization.module'
+            )
+          ).PaMLegalRegularizationModule,
+        data: { title: 'Regularizacion Juridica' },
       },
       /**
        *Legaspi
@@ -308,6 +358,38 @@ const routes: Routes = [
           ).VariableCostModule,
         data: { title: 'Variable costo' },
       },
+
+      {
+        path: 'zones',
+        loadChildren: async () =>
+          (await import('./administration-third/zones/zones.module'))
+            .ZonesModule,
+        data: { title: 'Coordinacion por zonas' },
+      },
+      {
+        path: 'electronic-signature',
+        loadChildren: async () =>
+          (await import('./electronic-signature/electronic-signature.module'))
+            .ElectronicSignatureModule,
+        data: { title: 'Firma Electrónica' },
+      },
+      {
+        path: 'proceedings-conversion',
+        loadChildren: async () =>
+          (
+            await import(
+              './proceedings-conversion/proceedings-conversion.module'
+            )
+          ).ProceedingsConversionModule,
+        data: { title: 'Detalle de actas de conversión' },
+      },
+      {
+        path: 'returns-confiscation',
+        loadChildren: async () =>
+          (await import('./returns-confiscation/returns-confiscation.module'))
+            .ReturnsConfiscationModule,
+        data: { title: 'Devoluciones y decomisos' },
+      },
       /**
        * Seguros David Lucas
        */
@@ -317,6 +399,36 @@ const routes: Routes = [
           (await import('./policies-report/policies-report.module'))
             .PoliciesReportModule,
         data: { title: 'Reportes de Pólizas' },
+      },
+      {
+        path: 'accumulated-monthly-assets',
+        loadChildren: async () =>
+          (
+            await import(
+              './accumulated-monthly-assets/accumulated-monthly-assets.module'
+            )
+          ).AccumulatedMonthlyAssetsModule,
+        data: { title: 'Acumulado de bienes mensual' },
+      },
+      {
+        path: 'insured-numerary-account',
+        loadChildren: async () =>
+          (
+            await import(
+              './insured-numerary-account/insured-numerary-account.module'
+            )
+          ).InsuredNumeraryAccountModule,
+        data: { title: 'Cuenta de numerario asegurado' },
+      },
+      {
+        path: 'performance-evaluation-report',
+        loadChildren: async () =>
+          (
+            await import(
+              './performance-evaluation-report/performance-evaluation-report.module'
+            )
+          ).PerformanceEvaluationReportModule,
+        data: { title: 'Reporte de evaluación de desempeño' },
       },
     ],
   },

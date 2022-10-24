@@ -6,8 +6,8 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ISafe } from '../../../../core/models/catalogs/safe.model';
 import { SafeService } from '../../../../core/services/catalogs/safe.service';
-import { VAULT_COLUMNS } from './vault-columns';
 import { VaultDetailComponent } from '../vault-detail/vault-detail.component';
+import { VAULT_COLUMNS } from './vault-columns';
 
 @Component({
   selector: 'app-vault-list',

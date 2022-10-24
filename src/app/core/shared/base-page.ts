@@ -92,7 +92,7 @@ const TABLE_SETTINGS: TableSettings = {
   },
   columns: {},
   noDataMessage: 'No se encontrarón registros',
-  rowClassFunction: (row:any) =>{}
+  rowClassFunction: (row: any) => {},
 };
 @Component({
   template: '',

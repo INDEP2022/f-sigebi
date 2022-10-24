@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';

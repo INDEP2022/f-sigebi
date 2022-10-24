@@ -1,5 +1,3 @@
-import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
-
 export const COLUMNS = {
   moveId: {
     title: 'No. Movto.',

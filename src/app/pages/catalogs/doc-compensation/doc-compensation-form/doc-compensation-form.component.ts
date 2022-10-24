@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDocCompensationSatXml } from 'src/app/core/models/catalogs/doc-compensation-sat-xml.model';
 import { IDocCompensation } from 'src/app/core/models/catalogs/doc-compensation.model';
 import { IDocCompesationSat } from 'src/app/core/models/catalogs/doc-compesation-sat.model';

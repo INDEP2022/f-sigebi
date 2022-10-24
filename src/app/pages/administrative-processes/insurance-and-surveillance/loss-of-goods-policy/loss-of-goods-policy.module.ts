@@ -1,10 +1,10 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
+import { ReactiveFormsModule } from '@angular/forms';
+import { SharedModule } from '../../../../shared/shared.module';
 import { LossOfGoodsPolicyRoutingModule } from './loss-of-goods-policy-routing.module';
 import { LossOfGoodsPolicyComponent } from './loss-of-goods-policy/loss-of-goods-policy.component';
-import { SharedModule } from '../../../../shared/shared.module';
-import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [LossOfGoodsPolicyComponent],

@@ -6,11 +6,7 @@ export const COLUMNS = {
     title: 'Pagado',
     type: 'custom',
     renderComponent: CheckboxElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
-      });
-    },
+    onComponentInitFunction: (instance: any) => {},
     sort: false,
   },
   request: {

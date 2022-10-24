@@ -1264,6 +1264,8 @@ $background-checkbox-bg-color: $primary, $secondary, $success, $info, $warning,
 }
 
 select.form-control {
+  height: 43px !important;
+
   &,
   &:focus,
   &:hover {

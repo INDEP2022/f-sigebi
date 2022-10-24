@@ -1,16 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { BasePage } from 'src/app/core/shared/base-page';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
 
 @Component({
   selector: 'app-pa-sm-c-service-monitoring',
   templateUrl: './pa-sm-c-service-monitoring.component.html',
-  styles: []
+  styles: [],
 })
-export class PaSmCServiceMonitoringComponent extends BasePage implements OnInit {
-
+export class PaSmCServiceMonitoringComponent
+  extends BasePage
+  implements OnInit
+{
   //Provisional DATA
   data: any[] = [
     {
@@ -23,15 +25,14 @@ export class PaSmCServiceMonitoringComponent extends BasePage implements OnInit 
       status: 'expiredDate',
     },
     {
-      numberGood:12112,
+      numberGood: 12112,
       descriptionG: 'Ficha Depósito',
       numberService: 3823,
       descriptionS: 'Gastos de seguridad Pública y Nacional',
       nextPayment: '02-06-2001',
       delay: '1305',
       status: 'dueDate',
-    }
-
+    },
   ];
 
   totalItems: number = 0;
@@ -47,22 +48,20 @@ export class PaSmCServiceMonitoringComponent extends BasePage implements OnInit 
     this.settings = {
       ...this.settings,
       actions: false,
-      rowClassFunction: (row:any) =>{
-        if(row.data.status === 'dueDate'){
+      rowClassFunction: (row: any) => {
+        if (row.data.status === 'dueDate') {
           return 'text-success';
-        }else {
-          return 'text-danger'
+        } else {
+          return 'text-danger';
         }
       },
       columns: COLUMNS,
     };
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   settingsChange($event: any): void {
     this.settings = $event;
   }
-
 }

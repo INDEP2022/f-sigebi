@@ -1,5 +1,5 @@
 export const EXECUTIVE_PROCESSES_ROUTES = [
-    {
+  {
     label: 'Procesos Ejecutivos',
     icon: 'bx-folder',
     subItems: [
@@ -69,7 +69,14 @@ export const EXECUTIVE_PROCESSES_ROUTES = [
         label: 'Gestión de Autorización de Destrucción',
         link: '/pages/executive-processes/pe-gdadd-m-destruction-authorization-management',
       },
-      
+      {
+        label: 'Aprobación de cambio a numerario',
+        link: '/pages/executive-processes/pe-gdadd-m-approval-change-numeraire',
+      },
+      {
+        label: 'Documentación recibida en sera',
+        link: '/pages/executive-processes/pe-gdadd-m-doc-received-sera',
+      },
     ],
   },
-]
+];

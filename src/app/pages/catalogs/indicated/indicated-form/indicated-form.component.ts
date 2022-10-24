@@ -1,7 +1,7 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IIndiciados } from 'src/app/core/models/catalogs/indiciados.model';
 import { IndiciadosService } from 'src/app/core/services/catalogs/indiciados.service';
 import { BasePage } from 'src/app/core/shared/base-page';

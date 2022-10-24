@@ -1,5 +1,5 @@
-<app-card [header]="true">
-  <div class="ch-content" header>
+<app-card>
+  <div body>
     <h5 class="title">DETALLES DEL ACTA</h5>
   </div>
 </app-card>
@@ -495,15 +495,23 @@
     <div body>
       <div class="row">
         <div class="col-md-6 col-sm-12 col-xs-12">
-          <button class="btn btn-primary btn-sm active" (click)="back()">
-            Atras
-          </button>
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button class="btn btn-primary btn-sm active" (click)="back()">
+                Atras
+              </button>
+            </div>
+          </div>
         </div>
 
         <div class="col-md-6 col-sm-12 col-xs-12">
-          <button class="btn btn-success btn-sm active" (click)="save()">
-            Guardar
-          </button>
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button class="btn btn-success btn-sm active" (click)="save()">
+                Guardar
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
