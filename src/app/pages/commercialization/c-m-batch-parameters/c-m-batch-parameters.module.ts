@@ -9,5 +9,6 @@ import { EventSelectionComponent } from './components/event-selection/event-sele
 @NgModule({
   declarations: [CMBatchParametersListComponent, EventSelectionComponent],
   imports: [CommonModule, CMBatchParametersRoutingModule, SharedModule],
+  exports: [EventSelectionComponent],
 })
 export class CMBatchParametersModule {}
