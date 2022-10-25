@@ -18,8 +18,8 @@
           <div class="md-tabls">
             <tabset>
               <tab heading="Documentos generales">
-                <div *ngIf="showForm">
-                  <h5 class="title">Buscar expedientes</h5>
+                <div>
+                  <h5 class="title">Búsqueda expedientes</h5>
                   <form [formGroup]="searchFileForm" class="form-material">
                     <div class="row pt-3">
                       <div class="col-md-4">
@@ -244,11 +244,17 @@
                   </button>
 
                   <button
+                    (click)="electronicSign()"
+                    class="btn btn-pink btn-sm active">
+                    <i class="fa fa-key"></i> Firma electrónica
+                  </button>
+
+                  <!-- <button
                     *ngIf="!showForm"
                     (click)="showForm = !showForm"
                     class="btn btn-info btn-sm active">
                     <i class="fa fa-search"></i> Buscar
-                  </button>
+                  </button> -->
 
                   <button
                     *ngIf="showForm"
@@ -273,7 +279,7 @@
               </tab>
 
               <tab heading="Documentos de solicitud">
-                <h5 class="title">Filtros de búsqueda</h5>
+                <h5 class="title">Búsqueda solicitud</h5>
 
                 <form [formGroup]="searchFileForm" class="form-material">
                   <div class="row pt-3">
@@ -370,7 +376,7 @@
               </tab>
 
               <tab heading="Documentos de bienes">
-                <h5 class="title">Filtro de búsqueda</h5>
+                <h5 class="title">Búsqueda bienes</h5>
                 <form [formGroup]="searchFileForm" class="form-material">
                   <div class="row pt-3">
                     <div class="col-md-6">
@@ -437,7 +443,7 @@
                     <app-columns-select
                       [(settings)]="settingsDocEst"></app-columns-select>
                     <button
-                      (click)="showDocsEst()"
+                      (click)="showDocsEstValidate()"
                       class="btn btn-primary btn-sm active">
                       <i class="fa fa-file-archive"></i> Ver documentos
                     </button>
@@ -446,7 +452,8 @@
                   <ng2-smart-table
                     [attr.class]="'table-bordered'"
                     [settings]="settingsDocEst"
-                    [source]="documentsEstData">
+                    [source]="documentsEstData"
+                    (userRowSelect)="selectDocument($event)">
                   </ng2-smart-table>
                   <app-pagination
                     [params]="params"
@@ -455,7 +462,7 @@
               </tab>
 
               <tab heading="Busqueda de documentos">
-                <h5 class="title">Búsqueda de documentos</h5>
+                <h5 class="title">Búsqueda documentos</h5>
                 <form [formGroup]="searchFileForm" class="form-material">
                   <div class="row pt-3">
                     <form-field
@@ -701,7 +708,9 @@
                   <ng2-smart-table
                     [attr.class]="'table-bordered'"
                     [settings]="settingsDocSea"
-                    [source]="documentsSeaData">
+                    [source]="documentsSeaData"
+                    (edit)="showDocument()"
+                    (delete)="deleteDocument()">
                   </ng2-smart-table>
                   <app-pagination
                     [params]="params"

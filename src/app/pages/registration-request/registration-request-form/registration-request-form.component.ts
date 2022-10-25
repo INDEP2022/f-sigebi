@@ -2,15 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { ElectronicSignatureListComponent } from '../../request/programming-request-components/acept-programming/electronic-signature-list/electronic-signature-list.component';
+import { ShowSignatureProgrammingComponent } from '../../request/programming-request-components/acept-programming/show-signature-programming/show-signature-programming.component';
+import { DocumentShowComponent } from '../../request/programming-request-components/execute-reception/document-show/document-show.component';
 import { DocumentsListComponent } from '../../request/programming-request-components/execute-reception/documents-list/documents-list.component';
 import { AssociateFileComponent } from '../associate-file/associate-file.component';
 import {
+  EXPEDIENT_DOC_EST_COLUMNS,
   EXPEDIENT_DOC_GEN_COLUMNS,
   EXPEDIENT_DOC_REQ_COLUMNS,
-  EXPEDIENT_DOC_EST_COLUMNS,
   EXPEDIENT_DOC_SEA_COLUMNS,
 } from './expedient-doc-columns';
 
@@ -34,6 +38,8 @@ export class RegistrationRequestFormComponent implements OnInit {
   typeDocuments = new DefaultSelect();
 
   showForm: boolean = false;
+  documentSelect: boolean = false;
+
   documentsGenData: any[] = [];
   documentsReqData: any[] = [];
   documentsEstData: any[] = [];
@@ -49,12 +55,12 @@ export class RegistrationRequestFormComponent implements OnInit {
     this.settingsDocSea.columns = EXPEDIENT_DOC_SEA_COLUMNS;
 
     this.settingsDocSea.edit.editButtonContent =
-      '<i class="fa fa-eye text-primary mx-2"></i>';
+      '<i class="fa fa-file text-success mx-2"></i>';
 
     this.settingsDocSea.actions.delete = true;
 
     this.settingsDocSea.delete.deleteButtonContent =
-      '<i class="fa fa-file text-success mx-2"></i>';
+      '<i class="fa fa-eye text-primary mx-2"></i>';
     this.documentsEstData = [
       {
         numberGestion: 234232,
@@ -151,5 +157,61 @@ export class RegistrationRequestFormComponent implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
+  }
+
+  showDocsEstValidate() {
+    if (!this.documentSelect) {
+      alert('Selecciona un documento');
+    } else {
+      const showDoctsEst = this.modalService.show(DocumentsListComponent, {
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      });
+    }
+  }
+
+  selectDocument(selectDocument?: any) {
+    if (selectDocument?.isSelected) {
+      this.documentSelect = true;
+    } else {
+      this.documentSelect = false;
+    }
+  }
+
+  showDocument() {
+    const showDocument = this.modalService.show(DocumentShowComponent, {
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+  }
+
+  electronicSign() {
+    const config = MODAL_CONFIG;
+    config.initialState = {
+      callback: (next: boolean) => {
+        if (next) {
+          this.showSignProg();
+        }
+      },
+    };
+
+    const electronicSign = this.modalService.show(
+      ElectronicSignatureListComponent,
+      config
+    );
+  }
+
+  showSignProg() {
+    const showSignProg = this.modalService.show(
+      ShowSignatureProgrammingComponent,
+      {
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
+  }
+
+  deleteDocument() {
+    alert('Se abre PDF');
   }
 }
