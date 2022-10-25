@@ -9,6 +9,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { InputFormDirective } from './common/directives/input-form.directive';
 import { HttpErrorsInterceptor } from './common/interceptors/http-errors.interceptor';
+import { DateFnsModule } from 'ngx-date-fns';
 import { ContentComponent } from './layouts/content/content.component';
 import { FullModule } from './layouts/full/full.module';
 import { counterReducer } from './pages/admin/reducer/home.reducer';
@@ -37,6 +38,7 @@ export function tokenGetter() {
     }),
     AppRoutingModule,
     HttpClientModule,
+    DateFnsModule.forRoot(),
   ],
   providers: [
     {

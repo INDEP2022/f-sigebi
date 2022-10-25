@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { DescriptionOfTheMatterComponent } from './description-of-the-matter/description-of-the-matter.component';
 //Components
 import { PaGspCGlobalServicePaymentComponent } from './global-service-payments/pa-gsp-c-global-service-payment.component';
 import { PaRspCRecordServicePaymentComponent } from './record-service-payments/pa-rsp-c-record-service-payment.component';
@@ -23,10 +24,14 @@ const routes: Routes = [
     path: 'global/:requestId',
     component: PaGspCGlobalServicePaymentComponent,
   },
+  {
+    path: 'descripcion-of-the-matter',
+    component: DescriptionOfTheMatterComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class PaSMServicesRoutingModule {}
+export class PaSMServicesRoutingModule { }

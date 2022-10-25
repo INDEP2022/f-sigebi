@@ -1,4 +1,10 @@
 export const TABLE_SETTINGS = {
+  add: {
+    // addButtonContent: '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
+    // createButtonContent: '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
+    // cancelButtonContent: '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
+    confirmCreate: true,
+  },
   selectMode: '',
   actions: {
     columnTitle: 'Acciones',

@@ -4,6 +4,7 @@ import { REGISTRATION_REQUEST_ROUTES } from '../common/routes/registration-reque
 import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
 import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception.routes';
 import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
+import { GENERAL_PROCESSES_ROUTES } from '../common/routes/general-processes.routes';
 import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
@@ -127,9 +128,18 @@ export const MENU: IMenuItem[] = [
         label: 'Actas Circunstanciadas de Suspensión/Cancelación',
         link: '/pages/final-destination-process/circumstantial-acts-suspension-cancellation',
       },
+      {
+        label: 'Actas Circunstanciadas de Cancelación de Ent por Robo',
+        link: '/pages/final-destination-process/acts-circumstantiated-cancellation-theft',
+      },
+      {
+        label: 'Constancias de Entrega',
+        link: '/pages/final-destination-process/proof-of-delivery',
+      },
     ],
   },
   ...DOCUMENTS_RECEPTION_ROUTES,
+  ...GENERAL_PROCESSES_ROUTES,
   //Procesos ejecutivos
   ...EXECUTIVE_PROCESSES_ROUTES,
   //Comercialización
