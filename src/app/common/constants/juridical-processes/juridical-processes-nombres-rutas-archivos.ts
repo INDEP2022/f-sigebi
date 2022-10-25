@@ -90,6 +90,12 @@ export const routesJuridicalProcesses: any = [
     link: 'relacion-recursos-revision',
     menu: 'Resolución de Recursos de Revisión',
   },
+  {
+    // Comprobación de Documentos para Recursos Revision
+    label: 'Comprobación de Documentos para Recursos Revision',
+    link: 'comprobacion-documentos-recursos-revision',
+    menu: 'Comprobación de Doc. para Recursos Revision',
+  },
   // DEPOSITARIA
 ];
 export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
@@ -188,6 +194,14 @@ export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
               baseMenu +
               baseMenuDepositaria +
               routesJuridicalProcesses[13].link,
+          },
+          {
+            // Resolución de Recursos de Revisión
+            label: routesJuridicalProcesses[14].menu,
+            link:
+              baseMenu +
+              baseMenuDepositaria +
+              routesJuridicalProcesses[14].link,
           },
         ],
       },
