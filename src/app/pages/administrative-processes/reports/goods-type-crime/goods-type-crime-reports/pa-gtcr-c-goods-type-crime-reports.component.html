@@ -25,7 +25,7 @@
               formControlName="to"
               placeholder="Selección de fecha"
               class="form-control"
-              bsDatepicker />
+              bsDatepicker/>
           </form-field>
         </div>
       </div>
@@ -56,7 +56,9 @@
         </div>
         <!--Areas Component-->
         <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-          <app-areas-shared [form]="form"></app-areas-shared>
+          <app-areas-shared 
+            [form]="form">
+          </app-areas-shared>
         </div>
       </div>
     </form>
