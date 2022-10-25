@@ -97,11 +97,19 @@ const routes: Routes = [
         )
       ).JudicialPhysicalReceptionModule,
   },
+
   {
     path: 'general-processes',
     loadChildren: async () =>
       (await import('./general-processes/general-processes.module'))
         .GeneralProcessesModule,
+  },
+
+  {
+    path: 'registration-request',
+    loadChildren: async () =>
+      (await import('./registration-request/registration-request.module'))
+        .RegistrationRequestModule,
   },
 ];
 
