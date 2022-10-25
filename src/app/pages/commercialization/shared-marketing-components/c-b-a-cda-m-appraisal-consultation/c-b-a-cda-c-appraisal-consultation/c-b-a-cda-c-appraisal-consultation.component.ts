@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { BasePage } from 'src/app/core/shared/base-page';
 
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import { APPRAISAL_COLUMNS } from './appraisal-columns';
-import { ExcelService } from 'src/app/common/services/exporttoexcel.service';
 
 @Component({
   selector: 'app-c-b-a-cda-c-appraisal-consultation',
@@ -13,6 +15,8 @@ export class CBACdaCAppraisalConsultationComponent
   extends BasePage
   implements OnInit
 {
+  params = new BehaviorSubject<ListParams>(new ListParams());
+
   constructor(private excelService: ExcelService) {
     super();
     this.settings = {
@@ -24,7 +28,8 @@ export class CBACdaCAppraisalConsultationComponent
         position: 'right',
       },
       edit: {
-        editButtonContent: '<span class="bi bi-file-earmark-excel"></span>',
+        editButtonContent:
+          '<span class="bi bi-file-earmark-excel text-warning mx-2"></span>',
       },
       columns: { ...APPRAISAL_COLUMNS },
     };
@@ -34,12 +39,12 @@ export class CBACdaCAppraisalConsultationComponent
 
   data = [
     {
-      idEvento: '21673',
-      idAvaluo: '32243',
-      cveAvaluo: 'IEV_DIV_186_E21673',
-      cveOficio: '77',
+      idEvento: '31573',
+      idAvaluo: '98743',
+      cveAvaluo: 'SDF_DFA_186_E21673',
+      cveOficio: '14',
       usuarioCaptura: 'MAROMERO',
-      fechaCaptura: '19/09/20',
+      fechaCaptura: '20/09/20',
       no: '',
       noBien: '',
       descripcion: '',

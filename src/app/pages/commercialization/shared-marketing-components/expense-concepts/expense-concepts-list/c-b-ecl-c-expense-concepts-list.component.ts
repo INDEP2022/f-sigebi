@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';

@@ -8,6 +8,6 @@
     <ng2-smart-table
       [settings]="settings"
       [source]="data"
-      (edit)="openModal()"></ng2-smart-table>
+      (edit)="openForm($event.data)"></ng2-smart-table>
   </div>
 </app-card>

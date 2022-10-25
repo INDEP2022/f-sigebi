@@ -3,7 +3,6 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { ExampleGood } from '../../kitchenware/pa-k-c-property-registration/pa-k-c-property-registration.component';
 import { PaVcCModalListGoodsComponent } from '../pa-vc-c-modal-list-goods/pa-vc-c-modal-list-goods.component';
 
 export interface ExampleVault {

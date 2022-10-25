@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { SharedModule } from '../../../shared/shared.module';
 import { DrClosingConfiscationAndReturnRecordsRoutingModule } from './dr-closing-confiscation-and-return-records-routing.module';
 import { DrClosingRecordsComponent } from './dr-closing-records/dr-closing-records.component';

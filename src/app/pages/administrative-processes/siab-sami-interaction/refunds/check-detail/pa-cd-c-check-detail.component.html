@@ -1,0 +1,53 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ status }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mb-3 mt-3">
+        <div class="col-xs-12 col-12 col-md-6 mb-3 mt-3">
+          <form-field
+            label="Número de Cheque"
+            [control]="form.get('checkNumber')">
+            <input
+              class="form-control"
+              formControlName="checkNumber"
+              type="number" />
+          </form-field>
+        </div>
+        <div class="col-xs-12 col-12 col-md-6 mb-3 mt-3">
+          <form-field
+            label="Número de Cuenta"
+            [control]="form.get('accountNumber')">
+            <input
+              class="form-control"
+              formControlName="accountNumber"
+              type="number" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mb-3 mt-3">
+        <!--Banks Component-->
+        <div class="col-12 mb-3 mt-3">
+          <app-banks-shared [form]="form"></app-banks-shared>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

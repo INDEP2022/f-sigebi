@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -13,6 +13,11 @@ export class CBmFEdfCInvoiceStatusModalComponent
   implements OnInit
 {
   form: FormGroup = new FormGroup({});
+  allotment: any;
+  title: string = 'Causas de ';
+  edit: boolean = false;
+  @Output() refresh = new EventEmitter<true>();
+
   constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
   }
@@ -23,9 +28,14 @@ export class CBmFEdfCInvoiceStatusModalComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      idStatus: ['', [Validators.required]],
-      description: ['', [Validators.required]],
+      id: [null, [Validators.required]],
+      descripcion: [null, [Validators.required]],
     });
+    if (this.allotment != null) {
+      this.edit = true;
+      console.log(this.allotment);
+      this.form.patchValue(this.allotment);
+    }
   }
 
   close() {

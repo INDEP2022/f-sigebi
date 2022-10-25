@@ -40,42 +40,19 @@
               </form-field>
             </div>
             <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
-              <!-- <form-field [control]="flyerForm.get('tipoVolante')" label="Tipo de Volante"> -->
               <div class="row w-100 pl-4">
-                <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-                  <form-radio label="Administrativo">
+                <label class="form-control-label">Tipo Volante</label>
+                <div
+                  class="col-sm-12 col-12 col-md-6 col-lg-6 col-xl-3 p-2 text-center"
+                  *ngFor="let option of optionsTipoVolante">
+                  <form-radio label="{{ option.label }}">
                     <input
                       type="radio"
                       formControlName="tipoVolante"
-                      value="Admin_Transfe" />
-                  </form-radio>
-                </div>
-                <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-                  <form-radio label="Procesal">
-                    <input
-                      type="radio"
-                      formControlName="tipoVolante"
-                      value="Procesal" />
-                  </form-radio>
-                </div>
-                <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-                  <form-radio label="Admin. Trans">
-                    <input
-                      type="radio"
-                      formControlName="tipoVolante"
-                      value="Admin" />
-                  </form-radio>
-                </div>
-                <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-                  <form-radio label="Transferente">
-                    <input
-                      type="radio"
-                      formControlName="tipoVolante"
-                      value="Transferente" />
+                      [value]="option.value" />
                   </form-radio>
                 </div>
               </div>
-              <!-- </form-field> -->
             </div>
             <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
               <form-field
@@ -93,33 +70,33 @@
                   formControlName="averiguacionPrevia" />
               </form-field>
             </div>
-            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
               <form-field
                 [control]="flyerForm.get('causaPenal')"
                 label="Causa Penal">
                 <input class="form-control" formControlName="causaPenal" />
               </form-field>
             </div>
-            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
               <form-field
                 [control]="flyerForm.get('cveAmparo')"
                 label="No. Amparo">
                 <input class="form-control" formControlName="cveAmparo" />
               </form-field>
             </div>
-            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2 text-center">
+            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2 text-center">
               <button type="button" class="btn btn-primary btn-sm active">
                 Observaciones
               </button>
             </div>
-            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
               <form-field
                 [control]="flyerForm.get('cveTocaPenal')"
                 label="Toca Penal">
                 <input class="form-control" formControlName="cveTocaPenal" />
               </form-field>
             </div>
-            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
               <form-field
                 [control]="flyerForm.get('cveOficioExterno')"
                 label="No. Oficio">
@@ -128,7 +105,7 @@
                   formControlName="cveOficioExterno" />
               </form-field>
             </div>
-            <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
+            <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
               <form-field
                 [control]="flyerForm.get('fecOficioExterno')"
                 label="Fecha Oficio">

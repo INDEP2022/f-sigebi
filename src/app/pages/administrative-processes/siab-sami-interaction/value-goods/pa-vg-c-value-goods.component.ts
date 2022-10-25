@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -30,7 +30,11 @@ export class PaVgCValueGoodsComponent extends BasePage implements OnInit {
       actions: false,
       columns: { ...COLUMNS },
     };
-    this.settings2.columns = COLUMNS2;
+    this.settings2 = {
+      ...this.settings2,
+      actions: false,
+      columns: { ...COLUMNS2 },
+    };
   }
 
   ngOnInit(): void {

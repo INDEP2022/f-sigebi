@@ -1,9 +1,10 @@
-import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception.routes';
-import { menuOptionsJuridicalProcesses } from '../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
-import { IMenuItem } from './interfaces/menu.interface';
-import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
-import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
+import { MENU_OPTIONS_JURIDICAL_PROCESSES } from '../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
 import { ADMINISTRATIVE_PROCESSES_ROUTES } from '../common/routes/administrative-processes.routes';
+import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
+import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception.routes';
+import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
+import { GENERAL_PROCESSES_ROUTES } from '../common/routes/general-processes.routes';
+import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
   {
@@ -45,8 +46,8 @@ export const MENU: IMenuItem[] = [
         link: '/pages/request/request-in-turn',
       },
       {
-        label: 'Solicitudes de transferencia',
-        link: '/pages/request/transfer-request',
+        label: 'Solicitudes',
+        link: '/pages/request/list',
       },
     ],
   },
@@ -94,17 +95,42 @@ export const MENU: IMenuItem[] = [
         ],
       },
       {
-        label: 'Exportación de Bienes para Donación a Excel',
+        label: 'Proceso de Donación',
         subItems: [
           {
             label: 'Exportación de Bienes para Donación',
             link: '/pages/final-destination-process/donation-process/export-goods-donation',
           },
+          {
+            label: 'Propuesta de Inventarios para Donación Web',
+            link: '/pages/final-destination-process/donation-process/web-donation-inventories',
+          },
+          {
+            label: 'Propuesta de Inventarios para Donación Directa',
+            link: '/pages/final-destination-process/donation-process/direct-donation-inventories',
+          },
+          {
+            label: 'Mantenimiento Comprometer para Donación',
+            link: '/pages/final-destination-process/donation-process/maintenance-commitment-donation',
+          },
+          {
+            label: 'Aprobación para Donación',
+            link: '/pages/final-destination-process/donation-process/approval-for-donation',
+          },
         ],
+      },
+      {
+        label: 'Actas Circunstanciadas de Suspensión/Cancelación',
+        link: '/pages/final-destination-process/circumstantial-acts-suspension-cancellation',
+      },
+      {
+        label: 'Actas Circunstanciadas de Cancelación de Ent por Robo',
+        link: '/pages/final-destination-process/acts-circumstantiated-cancellation-theft',
       },
     ],
   },
   ...DOCUMENTS_RECEPTION_ROUTES,
+  ...GENERAL_PROCESSES_ROUTES,
   //Procesos ejecutivos
   ...EXECUTIVE_PROCESSES_ROUTES,
   //Comercialización
@@ -177,7 +203,7 @@ export const MENU: IMenuItem[] = [
             link: '/pages/commercialization/c-bm-f-syf-m-series-folios-control',
           },
           {
-            label: 'Causas y Refacturación',
+            label: 'Causas de Refacturación',
             link: '/pages/commercialization/c-bm-f-cdr-m-rebilling-causes',
           },
           {
@@ -191,6 +217,14 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Permisos a Eventos',
             link: '/pages/commercialization/events',
+          },
+          {
+            label: 'Facturación masiva de venta de bases',
+            link: '/pages/commercialization/mass-biling-base-sales-tab',
+          },
+          {
+            label: 'Facturación normal',
+            link: '/pages/commercialization/regular-billing-tab',
           },
         ],
       },
@@ -272,20 +306,44 @@ export const MENU: IMenuItem[] = [
         subItems: [],
       },
       {
-        label: 'Conversión a numerario',
+        label: 'Conversión a Numerario',
         link: '/pages/commercialization/numeraire-exchange',
+      },
+      {
+        label: 'Consulta de Pagos Sirsae',
+        link: '/pages/commercialization/sirsae-payment-consultation',
+      },
+      {
+        label: 'Conversión Masiva de LCs',
+        link: '/pages/commercialization/lcs-massive-conversion',
+      },
+      {
+        label: 'Parámetros por Lote',
+        link: '/pages/commercialization/batch-parameters',
+      },
+      {
+        label: 'Eventos Relacionados',
+        link: '/pages/commercialization/related-events',
+      },
+      {
+        label: 'Búsqueda de Pagos',
+        link: '/pages/commercialization/payment-search',
+      },
+      {
+        label: 'Gestión de Firmas Electrónicas',
+        link: '/pages/commercialization/electronic-signatures',
       },
     ],
   },
   // PROCESOS JURIDICOS
-  menuOptionsJuridicalProcesses,
+  ...MENU_OPTIONS_JURIDICAL_PROCESSES,
   // Recepcion Fisica Judicial
   {
     label: 'Recepcion Fisica Judicial',
     icon: 'bx-folder',
     subItems: [
       {
-        label: 'Complemento Arituclo',
+        label: 'Complemento Aritculo',
         link: '/pages/judicial-physical-reception/articles-complement',
       },
       {
@@ -299,6 +357,27 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Actas de Recepcion',
         link: '/pages/judicial-physical-reception/confiscated-records',
+      },
+      {
+        label: 'Parcializa Bienes Generales 1',
+        link: '/pages/judicial-physical-reception/partializes-general-goods-1',
+      },
+
+      {
+        label: 'Parcializa Bienes Generales 2',
+        link: '/pages/judicial-physical-reception/partializes-general-goods-2',
+      },
+      {
+        label: 'Parcializaciond de Bienes',
+        link: '/pages/judicial-physical-reception/partializes-goods',
+      },
+      {
+        label: 'Recepcion Suspencion/Cancelacion',
+        link: '/pages/judicial-physical-reception/cancellation-recepcion',
+      },
+      {
+        label: 'Devolucion x Cancelacion de Venta',
+        link: '/pages/judicial-physical-reception/cancellation-sale',
       },
     ],
   },

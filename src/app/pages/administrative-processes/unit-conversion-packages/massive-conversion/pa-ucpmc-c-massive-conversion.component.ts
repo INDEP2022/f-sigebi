@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -24,7 +24,11 @@ export class PaUcpmcCMassiveConversionComponent
 
   constructor(private fb: FormBuilder) {
     super();
-    this.settings.columns = COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: { add: false, delete: true, edit: true },
+      columns: COLUMNS,
+    };
   }
 
   ngOnInit(): void {

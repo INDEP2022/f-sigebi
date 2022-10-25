@@ -2,12 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 //import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { COLUMNS } from './columns';
-import { Router } from '@angular/router';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { BsModalService } from 'ngx-bootstrap/modal';
 import { PaMrgCModalClassificationGoodsComponent } from '../pa-mrg-c-modal-classification-goods/pa-mrg-c-modal-classification-goods.component';
+import { COLUMNS } from './columns';
 
 @Component({
   selector: 'app-pa-mrg-c-massive-reclassification-goods',

@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { EditValidationExemptedGoodsModalComponent } from '../edit-validation-exempted-goods-modal/edit-validation-exempted-goods-modal.component';
 import { VALIDATION_EXEMPTED_GOODS_COLUMS } from './c-b-bedv-c-validation-exempted-goods-columns';
 
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -17,47 +19,47 @@ export class CBBedvCValidationExemptedGoodsComponent
 {
   ExcelData: any;
   CsvData: any;
+
   form: FormGroup = new FormGroup({});
 
-  constructor(private fb: FormBuilder) {
+  columns: any[] = [];
+  totalItems: number = 0;
+
+  constructor(private fb: FormBuilder, private modalService: BsModalService) {
     super();
     this.settings = {
       ...this.settings,
-      actions: false,
+      actions: {
+        columnTitle: 'Acciones',
+        position: 'right',
+        edit: true,
+        delete: false,
+      },
       columns: { ...VALIDATION_EXEMPTED_GOODS_COLUMS },
     };
   }
 
-  ngOnInit(): void {
-    this.prepareForm();
-  }
-  private prepareForm() {
-    this.form = this.fb.group({
-      idEvento: ['', [Validators.required]],
-      blackList: ['', [Validators.required]],
-      refundAmount: ['', [Validators.required]],
-      penaltyAmount: ['', [Validators.required]],
-    });
-  }
-  list = [
+  ngOnInit(): void {}
+
+  data = [
     {
-      bien: '791',
-      descripcion:
+      noBien: '791',
+      description:
         'FREIGHTLINER 1987 AZUL 453BK6 SPF CON CAJA REFRIGERADA CON THERMOKING 1FUEYB',
-      unidad: 'UNIDAD',
-      proceso: 'REV',
+      unit: 'UNIDAD',
+      proccess: 'REV',
     },
     {
-      bien: '1773',
-      descripcion: 'CARGADOR DE LA MARCA CANON, AL PARECER PARA CACULADORA',
-      unidad: 'PIEZA',
-      proceso: 'COMER',
+      noBien: '1773',
+      description: 'CARGADOR DE LA MARCA CANON, AL PARECER PARA CACULADORA',
+      unit: 'PIEZA',
+      proccess: 'COMER',
     },
     {
-      bien: '10230',
-      descripcion: 'SEMIREMOLQUE TIPO CAJA CERRADA',
-      unidad: 'PIEZA',
-      proceso: 'REV',
+      noBien: '10230',
+      description: 'SEMIREMOLQUE TIPO CAJA CERRADA',
+      unit: 'PIEZA',
+      proccess: 'REV',
     },
   ];
 
@@ -70,8 +72,33 @@ export class CBBedvCValidationExemptedGoodsComponent
     fileReader.onload = e => {
       var workbook = XLSX.read(fileReader.result, { type: 'binary' });
       var sheetNames = workbook.SheetNames;
-      this.list = XLSX.utils.sheet_to_json(workbook.Sheets[sheetNames[0]]);
-      console.log(this.list);
+      this.data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetNames[0]]);
+      console.log(this.data);
     };
+  }
+
+  getData() {
+    this.loading = true;
+    this.columns = this.data;
+    this.totalItems = this.data.length;
+    this.loading = false;
+  }
+
+  openModal(context?: Partial<EditValidationExemptedGoodsModalComponent>) {
+    const modalRef = this.modalService.show(
+      EditValidationExemptedGoodsModalComponent,
+      {
+        initialState: { ...context },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
+    modalRef.content.refresh.subscribe(next => {
+      if (next) this.getData();
+    });
+  }
+
+  openForm(allotment?: any) {
+    this.openModal({ allotment });
   }
 }

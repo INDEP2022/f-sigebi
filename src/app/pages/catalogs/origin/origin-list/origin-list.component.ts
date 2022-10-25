@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { OriginService } from 'src/app/core/services/catalogs/origin.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IOrigin } from '../../../../core/models/catalogs/origin.model';
-import { OriginService } from 'src/app/core/services/catalogs/origin.service';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { OriginFormComponent } from '../origin-form/origin-form.component';

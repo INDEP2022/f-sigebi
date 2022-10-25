@@ -1,15 +1,15 @@
 /** BASE IMPORT */
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { BasePage } from 'src/app/core/shared/base-page';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { BasePage } from 'src/app/core/shared/base-page';
 /** LIBRERÍAS EXTERNAS IMPORTS */
-import { Example } from 'src/app/core/models/catalogs/example';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import {
-  routesJuridicalProcesses,
   baseMenu,
+  routesJuridicalProcesses,
 } from 'src/app/common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { Example } from 'src/app/core/models/catalogs/example';
 
 /** SERVICE IMPORTS */
 import { ExampleService } from 'src/app/core/services/catalogs/example.service';
@@ -37,6 +37,13 @@ export class PJADEFileDataUpdateComponent
     '/pages/documents-reception/flyers-registration/shift-change';
   linkOficioRelacionado: string =
     '/pages/documents-reception/flyers-registration/related-document-management';
+
+  public optionsTipoVolante = [
+    { value: 'Administrativo', label: 'Administrativo' },
+    { value: 'Procesal', label: 'Procesal' },
+    { value: 'Admin. Trans', label: 'Admin. Trans' },
+    { value: 'Transferente', label: 'Transferente' },
+  ];
 
   constructor(
     private fb: FormBuilder,

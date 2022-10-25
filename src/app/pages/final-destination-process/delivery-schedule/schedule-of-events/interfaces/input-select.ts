@@ -1,4 +1,4 @@
 export interface inputSelect {
-    id: number,
-    name: string
+  id: number;
+  name: string;
 }

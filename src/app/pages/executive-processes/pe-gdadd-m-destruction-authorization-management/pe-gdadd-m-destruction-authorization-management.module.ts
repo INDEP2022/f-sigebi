@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
-import { SharedModule } from 'src/app/shared/shared.module';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { SharedModule } from 'src/app/shared/shared.module';
 
-import { PeGdaddMDestructionAuthorizationManagementRoutingModule } from './pe-gdadd-m-destruction-authorization-management-routing.module';
 import { PeGdaddCDestructionAuthorizationManagementComponent } from './pe-gdadd-c-destruction-authorization-management/pe-gdadd-c-destruction-authorization-management.component';
+import { PeGdaddMDestructionAuthorizationManagementRoutingModule } from './pe-gdadd-m-destruction-authorization-management-routing.module';
 
 @NgModule({
   declarations: [PeGdaddCDestructionAuthorizationManagementComponent],

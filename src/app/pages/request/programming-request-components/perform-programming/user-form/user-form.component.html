@@ -1,0 +1,46 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Información Usuario</h5>
+  </div>
+  <div body>
+    <form [formGroup]="userForm" class="form-material">
+      <form-field [control]="userForm.get('name')" label="Nombre usuario">
+        <input type="text" class="form-control" formControlName="name" />
+      </form-field>
+      <div class="row pt-3">
+        <form-field
+          [control]="userForm.get('email')"
+          label="Correo electronico">
+          <input type="text" class="form-control" formControlName="email" />
+        </form-field>
+      </div>
+      <div class="row pt-3">
+        <form-field [control]="userForm.get('chargeUser')">
+          <ngx-select
+            [form]="userForm"
+            control="chargeUser"
+            [data]="chargeUser"
+            value="id"
+            bindLabel="norm"
+            label="Cargo usuario"
+            (fetchItems)="getFractionSelect($event)"></ngx-select>
+        </form-field>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!userForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

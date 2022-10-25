@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
-import { ThirdPartyCompanyRoutingModule } from './third-party-company-routing.module';
-import { ThirdPartyCompanyListComponent } from './third-party-company-list/third-party-company-list.component';
-import { ThirdPartyCompanyFormComponent } from './third-party-company-form/third-party-company-form.component';
-import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { ThirdPartyCompanyFormComponent } from './third-party-company-form/third-party-company-form.component';
+import { ThirdPartyCompanyListComponent } from './third-party-company-list/third-party-company-list.component';
+import { ThirdPartyCompanyRoutingModule } from './third-party-company-routing.module';
 
 @NgModule({
   declarations: [

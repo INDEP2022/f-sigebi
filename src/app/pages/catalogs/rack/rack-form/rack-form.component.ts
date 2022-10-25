@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { RackService } from 'src/app/core/services/catalogs/rack.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { ListParams } from '../../../../common/repository/interfaces/list-params';
 import { IRack } from '../../../../core/models/catalogs/rack.model';
 import { DefaultSelect } from '../../../../shared/components/select/default-select';
-import { ListParams } from '../../../../common/repository/interfaces/list-params';
 
 @Component({
   selector: 'app-rack-form',

@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { BasePage } from 'src/app/core/shared/base-page';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BasePage } from 'src/app/core/shared/base-page';
 
 import { INonDeliveryReason } from '../../../../core/models/catalogs/non-delivery-reason.model';
 import { NonDeliveryReasonService } from '../../../../core/services/catalogs/non-delivery-reason.service';
-import { NON_DELIVERY_REASONS_COLUMNS } from './non-delivery-reasons-columns';
 import { NonDeliveryReasonsFormComponent } from '../non-delivery-reasons-form/non-delivery-reasons-form.component';
+import { NON_DELIVERY_REASONS_COLUMNS } from './non-delivery-reasons-columns';
 
 @Component({
   selector: 'app-non-delivery-reasons-list',

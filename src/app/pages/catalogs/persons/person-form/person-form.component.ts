@@ -5,7 +5,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IPerson } from 'src/app/core/models/catalogs/person.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { ModelForm } from '../../../../core/interfaces/ModelForm';
+import { ModelForm } from '../../../../core/interfaces/model-form';
 import { PersonService } from '../../../../core/services/catalogs/person.service';
 
 @Component({

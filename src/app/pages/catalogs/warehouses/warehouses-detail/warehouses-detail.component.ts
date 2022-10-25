@@ -7,7 +7,6 @@ import { LocalityService } from 'src/app/core/services/catalogs/locality.service
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { IWarehouse } from '../../../../core/models/catalogs/warehouse.model';
 import { WarehouseService } from '../../../../core/services/catalogs/warehouse.service';
 
 @Component({

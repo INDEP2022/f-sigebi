@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { ICity } from 'src/app/core/models/catalogs/city.model';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IMinpub } from '../../models/catalogs/minpub.model';
-import { ICity } from 'src/app/core/models/catalogs/city.model';
 @Injectable({
   providedIn: 'root',
 })

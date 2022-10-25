@@ -1,0 +1,9 @@
+<div class="row pt-5">
+  <div class="ch-content">
+    <h5 class="title">Rechazados</h5>
+    <div class="row justify-content-end mr-3">
+      <app-columns-select [(settings)]="settings"></app-columns-select>
+    </div>
+  </div>
+  <ng2-smart-table [settings]="settings" [source]="data"> </ng2-smart-table>
+</div>

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
 import { IZoneGeographic } from 'src/app/core/models/catalogs/zone-geographic.model';
