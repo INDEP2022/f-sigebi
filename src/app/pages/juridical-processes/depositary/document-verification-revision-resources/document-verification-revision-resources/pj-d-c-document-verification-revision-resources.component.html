@@ -1,0 +1,246 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      COMPROBACI&Oacute;N DE DOCUMENTOS PARA RECURSOS REVISI&Oacute;N
+    </h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-12 p-2">
+          <h6>Información de Expediente</h6>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="form.get('noExpediente')"
+            label="No. Expediente">
+            <input class="form-control" formControlName="noExpediente" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field [control]="form.get('noAmparo')" label="No. Amparo">
+            <input class="form-control" formControlName="noAmparo" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="form.get('fechaPresentacionRecursoRevision')"
+            label="Fecha Presentación Recurso Revisión">
+            <input
+              class="form-control"
+              formControlName="fechaPresentacionRecursoRevision"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field
+            [control]="form.get('averiguacionPrevia')"
+            label="Averiguación Previa">
+            <input class="form-control" formControlName="averiguacionPrevia" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field [control]="form.get('causaPenal')" label="Causa Penal">
+            <input class="form-control" formControlName="causaPenal" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2">
+          <h6>Información de Bienes</h6>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field [control]="form.get('noBien')" label="No. Bien">
+            <input class="form-control" formControlName="noBien" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field
+            [control]="form.get('descripcion')"
+            label="No. Bien Descripción">
+            <input class="form-control" formControlName="descripcion" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="form.get('fechaAcuerdoInicial')"
+            label="Fecha Notificación">
+            <input
+              class="form-control"
+              formControlName="fechaAcuerdoInicial"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field [control]="form.get('estatusBien')" label="Estatus Bien">
+            <input class="form-control" formControlName="estatusBien" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="form.get('fechaNotificacion')"
+            label="Fecha Notificación">
+            <input
+              class="form-control"
+              formControlName="fechaNotificacion"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="form.get('statusDictaminacion')"
+            label="Estatus Dictaminación">
+            <input class="form-control" formControlName="statusDictaminacion" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field
+            [control]="form.get('acuerdoInicial')"
+            label="Acuerdo Inicial">
+            <textarea
+              rows="3"
+              class="form-control"
+              formControlName="acuerdoInicial"></textarea>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field
+            [control]="form.get('motivoRecursoRevision')"
+            label="Motivo Recurso Revisión">
+            <textarea
+              rows="3"
+              class="form-control"
+              formControlName="motivoRecursoRevision"></textarea>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field
+            [control]="form.get('observaciones')"
+            label="Observaciones">
+            <textarea
+              rows="3"
+              class="form-control"
+              formControlName="observaciones"></textarea>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
+          <div class="form-group">
+            <button
+              type="button"
+              class="btn btn-primary active"
+              (click)="btnAprobar()">
+              Aprobar
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer *ngIf="autoridad" class="alert alert-info">
+    <form [formGroup]="formAutoridad" class="form-material">
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-6 p-2">
+          <form-field
+            [control]="formAutoridad.get('autoridad')"
+            label="Autoridad que aprueba el Dictamen">
+            <input class="form-control" formControlName="autoridad" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 p-2">
+          <div class="form-group">
+            <button
+              type="button"
+              class="btn btn-primary active ml-2 mr-2"
+              (click)="btnEjecutarAutoridad()">
+              Aceptar
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary active ml-2 mr-2"
+              (click)="btnSalirAutoridad()">
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>
+
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">DOCUMENTACI&Oacute;N</h5>
+  </div>
+
+  <div body>
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-2">
+        <ng2-smart-table
+          class="my-table"
+          [settings]="tableSettings"
+          [source]="dataTable"></ng2-smart-table>
+      </div>
+      <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+        <div class="form-group">
+          <button
+            type="button"
+            class="btn btn-primary active ml-2 mr-2"
+            (click)="btnRecursos()">
+            Recursos
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary active ml-2 mr-2"
+            (click)="btnSeleccionarDocumentos()">
+            Seleccionar Documentos
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div footer *ngIf="informes">
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 p-2">
+        <div class="alert alert-info">
+          <p>
+            PARA GENERAR REQUISITOS DOCUMENTALES CON DETALLE DE TODOS LOS
+            EXPEDIENTES Y BIENES, EL NÚMERO DE EXPEDIENTE Y EL NÚMERO DE BIEN
+            DEBEN SER NULOS.
+          </p>
+          <br />
+          <form [formGroup]="formInforme" class="form-material">
+            <div class="row w-100">
+              <div class="col-sm-12 col-12 col-md-6 p-2">
+                <form-field
+                  [control]="form.get('noExpediente')"
+                  label="No. Expediente">
+                  <input class="form-control" formControlName="noExpediente" />
+                </form-field>
+              </div>
+              <div class="col-sm-12 col-12 col-md-6 p-2">
+                <form-field [control]="form.get('noBien')" label="No. Bien">
+                  <input class="form-control" formControlName="noBien" />
+                </form-field>
+              </div>
+              <div class="col-sm-12 col-12 col-md-12 p-2">
+                <div class="form-group">
+                  <button
+                    type="button"
+                    class="btn btn-primary active ml-2 mr-2"
+                    (click)="btnEjecutarInformes()">
+                    Ejecutar Informes
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-primary active ml-2 mr-2"
+                    (click)="btnSalir()">
+                    Salir
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>
