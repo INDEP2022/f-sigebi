@@ -93,6 +93,13 @@ const routes: Routes = [
       ).PJDDocumentVerificationRevisionResourcesModule,
     data: { title: routesJuridicalProcesses[14].label },
   },
+  {
+    path: routesJuridicalProcesses[15].link,
+    loadChildren: async () =>
+      (await import('./return-ruling/jp-d-m-return-ruling.module'))
+        .JpDMReturnRulingModule,
+    data: { title: routesJuridicalProcesses[15].label },
+  },
   // DEPOSITARIA
 
   // PROCESO DE DISPERCION DE PAGOS

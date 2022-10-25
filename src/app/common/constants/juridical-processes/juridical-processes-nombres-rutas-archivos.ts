@@ -96,6 +96,12 @@ export const routesJuridicalProcesses: any = [
     link: 'comprobacion-documentos-recursos-revision',
     menu: 'Comprobación de Doc. para Recursos Revision',
   },
+  {
+    // Dictaminación para devolución
+    label: 'Dictaminación para devolución',
+    link: 'return-ruling',
+    menu: 'Dictaminación para devolución',
+  },
   // DEPOSITARIA
 ];
 export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
@@ -202,6 +208,13 @@ export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
               baseMenu +
               baseMenuDepositaria +
               routesJuridicalProcesses[14].link,
+          },
+          {
+            label: routesJuridicalProcesses[15].menu,
+            link:
+              baseMenu +
+              baseMenuDepositaria +
+              routesJuridicalProcesses[15].link,
           },
         ],
       },
