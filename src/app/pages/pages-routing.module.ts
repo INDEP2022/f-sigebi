@@ -92,8 +92,17 @@ const routes: Routes = [
   {
     path: 'judicial-physical-reception',
     loadChildren: async () =>
-      (await import('./judicial-physical-reception/judicial-physical-reception.module'))
-        .JudicialPhysicalReceptionModule,
+      (
+        await import(
+          './judicial-physical-reception/judicial-physical-reception.module'
+        )
+      ).JudicialPhysicalReceptionModule,
+  },
+  {
+    path: 'registration-request',
+    loadChildren: async () =>
+      (await import('./registration-request/registration-request.module'))
+        .RegistrationRequestModule,
   },
 ];
 

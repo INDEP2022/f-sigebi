@@ -4,6 +4,7 @@ import { IMenuItem } from './interfaces/menu.interface';
 import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
 import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
 import { ADMINISTRATIVE_PROCESSES_ROUTES } from '../common/routes/administrative-processes.routes';
+import { REGISTRATION_REQUEST_ROUTES } from '../common/routes/registration-request.routes';
 
 export const MENU: IMenuItem[] = [
   {
@@ -308,6 +309,10 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
+
+  // Registro solicitudes//
+  ...REGISTRATION_REQUEST_ROUTES,
+
   //Proceso Destino final
   {
     label: 'Proceso Destino final',
