@@ -123,6 +123,10 @@ export const MENU: IMenuItem[] = [
         label: 'Actas Circunstanciadas de Suspensión/Cancelación',
         link: '/pages/final-destination-process/circumstantial-acts-suspension-cancellation',
       },
+      {
+        label: 'Actas Circunstanciadas de Cancelación de Ent por Robo',
+        link: '/pages/final-destination-process/acts-circumstantiated-cancellation-theft',
+      },
     ],
   },
   ...DOCUMENTS_RECEPTION_ROUTES,

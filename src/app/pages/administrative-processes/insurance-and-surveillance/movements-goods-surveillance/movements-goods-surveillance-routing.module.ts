@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ReturnsConfiscationComponent } from './returns-confiscation/returns-confiscation.component';
+import { MovementsGoodsSurveillanceComponent } from './movements-goods-surveillance/movements-goods-surveillance.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: ReturnsConfiscationComponent,
+    component: MovementsGoodsSurveillanceComponent,
   },
 ];
 
@@ -13,4 +13,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class ReturnsConfiscationRoutingModule {}
+export class MovementsGoodsSurveillanceRoutingModule {}
