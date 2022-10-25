@@ -46,6 +46,53 @@ const routes: Routes = [
         .PJDRBDGoodsDepositaryModule,
     data: { title: routesJuridicalProcesses[9].label },
   },
+  {
+    path: routesJuridicalProcesses[10].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './assignation-goods-protection/pj-d-ra-m-assignation-goods-protection.module'
+        )
+      ).PJDRAAssignationGoodsProtectionModule,
+    data: { title: routesJuridicalProcesses[10].label },
+  },
+  {
+    path: routesJuridicalProcesses[11].link,
+    loadChildren: async () =>
+      (await import('./issue-agreements/pj-d-ea-m-issue-agreements.module'))
+        .PJDEAIssueAgreementsModule,
+    data: { title: routesJuridicalProcesses[11].label },
+  },
+  {
+    path: routesJuridicalProcesses[12].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './historical-situation-goods/pj-d-ea-m-historical-situation-goods.module'
+        )
+      ).PJDAEHistoricalSituationGoodsModule,
+    data: { title: routesJuridicalProcesses[12].label },
+  },
+  {
+    path: routesJuridicalProcesses[13].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './resolution-revision-resources/pj-d-m-resolution-revision-resources.module'
+        )
+      ).PJDResolutionRevisionResourcesModule,
+    data: { title: routesJuridicalProcesses[13].label },
+  },
+  {
+    path: routesJuridicalProcesses[14].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './document-verification-revision-resources/pj-d-m-document-verification-revision-resources.module'
+        )
+      ).PJDDocumentVerificationRevisionResourcesModule,
+    data: { title: routesJuridicalProcesses[14].label },
+  },
   // DEPOSITARIA
 
   // PROCESO DE DISPERCION DE PAGOS
@@ -65,4 +112,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class DepositoryRoutingModule {}
+export class DepositaryRoutingModule {}
