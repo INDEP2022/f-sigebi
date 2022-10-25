@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { IRegulatory } from 'src/app/core/models/catalogs/regulatory.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { RegulatoryService } from 'src/app/core/services/catalogs/regulatory.service';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { RegulatoyFormComponent } from '../regulatory-form/regulatoy-form.component';
 import { REGULATORY_COLUMNS } from './regulatory-columns';
 

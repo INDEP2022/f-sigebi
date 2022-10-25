@@ -1,9 +1,9 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BasePage } from 'src/app/core/shared/base-page';
-import { LIST_EVENT_COLUMNS } from './list-event-columns';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { LIST_EVENT_COLUMNS } from './list-event-columns';
 
 @Component({
   selector: 'app-select-event-modal',

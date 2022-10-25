@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ListParams } from '../../../../common/repository/interfaces/list-params';
 
-import { IRevisionReason } from '../../../../core/models/catalogs/revision-reason.model';
 import { RevisionReasonService } from 'src/app/core/services/catalogs/revision-reason.service';
-import { REVISION_REASON_COLUMNS } from './revision-reason-columns';
+import { IRevisionReason } from '../../../../core/models/catalogs/revision-reason.model';
 import { RevisionReasonFormComponent } from '../revision-reason-form/revision-reason-form.component';
+import { REVISION_REASON_COLUMNS } from './revision-reason-columns';
 
 @Component({
   selector: 'app-revision-reason-list',

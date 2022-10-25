@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BsModalService } from 'ngx-bootstrap/modal';
 import { Router } from '@angular/router';
-import { BehaviorSubject, takeUntil } from 'rxjs';
-import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
 //Components
 import { PaGspCGoodsServicePaymentComponent } from '../goods-service-payments/pa-gsp-c-goods-service-payment.component';
@@ -14,38 +13,39 @@ import { PaRsfCRequestServiceFormComponent } from '../request-service-form/pa-rs
 @Component({
   selector: 'app-pa-rsp-c-request-service-payment',
   templateUrl: './pa-rsp-c-request-service-payment.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class PaRspCRequestServicePaymentComponent extends BasePage implements OnInit{
-
+export class PaRspCRequestServicePaymentComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
 
   data: any[] = [
-      {
-          request: 'Solictu1234',
-          goodNumber: '2563',
-          service: 'CVE_SERVICE+DI_DESCRIPTION',
-          requestDate: '29-12-1999',
-          paymentDate: 'FEC_PAGO',
-          amount: '$10000000',
-          isPayment: false,
-      },
-      {
-          request: 'abc3422',
-          goodNumber: '2563',
-          service: 'CVE_SERVICE+DI_DESCRIPTION',
-          requestDate: '29-12-2020',
-          paymentDate: 'FEC_PAGO',
-          amount: '$10000000',
-          isPayment: true,
-      }
+    {
+      request: 'Solictu1234',
+      goodNumber: '2563',
+      service: 'CVE_SERVICE+DI_DESCRIPTION',
+      requestDate: '29-12-1999',
+      paymentDate: 'FEC_PAGO',
+      amount: '$10000000',
+      isPayment: false,
+    },
+    {
+      request: 'abc3422',
+      goodNumber: '2563',
+      service: 'CVE_SERVICE+DI_DESCRIPTION',
+      requestDate: '29-12-2020',
+      paymentDate: 'FEC_PAGO',
+      amount: '$10000000',
+      isPayment: true,
+    },
   ];
 
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   //Columns
-  columns=COLUMNS;
+  columns = COLUMNS;
 
   constructor(
     private fb: FormBuilder,
@@ -55,13 +55,12 @@ export class PaRspCRequestServicePaymentComponent extends BasePage implements On
     super();
     this.settings = {
       ...this.settings,
-      actions: { add: true, delete: true},
+      actions: { add: true, delete: true },
       columns: COLUMNS,
     };
   }
 
   ngOnInit(): void {
-
     this.prepareForm();
     /**
      * Instance renderComponent
@@ -113,14 +112,11 @@ export class PaRspCRequestServicePaymentComponent extends BasePage implements On
   }
 
   openModalNew(context?: Partial<PaRsfCRequestServiceFormComponent>): void {
-    const modalRef = this.modalService.show(
-      PaRsfCRequestServiceFormComponent,
-      {
-        //initialState: {/**/},
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      }
-    );
+    const modalRef = this.modalService.show(PaRsfCRequestServiceFormComponent, {
+      //initialState: {/**/},
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
 
     modalRef.content.data.subscribe(data => {
       if (data) {

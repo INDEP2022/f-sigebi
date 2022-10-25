@@ -1,4 +1,4 @@
-export interface IAuthority{
-    id:number;
-    name:string;
+export interface IAuthority {
+  id: number;
+  name: string;
 }

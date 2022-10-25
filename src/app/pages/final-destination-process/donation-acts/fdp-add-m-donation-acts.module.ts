@@ -1,9 +1,9 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FdpAddMDonationActsRoutingModule } from './fdp-add-m-donation-acts-routing.module';
-import { FdpAddCDonationActsComponent } from './donation-acts/fdp-add-c-donation-acts.component';
-import { SharedModule } from 'src/app/shared/shared.module';
+import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { FdpAddCDonationActsComponent } from './donation-acts/fdp-add-c-donation-acts.component';
+import { FdpAddMDonationActsRoutingModule } from './fdp-add-m-donation-acts-routing.module';
 
 @NgModule({
   declarations: [FdpAddCDonationActsComponent],

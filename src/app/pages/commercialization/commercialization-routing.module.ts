@@ -136,7 +136,7 @@ const routes: Routes = [
           './movable-property/c-bm-f-cdr-m-rebilling-causes/c-bm-f-cdr-m-rebilling-causes.module'
         )
       ).CBmFCdrMRebillingCausesModule,
-    data: { title: 'Causas y Refacturación' },
+    data: { title: 'Causas de Refacturación' },
   },
   {
     path: 'c-bm-f-edf-m-invoice-status',
@@ -224,6 +224,57 @@ const routes: Routes = [
         )
       ).CMLcsMassiveConversionModule,
     data: { title: 'Conversión Masiva de LCs' },
+  },
+  {
+    path: 'mass-biling-base-sales-tab',
+    loadChildren: async () =>
+      (
+        await import(
+          './movable-property/mass-biling-base-sales-tab/mass-biling-base-sales-tab.module'
+        )
+      ).MassBilingBaseSalesTabModule,
+    data: { title: 'Facturación masiva de VTA. de bases ' },
+  },
+  {
+    path: 'batch-parameters',
+    loadChildren: async () =>
+      (await import('./c-m-batch-parameters/c-m-batch-parameters.module'))
+        .CMBatchParametersModule,
+    data: { title: 'Parámetros por Lote' },
+  },
+  {
+    path: 'related-events',
+    loadChildren: async () =>
+      (await import('./c-m-related-events/c-m-related-events.module'))
+        .CMRelatedEventsModule,
+    data: { title: 'Eventos Relacionados' },
+  },
+  {
+    path: 'regular-billing-tab',
+    loadChildren: async () =>
+      (
+        await import(
+          './movable-property/regular-billing-tab/regular-billing-tab.module'
+        )
+      ).RegularBillingTabModule,
+    data: { title: 'Facturación normal' },
+  },
+  {
+    path: 'payment-search',
+    loadChildren: async () =>
+      (await import('./c-m-payment-search/c-m-payment-search.module'))
+        .CMPaymentSearchModule,
+    data: { title: 'Búsqueda y Procesamiento de Pagos' },
+  },
+  {
+    path: 'electronic-signatures',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-m-electronic-signatures/c-m-electronic-signatures.module'
+        )
+      ).CMElectronicSignaturesModule,
+    data: { title: 'Gestión de Firmas Electrónicas' },
   },
 ];
 

@@ -1,0 +1,101 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">REPORTES DE VIGILANCIA</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row mt-4 float-right">
+        <div class="row mt-4">
+          <div class="col-md-4">
+            <form-field [control]="form.get('contract')" label="Contrato">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="contract"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('provider')">
+              <ngx-select
+                [form]="form"
+                [data]="providers"
+                bindLabel="name"
+                label="Subtipo Final"
+                value="id"
+                (fetchItems)="getProviders($event)"
+                control="provider"></ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="form.get('providerSign')"
+              label="Firma Reporte Proovedor">
+              <input
+                type="text"
+                formControlName="providerSign"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-md-4">
+            <form-field [control]="form.get('reports')" label="Reportes">
+              <input
+                type="text"
+                formControlName="reports"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="form.get('reportSae')"
+              label="Firma Reporte SAE">
+              <input
+                type="text"
+                formControlName="reportSae"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-md-2">
+            <form-field [control]="form.get('year')" label="Año">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="year"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-2">
+            <form-field [control]="form.get('month')" label="Mes">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="month"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row mt-4 float-right">
+          <div class="">
+            <button type="submit" class="btn btn-primary btn-sm active mx-4">
+              REPORTE
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

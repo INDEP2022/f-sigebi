@@ -1,19 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { BsDatepickerConfig, BsDatepickerViewMode } from 'ngx-bootstrap/datepicker';
-import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { DomSanitizer } from '@angular/platform-browser';
+import {
+  BsDatepickerConfig,
+  BsDatepickerViewMode,
+} from 'ngx-bootstrap/datepicker';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-pe-aab-c-annual-accumulated-assets',
   templateUrl: './pe-aab-c-annual-accumulated-assets.component.html',
   styles: [],
 })
-export class PeAabCAnnualAccumulatedAssetsComponent extends BasePage implements OnInit {
+export class PeAabCAnnualAccumulatedAssetsComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
   select = new DefaultSelect();
   pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
@@ -29,9 +34,10 @@ export class PeAabCAnnualAccumulatedAssetsComponent extends BasePage implements 
   constructor(
     private modalService: BsModalService,
     private fb: FormBuilder,
-    private sanitizer: DomSanitizer) {
-      super();
-    }
+    private sanitizer: DomSanitizer
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -60,7 +66,7 @@ export class PeAabCAnnualAccumulatedAssetsComponent extends BasePage implements 
     });
   }
 
-    openPrevPdf() {
+  openPrevPdf() {
     let config: ModalOptions = {
       initialState: {
         documento: {

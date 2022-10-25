@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { ListParams } from '../../../../common/repository/interfaces/list-params';
 import { IMinpub } from '../../../../core/models/catalogs/minpub.model';
 import { MinPubService } from '../../../../core/services/catalogs/minpub.service';
-import { MINIPUB_COLUMNS } from './minpub-columns';
 import { MinpubFormComponent } from './../minpub-form/minpub-form.component';
+import { MINIPUB_COLUMNS } from './minpub-columns';
 
 @Component({
   selector: 'app-minpub-list',

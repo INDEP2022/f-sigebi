@@ -1,0 +1,101 @@
+<div >
+    <div class="row">
+        <div class="d-flex bd-highlight">
+            <div class="p-2 flex-grow-1 bd-highlight">
+                <h5 class="title"><strong>Informacion de Recepción de Solicitud</strong></h5>
+            </div>
+           <!--  <div class="p-2 bd-highlight buttons">
+                <button
+                    class="btn btn-primary btn-sm active"
+                    [disabled]="receptionForm.invalid"      
+                    (click)="confirm()">
+                    Guardar
+                </button>
+            </div> -->
+        </div>
+    </div>
+    <div class="row">
+        <form [formGroup]="receptionForm" class="form-material">
+            <div class="row pt-3">
+                <div class="col-sm-2">
+                    <span style="line-height: 3;">Prioridad</span>
+                </div>
+                <div class="col-sm-2">
+                    <form-radio label="">
+                        <input 
+                        type="radio" 
+                        formControlName="priority" 
+                        value="true" 
+                        id="priority" />
+                    </form-radio>   
+                </div>
+                <div class="col-md-3">
+                    <label class="label" for="">Procedencia Información: <span for="">{{receptionForm.get('infoProvenance').value}}</span></label>
+                </div>
+            </div>
+            <div class="row pt-3">       
+                <div class="col-md-4">
+                    <label class="label" for="">Fecha de Recepcion: <span for="">{{receptionForm.get('receptDate').value}}</span></label>               
+                  </div>
+                  <div class="col-md-4">
+                    <label class="label" for="">Fecha de Oficion: <span for="">{{receptionForm.get('officeDate').value}}</span></label>
+                  </div>
+                <div class="col-md-4">
+                    <label class="label" for="">Tipo Expediente: <span for="">{{receptionForm.get('typeExpedient').value}}</span></label>
+                </div>    
+            </div>
+            <div class="row pt-3">   
+                <div class="col-md-4">
+                    <label class="label" for="">Nombre del Remitente: <span for="">{{receptionForm.get('nameSender').value}}</span></label>
+                </div>       
+                <div class="col-md-4">
+                    <label class="label" for="">Cargo del Remitente: <span for="">{{receptionForm.get('senderCharge').value}}</span></label>
+                </div>
+                <div class="col-md-4">
+                    <label class="label" for="">Telefono del Remitente: <span for="">{{receptionForm.get('phoneSender').value}}</span></label>
+                </div>              
+            </div>
+            <div class="row pt-3">    
+                <div class="col-md-4">
+                    <label class="label" for="">Email del Remitente: <span for="">{{receptionForm.get('emailSender').value}}</span></label>
+                </div>
+                <div class="col-md-4">
+                    <label class="label" for="">Juzgado: <span for="">{{receptionForm.get('tribunal').value}}</span></label>
+                </div>   
+                <div class="col-md-4">
+                    <label class="label" for="">Delito: <span for="">{{receptionForm.get('crime').value}}</span></label>
+                </div>           
+            </div>
+            <div class="row pt-3">
+                <div class="col-md-4">
+                    <label class="label" for="">Via de Recepción: <span for="">{{receptionForm.get('typeReception').value}}</span></label>
+                </div>
+                <div class="col-md-4">
+                    <label class="label" for="">Gestión de Destino: <span for="">{{receptionForm.get('destinationManage').value}}</span></label>
+                </div>
+                <div class="col-md-4">
+                    <label class="label" for="">Contribuyente y/o Indiciado: <span for="">{{receptionForm.get('contributor').value}}</span></label>
+                </div>
+            </div>
+            <div class="row pt-3">           
+                <div class="col-md-4">
+                    <label class="label" for="">Asunto: <span for="">{{receptionForm.get('subject').value}}</span></label>
+                </div>
+                <div class="col-md-4">
+                    <label class="label" for="">Expediente Transferente/PAMA: <span for="">{{receptionForm.get('transExpedient').value}}</span></label>
+                </div>
+                <div class="col-md-4">
+                    <label class="label" for="">Tipo Transferencia: <span for="">{{receptionForm.get('typeTransfer').value}}</span></label>
+                </div>
+            </div>
+            <div class="row pt-3">  
+                <div class="col-md-4">
+                    <label class="label" for="">Notas Entidad Transferente: <span for="">{{receptionForm.get('transferEntityNotes').value}}</span></label>
+                </div>
+                <div class="col-md-8">
+                    <label class="label" for="">Observaciones: <span for="">{{receptionForm.get('observations').value}}</span></label>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

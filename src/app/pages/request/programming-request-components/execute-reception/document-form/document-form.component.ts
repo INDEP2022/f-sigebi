@@ -8,16 +8,12 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-document-form',
   templateUrl: './document-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class DocumentFormComponent extends BasePage implements OnInit {
-
   documentForm: FormGroup = new FormGroup({});
   typesDocuments = new DefaultSelect();
-  constructor(
-    private fb: FormBuilder,
-    private modalRef: BsModalRef) { 
+  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
     super();
   }
 
@@ -25,7 +21,7 @@ export class DocumentFormComponent extends BasePage implements OnInit {
     this.prepareForm();
   }
 
-  prepareForm(){
+  prepareForm() {
     this.documentForm = this.fb.group({
       typeDocument: [null, [Validators.required]],
       document: [null, [Validators.required]],
@@ -43,16 +39,14 @@ export class DocumentFormComponent extends BasePage implements OnInit {
       programmingFolio: ['R-METROPOLITANA-SAT-5397-OS'],
       senderCharge: [null],
       comments: [null],
-    })
+    });
   }
 
-  getDocumentSelect(typeDocument: ListParams){
+  getDocumentSelect(typeDocument: ListParams) {}
 
-  }
+  confirm() {}
 
-  confirm(){}
-
-  close(){
+  close() {
     this.modalRef.hide();
   }
 }

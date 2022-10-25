@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Form, FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { ALLOTMENT_COLUMNS } from './payment-dispersion-validation-allotment-columns';
@@ -52,7 +52,15 @@ export class CBVdpCPaymentDispersionValidationComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      idEvento: [ '',  [ Validators.required, Validators.maxLength(10), Validators.minLength(1), Validators.pattern(NUMBERS_PATTERN)]],
+      idEvento: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(10),
+          Validators.minLength(1),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
       event: ['', [Validators.required]],
     });
   }

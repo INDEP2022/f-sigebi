@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { ViewCell } from 'ng2-smart-table';
-import { FormGroup, FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-table-checkbox',

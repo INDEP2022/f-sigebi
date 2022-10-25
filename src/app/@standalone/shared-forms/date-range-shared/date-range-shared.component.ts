@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
-import { SharedModule } from 'src/app/shared/shared.module';
 import { FormGroup } from '@angular/forms';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 @Component({
   selector: 'app-date-range-shared',

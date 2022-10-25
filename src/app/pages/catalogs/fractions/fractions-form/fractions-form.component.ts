@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IFraction } from 'src/app/core/models/catalogs/fraction.model';
 import { INorm } from 'src/app/core/models/catalogs/norm.model';
 import { ISiabClasification } from 'src/app/core/models/catalogs/siab-clasification.model';

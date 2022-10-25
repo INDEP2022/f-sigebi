@@ -1,9 +1,9 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
+import { SharedModule } from 'src/app/shared/shared.module';
 import { DrSatSaeGoodsLoadRoutingModule } from './dr-sat-sae-goods-load-routing.module';
 import { DrSatSaeGoodsLoadComponent } from './dr-sat-sae-goods-load/dr-sat-sae-goods-load.component';
-import { SharedModule } from 'src/app/shared/shared.module';
 
 @NgModule({
   declarations: [DrSatSaeGoodsLoadComponent],

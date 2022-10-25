@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
 import { IUser } from 'src/app/core/models/catalogs/user.model';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 

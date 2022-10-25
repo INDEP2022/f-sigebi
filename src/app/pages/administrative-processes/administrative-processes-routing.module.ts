@@ -127,6 +127,26 @@ const routes: Routes = [
           ).PaMChangeOfStatusStiModule,
         data: { title: 'Cambio de estatus sti' },
       },
+      {
+        path: 'payment-claim-process',
+        loadChildren: async () =>
+          (
+            await import(
+              './payment-claim-process/pa-m-payment-claim-process.module'
+            )
+          ).PaMPaymentClaimProcessModule,
+        data: { title: 'Proceso de reclamacion de pago' },
+      },
+      {
+        path: 'legal-regularization',
+        loadChildren: async () =>
+          (
+            await import(
+              './legal-regularization/pa-m-legal-regularization.module'
+            )
+          ).PaMLegalRegularizationModule,
+        data: { title: 'Regularizacion Juridica' },
+      },
       /**
        *Legaspi
        **/
@@ -150,6 +170,13 @@ const routes: Routes = [
           import('./reports/record/pa-r-r-m-record.module').then(
             m => m.PaRRMRecordModule
           ),
+      },
+      {
+        path: 'goods-type-crime-reports',
+        loadChildren: async () =>( 
+          await import( './reports/goods-type-crime/pa-gtc-m-goods-type-crime.module'))
+          .PaGtcMGoodsTypeCrimeModule,
+          data: { title: 'Reporte de Bienes por Tipo de Delito' },
       },
       {
         path: 'unit-conversion-packages',
@@ -178,6 +205,13 @@ const routes: Routes = [
           import(
             './siab-sami-interaction/pa-ssi-m-siab-sami-interaction.module'
           ).then(m => m.PaSsiMSiabSamiInteractionModule),
+      },
+      {
+        path: 'returns-confiscations',
+        loadChildren: async () =>
+          (await import('./returns-confiscations/pa-rc-m-returns-confications.module'))
+            .PaRcMReturnsConficationsModule,
+        data: { title: 'Devoluciones y Decomisos' },
       },
       /**
        *Legaspi
@@ -356,9 +390,19 @@ const routes: Routes = [
       {
         path: 'proceedings-conversion',
         loadChildren: async () =>
-          (await import('./proceedings-conversion/proceedings-conversion.module'))
-            .ProceedingsConversionModule,
+          (
+            await import(
+              './proceedings-conversion/proceedings-conversion.module'
+            )
+          ).ProceedingsConversionModule,
         data: { title: 'Detalle de actas de conversión' },
+      },
+      {
+        path: 'returns-confiscation',
+        loadChildren: async () =>
+          (await import('./returns-confiscation/returns-confiscation.module'))
+            .ReturnsConfiscationModule,
+        data: { title: 'Devoluciones y decomisos' },
       },
       /**
        * Seguros David Lucas

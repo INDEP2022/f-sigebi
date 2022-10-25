@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
-import { DelegationsRoutingModule } from './delegations-routing.module';
-import { DelegationListComponent } from './delegation-list/delegation-list.component';
-import { DelegationFormComponent } from './delegation-form/delegation-form.component';
-import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { DelegationFormComponent } from './delegation-form/delegation-form.component';
+import { DelegationListComponent } from './delegation-list/delegation-list.component';
+import { DelegationsRoutingModule } from './delegations-routing.module';
 
 @NgModule({
   declarations: [DelegationListComponent, DelegationFormComponent],

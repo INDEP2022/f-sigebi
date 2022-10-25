@@ -3,14 +3,10 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-maintenance',
   templateUrl: './maintenance.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class MaintenanceComponent implements OnInit {
+  constructor() {}
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

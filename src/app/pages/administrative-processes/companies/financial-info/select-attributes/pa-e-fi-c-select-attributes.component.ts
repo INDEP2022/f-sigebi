@@ -1,6 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { financialIndicators, financialAtribs } from './info';
 
 //Example
 export interface FinancialIndicator {

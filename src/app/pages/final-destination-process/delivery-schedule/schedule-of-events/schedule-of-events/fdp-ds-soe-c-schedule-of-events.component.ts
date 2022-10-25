@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { MAIN_COLUMNS } from '../main-columns';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { inputSelect } from '../interfaces/input-select';
+import { MAIN_COLUMNS } from '../main-columns';
 
 @Component({
   selector: 'app-fdp-ds-soe-c-schedule-of-events',

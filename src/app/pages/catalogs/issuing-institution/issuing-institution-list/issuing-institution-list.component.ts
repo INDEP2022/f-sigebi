@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IIssuingInstitution } from '../../../../core/models/catalogs/issuing-institution.model';
+import { IssuingInstitutionFormComponent } from '../issuing-institution-form/issuing-institution-form.component';
 import { IssuingInstitutionService } from './../../../../core/services/catalogs/issuing-institution.service';
 import { ISSUING_INSTITUTION_COLUMNS } from './issuing-institution-columns';
-import { IssuingInstitutionFormComponent } from '../issuing-institution-form/issuing-institution-form.component';
 
 @Component({
   selector: 'app-issuing-institution-list',

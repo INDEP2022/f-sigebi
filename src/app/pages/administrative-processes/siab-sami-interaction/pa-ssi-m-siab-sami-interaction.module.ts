@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 //Shared
 import { SharedModule } from 'src/app/shared/shared.module';
 //Reactive Forms
@@ -9,11 +9,11 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 //Routing
 import { PaSsiMSiabSamiInteractionRoutingModule } from './pa-ssi-m-siab-sami-interaction-routing.module';
 //Components
-import { PaSsiCSiabSamiInteractionComponent } from './pa-ssi-c-siab-sami-interaction.component';
 import { PaGrCGoodsRelationshipComponent } from './goods-relationship/pa-gr-c-goods-relationship.component';
 import { PaMdgCMissingDamagedGoodsComponent } from './missing-damaged-goods/pa-mdg-c-missing-damaged-goods.component';
-import { PaRmCRevenueManagementComponent } from './revenue-management/pa-rm-c-revenue-management.component';
+import { PaSsiCSiabSamiInteractionComponent } from './pa-ssi-c-siab-sami-interaction.component';
 import { PaPgCPaymentGoodsComponent } from './payment-goods/pa-pg-c-payment-goods.component';
+import { PaRmCRevenueManagementComponent } from './revenue-management/pa-rm-c-revenue-management.component';
 import { PaVgCValueGoodsComponent } from './value-goods/pa-vg-c-value-goods.component';
 
 @NgModule({

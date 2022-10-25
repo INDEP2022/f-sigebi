@@ -12,6 +12,9 @@ export interface IRequest {
   typeExpedient?: string;
   noRequest?: string;
 
+  //
+  responsible?: string;
+
   //Reception Requests
   priority?: boolean;
   infoProvenance?: string;
@@ -35,4 +38,7 @@ export interface IRequest {
   typeTransfer?: string;
   transferEntityNotes?: string;
   observations?: string;
+
+  //solicitud del expediente
+  status?: string;
 }

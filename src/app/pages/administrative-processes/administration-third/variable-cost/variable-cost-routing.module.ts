@@ -4,12 +4,13 @@ import { VariableCostComponent } from './variable-cost/variable-cost.component';
 
 const routes: Routes = [
   {
-    path:'', component:VariableCostComponent
-  }
+    path: '',
+    component: VariableCostComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class VariableCostRoutingModule { }
+export class VariableCostRoutingModule {}

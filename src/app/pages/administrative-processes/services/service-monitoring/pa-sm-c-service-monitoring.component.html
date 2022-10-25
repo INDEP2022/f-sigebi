@@ -3,28 +3,30 @@
     <h5 class="title">MONITOR DE SERVICIOS</h5>
     <div class="col-md-5 buttons">
       <div class="ml-3">
-        <app-columns-select [(settings)]="settings" [defaultColumns]="6"></app-columns-select>
+        <app-columns-select
+          [(settings)]="settings"
+          [defaultColumns]="6"></app-columns-select>
       </div>
     </div>
   </div>
   <div body>
     <!--Info Event-->
     <div class="row mb-3 mt-3 justify-content-end">
-    	<div class="col-md-3 align-content-end">
-    		<div class="mt-4">
-    			<h5 class="font-size-14 text-success">
-    				<i class="bx bx-calendar me-1 text-success"></i>
-    				Por Vencer
-    			</h5>
-    		</div>
+      <div class="col-md-2 align-content-end">
+        <div class="mt-4">
+          <h5 class="font-size-14 text-success">
+            <i class="bx bx-calendar me-1 text-success"></i>
+            Por Vencer
+          </h5>
+        </div>
       </div>
-      <div class="col-md-3 align-content-end">
-      	<div class="mt-4">
-    			<h5 class="font-size-14 text-danger">
-    				<i class="bx bx-calendar me-1 text-danger"></i>
-      			Vencido
-    			</h5>
-    		</div>
+      <div class="col-md-2 align-content-end">
+        <div class="mt-4">
+          <h5 class="font-size-14 text-danger">
+            <i class="bx bx-calendar me-1 text-danger"></i>
+            Vencido
+          </h5>
+        </div>
       </div>
     </div>
     <!--MONITORING-->

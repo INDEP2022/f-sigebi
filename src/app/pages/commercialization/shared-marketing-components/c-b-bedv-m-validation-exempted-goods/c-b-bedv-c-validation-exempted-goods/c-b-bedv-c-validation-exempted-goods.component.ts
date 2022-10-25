@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { VALIDATION_EXEMPTED_GOODS_COLUMS } from './c-b-bedv-c-validation-exempted-goods-columns';
 import { EditValidationExemptedGoodsModalComponent } from '../edit-validation-exempted-goods-modal/edit-validation-exempted-goods-modal.component';
+import { VALIDATION_EXEMPTED_GOODS_COLUMS } from './c-b-bedv-c-validation-exempted-goods-columns';
 
 import { BasePage } from 'src/app/core/shared/base-page';
 //XLSX
@@ -30,8 +30,8 @@ export class CBBedvCValidationExemptedGoodsComponent
     this.settings = {
       ...this.settings,
       actions: {
-        columnTitle: "Acciones",
-        position: "right",
+        columnTitle: 'Acciones',
+        position: 'right',
         edit: true,
         delete: false,
       },
@@ -39,10 +39,7 @@ export class CBBedvCValidationExemptedGoodsComponent
     };
   }
 
-  ngOnInit(): void {
-    
-  }
-  
+  ngOnInit(): void {}
 
   data = [
     {
@@ -88,17 +85,20 @@ export class CBBedvCValidationExemptedGoodsComponent
   }
 
   openModal(context?: Partial<EditValidationExemptedGoodsModalComponent>) {
-    const modalRef = this.modalService.show(EditValidationExemptedGoodsModalComponent, {
-      initialState: { ...context },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
+    const modalRef = this.modalService.show(
+      EditValidationExemptedGoodsModalComponent,
+      {
+        initialState: { ...context },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
     modalRef.content.refresh.subscribe(next => {
       if (next) this.getData();
     });
   }
 
   openForm(allotment?: any) {
-     this.openModal({ allotment });
-   }
+    this.openModal({ allotment });
+  }
 }

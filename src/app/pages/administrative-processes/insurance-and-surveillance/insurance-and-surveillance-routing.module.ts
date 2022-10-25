@@ -113,6 +113,37 @@ const routes: Routes = [
           ).ProrrateoGoodsSurveillanceModule,
         data: { title: 'Prorrateo de vigilancia' },
       },
+      {
+        path: 'surveillance-reports',
+        loadChildren: async () =>
+          (await import('./surveillance-reports/surveillance-reports.module'))
+            .SurveillanceReportsModule,
+        data: { title: 'Reportes de Vigilancia' },
+      },
+      {
+        path: 'centralized-expenses',
+        loadChildren: async () =>
+          (await import('./centralized-expenses/centralized-expenses.module'))
+            .CentralizedExpensesModule,
+        data: { title: 'Gastos centralizados' },
+      },
+      {
+        path: 'deregistration-of-goods',
+        loadChildren: async () =>
+          (
+            await import(
+              './deregistration-of-goods/deregistration-of-goods.module'
+            )
+          ).DeregistrationOfGoodsModule,
+        data: { title: 'Baja de bienes en polizas' },
+      },
+      {
+        path: 'goods-to-policies-reports',
+        loadChildren: async () =>
+          (await import('./goods-to-policies-reports/pa-is-gpr-m-goods-to-policies-reports.module'))
+            .PaIsGprMGoodsToPoliciesReportsModule,
+        data: { title: 'Reportes de Incorporación de Bienes a Pólizas' },
+      },
     ],
   },
 ];

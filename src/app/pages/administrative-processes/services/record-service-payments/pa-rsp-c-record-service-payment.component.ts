@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -42,25 +42,22 @@ export class PaRspCRecordServicePaymentComponent
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   //Columns
-  columns=COLUMNS;
+  columns = COLUMNS;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private modalRef: BsModalRef
   ) {
-
     super();
     this.settings = {
       ...this.settings,
       actions: { add: true },
       columns: COLUMNS,
     };
-
   }
 
   ngOnInit(): void {
-    
     this.prepareForm();
 
     /**

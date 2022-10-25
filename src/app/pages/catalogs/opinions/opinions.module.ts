@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
-import { OpinionsRoutingModule } from './opinions-routing.module';
-import { OpinionsListComponent } from './opinions-list/opinions-list.component';
-import { OpinionFormComponent } from './opinion-form/opinion-form.component';
-import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { OpinionFormComponent } from './opinion-form/opinion-form.component';
+import { OpinionsListComponent } from './opinions-list/opinions-list.component';
+import { OpinionsRoutingModule } from './opinions-routing.module';
 
 @NgModule({
   declarations: [OpinionsListComponent, OpinionFormComponent],

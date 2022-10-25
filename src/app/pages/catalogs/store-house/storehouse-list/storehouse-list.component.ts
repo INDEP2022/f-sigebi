@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IStorehouse } from '../../../../core/models/catalogs/storehouse.model';
-import { STOREHOUSE_COLUMNS } from './storehouse-columns';
 import { StorehouseService } from '../../../../core/services/catalogs/storehouse.service';
-import { BsModalService } from 'ngx-bootstrap/modal';
 import { StorehouseDetailComponent } from '../storehouse-detail/storehouse-detail.component';
+import { STOREHOUSE_COLUMNS } from './storehouse-columns';
 
 @Component({
   selector: 'app-storehouse-list',

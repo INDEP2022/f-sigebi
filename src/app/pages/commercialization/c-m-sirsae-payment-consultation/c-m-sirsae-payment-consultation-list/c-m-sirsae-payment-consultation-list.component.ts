@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { BasePage } from 'src/app/core/shared/base-page';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from './../../../../shared/components/select/default-select';
 import { CONSULT_SIRSAE_COLUMNS } from './c-m-sirsae-payment-consultation-columns';
-import { LocalDataSource } from 'ng2-smart-table';
 
 @Component({
   selector: 'app-c-m-sirsae-payment-consultation-list',

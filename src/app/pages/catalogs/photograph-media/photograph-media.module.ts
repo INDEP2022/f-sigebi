@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { SharedModule } from '../../../shared/shared.module';
-import { PhotographMediaRoutingModule } from './photograph-media-routing.module';
-import { PhotographMediaListComponent } from './photograph-media-list/photograph-media-list.component';
 import { PhotographMediaFormComponent } from './photograph-media-form/photograph-media-form.component';
+import { PhotographMediaListComponent } from './photograph-media-list/photograph-media-list.component';
+import { PhotographMediaRoutingModule } from './photograph-media-routing.module';
 
 @NgModule({
   declarations: [PhotographMediaListComponent, PhotographMediaFormComponent],

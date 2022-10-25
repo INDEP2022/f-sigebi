@@ -58,6 +58,13 @@ const routes: Routes = [
         m => m.DonationProcessModule
       ),
   },
+  {
+    path: 'circumstantial-acts-suspension-cancellation',
+    loadChildren: () =>
+      import(
+        './circumstantial-acts-suspension-cancellation/fdp-acsc-m-circumstantial-acts-suspension-cancellation.module'
+      ).then(m => m.FdpAcscMCircumstantialActsSuspensionCancellationModule),
+  },
 ];
 
 @NgModule({

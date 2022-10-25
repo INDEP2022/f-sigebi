@@ -1,15 +1,15 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterModule } from '@angular/router';
 
-import { SimplebarAngularModule } from 'simplebar-angular';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { NgScrollbarModule } from 'ngx-scrollbar';
 
 import { FullComponent } from './full.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
-import { TopbarComponent } from './topbar/topbar.component';
 import { TitleComponent } from './title.component';
+import { TopbarComponent } from './topbar/topbar.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +21,7 @@ import { TitleComponent } from './title.component';
   imports: [
     CommonModule,
     BrowserAnimationsModule,
-    SimplebarAngularModule,
+    NgScrollbarModule,
     BsDropdownModule,
     RouterModule,
   ],

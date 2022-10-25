@@ -1,10 +1,10 @@
 /** BASE IMPORT */
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 /** LIBRERÍAS EXTERNAS IMPORTS */
-import { Example } from 'src/app/core/models/catalogs/example';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { Example } from 'src/app/core/models/catalogs/example';
 
 /** SERVICE IMPORTS */
 import { ExampleService } from 'src/app/core/services/catalogs/example.service';
@@ -65,10 +65,7 @@ export class FormFactAbandonosOficioComponent
   };
   /** Tabla bienes */
 
-  constructor(
-    private fb: FormBuilder,
-    private exampleService: ExampleService
-    ) {
+  constructor(private fb: FormBuilder, private exampleService: ExampleService) {
     super();
   }
 

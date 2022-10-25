@@ -11,6 +11,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         link: '/pages/administrative-processes/numerary-physics',
       },
       {
+        label: 'Numerario Operado',
+        link: '/pages/administrative-processes/numerary-operator',
+      },
+      {
         label: 'Otras Monedas',
         link: '/pages/administrative-processes/other-currencies',
       },
@@ -51,6 +55,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         link: '/pages/administrative-processes/monitor-unavoidable-assets',
       },
       {
+        label: 'Devoluciones y decomisos',
+        link: '/pages/administrative-processes/returns-confiscation',
+      },
+      {
         label: 'Seguros y Vigilancia',
         icon: 'bx-folder',
         subItems: [
@@ -63,6 +71,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             link: '/pages/administrative-processes/insurance-policy',
           },
           {
+            label: 'Reportes de Pólizas',
+            link: '/pages/administrative-processes/policies-report',
+          },
+          {
             label: 'Altas de bienes en Pólizas',
             link: '/pages/administrative-processes/registration-of-policy',
           },
@@ -71,7 +83,7 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             link: '/pages/administrative-processes/loss-of-policy',
           },
           {
-            label: 'Mantenimiento',
+            label: 'Solicitudes',
             link: '/pages/administrative-processes/maintenance',
           },
           {
@@ -105,6 +117,56 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Prorrateo de bienes de vigilancia comúm',
             link: '/pages/administrative-processes/prorrateo-goods-surveillance',
+          },
+          {
+            label: 'Reportes de vigilancia',
+            link: '/pages/administrative-processes/surveillance-reports',
+          },
+          {
+            label: 'Baja de bienes en polizas',
+            link: '/pages/administrative-processes/deregistration-of-goods',
+          },
+          {
+            label: 'Visitas a inmuebles',
+            link: '/pages/administrative-processes/expenses-format',
+          },
+          {
+            label: 'Reportes de Incorporación de Bienes a Pólizas',
+            link: '/pages/administrative-processes/goods-to-policies-reports'
+          }
+        ],
+      },
+      {
+        label: 'Gastos y Costos',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Catalogo de conceptos de gasto',
+            link: '/pages/administrative-processes/catalogue-concepts',
+          },
+          {
+            label: 'Tipos de Cambio',
+            link: '/pages/administrative-processes/exchange-types',
+          },
+          {
+            label: 'Procedimiento de cierres de costos',
+            link: '/pages/administrative-processes/costs-procedures',
+          },
+          {
+            label: 'Gastos aplicados a bienes',
+            link: '/pages/administrative-processes/costs-applied-goods',
+          },
+          {
+            label: 'Resumen de Gastos',
+            link: '/pages/administrative-processes/costs-resume',
+          },
+          {
+            label: 'Gastos centralizados',
+            link: '/pages/administrative-processes/centralized-expenses',
+          },
+          {
+            label: 'Registro de Gastos',
+            link: '/pages/administrative-processes/expenses-register',
           },
         ],
       },
@@ -159,7 +221,18 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         label: 'Cambio de estatus',
         link: '/pages/administrative-processes/change-of-status',
       },
-
+      {
+        label: 'Cambio de estatus STI',
+        link: '/pages/administrative-processes/change-status-sti',
+      },
+      {
+        label: 'Proceso de reclamación de pago',
+        link: '/pages/administrative-processes/payment-claim-process',
+      },
+      {
+        label: 'Regularización jurídica',
+        link: '/pages/administrative-processes/legal-regularization',
+      },
       /**
        * END ALEXANDER
        **/
@@ -169,6 +242,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
       {
         label: 'Venta de Bienes',
         link: '/pages/administrative-processes/sale-goods',
+      },
+      {
+        label: 'Firma Electrónica',
+        link: '/pages/administrative-processes/electronic-signature',
       },
       {
         label: 'Administracion Terceros',
@@ -205,6 +282,34 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Variable costo',
             link: '/pages/administrative-processes/variable-cost',
+          },
+          {
+            label: 'Coordinacion por zonas',
+            link: '/pages/administrative-processes/zones',
+          },
+        ],
+      },
+      {
+        label: 'Cuenta de numerario asegurado',
+        link: '/pages/administrative-processes/insured-numerary-account',
+      },
+      {
+        label: 'Empresas',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Reporte de evaluación de desempeño',
+            link: '/pages/administrative-processes/performance-evaluation-report',
+          },
+        ],
+      },
+      {
+        label: 'Conversión de bienes',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Actas conversión',
+            link: '/pages/administrative-processes/proceedings-conversion',
           },
         ],
       },
@@ -244,6 +349,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Expedientes',
             link: '/pages/administrative-processes/record-details',
           },
+          {
+            label: 'Bienes por Tipo de Delito',
+            link: '/pages/administrative-processes/goods-type-crime-reports'
+          }
         ],
       },
       {
@@ -276,6 +385,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             icon: 'bx-folder',
             subItems: [],*/
           {
+            label: 'Bienes Relacionados',
+            link: '/pages/administrative-processes/siab-sami-interaction/refunds/goods-relationship',
+          },
+          {
             label: 'Solicitud de Pago',
             link: '/pages/administrative-processes/siab-sami-interaction/refunds/payment-request',
           },
@@ -298,6 +411,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             link: '/pages/administrative-processes/services/record-service-payments',
           },
         ],
+      },
+      {
+        label: 'Devoluciones y Decomisos',
+        link: '/pages/administrative-processes/returns-confiscations',
       },
       /**
        * END LEGASPI
