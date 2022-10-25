@@ -140,9 +140,32 @@ const routes: Routes = [
       {
         path: 'goods-to-policies-reports',
         loadChildren: async () =>
-          (await import('./goods-to-policies-reports/pa-is-gpr-m-goods-to-policies-reports.module'))
-            .PaIsGprMGoodsToPoliciesReportsModule,
+          (
+            await import(
+              './goods-to-policies-reports/pa-is-gpr-m-goods-to-policies-reports.module'
+            )
+          ).PaIsGprMGoodsToPoliciesReportsModule,
         data: { title: 'Reportes de Incorporación de Bienes a Pólizas' },
+      },
+      {
+        path: 'percentage-surveillance',
+        loadChildren: async () =>
+          (
+            await import(
+              './percentages-surveillance/percentages-surveillance.module'
+            )
+          ).PercentagesSurveillanceModule,
+        data: { title: 'Porcentaje de supervisión de Bienes' },
+      },
+      {
+        path: 'movements-goods-surveillance',
+        loadChildren: async () =>
+          (
+            await import(
+              './movements-goods-surveillance/movements-goods-surveillance.module'
+            )
+          ).MovementsGoodsSurveillanceModule,
+        data: { title: 'Movimeinto de bienes en vigilaancia' },
       },
     ],
   },

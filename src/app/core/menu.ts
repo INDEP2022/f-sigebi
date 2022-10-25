@@ -3,6 +3,7 @@ import { ADMINISTRATIVE_PROCESSES_ROUTES } from '../common/routes/administrative
 import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
 import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception.routes';
 import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
+import { GENERAL_PROCESSES_ROUTES } from '../common/routes/general-processes.routes';
 import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
@@ -133,6 +134,7 @@ export const MENU: IMenuItem[] = [
     ],
   },
   ...DOCUMENTS_RECEPTION_ROUTES,
+  ...GENERAL_PROCESSES_ROUTES,
   //Procesos ejecutivos
   ...EXECUTIVE_PROCESSES_ROUTES,
   //Comercialización
