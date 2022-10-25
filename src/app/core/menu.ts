@@ -126,6 +126,10 @@ export const MENU: IMenuItem[] = [
         label: 'Actas Circunstanciadas de Cancelación de Ent por Robo',
         link: '/pages/final-destination-process/acts-circumstantiated-cancellation-theft',
       },
+      {
+        label: 'Constancias de Entrega',
+        link: '/pages/final-destination-process/proof-of-delivery',
+      },
     ],
   },
   ...DOCUMENTS_RECEPTION_ROUTES,
@@ -360,7 +364,7 @@ export const MENU: IMenuItem[] = [
         label: 'Parcializa Bienes Generales 1',
         link: '/pages/judicial-physical-reception/partializes-general-goods-1',
       },
-      
+
       {
         label: 'Parcializa Bienes Generales 2',
         link: '/pages/judicial-physical-reception/partializes-general-goods-2',
@@ -377,7 +381,6 @@ export const MENU: IMenuItem[] = [
         label: 'Devolucion x Cancelacion de Venta',
         link: '/pages/judicial-physical-reception/cancellation-sale',
       },
-      
     ],
   },
 ];
