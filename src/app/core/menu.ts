@@ -220,6 +220,14 @@ export const MENU: IMenuItem[] = [
             label: 'Facturación normal',
             link: '/pages/commercialization/regular-billing-tab',
           },
+          {
+            label: 'Campos Rectificación',
+            link: '/pages/commercialization/c-bm-f-fr-cr-m-rectification-fields',
+          },
+          {
+            label: 'Formato de rectificación',
+            link: '/pages/commercialization/c-bm-f-fr-prdf-m-invoice-rectification-process',
+          },
         ],
       },
       {
