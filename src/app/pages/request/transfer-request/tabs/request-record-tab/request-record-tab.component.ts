@@ -26,7 +26,7 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
   prepareForm(): void {
     let fecha = this.getCurrentDate();
     this.receptionForm = this.fb.group({
-      priority: [null],
+      priority: [false],
       infoProvenance: [null],
       receptDate: [{ value: fecha, disabled: true }],
       officeDate: [null, Validators.required],

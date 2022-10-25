@@ -16,7 +16,7 @@ export interface IRequest {
   responsible?: string;
 
   //Reception Requests
-  priority?: string;
+  priority?: any;
   infoProvenance?: string;
   receptDate?: string;
   officeDate?: Date;

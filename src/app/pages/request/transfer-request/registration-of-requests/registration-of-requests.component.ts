@@ -27,11 +27,14 @@ export class RegistrationOfRequestsComponent
   tab1: string = '';
   tab2: string = '';
   tab3: string = '';
+  tab4: string = '';
+  tab5: string = '';
+  tab6: string = '';
 
-  //registro de bienes tab
-  state: boolean = false;
+  //registro de solicitudos o bienes
+  requestRegistration: boolean = true;
   //verificacion de cumplimientos tab
-  complianceVerifi: boolean = true;
+  complianceVerifi: boolean = false;
   //clasificacion de bienes
   classifyAssets: boolean = false;
 
@@ -72,11 +75,14 @@ export class RegistrationOfRequestsComponent
   }
 
   intiTabs(): void {
-    if (this.state == true) {
+    if (this.requestRegistration == true) {
       this.tab1 = 'Registro de Solicitud';
       this.tab2 = 'Bienes';
       this.tab3 = 'Domicilio de la Transferencia';
-      this.btnTitle = 'Guardar Proceso'; //cambiar el nombre al real
+      this.tab4 = 'Domicilo de la Transferente';
+      this.tab5 = 'Asociar Expediente';
+      this.tab6 = 'Expediente';
+      this.btnTitle = 'Verificar Cumplimiento';
     } else if (this.complianceVerifi == true) {
       this.tab1 = 'Detalle Solicitud';
       this.tab2 = 'Verificar Cumplimiento';

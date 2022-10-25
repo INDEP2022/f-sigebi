@@ -118,7 +118,7 @@
 
         <!-- dynamic changes -->
 
-        <div *ngIf="state" class="row pt-2">
+        <!--  <div *ngIf="requestRegistration" class="row pt-2">
           <tabset class="md-tabs">
             <tab heading="{{ tab1 }}" id="tab1">
               <app-request-record-tab></app-request-record-tab>
@@ -126,11 +126,15 @@
             <tab heading="{{ tab2 }}">Basic content 1</tab>
             <tab heading="{{ tab3 }}">Basic content 2</tab>
           </tabset>
-        </div>
+        </div> -->
 
-        <div *ngIf="complianceVerifi || classifyAssets" class="row pt-2">
+        <div class="row pt-2">
           <tabset class="md-tabs">
             <tab heading="{{ tab1 }}" id="tab1">
+              <!-- Registro de Solicitudes o bines -->
+              <app-request-record-tab
+                *ngIf="requestRegistration"></app-request-record-tab>
+              <!-- Fin -->
               <!-- cumplimiento de verificacion y clasificacion de bienes-->
               <app-request-detail-tab
                 *ngIf="complianceVerifi || classifyAssets"
@@ -156,6 +160,15 @@
               *ngIf="complianceVerifi || classifyAssets">
               <!-- cumplimiento de verificacion y clasificacion de bienes -->
               <app-expedients-tabs></app-expedients-tabs>
+            </tab>
+            <tab heading="{{ tab4 }}" *ngIf="requestRegistration">
+              <h5>Ingresar contenido</h5>
+            </tab>
+            <tab heading="{{ tab5 }}" *ngIf="requestRegistration">
+              <h5>Ingresar contenido</h5>
+            </tab>
+            <tab heading="{{ tab6 }}" *ngIf="requestRegistration">
+              <h5>Ingresar contenido</h5>
             </tab>
           </tabset>
         </div>
