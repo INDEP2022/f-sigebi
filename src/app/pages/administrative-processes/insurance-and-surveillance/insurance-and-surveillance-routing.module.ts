@@ -114,25 +114,28 @@ const routes: Routes = [
         data: { title: 'Prorrateo de vigilancia' },
       },
       {
-        path: 'costs-resume',
-        loadChildren: async () =>
-          (await import('./costs-resume/costs-resume.module'))
-            .CostsResumeModule,
-        data: { title: 'Resumen de Gastos' },
-      },
-      {
-        path: 'costs-applied-goods',
-        loadChildren: async () =>
-          (await import('./costs-applied-goods/costs-applied-goods.module'))
-            .CostsAppliedGoodsModule,
-        data: { title: 'Gastos aplicados a Bienes' },
-      },
-      {
         path: 'surveillance-reports',
         loadChildren: async () =>
           (await import('./surveillance-reports/surveillance-reports.module'))
             .SurveillanceReportsModule,
         data: { title: 'Reportes de Vigilancia' },
+      },
+      {
+        path: 'centralized-expenses',
+        loadChildren: async () =>
+          (await import('./centralized-expenses/centralized-expenses.module'))
+            .CentralizedExpensesModule,
+        data: { title: 'Gastos centralizados' },
+      },
+      {
+        path: 'deregistration-of-goods',
+        loadChildren: async () =>
+          (
+            await import(
+              './deregistration-of-goods/deregistration-of-goods.module'
+            )
+          ).DeregistrationOfGoodsModule,
+        data: { title: 'Baja de bienes en polizas' },
       },
     ],
   },

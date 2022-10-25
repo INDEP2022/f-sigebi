@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -49,16 +49,21 @@ export class ClassificationAssetsTabComponent
   extends BasePage
   implements OnInit
 {
+  @Input() dataObject: any;
+  @Input() typeDoc: any = '';
   title: string = 'Bienes de la Solicitud';
   params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: any[] = [];
   assetsId: any = '';
+  detailArray: any;
 
   constructor() {
     super();
   }
 
   ngOnInit(): void {
+    console.log(this.typeDoc);
+
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,
@@ -90,5 +95,6 @@ export class ClassificationAssetsTabComponent
   rowSelected(event: any) {
     this.assetsId = event.data.id;
     console.log(this.assetsId);
+    this.detailArray = event.data;
   }
 }

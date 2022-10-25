@@ -4,7 +4,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
-import { SimplebarAngularModule } from 'simplebar-angular';
+import { NgScrollbarModule } from 'ngx-scrollbar';
 
 import { FullComponent } from './full.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
@@ -21,7 +21,7 @@ import { TopbarComponent } from './topbar/topbar.component';
   imports: [
     CommonModule,
     BrowserAnimationsModule,
-    SimplebarAngularModule,
+    NgScrollbarModule,
     BsDropdownModule,
     RouterModule,
   ],

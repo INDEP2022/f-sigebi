@@ -19,17 +19,18 @@
   <div class="row pt-3">
     <div class="row pt-2">
       <div class="col-md-12">
+        <!-- border: 1px solid gray; -->
         <!-- style="overflow-x: scroll" -->
-        <!-- <ng-scrollbar> -->
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            (rowSelect)="rowSelected($event)"
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="paragraphs">
-          </ng2-smart-table>
-        </div>
-        <!--  </ng-scrollbar> -->
+        <ng-scrollbar track="all" style="min-height: 170px; border: none">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              (rowSelect)="rowSelected($event)"
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="paragraphs">
+            </ng2-smart-table>
+          </div>
+        </ng-scrollbar>
       </div>
     </div>
   </div>
@@ -39,8 +40,14 @@
         <app-classify-assets-tab
           [assetsId]="assetsId"></app-classify-assets-tab>
       </tab>
-      <tab heading="Atributos del Bien"> </tab>
-      <tab heading="Aclaración"> </tab>
+      <tab heading="Atributos del Bien">
+        <app-detail-assets-tab-component
+          [detailAssets]="detailArray"
+          [typeDoc]="typeDoc"></app-detail-assets-tab-component>
+      </tab>
+      <tab heading="Aclaración">
+        <h5>Aclaraciones</h5>
+      </tab>
     </tabset>
   </div>
 </div>

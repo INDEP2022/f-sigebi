@@ -292,3 +292,27 @@ table:not(.normal-hover) tbody tr:hover {
   position: relative;
   left: 12px;
 }
+
+ng-scrollbar {
+  --scrollbar-size: 8px;
+  --scrollbar-thumb-color: rgba(94, 175, 255, 0.5);
+  --scrollbar-thumb-hover-color: dodgerblue;
+  --scrollbar-border-radius: 4px;
+  border: 1px solid gray;
+}
+
+.dropdown-item.bg-primary {
+  background-color: #9d2449 !important;
+}
+
+.bk-danger {
+  background-color: #bc955c;
+}
+
+.dismiss {
+  float: right;
+
+  &:hover {
+    cursor: pointer;
+  }
+}

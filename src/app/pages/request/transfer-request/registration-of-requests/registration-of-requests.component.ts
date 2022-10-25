@@ -6,6 +6,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequest } from 'src/app/core/models/catalogs/request.model';
 import { BasePage } from 'src/app/core/shared/base-page';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-registration-of-requests',
@@ -21,16 +22,18 @@ export class RegistrationOfRequestsComponent
   title: string = 'title';
   parameter: any;
   object: any = '';
+  btnTitle: string = '';
   //tabs
   tab1: string = '';
   tab2: string = '';
   tab3: string = '';
+
   //registro de bienes tab
   state: boolean = false;
   //verificacion de cumplimientos tab
-  complianceVerifi: boolean = false;
+  complianceVerifi: boolean = true;
   //clasificacion de bienes
-  classifyAssets: boolean = true;
+  classifyAssets: boolean = false;
 
   constructor(
     public fb: FormBuilder,
@@ -73,20 +76,23 @@ export class RegistrationOfRequestsComponent
       this.tab1 = 'Registro de Solicitud';
       this.tab2 = 'Bienes';
       this.tab3 = 'Domicilio de la Transferencia';
+      this.btnTitle = 'Guardar Proceso'; //cambiar el nombre al real
     } else if (this.complianceVerifi == true) {
       this.tab1 = 'Detalle Solicitud';
       this.tab2 = 'Verificar Cumplimiento';
       this.tab3 = 'Expediente';
+      this.btnTitle = 'Clasificar Bien';
     } else if (this.classifyAssets == true) {
       this.tab1 = 'Detalle Solicitud';
       this.tab2 = 'Clasificación de Bienes';
       this.tab3 = 'Expediente';
+      this.btnTitle = 'Destino Documental';
     }
   }
   confirm() {
     this.msgAvertanceModal(
       'Aceptar',
-      'Asegurse de tener guardado los formularios antes de turnar el folio',
+      'Asegurse de tener guardado los formularios antes de turnar la solicitud!',
       'Confirmación',
       ''
     );
@@ -106,20 +112,28 @@ export class RegistrationOfRequestsComponent
       if (question.isConfirmed) {
         //Ejecutar el servicio
         this.msgSaveModal(
-          'Clasificar Bien',
+          this.btnTitle,
           '¿Deseas turnar la solicitud con Folio:....?',
           'Confirmación',
-          ''
+          undefined
         );
       }
     });
   }
 
   msgSaveModal(btnTitle: string, message: string, title: string, typeMsg: any) {
-    this.alertQuestion(typeMsg, title, message, btnTitle).then(question => {
-      if (question.isConfirmed) {
-        //Ejecutar el servicio
-        console.log('Guardar Solicitud');
+    Swal.fire({
+      title: title,
+      text: message,
+      icon: typeMsg,
+      width: 450,
+      showCancelButton: true,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#b38e5d',
+      confirmButtonText: btnTitle,
+    }).then(result => {
+      if (result.isConfirmed) {
+        console.log('Guardar solicitud');
       }
     });
   }

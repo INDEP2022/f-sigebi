@@ -14,7 +14,7 @@
             class="btn btn-primary btn-sm active"
             [disabled]="registRequestForm.invalid"
             (click)="confirm()">
-            Clasificar Bien
+            <i class="bx bxs-right-arrow-square"></i> {{ btnTitle }}
           </button>
         </div>
       </div>
@@ -141,14 +141,20 @@
               <!-- cumplimiento de verificacion -->
               <app-verify-compliance-tab
                 *ngIf="complianceVerifi"
+                [typeDoc]="'verify-compliance'"
                 [dataObject]="object"></app-verify-compliance-tab>
               <!-- fin -->
               <!-- clasificacion de bienes -->
-              <app-classification-assets-tab></app-classification-assets-tab>
+              <app-classification-assets-tab
+                *ngIf="classifyAssets"
+                [dataObject]="object"
+                [typeDoc]="'classify-assets'"></app-classification-assets-tab>
               <!-- fin -->
             </tab>
-            <tab heading="{{ tab3 }}" *ngIf="complianceVerifi">
-              <!-- cumplimiento de verificacion -->
+            <tab
+              heading="{{ tab3 }}"
+              *ngIf="complianceVerifi || classifyAssets">
+              <!-- cumplimiento de verificacion y clasificacion de bienes -->
               <app-expedients-tabs></app-expedients-tabs>
             </tab>
           </tabset>
@@ -163,7 +169,7 @@
           class="btn btn-primary active"
           [disabled]="registRequestForm.invalid"
           (click)="confirm()">
-          Clasificar Bien
+          <i class="bx bxs-right-arrow-square"></i> {{ btnTitle }}
         </button>
       </div>
       <div class="m-3">

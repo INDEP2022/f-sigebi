@@ -6,9 +6,11 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { AdvancedSearchComponent } from '../advanced-search/advanced-search.component';
 
 @Component({
   selector: 'app-classify-assets-tab',
@@ -21,6 +23,7 @@ export class ClassifyAssetsTabComponent
 {
   @Input() assetsId: any = '';
   public classiGoodsForm: ModelForm<any>;
+  private bsModalRef: BsModalRef;
 
   public selectSection = new DefaultSelect<any>();
   public selectChapter = new DefaultSelect<any>();
@@ -29,7 +32,7 @@ export class ClassifyAssetsTabComponent
   public selectLevel3 = new DefaultSelect<any>();
   public selectLevel4 = new DefaultSelect<any>();
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private modalService: BsModalService) {
     super();
   }
 
@@ -69,4 +72,22 @@ export class ClassifyAssetsTabComponent
   getLevel3(event: any) {}
 
   getLevel4(event: any) {}
+
+  openSearchModal(): void {
+    let config: ModalOptions = {
+      initialState: {
+        parameter: '',
+        callback: (next: boolean) => {
+          //if(next) this.getExample();
+        },
+      },
+      class: 'modalSizeXL modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.bsModalRef = this.modalService.show(AdvancedSearchComponent, config);
+
+    this.bsModalRef.content.event.subscribe((res: any) => {
+      console.log(res);
+    });
+  }
 }

@@ -4,14 +4,16 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { SharedModule } from 'src/app/shared/shared.module';
 
-import { SimplebarAngularModule } from 'simplebar-angular';
+import { NgScrollbarModule } from 'ngx-scrollbar';
 import { RegistrationOfRequestsComponent } from '../transfer-request/registration-of-requests/registration-of-requests.component';
+import { AdvancedSearchComponent } from '../transfer-request/tabs/classify-assets-components/classify-assets-child-tabs-components/advanced-search/advanced-search.component';
 import { ClassifyAssetsTabComponent } from '../transfer-request/tabs/classify-assets-components/classify-assets-child-tabs-components/classify-assets-tab/classify-assets-tab.component';
 import { ClassificationAssetsTabComponent } from '../transfer-request/tabs/classify-assets-components/good-classification-tab/classification-assets-tab.component';
 import { ExpedientsTabsComponent } from '../transfer-request/tabs/compliance-verification-components/expedients-tabs/expedients-tabs.component';
 import { RequestDetailTabComponent } from '../transfer-request/tabs/compliance-verification-components/request-detail-tab/request-detail-tab.component';
 import { SaeInputComponent } from '../transfer-request/tabs/compliance-verification-components/verify-compliance-tab/sae-input/sae-input.component';
 import { VerifyComplianceTabComponent } from '../transfer-request/tabs/compliance-verification-components/verify-compliance-tab/verify-compliance-tab.component';
+import { DetailAssetsTabComponentComponent } from '../transfer-request/tabs/detail-assets-tab-component/detail-assets-tab-component.component';
 import { BtnRequestComponent } from '../transfer-request/tabs/expedients-child-tabs-components/btn-request/btn-request.component';
 import { DocRequestTabComponent } from '../transfer-request/tabs/expedients-child-tabs-components/doc-request-tab/doc-request-tab.component';
 import { SeeInformationComponent } from '../transfer-request/tabs/expedients-child-tabs-components/doc-request-tab/see-information/see-information.component';
@@ -47,6 +49,8 @@ import { ViewOfRequestsRoutingModule } from './view-of-requests-routing.module';
     RequestOfAssetsComponent,
     ClassificationAssetsTabComponent,
     ClassifyAssetsTabComponent,
+    AdvancedSearchComponent,
+    DetailAssetsTabComponentComponent,
   ],
   imports: [
     CommonModule,
@@ -54,7 +58,7 @@ import { ViewOfRequestsRoutingModule } from './view-of-requests-routing.module';
     SharedModule,
     ModalModule.forChild(),
     TabsModule.forRoot(),
-    SimplebarAngularModule,
+    NgScrollbarModule,
   ],
 })
 export class ViewOfRequestsModule {}
