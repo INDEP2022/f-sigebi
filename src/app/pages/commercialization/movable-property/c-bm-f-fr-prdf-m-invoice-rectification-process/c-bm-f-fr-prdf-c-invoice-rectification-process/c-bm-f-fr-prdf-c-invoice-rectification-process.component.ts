@@ -20,8 +20,6 @@ export class CBmFFrPrdfCInvoiceRectificationProcessComponent implements OnInit {
 
   form : FormGroup = new FormGroup ({});
 
-  currentDate = new Date();
-
   constructor(private modalRef: BsModalRef, private fb:FormBuilder, private modalService: BsModalService,  private sanitizer: DomSanitizer,) { }
 
   ngOnInit(): void {
