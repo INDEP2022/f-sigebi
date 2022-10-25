@@ -31,19 +31,23 @@
       </div>
       <div class="row pt-5">
         <div class="col-md-4">
-          <form-field label="Autoriza" [control]="form.get('authorizes')">
+          <app-user-shared
+            [form]="form"
+            [userField]="'idAuth'"
+            [label]="'Autoriza'"></app-user-shared>
+        </div>
+        <div class="col-md-4 pt-3">
+          <form-field [control]="form.get('date')" label="Fecha expedición">
             <input
               type="text"
+              placeholder=""
               class="form-control"
-              formControlName="authorizes" />
+              bsDatepicker
+              formControlName="date"
+              [bsConfig]="{ isAnimated: true }" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field label="Fecha" [control]="form.get('date')">
-            <input type="text" class="form-control" formControlName="date" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
+        <div class="col-md-4 pt-3">
           <form-field label="Lote" [control]="form.get('allotment')">
             <input
               type="text"

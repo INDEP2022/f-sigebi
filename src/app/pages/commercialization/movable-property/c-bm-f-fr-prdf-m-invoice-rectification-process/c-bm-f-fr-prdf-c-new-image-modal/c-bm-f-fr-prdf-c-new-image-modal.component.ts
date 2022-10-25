@@ -5,6 +5,8 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { DomSanitizer } from '@angular/platform-browser';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { maxDate, minDate } from 'src/app/common/validations/date.validators';
 
 @Component({
   selector: 'app-c-bm-f-fr-prdf-c-new-image-modal',
@@ -31,12 +33,18 @@ export class CBmFFrPrdfCNewImageModalComponent implements OnInit {
       name: [null, [Validators.required]],
       lastName: [null, [Validators.required]],
       motherlastName: [null, [Validators.required]],
-      authorizes: [null, [Validators.required]],
-      date: [null, [Validators.required]],
-      allotment: [null, [Validators.required]],
+      idAuth: ['', [Validators.required]],
+      date: [null, [maxDate(new Date()), Validators.required]],
+      allotment: [null, [Validators.required,
+          Validators.maxLength(10),
+          Validators.minLength(1),
+          Validators.pattern(NUMBERS_PATTERN),]],
       siab: [null, [Validators.required]],
       description: [null, [Validators.required]],
-      total: [null, [Validators.required]],
+      total: [null, [Validators.required,
+          Validators.maxLength(10),
+          Validators.minLength(1),
+          Validators.pattern(NUMBERS_PATTERN),]],
       cve: [null, [Validators.required]],
       image: [null, [Validators.required]],
 

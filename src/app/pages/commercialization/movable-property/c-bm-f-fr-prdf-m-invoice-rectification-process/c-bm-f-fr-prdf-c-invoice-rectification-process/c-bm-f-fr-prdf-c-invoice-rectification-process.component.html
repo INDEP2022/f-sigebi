@@ -16,8 +16,14 @@
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field label="Fecha Expedición" [control]="form.get('ExpDate')">
-            <input type="text" class="form-control" formControlName="ExpDate" />
+          <form-field [control]="form.get('ExpDate')" label="Fecha expedición">
+            <input
+              type="text"
+              placeholder=""
+              class="form-control"
+              bsDatepicker
+              formControlName="ExpDate"
+              [bsConfig]="{ isAnimated: true }" />
           </form-field>
         </div>
         <div class="col-md-1">
@@ -61,10 +67,12 @@
       </div>
       <div class="row pt-5">
         <div class="col-md-6">
-          <form-field label="Representante" [control]="form.get('agent')">
-            <input type="text" class="form-control" formControlName="agent" />
-          </form-field>
+          <app-user-shared
+            [form]="form"
+            [userField]="'agent'"
+            [label]="'Representante'"></app-user-shared>
         </div>
+
         <div class="col-md-2">
           <button
             type="button"
@@ -87,14 +95,15 @@
               formControlName="idInvoice" />
           </form-field>
         </div>
-        <div class="col-md-2">
-          <form-field label="Fecha" [control]="form.get('date')">
-            <input type="text" class="form-control" formControlName="date" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field label="Hora" [control]="form.get('time')">
-            <input type="text" class="form-control" formControlName="time" />
+        <div class="col-md-4">
+          <form-field [control]="form.get('time')" label="Fecha expedición">
+            <input
+              type="text"
+              placeholder=""
+              class="form-control"
+              bsDatepicker
+              formControlName="time"
+              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY, h:mm:ss a' }" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -146,25 +155,22 @@
         </div>
         <div class="row pt-5">
           <div class="col-md-4">
-            <form-field label="Elabora" [control]="form.get('elaborate')">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="elaborate" />
-            </form-field>
+            <app-user-shared
+              [form]="form"
+              [userField]="'idCapture'"
+              [label]="'Elabora'"></app-user-shared>
           </div>
           <div class="col-md-4">
-            <form-field label="Verifica" [control]="form.get('verify')">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="verify" />
-            </form-field>
+            <app-user-shared
+              [form]="form"
+              [userField]="'idAuth'"
+              [label]="'Verifica'"></app-user-shared>
           </div>
           <div class="col-md-4">
-            <form-field label="Expide" [control]="form.get('sends')">
-              <input type="text" class="form-control" formControlName="sends" />
-            </form-field>
+            <app-user-shared
+              [form]="form"
+              [userField]="'idSol'"
+              [label]="'Expide'"></app-user-shared>
           </div>
         </div>
       </div>
