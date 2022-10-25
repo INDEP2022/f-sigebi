@@ -3,6 +3,7 @@ import { ADMINISTRATIVE_PROCESSES_ROUTES } from '../common/routes/administrative
 import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
 import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception.routes';
 import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
+import { GENERAL_PROCESSES_ROUTES } from '../common/routes/general-processes.routes';
 import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
@@ -45,8 +46,8 @@ export const MENU: IMenuItem[] = [
         link: '/pages/request/request-in-turn',
       },
       {
-        label: 'Solicitudes de transferencia',
-        link: '/pages/request/transfer-request',
+        label: 'Solicitudes',
+        link: '/pages/request/list',
       },
     ],
   },
@@ -118,9 +119,18 @@ export const MENU: IMenuItem[] = [
           },
         ],
       },
+      {
+        label: 'Actas Circunstanciadas de Suspensión/Cancelación',
+        link: '/pages/final-destination-process/circumstantial-acts-suspension-cancellation',
+      },
+      {
+        label: 'Actas Circunstanciadas de Cancelación de Ent por Robo',
+        link: '/pages/final-destination-process/acts-circumstantiated-cancellation-theft',
+      },
     ],
   },
   ...DOCUMENTS_RECEPTION_ROUTES,
+  ...GENERAL_PROCESSES_ROUTES,
   //Procesos ejecutivos
   ...EXECUTIVE_PROCESSES_ROUTES,
   //Comercialización
@@ -209,8 +219,12 @@ export const MENU: IMenuItem[] = [
             link: '/pages/commercialization/events',
           },
           {
-            label: 'Facturación masiva de venta de bases ',
+            label: 'Facturación masiva de venta de bases',
             link: '/pages/commercialization/mass-biling-base-sales-tab',
+          },
+          {
+            label: 'Facturación normal',
+            link: '/pages/commercialization/regular-billing-tab',
           },
         ],
       },
@@ -311,6 +325,14 @@ export const MENU: IMenuItem[] = [
         label: 'Eventos Relacionados',
         link: '/pages/commercialization/related-events',
       },
+      {
+        label: 'Búsqueda de Pagos',
+        link: '/pages/commercialization/payment-search',
+      },
+      {
+        label: 'Gestión de Firmas Electrónicas',
+        link: '/pages/commercialization/electronic-signatures',
+      },
     ],
   },
   // PROCESOS JURIDICOS
@@ -321,7 +343,7 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-folder',
     subItems: [
       {
-        label: 'Complemento Arituclo',
+        label: 'Complemento Aritculo',
         link: '/pages/judicial-physical-reception/articles-complement',
       },
       {
@@ -335,6 +357,27 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Actas de Recepcion',
         link: '/pages/judicial-physical-reception/confiscated-records',
+      },
+      {
+        label: 'Parcializa Bienes Generales 1',
+        link: '/pages/judicial-physical-reception/partializes-general-goods-1',
+      },
+
+      {
+        label: 'Parcializa Bienes Generales 2',
+        link: '/pages/judicial-physical-reception/partializes-general-goods-2',
+      },
+      {
+        label: 'Parcializaciond de Bienes',
+        link: '/pages/judicial-physical-reception/partializes-goods',
+      },
+      {
+        label: 'Recepcion Suspencion/Cancelacion',
+        link: '/pages/judicial-physical-reception/cancellation-recepcion',
+      },
+      {
+        label: 'Devolucion x Cancelacion de Venta',
+        link: '/pages/judicial-physical-reception/cancellation-sale',
       },
     ],
   },
