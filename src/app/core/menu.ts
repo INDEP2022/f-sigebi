@@ -3,6 +3,7 @@ import { ADMINISTRATIVE_PROCESSES_ROUTES } from '../common/routes/administrative
 import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
 import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception.routes';
 import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
+import { GENERAL_PROCESSES_ROUTES } from '../common/routes/general-processes.routes';
 import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
@@ -125,6 +126,7 @@ export const MENU: IMenuItem[] = [
     ],
   },
   ...DOCUMENTS_RECEPTION_ROUTES,
+  ...GENERAL_PROCESSES_ROUTES,
   //Procesos ejecutivos
   ...EXECUTIVE_PROCESSES_ROUTES,
   //Comercialización
@@ -356,7 +358,7 @@ export const MENU: IMenuItem[] = [
         label: 'Parcializa Bienes Generales 1',
         link: '/pages/judicial-physical-reception/partializes-general-goods-1',
       },
-      
+
       {
         label: 'Parcializa Bienes Generales 2',
         link: '/pages/judicial-physical-reception/partializes-general-goods-2',
@@ -373,7 +375,6 @@ export const MENU: IMenuItem[] = [
         label: 'Devolucion x Cancelacion de Venta',
         link: '/pages/judicial-physical-reception/cancellation-sale',
       },
-      
     ],
   },
 ];
