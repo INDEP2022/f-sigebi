@@ -4,6 +4,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { DrGoodsCaptureRecordSelectComponent } from './components/dr-goods-capture-record-select/dr-goods-capture-record-select.component';
 
 @Component({
   selector: 'app-dr-goods-capture',
@@ -20,6 +21,7 @@ export class DrGoodsCaptureComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.selectRecord();
   }
 
   prepareForm() {
@@ -38,6 +40,11 @@ export class DrGoodsCaptureComponent extends BasePage implements OnInit {
       identifica: [null, [Validators.required]],
       descripcion: [null, [Validators.required]],
     });
+  }
+
+  selectRecord() {
+    const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
+    this.modalService.show(DrGoodsCaptureRecordSelectComponent, modalConfig);
   }
 
   hideObservations() {

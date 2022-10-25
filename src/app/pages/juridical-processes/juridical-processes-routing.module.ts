@@ -49,7 +49,7 @@ const routes: Routes = [
   {
     path: 'depositaria',
     loadChildren: async () =>
-      (await import('./depository/depository.module')).DepositoryModule,
+      (await import('./depositary/depositary.module')).DepositaryModule,
     data: { title: 'Depositoria' },
   },
   // DEPOSITARIA

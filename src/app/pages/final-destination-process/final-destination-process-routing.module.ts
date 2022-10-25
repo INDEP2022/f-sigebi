@@ -65,6 +65,20 @@ const routes: Routes = [
         './circumstantial-acts-suspension-cancellation/fdp-acsc-m-circumstantial-acts-suspension-cancellation.module'
       ).then(m => m.FdpAcscMCircumstantialActsSuspensionCancellationModule),
   },
+  {
+    path: 'acts-circumstantiated-cancellation-theft',
+    loadChildren: () =>
+      import(
+        './acts-circumstantiated-cancellation-theft/fdp-accr-m-acts-circumstantiated-cancellation-theft.module'
+      ).then(m => m.FdpAccrMActsCircumstantiatedCancellationTheftModule),
+  },
+  {
+    path: 'proof-of-delivery',
+    loadChildren: () =>
+      import('./proof-of-delivery/fdp-cde-m-proof-of-delivery.module').then(
+        m => m.FdpCdeMProofOfDeliveryModule
+      ),
+  },
 ];
 
 @NgModule({
