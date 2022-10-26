@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRequestList } from 'src/app/core/models/catalogs/request-list.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { REQUEST_LIST_COLUMNS } from './request-list-columns';
-import { Router } from '@angular/router';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 
 var usuario: IRequestList[] = [
   {
@@ -55,7 +55,12 @@ export class RequestListComponent extends BasePage implements OnInit {
     this.lastClick += 1;
     setTimeout(() => {
       if (this.lastClick > 1) {
-        this.router.navigate(['pages/request/list/registration-request', 1]);
+        //pages/request/list/registration-request
+        //pages/request/transfer-request/registration-request
+        this.router.navigate([
+          'pages/request/transfer-request/registration-request',
+          1,
+        ]);
       }
       this.lastClick = 0;
     }, 500);
