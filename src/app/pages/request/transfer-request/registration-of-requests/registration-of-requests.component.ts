@@ -45,7 +45,7 @@ export class RegistrationOfRequestsComponent
   prepareForm() {
     this.registRequestForm = this.fb.group({
       date: [],
-      noOfi: ['400-10-00-01*00*2020-7824'],
+      noOfi: ['400-10-00-01*00*2020'],
       regDelega: ['BAJA CALIFORNIA'],
       entity: ['Juan Pablo'],
       tranfe: ['SAT FISCO FEDERAL'],
