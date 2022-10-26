@@ -136,6 +136,10 @@ export const MENU: IMenuItem[] = [
         label: 'Constancias de Entrega',
         link: '/pages/final-destination-process/proof-of-delivery',
       },
+      {
+        label: 'Actas de Bienes Entregados para Estudio',
+        link: '/pages/final-destination-process/acts-goods-delivered',
+      },
     ],
   },
   ...DOCUMENTS_RECEPTION_ROUTES,
