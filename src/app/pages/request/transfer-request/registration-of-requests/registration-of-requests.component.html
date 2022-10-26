@@ -14,7 +14,7 @@
             class="btn btn-primary btn-sm active"
             [disabled]="registRequestForm.invalid"
             (click)="confirm()">
-            <i class="bx bxs-right-arrow-square"></i> {{ btnTitle }}
+            Clasificar Bien
           </button>
         </div>
       </div>
@@ -120,41 +120,25 @@
 
         <div *ngIf="state" class="row pt-2">
           <tabset class="md-tabs">
-            <tab heading="{{ tab1 }}" id="tab1">
+            <tab heading="Registro de Solicitud" id="tab1">
               <app-request-record-tab></app-request-record-tab>
             </tab>
-            <tab heading="{{ tab2 }}">Basic content 1</tab>
-            <tab heading="{{ tab3 }}">Basic content 2</tab>
+            <tab heading="Bienes">Basic content 1</tab>
+            <tab heading="Domicilio de la Transferencia">Basic content 2</tab>
           </tabset>
         </div>
 
-        <div *ngIf="complianceVerifi || classifyAssets" class="row pt-2">
+        <div *ngIf="complianceVerifi" class="row pt-2">
           <tabset class="md-tabs">
-            <tab heading="{{ tab1 }}" id="tab1">
-              <!-- cumplimiento de verificacion y clasificacion de bienes-->
+            <tab heading="Detalle Solicitud" id="tab1">
               <app-request-detail-tab
-                *ngIf="complianceVerifi || classifyAssets"
                 [dataObject]="object"></app-request-detail-tab>
-              <!-- fin -->
             </tab>
-            <tab heading="{{ tab2 }}">
-              <!-- cumplimiento de verificacion -->
+            <tab heading="Verificar Cumplimiento">
               <app-verify-compliance-tab
-                *ngIf="complianceVerifi"
-                [typeDoc]="'verify-compliance'"
                 [dataObject]="object"></app-verify-compliance-tab>
-              <!-- fin -->
-              <!-- clasificacion de bienes -->
-              <app-classification-assets-tab
-                *ngIf="classifyAssets"
-                [dataObject]="object"
-                [typeDoc]="'classify-assets'"></app-classification-assets-tab>
-              <!-- fin -->
             </tab>
-            <tab
-              heading="{{ tab3 }}"
-              *ngIf="complianceVerifi || classifyAssets">
-              <!-- cumplimiento de verificacion y clasificacion de bienes -->
+            <tab heading="Expediente">
               <app-expedients-tabs></app-expedients-tabs>
             </tab>
           </tabset>
@@ -169,7 +153,7 @@
           class="btn btn-primary active"
           [disabled]="registRequestForm.invalid"
           (click)="confirm()">
-          <i class="bx bxs-right-arrow-square"></i> {{ btnTitle }}
+          Clasificar Bien
         </button>
       </div>
       <div class="m-3">

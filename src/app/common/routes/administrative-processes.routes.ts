@@ -361,6 +361,18 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Generación de informacion para reporte COORD',
             link: '/pages/administrative-processes/information-generation',
           },
+          {
+            label: 'Bóvedas y Gavetas',
+            link: '/pages/administrative-processes/vaults',
+          },
+          {
+            label: 'Concentrado de bienes por expendiente',
+            link: '/pages/administrative-processes/concentrate-goods-type',
+          },
+          {
+            label: 'Generación de archivo plano',
+            link: '/pages/administrative-processes/flat-file-for-good',
+          },
         ],
       },
       {

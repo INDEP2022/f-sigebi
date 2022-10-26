@@ -27,7 +27,7 @@ export class RequestDetailTabComponent extends BasePage implements OnInit {
 
   prepareForm(): void {
     this.receptionForm = this.fb.group({
-      priority: [{ value: 'priority', disabled: true }],
+      priority: [null],
       infoProvenance: ['Mensajeria'],
       receptDate: [{ value: '', disabled: true }],
       officeDate: [null, Validators.required],
