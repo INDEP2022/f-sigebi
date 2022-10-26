@@ -103,6 +103,13 @@ const routes: Routes = [
       ).PJDReviewResourceReportModule,
     data: { title: routesJuridicalProcesses[15].label },
   },
+  {
+    path: routesJuridicalProcesses[16].link,
+    loadChildren: async () =>
+      (await import('./notifications-file/pj-d-ne-m-notifications-file.module'))
+        .PJDNENotificationsFileModule,
+    data: { title: routesJuridicalProcesses[16].label },
+  },
   // DEPOSITARIA
 
   // PROCESO DE DISPERCION DE PAGOS
