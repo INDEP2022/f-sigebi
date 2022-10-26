@@ -79,6 +79,20 @@ const routes: Routes = [
         m => m.FdpCdeMProofOfDeliveryModule
       ),
   },
+  {
+    path: 'acts-goods-delivered',
+    loadChildren: () =>
+      import(
+        './acts-goods-delivered/fdp-abee-m-acts-goods-delivered.module'
+      ).then(m => m.FdpAbeeMActsGoodsDeliveredModule),
+  },
+  {
+    path: 'acts-regularization-non-existence',
+    loadChildren: () =>
+      import(
+        './acts-regularization-non-existence/fdp-arif-m-acts-regularization-non-existence.module'
+      ).then(m => m.FdpArifMActsRegularizationNonExistenceModule),
+  },
 ];
 
 @NgModule({
