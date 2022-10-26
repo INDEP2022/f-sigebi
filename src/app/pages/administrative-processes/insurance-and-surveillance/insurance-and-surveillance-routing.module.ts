@@ -167,6 +167,19 @@ const routes: Routes = [
           ).MovementsGoodsSurveillanceModule,
         data: { title: 'Movimeinto de bienes en vigilaancia' },
       },
+      {
+        path: 'user-access',
+        loadChildren: async () =>
+          (await import('./access/access.module')).AccessModule,
+        data: { title: 'Acceso a usuarios' },
+      },
+      {
+        path: 'surveillance-service',
+        loadChildren: async () =>
+          (await import('./surveillance-service/surveillance-service.module'))
+            .SurveillanceServiceModule,
+        data: { title: 'Servicio de vigilancia' },
+      },
     ],
   },
 ];
