@@ -29,6 +29,12 @@ const routes: Routes = [
         )
       ).GpHistoricalGoodSituationModule,
   },
+  {
+    path: 'purging-records',
+    loadChildren: async () =>
+      (await import('./gp-purging-records/gp-purging-records.module'))
+        .GpPurgingRecordsModule,
+  },
 ];
 
 @NgModule({

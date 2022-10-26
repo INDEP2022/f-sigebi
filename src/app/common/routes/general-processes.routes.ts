@@ -15,6 +15,10 @@ export const GENERAL_PROCESSES_ROUTES = [
         label: 'Historico Situación del Bien',
         link: '/pages/general-processes/historical-good-situation',
       },
+      {
+        label: 'Depuración de Expedientes',
+        link: '/pages/general-processes/purging-records',
+      },
     ],
   },
 ];
