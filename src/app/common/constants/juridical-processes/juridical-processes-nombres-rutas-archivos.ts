@@ -114,6 +114,18 @@ export const routesJuridicalProcesses: any = [
     link: 'dictaminacion-masiva-prog-desalojo',
     menu: 'Dictaminación Masiva Prog. Desalojo',
   },
+  {
+    // Dictaminación para devolución
+    label: 'Dictaminación para devolución',
+    link: 'return-ruling',
+    menu: 'Dictaminación para devolución',
+  },
+  {
+    // Comprobación de Documentos para Recursos Revision
+    label: 'Oficio de dictaminaciones jurídicas',
+    link: 'legal-opinions-office',
+    menu: 'Oficio de dictaminaciones jurídicas',
+  },
   // DEPOSITARIA
 ];
 export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
@@ -244,6 +256,22 @@ export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
               baseMenu +
               baseMenuDepositaria +
               routesJuridicalProcesses[17].link,
+          },
+          {
+            // Dictaminación para devolución
+            label: routesJuridicalProcesses[18].menu,
+            link:
+              baseMenu +
+              baseMenuDepositaria +
+              routesJuridicalProcesses[18].link,
+          },
+          {
+            // Comprobación de Documentos para Recursos Revision
+            label: routesJuridicalProcesses[19].menu,
+            link:
+              baseMenu +
+              baseMenuDepositaria +
+              routesJuridicalProcesses[19].link,
           },
         ],
       },
