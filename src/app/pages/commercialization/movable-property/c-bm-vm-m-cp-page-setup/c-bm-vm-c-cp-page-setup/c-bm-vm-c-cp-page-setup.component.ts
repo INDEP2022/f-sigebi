@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { CBmVmCCpPageSetupModalComponent } from '../c-bm-vm-c-cp-page-setup-modal/c-bm-vm-c-cp-page-setup-modal.component';
 import { PAGE_SETUP_COLUMNS } from './page-setup-columns';
+import { BsModalService } from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-c-bm-vm-c-cp-page-setup',
@@ -10,12 +12,19 @@ import { PAGE_SETUP_COLUMNS } from './page-setup-columns';
 })
 export class CBmVmCCpPageSetupComponent extends BasePage implements OnInit {
 
-  
-  constructor() {
+  columns: any[] = [];
+  totalItems: number = 0;
+
+  constructor(private modalService: BsModalService) {
     super();
     this.settings = {
       ...this.settings,
-      actions: false,
+      actions: {
+        columnTitle: "Acciones",
+        edit: true,
+        delete: false,
+        position: "right"
+      },
       selectMode: 'multi',
       columns: {...PAGE_SETUP_COLUMNS},
     }
@@ -68,5 +77,30 @@ export class CBmVmCCpPageSetupComponent extends BasePage implements OnInit {
       ak2: "Valor Avaluo"
     }
   ]
+
+  openForm(pageSetup?: any) {
+    this.openModal({ pageSetup });
+  }
+
+  openModal(context?: Partial<CBmVmCCpPageSetupModalComponent>) {
+    const modalRef = this.modalService.show(
+      CBmVmCCpPageSetupModalComponent,
+      {
+        initialState: { ...context },
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
+    modalRef.content.refresh.subscribe(next => {
+      if (next) this.getData();
+    });
+  }
+
+  getData() {
+    this.loading = true;
+    this.columns = this.data;
+    this.totalItems = this.data.length;
+    this.loading = false;
+  }
 
 }

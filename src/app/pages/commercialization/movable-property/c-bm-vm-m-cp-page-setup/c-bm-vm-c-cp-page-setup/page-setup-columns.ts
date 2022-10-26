@@ -2,7 +2,6 @@ export const PAGE_SETUP_COLUMNS = {
     table: {
         title: 'Tabla',
         sort: false,
-        width: "25px"
     },
     column: {
         title: 'Columna',

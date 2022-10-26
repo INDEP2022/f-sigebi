@@ -9,7 +9,16 @@
   <div body>
     <div class="ch-content">
       <h5 class="title">Tablas y Columnas para visualizar en la página web</h5>
+      <button
+        type="button"
+        class="btn btn-primary btn-sm active ml-3"
+        (click)="openForm()">
+        Nuevo
+      </button>
     </div>
-    <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
+    <ng2-smart-table
+      [settings]="settings"
+      [source]="data"
+      (edit)="openForm($event.data)"></ng2-smart-table>
   </div>
 </app-card>
