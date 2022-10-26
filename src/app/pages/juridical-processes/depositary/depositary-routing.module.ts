@@ -120,12 +120,35 @@ const routes: Routes = [
   {
     path: routesJuridicalProcesses[18].link,
     loadChildren: async () =>
+      (await import('./return-ruling/jp-d-m-return-ruling.module'))
+        .JpDMReturnRulingModule,
+    data: { title: routesJuridicalProcesses[18].label },
+  },
+  {
+    path: routesJuridicalProcesses[19].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './legal-opinions-office/jp-d-m-legal-opinions-office.module'
+        )
+      ).JpDMLegalOpinionsOfficeModule,
+    data: { title: routesJuridicalProcesses[19].label },
+  },
+  {
+    path: routesJuridicalProcesses[20].link,
+    loadChildren: async () =>
+      (await import('./trials/jp-d-m-trials.module')).JpDMTrialsModule,
+    data: { title: routesJuridicalProcesses[20].label },
+  },
+  {
+    path: routesJuridicalProcesses[21].link,
+    loadChildren: async () =>
       (
         await import(
           './thirdparties-possession-validation/pj-d-vp-m-thirdparties-possession-validation.module'
         )
       ).PJDVPThirdpartiesPossessionValidationModule,
-    data: { title: routesJuridicalProcesses[18].label },
+    data: { title: routesJuridicalProcesses[21].label },
   },
   // DEPOSITARIA
 
@@ -140,6 +163,7 @@ const routes: Routes = [
       ).PaymentDispersalProcessModule,
     data: { title: 'Proceso de Disperción de Pagos' },
   },
+
   // PROCESO DE DISPERCION DE PAGOS
 ];
 @NgModule({

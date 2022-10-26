@@ -115,6 +115,24 @@ export const routesJuridicalProcesses: any = [
     menu: 'Dictaminación Masiva Prog. Desalojo',
   },
   {
+    // Dictaminación para devolución
+    label: 'Dictaminación para devolución',
+    link: 'return-ruling',
+    menu: 'Dictaminación para devolución',
+  },
+  {
+    // Comprobación de Documentos para Recursos Revision
+    label: 'Oficio de dictaminaciones jurídicas',
+    link: 'legal-opinions-office',
+    menu: 'Oficio de dictaminaciones jurídicas',
+  },
+  {
+    // Comprobación de Documentos para Recursos Revision
+    label: 'Juicios',
+    link: 'trials',
+    menu: 'Juicios',
+  },
+  {
     // Validación de Procesión a Terceros
     label: 'Validación de Procesión a Terceros',
     link: 'validacion-pocesion-terceros',
@@ -252,12 +270,36 @@ export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
               routesJuridicalProcesses[17].link,
           },
           {
-            // Validación de Procesión a Terceros
+            // Dictaminación para devolución
             label: routesJuridicalProcesses[18].menu,
             link:
               baseMenu +
               baseMenuDepositaria +
               routesJuridicalProcesses[18].link,
+          },
+          {
+            // Comprobación de Documentos para Recursos Revision
+            label: routesJuridicalProcesses[19].menu,
+            link:
+              baseMenu +
+              baseMenuDepositaria +
+              routesJuridicalProcesses[19].link,
+          },
+          {
+            // Juicios
+            label: routesJuridicalProcesses[20].menu,
+            link:
+              baseMenu +
+              baseMenuDepositaria +
+              routesJuridicalProcesses[20].link,
+          },
+          {
+            // Validación de Procesión a Terceros
+            label: routesJuridicalProcesses[21].menu,
+            link:
+              baseMenu +
+              baseMenuDepositaria +
+              routesJuridicalProcesses[21].link,
           },
         ],
       },

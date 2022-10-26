@@ -1,0 +1,380 @@
+<div>
+  <div class="row pt-3 pb-3" *ngIf="typeDoc === 'classify-assets'">
+    <div class="col-md-12">
+      <div style="float: right">
+        <button (click)="save()" class="btn btn-primary btn-sm active">
+          <i class="bx bx-save"></i> Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+  <form [formGroup]="assetsForm" class="form-material">
+    <tabset class="md-tabs">
+      <tab id="tab1">
+        <ng-template tabHeading>
+          <i class="bx bx-info-circle"></i> Información del Bien
+        </ng-template>
+        <div class="infoGood">
+          <div class="row pt-5">
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >No. Gestion: <span for="">8905184</span></label
+              >
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Destino Ligie: <span for="">VENTA</span></label
+              >
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Tipo Bien: <span for="">VEHICULOS</span></label
+              >
+            </div>
+          </div>
+          <div class="row pt-5">
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Destino Transferencia: <span for="">VENTA</span></label
+              >
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Tipo de Bien: <span for="">Bien MUEBLES</span></label
+              >
+            </div>
+            <div class="col-md-4" *ngIf="typeDoc === 'verify-compliance'">
+              <label class="custom-label" for=""
+                >Destino SAE: <span for=""></span
+              ></label>
+            </div>
+            <!-- Clasificacion de bienes -->
+            <div class="col-md-4" *ngIf="typeDoc === 'classify-assets'">
+              <ngx-select
+                [form]="assetsForm"
+                control="sae"
+                (fetchItems)="getSae($event)"
+                [data]="selectSae"
+                label="Destino SAE"
+                value="sae"></ngx-select>
+            </div>
+          </div>
+          <div class="row pt-5">
+            <div class="col-md-4">
+              <label for="" class="custom-label">
+                Descrip. de Bien Transferente:
+                <span>
+                  VEHICULO NISSAN, MODELO TSURU,AÑO2017,CUATROPUERTAS,CON AIRE
+                  ACONDICIONADO AUTOMATICO</span
+                >
+              </label>
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Color: <span for="">BLANCO</span></label
+              >
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Capacidad(lts): <span for=""></span
+              ></label>
+            </div>
+          </div>
+          <div class="row pt-5">
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Volumen(m3): <span for=""></span
+              ></label>
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Descripción Bien SAE: <span for=""></span
+              ></label>
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Tipo de Uso: <span for=""></span
+              ></label>
+            </div>
+          </div>
+          <div class="row pt-5">
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >No. Exp. de la Transferencia:
+                <span for="">17042018</span></label
+              >
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Procedencia: <span for=""></span
+              ></label>
+            </div>
+            <div class="col-md-4" *ngIf="typeDoc === 'verify-compliance'">
+              <label class="custom-label" for=""
+                >Estado Físico: <span for="">BUENO</span></label
+              >
+            </div>
+            <!-- clasificacion bienes -->
+            <div class="col-md-4" *ngIf="typeDoc === 'classify-assets'">
+              <ngx-select
+                [form]="assetsForm"
+                control="physicalState"
+                (fetchItems)="getSae($event)"
+                [data]="selectSae"
+                label="Estado Físico"
+                value="physicalState"></ngx-select>
+            </div>
+          </div>
+          <div class="row pt-5" *ngIf="typeDoc === 'classify-assets'">
+            <div class="col-md-4">
+              <ngx-select
+                [form]="assetsForm"
+                control="conservationState"
+                (fetchItems)="getConservationState($event)"
+                [data]="selectConservationState"
+                label="Estado de Concervación"
+                value="conservationState"></ngx-select>
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >No. Norma: <span for=""></span>---</label
+              >
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Maneje: <span for=""></span>---</label
+              >
+            </div>
+          </div>
+          <div class="row pt-5" *ngIf="typeDoc === 'classify-assets'">
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Unid. de Medida Transferente: <span for=""></span>PIEZA</label
+              >
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >duplicidad: <span for=""></span>--</label
+              >
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >cantidad de la transferente: <span for=""></span>1</label
+              >
+            </div>
+          </div>
+          <div class="row pt-5">
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Avalúo: <span for=""></span>-</label
+              >
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Uni. de Medida Ligie: <span for=""></span
+              ></label>
+            </div>
+          </div>
+        </div>
+      </tab>
+      <tab>
+        <ng-template tabHeading>
+          <i class="bx bx-home"></i> Domicilio del Bien
+        </ng-template>
+        <div class="addressGood">
+          <div class="row pt-5">
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Alias Almacén:
+                <span for="">DOMICILIO TRANSFERENTE</span></label
+              >
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Num. Int.: <span for=""></span
+              ></label>
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Nombre de la Vía: <span for=""></span
+              ></label>
+            </div>
+          </div>
+          <div class="row pt-5">
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Estado: <span for="">NUEVO LEÓN</span></label
+              >
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Referencia Vía: <span for=""></span
+              ></label>
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Origen de la Vía: <span for=""></span
+              ></label>
+            </div>
+          </div>
+          <div class="row pt-5">
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Municipio: <span for="">SAN PEDRO GARZA GARCIA</span></label
+              >
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Referencia Vía 2: <span for=""></span
+              ></label>
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Destino de la Vía: <span for=""></span
+              ></label>
+            </div>
+          </div>
+          <div class="row pt-5">
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Colonia:
+                <span for="">RESIDENCIAL SAN AGUSTIN 1 SECTOR</span></label
+              >
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Referencia Vía 3: <span for=""></span
+              ></label>
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Kilometro de la Vía: <span for=""></span
+              ></label>
+            </div>
+          </div>
+          <div class="row pt-5">
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >C.P: <span for="">66260</span></label
+              >
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Latitud: <span for=""></span
+              ></label>
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Descripción: <span for=""></span
+              ></label>
+            </div>
+          </div>
+          <div class="row pt-5">
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Num. Ext.: <span for="">-</span></label
+              >
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Longitud: <span for=""></span
+              ></label>
+            </div>
+          </div>
+        </div>
+      </tab>
+      <tab>
+        <ng-template tabHeading>
+          <i class="bx bxs-car"></i> Ficha Técnica Vehículos
+        </ng-template>
+        <div class="vehicleDateSheet">
+          <div class="row pt-5">
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Marca: <span for="">NISSAN</span></label
+              >
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Num. Ejes: <span for="">2</span></label
+              >
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Cabina: <span for=""></span
+              ></label>
+            </div>
+          </div>
+          <div class="row pt-5">
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Submarca: <span for="">TSURU</span></label
+              >
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Num. Motor: <span for="">1234567890</span></label
+              >
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Procedencia: <span for=""></span
+              ></label>
+            </div>
+          </div>
+          <div class="row pt-5">
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Blindaje: <span for=""></span
+              ></label>
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Matrícula: <span for="">270-NSR</span></label
+              >
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Apto para Circular: <span for="">-</span></label
+              >
+            </div>
+          </div>
+          <div class="row pt-5">
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Modelo: <span for="">2017</span></label
+              >
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Serie: <span for="">987654321</span></label
+              >
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Cuenta con Reporte de: <span for=""></span
+              ></label>
+            </div>
+          </div>
+          <div class="row pt-5">
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Num. Puertas: <span for="">4</span></label
+              >
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Chasis: <span for="">2345678</span></label
+              >
+            </div>
+            <div class="col-md-4">
+              <label class="custom-label" for=""
+                >Robo: <span for=""></span
+              ></label>
+            </div>
+          </div>
+        </div>
+      </tab>
+    </tabset>
+  </form>
+</div>

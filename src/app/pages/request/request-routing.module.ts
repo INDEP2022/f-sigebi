@@ -86,6 +86,13 @@ const routes: Routes = [
         .ViewOfRequestsModule,
     data: { title: 'Vista de las Solicitudes' },
   },
+  {
+    path: 'transfer-request',
+    loadChildren: async () =>
+      (await import('./transfer-request/transfer-request.module'))
+        .TransferRequestModule,
+    data: { title: 'Solicitudes de transferencia' },
+  },
 ];
 
 @NgModule({
