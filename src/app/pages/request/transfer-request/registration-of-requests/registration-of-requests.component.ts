@@ -34,6 +34,7 @@ export class RegistrationOfRequestsComponent
   complianceVerifi: boolean = true;
   //clasificacion de bienes
   classifyAssets: boolean = false;
+  //ingresando cambios para el git
 
   constructor(
     public fb: FormBuilder,
