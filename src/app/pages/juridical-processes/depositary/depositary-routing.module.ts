@@ -141,14 +141,21 @@ const routes: Routes = [
     data: { title: routesJuridicalProcesses[20].label },
   },
   {
+    // ESPACIO EN BLANCO
     path: routesJuridicalProcesses[21].link,
+    loadChildren: async () =>
+      (await import('./trials/jp-d-m-trials.module')).JpDMTrialsModule,
+    data: { title: routesJuridicalProcesses[21].label },
+  }, // ESPACIO EN BLANCO
+  {
+    path: routesJuridicalProcesses[22].link,
     loadChildren: async () =>
       (
         await import(
           './thirdparties-possession-validation/pj-d-vp-m-thirdparties-possession-validation.module'
         )
       ).PJDVPThirdpartiesPossessionValidationModule,
-    data: { title: routesJuridicalProcesses[21].label },
+    data: { title: routesJuridicalProcesses[22].label },
   },
   // DEPOSITARIA
 
