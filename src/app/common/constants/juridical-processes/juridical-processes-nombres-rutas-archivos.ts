@@ -102,6 +102,12 @@ export const routesJuridicalProcesses: any = [
     link: 'reporte-recursos-revision',
     menu: 'Reporte de Recursos de Revisión',
   },
+  {
+    // Notificaciones por Expediente
+    label: 'Notificaciones por Expediente',
+    link: 'notificacion-expediente',
+    menu: 'Notificaciones por Expediente',
+  },
   // DEPOSITARIA
 ];
 export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
@@ -216,6 +222,14 @@ export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
               baseMenu +
               baseMenuDepositaria +
               routesJuridicalProcesses[15].link,
+          },
+          {
+            // Notificación por Expediente
+            label: routesJuridicalProcesses[16].menu,
+            link:
+              baseMenu +
+              baseMenuDepositaria +
+              routesJuridicalProcesses[16].link,
           },
         ],
       },
