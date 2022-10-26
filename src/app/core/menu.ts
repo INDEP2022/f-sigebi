@@ -144,6 +144,10 @@ export const MENU: IMenuItem[] = [
         label: 'Actas de Regularización por Inexistencia Física',
         link: '/pages/final-destination-process/acts-regularization-non-existence',
       },
+      {
+        label: 'Reporte de Actas de Devolución',
+        link: '/pages/final-destination-process/return-acts-report',
+      },
     ],
   },
   ...DOCUMENTS_RECEPTION_ROUTES,

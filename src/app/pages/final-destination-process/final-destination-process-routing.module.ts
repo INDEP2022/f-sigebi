@@ -93,6 +93,13 @@ const routes: Routes = [
         './acts-regularization-non-existence/fdp-arif-m-acts-regularization-non-existence.module'
       ).then(m => m.FdpArifMActsRegularizationNonExistenceModule),
   },
+  {
+    path: 'return-acts-report',
+    loadChildren: () =>
+      import('./return-acts-report/fdp-rad-m-return-acts-report.module').then(
+        m => m.FdpRadMReturnActsReportModule
+      ),
+  },
 ];
 
 @NgModule({
