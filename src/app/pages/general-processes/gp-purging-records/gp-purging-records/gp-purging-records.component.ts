@@ -3,7 +3,13 @@ import { FormBuilder, Validators } from '@angular/forms';
 @Component({
   selector: 'app-gp-purging-records',
   templateUrl: './gp-purging-records.component.html',
-  styles: [],
+  styles: [
+    `
+      .b-content {
+        margin-top: -35px;
+      }
+    `,
+  ],
 })
 export class GpPurgingRecordsComponent implements OnInit {
   form = this.fb.group({
