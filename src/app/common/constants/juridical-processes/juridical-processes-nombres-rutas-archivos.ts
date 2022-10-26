@@ -114,6 +114,12 @@ export const routesJuridicalProcesses: any = [
     link: 'dictaminacion-masiva-prog-desalojo',
     menu: 'Dictaminación Masiva Prog. Desalojo',
   },
+  {
+    // Validación de Procesión a Terceros
+    label: 'Validación de Procesión a Terceros',
+    link: 'validacion-pocesion-terceros',
+    menu: 'Validación de Procesión',
+  },
   // DEPOSITARIA
 ];
 export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
@@ -244,6 +250,14 @@ export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
               baseMenu +
               baseMenuDepositaria +
               routesJuridicalProcesses[17].link,
+          },
+          {
+            // Validación de Procesión a Terceros
+            label: routesJuridicalProcesses[18].menu,
+            link:
+              baseMenu +
+              baseMenuDepositaria +
+              routesJuridicalProcesses[18].link,
           },
         ],
       },

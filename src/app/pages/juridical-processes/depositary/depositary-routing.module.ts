@@ -117,6 +117,16 @@ const routes: Routes = [
         .PJDDMPDMassRulingModule,
     data: { title: routesJuridicalProcesses[17].label },
   },
+  {
+    path: routesJuridicalProcesses[18].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './thirdparties-possession-validation/pj-d-vp-m-thirdparties-possession-validation.module'
+        )
+      ).PJDVPThirdpartiesPossessionValidationModule,
+    data: { title: routesJuridicalProcesses[18].label },
+  },
   // DEPOSITARIA
 
   // PROCESO DE DISPERCION DE PAGOS
