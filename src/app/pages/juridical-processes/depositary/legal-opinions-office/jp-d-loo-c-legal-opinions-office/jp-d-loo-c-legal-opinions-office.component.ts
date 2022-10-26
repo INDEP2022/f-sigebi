@@ -14,7 +14,44 @@ export class JpDLooCLegalOpinionsOfficeComponent
   extends BasePage
   implements OnInit
 {
-  data: any[];
+  data: any[] = [
+    {
+      number: 'Bien 1',
+      description: 'Descripcion del bien 1',
+      kitchenware: 'Menaje 1',
+      quantityDict: '2.000',
+      status: 'Estatus 1',
+      ident: 'Ident 1',
+      processes: 'Procesos 1',
+    },
+    {
+      number: 'Bien 1',
+      description: 'Descripcion del bien 1',
+      kitchenware: 'Menaje 1',
+      quantityDict: '2.000',
+      status: 'Estatus 1',
+      ident: 'Ident 1',
+      processes: 'Procesos 1',
+    },
+    {
+      number: 'Bien 1',
+      description: 'Descripcion del bien 1',
+      kitchenware: 'Menaje 1',
+      quantityDict: '2.000',
+      status: 'Estatus 1',
+      ident: 'Ident 1',
+      processes: 'Procesos 1',
+    },
+    {
+      number: 'Bien 1',
+      description: 'Descripcion del bien 1',
+      kitchenware: 'Menaje 1',
+      quantityDict: '2.000',
+      status: 'Estatus 1',
+      ident: 'Ident 1',
+      processes: 'Procesos 1',
+    },
+  ];
 
   form: FormGroup;
 
