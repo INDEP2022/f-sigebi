@@ -62,7 +62,8 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
     });
   }
   confirm() {
-    this.router.navigate(['/warehouse-show']);
+    this.router.navigate(['/pages/request/warehouse']);
+    this.close();
   }
 
   getResponsibleUserSelect(responsibleUser: ListParams) {}

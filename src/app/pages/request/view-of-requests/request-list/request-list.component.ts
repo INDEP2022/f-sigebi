@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRequestList } from 'src/app/core/models/catalogs/request-list.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { REQUEST_LIST_COLUMNS } from './request-list-columns';
-import { Router } from '@angular/router';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 
 var usuario: IRequestList[] = [
   {
@@ -16,6 +16,14 @@ var usuario: IRequestList[] = [
     noInstance: 820169,
     created: 'tester_nsbxt',
     process: 'SolicitudeTransferencia',
+  },
+  {
+    title: 'Registo de solicitud (programar solicitud) con folio 45010',
+    noRequest: 45010,
+    numTask: 260302,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'Solicitud de programación',
   },
 ];
 
@@ -49,6 +57,10 @@ export class RequestListComponent extends BasePage implements OnInit {
 
   openCreateRequestForm(event?: IRequestList) {
     this.router.navigate(['pages/request/list/new-transfer-request']);
+  }
+
+  openCreateProgrammingRequest() {
+    this.router.navigate;
   }
 
   editRequest(event: any) {
