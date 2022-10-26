@@ -132,6 +132,18 @@ export const routesJuridicalProcesses: any = [
     link: 'trials',
     menu: 'Juicios',
   },
+  {
+    // ESPACIO EN BLANCO
+    label: '',
+    link: '',
+    menu: '',
+  },
+  {
+    // Validación de Procesión a Terceros
+    label: 'Validación de Procesión a Terceros',
+    link: 'validacion-pocesion-terceros',
+    menu: 'Validación de Procesión',
+  },
   // DEPOSITARIA
 ];
 export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
@@ -286,6 +298,22 @@ export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
               baseMenu +
               baseMenuDepositaria +
               routesJuridicalProcesses[20].link,
+          },
+          {
+            // ESPACIO EN BLANCO
+            label: routesJuridicalProcesses[21].menu,
+            link:
+              baseMenu +
+              baseMenuDepositaria +
+              routesJuridicalProcesses[21].link,
+          },
+          {
+            // Validación de Procesión a Terceros
+            label: routesJuridicalProcesses[22].menu,
+            link:
+              baseMenu +
+              baseMenuDepositaria +
+              routesJuridicalProcesses[22].link,
           },
         ],
       },
