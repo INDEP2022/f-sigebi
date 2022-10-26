@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequest } from 'src/app/core/models/catalogs/request.model';
@@ -42,6 +42,7 @@ export class RegistrationOfRequestsComponent
     public fb: FormBuilder,
     public modalRef: BsModalRef,
     public route: ActivatedRoute,
+    public router: Router,
     public location: Location
   ) {
     super();
@@ -105,7 +106,8 @@ export class RegistrationOfRequestsComponent
   }
 
   close() {
-    this.location.back();
+    this.registRequestForm.reset();
+    this.router.navigate(['pages/request/list']);
   }
 
   msgAvertanceModal(
