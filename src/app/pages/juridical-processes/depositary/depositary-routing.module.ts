@@ -117,6 +117,16 @@ const routes: Routes = [
         .PJDDMPDMassRulingModule,
     data: { title: routesJuridicalProcesses[17].label },
   },
+  {
+    path: routesJuridicalProcesses[18].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './underwriting-credit-memo/jp-d-m-underwriting-credit-memo.module'
+        )
+      ).JpDMUnderwritingCreditMemoModule,
+    data: { title: routesJuridicalProcesses[18].label },
+  },
   // DEPOSITARIA
 
   // PROCESO DE DISPERCION DE PAGOS

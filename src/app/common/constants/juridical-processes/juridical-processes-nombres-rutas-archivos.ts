@@ -114,6 +114,12 @@ export const routesJuridicalProcesses: any = [
     link: 'dictaminacion-masiva-prog-desalojo',
     menu: 'Dictaminación Masiva Prog. Desalojo',
   },
+  {
+    // Dictaminación Masiva Prog. Desalojo
+    label: 'Notificación de abandono por aseguramiento',
+    link: 'notice-abandonment-for-securing',
+    menu: 'Notificación de abandono por aseguramiento',
+  },
   // DEPOSITARIA
 ];
 export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
@@ -244,6 +250,14 @@ export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
               baseMenu +
               baseMenuDepositaria +
               routesJuridicalProcesses[17].link,
+          },
+          {
+            // Dictaminación Masiva Prog. Desalojo
+            label: routesJuridicalProcesses[18].menu,
+            link:
+              baseMenu +
+              baseMenuDepositaria +
+              routesJuridicalProcesses[18].link,
           },
         ],
       },
