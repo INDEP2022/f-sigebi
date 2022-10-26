@@ -1,0 +1,177 @@
+<form [formGroup]="formTrials" class="form-material">
+  <div class="row mt-5">
+    <div class="col-md-2 col-sm-12 col-xs-12">
+      <form-field [control]="formTrials.get('numberGood')" label="No Bien">
+        <input type="text" class="form-control" formControlName="numberGood" />
+      </form-field>
+    </div>
+    <div class="col-md-6 col-sm-12 col-xs-12">
+      <form-field
+        [control]="formTrials.get('descriptionGood')"
+        label="Descripción">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="descriptionGood" />
+      </form-field>
+    </div>
+    <div class="col-md-2 col-sm-12 col-xs-12">
+      <form-field [control]="formTrials.get('statusGood')" label="Estado">
+        <input type="text" class="form-control" formControlName="statusGood" />
+      </form-field>
+    </div>
+    <div class="col-md-2 col-sm-12 col-xs-12">
+      <form-field [control]="formTrials.get('fileGood')" label="Expediente">
+        <input type="text" class="form-control" formControlName="fileGood" />
+      </form-field>
+    </div>
+  </div>
+  <hr />
+  <div class="row mt-5">
+    <div class="col-md-6 col-sm-12 col-xs-12">
+      <form-field [control]="formTrials.get('procedure')" label="Procedimiento">
+        <input type="text" class="form-control" formControlName="procedure" />
+      </form-field>
+    </div>
+    <div class="col-md-6 col-sm-12 col-xs-12">
+      <form-field
+        [control]="formTrials.get('numberFileReal')"
+        label="No. Expediente Real">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="numberFileReal" />
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <form-field [control]="formTrials.get('description')" label="Descripción">
+        <textarea
+          type="text"
+          class="form-control"
+          formControlName="description"></textarea>
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-md-6 col-sm-12 col-xs-12">
+      <form-field [control]="formTrials.get('author1')" label="Autor 1">
+        <input type="text" class="form-control" formControlName="author1" />
+      </form-field>
+    </div>
+    <div class="col-md-6 col-sm-12 col-xs-12">
+      <form-field [control]="formTrials.get('author2')" label="Autor 2">
+        <input type="text" class="form-control" formControlName="author2" />
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-md-4 col-sm-12 col-xs-12">
+      <form-field [control]="formTrials.get('site')" label="Lugar">
+        <input type="text" class="form-control" formControlName="site" />
+      </form-field>
+    </div>
+    <div class="col-md-4 col-sm-12 col-xs-12">
+      <form-field [control]="formTrials.get('authority')" label="Autoridad">
+        <input type="text" class="form-control" formControlName="authority" />
+      </form-field>
+    </div>
+    <div class="col-md-4 col-sm-12 col-xs-12">
+      <form-field
+        [control]="formTrials.get('nameAuthority')"
+        label="Denominación Autoridad">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="nameAuthority" />
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-md-4 col-sm-12 col-xs-12">
+      <form-field [control]="formTrials.get('startDate')" label="Fecha Inicio">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="startDate"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col-md-4 col-sm-12 col-xs-12">
+      <form-field [control]="formTrials.get('endDate')" label="Fecha Término">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="endDate"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col-md-4 col-sm-12 col-xs-12">
+      <form-field [control]="formTrials.get('observing')" label="Observacion">
+        <input type="text" class="form-control" formControlName="observing" />
+      </form-field>
+    </div>
+  </div>
+  <hr />
+  <div class="row mt-5">
+    <div class="col-md-4 col-sm-12 col-xs-12">
+      <form-field
+        [control]="formTrials.get('lastUpdateDate')"
+        label="Fecha Última Actualización">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="lastUpdateDate"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col-md-8 col-sm-12 col-xs-12">
+      <form-field
+        [control]="formTrials.get('lastUpdate')"
+        label="Última Actualización">
+        <input type="text" class="form-control" formControlName="lastUpdate" />
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-md-4 col-sm-12 col-xs-12">
+      <form-field
+        [control]="formTrials.get('nextUpdateDate')"
+        label="Fecha Próxima Actualización">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="nextUpdateDate"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col-md-8 col-sm-12 col-xs-12">
+      <form-field
+        [control]="formTrials.get('nextUpdate')"
+        label="Próxima Actualización">
+        <input type="text" class="form-control" formControlName="nextUpdate" />
+      </form-field>
+    </div>
+  </div>
+  <hr />
+  Sentencia/Laudo/Resolución-Definitivos
+  <div class="container">
+    <div class="row mt-5">
+      <div class="col-md-4 col-sm-12 col-xs-12">
+        <form-field [control]="formTrials.get('date')" label="Fecha">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="date"
+            bsDatepicker />
+        </form-field>
+      </div>
+      <div class="col-md-8 col-sm-12 col-xs-12">
+        <form-field [control]="formTrials.get('sentido')" label="Sentido">
+          <input type="text" class="form-control" formControlName="sentido" />
+        </form-field>
+      </div>
+    </div>
+  </div>
+</form>
