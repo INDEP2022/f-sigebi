@@ -3,7 +3,6 @@ import { FormBuilder } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { COLUMNS } from './columns';
 
 @Component({
   selector: 'app-jp-d-t-c-trials',
@@ -18,8 +17,6 @@ export class JpDTCTrialsComponent extends BasePage implements OnInit {
 
   constructor(private fb: FormBuilder) {
     super();
-    this.settings.columns = COLUMNS;
-    this.settings.actions = false;
   }
 
   ngOnInit(): void {}
