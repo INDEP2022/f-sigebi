@@ -430,6 +430,13 @@ const routes: Routes = [
           ).PerformanceEvaluationReportModule,
         data: { title: 'Reporte de evaluación de desempeño' },
       },
+      /**Numerario Abner */
+      {
+        path: 'numerary',
+        loadChildren: async () =>
+          (await import('./numerary/numerary.module')).NumeraryModule,
+        data: { title: 'Numerario' },
+      },
     ],
   },
 ];
