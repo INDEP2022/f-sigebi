@@ -108,6 +108,12 @@ export const routesJuridicalProcesses: any = [
     link: 'notificacion-expediente',
     menu: 'Notificaciones por Expediente',
   },
+  {
+    // Dictaminación Masiva Prog. Desalojo
+    label: 'Dictaminación Masiva',
+    link: 'dictaminacion-masiva-prog-desalojo',
+    menu: 'Dictaminación Masiva Prog. Desalojo',
+  },
   // DEPOSITARIA
 ];
 export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
@@ -230,6 +236,14 @@ export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
               baseMenu +
               baseMenuDepositaria +
               routesJuridicalProcesses[16].link,
+          },
+          {
+            // Dictaminación Masiva Prog. Desalojo
+            label: routesJuridicalProcesses[17].menu,
+            link:
+              baseMenu +
+              baseMenuDepositaria +
+              routesJuridicalProcesses[17].link,
           },
         ],
       },
