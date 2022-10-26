@@ -136,6 +136,10 @@ export const MENU: IMenuItem[] = [
         label: 'Constancias de Entrega',
         link: '/pages/final-destination-process/proof-of-delivery',
       },
+      {
+        label: 'Actas de Bienes Entregados para Estudio',
+        link: '/pages/final-destination-process/acts-goods-delivered',
+      },
     ],
   },
   ...DOCUMENTS_RECEPTION_ROUTES,
@@ -234,6 +238,14 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Facturación normal',
             link: '/pages/commercialization/regular-billing-tab',
+          },
+          {
+            label: 'Campos Rectificación',
+            link: '/pages/commercialization/c-bm-f-fr-cr-m-rectification-fields',
+          },
+          {
+            label: 'Formato de rectificación',
+            link: '/pages/commercialization/c-bm-f-fr-prdf-m-invoice-rectification-process',
           },
         ],
       },

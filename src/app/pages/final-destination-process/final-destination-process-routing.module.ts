@@ -79,6 +79,13 @@ const routes: Routes = [
         m => m.FdpCdeMProofOfDeliveryModule
       ),
   },
+  {
+    path: 'acts-goods-delivered',
+    loadChildren: () =>
+      import(
+        './acts-goods-delivered/fdp-abee-m-acts-goods-delivered.module'
+      ).then(m => m.FdpAbeeMActsGoodsDeliveredModule),
+  },
 ];
 
 @NgModule({
