@@ -34,7 +34,6 @@ export class RegistrationOfRequestsComponent
   complianceVerifi: boolean = true;
   //clasificacion de bienes
   classifyAssets: boolean = false;
-  //ingresando cambios para el git
 
   constructor(
     public fb: FormBuilder,
@@ -57,7 +56,7 @@ export class RegistrationOfRequestsComponent
   prepareForm() {
     this.registRequestForm = this.fb.group({
       date: [],
-      noOfi: ['400-10-00-01*00*2020-7824'],
+      noOfi: ['400-10-00-01*00*2020'],
       regDelega: ['BAJA CALIFORNIA'],
       entity: ['Juan Pablo'],
       tranfe: ['SAT FISCO FEDERAL'],
