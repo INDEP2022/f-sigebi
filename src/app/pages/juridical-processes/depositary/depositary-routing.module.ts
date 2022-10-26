@@ -110,6 +110,13 @@ const routes: Routes = [
         .PJDNENotificationsFileModule,
     data: { title: routesJuridicalProcesses[16].label },
   },
+  {
+    path: routesJuridicalProcesses[17].link,
+    loadChildren: async () =>
+      (await import('./mass-ruling/pj-d-dmpd-m-mass-ruling.module'))
+        .PJDDMPDMassRulingModule,
+    data: { title: routesJuridicalProcesses[17].label },
+  },
   // DEPOSITARIA
 
   // PROCESO DE DISPERCION DE PAGOS
