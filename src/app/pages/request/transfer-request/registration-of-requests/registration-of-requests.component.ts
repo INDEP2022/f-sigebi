@@ -1,12 +1,11 @@
-import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequest } from 'src/app/core/models/catalogs/request.model';
 import { BasePage } from 'src/app/core/shared/base-page';
-import Swal from 'sweetalert2';
+import { ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-registration-of-requests',
@@ -22,33 +21,23 @@ export class RegistrationOfRequestsComponent
   title: string = 'title';
   parameter: any;
   object: any = '';
-  btnTitle: string = '';
-  //tabs
-  tab1: string = '';
-  tab2: string = '';
-  tab3: string = '';
-
   //registro de bienes tab
   state: boolean = false;
   //verificacion de cumplimientos tab
   complianceVerifi: boolean = true;
-  //clasificacion de bienes
-  classifyAssets: boolean = false;
 
   constructor(
     public fb: FormBuilder,
     public modalRef: BsModalRef,
     public route: ActivatedRoute,
-    public router: Router,
     public location: Location
   ) {
     super();
   }
 
   ngOnInit(): void {
-    this.intiTabs();
-    this.prepareForm();
     this.route.params.subscribe(params => {
+      this.prepareForm();
       this.object = this.registRequestForm.value;
     });
   }
@@ -72,36 +61,17 @@ export class RegistrationOfRequestsComponent
     });
   }
 
-  intiTabs(): void {
-    if (this.state == true) {
-      this.tab1 = 'Registro de Solicitud';
-      this.tab2 = 'Bienes';
-      this.tab3 = 'Domicilio de la Transferencia';
-      this.btnTitle = 'Guardar Proceso'; //cambiar el nombre al real
-    } else if (this.complianceVerifi == true) {
-      this.tab1 = 'Detalle Solicitud';
-      this.tab2 = 'Verificar Cumplimiento';
-      this.tab3 = 'Expediente';
-      this.btnTitle = 'Clasificar Bien';
-    } else if (this.classifyAssets == true) {
-      this.tab1 = 'Detalle Solicitud';
-      this.tab2 = 'Clasificación de Bienes';
-      this.tab3 = 'Expediente';
-      this.btnTitle = 'Destino Documental';
-    }
-  }
   confirm() {
     this.msgAvertanceModal(
       'Aceptar',
-      'Asegurse de tener guardado los formularios antes de turnar la solicitud!',
+      'Asegurse de tener guardado los formularios antes de turnar el folio',
       'Confirmación',
       ''
     );
   }
 
   close() {
-    this.registRequestForm.reset();
-    this.router.navigate(['pages/request/list']);
+    this.location.back();
   }
 
   msgAvertanceModal(
@@ -114,28 +84,20 @@ export class RegistrationOfRequestsComponent
       if (question.isConfirmed) {
         //Ejecutar el servicio
         this.msgSaveModal(
-          this.btnTitle,
+          'Clasificar Bien',
           '¿Deseas turnar la solicitud con Folio:....?',
           'Confirmación',
-          undefined
+          ''
         );
       }
     });
   }
 
   msgSaveModal(btnTitle: string, message: string, title: string, typeMsg: any) {
-    Swal.fire({
-      title: title,
-      text: message,
-      icon: typeMsg,
-      width: 450,
-      showCancelButton: true,
-      confirmButtonColor: '#9D2449',
-      cancelButtonColor: '#b38e5d',
-      confirmButtonText: btnTitle,
-    }).then(result => {
-      if (result.isConfirmed) {
-        console.log('Guardar solicitud');
+    this.alertQuestion(typeMsg, title, message, btnTitle).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        console.log('Guardar Solicitud');
       }
     });
   }

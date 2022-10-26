@@ -1,13 +1,13 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { Articulo12, Articulo3 } from './articulos';
+import { VERIRY_COMPLIANCE_COLUMNS } from './verify-compliance-columns';
+import { Articulo3, Articulo12 } from './articulos';
 import { DETAIL_ESTATE_COLUMNS } from './detail-estates-columns';
 import { IDetailEstate } from './detail-estates.model';
-import { VERIRY_COMPLIANCE_COLUMNS } from './verify-compliance-columns';
 
 var bienes: IDetailEstate[] = [
   {
@@ -49,7 +49,6 @@ var bienes: IDetailEstate[] = [
 })
 export class VerifyComplianceTabComponent extends BasePage implements OnInit {
   @Input() dataObject: any;
-  @Input() typeDoc: string = '';
   verifComplianceForm: ModelForm<any>;
 
   settingsEstate = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
@@ -62,13 +61,13 @@ export class VerifyComplianceTabComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
 
-  detailArray: Array<any>;
+  arreglo: Array<any>;
   article3array: Array<any> = new Array<any>();
   article12and13array: Array<any> = new Array<any>();
 
   constructor() {
     super();
-    this.detailArray = new Array();
+    this.arreglo = new Array();
   }
 
   ngOnInit(): void {
@@ -111,33 +110,33 @@ export class VerifyComplianceTabComponent extends BasePage implements OnInit {
   }
 
   selectAll(event?: any) {
-    this.detailArray = [];
+    this.arreglo = [];
     if (event.target.checked) {
       this.detallesBienes.forEach(x => {
         x.checked = event.target.checked;
-        this.detailArray.push(x);
+        this.arreglo.push(x);
       });
     } else {
       this.detallesBienes.forEach(x => {
         x.checked = event.target.checked;
-        this.detailArray = [];
+        this.arreglo = [];
       });
     }
-    console.log(this.detailArray);
+    console.log(this.arreglo);
   }
 
   selectOne(event: any) {
     if (event.target.checked == true) {
-      this.detailArray.push(
+      this.arreglo.push(
         this.detallesBienes.find(x => x.id == event.target.value)
       );
     } else {
-      let index = this.detailArray.indexOf(
+      let index = this.arreglo.indexOf(
         this.detallesBienes.find(x => x.id == event.target.value)
       );
-      this.detailArray.splice(index, 1);
+      this.arreglo.splice(index, 1);
     }
-    console.log(this.detailArray);
+    console.log(this.arreglo);
   }
 
   getTableElements(event: any) {
