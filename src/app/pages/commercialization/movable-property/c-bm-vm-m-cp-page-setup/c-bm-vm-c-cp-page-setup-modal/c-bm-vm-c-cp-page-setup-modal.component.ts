@@ -13,7 +13,7 @@ export class CBmVmCCpPageSetupModalComponent extends BasePage implements OnInit 
 
   form : FormGroup = new FormGroup({});
   pageSetup: any;
-  title: string = 'Tablas y columnas para visualizar en la página Web';
+  title: string = 'Campos para Tablas y columnas"';
   edit: boolean = false;
   @Output() refresh = new EventEmitter<true>();
 
