@@ -3,6 +3,8 @@ import { ADMINISTRATIVE_PROCESSES_ROUTES } from '../common/routes/administrative
 import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
 import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception.routes';
 import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
+import { GENERAL_PROCESSES_ROUTES } from '../common/routes/general-processes.routes';
+import { REGISTRATION_REQUEST_ROUTES } from '../common/routes/registration-request.routes';
 import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
@@ -50,6 +52,10 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
+
+  // Registro solicitudes//
+  ...REGISTRATION_REQUEST_ROUTES,
+
   //Proceso Destino final
   {
     label: 'Proceso Destino final',
@@ -118,9 +124,30 @@ export const MENU: IMenuItem[] = [
           },
         ],
       },
+      {
+        label: 'Actas Circunstanciadas de Suspensión/Cancelación',
+        link: '/pages/final-destination-process/circumstantial-acts-suspension-cancellation',
+      },
+      {
+        label: 'Actas Circunstanciadas de Cancelación de Ent por Robo',
+        link: '/pages/final-destination-process/acts-circumstantiated-cancellation-theft',
+      },
+      {
+        label: 'Constancias de Entrega',
+        link: '/pages/final-destination-process/proof-of-delivery',
+      },
+      {
+        label: 'Actas de Bienes Entregados para Estudio',
+        link: '/pages/final-destination-process/acts-goods-delivered',
+      },
+      {
+        label: 'Actas de Regularización por Inexistencia Física',
+        link: '/pages/final-destination-process/acts-regularization-non-existence',
+      },
     ],
   },
   ...DOCUMENTS_RECEPTION_ROUTES,
+  ...GENERAL_PROCESSES_ROUTES,
   //Procesos ejecutivos
   ...EXECUTIVE_PROCESSES_ROUTES,
   //Comercialización
@@ -215,6 +242,14 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Facturación normal',
             link: '/pages/commercialization/regular-billing-tab',
+          },
+          {
+            label: 'Campos Rectificación',
+            link: '/pages/commercialization/c-bm-f-fr-cr-m-rectification-fields',
+          },
+          {
+            label: 'Formato de rectificación',
+            link: '/pages/commercialization/c-bm-f-fr-prdf-m-invoice-rectification-process',
           },
         ],
       },
@@ -333,7 +368,7 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-folder',
     subItems: [
       {
-        label: 'Complemento Arituclo',
+        label: 'Complemento Aritculo',
         link: '/pages/judicial-physical-reception/articles-complement',
       },
       {
@@ -347,6 +382,27 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Actas de Recepcion',
         link: '/pages/judicial-physical-reception/confiscated-records',
+      },
+      {
+        label: 'Parcializa Bienes Generales 1',
+        link: '/pages/judicial-physical-reception/partializes-general-goods-1',
+      },
+
+      {
+        label: 'Parcializa Bienes Generales 2',
+        link: '/pages/judicial-physical-reception/partializes-general-goods-2',
+      },
+      {
+        label: 'Parcializaciond de Bienes',
+        link: '/pages/judicial-physical-reception/partializes-goods',
+      },
+      {
+        label: 'Recepcion Suspencion/Cancelacion',
+        link: '/pages/judicial-physical-reception/cancellation-recepcion',
+      },
+      {
+        label: 'Devolucion x Cancelacion de Venta',
+        link: '/pages/judicial-physical-reception/cancellation-sale',
       },
     ],
   },

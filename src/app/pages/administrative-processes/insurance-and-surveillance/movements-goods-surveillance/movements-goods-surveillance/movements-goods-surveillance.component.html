@@ -1,0 +1,17 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">MOVIMIENTOS DE BIENES EN VIGILANCIA</h5>
+  </div>
+  <div body>
+    <div class="md-tabs">
+      <tabset>
+        <tab heading="Consulta" id="tab1">
+          <app-movements-consults></app-movements-consults>
+        </tab>
+        <tab heading="Movimientos" id="tab2">
+          <app-movements-movements></app-movements-movements>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</app-card>
