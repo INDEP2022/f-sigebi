@@ -98,12 +98,25 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './legal-opinions-office/jp-d-m-legal-opinions-office.module'
+          './review-resource-report/pj-d-m-review-resource-report.module'
         )
-      ).JpDMLegalOpinionsOfficeModule,
+      ).PJDReviewResourceReportModule,
     data: { title: routesJuridicalProcesses[15].label },
   },
-
+  {
+    path: routesJuridicalProcesses[16].link,
+    loadChildren: async () =>
+      (await import('./notifications-file/pj-d-ne-m-notifications-file.module'))
+        .PJDNENotificationsFileModule,
+    data: { title: routesJuridicalProcesses[16].label },
+  },
+  {
+    path: routesJuridicalProcesses[17].link,
+    loadChildren: async () =>
+      (await import('./mass-ruling/pj-d-dmpd-m-mass-ruling.module'))
+        .PJDDMPDMassRulingModule,
+    data: { title: routesJuridicalProcesses[17].label },
+  },
   // DEPOSITARIA
 
   // PROCESO DE DISPERCION DE PAGOS
