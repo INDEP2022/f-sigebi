@@ -14,7 +14,7 @@ export class RequestDetailTabComponent extends BasePage implements OnInit {
   @Input() typeDoc = '';
   //datos pasados del padre
   @Input() dataObject: any;
-  receptionForm: ModelForm<IRequest>;
+  public receptionForm: ModelForm<IRequest>;
   selectTypeExpedient = new DefaultSelect<IRequest>();
 
   constructor(public fb: FormBuilder) {
@@ -27,7 +27,7 @@ export class RequestDetailTabComponent extends BasePage implements OnInit {
 
   prepareForm(): void {
     this.receptionForm = this.fb.group({
-      priority: [null],
+      priority: [{ value: true, disabled: true }],
       infoProvenance: ['Mensajeria'],
       receptDate: [{ value: '', disabled: true }],
       officeDate: [null, Validators.required],
