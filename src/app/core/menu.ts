@@ -1,10 +1,10 @@
 import { MENU_OPTIONS_JURIDICAL_PROCESSES } from '../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
 import { ADMINISTRATIVE_PROCESSES_ROUTES } from '../common/routes/administrative-processes.routes';
+import { REGISTRATION_REQUEST_ROUTES } from '../common/routes/registration-request.routes';
 import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
 import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception.routes';
 import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
 import { GENERAL_PROCESSES_ROUTES } from '../common/routes/general-processes.routes';
-import { REGISTRATION_REQUEST_ROUTES } from '../common/routes/registration-request.routes';
 import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
@@ -136,14 +136,6 @@ export const MENU: IMenuItem[] = [
         label: 'Constancias de Entrega',
         link: '/pages/final-destination-process/proof-of-delivery',
       },
-      {
-        label: 'Actas de Bienes Entregados para Estudio',
-        link: '/pages/final-destination-process/acts-goods-delivered',
-      },
-      {
-        label: 'Actas de Regularización por Inexistencia Física',
-        link: '/pages/final-destination-process/acts-regularization-non-existence',
-      },
     ],
   },
   ...DOCUMENTS_RECEPTION_ROUTES,
@@ -242,14 +234,6 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Facturación normal',
             link: '/pages/commercialization/regular-billing-tab',
-          },
-          {
-            label: 'Campos Rectificación',
-            link: '/pages/commercialization/c-bm-f-fr-cr-m-rectification-fields',
-          },
-          {
-            label: 'Formato de rectificación',
-            link: '/pages/commercialization/c-bm-f-fr-prdf-m-invoice-rectification-process',
           },
         ],
       },
