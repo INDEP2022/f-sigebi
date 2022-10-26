@@ -16,7 +16,7 @@ export interface IRequest {
   responsible?: string;
 
   //Reception Requests
-  priority?: string;
+  priority?: boolean;
   infoProvenance?: string;
   receptDate?: string;
   officeDate?: Date;
@@ -41,17 +41,4 @@ export interface IRequest {
 
   //solicitud del expediente
   status?: string;
-
-  assetsDescripTransfer?: string;
-  assetsDescripSEA?: string;
-  typeAsset?: string;
-  fraction?: string;
-  quantityTransfer?: string;
-  ligieUnitMeasure?: string;
-  transferUnitMeasure?: string;
-  uniqueKey?: string;
-  physicalState?: string;
-  conservationState?: string;
-  destinyLigie?: string;
-  destinyTransfer?: string;
 }

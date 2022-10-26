@@ -13,11 +13,3 @@ span {
   font-size: 0.8em;
   font-weight: 400;
 }
-
-:host ::ng-deep .swal2-container.swal2-center>.swal2-popup{
-  background-color: red;
-  color: red;
-}
-  /* .swal2-container.swal2-center>.swal2-popup {
-      width: 40rem !important;
-    } */
