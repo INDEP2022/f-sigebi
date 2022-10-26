@@ -96,8 +96,33 @@ const routes: Routes = [
   {
     path: routesJuridicalProcesses[15].link,
     loadChildren: async () =>
-      (await import('./trials/jp-d-m-trials.module')).JpDMTrialsModule,
+      (
+        await import(
+          './review-resource-report/pj-d-m-review-resource-report.module'
+        )
+      ).PJDReviewResourceReportModule,
     data: { title: routesJuridicalProcesses[15].label },
+  },
+  {
+    path: routesJuridicalProcesses[16].link,
+    loadChildren: async () =>
+      (await import('./notifications-file/pj-d-ne-m-notifications-file.module'))
+        .PJDNENotificationsFileModule,
+    data: { title: routesJuridicalProcesses[16].label },
+  },
+  {
+    path: routesJuridicalProcesses[17].link,
+    loadChildren: async () =>
+      (await import('./mass-ruling/pj-d-dmpd-m-mass-ruling.module'))
+        .PJDDMPDMassRulingModule,
+    data: { title: routesJuridicalProcesses[17].label },
+  },
+  {
+    path: routesJuridicalProcesses[18].link,
+    loadChildren: async () =>
+      (await import('./return-ruling/jp-d-m-return-ruling.module'))
+        .JpDMReturnRulingModule,
+    data: { title: routesJuridicalProcesses[18].label },
   },
   // DEPOSITARIA
 
@@ -112,6 +137,7 @@ const routes: Routes = [
       ).PaymentDispersalProcessModule,
     data: { title: 'Proceso de Disperción de Pagos' },
   },
+
   // PROCESO DE DISPERCION DE PAGOS
 ];
 @NgModule({
