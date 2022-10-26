@@ -126,6 +126,12 @@ export const routesJuridicalProcesses: any = [
     link: 'legal-opinions-office',
     menu: 'Oficio de dictaminaciones jurídicas',
   },
+  {
+    // Comprobación de Documentos para Recursos Revision
+    label: 'Juicios',
+    link: 'trials',
+    menu: 'Juicios',
+  },
   // DEPOSITARIA
 ];
 export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
@@ -272,6 +278,14 @@ export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
               baseMenu +
               baseMenuDepositaria +
               routesJuridicalProcesses[19].link,
+          },
+          {
+            // Juicios
+            label: routesJuridicalProcesses[20].menu,
+            link:
+              baseMenu +
+              baseMenuDepositaria +
+              routesJuridicalProcesses[20].link,
           },
         ],
       },

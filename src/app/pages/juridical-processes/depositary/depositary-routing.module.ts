@@ -134,6 +134,12 @@ const routes: Routes = [
       ).JpDMLegalOpinionsOfficeModule,
     data: { title: routesJuridicalProcesses[19].label },
   },
+  {
+    path: routesJuridicalProcesses[20].link,
+    loadChildren: async () =>
+      (await import('./trials/jp-d-m-trials.module')).JpDMTrialsModule,
+    data: { title: routesJuridicalProcesses[20].label },
+  },
   // DEPOSITARIA
 
   // PROCESO DE DISPERCION DE PAGOS
