@@ -13,7 +13,32 @@ export class JpDRrCReturnRulingComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  data: any = [];
+  data: any = [
+    {
+      numberGood: 'Bien 1',
+      description: 'Descripcion del bien 1',
+      dateReceived: '02/07/2022',
+      status: 'Estatus 1',
+    },
+    {
+      numberGood: 'Bien 1',
+      description: 'Descripcion del bien 1',
+      dateReceived: '02/07/2022',
+      status: 'Estatus 1',
+    },
+    {
+      numberGood: 'Bien 1',
+      description: 'Descripcion del bien 1',
+      dateReceived: '02/07/2022',
+      status: 'Estatus 1',
+    },
+    {
+      numberGood: 'Bien 1',
+      description: 'Descripcion del bien 1',
+      dateReceived: '02/07/2022',
+      status: 'Estatus 1',
+    },
+  ];
   //Reactive Forms
   form: FormGroup;
 

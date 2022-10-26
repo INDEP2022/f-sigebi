@@ -117,6 +117,13 @@ const routes: Routes = [
         .PJDDMPDMassRulingModule,
     data: { title: routesJuridicalProcesses[17].label },
   },
+  {
+    path: routesJuridicalProcesses[18].link,
+    loadChildren: async () =>
+      (await import('./return-ruling/jp-d-m-return-ruling.module'))
+        .JpDMReturnRulingModule,
+    data: { title: routesJuridicalProcesses[18].label },
+  },
   // DEPOSITARIA
 
   // PROCESO DE DISPERCION DE PAGOS
@@ -130,6 +137,7 @@ const routes: Routes = [
       ).PaymentDispersalProcessModule,
     data: { title: 'Proceso de Disperción de Pagos' },
   },
+
   // PROCESO DE DISPERCION DE PAGOS
 ];
 @NgModule({
