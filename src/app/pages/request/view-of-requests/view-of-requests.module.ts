@@ -22,7 +22,7 @@ import { GeneralDocTabComponent } from '../transfer-request/tabs/expedients-chil
 import { GoodDocTabComponent } from '../transfer-request/tabs/expedients-child-tabs-components/good-doc-tab/good-doc-tab.component';
 import { NewDocumentComponent } from '../transfer-request/tabs/expedients-child-tabs-components/new-document/new-document.component';
 import { RequestOfAssetsComponent } from '../transfer-request/tabs/expedients-child-tabs-components/request-of-assets/request-of-assets.component';
-import { RequestRecordTabComponent } from '../transfer-request/tabs/request-record-tab/request-record-tab.component';
+import { RequestRecordTabComponent } from '../transfer-request/tabs/records-of-request-components/request-record-tab/request-record-tab.component';
 import { RequestFormComponent } from './request-form/request-form.component';
 import { RequestListComponent } from './request-list/request-list.component';
 import { UsersSelectedToTurnComponent } from './users-selected-to-turn/users-selected-to-turn.component';
