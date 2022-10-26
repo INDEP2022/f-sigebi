@@ -276,26 +276,6 @@ const routes: Routes = [
       ).CMElectronicSignaturesModule,
     data: { title: 'Gestión de Firmas Electrónicas' },
   },
-  {
-    path: 'c-bm-f-fr-cr-m-rectification-fields',
-    loadChildren: async () =>
-      (
-        await import(
-          './movable-property/c-bm-f-fr-cr-m-rectification-fields/c-bm-f-fr-cr-m-rectification-fields.module'
-        )
-      ).CBmFFrCrMRectificationFieldsModule,
-    data: { title: 'Campos rectificación' },
-  },
-  {
-    path: 'c-bm-f-fr-prdf-m-invoice-rectification-process',
-    loadChildren: async () =>
-      (
-        await import(
-          './movable-property/c-bm-f-fr-prdf-m-invoice-rectification-process/c-bm-f-fr-prdf-m-invoice-rectification-process.module'
-        )
-      ).CBmFFrPrdfMInvoiceRectificationProcessModule,
-    data: { title: 'Formato de rectificación' },
-  },
 ];
 
 @NgModule({
