@@ -19,6 +19,10 @@ export const GENERAL_PROCESSES_ROUTES = [
         label: 'Depuración de Expedientes',
         link: '/pages/general-processes/purging-records',
       },
+      {
+        label: 'Rastreador de Bienes',
+        link: '/pages/general-processes/goods-tracker',
+      },
     ],
   },
 ];
