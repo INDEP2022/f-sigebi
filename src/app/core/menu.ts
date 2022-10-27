@@ -275,7 +275,15 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Reporte de Ingresos por Mandato',
             link: '/pages/commercialization/mandate-income-reports'
-          }
+          },
+          {
+            label: 'Remesas registradas por regional',
+            link: '/pages/commercialization/c-bm-r-rrpr-m-remittances-recorded-region',
+          },
+          {
+            label: 'Exportación de las Remesas',
+            link: '/pages/commercialization/c-bm-r-exdlr-m-remittance-exportation',
+          },
         ],
       },
       {
