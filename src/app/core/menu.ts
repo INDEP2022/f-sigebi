@@ -122,6 +122,10 @@ export const MENU: IMenuItem[] = [
             label: 'Aprobación para Donación',
             link: '/pages/final-destination-process/donation-process/approval-for-donation',
           },
+          {
+            label: 'Solicitud y Autorización de Donación',
+            link: '/pages/final-destination-process/donation-process/donation-authorization-request',
+          },
         ],
       },
       {
@@ -264,6 +268,10 @@ export const MENU: IMenuItem[] = [
             link: '/pages/commercialization/c-bm-vm-cde-m-entity-classification',
           },
           {
+            label: 'Reporte de Ingresos por Mandato',
+            link: '/pages/commercialization/mandate-income-reports'
+          },
+          {
             label: 'Remesas registradas por regional',
             link: '/pages/commercialization/c-bm-r-rrpr-m-remittances-recorded-region',
           },
@@ -329,6 +337,10 @@ export const MENU: IMenuItem[] = [
             label: 'Permisos a Eventos',
             link: '/pages/commercialization/events',
           },
+          {
+            label: 'Reporte de Ingresos por Mandato',
+            link: '/pages/commercialization/mandate-income-reports'
+          }
         ],
       },
       {

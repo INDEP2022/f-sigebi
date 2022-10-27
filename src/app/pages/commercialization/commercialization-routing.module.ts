@@ -324,6 +324,13 @@ const routes: Routes = [
     data: { title: 'Devolución de Pagos' },
   },
   {
+    path: 'mandate-income-reports',
+    loadChildren: async () =>
+      (await import('./shared-marketing-components/mandate-income-reports/c-b-mir-m-mandate-income-reports.module'))
+        .CBMirMMandateIncomeReportsModule,
+    data: { title: 'Reporte de Ing. por Mandato' },
+  },
+  {
     path: 'c-bm-r-rrpr-m-remittances-recorded-region',
     loadChildren: async () =>
       (await import('./movable-property/c-bm-r-rrpr-m-remittances-recorded-region/c-bm-r-rrpr-m-remittances-recorded-region.module'))
