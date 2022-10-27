@@ -431,6 +431,36 @@ const routes: Routes = [
           ).InformationGenerationModule,
         data: { title: 'Generación de informacion para reporte coord' },
       },
+      {
+        path: 'vaults',
+        loadChildren: async () =>
+          (
+            await import(
+              './reports/vaults/vaults.module'
+            )
+          ).VaultsModule,
+        data: { title: 'Bovedas y Gavetas' },
+      },
+      {
+        path: 'concentrate-goods-type',
+        loadChildren: async () =>
+          (
+            await import(
+              './reports/concentrate-goods-type/concentrate-goods-type.module'
+            )
+          ).ConcentrateGoodsTypeModule,
+        data: { title: 'Concentrado de bienes por expendiente' },
+      },
+      {
+        path: 'flat-file-for-good',
+        loadChildren: async () =>
+          (
+            await import(
+              './reports/flat-file-for-good/flat-file-for-good.module'
+            )
+          ).FlatFileForGoodModule,
+        data: { title: 'Generación de archivo plano' },
+      },
       /**
        * Seguros David Lucas
        */

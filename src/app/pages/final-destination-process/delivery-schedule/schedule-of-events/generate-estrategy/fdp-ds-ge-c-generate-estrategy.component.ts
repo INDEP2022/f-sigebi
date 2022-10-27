@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { FdpAdpdtDetailDelegationsComponent } from './../../../third-party-possession-acts/detail-delegations/fdp-adpdt-detail-delegations.component';
+import { FdpAdpdtDetailDelegationsComponent } from '../../../shared-final-destination/detail-delegations/fdp-adpdt-detail-delegations.component';
 import { COLUMNS_GOODS } from './columns-goods';
 import { COLUMNS_ORDERS } from './columns-orders';
 

@@ -11,11 +11,15 @@ import { UsersSharedComponent } from 'src/app/@standalone/shared-forms/user-shar
 //Components
 import { SelectUserComponent } from './select-user/select-user.component';
 import { DatePickerComponent } from './date-picker/date-picker.component';
+import { SelectIdComponent } from './entity-classification/select-id/select-id.component';
+import { SelectDescriptionComponent } from './entity-classification/select-description/select-description.component';
 
 @NgModule({
   declarations: [
     SelectUserComponent,
-    DatePickerComponent
+    DatePickerComponent,
+    SelectIdComponent,
+    SelectDescriptionComponent
   ],
   imports: [
     CommonModule,
