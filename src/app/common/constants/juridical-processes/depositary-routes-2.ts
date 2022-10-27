@@ -23,4 +23,10 @@ export const DEPOSITARY_ROUTES_2: any[] = [
     link: 'notice-of-abandonment-by-return',
     menu: 'Notificación de abandono por devolución',
   },
+  {
+    // ESPACIO EN BLANCO
+    label: 'Notificaciones pendientes',
+    link: 'pending-notifications',
+    menu: 'Notificaciones pendientes',
+  },
 ];

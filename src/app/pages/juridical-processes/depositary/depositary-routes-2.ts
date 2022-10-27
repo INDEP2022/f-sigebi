@@ -35,4 +35,14 @@ export const DEPOSITARY_ROUTES_2_ROUTING = [
       ).JpDMNoticeOfAbandonmentByReturnModule,
     data: { title: DEPOSITARY_ROUTES_2[3].label },
   },
+  {
+    path: DEPOSITARY_ROUTES_2[4].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './pending-notifications/jp-d-m-pending-notifications.module'
+        )
+      ).JpDMPendingNotificationsModule,
+    data: { title: DEPOSITARY_ROUTES_2[4].label },
+  },
 ];
