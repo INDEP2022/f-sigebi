@@ -18,9 +18,10 @@ export const DEPOSITARY_ROUTES_2: any[] = [
     menu: 'Juicios',
   },
   {
-    // ESPACIO EN BLANCO
-    label: '',
-    link: '',
-    menu: '',
+    // Dictaminación Masiva Prog. Desalojo
+    label: 'Notificación de abandono por aseguramiento',
+    link: 'notice-abandonment-for-securing',
+    menu: 'Notificación de abandono por aseguramiento',
   },
+  {},
 ];

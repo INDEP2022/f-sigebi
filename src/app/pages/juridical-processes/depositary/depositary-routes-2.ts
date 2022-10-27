@@ -32,4 +32,14 @@ export const DEPOSITARY_ROUTES_2_ROUTING = [
       (await import('./trials/jp-d-m-trials.module')).JpDMTrialsModule,
     data: { title: DEPOSITARY_ROUTES_2[3].label },
   }, // ESPACIO EN BLANCO
+  {
+    path: DEPOSITARY_ROUTES_2[4].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './underwriting-credit-memo/jp-d-m-underwriting-credit-memo.module'
+        )
+      ).JpDMUnderwritingCreditMemoModule,
+    data: { title: DEPOSITARY_ROUTES_2[4].label },
+  },
 ];
