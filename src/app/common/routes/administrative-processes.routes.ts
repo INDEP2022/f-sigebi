@@ -295,6 +295,15 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Coordinacion por zonas',
             link: '/pages/administrative-processes/zones',
           },
+          /*{
+            label: 'Almacenes',
+            icon: 'bx-folder',
+            subItems: [],
+          },*/
+          {
+            label: 'Alta de Almacenes por Contrato',
+            link: '/pages/administrative-processes/reg-warehouse-contract',
+          },
         ],
       },
       {
