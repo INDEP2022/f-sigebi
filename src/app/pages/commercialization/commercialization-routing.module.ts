@@ -297,6 +297,26 @@ const routes: Routes = [
     data: { title: 'Formato de rectificación' },
   },
   {
+    path: 'c-bm-vm-m-cp-page-setup',
+    loadChildren: async () =>
+      (
+        await import(
+          './movable-property/c-bm-vm-m-cp-page-setup/c-bm-vm-m-cp-page-setup.module'
+        )
+      ).CBmVmMCpPageSetupModule,
+    data: { title: 'Configuración de Página' },
+  },
+  {
+    path: 'c-bm-vm-cde-m-entity-classification',
+    loadChildren: async () =>
+      (
+        await import(
+          './movable-property/c-bm-vm-cde-m-entity-classification/c-bm-vm-cde-m-entity-classification.module'
+        )
+      ).CBmVmCdeMEntityClassificationModule,
+    data: { title: 'Catálogo de Entidades' },
+  },
+  {
     path: 'payment-refund',
     loadChildren: async () =>
       (await import('./c-m-payment-refund/c-m-payment-refund.module'))

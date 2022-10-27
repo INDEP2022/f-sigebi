@@ -255,6 +255,14 @@ export const MENU: IMenuItem[] = [
             label: 'Formato de rectificación',
             link: '/pages/commercialization/c-bm-f-fr-prdf-m-invoice-rectification-process',
           },
+          {
+            label: 'Configuración de Página',
+            link: '/pages/commercialization/c-bm-vm-m-cp-page-setup',
+          },
+          {
+            label: 'Catálogo de Entidades',
+            link: '/pages/commercialization/c-bm-vm-cde-m-entity-classification',
+          },
         ],
       },
       {
