@@ -323,6 +323,20 @@ const routes: Routes = [
         .CMPaymentRefundModule,
     data: { title: 'Devolución de Pagos' },
   },
+  {
+    path: 'c-bm-r-rrpr-m-remittances-recorded-region',
+    loadChildren: async () =>
+      (await import('./movable-property/c-bm-r-rrpr-m-remittances-recorded-region/c-bm-r-rrpr-m-remittances-recorded-region.module'))
+        .CBmRRrprMRemittancesRecordedRegionModule,
+    data: { title: 'Remesas registradas por regional' },
+  },
+  {
+    path: 'c-bm-r-exdlr-m-remittance-exportation',
+    loadChildren: async () =>
+      (await import('./movable-property/c-bm-r-exdlr-m-remittance-exportation/c-bm-r-exdlr-m-remittance-exportation.module'))
+        .CBmRExdlrMRemittanceExportationModule,
+    data: { title: 'Exportación de las Remesas' },
+  },
 ];
 
 @NgModule({

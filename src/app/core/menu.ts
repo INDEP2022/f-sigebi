@@ -263,6 +263,14 @@ export const MENU: IMenuItem[] = [
             label: 'Catálogo de Entidades',
             link: '/pages/commercialization/c-bm-vm-cde-m-entity-classification',
           },
+          {
+            label: 'Remesas registradas por regional',
+            link: '/pages/commercialization/c-bm-r-rrpr-m-remittances-recorded-region',
+          },
+          {
+            label: 'Exportación de las Remesas',
+            link: '/pages/commercialization/c-bm-r-exdlr-m-remittance-exportation',
+          },
         ],
       },
       {
