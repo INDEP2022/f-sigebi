@@ -316,3 +316,33 @@ ng-scrollbar {
     cursor: pointer;
   }
 }
+
+.btn-danger:not(.active) {
+  &:hover {
+    background-color: #bc955c !important;
+    border-color: #bc955c !important;
+  }
+}
+
+a.dropdown-item {
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+ng-scrollbar.table-scrollbar {
+  border: none;
+}
+
+.table-padding {
+  height: 1em;
+}
+
+.tab-content form.no-margin {
+  margin-bottom: 0px !important;
+}
+
+.float-check {
+  position: relative;
+  bottom: 6px;
+}

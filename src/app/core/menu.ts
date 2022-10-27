@@ -1,10 +1,10 @@
 import { MENU_OPTIONS_JURIDICAL_PROCESSES } from '../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
 import { ADMINISTRATIVE_PROCESSES_ROUTES } from '../common/routes/administrative-processes.routes';
-import { REGISTRATION_REQUEST_ROUTES } from '../common/routes/registration-request.routes';
 import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
 import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception.routes';
 import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
 import { GENERAL_PROCESSES_ROUTES } from '../common/routes/general-processes.routes';
+import { REGISTRATION_REQUEST_ROUTES } from '../common/routes/registration-request.routes';
 import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
@@ -122,6 +122,10 @@ export const MENU: IMenuItem[] = [
             label: 'Aprobación para Donación',
             link: '/pages/final-destination-process/donation-process/approval-for-donation',
           },
+          {
+            label: 'Solicitud y Autorización de Donación',
+            link: '/pages/final-destination-process/donation-process/donation-authorization-request',
+          },
         ],
       },
       {
@@ -135,6 +139,18 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Constancias de Entrega',
         link: '/pages/final-destination-process/proof-of-delivery',
+      },
+      {
+        label: 'Actas de Bienes Entregados para Estudio',
+        link: '/pages/final-destination-process/acts-goods-delivered',
+      },
+      {
+        label: 'Actas de Regularización por Inexistencia Física',
+        link: '/pages/final-destination-process/acts-regularization-non-existence',
+      },
+      {
+        label: 'Reporte de Actas de Devolución',
+        link: '/pages/final-destination-process/return-acts-report',
       },
     ],
   },
@@ -235,6 +251,26 @@ export const MENU: IMenuItem[] = [
             label: 'Facturación normal',
             link: '/pages/commercialization/regular-billing-tab',
           },
+          {
+            label: 'Campos Rectificación',
+            link: '/pages/commercialization/c-bm-f-fr-cr-m-rectification-fields',
+          },
+          {
+            label: 'Formato de rectificación',
+            link: '/pages/commercialization/c-bm-f-fr-prdf-m-invoice-rectification-process',
+          },
+          {
+            label: 'Configuración de Página',
+            link: '/pages/commercialization/c-bm-vm-m-cp-page-setup',
+          },
+          {
+            label: 'Catálogo de Entidades',
+            link: '/pages/commercialization/c-bm-vm-cde-m-entity-classification',
+          },
+          {
+            label: 'Reporte de Ingresos por Mandato',
+            link: '/pages/commercialization/mandate-income-reports'
+          }
         ],
       },
       {
@@ -293,6 +329,10 @@ export const MENU: IMenuItem[] = [
             label: 'Permisos a Eventos',
             link: '/pages/commercialization/events',
           },
+          {
+            label: 'Reporte de Ingresos por Mandato',
+            link: '/pages/commercialization/mandate-income-reports'
+          }
         ],
       },
       {
@@ -306,6 +346,10 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Claves autorización envío ext. OIs',
             link: '/pages/commercialization/catalogs/authorization-keys-ois',
+          },
+          {
+            label: 'Líneas de Captura',
+            link: '/pages/commercialization/catalogs/capture-lines',
           },
         ],
       },
@@ -341,6 +385,10 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Gestión de Firmas Electrónicas',
         link: '/pages/commercialization/electronic-signatures',
+      },
+      {
+        label: 'Devolución de Pagos',
+        link: '/pages/commercialization/payment-refund',
       },
     ],
   },
