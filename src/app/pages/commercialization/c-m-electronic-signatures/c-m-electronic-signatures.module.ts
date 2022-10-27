@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { AlertModule } from 'ngx-bootstrap/alert';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { NgScrollbarModule } from 'ngx-scrollbar';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { CMElectronicSignaturesMainComponent } from './c-m-electronic-signatures-main/c-m-electronic-signatures-main.component';
 import { CMElectronicSignaturesRoutingModule } from './c-m-electronic-signatures-routing.module';
@@ -17,6 +18,7 @@ import { CMElectronicSignaturesRoutingModule } from './c-m-electronic-signatures
     TabsModule,
     AlertModule.forRoot(),
     ModalModule.forChild(),
+    NgScrollbarModule,
   ],
 })
 export class CMElectronicSignaturesModule {}

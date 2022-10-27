@@ -55,6 +55,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         icon: 'bx-folder',
         subItems: [
           {
+            label: 'Acceso a Usuarios',
+            link: '/pages/administrative-processes/user-access',
+          },
+          {
             label: 'Mantenimiento de Pólizas',
             link: '/pages/administrative-processes/policy-maintenance',
           },
@@ -133,6 +137,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Movimiento de Bienes en vigilancia',
             link: '/pages/administrative-processes/movements-goods-surveillance',
+          },
+          {
+            label: 'Servicio de Vigilancia',
+            link: '/pages/administrative-processes/surveillance-service',
           },
         ],
       },
@@ -303,16 +311,6 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         link: '/pages/administrative-processes/insured-numerary-account',
       },
       {
-        label: 'Empresas',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Reporte de evaluación de desempeño',
-            link: '/pages/administrative-processes/performance-evaluation-report',
-          },
-        ],
-      },
-      {
         label: 'Conversión de bienes',
         icon: 'bx-folder',
         subItems: [
@@ -344,6 +342,14 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Resumen Info Financiera',
             link: '/pages/administrative-processes/summary-financial-info',
           },
+          {
+            label: 'Reporte de evaluación de desempeño',
+            link: '/pages/administrative-processes/performance-evaluation-report',
+          },
+          {
+            label: 'Reporte de inventario',
+            link: '/pages/administrative-processes/inventory-report',
+          },
         ],
       },
       {
@@ -369,6 +375,30 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Generación de informacion para reporte COORD',
             link: '/pages/administrative-processes/information-generation',
+          },
+          {
+            label: 'Bóvedas y Gavetas',
+            link: '/pages/administrative-processes/vaults',
+          },
+          {
+            label: 'Concentrado de bienes por expendiente',
+            link: '/pages/administrative-processes/concentrate-goods-type',
+          },
+          {
+            label: 'Generación de archivo plano',
+            link: '/pages/administrative-processes/flat-file-for-good',
+          },
+          {
+            label: 'Devoluciones y Decomisios de Bienes',
+            link: '/pages/administrative-processes/return-confiscation-property',
+          },
+          {
+            label: 'Archivo plano de avaluos por Bien',
+            link: '/pages/administrative-processes/generate-excel-file',
+          },
+          {
+            label: 'Gastos por bien',
+            link: '/pages/administrative-processes/bills-good',
           },
         ],
       },

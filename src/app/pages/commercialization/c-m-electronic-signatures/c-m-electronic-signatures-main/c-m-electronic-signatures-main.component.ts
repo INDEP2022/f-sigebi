@@ -201,7 +201,8 @@ export class CMElectronicSignaturesMainComponent
   }
 
   openSignWindow() {
-    let url = this.pdfUrl;
+    let url =
+      'http://firma.sae.gob.mx/firmar.aspx?DICTAMEN=_&NATURALEZA_DOC=&NO_DOCUMENTO=&TIPO_DOCUMENTO=&RFC_USR=XAXX010101000';
     window.open(url, 'Firmar Documento | INDEP');
   }
 

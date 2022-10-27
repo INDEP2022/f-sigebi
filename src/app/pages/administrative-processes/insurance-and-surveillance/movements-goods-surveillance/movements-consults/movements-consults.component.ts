@@ -13,7 +13,7 @@ import { MOVEMENTS_COSULTS_COLUMNS } from './movements-consults-columns';
 export class MovementsConsultsComponent extends BasePage implements OnInit {
   form: FormGroup;
 
-  percentages: any[] = [];
+  consults: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   constructor(private fb: FormBuilder) {
@@ -34,6 +34,8 @@ export class MovementsConsultsComponent extends BasePage implements OnInit {
       h12: [null, Validators.required],
       indirectTurn: [null, Validators.required],
       canineTurn: [null, Validators.required],
+      criteria: [null, Validators.required],
+      descCriteria: [null, Validators.required],
     });
   }
 }

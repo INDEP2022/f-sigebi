@@ -276,6 +276,53 @@ const routes: Routes = [
       ).CMElectronicSignaturesModule,
     data: { title: 'Gestión de Firmas Electrónicas' },
   },
+  {
+    path: 'c-bm-f-fr-cr-m-rectification-fields',
+    loadChildren: async () =>
+      (
+        await import(
+          './movable-property/c-bm-f-fr-cr-m-rectification-fields/c-bm-f-fr-cr-m-rectification-fields.module'
+        )
+      ).CBmFFrCrMRectificationFieldsModule,
+    data: { title: 'Campos rectificación' },
+  },
+  {
+    path: 'c-bm-f-fr-prdf-m-invoice-rectification-process',
+    loadChildren: async () =>
+      (
+        await import(
+          './movable-property/c-bm-f-fr-prdf-m-invoice-rectification-process/c-bm-f-fr-prdf-m-invoice-rectification-process.module'
+        )
+      ).CBmFFrPrdfMInvoiceRectificationProcessModule,
+    data: { title: 'Formato de rectificación' },
+  },
+  {
+    path: 'c-bm-vm-m-cp-page-setup',
+    loadChildren: async () =>
+      (
+        await import(
+          './movable-property/c-bm-vm-m-cp-page-setup/c-bm-vm-m-cp-page-setup.module'
+        )
+      ).CBmVmMCpPageSetupModule,
+    data: { title: 'Configuración de Página' },
+  },
+  {
+    path: 'c-bm-vm-cde-m-entity-classification',
+    loadChildren: async () =>
+      (
+        await import(
+          './movable-property/c-bm-vm-cde-m-entity-classification/c-bm-vm-cde-m-entity-classification.module'
+        )
+      ).CBmVmCdeMEntityClassificationModule,
+    data: { title: 'Catálogo de Entidades' },
+  },
+  {
+    path: 'payment-refund',
+    loadChildren: async () =>
+      (await import('./c-m-payment-refund/c-m-payment-refund.module'))
+        .CMPaymentRefundModule,
+    data: { title: 'Devolución de Pagos' },
+  },
 ];
 
 @NgModule({

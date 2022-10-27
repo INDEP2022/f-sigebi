@@ -1,0 +1,69 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">BIENES CON RECURSO DE REVISI&Oacute;N</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field [control]="form.get('delegacion')" label="Delegación">
+            <input class="form-control" formControlName="delegacion" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field
+            [control]="form.get('subdelegacion')"
+            label="SubDelegación">
+            <input class="form-control" formControlName="subdelegacion" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field
+            [control]="form.get('delBien')"
+            label="Desde el No. Bien:">
+            <input class="form-control" formControlName="delBien" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field [control]="form.get('alBien')" label="Al No. Bien:">
+            <input class="form-control" formControlName="alBien" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2">
+          <h6>Fecha Presentación Recurso:</h6>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field
+            [control]="form.get('fechaPresentacionRecursoDesde')"
+            label="Fecha desde:">
+            <input
+              class="form-control"
+              formControlName="fechaPresentacionRecursoDesde"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field
+            [control]="form.get('fechaPresentacionRecursoHasta')"
+            label="Fecha hasta:">
+            <input
+              class="form-control"
+              formControlName="fechaPresentacionRecursoHasta"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
+          <div class="form-group">
+            <button
+              type="button"
+              class="btn btn-primary active"
+              (click)="btnGenerarReporte()">
+              Generar Reporte
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

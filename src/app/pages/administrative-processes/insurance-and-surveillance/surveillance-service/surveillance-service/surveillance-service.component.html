@@ -1,0 +1,142 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">SERVICIO DE VIGILANCIA</h5>
+  </div>
+
+  <div body>
+    <form action="" [formGroup]="form" class="form-material">
+      <div class="row mt-4">
+        <div class="col gap-4">
+          <div class="mb-4">
+            <ngx-select
+              [form]="form"
+              [data]="delegations"
+              bindLabel="name"
+              label="Delegación"
+              value="id"
+              (fetchItems)="getDelegations($event)"
+              control="delegation"></ngx-select>
+          </div>
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <form-field [control]="form.get('process')" label="Proceso">
+                <select class="form-control" formControlName="process">
+                  <option [value]="null">Seleccione un valor</option>
+                  <option [value]="1">Proceso 1</option>
+                  <option [value]="2">Proceso 2</option>
+                </select>
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <form-field [control]="form.get('period')" label="Periodo">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="period"
+                  min="1"
+                  pattern="^[0-9]+" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <form-field [control]="form.get('from')" label="Periodo del">
+                <input
+                  type="text"
+                  formControlName="from"
+                  class="form-control"
+                  bsDatepicker />
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <form-field [control]="form.get('to')" label="Al">
+                <input
+                  type="text"
+                  formControlName="to"
+                  class="form-control"
+                  bsDatepicker />
+              </form-field>
+            </div>
+          </div>
+          <div class="row mt-4">
+            <div class="col-md-3">
+              <form-field [control]="form.get('total')" label="Total aleatorio">
+                <input
+                  type="text"
+                  formControlName="total"
+                  class="form-control" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col gap-4">
+          <div class="row">
+            <form-field [control]="form.get('processTwo')" label="Proceso">
+              <select class="form-control" formControlName="processTwo">
+                <option [value]="null">Seleccione un valor</option>
+                <option [value]="1">Proceso 1</option>
+                <option [value]="2">Proceso 2</option>
+              </select>
+            </form-field>
+          </div>
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <form-field [control]="form.get('from')" label="Periodo del">
+                <input
+                  type="text"
+                  formControlName="from"
+                  class="form-control"
+                  bsDatepicker />
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <form-field [control]="form.get('toTwo')" label="Al">
+                <input
+                  type="text"
+                  formControlName="toTwo"
+                  class="form-control"
+                  bsDatepicker />
+              </form-field>
+            </div>
+          </div>
+
+          <button type="button" class="btn btn-primary btn-sm active">
+            CARGAR ARCHIVO
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm active mx-4">
+            REVISAR CARGA
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm active mx-4">
+            GENERAR ALEATORIOS
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm active mx-4">
+            CREAR REPORTE
+          </button>
+          <button type="button" class="btn btn-success btn-sm active">
+            EXPORTAR REPORTE
+          </button>
+        </div>
+      </div>
+      <hr />
+      <div>
+        <div class="row pt-4">
+          <div class="ch-content">
+            <h5 class="title">BIENES</h5>
+          </div>
+          <div class="col-md-12">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="goods">
+              </ng2-smart-table>
+            </div>
+          </div>
+        </div>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </form>
+  </div>
+</app-card>
