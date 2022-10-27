@@ -26,10 +26,13 @@ export const DEPOSITARY_ROUTES_2_ROUTING = [
     data: { title: DEPOSITARY_ROUTES_2[2].label },
   },
   {
-    // ESPACIO EN BLANCO
     path: DEPOSITARY_ROUTES_2[3].link,
     loadChildren: async () =>
-      (await import('./trials/jp-d-m-trials.module')).JpDMTrialsModule,
+      (
+        await import(
+          './notice-of-abandonment-by-return/jp-d-m-notice-of-abandonment-by-return.module'
+        )
+      ).JpDMNoticeOfAbandonmentByReturnModule,
     data: { title: DEPOSITARY_ROUTES_2[3].label },
-  }, // ESPACIO EN BLANCO
+  },
 ];
