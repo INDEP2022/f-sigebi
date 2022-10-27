@@ -335,6 +335,10 @@ export const MENU: IMenuItem[] = [
             label: 'Claves autorización envío ext. OIs',
             link: '/pages/commercialization/catalogs/authorization-keys-ois',
           },
+          {
+            label: 'Líneas de Captura',
+            link: '/pages/commercialization/catalogs/capture-lines',
+          },
         ],
       },
       {
@@ -369,6 +373,10 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Gestión de Firmas Electrónicas',
         link: '/pages/commercialization/electronic-signatures',
+      },
+      {
+        label: 'Devolución de Pagos',
+        link: '/pages/commercialization/payment-refund',
       },
     ],
   },

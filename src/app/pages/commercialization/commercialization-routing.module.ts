@@ -316,6 +316,13 @@ const routes: Routes = [
       ).CBmVmCdeMEntityClassificationModule,
     data: { title: 'Catálogo de Entidades' },
   },
+  {
+    path: 'payment-refund',
+    loadChildren: async () =>
+      (await import('./c-m-payment-refund/c-m-payment-refund.module'))
+        .CMPaymentRefundModule,
+    data: { title: 'Devolución de Pagos' },
+  },
 ];
 
 @NgModule({
