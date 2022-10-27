@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { NgScrollbarModule } from 'ngx-scrollbar';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { CMPaymentSearchListComponent } from './c-m-payment-search-list/c-m-payment-search-list.component';
 import { CMPaymentSearchModalComponent } from './c-m-payment-search-modal/c-m-payment-search-modal.component';
@@ -14,6 +15,7 @@ import { CMPaymentSearchRoutingModule } from './c-m-payment-search-routing.modul
     CMPaymentSearchRoutingModule,
     SharedModule,
     ModalModule.forChild(),
+    NgScrollbarModule,
   ],
 })
 export class CMPaymentSearchModule {}

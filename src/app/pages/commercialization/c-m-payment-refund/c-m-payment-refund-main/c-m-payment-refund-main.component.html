@@ -68,7 +68,7 @@
         </div>
         <div class="col-sm-12 col-md-12 col-lg-6">
           <div class="d-flex flex-row-reverse">
-            <div class="mt-1">
+            <div class="">
               <app-columns-select
                 [(settings)]="controlSettings"></app-columns-select>
             </div>
@@ -239,13 +239,13 @@
                 </div>
                 <div class="col-sm-12 col-md-12 col-lg-6">
                   <div class="d-flex flex-row-reverse">
-                    <div class="mt-1">
+                    <div class="">
                       <app-columns-select
                         [(settings)]="accountSettings"></app-columns-select>
                     </div>
                     <div>
                       <button
-                        class="btn btn-sm btn-info active me-2 font-size-13"
+                        class="btn btn-sm btn-primary active me-2 font-size-13"
                         (click)="refreshAccountsPayments()"
                         [disabled]="selectedAccounts.length == 0">
                         Verificar Pagos SIRSAE
@@ -300,7 +300,7 @@
                 </div>
                 <div class="col-sm-12 col-md-12 col-lg-12">
                   <div class="d-flex flex-row-reverse">
-                    <div class="mt-1">
+                    <div class="">
                       <app-columns-select
                         [(settings)]="paymentSettings"></app-columns-select>
                     </div>
@@ -314,7 +314,7 @@
                     </div>
                     <div class="me-2">
                       <button
-                        class="btn btn-sm btn-info btn-block active me-2 font-size-13"
+                        class="btn btn-sm btn-success btn-block active me-2 font-size-13"
                         (click)="openTransferDateModal()"
                         [disabled]="selectedPayment.length == 0">
                         Fecha de Transferencia

@@ -327,6 +327,10 @@ export const MENU: IMenuItem[] = [
             label: 'Claves autorización envío ext. OIs',
             link: '/pages/commercialization/catalogs/authorization-keys-ois',
           },
+          {
+            label: 'Líneas de Captura',
+            link: '/pages/commercialization/catalogs/capture-lines',
+          },
         ],
       },
       {
