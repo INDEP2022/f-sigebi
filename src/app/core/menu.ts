@@ -122,6 +122,10 @@ export const MENU: IMenuItem[] = [
             label: 'Aprobación para Donación',
             link: '/pages/final-destination-process/donation-process/approval-for-donation',
           },
+          {
+            label: 'Solicitud y Autorización de Donación',
+            link: '/pages/final-destination-process/donation-process/donation-authorization-request',
+          },
         ],
       },
       {
