@@ -272,6 +272,10 @@ export const MENU: IMenuItem[] = [
             label: 'Catálogo de Entidades',
             link: '/pages/commercialization/c-bm-vm-cde-m-entity-classification',
           },
+          {
+            label: 'Reporte de Ingresos por Mandato',
+            link: '/pages/commercialization/mandate-income-reports'
+          }
         ],
       },
       {
@@ -330,6 +334,10 @@ export const MENU: IMenuItem[] = [
             label: 'Permisos a Eventos',
             link: '/pages/commercialization/events',
           },
+          {
+            label: 'Reporte de Ingresos por Mandato',
+            link: '/pages/commercialization/mandate-income-reports'
+          }
         ],
       },
       {

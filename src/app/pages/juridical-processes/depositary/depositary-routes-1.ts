@@ -121,4 +121,24 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
       ).PJDVPThirdpartiesPossessionValidationModule,
     data: { title: DEPOSITARY_ROUTES_1[14].label },
   },
+  {
+    path: DEPOSITARY_ROUTES_1[15].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './generation-files-trades/pj-d-gaf-m-generation-files-trades.module'
+        )
+      ).PJDGAFGenerationFilesTradesModule,
+    data: { title: DEPOSITARY_ROUTES_1[15].label },
+  },
+  {
+    path: DEPOSITARY_ROUTES_1[16].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './capture-formalizing-lawyers/pj-fi-af-m-capture-formalizing-lawyers.module'
+        )
+      ).PJFIAFCaptureFormalizingLawyersModule,
+    data: { title: DEPOSITARY_ROUTES_1[16].label },
+  },
 ];
