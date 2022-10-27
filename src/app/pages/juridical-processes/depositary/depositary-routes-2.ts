@@ -35,4 +35,14 @@ export const DEPOSITARY_ROUTES_2_ROUTING = [
       ).JpDMNoticeOfAbandonmentByReturnModule,
     data: { title: DEPOSITARY_ROUTES_2[3].label },
   },
+  {
+    path: DEPOSITARY_ROUTES_2[4].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './maintenance-of-coverages/jp-d-m-maintenance-of-coverages.module'
+        )
+      ).JpDMMaintenanceOfCoveragesModule,
+    data: { title: DEPOSITARY_ROUTES_2[4].label },
+  },
 ];

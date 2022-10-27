@@ -23,4 +23,9 @@ export const DEPOSITARY_ROUTES_2: any[] = [
     link: 'notice-of-abandonment-by-return',
     menu: 'Notificación de abandono por devolución',
   },
+  {
+    label: 'Mantenimiento amparos',
+    link: 'maintenance-of-coverages',
+    menu: 'Mantenimiento amparos',
+  },
 ];
