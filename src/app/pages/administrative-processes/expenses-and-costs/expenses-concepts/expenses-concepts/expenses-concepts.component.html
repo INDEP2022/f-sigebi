@@ -1,0 +1,39 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">CONCEPTOS DE GASTOS</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('clasification')"
+            label="Clasificación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="clasification" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('concept')" label="Concepto de gasto">
+            <input type="text" class="form-control" formControlName="concept" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('status')" label="Estatus">
+            <input type="text" class="form-control" formControlName="status" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="row mt-4 float-right">
+      <div class="">
+        <button type="button" class="btn btn-primary btn-sm active mx-4">
+          CONSULTAR
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -126,6 +126,11 @@ export const MENU: IMenuItem[] = [
             label: 'Solicitud y Autorización de Donación',
             link: '/pages/final-destination-process/donation-process/donation-authorization-request',
           },
+          //VISTAS A LAS QUE SE LES DEBE VERIFICAR SU RUTA
+          {
+            label: 'Parcialización Bienes en Donación',
+            link: '/pages/final-destination-process/donation-process/partialization-goods-donation',
+          },
         ],
       },
       {
