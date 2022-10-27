@@ -176,6 +176,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Registro de Gastos',
             link: '/pages/administrative-processes/expenses-register',
           },
+          {
+            label: 'Conceptos de Gastos',
+            link: '/pages/administrative-processes/expenses-concepts',
+          },
         ],
       },
       /**
