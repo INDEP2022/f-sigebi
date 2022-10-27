@@ -259,6 +259,10 @@ export const MENU: IMenuItem[] = [
             label: 'Configuración de Página',
             link: '/pages/commercialization/c-bm-vm-m-cp-page-setup',
           },
+          {
+            label: 'Catálogo de Entidades',
+            link: '/pages/commercialization/c-bm-vm-cde-m-entity-classification',
+          },
         ],
       },
       {

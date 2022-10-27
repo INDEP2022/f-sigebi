@@ -306,6 +306,16 @@ const routes: Routes = [
       ).CBmVmMCpPageSetupModule,
     data: { title: 'Configuración de Página' },
   },
+  {
+    path: 'c-bm-vm-cde-m-entity-classification',
+    loadChildren: async () =>
+      (
+        await import(
+          './movable-property/c-bm-vm-cde-m-entity-classification/c-bm-vm-cde-m-entity-classification.module'
+        )
+      ).CBmVmCdeMEntityClassificationModule,
+    data: { title: 'Catálogo de Entidades' },
+  },
 ];
 
 @NgModule({
