@@ -31,10 +31,6 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         link: '/pages/administrative-processes/apply-lif',
       },
       {
-        label: 'Actas Conversión',
-        link: '/pages/administrative-processes/conversion-act',
-      },
-      {
         label: 'Solicitud de Avalúos',
         link: '/pages/administrative-processes/appraisal-request',
       },
@@ -55,13 +51,13 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         link: '/pages/administrative-processes/monitor-unavoidable-assets',
       },
       {
-        label: 'Devoluciones y decomisos',
-        link: '/pages/administrative-processes/returns-confiscation',
-      },
-      {
         label: 'Seguros y Vigilancia',
         icon: 'bx-folder',
         subItems: [
+          {
+            label: 'Acceso a Usuarios',
+            link: '/pages/administrative-processes/user-access',
+          },
           {
             label: 'Mantenimiento de Pólizas',
             link: '/pages/administrative-processes/policy-maintenance',
@@ -129,6 +125,22 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Visitas a inmuebles',
             link: '/pages/administrative-processes/expenses-format',
+          },
+          {
+            label: 'Reportes de Incorporación de Bienes a Pólizas',
+            link: '/pages/administrative-processes/goods-to-policies-reports',
+          },
+          {
+            label: 'Porcentajes de Supervisión y vigilancia',
+            link: '/pages/administrative-processes/percentage-surveillance',
+          },
+          {
+            label: 'Movimiento de Bienes en vigilancia',
+            link: '/pages/administrative-processes/movements-goods-surveillance',
+          },
+          {
+            label: 'Servicio de Vigilancia',
+            link: '/pages/administrative-processes/surveillance-service',
           },
         ],
       },
@@ -345,6 +357,30 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Expedientes',
             link: '/pages/administrative-processes/record-details',
           },
+          {
+            label: 'Bienes por Tipo de Delito',
+            link: '/pages/administrative-processes/goods-type-crime-reports',
+          },
+          {
+            label: 'Histórico de situación procesal de los bienes',
+            link: '/pages/administrative-processes/procedural-history',
+          },
+          {
+            label: 'Generación de informacion para reporte COORD',
+            link: '/pages/administrative-processes/information-generation',
+          },
+          {
+            label: 'Bóvedas y Gavetas',
+            link: '/pages/administrative-processes/vaults',
+          },
+          {
+            label: 'Concentrado de bienes por expendiente',
+            link: '/pages/administrative-processes/concentrate-goods-type',
+          },
+          {
+            label: 'Generación de archivo plano',
+            link: '/pages/administrative-processes/flat-file-for-good',
+          },
         ],
       },
       {
@@ -402,7 +438,15 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Registro de Pago de Servicios',
             link: '/pages/administrative-processes/services/record-service-payments',
           },
+          {
+            label: 'Concentrado de bienes para contabilidad',
+            link: '/pages/administrative-processes/services/descripcion-of-the-matter',
+          },
         ],
+      },
+      {
+        label: 'Devoluciones y Decomisos',
+        link: '/pages/administrative-processes/returns-confiscations',
       },
       /**
        * END LEGASPI

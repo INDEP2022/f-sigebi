@@ -1,0 +1,55 @@
+<form [formGroup]="formLawyers" class="form-material">
+  <div class="row mt-5">
+    <div class="col-md-2 col-sm-12 col-xs-12">
+      <form-field
+        [control]="formLawyers.get('office')"
+        label="Despacho Responsable">
+        <input type="text" class="form-control" formControlName="office" />
+      </form-field>
+    </div>
+    <div class="col-md-6 col-sm-12 col-xs-12">
+      <form-field
+        [control]="formLawyers.get('descriptionOffice')"
+        label="Descripción">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="descriptionOffice" />
+      </form-field>
+    </div>
+    <div class="col-md-4 col-sm-12 col-xs-12">
+      <form-field
+        [control]="formLawyers.get('expectations')"
+        label="Expectativas">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="expectations" />
+      </form-field>
+    </div>
+  </div>
+  <hr />
+  <div class="row">
+    <div [class]="loading ? 'table-loading' : ''">
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settings"
+        [source]="data">
+      </ng2-smart-table>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <button type="button" class="btn btn-primary btn-sm active">
+            Actuaciones
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

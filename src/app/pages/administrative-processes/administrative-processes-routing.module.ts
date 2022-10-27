@@ -53,20 +53,6 @@ const routes: Routes = [
         data: { title: 'Aplicar Lif' },
       },
       {
-        path: 'conversion-act',
-        loadChildren: async () =>
-          (await import('./conversion-act/conversion-act.module'))
-            .ConversionActModule,
-        data: { title: 'Actas de converision' },
-      },
-      {
-        path: 'conversion-act',
-        loadChildren: async () =>
-          (await import('./conversion-act/conversion-act.module'))
-            .ConversionActModule,
-        data: { title: 'Actas de converision' },
-      },
-      {
         path: 'conversion-management',
         loadChildren: async () =>
           (await import('./conversion-management/conversion-management.module'))
@@ -172,6 +158,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'goods-type-crime-reports',
+        loadChildren: async () => (
+          await import('./reports/goods-type-crime/pa-gtc-m-goods-type-crime.module'))
+          .PaGtcMGoodsTypeCrimeModule,
+        data: { title: 'Reporte de Bienes por Tipo de Delito' },
+      },
+      {
         path: 'unit-conversion-packages',
         loadChildren: () =>
           import(
@@ -198,6 +191,13 @@ const routes: Routes = [
           import(
             './siab-sami-interaction/pa-ssi-m-siab-sami-interaction.module'
           ).then(m => m.PaSsiMSiabSamiInteractionModule),
+      },
+      {
+        path: 'returns-confiscations',
+        loadChildren: async () =>
+          (await import('./returns-confiscations/pa-rc-m-returns-confications.module'))
+            .PaRcMReturnsConficationsModule,
+        data: { title: 'Devoluciones y Decomisos' },
       },
       /**
        *Legaspi
@@ -384,11 +384,54 @@ const routes: Routes = [
         data: { title: 'Detalle de actas de conversión' },
       },
       {
-        path: 'returns-confiscation',
+        path: 'procedural-history',
         loadChildren: async () =>
-          (await import('./returns-confiscation/returns-confiscation.module'))
-            .ReturnsConfiscationModule,
-        data: { title: 'Devoluciones y decomisos' },
+          (
+            await import(
+              './reports/procedural-history/procedural-history.module'
+            )
+          ).ProceduralHistoryModule,
+        data: { title: 'Histórico procesal' },
+      },
+      {
+        path: 'information-generation',
+        loadChildren: async () =>
+          (
+            await import(
+              './reports/information-generation/information-generation.module'
+            )
+          ).InformationGenerationModule,
+        data: { title: 'Generación de informacion para reporte coord' },
+      },
+      {
+        path: 'vaults',
+        loadChildren: async () =>
+          (
+            await import(
+              './reports/vaults/vaults.module'
+            )
+          ).VaultsModule,
+        data: { title: 'Bovedas y Gavetas' },
+      },
+      {
+        path: 'concentrate-goods-type',
+        loadChildren: async () =>
+          (
+            await import(
+              './reports/concentrate-goods-type/concentrate-goods-type.module'
+            )
+          ).ConcentrateGoodsTypeModule,
+        data: { title: 'Concentrado de bienes por expendiente' },
+      },
+      {
+        path: 'flat-file-for-good',
+        loadChildren: async () =>
+          (
+            await import(
+              './reports/flat-file-for-good/flat-file-for-good.module'
+            )
+          ).FlatFileForGoodModule,
+        data: { title: 'Generación de archivo plano' },
       },
       /**
        * Seguros David Lucas
@@ -438,4 +481,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class AdministrativeProcessesRoutingModule {}
+export class AdministrativeProcessesRoutingModule { }
