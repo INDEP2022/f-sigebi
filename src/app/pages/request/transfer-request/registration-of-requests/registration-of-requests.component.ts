@@ -31,9 +31,9 @@ export class RegistrationOfRequestsComponent
   //registro de bienes tab
   state: boolean = false;
   //verificacion de cumplimientos tab
-  complianceVerifi: boolean = true;
+  complianceVerifi: boolean = false;
   //clasificacion de bienes
-  classifyAssets: boolean = false;
+  classifyAssets: boolean = true;
 
   constructor(
     public fb: FormBuilder,

@@ -6,6 +6,7 @@
           <strong>Informacion de Recepción de Solicitud</strong>
         </h5>
       </div>
+
       <!--  <div class="p-2 bd-highlight buttons">
                 <button
                     class="btn btn-primary btn-sm active"
@@ -23,6 +24,11 @@
           <span style="line-height: 3">Prioridad</span>
         </div>
         <div class="col-sm-2">
+          <form-field [control]="receptionForm.get('priority')" label="">
+            <input id="label" type="checkbox" formControlName="priority" />
+          </form-field>
+        </div>
+        <!--  <div class="col-sm-2">
           <form-radio label="">
             <input
               type="radio"
@@ -30,7 +36,7 @@
               value="priority"
               id="priority" />
           </form-radio>
-        </div>
+        </div> -->
         <div class="col-md-3">
           <label class="label" for=""
             >Procedencia Información:
