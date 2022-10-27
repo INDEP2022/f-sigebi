@@ -165,6 +165,34 @@ const routes: Routes = [
         data: { title: 'Reporte de Bienes por Tipo de Delito' },
       },
       {
+        path: 'return-confiscation-property',
+        loadChildren: () =>
+          import('./reports/return-confiscation-property/return-confiscation-property.module').then(
+            m => m.ReturnConfiscationPropertyModule
+          ),
+      },
+      {
+        path: 'generate-excel-file',
+        loadChildren: () =>
+          import('./reports/generate-excel-file/generate-excel-file.module').then(
+            m => m.GenerateExcelFileModule
+          ),
+      },
+      {
+        path: 'bills-good',
+        loadChildren: () =>
+          import('./reports/bills-good/bills-good.module').then(
+            m => m.BillsGoodModule
+          ),
+      },
+      {
+        path: 'inventory-report',
+        loadChildren: () =>
+          import('./inventory-report/inventory-report.module').then(
+            m => m.InventoryReportModule
+          ),
+      },
+      {
         path: 'unit-conversion-packages',
         loadChildren: () =>
           import(
@@ -198,6 +226,13 @@ const routes: Routes = [
           (await import('./returns-confiscations/pa-rc-m-returns-confications.module'))
             .PaRcMReturnsConficationsModule,
         data: { title: 'Devoluciones y Decomisos' },
+      },
+      {
+        path: 'reg-warehouse-contract',
+        loadChildren: async () =>
+          (await import('./third-party-admin/warehouse/pa-tp-w-m-warehouse.module'))
+            .PaTpWMWarehouseModule,
+        data: { title: 'Alta de Almacenes por Contrato' },
       },
       /**
        *Legaspi
@@ -402,6 +437,36 @@ const routes: Routes = [
             )
           ).InformationGenerationModule,
         data: { title: 'Generación de informacion para reporte coord' },
+      },
+      {
+        path: 'vaults',
+        loadChildren: async () =>
+          (
+            await import(
+              './reports/vaults/vaults.module'
+            )
+          ).VaultsModule,
+        data: { title: 'Bovedas y Gavetas' },
+      },
+      {
+        path: 'concentrate-goods-type',
+        loadChildren: async () =>
+          (
+            await import(
+              './reports/concentrate-goods-type/concentrate-goods-type.module'
+            )
+          ).ConcentrateGoodsTypeModule,
+        data: { title: 'Concentrado de bienes por expendiente' },
+      },
+      {
+        path: 'flat-file-for-good',
+        loadChildren: async () =>
+          (
+            await import(
+              './reports/flat-file-for-good/flat-file-for-good.module'
+            )
+          ).FlatFileForGoodModule,
+        data: { title: 'Generación de archivo plano' },
       },
       /**
        * Seguros David Lucas

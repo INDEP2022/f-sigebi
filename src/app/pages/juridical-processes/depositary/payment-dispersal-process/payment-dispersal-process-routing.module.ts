@@ -1,8 +1,8 @@
 /** BASE IMPORT */
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { DEPOSITARY_ROUTES_1 } from 'src/app/common/constants/juridical-processes/depositary-routes-1';
 /** LIBRERÍAS EXTERNAS IMPORTS */
-import { routesJuridicalProcesses } from 'src/app/common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
 
 /** SERVICE IMPORTS */
 
@@ -13,27 +13,28 @@ import { routesJuridicalProcesses } from 'src/app/common/constants/juridical-pro
 const routes: Routes = [
   // PROCESO DE DISPERCION DE PAGOS
   {
-    path: routesJuridicalProcesses[5].link,
+    path: DEPOSITARY_ROUTES_1[1].link,
     loadChildren: async () =>
       (
         await import(
           './conciliation-depositary-payments/pj-d-pdp-m-conciliation-depositary-payments.module'
         )
       ).PJDPDPConciliationDepositaryPaymentsModule,
-    data: { title: routesJuridicalProcesses[5].label },
+    data: { title: DEPOSITARY_ROUTES_1[1].label },
   },
   {
-    path: routesJuridicalProcesses[6].link,
+    path: DEPOSITARY_ROUTES_1[2].link,
     loadChildren: async () =>
       (
         await import(
           './query-related-payments-depositories/pj-d-pdp-m-query-related-payments-depositories.module'
         )
       ).PJDPDPQueryRelatedPaymentsDepositoriesModule,
-    data: { title: routesJuridicalProcesses[6].label },
+    data: { title: DEPOSITARY_ROUTES_1[2].label },
   },
   // PROCESO DE DISPERCION DE PAGOS
 ];
+console.log(routes);
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],

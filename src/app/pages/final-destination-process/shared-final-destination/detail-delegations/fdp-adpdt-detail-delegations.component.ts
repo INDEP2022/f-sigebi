@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 
-import { DELEGATIONS_COLUMNS } from '../delegations-columns';
-import { COLUMNS_STATUS_HISTORY } from './../../delivery-schedule/schedule-of-events/generate-estrategy/columns_status-history';
+import { COLUMNS_STATUS_HISTORY } from '../../delivery-schedule/schedule-of-events/generate-estrategy/columns_status-history';
+import { DELEGATIONS_COLUMNS } from '../../third-party-possession-acts/delegations-columns';
 @Component({
   selector: 'app-fdp-adpdt-detail-delegations',
   templateUrl: './fdp-adpdt-detail-delegations.component.html',
