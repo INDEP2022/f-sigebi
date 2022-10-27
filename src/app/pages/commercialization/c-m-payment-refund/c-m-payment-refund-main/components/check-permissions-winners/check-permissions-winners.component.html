@@ -1,0 +1,9 @@
+<form [formGroup]="checkForm" class="form-material">
+  <form-check label="" [for]="checkId">
+    <input
+      [id]="checkId"
+      type="checkbox"
+      formControlName="type"
+      (click)="change($event)" />
+  </form-check>
+</form>

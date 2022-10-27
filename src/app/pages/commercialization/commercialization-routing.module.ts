@@ -276,6 +276,13 @@ const routes: Routes = [
       ).CMElectronicSignaturesModule,
     data: { title: 'Gestión de Firmas Electrónicas' },
   },
+  {
+    path: 'payment-refund',
+    loadChildren: async () =>
+      (await import('./c-m-payment-refund/c-m-payment-refund.module'))
+        .CMPaymentRefundModule,
+    data: { title: 'Devolución de Pagos' },
+  },
 ];
 
 @NgModule({
