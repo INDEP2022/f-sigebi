@@ -302,16 +302,6 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         link: '/pages/administrative-processes/insured-numerary-account',
       },
       {
-        label: 'Empresas',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Reporte de evaluación de desempeño',
-            link: '/pages/administrative-processes/performance-evaluation-report',
-          },
-        ],
-      },
-      {
         label: 'Conversión de bienes',
         icon: 'bx-folder',
         subItems: [
@@ -342,6 +332,14 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Resumen Info Financiera',
             link: '/pages/administrative-processes/summary-financial-info',
+          },
+          {
+            label: 'Reporte de evaluación de desempeño',
+            link: '/pages/administrative-processes/performance-evaluation-report',
+          },
+          {
+            label: 'Reporte de inventario',
+            link: '/pages/administrative-processes/inventory-report',
           },
         ],
       },
@@ -380,6 +378,18 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Generación de archivo plano',
             link: '/pages/administrative-processes/flat-file-for-good',
+          },
+          {
+            label: 'Devoluciones y Decomisios de Bienes',
+            link: '/pages/administrative-processes/return-confiscation-property',
+          },
+          {
+            label: 'Archivo plano de avaluos por Bien',
+            link: '/pages/administrative-processes/generate-excel-file',
+          },
+          {
+            label: 'Gastos por bien',
+            link: '/pages/administrative-processes/bills-good',
           },
         ],
       },
