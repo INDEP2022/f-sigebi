@@ -45,6 +45,16 @@ const routes: Routes = [
       ).PJAAbandonmentsDeclarationTradesModule,
     data: { title: routesJuridicalProcesses[3].label },
   },
+  {
+    path: routesJuridicalProcesses[4].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './goods-process-validation-extdom/pj-bvae-m-goods-process-validation-extdom.module'
+        )
+      ).PJBVAEGoodsProcessValidationExtdomModule,
+    data: { title: routesJuridicalProcesses[4].label },
+  },
   // DEPOSITARIA
   {
     path: 'depositaria',

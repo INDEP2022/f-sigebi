@@ -32,6 +32,12 @@ export const routesJuridicalProcesses: any = [
     link: 'abandonos',
     menu: 'Abandonos',
   },
+  {
+    // BIENES EN PROCESO DE VALIDACIÓN EXT_DOM
+    label: 'Bienes en Proceso de Validación EXT_DOM',
+    link: 'bienes-validacion-aseg-extdom',
+    menu: 'Bienes Validación ASEG_EXTDOM',
+  },
 ];
 export const routesFormalizacionInmuebles: any = [
   {
@@ -72,6 +78,11 @@ export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
         // DECLARATORIA Y OFICIOS DE ABANDONOS
         label: routesJuridicalProcesses[3].menu,
         link: baseMenu + routesJuridicalProcesses[3].link,
+      },
+      {
+        // BIENES EN PROCESO DE VALIDACIÓN EXT_DOM
+        label: routesJuridicalProcesses[4].menu,
+        link: baseMenu + routesJuridicalProcesses[4].link,
       },
       {
         label: 'Depositaría',
