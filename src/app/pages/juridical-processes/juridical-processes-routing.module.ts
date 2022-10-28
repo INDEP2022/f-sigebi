@@ -69,6 +69,13 @@ const routes: Routes = [
         .PJAbandonmentsModule,
     data: { title: routesJuridicalProcesses[6].label },
   },
+  {
+    path: routesJuridicalProcesses[7].link,
+    loadChildren: async () =>
+      (await import('./tracing-judgment/pj-m-tracing-judgment.module'))
+        .PJTracingJudgmentModule,
+    data: { title: routesJuridicalProcesses[7].label },
+  },
   // DEPOSITARIA
   {
     path: 'depositaria',
