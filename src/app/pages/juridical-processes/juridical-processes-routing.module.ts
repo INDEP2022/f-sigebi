@@ -55,6 +55,13 @@ const routes: Routes = [
       ).PJBVAEGoodsProcessValidationExtdomModule,
     data: { title: routesJuridicalProcesses[4].label },
   },
+  {
+    path: routesJuridicalProcesses[5].link,
+    loadChildren: async () =>
+      (await import('./relief-delete/pj-m-relief-delete.module'))
+        .PJReliefDeleteModule,
+    data: { title: routesJuridicalProcesses[5].label },
+  },
   // DEPOSITARIA
   {
     path: 'depositaria',
