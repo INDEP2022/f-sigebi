@@ -19,8 +19,8 @@ export const DEPOSITARY_ROUTES_2: any[] = [
   },
   {
     // ESPACIO EN BLANCO
-    label: '',
-    link: '',
-    menu: '',
+    label: 'Notificacion de abandono por devolucion',
+    link: 'notice-of-abandonment-by-return',
+    menu: 'Notificación de abandono por devolución',
   },
 ];

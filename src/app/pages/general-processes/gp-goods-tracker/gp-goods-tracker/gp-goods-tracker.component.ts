@@ -20,10 +20,12 @@ import { GOODS_TRACKER_FORM } from '../constants/goods-tracker-form';
   ],
 })
 export class GpGoodsTrackerComponent extends BasePage implements OnInit {
+  @ViewChild('scrollFilter') scrollFilter: ElementRef;
+  @ViewChild('tableItems') tableItems: ElementRef<HTMLDivElement>;
   criteriasEnum = GoodsTrackerCriteriasEnum;
   filterCriterias = GOODS_TRACKER_CRITERIAS;
   form = this.fb.group(GOODS_TRACKER_FORM);
-  @ViewChild('scrollFiler') scrollFiler: ElementRef;
+  showTable: boolean = false;
 
   get criteriaControl() {
     return this.form.controls.criterio;
@@ -39,12 +41,21 @@ export class GpGoodsTrackerComponent extends BasePage implements OnInit {
 
   listenCriteriaChange() {
     this.form.controls.criterio.valueChanges.subscribe(criteria => {
-      this.scrollFiler.nativeElement.scrollIntoView({ behavior: 'smooth' });
+      this.scrollFilter.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'center',
+      });
     });
   }
 
   searchGoods(params: any) {
-    console.log(params);
+    this.showTable = true;
+    this.tableItems.nativeElement.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+      inline: 'center',
+    });
   }
 
   getFilterName(): string {

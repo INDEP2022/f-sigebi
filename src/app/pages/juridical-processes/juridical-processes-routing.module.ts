@@ -45,6 +45,16 @@ const routes: Routes = [
       ).PJAAbandonmentsDeclarationTradesModule,
     data: { title: routesJuridicalProcesses[3].label },
   },
+  {
+    path: routesJuridicalProcesses[4].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './goods-process-validation-extdom/pj-bvae-m-goods-process-validation-extdom.module'
+        )
+      ).PJBVAEGoodsProcessValidationExtdomModule,
+    data: { title: routesJuridicalProcesses[4].label },
+  },
   // DEPOSITARIA
   {
     path: 'depositaria',
@@ -53,6 +63,15 @@ const routes: Routes = [
     data: { title: 'Depositoria' },
   },
   // DEPOSITARIA
+  // FORMALIZACION INMUEBLES
+  {
+    path: 'formalizacion-inmuebles',
+    loadChildren: async () =>
+      (await import('./formalization-property/formalization-property.module'))
+        .PaymentDispersalProcessModule,
+    data: { title: 'Formalización de Inmuebles' },
+  },
+  // FORMALIZACION INMUEBLES
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],
