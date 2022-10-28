@@ -81,6 +81,40 @@ export class PJBVAEGoodsProcessValidationExtdomComponent
     },
   ];
 
+  tableSettingsHistorico = {
+    actions: {
+      columnTitle: '',
+      add: false,
+      edit: false,
+      delete: false,
+    },
+    hideSubHeader: true, //oculta subheaader de filtro
+    mode: 'external', // ventana externa
+
+    columns: {
+      noBien: { title: 'No. Bien' }, //*
+      fechaCambio: { title: 'Fecha Cambio' },
+      usuarioCambio: { title: 'Usuario Cambio' },
+      folioUnivCambio: { title: 'Folio Univ Cambio' },
+      fechaLibera: { title: 'Fecha Libera' },
+      usuarioLibera: { title: 'Usuario Libera' },
+      folioUnivLibera: { title: 'Folio Univ Libera' },
+    },
+  };
+  // Data table
+  dataTableHistorico = [
+    {
+      noBien: 'No. Bien',
+      fechaCambio: 'Fecha Cambio',
+      usuarioCambio: 'Usuario Cambio',
+      folioUnivCambio: 'Folio Univ Cambio',
+      fechaLibera: 'Fecha Libera',
+      usuarioLibera: 'Usuario Libera',
+      folioUnivLibera: 'Folio Univ Libera',
+    },
+  ];
+  public listadoHistorico: boolean = false;
+
   public form: FormGroup;
   public formEscaneo: FormGroup;
 
@@ -136,5 +170,11 @@ export class PJBVAEGoodsProcessValidationExtdomComponent
 
   btnConsultarHistorico() {
     console.log('ConsultarHistorico');
+    this.listadoHistorico = true;
+  }
+
+  btnSalir() {
+    console.log('Salir');
+    this.listadoHistorico = false;
   }
 }
