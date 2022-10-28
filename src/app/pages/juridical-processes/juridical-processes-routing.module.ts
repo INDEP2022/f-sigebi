@@ -53,6 +53,15 @@ const routes: Routes = [
     data: { title: 'Depositoria' },
   },
   // DEPOSITARIA
+  // FORMALIZACION INMUEBLES
+  {
+    path: 'formalizacion-inmuebles',
+    loadChildren: async () =>
+      (await import('./formalization-property/formalization-property.module'))
+        .PaymentDispersalProcessModule,
+    data: { title: 'Formalización de Inmuebles' },
+  },
+  // FORMALIZACION INMUEBLES
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],

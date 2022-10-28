@@ -97,11 +97,5 @@ export const DEPOSITARY_ROUTES_1: any[] = [
     link: 'Generacion-archivos-oficios',
     menu: 'Generación de Procesión de Oficios',
   },
-  {
-    // Capturas de Abogados Formalizadores
-    label: 'Capturas de Abogados Formalizadores',
-    link: 'abogados-formalizadores',
-    menu: 'Abogados Formalizadores',
-  },
   // DEPOSITARIA
 ];
