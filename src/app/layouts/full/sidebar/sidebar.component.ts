@@ -27,21 +27,20 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
 
   @ViewChild('sideMenu') sideMenu: ElementRef;
 
-  constructor(private router: Router) {
-    this.router.events.forEach((event: any) => {
+  constructor(private router: Router) {}
+
+  ngOnInit() {
+    this.initialize();
+  }
+
+  ngAfterViewInit() {
+    this.router.events.forEach(event => {
       if (event instanceof NavigationEnd) {
         this._activateMenuDropdown();
         this._scrollElement();
       }
     });
-  }
-
-  ngOnInit() {
-    this.initialize();
     this._scrollElement();
-  }
-
-  ngAfterViewInit() {
     this.menu = new MetisMenu(this.sideMenu.nativeElement);
     this._activateMenuDropdown();
   }

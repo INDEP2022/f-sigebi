@@ -122,6 +122,15 @@ export const MENU: IMenuItem[] = [
             label: 'Aprobación para Donación',
             link: '/pages/final-destination-process/donation-process/approval-for-donation',
           },
+          {
+            label: 'Solicitud y Autorización de Donación',
+            link: '/pages/final-destination-process/donation-process/donation-authorization-request',
+          },
+          //VISTAS A LAS QUE SE LES DEBE VERIFICAR SU RUTA
+          {
+            label: 'Parcialización Bienes en Donación',
+            link: '/pages/final-destination-process/donation-process/partialization-goods-donation',
+          },
         ],
       },
       {
@@ -147,6 +156,23 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Reporte de Actas de Devolución',
         link: '/pages/final-destination-process/return-acts-report',
+      },
+      //VISTAS A LAS QUE SE LES DEBE VERIFICAR SU RUTA
+      {
+        label: 'Comprobación de Requisitos Documentales por Donación',
+        link: '/pages/final-destination-process/check-donation-requirements',
+      },
+      {
+        label: 'Comprobación de Requisitos Documentales por Destrucción',
+        link: '/pages/final-destination-process/check-destruction-requirements',
+      },
+      {
+        label: 'Comprobación de Requisitos Documentales por Donación',
+        link: '/pages/final-destination-process/check-donation-requirements',
+      },
+      {
+        label: 'Comprobación de Requisitos Documentales para Destino',
+        link: '/pages/final-destination-process/check-destination-requirements',
       },
     ],
   },
@@ -263,6 +289,22 @@ export const MENU: IMenuItem[] = [
             label: 'Catálogo de Entidades',
             link: '/pages/commercialization/c-bm-vm-cde-m-entity-classification',
           },
+          {
+            label: 'Reporte de Ingresos por Mandato',
+            link: '/pages/commercialization/mandate-income-reports',
+          },
+          {
+            label: 'Remesas registradas por regional',
+            link: '/pages/commercialization/c-bm-r-rrpr-m-remittances-recorded-region',
+          },
+          {
+            label: 'Exportación de las Remesas',
+            link: '/pages/commercialization/c-bm-r-exdlr-m-remittance-exportation',
+          },
+          {
+            label: 'Catálogos Auxiliares para Firmas Electrónicas',
+            link: '/pages/commercialization/c-b-r-oim-electronic-signature-auxiliary-catalogs/movable',
+          },
         ],
       },
       {
@@ -320,6 +362,10 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Permisos a Eventos',
             link: '/pages/commercialization/events',
+          },
+          {
+            label: 'Reporte de Ingresos por Mandato',
+            link: '/pages/commercialization/mandate-income-reports',
           },
         ],
       },

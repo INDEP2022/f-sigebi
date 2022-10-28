@@ -100,6 +100,27 @@ const routes: Routes = [
         m => m.FdpRadMReturnActsReportModule
       ),
   },
+  {
+    path: 'check-donation-requirements',
+    loadChildren: () =>
+      import(
+        './check-donation-requirements/fdp-crd-m-check-donation-requirements.module'
+      ).then(m => m.FdpCrdMCheckDonationRequirementsModule),
+  },
+  {
+    path: 'check-destruction-requirements',
+    loadChildren: () =>
+      import(
+        './check-destruction-requirements/fdp-crd-m-check-destruction-requirements.module'
+      ).then(m => m.FdpCrdMCheckDestructionRequirementsModule),
+  },
+  {
+    path: 'check-destination-requirements',
+    loadChildren: () =>
+      import(
+        './check-destination-requirements/fdp-crd-m-check-destination-requirements.module'
+      ).then(m => m.FdpCrdMCheckDestinationRequirementsModule),
+  },
 ];
 
 @NgModule({

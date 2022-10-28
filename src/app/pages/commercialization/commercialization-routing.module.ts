@@ -323,6 +323,46 @@ const routes: Routes = [
         .CMPaymentRefundModule,
     data: { title: 'Devolución de Pagos' },
   },
+  {
+    path: 'mandate-income-reports',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/mandate-income-reports/c-b-mir-m-mandate-income-reports.module'
+        )
+      ).CBMirMMandateIncomeReportsModule,
+    data: { title: 'Reporte de Ing. por Mandato' },
+  },
+  {
+    path: 'c-bm-r-rrpr-m-remittances-recorded-region',
+    loadChildren: async () =>
+      (
+        await import(
+          './movable-property/c-bm-r-rrpr-m-remittances-recorded-region/c-bm-r-rrpr-m-remittances-recorded-region.module'
+        )
+      ).CBmRRrprMRemittancesRecordedRegionModule,
+    data: { title: 'Remesas registradas por regional' },
+  },
+  {
+    path: 'c-bm-r-exdlr-m-remittance-exportation',
+    loadChildren: async () =>
+      (
+        await import(
+          './movable-property/c-bm-r-exdlr-m-remittance-exportation/c-bm-r-exdlr-m-remittance-exportation.module'
+        )
+      ).CBmRExdlrMRemittanceExportationModule,
+    data: { title: 'Exportación de las Remesas' },
+  },
+  {
+    path: 'c-b-r-oim-electronic-signature-auxiliary-catalogs',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/c-b-r-oim-m-signture-auxiliary-catalogs/c-b-r-oim-m-signture-auxiliary-catalogs.module'
+        )
+      ).CBROimMSigntureAuxiliaryCatalogsModule,
+    data: { title: 'Catálogos Auxiliares para Firmas Electrónicas' },
+  },
 ];
 
 @NgModule({
