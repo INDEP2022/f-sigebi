@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-git add . && echo "Se agregaron los nuevos cambios"
+npx pretty-quick --pattern "src/**/*.{ts,json,html,scss}" --staged
