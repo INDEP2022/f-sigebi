@@ -19,6 +19,16 @@ const routes: Routes = [
       ).CCMAuthorizationKeysOisModule,
     data: { title: 'Claves de Autorización Envío Ext. OIs' },
   },
+  {
+    path: 'capture-lines',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-c-m-capture-lines/c-c-m-capture-lines.module'
+        )
+      ).CCMCaptureLinesModule,
+    data: { title: 'Líneas de Captura' },
+  },
 ];
 
 @NgModule({

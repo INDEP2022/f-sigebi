@@ -122,6 +122,15 @@ export const MENU: IMenuItem[] = [
             label: 'Aprobación para Donación',
             link: '/pages/final-destination-process/donation-process/approval-for-donation',
           },
+          {
+            label: 'Solicitud y Autorización de Donación',
+            link: '/pages/final-destination-process/donation-process/donation-authorization-request',
+          },
+          //VISTAS A LAS QUE SE LES DEBE VERIFICAR SU RUTA
+          {
+            label: 'Parcialización Bienes en Donación',
+            link: '/pages/final-destination-process/donation-process/partialization-goods-donation',
+          },
         ],
       },
       {
@@ -255,6 +264,26 @@ export const MENU: IMenuItem[] = [
             label: 'Formato de rectificación',
             link: '/pages/commercialization/c-bm-f-fr-prdf-m-invoice-rectification-process',
           },
+          {
+            label: 'Configuración de Página',
+            link: '/pages/commercialization/c-bm-vm-m-cp-page-setup',
+          },
+          {
+            label: 'Catálogo de Entidades',
+            link: '/pages/commercialization/c-bm-vm-cde-m-entity-classification',
+          },
+          {
+            label: 'Reporte de Ingresos por Mandato',
+            link: '/pages/commercialization/mandate-income-reports'
+          },
+          {
+            label: 'Remesas registradas por regional',
+            link: '/pages/commercialization/c-bm-r-rrpr-m-remittances-recorded-region',
+          },
+          {
+            label: 'Exportación de las Remesas',
+            link: '/pages/commercialization/c-bm-r-exdlr-m-remittance-exportation',
+          },
         ],
       },
       {
@@ -313,6 +342,10 @@ export const MENU: IMenuItem[] = [
             label: 'Permisos a Eventos',
             link: '/pages/commercialization/events',
           },
+          {
+            label: 'Reporte de Ingresos por Mandato',
+            link: '/pages/commercialization/mandate-income-reports'
+          }
         ],
       },
       {
@@ -326,6 +359,10 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Claves autorización envío ext. OIs',
             link: '/pages/commercialization/catalogs/authorization-keys-ois',
+          },
+          {
+            label: 'Líneas de Captura',
+            link: '/pages/commercialization/catalogs/capture-lines',
           },
         ],
       },
@@ -361,6 +398,10 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Gestión de Firmas Electrónicas',
         link: '/pages/commercialization/electronic-signatures',
+      },
+      {
+        label: 'Devolución de Pagos',
+        link: '/pages/commercialization/payment-refund',
       },
     ],
   },
