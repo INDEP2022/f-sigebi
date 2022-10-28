@@ -1,0 +1,66 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">DICTAMINACIONES JUR&Iacute;DICAS</h5>
+  </div>
+
+  <div body>
+    <div class="row w-100">
+      <div class="md-tabs">
+        <tabset>
+          <tab heading="Procede Formalización" id="tab1">
+            <div class="row w-100">
+              <div class="col-sm-12 col-12 col-md-12 p-2">
+                <h6>Procede Formalizaci&oacute;n</h6>
+              </div>
+              <div class="col-sm-12 col-12 col-md-12 p-2">
+                <ng2-smart-table
+                  class="my-table"
+                  [settings]="tableSettingsProcedeFormalizacion"
+                  [source]="dataTableProcedeFormalizacion"></ng2-smart-table>
+              </div>
+            </div>
+          </tab>
+          <tab heading="Asigna Notario">
+            <div class="row w-100">
+              <div class="col-sm-12 col-12 col-md-12 p-2">
+                <h6>Asigna Notario</h6>
+              </div>
+              <div class="col-sm-12 col-12 col-md-12 p-2">
+                <ng2-smart-table
+                  class="my-table"
+                  [settings]="tableSettingsAsignaNotario"
+                  [source]="dataTableAsignaNotario"></ng2-smart-table>
+              </div>
+            </div>
+          </tab>
+          <tab heading="Formaliza Escrituración">
+            <div class="row w-100">
+              <div class="col-sm-12 col-12 col-md-12 p-2">
+                <h6>Formaliza Escrituraci&oacute;n</h6>
+              </div>
+              <div class="col-sm-12 col-12 col-md-12 p-2">
+                <ng2-smart-table
+                  class="my-table"
+                  [settings]="tableSettingsFormalizaEscrituracion"
+                  [source]="dataTableFormalizaEscrituracion"></ng2-smart-table>
+              </div>
+            </div>
+          </tab>
+          <tab heading="Todos">
+            <div class="row w-100">
+              <div class="col-sm-12 col-12 col-md-12 p-2">
+                <h6>Todos</h6>
+              </div>
+              <div class="col-sm-12 col-12 col-md-12 p-2">
+                <ng2-smart-table
+                  class="my-table"
+                  [settings]="tableSettingsTodos"
+                  [source]="dataTableTodos"></ng2-smart-table>
+              </div>
+            </div>
+          </tab>
+        </tabset>
+      </div>
+    </div>
+  </div>
+</app-card>
