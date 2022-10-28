@@ -4,7 +4,7 @@ import { CBROimCSignatureAuxiliaryCatalogsMainComponent } from './c-b-r-oim-c-si
 
 const routes: Routes = [
   {
-    path: '',
+    path: ':property',
     component: CBROimCSignatureAuxiliaryCatalogsMainComponent,
   },
 ];

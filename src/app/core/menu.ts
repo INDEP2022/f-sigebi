@@ -286,7 +286,7 @@ export const MENU: IMenuItem[] = [
           },
           {
             label: 'Catálogos Auxiliares para Firmas Electrónicas',
-            link: '/pages/commercialization/c-b-r-oim-electronic-signature-auxiliary-catalogs?property=movable',
+            link: '/pages/commercialization/c-b-r-oim-electronic-signature-auxiliary-catalogs/movable',
           },
         ],
       },
