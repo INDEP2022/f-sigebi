@@ -274,7 +274,7 @@ export const MENU: IMenuItem[] = [
           },
           {
             label: 'Reporte de Ingresos por Mandato',
-            link: '/pages/commercialization/mandate-income-reports'
+            link: '/pages/commercialization/mandate-income-reports',
           },
           {
             label: 'Remesas registradas por regional',
@@ -283,6 +283,10 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Exportación de las Remesas',
             link: '/pages/commercialization/c-bm-r-exdlr-m-remittance-exportation',
+          },
+          {
+            label: 'Catálogos Auxiliares para Firmas Electrónicas',
+            link: '/pages/commercialization/c-b-r-oim-electronic-signature-auxiliary-catalogs/movable',
           },
         ],
       },
@@ -344,8 +348,8 @@ export const MENU: IMenuItem[] = [
           },
           {
             label: 'Reporte de Ingresos por Mandato',
-            link: '/pages/commercialization/mandate-income-reports'
-          }
+            link: '/pages/commercialization/mandate-income-reports',
+          },
         ],
       },
       {
