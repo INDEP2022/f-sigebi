@@ -21,8 +21,6 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
   @ViewChild('componentRef') scrollRef: any;
   @Input() isCondensed = false;
   private menu: any;
-  private data: any;
-
   public menuItems: IMenuItem[] = [];
 
   @ViewChild('sideMenu') sideMenu: ElementRef;
@@ -64,10 +62,12 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
         const currentPosition: any =
           document.getElementsByClassName('mm-active')[0];
         let position = currentPosition.offsetTop;
-        if (position > 500)
-          if (this.scrollRef.SimpleBar !== null)
-            this.scrollRef.SimpleBar.getScrollElement().scrollTop =
-              position + 300;
+        if (position > 500) {
+          this.scrollRef.scrollTo({ top: position + 300, duration: 0 });
+        }
+        // if (this.scrollRef.SimpleBar !== null)
+        //   this.scrollRef.SimpleBar.getScrollElement().scrollTop =
+        //     position + 300;
       }
     }, 300);
   }
