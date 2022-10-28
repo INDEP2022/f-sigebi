@@ -176,6 +176,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Registro de Gastos',
             link: '/pages/administrative-processes/expenses-register',
           },
+          {
+            label: 'Conceptos de Gastos',
+            link: '/pages/administrative-processes/expenses-concepts',
+          },
         ],
       },
       /**
@@ -294,6 +298,15 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Coordinacion por zonas',
             link: '/pages/administrative-processes/zones',
+          },
+          /*{
+            label: 'Almacenes',
+            icon: 'bx-folder',
+            subItems: [],
+          },*/
+          {
+            label: 'Alta de Almacenes por Contrato',
+            link: '/pages/administrative-processes/reg-warehouse-contract',
           },
         ],
       },

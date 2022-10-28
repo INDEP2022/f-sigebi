@@ -16,8 +16,8 @@ export class CBmFFrCrCRectificationFieldsComponent extends BasePage implements O
 
     this.settings = {
       ...this.settings,
-      actions: false,
-      columns: RECTIFICATION_FIELDS_COLUMNS
+      actions:{ columnTitle: "Acciones", position: "right", add:false, edit:true, delete: false},
+      columns: {...RECTIFICATION_FIELDS_COLUMNS}
     }
   }
 

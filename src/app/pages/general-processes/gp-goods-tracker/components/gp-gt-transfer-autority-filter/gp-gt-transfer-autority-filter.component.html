@@ -1,1 +1,32 @@
-<p>gp-gt-transfer-autority-filter works!</p>
+<form [formGroup]="form" class="form-material" (submit)="search()">
+  <div class="row">
+    <form-field [control]="form.get('transfer')" class="col-md-4">
+      <ngx-select
+        [form]="form"
+        control="transfer"
+        label="Transferente"
+        [data]="select"></ngx-select>
+    </form-field>
+    <form-field [control]="form.get('emisora')" class="col-md-4">
+      <ngx-select
+        [form]="form"
+        control="emisora"
+        label="Emisora"
+        [data]="select"></ngx-select>
+    </form-field>
+    <form-field [control]="form.get('autoridad')" class="col-md-4">
+      <ngx-select
+        [form]="form"
+        control="autoridad"
+        label="Autoridad"
+        [data]="select"></ngx-select>
+    </form-field>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <button class="btn btn-primary active">
+        Buscar<i class="fa fa-search ml-2"></i>
+      </button>
+    </div>
+  </div>
+</form>

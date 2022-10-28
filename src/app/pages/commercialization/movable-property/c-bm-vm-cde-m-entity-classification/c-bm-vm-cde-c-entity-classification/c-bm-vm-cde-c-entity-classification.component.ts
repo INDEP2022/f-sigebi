@@ -24,7 +24,7 @@ export class CBmVmCdeCEntityClassificationComponent extends BasePage implements 
     super();
     this.settings = {
       ...this.settings,
-      actions:{ add:false, edit:true, delete: false},
+      actions:{ columnTitle: "Acciones", position: "right", add:false, edit:true, delete: false},
       edit: {
         editButtonContent: '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
         saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',

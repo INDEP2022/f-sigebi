@@ -91,5 +91,11 @@ export const DEPOSITARY_ROUTES_1: any[] = [
     link: 'validacion-pocesion-terceros',
     menu: 'Validación de Procesión',
   },
+  {
+    // Generación de Archivos de Oficios
+    label: 'Generación de Archivos de Oficios',
+    link: 'Generacion-archivos-oficios',
+    menu: 'Generación de Procesión de Oficios',
+  },
   // DEPOSITARIA
 ];

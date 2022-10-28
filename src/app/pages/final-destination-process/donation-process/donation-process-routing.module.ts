@@ -37,6 +37,20 @@ const routes: Routes = [
         './approval-for-donation/fdp-apd-m-approval-for-donation.module'
       ).then(m => m.FdpApdMApprovalForDonationModule),
   },
+  {
+    path: 'donation-authorization-request',
+    loadChildren: () =>
+      import(
+        './donation-authorization-request/fdp-sad-m-donation-authorization-request.module'
+      ).then(m => m.FdpSadMDonationAuthorizationRequestModule),
+  },
+  {
+    path: 'partialization-goods-donation',
+    loadChildren: () =>
+      import(
+        './partialization-goods-donation/fdp-pbd-m-partialization-goods-donation.module'
+      ).then(m => m.FdpPbdMPartializationGoodsDonationModule),
+  },
 ];
 
 @NgModule({
