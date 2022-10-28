@@ -29,7 +29,7 @@ export const routesJuridicalProcesses: any = [
   {
     // DECLARATORIA Y OFICIOS DE ABANDONOS
     label: 'Declaratoria y Oficios de Abandonos',
-    link: 'abandonos',
+    link: 'declaratoria-oficios-abandonos',
     menu: 'Abandonos',
   },
   {
@@ -39,10 +39,16 @@ export const routesJuridicalProcesses: any = [
     menu: 'Bienes Validación ASEG_EXTDOM',
   },
   {
-    // DESAHOGO Quitar Desahogo
-    label: 'DESAHOGO Quitar Desahogo',
+    // Quitar Desahogo
+    label: 'Quitar Desahogo',
     link: 'quitar-desahogo',
     menu: 'Quitar Desahogo',
+  },
+  {
+    // Abandonos
+    label: 'Abandonos',
+    link: 'abandonos',
+    menu: 'Aplicar Abandono',
   },
 ];
 export const routesFormalizacionInmuebles: any = [
@@ -94,6 +100,11 @@ export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
         // DESAHOGO Quitar Desahogo
         label: routesJuridicalProcesses[5].menu,
         link: baseMenu + routesJuridicalProcesses[5].link,
+      },
+      {
+        // Abandonos
+        label: routesJuridicalProcesses[6].menu,
+        link: baseMenu + routesJuridicalProcesses[6].link,
       },
       {
         label: 'Depositaría',

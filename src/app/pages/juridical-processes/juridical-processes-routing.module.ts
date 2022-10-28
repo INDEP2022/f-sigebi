@@ -62,6 +62,13 @@ const routes: Routes = [
         .PJReliefDeleteModule,
     data: { title: routesJuridicalProcesses[5].label },
   },
+  {
+    path: routesJuridicalProcesses[6].link,
+    loadChildren: async () =>
+      (await import('./abandonments/pj-m-abandonments.module'))
+        .PJAbandonmentsModule,
+    data: { title: routesJuridicalProcesses[6].label },
+  },
   // DEPOSITARIA
   {
     path: 'depositaria',
