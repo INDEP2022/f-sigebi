@@ -301,6 +301,10 @@ export const MENU: IMenuItem[] = [
             label: 'Exportación de las Remesas',
             link: '/pages/commercialization/c-bm-r-exdlr-m-remittance-exportation',
           },
+          {
+            label: 'Catálogos Auxiliares para Firmas Electrónicas',
+            link: '/pages/commercialization/c-b-r-oim-electronic-signature-auxiliary-catalogs/movable',
+          },
         ],
       },
       {

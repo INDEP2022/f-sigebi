@@ -270,3 +270,32 @@
     </div>
   </div>
 </app-card>
+
+<app-card [header]="true" *ngIf="listadoHistorico == true">
+  <div class="ch-content" header>
+    <h5 class="title">Historico Bienes Aseg_Ext_Dom</h5>
+  </div>
+
+  <div body>
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 p-2">
+        <ng2-smart-table
+          class="my-table"
+          [settings]="tableSettingsHistorico"
+          [source]="dataTableHistorico"></ng2-smart-table>
+      </div>
+      <div class="col-sm-12 col-12 col-md-6 p-2">
+        <span class="m-2">Estatus</span>
+        <span class="badge bagde-3 bg-info m-2">Sin Liberar</span>
+        <span class="badge primary-3 bg-warning m-2">Liberados</span>
+      </div>
+      <div class="col-sm-12 col-12 col-md-6 text-right p-2">
+        <div class="form-group">
+          <button class="btn btn-danger btn-sm active m-3" (click)="btnSalir()">
+            Cerrar Consulta Historico
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>
