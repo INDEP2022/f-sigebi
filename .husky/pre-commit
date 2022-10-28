@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-git add .
+git add . && echo "Se agregaron los nuevos cambios"
