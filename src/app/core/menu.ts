@@ -164,6 +164,22 @@ export const MENU: IMenuItem[] = [
         icon: 'bx-folder',
         subItems: [
           {
+            label: 'Reportes',
+            icon: 'bx-folder',
+            subItems: [
+              {
+                label: 'Órdenes de Ingreso por Mandato',
+                icon: 'bx-folder',
+                subItems: [
+                  {
+                    label: 'Catálogos Auxiliares para Firmas Electrónicas',
+                    link: '/pages/commercialization/c-b-r-oim-electronic-signature-auxiliary-catalogs',
+                  },
+                ],
+              },
+            ],
+          },
+          {
             label: 'Preparación del evento',
             link: '/pages/commercialization/c-b-f-fmdvdb-m-event-preparation',
           },

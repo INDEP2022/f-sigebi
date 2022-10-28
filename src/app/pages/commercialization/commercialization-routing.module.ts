@@ -323,6 +323,16 @@ const routes: Routes = [
         .CMPaymentRefundModule,
     data: { title: 'Devolución de Pagos' },
   },
+  {
+    path: 'c-b-r-oim-electronic-signature-auxiliary-catalogs',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/c-b-r-oim-m-signture-auxiliary-catalogs/c-b-r-oim-m-signture-auxiliary-catalogs.module'
+        )
+      ).CBROimMSigntureAuxiliaryCatalogsModule,
+    data: { title: 'Catálogos Auxiliares para Firmas Electrónicas' },
+  },
 ];
 
 @NgModule({
