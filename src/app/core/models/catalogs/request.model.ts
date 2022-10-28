@@ -6,7 +6,7 @@ export interface IRequest {
   tranfe?: string;
   transmitter?: string;
   authority?: string;
-  typeUser?: string;
+  typeUse?: string;
   receiUser?: string;
   noExpedient?: string;
   typeExpedient?: string;
@@ -16,7 +16,7 @@ export interface IRequest {
   responsible?: string;
 
   //Reception Requests
-  priority?: any;
+  priority?: boolean;
   infoProvenance?: string;
   receptDate?: string;
   officeDate?: Date;
@@ -42,16 +42,41 @@ export interface IRequest {
   //solicitud del expediente
   status?: string;
 
-  assetsDescripTransfer?: string;
-  assetsDescripSEA?: string;
+  //registro solicitud o bien
+  noManagement?: string;
+  descripTransfeAsset?: string;
   typeAsset?: string;
-  fraction?: string;
-  quantityTransfer?: string;
-  ligieUnitMeasure?: string;
-  transferUnitMeasure?: string;
-  uniqueKey?: string;
   physicalState?: string;
   conservationState?: string;
+  tansferUnitMeasure?: string;
+  transferAmount?: string;
   destinyLigie?: string;
   destinyTransfer?: string;
+  householdAsset?: string;
+
+  //registro solicitud -> bienes
+  duplicity?: boolean;
+  capacityLts?: number;
+  volumem3?: number;
+  origin?: string;
+  LigieUnitMeasure?: string;
+  avaluo?: boolean;
+  meetNormal?: boolean;
+  notes?: [null];
+  destintSae?: string;
+  referenceVia2?: string;
+  state?: string;
+  municipe?: string;
+  referenceVia3?: string;
+  longitud?: string;
+  latitud?: string;
+  suburb?: string;
+  cp?: string;
+  nameRoute?: string;
+  numExt?: string;
+  originRoute?: string;
+  numInt?: string;
+  routeDestination?: string;
+  referenceVia1?: number;
+  description?: number;
 }

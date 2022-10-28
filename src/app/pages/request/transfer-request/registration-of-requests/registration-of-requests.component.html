@@ -121,7 +121,8 @@
             <tab heading="{{ tab1 }}" id="tab1">
               <!-- Registro de Solicitudes o bines -->
               <app-request-record-tab
-                *ngIf="requestRegistration"></app-request-record-tab>
+                *ngIf="requestRegistration"
+                [dataObject]="object"></app-request-record-tab>
               <!-- Fin -->
               <!-- cumplimiento de verificacion y clasificacion de bienes-->
               <app-request-detail-tab
@@ -130,6 +131,9 @@
               <!-- fin -->
             </tab>
             <tab heading="{{ tab2 }}">
+              <!-- Registro de Solicitudes o bines -->
+              <app-assets *ngIf="requestRegistration"></app-assets>
+              <!--  -->
               <!-- cumplimiento de verificacion -->
               <app-verify-compliance-tab
                 *ngIf="complianceVerifi"

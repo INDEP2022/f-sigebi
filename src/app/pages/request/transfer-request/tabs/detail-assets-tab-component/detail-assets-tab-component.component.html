@@ -1,5 +1,7 @@
 <div>
-  <div class="row pt-3 pb-3" *ngIf="typeDoc === 'classify-assets'">
+  <div
+    class="row pt-3 pb-3"
+    *ngIf="typeDoc === 'classify-assets' || typeDoc === 'assets'">
     <div class="col-md-12">
       <div style="float: right">
         <button (click)="save()" class="btn btn-primary btn-sm active">
@@ -14,12 +16,241 @@
         <ng-template tabHeading>
           <i class="bx bx-info-circle"></i> Información del Bien
         </ng-template>
-        <div class="infoGood">
-          <div class="row pt-5">
+        <div class="infoAsset">
+          <div class="row">
+            <div
+              class="col-md-2"
+              *ngIf="
+                typeDoc === 'classify-assets' ||
+                typeDoc === 'verify-compliance' ||
+                carsAssets === true
+              ">
+              <form-field
+                [control]="assetsForm.get('noManagement')"
+                label="No. Gestion">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="noManagement" />
+              </form-field>
+            </div>
             <div class="col-md-4">
-              <label class="custom-label" for=""
-                >No. Gestion: <span for="">8905184</span></label
-              >
+              <form-field
+                [control]="assetsForm.get('typeAsset')"
+                label="Tipo Bien">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="typeAsset" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-3">
+              <form-field [control]="assetsForm.get('color')" label="Color">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="color" />
+              </form-field>
+            </div>
+            <div class="col-md-5">
+              <form-field
+                [control]="assetsForm.get('descripTransfeAsset')"
+                label="Descripción de bien Transferente">
+                <textarea
+                  class="form-control"
+                  formControlName="descripTransfeAsset"></textarea>
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('transferQuantity')"
+                label="*Cantidad de la Transferente">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="transferQuantity" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-2">
+              <form-check label="Duplicidad" for="duplicity">
+                <input
+                  id="duplicity"
+                  type="checkbox"
+                  formControlName="duplicity" />
+              </form-check>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('capacityLts')"
+                label="Capacidad (lts.)">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="capacityLts" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('volumem3')"
+                label="Volumen (m3)">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="volumem3" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('noExpedient')"
+                label="No. Exp. de la transferente">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="noExpedient" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('noExpedient')"
+                label="Tipo de Uso">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="noExpedient" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <ngx-select
+                [form]="assetsForm"
+                control="physicalState"
+                (fetchItems)="getPhysicalState($event)"
+                [data]="selectPhysicalState"
+                label="Estado Fisico"
+                value="id"
+                bindLabel="physicalState"></ngx-select>
+            </div>
+            <div class="col-md-4">
+              <ngx-select
+                [form]="assetsForm"
+                control="conservationState"
+                (fetchItems)="getConcervationState($event)"
+                [data]="selectConcervationState"
+                label="Estado de Concervación"
+                value="id"
+                bindLabel="conservationState"></ngx-select>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('origin')"
+                label="Procedencia">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="origin" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('LigieUnitMeasure')"
+                label="Unidad de Medida Ligie">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="LigieUnitMeasure" />
+              </form-field>
+            </div>
+            <div class="col-md-2">
+              <form-check label="Avalúo" for="avaluo">
+                <input id="avaluo" type="checkbox" formControlName="avaluo" />
+              </form-check>
+            </div>
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('destinyLigie')"
+                label="Destino Ligie">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="destinyLigie" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <ngx-select
+                [form]="assetsForm"
+                control="destinyTransfer"
+                (fetchItems)="getDestinyTransfer($event)"
+                [data]="selectDestinyTransfer"
+                label="*Destino Transferente"
+                value="id"
+                bindLabel="destinyTransfer"></ngx-select>
+            </div>
+            <div class="col-md-3" *ngIf="otherAssets === true">
+              <form-check label="Cumple Norma" for="meetNoraml">
+                <input
+                  id="meetNoraml"
+                  type="checkbox"
+                  formControlName="meetNoraml" />
+              </form-check>
+            </div>
+            <div class="col-md-4" *ngIf="carsAssets === true">
+              <form-field [control]="assetsForm.get('notes')" label="Notas">
+                <textarea
+                  class="form-control"
+                  formControlName="notes"></textarea>
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-4" *ngIf="otherAssets === true">
+              <ngx-select
+                [form]="assetsForm"
+                control="tansferUnitMeasure"
+                (fetchItems)="getTansferUnitMeasure($event)"
+                [data]="selectTansferUnitMeasure"
+                label="*Unid. Medida Transferente"
+                value="id"
+                bindLabel="tansferUnitMeasure"></ngx-select>
+            </div>
+            <div class="col-md-4" *ngIf="otherAssets === true">
+              <form-field [control]="assetsForm.get('notes')" label="Notas">
+                <textarea
+                  class="form-control"
+                  formControlName="notes"></textarea>
+              </form-field>
+            </div>
+            <div class="col-md-4" *ngIf="typeDoc === 'classify-assets'">
+              <ngx-select
+                [form]="assetsForm"
+                control="destintSae"
+                (fetchItems)="getDestintSae($event)"
+                [data]="selectDestintSae"
+                label="Destino SEA"
+                value="id"
+                bindLabel="destintSae"></ngx-select>
+            </div>
+          </div>
+          <!--  <div class="row pt-5">
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('typeAsset')"
+                label="Tipo Bien">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="typeAsset" />
+              </form-field>
             </div>
             <div class="col-md-4">
               <label class="custom-label" for=""
@@ -48,7 +279,7 @@
                 >Destino SAE: <span for=""></span
               ></label>
             </div>
-            <!-- Clasificacion de bienes -->
+            Clasificacion de bienes -
             <div class="col-md-4" *ngIf="typeDoc === 'classify-assets'">
               <ngx-select
                 [form]="assetsForm"
@@ -114,7 +345,7 @@
                 >Estado Físico: <span for="">BUENO</span></label
               >
             </div>
-            <!-- clasificacion bienes -->
+             clasificacion bienes 
             <div class="col-md-4" *ngIf="typeDoc === 'classify-assets'">
               <ngx-select
                 [form]="assetsForm"
@@ -174,14 +405,27 @@
                 >Uni. de Medida Ligie: <span for=""></span
               ></label>
             </div>
-          </div>
+          </div> -->
         </div>
       </tab>
+      <!-- tab Domicilio del Bien -->
       <tab>
         <ng-template tabHeading>
           <i class="bx bx-home"></i> Domicilio del Bien
         </ng-template>
         <div class="addressGood">
+          <div class="row pt-4">
+            <div style="text-align: center">
+              <div>
+                <button class="btn btn-primary btn-sm active">
+                  <i class="bx bx-home"></i> Seleccionar Domicilio
+                </button>
+              </div>
+              <div>
+                <button class="btn btn-secondary btn-sm active">Mensaje</button>
+              </div>
+            </div>
+          </div>
           <div class="row pt-5">
             <div class="col-md-4">
               <label class="custom-label" for=""
@@ -190,17 +434,177 @@
               >
             </div>
             <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Num. Int.: <span for=""></span
-              ></label>
+              <form-field
+                [control]="assetsForm.get('referenceVia2')"
+                label="Referencia Via 2">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="referenceVia2" />
+              </form-field>
             </div>
             <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Nombre de la Vía: <span for=""></span
-              ></label>
+              <form-field
+                [control]="assetsForm.get('referenceVia3')"
+                label="Referencia Via 3">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="referenceVia3" />
+              </form-field>
             </div>
           </div>
-          <div class="row pt-5">
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <ngx-select
+                [form]="assetsForm"
+                control="state"
+                (fetchItems)="getState($event)"
+                [data]="selectState"
+                label="Estado"
+                value="id"
+                bindLabel="state"></ngx-select>
+            </div>
+
+            <div class="col-md-4">
+              <ngx-select
+                [form]="assetsForm"
+                control="municipe"
+                (fetchItems)="getMunicipe($event)"
+                [data]="selectMunicipe"
+                label="Municipe"
+                value="id"
+                bindLabel="municipe"></ngx-select>
+            </div>
+            <div class="col-md-4">
+              <ngx-select
+                [form]="assetsForm"
+                control="suburb"
+                (fetchItems)="getSuburb($event)"
+                [data]="selectSuburb"
+                label="Colonia"
+                value="id"
+                bindLabel="suburb"></ngx-select>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <ngx-select
+                [form]="assetsForm"
+                control="cp"
+                (fetchItems)="getCP($event)"
+                [data]="selectCP"
+                label="C.P."
+                value="id"
+                bindLabel="cp"></ngx-select>
+            </div>
+            <div class="col-md-4">
+              <form-field [control]="assetsForm.get('latitud')" label="Latitud">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="latitud" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('longitud')"
+                label="Longitud">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="longitud" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('nameRoute')"
+                label="Nombre de la Via">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="nameRoute" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('numExt')"
+                label="Num. Ext.">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="numExt" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('originRoute')"
+                label="Origin de la Via">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="originRoute" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('numInt')"
+                label="Num. Int.">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="numInt" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('routeDestination')"
+                label="Destino de la Via">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="routeDestination" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('referenceVia1')"
+                label="Referencia Via 1">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="referenceVia1" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('kilometerRoute')"
+                label="Kiloometro de la Via">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="kilometerRoute" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('description')"
+                label="Descripción">
+                <textarea
+                  class="form-control"
+                  formControlName="description"></textarea>
+              </form-field>
+            </div>
+          </div>
+          <!--           <div class="row pt-5">
             <div class="col-md-4">
               <label class="custom-label" for=""
                 >Estado: <span for="">NUEVO LEÓN</span></label
@@ -280,7 +684,7 @@
                 >Longitud: <span for=""></span
               ></label>
             </div>
-          </div>
+          </div> -->
         </div>
       </tab>
       <tab>

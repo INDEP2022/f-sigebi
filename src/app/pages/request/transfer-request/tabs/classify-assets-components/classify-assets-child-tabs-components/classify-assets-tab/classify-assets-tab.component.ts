@@ -22,6 +22,7 @@ export class ClassifyAssetsTabComponent
   implements OnInit, OnChanges
 {
   @Input() assetsId: any = '';
+  @Input() typeDoc: string = '';
   public classiGoodsForm: ModelForm<any>;
   private bsModalRef: BsModalRef;
 
@@ -32,17 +33,22 @@ export class ClassifyAssetsTabComponent
   public selectLevel3 = new DefaultSelect<any>();
   public selectLevel4 = new DefaultSelect<any>();
 
+  detailArray: any = {};
+
   constructor(private fb: FormBuilder, private modalService: BsModalService) {
     super();
   }
 
   ngOnInit(): void {
+    console.log(this.typeDoc);
     this.initForm();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['assetsId'].currentValue != '') {
-      //cargar la clasificacion de bienes segun el id que se envio
+    if (this.typeDoc == '') {
+      if (changes['assetsId'].currentValue != '') {
+        //cargar la clasificacion de bienes segun el id que se envio
+      }
     }
   }
 
