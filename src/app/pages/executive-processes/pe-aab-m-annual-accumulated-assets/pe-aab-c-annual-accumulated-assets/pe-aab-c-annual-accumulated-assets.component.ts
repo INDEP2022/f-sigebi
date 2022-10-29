@@ -7,6 +7,7 @@ import {
 } from 'ngx-bootstrap/datepicker';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { maxDate } from 'src/app/common/validations/date.validators';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -23,13 +24,10 @@ export class PeAabCAnnualAccumulatedAssetsComponent
   select = new DefaultSelect();
   pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
 
-  bsValueToYear: Date = new Date();
-  minModeToYear: BsDatepickerViewMode = 'year'; // change for month:year
   bsConfigToYear: Partial<BsDatepickerConfig>;
-
-  bsValueFromYear: Date = new Date();
-  minModeFromYear: BsDatepickerViewMode = 'year'; // change for month:year
   bsConfigFromYear: Partial<BsDatepickerConfig>;
+
+  mode: BsDatepickerViewMode = 'year'; // change for month:year
 
   constructor(
     private modalService: BsModalService,
@@ -44,14 +42,14 @@ export class PeAabCAnnualAccumulatedAssetsComponent
     this.bsConfigToYear = Object.assign(
       {},
       {
-        minMode: this.minModeToYear,
+        minMode: this.mode,
         dateInputFormat: 'YYYY',
       }
     );
     this.bsConfigFromYear = Object.assign(
       {},
       {
-        minMode: this.minModeFromYear,
+        minMode: this.mode,
         dateInputFormat: 'YYYY',
       }
     );
@@ -59,10 +57,10 @@ export class PeAabCAnnualAccumulatedAssetsComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      delegation: ['', [Validators.required]],
-      subdelegation: ['', [Validators.required]],
-      fromYear: [this.bsValueFromYear, [Validators.required]],
-      toYear: [this.bsValueToYear, [Validators.required]],
+      delegation: [''],
+      subdelegation: [''],
+      fromYear: [null, [Validators.required, maxDate(new Date())]],
+      toYear: [null, [Validators.required, maxDate(new Date())]],
     });
   }
 
