@@ -38,6 +38,12 @@ export const routesJuridicalProcesses: any = [
     link: 'bienes-validacion-aseg-extdom',
     menu: 'Bienes Validación ASEG_EXTDOM',
   },
+  {
+    // DESAHOGO Quitar Desahogo
+    label: 'DESAHOGO Quitar Desahogo',
+    link: 'quitar-desahogo',
+    menu: 'Quitar Desahogo',
+  },
 ];
 export const routesFormalizacionInmuebles: any = [
   {
@@ -83,6 +89,11 @@ export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
         // BIENES EN PROCESO DE VALIDACIÓN EXT_DOM
         label: routesJuridicalProcesses[4].menu,
         link: baseMenu + routesJuridicalProcesses[4].link,
+      },
+      {
+        // DESAHOGO Quitar Desahogo
+        label: routesJuridicalProcesses[5].menu,
+        link: baseMenu + routesJuridicalProcesses[5].link,
       },
       {
         label: 'Depositaría',
