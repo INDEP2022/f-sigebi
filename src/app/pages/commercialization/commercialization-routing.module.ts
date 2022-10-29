@@ -363,6 +363,16 @@ const routes: Routes = [
       ).CBROimMSigntureAuxiliaryCatalogsModule,
     data: { title: 'Catálogos Auxiliares para Firmas Electrónicas' },
   },
+  {
+    path: 'direct-sale-requests-capture/municipality-control',
+    loadChildren: async () =>
+      (
+        await import(
+          './direct-sale-requests-capture/c-csvd-m-municipality-control/c-csvd-m-municipality-control.module'
+        )
+      ).CCsvdMMunicipalityControlModule,
+    data: { title: 'Control de Municipios' },
+  },
 ];
 
 @NgModule({

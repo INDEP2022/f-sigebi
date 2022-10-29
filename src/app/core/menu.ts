@@ -388,6 +388,16 @@ export const MENU: IMenuItem[] = [
         ],
       },
       {
+        label: 'Captura de Solicitudes de Venta Directa',
+        icon: 'folder',
+        subItems: [
+          {
+            label: 'Control de Municipios',
+            link: '/pages/commercialization/direct-sale-requests-capture/municipality-control',
+          },
+        ],
+      },
+      {
         label: 'Activos Financieros',
         icon: 'credit-card-outline',
         subItems: [],
