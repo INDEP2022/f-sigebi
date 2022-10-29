@@ -1,4 +1,5 @@
 import { CREAR_MENU_DEPOSITARY } from './depositary-routes';
+import { CREAR_MENU_JURIDICAL_PROCESSES } from './juridical-processes-routes';
 
 export const baseMenu: string = '/pages/juridicos/'; // Base url Menu
 export const baseMenuDepositaria: string = 'depositaria/'; // Base url Menu Depositaria
@@ -50,6 +51,12 @@ export const routesJuridicalProcesses: any = [
     link: 'abandonos',
     menu: 'Aplicar Abandono',
   },
+  {
+    // Seguimiento a Juicios
+    label: 'Seguimiento a Juicios',
+    link: 'seguimiento-juicios',
+    menu: 'Seguimiento a Juicios',
+  },
 ];
 export const routesFormalizacionInmuebles: any = [
   {
@@ -71,41 +78,7 @@ export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
     label: 'Procesos Jurídicos',
     icon: 'bx-share-alt',
     subItems: [
-      {
-        // DICTAMINACIONES JURIDICAS
-        label: routesJuridicalProcesses[0].menu,
-        link: baseMenu + routesJuridicalProcesses[0].link + '/12345',
-      },
-      {
-        // ACTUALIZACIÓN DE EXPEDIENTE
-        label: routesJuridicalProcesses[1].menu,
-        link: baseMenu + routesJuridicalProcesses[1].link + '/12345',
-      },
-      {
-        // ACTUALIZACIÓN DE EXPEDIENTE EN NOTIFICACIÓN
-        label: routesJuridicalProcesses[2].menu,
-        link: baseMenu + routesJuridicalProcesses[2].link,
-      },
-      {
-        // DECLARATORIA Y OFICIOS DE ABANDONOS
-        label: routesJuridicalProcesses[3].menu,
-        link: baseMenu + routesJuridicalProcesses[3].link,
-      },
-      {
-        // BIENES EN PROCESO DE VALIDACIÓN EXT_DOM
-        label: routesJuridicalProcesses[4].menu,
-        link: baseMenu + routesJuridicalProcesses[4].link,
-      },
-      {
-        // DESAHOGO Quitar Desahogo
-        label: routesJuridicalProcesses[5].menu,
-        link: baseMenu + routesJuridicalProcesses[5].link,
-      },
-      {
-        // Abandonos
-        label: routesJuridicalProcesses[6].menu,
-        link: baseMenu + routesJuridicalProcesses[6].link,
-      },
+      ...CREAR_MENU_JURIDICAL_PROCESSES(),
       {
         label: 'Depositaría',
         subItems: CREAR_MENU_DEPOSITARY(),
