@@ -126,6 +126,10 @@ export const MENU: IMenuItem[] = [
             label: 'Solicitud y Autorización de Donación',
             link: '/pages/final-destination-process/donation-process/donation-authorization-request',
           },
+          {
+            label: 'Registro de Inventarios para Donación Directa',
+            link: '/pages/final-destination-process/donation-process/registration-inventories-donation',
+          },
           //VISTAS A LAS QUE SE LES DEBE VERIFICAR SU RUTA
           {
             label: 'Parcialización Bienes en Donación',
@@ -165,10 +169,6 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Comprobación de Requisitos Documentales por Destrucción',
         link: '/pages/final-destination-process/check-destruction-requirements',
-      },
-      {
-        label: 'Comprobación de Requisitos Documentales por Donación',
-        link: '/pages/final-destination-process/check-donation-requirements',
       },
       {
         label: 'Comprobación de Requisitos Documentales para Destino',
