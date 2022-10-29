@@ -51,6 +51,13 @@ const routes: Routes = [
         './partialization-goods-donation/fdp-pbd-m-partialization-goods-donation.module'
       ).then(m => m.FdpPbdMPartializationGoodsDonationModule),
   },
+  {
+    path: 'registration-inventories-donation',
+    loadChildren: () =>
+      import(
+        './registration-inventories-donation/fdp-ridd-m-registration-inventories-donation.module'
+      ).then(m => m.FdpRiddMRegistrationInventoriesDonationModule),
+  },
 ];
 
 @NgModule({
