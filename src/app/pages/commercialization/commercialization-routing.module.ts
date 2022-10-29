@@ -373,6 +373,13 @@ const routes: Routes = [
       ).CCsvdMMunicipalityControlModule,
     data: { title: 'Control de Municipios' },
   },
+  {
+    path: 'billing',
+    loadChildren: async () =>
+      (await import('./c-fp-m-penalty-billing/c-fp-m-penalty-billing.module'))
+        .CFpMPenaltyBillingModule,
+    data: { title: 'Facturación' },
+  },
 ];
 
 @NgModule({

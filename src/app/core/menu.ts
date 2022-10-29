@@ -398,6 +398,20 @@ export const MENU: IMenuItem[] = [
         ],
       },
       {
+        label: 'Facturación',
+        icon: 'folder',
+        subItems: [
+          {
+            label: 'Facturación de Penalizaciones',
+            link: '/pages/commercialization/billing/penalty',
+          },
+          {
+            label: 'Facturación de Venta de Bases',
+            link: '/pages/commercialization/billing/bases-sales',
+          },
+        ],
+      },
+      {
         label: 'Activos Financieros',
         icon: 'credit-card-outline',
         subItems: [],
