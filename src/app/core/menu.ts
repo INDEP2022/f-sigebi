@@ -309,6 +309,10 @@ export const MENU: IMenuItem[] = [
             label: 'Envío de Movimientos a SIRSAE',
             link: '/pages/commercialization/c-b-ems-sirsae-movement-sending/movable',
           },
+          {
+            label: 'Ejecución de la Conciliación',
+            link: '/pages/commercialization/c-b-pdp-ec-conciliation-execution/movable',
+          },
         ],
       },
       {
@@ -374,6 +378,10 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Envío de Movimientos a SIRSAE',
             link: '/pages/commercialization/c-b-ems-sirsae-movement-sending/immovable',
+          },
+          {
+            label: 'Ejecución de la Conciliación',
+            link: '/pages/commercialization/c-b-pdp-ec-conciliation-execution/immovable',
           },
         ],
       },

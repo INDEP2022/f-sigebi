@@ -6,29 +6,30 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { SIRSAE_MOVEMENT_SENDING_COLUMNS } from './c-b-ems-sirsae-movement-sending-columns';
+import { CONCILIATION_EXECUTION_COLUMNS } from './c-b-pdp-ec-conciliation-execution-columns';
 
 @Component({
-  selector: 'app-c-b-ems-c-sirsae-movement-sending-main',
-  templateUrl: './c-b-ems-c-sirsae-movement-sending-main.component.html',
+  selector: 'app-c-b-pdp-ec-c-conciliation-execution-main',
+  templateUrl: './c-b-pdp-ec-c-conciliation-execution-main.component.html',
   styles: [],
 })
-export class CBEmsCSirsaeMovementSendingMainComponent
+export class CBPdpEcCConciliationExecutionMainComponent
   extends BasePage
   implements OnInit
 {
-  layout: string = 'movable'; // 'movable' 'immovable'
+  layout: string = 'movable'; // 'movable', 'immovable'
   navigateCount: number = 0;
-  movementForm: FormGroup = new FormGroup({});
+  conciliationForm: FormGroup = new FormGroup({});
   eventItems = new DefaultSelect();
   batchItems = new DefaultSelect();
   selectedEvent: any = null;
   selectedBatch: any = null;
   clientRows: any[] = [];
+  maxDate: Date = new Date();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-  movementColumns: any[] = [];
-  movementSettings = {
+  conciliationColumns: any[] = [];
+  conciliationSettings = {
     ...TABLE_SETTINGS,
     actions: false,
     selectMode: 'multi',
@@ -84,46 +85,46 @@ export class CBEmsCSirsaeMovementSendingMainComponent
     {
       id: 1646,
       name: 'ALEJANDRO MEJIA',
-      rfc: 'GS46INN91',
-      sent: 'NO',
+      processed: 'NO',
+      executionDate: '',
     },
     {
       id: 1647,
       name: 'MARIA ESTEVEZ',
-      rfc: 'HINS12651IN',
-      sent: 'NO',
+      processed: 'NO',
+      executionDate: '',
     },
     {
       id: 1648,
       name: 'ANA PADILLA',
-      rfc: 'RGN682PKM',
-      sent: 'NO',
+      processed: 'NO',
+      executionDate: '',
     },
     {
       id: 1649,
       name: 'VICTOR MORALES',
-      rfc: 'UGO1297LN9',
-      sent: 'NO',
+      processed: 'NO',
+      executionDate: '',
     },
     {
       id: 1650,
       name: 'PEDRO MENDOZA',
-      rfc: 'LPAT2151UB',
-      sent: 'NO',
+      processed: 'NO',
+      executionDate: '',
     },
   ];
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder) {
     super();
-    this.movementSettings.columns = SIRSAE_MOVEMENT_SENDING_COLUMNS;
+    this.conciliationSettings.columns = CONCILIATION_EXECUTION_COLUMNS;
   }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       if (params.get('goodType')) {
         if (this.navigateCount > 0) {
-          this.movementForm.reset();
-          this.clientRows = [];
+          // this.movementForm.reset();
+          // this.clientRows = [];
           window.location.reload();
         }
         this.layout = params.get('goodType');
@@ -137,15 +138,18 @@ export class CBEmsCSirsaeMovementSendingMainComponent
   }
 
   private prepareForm(): void {
-    this.movementForm = this.fb.group({
+    this.conciliationForm = this.fb.group({
       event: [null, [Validators.required]],
-      batch: [null, [Validators.required]],
+      date: [null, [Validators.required]],
+      phase: [null, [Validators.required]],
+      batch: [null],
+      price: [null],
     });
   }
 
   getData() {
-    this.movementColumns = this.clientsTestData;
-    this.totalItems = this.movementColumns.length;
+    this.conciliationColumns = this.clientsTestData;
+    this.totalItems = this.conciliationColumns.length;
   }
 
   getEvents(params: ListParams) {
@@ -180,17 +184,9 @@ export class CBEmsCSirsaeMovementSendingMainComponent
     this.clientRows = rows;
   }
 
-  sendSirsae(type: string = '') {
-    switch (type) {
-      case 'BATCH':
-        console.log(this.clientRows);
-        break;
-      case 'CLIENT':
-        console.log(this.clientRows);
-        break;
-      default:
-        console.log(this.clientRows);
-        break;
-    }
-  }
+  execute() {}
+
+  modify() {}
+
+  cancel() {}
 }

@@ -390,6 +390,16 @@ const routes: Routes = [
       ).CBEmsMSirsaeMovementSendingModule,
     data: { title: 'Envío de Movimientos a SIRSAE' },
   },
+  {
+    path: 'c-b-pdp-ec-conciliation-execution',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/c-b-pdp-ec-m-conciliation-execution/c-b-pdp-ec-m-conciliation-execution.module'
+        )
+      ).CBPdpEcMConciliationExecutionModule,
+    data: { title: 'Ejecución de la Conciliación' },
+  },
 ];
 
 @NgModule({
