@@ -380,6 +380,16 @@ const routes: Routes = [
         .CFpMPenaltyBillingModule,
     data: { title: 'Facturación' },
   },
+  {
+    path: 'c-b-ems-sirsae-movement-sending',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/c-b-ems-m-sirsae-movement-sending/c-b-ems-m-sirsae-movement-sending.module'
+        )
+      ).CBEmsMSirsaeMovementSendingModule,
+    data: { title: 'Envío de Movimientos a SIRSAE' },
+  },
 ];
 
 @NgModule({

@@ -305,6 +305,10 @@ export const MENU: IMenuItem[] = [
             label: 'Catálogos Auxiliares para Firmas Electrónicas',
             link: '/pages/commercialization/c-b-r-oim-electronic-signature-auxiliary-catalogs/movable',
           },
+          {
+            label: 'Envío de Movimientos a SIRSAE',
+            link: '/pages/commercialization/c-b-ems-sirsae-movement-sending/movable',
+          },
         ],
       },
       {
@@ -366,6 +370,10 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Reporte de Ingresos por Mandato',
             link: '/pages/commercialization/mandate-income-reports',
+          },
+          {
+            label: 'Envío de Movimientos a SIRSAE',
+            link: '/pages/commercialization/c-b-ems-sirsae-movement-sending/immovable',
           },
         ],
       },
