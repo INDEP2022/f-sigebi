@@ -1,0 +1,48 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      FACTJURCONABANDEV - MONITOR DE ABANDONO POR DEVOLUCI&Oacute;N
+    </h5>
+  </div>
+
+  <div body>
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 p-2">
+        <ng2-smart-table
+          [attr.class]="'my-table table-bordered'"
+          [settings]="tableSettings"
+          [source]="dataTable">
+        </ng2-smart-table>
+        <br />
+        <span class="badge badge-pill bg-danger m-2 p-2">No Disponible</span>
+        <span class="badge badge-pill bg-info m-2 p-2"
+          >Abandono por Confirmar</span
+        >
+      </div>
+    </div>
+    <form [formGroup]="form" class="form-material">
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field
+            [control]="form.get('diEstatusBien')"
+            label="Estatus Bien">
+            <input
+              class="form-control"
+              formControlName="diEstatusBien"
+              placeholder="Estatus Bien" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
+          <div class="form-group">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              (click)="btnDeclaracion()">
+              Declaraci&oacute;n
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>
