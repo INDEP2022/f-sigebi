@@ -57,6 +57,18 @@ export const routesJuridicalProcesses: any = [
     link: 'seguimiento-juicios',
     menu: 'Seguimiento a Juicios',
   },
+  {
+    // Monitor de Abandono por Devolución
+    label: 'Monitor de Abandono por Devolución',
+    link: 'monitor-abandono-devolucion',
+    menu: 'Monitor de Abandono por Devolución',
+  },
+  {
+    // Abandono por Devolución Monitor
+    label: 'Abandono por Devolución Monitor',
+    link: 'abandono-devolucion-monitor',
+    menu: 'Abandono por Devolución Monitor',
+  },
 ];
 export const routesFormalizacionInmuebles: any = [
   {

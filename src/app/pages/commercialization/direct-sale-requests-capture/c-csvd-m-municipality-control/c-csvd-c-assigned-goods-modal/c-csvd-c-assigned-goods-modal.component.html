@@ -1,0 +1,157 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="goodForm">
+      <div class="row">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="goodForm.get('goodId')">
+            <ngx-select
+              [form]="goodForm"
+              [data]="goodItems"
+              label="Número Bien"
+              value="id"
+              bindLabel="id"
+              (fetchItems)="getGoods($event)"
+              control="goodId">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="goodForm.get('delegation')" label="Delegación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegation" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="goodForm.get('description')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="goodForm.get('appraisal')"
+            label="Valor Avalúo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="appraisal" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="goodForm.get('appraisalDate')"
+            label="Fecha Avalúo">
+            <input
+              type="text"
+              formControlName="appraisalDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="goodForm.get('sessionNumber')"
+            label="Número Sesión">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="sessionNumber" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="goodForm.get('goodClasification')"
+            label="Clasifica Bien">
+            <ng-select
+              formControlName="goodClasification"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option
+                *ngFor="let c of goodClassification"
+                value="c.description"
+                >{{ c.description }}</ng-option
+              >
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="goodForm.get('location')" label="Ubicación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="location" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="goodForm.get('mandate')" label="Mandato">
+            <input type="text" formControlName="mandate" class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="goodForm.get('siabClassification')"
+            label="Clasifica SIAB">
+            <ng-select
+              formControlName="siabClassification"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option
+                *ngFor="let c of siabClassification"
+                value="c.description"
+                >{{ c.description }}</ng-option
+              >
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="goodForm.get('commentary')"
+            label="Comentarios">
+            <textarea
+              rows="2"
+              formControlName="commentary"
+              class="form-control">
+            </textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!goodForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

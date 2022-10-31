@@ -1,0 +1,128 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="applicantForm">
+      <div class="row">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="applicantForm.get('entityId')" label="Entidad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="entityId" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="applicantForm.get('applicant')"
+            label="Solicitante">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="applicant" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="applicantForm.get('position')" label="Puesto">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="position" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="applicantForm.get('municipality')">
+            <ngx-select
+              [form]="applicantForm"
+              [data]="municipalityItems"
+              label="Municipio"
+              value="description"
+              bindLabel="description"
+              (fetchItems)="getMunicipalities($event)"
+              control="municipality">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="applicantForm.get('state')">
+            <ngx-select
+              [form]="applicantForm"
+              [data]="stateItems"
+              value="description"
+              bindLabel="description"
+              label="Estado"
+              (fetchItems)="getStates($event)"
+              control="state">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="applicantForm.get('applicationDate')"
+            label="Fecha Solicitud">
+            <input
+              type="text"
+              formControlName="applicationDate"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="applicantForm.get('description')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="applicantForm.get('phone')" label="Teléfono">
+            <input type="text" class="form-control" formControlName="phone" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="applicantForm.get('adjudication')"
+            label="Adjudicación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="adjudication" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="applicantForm.get('email')" label="Correo Web">
+            <input type="text" class="form-control" formControlName="email" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!applicantForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
