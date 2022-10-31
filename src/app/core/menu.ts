@@ -99,6 +99,7 @@ export const MENU: IMenuItem[] = [
           },
         ],
       },
+      //Proceso de Donación
       {
         label: 'Proceso de Donación',
         subItems: [
@@ -129,6 +130,10 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Registro de Inventarios para Donación Directa',
             link: '/pages/final-destination-process/donation-process/registration-inventories-donation',
+          },
+          {
+            label: 'Contratos de Donación',
+            link: '/pages/final-destination-process/donation-process/donation-contracts',
           },
           //VISTAS A LAS QUE SE LES DEBE VERIFICAR SU RUTA
           {
