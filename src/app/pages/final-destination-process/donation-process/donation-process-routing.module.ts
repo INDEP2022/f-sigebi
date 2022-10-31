@@ -72,6 +72,13 @@ const routes: Routes = [
         './administrator-donation-contract/fdp-cdda-m-administrator-donation-contract.module'
       ).then(m => m.FdpCddaMAdministratorDonationContractModule),
   },
+  {
+    path: 'donation-processes',
+    loadChildren: () =>
+      import('./donation-processes/fdp-pdd-m-donation-processes.module').then(
+        m => m.FdpPddMDonationProcessesModule
+      ),
+  },
 ];
 
 @NgModule({
