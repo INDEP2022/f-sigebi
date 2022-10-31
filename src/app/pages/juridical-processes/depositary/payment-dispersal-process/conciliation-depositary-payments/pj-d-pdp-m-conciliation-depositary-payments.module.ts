@@ -5,7 +5,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 /** BASE IMPORT */
 
 /** LIBRERIAS EXTERNAS IMPORTS */
-import { SharedLegalProcessModule } from '../../../shared-legal-process/shared-legal-process.module';
+import { SharedJuridicalProcessesModule } from '../../../shared-juridical-processes/shared-juridical-processes.module';
 
 /** SERVICE IMPORTS */
 
@@ -21,7 +21,7 @@ import { PJDPDPConciliationDepositaryPaymentsComponent } from './conciliation-de
     CommonModule,
     PJDPDPConciliationDepositaryPaymentsRoutingModule,
     SharedModule,
-    SharedLegalProcessModule,
+    SharedJuridicalProcessesModule,
   ],
 })
 export class PJDPDPConciliationDepositaryPaymentsModule {}

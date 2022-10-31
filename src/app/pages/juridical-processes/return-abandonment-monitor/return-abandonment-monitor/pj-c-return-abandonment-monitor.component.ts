@@ -37,7 +37,7 @@ export class PJReturnAbandonmentMonitorComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      noBien: [''],
+      noBien: [this.idBien ? this.idBien : ''],
       descripcion: [''],
       cantidad: [''],
       estatus: [''],
