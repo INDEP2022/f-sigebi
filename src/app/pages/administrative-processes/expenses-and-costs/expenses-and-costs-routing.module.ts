@@ -79,6 +79,13 @@ const routes: Routes = [
             .ExpensesConceptsModule,
         data: { title: 'Conceptos de Gasto' },
       },
+      {
+        path: 'applicants-criteria',
+        loadChildren: async () =>
+          (await import('./applicants-criteria/applicants-criteria.module'))
+            .ApplicantsCriteriaModule,
+        data: { title: 'Criterios de aplicación' },
+      },
     ],
   },
 ];
