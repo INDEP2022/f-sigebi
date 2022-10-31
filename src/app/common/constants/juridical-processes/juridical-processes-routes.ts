@@ -7,6 +7,7 @@ const JURIDICAL_PROCESSES: string[] = [
   'dictaminaciones-juridicas',
   'actualizacion-datos-expediente',
   'abandono-devolucion-monitor',
+  'declaracion-abandono-aseguramiento',
 ];
 
 export const CREAR_MENU_JURIDICAL_PROCESSES = function () {

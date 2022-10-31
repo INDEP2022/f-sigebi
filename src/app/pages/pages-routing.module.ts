@@ -111,6 +111,16 @@ const routes: Routes = [
       (await import('./registration-request/registration-request.module'))
         .RegistrationRequestModule,
   },
+
+  {
+    path: 'documentation-complementary',
+    loadChildren: async () =>
+      (
+        await import(
+          './documentation-complementary/documentation-complementary.module'
+        )
+      ).DocumentationComplementaryModule,
+  },
 ];
 
 @NgModule({

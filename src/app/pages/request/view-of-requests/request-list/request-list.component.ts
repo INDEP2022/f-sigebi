@@ -17,6 +17,14 @@ var usuario: IRequestList[] = [
     created: 'tester_nsbxt',
     process: 'SolicitudeTransferencia',
   },
+  {
+    title: 'Registo de solicitud (programar solicitud) con folio 45010',
+    noRequest: 45010,
+    numTask: 260302,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'Solicitud de programación',
+  },
 ];
 
 @Component({
@@ -49,6 +57,10 @@ export class RequestListComponent extends BasePage implements OnInit {
 
   openCreateRequestForm(event?: IRequestList) {
     this.router.navigate(['pages/request/list/new-transfer-request']);
+  }
+
+  openCreateProgrammingRequest() {
+    this.router.navigate;
   }
 
   editRequest(event: any) {

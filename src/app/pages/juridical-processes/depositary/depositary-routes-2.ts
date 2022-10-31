@@ -40,4 +40,14 @@ export const DEPOSITARY_ROUTES_2_ROUTING = [
       ).JpDMDepositaryPaymentChargesModule,
     data: { title: DEPOSITARY_ROUTES_2[3].label },
   },
+  {
+    path: DEPOSITARY_ROUTES_2[4].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './income-orders-depository-goods/jp-d-m-income-orders-depository-goods.module'
+        )
+      ).JpDMIncomeOrdersDepositoryGoodsModule,
+    data: { title: DEPOSITARY_ROUTES_2[4].label },
+  },
 ];
