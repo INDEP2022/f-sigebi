@@ -170,7 +170,11 @@ export const MENU: IMenuItem[] = [
         label: 'Reporte de Actas de Devolución',
         link: '/pages/final-destination-process/return-acts-report',
       },
-      //VISTAS A LAS QUE SE LES DEBE VERIFICAR SU RUTA
+      {
+        label: 'Revisión de Fichas Técnicas',
+        link: '/pages/final-destination-process/review-technical-sheets',
+      },
+      //VISTAS A LAS QUE SE LES DEBE VERIFICAR SU RUTA O SI SON LLAMADAS DESDE OTRA VISTA
       {
         label: 'Comprobación de Requisitos Documentales por Donación',
         link: '/pages/final-destination-process/check-donation-requirements',
