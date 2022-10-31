@@ -55,6 +55,47 @@ const routes: Routes = [
       ).PJBVAEGoodsProcessValidationExtdomModule,
     data: { title: routesJuridicalProcesses[4].label },
   },
+  {
+    path: routesJuridicalProcesses[5].link,
+    loadChildren: async () =>
+      (await import('./relief-delete/pj-m-relief-delete.module'))
+        .PJReliefDeleteModule,
+    data: { title: routesJuridicalProcesses[5].label },
+  },
+  {
+    path: routesJuridicalProcesses[6].link,
+    loadChildren: async () =>
+      (await import('./abandonments/pj-m-abandonments.module'))
+        .PJAbandonmentsModule,
+    data: { title: routesJuridicalProcesses[6].label },
+  },
+  {
+    path: routesJuridicalProcesses[7].link,
+    loadChildren: async () =>
+      (await import('./tracing-judgment/pj-m-tracing-judgment.module'))
+        .PJTracingJudgmentModule,
+    data: { title: routesJuridicalProcesses[7].label },
+  },
+  {
+    path: routesJuridicalProcesses[8].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './monitor-return-abandonment/pj-m-monitor-return-abandonment.module'
+        )
+      ).PJMonitorReturnAbandonmentModule,
+    data: { title: routesJuridicalProcesses[8].label },
+  },
+  {
+    path: routesJuridicalProcesses[9].link + '/:id',
+    loadChildren: async () =>
+      (
+        await import(
+          './return-abandonment-monitor/pj-m-return-abandonment-monitor.module'
+        )
+      ).PJReturnAbandonmentMonitorModule,
+    data: { title: routesJuridicalProcesses[9].label },
+  },
   // DEPOSITARIA
   {
     path: 'depositaria',

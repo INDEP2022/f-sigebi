@@ -21,6 +21,7 @@ import { PaRsfCRequestServiceFormComponent } from './request-service-form/pa-rsf
 import { PaRspCRequestServicePaymentComponent } from './request-service-payments/pa-rsp-c-request-service-payment.component';
 import { PaSmCServiceMonitoringComponent } from './service-monitoring/pa-sm-c-service-monitoring.component';
 import { DescriptionOfTheMatterComponent } from './description-of-the-matter/description-of-the-matter.component';
+import { ImplementationReportsInvoicesComponent } from './implementation-reports-invoices/implementation-reports-invoices.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { DescriptionOfTheMatterComponent } from './description-of-the-matter/des
     PaRsfCRequestServiceFormComponent,
     PaSmCServiceMonitoringComponent,
     DescriptionOfTheMatterComponent,
+    ImplementationReportsInvoicesComponent,
   ],
   imports: [
     CommonModule,
