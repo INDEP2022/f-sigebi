@@ -76,6 +76,26 @@ const routes: Routes = [
         .PJTracingJudgmentModule,
     data: { title: routesJuridicalProcesses[7].label },
   },
+  {
+    path: routesJuridicalProcesses[8].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './monitor-return-abandonment/pj-m-monitor-return-abandonment.module'
+        )
+      ).PJMonitorReturnAbandonmentModule,
+    data: { title: routesJuridicalProcesses[8].label },
+  },
+  {
+    path: routesJuridicalProcesses[9].link + '/:id',
+    loadChildren: async () =>
+      (
+        await import(
+          './return-abandonment-monitor/pj-m-return-abandonment-monitor.module'
+        )
+      ).PJReturnAbandonmentMonitorModule,
+    data: { title: routesJuridicalProcesses[9].label },
+  },
   // DEPOSITARIA
   {
     path: 'depositaria',

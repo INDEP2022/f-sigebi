@@ -58,6 +58,20 @@ const routes: Routes = [
         './registration-inventories-donation/fdp-ridd-m-registration-inventories-donation.module'
       ).then(m => m.FdpRiddMRegistrationInventoriesDonationModule),
   },
+  {
+    path: 'donation-contracts',
+    loadChildren: () =>
+      import('./donation-contracts/fdp-cdd-m-donation-contracts.module').then(
+        m => m.FdpCddMDonationContractsModule
+      ),
+  },
+  {
+    path: 'administrator-donation-contract',
+    loadChildren: () =>
+      import(
+        './administrator-donation-contract/fdp-cdda-m-administrator-donation-contract.module'
+      ).then(m => m.FdpCddaMAdministratorDonationContractModule),
+  },
 ];
 
 @NgModule({

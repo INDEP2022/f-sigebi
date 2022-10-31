@@ -99,6 +99,7 @@ export const MENU: IMenuItem[] = [
           },
         ],
       },
+      //Proceso de Donación
       {
         label: 'Proceso de Donación',
         subItems: [
@@ -129,6 +130,14 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Registro de Inventarios para Donación Directa',
             link: '/pages/final-destination-process/donation-process/registration-inventories-donation',
+          },
+          {
+            label: 'Contratos de Donación',
+            link: '/pages/final-destination-process/donation-process/donation-contracts',
+          },
+          {
+            label: 'Contratos de Donación Directa Administrador',
+            link: '/pages/final-destination-process/donation-process/administrator-donation-contract',
           },
           //VISTAS A LAS QUE SE LES DEBE VERIFICAR SU RUTA
           {
@@ -305,6 +314,14 @@ export const MENU: IMenuItem[] = [
             label: 'Catálogos Auxiliares para Firmas Electrónicas',
             link: '/pages/commercialization/c-b-r-oim-electronic-signature-auxiliary-catalogs/movable',
           },
+          {
+            label: 'Envío de Movimientos a SIRSAE',
+            link: '/pages/commercialization/c-b-ems-sirsae-movement-sending/movable',
+          },
+          {
+            label: 'Ejecución de la Conciliación',
+            link: '/pages/commercialization/c-b-pdp-ec-conciliation-execution/movable',
+          },
         ],
       },
       {
@@ -367,6 +384,14 @@ export const MENU: IMenuItem[] = [
             label: 'Reporte de Ingresos por Mandato',
             link: '/pages/commercialization/mandate-income-reports',
           },
+          {
+            label: 'Envío de Movimientos a SIRSAE',
+            link: '/pages/commercialization/c-b-ems-sirsae-movement-sending/immovable',
+          },
+          {
+            label: 'Ejecución de la Conciliación',
+            link: '/pages/commercialization/c-b-pdp-ec-conciliation-execution/immovable',
+          },
         ],
       },
       {
@@ -384,6 +409,30 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Líneas de Captura',
             link: '/pages/commercialization/catalogs/capture-lines',
+          },
+        ],
+      },
+      {
+        label: 'Captura de Solicitudes de Venta Directa',
+        icon: 'folder',
+        subItems: [
+          {
+            label: 'Control de Municipios',
+            link: '/pages/commercialization/direct-sale-requests-capture/municipality-control',
+          },
+        ],
+      },
+      {
+        label: 'Facturación',
+        icon: 'folder',
+        subItems: [
+          {
+            label: 'Facturación de Penalizaciones',
+            link: '/pages/commercialization/billing/penalty',
+          },
+          {
+            label: 'Facturación de Venta de Bases',
+            link: '/pages/commercialization/billing/bases-sales',
           },
         ],
       },

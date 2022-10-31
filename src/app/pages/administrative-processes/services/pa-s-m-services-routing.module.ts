@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { DescriptionOfTheMatterComponent } from './description-of-the-matter/description-of-the-matter.component';
 //Components
 import { PaGspCGlobalServicePaymentComponent } from './global-service-payments/pa-gsp-c-global-service-payment.component';
+import { ImplementationReportsInvoicesComponent } from './implementation-reports-invoices/implementation-reports-invoices.component';
 import { PaRspCRecordServicePaymentComponent } from './record-service-payments/pa-rsp-c-record-service-payment.component';
 import { PaRspCRequestServicePaymentComponent } from './request-service-payments/pa-rsp-c-request-service-payment.component';
 import { PaSmCServiceMonitoringComponent } from './service-monitoring/pa-sm-c-service-monitoring.component';
@@ -27,6 +28,10 @@ const routes: Routes = [
   {
     path: 'descripcion-of-the-matter',
     component: DescriptionOfTheMatterComponent,
+  },
+  {
+    path: 'implementation-reports-invoices',
+    component: ImplementationReportsInvoicesComponent,
   },
 ];
 
