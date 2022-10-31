@@ -14,4 +14,9 @@ export const DEPOSITARY_ROUTES_2: any[] = [
     link: 'depository-fees',
     menu: 'Cargas pagos depositarias',
   },
+  {
+    label: 'Cargas de pago de las depositarias',
+    link: 'depositary-payment-charges',
+    menu: 'Cargas de pago de las depositarias',
+  },
 ];

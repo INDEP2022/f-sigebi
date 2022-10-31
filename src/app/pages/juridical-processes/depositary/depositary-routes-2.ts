@@ -30,4 +30,14 @@ export const DEPOSITARY_ROUTES_2_ROUTING = [
         .JpDMDepositoryFeesModule,
     data: { title: DEPOSITARY_ROUTES_2[2].label },
   },
+  {
+    path: DEPOSITARY_ROUTES_2[3].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './depositary-payment-charges/jp-d-m-depositary-payment-charges.module'
+        )
+      ).JpDMDepositaryPaymentChargesModule,
+    data: { title: DEPOSITARY_ROUTES_2[3].label },
+  },
 ];
