@@ -1,6 +1,7 @@
 import { MENU_OPTIONS_JURIDICAL_PROCESSES } from '../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
 import { ADMINISTRATIVE_PROCESSES_ROUTES } from '../common/routes/administrative-processes.routes';
 import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
+import { DOCUMENTATION_COMPLEMENTARY } from '../common/routes/documentation-complementary';
 import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception.routes';
 import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
 import { GENERAL_PROCESSES_ROUTES } from '../common/routes/general-processes.routes';
@@ -55,6 +56,9 @@ export const MENU: IMenuItem[] = [
 
   // Registro solicitudes//
   ...REGISTRATION_REQUEST_ROUTES,
+
+  //Documentación complementaria//
+  ...DOCUMENTATION_COMPLEMENTARY,
 
   //Proceso Destino final
   {

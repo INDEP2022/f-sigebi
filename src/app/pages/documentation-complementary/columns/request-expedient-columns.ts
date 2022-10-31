@@ -1,61 +1,72 @@
-export const EXPEDIENTS_REQUEST_COLUMNS = {
-  noRequest: {
-    title: 'No. solicitud',
+export const REQUEST_EXPEDIENT_COLUMNS = {
+  numRequest: {
+    title: 'No°. solicitud',
+    type: 'number',
+    sort: false,
+  },
+
+  numExpedient: {
+    title: 'No° expediente',
     type: 'string',
     sort: false,
   },
-  noExpedient: {
-    title: 'No. Expediente',
+
+  applicationDate: {
+    title: 'Fecha de solicitud',
     type: 'string',
     sort: false,
   },
-  date: {
-    title: 'Fecha Solicitud',
+
+  regionalDelegation: {
+    title: 'Delegación regional',
     type: 'string',
     sort: false,
   },
-  regDelega: {
-    title: 'Delegación Regional',
+
+  state: {
+    title: 'Estado',
     type: 'string',
     sort: false,
   },
-  status: {
-    title: 'Estatus',
-    type: 'string',
-    sort: false,
-  },
-  tranfe: {
+
+  transferent: {
     title: 'Transferente',
     type: 'string',
     sort: false,
   },
-  transmitter: {
-    title: 'Emisor',
+
+  broadStation: {
+    title: 'Emisora',
     type: 'string',
     sort: false,
   },
+
   authority: {
     title: 'Autoridad',
     type: 'string',
     sort: false,
   },
-  noOfi: {
-    title: 'No. Oficio',
+
+  officeNumber: {
+    title: 'No°. oficio',
     type: 'string',
     sort: false,
   },
-  typeReception: {
-    title: 'Via de Recepción',
+
+  viaReception: {
+    title: 'Via de recepción',
     type: 'string',
     sort: false,
   },
-  typeTransfer: {
-    title: 'Tipo Transferencia',
-    type: 'string',
-    sort: false,
-  },
-  subject: {
+
+  affair: {
     title: 'Asunto',
+    type: 'string',
+    sort: false,
+  },
+
+  typeTransference: {
+    title: 'Tipo transferencia',
     type: 'string',
     sort: false,
   },
