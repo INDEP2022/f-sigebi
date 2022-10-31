@@ -12,17 +12,17 @@ export const DEPOSITARY_ROUTES_2_ROUTING = [
   {
     path: DEPOSITARY_ROUTES_2[1].link,
     loadChildren: async () =>
-      (
-        await import(
-          './legal-opinions-office/jp-d-m-legal-opinions-office.module'
-        )
-      ).JpDMLegalOpinionsOfficeModule,
+      (await import('./trials/jp-d-m-trials.module')).JpDMTrialsModule,
     data: { title: DEPOSITARY_ROUTES_2[1].label },
   },
   {
     path: DEPOSITARY_ROUTES_2[2].link,
     loadChildren: async () =>
-      (await import('./trials/jp-d-m-trials.module')).JpDMTrialsModule,
+      (
+        await import(
+          './notice-of-abandonment-by-return/jp-d-m-notice-of-abandonment-by-return.module'
+        )
+      ).JpDMNoticeOfAbandonmentByReturnModule,
     data: { title: DEPOSITARY_ROUTES_2[2].label },
   },
   {
@@ -30,9 +30,9 @@ export const DEPOSITARY_ROUTES_2_ROUTING = [
     loadChildren: async () =>
       (
         await import(
-          './notice-of-abandonment-by-return/jp-d-m-notice-of-abandonment-by-return.module'
+          './depositary-payment-charges/jp-d-m-depositary-payment-charges.module'
         )
-      ).JpDMNoticeOfAbandonmentByReturnModule,
+      ).JpDMDepositaryPaymentChargesModule,
     data: { title: DEPOSITARY_ROUTES_2[3].label },
   },
 ];

@@ -12,15 +12,13 @@ export const DEPOSITARY_ROUTES_2: any[] = [
     menu: 'Oficio de dictaminaciones jurídicas',
   },
   {
-    // Comprobación de Documentos para Recursos Revision
-    label: 'Juicios',
-    link: 'trials',
-    menu: 'Juicios',
-  },
-  {
-    // ESPACIO EN BLANCO
     label: 'Notificacion de abandono por devolucion',
     link: 'notice-of-abandonment-by-return',
     menu: 'Notificación de abandono por devolución',
+  },
+  {
+    label: 'Cargas de pago de las depositarias',
+    link: 'depositary-payment-charges',
+    menu: 'Cargas de pago de las depositarias',
   },
 ];
