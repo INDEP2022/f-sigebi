@@ -468,6 +468,23 @@ const routes: Routes = [
           ).FlatFileForGoodModule,
         data: { title: 'Generación de archivo plano' },
       },
+      {
+        path: 'real-estate-analytical-report',
+        loadChildren: async () =>
+          (
+            await import(
+              './reports/real-estate-analytical-report/real-estate-analytical-report.module'
+            )
+          ).RealEstateAnalyticalReportModule,
+        data: { title: 'Analitico de bienes inmuebles' },
+      },
+      {
+        path: 'warehouses',
+        loadChildren: async () =>
+          (await import('./administration-third/warehouses/warehouses.module'))
+            .WarehousesModule,
+        data: { title: 'Bienes en almacén' },
+      },
       /**
        * Seguros David Lucas
        */
