@@ -95,4 +95,13 @@ export interface IRequest {
   engineNum?: string;
   canCirculate?: boolean;
   hasTheftReport?: boolean;
+
+  //Embarcaciones
+  boatArmored?: boolean;
+  operativeStatus?: string;
+  engineNumBoat?: string;
+  numEngines?: string;
+  enrollmentBoat?: string;
+  flag?: string;
+  cabinBoat?: number;
 }
