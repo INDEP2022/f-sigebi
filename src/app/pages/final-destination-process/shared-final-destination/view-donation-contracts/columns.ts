@@ -1,4 +1,4 @@
-export const COLUMNS = {
+export let COLUMNS = {
   idRequest: {
     title: 'Id Solicitud',
     type: 'number',

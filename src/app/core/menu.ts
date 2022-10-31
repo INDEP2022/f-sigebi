@@ -135,6 +135,10 @@ export const MENU: IMenuItem[] = [
             label: 'Contratos de Donación',
             link: '/pages/final-destination-process/donation-process/donation-contracts',
           },
+          {
+            label: 'Contratos de Donación Directa Administrador',
+            link: '/pages/final-destination-process/donation-process/administrator-donation-contract',
+          },
           //VISTAS A LAS QUE SE LES DEBE VERIFICAR SU RUTA
           {
             label: 'Parcialización Bienes en Donación',
