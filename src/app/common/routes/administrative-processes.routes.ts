@@ -180,6 +180,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Conceptos de Gastos',
             link: '/pages/administrative-processes/expenses-concepts',
           },
+          {
+            label: 'Criterios de aplicación',
+            link: '/pages/administrative-processes/applicants-criteria',
+          },
         ],
       },
       /**
@@ -358,6 +362,18 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Reporte de inventario',
             link: '/pages/administrative-processes/inventory-report',
+          },
+          {
+            label: 'Indicadores por Bien',
+            link: '/pages/administrative-processes/indicators-per-good',
+          },
+          {
+            label: 'Reporte de información financiera',
+            link: '/pages/administrative-processes/financial-information-report',
+          },
+          {
+            label: 'Información financiera',
+            link: '/pages/administrative-processes/financial-information',
           },
         ],
       },
