@@ -296,6 +296,110 @@ const routes: Routes = [
       ).CBmFFrPrdfMInvoiceRectificationProcessModule,
     data: { title: 'Formato de rectificación' },
   },
+  {
+    path: 'c-bm-vm-m-cp-page-setup',
+    loadChildren: async () =>
+      (
+        await import(
+          './movable-property/c-bm-vm-m-cp-page-setup/c-bm-vm-m-cp-page-setup.module'
+        )
+      ).CBmVmMCpPageSetupModule,
+    data: { title: 'Configuración de Página' },
+  },
+  {
+    path: 'c-bm-vm-cde-m-entity-classification',
+    loadChildren: async () =>
+      (
+        await import(
+          './movable-property/c-bm-vm-cde-m-entity-classification/c-bm-vm-cde-m-entity-classification.module'
+        )
+      ).CBmVmCdeMEntityClassificationModule,
+    data: { title: 'Catálogo de Entidades' },
+  },
+  {
+    path: 'payment-refund',
+    loadChildren: async () =>
+      (await import('./c-m-payment-refund/c-m-payment-refund.module'))
+        .CMPaymentRefundModule,
+    data: { title: 'Devolución de Pagos' },
+  },
+  {
+    path: 'mandate-income-reports',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/mandate-income-reports/c-b-mir-m-mandate-income-reports.module'
+        )
+      ).CBMirMMandateIncomeReportsModule,
+    data: { title: 'Reporte de Ing. por Mandato' },
+  },
+  {
+    path: 'c-bm-r-rrpr-m-remittances-recorded-region',
+    loadChildren: async () =>
+      (
+        await import(
+          './movable-property/c-bm-r-rrpr-m-remittances-recorded-region/c-bm-r-rrpr-m-remittances-recorded-region.module'
+        )
+      ).CBmRRrprMRemittancesRecordedRegionModule,
+    data: { title: 'Remesas registradas por regional' },
+  },
+  {
+    path: 'c-bm-r-exdlr-m-remittance-exportation',
+    loadChildren: async () =>
+      (
+        await import(
+          './movable-property/c-bm-r-exdlr-m-remittance-exportation/c-bm-r-exdlr-m-remittance-exportation.module'
+        )
+      ).CBmRExdlrMRemittanceExportationModule,
+    data: { title: 'Exportación de las Remesas' },
+  },
+  {
+    path: 'c-b-r-oim-electronic-signature-auxiliary-catalogs',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/c-b-r-oim-m-signture-auxiliary-catalogs/c-b-r-oim-m-signture-auxiliary-catalogs.module'
+        )
+      ).CBROimMSigntureAuxiliaryCatalogsModule,
+    data: { title: 'Catálogos Auxiliares para Firmas Electrónicas' },
+  },
+  {
+    path: 'direct-sale-requests-capture/municipality-control',
+    loadChildren: async () =>
+      (
+        await import(
+          './direct-sale-requests-capture/c-csvd-m-municipality-control/c-csvd-m-municipality-control.module'
+        )
+      ).CCsvdMMunicipalityControlModule,
+    data: { title: 'Control de Municipios' },
+  },
+  {
+    path: 'billing',
+    loadChildren: async () =>
+      (await import('./c-fp-m-penalty-billing/c-fp-m-penalty-billing.module'))
+        .CFpMPenaltyBillingModule,
+    data: { title: 'Facturación' },
+  },
+  {
+    path: 'c-b-ems-sirsae-movement-sending',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/c-b-ems-m-sirsae-movement-sending/c-b-ems-m-sirsae-movement-sending.module'
+        )
+      ).CBEmsMSirsaeMovementSendingModule,
+    data: { title: 'Envío de Movimientos a SIRSAE' },
+  },
+  {
+    path: 'c-b-pdp-ec-conciliation-execution',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/c-b-pdp-ec-m-conciliation-execution/c-b-pdp-ec-m-conciliation-execution.module'
+        )
+      ).CBPdpEcMConciliationExecutionModule,
+    data: { title: 'Ejecución de la Conciliación' },
+  },
 ];
 
 @NgModule({

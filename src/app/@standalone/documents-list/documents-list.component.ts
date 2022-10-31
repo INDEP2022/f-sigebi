@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   Component,
   ElementRef,
@@ -5,12 +6,12 @@ import {
   QueryList,
   ViewChildren,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { SharedModule } from 'src/app/shared/shared.module';
+import { BsModalRef } from 'ngx-bootstrap/modal';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 @Component({
   selector: 'app-documents-list',
@@ -29,7 +30,7 @@ export class DocumentsListComponent extends BasePage implements OnInit {
   params = new BehaviorSubject(new ListParams());
   totalItems: 0;
 
-  constructor() {
+  constructor(private modalRef: BsModalRef) {
     super();
   }
 
@@ -44,6 +45,10 @@ export class DocumentsListComponent extends BasePage implements OnInit {
 
   viewDocument() {
     this.isSingleClick = false;
+  }
+
+  close() {
+    this.modalRef.hide();
   }
 
   styleDocumentContent(documentContent: HTMLDivElement, file: any) {

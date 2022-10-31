@@ -67,7 +67,12 @@ export class RequestListComponent extends BasePage implements OnInit {
     this.lastClick += 1;
     setTimeout(() => {
       if (this.lastClick > 1) {
-        this.router.navigate(['pages/request/list/registration-request', 1]);
+        //pages/request/list/registration-request
+        //pages/request/transfer-request/registration-request
+        this.router.navigate([
+          'pages/request/transfer-request/registration-request',
+          1,
+        ]);
       }
       this.lastClick = 0;
     }, 500);

@@ -176,6 +176,14 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Registro de Gastos',
             link: '/pages/administrative-processes/expenses-register',
           },
+          {
+            label: 'Conceptos de Gastos',
+            link: '/pages/administrative-processes/expenses-concepts',
+          },
+          {
+            label: 'Criterios de aplicación',
+            link: '/pages/administrative-processes/applicants-criteria',
+          },
         ],
       },
       /**
@@ -295,21 +303,25 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Coordinacion por zonas',
             link: '/pages/administrative-processes/zones',
           },
+          /*{
+            label: 'Almacenes',
+            icon: 'bx-folder',
+            subItems: [],
+          },*/
+          {
+            label: 'Alta de Almacenes por Contrato',
+            link: '/pages/administrative-processes/reg-warehouse-contract',
+          },
+          {
+            label: 'Bienes en almacén',
+            link: '/pages/administrative-processes/warehouses',
+          },
+
         ],
       },
       {
         label: 'Cuenta de numerario asegurado',
         link: '/pages/administrative-processes/insured-numerary-account',
-      },
-      {
-        label: 'Empresas',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Reporte de evaluación de desempeño',
-            link: '/pages/administrative-processes/performance-evaluation-report',
-          },
-        ],
       },
       {
         label: 'Conversión de bienes',
@@ -343,6 +355,26 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Resumen Info Financiera',
             link: '/pages/administrative-processes/summary-financial-info',
           },
+          {
+            label: 'Reporte de evaluación de desempeño',
+            link: '/pages/administrative-processes/performance-evaluation-report',
+          },
+          {
+            label: 'Reporte de inventario',
+            link: '/pages/administrative-processes/inventory-report',
+          },
+          {
+            label: 'Indicadores por Bien',
+            link: '/pages/administrative-processes/indicators-per-good',
+          },
+          {
+            label: 'Reporte de información financiera',
+            link: '/pages/administrative-processes/financial-information-report',
+          },
+          {
+            label: 'Información financiera',
+            link: '/pages/administrative-processes/financial-information',
+          },
         ],
       },
       {
@@ -369,6 +401,35 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Generación de informacion para reporte COORD',
             link: '/pages/administrative-processes/information-generation',
           },
+          {
+            label: 'Bóvedas y Gavetas',
+            link: '/pages/administrative-processes/vaults',
+          },
+          {
+            label: 'Concentrado de bienes por expendiente',
+            link: '/pages/administrative-processes/concentrate-goods-type',
+          },
+          {
+            label: 'Generación de archivo plano',
+            link: '/pages/administrative-processes/flat-file-for-good',
+          },
+          {
+            label: 'Devoluciones y Decomisios de Bienes',
+            link: '/pages/administrative-processes/return-confiscation-property',
+          },
+          {
+            label: 'Archivo plano de avaluos por Bien',
+            link: '/pages/administrative-processes/generate-excel-file',
+          },
+          {
+            label: 'Gastos por bien',
+            link: '/pages/administrative-processes/bills-good',
+          },
+          {
+            label: 'Analitico de bienes inmuebles',
+            link: '/pages/administrative-processes/real-estate-analytical-report',
+          },
+
         ],
       },
       {
@@ -429,6 +490,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Concentrado de bienes para contabilidad',
             link: '/pages/administrative-processes/services/descripcion-of-the-matter',
+          },
+          {
+            label: 'Factura de reportes de implementación',
+            link: '/pages/administrative-processes/services/implementation-reports-invoices',
           },
         ],
       },

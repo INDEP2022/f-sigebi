@@ -37,6 +37,41 @@ const routes: Routes = [
         './approval-for-donation/fdp-apd-m-approval-for-donation.module'
       ).then(m => m.FdpApdMApprovalForDonationModule),
   },
+  {
+    path: 'donation-authorization-request',
+    loadChildren: () =>
+      import(
+        './donation-authorization-request/fdp-sad-m-donation-authorization-request.module'
+      ).then(m => m.FdpSadMDonationAuthorizationRequestModule),
+  },
+  {
+    path: 'partialization-goods-donation',
+    loadChildren: () =>
+      import(
+        './partialization-goods-donation/fdp-pbd-m-partialization-goods-donation.module'
+      ).then(m => m.FdpPbdMPartializationGoodsDonationModule),
+  },
+  {
+    path: 'registration-inventories-donation',
+    loadChildren: () =>
+      import(
+        './registration-inventories-donation/fdp-ridd-m-registration-inventories-donation.module'
+      ).then(m => m.FdpRiddMRegistrationInventoriesDonationModule),
+  },
+  {
+    path: 'donation-contracts',
+    loadChildren: () =>
+      import('./donation-contracts/fdp-cdd-m-donation-contracts.module').then(
+        m => m.FdpCddMDonationContractsModule
+      ),
+  },
+  {
+    path: 'administrator-donation-contract',
+    loadChildren: () =>
+      import(
+        './administrator-donation-contract/fdp-cdda-m-administrator-donation-contract.module'
+      ).then(m => m.FdpCddaMAdministratorDonationContractModule),
+  },
 ];
 
 @NgModule({

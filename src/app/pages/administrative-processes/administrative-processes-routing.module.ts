@@ -159,10 +159,41 @@ const routes: Routes = [
       },
       {
         path: 'goods-type-crime-reports',
-        loadChildren: async () => (
-          await import('./reports/goods-type-crime/pa-gtc-m-goods-type-crime.module'))
-          .PaGtcMGoodsTypeCrimeModule,
+        loadChildren: async () =>
+          (
+            await import(
+              './reports/goods-type-crime/pa-gtc-m-goods-type-crime.module'
+            )
+          ).PaGtcMGoodsTypeCrimeModule,
         data: { title: 'Reporte de Bienes por Tipo de Delito' },
+      },
+      {
+        path: 'return-confiscation-property',
+        loadChildren: () =>
+          import(
+            './reports/return-confiscation-property/return-confiscation-property.module'
+          ).then(m => m.ReturnConfiscationPropertyModule),
+      },
+      {
+        path: 'generate-excel-file',
+        loadChildren: () =>
+          import(
+            './reports/generate-excel-file/generate-excel-file.module'
+          ).then(m => m.GenerateExcelFileModule),
+      },
+      {
+        path: 'bills-good',
+        loadChildren: () =>
+          import('./reports/bills-good/bills-good.module').then(
+            m => m.BillsGoodModule
+          ),
+      },
+      {
+        path: 'inventory-report',
+        loadChildren: () =>
+          import('./inventory-report/inventory-report.module').then(
+            m => m.InventoryReportModule
+          ),
       },
       {
         path: 'unit-conversion-packages',
@@ -195,9 +226,22 @@ const routes: Routes = [
       {
         path: 'returns-confiscations',
         loadChildren: async () =>
-          (await import('./returns-confiscations/pa-rc-m-returns-confications.module'))
-            .PaRcMReturnsConficationsModule,
+          (
+            await import(
+              './returns-confiscations/pa-rc-m-returns-confications.module'
+            )
+          ).PaRcMReturnsConficationsModule,
         data: { title: 'Devoluciones y Decomisos' },
+      },
+      {
+        path: 'reg-warehouse-contract',
+        loadChildren: async () =>
+          (
+            await import(
+              './third-party-admin/warehouse/pa-tp-w-m-warehouse.module'
+            )
+          ).PaTpWMWarehouseModule,
+        data: { title: 'Alta de Almacenes por Contrato' },
       },
       /**
        *Legaspi
@@ -403,6 +447,49 @@ const routes: Routes = [
           ).InformationGenerationModule,
         data: { title: 'Generación de informacion para reporte coord' },
       },
+      {
+        path: 'vaults',
+        loadChildren: async () =>
+          (await import('./reports/vaults/vaults.module')).VaultsModule,
+        data: { title: 'Bovedas y Gavetas' },
+      },
+      {
+        path: 'concentrate-goods-type',
+        loadChildren: async () =>
+          (
+            await import(
+              './reports/concentrate-goods-type/concentrate-goods-type.module'
+            )
+          ).ConcentrateGoodsTypeModule,
+        data: { title: 'Concentrado de bienes por expendiente' },
+      },
+      {
+        path: 'flat-file-for-good',
+        loadChildren: async () =>
+          (
+            await import(
+              './reports/flat-file-for-good/flat-file-for-good.module'
+            )
+          ).FlatFileForGoodModule,
+        data: { title: 'Generación de archivo plano' },
+      },
+      {
+        path: 'real-estate-analytical-report',
+        loadChildren: async () =>
+          (
+            await import(
+              './reports/real-estate-analytical-report/real-estate-analytical-report.module'
+            )
+          ).RealEstateAnalyticalReportModule,
+        data: { title: 'Analitico de bienes inmuebles' },
+      },
+      {
+        path: 'warehouses',
+        loadChildren: async () =>
+          (await import('./administration-third/warehouses/warehouses.module'))
+            .WarehousesModule,
+        data: { title: 'Bienes en almacén' },
+      },
       /**
        * Seguros David Lucas
        */
@@ -443,6 +530,30 @@ const routes: Routes = [
           ).PerformanceEvaluationReportModule,
         data: { title: 'Reporte de evaluación de desempeño' },
       },
+      {
+        path: 'indicators-per-good',
+        loadChildren: async () =>
+          (await import('./indicators-per-good/indicators-per-good.module'))
+            .IndicatorsPerGoodModule,
+        data: { title: 'Indicadores por Bien' },
+      },
+      {
+        path: 'financial-information-report',
+        loadChildren: async () =>
+          (
+            await import(
+              './financial-information-report/financial-information-report.module'
+            )
+          ).FinancialInformationReportModule,
+        data: { title: 'Reporte de información financiera' },
+      },
+      {
+        path: 'financial-information',
+        loadChildren: async () =>
+          (await import('./financial-information/financial-information.module'))
+            .FinancialInformationModule,
+        data: { title: 'Información financiera' },
+      },
     ],
   },
 ];
@@ -451,4 +562,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class AdministrativeProcessesRoutingModule { }
+export class AdministrativeProcessesRoutingModule {}

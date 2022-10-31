@@ -72,6 +72,20 @@ const routes: Routes = [
           ).ExpensesRegisterModule,
         data: { title: 'Registro de Gasto' },
       },
+      {
+        path: 'expenses-concepts',
+        loadChildren: async () =>
+          (await import('./expenses-concepts/expenses-concepts.module'))
+            .ExpensesConceptsModule,
+        data: { title: 'Conceptos de Gasto' },
+      },
+      {
+        path: 'applicants-criteria',
+        loadChildren: async () =>
+          (await import('./applicants-criteria/applicants-criteria.module'))
+            .ApplicantsCriteriaModule,
+        data: { title: 'Criterios de aplicación' },
+      },
     ],
   },
 ];

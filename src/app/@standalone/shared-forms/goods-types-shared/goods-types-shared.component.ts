@@ -26,11 +26,13 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
   @Input() subtypeField: string = 'subtype';
   @Input() ssubtypeField: string = 'ssubtype';
   @Input() sssubtypeField: string = 'sssubtype';
-
+  @Input() inlineForm: boolean = false;
+  @Input() columns: number = 4;
   @Input() goodTypeShow: boolean = true;
   @Input() subTypeShow: boolean = true;
   @Input() ssubTypeShow: boolean = true;
   @Input() sssubTypeShow: boolean = true;
+  rowClass: string;
 
   params = new BehaviorSubject<ListParams>(new ListParams());
   types = new DefaultSelect<IGoodType>();
@@ -55,7 +57,11 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.rowClass = this.inlineForm
+      ? `col-md-${this.columns} mt-3`
+      : `col-md-12 mt-3`;
+  }
 
   getTypes(params: ListParams) {
     this.service.getAll(params).subscribe(
