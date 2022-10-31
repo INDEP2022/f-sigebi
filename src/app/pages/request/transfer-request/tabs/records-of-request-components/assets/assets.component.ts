@@ -64,7 +64,12 @@ export class AssetsComponent extends BasePage implements OnInit {
   }
 
   newAsset(): void {
-    this.createNewAsset = true;
+    if (this.createNewAsset === false) {
+      this.createNewAsset = true;
+      window.scroll(0, 600);
+    } else {
+      this.createNewAsset = false;
+    }
   }
 
   openForm(event: any) {}

@@ -24,7 +24,8 @@
                 typeDoc === 'classify-assets' ||
                 typeDoc === 'verify-compliance' ||
                 carsAssets === true ||
-                boatAssets === true
+                boatAssets === true ||
+                especialMachinery === true
               ">
               <form-field
                 [control]="assetsForm.get('noManagement')"
@@ -128,7 +129,17 @@
                   formControlName="noExpedient" />
               </form-field>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4" *ngIf="jewelerAssets === true">
+              <ngx-select
+                [form]="assetsForm"
+                control="tansferUnitMeasure"
+                (fetchItems)="getTansferUnitMeasure($event)"
+                [data]="selectTansferUnitMeasure"
+                label="*Unid. Medida Transferente"
+                value="id"
+                bindLabel="tansferUnitMeasure"></ngx-select>
+            </div>
+            <div class="col-md-4" *ngIf="!jewelerAssets">
               <ngx-select
                 [form]="assetsForm"
                 control="physicalState"
@@ -206,7 +217,13 @@
             </div>
             <div
               class="col-md-4"
-              *ngIf="carsAssets === true || boatAssets === true">
+              *ngIf="
+                carsAssets === true ||
+                boatAssets === true ||
+                jewelerAssets === true ||
+                aircraftAssets === true ||
+                especialMachinery === true
+              ">
               <form-field [control]="assetsForm.get('notes')" label="Notas">
                 <textarea
                   class="form-control"
@@ -218,7 +235,12 @@
           <div class="row pt-4">
             <div
               class="col-md-4"
-              *ngIf="otherAssets === true || boatAssets === true">
+              *ngIf="
+                otherAssets === true ||
+                boatAssets === true ||
+                aircraftAssets === true ||
+                especialMachinery === true
+              ">
               <ngx-select
                 [form]="assetsForm"
                 control="tansferUnitMeasure"
@@ -246,171 +268,6 @@
                 bindLabel="destintSae"></ngx-select>
             </div>
           </div>
-          <!--  <div class="row pt-5">
-            <div class="col-md-4">
-              <form-field
-                [control]="assetsForm.get('typeAsset')"
-                label="Tipo Bien">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="typeAsset" />
-              </form-field>
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Destino Ligie: <span for="">VENTA</span></label
-              >
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Tipo Bien: <span for="">VEHICULOS</span></label
-              >
-            </div>
-          </div>
-          <div class="row pt-5">
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Destino Transferencia: <span for="">VENTA</span></label
-              >
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Tipo de Bien: <span for="">Bien MUEBLES</span></label
-              >
-            </div>
-            <div class="col-md-4" *ngIf="typeDoc === 'verify-compliance'">
-              <label class="custom-label" for=""
-                >Destino SAE: <span for=""></span
-              ></label>
-            </div>
-            Clasificacion de bienes -
-            <div class="col-md-4" *ngIf="typeDoc === 'classify-assets'">
-              <ngx-select
-                [form]="assetsForm"
-                control="sae"
-                (fetchItems)="getSae($event)"
-                [data]="selectSae"
-                label="Destino SAE"
-                value="sae"></ngx-select>
-            </div>
-          </div>
-          <div class="row pt-5">
-            <div class="col-md-4">
-              <label for="" class="custom-label">
-                Descrip. de Bien Transferente:
-                <span>
-                  VEHICULO NISSAN, MODELO TSURU,AÑO2017,CUATROPUERTAS,CON AIRE
-                  ACONDICIONADO AUTOMATICO</span
-                >
-              </label>
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Color: <span for="">BLANCO</span></label
-              >
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Capacidad(lts): <span for=""></span
-              ></label>
-            </div>
-          </div>
-          <div class="row pt-5">
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Volumen(m3): <span for=""></span
-              ></label>
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Descripción Bien SAE: <span for=""></span
-              ></label>
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Tipo de Uso: <span for=""></span
-              ></label>
-            </div>
-          </div>
-          <div class="row pt-5">
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >No. Exp. de la Transferencia:
-                <span for="">17042018</span></label
-              >
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Procedencia: <span for=""></span
-              ></label>
-            </div>
-            <div class="col-md-4" *ngIf="typeDoc === 'verify-compliance'">
-              <label class="custom-label" for=""
-                >Estado Físico: <span for="">BUENO</span></label
-              >
-            </div>
-             clasificacion bienes 
-            <div class="col-md-4" *ngIf="typeDoc === 'classify-assets'">
-              <ngx-select
-                [form]="assetsForm"
-                control="physicalState"
-                (fetchItems)="getSae($event)"
-                [data]="selectSae"
-                label="Estado Físico"
-                value="physicalState"></ngx-select>
-            </div>
-          </div>
-          <div class="row pt-5" *ngIf="typeDoc === 'classify-assets'">
-            <div class="col-md-4">
-              <ngx-select
-                [form]="assetsForm"
-                control="conservationState"
-                (fetchItems)="getConservationState($event)"
-                [data]="selectConservationState"
-                label="Estado de Concervación"
-                value="conservationState"></ngx-select>
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >No. Norma: <span for=""></span>---</label
-              >
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Maneje: <span for=""></span>---</label
-              >
-            </div>
-          </div>
-          <div class="row pt-5" *ngIf="typeDoc === 'classify-assets'">
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Unid. de Medida Transferente: <span for=""></span>PIEZA</label
-              >
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >duplicidad: <span for=""></span>--</label
-              >
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >cantidad de la transferente: <span for=""></span>1</label
-              >
-            </div>
-          </div>
-          <div class="row pt-5">
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Avalúo: <span for=""></span>-</label
-              >
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Uni. de Medida Ligie: <span for=""></span
-              ></label>
-            </div>
-          </div> -->
         </div>
       </tab>
       <!-- Domicilio del bien tab -->
@@ -769,7 +626,376 @@
           <i class="bx bx-anchor"></i> Información de Embarcación
         </ng-template>
         <div formGroupName="boat" class="boatInformation">
-          <div class="row pt-5"></div>
+          <div class="row pt-5">
+            <div class="col-md-3">
+              <form-check label="Blindaje" for="boatArmored">
+                <input
+                  id="boatArmored"
+                  type="checkbox"
+                  formControlName="boatArmored" />
+              </form-check>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('boat')"
+                label="*Estado Operativo">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="operativeStatus" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('boat')"
+                label="*Num. Motor">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="engineNumBoat" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('boat')"
+                label="*Num. Motores">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="numEngines" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-3">
+              <form-field [control]="assetsForm.get('boat')" label="*Matricula">
+                <input
+                  type="string"
+                  class="form-control"
+                  formControlName="enrollmentBoat" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field [control]="assetsForm.get('boat')" label="*Bandera">
+                <input
+                  type="string"
+                  class="form-control"
+                  formControlName="flag" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field [control]="assetsForm.get('boat')" label="Cabina">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="cabinBoat" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field [control]="assetsForm.get('boat')" label="*Calado">
+                <input
+                  type="string"
+                  class="form-control"
+                  formControlName="calado" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-3">
+              <form-field [control]="assetsForm.get('boat')" label="*Calado">
+                <input
+                  type="string"
+                  class="form-control"
+                  formControlName="fretwork" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('boat')"
+                label="Volumen(m3)">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="volumem3Boat" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field [control]="assetsForm.get('boat')" label="*Eslora">
+                <input
+                  type="string"
+                  class="form-control"
+                  formControlName="eslora" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('boat')"
+                label="*Procedencia">
+                <input
+                  type="string"
+                  class="form-control"
+                  formControlName="originBoat" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-3">
+              <form-field [control]="assetsForm.get('boat')" label="Manga">
+                <input
+                  type="string"
+                  class="form-control"
+                  formControlName="manga" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <ngx-select
+                [form]="assetsForm.controls['boat']"
+                control="typeUseBoat"
+                (fetchItems)="getTypeUseBoat($event)"
+                [data]="selectTypeUseBoat"
+                label="Tipo de Uso"
+                value="id"
+                bindLabel="typeUseBoat"></ngx-select>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('boat')"
+                label="Mombre de Embarcación">
+                <input
+                  type="string"
+                  class="form-control"
+                  formControlName="boatName" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('boat')"
+                label="*Año de Fabricación">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="yearProduction" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('boat')"
+                label="*Registro Publico de la Embarcación">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="boatRegistration" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('boat')"
+                label="*Registro Publico de la Embarcación">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="boatRegistration" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('boat')"
+                label="Capacidad (lts)">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="capacityLtsBoat" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('boat')"
+                label="Embarcaciónes">
+                <input
+                  type="string"
+                  class="form-control"
+                  formControlName="boats" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </tab>
+      <!-- Informacion Joyeria -->
+      <tab *ngIf="jewelerAssets">
+        <ng-template tabHeading>
+          <i class="bx bx-disc"></i> Información de Joya
+        </ng-template>
+        <div formGroupName="jewel" class="jewelInformation">
+          <div class="row-pt-5">
+            <div class="col-md-4">
+              <form-field [control]="assetsForm.get('jewel')" label="Kilataje">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="kilos" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field [control]="assetsForm.get('jewel')" label="Material">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="material" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field [control]="assetsForm.get('jewel')" label="Peso(Kgs)">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="weight" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </tab>
+      <!-- Informacion aereonaves -->
+      <tab *ngIf="aircraftAssets">
+        <ng-template tabHeading>
+          <i class="bx bx-flag"></i> Información de Aeronave
+        </ng-template>
+        <div formGroupName="aircraft" class="aircraftInformation">
+          <div class="row pt-5">
+            <div class="col-md-4">
+              <form-check label="Blindaje" for="aircraftArmored">
+                <input
+                  id="aircraftArmored"
+                  type="checkbox"
+                  formControlName="aircraftArmored" />
+              </form-check>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('aircraft')"
+                label="Año de Fabricación">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="yearProductionAircraft" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field [control]="assetsForm.get('aircraft')" label="Modelo">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="modelAircraft" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('aircraft')"
+                label="Estado Operativo">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="operativeStatusAircraf" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('aircraft')"
+                label="Num. Motor">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="engineNumAircraft" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('aircraft')"
+                label="Num. Motores">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="numEnginesAircraft" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('aircraft')"
+                label="Matrícula">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="enrollmentAircraft" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('aircraft')"
+                label="Registro Dirección Gral. de Aeronáutica Civil">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="AeronauticsRegistry" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field [control]="assetsForm.get('aircraft')" label="Serie">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="serieAircraft" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <ngx-select
+                [form]="assetsForm.controls['aircraft']"
+                control="typeAirplane"
+                (fetchItems)="getTypeAirplane($event)"
+                [data]="selectTypeAirplane"
+                label="Tipo de Avion"
+                value="id"
+                bindLabel="typeAirplane"></ngx-select>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('aircraft')"
+                label="Procedencia">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="originAircraft" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('aircraft')"
+                label="Procedencia">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="flagAircraft" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <ngx-select
+                [form]="assetsForm.controls['aircraft']"
+                control="typeUseAirCraft"
+                (fetchItems)="getTypeUseAirCrafte($event)"
+                [data]="selectTypeUseAirCrafte"
+                label="Tipo de Uso"
+                value="id"
+                bindLabel="typeUseAirCraft"></ngx-select>
+            </div>
+          </div>
         </div>
       </tab>
     </tabset>

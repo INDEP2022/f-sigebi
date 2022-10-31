@@ -104,4 +104,32 @@ export interface IRequest {
   enrollmentBoat?: string;
   flag?: string;
   cabinBoat?: number;
+  fretwork?: string;
+  volumem3Boat?: string;
+  eslora?: number;
+  originBoat?: string;
+  manga?: string;
+  typeUseBoat?: string;
+  boatName?: string;
+  yearProduction?: number;
+  boatRegistration?: string;
+  capacityLtsBoat?: string;
+  boats?: string;
+
+  //
+
+  //aircraft
+  aircraftArmored?: boolean;
+  yearProductionAircraft?: number;
+  modelAircraft?: string;
+  operativeStatusAircraf?: string;
+  engineNumAircraft?: number;
+  numEnginesAircraft?: number;
+  enrollmentAircraft?: string;
+  AeronauticsRegistry?: string;
+  serieAircraft?: number;
+  typeAirplane?: string;
+  originAircraft?: string;
+  flagAircraft?: string;
+  typeUseAirCraft?: string;
 }

@@ -22,7 +22,10 @@ export class DetailAssetsTabComponentComponent implements OnInit {
   //tipo de bien seleccionado
   otherAssets: boolean = false;
   carsAssets: boolean = false;
-  boatAssets: boolean = true;
+  boatAssets: boolean = false;
+  jewelerAssets: boolean = false;
+  aircraftAssets: boolean = false;
+  especialMachinery: boolean = true;
 
   selectQuantityTransfer = new DefaultSelect<any>();
   selectPhysicalState = new DefaultSelect<any>();
@@ -36,6 +39,9 @@ export class DetailAssetsTabComponentComponent implements OnInit {
   selectCP = new DefaultSelect<any>();
   selectBrand = new DefaultSelect<any>();
   selectSubBrand = new DefaultSelect<any>();
+  selectTypeUseBoat = new DefaultSelect<any>();
+  selectTypeAirplane = new DefaultSelect<any>();
+  selectTypeUseAirCrafte = new DefaultSelect<any>();
 
   constructor(private fb: FormBuilder, private modalServise: BsModalService) {}
 
@@ -106,7 +112,46 @@ export class DetailAssetsTabComponentComponent implements OnInit {
         canCirculate: new FormControl(''),
         hasTheftReport: new FormControl(''),
       }),
-      boat: new FormGroup({}),
+      boat: new FormGroup({
+        boatArmored: new FormControl(''),
+        operativeStatus: new FormControl(''),
+        engineNumBoat: new FormControl(''),
+        numEngines: new FormControl(''),
+        enrollmentBoat: new FormControl(''),
+        flag: new FormControl(''),
+        cabinBoat: new FormControl(''),
+        fretwork: new FormControl(''),
+        volumem3Boat: new FormControl(''),
+        eslora: new FormControl(''),
+        originBoat: new FormControl(''),
+        manga: new FormControl(''),
+        typeUseBoat: new FormControl(''),
+        boatName: new FormControl(''),
+        yearProduction: new FormControl(''),
+        boatRegistration: new FormControl(''),
+        capacityLtsBoat: new FormControl(''),
+        boats: new FormControl(''),
+      }),
+      jewel: new FormGroup({
+        kilos: new FormControl(''),
+        material: new FormControl(''),
+        weight: new FormControl(''),
+      }),
+      aircraft: new FormGroup({
+        aircraftArmored: new FormControl(''),
+        yearProductionAircraft: new FormControl(''),
+        modelAircraft: new FormControl(''),
+        operativeStatusAircraf: new FormControl(''),
+        engineNumAircraft: new FormControl(''),
+        numEnginesAircraft: new FormControl(''),
+        enrollmentAircraft: new FormControl(''),
+        AeronauticsRegistry: new FormControl(''),
+        serieAircraft: new FormControl(''),
+        typeAirplane: new FormControl(''),
+        originAircraft: new FormControl(''),
+        flagAircraft: new FormControl(''),
+        typeUseAirCraft: new FormControl(''),
+      }),
       /* aliasWarehouse: [null],
       referenceVia2: [null],
       state: [null],
@@ -159,6 +204,12 @@ export class DetailAssetsTabComponentComponent implements OnInit {
   getBrand(event: any) {}
 
   getSubBrand(event: any) {}
+
+  getTypeUseBoat(event: any) {}
+
+  getTypeAirplane(event: any) {}
+
+  getTypeUseAirCrafte(event: any) {}
 
   initInputs(): void {
     if (this.typeDoc === 'verify-compliance') {
