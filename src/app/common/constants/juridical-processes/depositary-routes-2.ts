@@ -19,4 +19,9 @@ export const DEPOSITARY_ROUTES_2: any[] = [
     link: 'depositary-payment-charges',
     menu: 'Cargas de pago de las depositarias',
   },
+  {
+    label: 'Ordenes de ingreso por bien de depositaria',
+    link: 'income-orders-depository-goods',
+    menu: 'Ordenes de ingreso por bien de depositaria',
+  },
 ];
