@@ -3,7 +3,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BasePage } from 'src/app/core/shared/base-page';
-
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -13,11 +12,11 @@ import { BasePage } from 'src/app/core/shared/base-page';
 /** COMPONENTS IMPORTS */
 
 @Component({
-  selector: 'app-pj-c-return-abandonment-monitor',
-  templateUrl: './pj-c-return-abandonment-monitor.component.html',
-  styleUrls: ['./pj-c-return-abandonment-monitor.component.scss'],
+  selector: 'app-pj-c-declaration-abandonment-insurance',
+  templateUrl: './pj-c-declaration-abandonment-insurance.component.html',
+  styleUrls: ['./pj-c-declaration-abandonment-insurance.component.scss'],
 })
-export class PJReturnAbandonmentMonitorComponent
+export class PJDeclarationAbandonmentInsuranceComponent
   extends BasePage
   implements OnInit, OnDestroy
 {
@@ -43,8 +42,10 @@ export class PJReturnAbandonmentMonitorComponent
       estatus: [''],
       fechaNotificacion: [''],
       fechaNotificacion2: [''],
+      fechaNotificacion3: [''],
       fechaTerminoPeriodo: [''],
       fechaTerminoPeriodo2: [''],
+      fechaTerminoPeriodo3: [''],
       declaracionAbandonoSERA: [''],
     });
   }

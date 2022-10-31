@@ -38,4 +38,4 @@ export const declarationsExports: any[] = [
   ],
   exports: [declarationsExports],
 })
-export class SharedLegalProcessModule {}
+export class SharedJuridicalProcessesModule {}

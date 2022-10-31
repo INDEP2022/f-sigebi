@@ -1,14 +1,12 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">
-      FORMULARIO - MONITOR DE ABANDONO POR DEVOLUCI&Oacute;N
-    </h5>
+    <h5 class="title">DECLARACI&Oacute;N DE ABANDONO POR ASEGURAMIENTO</h5>
   </div>
 
   <div body>
     <form [formGroup]="form" class="form-material">
       <div class="row w-100">
-        <div class="col-sm-12 col-12 col-md-4 p-2">
+        <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('noBien')" label="No. Bien">
             <input
               class="form-control"
@@ -24,7 +22,7 @@
               placeholder="Estatus" />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-3 p-2">
+        <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field [control]="form.get('cantidad')" label="Cantidad">
             <input
               class="form-control"
@@ -56,6 +54,17 @@
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
+            [control]="form.get('fechaNotificacion3')"
+            label="Fecha Notificación 3">
+            <input
+              class="form-control"
+              formControlName="fechaNotificacion3"
+              placeholder="Fecha Notificacion 3"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
             [control]="form.get('fechaTerminoPeriodo')"
             label="Fecha Termino Periodo">
             <input
@@ -76,7 +85,18 @@
               bsDatepicker />
           </form-field>
         </div>
-        <div class="col-sm-12 col-12 col-md-6 p-2">
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="form.get('fechaTerminoPeriodo3')"
+            label="Fecha Termino Periodo 3">
+            <input
+              class="form-control"
+              formControlName="fechaTerminoPeriodo3"
+              placeholder="Fecha Termino Periodo 3"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field
             [control]="form.get('declaracionAbandonoSERA')"
             label="Declaración Abandonos SERA">
