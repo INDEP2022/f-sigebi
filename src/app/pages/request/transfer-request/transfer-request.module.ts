@@ -28,6 +28,8 @@ import { RequestOfAssetsComponent } from './tabs/expedients-child-tabs-component
 import { AssetsComponent } from './tabs/records-of-request-components/assets/assets.component';
 import { RequestRecordTabComponent } from './tabs/records-of-request-components/request-record-tab/request-record-tab.component';
 import { TransferRequestRoutingModule } from './transfer-request-routing.module';
+import { SelectAddressComponent } from './tabs/records-of-request-components/records-of-request-child-tabs-components/select-address/select-address.component';
+import { AddressTransferorTabComponent } from './tabs/records-of-request-components/address-transferor-tab/address-transferor-tab.component';
 
 @NgModule({
   declarations: [
@@ -55,6 +57,8 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     ClarificationListTabComponent,
     ClarificationFormTabComponent,
     AssetsComponent,
+    SelectAddressComponent,
+    AddressTransferorTabComponent,
   ],
   imports: [
     CommonModule,

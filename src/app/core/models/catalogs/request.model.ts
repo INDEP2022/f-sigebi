@@ -79,4 +79,20 @@ export interface IRequest {
   routeDestination?: string;
   referenceVia1?: number;
   description?: number;
+
+  //Vehiculo
+  brand?: string;
+  enrollment?: string;
+  subBrand?: string;
+  serie?: string;
+  armored?: boolean;
+  chassis?: string;
+  model?: string;
+  numDoors?: number;
+  cabin?: number;
+  numEje?: number;
+  originVehicle?: string;
+  engineNum?: string;
+  canCirculate?: boolean;
+  hasTheftReport?: boolean;
 }

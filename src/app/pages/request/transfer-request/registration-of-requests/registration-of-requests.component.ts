@@ -79,10 +79,9 @@ export class RegistrationOfRequestsComponent
     if (this.requestRegistration == true) {
       this.tab1 = 'Registro de Solicitud';
       this.tab2 = 'Bienes';
-      this.tab3 = 'Domicilio de la Transferencia';
-      this.tab4 = 'Domicilo de la Transferente';
-      this.tab5 = 'Asociar Expediente';
-      this.tab6 = 'Expediente';
+      this.tab3 = 'Domicilio de la Transferente';
+      this.tab4 = 'Asociar Expediente';
+      this.tab5 = 'Expediente';
       this.btnTitle = 'Verificar Cumplimiento';
     } else if (this.complianceVerifi == true) {
       this.tab1 = 'Detalle Solicitud';

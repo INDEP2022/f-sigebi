@@ -23,7 +23,8 @@
               *ngIf="
                 typeDoc === 'classify-assets' ||
                 typeDoc === 'verify-compliance' ||
-                carsAssets === true
+                carsAssets === true ||
+                boatAssets === true
               ">
               <form-field
                 [control]="assetsForm.get('noManagement')"
@@ -203,7 +204,9 @@
                   formControlName="meetNoraml" />
               </form-check>
             </div>
-            <div class="col-md-4" *ngIf="carsAssets === true">
+            <div
+              class="col-md-4"
+              *ngIf="carsAssets === true || boatAssets === true">
               <form-field [control]="assetsForm.get('notes')" label="Notas">
                 <textarea
                   class="form-control"
@@ -213,7 +216,9 @@
           </div>
 
           <div class="row pt-4">
-            <div class="col-md-4" *ngIf="otherAssets === true">
+            <div
+              class="col-md-4"
+              *ngIf="otherAssets === true || boatAssets === true">
               <ngx-select
                 [form]="assetsForm"
                 control="tansferUnitMeasure"
@@ -408,24 +413,28 @@
           </div> -->
         </div>
       </tab>
-      <!-- tab Domicilio del Bien -->
+      <!-- Domicilio del bien tab -->
       <tab>
         <ng-template tabHeading>
           <i class="bx bx-home"></i> Domicilio del Bien
         </ng-template>
-        <div class="addressGood">
-          <div class="row pt-4">
+        <div formGroupName="address" class="addressGood">
+          <div class="row pt-4" *ngIf="typeDoc === 'assets'">
             <div style="text-align: center">
-              <div>
-                <button class="btn btn-primary btn-sm active">
-                  <i class="bx bx-home"></i> Seleccionar Domicilio
-                </button>
-              </div>
-              <div>
-                <button class="btn btn-secondary btn-sm active">Mensaje</button>
-              </div>
+              <button
+                class="btn btn-primary btn-sm active"
+                style="margin-right: 2px"
+                (click)="openSelectAddressModal()">
+                <i class="bx bx-home"></i> Seleccionar Domicilio
+              </button>
+              <button
+                class="btn btn-secondary btn-sm active"
+                style="margin-left: 2px">
+                Mensaje
+              </button>
             </div>
           </div>
+
           <div class="row pt-5">
             <div class="col-md-4">
               <label class="custom-label" for=""
@@ -435,7 +444,7 @@
             </div>
             <div class="col-md-4">
               <form-field
-                [control]="assetsForm.get('referenceVia2')"
+                [control]="assetsForm.get('address')"
                 label="Referencia Via 2">
                 <input
                   type="text"
@@ -445,7 +454,7 @@
             </div>
             <div class="col-md-4">
               <form-field
-                [control]="assetsForm.get('referenceVia3')"
+                [control]="assetsForm.get('address')"
                 label="Referencia Via 3">
                 <input
                   type="text"
@@ -454,10 +463,11 @@
               </form-field>
             </div>
           </div>
+
           <div class="row pt-4">
             <div class="col-md-4">
               <ngx-select
-                [form]="assetsForm"
+                [form]="assetsForm.controls['address']"
                 control="state"
                 (fetchItems)="getState($event)"
                 [data]="selectState"
@@ -468,7 +478,7 @@
 
             <div class="col-md-4">
               <ngx-select
-                [form]="assetsForm"
+                [form]="assetsForm.controls['address']"
                 control="municipe"
                 (fetchItems)="getMunicipe($event)"
                 [data]="selectMunicipe"
@@ -478,7 +488,7 @@
             </div>
             <div class="col-md-4">
               <ngx-select
-                [form]="assetsForm"
+                [form]="assetsForm.controls['address']"
                 control="suburb"
                 (fetchItems)="getSuburb($event)"
                 [data]="selectSuburb"
@@ -487,10 +497,11 @@
                 bindLabel="suburb"></ngx-select>
             </div>
           </div>
+
           <div class="row pt-4">
             <div class="col-md-4">
               <ngx-select
-                [form]="assetsForm"
+                [form]="assetsForm.controls['address']"
                 control="cp"
                 (fetchItems)="getCP($event)"
                 [data]="selectCP"
@@ -499,7 +510,7 @@
                 bindLabel="cp"></ngx-select>
             </div>
             <div class="col-md-4">
-              <form-field [control]="assetsForm.get('latitud')" label="Latitud">
+              <form-field [control]="assetsForm.get('address')" label="Latitud">
                 <input
                   type="text"
                   class="form-control"
@@ -508,7 +519,7 @@
             </div>
             <div class="col-md-4">
               <form-field
-                [control]="assetsForm.get('longitud')"
+                [control]="assetsForm.get('address')"
                 label="Longitud">
                 <input
                   type="text"
@@ -517,10 +528,11 @@
               </form-field>
             </div>
           </div>
+
           <div class="row pt-4">
             <div class="col-md-4">
               <form-field
-                [control]="assetsForm.get('nameRoute')"
+                [control]="assetsForm.get('address')"
                 label="Nombre de la Via">
                 <input
                   type="text"
@@ -530,7 +542,7 @@
             </div>
             <div class="col-md-4">
               <form-field
-                [control]="assetsForm.get('numExt')"
+                [control]="assetsForm.get('address')"
                 label="Num. Ext.">
                 <input
                   type="text"
@@ -540,7 +552,7 @@
             </div>
             <div class="col-md-4">
               <form-field
-                [control]="assetsForm.get('originRoute')"
+                [control]="assetsForm.get('address')"
                 label="Origin de la Via">
                 <input
                   type="text"
@@ -550,10 +562,10 @@
             </div>
           </div>
 
-          <div class="row">
+          <div class="row pt-4">
             <div class="col-md-4">
               <form-field
-                [control]="assetsForm.get('numInt')"
+                [control]="assetsForm.get('address')"
                 label="Num. Int.">
                 <input
                   type="text"
@@ -563,7 +575,7 @@
             </div>
             <div class="col-md-4">
               <form-field
-                [control]="assetsForm.get('routeDestination')"
+                [control]="assetsForm.get('address')"
                 label="Destino de la Via">
                 <input
                   type="text"
@@ -573,7 +585,7 @@
             </div>
             <div class="col-md-4">
               <form-field
-                [control]="assetsForm.get('referenceVia1')"
+                [control]="assetsForm.get('address')"
                 label="Referencia Via 1">
                 <input
                   type="text"
@@ -586,7 +598,7 @@
           <div class="row pt-4">
             <div class="col-md-4">
               <form-field
-                [control]="assetsForm.get('kilometerRoute')"
+                [control]="assetsForm.get('address')"
                 label="Kiloometro de la Via">
                 <input
                   type="number"
@@ -596,7 +608,7 @@
             </div>
             <div class="col-md-4">
               <form-field
-                [control]="assetsForm.get('description')"
+                [control]="assetsForm.get('address')"
                 label="Descripción">
                 <textarea
                   class="form-control"
@@ -604,179 +616,160 @@
               </form-field>
             </div>
           </div>
-          <!--           <div class="row pt-5">
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Estado: <span for="">NUEVO LEÓN</span></label
-              >
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Referencia Vía: <span for=""></span
-              ></label>
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Origen de la Vía: <span for=""></span
-              ></label>
-            </div>
-          </div>
-          <div class="row pt-5">
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Municipio: <span for="">SAN PEDRO GARZA GARCIA</span></label
-              >
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Referencia Vía 2: <span for=""></span
-              ></label>
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Destino de la Vía: <span for=""></span
-              ></label>
-            </div>
-          </div>
-          <div class="row pt-5">
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Colonia:
-                <span for="">RESIDENCIAL SAN AGUSTIN 1 SECTOR</span></label
-              >
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Referencia Vía 3: <span for=""></span
-              ></label>
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Kilometro de la Vía: <span for=""></span
-              ></label>
-            </div>
-          </div>
-          <div class="row pt-5">
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >C.P: <span for="">66260</span></label
-              >
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Latitud: <span for=""></span
-              ></label>
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Descripción: <span for=""></span
-              ></label>
-            </div>
-          </div>
-          <div class="row pt-5">
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Num. Ext.: <span for="">-</span></label
-              >
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Longitud: <span for=""></span
-              ></label>
-            </div>
-          </div> -->
         </div>
       </tab>
-      <tab>
+      <!-- Información del  vehiculo tab -->
+      <tab *ngIf="carsAssets">
         <ng-template tabHeading>
-          <i class="bx bxs-car"></i> Ficha Técnica Vehículos
+          <i class="bx bxs-car"></i> Información de Vehiculo
         </ng-template>
-        <div class="vehicleDateSheet">
+        <div formGroupName="vehicle" class="vehicleDateSheet">
           <div class="row pt-5">
             <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Marca: <span for="">NISSAN</span></label
-              >
+              <ngx-select
+                [form]="assetsForm.controls['vehicle']"
+                control="brand"
+                (fetchItems)="getBrand($event)"
+                [data]="selectBrand"
+                label="Estado"
+                value="id"
+                bindLabel="brand"></ngx-select>
             </div>
             <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Num. Ejes: <span for="">2</span></label
-              >
+              <form-field
+                [control]="assetsForm.get('vehicle')"
+                label="Matricula">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="enrollment" />
+              </form-field>
             </div>
             <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Cabina: <span for=""></span
-              ></label>
+              <ngx-select
+                [form]="assetsForm.controls['vehicle']"
+                control="subBrand"
+                (fetchItems)="getSubBrand($event)"
+                [data]="selectSubBrand"
+                label="Sub Marca"
+                value="id"
+                bindLabel="subBrand"></ngx-select>
             </div>
           </div>
+
+          <div class="row pt-5">
+            <div class="col-md-3">
+              <form-field [control]="assetsForm.get('vehicle')" label="Serie">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="serie" />
+              </form-field>
+            </div>
+
+            <div class="col-md-3">
+              <form-check label="Blindaje" for="armored">
+                <input id="armored" type="checkbox" formControlName="armored" />
+              </form-check>
+            </div>
+            <div class="col-md-3">
+              <form-field [control]="assetsForm.get('vehicle')" label="Chasis">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="chassis" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field [control]="assetsForm.get('vehicle')" label="Modelo">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="model" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row pt-5">
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('vehicle')"
+                label="Num. Puertas">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="numDoors" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field [control]="assetsForm.get('vehicle')" label="Cabina">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="cabin" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('vehicle')"
+                label="Num. Ejes">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="numEje" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('vehicle')"
+                label="Procedencia">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="originVehicle" />
+              </form-field>
+            </div>
+          </div>
+
           <div class="row pt-5">
             <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Submarca: <span for="">TSURU</span></label
-              >
+              <form-field
+                [control]="assetsForm.get('vehicle')"
+                label="Num. Motor">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="engineNum" />
+              </form-field>
             </div>
             <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Num. Motor: <span for="">1234567890</span></label
-              >
+              <form-check label="Apto para Circular" for="canCirculate">
+                <input
+                  id="canCirculate"
+                  type="checkbox"
+                  formControlName="canCirculate" />
+              </form-check>
             </div>
             <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Procedencia: <span for=""></span
-              ></label>
+              <form-check
+                label="Cuenta con Reporte de Robo"
+                for="hasTheftReport">
+                <input
+                  id="hasTheftReport"
+                  type="checkbox"
+                  formControlName="hasTheftReport" />
+              </form-check>
             </div>
           </div>
-          <div class="row pt-5">
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Blindaje: <span for=""></span
-              ></label>
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Matrícula: <span for="">270-NSR</span></label
-              >
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Apto para Circular: <span for="">-</span></label
-              >
-            </div>
-          </div>
-          <div class="row pt-5">
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Modelo: <span for="">2017</span></label
-              >
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Serie: <span for="">987654321</span></label
-              >
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Cuenta con Reporte de: <span for=""></span
-              ></label>
-            </div>
-          </div>
-          <div class="row pt-5">
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Num. Puertas: <span for="">4</span></label
-              >
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Chasis: <span for="">2345678</span></label
-              >
-            </div>
-            <div class="col-md-4">
-              <label class="custom-label" for=""
-                >Robo: <span for=""></span
-              ></label>
-            </div>
-          </div>
+        </div>
+      </tab>
+      <!-- Información de Embarcación  -->
+      <tab *ngIf="boatAssets">
+        <ng-template tabHeading>
+          <i class="bx bx-anchor"></i> Información de Embarcación
+        </ng-template>
+        <div formGroupName="boat" class="boatInformation">
+          <div class="row pt-5"></div>
         </div>
       </tab>
     </tabset>

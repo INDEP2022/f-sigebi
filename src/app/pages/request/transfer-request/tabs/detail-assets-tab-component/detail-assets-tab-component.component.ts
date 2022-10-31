@@ -1,7 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { SelectAddressComponent } from '../records-of-request-components/records-of-request-child-tabs-components/select-address/select-address.component';
 
 @Component({
   selector: 'app-detail-assets-tab-component',
@@ -12,12 +14,15 @@ export class DetailAssetsTabComponentComponent implements OnInit {
   //usado para cargar los adatos de los bienes en el caso de cumplimientos de bienes y clasificacion de bienes
   @Input() detailAssets: any;
   @Input() typeDoc: any;
+  bsModalRef: BsModalRef;
   assetsForm: ModelForm<any>;
   selectSae = new DefaultSelect<any>();
   selectConservationState = new DefaultSelect<any>();
-  //tipo de cumplimiento seleccionado
+
+  //tipo de bien seleccionado
   otherAssets: boolean = false;
-  carsAssets: boolean = true;
+  carsAssets: boolean = false;
+  boatAssets: boolean = true;
 
   selectQuantityTransfer = new DefaultSelect<any>();
   selectPhysicalState = new DefaultSelect<any>();
@@ -29,8 +34,10 @@ export class DetailAssetsTabComponentComponent implements OnInit {
   selectMunicipe = new DefaultSelect<any>();
   selectSuburb = new DefaultSelect<any>();
   selectCP = new DefaultSelect<any>();
+  selectBrand = new DefaultSelect<any>();
+  selectSubBrand = new DefaultSelect<any>();
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private modalServise: BsModalService) {}
 
   ngOnInit(): void {
     this.initForm();
@@ -64,11 +71,48 @@ export class DetailAssetsTabComponentComponent implements OnInit {
       physicalState: [null],
       destintSae: [{ value: null, disabled: true }],
       /* tab bienes */
-      aliasWarehouse: [null],
+      address: new FormGroup({
+        aliasWarehouse: new FormControl(''),
+        referenceVia2: new FormControl(''),
+        state: new FormControl(''),
+        referenceVia3: new FormControl(''),
+        municipe: new FormControl(''),
+        suburb: new FormControl(''),
+        cp: new FormControl(''),
+        longitud: new FormControl(''),
+        latitud: new FormControl(''),
+        nameRoute: new FormControl(''),
+        numExt: new FormControl(''),
+        originRoute: new FormControl(''),
+        numInt: new FormControl(''),
+        routeDestination: new FormControl(''),
+        referenceVia1: new FormControl(''),
+        kilometerRoute: new FormControl(''),
+        description: new FormControl(''),
+      }),
+      vehicle: new FormGroup({
+        brand: new FormControl(''),
+        enrollment: new FormControl(''),
+        subBrand: new FormControl(''),
+        serie: new FormControl(''),
+        armored: new FormControl(''),
+        chassis: new FormControl(''),
+        model: new FormControl(''),
+        numDoors: new FormControl(''),
+        cabin: new FormControl(''),
+        numEje: new FormControl(''),
+        originVehicle: new FormControl(''),
+        engineNum: new FormControl(''),
+        canCirculate: new FormControl(''),
+        hasTheftReport: new FormControl(''),
+      }),
+      boat: new FormGroup({}),
+      /* aliasWarehouse: [null],
       referenceVia2: [null],
       state: [null],
       referenceVia3: [null],
       municipe: [null],
+      suburb: [null],
       cp: [null],
       longitud: [null],
       latitud: [null],
@@ -80,7 +124,7 @@ export class DetailAssetsTabComponentComponent implements OnInit {
       referenceVia1: [null],
       kilometerRoute: [null],
       description: [null],
-      suburb: [null],
+       */
     });
 
     //this.assetsForm.controls['typeAsset'].disable();
@@ -112,6 +156,10 @@ export class DetailAssetsTabComponentComponent implements OnInit {
 
   getCP(event: any) {}
 
+  getBrand(event: any) {}
+
+  getSubBrand(event: any) {}
+
   initInputs(): void {
     if (this.typeDoc === 'verify-compliance') {
       this.assetsForm.disable();
@@ -121,7 +169,8 @@ export class DetailAssetsTabComponentComponent implements OnInit {
       this.assetsForm.controls['conservationState'].enable();
       this.assetsForm.controls['destintSae'].enable();
     } else if (this.typeDoc === 'assets') {
-      this.assetsForm.controls['referenceVia2'].disable();
+      this.assetsForm.controls['address'].disable();
+      /* this.assetsForm.controls['referenceVia2'].disable();
       this.assetsForm.controls['state'].disable();
       this.assetsForm.controls['referenceVia3'].disable();
       this.assetsForm.controls['municipe'].disable();
@@ -136,10 +185,34 @@ export class DetailAssetsTabComponentComponent implements OnInit {
       this.assetsForm.controls['referenceVia1'].disable();
       this.assetsForm.controls['kilometerRoute'].disable();
       this.assetsForm.controls['description'].disable();
-      this.assetsForm.controls['suburb'].disable();
+      this.assetsForm.controls['suburb'].disable(); */
     }
   }
+
+  openSelectAddressModal(): void {
+    let config: ModalOptions = {
+      initialState: {
+        address: '',
+        callback: (next: boolean) => {
+          //if (next) this.getExample();
+        },
+      },
+      class: 'modalSizeXL modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.bsModalRef = this.modalServise.show(SelectAddressComponent, config);
+
+    this.bsModalRef.content.event.subscribe((res: any) => {
+      //cargarlos en el formulario
+      console.log(res);
+      this.assetsForm.controls['address'].enable();
+      //this.assetsForm.controls['address'].get('longitud').enable();
+      //this.requestForm.get('receiUser').patchValue(res.user);
+    });
+  }
+
   save(): void {
     console.log('guardar los atributos de bien');
+    console.log(this.assetsForm);
   }
 }

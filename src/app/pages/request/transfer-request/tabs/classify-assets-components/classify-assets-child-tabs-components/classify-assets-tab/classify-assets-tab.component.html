@@ -89,7 +89,8 @@
         </ngx-select>
       </div>
     </div>
-    <div class="row" *ngIf="typeDoc === 'assets'">
+    <div class="row pt-4" *ngIf="typeDoc === 'assets'">
+      <hr style="color: black" />
       <app-detail-assets-tab-component
         [detailAssets]="detailArray"
         [typeDoc]="typeDoc"></app-detail-assets-tab-component>
