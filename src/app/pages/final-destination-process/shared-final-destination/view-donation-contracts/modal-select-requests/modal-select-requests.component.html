@@ -16,20 +16,22 @@
                         Incorporar
                     </button>
                 </div>
-                <div class="col-12 col-md-2">
-                    <div class="mb-3 pl-4 pr-4">
-                        <form-field [control]="form.get('idDonee')" label="Id. Donatario">
-                            <input type="text" class="form-control" formControlName="idDonee" />
-                        </form-field>
+                <ng-container *ngIf="op === 1;">
+                    <div class="col-12 col-md-2">
+                        <div class="mb-3 pl-4 pr-4">
+                            <form-field [control]="form.get('idDonee')" label="Id. Donatario">
+                                <input type="text" class="form-control" formControlName="idDonee" />
+                            </form-field>
+                        </div>
                     </div>
-                </div>
-                <div class="col-12 col-md-2">
-                    <div class="mb-3 pl-4 pr-4">
-                        <form-field [control]="form.get('numbWarehouse')" label="No. Almacén">
-                            <input type="text" class="form-control" formControlName="numbWarehouse" />
-                        </form-field>
+                    <div class="col-12 col-md-2">
+                        <div class="mb-3 pl-4 pr-4">
+                            <form-field [control]="form.get('numbWarehouse')" label="No. Almacén">
+                                <input type="text" class="form-control" formControlName="numbWarehouse" />
+                            </form-field>
+                        </div>
                     </div>
-                </div>
+                </ng-container>
                 <div class="col-12 col-md-2">
                     <div class="mb-3 pl-4 pr-4">
                         <form-field [control]="form.get('typeRequest')" label="Tipo Solicitud">

@@ -11,6 +11,7 @@ import { COLUMNS } from './columns';
   styles: [],
 })
 export class ModalSelectRequestsComponent extends BasePage implements OnInit {
+  op: number;
   form: FormGroup;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -27,11 +28,17 @@ export class ModalSelectRequestsComponent extends BasePage implements OnInit {
   }
 
   initForm() {
-    this.form = this.fb.group({
-      idDonee: [null, [Validators.required]],
-      numbWarehouse: [null, [Validators.required]],
-      typeRequest: [null, [Validators.required]],
-    });
+    if (this.op === 1) {
+      this.form = this.fb.group({
+        idDonee: [null, [Validators.required]],
+        numbWarehouse: [null, [Validators.required]],
+        typeRequest: [null, [Validators.required]],
+      });
+    } else {
+      this.form = this.fb.group({
+        typeRequest: [null, [Validators.required]],
+      });
+    }
   }
 
   settingsChange(event: any) {
