@@ -121,6 +121,13 @@ const routes: Routes = [
         './check-destination-requirements/fdp-crd-m-check-destination-requirements.module'
       ).then(m => m.FdpCrdMCheckDestinationRequirementsModule),
   },
+  {
+    path: 'review-technical-sheets',
+    loadChildren: () =>
+      import(
+        './review-technical-sheets/fdp-rft-m-review-technical-sheets.module'
+      ).then(m => m.FdpRftMReviewTechnicalSheetsModule),
+  },
 ];
 
 @NgModule({

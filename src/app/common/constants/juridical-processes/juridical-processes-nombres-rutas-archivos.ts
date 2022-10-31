@@ -58,16 +58,22 @@ export const routesJuridicalProcesses: any = [
     menu: 'Seguimiento a Juicios',
   },
   {
-    // Monitor de Abandono por Devolución
-    label: 'Monitor de Abandono por Devolución',
+    // Lista - Monitor de Abandono por Devolución
+    label: 'Lista - Monitor de Abandono por Devolución',
     link: 'monitor-abandono-devolucion',
-    menu: 'Monitor de Abandono por Devolución',
+    menu: 'Lista - Monitor de Abandono por Devolución',
   },
   {
-    // Abandono por Devolución Monitor
-    label: 'Abandono por Devolución Monitor',
+    // Formulario - Monitor Abandono por Devolución
+    label: 'Formulario - Monitor Abandono por Devolución',
     link: 'abandono-devolucion-monitor',
-    menu: 'Abandono por Devolución Monitor',
+    menu: 'Formulario - Monitor Abandono por Devolución',
+  },
+  {
+    // Declaración de Abandono por Aseguramiento
+    label: 'Declaración de Abandono por Aseguramiento',
+    link: 'declaracion-abandono-aseguramiento',
+    menu: 'Declaración de Abandono por Aseguramiento',
   },
 ];
 export const routesFormalizacionInmuebles: any = [

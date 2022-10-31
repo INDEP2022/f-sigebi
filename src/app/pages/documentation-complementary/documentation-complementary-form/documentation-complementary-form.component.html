@@ -1,0 +1,173 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Documentación complementaria</h5>
+  </div>
+  <div body style="margin-top: -30px">
+    <div class="d-flex justify-content-end">
+      <div class="m-3 btn-toolbar">
+        <button class="btn btn-info btn-sm active">Guardar</button>
+        <button
+          [routerLink]="['register']"
+          class="btn btn-primary btn-sm active">
+          Turnar
+        </button>
+      </div>
+    </div>
+
+    <h5 class="title">Información solicitud</h5>
+    <form
+      [formGroup]="documentComplementaryForm"
+      class="form-material"
+      style="margin: 0 auto">
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="text-left">Fecha de solicitud: </label>
+            <span> {{ date | date: 'dd/MM/yyyy' }}</span>
+          </div>
+
+          <div class="form-group pt-5">
+            <form-field
+              [control]="documentComplementaryForm.get('officeNumber')"
+              label="No°. oficio">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="officeNumber" />
+            </form-field>
+          </div>
+
+          <div class="form-group pt-3">
+            <form-field [control]="documentComplementaryForm.get('authority')">
+              <ngx-select
+                [form]="documentComplementaryForm"
+                control="authority"
+                [data]="authoritys"
+                value="id"
+                bindLabel="id"
+                label="Autoridad"
+                (fetchItems)="getAuthoritySelect($event)"></ngx-select>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <form-field [control]="documentComplementaryForm.get('state')">
+              <ngx-select
+                [form]="documentComplementaryForm"
+                control="state"
+                [data]="states"
+                value="id"
+                bindLabel="id"
+                label="Estado"
+                (fetchItems)="getStateSelect($event)"></ngx-select>
+            </form-field>
+          </div>
+
+          <div class="form-group pt-4">
+            <form-field
+              [control]="documentComplementaryForm.get('transferent')">
+              <ngx-select
+                [form]="documentComplementaryForm"
+                control="transferent"
+                [data]="transferents"
+                value="id"
+                bindLabel="id"
+                label="Transferente"
+                (fetchItems)="getTransferentSelect($event)"></ngx-select>
+            </form-field>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <form-field
+              [control]="documentComplementaryForm.get('regionalDelegation')"
+              label="Delegación regional">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="regionalDelegation"
+                readonly />
+            </form-field>
+          </div>
+
+          <div class="form-group pt-4">
+            <form-field
+              [control]="documentComplementaryForm.get('broadStation')">
+              <ngx-select
+                [form]="documentComplementaryForm"
+                control="broadStation"
+                [data]="broadStations"
+                value="id"
+                bindLabel="id"
+                label="Emisora"
+                (fetchItems)="getbroadStationSelect($event)"></ngx-select>
+            </form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <h5 class="title">Asunto</h5>
+
+        <div class="row pt-3">
+          <form-field [control]="documentComplementaryForm.get('subject')">
+            <select class="form-select" formControlName="subject">
+              <option [value]="null">Seleccione un asunto</option>
+              <option [value]="1">Asunto 1</option>
+              <option [value]="2">Asunto 2</option>
+            </select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4 form-horizontal">
+        <h5 class="title">Usuario a turnar</h5>
+        <div class="form-group">
+          <label class="control-label col-sm-2">Tipo de usuario:</label>
+
+          <div class="col-sm-6">
+            <form-radio label="T.E" class="radio-inline">
+              <input
+                type="radio"
+                formControlName="radio"
+                value="T.E"
+                (change)="typeUser($event)" />
+            </form-radio>
+            <form-radio label="SAE" class="radio-inline">
+              <input
+                type="radio"
+                formControlName="radio"
+                value="SAE"
+                (change)="typeUser($event)" />
+            </form-radio>
+          </div>
+        </div>
+
+        <div class="col-sm-6">
+          <form-field
+            [control]="documentComplementaryForm.get('userReception')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="userReception"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <div *ngIf="valueCheck == null">
+            <button class="btn btn-primary btn-sm active">Seleccionar</button>
+          </div>
+
+          <div *ngIf="valueCheck">
+            <button (click)="searchUser()" class="btn btn-pink btn-sm active">
+              Seleccionar
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>
