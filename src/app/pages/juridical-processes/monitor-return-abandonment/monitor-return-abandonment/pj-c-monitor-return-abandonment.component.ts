@@ -31,14 +31,16 @@ export class PJMonitorReturnAbandonmentComponent
     mode: 'external', // ventana externa
 
     columns: {
-      noBien: { title: '' },
-      descripcion: { title: '' },
-      cantidad: { title: '' },
-      motivoAbandono: { title: '' },
-      vencimientoUltimaNotificacion: { title: '' },
-      fechaNotificacion: { title: '' },
-      obervacionesAbandono: { title: '' },
-      fechaRatificacionJudicial: { title: '' },
+      noBien: { title: 'No Bien' },
+      descripcion: { title: 'Descripción' },
+      cantidad: { title: 'Cantidad' },
+      motivoAbandono: { title: 'Motivo Abandono' },
+      vencimientoUltimaNotificacion: {
+        title: 'Vencimiento Ultima Notificación',
+      },
+      fechaNotificacion: { title: 'Fecha Notificación' },
+      obervacionesAbandono: { title: 'Observaciones Abandono' },
+      fechaRatificacionJudicial: { title: 'Fecha Ratificación Judicial' },
     },
   };
   // Data table

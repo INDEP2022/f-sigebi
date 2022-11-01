@@ -148,6 +148,10 @@ export const MENU: IMenuItem[] = [
             label: 'Parcialización Bienes en Donación',
             link: '/pages/final-destination-process/donation-process/partialization-goods-donation',
           },
+          {
+            label: 'Procesos de Donación',
+            link: '/pages/final-destination-process/donation-process/donation-processes',
+          },
         ],
       },
       {
