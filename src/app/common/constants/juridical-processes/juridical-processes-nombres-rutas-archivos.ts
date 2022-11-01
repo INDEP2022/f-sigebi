@@ -75,6 +75,12 @@ export const routesJuridicalProcesses: any = [
     link: 'declaracion-abandono-aseguramiento',
     menu: 'Declaración de Abandono por Aseguramiento',
   },
+  {
+    // Dictaminaciones juridicas mantenimiento
+    label: 'Dictaminaciones Juridicas Mantenimiento',
+    link: 'dictaminaciones-juridicas-mantenimiento',
+    menu: 'Dictaminaciones Juridicas Mantenimiento',
+  },
 ];
 export const routesFormalizacionInmuebles: any = [
   {

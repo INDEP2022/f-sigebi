@@ -490,6 +490,13 @@ const routes: Routes = [
             .WarehousesModule,
         data: { title: 'Bienes en almacén' },
       },
+      {
+        path: 'storehouse',
+        loadChildren: async () =>
+          (await import('./administration-third/storehouse/storehouse.module'))
+            .StorehouseModule,
+        data: { title: 'Reportes de almacen' },
+      },
       /**
        * Seguros David Lucas
        */

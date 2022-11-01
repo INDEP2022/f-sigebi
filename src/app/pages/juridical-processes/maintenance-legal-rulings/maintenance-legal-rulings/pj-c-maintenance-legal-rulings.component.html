@@ -1,0 +1,82 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">DICTAMINACIONES</h5>
+  </div>
+
+  <div body>
+    <app-pj-c-maintenance-legal-rulings-rulings></app-pj-c-maintenance-legal-rulings-rulings>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">BIENES</h5>
+  </div>
+
+  <div body>
+    <app-pj-c-maintenance-legal-rulings-goods></app-pj-c-maintenance-legal-rulings-goods>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">DOCUMENTOS BIEN</h5>
+  </div>
+
+  <div body>
+    <app-pj-c-maintenance-legal-rulings-documentation-goods></app-pj-c-maintenance-legal-rulings-documentation-goods>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">OFICIO</h5>
+  </div>
+
+  <div body>
+    <app-pj-c-maintenance-legal-rulings-document-trade></app-pj-c-maintenance-legal-rulings-document-trade>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">MÁS INFORMACIÓN</h5>
+  </div>
+
+  <div body>
+    <app-pj-c-maintenance-legal-rulings-more-information></app-pj-c-maintenance-legal-rulings-more-information>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">COPIAS DE OFICIO</h5>
+  </div>
+
+  <div body>
+    <app-pj-c-maintenance-legal-rulings-copy-documentation-goods></app-pj-c-maintenance-legal-rulings-copy-documentation-goods>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">JUSTIFICACIÓN</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-12 p-2">
+          <form-field
+            [control]="form.get('justificacion')"
+            label="Justificación">
+            <textarea
+              rows="6"
+              class="form-control"
+              formControlName="justificacion"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

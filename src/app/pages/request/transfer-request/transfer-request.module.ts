@@ -25,9 +25,12 @@ import { GeneralDocTabComponent } from './tabs/expedients-child-tabs-components/
 import { GoodDocTabComponent } from './tabs/expedients-child-tabs-components/good-doc-tab/good-doc-tab.component';
 import { NewDocumentComponent } from './tabs/expedients-child-tabs-components/new-document/new-document.component';
 import { RequestOfAssetsComponent } from './tabs/expedients-child-tabs-components/request-of-assets/request-of-assets.component';
-import { RequestRecordTabComponent } from './tabs/request-record-tab/request-record-tab.component';
-
+import { AssetsComponent } from './tabs/records-of-request-components/assets/assets.component';
+import { RequestRecordTabComponent } from './tabs/records-of-request-components/request-record-tab/request-record-tab.component';
 import { TransferRequestRoutingModule } from './transfer-request-routing.module';
+import { SelectAddressComponent } from './tabs/records-of-request-components/records-of-request-child-tabs-components/select-address/select-address.component';
+import { AddressTransferorTabComponent } from './tabs/records-of-request-components/address-transferor-tab/address-transferor-tab.component';
+import { MenajeComponent } from './tabs/records-of-request-components/records-of-request-child-tabs-components/menaje/menaje.component';
 
 @NgModule({
   declarations: [
@@ -54,6 +57,10 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     DetailAssetsTabComponentComponent,
     ClarificationListTabComponent,
     ClarificationFormTabComponent,
+    AssetsComponent,
+    SelectAddressComponent,
+    AddressTransferorTabComponent,
+    MenajeComponent,
   ],
   imports: [
     CommonModule,
