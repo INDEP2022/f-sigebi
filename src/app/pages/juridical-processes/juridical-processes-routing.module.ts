@@ -106,6 +106,16 @@ const routes: Routes = [
       ).PJDeclarationAbandonmentInsuranceModule,
     data: { title: routesJuridicalProcesses[10].label },
   },
+  {
+    path: routesJuridicalProcesses[11].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './maintenance-legal-rulings/pj-m-maintenance-legal-rulings.module'
+        )
+      ).PJMaintenanceLegalRulingModule,
+    data: { title: routesJuridicalProcesses[11].label },
+  },
   // DEPOSITARIA
   {
     path: 'depositaria',
