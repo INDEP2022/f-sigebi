@@ -96,4 +96,6 @@ export class ClassifyAssetsTabComponent
       console.log(res);
     });
   }
+
+  saveRequest(): void {}
 }

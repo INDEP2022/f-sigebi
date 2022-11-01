@@ -163,7 +163,8 @@
               <h5>Ingresar contenido</h5>
             </tab>
             <tab heading="{{ tab5 }}" *ngIf="requestRegistration">
-              <h5>Ingresar contenido</h5>
+              <app-expedients-tabs
+                *ngIf="requestRegistration"></app-expedients-tabs>
             </tab>
           </tabset>
         </div>

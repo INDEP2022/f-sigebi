@@ -1,7 +1,5 @@
 <div>
-  <div
-    class="row pt-3 pb-3"
-    *ngIf="typeDoc === 'classify-assets' || typeDoc === 'assets'">
+  <div class="row pt-3 pb-3" *ngIf="typeDoc === 'classify-assets'">
     <div class="col-md-12">
       <div style="float: right">
         <button (click)="save()" class="btn btn-primary btn-sm active">
@@ -25,7 +23,8 @@
                 typeDoc === 'verify-compliance' ||
                 carsAssets === true ||
                 boatAssets === true ||
-                especialMachinery === true
+                especialMachineryAssets === true ||
+                mineralsAssets === true
               ">
               <form-field
                 [control]="assetsForm.get('noManagement')"
@@ -36,7 +35,7 @@
                   formControlName="noManagement" />
               </form-field>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
               <form-field
                 [control]="assetsForm.get('typeAsset')"
                 label="Tipo Bien">
@@ -129,17 +128,7 @@
                   formControlName="noExpedient" />
               </form-field>
             </div>
-            <div class="col-md-4" *ngIf="jewelerAssets === true">
-              <ngx-select
-                [form]="assetsForm"
-                control="tansferUnitMeasure"
-                (fetchItems)="getTansferUnitMeasure($event)"
-                [data]="selectTansferUnitMeasure"
-                label="*Unid. Medida Transferente"
-                value="id"
-                bindLabel="tansferUnitMeasure"></ngx-select>
-            </div>
-            <div class="col-md-4" *ngIf="!jewelerAssets">
+            <div class="col-md-4">
               <ngx-select
                 [form]="assetsForm"
                 control="physicalState"
@@ -207,7 +196,9 @@
                 value="id"
                 bindLabel="destinyTransfer"></ngx-select>
             </div>
-            <div class="col-md-3" *ngIf="otherAssets === true">
+            <div
+              class="col-md-3"
+              *ngIf="otherAssets === true || manejeAssets === true">
               <form-check label="Cumple Norma" for="meetNoraml">
                 <input
                   id="meetNoraml"
@@ -222,7 +213,10 @@
                 boatAssets === true ||
                 jewelerAssets === true ||
                 aircraftAssets === true ||
-                especialMachinery === true
+                especialMachineryAssets === true ||
+                mineralsAssets === true ||
+                immovablesAssets === true ||
+                foodAndDrink === true
               ">
               <form-field [control]="assetsForm.get('notes')" label="Notas">
                 <textarea
@@ -233,14 +227,8 @@
           </div>
 
           <div class="row pt-4">
-            <div
-              class="col-md-4"
-              *ngIf="
-                otherAssets === true ||
-                boatAssets === true ||
-                aircraftAssets === true ||
-                especialMachinery === true
-              ">
+            <div class="col-md-4">
+              <!-- ver -->
               <ngx-select
                 [form]="assetsForm"
                 control="tansferUnitMeasure"
@@ -250,7 +238,9 @@
                 value="id"
                 bindLabel="tansferUnitMeasure"></ngx-select>
             </div>
-            <div class="col-md-4" *ngIf="otherAssets === true">
+            <div
+              class="col-md-4"
+              *ngIf="otherAssets === true || manejeAssets === true">
               <form-field [control]="assetsForm.get('notes')" label="Notas">
                 <textarea
                   class="form-control"
@@ -667,7 +657,7 @@
             </div>
           </div>
           <div class="row pt-4">
-            <div class="col-md-3">
+            <div class="col-md-4">
               <form-field [control]="assetsForm.get('boat')" label="*Matricula">
                 <input
                   type="string"
@@ -675,7 +665,7 @@
                   formControlName="enrollmentBoat" />
               </form-field>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
               <form-field [control]="assetsForm.get('boat')" label="*Bandera">
                 <input
                   type="string"
@@ -683,20 +673,12 @@
                   formControlName="flag" />
               </form-field>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
               <form-field [control]="assetsForm.get('boat')" label="Cabina">
                 <input
                   type="number"
                   class="form-control"
                   formControlName="cabinBoat" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
-              <form-field [control]="assetsForm.get('boat')" label="*Calado">
-                <input
-                  type="string"
-                  class="form-control"
-                  formControlName="calado" />
               </form-field>
             </div>
           </div>
@@ -994,6 +976,241 @@
                 label="Tipo de Uso"
                 value="id"
                 bindLabel="typeUseAirCraft"></ngx-select>
+            </div>
+          </div>
+        </div>
+      </tab>
+      <!-- Informacion inmuebles -->
+      <tab *ngIf="immovablesAssets">
+        <ng-template tabHeading>
+          <i class="bx bx-building"></i> Bien Inmueble
+        </ng-template>
+        <div formGroupName="immovables" class="immovablestInformation">
+          <div class="row pt-5">
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('descripTransfeAsset')"
+                label="Descripción">
+                <textarea
+                  class="form-control"
+                  formControlName="descriptionImmovable"></textarea>
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('immovables')"
+                label="Guarda Custodia">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="custody" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('immovables')"
+                label="Estatus">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="statusImmovable" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('immovables')"
+                label="Requiere Vigilancia">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="requireVigilance" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('immovables')"
+                label="Nivel de Vigilancia">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="levelVigilance" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('immovables')"
+                label="Tipo de Inmueble">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="typeImmovable" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row-pt-4">
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('immovables')"
+                label="Metros de Bodega">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="metersWarehouse" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('immovables')"
+                label="Mts. de Terreno">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="metersLand" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('immovables')"
+                label="Habitaciones">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="rooms" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('immovables')"
+                label="Mts. Construidos de Terreno">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="metersBuiltLand" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-3">
+              <form-field [control]="assetsForm.get('immovables')" label="Baño">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="bathRoom" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('immovables')"
+                label="Cocina">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="kitchen" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('immovables')"
+                label="Cocina">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="kitchen" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('immovables')"
+                label="Comedor">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="dinningRoom" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-3">
+              <form-field [control]="assetsForm.get('immovables')" label="Sala">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="livingRoom" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field [control]="assetsForm.get('immovables')" label="Sala">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="livingRoom" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('immovables')"
+                label="Estudio">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="studyRoom" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('immovables')"
+                label="Espacio de Estacionamiento">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="garage" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('immovables')"
+                label="Registro Público de Propiedad">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="publicDeed" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('immovables')"
+                label="Valor Avaluo">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="appraisedValue" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('immovables')"
+                label="Fecha de Avaluo">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="valueDate"
+                  placeholder=""
+                  bsDatepicker />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="assetsForm.get('immovables')"
+                label="Certificado de Liberación de Gravamen">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="gravamen" />
+              </form-field>
             </div>
           </div>
         </div>

@@ -31,6 +31,8 @@ export class SelectAddressComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   public event: EventEmitter<any> = new EventEmitter();
   rowSelected: any;
+  address: any;
+  onlyOrigin: boolean = false;
 
   constructor(
     private modelRef: BsModalRef,
@@ -40,6 +42,8 @@ export class SelectAddressComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(this.onlyOrigin);
+
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,

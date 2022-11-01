@@ -132,4 +132,26 @@ export interface IRequest {
   originAircraft?: string;
   flagAircraft?: string;
   typeUseAirCraft?: string;
+
+  //inmueble
+  descriptionImmovable?: string;
+  custody?: string;
+  statusImmovable?: string;
+  requireVigilance?: string;
+  levelVigilance?: string;
+  typeImmovable?: string;
+  metersWarehouse?: string;
+  metersLand?: number;
+  rooms?: number;
+  metersBuiltLand?: number;
+  bathRoom?: string;
+  kitchen?: string;
+  dinningRoom?: string;
+  livingRoom?: string;
+  studyRoom?: string;
+  garage?: string;
+  publicDeed?: string;
+  appraisedValue?: string;
+  valueDate?: string;
+  gravamen?: string;
 }

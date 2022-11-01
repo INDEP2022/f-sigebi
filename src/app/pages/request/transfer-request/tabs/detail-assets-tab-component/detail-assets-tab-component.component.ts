@@ -25,8 +25,13 @@ export class DetailAssetsTabComponentComponent implements OnInit {
   boatAssets: boolean = false;
   jewelerAssets: boolean = false;
   aircraftAssets: boolean = false;
-  especialMachinery: boolean = true;
+  especialMachineryAssets: boolean = false;
+  mineralsAssets: boolean = false;
+  immovablesAssets: boolean = false;
+  manejeAssets: boolean = false; //diverso
+  foodAndDrink: boolean = true; //diverso
 
+  //selectores
   selectQuantityTransfer = new DefaultSelect<any>();
   selectPhysicalState = new DefaultSelect<any>();
   selectConcervationState = new DefaultSelect<any>();
@@ -152,24 +157,28 @@ export class DetailAssetsTabComponentComponent implements OnInit {
         flagAircraft: new FormControl(''),
         typeUseAirCraft: new FormControl(''),
       }),
-      /* aliasWarehouse: [null],
-      referenceVia2: [null],
-      state: [null],
-      referenceVia3: [null],
-      municipe: [null],
-      suburb: [null],
-      cp: [null],
-      longitud: [null],
-      latitud: [null],
-      nameRoute: [null],
-      numExt: [null],
-      originRoute: [null],
-      numInt: [null],
-      routeDestination: [null],
-      referenceVia1: [null],
-      kilometerRoute: [null],
-      description: [null],
-       */
+      immovables: new FormGroup({
+        descriptionImmovable: new FormControl(''),
+        custody: new FormControl(''),
+        statusImmovable: new FormControl(''),
+        requireVigilance: new FormControl(''),
+        levelVigilance: new FormControl(''),
+        typeImmovable: new FormControl(''),
+        metersWarehouse: new FormControl(''),
+        metersLand: new FormControl(''),
+        rooms: new FormControl(''),
+        metersBuiltLand: new FormControl(''),
+        bathRoom: new FormControl(''),
+        kitchen: new FormControl(''),
+        dinningRoom: new FormControl(''),
+        livingRoom: new FormControl(''),
+        studyRoom: new FormControl(''),
+        garage: new FormControl(''),
+        publicDeed: new FormControl(''),
+        appraisedValue: new FormControl(''),
+        valueDate: new FormControl(''),
+        gravamen: new FormControl(''),
+      }),
     });
 
     //this.assetsForm.controls['typeAsset'].disable();

@@ -1,15 +1,12 @@
 <div class="row">
   <div class="row">
     <div class="col-md-12">
-      <h5 class="title">Bienes</h5>
+      <h5 class="title"><strong>Bienes</strong></h5>
     </div>
   </div>
-  <div class="row">
-    <div class="d-flex">
-      <div class="form-material col-md-5 mr-auto p-2">
-        <search-bar [params]="params"></search-bar>
-      </div>
-      <div class="p-2">
+  <div class="row pt-4">
+    <div class="d-flex justify-content-end">
+      <div class="" style="margin-left: 1%">
         <button
           class="btn btn-success btn-sm ml-2"
           type="button"
@@ -24,16 +21,33 @@
           accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
           (change)="onFileChange($event)" />
       </div>
-      <div class="p-2">
+      <div class="" style="margin-left: 1%">
         <button class="btn btn-secondary btn-sm active" (click)="newAsset()">
           Crear Nuevo
         </button>
       </div>
-      <div class="p-2">
-        <button class="btn btn-primary btn-sm active">
-          <i class="bx bx-save"></i> Guardar
+      <div class="" style="margin-left: 1%">
+        <button
+          class="btn btn-secondary btn-sm active"
+          (click)="openSelectAddressModal()">
+          <i class="bx bx-home"></i> Seleccionar Domicilio
         </button>
       </div>
+      <div class="" style="margin-left: 1%">
+        <button class="btn btn-secondary btn-sm active" (click)="menajeModal()">
+          Menaje
+        </button>
+      </div>
+      <div class="" style="margin-left: 1%">
+        <button class="btn btn-primary btn-sm active" (click)="save()">
+          Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="row pt-4">
+    <div class="form-material col-md-5">
+      <search-bar [params]="params"></search-bar>
     </div>
   </div>
   <div class="row">
@@ -44,9 +58,7 @@
             [attr.class]="'table-bordered'"
             [settings]="settings"
             [source]="paragraphs"
-            (edit)="openForm($event.data)"
-            (delete)="showDeleteAlert($event.data)"
-            (rowSelect)="editRequest($event)"
+            (userRowSelect)="selectRows($event)"
             ><!-- (rowSelect)="editRequest($event)" (edit)="openForm($event.data)" -->
           </ng2-smart-table>
         </div>

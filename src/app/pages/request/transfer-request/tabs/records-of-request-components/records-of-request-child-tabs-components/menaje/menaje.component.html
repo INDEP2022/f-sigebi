@@ -4,16 +4,6 @@
   </div>
   <div body>
     <div class="row">
-      <div style="text-align: center" *ngIf="!onlyOrigin">
-        <button
-          class="btn btn-primary btn-sm active"
-          style="margin-right: 2px"
-          (click)="newAddress()">
-          <i class="bx bx-home"></i> Nuevo Domicilio
-        </button>
-      </div>
-    </div>
-    <div class="row">
       <div class="form-material col-md-5">
         <search-bar [params]="params"></search-bar>
       </div>
@@ -30,22 +20,13 @@
         </div>
       </div>
     </div>
-    <app-pagination
-      [params]="params"
-      [totalItems]="totalItems"></app-pagination>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
-      <!-- <div class="m-3">
-        <button
-          type="button"
-          class="btn btn-primary active"
-          (click)="confirm()">
-          Aceptar
-        </button>
-      </div> -->
       <div class="m-3">
-        <button class="btn btn-primary btn-sm active" (click)="selectAddress()">
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="selectImmovable()">
           Seleccionar
         </button>
       </div>
