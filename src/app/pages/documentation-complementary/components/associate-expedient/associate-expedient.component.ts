@@ -14,7 +14,7 @@ import {
 @Component({
   selector: 'app-associate-expedient',
   templateUrl: './associate-expedient.component.html',
-  styles: [],
+  styleUrls: ['../../styles/search-document-form.scss'],
 })
 export class AssociateExpedientComponent extends BasePage implements OnInit {
   @Input() documentationSearchExpedientForm: FormGroup;
@@ -33,7 +33,7 @@ export class AssociateExpedientComponent extends BasePage implements OnInit {
 
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-
+  showSearchForm: boolean = false;
   constructor(private modalService: BsModalService) {
     super();
 
