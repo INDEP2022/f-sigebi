@@ -9,8 +9,6 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { PeIbsDACReportRegistrationModuleComponent } from './pe-ibs-d-a-c-report-registration-module/pe-ibs-d-a-c-report-registration-module.component';
 import { PeIbsDAMReportRegistrationModuleRoutingModule } from './pe-ibs-d-a-m-report-registration-module-routing.module';
 
-import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-
 @NgModule({
   declarations: [PeIbsDACReportRegistrationModuleComponent],
   imports: [
@@ -20,7 +18,6 @@ import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents
     DelegationSharedComponent,
     DateRangeSharedComponent,
     ModalModule.forChild(),
-    PreviewDocumentsComponent,
   ],
 })
 export class PeIbsDAMReportRegistrationModuleModule {}
