@@ -1,5 +1,5 @@
 <div>
-  <div class="row">
+  <div class="row pt-4">
     <div class="d-flex">
       <div class="mr-auto p-2">
         <h5 class="title"><strong>Verificación de Cumplimiento</strong></h5>
@@ -12,7 +12,7 @@
         </button>
       </div>
       <div class="p-2 buttons">
-        <button class="btn btn-primary btn-sm active">
+        <button class="btn btn-primary btn-sm active" (click)="saveRequest()">
           <i class="bx bx-save"></i> Guardar
         </button>
       </div>
@@ -32,8 +32,7 @@
           [data]="selectSection"
           label="Section"
           value="section">
-        </ngx-select
-        ><span>A</span>
+        </ngx-select>
       </div>
       <div class="col-md-5">
         <ngx-select
@@ -41,7 +40,7 @@
           control="chapter"
           (fetchItems)="getChapter($event)"
           [data]="selectChapter"
-          label="Section"
+          label="Capitulo"
           value="section">
         </ngx-select>
       </div>
@@ -55,8 +54,7 @@
           [data]="selectLevel1"
           label="Nivel 1"
           value="level1">
-        </ngx-select
-        ><span>A</span>
+        </ngx-select>
       </div>
       <div class="col-md-5">
         <ngx-select
@@ -78,8 +76,7 @@
           [data]="selectLevel3"
           label="Nivel 3"
           value="level3">
-        </ngx-select
-        ><span>A</span>
+        </ngx-select>
       </div>
       <div class="col-md-5">
         <ngx-select
@@ -91,6 +88,29 @@
           value="level4">
         </ngx-select>
       </div>
+    </div>
+    <div class="row pt-4" *ngIf="typeDoc === 'assets'">
+      <hr style="color: black" />
+      <app-detail-assets-tab-component
+        [detailAssets]="detailArray"
+        [typeDoc]="typeDoc"></app-detail-assets-tab-component>
+      <!-- <tabset class="md-tabs">
+        <tab id="tab1">
+          <ng-template tabHeading>
+            <i class="bx bx-info-circle"></i> Información del Bien
+          </ng-template>
+        </tab>
+        <tab id="tab1">
+          <ng-template tabHeading>
+            <i class="bx bx-home"></i> Domicilio del Bien
+          </ng-template>
+        </tab>
+        <tab id="tab1">
+          <ng-template tabHeading>
+            <i class="bx bx-home"></i> Informacion de Joya
+          </ng-template>
+        </tab>
+      </tabset> -->
     </div>
   </div>
 </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequest } from 'src/app/core/models/catalogs/request.model';
@@ -11,6 +11,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class RequestRecordTabComponent extends BasePage implements OnInit {
+  @Input() dataObject: any;
   receptionForm: ModelForm<IRequest>;
   selectTypeExpedient = new DefaultSelect<IRequest>();
 
@@ -24,9 +25,10 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
   }
 
   prepareForm(): void {
+    //console.log(this.dataObject);
     let fecha = this.getCurrentDate();
     this.receptionForm = this.fb.group({
-      priority: [null],
+      priority: [false],
       infoProvenance: [null],
       receptDate: [{ value: fecha, disabled: true }],
       officeDate: [null, Validators.required],
@@ -59,7 +61,6 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
     var mes = today.getMonth() + 1;
     var dia = today.getDate();
     var fecha = dia + '/' + mes + '' + year;
-    console.log(fecha);
     return fecha;
   }
 
