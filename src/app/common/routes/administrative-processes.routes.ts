@@ -180,6 +180,14 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Conceptos de Gastos',
             link: '/pages/administrative-processes/expenses-concepts',
           },
+          {
+            label: 'Criterios de aplicación',
+            link: '/pages/administrative-processes/applicants-criteria',
+          },
+          {
+            label: 'Clasificación costos',
+            link: '/pages/administrative-processes/costs-clasification',
+          },
         ],
       },
       /**
@@ -316,7 +324,6 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Reportes de Almacén',
             link: '/pages/administrative-processes/storehouse',
           },
-
         ],
       },
       {
@@ -362,6 +369,18 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Reporte de inventario',
             link: '/pages/administrative-processes/inventory-report',
+          },
+          {
+            label: 'Indicadores por Bien',
+            link: '/pages/administrative-processes/indicators-per-good',
+          },
+          {
+            label: 'Reporte de información financiera',
+            link: '/pages/administrative-processes/financial-information-report',
+          },
+          {
+            label: 'Información financiera',
+            link: '/pages/administrative-processes/financial-information',
           },
         ],
       },
@@ -417,7 +436,6 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Analitico de bienes inmuebles',
             link: '/pages/administrative-processes/real-estate-analytical-report',
           },
-
         ],
       },
       {

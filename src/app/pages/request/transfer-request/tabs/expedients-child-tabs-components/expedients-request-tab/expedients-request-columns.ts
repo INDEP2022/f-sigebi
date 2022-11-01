@@ -1,6 +1,6 @@
 export const EXPEDIENTS_REQUEST_COLUMNS = {
   noRequest: {
-    title: 'No. Request',
+    title: 'No. solicitud',
     type: 'string',
     sort: false,
   },

@@ -1,0 +1,44 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="typeForm">
+      <div class="row">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="typeForm.get('denomination')"
+            label="Denominación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="denomination" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="typeForm.get('order')"
+            label="Orden de Presentación">
+            <input type="number" class="form-control" formControlName="order" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!typeForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
