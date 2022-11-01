@@ -184,6 +184,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Criterios de aplicación',
             link: '/pages/administrative-processes/applicants-criteria',
           },
+          {
+            label: 'Clasificación costos',
+            link: '/pages/administrative-processes/costs-clasification',
+          },
         ],
       },
       /**
@@ -316,7 +320,6 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Bienes en almacén',
             link: '/pages/administrative-processes/warehouses',
           },
-
         ],
       },
       {
@@ -429,7 +432,6 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Analitico de bienes inmuebles',
             link: '/pages/administrative-processes/real-estate-analytical-report',
           },
-
         ],
       },
       {

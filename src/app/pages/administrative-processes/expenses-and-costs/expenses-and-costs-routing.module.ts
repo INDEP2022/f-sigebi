@@ -86,6 +86,13 @@ const routes: Routes = [
             .ApplicantsCriteriaModule,
         data: { title: 'Criterios de aplicación' },
       },
+      {
+        path: 'costs-clasification',
+        loadChildren: async () =>
+          (await import('./costs-clasification/costs-clasification.module'))
+            .CostsClasificationModule,
+        data: { title: 'Clasificación de Costos' },
+      },
     ],
   },
 ];
