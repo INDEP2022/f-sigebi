@@ -404,6 +404,10 @@ export const MENU: IMenuItem[] = [
             label: 'Ejecución de la Conciliación',
             link: '/pages/commercialization/c-b-pdp-ec-conciliation-execution/immovable',
           },
+          {
+            label: 'Validación de Cálculo I.V.A ',
+            link: '/pages/commercialization/tax-validation-calculation'
+          }
         ],
       },
       {
