@@ -8,8 +8,6 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { PeAabCAnnualAccumulatedAssetsComponent } from './pe-aab-c-annual-accumulated-assets/pe-aab-c-annual-accumulated-assets.component';
 import { PeAabMAnnualAccumulatedAssetsRoutingModule } from './pe-aab-m-annual-accumulated-assets-routing.module';
 
-import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-
 @NgModule({
   declarations: [PeAabCAnnualAccumulatedAssetsComponent],
   imports: [
@@ -17,7 +15,6 @@ import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents
     PeAabMAnnualAccumulatedAssetsRoutingModule,
     SharedModule,
     DelegationSharedComponent,
-    PreviewDocumentsComponent,
     ModalModule.forChild(),
   ],
   exports: [PeAabCAnnualAccumulatedAssetsComponent],

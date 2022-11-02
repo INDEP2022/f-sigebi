@@ -1,45 +1,39 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">
-      REPORTE INFORMACIÓN DE MODULO DE REGISTRO DE BIENES ASEGURADOS, DECOMISOS
+      REPORTE INFORMACIÓN DE MÓDULO DE REGISTRO DE BIENES ASEGURADOS, DECOMISOS
       Y ABANDONOS
     </h5>
   </div>
 
   <div body>
-    <form class="form-material" [formGroup]="form" (submit)="send()">
+    <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-3">
           <app-delegation-shared [form]="form" [showSubdelegation]="false">
           </app-delegation-shared>
         </div>
-        <div class="col-md-3 mt-3">
+        <div class="col-md-3">
           <app-delegation-shared [form]="form" [showDelegation]="false">
           </app-delegation-shared>
         </div>
         <div class="col-md-4 mt-3">
-          <app-date-range-shared [form]="form"></app-date-range-shared>
+          <form-field
+            [control]="form.get('rangeDate')"
+            label="Fechas de recepción">
+            <input
+              class="form-control"
+              formControlName="rangeDate"
+              placeholder="Seleccione el rango de fechas"
+              ngModel
+              bsDaterangepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD-MM-YYYY',
+                displayOneMonthRange: true
+              }" />
+          </form-field>
         </div>
-        <!-- <div class="col-md-2 mt-3">
-                    <form-field [control]="form.get('fromDate')" label="Fecha recepción">
-                        <input type="text"
-                               placeholder="Del"
-                               class="form-control"
-                               bsDatepicker
-                               formControlName="fromDate"
-                               [bsConfig]="{ isAnimated: true }">
-                    </form-field>
-                </div>
-                <div class="col-md-2 mt-3">
-                    <form-field [control]="form.get('toDate')" label="">
-                        <input type="text" 
-                               placeholder="Al"
-                               class="form-control"
-                               bsDatepicker
-                               formControlName="toDate"
-                               [bsConfig]="{ isAnimated: true }">
-                    </form-field>
-                </div> -->
       </div>
     </form>
   </div>
@@ -49,7 +43,8 @@
         <button
           type="submit"
           class="btn btn-primary active"
-          [disabled]="!form.valid">
+          [disabled]="!form.valid"
+          (click)="openPrevPdf()">
           Imprimir
         </button>
       </div>
