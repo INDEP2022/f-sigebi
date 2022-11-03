@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { maxDate } from 'src/app/common/validations/date.validators';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -15,29 +19,31 @@ export class PeAtbCQuarterlyAccumulatedAssetsComponent implements OnInit {
   form: FormGroup = new FormGroup({});
   select = new DefaultSelect();
 
-  bsValueFromMonth: Date = new Date();
-  minModeFromMonth: BsDatepickerViewMode = 'month'; // change for month:year
-  bsConfigFromMonth: Partial<BsDatepickerConfig>;
+  pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
 
-  bsValueToMonth: Date = new Date();
-  minModeToMonth: BsDatepickerViewMode = 'month'; // change for month:year
+  mode: BsDatepickerViewMode = 'month'; // change for month:year
+  bsConfigFromMonth: Partial<BsDatepickerConfig>;
   bsConfigToMonth: Partial<BsDatepickerConfig>;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private sanitizer: DomSanitizer
+  ) {}
 
   ngOnInit(): void {
     this.prepareForm();
     this.bsConfigFromMonth = Object.assign(
       {},
       {
-        minMode: this.minModeFromMonth,
+        minMode: this.mode,
         dateInputFormat: 'MMMM/YYYY',
       }
     );
     this.bsConfigToMonth = Object.assign(
       {},
       {
-        minMode: this.minModeFromMonth,
+        minMode: this.mode,
         dateInputFormat: 'MMMM/YYYY',
       }
     );
@@ -45,10 +51,27 @@ export class PeAtbCQuarterlyAccumulatedAssetsComponent implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      delegation: ['', [Validators.required]],
-      subdelegation: ['', [Validators.required]],
-      fromMonth: [this.bsValueFromMonth, [Validators.required]],
-      toMonth: [this.bsValueToMonth, [Validators.required]],
+      delegation: [''],
+      subdelegation: [''],
+      fromMonth: [null, [Validators.required, maxDate(new Date())]],
+      toMonth: [null, [Validators.required, maxDate(new Date())]],
     });
+  }
+
+  openPrevPdf() {
+    let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(this.pdfurl),
+          type: 'pdf',
+        },
+        callback: (data: any) => {
+          console.log(data);
+        },
+      }, //pasar datos por aca
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+    this.modalService.show(PreviewDocumentsComponent, config);
   }
 }

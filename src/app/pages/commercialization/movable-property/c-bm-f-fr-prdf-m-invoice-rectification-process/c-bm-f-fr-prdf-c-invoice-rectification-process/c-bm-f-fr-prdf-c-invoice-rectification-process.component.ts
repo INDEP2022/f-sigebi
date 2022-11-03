@@ -10,44 +10,63 @@ import { CBmFFrPrdfCNewImageModalComponent } from '../c-bm-f-fr-prdf-c-new-image
 
 @Component({
   selector: 'app-c-bm-f-fr-prdf-c-invoice-rectification-process',
-  templateUrl: './c-bm-f-fr-prdf-c-invoice-rectification-process.component.html',
-  styles: [
-  ]
+  templateUrl:
+    './c-bm-f-fr-prdf-c-invoice-rectification-process.component.html',
+  styles: [],
 })
 export class CBmFFrPrdfCInvoiceRectificationProcessComponent implements OnInit {
-
   pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
 
-  form : FormGroup = new FormGroup ({});
+  form: FormGroup = new FormGroup({});
 
-  constructor(private modalRef: BsModalRef, private fb:FormBuilder, private modalService: BsModalService,  private sanitizer: DomSanitizer,) { }
+  constructor(
+    private modalRef: BsModalRef,
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private sanitizer: DomSanitizer
+  ) {}
 
   ngOnInit(): void {
     this.prepareForm();
   }
 
-  private prepareForm(){
+  private prepareForm() {
     this.form = this.fb.group({
-      idOficio: [null, [Validators.required,
+      idOficio: [
+        null,
+        [
+          Validators.required,
           Validators.maxLength(10),
           Validators.minLength(1),
-          Validators.pattern(NUMBERS_PATTERN),]],
-      ExpDate: [null, [Validators.required, maxDate(new Date()),]],
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      ExpDate: [null, [Validators.required, maxDate(new Date())]],
       serie: [null, [Validators.required]],
-      invoiceFolio: [null, [Validators.required,
+      invoiceFolio: [
+        null,
+        [
+          Validators.required,
           Validators.maxLength(10),
           Validators.minLength(1),
-          Validators.pattern(NUMBERS_PATTERN),]],
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
       name: [null, [Validators.required]],
       lastName: [null, [Validators.required]],
       motherlastName: [null, [Validators.required]],
       agent: [null, [Validators.required]],
 
-      idInvoice: [null, [Validators.required,
+      idInvoice: [
+        null,
+        [
+          Validators.required,
           Validators.maxLength(10),
           Validators.minLength(1),
-          Validators.pattern(NUMBERS_PATTERN),]],
-      time: [null, [Validators.required,  maxDate(new Date())]],
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      time: [null, [Validators.required, maxDate(new Date())]],
       paragraph1: [null, [Validators.required]],
       paragraph2: [null, [Validators.required]],
       paragraph3: [null, [Validators.required]],
@@ -57,7 +76,7 @@ export class CBmFFrPrdfCInvoiceRectificationProcessComponent implements OnInit {
       idCapture: ['', [Validators.required]],
       idAuth: ['', [Validators.required]],
       idSol: ['', [Validators.required]],
-    })
+    });
   }
 
   openModal(): void {
@@ -83,6 +102,4 @@ export class CBmFFrPrdfCInvoiceRectificationProcessComponent implements OnInit {
     };
     this.modalService.show(PreviewDocumentsComponent, config);
   }
-  
-
 }

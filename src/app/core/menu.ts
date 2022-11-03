@@ -400,6 +400,10 @@ export const MENU: IMenuItem[] = [
             label: 'Ejecución de la Conciliación',
             link: '/pages/commercialization/c-b-pdp-ec-conciliation-execution/immovable',
           },
+          {
+            label: 'Validación de Cálculo I.V.A ',
+            link: '/pages/commercialization/tax-validation-calculation',
+          },
         ],
       },
       {
@@ -417,6 +421,14 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Líneas de Captura',
             link: '/pages/commercialization/catalogs/capture-lines',
+          },
+          {
+            label: 'Clientes',
+            link: '/pages/commercialization/catalogs/customers',
+          },
+          {
+            label: 'Proveedores',
+            link: '/pages/commercialization/catalogs/providers',
           },
         ],
       },

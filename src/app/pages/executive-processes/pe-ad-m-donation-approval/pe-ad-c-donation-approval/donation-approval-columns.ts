@@ -1,5 +1,3 @@
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-
 export const DONATION_APPROVAL_COLUMNS = {
   noBien: {
     title: 'No. Bien',
@@ -21,17 +19,6 @@ export const DONATION_APPROVAL_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  passed: {
-    title: 'Aprobado',
-    type: 'custom',
-    renderComponent: CheckboxElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
-      });
-    },
-    sort: false,
-  },
   status: {
     title: 'Estatus',
     type: 'string',
@@ -41,5 +28,11 @@ export const DONATION_APPROVAL_COLUMNS = {
     title: 'Ext. Dom',
     type: 'string',
     sort: false,
+  },
+  availability: {
+    title: 'Disponibilidad',
+    type: 'boolean',
+    sort: false,
+    hide: true,
   },
 };
