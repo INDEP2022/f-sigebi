@@ -40,7 +40,7 @@ export class RegistrationOfRequestsComponent
   //validar destino del bien(documento)
   validateDocument: boolean = false;
   //notificar aclaraciones o improcedencias
-  notifyClarifiOrInapprop = true;
+  notifyClarifiOrImpropriety = true;
 
   constructor(
     public fb: FormBuilder,
@@ -102,7 +102,7 @@ export class RegistrationOfRequestsComponent
       this.tab2 = 'Aclaraciones';
       this.tab3 = 'Identifica Destino Documental';
       this.btnTitle = 'Solicitar Aprobación';
-    } else if (this.notifyClarifiOrInapprop) {
+    } else if (this.notifyClarifiOrImpropriety) {
       this.tab1 = 'Detalle de la Solicitud';
       this.tab2 = 'Bienes';
       this.tab3 = 'Expediente';
