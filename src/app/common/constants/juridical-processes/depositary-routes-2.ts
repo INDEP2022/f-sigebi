@@ -34,4 +34,9 @@ export const DEPOSITARY_ROUTES_2: any[] = [
     link: 'return-abandonment-monitor',
     menu: 'Monitor de abandono por devolución',
   },
+  {
+    label: 'Monitor de solicitudes de depositaria',
+    link: 'deposit-request-monitor',
+    menu: 'Monitor de solicitudes de depositaria',
+  },
 ];
