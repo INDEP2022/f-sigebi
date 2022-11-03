@@ -12,14 +12,14 @@ import { ExpedientListComponent } from '../../expedient-list/expedient-list.comp
 @Component({
   selector: 'app-document-request',
   templateUrl: './document-request.component.html',
-  styles: [],
+  styleUrls: ['../../styles/search-document-form.scss'],
 })
 export class DocumentRequestComponent extends BasePage implements OnInit {
   typeDocuments = new DefaultSelect();
 
   @Input() documentationExpedientForm: FormGroup;
   expedientData: any[] = [];
-
+  showSearchForm: boolean = false;
   constructor(private modalService: BsModalService) {
     super();
     this.settings = {

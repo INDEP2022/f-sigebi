@@ -6,12 +6,12 @@ import { PHOTOGRAPHY_COLUMNS } from 'src/app/pages/request/programming-request-c
 @Component({
   selector: 'app-photos-good',
   templateUrl: './photos-good.component.html',
-  styles: [],
+  styleUrls: ['../../styles/search-document-form.scss'],
 })
 export class PhotosGoodComponent extends BasePage implements OnInit {
   @Input() photosGood: FormGroup;
   imagesData: any[] = [];
-
+  showSearchForm: boolean = false;
   constructor() {
     super();
     this.settings = {

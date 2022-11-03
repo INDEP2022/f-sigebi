@@ -13,7 +13,7 @@ import { REQUEST_EXPEDIENT_COLUMNS } from '../../columns/request-expedient-colum
 @Component({
   selector: 'app-request-expedient',
   templateUrl: './request-expedient.component.html',
-  styles: [],
+  styleUrls: ['../../styles/search-document-form.scss'],
 })
 export class RequestExpedientComponent extends BasePage implements OnInit {
   settingsDocExpediet = {
@@ -40,6 +40,7 @@ export class RequestExpedientComponent extends BasePage implements OnInit {
   documentsReqData: any[] = [];
   expedientData: any[] = [];
   estateRequestData: any[] = [];
+  showSearchForm: boolean = false;
 
   typeDocuments = new DefaultSelect();
 
