@@ -116,21 +116,14 @@
           </div>
         </app-card>
 
-        <!-- dynamic changes -->
-
-        <div *ngIf="state" class="row pt-2">
+        <div class="row pt-2">
           <tabset class="md-tabs">
             <tab heading="{{ tab1 }}" id="tab1">
-              <app-request-record-tab></app-request-record-tab>
-            </tab>
-            <tab heading="{{ tab2 }}">Basic content 1</tab>
-            <tab heading="{{ tab3 }}">Basic content 2</tab>
-          </tabset>
-        </div>
-
-        <div *ngIf="complianceVerifi || classifyAssets" class="row pt-2">
-          <tabset class="md-tabs">
-            <tab heading="{{ tab1 }}" id="tab1">
+              <!-- Registro de Solicitudes o bines -->
+              <app-request-record-tab
+                *ngIf="requestRegistration"
+                [dataObject]="object"></app-request-record-tab>
+              <!-- Fin -->
               <!-- cumplimiento de verificacion y clasificacion de bienes-->
               <app-request-detail-tab
                 *ngIf="complianceVerifi || classifyAssets"
@@ -138,6 +131,9 @@
               <!-- fin -->
             </tab>
             <tab heading="{{ tab2 }}">
+              <!-- Registro de Solicitudes o bines -->
+              <app-assets *ngIf="requestRegistration"></app-assets>
+              <!-- fin -->
               <!-- cumplimiento de verificacion -->
               <app-verify-compliance-tab
                 *ngIf="complianceVerifi"
@@ -151,11 +147,24 @@
                 [typeDoc]="'classify-assets'"></app-classification-assets-tab>
               <!-- fin -->
             </tab>
-            <tab
-              heading="{{ tab3 }}"
-              *ngIf="complianceVerifi || classifyAssets">
+            <tab heading="{{ tab3 }}">
+              <!-- Registro de Solicitud o bien -->
+              <app-address-transferor-tab
+                *ngIf="requestRegistration"></app-address-transferor-tab>
+              <!-- fin -->
               <!-- cumplimiento de verificacion y clasificacion de bienes -->
-              <app-expedients-tabs></app-expedients-tabs>
+              <app-expedients-tabs
+                *ngIf="
+                  complianceVerifi || classifyAssets
+                "></app-expedients-tabs>
+              <!-- fin -->
+            </tab>
+            <tab heading="{{ tab4 }}" *ngIf="requestRegistration">
+              <h5>Ingresar contenido</h5>
+            </tab>
+            <tab heading="{{ tab5 }}" *ngIf="requestRegistration">
+              <app-expedients-tabs
+                *ngIf="requestRegistration"></app-expedients-tabs>
             </tab>
           </tabset>
         </div>
@@ -163,7 +172,7 @@
     </div>
 
     <div class="d-flex justify-content-center">
-      <div class="m-3">
+      <!-- <div class="m-3">
         <button
           type="button"
           class="btn btn-primary active"
@@ -171,10 +180,10 @@
           (click)="confirm()">
           <i class="bx bxs-right-arrow-square"></i> {{ btnTitle }}
         </button>
-      </div>
+      </div> -->
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
-          Cancelar
+          Salir
         </button>
       </div>
     </div>

@@ -16,20 +16,20 @@
       </div>
     </div>
     <form [formGroup]="receptionForm" class="form-material">
-      <div class="row pt-3">
-        <div class="col-sm-2">
+      <div class="row pt-4">
+        <div class="col-md-2">
           <span style="line-height: 3">Prioridad</span>
         </div>
-        <div class="col-sm-2">
-          <form-radio label="">
+        <div class="col-md-2">
+          <form-field [control]="receptionForm.get('priority')">
             <input
-              type="radio"
+              type="checkbox"
               formControlName="priority"
-              value="true"
+              aria-label=""
               id="priority" />
-          </form-radio>
+          </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <form-field
             [control]="receptionForm.get('infoProvenance')"
             label="Procedencia Información">
@@ -41,7 +41,7 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-3">
+      <div class="row pt-4">
         <div class="col-md-2">
           <form-field
             [control]="receptionForm.get('receptDate')"
@@ -90,7 +90,7 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-3">
+      <div class="row pt-4">
         <div class="col-md-3">
           <form-field
             [control]="receptionForm.get('nameSender')"
@@ -136,7 +136,7 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-3">
+      <div class="row pt-4">
         <div class="col-md-3">
           <form-field [control]="receptionForm.get('sender')" label="Remitente">
             <input
@@ -176,7 +176,7 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-3">
+      <div class="row pt-4">
         <div class="col-md-3">
           <form-field
             [control]="receptionForm.get('destinationManage')"
@@ -209,7 +209,7 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-3">
+      <div class="row pt-4">
         <div class="col-md-3">
           <form-field
             [control]="receptionForm.get('transExpedient')"
