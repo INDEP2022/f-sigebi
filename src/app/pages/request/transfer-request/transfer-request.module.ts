@@ -36,6 +36,7 @@ import { RequestRecordTabComponent } from './tabs/records-of-request-components/
 import { RegistrationRequestFormComponent } from './tabs/registration-request-form/registration-request-form.component';
 import { RequestDocumentFormComponent } from './tabs/request-document-form/request-document-form.component';
 import { SearchDocumentFormComponent } from './tabs/search-document-form/search-document-form.component';
+import { ClarificationsComponent } from './tabs/validate-asset-document-components/clarifications/clarifications.component';
 import { TransferRequestRoutingModule } from './transfer-request-routing.module';
 
 @NgModule({
@@ -67,6 +68,7 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     SelectAddressComponent,
     AddressTransferorTabComponent,
     MenajeComponent,
+    ClarificationsComponent,
     RegistrationRequestFormComponent,
     AssociateFileComponent,
     GeneralDocumentsFormComponent,
