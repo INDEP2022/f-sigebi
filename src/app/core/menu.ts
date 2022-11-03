@@ -406,8 +406,8 @@ export const MENU: IMenuItem[] = [
           },
           {
             label: 'Validación de Cálculo I.V.A ',
-            link: '/pages/commercialization/tax-validation-calculation'
-          }
+            link: '/pages/commercialization/tax-validation-calculation',
+          },
         ],
       },
       {
@@ -429,6 +429,10 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Clientes',
             link: '/pages/commercialization/catalogs/customers',
+          },
+          {
+            label: 'Proveedores',
+            link: '/pages/commercialization/catalogs/providers',
           },
         ],
       },
