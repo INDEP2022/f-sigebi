@@ -126,7 +126,7 @@
               <!-- Fin -->
               <!-- cumplimiento de verificacion y clasificacion de bienes-->
               <app-request-detail-tab
-                *ngIf="complianceVerifi || classifyAssets"
+                *ngIf="complianceVerifi || classifyAssets || validateDocument"
                 [dataObject]="object"></app-request-detail-tab>
               <!-- fin -->
             </tab>
@@ -145,6 +145,9 @@
                 *ngIf="classifyAssets"
                 [dataObject]="object"
                 [typeDoc]="'classify-assets'"></app-classification-assets-tab>
+              <!-- fin -->
+              <!-- Validacion de Documentos -->
+              <app-clarifications *ngIf="validateDocument"></app-clarifications>
               <!-- fin -->
             </tab>
             <tab heading="{{ tab3 }}">

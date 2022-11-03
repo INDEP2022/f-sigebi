@@ -32,11 +32,13 @@ export class RegistrationOfRequestsComponent
   tab6: string = '';
 
   //registro de solicitudos o bienes
-  requestRegistration: boolean = true;
+  requestRegistration: boolean = false;
   //verificacion de cumplimientos tab
   complianceVerifi: boolean = false;
   //clasificacion de bienes
   classifyAssets: boolean = false;
+  //validar destino del bien(documento)
+  validateDocument: boolean = true;
 
   constructor(
     public fb: FormBuilder,
@@ -93,6 +95,11 @@ export class RegistrationOfRequestsComponent
       this.tab2 = 'Clasificación de Bienes';
       this.tab3 = 'Expediente';
       this.btnTitle = 'Destino Documental';
+    } else if (this.validateDocument) {
+      this.tab1 = 'Detalle Solicitud';
+      this.tab2 = 'Aclaraciones';
+      this.tab3 = 'Identifica Destino Documental';
+      this.btnTitle = 'Solicitar Aprobación';
     }
   }
   confirm() {

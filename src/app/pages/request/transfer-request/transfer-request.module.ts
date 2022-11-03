@@ -31,6 +31,7 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
 import { SelectAddressComponent } from './tabs/records-of-request-components/records-of-request-child-tabs-components/select-address/select-address.component';
 import { AddressTransferorTabComponent } from './tabs/records-of-request-components/address-transferor-tab/address-transferor-tab.component';
 import { MenajeComponent } from './tabs/records-of-request-components/records-of-request-child-tabs-components/menaje/menaje.component';
+import { ClarificationsComponent } from './tabs/validate-asset-document-components/clarifications/clarifications.component';
 
 @NgModule({
   declarations: [
@@ -61,6 +62,7 @@ import { MenajeComponent } from './tabs/records-of-request-components/records-of
     SelectAddressComponent,
     AddressTransferorTabComponent,
     MenajeComponent,
+    ClarificationsComponent,
   ],
   imports: [
     CommonModule,
