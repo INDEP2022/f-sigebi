@@ -29,6 +29,14 @@ const routes: Routes = [
       ).CCMCaptureLinesModule,
     data: { title: 'Líneas de Captura' },
   },
+  {
+    path: 'customers',
+    loadChildren: async () => ( 
+      await import( 
+        './customers/c-c-c-m-customers.module')
+      ).CCCMCustomersModule,
+    data: { title: 'Clientes' },
+  },
 ];
 
 @NgModule({
