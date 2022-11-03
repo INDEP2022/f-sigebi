@@ -60,4 +60,14 @@ export const DEPOSITARY_ROUTES_2_ROUTING = [
       ).JpDMReportDocumentsForReviewModule,
     data: { title: DEPOSITARY_ROUTES_2[5].label },
   },
+  {
+    path: DEPOSITARY_ROUTES_2[6].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './return-abandonment-monitor/jp-d-m-return-abandonment-monitor.module'
+        )
+      ).JpDMReturnAbandonmentMonitorModule,
+    data: { title: DEPOSITARY_ROUTES_2[6].label },
+  },
 ];

@@ -29,4 +29,9 @@ export const DEPOSITARY_ROUTES_2: any[] = [
     link: 'report-documents-for-review',
     menu: 'Reporte de documentos para Dictaminacion',
   },
+  {
+    label: 'Monitor de abandono por devolución',
+    link: 'return-abandonment-monitor',
+    menu: 'Monitor de abandono por devolución',
+  },
 ];
