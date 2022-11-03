@@ -5,9 +5,6 @@
   <div body>
     <div class="row">
       <div class="d-flex">
-        <div class="p-2" header>
-          <h5 class="title">Información de la Solicitud</h5>
-        </div>
         <div class="ml-auto p-2">
           <button
             type="button"
@@ -17,6 +14,11 @@
             <i class="bx bxs-right-arrow-square"></i> {{ btnTitle }}
           </button>
         </div>
+      </div>
+    </div>
+    <div class="row">
+      <div header>
+        <h5 class="title">Información de la Solicitud</h5>
       </div>
     </div>
     <div>
@@ -126,7 +128,12 @@
               <!-- Fin -->
               <!-- cumplimiento de verificacion y clasificacion de bienes-->
               <app-request-detail-tab
-                *ngIf="complianceVerifi || classifyAssets || validateDocument"
+                *ngIf="
+                  complianceVerifi ||
+                  classifyAssets ||
+                  validateDocument ||
+                  notifyClarifiOrInapprop
+                "
                 [dataObject]="object"></app-request-detail-tab>
               <!-- fin -->
             </tab>

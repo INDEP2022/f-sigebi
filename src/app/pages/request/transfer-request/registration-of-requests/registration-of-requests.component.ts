@@ -38,7 +38,9 @@ export class RegistrationOfRequestsComponent
   //clasificacion de bienes
   classifyAssets: boolean = false;
   //validar destino del bien(documento)
-  validateDocument: boolean = true;
+  validateDocument: boolean = false;
+  //notificar aclaraciones o improcedencias
+  notifyClarifiOrInapprop = true;
 
   constructor(
     public fb: FormBuilder,
@@ -100,6 +102,11 @@ export class RegistrationOfRequestsComponent
       this.tab2 = 'Aclaraciones';
       this.tab3 = 'Identifica Destino Documental';
       this.btnTitle = 'Solicitar Aprobación';
+    } else if (this.notifyClarifiOrInapprop) {
+      this.tab1 = 'Detalle de la Solicitud';
+      this.tab2 = 'Bienes';
+      this.tab3 = 'Expediente';
+      this.btnTitle = 'Turnar';
     }
   }
   confirm() {
