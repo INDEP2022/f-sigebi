@@ -50,4 +50,14 @@ export const DEPOSITARY_ROUTES_2_ROUTING = [
       ).JpDMIncomeOrdersDepositoryGoodsModule,
     data: { title: DEPOSITARY_ROUTES_2[4].label },
   },
+  {
+    path: DEPOSITARY_ROUTES_2[5].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './report-documents-for-review/jp-d-m-report-documents-for-review.module'
+        )
+      ).JpDMReportDocumentsForReviewModule,
+    data: { title: DEPOSITARY_ROUTES_2[5].label },
+  },
 ];
