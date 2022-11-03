@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { BasePage } from 'src/app/core/shared/base-page';
-import { IRequest } from 'src/app/core/models/catalogs/request.model';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IRequest } from 'src/app/core/models/catalogs/request.model';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-new-document',
@@ -25,9 +25,8 @@ export class NewDocumentComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    console.log('NEW DOC TIPO');
-
-    console.log(this.typeDoc);
+    //console.log('NEW DOC TIPO');
+    //console.log(this.typeDoc);
   }
 
   initForm(): void {
