@@ -32,13 +32,13 @@ export class RegistrationOfRequestsComponent
   tab6: string = '';
 
   //registro de solicitudos o bienes
-  requestRegistration: boolean = true;
+  requestRegistration: boolean = false;
   //verificacion de cumplimientos tab
   complianceVerifi: boolean = false;
   //clasificacion de bienes
   classifyAssets: boolean = false;
   //validar destino del bien(documento)
-  validateDocument: boolean = false;
+  validateDocument: boolean = true;
 
   constructor(
     public fb: FormBuilder,
