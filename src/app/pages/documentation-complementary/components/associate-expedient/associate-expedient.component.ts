@@ -4,7 +4,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { AssociateFileComponent } from 'src/app/pages/registration-request/associate-file/associate-file.component';
+import { AssociateFileComponent } from 'src/app/pages/request/transfer-request/tabs/associate-file/associate-file.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
   ASSOCIATE_EXPEDIENT_COLUMNS,
