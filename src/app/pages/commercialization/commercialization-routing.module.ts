@@ -400,6 +400,16 @@ const routes: Routes = [
       ).CBPdpEcMConciliationExecutionModule,
     data: { title: 'Ejecución de la Conciliación' },
   },
+  {
+    path: 'tax-validation-calculation',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/tax-calculation-validation/c-b-tcv-m-tax-validation-calculation.module'
+        )
+      ).CBTcvMTaxValidationCalculationModule,
+    data: { title: 'Validación de Cálculo I.V.A' },
+  },
 ];
 
 @NgModule({

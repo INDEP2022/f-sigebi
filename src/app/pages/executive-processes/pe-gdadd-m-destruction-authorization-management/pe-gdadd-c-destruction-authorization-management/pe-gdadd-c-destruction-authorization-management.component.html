@@ -7,7 +7,7 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-2">
+        <div class="col-md-1">
           <form-field [control]="form.get('noAuth')" label="No.">
             <input
               type="text"
@@ -101,19 +101,28 @@
           </form-field>
         </div>
         <div class="col-md-1">
-          <button type="submit" class="btn-sm btn-primary active">
+          <button
+            type="submit"
+            class="btn-sm btn-info active"
+            (click)="msjRequest()">
             Solicitud
           </button>
         </div>
 
         <div class="col-md-1">
-          <button type="submit" class="btn-sm btn-primary active">
+          <button
+            type="submit"
+            class="btn-sm btn-info active"
+            (click)="msjScan()">
             Escanear
           </button>
         </div>
 
         <div class="col-md-1">
-          <button type="submit" class="btn-sm btn-primary active">
+          <button
+            type="submit"
+            class="btn-sm btn-info active"
+            (click)="openPrevImg()">
             Ver IMG
           </button>
         </div>
@@ -131,43 +140,28 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="dataNoBien"
-            (delete)="delete($event)">
+            [source]="dataNoBien">
           </ng2-smart-table>
         </div>
       </div>
       <div class="row pt-5">
-        <div class="col-md-2">
-          <label> Estado: </label>
+        <div class="col-md-8">
+          <p class="d-flex justify-content-center">
+            <span class="text-success mr-5"
+              ><i class="fa fa-square"></i> Disponibles</span
+            >
+            <span class="text-danger"
+              ><i class="fa fa-square"></i> No disponibles</span
+            >
+          </p>
         </div>
         <div class="col-md-2">
-          <div class="form-check">
-            <input
-              class="form-check-input"
-              type="radio"
-              name="flexRadioDefault"
-              id="flexRadioDefault1" />
-            <label class="form-check-label"> Disponible </label>
-          </div>
-        </div>
-        <div class="col-md-2">
-          <div class="form-check">
-            <input
-              class="form-check-input"
-              type="radio"
-              name="flexRadioDefault"
-              id="flexRadioDefault2"
-              checked />
-            <label class="form-check-label"> No disponible </label>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <button type="submit" class="btn-sm btn-primary active">
+          <button type="submit" class="btn-sm btn-secondary active">
             Insertar vía archivo plano
           </button>
         </div>
-        <div class="col-md-3">
-          <button type="submit" class="btn-sm btn-primary active">
+        <div class="col-md-2">
+          <button type="submit" class="btn-sm btn-secondary active">
             Insertar vía rastreador
           </button>
         </div>

@@ -490,6 +490,20 @@ const routes: Routes = [
             .WarehousesModule,
         data: { title: 'Bienes en almacén' },
       },
+      {
+        path: 'storehouse',
+        loadChildren: async () =>
+          (await import('./administration-third/storehouse/storehouse.module'))
+            .StorehouseModule,
+        data: { title: 'Reportes de almacen' },
+      },
+      {
+        path: 'control-service-orders',
+        loadChildren: async () =>
+          (await import('./administration-third/control-service-orders/control-service-orders.module'))
+            .ControlServiceOrdersModule,
+        data: { title: 'Control de las ordenes de servicio' },
+      },
       /**
        * Seguros David Lucas
        */
@@ -562,4 +576,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class AdministrativeProcessesRoutingModule {}
+export class AdministrativeProcessesRoutingModule { }
