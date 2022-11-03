@@ -422,6 +422,10 @@ export const MENU: IMenuItem[] = [
             label: 'Líneas de Captura',
             link: '/pages/commercialization/catalogs/capture-lines',
           },
+          {
+            label: 'Proveedores',
+            link: '/pages/commercialization/catalogs/providers',
+          },
         ],
       },
       {
