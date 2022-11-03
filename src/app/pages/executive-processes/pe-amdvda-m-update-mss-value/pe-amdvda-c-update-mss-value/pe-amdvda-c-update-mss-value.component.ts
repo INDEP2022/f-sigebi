@@ -10,7 +10,7 @@ import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-pe-amdvda-c-update-mss-value',
   templateUrl: './pe-amdvda-c-update-mss-value.component.html',
-  styles: [],
+  styleUrls: ['./pe-amdvda-c-update-mss-value.scss'],
 })
 export class PeAmdvdaCUpdateMssValueComponent
   extends BasePage

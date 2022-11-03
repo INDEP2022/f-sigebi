@@ -320,6 +320,14 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Bienes en almacén',
             link: '/pages/administrative-processes/warehouses',
           },
+          {
+            label: 'Reportes de Almacén',
+            link: '/pages/administrative-processes/storehouse',
+          },
+          {
+            label: 'Control de las ordenes de servicio',
+            link: '/pages/administrative-processes/control-service-orders',
+          },
         ],
       },
       {

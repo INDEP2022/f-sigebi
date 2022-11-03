@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 import { DelegationSharedComponent } from 'src/app/@standalone/shared-forms/delegation-shared/delegation-shared.component';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -14,9 +14,9 @@ import { PeAtbMQuarterlyAccumulatedAssetsRoutingModule } from './pe-atb-m-quarte
   imports: [
     CommonModule,
     PeAtbMQuarterlyAccumulatedAssetsRoutingModule,
-    BsDatepickerModule,
     SharedModule,
     DelegationSharedComponent,
+    ModalModule.forChild(),
   ],
 })
 export class PeAtbMQuarterlyAccumulatedAssetsModule {}

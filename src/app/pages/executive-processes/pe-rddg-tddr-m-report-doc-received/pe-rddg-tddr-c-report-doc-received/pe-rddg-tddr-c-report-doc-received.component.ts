@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+
+import { maxDate } from 'src/app/common/validations/date.validators';
 
 @Component({
   selector: 'app-pe-rddg-tddr-c-report-doc-received',
@@ -9,15 +14,17 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class PeRddgTddrCReportDocReceivedComponent implements OnInit {
   today: Date;
-  maxDate: Date;
-  minDate: Date;
 
   form: FormGroup = new FormGroup({});
 
-  constructor(private fb: FormBuilder) {
+  pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
+
+  constructor(
+    private modalService: BsModalService,
+    private fb: FormBuilder,
+    private sanitizer: DomSanitizer
+  ) {
     this.today = new Date();
-    this.minDate = new Date(this.today.getFullYear(), this.today.getMonth(), 2);
-    // this.maxDate = new Date(this.today.getFullYear(), this.today.getMonth(), 25);
   }
 
   ngOnInit(): void {
@@ -26,10 +33,27 @@ export class PeRddgTddrCReportDocReceivedComponent implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      rangeDate: ['', []],
+      rangeDate: [null, [Validators.required, maxDate(new Date())]],
       // fromDate: ['', [Validators.required]],
       // toDate: ['', [Validators.required]],
-      report: ['', [Validators.required]],
+      report: [null],
     });
+  }
+
+  openPrevPdf() {
+    let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(this.pdfurl),
+          type: 'pdf',
+        },
+        callback: (data: any) => {
+          console.log(data);
+        },
+      }, //pasar datos por aca
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+    this.modalService.show(PreviewDocumentsComponent, config);
   }
 }
