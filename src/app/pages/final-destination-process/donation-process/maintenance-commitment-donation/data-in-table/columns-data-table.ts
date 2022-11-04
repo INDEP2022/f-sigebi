@@ -1,3 +1,4 @@
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 export const COLUMNS_DATA_TABLE = {
   tag: {
     title: 'Etiqueta',
@@ -37,6 +38,28 @@ export const COLUMNS_DATA_TABLE = {
   unit: {
     title: 'Unidad',
     type: 'string',
+    sort: false,
+  },
+  yes: {
+    title: 'S',
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
+    sort: false,
+  },
+  not: {
+    title: 'N',
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
     sort: false,
   },
 };

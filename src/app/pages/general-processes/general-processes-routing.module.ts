@@ -29,6 +29,41 @@ const routes: Routes = [
         )
       ).GpHistoricalGoodSituationModule,
   },
+  {
+    path: 'purging-records',
+    loadChildren: async () =>
+      (await import('./gp-purging-records/gp-purging-records.module'))
+        .GpPurgingRecordsModule,
+  },
+  {
+    path: 'goods-tracker',
+    loadChildren: async () =>
+      (await import('./gp-goods-tracker/gp-goods-tracker.module'))
+        .GpGoodsTrackerModule,
+  },
+  {
+    path: 'records-tracker',
+    loadChildren: async () =>
+      (await import('./gp-records-tracker/gp-records-tracker.module'))
+        .GpRecordsTrackerModule,
+  },
+  {
+    path: 'scan-request',
+    loadChildren: async () =>
+      (await import('./gp-scan-request/gp-scan-request.module'))
+        .GpScanRequestModule,
+  },
+  {
+    path: 'documents-viewer',
+    loadChildren: async () =>
+      (await import('./gp-documents-viewer/gp-documents-viewer.module'))
+        .GpDocumentsViewerModule,
+  },
+  {
+    path: 'indicators',
+    loadChildren: async () =>
+      (await import('./gp-indicators/gp-indicators.module')).GpIndicatorsModule,
+  },
 ];
 
 @NgModule({

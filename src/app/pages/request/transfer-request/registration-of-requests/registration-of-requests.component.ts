@@ -27,13 +27,18 @@ export class RegistrationOfRequestsComponent
   tab1: string = '';
   tab2: string = '';
   tab3: string = '';
+  tab4: string = '';
+  tab5: string = '';
+  tab6: string = '';
 
-  //registro de bienes tab
-  state: boolean = false;
+  //registro de solicitudos o bienes
+  requestRegistration: boolean = false;
   //verificacion de cumplimientos tab
   complianceVerifi: boolean = false;
   //clasificacion de bienes
-  classifyAssets: boolean = true;
+  classifyAssets: boolean = false;
+  //validar destino del bien(documento)
+  validateDocument: boolean = true;
 
   constructor(
     public fb: FormBuilder,
@@ -73,11 +78,13 @@ export class RegistrationOfRequestsComponent
   }
 
   intiTabs(): void {
-    if (this.state == true) {
+    if (this.requestRegistration == true) {
       this.tab1 = 'Registro de Solicitud';
       this.tab2 = 'Bienes';
-      this.tab3 = 'Domicilio de la Transferencia';
-      this.btnTitle = 'Guardar Proceso'; //cambiar el nombre al real
+      this.tab3 = 'Domicilio de la Transferente';
+      this.tab4 = 'Asociar Expediente';
+      this.tab5 = 'Expediente';
+      this.btnTitle = 'Verificar Cumplimiento';
     } else if (this.complianceVerifi == true) {
       this.tab1 = 'Detalle Solicitud';
       this.tab2 = 'Verificar Cumplimiento';
@@ -88,6 +95,11 @@ export class RegistrationOfRequestsComponent
       this.tab2 = 'Clasificación de Bienes';
       this.tab3 = 'Expediente';
       this.btnTitle = 'Destino Documental';
+    } else if (this.validateDocument) {
+      this.tab1 = 'Detalle Solicitud';
+      this.tab2 = 'Aclaraciones';
+      this.tab3 = 'Identifica Destino Documental';
+      this.btnTitle = 'Solicitar Aprobación';
     }
   }
   confirm() {

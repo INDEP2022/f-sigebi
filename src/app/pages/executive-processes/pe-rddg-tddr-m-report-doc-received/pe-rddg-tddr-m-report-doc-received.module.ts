@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { ModalModule } from 'ngx-bootstrap/modal';
 import { DateRangeSharedComponent } from 'src/app/@standalone/shared-forms/date-range-shared/date-range-shared.component';
 import { SharedModule } from 'src/app/shared/shared.module';
-
 import { PeRddgTddrCReportDocReceivedComponent } from './pe-rddg-tddr-c-report-doc-received/pe-rddg-tddr-c-report-doc-received.component';
 import { PeRddgTddrMReportDocReceivedRoutingModule } from './pe-rddg-tddr-m-report-doc-received-routing.module';
 
@@ -14,8 +13,8 @@ import { PeRddgTddrMReportDocReceivedRoutingModule } from './pe-rddg-tddr-m-repo
     CommonModule,
     PeRddgTddrMReportDocReceivedRoutingModule,
     SharedModule,
-    BsDatepickerModule,
     DateRangeSharedComponent,
+    ModalModule.forChild(),
   ],
 })
 export class PeRddgTddrMReportDocReceivedModule {}

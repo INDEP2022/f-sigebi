@@ -14,33 +14,26 @@
           <app-delegation-shared [form]="form" [showSubdelegation]="false">
           </app-delegation-shared>
         </div>
-        <div class="col-md-3 mt-3">
+        <div class="col-md-3">
           <app-delegation-shared [form]="form" [showDelegation]="false">
           </app-delegation-shared>
         </div>
         <div class="col-md-4 mt-3">
-          <app-date-range-shared [form]="form"></app-date-range-shared>
+          <form-field
+            [control]="form.get('rangeDate')"
+            label="Fechas de recepción">
+            <input
+              class="form-control"
+              formControlName="rangeDate"
+              ngModel
+              bsDaterangepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD-MM-YYYY',
+                displayOneMonthRange: true
+              }" />
+          </form-field>
         </div>
-        <!-- <div class="col-md-2 mt-3">
-                    <form-field [control]="form.get('fromDate')" label="Recepción del:">
-                        <input type="text"
-                               placeholder=""
-                               class="form-control"
-                               bsDatepicker
-                               formControlName="fromDate"
-                               [bsConfig]="{ isAnimated: true }">
-                    </form-field>
-                </div>
-                <div class="col-md-2 mt-3">
-                    <form-field [control]="form.get('toDate')" label="Al">
-                        <input type="text"
-                               placeholder=""
-                               class="form-control"
-                               bsDatepicker
-                               formControlName="toDate"
-                               [bsConfig]="{ isAnimated: true }">
-                    </form-field>
-                </div> -->
       </div>
     </form>
   </div>
@@ -51,7 +44,8 @@
         <button
           type="button"
           class="btn btn-primary active"
-          [disabled]="!form.valid">
+          [disabled]="!form.valid"
+          (click)="openPrevPdf()">
           Imprimir
         </button>
       </div>

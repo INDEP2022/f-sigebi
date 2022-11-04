@@ -1,0 +1,137 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Solicitud de Digitalización</h5>
+    <div class="buttons">
+      <h6 class="text-danger">Folio Universal: 000000</h6>
+    </div>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <form-field
+          class="col-md-2"
+          [control]="form.get('noExpediente')"
+          label="No. Expediente">
+          <input
+            type="number"
+            formControlName="noExpediente"
+            class="form-control" />
+        </form-field>
+
+        <form-field
+          class="col-md-2"
+          [control]="form.get('noVolante')"
+          label="No. Volante">
+          <input
+            type="number"
+            formControlName="noVolante"
+            class="form-control" />
+        </form-field>
+
+        <form-field
+          class="col-md-2"
+          [control]="form.get('fecReception')"
+          label="Fecha Recepción Volante">
+          <input
+            formControlName="fecReception"
+            class="form-control"
+            bsDatepicker />
+        </form-field>
+
+        <form-field
+          class="col-md-6"
+          [control]="form.get('averPrevia')"
+          label="Averiguación Previa">
+          <input formControlName="averPrevia" class="form-control" />
+        </form-field>
+      </div>
+
+      <div class="row pt-3">
+        <form-field
+          class="col-md-3"
+          [control]="form.get('causaPenal')"
+          label="Causa Penal">
+          <input formControlName="causaPenal" class="form-control" />
+        </form-field>
+
+        <form-field
+          class="col-md-3"
+          [control]="form.get('tocaPenal')"
+          label="Toca Penal">
+          <input formControlName="tocaPenal" class="form-control" />
+        </form-field>
+
+        <form-field
+          class="col-md-3"
+          [control]="form.get('acta')"
+          label="Acta Circunstanciada">
+          <input formControlName="acta" class="form-control" />
+        </form-field>
+
+        <form-field
+          class="col-md-3"
+          [control]="form.get('amparo')"
+          label="Amparo">
+          <input formControlName="amparo" class="form-control" />
+        </form-field>
+      </div>
+
+      <hr />
+      <div class="row">
+        <form-field [control]="form.get('tipoDoc')" class="col-md-4">
+          <ngx-select
+            [form]="form"
+            control="tipoDoc"
+            label="Tipo Documento"
+            [data]="select">
+          </ngx-select>
+        </form-field>
+
+        <form-field
+          [control]="form.get('naturaleza')"
+          class="col-md-4"
+          label="Naturaleza">
+          <select formControlName="naturaleza" class="form-control">
+            <option value="">Original</option>
+            <option value="">Copia Simple</option>
+            <option value="">Mixto</option>
+            <option value="">Copia Certificada</option>
+          </select>
+        </form-field>
+
+        <form-field
+          [control]="form.get('fecha')"
+          class="col-md-4"
+          label="Fecha Significativa">
+          <input
+            type="text"
+            formControlName="fecha"
+            bsDatepicker
+            class="form-control" />
+        </form-field>
+      </div>
+      <div class="row">
+        <form-field
+          [control]="form.get('descripcion')"
+          class="col-md-6"
+          label="Descripción del Documento">
+          <textarea
+            formControlName="descripcion"
+            class="form-control"></textarea>
+        </form-field>
+        <div class="col">
+          <button class="btn btn-info active btn-sm">Escanear</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <button class="btn btn-primary active mr-2">Nueva Solicitud</button>
+
+          <button class="btn btn-secondary active">Generar Solicitud</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

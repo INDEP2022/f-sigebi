@@ -36,6 +36,5 @@ export const CREAR_MENU_DEPOSITARY = function () {
       link: baseMenu + baseMenuDepositaria + DEPOSITARY_ROUTES_2[index].link,
     });
   }
-  console.log('MENU', menuDepositary);
   return menuDepositary;
 };

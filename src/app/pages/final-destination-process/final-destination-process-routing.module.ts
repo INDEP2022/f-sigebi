@@ -93,6 +93,41 @@ const routes: Routes = [
         './acts-regularization-non-existence/fdp-arif-m-acts-regularization-non-existence.module'
       ).then(m => m.FdpArifMActsRegularizationNonExistenceModule),
   },
+  {
+    path: 'return-acts-report',
+    loadChildren: () =>
+      import('./return-acts-report/fdp-rad-m-return-acts-report.module').then(
+        m => m.FdpRadMReturnActsReportModule
+      ),
+  },
+  {
+    path: 'check-donation-requirements',
+    loadChildren: () =>
+      import(
+        './check-donation-requirements/fdp-crd-m-check-donation-requirements.module'
+      ).then(m => m.FdpCrdMCheckDonationRequirementsModule),
+  },
+  {
+    path: 'check-destruction-requirements',
+    loadChildren: () =>
+      import(
+        './check-destruction-requirements/fdp-crd-m-check-destruction-requirements.module'
+      ).then(m => m.FdpCrdMCheckDestructionRequirementsModule),
+  },
+  {
+    path: 'check-destination-requirements',
+    loadChildren: () =>
+      import(
+        './check-destination-requirements/fdp-crd-m-check-destination-requirements.module'
+      ).then(m => m.FdpCrdMCheckDestinationRequirementsModule),
+  },
+  {
+    path: 'review-technical-sheets',
+    loadChildren: () =>
+      import(
+        './review-technical-sheets/fdp-rft-m-review-technical-sheets.module'
+      ).then(m => m.FdpRftMReviewTechnicalSheetsModule),
+  },
 ];
 
 @NgModule({

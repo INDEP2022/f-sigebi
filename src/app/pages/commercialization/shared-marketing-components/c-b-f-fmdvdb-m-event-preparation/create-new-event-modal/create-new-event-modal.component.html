@@ -5,7 +5,7 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-2 mt-3">
+        <div class="col-md-2">
           <form-field [control]="form.get('id_event')" label="No.">
             <input
               type="text"
@@ -13,7 +13,7 @@
               formControlName="id_event" />
           </form-field>
         </div>
-        <div class="col-md-3 mt-3">
+        <div class="col-md-3">
           <form-field [control]="form.get('cve')" label="Clave">
             <input type="text" class="form-control" formControlName="cve" />
           </form-field>
@@ -23,7 +23,7 @@
             [form]="form"
             [bindLabel]="'descripcion'"></app-event-type-shared>
         </div>
-        <div class="col-md-3 mt-3">
+        <div class="col-md-3">
           <form-field
             [control]="form.get('dateEvent')"
             label="Fecha del Evento">

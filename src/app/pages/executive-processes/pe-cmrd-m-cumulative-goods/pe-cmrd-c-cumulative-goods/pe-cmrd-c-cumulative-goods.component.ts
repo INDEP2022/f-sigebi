@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
 } from 'ngx-bootstrap/datepicker';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { maxDate } from 'src/app/common/validations/date.validators';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -16,40 +19,31 @@ export class PeCmrdCCumulativeGoodsComponent implements OnInit {
   form: FormGroup = new FormGroup({});
   select = new DefaultSelect();
 
-  bsValueYear: Date = new Date();
-  minModeYear: BsDatepickerViewMode = 'year'; // change for month:year
-  bsConfigYear: Partial<BsDatepickerConfig>;
+  pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
 
-  bsValueFromMonth: Date = new Date();
-  minModeFromMonth: BsDatepickerViewMode = 'month'; // change for month:year
+  modeMonth: BsDatepickerViewMode = 'month'; // change for month:year
   bsConfigFromMonth: Partial<BsDatepickerConfig>;
-
-  bsValueToMonth: Date = new Date();
-  minModeToMonth: BsDatepickerViewMode = 'month'; // change for month:year
   bsConfigToMonth: Partial<BsDatepickerConfig>;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private modalService: BsModalService,
+    private fb: FormBuilder,
+    private sanitizer: DomSanitizer
+  ) {}
 
   ngOnInit(): void {
     this.prepareForm();
-    this.bsConfigYear = Object.assign(
-      {},
-      {
-        minMode: this.minModeYear,
-        dateInputFormat: 'YYYY',
-      }
-    );
     this.bsConfigFromMonth = Object.assign(
       {},
       {
-        minMode: this.minModeFromMonth,
+        minMode: this.modeMonth,
         dateInputFormat: 'MMMM',
       }
     );
     this.bsConfigToMonth = Object.assign(
       {},
       {
-        minMode: this.minModeFromMonth,
+        minMode: this.modeMonth,
         dateInputFormat: 'MMMM',
       }
     );
@@ -57,21 +51,27 @@ export class PeCmrdCCumulativeGoodsComponent implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      delegation: ['', [Validators.required]],
-      subdelegation: ['', [Validators.required]],
-      fromYear: [
-        this.bsValueYear,
-        [
-          Validators.required,
-          Validators.maxLength(4),
-          Validators.minLength(4),
-          Validators.pattern(NUMBERS_PATTERN),
-          Validators.min(1950),
-          Validators.max(2022),
-        ],
-      ],
-      toMonth: [this.bsValueToMonth, [Validators.required]],
-      fromMonth: [this.bsValueFromMonth, [Validators.required]],
+      delegation: [''],
+      subdelegation: [''],
+      toMonth: [null, [Validators.required, maxDate(new Date())]],
+      fromMonth: [null, [Validators.required, maxDate(new Date())]],
     });
+  }
+
+  openPrevPdf() {
+    let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(this.pdfurl),
+          type: 'pdf',
+        },
+        callback: (data: any) => {
+          console.log(data);
+        },
+      }, //pasar datos por aca
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+    this.modalService.show(PreviewDocumentsComponent, config);
   }
 }
