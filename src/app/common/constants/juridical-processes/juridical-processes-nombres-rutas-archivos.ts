@@ -1,4 +1,5 @@
 import { CREAR_MENU_DEPOSITARY } from './depositary-routes';
+import { CREAR_MENU_JURIDICAL_PROCESSES } from './juridical-processes-routes';
 
 export const baseMenu: string = '/pages/juridicos/'; // Base url Menu
 export const baseMenuDepositaria: string = 'depositaria/'; // Base url Menu Depositaria
@@ -29,7 +30,7 @@ export const routesJuridicalProcesses: any = [
   {
     // DECLARATORIA Y OFICIOS DE ABANDONOS
     label: 'Declaratoria y Oficios de Abandonos',
-    link: 'abandonos',
+    link: 'declaratoria-oficios-abandonos',
     menu: 'Abandonos',
   },
   {
@@ -37,6 +38,54 @@ export const routesJuridicalProcesses: any = [
     label: 'Bienes en Proceso de Validación EXT_DOM',
     link: 'bienes-validacion-aseg-extdom',
     menu: 'Bienes Validación ASEG_EXTDOM',
+  },
+  {
+    // Quitar Desahogo
+    label: 'Quitar Desahogo',
+    link: 'quitar-desahogo',
+    menu: 'Quitar Desahogo',
+  },
+  {
+    // Abandonos
+    label: 'Abandonos',
+    link: 'abandonos',
+    menu: 'Aplicar Abandono',
+  },
+  {
+    // Seguimiento a Juicios
+    label: 'Seguimiento a Juicios',
+    link: 'seguimiento-juicios',
+    menu: 'Seguimiento a Juicios',
+  },
+  {
+    // Lista - Monitor de Abandono por Devolución
+    label: 'Lista - Monitor de Abandono por Devolución',
+    link: 'monitor-abandono-devolucion',
+    menu: 'Lista - Monitor de Abandono por Devolución',
+  },
+  {
+    // Formulario - Monitor Abandono por Devolución
+    label: 'Formulario - Monitor Abandono por Devolución',
+    link: 'abandono-devolucion-monitor',
+    menu: 'Formulario - Monitor Abandono por Devolución',
+  },
+  {
+    // Declaración de Abandono por Aseguramiento
+    label: 'Declaración de Abandono por Aseguramiento',
+    link: 'declaracion-abandono-aseguramiento',
+    menu: 'Declaración de Abandono por Aseguramiento',
+  },
+  {
+    // Dictaminaciones juridicas mantenimiento
+    label: 'Dictaminaciones Juridicas Mantenimiento',
+    link: 'dictaminaciones-juridicas-mantenimiento',
+    menu: 'Dictaminaciones Juridicas Mantenimiento',
+  },
+  {
+    // DICTAMINACIONES JURIDICAS-G
+    label: 'Dictaminaciones Juridicas-G',
+    link: 'dictaminaciones-juridicas-g',
+    menu: 'Dictaminaciones Juridicas-G',
   },
 ];
 export const routesFormalizacionInmuebles: any = [
@@ -59,31 +108,7 @@ export const MENU_OPTIONS_JURIDICAL_PROCESSES = [
     label: 'Procesos Jurídicos',
     icon: 'bx-share-alt',
     subItems: [
-      {
-        // DICTAMINACIONES JURIDICAS
-        label: routesJuridicalProcesses[0].menu,
-        link: baseMenu + routesJuridicalProcesses[0].link + '/12345',
-      },
-      {
-        // ACTUALIZACIÓN DE EXPEDIENTE
-        label: routesJuridicalProcesses[1].menu,
-        link: baseMenu + routesJuridicalProcesses[1].link + '/12345',
-      },
-      {
-        // ACTUALIZACIÓN DE EXPEDIENTE EN NOTIFICACIÓN
-        label: routesJuridicalProcesses[2].menu,
-        link: baseMenu + routesJuridicalProcesses[2].link,
-      },
-      {
-        // DECLARATORIA Y OFICIOS DE ABANDONOS
-        label: routesJuridicalProcesses[3].menu,
-        link: baseMenu + routesJuridicalProcesses[3].link,
-      },
-      {
-        // BIENES EN PROCESO DE VALIDACIÓN EXT_DOM
-        label: routesJuridicalProcesses[4].menu,
-        link: baseMenu + routesJuridicalProcesses[4].link,
-      },
+      ...CREAR_MENU_JURIDICAL_PROCESSES(),
       {
         label: 'Depositaría',
         subItems: CREAR_MENU_DEPOSITARY(),

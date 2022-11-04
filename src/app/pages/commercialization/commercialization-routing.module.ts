@@ -363,6 +363,53 @@ const routes: Routes = [
       ).CBROimMSigntureAuxiliaryCatalogsModule,
     data: { title: 'Catálogos Auxiliares para Firmas Electrónicas' },
   },
+  {
+    path: 'direct-sale-requests-capture/municipality-control',
+    loadChildren: async () =>
+      (
+        await import(
+          './direct-sale-requests-capture/c-csvd-m-municipality-control/c-csvd-m-municipality-control.module'
+        )
+      ).CCsvdMMunicipalityControlModule,
+    data: { title: 'Control de Municipios' },
+  },
+  {
+    path: 'billing',
+    loadChildren: async () =>
+      (await import('./c-fp-m-penalty-billing/c-fp-m-penalty-billing.module'))
+        .CFpMPenaltyBillingModule,
+    data: { title: 'Facturación' },
+  },
+  {
+    path: 'c-b-ems-sirsae-movement-sending',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/c-b-ems-m-sirsae-movement-sending/c-b-ems-m-sirsae-movement-sending.module'
+        )
+      ).CBEmsMSirsaeMovementSendingModule,
+    data: { title: 'Envío de Movimientos a SIRSAE' },
+  },
+  {
+    path: 'c-b-pdp-ec-conciliation-execution',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/c-b-pdp-ec-m-conciliation-execution/c-b-pdp-ec-m-conciliation-execution.module'
+        )
+      ).CBPdpEcMConciliationExecutionModule,
+    data: { title: 'Ejecución de la Conciliación' },
+  },
+  {
+    path: 'tax-validation-calculation',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/tax-calculation-validation/c-b-tcv-m-tax-validation-calculation.module'
+        )
+      ).CBTcvMTaxValidationCalculationModule,
+    data: { title: 'Validación de Cálculo I.V.A' },
+  },
 ];
 
 @NgModule({

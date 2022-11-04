@@ -1,0 +1,230 @@
+<h5 class="title">
+  <p>
+    <a
+      class="text-color"
+      (click)="showSearchForm = true"
+      *ngIf="!showSearchForm">
+      <i class="fa fa-angle-right" aria-hidden="true"></i> Bienes inventario</a
+    >
+  </p>
+
+  <p>
+    <a
+      class="text-color"
+      (click)="showSearchForm = false"
+      *ngIf="showSearchForm">
+      <i class="fa fa-angle-down" aria-hidden="true"></i> Bienes inventario</a
+    >
+  </p>
+</h5>
+
+<form [formGroup]="documentationEstateForm" class="form-material">
+  <div *ngIf="showSearchForm">
+    <div class="row pt-3">
+      <div class="col-md-4">
+        <div class="pt-3">
+          <form-field
+            [control]="documentationEstateForm.get('gestionNumber')"
+            label="No°. gestión">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="gestionNumber" />
+          </form-field>
+        </div>
+
+        <div class="pt-3">
+          <form-field
+            [control]="documentationEstateForm.get('uniqueKey')"
+            label="Clave Única">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="uniqueKey" />
+          </form-field>
+        </div>
+
+        <div class="pt-3">
+          <form-field
+            [control]="documentationEstateForm.get('description')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+
+        <div class="pt-3">
+          <form-field
+            [control]="documentationEstateForm.get('numberExpedient')"
+            label="No°. expediente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberExpedient" />
+          </form-field>
+        </div>
+
+        <div class="pt-3">
+          <form-field
+            [control]="documentationEstateForm.get('expedientTransferent')"
+            label="Expediente transferente / PAMA">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberExpedient" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="col-md-4 pt-3">
+        <div>
+          <form-field
+            [control]="documentationEstateForm.get('regionalDelegation')">
+            <ngx-select
+              [form]="documentationEstateForm"
+              control="regionalDelegation"
+              [data]="regionalsDelegations"
+              value="id"
+              bindLabel="id"
+              label="Delegación regional"
+              (fetchItems)="getRegionalDelegationSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+
+        <div class="pt-3">
+          <form-field [control]="documentationEstateForm.get('state')">
+            <ngx-select
+              [form]="documentationEstateForm"
+              control="state"
+              [data]="states"
+              value="id"
+              bindLabel="id"
+              label="Estado"
+              (fetchItems)="getStateSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+
+        <div class="pt-3">
+          <form-field [control]="documentationEstateForm.get('broadStation')">
+            <ngx-select
+              [form]="documentationEstateForm"
+              control="broadStation"
+              [data]="broadStations"
+              value="id"
+              bindLabel="id"
+              label="Emisora"
+              (fetchItems)="getBroadStationSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+
+        <div class="pt-3">
+          <form-field [control]="documentationEstateForm.get('authority')">
+            <ngx-select
+              [form]="documentationEstateForm"
+              control="authority"
+              [data]="authorities"
+              value="id"
+              bindLabel="id"
+              label="Autoridad"
+              (fetchItems)="getAuthoritySelect($event)"></ngx-select>
+          </form-field>
+        </div>
+
+        <div class="pt-3">
+          <form-field [control]="documentationEstateForm.get('goodType')">
+            <ngx-select
+              [form]="documentationEstateForm"
+              control="goodType"
+              [data]="goodTypes"
+              value="id"
+              bindLabel="id"
+              label="Tipo bien"
+              (fetchItems)="getGoodTypeSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="col-md-4 pt-3">
+        <div>
+          <form-field
+            [control]="documentationEstateForm.get('warehouseCode')"
+            label="Código almacén">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="warehouseCode" />
+          </form-field>
+        </div>
+
+        <div class="pt-3">
+          <form-field
+            [control]="documentationEstateForm.get('origin')"
+            label="Origen">
+            <select class="form-control" formControlName="origin">
+              <option [value]="null">Inventarios</option>
+            </select>
+          </form-field>
+        </div>
+
+        <div class="pt-3">
+          <form-field
+            [control]="documentationEstateForm.get('folioRecord')"
+            label="Folio acta">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="folioRecord" />
+          </form-field>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="justify-content-end btn-toolbar">
+    <button type="submit" class="btn btn-primary btn-sm active">
+      <i class="fa fa-search"></i> Buscar
+    </button>
+    <button
+      *ngIf="showSearchForm"
+      type="submit"
+      class="btn btn-danger btn-sm active">
+      Limpiar
+    </button>
+  </div>
+  <div class="row pt-3">
+    <div class="d-flex justify-content-right">
+      <app-columns-select [(settings)]="settingsEstate"></app-columns-select>
+    </div>
+    <ng2-smart-table
+      [attr.class]="'table-bordered'"
+      [settings]="settingsEstate"
+      [source]="estateData"
+      (delete)="showExpedient()">
+    </ng2-smart-table>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
+  </div>
+
+  <div class="row pt-3">
+    <h5 class="title">Bienes seleccionados</h5>
+    <div class="row pt-3">
+      <div class="btn-toolbar">
+        <app-columns-select
+          [(settings)]="settingsEstateSelect"></app-columns-select>
+        <button (click)="searchSiab()" class="btn btn-primary btn-sm active">
+          Solicitar busqueda en SIAB
+        </button>
+      </div>
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settingsEstateSelect"
+        [source]="estateSelectData">
+      </ng2-smart-table>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+  </div>
+</form>

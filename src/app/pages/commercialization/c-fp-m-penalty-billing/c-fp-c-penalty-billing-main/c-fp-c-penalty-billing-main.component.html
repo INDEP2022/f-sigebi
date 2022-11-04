@@ -1,0 +1,381 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      {{ layout == 'penalty' ? 'Facturación de Penalizaciones' : '' }}
+      {{ layout == 'bases-sales' ? 'Facturación de Venta de Bases' : '' }}
+    </h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="billingForm">
+      <div class="row mt-1 mb-5">
+        <div class="col-sm-12 col-md-12">
+          <div
+            class="row row-cols-sm-1 row row-cols-1 row-cols-md-2 row row-cols-lg-3 row-cols-xl-4 g-3">
+            <div class="col">
+              <button
+                class="btn btn-sm btn-primary btn-block active me-2 font-size-13"
+                (click)="generateFolios()">
+                Genera Folios
+              </button>
+            </div>
+            <div class="col">
+              <button
+                class="btn btn-sm btn-info btn-block active me-2 font-size-13"
+                (click)="openFolioModal()"
+                [disabled]="">
+                Asig. Manual Folios
+              </button>
+            </div>
+            <div class="col">
+              <button
+                class="btn btn-sm btn-warning btn-block active me-2 font-size-13"
+                (click)="deleteFolios()"
+                [disabled]="">
+                Eliminar Folios
+              </button>
+            </div>
+            <div class="col">
+              <button
+                class="btn btn-sm btn-secondary btn-block active me-2 font-size-13"
+                (click)="getImage()">
+                Obtener Imagen
+              </button>
+            </div>
+            <div class="col">
+              <button
+                class="btn btn-sm btn-success btn-block active me-2 font-size-13"
+                (click)="openPrevInvoice()">
+                Visualizar Factura
+              </button>
+            </div>
+            <div class="col">
+              <button
+                class="btn btn-sm btn-danger btn-block active me-2 font-size-13"
+                (click)="openCancelModal()">
+                Cancelar Factura
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-5 d-flex justify-content-center">
+        <div class="col-sm-6 col-md-4 col-lg-3 col-xl-3">
+          <form-field [control]="billingForm.get('event')">
+            <ngx-select
+              [form]="billingForm"
+              [data]="eventItems"
+              value="id"
+              bindLabel="id"
+              label="Evento"
+              (fetchItems)="getEvents($event)"
+              control="event">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-sm-6 col-md-4 col-lg-3 col-xl-3">
+          <form-field [control]="billingForm.get('batch')">
+            <ngx-select
+              [form]="billingForm"
+              [data]="batchItems"
+              value="id"
+              bindLabel="id"
+              label="Lote"
+              (fetchItems)="getBatches($event)"
+              control="batch">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div
+          class="col-sm-6 col-md-4 col-lg-6 col-xl-6"
+          *ngIf="layout == 'penalty'">
+          <div class="row">
+            <div class="col-sm-4 col-md-4">
+              <h5 class="font-size-13 mb-2 ms-lg-3 d-inline">Serie</h5>
+              <p class="text-muted ms-lg-3" *ngIf="folioData != null">
+                {{ folioData.series }}
+              </p>
+            </div>
+            <div class="col-sm-4 col-md-4">
+              <h5 class="font-size-13 mb-2 ms-lg-3 d-inline">Folio</h5>
+              <p class="text-muted ms-lg-3" *ngIf="folioData != null">
+                {{ folioData.folio }}
+              </p>
+            </div>
+            <div class="col-sm-4 col-md-4">
+              <h5 class="font-size-13 mb-2 ms-lg-3 d-inline">Estatus</h5>
+              <p class="text-muted ms-lg-3" *ngIf="folioData != null">
+                {{ folioData.status }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-5" *ngIf="layout == 'bases-sales'">
+        <div class="col-sm-12 col-md-12 col-lg-6">
+          <div class="row">
+            <div class="col-sm-4 col-md-4">
+              <h5 class="font-size-14 mb-2 d-inline">Serie</h5>
+              <p class="text-muted" *ngIf="folioData != null">
+                {{ folioData.series }}
+              </p>
+            </div>
+            <div class="col-sm-4 col-md-4">
+              <h5 class="font-size-14 mb-2 d-inline">Folio</h5>
+              <p class="text-muted" *ngIf="folioData != null">
+                {{ folioData.folio }}
+              </p>
+            </div>
+            <div class="col-sm-4 col-md-4">
+              <h5 class="font-size-14 mb-2 d-inline">Estatus</h5>
+              <p class="text-muted" *ngIf="folioData != null">
+                {{ folioData.status }}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-6">
+          <div class="row">
+            <div class="col-sm-4 col-md-4">
+              <h5 class="font-size-14 mb-2 d-inline">OI Bases</h5>
+              <p class="text-muted" *ngIf="folioData != null">
+                {{ folioData.oiBases }}
+              </p>
+            </div>
+            <div class="col-sm-4 col-md-4">
+              <h5 class="font-size-14 mb-2 d-inline">Fecha OI Bases</h5>
+              <p class="text-muted" *ngIf="folioData != null">
+                {{ folioData.oiBasesDate }}
+              </p>
+            </div>
+            <div class="col-sm-4 col-md-4">
+              <h5 class="font-size-14 mb-2 d-inline">Documento</h5>
+              <p class="text-muted" *ngIf="folioData != null">
+                {{ folioData.document }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-12 col-xl-6">
+          <div class="row">
+            <div class="col-sm-12 col-md-6">
+              <form-field [control]="billingForm.get('cve')" label="Cve">
+                <input type="text" formControlName="cve" class="form-control" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-md-6">
+              <form-field
+                [control]="billingForm.get('eventDate')"
+                label="Fecha Evento">
+                <input
+                  type="text"
+                  formControlName="eventDate"
+                  class="form-control"
+                  [maxDate]="maxDate"
+                  bsDatepicker />
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 col-md-12 col-xl-6">
+          <div class="row mt-5 mt-xl-0">
+            <div class="col-sm-12 col-md-6" *ngIf="layout == 'penalty'">
+              <form-field
+                [control]="billingForm.get('voucherType')"
+                label="Tipo">
+                <ng-select
+                  formControlName="voucherType"
+                  [searchable]="false"
+                  class="form-control"
+                  [clearable]="false">
+                  <ng-option
+                    *ngFor="let v of voucherTypes"
+                    value="v.description"
+                    >{{ v.type }}</ng-option
+                  >
+                </ng-select>
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-md-6" *ngIf="layout == 'bases-sales'">
+              <form-field
+                [control]="billingForm.get('eventType')"
+                label="Tipo Evento">
+                <ng-select
+                  formControlName="eventType"
+                  [searchable]="false"
+                  class="form-control"
+                  [clearable]="false">
+                  <ng-option
+                    *ngFor="let e of eventTypes"
+                    value="e.description"
+                    >{{ e.type }}</ng-option
+                  >
+                </ng-select>
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-md-6">
+              <form-field
+                [control]="billingForm.get('printDate')"
+                label="Fecha Impresión">
+                <input
+                  type="text"
+                  formControlName="printDate"
+                  class="form-control"
+                  [maxDate]="maxDate"
+                  bsDatepicker />
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="billingForm.get('transferor')"
+            label="Transferente">
+            <input
+              type="text"
+              formControlName="transferor"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="billingForm.get('transferorDesc')"
+            label="Desc. Transferente">
+            <input
+              type="text"
+              formControlName="transferorDesc"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="billingForm.get('delegationNumber')"
+            label="Número Delegación">
+            <input
+              type="number"
+              formControlName="delegationNumber"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="billingForm.get('delegationDesc')"
+            label="Desc. Delegación">
+            <input
+              type="text"
+              formControlName="delegationDesc"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="billingForm.get('authorize')" label="Autoriza">
+            <input
+              type="text"
+              formControlName="authorize"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="billingForm.get('description')"
+            label="Descripción">
+            <textarea
+              rows="2"
+              formControlName="description"
+              class="form-control">
+            </textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="billingForm.get('client')" label="Cliente">
+            <input type="text" formControlName="client" class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="billingForm.get('rfc')" label="R.F.C.">
+            <input type="text" formControlName="rfc" class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="billingForm.get('street')" label="Calle">
+            <input type="text" formControlName="street" class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="billingForm.get('neighborhood')"
+            label="Colonia">
+            <input
+              type="text"
+              formControlName="neighborhood"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="billingForm.get('municipality')">
+            <ngx-select
+              [form]="billingForm"
+              [data]="municipalityItems"
+              value="description"
+              bindLabel="description"
+              label="Municipio"
+              (fetchItems)="getMunicipalities($event)"
+              control="municipality">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="billingForm.get('state')">
+            <ngx-select
+              [form]="billingForm"
+              [data]="stateItems"
+              value="description"
+              bindLabel="description"
+              label="Estado"
+              (fetchItems)="getStates($event)"
+              control="state">
+            </ngx-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-4 col-md-3">
+          <form-field [control]="billingForm.get('cp')" label="CP">
+            <input type="text" formControlName="cp" class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-sm-4 col-md-3">
+          <form-field [control]="billingForm.get('price')" label="Precio">
+            <input type="number" formControlName="price" class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-sm-4 col-md-3">
+          <form-field [control]="billingForm.get('saleTax')" label="Iva">
+            <input
+              type="number"
+              formControlName="saleTax"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-sm-4 col-md-3">
+          <form-field [control]="billingForm.get('total')" label="Total">
+            <input type="number" formControlName="total" class="form-control" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

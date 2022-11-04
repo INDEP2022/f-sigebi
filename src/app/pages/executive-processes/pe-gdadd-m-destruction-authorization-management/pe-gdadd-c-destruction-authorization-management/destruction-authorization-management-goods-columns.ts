@@ -20,4 +20,10 @@ export const GOODS_COLUMNS = {
     type: 'string',
     sort: false,
   },
+  availability: {
+    title: 'Disponibilidad',
+    type: 'boolean',
+    sort: false,
+    hide: true,
+  },
 };

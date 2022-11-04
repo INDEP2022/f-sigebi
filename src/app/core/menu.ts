@@ -1,10 +1,10 @@
 import { MENU_OPTIONS_JURIDICAL_PROCESSES } from '../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
 import { ADMINISTRATIVE_PROCESSES_ROUTES } from '../common/routes/administrative-processes.routes';
 import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
+import { DOCUMENTATION_COMPLEMENTARY } from '../common/routes/documentation-complementary';
 import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception.routes';
 import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
 import { GENERAL_PROCESSES_ROUTES } from '../common/routes/general-processes.routes';
-import { REGISTRATION_REQUEST_ROUTES } from '../common/routes/registration-request.routes';
 import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
@@ -53,8 +53,8 @@ export const MENU: IMenuItem[] = [
     ],
   },
 
-  // Registro solicitudes//
-  ...REGISTRATION_REQUEST_ROUTES,
+  //Documentación complementaria//
+  ...DOCUMENTATION_COMPLEMENTARY,
 
   //Proceso Destino final
   {
@@ -99,6 +99,7 @@ export const MENU: IMenuItem[] = [
           },
         ],
       },
+      //Proceso de Donación
       {
         label: 'Proceso de Donación',
         subItems: [
@@ -126,10 +127,26 @@ export const MENU: IMenuItem[] = [
             label: 'Solicitud y Autorización de Donación',
             link: '/pages/final-destination-process/donation-process/donation-authorization-request',
           },
+          {
+            label: 'Registro de Inventarios para Donación Directa',
+            link: '/pages/final-destination-process/donation-process/registration-inventories-donation',
+          },
+          {
+            label: 'Contratos de Donación',
+            link: '/pages/final-destination-process/donation-process/donation-contracts',
+          },
+          {
+            label: 'Contratos de Donación Directa Administrador',
+            link: '/pages/final-destination-process/donation-process/administrator-donation-contract',
+          },
           //VISTAS A LAS QUE SE LES DEBE VERIFICAR SU RUTA
           {
             label: 'Parcialización Bienes en Donación',
             link: '/pages/final-destination-process/donation-process/partialization-goods-donation',
+          },
+          {
+            label: 'Procesos de Donación',
+            link: '/pages/final-destination-process/donation-process/donation-processes',
           },
         ],
       },
@@ -157,7 +174,11 @@ export const MENU: IMenuItem[] = [
         label: 'Reporte de Actas de Devolución',
         link: '/pages/final-destination-process/return-acts-report',
       },
-      //VISTAS A LAS QUE SE LES DEBE VERIFICAR SU RUTA
+      {
+        label: 'Revisión de Fichas Técnicas',
+        link: '/pages/final-destination-process/review-technical-sheets',
+      },
+      //VISTAS A LAS QUE SE LES DEBE VERIFICAR SU RUTA O SI SON LLAMADAS DESDE OTRA VISTA
       {
         label: 'Comprobación de Requisitos Documentales por Donación',
         link: '/pages/final-destination-process/check-donation-requirements',
@@ -165,10 +186,6 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Comprobación de Requisitos Documentales por Destrucción',
         link: '/pages/final-destination-process/check-destruction-requirements',
-      },
-      {
-        label: 'Comprobación de Requisitos Documentales por Donación',
-        link: '/pages/final-destination-process/check-donation-requirements',
       },
       {
         label: 'Comprobación de Requisitos Documentales para Destino',
@@ -305,6 +322,14 @@ export const MENU: IMenuItem[] = [
             label: 'Catálogos Auxiliares para Firmas Electrónicas',
             link: '/pages/commercialization/c-b-r-oim-electronic-signature-auxiliary-catalogs/movable',
           },
+          {
+            label: 'Envío de Movimientos a SIRSAE',
+            link: '/pages/commercialization/c-b-ems-sirsae-movement-sending/movable',
+          },
+          {
+            label: 'Ejecución de la Conciliación',
+            link: '/pages/commercialization/c-b-pdp-ec-conciliation-execution/movable',
+          },
         ],
       },
       {
@@ -367,6 +392,18 @@ export const MENU: IMenuItem[] = [
             label: 'Reporte de Ingresos por Mandato',
             link: '/pages/commercialization/mandate-income-reports',
           },
+          {
+            label: 'Envío de Movimientos a SIRSAE',
+            link: '/pages/commercialization/c-b-ems-sirsae-movement-sending/immovable',
+          },
+          {
+            label: 'Ejecución de la Conciliación',
+            link: '/pages/commercialization/c-b-pdp-ec-conciliation-execution/immovable',
+          },
+          {
+            label: 'Validación de Cálculo I.V.A ',
+            link: '/pages/commercialization/tax-validation-calculation',
+          },
         ],
       },
       {
@@ -384,6 +421,38 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Líneas de Captura',
             link: '/pages/commercialization/catalogs/capture-lines',
+          },
+          {
+            label: 'Clientes',
+            link: '/pages/commercialization/catalogs/customers',
+          },
+          {
+            label: 'Proveedores',
+            link: '/pages/commercialization/catalogs/providers',
+          },
+        ],
+      },
+      {
+        label: 'Captura de Solicitudes de Venta Directa',
+        icon: 'folder',
+        subItems: [
+          {
+            label: 'Control de Municipios',
+            link: '/pages/commercialization/direct-sale-requests-capture/municipality-control',
+          },
+        ],
+      },
+      {
+        label: 'Facturación',
+        icon: 'folder',
+        subItems: [
+          {
+            label: 'Facturación de Penalizaciones',
+            link: '/pages/commercialization/billing/penalty',
+          },
+          {
+            label: 'Facturación de Venta de Bases',
+            link: '/pages/commercialization/billing/bases-sales',
           },
         ],
       },

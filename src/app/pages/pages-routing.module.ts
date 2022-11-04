@@ -106,10 +106,13 @@ const routes: Routes = [
   },
 
   {
-    path: 'registration-request',
+    path: 'documentation-complementary',
     loadChildren: async () =>
-      (await import('./registration-request/registration-request.module'))
-        .RegistrationRequestModule,
+      (
+        await import(
+          './documentation-complementary/documentation-complementary.module'
+        )
+      ).DocumentationComplementaryModule,
   },
 ];
 

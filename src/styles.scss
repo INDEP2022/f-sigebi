@@ -3,29 +3,29 @@
   font-size: 16px;
 }
 
-.swal2-container.swal2-top-end>.swal2-popup,
-.swal2-container.swal2-top-right>.swal2-popup {
+.swal2-container.swal2-top-end > .swal2-popup,
+.swal2-container.swal2-top-right > .swal2-popup {
   border-top: 4px solid #c0c0c0;
 }
 
 .swal2-actions {
-  width          : 70% !important;
+  width: 70% !important;
   justify-content: space-around !important;
 }
 
 .ch-content {
-  display        : flex;
+  display: flex;
   justify-content: space-between;
-  align-items    : center;
+  align-items: center;
 
   .title {
-    font-size     : 14px;
-    font-weight   : 600;
+    font-size: 14px;
+    font-weight: 600;
     text-transform: uppercase;
   }
 
   .buttons {
-    display        : flex;
+    display: flex;
     justify-content: end;
   }
 }
@@ -65,36 +65,36 @@
   border-radius: 7px !important;
 
   .modal-header {
-    border-radius  : 7px 7px 0 0;
-    background     : #fff !important;
-    border-bottom  : 1px solid #f2f2f2 !important;
-    display        : flex;
+    border-radius: 7px 7px 0 0;
+    background: #fff !important;
+    border-bottom: 1px solid #f2f2f2 !important;
+    display: flex;
     justify-content: space-between;
-    align-items    : center;
+    align-items: center;
 
     .modal-title {
-      color         : #000 !important;
-      font-size     : 13px;
-      font-weight   : 600;
+      color: #000 !important;
+      font-size: 13px;
+      font-weight: 600;
       text-transform: uppercase;
     }
 
     .close {
-      color     : #000;
+      color: #000;
       margin-top: 0px !important;
-      font-size : small;
+      font-size: small;
     }
   }
 }
 
 .modal-content .modal-header h5:after {
-  content         : '' !important;
+  content: '' !important;
   background-color: #9d2449 !important;
-  position        : absolute !important;
-  left            : -1px !important;
-  top             : 5 !important;
-  width           : 4px !important;
-  height          : 20px !important;
+  position: absolute !important;
+  left: -1px !important;
+  top: 5 !important;
+  width: 4px !important;
+  height: 20px !important;
 }
 
 // ng2-smart-table {
@@ -114,22 +114,22 @@
 }
 
 .table-loading tbody:after {
-  position           : absolute;
-  top                : 0;
-  left               : 0;
-  right              : 0;
-  bottom             : 0;
-  background-color   : rgba(0, 0, 0, 0.2);
-  background-image   : url('./assets/images/loader-button.gif');
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  background-image: url('./assets/images/loader-button.gif');
   background-position: center;
-  background-repeat  : no-repeat;
-  background-size    : 100px 100px;
-  z-index            : 100;
-  content            : '';
+  background-repeat: no-repeat;
+  background-size: 100px 100px;
+  z-index: 100;
+  content: '';
 }
 
 .btn-header {
-  transform  : scale(95%);
+  transform: scale(95%);
   padding-top: 8px;
 }
 
@@ -138,15 +138,15 @@ hr {
 }
 
 %table-check {
-  -webkit-appearance : none;
-  outline            : 0;
-  width              : 15px;
-  height             : 15px;
-  background-color   : #fff;
-  background-repeat  : no-repeat;
+  -webkit-appearance: none;
+  outline: 0;
+  width: 15px;
+  height: 15px;
+  background-color: #fff;
+  background-repeat: no-repeat;
   background-position: center;
-  background-size    : contain;
-  border             : 1px solid rgba(0, 0, 0, 0.25);
+  background-size: contain;
+  border: 1px solid rgba(0, 0, 0, 0.25);
 }
 
 $checkbox_image: "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e";
@@ -154,7 +154,7 @@ $checkbox_image: "data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' v
 %table-checked-check {
   background-image: url($checkbox_image);
   background-color: #9d2449;
-  border-color    : #9d2449;
+  border-color: #9d2449;
 }
 
 .ng2-smart-actions input[type='checkbox'] {
@@ -195,7 +195,7 @@ table:not(.normal-hover) tbody tr.selected {
 
 table:not(.normal-hover) tbody tr:hover {
   background: #f0e4d1 !important;
-  cursor    : pointer;
+  cursor: pointer;
 }
 
 .mh-80 {
@@ -203,13 +203,13 @@ table:not(.normal-hover) tbody tr:hover {
 }
 
 .table-overflow {
-  max-width : 100%;
+  max-width: 100%;
   overflow-x: scroll;
 }
 
 .float-icon {
   position: relative;
-  top     : 2px;
+  top: 2px;
 }
 
 .mw-98 {
@@ -218,7 +218,7 @@ table:not(.normal-hover) tbody tr:hover {
 
 @media (max-width: 1400px) {
   hr.mw-98 {
-    max-width  : 95%;
+    max-width: 95%;
     margin-left: 8px;
   }
 }
@@ -229,21 +229,21 @@ table:not(.normal-hover) tbody tr:hover {
 
 .float-icon-md {
   position: relative;
-  top     : 4px;
+  top: 4px;
 }
 
 .rotate-down {
   -webkit-transform: rotate(180deg);
-  -moz-transform   : rotate(180deg);
-  transform        : rotate(180deg);
-  transition       : all 0.5s;
+  -moz-transform: rotate(180deg);
+  transform: rotate(180deg);
+  transition: all 0.5s;
 }
 
 .rotate-up {
   -webkit-transform: rotate(0deg);
-  -moz-transform   : rotate(0deg);
-  transform        : rotate(0deg);
-  transition       : all 0.5s;
+  -moz-transform: rotate(0deg);
+  transform: rotate(0deg);
+  transition: all 0.5s;
 }
 
 .text-black {
@@ -251,18 +251,18 @@ table:not(.normal-hover) tbody tr:hover {
 }
 
 .add-row-height td {
-  height        : 40px !important;
-  white-space   : nowrap;
+  height: 40px !important;
+  white-space: nowrap;
   vertical-align: middle !important;
   padding-bottom: 0px !important;
 }
 
 .lower-select {
   position: relative;
-  top     : 32px;
+  top: 32px;
 }
 
-.custom-file-input~.custom-file-label::after {
+.custom-file-input ~ .custom-file-label::after {
   content: 'Examinar' !important;
 }
 
@@ -290,14 +290,14 @@ table:not(.normal-hover) tbody tr:hover {
 
 .center-checkbox tbody tr td.ng2-smart-action-multiple-select input {
   position: relative;
-  left    : 12px;
+  left: 12px;
 }
 
 ng-scrollbar {
-  --scrollbar-size             : 8px;
-  --scrollbar-thumb-color      : rgba(94, 175, 255, 0.5);
+  --scrollbar-size: 8px;
+  --scrollbar-thumb-color: rgba(94, 175, 255, 0.5);
   --scrollbar-thumb-hover-color: dodgerblue;
-  --scrollbar-border-radius    : 4px;
+  --scrollbar-border-radius: 4px;
 }
 
 .dropdown-item.bg-primary {
@@ -319,7 +319,7 @@ ng-scrollbar {
 .btn-danger:not(.active) {
   &:hover {
     background-color: #bc955c !important;
-    border-color    : #bc955c !important;
+    border-color: #bc955c !important;
   }
 }
 
@@ -343,5 +343,22 @@ ng-scrollbar.table-scrollbar {
 
 .float-check {
   position: relative;
-  bottom  : 6px;
+  bottom: 6px;
+}
+
+.tooltip.tooltip-style .tooltip-inner {
+  background-color: #fff;
+  color: #000;
+  box-shadow: 1px 2px 13px -1px rgba(94, 94, 94, 0.54);
+  -webkit-box-shadow: 1px 2px 13px -1px rgba(94, 94, 94, 0.54);
+  -moz-box-shadow: 1px 2px 13px -1px rgba(94, 94, 94, 0.54);
+}
+
+.tooltip.top.tooltip-style .tooltip-arrow:before,
+.tooltip.top.tooltip-style .tooltip-arrow {
+  border-top-color: #fff;
+}
+
+.cp {
+  color: #404041 !important;
 }
