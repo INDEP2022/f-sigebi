@@ -410,6 +410,16 @@ const routes: Routes = [
       ).CBTcvMTaxValidationCalculationModule,
     data: { title: 'Validación de Cálculo I.V.A' },
   },
+  {
+    path: 'marketing-records',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/marketing-records/c-b-mr-m-marketing-records.module'
+        )
+      ).CBMrMMarketingRecordsModule,
+    data: { title: 'Oficios de Comercialización' },
+  },
 ];
 
 @NgModule({

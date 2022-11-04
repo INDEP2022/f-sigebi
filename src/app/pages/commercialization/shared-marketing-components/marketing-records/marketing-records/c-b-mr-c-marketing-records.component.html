@@ -1,0 +1,272 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">CREACIÓN DE OFICIOS DE COMERCIALIZACIÓN</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+    	<div class="row mb-3 mt-3">
+    		<div class="col-lg-4 col-md-4 col-sm-12 col-12 mb-3 mt-3 align-self-center">
+          <div class="row justify-content-between">
+            <div class="col-md-6">
+              <form-radio label="Bien">
+                <input
+                  type="radio"
+                  formControlName="recordCommerType"
+                  value="goodId" />
+              </form-radio>
+            </div>
+            <div class="col-md-6">
+              <form-radio label="Portafolio">
+                <input
+                  type="radio"
+                  formControlName="recordCommerType"
+                  value="portfolio" />
+              </form-radio>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="form.get('recordCommerType').value === 'goodId'" class="col-lg-4 col-md-4 col-sm-6 col-12 mb-3 mt-3 align-self-baseline">
+        	<app-goods-shared [form]="form"></app-goods-shared>
+        </div>
+        <div *ngIf="form.get('recordCommerType').value === 'portfolio'" class="col-lg-4 col-md-4 col-sm-6 col-12 mb-3 mt-3 align-self-baseline">
+        	<div class="row mb-3 mt-3">
+        		<div class="col-md-12">
+        			<form-field
+		            label="Portafolio"
+		            [control]="form.get('portfolio')">
+		            <input
+		              class="form-control"
+		              formControlName="portfolio" type="text"/>
+		          </form-field>
+        		</div>
+        	</div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-6 col-12 mb-3 mt-3">
+        	<div class="row mb-3 mt-3">
+        		<div class="col-md-12">
+		        	<form-field
+		            label="Clave Oficio"
+		            [control]="form.get('recordKey')">
+		            <input
+		              class="form-control"
+		              formControlName="recordKey" type="text"/>
+		          </form-field>
+        		</div>
+      		</div>
+        </div>
+    	</div>
+    	<div class="row mb-3 mt-3">
+    		<!--Users Component-->
+        <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
+          <app-user-shared
+            [form]="form"
+            [userField]="'sender'"
+            [label]="'Remitente'"></app-user-shared>
+        </div>
+    		<!--Users Component-->
+        <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
+          <app-user-shared
+            [form]="form"
+            [userField]="'recipient'"
+            [label]="'Destinatario'"></app-user-shared>
+        </div>
+        <!--Cities Components-->
+      	<div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
+        	<app-cities-shared [form]="form"></app-cities-shared>
+       	</div>
+        <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
+        	<form-field
+        		[control]="form.get('salesProcess')"
+		        label="Proceso de Venta">
+		        <select class="form-control" formControlName="salesProcess">
+		          <option [value]="null">Seleccione un valor</option>
+		          <option value="process1">Subasta</option>
+		          <option value="process2">Proccess 2</option>
+		          <option value="process3">Proccess 3</option>
+		        </select>
+		      </form-field>
+        </div>
+      </div>
+      <div class="row mb-3 mt-3">
+    		<div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3 align-self-center">
+          <div class="row justify-content-between">
+            <div class="col-md-6">
+              <form-radio label="Oficio Entrega Física">
+                <input
+                  type="radio"
+                  formControlName="recordType"
+                  value="physicalDelivery" />
+              </form-radio>
+            </div>
+            <div class="col-md-6">
+              <form-radio label="Oficio Escrituración">
+                <input
+                  type="radio"
+                  formControlName="recordType"
+                  value="houseTitle" />
+              </form-radio>
+            </div>
+          </div>
+        </div>
+    	</div>
+    	<div class="row mb-3 mt-3">
+    		<div class="col-md-12 mb-3 mt-3">
+    			<form-field
+        		[control]="form.get('paragraph1')"
+		        label="Párrafo 1">
+		        <textarea class="form-control" type="text" formControlName="paragraph1"></textarea>
+		      </form-field>
+    		</div>
+    		<div class="col-md-12 mb-3 mt-3">
+    			<form-field
+        		[control]="form.get('paragraph2')"
+		        label="Párrafo 2">
+		        	<textarea class="form-control" type="text" formControlName="paragraph2"></textarea>
+		      </form-field>
+    		</div>
+    		<div class="col-md-12 mb-3 mt-3">
+    			<form-field
+        		[control]="form.get('paragraph3')"
+		        label="Párrafo 3">
+		        	<textarea class="form-control" type="text" formControlName="paragraph3"></textarea>
+		      </form-field>
+    		</div>
+    	</div>
+    </form>
+    <!--GOODS TABLE-->
+    <div class="row justify-content-end mr-1">
+      <div class="ch-content">
+        <h5 class="title">Bienes</h5>
+      </div>
+    </div>
+    <div class="d-flex justify-content-end mr-1">
+      <app-columns-select
+        (settingsChange)="settingsChange($event)"
+        [settings]="settings">
+      </app-columns-select>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+    <!--DOCS TABLE-->
+    <div class="row justify-content-end mr-1">
+      <div class="ch-content">
+        <h5 class="title">Documentos para el Oficio de Gestión</h5>
+      </div>
+    </div>
+    <div class="d-flex justify-content-end mr-1">
+      <div class="col-2">
+        <button class="btn btn-primary active btn-sm w-100" (click)="openModal()">
+          Agregar
+        </button>
+      </div>
+      <app-columns-select
+        (settingsChange)="settingsChange2($event)"
+        [settings]="settings2">
+      </app-columns-select>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings2"
+            [source]="data2"
+            (delete)="delete($event)">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params2" [totalItems]="totalItems2">
+    </app-pagination>
+    <!--C.C.P USERS-->
+    <form class="form-material" [formGroup]="formCcp">
+      <div class="row mb-3 mt-3">
+        <div class="col-xs-12 col-12 col-md-6 col-lg-6 mb-3 mt-3">
+          <div class="row mb-3 mt-3">
+            <!--Users Component-->
+            <div class="col-md-12 mb-3 mt-3">
+              <app-user-shared
+                  [form]="formCcp"
+                  [userField]="'userId'"
+                  [patchValue]="true"
+                  [label]="'C.C.P'"></app-user-shared>
+            </div>
+          </div>
+          <div class="row mb-3 mt-3">
+            <div class="col-md-12" *ngIf="usersCcp.length > 0">
+              <h4 class="card-title mb-5">C.C.P</h4>
+              <div class="flex-row">
+                <div
+                  class="mb-3"
+                  *ngFor="let user of usersCcp; let i = index">
+                  <span class="badge-pill badge-info badge">
+                    {{user.name}}
+                    <i class="bi bi-x-circle align-self-center" (click)="removeItem(i)"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-12 col-12 col-md-6 col-lg-6 mb-3 mt-3 align-self-center">
+          <div class="row mb-3 mt-3">
+            <div class="col-md-12">
+              <form-field
+                label="Folio Escaner"
+                [control]="formCcp.get('scannerFolio')">
+                <input
+                  class="form-control"
+                  formControlName="scannerFolio" type="text"/>
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--Actions-->
+      <div class="row mb-3 mt-3">
+        <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+          <button type="button" [disabled]="form.get('recordCommerType').value !== 'goodId'" class="btn btn-secondary btn-sm active w-100">
+            Bien Vista Previa
+          </button>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+          <button type="button" [disabled]="form.get('recordCommerType').value !== 'portfolio'" class="btn btn-secondary btn-sm active w-100">
+            Pflio. Vista Previa
+          </button>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+          <button type="button" class="btn btn-secondary btn-sm active w-100">
+            Cierre - Envío
+          </button>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+          <button type="button" class="btn btn-secondary btn-sm active w-100">
+            Borrar Oficio
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button [disabled]="!form.valid" [loading]="loading">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="resetForm()">Limpiar</button>
+      </div>
+    </div>
+  </div>
+</app-card>
