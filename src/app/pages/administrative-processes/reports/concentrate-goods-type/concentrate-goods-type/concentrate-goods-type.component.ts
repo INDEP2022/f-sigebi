@@ -5,12 +5,11 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 @Component({
   selector: 'app-concentrate-goods-type',
   templateUrl: './concentrate-goods-type.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ConcentrateGoodsTypeComponent implements OnInit {
   concentrateGoodsTypeForm: ModelForm<any>;
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();

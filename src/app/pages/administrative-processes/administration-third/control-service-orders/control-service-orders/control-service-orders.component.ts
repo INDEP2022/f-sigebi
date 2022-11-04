@@ -9,8 +9,7 @@ import { CONTROLSERVICEORDERS_COLUMNS } from './control-service-orders-columns';
 @Component({
   selector: 'app-control-service-orders',
   templateUrl: './control-service-orders.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ControlServiceOrdersComponent extends BasePage implements OnInit {
   serviceOrdersForm: ModelForm<any>;

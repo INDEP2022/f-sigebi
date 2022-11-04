@@ -3,14 +3,10 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-fdp-cdda-c-administrator-donation-contract',
   templateUrl: './fdp-cdda-c-administrator-donation-contract.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class FdpCddaCAdministratorDonationContractComponent implements OnInit {
+  constructor() {}
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

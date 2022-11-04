@@ -500,15 +500,21 @@ const routes: Routes = [
       {
         path: 'control-service-orders',
         loadChildren: async () =>
-          (await import('./administration-third/control-service-orders/control-service-orders.module'))
-            .ControlServiceOrdersModule,
+          (
+            await import(
+              './administration-third/control-service-orders/control-service-orders.module'
+            )
+          ).ControlServiceOrdersModule,
         data: { title: 'Control de las ordenes de servicio' },
       },
       {
         path: 'service-orders-format',
         loadChildren: async () =>
-          (await import('./administration-third/service-orders-format/service-orders-format.module'))
-            .ServiceOrdersFormatModule,
+          (
+            await import(
+              './administration-third/service-orders-format/service-orders-format.module'
+            )
+          ).ServiceOrdersFormatModule,
         data: { title: 'Formato ordenes de servicio ' },
       },
       /**
@@ -583,4 +589,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class AdministrativeProcessesRoutingModule { }
+export class AdministrativeProcessesRoutingModule {}

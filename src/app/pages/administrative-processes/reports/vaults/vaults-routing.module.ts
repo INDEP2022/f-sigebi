@@ -4,12 +4,13 @@ import { VaultsComponent } from './vaults/vaults.component';
 
 const routes: Routes = [
   {
-    path: '', component: VaultsComponent
-  }
+    path: '',
+    component: VaultsComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class VaultsRoutingModule { }
+export class VaultsRoutingModule {}

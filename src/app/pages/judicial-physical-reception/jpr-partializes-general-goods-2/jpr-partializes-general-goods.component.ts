@@ -6,52 +6,52 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-jpr-partializes-general-goods',
   templateUrl: './jpr-partializes-general-goods.component.html',
-  styleUrls: ["partializes-general-goods.component.scss"],
+  styleUrls: ['partializes-general-goods.component.scss'],
 })
 export class JprPartializesGeneralGoodsComponent implements OnInit {
-
   form: FormGroup;
-  settings = {... TABLE_SETTINGS,
-   
+  settings = {
+    ...TABLE_SETTINGS,
+
     actions: false,
     columns: {
       id: {
-        title: "Id.",
-        type: "string",
+        title: 'Id.',
+        type: 'string',
         sort: false,
       },
       noBien: {
-        title: "No. Bien",
-        type: "string",
+        title: 'No. Bien',
+        type: 'string',
         sort: false,
       },
       descripcion: {
-        title: "Descripción",
-        type: "string",
+        title: 'Descripción',
+        type: 'string',
         sort: false,
       },
       proceso: {
-        title: "Proceso",
-        type: "string",
+        title: 'Proceso',
+        type: 'string',
         sort: false,
       },
       cantidad: {
-        title: "Cantidad",
-        type: "string",
+        title: 'Cantidad',
+        type: 'string',
         sort: false,
       },
       avaluo: {
-        title: "Valor Avalúo",
-        type: "string",
+        title: 'Valor Avalúo',
+        type: 'string',
         sort: false,
       },
       importe: {
-        title: "Importe",
-        type: "number",
+        title: 'Importe',
+        type: 'number',
         sort: false,
       },
     },
-    noDataMessage: "No se encontrarón registros",
+    noDataMessage: 'No se encontrarón registros',
   };
   data = EXAMPLE_DATA;
   itemsSelect = new DefaultSelect();
@@ -59,18 +59,18 @@ export class JprPartializesGeneralGoodsComponent implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    const total: number = this.data.map(element => element.cantidad).reduce((prev, curr) => prev + curr, 0)
-    this.data.push(
-      {
-        id: null,
-        noBien: null,
-        descripcion: null,
-        proceso: null,
-        cantidad: total,
-        avaluo: null,
-        importe: null
-      },
-    )
+    const total: number = this.data
+      .map(element => element.cantidad)
+      .reduce((prev, curr) => prev + curr, 0);
+    this.data.push({
+      id: null,
+      noBien: null,
+      descripcion: null,
+      proceso: null,
+      cantidad: total,
+      avaluo: null,
+      importe: null,
+    });
   }
   prepareForm() {
     this.form = this.fb.group({
@@ -88,15 +88,14 @@ export class JprPartializesGeneralGoodsComponent implements OnInit {
       saldo: [null, [Validators.required]],
     });
   }
-
 }
 
 const EXAMPLE_DATA = [
   {
     id: 1,
     noBien: 123,
-    descripcion: "DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS",
-    proceso: "ASEGURADO",
+    descripcion: 'DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS',
+    proceso: 'ASEGURADO',
     cantidad: 10,
     avaluo: 1,
     importe: 500,
@@ -104,8 +103,8 @@ const EXAMPLE_DATA = [
   {
     id: 1,
     noBien: 123,
-    descripcion: "DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS",
-    proceso: "ASEGURADO",
+    descripcion: 'DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS',
+    proceso: 'ASEGURADO',
     cantidad: 10,
     avaluo: 1,
     importe: 500,
@@ -113,8 +112,8 @@ const EXAMPLE_DATA = [
   {
     id: 1,
     noBien: 123,
-    descripcion: "DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS",
-    proceso: "ASEGURADO",
+    descripcion: 'DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS',
+    proceso: 'ASEGURADO',
     cantidad: 10,
     avaluo: 1,
     importe: 500,
@@ -122,8 +121,8 @@ const EXAMPLE_DATA = [
   {
     id: 1,
     noBien: 123,
-    descripcion: "DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS",
-    proceso: "ASEGURADO",
+    descripcion: 'DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS',
+    proceso: 'ASEGURADO',
     cantidad: 10,
     avaluo: 1,
     importe: 500,
@@ -131,8 +130,8 @@ const EXAMPLE_DATA = [
   {
     id: 1,
     noBien: 123,
-    descripcion: "DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS",
-    proceso: "ASEGURADO",
+    descripcion: 'DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS',
+    proceso: 'ASEGURADO',
     cantidad: 10,
     avaluo: 1,
     importe: 500,
@@ -140,8 +139,8 @@ const EXAMPLE_DATA = [
   {
     id: 1,
     noBien: 123,
-    descripcion: "DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS",
-    proceso: "ASEGURADO",
+    descripcion: 'DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS',
+    proceso: 'ASEGURADO',
     cantidad: 10,
     avaluo: 1,
     importe: 500,
@@ -149,8 +148,8 @@ const EXAMPLE_DATA = [
   {
     id: 1,
     noBien: 123,
-    descripcion: "DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS",
-    proceso: "ASEGURADO",
+    descripcion: 'DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS',
+    proceso: 'ASEGURADO',
     cantidad: 10,
     avaluo: 1,
     importe: 500,
@@ -158,8 +157,8 @@ const EXAMPLE_DATA = [
   {
     id: 1,
     noBien: 123,
-    descripcion: "DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS",
-    proceso: "ASEGURADO",
+    descripcion: 'DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS',
+    proceso: 'ASEGURADO',
     cantidad: 10,
     avaluo: 1,
     importe: 500,
@@ -167,8 +166,8 @@ const EXAMPLE_DATA = [
   {
     id: 1,
     noBien: 123,
-    descripcion: "DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS",
-    proceso: "ASEGURADO",
+    descripcion: 'DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS',
+    proceso: 'ASEGURADO',
     cantidad: 10,
     avaluo: 1,
     importe: 500,
@@ -176,8 +175,8 @@ const EXAMPLE_DATA = [
   {
     id: 1,
     noBien: 123,
-    descripcion: "DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS",
-    proceso: "ASEGURADO",
+    descripcion: 'DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS',
+    proceso: 'ASEGURADO',
     cantidad: 10,
     avaluo: 1,
     importe: 500,

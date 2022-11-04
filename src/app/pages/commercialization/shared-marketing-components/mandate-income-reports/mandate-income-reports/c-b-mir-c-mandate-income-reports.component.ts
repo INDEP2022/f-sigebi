@@ -12,16 +12,17 @@ import { ExcelService } from 'src/app/common/services/excel.service';
 @Component({
   selector: 'app-c-b-mir-c-mandate-income-reports',
   templateUrl: './c-b-mir-c-mandate-income-reports.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CBMirCMandateIncomeReportsComponent extends BasePage implements OnInit {
-
+export class CBMirCMandateIncomeReportsComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
 
   data: LocalDataSource = new LocalDataSource();
   dataOI: any[] = data;
-  selectedRows:any=[];
+  selectedRows: any = [];
 
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -32,9 +33,7 @@ export class CBMirCMandateIncomeReportsComponent extends BasePage implements OnI
   maxDate = new Date(new Date().getFullYear(), 11);
   minDate = new Date(new Date().getFullYear(), 0);
 
-  constructor(
-    private fb: FormBuilder,
-    private excelService: ExcelService) {
+  constructor(private fb: FormBuilder, private excelService: ExcelService) {
     super();
     this.settings = {
       ...this.settings,
@@ -46,7 +45,7 @@ export class CBMirCMandateIncomeReportsComponent extends BasePage implements OnI
 
   ngOnInit(): void {
     this.prepareForm();
-    this.data.load(this.dataOI)
+    this.data.load(this.dataOI);
   }
 
   private prepareForm(): void {
@@ -59,7 +58,7 @@ export class CBMirCMandateIncomeReportsComponent extends BasePage implements OnI
       authorizingUser: [null, [Validators.required]],
       requestingUser: [null, [Validators.required]],
       incomeOrder: [null, [Validators.required]],
-      reportNumber: [null, [Validators.required]]
+      reportNumber: [null, [Validators.required]],
     });
   }
 
@@ -67,12 +66,11 @@ export class CBMirCMandateIncomeReportsComponent extends BasePage implements OnI
     this.settings = $event;
   }
 
-  onUserRowSelect($event:any) {
+  onUserRowSelect($event: any) {
     this.selectedRows = $event.selected;
   }
 
-  exportAsXLSX(name:string): void {
+  exportAsXLSX(name: string): void {
     this.excelService.exportAsExcelFile(this.selectedRows, name);
   }
-
 }

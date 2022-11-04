@@ -4,12 +4,13 @@ import { StorehouseComponent } from './storehouse/storehouse.component';
 
 const routes: Routes = [
   {
-    path: '', component: StorehouseComponent
-  }
+    path: '',
+    component: StorehouseComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class StorehouseRoutingModule { }
+export class StorehouseRoutingModule {}

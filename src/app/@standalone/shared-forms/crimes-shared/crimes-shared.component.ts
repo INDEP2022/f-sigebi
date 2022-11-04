@@ -14,17 +14,14 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { ICrime } from 'src/app/core/models/administrative-processes/crime.model';
 import { dataCrimes } from './data';
 
-
 @Component({
   selector: 'app-crimes-shared',
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './crimes-shared.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CrimesSharedComponent extends BasePage implements OnInit {
-
   @Input() form: FormGroup;
   @Input() crimeField: string = 'crime';
 

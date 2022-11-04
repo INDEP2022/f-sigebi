@@ -3,14 +3,10 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-costs-clasification',
   templateUrl: './costs-clasification.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CostsClasificationComponent implements OnInit {
+  constructor() {}
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

@@ -1,16 +1,16 @@
 /** BASE IMPORT */
 import {
   Component,
-  OnDestroy,
-  OnInit,
   HostListener,
   Input,
+  OnDestroy,
+  OnInit,
 } from '@angular/core';
-import { BasePage } from 'src/app/core/shared/base-page';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BasePage } from 'src/app/core/shared/base-page';
 /** LIBRERÍAS EXTERNAS IMPORTS */
-import { Example } from 'src/app/core/models/catalogs/example';
 import { ViewCell } from 'ng2-smart-table';
+import { Example } from 'src/app/core/models/catalogs/example';
 
 /** SERVICE IMPORTS */
 import { EventEmitterService } from './eventEmitter.service';

@@ -5,12 +5,12 @@ import { CMPaymentSearchListComponent } from './c-m-payment-search-list/c-m-paym
 const routes: Routes = [
   {
     path: '',
-    component: CMPaymentSearchListComponent
-  }
+    component: CMPaymentSearchListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CMPaymentSearchRoutingModule { }
+export class CMPaymentSearchRoutingModule {}

@@ -5,14 +5,13 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 @Component({
   selector: 'app-storehouse',
   templateUrl: './storehouse.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class StorehouseComponent implements OnInit {
   costStorehouseForm: ModelForm<any>;
   assignmentStorehouseForm: ModelForm<any>;
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();

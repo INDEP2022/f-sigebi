@@ -3,17 +3,18 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ServiceOrdersFormatHistoricComponent } from '../service-orders-format-historic/service-orders-format-historic.component';
-import { CONTROLSERVICEORDERS_COLUMNS, SERVICEORDERSFORMAT_COLUMNS } from './service-orders-format-columns';
+import {
+  CONTROLSERVICEORDERS_COLUMNS,
+  SERVICEORDERSFORMAT_COLUMNS,
+} from './service-orders-format-columns';
 
 @Component({
   selector: 'app-service-orders-format',
   templateUrl: './service-orders-format.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
   data1: any[] = [];
@@ -99,7 +100,7 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
     let config: ModalOptions = {
       initialState: {
         data,
-        callback: (next: boolean) => { },
+        callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,

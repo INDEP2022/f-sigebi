@@ -5,12 +5,12 @@ import { PeGdaddCApprovalChangeNumeraireComponent } from './pe-gdadd-c-approval-
 const routes: Routes = [
   {
     path: '',
-    component: PeGdaddCApprovalChangeNumeraireComponent
-  }
+    component: PeGdaddCApprovalChangeNumeraireComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PeGdaddMApprovalChangeNumeraireRoutingModule { }
+export class PeGdaddMApprovalChangeNumeraireRoutingModule {}

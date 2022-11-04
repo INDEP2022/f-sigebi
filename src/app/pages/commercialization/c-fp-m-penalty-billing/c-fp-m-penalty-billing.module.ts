@@ -7,11 +7,15 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { CFpCPenaltyBillingMainComponent } from './c-fp-c-penalty-billing-main/c-fp-c-penalty-billing-main.component';
 import { CFpMPenaltyBillingRoutingModule } from './c-fp-m-penalty-billing-routing.module';
-import { FolioModalComponent } from './folio-modal/folio-modal.component';
 import { CancelModalComponent } from './cancel-modal/cancel-modal.component';
+import { FolioModalComponent } from './folio-modal/folio-modal.component';
 
 @NgModule({
-  declarations: [CFpCPenaltyBillingMainComponent, FolioModalComponent, CancelModalComponent],
+  declarations: [
+    CFpCPenaltyBillingMainComponent,
+    FolioModalComponent,
+    CancelModalComponent,
+  ],
   imports: [
     CommonModule,
     CFpMPenaltyBillingRoutingModule,

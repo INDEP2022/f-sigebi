@@ -6,9 +6,7 @@
     <form class="form-material" [formGroup]="form">
       <div class="row mb-3 mt-3">
         <div class="col-xs-12 col-12 col-md-2 mb-3 mb-3 mt-3">
-          <form-field
-            label="Fecha 1"
-            [control]="form.get('startDate')">
+          <form-field label="Fecha 1" [control]="form.get('startDate')">
             <input
               class="form-control"
               formControlName="startDate"
@@ -16,9 +14,7 @@
           </form-field>
         </div>
         <div class="col-xs-12 col-12 col-md-2 mb-3 mb-3 mt-3">
-          <form-field
-            label="Fecha 2"
-            [control]="form.get('endDate')">
+          <form-field label="Fecha 2" [control]="form.get('endDate')">
             <input
               class="form-control"
               formControlName="endDate"
@@ -27,10 +23,7 @@
         </div>
         <div class="col-xs-12 col-12 col-md-2 mb-3 mb-3 mt-3">
           <form-field label="Lote" [control]="form.get('batch')">
-            <input
-              class="form-control"
-              formControlName="batch"
-              type="number" />
+            <input class="form-control" formControlName="batch" type="number" />
           </form-field>
         </div>
         <!--Events Component-->
@@ -62,13 +55,18 @@
         </div>
       </div>
       <div class="row mb-3 mt-3 justify-content-end">
-        <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 col-12 align-self-center">
-          <button type="button" class="btn btn-primary btn-sm active w-100">Consultar</button>
+        <div
+          class="col-lg-2 col-md-2 col-sm-12 col-xs-12 col-12 align-self-center">
+          <button type="button" class="btn btn-primary btn-sm active w-100">
+            Consultar
+          </button>
         </div>
       </div>
       <div class="row mb-3 mt-3">
         <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12 col-12">
-          <label for="">Si desea una orden de ingreso en especial índiquela</label>
+          <label for=""
+            >Si desea una orden de ingreso en especial índiquela</label
+          >
           <div class="row mb-3 mt-3">
             <div class="col-6 mb-3 mb-3 mt-3">
               <form-field label="O.I" [control]="form.get('incomeOrder')">
@@ -84,7 +82,9 @@
           <label for="">Último reporte: </label>
           <div class="row mb-3 mt-3">
             <div class="col-6 mb-3 mb-3 mt-3">
-              <form-field label="No. Reporte a Reimprimir" [control]="form.get('incomeOrder')">
+              <form-field
+                label="No. Reporte a Reimprimir"
+                [control]="form.get('incomeOrder')">
                 <input
                   class="form-control"
                   formControlName="reportNumber"
@@ -93,8 +93,11 @@
             </div>
           </div>
         </div>
-        <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 col-12 align-self-center">
-          <button type="button" class="btn btn-primary btn-sm active w-100">Imprimir</button>
+        <div
+          class="col-lg-2 col-md-2 col-sm-12 col-xs-12 col-12 align-self-center">
+          <button type="button" class="btn btn-primary btn-sm active w-100">
+            Imprimir
+          </button>
         </div>
       </div>
     </form>
@@ -106,7 +109,12 @@
     </div>
     <div class="d-flex justify-content-end mr-1">
       <div class="col-2">
-        <button type="button" class="btn btn-success btn-sm active w-100" (click)="exportAsXLSX('O.I a Reportar a Tesorería')">Generar XML</button>
+        <button
+          type="button"
+          class="btn btn-success btn-sm active w-100"
+          (click)="exportAsXLSX('O.I a Reportar a Tesorería')">
+          Generar XML
+        </button>
       </div>
       <app-columns-select
         (settingsChange)="settingsChange($event)"
@@ -135,7 +143,12 @@
     </div>
     <div class="d-flex justify-content-end mr-1">
       <div class="col-2">
-        <button type="button" class="btn btn-success btn-sm active w-100" (click)="exportAsXLSX('O.I Afectadas')">Generar XML</button>
+        <button
+          type="button"
+          class="btn btn-success btn-sm active w-100"
+          (click)="exportAsXLSX('O.I Afectadas')">
+          Generar XML
+        </button>
       </div>
       <app-columns-select
         (settingsChange)="settingsChange($event)"

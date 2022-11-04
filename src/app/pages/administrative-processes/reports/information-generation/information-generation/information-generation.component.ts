@@ -5,12 +5,11 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 @Component({
   selector: 'app-information-generation',
   templateUrl: './information-generation.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class InformationGenerationComponent implements OnInit {
   informationGenerationForm: ModelForm<any>;
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();

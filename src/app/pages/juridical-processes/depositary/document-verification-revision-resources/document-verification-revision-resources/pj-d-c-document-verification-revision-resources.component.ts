@@ -1,6 +1,6 @@
 /** BASE IMPORT */
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 

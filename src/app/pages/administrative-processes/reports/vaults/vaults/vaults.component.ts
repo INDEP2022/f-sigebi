@@ -5,12 +5,11 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 @Component({
   selector: 'app-vaults',
   templateUrl: './vaults.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class VaultsComponent implements OnInit {
   vaultsForm: ModelForm<any>;
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();
@@ -26,5 +25,4 @@ export class VaultsComponent implements OnInit {
       until1: [null, Validators.required],
     });
   }
-
 }

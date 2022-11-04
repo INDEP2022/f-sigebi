@@ -4,12 +4,13 @@ import { ServiceOrdersFormatComponent } from './service-orders-format/service-or
 
 const routes: Routes = [
   {
-    path: '', component: ServiceOrdersFormatComponent
-  }
+    path: '',
+    component: ServiceOrdersFormatComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ServiceOrdersFormatRoutingModule { }
+export class ServiceOrdersFormatRoutingModule {}
