@@ -8,7 +8,6 @@
       <div class="col-12 col-sm-12 col-md-6">
         <search-bar-simple
           (eventEmit)="search($event)"
-          [valueBut]="'Buscar'"
           [label]="''"
           [placeholder]="'Número de expediente'">
         </search-bar-simple>
@@ -131,14 +130,19 @@
           </div>
 
           <div class="row mt-4">
-            <div class="col-md-4">
+            <div class="col-md-2">
               <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="actForm.get('date')" label="Fecha">
-                  <input
-                    type="text"
-                    class="form-control"
-                    bsDatepicker
-                    formControlName="date" />
+                <form-field [control]="actForm.get('year')" label="Año">
+                  <input type="text" class="form-control" [bsConfig]="bsConfigFromYear" #dp="bsDatepicker" bsDatepicker
+                    [(bsValue)]="bsValueFromYear" formControlName="year" />
+                </form-field>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="mb-3 pl-4 pr-4">
+                <form-field [control]="actForm.get('month')" label="Mes">
+                  <input type="text" class="form-control" [bsConfig]="bsConfigFromMonth" #dp="bsDatepicker" bsDatepicker
+                    [(bsValue)]="bsValueFromMonth" formControlName="month" />
                 </form-field>
               </div>
             </div>
@@ -276,40 +280,60 @@
         <div class="row mt-5">
           <app-divider class=""></app-divider>
         </div>
-        <div class="row mt-3 pt-2 scroll-table">
-          <ng2-smart-table
-            class="col-md-12"
-            [settings]="settings1"
-            [source]="data"></ng2-smart-table>
+        <div class="d-flex justify-content-end mt-5">
+          <app-columns-select [(settings)]="settings" class="row justify-content-end">
+          </app-columns-select>
         </div>
+        <ng-scrollbar style="min-height: 300px; border: none" class="mt-3" track="all">
+          <div class="row mt-3 pt-2">
+            <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="data">
+            </ng2-smart-table>
+          </div>
+        </ng-scrollbar>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
         <div class="row">
-          <div class="col-md-12">
-            <input type="text" status="" class="form-control" nbInput />
-            <p>
-              <span class="text-success mr-5"
-                ><i class="fa fa-square"></i> Disponibles</span
-              >
-              <span class="text-danger"
-                ><i class="fa fa-square"></i> No disponibles</span
-              >
-            </p>
+          <div class="d-flex align-items-center">
+            <div class="col-6 align-items-center">
+              <div class="mt-5">
+                <form class="form-material form-horizontal" [formGroup]="formTable1" (ngSubmit)="onSubmit()">
+                  <div class="row mt-5 justify-content-start justify-content-sm-end">
+                    <div class="mb-3 pl-4 pr-4">
+                      <form-field [control]="formTable1.get('detail')">
+                        <input type="text" class="form-control" formControlName="detail" readonly />
+                      </form-field>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div class="col-6 align-items-center">
+              <div class="row">
+                <div class="col-6">
+                  <span class="text-success mr-5"><i class="fa fa-square"></i> Disponibles</span>
+                </div>
+                <div class="col-6">
+                  <span class="text-danger"><i class="fa fa-square"></i> No disponibles</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-
+        
         <div class="row mt-5">
           <app-divider></app-divider>
         </div>
-        <div class="row mt-3 pt-2 scroll-table">
-          <ng2-smart-table
-            class="col-md-12"
-            [settings]="settings2"
-            [source]="data2"></ng2-smart-table>
+        <div class="d-flex justify-content-end mt-5">
+          <app-columns-select (settingsChange)="settingsChange($event, 2)" [settings]="settings2">
+          </app-columns-select>
         </div>
-        <div class="row">
-          <div class="col-md-12">
-            <input type="text" status="" class="form-control" nbInput />
+        <ng-scrollbar style="min-height: 300px; border: none" class="mt-3" track="all">
+          <div class="row mt-3">
+            <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings2" [source]="data2"></ng2-smart-table>
           </div>
-        </div>
+        </ng-scrollbar>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
       </div>
     </div>
   </div>

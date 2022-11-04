@@ -504,6 +504,13 @@ const routes: Routes = [
             .ControlServiceOrdersModule,
         data: { title: 'Control de las ordenes de servicio' },
       },
+      {
+        path: 'service-orders-format',
+        loadChildren: async () =>
+          (await import('./administration-third/service-orders-format/service-orders-format.module'))
+            .ServiceOrdersFormatModule,
+        data: { title: 'Formato ordenes de servicio ' },
+      },
       /**
        * Seguros David Lucas
        */

@@ -44,6 +44,7 @@ export class DocRequestTabComponent
   container: ViewContainerRef;
   @Input() typeDoc = '';
   title: string = '';
+  showSearchForm: boolean = false;
   selectDocType = new DefaultSelect<any>();
   docRequestForm: ModelForm<any>;
   params = new BehaviorSubject<ListParams>(new ListParams());
