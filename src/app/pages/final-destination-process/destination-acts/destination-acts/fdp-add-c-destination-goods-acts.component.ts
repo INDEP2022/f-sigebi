@@ -1,72 +1,34 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { COLUMNS1 } from './columns1';
+import { COLUMNS2 } from './columns2';
 
 @Component({
   selector: 'app-fdp-add-c-destination-goods-acts',
   templateUrl: './fdp-add-c-destination-goods-acts.component.html',
   styles: [],
 })
-export class FdpAddCDestinationGoodsActsComponent implements OnInit {
+export class FdpAddCDestinationGoodsActsComponent
+  extends BasePage
+  implements OnInit
+{
   actForm: FormGroup;
+  formTable1: FormGroup;
   response: boolean = false;
+  totalItems: number = 0;
+  settings2: any;
+  params = new BehaviorSubject<ListParams>(new ListParams());
 
-  settings1 = {
-    rowClassFunction: (row: any) =>
-      row.data.status ? 'available' : 'not-available',
-    pager: {
-      display: false,
-    },
-    hideSubHeader: true,
-    actions: false,
-    selectedRowIndex: -1,
-    mode: 'external',
-    columns: {
-      noBien: {
-        title: 'No. Bien',
-        type: 'number',
-      },
-      description: {
-        title: 'Descripcion',
-        type: 'string',
-      },
-      cantidad: {
-        title: 'Cantidad',
-        type: 'number',
-      },
-      acta: {
-        title: 'Acta',
-        type: 'string',
-      },
-    },
-    noDataMessage: 'No se encontrarón registros',
-  };
-
-  settings2 = {
-    pager: {
-      display: false,
-    },
-    hideSubHeader: true,
-    actions: false,
-    selectedRowIndex: -1,
-    mode: 'external',
-    columns: {
-      noBien: {
-        title: 'No. Bien',
-        type: 'number',
-      },
-      descripcion: {
-        title: 'Descripción',
-        type: 'string',
-      },
-      cantidad: {
-        title: 'Cantidad',
-        type: 'number',
-      },
-    },
-    noDataMessage: 'No se encontrarón registros',
-  };
-
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder) {
+    super();
+    this.settings = { ...this.settings, actions: false };
+    this.settings2 = { ...this.settings, actions: false };
+    this.settings.columns = COLUMNS1;
+    this.settings2.columns = COLUMNS2;
+  }
 
   ngOnInit(): void {
     this.initForm();
@@ -87,6 +49,10 @@ export class FdpAddCDestinationGoodsActsComponent implements OnInit {
       receiverName: [null, [Validators.required]],
       auditor: [null, [Validators.required]],
     });
+
+    this.formTable1 = this.fb.group({
+      detail: [null, []],
+    });
   }
 
   data = EXAMPLE_DATA;
@@ -97,6 +63,10 @@ export class FdpAddCDestinationGoodsActsComponent implements OnInit {
   }
 
   onSubmit() {}
+
+  settingsChange(event: any, op: number) {
+    op === 1 ? (this.settings = event) : (this.settings2 = event);
+  }
 }
 
 const EXAMPLE_DATA = [
