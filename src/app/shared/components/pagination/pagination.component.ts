@@ -10,7 +10,9 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
   styleUrls: ['./pagination.component.scss'],
 })
 export class PaginationComponent implements OnInit {
-  @Input() params: BehaviorSubject<ListParams>;
+  @Input() params: BehaviorSubject<ListParams> = new BehaviorSubject(
+    new ListParams()
+  );
   @Input() totalItems: number = 0;
   pageSizeOptions: number[] = [10, 25, 50, 100];
   pageSize: FormControl = new FormControl(10);

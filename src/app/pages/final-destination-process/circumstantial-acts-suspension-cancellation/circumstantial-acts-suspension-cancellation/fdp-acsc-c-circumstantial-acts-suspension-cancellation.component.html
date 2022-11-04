@@ -6,7 +6,7 @@
     <div body>
         <div class="row justify-content-center">
             <div class="col-12 col-sm-12 col-md-6">
-                <search-bar-simple (eventEmit)="search($event)" [valueBut]="'Buscar'" [label]="''"
+                <search-bar-simple (eventEmit)="search($event)" [label]="''"
                     [placeholder]="'Número de expediente'">
                 </search-bar-simple>
             </div>
@@ -230,11 +230,9 @@
                 </form>
 
                 <app-divider></app-divider>
-                <div class="row mt-5 justify-content-end mt-3">
-                    <div class="col-md-5 buttons pt-3 text-right">
-                        <app-columns-select (settingsChange)="settingsChange($event, 1)" [settings]="settings">
-                        </app-columns-select>
-                    </div>
+                <div class="d-flex justify-content-end mt-5">
+                    <app-columns-select [(settings)]="settings" class="row justify-content-end">
+                    </app-columns-select>
                 </div>
                 <div class="row mt-5 scroll-table">
                     <ng2-smart-table 

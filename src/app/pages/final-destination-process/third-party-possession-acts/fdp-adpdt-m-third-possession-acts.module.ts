@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { NgScrollbarModule } from 'ngx-scrollbar';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { FdpAdpdtMThirdPossessionActsRoutingModule } from './fdp-adpdt-m-third-possession-acts-routing.module';
 import { FdpAdpdtCThirdPossessionActsComponent } from './third-party-possession-acts/fdp-adpdt-c-third-possession-acts.component';
@@ -12,6 +13,7 @@ import { FdpAdpdtCThirdPossessionActsComponent } from './third-party-possession-
     FdpAdpdtMThirdPossessionActsRoutingModule,
     SharedModule,
     ReactiveFormsModule,
+    NgScrollbarModule,
   ],
 })
 export class FdpAdpdtMThirdPossessionActsModule {}

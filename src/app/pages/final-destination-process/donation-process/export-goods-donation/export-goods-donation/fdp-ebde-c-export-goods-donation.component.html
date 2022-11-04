@@ -21,13 +21,9 @@
       </div>
     </div>
 
-    <div class="row justify-content-end mt-3">
-      <div class="col-md-5 buttons pt-3 text-right">
-        <app-columns-select
-          (settingsChange)="settingsChange($event)"
-          [settings]="settings">
-        </app-columns-select>
-      </div>
+    <div class="d-flex justify-content-end mt-5">
+      <app-columns-select [(settings)]="settings" class="row justify-content-end">
+      </app-columns-select>
     </div>
 
     <div class="row mt-5">
@@ -40,16 +36,11 @@
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>
 
-    <div class="row mt-5">
-      <div class="col-12 col-md-3 text-center text-left">
+    <div class="row mt-5 justify-content-end">
+      <div class="col-12 col-md-3 text-center text-md-right">
         <button class="btn btn-success btn-sm active">Exportar a Excel</button>
       </div>
-      <div class="col-12 col-md-3 text-center text-left mt-3 mt-md-0">
-        <!-- <form-field>
-                    <input type="text" class="form-control" readonly />
-                </form-field> -->
-      </div>
-      <div class="col-12 col-md-3 text-center text-left mt-3 mt-md-0">
+      <div class="col-12 col-md-6 text-center text-md-right mt-3 mt-md-0">
         <button class="btn btn-success btn-sm active">
           Exportar a Excel y Cambiar Estatus
         </button>
