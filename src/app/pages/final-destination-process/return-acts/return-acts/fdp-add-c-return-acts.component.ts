@@ -1,90 +1,48 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  BsDatepickerConfig,
+  BsDatepickerViewMode,
+} from 'ngx-bootstrap/datepicker';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { COLUMNS1 } from './columns1';
+import { COLUMNS2 } from './columns2';
 
 @Component({
   selector: 'app-fdp-add-c-return-acts',
   templateUrl: './fdp-add-c-return-acts.component.html',
   styles: [],
 })
-export class FdpAddCReturnActsComponent implements OnInit {
+export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
   response: boolean = false;
   actForm: FormGroup;
-
-  settings1 = {
-    rowClassFunction: (row: any) =>
-      row.data.status ? 'available' : 'not-available',
-    pager: {
-      display: false,
-    },
-    hideSubHeader: true,
-    actions: false,
-    selectedRowIndex: -1,
-    mode: 'external',
-    columns: {
-      noBien: {
-        title: 'No. Bien',
-        type: 'number',
-      },
-      description: {
-        title: 'Descripcion',
-        type: 'string',
-      },
-      proceso: {
-        title: 'Proceso',
-        type: 'string',
-      },
-      cantidad: {
-        title: 'Cantidad',
-        type: 'number',
-      },
-      importe: {
-        title: 'Importe',
-        type: 'string',
-      },
-    },
-    noDataMessage: 'No se encontrarón registros',
-  };
-
-  settings2 = {
-    pager: {
-      display: false,
-    },
-    hideSubHeader: true,
-    actions: false,
-    selectedRowIndex: -1,
-    mode: 'external',
-    columns: {
-      noBien: {
-        title: 'No. Bien',
-        type: 'number',
-      },
-      descripcion: {
-        title: 'Descripción',
-        type: 'string',
-      },
-      proceso: {
-        title: 'Proceso',
-        type: 'string',
-      },
-      cantidad: {
-        title: 'Cantidad',
-        type: 'number',
-      },
-      importe: {
-        title: 'Importe',
-        type: 'number',
-      },
-    },
-    noDataMessage: 'No se encontrarón registros',
-  };
-
+  formTable1: FormGroup;
+  formTable2: FormGroup;
+  totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  bsValueFromMonth: Date = new Date();
+  minModeFromMonth: BsDatepickerViewMode = 'month';
+  bsConfigFromMonth: Partial<BsDatepickerConfig>;
+  bsValueFromYear: Date = new Date();
+  minModeFromYear: BsDatepickerViewMode = 'year';
+  bsConfigFromYear: Partial<BsDatepickerConfig>;
   data = EXAMPLE_DATA;
   data2 = EXAMPLE_DATA2;
+  settings2: any;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder) {
+    super();
+    this.settings = { ...this.settings, actions: false };
+    this.settings2 = { ...this.settings, actions: false };
+    this.settings.columns = COLUMNS1;
+    this.settings2.columns = COLUMNS2;
+  }
 
   ngOnInit(): void {
     this.initForm();
+    this.startCalendars();
   }
 
   search(term: string) {
@@ -92,6 +50,10 @@ export class FdpAddCReturnActsComponent implements OnInit {
   }
 
   onSubmit() {}
+
+  settingsChange(event: any, op: number) {
+    op === 1 ? (this.settings = event) : (this.settings2 = event);
+  }
 
   initForm() {
     this.actForm = this.fb.group({
@@ -106,9 +68,10 @@ export class FdpAddCReturnActsComponent implements OnInit {
       returnNumber: [null, [Validators.required]],
       admin: [null, [Validators.required]],
       folio: [null, [Validators.required]],
+      year: [this.bsValueFromYear, [Validators.required]],
+      month: [this.bsValueFromMonth, [Validators.required]],
       act: [null, [Validators.required]],
       elabDate: [null, [Validators.required]],
-      date: [null, [Validators.required]],
       folioScan: [null, [Validators.required]],
       orderingJudge: [null, [Validators.required]],
       observations: [null, [Validators.required]],
@@ -117,6 +80,31 @@ export class FdpAddCReturnActsComponent implements OnInit {
       witness: [null, [Validators.required]],
       auditor: [null, [Validators.required]],
     });
+
+    this.formTable1 = this.fb.group({
+      detail: [null, []],
+    });
+
+    this.formTable2 = this.fb.group({
+      detail: [null, []],
+    });
+  }
+
+  startCalendars() {
+    this.bsConfigFromMonth = Object.assign(
+      {},
+      {
+        minMode: this.minModeFromMonth,
+        dateInputFormat: 'MM',
+      }
+    );
+    this.bsConfigFromYear = Object.assign(
+      {},
+      {
+        minMode: this.minModeFromYear,
+        dateInputFormat: 'YYYY',
+      }
+    );
   }
 }
 
