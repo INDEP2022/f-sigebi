@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -29,6 +29,7 @@ var data = [
   styles: [],
 })
 export class AssetsComponent extends BasePage implements OnInit {
+  @Input() dataObject: string;
   bsModalRef: BsModalRef;
   params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: any[] = [];
@@ -40,6 +41,8 @@ export class AssetsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(this.dataObject);
+
     this.settings = {
       ...TABLE_SETTINGS,
       actions: false,

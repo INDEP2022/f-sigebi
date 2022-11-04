@@ -116,6 +116,23 @@ const routes: Routes = [
       ).PJMaintenanceLegalRulingModule,
     data: { title: routesJuridicalProcesses[11].label },
   },
+  {
+    path: routesJuridicalProcesses[12].link,
+    loadChildren: async () =>
+      (await import('./juridical-ruling-g/pj-dj-m-juridical-ruling-g.module'))
+        .PJDJJuridicalRulingGModule,
+    data: { title: routesJuridicalProcesses[12].label },
+  },
+  {
+    path: routesJuridicalProcesses[13].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './verification-documents-confiscation/pj-cdd-m-verification-documents-confiscation.module'
+        )
+      ).PJCDDVerificationDocumentsConfiscationModule,
+    data: { title: routesJuridicalProcesses[13].label },
+  },
   // DEPOSITARIA
   {
     path: 'depositaria',

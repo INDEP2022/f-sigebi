@@ -1,3 +1,4 @@
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 export const COLUMNS_EXPORT_GOODS = {
   numberGood: {
     title: 'No. Bien',
@@ -51,17 +52,35 @@ export const COLUMNS_EXPORT_GOODS = {
   },
   cpd: {
     title: 'CPD',
-    type: 'boolean',
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
     sort: false,
   },
   adm: {
     title: 'ADM',
-    type: 'boolean',
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
     sort: false,
   },
-  RDA: {
+  rda: {
     title: 'RDA',
-    type: 'boolean',
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
     sort: false,
   },
 };

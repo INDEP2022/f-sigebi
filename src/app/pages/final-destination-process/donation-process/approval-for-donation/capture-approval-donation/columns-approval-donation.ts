@@ -1,3 +1,4 @@
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 export const COLUMNS_APPROVAL_DONATION = {
   ref: {
     title: 'Ref',
@@ -77,6 +78,17 @@ export const COLUMNS_APPROVAL_DONATION = {
   coordAdmin: {
     title: 'Coord. Admin.',
     type: 'string',
+    sort: false,
+  },
+  select: {
+    title: 'Selec.',
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
     sort: false,
   },
 };

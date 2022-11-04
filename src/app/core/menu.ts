@@ -5,7 +5,6 @@ import { DOCUMENTATION_COMPLEMENTARY } from '../common/routes/documentation-comp
 import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception.routes';
 import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
 import { GENERAL_PROCESSES_ROUTES } from '../common/routes/general-processes.routes';
-import { REGISTRATION_REQUEST_ROUTES } from '../common/routes/registration-request.routes';
 import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
@@ -53,9 +52,6 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
-
-  // Registro solicitudes//
-  ...REGISTRATION_REQUEST_ROUTES,
 
   //Documentación complementaria//
   ...DOCUMENTATION_COMPLEMENTARY,
@@ -405,8 +401,12 @@ export const MENU: IMenuItem[] = [
             link: '/pages/commercialization/c-b-pdp-ec-conciliation-execution/immovable',
           },
           {
-            label: 'Validación de Cálculo I.V.A',
-            link: '/pages/commercialization/tax-validation-calculation'
+            label: 'Validación de Cálculo I.V.A ',
+            link: '/pages/commercialization/tax-validation-calculation',
+          },
+          {
+            label: 'Adjudicaciones Directas en Parcialidades',
+            link: '/pages/commercialization/partiality-direct-adjudication',
           },
           {
             label: 'Oficios de Comercialización',
@@ -433,6 +433,10 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Clientes',
             link: '/pages/commercialization/catalogs/customers',
+          },
+          {
+            label: 'Proveedores',
+            link: '/pages/commercialization/catalogs/providers',
           },
         ],
       },

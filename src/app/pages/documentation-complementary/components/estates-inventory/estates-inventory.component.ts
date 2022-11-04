@@ -16,7 +16,7 @@ import { RequestSiabFormComponent } from '../request-siab-form/request-siab-form
 @Component({
   selector: 'app-estates-inventory',
   templateUrl: './estates-inventory.component.html',
-  styles: [],
+  styleUrls: ['../../styles/search-document-form.scss'],
 })
 export class EstatesInventoryComponent extends BasePage implements OnInit {
   @Input() documentationEstateForm: FormGroup;
@@ -47,7 +47,7 @@ export class EstatesInventoryComponent extends BasePage implements OnInit {
   estateSelectData: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-
+  showSearchForm: boolean = false;
   constructor(private modalService: BsModalService) {
     super();
     this.settingsEstate.actions.delete = true;

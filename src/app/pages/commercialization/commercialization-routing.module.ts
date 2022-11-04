@@ -411,6 +411,16 @@ const routes: Routes = [
     data: { title: 'Validación de Cálculo I.V.A' },
   },
   {
+    path: 'partiality-direct-adjudication',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/c-b-a-adp-m-partiality-direct-adjudication/c-b-a-adp-m-partiality-direct-adjudication.module'
+        )
+      ).CBAAdpMPartialityDirectAdjudicationModule,
+    data: { title: 'Adjudicaciones Directas en Parcialidades' },
+  },
+  {
     path: 'marketing-records',
     loadChildren: async () =>
       (
