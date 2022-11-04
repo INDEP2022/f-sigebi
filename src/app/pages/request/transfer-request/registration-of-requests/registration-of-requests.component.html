@@ -126,7 +126,7 @@
               <!-- Fin -->
               <!-- cumplimiento de verificacion y clasificacion de bienes-->
               <app-request-detail-tab
-                *ngIf="complianceVerifi || classifyAssets"
+                *ngIf="complianceVerifi || classifyAssets || validateDocument"
                 [dataObject]="object"></app-request-detail-tab>
               <!-- fin -->
             </tab>
@@ -146,6 +146,9 @@
                 [dataObject]="object"
                 [typeDoc]="'classify-assets'"></app-classification-assets-tab>
               <!-- fin -->
+              <!-- Validacion de Documentos -->
+              <app-clarifications *ngIf="validateDocument"></app-clarifications>
+              <!-- fin -->
             </tab>
             <tab heading="{{ tab3 }}">
               <!-- Registro de Solicitud o bien -->
@@ -155,12 +158,12 @@
               <!-- cumplimiento de verificacion y clasificacion de bienes -->
               <app-expedients-tabs
                 *ngIf="
-                  complianceVerifi || classifyAssets
+                  complianceVerifi || classifyAssets || validateDocument
                 "></app-expedients-tabs>
               <!-- fin -->
             </tab>
             <tab heading="{{ tab4 }}" *ngIf="requestRegistration">
-              <h5>Ingresar contenido</h5>
+              <app-registration-request-form></app-registration-request-form>
             </tab>
             <tab heading="{{ tab5 }}" *ngIf="requestRegistration">
               <app-expedients-tabs

@@ -1,4 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
@@ -10,7 +16,7 @@ import { SelectAddressComponent } from '../records-of-request-components/records
   templateUrl: './detail-assets-tab-component.component.html',
   styleUrls: ['./detail-assets-tab-component.component.scss'],
 })
-export class DetailAssetsTabComponentComponent implements OnInit {
+export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
   //usado para cargar los adatos de los bienes en el caso de cumplimientos de bienes y clasificacion de bienes
   @Input() detailAssets: any;
   @Input() typeDoc: any;
@@ -50,10 +56,19 @@ export class DetailAssetsTabComponentComponent implements OnInit {
 
   constructor(private fb: FormBuilder, private modalServise: BsModalService) {}
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.typeDoc === 'clarification') {
+      console.log(changes['detailAssets'].currentValue);
+    }
+  }
+
   ngOnInit(): void {
     this.initForm();
-    console.log('atributos de bienes');
+    console.log('tipo de bien');
     console.log(this.typeDoc);
+    //console.log('detalle del objeto enviado');
+    //console.log(this.detailAssets);
+
     this.initInputs();
   }
 

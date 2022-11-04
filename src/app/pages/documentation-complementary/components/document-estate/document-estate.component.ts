@@ -11,13 +11,14 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-document-estate',
   templateUrl: './document-estate.component.html',
-  styles: [],
+  styleUrls: ['../../styles/search-document-form.scss'],
 })
 export class DocumentEstateComponent extends BasePage implements OnInit {
   @Input() expedientEstForm: FormGroup;
   typeDocuments = new DefaultSelect();
 
   documentsEstData: any[] = [];
+  showSearchForm: boolean = false;
   constructor(private modalService: BsModalService) {
     super();
 

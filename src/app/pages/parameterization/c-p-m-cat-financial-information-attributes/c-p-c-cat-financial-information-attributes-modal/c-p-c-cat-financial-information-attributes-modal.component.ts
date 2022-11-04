@@ -15,7 +15,7 @@ export class CPCCatFinancialInformationAttributesModalComponent
 {
   form: FormGroup = new FormGroup({});
   allotment: any;
-  title: string = 'Catálogo de atributos de información financiera';
+  title: string = 'Catálogo de Atributos de Información Financiera';
   edit: boolean = false;
   @Output() refresh = new EventEmitter<true>();
 

@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { RegistrationRequestFormComponent } from './registration-request-form/registration-request-form.component';
+import { CClCCustomersListComponent } from './customers-list/c-cl-c-customers-list.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: RegistrationRequestFormComponent,
+    component: CClCCustomersListComponent,
   },
 ];
 
@@ -13,4 +13,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class RegistrationRequestRoutingModule {}
+export class CCCMCustomersRoutingModule {}

@@ -6,7 +6,6 @@ import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception
 import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
 import { GENERAL_PROCESSES_ROUTES } from '../common/routes/general-processes.routes';
 import { PARAMETERIZATION_ROUTES } from '../common/routes/parameterization.routes';
-import { REGISTRATION_REQUEST_ROUTES } from '../common/routes/registration-request.routes';
 import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
@@ -54,9 +53,6 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
-
-  // Registro solicitudes//
-  ...REGISTRATION_REQUEST_ROUTES,
 
   //Documentación complementaria//
   ...DOCUMENTATION_COMPLEMENTARY,
@@ -405,6 +401,10 @@ export const MENU: IMenuItem[] = [
             label: 'Ejecución de la Conciliación',
             link: '/pages/commercialization/c-b-pdp-ec-conciliation-execution/immovable',
           },
+          {
+            label: 'Validación de Cálculo I.V.A ',
+            link: '/pages/commercialization/tax-validation-calculation',
+          },
         ],
       },
       {
@@ -422,6 +422,14 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Líneas de Captura',
             link: '/pages/commercialization/catalogs/capture-lines',
+          },
+          {
+            label: 'Clientes',
+            link: '/pages/commercialization/catalogs/customers',
+          },
+          {
+            label: 'Proveedores',
+            link: '/pages/commercialization/catalogs/providers',
           },
         ],
       },

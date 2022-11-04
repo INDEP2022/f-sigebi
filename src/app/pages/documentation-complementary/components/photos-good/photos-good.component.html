@@ -1,5 +1,25 @@
-<h5 class="title">Búsqueda de imágenes</h5>
-<div class="row pt-3">
+<h5 class="title">
+  <p>
+    <a
+      class="text-color"
+      (click)="showSearchForm = true"
+      *ngIf="!showSearchForm">
+      <i class="fa fa-angle-right" aria-hidden="true"></i> Búsqueda de
+      imágenes</a
+    >
+  </p>
+
+  <p>
+    <a
+      class="text-color"
+      (click)="showSearchForm = false"
+      *ngIf="showSearchForm">
+      <i class="fa fa-angle-down" aria-hidden="true"></i> Búsqueda de
+      imágenes</a
+    >
+  </p>
+</h5>
+<div *ngIf="showSearchForm" class="row pt-3">
   <form [formGroup]="photosGood" class="form-material">
     <div class="col-md-6">
       <div class="form-group">
@@ -71,6 +91,9 @@
 <div class="form-inline justify-content-end btn-toolbar">
   <button class="btn btn-primary btn-sm active">
     <i class="fa fa-search"></i> Buscar
+  </button>
+  <button *ngIf="showSearchForm" class="btn btn-danger btn-sm active">
+    Limpiar
   </button>
 </div>
 

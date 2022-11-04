@@ -497,6 +497,26 @@ const routes: Routes = [
             .StorehouseModule,
         data: { title: 'Reportes de almacen' },
       },
+      {
+        path: 'control-service-orders',
+        loadChildren: async () =>
+          (
+            await import(
+              './administration-third/control-service-orders/control-service-orders.module'
+            )
+          ).ControlServiceOrdersModule,
+        data: { title: 'Control de las ordenes de servicio' },
+      },
+      {
+        path: 'service-orders-format',
+        loadChildren: async () =>
+          (
+            await import(
+              './administration-third/service-orders-format/service-orders-format.module'
+            )
+          ).ServiceOrdersFormatModule,
+        data: { title: 'Formato ordenes de servicio ' },
+      },
       /**
        * Seguros David Lucas
        */

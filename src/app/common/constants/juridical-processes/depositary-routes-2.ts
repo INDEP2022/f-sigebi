@@ -24,4 +24,19 @@ export const DEPOSITARY_ROUTES_2: any[] = [
     link: 'income-orders-depository-goods',
     menu: 'Ordenes de ingreso por bien de depositaria',
   },
+  {
+    label: 'Reporte de documentos para Dictaminacion',
+    link: 'report-documents-for-review',
+    menu: 'Reporte de documentos para Dictaminacion',
+  },
+  {
+    label: 'Monitor de abandono por devolución',
+    link: 'return-abandonment-monitor',
+    menu: 'Monitor de abandono por devolución',
+  },
+  {
+    label: 'Monitor de solicitudes de depositaria',
+    link: 'deposit-request-monitor',
+    menu: 'Monitor de solicitudes de depositaria',
+  },
 ];

@@ -22,12 +22,23 @@ const routes: Routes = [
   {
     path: 'capture-lines',
     loadChildren: async () =>
-      (
-        await import(
-          './c-c-m-capture-lines/c-c-m-capture-lines.module'
-        )
-      ).CCMCaptureLinesModule,
+      (await import('./c-c-m-capture-lines/c-c-m-capture-lines.module'))
+        .CCMCaptureLinesModule,
     data: { title: 'Líneas de Captura' },
+  },
+  {
+    path: 'customers',
+    loadChildren: async () =>
+      (await import('./customers/c-c-c-m-customers.module'))
+        .CCCMCustomersModule,
+    data: { title: 'Clientes' },
+  },
+  {
+    path: 'providers',
+    loadChildren: async () =>
+      (await import('./c-c-m-provider-catalogs/c-c-m-provider-catalogs.module'))
+        .CCMProviderCatalogsModule,
+    data: { title: 'Proveedores' },
   },
 ];
 
