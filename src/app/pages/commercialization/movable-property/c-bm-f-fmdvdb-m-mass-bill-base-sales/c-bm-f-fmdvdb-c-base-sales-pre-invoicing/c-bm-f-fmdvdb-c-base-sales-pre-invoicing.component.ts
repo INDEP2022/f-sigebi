@@ -15,7 +15,9 @@ import { SeparateFoliosModalComponent } from '../separate-folios-modal/separate-
   templateUrl: './c-bm-f-fmdvdb-c-base-sales-pre-invoicing.component.html',
   styles: [],
 })
-export class CBmFFmdvdbCBaseSalesPreInvoicingComponent extends BasePage implements OnInit
+export class CBmFFmdvdbCBaseSalesPreInvoicingComponent
+  extends BasePage
+  implements OnInit
 {
   show1 = false;
 

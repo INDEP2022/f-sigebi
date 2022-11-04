@@ -6,12 +6,12 @@ import { PaRclCReturnsConficationsListComponent } from './returns-confications-l
 const routes: Routes = [
   {
     path: '',
-    component: PaRclCReturnsConficationsListComponent
-  }
+    component: PaRclCReturnsConficationsListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PaRcMReturnsConficationsRoutingModule { }
+export class PaRcMReturnsConficationsRoutingModule {}

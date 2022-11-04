@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 //Shared
 import { SharedModule } from 'src/app/shared/shared.module';
 //Reactive Forms
@@ -9,19 +9,18 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 //Ng Apexcharts
 import { NgApexchartsModule } from 'ng-apexcharts';
 //@Standalone Components
-import { WarehouseSharedComponent } from 'src/app/@standalone/shared-forms/warehouse-shared/warehouse-shared.component';
 import { ContractsSharedComponent } from 'src/app/@standalone/shared-forms/contracts-shared/contracts-shared.component';
+import { WarehouseSharedComponent } from 'src/app/@standalone/shared-forms/warehouse-shared/warehouse-shared.component';
 //Routing
 import { PaTpWMWarehouseRoutingModule } from './pa-tp-w-m-warehouse-routing.module';
 //Components
-import { PaRwcCRegWarehouseContractComponent } from './reg-warehouse-contract/pa-rwc-c-reg-warehouse-contract.component';
 import { PaPdCProceedingsDetailsComponent } from './proceedings-details/pa-pd-c-proceedings-details.component';
-
+import { PaRwcCRegWarehouseContractComponent } from './reg-warehouse-contract/pa-rwc-c-reg-warehouse-contract.component';
 
 @NgModule({
   declarations: [
     PaRwcCRegWarehouseContractComponent,
-    PaPdCProceedingsDetailsComponent
+    PaPdCProceedingsDetailsComponent,
   ],
   imports: [
     CommonModule,
@@ -33,6 +32,6 @@ import { PaPdCProceedingsDetailsComponent } from './proceedings-details/pa-pd-c-
     ContractsSharedComponent,
     NgApexchartsModule,
     ModalModule.forChild(),
-  ]
+  ],
 })
-export class PaTpWMWarehouseModule { }
+export class PaTpWMWarehouseModule {}

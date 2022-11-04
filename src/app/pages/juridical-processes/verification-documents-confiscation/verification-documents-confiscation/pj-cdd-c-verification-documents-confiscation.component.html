@@ -1,0 +1,53 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">COMPROBACI&Oacute;N DE DOCUMENTOS PARA DECOMISO</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="expedientesForm" class="container-fluid form-material">
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="expedientesForm.get('noExpediente')"
+            label="noExpediente">
+            <input class="form-control" formControlName="noExpediente" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field
+            [control]="expedientesForm.get('articuloValidado')"
+            label="Árticulo Validado">
+            <input class="form-control" formControlName="articuloValidado" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="expedientesForm.get('fechaDictamina')"
+            label="Fecha Dictamina">
+            <input
+              class="form-control"
+              formControlName="fechaDictamina"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="expedientesForm.get('fechaMinisterial')"
+            label="Fecha Ministerial">
+            <input
+              class="form-control"
+              formControlName="fechaMinisterial"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="expedientesForm.get('actaMinisterial')"
+            label="Acta Ministerial">
+            <input class="form-control" formControlName="actaMinisterial" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

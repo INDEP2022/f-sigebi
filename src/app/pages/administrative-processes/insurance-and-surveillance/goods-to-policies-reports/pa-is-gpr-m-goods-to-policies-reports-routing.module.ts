@@ -6,12 +6,12 @@ import { PaIsGprCReportComponent } from './report/pa-is-gpr-c-report.component';
 const routes: Routes = [
   {
     path: '',
-    component: PaIsGprCReportComponent
-  }
+    component: PaIsGprCReportComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PaIsGprMGoodsToPoliciesReportsRoutingModule { }
+export class PaIsGprMGoodsToPoliciesReportsRoutingModule {}

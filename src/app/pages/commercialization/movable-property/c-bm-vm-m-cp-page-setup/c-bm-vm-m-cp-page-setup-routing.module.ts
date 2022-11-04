@@ -5,12 +5,12 @@ import { CBmVmCCpPageSetupComponent } from './c-bm-vm-c-cp-page-setup/c-bm-vm-c-
 const routes: Routes = [
   {
     path: '',
-    component: CBmVmCCpPageSetupComponent
-  }
+    component: CBmVmCCpPageSetupComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CBmVmMCpPageSetupRoutingModule { }
+export class CBmVmMCpPageSetupRoutingModule {}

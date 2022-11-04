@@ -13,13 +13,12 @@ interface IExcelToJson {
 @Component({
   selector: 'app-flat-file-for-good',
   templateUrl: './flat-file-for-good.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class FlatFileForGoodComponent extends BasePage implements OnInit {
   flatFileGoodForm: ModelForm<any>;
   data: IExcelToJson[] = [];
-  constructor(private fb: FormBuilder, private excelService: ExcelService,) {
+  constructor(private fb: FormBuilder, private excelService: ExcelService) {
     super();
   }
 

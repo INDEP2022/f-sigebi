@@ -4,12 +4,13 @@ import { InformationGenerationComponent } from './information-generation/informa
 
 const routes: Routes = [
   {
-    path: '', component: InformationGenerationComponent
-  }
+    path: '',
+    component: InformationGenerationComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class InformationGenerationRoutingModule { }
+export class InformationGenerationRoutingModule {}

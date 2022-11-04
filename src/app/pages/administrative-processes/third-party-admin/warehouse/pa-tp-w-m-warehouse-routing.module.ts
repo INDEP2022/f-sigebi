@@ -5,12 +5,12 @@ import { PaRwcCRegWarehouseContractComponent } from './reg-warehouse-contract/pa
 const routes: Routes = [
   {
     path: '',
-    component: PaRwcCRegWarehouseContractComponent
-  }
+    component: PaRwcCRegWarehouseContractComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PaTpWMWarehouseRoutingModule { }
+export class PaTpWMWarehouseRoutingModule {}

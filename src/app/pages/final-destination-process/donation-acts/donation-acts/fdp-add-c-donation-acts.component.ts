@@ -1,86 +1,48 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  BsDatepickerConfig,
+  BsDatepickerViewMode,
+} from 'ngx-bootstrap/datepicker';
+import { BehaviorSubject } from 'rxjs';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { ListParams } from './../../../../common/repository/interfaces/list-params';
+import { COLUMNS1 } from './columns1';
+import { COLUMNS2 } from './columns2';
 
 @Component({
   selector: 'app-fdp-add-c-donation-acts',
   templateUrl: './fdp-add-c-donation-acts.component.html',
   styles: [],
 })
-export class FdpAddCDonationActsComponent implements OnInit {
+export class FdpAddCDonationActsComponent extends BasePage implements OnInit {
   actForm: FormGroup;
+  formTable1: FormGroup;
+  settings2: any;
   response: boolean = false;
-
-  settings1 = {
-    rowClassFunction: (row: any) =>
-      row.data.status ? 'available' : 'not-available',
-    pager: {
-      display: false,
-    },
-    hideSubHeader: true,
-    actions: false,
-    selectedRowIndex: -1,
-    mode: 'external',
-    columns: {
-      noBien: {
-        title: 'No. Bien',
-        type: 'number',
-      },
-      description: {
-        title: 'Descripcion',
-        type: 'string',
-      },
-      proceso: {
-        title: 'Proceso',
-        type: 'string',
-      },
-      cantidad: {
-        title: 'Cantidad',
-        type: 'number',
-      },
-      unidad: {
-        title: 'Unidad',
-        type: 'string',
-      },
-      acta: {
-        title: 'Acta',
-        type: 'string',
-      },
-    },
-    noDataMessage: 'No se encontrarón registros',
-  };
-
-  settings2 = {
-    pager: {
-      display: false,
-    },
-    hideSubHeader: true,
-    actions: false,
-    selectedRowIndex: -1,
-    mode: 'external',
-    columns: {
-      noBien: {
-        title: 'No. Bien',
-        type: 'number',
-      },
-      descripcion: {
-        title: 'Descripción',
-        type: 'string',
-      },
-      cantidad: {
-        title: 'Cantidad',
-        type: 'number',
-      },
-    },
-    noDataMessage: 'No se encontrarón registros',
-  };
+  totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  bsValueFromMonth: Date = new Date();
+  minModeFromMonth: BsDatepickerViewMode = 'month';
+  bsConfigFromMonth: Partial<BsDatepickerConfig>;
+  bsValueFromYear: Date = new Date();
+  minModeFromYear: BsDatepickerViewMode = 'year';
+  bsConfigFromYear: Partial<BsDatepickerConfig>;
 
   data = EXAMPLE_DATA;
   data2 = EXAMPLE_DATA2;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder) {
+    super();
+    this.settings = { ...this.settings, actions: false };
+    this.settings2 = { ...this.settings, actions: false };
+    this.settings.columns = COLUMNS1;
+    this.settings2.columns = COLUMNS2;
+  }
 
   ngOnInit(): void {
     this.initForm();
+    this.startCalendars();
   }
 
   search(term: string) {
@@ -100,7 +62,8 @@ export class FdpAddCDonationActsComponent implements OnInit {
       don: [null, [Validators.required]],
       admin: [null, [Validators.required]],
       folio: [null, [Validators.required]],
-      date: [null, [Validators.required]],
+      year: [this.bsValueFromYear, [Validators.required]],
+      month: [this.bsValueFromMonth, [Validators.required]],
       act: [null, [Validators.required]],
       address: [null, [Validators.required]],
       elabDate: [null, [Validators.required]],
@@ -112,6 +75,31 @@ export class FdpAddCDonationActsComponent implements OnInit {
       comptrollerWitness: [null, [Validators.required]],
       folioScan: [null, [Validators.required]],
     });
+
+    this.formTable1 = this.fb.group({
+      detail: [null, []],
+    });
+  }
+
+  settingsChange(event: any, op: number) {
+    op === 1 ? (this.settings = event) : (this.settings2 = event);
+  }
+
+  startCalendars() {
+    this.bsConfigFromMonth = Object.assign(
+      {},
+      {
+        minMode: this.minModeFromMonth,
+        dateInputFormat: 'MM',
+      }
+    );
+    this.bsConfigFromYear = Object.assign(
+      {},
+      {
+        minMode: this.minModeFromYear,
+        dateInputFormat: 'YYYY',
+      }
+    );
   }
 }
 

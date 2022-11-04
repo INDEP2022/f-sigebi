@@ -5,12 +5,12 @@ import { CBmVmCdeCEntityClassificationComponent } from './c-bm-vm-cde-c-entity-c
 const routes: Routes = [
   {
     path: '',
-    component: CBmVmCdeCEntityClassificationComponent
-  }
+    component: CBmVmCdeCEntityClassificationComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CBmVmCdeMEntityClassificationRoutingModule { }
+export class CBmVmCdeMEntityClassificationRoutingModule {}

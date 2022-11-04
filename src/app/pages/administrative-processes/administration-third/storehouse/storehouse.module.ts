@@ -1,19 +1,12 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
+import { SharedModule } from 'src/app/shared/shared.module';
 import { StorehouseRoutingModule } from './storehouse-routing.module';
 import { StorehouseComponent } from './storehouse/storehouse.component';
-import { SharedModule } from 'src/app/shared/shared.module';
-
 
 @NgModule({
-  declarations: [
-    StorehouseComponent
-  ],
-  imports: [
-    CommonModule,
-    StorehouseRoutingModule,
-    SharedModule
-  ]
+  declarations: [StorehouseComponent],
+  imports: [CommonModule, StorehouseRoutingModule, SharedModule],
 })
-export class StorehouseModule { }
+export class StorehouseModule {}

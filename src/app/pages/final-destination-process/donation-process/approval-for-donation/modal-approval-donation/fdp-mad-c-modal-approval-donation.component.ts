@@ -1,7 +1,7 @@
-import { ERROR_COLUMNS } from './error-columns';
 import { Component, OnInit } from '@angular/core';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { AREA_COLUMNS } from './area-columns';
+import { ERROR_COLUMNS } from './error-columns';
 
 @Component({
   selector: 'app-fdp-mad-c-modal-approval-donation',

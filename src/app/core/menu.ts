@@ -405,6 +405,14 @@ export const MENU: IMenuItem[] = [
             label: 'Validación de Cálculo I.V.A ',
             link: '/pages/commercialization/tax-validation-calculation',
           },
+          {
+            label: 'Adjudicaciones Directas en Parcialidades',
+            link: '/pages/commercialization/partiality-direct-adjudication',
+          },
+          {
+            label: 'Oficios de Comercialización',
+            link: '/pages/commercialization/marketing-records',
+          },
         ],
       },
       {

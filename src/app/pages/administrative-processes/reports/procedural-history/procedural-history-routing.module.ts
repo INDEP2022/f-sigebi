@@ -4,12 +4,13 @@ import { ProceduralHistoryComponent } from './procedural-history/procedural-hist
 
 const routes: Routes = [
   {
-    path: '', component: ProceduralHistoryComponent
-  }
+    path: '',
+    component: ProceduralHistoryComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ProceduralHistoryRoutingModule { }
+export class ProceduralHistoryRoutingModule {}

@@ -1,14 +1,14 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
-import { ExpensesRegisterRoutingModule } from './expenses-register-routing.module';
-import { ExpensesRegisterComponent } from './expenses-register/expenses-register.component';
-import { SharedModule } from '../../../../shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { SharedModule } from '../../../../shared/shared.module';
 import { ExpensesDataComponent } from './expenses-data/expenses-data.component';
 import { ExpensesGoodsComponent } from './expenses-goods/expenses-goods.component';
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { ExpensesRegisterRoutingModule } from './expenses-register-routing.module';
+import { ExpensesRegisterComponent } from './expenses-register/expenses-register.component';
 
 @NgModule({
   declarations: [
