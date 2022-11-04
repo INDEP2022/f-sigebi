@@ -12,6 +12,16 @@ const routes: Routes = [
       ).CPMCatFinancialInformationAttributesModule,
     data: { title: 'Catálogo de atributos de información financiera' },
   },
+  {
+    path: 'c-p-m-cat-financial-indicators',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-cat-financial-indicators/c-p-m-cat-financial-indicators.module'
+        )
+      ).CPMCatFinancialIndicatorsModule,
+    data: { title: 'Catálogo de indicadores financieros' },
+  },
 ];
 
 @NgModule({

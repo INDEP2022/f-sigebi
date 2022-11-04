@@ -7,6 +7,10 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Catálogo de atributos de información financiera',
         link: '/pages/parameterization/c-p-m-cat-financial-information-attributes',
       },
+      {
+        label: 'Catálogo de indicadores financieros',
+        link: '/pages/parameterization/c-p-m-cat-financial-indicators',
+      },
     ],
   },
 ];
