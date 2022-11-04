@@ -1,4 +1,4 @@
-export const COLUMNS1 = {
+export const COLUMNS = {
   noBien: {
     title: 'No. Bien',
     type: 'number',
@@ -6,11 +6,6 @@ export const COLUMNS1 = {
   },
   description: {
     title: 'Descripcion',
-    type: 'string',
-    sort: false,
-  },
-  proceso: {
-    title: 'Proceso',
     type: 'string',
     sort: false,
   },

@@ -7,8 +7,7 @@ import {
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { COLUMNS1 } from './columns1';
-import { COLUMNS2 } from './columns2';
+import { COLUMNS } from './columns';
 
 @Component({
   selector: 'app-fdp-add-c-return-acts',
@@ -36,8 +35,8 @@ export class FdpAddCReturnActsComponent extends BasePage implements OnInit {
     super();
     this.settings = { ...this.settings, actions: false };
     this.settings2 = { ...this.settings, actions: false };
-    this.settings.columns = COLUMNS1;
-    this.settings2.columns = COLUMNS2;
+    this.settings.columns = COLUMNS;
+    this.settings2.columns = COLUMNS;
   }
 
   ngOnInit(): void {

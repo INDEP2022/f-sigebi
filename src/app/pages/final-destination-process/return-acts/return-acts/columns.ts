@@ -1,11 +1,11 @@
-export const COLUMNS2 = {
+export const COLUMNS = {
   noBien: {
     title: 'No. Bien',
     type: 'number',
     sort: false,
   },
-  descripcion: {
-    title: 'Descripción',
+  description: {
+    title: 'Descripcion',
     type: 'string',
     sort: false,
   },
@@ -21,7 +21,7 @@ export const COLUMNS2 = {
   },
   importe: {
     title: 'Importe',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
 };
