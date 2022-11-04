@@ -38,9 +38,9 @@ export class RegistrationOfRequestsComponent
   //clasificacion de bienes
   classifyAssets: boolean = false;
   //validar destino del bien(documento)
-  validateDocument: boolean = true;
+  validateDocument: boolean = false;
   //notificar aclaraciones o improcedencias
-  notifyClarifiOrImpropriety = false;
+  notifyClarifiOrImpropriety = true;
 
   constructor(
     public fb: FormBuilder,

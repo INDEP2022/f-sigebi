@@ -81,6 +81,12 @@ export const routesJuridicalProcesses: any = [
     link: 'dictaminaciones-juridicas-mantenimiento',
     menu: 'Dictaminaciones Juridicas Mantenimiento',
   },
+  {
+    // DICTAMINACIONES JURIDICAS-G
+    label: 'Dictaminaciones Juridicas-G',
+    link: 'dictaminaciones-juridicas-g',
+    menu: 'Dictaminaciones Juridicas-G',
+  },
 ];
 export const routesFormalizacionInmuebles: any = [
   {

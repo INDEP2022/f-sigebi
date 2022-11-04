@@ -11,12 +11,13 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-document-expedient',
   templateUrl: './document-expedient.component.html',
-  styles: [],
+  styleUrls: ['../../styles/search-document-form.scss'],
 })
 export class DocumentExpedientComponent extends BasePage implements OnInit {
   @Input() documentExpedientForm: FormGroup;
   typeDocuments = new DefaultSelect();
   documentsExpedientData: any[] = [];
+  showSearchForm: boolean = false;
   constructor(private modalService: BsModalService) {
     super();
     this.settings.actions.delete = true;

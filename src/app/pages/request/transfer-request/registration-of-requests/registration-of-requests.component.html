@@ -156,6 +156,9 @@
               <!-- Validacion de Documentos -->
               <app-clarifications *ngIf="validateDocument"></app-clarifications>
               <!-- fin -->
+              <!-- notificar aclaraciones o improcedencias -->
+              <app-notification-assets-tab></app-notification-assets-tab>
+              <!-- fin -->
             </tab>
             <tab heading="{{ tab3 }}">
               <!-- Registro de Solicitud o bien -->
@@ -170,7 +173,7 @@
               <!-- fin -->
             </tab>
             <tab heading="{{ tab4 }}" *ngIf="requestRegistration">
-              <h5>Ingresar contenido</h5>
+              <app-registration-request-form></app-registration-request-form>
             </tab>
             <tab heading="{{ tab5 }}" *ngIf="requestRegistration">
               <app-expedients-tabs
