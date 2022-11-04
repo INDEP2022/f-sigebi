@@ -11,8 +11,7 @@ import { DocsData } from './data';
 @Component({
   selector: 'app-c-b-ag-c-add-docs',
   templateUrl: './c-b-ag-c-add-docs.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CBAgCAddDocsComponent extends BasePage implements OnInit {
   data: any[] = DocsData; //IDoc[];

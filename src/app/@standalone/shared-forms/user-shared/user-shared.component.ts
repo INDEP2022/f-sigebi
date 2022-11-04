@@ -63,7 +63,7 @@ export class UsersSharedComponent extends BasePage implements OnInit {
         name: type.name,
       });
       this.form.updateValueAndValidity();
-    }else{
+    } else {
       this.form.updateValueAndValidity();
     }
   }

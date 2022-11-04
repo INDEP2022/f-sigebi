@@ -10,21 +10,19 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { CBAgCAddDocsComponent } from '../add-docs/c-b-ag-c-add-docs.component';
 import { COLUMNS, COLUMNS2 } from './columns';
 //Provisional Data
-import { GoodsData,DocsData } from './data';
+import { DocsData, GoodsData } from './data';
 
 @Component({
   selector: 'app-c-b-mr-c-marketing-records',
   templateUrl: './c-b-mr-c-marketing-records.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CBMrCMarketingRecordsComponent extends BasePage implements OnInit {
-  
   form: FormGroup = new FormGroup({});
   formCcp: FormGroup = new FormGroup({});
   /**
    * Goods
-  * */
+   * */
   data: LocalDataSource = new LocalDataSource();
   goodsData: any[] = GoodsData;
   totalItems: number = 0;
@@ -32,14 +30,14 @@ export class CBMrCMarketingRecordsComponent extends BasePage implements OnInit {
 
   /**
    * Docs
-  * */
+   * */
   settings2;
   data2: LocalDataSource = new LocalDataSource();
   docsData: any[] = DocsData;
   totalItems2: number = 0;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
 
-  usersCcp:any=[];
+  usersCcp: any = [];
 
   constructor(private fb: FormBuilder, private modalService: BsModalService) {
     super();
@@ -64,10 +62,10 @@ export class CBMrCMarketingRecordsComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.form = this.fb.group({
-      recordType: ['physicalDelivery',[Validators.required]],
+      recordType: ['physicalDelivery', [Validators.required]],
       goodId: [null, [Validators.required]],
       portfolio: [null, [Validators.required]],
-      recordCommerType: ['goodId',[Validators.required]],
+      recordCommerType: ['goodId', [Validators.required]],
       recordKey: [null],
       sender: [null, [Validators.required]],
       recipient: [null, [Validators.required]],
@@ -86,8 +84,7 @@ export class CBMrCMarketingRecordsComponent extends BasePage implements OnInit {
         this.form.controls['portfolio'].clearValidators();
         this.form.controls['portfolio'].setValue(null);
         this.form.controls['portfolio'].updateValueAndValidity();
-
-      }else{
+      } else {
         this.form.controls['portfolio'].setValidators([Validators.required]);
         this.form.controls['portfolio'].updateValueAndValidity();
 
@@ -99,17 +96,19 @@ export class CBMrCMarketingRecordsComponent extends BasePage implements OnInit {
 
     /***
      * Users CCopy
-    * */
+     * */
     this.formCcp = this.fb.group({
       userId: [null, [Validators.required]],
       name: [null, [Validators.required]],
       scannerFolio: [null],
     });
 
-    this.formCcp.valueChanges.subscribe(value=>{
-      let includeId=this.usersCcp.some(((us:any) => us.userId == value.userId));
-      let includeName=this.usersCcp.some(((us:any) => us.name == value.name));
-      if(!includeId && !includeName && this.formCcp.valid){
+    this.formCcp.valueChanges.subscribe(value => {
+      let includeId = this.usersCcp.some(
+        (us: any) => us.userId == value.userId
+      );
+      let includeName = this.usersCcp.some((us: any) => us.name == value.name);
+      if (!includeId && !includeName && this.formCcp.valid) {
         this.usersCcp.push(value);
       }
     });
@@ -128,36 +127,40 @@ export class CBMrCMarketingRecordsComponent extends BasePage implements OnInit {
   }
 
   delete(event: any) {
-    this.alertQuestion('warning', 'Eliminar', 'Desea eliminar este documento?').then(
-      question => {
-        if (question.isConfirmed) {
-          //Ejecutar el servicio
-          this.data2.remove(event.data);
-          this.data2.refresh();
-        }
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este documento?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.data2.remove(event.data);
+        this.data2.refresh();
       }
-    );
+    });
   }
 
   removeItem(index: number): void {
-    this.usersCcp.splice(index,1);
+    this.usersCcp.splice(index, 1);
   }
 
   resetForm(): void {
-    this.alertQuestion('warning', 'Borrar', 'Desea borrar los datos ingresados?').then(
-      question => {
-        if (question.isConfirmed) {
-          this.form.reset();
-          this.formCcp.reset();
-          /***
-           * Users CCopy
-          * */
-          this.usersCcp=[];
-          this.data2.load([]);
-          this.data2.refresh();
-        }
+    this.alertQuestion(
+      'warning',
+      'Borrar',
+      'Desea borrar los datos ingresados?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.form.reset();
+        this.formCcp.reset();
+        /***
+         * Users CCopy
+         * */
+        this.usersCcp = [];
+        this.data2.load([]);
+        this.data2.refresh();
       }
-    );
+    });
   }
 
   settingsChange($event: any): void {
@@ -167,5 +170,4 @@ export class CBMrCMarketingRecordsComponent extends BasePage implements OnInit {
   settingsChange2($event: any): void {
     this.settings2 = $event;
   }
-
 }

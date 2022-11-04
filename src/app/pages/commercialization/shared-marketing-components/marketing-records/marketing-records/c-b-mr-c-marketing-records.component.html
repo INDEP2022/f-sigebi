@@ -4,8 +4,9 @@
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
-    	<div class="row mb-3 mt-3">
-    		<div class="col-lg-4 col-md-4 col-sm-12 col-12 mb-3 mt-3 align-self-center">
+      <div class="row mb-3 mt-3">
+        <div
+          class="col-lg-4 col-md-4 col-sm-12 col-12 mb-3 mt-3 align-self-center">
           <div class="row justify-content-between">
             <div class="col-md-6">
               <form-radio label="Bien">
@@ -25,45 +26,49 @@
             </div>
           </div>
         </div>
-        <div *ngIf="form.get('recordCommerType').value === 'goodId'" class="col-lg-4 col-md-4 col-sm-6 col-12 mb-3 mt-3 align-self-baseline">
-        	<app-goods-shared [form]="form"></app-goods-shared>
+        <div
+          *ngIf="form.get('recordCommerType').value === 'goodId'"
+          class="col-lg-4 col-md-4 col-sm-6 col-12 mb-3 mt-3 align-self-baseline">
+          <app-goods-shared [form]="form"></app-goods-shared>
         </div>
-        <div *ngIf="form.get('recordCommerType').value === 'portfolio'" class="col-lg-4 col-md-4 col-sm-6 col-12 mb-3 mt-3 align-self-baseline">
-        	<div class="row mb-3 mt-3">
-        		<div class="col-md-12">
-        			<form-field
-		            label="Portafolio"
-		            [control]="form.get('portfolio')">
-		            <input
-		              class="form-control"
-		              formControlName="portfolio" type="text"/>
-		          </form-field>
-        		</div>
-        	</div>
+        <div
+          *ngIf="form.get('recordCommerType').value === 'portfolio'"
+          class="col-lg-4 col-md-4 col-sm-6 col-12 mb-3 mt-3 align-self-baseline">
+          <div class="row mb-3 mt-3">
+            <div class="col-md-12">
+              <form-field label="Portafolio" [control]="form.get('portfolio')">
+                <input
+                  class="form-control"
+                  formControlName="portfolio"
+                  type="text" />
+              </form-field>
+            </div>
+          </div>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-6 col-12 mb-3 mt-3">
-        	<div class="row mb-3 mt-3">
-        		<div class="col-md-12">
-		        	<form-field
-		            label="Clave Oficio"
-		            [control]="form.get('recordKey')">
-		            <input
-		              class="form-control"
-		              formControlName="recordKey" type="text"/>
-		          </form-field>
-        		</div>
-      		</div>
+          <div class="row mb-3 mt-3">
+            <div class="col-md-12">
+              <form-field
+                label="Clave Oficio"
+                [control]="form.get('recordKey')">
+                <input
+                  class="form-control"
+                  formControlName="recordKey"
+                  type="text" />
+              </form-field>
+            </div>
+          </div>
         </div>
-    	</div>
-    	<div class="row mb-3 mt-3">
-    		<!--Users Component-->
+      </div>
+      <div class="row mb-3 mt-3">
+        <!--Users Component-->
         <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
           <app-user-shared
             [form]="form"
             [userField]="'sender'"
             [label]="'Remitente'"></app-user-shared>
         </div>
-    		<!--Users Component-->
+        <!--Users Component-->
         <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
           <app-user-shared
             [form]="form"
@@ -71,24 +76,25 @@
             [label]="'Destinatario'"></app-user-shared>
         </div>
         <!--Cities Components-->
-      	<div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
-        	<app-cities-shared [form]="form"></app-cities-shared>
-       	</div>
         <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
-        	<form-field
-        		[control]="form.get('salesProcess')"
-		        label="Proceso de Venta">
-		        <select class="form-control" formControlName="salesProcess">
-		          <option [value]="null">Seleccione un valor</option>
-		          <option value="process1">Subasta</option>
-		          <option value="process2">Proccess 2</option>
-		          <option value="process3">Proccess 3</option>
-		        </select>
-		      </form-field>
+          <app-cities-shared [form]="form"></app-cities-shared>
+        </div>
+        <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
+          <form-field
+            [control]="form.get('salesProcess')"
+            label="Proceso de Venta">
+            <select class="form-control" formControlName="salesProcess">
+              <option [value]="null">Seleccione un valor</option>
+              <option value="process1">Subasta</option>
+              <option value="process2">Proccess 2</option>
+              <option value="process3">Proccess 3</option>
+            </select>
+          </form-field>
         </div>
       </div>
       <div class="row mb-3 mt-3">
-    		<div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3 align-self-center">
+        <div
+          class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3 align-self-center">
           <div class="row justify-content-between">
             <div class="col-md-6">
               <form-radio label="Oficio Entrega Física">
@@ -108,30 +114,33 @@
             </div>
           </div>
         </div>
-    	</div>
-    	<div class="row mb-3 mt-3">
-    		<div class="col-md-12 mb-3 mt-3">
-    			<form-field
-        		[control]="form.get('paragraph1')"
-		        label="Párrafo 1">
-		        <textarea class="form-control" type="text" formControlName="paragraph1"></textarea>
-		      </form-field>
-    		</div>
-    		<div class="col-md-12 mb-3 mt-3">
-    			<form-field
-        		[control]="form.get('paragraph2')"
-		        label="Párrafo 2">
-		        	<textarea class="form-control" type="text" formControlName="paragraph2"></textarea>
-		      </form-field>
-    		</div>
-    		<div class="col-md-12 mb-3 mt-3">
-    			<form-field
-        		[control]="form.get('paragraph3')"
-		        label="Párrafo 3">
-		        	<textarea class="form-control" type="text" formControlName="paragraph3"></textarea>
-		      </form-field>
-    		</div>
-    	</div>
+      </div>
+      <div class="row mb-3 mt-3">
+        <div class="col-md-12 mb-3 mt-3">
+          <form-field [control]="form.get('paragraph1')" label="Párrafo 1">
+            <textarea
+              class="form-control"
+              type="text"
+              formControlName="paragraph1"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-12 mb-3 mt-3">
+          <form-field [control]="form.get('paragraph2')" label="Párrafo 2">
+            <textarea
+              class="form-control"
+              type="text"
+              formControlName="paragraph2"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-12 mb-3 mt-3">
+          <form-field [control]="form.get('paragraph3')" label="Párrafo 3">
+            <textarea
+              class="form-control"
+              type="text"
+              formControlName="paragraph3"></textarea>
+          </form-field>
+        </div>
+      </div>
     </form>
     <!--GOODS TABLE-->
     <div class="row justify-content-end mr-1">
@@ -166,7 +175,9 @@
     </div>
     <div class="d-flex justify-content-end mr-1">
       <div class="col-2">
-        <button class="btn btn-primary active btn-sm w-100" (click)="openModal()">
+        <button
+          class="btn btn-primary active btn-sm w-100"
+          (click)="openModal()">
           Agregar
         </button>
       </div>
@@ -197,29 +208,30 @@
             <!--Users Component-->
             <div class="col-md-12 mb-3 mt-3">
               <app-user-shared
-                  [form]="formCcp"
-                  [userField]="'userId'"
-                  [patchValue]="true"
-                  [label]="'C.C.P'"></app-user-shared>
+                [form]="formCcp"
+                [userField]="'userId'"
+                [patchValue]="true"
+                [label]="'C.C.P'"></app-user-shared>
             </div>
           </div>
           <div class="row mb-3 mt-3">
             <div class="col-md-12" *ngIf="usersCcp.length > 0">
               <h4 class="card-title mb-5">C.C.P</h4>
               <div class="flex-row">
-                <div
-                  class="mb-3"
-                  *ngFor="let user of usersCcp; let i = index">
+                <div class="mb-3" *ngFor="let user of usersCcp; let i = index">
                   <span class="badge-pill badge-info badge">
-                    {{user.name}}
-                    <i class="bi bi-x-circle align-self-center" (click)="removeItem(i)"></i>
+                    {{ user.name }}
+                    <i
+                      class="bi bi-x-circle align-self-center"
+                      (click)="removeItem(i)"></i>
                   </span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="col-xs-12 col-12 col-md-6 col-lg-6 mb-3 mt-3 align-self-center">
+        <div
+          class="col-xs-12 col-12 col-md-6 col-lg-6 mb-3 mt-3 align-self-center">
           <div class="row mb-3 mt-3">
             <div class="col-md-12">
               <form-field
@@ -227,7 +239,8 @@
                 [control]="formCcp.get('scannerFolio')">
                 <input
                   class="form-control"
-                  formControlName="scannerFolio" type="text"/>
+                  formControlName="scannerFolio"
+                  type="text" />
               </form-field>
             </div>
           </div>
@@ -236,12 +249,18 @@
       <!--Actions-->
       <div class="row mb-3 mt-3">
         <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-          <button type="button" [disabled]="form.get('recordCommerType').value !== 'goodId'" class="btn btn-secondary btn-sm active w-100">
+          <button
+            type="button"
+            [disabled]="form.get('recordCommerType').value !== 'goodId'"
+            class="btn btn-secondary btn-sm active w-100">
             Bien Vista Previa
           </button>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-          <button type="button" [disabled]="form.get('recordCommerType').value !== 'portfolio'" class="btn btn-secondary btn-sm active w-100">
+          <button
+            type="button"
+            [disabled]="form.get('recordCommerType').value !== 'portfolio'"
+            class="btn btn-secondary btn-sm active w-100">
             Pflio. Vista Previa
           </button>
         </div>
@@ -265,7 +284,12 @@
         </confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="resetForm()">Limpiar</button>
+        <button
+          type="button"
+          class="btn btn-danger active"
+          (click)="resetForm()">
+          Limpiar
+        </button>
       </div>
     </div>
   </div>

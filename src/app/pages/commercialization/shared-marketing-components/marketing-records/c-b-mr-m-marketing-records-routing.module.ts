@@ -6,12 +6,12 @@ import { CBMrCMarketingRecordsComponent } from './marketing-records/c-b-mr-c-mar
 const routes: Routes = [
   {
     path: '',
-    component: CBMrCMarketingRecordsComponent
-  }
+    component: CBMrCMarketingRecordsComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CBMrMMarketingRecordsRoutingModule { }
+export class CBMrMMarketingRecordsRoutingModule {}

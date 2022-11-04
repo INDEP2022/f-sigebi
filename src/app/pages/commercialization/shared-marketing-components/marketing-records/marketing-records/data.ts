@@ -20,6 +20,7 @@ export const DocsData = [
   },
   {
     key: 'OFERCOMER2',
-    document: 'Bases No 126 rubricadas y firmadas por el adquirente, incluye anexo 1',
+    document:
+      'Bases No 126 rubricadas y firmadas por el adquirente, incluye anexo 1',
   },
 ];

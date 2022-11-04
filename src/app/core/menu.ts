@@ -410,8 +410,8 @@ export const MENU: IMenuItem[] = [
           },
           {
             label: 'Oficios de Comercialización',
-            link: '/pages/commercialization/marketing-records'
-          }
+            link: '/pages/commercialization/marketing-records',
+          },
         ],
       },
       {

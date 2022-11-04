@@ -18,11 +18,9 @@ import { ICity } from 'src/app/core/models/catalogs/city.model';
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './cities-shared.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CitiesSharedComponent extends BasePage implements OnInit {
-
   @Input() form: FormGroup;
   @Input() cityField: string = 'city';
 
