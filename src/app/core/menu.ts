@@ -408,6 +408,10 @@ export const MENU: IMenuItem[] = [
             label: 'Adjudicaciones Directas en Parcialidades',
             link: '/pages/commercialization/partiality-direct-adjudication',
           },
+          {
+            label: 'Oficios de Comercialización',
+            link: '/pages/commercialization/marketing-records'
+          }
         ],
       },
       {

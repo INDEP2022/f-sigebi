@@ -25,6 +25,8 @@ export class UsersSharedComponent extends BasePage implements OnInit {
   @Input() userField: string = 'user';
   @Input() label: string = 'Usuarios';
   @Input() showUsers: boolean = true;
+  //If Form PatchValue
+  @Input() patchValue: boolean = false;
 
   users = new DefaultSelect<IUser>();
 
@@ -55,7 +57,15 @@ export class UsersSharedComponent extends BasePage implements OnInit {
   }
 
   onUsersChange(type: any) {
-    this.form.updateValueAndValidity();
+    if (this.patchValue) {
+      this.form.patchValue({
+        userId: type.userId,
+        name: type.name,
+      });
+      this.form.updateValueAndValidity();
+    }else{
+      this.form.updateValueAndValidity();
+    }
   }
 
   resetFields(fields: AbstractControl[]) {

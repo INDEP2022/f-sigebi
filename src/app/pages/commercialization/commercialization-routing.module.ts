@@ -420,6 +420,16 @@ const routes: Routes = [
       ).CBAAdpMPartialityDirectAdjudicationModule,
     data: { title: 'Adjudicaciones Directas en Parcialidades' },
   },
+  {
+    path: 'marketing-records',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/marketing-records/c-b-mr-m-marketing-records.module'
+        )
+      ).CBMrMMarketingRecordsModule,
+    data: { title: 'Oficios de Comercialización' },
+  },
 ];
 
 @NgModule({
