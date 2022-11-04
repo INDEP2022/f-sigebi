@@ -1,5 +1,5 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
-export const COLUMNS_DATA_TABLE = {
+export const COLUMNS_OTHER_TRANS = {
   tag: {
     title: 'Etiqueta',
     type: 'string',
@@ -38,6 +38,11 @@ export const COLUMNS_DATA_TABLE = {
   unit: {
     title: 'Unidad',
     type: 'string',
+    sort: false,
+  },
+  quantity: {
+    title: 'Cantidad',
+    type: 'number',
     sort: false,
   },
   yes: {

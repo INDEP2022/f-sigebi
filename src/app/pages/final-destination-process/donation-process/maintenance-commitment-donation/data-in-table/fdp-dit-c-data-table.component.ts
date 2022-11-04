@@ -3,6 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS_DATA_TABLE } from './columns-data-table';
+import { COLUMNS_OTHER_TRANS } from './columns-other-transf';
 import { COLUMNS_USER_PERMISSIONS } from './columns-user-permissions';
 
 @Component({
@@ -29,13 +30,7 @@ export class FdpDitCDataTableComponent extends BasePage implements OnInit {
     } else {
       if (this.type == 3) {
         //Otros Trans
-        this.settings.columns = {
-          ...COLUMNS_DATA_TABLE,
-          quantity: { title: 'Cantidad', type: 'number', sort: false },
-        };
-        Object.defineProperty(EXAMPLE_DATA1[0], 'quantity', {
-          value: 2,
-        });
+        this.settings.columns = COLUMNS_OTHER_TRANS;
         this.data = EXAMPLE_DATA1;
       } else {
         //Permisos Rastreador

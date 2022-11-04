@@ -1,3 +1,4 @@
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 export const COLUMNS = {
   cveDocument: {
     title: 'Cve Documento',
@@ -19,9 +20,15 @@ export const COLUMNS = {
     type: 'string',
     sort: false,
   },
-  //   requestDocumentation: {
-  //     title: 'Solicitar Documentación?',
-  //     type: 'boolean',
-  //     sort: false,
-  //   },
+  request: {
+    title: 'Solicitar Información?',
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
+    sort: false,
+  },
 };
