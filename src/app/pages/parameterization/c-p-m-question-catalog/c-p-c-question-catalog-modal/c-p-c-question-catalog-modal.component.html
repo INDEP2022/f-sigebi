@@ -1,0 +1,90 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field [control]="form.get('noQuestion')" label="No. Pregunta">
+            <input
+              type="text"
+              class="form-control"
+              formGroupName="noQuestion" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('textQuestion')"
+            label="Texto de la pregunta">
+            <input
+              type="text"
+              class="form-control"
+              formGroupName="textQuestion" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('maxScore')"
+            label="Puntuación Máxima">
+            <input type="text" class="form-control" formGroupName="maxScore" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('typeQuestion')"
+            label="Tipo de pregunta">
+            <input
+              type="text"
+              class="form-control"
+              formGroupName="typeQuestion" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field [control]="form.get('noResponse')" label="No. Respuesta">
+            <input
+              type="text"
+              class="form-control"
+              formGroupName="noResponse" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('initValue')" label="Valor inicial">
+            <input type="text" class="form-control" formGroupName="initValue" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('resValue')"
+            label="Valor de respuesta">
+            <input type="text" class="form-control" formGroupName="resValue" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('resText')"
+            label="Texto de la respuesta">
+            <input type="text" class="form-control" formGroupName="resText" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="!form.valid"
+          (click)="close()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
