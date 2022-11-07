@@ -15,6 +15,10 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Catálogo de preguntas',
         link: '/pages/parameterization/c-p-m-question-catalog',
       },
+      {
+        label: 'Catálogo de tablas lógicas',
+        link: '/pages/parameterization/c-p-m-logical-tables-register',
+      },
     ],
   },
 ];

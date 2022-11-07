@@ -5,20 +5,19 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
-  selector: 'app-c-p-c-question-catalog-modal',
-  templateUrl: './c-p-c-question-catalog-modal.component.html',
+  selector: 'app-c-p-c-logical-tables-register-modal',
+  templateUrl: './c-p-c-logical-tables-register-modal.component.html',
   styles: [],
 })
-export class CPCQuestionCatalogModalComponent
+export class CPCLogicalTablesRegisterModalComponent
   extends BasePage
   implements OnInit
 {
   form: FormGroup = new FormGroup({});
-  allotment: any;
-  title: string = 'Catálogo de preguntas';
+  title: string = 'Catálogo de tablas lógicas';
   edit: boolean = false;
+  allotment: any;
   @Output() refresh = new EventEmitter<true>();
-
   constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
     super();
   }
@@ -29,7 +28,7 @@ export class CPCQuestionCatalogModalComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      noQuestion: [
+      noTable: [
         null,
         [
           Validators.required,
@@ -38,13 +37,10 @@ export class CPCQuestionCatalogModalComponent
           Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
-      textQuestion: [null, [Validators.required]],
-      maxScore: [null, [Validators.required]],
-      typeQuestion: [null, [Validators.required]],
-      noResponse: [null, [Validators.required]],
-      initValue: [null, [Validators.required]],
-      resValue: [null, [Validators.required]],
-      resText: [null, [Validators.required]],
+      name: [null, [Validators.required]],
+      access: [null, [Validators.required]],
+      type: [null, [Validators.required]],
+      description: [null, [Validators.required]],
     });
     if (this.allotment != null) {
       this.edit = true;
