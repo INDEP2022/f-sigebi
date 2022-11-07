@@ -332,6 +332,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Ordenes de servicio',
             link: '/pages/administrative-processes/service-orders-format',
           },
+          {
+            label: 'Reporte de implementacion',
+            link: '/pages/administrative-processes/implementation-report',
+          },
         ],
       },
       {
