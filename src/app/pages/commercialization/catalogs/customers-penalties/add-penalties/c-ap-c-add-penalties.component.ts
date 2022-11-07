@@ -1,28 +1,23 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { BsModalRef } from 'ngx-bootstrap/modal';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'app-c-ap-c-add-penalties',
   templateUrl: './c-ap-c-add-penalties.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CApCAddPenaltiesComponent extends BasePage implements OnInit {
-   
   form: FormGroup = new FormGroup({});
 
   edit: boolean = false;
   title: string = 'Registro de Penalización y Cambio de Estatus';
-  penalty:any;//IPenalty
+  penalty: any; //IPenalty
 
   @Output() data = new EventEmitter<{}>();
 
-  constructor(
-    private fb: FormBuilder,
-    private modalRef: BsModalRef) {
+  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
     super();
   }
 
@@ -45,7 +40,6 @@ export class CApCAddPenaltiesComponent extends BasePage implements OnInit {
       this.edit = true;
       this.form.patchValue(this.penalty);
     }
-
   }
 
   close() {
@@ -57,5 +51,4 @@ export class CApCAddPenaltiesComponent extends BasePage implements OnInit {
     this.data.emit(data);
     this.modalRef.hide();
   }
-
 }

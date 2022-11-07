@@ -44,4 +44,9 @@ export const DEPOSITARY_ROUTES_2: any[] = [
     link: 'generation-files-opinion',
     menu: 'Generación de archivos de dictamen',
   },
+  {
+    label: 'Reportes de bienes declarados como abandono',
+    link: 'reports-assets-declared-abandoned',
+    menu: 'Reportes de bienes declarados como abandono',
+  },
 ];
