@@ -517,6 +517,13 @@ const routes: Routes = [
           ).ServiceOrdersFormatModule,
         data: { title: 'Formato ordenes de servicio ' },
       },
+      {
+        path: 'implementation-report',
+        loadChildren: async () =>
+          (await import('./administration-third/implementation-report/implementation-report.module'))
+            .ImplementationReportModule,
+        data: { title: 'Reporte de implementacion' },
+      },
       /**
        * Seguros David Lucas
        */
@@ -556,6 +563,13 @@ const routes: Routes = [
             )
           ).PerformanceEvaluationReportModule,
         data: { title: 'Reporte de evaluación de desempeño' },
+      },
+      /**Numerario Abner */
+      {
+        path: 'numerary',
+        loadChildren: async () =>
+          (await import('./numerary/numerary.module')).NumeraryModule,
+        data: { title: 'Numerario' },
       },
       {
         path: 'indicators-per-good',

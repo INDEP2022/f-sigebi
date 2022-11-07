@@ -2,6 +2,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -19,8 +20,97 @@ export class PJCDDVerificationDocumentsConfiscationComponent
   extends BasePage
   implements OnInit, OnDestroy
 {
+  settingsTablaDocumentos = {
+    pager: {
+      display: false,
+    },
+    hideSubHeader: true,
+    actions: false,
+    selectedRowIndex: -1,
+    mode: 'external',
+    columns: {
+      cveDocumento: {
+        title: 'Cve. Documento',
+        type: 'number',
+      }, // 8 char
+      descripcionDocumento: {
+        title: 'Descripción Documento',
+        type: 'text',
+      }, // 100 char etiqueta
+      solicitarDocumentos: {
+        title: 'Solicitar Documentos',
+        type: 'check',
+      }, // 1 char
+    },
+    noDataMessage: 'No se encontrarón registros',
+  };
+  dataTablaDocumentos = [
+    {
+      cveDocumento: '123456', // 8 char
+      descripcionDocumento: 'Descripcion Documento', // 100 char etiqueta
+      solicitarDocumentos: '1', // 1 char
+    },
+    {
+      cveDocumento: '123456', // 8 char
+      descripcionDocumento: 'Descripcion Documento', // 100 char etiqueta
+      solicitarDocumentos: '1', // 1 char
+    },
+  ];
+
+  settingsDocumentos = {
+    pager: {
+      display: false,
+    },
+    hideSubHeader: true,
+    actions: false,
+    selectedRowIndex: -1,
+    mode: 'external',
+    columns: {
+      cveDocumento: {
+        title: 'Cve. Documento',
+        type: 'number',
+      }, // 8 char
+      descripcionDocumento: {
+        title: 'Descripción Documento',
+        type: 'text',
+      }, // 100 char etiqueta
+      fechaRecibo: {
+        title: 'Fecha Recibo',
+        type: 'date',
+      }, // 30 char
+      estatusDocumentos: {
+        title: 'Estatus Documentos',
+        type: 'text',
+      }, // 30 char
+      solicitarDocumentos: {
+        title: 'Solicitar Documentos',
+        type: 'check',
+      }, // 1 char
+    },
+    noDataMessage: 'No se encontrarón registros',
+  };
+  dataDocumentos = [
+    {
+      cveDocumento: '123456', // 8 char
+      descripcionDocumento: 'Descripcion Documento', // 100 char etiqueta
+      fechaRecibo: '04/11/2022', // 30 char
+      estatusDocumentos: 'proceso', // 30 char
+      solicitarDocumentos: '1', // 1 char
+    },
+    {
+      cveDocumento: '123456', // 8 char
+      descripcionDocumento: 'Descripcion Documento', // 100 char etiqueta
+      fechaRecibo: '04/11/2022', // 30 char
+      estatusDocumentos: 'proceso', // 30 char
+      solicitarDocumentos: '1', // 1 char
+    },
+  ];
+
+  public listadoDocumentos: boolean = false;
+  public tablaDocumentos: boolean = false;
   expedientesForm: FormGroup;
   bienesForm: FormGroup;
+  reporteHistorialForm: FormGroup;
 
   constructor(private fb: FormBuilder) {
     super();
@@ -57,5 +147,38 @@ export class PJCDDVerificationDocumentsConfiscationComponent
       disponible: ['', [Validators.maxLength(2)]], // 2 char
       noRegistro: ['', [Validators.maxLength(40)]], // 40 char
     });
+    this.reporteHistorialForm = this.fb.group({
+      noExpediente: ['', [Validators.maxLength(10)]], // 10 char
+      noBien: ['', [Validators.maxLength(10)]], // 10 char
+    });
+  }
+
+  btnAprobar() {
+    console.log('btnAprobar');
+  }
+  btnRechazar() {
+    console.log('btnRechazar');
+  }
+  btnParcializar() {
+    console.log('btnParcializar');
+  }
+  btnHistorial() {
+    console.log('btnHistorial');
+    this.listadoDocumentos = true;
+  }
+  btnProceso() {
+    console.log('btnProceso');
+    this.tablaDocumentos = true;
+  }
+  btnGenerarReporte() {
+    console.log('btnGenerarReporte');
+  }
+  btnSalir() {
+    console.log('Salir');
+    this.listadoDocumentos = false;
+  }
+  btnSalirTabla() {
+    console.log('btnSalirTabla');
+    this.tablaDocumentos = false;
   }
 }
