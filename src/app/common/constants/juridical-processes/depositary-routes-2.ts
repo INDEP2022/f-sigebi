@@ -39,4 +39,9 @@ export const DEPOSITARY_ROUTES_2: any[] = [
     link: 'deposit-request-monitor',
     menu: 'Monitor de solicitudes de depositaria',
   },
+  {
+    label: 'Generación de archivos de dictamen',
+    link: 'generation-files-opinion',
+    menu: 'Generación de archivos de dictamen',
+  },
 ];
