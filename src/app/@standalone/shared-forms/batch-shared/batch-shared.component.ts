@@ -18,11 +18,9 @@ import { IBatch } from 'src/app/core/models/catalogs/batch.model';
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './batch-shared.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class BatchSharedComponent extends BasePage implements OnInit {
-  
   @Input() form: FormGroup;
   @Input() batchField: string = 'batch';
 

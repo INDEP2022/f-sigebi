@@ -13,17 +13,14 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { ITypePenalty } from 'src/app/core/models/administrative-processes/type-penalty';
 import { TypePenaltiesData } from './data';
 
-
 @Component({
   selector: 'app-penalties-type-shared',
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './penalties-type-shared.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PenaltiesTypeSharedComponent extends BasePage implements OnInit {
-
   @Input() form: FormGroup;
   @Input() typePenaltyField: string = 'typePenalty';
 

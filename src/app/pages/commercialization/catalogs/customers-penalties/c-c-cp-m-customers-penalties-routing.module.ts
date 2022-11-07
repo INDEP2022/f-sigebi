@@ -6,12 +6,12 @@ import { CCpCCustomersPenaltiesComponent } from './customers-penalties/c-cp-c-cu
 const routes: Routes = [
   {
     path: '',
-    component: CCpCCustomersPenaltiesComponent
-  }
+    component: CCpCCustomersPenaltiesComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CCCpMCustomersPenaltiesRoutingModule { }
+export class CCCpMCustomersPenaltiesRoutingModule {}

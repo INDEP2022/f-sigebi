@@ -3,9 +3,9 @@
     <h5 class="modal-title">{{ title }}</h5>
   </div>
   <div body>
-  	<form class="form-material" [formGroup]="form">
+    <form class="form-material" [formGroup]="form">
       <div class="row mb-3 mt-3">
-      	<!--Customers Component-->
+        <!--Customers Component-->
         <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
           <app-customers-shared [form]="form"></app-customers-shared>
         </div>
@@ -24,9 +24,7 @@
         <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
           <div class="row mb-3 mt-3">
             <div class="col-md-12">
-              <form-field
-                [control]="form.get('status')"
-                label="Estatus">
+              <form-field [control]="form.get('status')" label="Estatus">
                 <select class="form-control" formControlName="status">
                   <option [value]="null">Selecciona un Valor</option>
                   <option value="penaltie">Penaliza</option>
@@ -53,7 +51,9 @@
       </div>
       <div class="row mb-3 mt-3">
         <div class="col-md-12 mb-3 mt-3">
-          <form-field [control]="form.get('observations')" label="Observaciones">
+          <form-field
+            [control]="form.get('observations')"
+            label="Observaciones">
             <textarea
               class="form-control"
               type="text"
@@ -66,9 +66,7 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-        	[loading]="loading"
-          (confirm)="confirm()">
+        <confirm-button [loading]="loading" (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">
