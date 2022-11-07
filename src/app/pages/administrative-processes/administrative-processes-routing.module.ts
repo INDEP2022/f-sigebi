@@ -518,6 +518,16 @@ const routes: Routes = [
         data: { title: 'Formato ordenes de servicio ' },
       },
       {
+        path: 'performance-indicator',
+        loadChildren: async () =>
+          (
+            await import(
+              './administration-third/performance-indicator/performance-indicator.module'
+            )
+          ).PerformanceIndicatorModule,
+        data: { title: 'Indicador de desempeño' },
+      },
+      {
         path: 'implementation-report',
         loadChildren: async () =>
           (await import('./administration-third/implementation-report/implementation-report.module'))
@@ -596,4 +606,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class AdministrativeProcessesRoutingModule {}
+export class AdministrativeProcessesRoutingModule { }

@@ -13,6 +13,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     ImplementationReportComponent,
     ImplementationReportHistoricComponent
   ],
+  exports: [ImplementationReportHistoricComponent],
   imports: [
     CommonModule,
     ImplementationReportRoutingModule,
