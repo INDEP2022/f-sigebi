@@ -431,12 +431,16 @@ export const MENU: IMenuItem[] = [
             link: '/pages/commercialization/catalogs/capture-lines',
           },
           {
+            label: 'Proveedores',
+            link: '/pages/commercialization/catalogs/providers',
+          },
+          {
             label: 'Clientes',
             link: '/pages/commercialization/catalogs/customers',
           },
           {
-            label: 'Proveedores',
-            link: '/pages/commercialization/catalogs/providers',
+            label: 'Penalización de Clientes',
+            link: '/pages/commercialization/catalogs/customers-penalties',
           },
         ],
       },
