@@ -5,6 +5,7 @@ import { DOCUMENTATION_COMPLEMENTARY } from '../common/routes/documentation-comp
 import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception.routes';
 import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
 import { GENERAL_PROCESSES_ROUTES } from '../common/routes/general-processes.routes';
+import { PARAMETERIZATION_ROUTES } from '../common/routes/parameterization.routes';
 import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
@@ -549,4 +550,7 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
+
+  //Parametrización
+  ...PARAMETERIZATION_ROUTES,
 ];

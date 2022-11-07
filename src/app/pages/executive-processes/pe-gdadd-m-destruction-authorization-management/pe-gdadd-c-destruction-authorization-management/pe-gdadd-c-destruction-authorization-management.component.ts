@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { maxDate } from 'src/app/common/validations/date.validators';
 
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -30,10 +32,15 @@ export class PeGdaddCDestructionAuthorizationManagementComponent
     ...this.settings,
     actions: false,
   };
+
   form: FormGroup = new FormGroup({});
   today: Date;
   imagenurl =
     'https://images.ctfassets.net/txhaodyqr481/6gyslCh8jbWbh9zYs5Dmpa/a4a184b2d1eda786bf14e050607b80df/plantillas-de-factura-profesional-suscripcion-gratis-con-sumup-facturas.jpg?fm=webp&q=85&w=743&h=892';
+
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems: number = 0;
+  columns: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -58,6 +65,7 @@ export class PeGdaddCDestructionAuthorizationManagementComponent
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getPagination();
   }
 
   private prepareForm() {
@@ -79,6 +87,11 @@ export class PeGdaddCDestructionAuthorizationManagementComponent
       scanFolio: ['', [Validators.required]],
       observations: ['', [Validators.required]],
     });
+  }
+
+  getPagination() {
+    this.columns = this.dataNoBien;
+    this.totalItems = this.columns.length;
   }
 
   dataActRec = [

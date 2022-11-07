@@ -114,6 +114,12 @@ const routes: Routes = [
         )
       ).DocumentationComplementaryModule,
   },
+  {
+    path: 'parameterization',
+    loadChildren: async () =>
+      (await import('./parameterization/parameterization.module'))
+        .ParameterizationModule,
+  },
 ];
 
 @NgModule({
