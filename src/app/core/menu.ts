@@ -1,4 +1,5 @@
 import { MENU_OPTIONS_JURIDICAL_PROCESSES } from '../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
+import { MENU_OPTIONS_SECURITY } from '../common/constants/security/security-menu';
 import { ADMINISTRATIVE_PROCESSES_ROUTES } from '../common/routes/administrative-processes.routes';
 import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
 import { DOCUMENTATION_COMPLEMENTARY } from '../common/routes/documentation-complementary';
@@ -506,6 +507,8 @@ export const MENU: IMenuItem[] = [
   },
   // PROCESOS JURIDICOS
   ...MENU_OPTIONS_JURIDICAL_PROCESSES,
+  // SEGURIDAD
+  ...MENU_OPTIONS_SECURITY,
   // Recepcion Fisica Judicial
   {
     label: 'Recepcion Fisica Judicial',
