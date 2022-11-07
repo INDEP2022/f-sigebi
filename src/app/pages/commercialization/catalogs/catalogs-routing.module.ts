@@ -40,6 +40,16 @@ const routes: Routes = [
         .CCMProviderCatalogsModule,
     data: { title: 'Proveedores' },
   },
+  {
+    path: 'customers-penalties',
+    loadChildren: async () =>
+      (
+        await import(
+          './customers-penalties/c-c-cp-m-customers-penalties.module'
+        )
+      ).CCCpMCustomersPenaltiesModule,
+    data: { title: 'Penalización de Clientes' },
+  },
 ];
 
 @NgModule({

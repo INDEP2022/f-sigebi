@@ -81,13 +81,13 @@ export const DEPOSITARY_ROUTES_2_ROUTING = [
     data: { title: DEPOSITARY_ROUTES_2[7].label },
   },
   {
-    path: DEPOSITARY_ROUTES_2[9].link,
+    path: DEPOSITARY_ROUTES_2[8].link,
     loadChildren: async () =>
       (
         await import(
-          './reports-assets-declared-abandoned/jp-d-m-reports-assets-declared-abandoned.module'
+          './generation-files-opinion/jp-d-m-generation-files-opinion.module'
         )
-      ).JpDMReportsAssetsDeclaredAbandonedModule,
-    data: { title: DEPOSITARY_ROUTES_2[9].label },
+      ).JpDMGenerationFilesOpinionModule,
+    data: { title: DEPOSITARY_ROUTES_2[8].label },
   },
 ];
