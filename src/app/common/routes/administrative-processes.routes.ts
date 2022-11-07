@@ -518,6 +518,18 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
       /**
        * END LEGASPI
        **/
+      /**START Abner */
+      {
+        label: 'Numerario',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Registro de fichas de deposito',
+            link: '/pages/administrative-processes/numerary/deposit-tokens',
+          },
+        ],
+      },
+      /**END Abner */
     ],
   },
 ];
