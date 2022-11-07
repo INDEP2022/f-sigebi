@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CPCQuestionCatalogModalComponent } from '../c-p-c-question-catalog-modal/c-p-c-question-catalog-modal.component';
 import { QUESTION_CATALOG_COLUMNS } from './question-catalog-columns';
@@ -12,6 +14,7 @@ import { QUESTION_CATALOG_COLUMNS } from './question-catalog-columns';
 export class CPCQuestionCatalogComponent extends BasePage implements OnInit {
   columns: any[] = [];
   totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(private modalService: BsModalService) {
     super();
@@ -27,7 +30,9 @@ export class CPCQuestionCatalogComponent extends BasePage implements OnInit {
     };
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getPagination();
+  }
 
   openForm(allotment?: any) {
     this.openModal({ allotment });
@@ -49,6 +54,11 @@ export class CPCQuestionCatalogComponent extends BasePage implements OnInit {
     this.columns = this.data;
     this.totalItems = this.data.length;
     this.loading = false;
+  }
+
+  getPagination() {
+    this.columns = this.data;
+    this.totalItems = this.columns.length;
   }
 
   data = [

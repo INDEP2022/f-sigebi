@@ -11,10 +11,14 @@
     </div>
   </div>
   <div body>
-    <ng2-smart-table
-      [settings]="settings"
-      [source]="data"
-      (edit)="openForm($event.data)"></ng2-smart-table>
+    <div class="table-responsive">
+      <ng2-smart-table
+        [settings]="settings"
+        [source]="data"
+        (edit)="openForm($event.data)"></ng2-smart-table>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
     <div class="row pt-3">
       <div class="col-md-2">
         <h5 class="font-size-14 d-inline">Total de respuestas: &nbsp;</h5>

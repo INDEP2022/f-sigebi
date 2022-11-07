@@ -10,7 +10,7 @@
             <input
               type="text"
               class="form-control"
-              formGroupName="noQuestion" />
+              formControlName="noQuestion" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -20,14 +20,17 @@
             <input
               type="text"
               class="form-control"
-              formGroupName="textQuestion" />
+              formControlName="textQuestion" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
             [control]="form.get('maxScore')"
             label="Puntuación Máxima">
-            <input type="text" class="form-control" formGroupName="maxScore" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="maxScore" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -37,7 +40,7 @@
             <input
               type="text"
               class="form-control"
-              formGroupName="typeQuestion" />
+              formControlName="typeQuestion" />
           </form-field>
         </div>
       </div>
@@ -47,26 +50,32 @@
             <input
               type="text"
               class="form-control"
-              formGroupName="noResponse" />
+              formControlName="noResponse" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field [control]="form.get('initValue')" label="Valor inicial">
-            <input type="text" class="form-control" formGroupName="initValue" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="initValue" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
             [control]="form.get('resValue')"
             label="Valor de respuesta">
-            <input type="text" class="form-control" formGroupName="resValue" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="resValue" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
             [control]="form.get('resText')"
             label="Texto de la respuesta">
-            <input type="text" class="form-control" formGroupName="resText" />
+            <input type="text" class="form-control" formControlName="resText" />
           </form-field>
         </div>
       </div>
