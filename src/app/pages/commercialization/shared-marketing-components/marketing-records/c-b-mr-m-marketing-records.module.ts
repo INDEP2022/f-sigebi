@@ -5,7 +5,6 @@ import { SharedModule } from 'src/app/shared/shared.module';
 //Reactive Forms
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 //Ngx Bootstrap
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ModalModule } from 'ngx-bootstrap/modal';
 //Standalone Components
 import { CitiesSharedComponent } from 'src/app/@standalone/shared-forms/cities-shared/cities-shared.component';
@@ -25,7 +24,6 @@ import { CBMrCMarketingRecordsComponent } from './marketing-records/c-b-mr-c-mar
     SharedModule,
     FormsModule,
     ReactiveFormsModule,
-    BsDatepickerModule,
     ModalModule.forChild(),
     UsersSharedComponent,
     CitiesSharedComponent,
