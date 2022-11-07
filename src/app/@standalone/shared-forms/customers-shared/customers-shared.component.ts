@@ -18,11 +18,9 @@ import { ICustomer } from 'src/app/core/models/catalogs/customer.model';
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './customers-shared.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CustomersSharedComponent extends BasePage implements OnInit {
-  
   @Input() form: FormGroup;
   @Input() customerField: string = 'customer';
 
