@@ -8,12 +8,12 @@ import { COLUMNS } from './columns';
 import { data } from './data';
 
 @Component({
-  selector: 'app-c-c-et-c-event-types',
-  templateUrl: './c-c-et-c-event-types.component.html',
+  selector: 'app-c-c-ss-c-sale-status',
+  templateUrl: './c-c-ss-c-sale-status.component.html',
   styles: [
   ]
 })
-export class CCEtCEventTypesComponent extends BasePage implements OnInit {
+export class CCSsCSaleStatusComponent extends BasePage implements OnInit {
 
   data: LocalDataSource = new LocalDataSource();
   eventTypesD = data;
@@ -40,7 +40,7 @@ export class CCEtCEventTypesComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.data.load(this.eventTypesD);
   }
-  
+
   selectRow(row: any) {
     this.selectedRow = row;
     this.rowSelected = true;

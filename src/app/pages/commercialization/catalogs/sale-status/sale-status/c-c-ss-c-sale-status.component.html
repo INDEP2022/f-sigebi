@@ -1,6 +1,6 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">TIPOS DE EVENTO</h5>
+    <h5 class="title">ESTATUS DE VENTA</h5>
   </div>
   <div body>
     <div class="row mb-3 mt-3">
@@ -13,28 +13,19 @@
       </div>
       <div class="col-lg-6 col-md-6 col-sm-12 col-12 align-self-baseline" *ngIf="rowSelected">
         <div class="row mb-3 mt-3 justify-content-end">
-          <div class="col-lg-4 col-md-4 col-sm-6 col-12">
-            <label for="">Tipo de Dispersión</label>
+          <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+            <label for="">Estatus</label>
             <div class="mt-4">
               <h5 class="font-size-14 text-muted">
                 <i class="bx bxs-circle me-1 text-muted"></i>
-                {{ selectedRow?.id_tipo_disp }}
-              </h5>
-            </div>
-          </div>
-          <div class="col-lg-4 col-md-4 col-sm-6 col-12">
-            <label for="">Tipo de Fallo</label>
-            <div class="mt-4">
-              <h5 class="font-size-14 text-muted">
-                <i class="bx bxs-circle me-1 text-muted"></i>
-                {{ selectedRow?.id_tipo_fallo }}
+                {{ selectedRow?.status}}
               </h5>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <!--EVENT TYPES TABLE-->
+    <!--SALE STATUS TABLE-->
     <div class="row pt-4">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
@@ -51,21 +42,12 @@
     </app-pagination>
     <!--INFO EVENT TYPE-->
     <div class="row mb-3 mt-3 justify-content-start" *ngIf="rowSelected">
-    	<div class="col-lg-2 col-md-2 col-sm-6 col-12">
-    		<label for="">Tipo de Dispersión</label>
+      <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+        <label for="">Estatus</label>
         <div class="mt-4">
           <h5 class="font-size-14 text-muted">
             <i class="bx bxs-circle me-1 text-muted"></i>
-            {{ selectedRow?.id_tipo_disp }}
-          </h5>
-        </div>
-      </div>
-      <div class="col-lg-2 col-md-2 col-sm-6 col-12">
-    		<label for="">Tipo de Fallo</label>
-        <div class="mt-4">
-          <h5 class="font-size-14 text-muted">
-            <i class="bx bxs-circle me-1 text-muted"></i>
-            {{ selectedRow?.id_tipo_fallo }}
+            {{ selectedRow?.status}}
           </h5>
         </div>
       </div>
