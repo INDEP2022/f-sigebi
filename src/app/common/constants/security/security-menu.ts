@@ -22,6 +22,11 @@ export const MENU_OPTIONS_SECURITY = [
         label: routesSecurity[2].menu,
         link: baseMenuSecurity + routesSecurity[2].link,
       },
+      {
+        // Reporte de Accesos por Usuarios
+        label: routesSecurity[3].menu,
+        link: baseMenuSecurity + routesSecurity[3].link,
+      },
     ],
   },
   // SEGURIDAD
