@@ -28,6 +28,12 @@ import { GoodDocTabComponent } from './tabs/expedients-child-tabs-components/goo
 import { NewDocumentComponent } from './tabs/expedients-child-tabs-components/new-document/new-document.component';
 import { RequestOfAssetsComponent } from './tabs/expedients-child-tabs-components/request-of-assets/request-of-assets.component';
 import { GeneralDocumentsFormComponent } from './tabs/general-documents-form/general-documents-form.component';
+import { InputFieldComponent } from './tabs/notify-clarifications-impropriety-tabs-component/input-field/input-field.component';
+import { NotificationAssetsTabComponent } from './tabs/notify-clarifications-impropriety-tabs-component/notification-assets-tab/notification-assets-tab.component';
+import { NotifyAssetsImproprietyFormComponent } from './tabs/notify-clarifications-impropriety-tabs-component/notify-assets-impropriety-form/notify-assets-impropriety-form.component';
+import { PrintReportModalComponent } from './tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
+import { RefuseClarificationModalComponent } from './tabs/notify-clarifications-impropriety-tabs-component/refuse-clarification-modal/refuse-clarification-modal.component';
+import { UploadFielsModalComponent } from './tabs/notify-clarifications-impropriety-tabs-component/upload-fiels-modal/upload-fiels-modal.component';
 import { AddressTransferorTabComponent } from './tabs/records-of-request-components/address-transferor-tab/address-transferor-tab.component';
 import { AssetsComponent } from './tabs/records-of-request-components/assets/assets.component';
 import { MenajeComponent } from './tabs/records-of-request-components/records-of-request-child-tabs-components/menaje/menaje.component';
@@ -68,12 +74,18 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     AddressTransferorTabComponent,
     MenajeComponent,
     ClarificationsComponent,
+    NotificationAssetsTabComponent,
     RegistrationRequestFormComponent,
     AssociateFileComponent,
     GeneralDocumentsFormComponent,
     RequestDocumentFormComponent,
     EstateDocumentFormComponent,
     SearchDocumentFormComponent,
+    NotifyAssetsImproprietyFormComponent,
+    PrintReportModalComponent,
+    InputFieldComponent,
+    UploadFielsModalComponent,
+    RefuseClarificationModalComponent,
   ],
   imports: [
     CommonModule,
