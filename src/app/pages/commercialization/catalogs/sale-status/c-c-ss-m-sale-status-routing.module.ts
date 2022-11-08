@@ -6,12 +6,12 @@ import { CCSsCSaleStatusComponent } from './sale-status/c-c-ss-c-sale-status.com
 const routes: Routes = [
   {
     path: '',
-    component: CCSsCSaleStatusComponent
-  }
+    component: CCSsCSaleStatusComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CCSsMSaleStatusRoutingModule { }
+export class CCSsMSaleStatusRoutingModule {}

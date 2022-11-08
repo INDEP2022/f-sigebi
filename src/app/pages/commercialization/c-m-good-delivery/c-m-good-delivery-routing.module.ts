@@ -5,12 +5,12 @@ import { CCGoodDeliveryMainComponent } from './c-c-good-delivery-main/c-c-good-d
 const routes: Routes = [
   {
     path: '',
-    component: CCGoodDeliveryMainComponent
-  }
+    component: CCGoodDeliveryMainComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CMGoodDeliveryRoutingModule { }
+export class CMGoodDeliveryRoutingModule {}

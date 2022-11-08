@@ -3,14 +3,12 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-msg-rdcbs-c-register-additional-documentation',
   templateUrl: './msg-rdcbs-c-register-additional-documentation.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class MsgRdcbsCRegisterAdditionalDocumentationComponent implements OnInit {
+export class MsgRdcbsCRegisterAdditionalDocumentationComponent
+  implements OnInit
+{
+  constructor() {}
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

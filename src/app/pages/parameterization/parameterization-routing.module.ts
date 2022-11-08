@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
+  //Henry
   {
     path: 'c-p-m-cat-financial-information-attributes',
     loadChildren: async () =>
@@ -40,6 +41,17 @@ const routes: Routes = [
     data: { title: 'Catálogo de tablas lógicas' },
   },
   {
+    path: 'c-p-m-flyer-subject-catalog',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-flyer-subject-catalog/c-p-m-flyer-subject-catalog.module'
+        )
+      ).CPMFlyerSubjectCatalogModule,
+    data: { title: 'Catálogo de asuntos para volantes' },
+  },
+  //Alexander
+  {
     path: 'maintenance-of-areas',
     loadChildren: async () =>
       (
@@ -49,6 +61,7 @@ const routes: Routes = [
       ).CPMMaintenanceOfAreasModule,
     data: { title: 'Catálogo de Mantenimiento de Areas' },
   },
+  //Félix
 ];
 
 @NgModule({
