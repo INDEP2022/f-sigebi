@@ -5,7 +5,17 @@
   <div body>
     <div class="row">
       <div class="d-flex">
-        <div class="ml-auto p-2">
+        <div class="mr-auto p-2"></div>
+        <div class="p-2" *ngIf="notifyClarifiOrImpropriety">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]="registRequestForm.invalid"
+            (click)="saveClarification()">
+            <i class="bx bxs-right-arrow-square"></i> {{ btnSaveTitle }}
+          </button>
+        </div>
+        <div class="p-2">
           <button
             type="button"
             class="btn btn-primary btn-sm active"
@@ -157,7 +167,8 @@
               <app-clarifications *ngIf="validateDocument"></app-clarifications>
               <!-- fin -->
               <!-- notificar aclaraciones o improcedencias -->
-              <app-notification-assets-tab></app-notification-assets-tab>
+              <app-notification-assets-tab
+                [isSaving]="saveClarifiObject"></app-notification-assets-tab>
               <!-- fin -->
             </tab>
             <tab heading="{{ tab3 }}">

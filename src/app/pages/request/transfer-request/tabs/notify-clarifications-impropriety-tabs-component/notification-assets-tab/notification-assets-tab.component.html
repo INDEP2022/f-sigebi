@@ -2,49 +2,26 @@
   <div class="row">
     <h5><strong>Lista de Bienes</strong></h5>
   </div>
+
   <div class="row">
-    <div class="form-inline justify-content-end">
-      <div class="btn-group" dropdown>
+    <div class="d-flex">
+      <div class="mr-auto p-2"></div>
+      <div class="p-2">
         <button
-          id="button-alignment"
-          dropdownToggle
-          type="button"
-          class="btn btn-success btn-sm active dropdown-toggle"
-          aria-controls="button-alignment">
-          Acciones <span class="caret"></span>
+          class="btn btn-success btn-sm active"
+          (click)="verifyClarification()">
+          <i class="bx bx-check"></i> Verificar Cumplimiento
         </button>
-        <ul
-          id="button-alignment"
-          *dropdownMenu
-          class="dropdown-menu dropdown-menu-right"
-          role="menu"
-          aria-labelledby="button-alignment">
-          <li role="menuitem">
-            <a class="dropdown-item" style="cursor: pointer"
-              ><i class="bx bx-check"></i> Verificar Cumplimiento</a
-            >
-          </li>
-          <li role="menuitem">
-            <a class="dropdown-item">
-              <i class="bx bx-check-circle"></i> Aceptar Aclaración</a
-            >
-          </li>
-          <!--           <li role="menuitem">
-            <a class="dropdown-item"
-              ><i class="bx bxs-check-square"></i> Aprobar Aclaración</a
-            >
-          </li> -->
-          <li role="menuitem">
-            <a class="dropdown-item"
-              ><i class="bx bx-check-circle"></i> Aceptar Improcedencias</a
-            >
-          </li>
-          <!--           <li role="menuitem">
-            <a class="dropdown-item"
-              ><i class="bx bxs-check-square"></i> Aprobar Improcedencias</a
-            >
-          </li> -->
-        </ul>
+      </div>
+      <div class="p-2">
+        <button class="btn btn-success btn-sm active">
+          <i class="bx bx-check-circle"></i> Aceptar Aclaración
+        </button>
+      </div>
+      <div class="p-2">
+        <button class="btn btn-success btn-sm active">
+          <i class="bx bx-check-circle"></i> Aceptar Improcedencias
+        </button>
       </div>
     </div>
   </div>
@@ -77,11 +54,21 @@
         </button>
       </div>
       <div class="p-2">
-        <button class="btn btn-danger btn-sm active">Rechazar</button>
+        <button
+          *ngIf="!byInterconnection"
+          class="btn btn-success btn-sm active"
+          (click)="finishClarifiImpro()">
+          Finalizar Aclaración Improcedencia
+        </button>
+        <button *ngIf="byInterconnection" class="btn btn-info btn-sm active">
+          Ver Respuesta Aclaracion
+        </button>
       </div>
       <div class="p-2">
-        <button class="btn btn-danger btn-sm active">
-          Ver Respuesta Aclaración
+        <button
+          class="btn btn-danger btn-sm active"
+          (click)="refuseClarification()">
+          Rechazar
         </button>
       </div>
     </div>

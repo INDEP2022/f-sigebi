@@ -23,6 +23,9 @@ export class RegistrationOfRequestsComponent
   parameter: any;
   object: any = '';
   btnTitle: string = '';
+  btnSaveTitle: string = '';
+  saveClarifiObject: boolean = false;
+
   //tabs
   tab1: string = '';
   tab2: string = '';
@@ -106,7 +109,8 @@ export class RegistrationOfRequestsComponent
       this.tab1 = 'Detalle de la Solicitud';
       this.tab2 = 'Bienes';
       this.tab3 = 'Expediente';
-      this.btnTitle = 'Turnar';
+      this.btnTitle = 'Terminar';
+      this.btnSaveTitle = 'Guardar';
     }
   }
   confirm() {
@@ -116,6 +120,10 @@ export class RegistrationOfRequestsComponent
       'Confirmación',
       ''
     );
+  }
+
+  saveClarification(): void {
+    this.saveClarifiObject = true;
   }
 
   close() {
