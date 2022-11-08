@@ -62,6 +62,18 @@ export const GENERAL_PROCESSES_ROUTES = [
             label: 'Estados de Cuenta',
             link: '/pages/general-processes/indicators/account-status',
           },
+          {
+            label: 'Estrategias de Administración',
+            link: '/pages/general-processes/indicators/management-strategies',
+          },
+          {
+            label: 'Estrategias de Recepción',
+            link: '/pages/general-processes/indicators/reception-strategies',
+          },
+          {
+            label: 'Consolidado',
+            link: '/pages/general-processes/indicators/consolidated',
+          },
         ],
       },
     ],

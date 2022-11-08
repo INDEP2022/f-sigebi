@@ -12,6 +12,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
 })
 export class GpCaptureFilterComponent implements OnInit {
   @Input() isReceptionAndDelivery: boolean = false;
+  @Input() isReceptionStrategies: boolean = false;
+  @Input() isConsolidated: boolean = false;
   form = this.fb.group({
     de: [null, [Validators.required]],
     a: [null, [Validators.required]],
