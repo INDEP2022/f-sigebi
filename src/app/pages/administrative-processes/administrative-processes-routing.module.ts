@@ -534,6 +534,13 @@ const routes: Routes = [
             .ImplementationReportModule,
         data: { title: 'Reporte de implementacion' },
       },
+      {
+        path: 'service-order-reports',
+        loadChildren: async () =>
+          (await import('./administration-third/service-order-reports/service-order-reports.module'))
+            .ServiceOrderReportsModule,
+        data: { title: 'Reportes de Ordenes de Servicio' },
+      },
       /**
        * Seguros David Lucas
        */
