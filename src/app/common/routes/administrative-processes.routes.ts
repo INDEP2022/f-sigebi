@@ -340,6 +340,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Indicador de Desempeño',
             link: '/pages/administrative-processes/performance-indicator',
           },
+          {
+            label: 'Reportes de la O.DE S.',
+            link: '/pages/administrative-processes/service-order-reports',
+          },
         ],
       },
       {
