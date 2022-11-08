@@ -40,11 +40,7 @@ export class CCEtCEventTypesComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.data.load(this.eventTypesD);
   }
-
-  /*settingsChange($event: any): void {
-    this.settings = $event;
-  }*/
-
+  
   selectRow(row: any) {
     this.selectedRow = row;
     this.rowSelected = true;

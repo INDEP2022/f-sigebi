@@ -57,6 +57,13 @@ const routes: Routes = [
         .CCEtMEventTypesModule,
     data: { title: 'Tipos de Eventos' },
   },
+  {
+    path: 'sale-status',
+    loadChildren: async () =>
+      (await import('./sale-status/c-c-ss-m-sale-status.module'))
+        .CCSsMSaleStatusModule,
+    data: { title: 'Estatus de Venta' },
+  },
 ];
 
 @NgModule({

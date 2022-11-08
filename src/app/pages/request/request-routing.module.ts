@@ -93,6 +93,14 @@ const routes: Routes = [
         .TransferRequestModule,
     data: { title: 'Solicitudes de transferencia' },
   },
+  //Gestionar Bienes Similares
+  {
+    path: 'manage-similar-goods',
+    loadChildren: async () =>
+      (await import('./manage-similar-goods/manage-similar-goods.module'))
+        .ManageSimilarGoodsModule,
+    data: { title: '' },
+  },
 ];
 
 @NgModule({

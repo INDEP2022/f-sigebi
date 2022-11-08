@@ -2,12 +2,12 @@ import { MENU_OPTIONS_JURIDICAL_PROCESSES } from '../common/constants/juridical-
 import { MENU_OPTIONS_SECURITY } from '../common/constants/security/security-menu';
 import { ADMINISTRATIVE_PROCESSES_ROUTES } from '../common/routes/administrative-processes.routes';
 import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
+import { COMMERCIALIZATION_ROUTES } from '../common/routes/commercialization.routes';
 import { DOCUMENTATION_COMPLEMENTARY } from '../common/routes/documentation-complementary';
 import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception.routes';
 import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
 import { GENERAL_PROCESSES_ROUTES } from '../common/routes/general-processes.routes';
 import { PARAMETERIZATION_ROUTES } from '../common/routes/parameterization.routes';
-import { COMMERCIALIZATION_ROUTES } from '../common/routes/commercialization.routes';
 import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
@@ -52,6 +52,15 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Solicitudes',
         link: '/pages/request/list',
+      },
+      {
+        label: 'Gestionar Bienes Similares',
+        subItems: [
+          {
+            label: 'Documentación Complementaria',
+            link: '/pages/request/manage-similar-goods/register-additional-documentation',
+          },
+        ],
       },
     ],
   },
@@ -176,6 +185,10 @@ export const MENU: IMenuItem[] = [
       {
         label: 'Reporte de Actas de Devolución',
         link: '/pages/final-destination-process/return-acts-report',
+      },
+      {
+        label: 'Fichas Técnicas',
+        link: '/pages/final-destination-process/technical-sheets',
       },
       {
         label: 'Revisión de Fichas Técnicas',

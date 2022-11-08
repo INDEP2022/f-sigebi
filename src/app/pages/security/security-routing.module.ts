@@ -26,6 +26,13 @@ const routes: Routes = [
         .SSystemAccessModule,
     data: { title: routesSecurity[1].label },
   },
+  {
+    path: routesSecurity[2].link,
+    loadChildren: async () =>
+      (await import('./change-password/s-cc-m-change-password.module'))
+        .SCCChangePasswordModule,
+    data: { title: routesSecurity[2].label },
+  },
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],

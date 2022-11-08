@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { RequestFormComponent } from './request-form/request-form.component';
+import { NewTransferRequestComponent } from './new-transfer-request/new-transfer-request.component';
 import { RequestListComponent } from './request-list/request-list.component';
 
 const routes: Routes = [
@@ -10,7 +10,7 @@ const routes: Routes = [
   },
   {
     path: 'new-transfer-request',
-    component: RequestFormComponent,
+    component: NewTransferRequestComponent,
   },
 ];
 
