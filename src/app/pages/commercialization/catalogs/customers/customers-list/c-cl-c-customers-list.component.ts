@@ -1,35 +1,34 @@
 import { Component, OnInit } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
-import { DomSanitizer } from '@angular/platform-browser';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Components
-import { CCrCCustomersRepresentativesComponent } from '../customers-representatives/c-cr-c-customers-representatives.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { CCrCCustomersRepresentativesComponent } from '../customers-representatives/c-cr-c-customers-representatives.component';
 import { COLUMNS } from './columns';
 import { data } from './data';
 
 @Component({
   selector: 'app-c-cl-c-customers-list',
   templateUrl: './c-cl-c-customers-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CClCCustomersListComponent extends BasePage implements OnInit {
-
   data: any[] = data;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(
     private sanitizer: DomSanitizer,
-    private modalService: BsModalService) {
+    private modalService: BsModalService
+  ) {
     super();
     this.settings = {
       ...this.settings,
-      actions:{ 
-        add:false,
-        edit:false,
+      actions: {
+        add: false,
+        edit: false,
         delete: false,
         columnTitle: 'Representantes',
         custom: [
@@ -39,7 +38,7 @@ export class CClCCustomersListComponent extends BasePage implements OnInit {
               <button type="button" class="btn btn-success btn-sm active">
                <i class='bx bx-export' ></i>
               </button>
-            `)
+            `),
           },
           {
             name: 'info',
@@ -47,7 +46,7 @@ export class CClCCustomersListComponent extends BasePage implements OnInit {
               <button type="button" class="btn btn-info btn-sm active">
               <i class='bx bx-info-circle'></i>
               </button>
-            `)
+            `),
           },
         ],
       },
@@ -81,11 +80,11 @@ export class CClCCustomersListComponent extends BasePage implements OnInit {
     this.settings = $event;
   }
 
-  onCustom(event:any) {
-    if(event.action === 'info'){
+  onCustom(event: any) {
+    if (event.action === 'info') {
       this.openModal();
       //alert('info')
-    }else{
+    } else {
       //alert('export')
     }
     //alert(`Custom event '${event.action}' fired on row №: ${event.data.id}`)

@@ -5,12 +5,12 @@ import { CBmRExdlrCRemittanceExportationComponent } from './c-bm-r-exdlr-c-remit
 const routes: Routes = [
   {
     path: '',
-    component: CBmRExdlrCRemittanceExportationComponent
-  }
+    component: CBmRExdlrCRemittanceExportationComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CBmRExdlrMRemittanceExportationRoutingModule { }
+export class CBmRExdlrMRemittanceExportationRoutingModule {}

@@ -20,7 +20,7 @@
                   bsDatepicker />
               </form-field>
             </div>
-            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 col-12  mb-3 mt-3">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 col-12 mb-3 mt-3">
               <form-field [control]="form.get('to')" label="Al">
                 <input
                   formControlName="to"
@@ -42,21 +42,21 @@
                 <input
                   formControlName="requestFrom"
                   class="form-control"
-                  type="number"/>
+                  type="number" />
               </form-field>
             </div>
-            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 col-12  mb-3 mt-3">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12 col-12 mb-3 mt-3">
               <form-field [control]="form.get('requestTo')" label="Al">
                 <input
                   formControlName="requestTo"
                   class="form-control"
-                  type="number"/>
+                  type="number" />
               </form-field>
             </div>
           </div>
         </div>
       </div>
-      
+
       <div class="row mb-3 mt-3">
         <!--Delegation Component-->
         <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
@@ -73,14 +73,14 @@
         <!--Users Component-->
         <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
           <app-user-shared
-                [form]="form"
-                [userField]="'issuingUser'"
-                [label]="'Usuario Emisor'"></app-user-shared>
+            [form]="form"
+            [userField]="'issuingUser'"
+            [label]="'Usuario Emisor'"></app-user-shared>
         </div>
 
-      	<div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
-      		<app-policies-shared [form]="form"></app-policies-shared>
-      	</div>
+        <div class="col-md-6 col-sm-12 col-xs-12 mb-3 mt-3">
+          <app-policies-shared [form]="form"></app-policies-shared>
+        </div>
       </div>
     </form>
   </div>
@@ -88,10 +88,10 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-        	text="Imprimir"
-	        [disabled]="form.invalid"
-	        [loading]="loading"
-	        (confirm)="confirm()">
+          text="Imprimir"
+          [disabled]="form.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">

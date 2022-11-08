@@ -5,12 +5,12 @@ import { CMElectronicSignaturesMainComponent } from './c-m-electronic-signatures
 const routes: Routes = [
   {
     path: '',
-    component: CMElectronicSignaturesMainComponent
-  }
+    component: CMElectronicSignaturesMainComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CMElectronicSignaturesRoutingModule { }
+export class CMElectronicSignaturesRoutingModule {}

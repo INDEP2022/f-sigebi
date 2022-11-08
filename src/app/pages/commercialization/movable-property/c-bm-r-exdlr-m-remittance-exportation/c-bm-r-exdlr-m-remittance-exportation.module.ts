@@ -1,22 +1,19 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
-import { SharedModule } from 'src/app/shared/shared.module';
 import { EventTypeSharedComponent } from 'src/app/@standalone/shared-forms/event-type-shared/event-type-shared.component';
+import { SharedModule } from 'src/app/shared/shared.module';
 
-import { CBmRExdlrMRemittanceExportationRoutingModule } from './c-bm-r-exdlr-m-remittance-exportation-routing.module';
 import { CBmRExdlrCRemittanceExportationComponent } from './c-bm-r-exdlr-c-remittance-exportation/c-bm-r-exdlr-c-remittance-exportation.component';
-
+import { CBmRExdlrMRemittanceExportationRoutingModule } from './c-bm-r-exdlr-m-remittance-exportation-routing.module';
 
 @NgModule({
-  declarations: [
-    CBmRExdlrCRemittanceExportationComponent
-  ],
+  declarations: [CBmRExdlrCRemittanceExportationComponent],
   imports: [
     CommonModule,
     CBmRExdlrMRemittanceExportationRoutingModule,
     SharedModule,
-    EventTypeSharedComponent
-  ]
+    EventTypeSharedComponent,
+  ],
 })
-export class CBmRExdlrMRemittanceExportationModule { }
+export class CBmRExdlrMRemittanceExportationModule {}

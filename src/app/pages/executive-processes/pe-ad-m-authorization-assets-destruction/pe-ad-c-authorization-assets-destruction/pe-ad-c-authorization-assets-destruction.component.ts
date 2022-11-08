@@ -8,6 +8,8 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { ASSETS_DESTRUCTION_COLUMLNS } from './authorization-assets-destruction-columns';
 //XLSX
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import * as XLSX from 'xlsx';
 
 @Component({
@@ -22,6 +24,9 @@ export class PeAdCAuthorizationAssetsDestructionComponent
   form: FormGroup = new FormGroup({});
   show = false;
   ExcelData: any;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems: number = 0;
+  columns: any[] = [];
 
   imagenurl =
     'https://images.ctfassets.net/txhaodyqr481/6gyslCh8jbWbh9zYs5Dmpa/a4a184b2d1eda786bf14e050607b80df/plantillas-de-factura-profesional-suscripcion-gratis-con-sumup-facturas.jpg?fm=webp&q=85&w=743&h=892';
@@ -47,6 +52,7 @@ export class PeAdCAuthorizationAssetsDestructionComponent
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getPagination();
   }
 
   private prepareForm() {
@@ -70,6 +76,11 @@ export class PeAdCAuthorizationAssetsDestructionComponent
       scanFolio: [null],
       cancelSheet: [null],
     });
+  }
+
+  getPagination() {
+    this.columns = this.data;
+    this.totalItems = this.columns.length;
   }
 
   msjRequest() {

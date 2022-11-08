@@ -1,0 +1,77 @@
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BasePage } from 'src/app/core/shared/base-page';
+
+@Component({
+  selector: 'app-jp-d-gfo-c-generation-files-opinion',
+  templateUrl: './jp-d-gfo-c-generation-files-opinion.component.html',
+  styles: [],
+})
+export class JpDGfoCGenerationFilesOpinionComponent
+  extends BasePage
+  implements OnInit
+{
+  form: FormGroup;
+
+  get numberFlyer() {
+    return this.form.get('numberFlyer');
+  }
+  get numberFile() {
+    return this.form.get('numberFile');
+  }
+  get numberOpinion() {
+    return this.form.get('numberOpinion');
+  }
+  get typeDictamination() {
+    return this.form.get('typeDictamination');
+  }
+  get dateDictamination() {
+    return this.form.get('dateDictamination');
+  }
+  get status() {
+    return this.form.get('status');
+  }
+  get keyOficcioArmy() {
+    return this.form.get('keyOficcioArmy');
+  }
+  get dateInstructor() {
+    return this.form.get('dateInstructor');
+  }
+  get userDictates() {
+    return this.form.get('userDictates');
+  }
+
+  totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+
+  constructor(private fb: FormBuilder) {
+    super();
+  }
+
+  ngOnInit(): void {
+    this.buildForm();
+  }
+
+  /**
+   * @method: metodo para iniciar el formulario
+   * @author:  Alexander Alvarez
+   * @since: 27/09/2022
+   */
+  private buildForm() {
+    this.form = this.fb.group({
+      numberFlyer: [null, [Validators.required]],
+      numberFile: [null, [Validators.required]],
+      numberOpinion: [null, [Validators.required]],
+      typeDictamination: [null, [Validators.required]],
+      dateDictamination: [null, [Validators.required]],
+      status: [null, [Validators.required]],
+      keyOficcioArmy: [null, [Validators.required]],
+      dateInstructor: [null, [Validators.required]],
+      userDictates: [null, [Validators.required]],
+    });
+  }
+
+  generateReportFile() {}
+}

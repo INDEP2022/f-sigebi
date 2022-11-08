@@ -6,12 +6,13 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-c-bm-vm-c-cp-page-setup-modal',
   templateUrl: './c-bm-vm-c-cp-page-setup-modal.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CBmVmCCpPageSetupModalComponent extends BasePage implements OnInit {
-
-  form : FormGroup = new FormGroup({});
+export class CBmVmCCpPageSetupModalComponent
+  extends BasePage
+  implements OnInit
+{
+  form: FormGroup = new FormGroup({});
   pageSetup: any;
   title: string = 'Campos para Tablas y columnas"';
   edit: boolean = false;
@@ -25,7 +26,7 @@ export class CBmVmCCpPageSetupModalComponent extends BasePage implements OnInit 
     this.prepareForm();
   }
 
-  private prepareForm(){
+  private prepareForm() {
     this.form = this.fb.group({
       table: [null, [Validators.required]],
       column: [null, [Validators.required]],
@@ -40,8 +41,7 @@ export class CBmVmCCpPageSetupModalComponent extends BasePage implements OnInit 
     }
   }
 
-close() {
+  close() {
     this.modalRef.hide();
   }
-
 }

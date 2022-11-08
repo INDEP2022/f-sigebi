@@ -5,12 +5,12 @@ import { CBmRRrprCRemittancesRecordedRegionComponent } from './c-bm-r-rrpr-c-rem
 const routes: Routes = [
   {
     path: '',
-    component: CBmRRrprCRemittancesRecordedRegionComponent
-  }
+    component: CBmRRrprCRemittancesRecordedRegionComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CBmRRrprMRemittancesRecordedRegionRoutingModule { }
+export class CBmRRrprMRemittancesRecordedRegionRoutingModule {}

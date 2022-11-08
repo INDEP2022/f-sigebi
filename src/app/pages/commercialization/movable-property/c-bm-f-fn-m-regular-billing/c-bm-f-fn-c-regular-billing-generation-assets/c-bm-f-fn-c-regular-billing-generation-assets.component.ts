@@ -8,20 +8,19 @@ import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-c-bm-f-fn-c-regular-billing-generation-assets',
   templateUrl: './c-bm-f-fn-c-regular-billing-generation-assets.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CBmFFnCRegularBillingGenerationAssetsComponent extends BasePage implements OnInit {
-
-  
-  constructor(private excelService: ExcelService,) {
+export class CBmFFnCRegularBillingGenerationAssetsComponent
+  extends BasePage
+  implements OnInit
+{
+  constructor(private excelService: ExcelService) {
     super();
     this.settings = {
       ...this.settings,
       actions: false,
-      columns: {...REGULAR_BILLING_GENERATION_ASSETS_COLUMNS}
-    }
-    
+      columns: { ...REGULAR_BILLING_GENERATION_ASSETS_COLUMNS },
+    };
   }
 
   data = [
@@ -29,20 +28,17 @@ export class CBmFFnCRegularBillingGenerationAssetsComponent extends BasePage imp
       noBien: 207,
       serie: 54857,
       invoice: 2654,
-      observation: "Sin observaciones",
+      observation: 'Sin observaciones',
       event: 1321,
       allotment: 78,
-      status: "No disponible",
-      validation: "Incorrecto",
-      dateProccess: "10/nov/2019",
-      user: "MIGUEL FERNANDEZ HERNANDEZ",
+      status: 'No disponible',
+      validation: 'Incorrecto',
+      dateProccess: '10/nov/2019',
+      user: 'MIGUEL FERNANDEZ HERNANDEZ',
     },
-    
-  ]
+  ];
 
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 
   ReadExcel(event: any) {
     let file = event.target.files[0];
@@ -61,5 +57,4 @@ export class CBmFFnCRegularBillingGenerationAssetsComponent extends BasePage imp
   exportAsXLSX(): void {
     this.excelService.exportAsExcelFile(this.data, 'generacion_bienes_VNR');
   }
-
 }

@@ -19,11 +19,9 @@ import { dataContracts } from './data';
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './contracts-shared.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ContractsSharedComponent extends BasePage implements OnInit {
-
   @Input() form: FormGroup;
   @Input() contractField: string = 'contract';
 

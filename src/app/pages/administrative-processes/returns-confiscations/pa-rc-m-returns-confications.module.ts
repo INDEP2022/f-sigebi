@@ -1,8 +1,8 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 //Shared
+import { RenderComponentsModule } from 'src/app/shared/render-components/render-components.module';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { RenderComponentsModule } from 'src/app/shared/render-components/render-components.module'
 //Reactive Forms
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 //Ngx Bootstrap
@@ -15,11 +15,8 @@ import { UsersSharedComponent } from 'src/app/@standalone/shared-forms/user-shar
 //Components
 import { PaRclCReturnsConficationsListComponent } from './returns-confications-list/pa-rcl-c-returns-confications-list.component';
 
-
 @NgModule({
-  declarations: [
-    PaRclCReturnsConficationsListComponent
-  ],
+  declarations: [PaRclCReturnsConficationsListComponent],
   imports: [
     CommonModule,
     PaRcMReturnsConficationsRoutingModule,
@@ -29,7 +26,7 @@ import { PaRclCReturnsConficationsListComponent } from './returns-confications-l
     ReactiveFormsModule,
     BsDatepickerModule,
     RecordsSharedComponent,
-    UsersSharedComponent
-  ]
+    UsersSharedComponent,
+  ],
 })
-export class PaRcMReturnsConficationsModule { }
+export class PaRcMReturnsConficationsModule {}

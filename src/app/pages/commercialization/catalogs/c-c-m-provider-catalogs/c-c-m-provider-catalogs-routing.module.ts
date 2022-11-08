@@ -5,8 +5,8 @@ import { CCCProviderCatalogsMainComponent } from './c-c-c-provider-catalogs-main
 const routes: Routes = [
   {
     path: '',
-    component: CCCProviderCatalogsMainComponent
-  }
+    component: CCCProviderCatalogsMainComponent,
+  },
 ];
 
 @NgModule({

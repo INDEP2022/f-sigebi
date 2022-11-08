@@ -6,12 +6,12 @@ import { CBTcvCTaxValidationCalculationComponent } from './tax-calculation-valid
 const routes: Routes = [
   {
     path: '',
-    component: CBTcvCTaxValidationCalculationComponent
-  }
+    component: CBTcvCTaxValidationCalculationComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CBTcvMTaxValidationCalculationRoutingModule { }
+export class CBTcvMTaxValidationCalculationRoutingModule {}

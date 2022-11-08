@@ -5,12 +5,11 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 @Component({
   selector: 'app-description-of-the-matter',
   templateUrl: './description-of-the-matter.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class DescriptionOfTheMatterComponent implements OnInit {
   descripcionOfTheMatterForm: ModelForm<any>;
-  constructor(private fb: FormBuilder,) { }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();

@@ -1,0 +1,18 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showCity">
+    <div class="col-md-12">
+      <form-field [control]="form.get(cityField)">
+        <ngx-select
+          (fetchItems)="getCities($event)"
+          [data]="cities"
+          [form]="form"
+          value="idCity"
+          bindLabel="nameCity"
+          label="Ciudades"
+          [control]="cityField"
+          (change)="onCitiesChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

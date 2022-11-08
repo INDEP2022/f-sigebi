@@ -3,14 +3,10 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-general-doc-tab',
   templateUrl: './general-doc-tab.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class GeneralDocTabComponent implements OnInit {
+  constructor() {}
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

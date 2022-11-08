@@ -16,28 +16,30 @@ export const Articulo3: any = [
 ];
 
 export const Articulo12: any = [
-    {
-        cumplimiento:'a) Documento que acrediten la propiedad o la legitima posesión y la posibilidad de disponer del bien.',
+  {
+    cumplimiento:
+      'a) Documento que acrediten la propiedad o la legitima posesión y la posibilidad de disponer del bien.',
     articulo: 'Articulo 12 Ley',
-    },
-    {
-        cumplimiento:'b) Inventario.',
+  },
+  {
+    cumplimiento: 'b) Inventario.',
     articulo: 'Articulo 12 y 13 Re..',
-    },
-    {
-        cumplimiento:'c) Inventario.',
+  },
+  {
+    cumplimiento: 'c) Inventario.',
     articulo: 'Articulo 12 y 13 Re..',
-    },
-    {
-        cumplimiento:'d) Se señala es estado fisico y/o conversación.',
+  },
+  {
+    cumplimiento: 'd) Se señala es estado fisico y/o conversación.',
     articulo: 'Articulo 12 y 13 Re..',
-    },
-    {
-        cumplimiento:'e) Otros (Dependiendo del bien de que se trate se deberán validar diversos requisitos tales como si bien...)',
+  },
+  {
+    cumplimiento:
+      'e) Otros (Dependiendo del bien de que se trate se deberán validar diversos requisitos tales como si bien...)',
     articulo: 'Articulo 12 y 13 Re..',
-    },
-    {
-        cumplimiento:'f) Para el caso del vehiculo exterior: ...',
+  },
+  {
+    cumplimiento: 'f) Para el caso del vehiculo exterior: ...',
     articulo: 'Articulo 12 y 13 Re..',
-    }
-]
+  },
+];
