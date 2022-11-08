@@ -179,7 +179,10 @@
               <!-- cumplimiento de verificacion y clasificacion de bienes -->
               <app-expedients-tabs
                 *ngIf="
-                  complianceVerifi || classifyAssets || validateDocument
+                  complianceVerifi ||
+                  classifyAssets ||
+                  validateDocument ||
+                  notifyClarifiOrImpropriety
                 "></app-expedients-tabs>
               <!-- fin -->
             </tab>
