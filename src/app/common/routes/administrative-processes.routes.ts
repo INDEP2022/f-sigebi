@@ -336,6 +336,11 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Reporte de implementacion',
             link: '/pages/administrative-processes/implementation-report',
           },
+          {
+            label: 'Indicador de Desempeño',
+            link: '/pages/administrative-processes/performance-indicator',
+          },
+
         ],
       },
       {

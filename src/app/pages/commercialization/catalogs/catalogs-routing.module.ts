@@ -43,9 +43,19 @@ const routes: Routes = [
   {
     path: 'customers-penalties',
     loadChildren: async () =>
-      (await import('./customers-penalties/c-c-cp-m-customers-penalties.module'))
-        .CCCpMCustomersPenaltiesModule,
+      (
+        await import(
+          './customers-penalties/c-c-cp-m-customers-penalties.module'
+        )
+      ).CCCpMCustomersPenaltiesModule,
     data: { title: 'Penalización de Clientes' },
+  },
+  {
+    path: 'event-types',
+    loadChildren: async () =>
+      (await import('./event-types/c-c-et-m-event-types.module'))
+        .CCEtMEventTypesModule,
+    data: { title: 'Tipos de Eventos' },
   },
 ];
 

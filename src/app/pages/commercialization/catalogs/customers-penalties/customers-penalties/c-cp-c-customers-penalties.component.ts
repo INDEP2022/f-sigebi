@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -14,11 +14,12 @@ import { data } from './data';
 @Component({
   selector: 'app-c-cp-c-customers-penalties',
   templateUrl: './c-cp-c-customers-penalties.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CCpCCustomersPenaltiesComponent extends BasePage implements OnInit {
-   
+export class CCpCCustomersPenaltiesComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
 
   data: any[] = data;
@@ -72,17 +73,14 @@ export class CCpCCustomersPenaltiesComponent extends BasePage implements OnInit 
   }
 
   openModal(context?: Partial<CApCAddPenaltiesComponent>): void {
-    const modalRef = this.modalService.show(
-      CApCAddPenaltiesComponent,
-      {
-        initialState: context,
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      }
-    );
+    const modalRef = this.modalService.show(CApCAddPenaltiesComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
 
     modalRef.content.data.subscribe((data: any) => {
-      console.log(data)
+      console.log(data);
       //if (data)
     });
   }
