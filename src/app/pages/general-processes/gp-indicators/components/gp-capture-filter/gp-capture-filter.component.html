@@ -20,7 +20,9 @@
     </form-field>
 
     <form-field
-      *ngIf="!isReceptionAndDelivery"
+      *ngIf="
+        !isReceptionAndDelivery && !isReceptionStrategies && !isConsolidated
+      "
       [control]="form.get('fecha')"
       label="Fecha Ingreso"
       class="col-md-2">
@@ -32,10 +34,12 @@
     </form-field>
 
     <form-field
-      *ngIf="isReceptionAndDelivery"
+      *ngIf="
+        (isReceptionAndDelivery || isReceptionStrategies) && !isConsolidated
+      "
       [control]="form.get('tipoEvento')"
       class="col-md-3"
-      label="Tipo Volante">
+      label="Tipo Evento">
       <select class="form-control" formControlName="tipoEvento">
         <option *ngFor="let event of eventTypes" [value]="event">
           {{ event }}
@@ -52,7 +56,7 @@
       </ngx-select>
     </form-field>
   </div>
-  <div class="row pt-3">
+  <div class="row pt-3" *ngIf="!isReceptionStrategies && !isConsolidated">
     <form-field [control]="form.get('transferente')" class="col-md-4">
       <ngx-select
         [form]="form"
@@ -87,7 +91,10 @@
         [data]="select">
       </ngx-select>
     </form-field>
-    <form-field [control]="form.get('clave')" class="col-md-4">
+    <form-field
+      [control]="form.get('clave')"
+      class="col-md-4"
+      *ngIf="!isReceptionStrategies && !isConsolidated">
       <ngx-select
         [form]="form"
         control="clave"
@@ -99,7 +106,8 @@
     <form-field
       [control]="form.get('tipoVolante')"
       class="col-md-2"
-      label="Tipo Volante">
+      label="Tipo Volante"
+      *ngIf="!isReceptionStrategies && !isConsolidated">
       <select class="form-control" formControlName="tipoVolante">
         <option *ngFor="let type of flyerTypes" [value]="type">
           {{ type }}
