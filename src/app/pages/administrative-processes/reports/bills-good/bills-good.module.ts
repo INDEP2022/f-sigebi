@@ -1,19 +1,12 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
+import { SharedModule } from 'src/app/shared/shared.module';
 import { BillsGoodRoutingModule } from './bills-good-routing.module';
 import { BillsGoodComponent } from './bills-good/bills-good.component';
-import { SharedModule } from 'src/app/shared/shared.module';
-
 
 @NgModule({
-  declarations: [
-    BillsGoodComponent
-  ],
-  imports: [
-    CommonModule,
-    BillsGoodRoutingModule,
-    SharedModule,
-  ]
+  declarations: [BillsGoodComponent],
+  imports: [CommonModule, BillsGoodRoutingModule, SharedModule],
 })
-export class BillsGoodModule { }
+export class BillsGoodModule {}

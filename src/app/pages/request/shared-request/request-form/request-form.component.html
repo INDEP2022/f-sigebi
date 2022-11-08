@@ -1,6 +1,11 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+    <div *ngIf="op == 1; else optionTitle">
+      <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} SOLICITUD</h5>
+    </div>
+    <ng-template #optionTitle>
+      <h5 class="modal-title"> Documentación Complementaria</h5>
+    </ng-template>
   </div>
   <div body class="body">
     <form [formGroup]="requestForm" class="form-material">
@@ -83,9 +88,30 @@
                 label="Transferencia"
                 value="regDelega"></ngx-select>
             </div>
+            <div *ngIf="op == 2" class="col-md-3">
+              <ngx-select [form]="requestForm" control="state" (fetchItems)="getState($event)" [data]="selectState"
+                label="Estado" value="regDelega"></ngx-select>
+            </div>
           </div>
         </div>
       </app-card>
+
+      <div *ngIf="op == 2">
+        <app-card [header]="true">
+          <div class="ch-content" header>
+            <h6 class="title">Seleccione el Asunto</h6>
+          </div>
+          <div body>
+            <div class="row pt-5">
+              <div class="col-md-6">
+                <ngx-select [form]="requestForm" control="issue" (fetchItems)="getIssue($event)" [data]="selectIssue"
+                  label="Asunto" value="regDelega"></ngx-select>
+              </div>
+            </div>
+          </div>
+        </app-card>
+
+      </div>
 
       <app-card [header]="true">
         <div class="ch-content" header>

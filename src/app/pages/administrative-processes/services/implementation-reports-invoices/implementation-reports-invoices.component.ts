@@ -4,15 +4,20 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { IMPLEMENTATION_COLUMNS, INVOICE_COLUMNS } from './implementation-reports-invoices-columns';
+import {
+  IMPLEMENTATION_COLUMNS,
+  INVOICE_COLUMNS,
+} from './implementation-reports-invoices-columns';
 
 @Component({
   selector: 'app-implementation-reports-invoices',
   templateUrl: './implementation-reports-invoices.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class ImplementationReportsInvoicesComponent extends BasePage implements OnInit {
+export class ImplementationReportsInvoicesComponent
+  extends BasePage
+  implements OnInit
+{
   settings2 = { ...this.settings, actions: false };
   invoiceDetailsForm: ModelForm<any>;
   delegationForm: ModelForm<any>;

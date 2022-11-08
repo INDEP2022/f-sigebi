@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title"> Impresión de Bóveda </h5>
+    <h5 class="title">Impresión de Bóveda</h5>
   </div>
 
   <div body>
@@ -8,7 +8,10 @@
       <div class="row margin-input">
         <div class="col-md-4">
           <form-field [control]="vaultsForm.get('regional')" label="Regional">
-            <input type="text" class="form-control" formControlName="regional" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="regional" />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -17,34 +20,61 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="vaultsForm.get('statusGoods')" label="Estatus Bienes">
-            <input type="text" class="form-control" formControlName="statusGoods" />
+          <form-field
+            [control]="vaultsForm.get('statusGoods')"
+            label="Estatus Bienes">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="statusGoods" />
           </form-field>
         </div>
       </div>
       <div class="row margin-input">
         <div class="col-md-4">
-          <form-field [control]="vaultsForm.get('entryDateFrom')" label="Fecha de Entrada desde">
-            <input type="text" formControlName="entryDateFrom" placeholder="Fecha de Entrada desde" class="form-control"
+          <form-field
+            [control]="vaultsForm.get('entryDateFrom')"
+            label="Fecha de Entrada desde">
+            <input
+              type="text"
+              formControlName="entryDateFrom"
+              placeholder="Fecha de Entrada desde"
+              class="form-control"
               bsDatepicker />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="vaultsForm.get('until')" label="Hasta">
-            <input type="text" formControlName="until" placeholder="Hasta" class="form-control" bsDatepicker />
+            <input
+              type="text"
+              formControlName="until"
+              placeholder="Hasta"
+              class="form-control"
+              bsDatepicker />
           </form-field>
         </div>
       </div>
       <div class="row margin-input">
         <div class="col-md-4">
-          <form-field [control]="vaultsForm.get('departureDateOf')" label="Fecha de Salida desde">
-            <input type="text" formControlName="departureDateOf" placeholder="Fecha de Salida desde"
-              class="form-control" bsDatepicker />
+          <form-field
+            [control]="vaultsForm.get('departureDateOf')"
+            label="Fecha de Salida desde">
+            <input
+              type="text"
+              formControlName="departureDateOf"
+              placeholder="Fecha de Salida desde"
+              class="form-control"
+              bsDatepicker />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field [control]="vaultsForm.get('until1')" label="Hasta">
-            <input type="text" formControlName="until1" placeholder="Hasta" class="form-control" bsDatepicker />
+            <input
+              type="text"
+              formControlName="until1"
+              placeholder="Hasta"
+              class="form-control"
+              bsDatepicker />
           </form-field>
         </div>
       </div>

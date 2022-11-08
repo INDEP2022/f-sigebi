@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Location } from '@angular/common';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IRequestInTurnSelected } from 'src/app/core/models/catalogs/request-in-turn-selected.model';
 import { IRequest } from 'src/app/core/models/catalogs/request.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { UsersSelectedToTurnComponent } from '../users-selected-to-turn/users-selected-to-turn.component';
-import { Location } from '@angular/common';
+import { IRequestInTurnSelected } from './../../../../core/models/catalogs/request-in-turn-selected.model';
 
 @Component({
   selector: 'app-create-request',
@@ -15,9 +15,9 @@ import { Location } from '@angular/common';
   styleUrls: ['./request-form.component.scss'],
 })
 export class RequestFormComponent extends BasePage implements OnInit {
+  @Input() op: number; // op con valor 1 = Recepción Manual, op con valor 2 = Documentación Complementaria
+  @Input() edit: boolean = false;
   requestForm: ModelForm<IRequest>;
-  title: string = 'SOLICITUD';
-  edit: boolean = false;
   typeTurn: String = '';
   bsModalRef: BsModalRef;
   checked: string = 'checked';
@@ -27,10 +27,12 @@ export class RequestFormComponent extends BasePage implements OnInit {
   selectEntity = new DefaultSelect<IRequest>();
   selectAuthority = new DefaultSelect<IRequest>();
   selectTransfe = new DefaultSelect<IRequest>();
+  selectState = new DefaultSelect<IRequest>();
+  selectIssue = new DefaultSelect<IRequest>();
 
   constructor(
     public fb: FormBuilder,
-    public modalServise: BsModalService,
+    public modalService: BsModalService,
     public location: Location
   ) {
     super();
@@ -52,6 +54,14 @@ export class RequestFormComponent extends BasePage implements OnInit {
       typeUser: ['all'],
       receiUser: [{ value: '', disabled: true }],
     });
+    //se agregan campos documentación complementaria según el valor del parametro OP
+    if (this.op == 2) this.complementaryDocumentationField(this.requestForm);
+  }
+
+  complementaryDocumentationField(form: ModelForm<IRequest>) {
+    // agregar nuevos campos al formulario para solicitudes de documentacion complementaria
+    form.addControl('state', this.fb.control('', []));
+    form.addControl('issue', this.fb.control('', []));
   }
 
   getRegionalDeleg(event: any): void {}
@@ -64,6 +74,10 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
   getTransfe(event: any): void {}
 
+  getState(event: any): void {}
+
+  getIssue(event: any): void {}
+
   openModalSelectUser() {
     let config: ModalOptions = {
       initialState: {
@@ -75,11 +89,10 @@ export class RequestFormComponent extends BasePage implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.bsModalRef = this.modalServise.show(
+    this.bsModalRef = this.modalService.show(
       UsersSelectedToTurnComponent,
       config
     );
-
     this.bsModalRef.content.event.subscribe((res: IRequestInTurnSelected) => {
       console.log(res);
       this.requestForm.get('receiUser').patchValue(res.user);

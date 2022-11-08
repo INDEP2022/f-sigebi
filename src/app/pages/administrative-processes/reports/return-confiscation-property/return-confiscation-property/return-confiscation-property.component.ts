@@ -5,12 +5,11 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 @Component({
   selector: 'app-return-confiscation-property',
   templateUrl: './return-confiscation-property.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ReturnConfiscationPropertyComponent implements OnInit {
   returnConfiscationForm: ModelForm<any>;
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();

@@ -8,10 +8,12 @@ import { SERVICEORDERSFORMATHISTORIC_COLUMNS } from './service-orders-format-his
 @Component({
   selector: 'app-service-orders-format-historic',
   templateUrl: './service-orders-format-historic.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class ServiceOrdersFormatHistoricComponent extends BasePage implements OnInit {
+export class ServiceOrdersFormatHistoricComponent
+  extends BasePage
+  implements OnInit
+{
   data1: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
@@ -24,8 +26,7 @@ export class ServiceOrdersFormatHistoricComponent extends BasePage implements On
     };
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
   close() {
     this.modalRef.hide();
   }

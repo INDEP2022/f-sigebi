@@ -5,7 +5,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { RequestListComponent } from '../view-of-requests/request-list/request-list.component';
-import { UsersSelectedToTurnComponent } from '../view-of-requests/users-selected-to-turn/users-selected-to-turn.component';
+import { SharedRequestModule } from './../shared-request/shared-request.module';
 import { RegistrationOfRequestsComponent } from './registration-of-requests/registration-of-requests.component';
 import { AssociateFileComponent } from './tabs/associate-file/associate-file.component';
 import { AdvancedSearchComponent } from './tabs/classify-assets-components/classify-assets-child-tabs-components/advanced-search/advanced-search.component';
@@ -48,7 +48,6 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
 @NgModule({
   declarations: [
     //RequestFormComponent,
-    UsersSelectedToTurnComponent,
     RequestListComponent,
     RegistrationOfRequestsComponent,
     RequestRecordTabComponent,
@@ -95,6 +94,7 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     ModalModule.forChild(),
     TabsModule.forRoot(),
     NgScrollbarModule,
+    SharedRequestModule,
   ],
 })
 export class TransferRequestModule {}

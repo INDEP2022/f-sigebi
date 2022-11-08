@@ -11,6 +11,7 @@ import { CMPaymentRefundMainComponent } from './c-m-payment-refund-main/c-m-paym
 import { ChangeRfcModalComponent } from './c-m-payment-refund-main/change-rfc-modal/change-rfc-modal.component';
 import { CheckPermissionsNonWinnersComponent } from './c-m-payment-refund-main/components/check-permissions-non-winners/check-permissions-non-winners.component';
 import { CheckPermissionsWinnersComponent } from './c-m-payment-refund-main/components/check-permissions-winners/check-permissions-winners.component';
+import { CheckValidKeyComponent } from './c-m-payment-refund-main/components/check-valid-key/check-valid-key.component';
 import { CreateControlModalComponent } from './c-m-payment-refund-main/create-control-modal/create-control-modal.component';
 import { CreationPermissionsModalComponent } from './c-m-payment-refund-main/creation-permissions-modal/creation-permissions-modal.component';
 import { ExpensesRequestModalComponent } from './c-m-payment-refund-main/expenses-request-modal/expenses-request-modal.component';
@@ -22,7 +23,6 @@ import { LayoutMaintenanceComponent } from './c-m-payment-refund-main/layout-mai
 import { TableCheckComponent } from './c-m-payment-refund-main/table-check/table-check.component';
 import { TransferDateModalComponent } from './c-m-payment-refund-main/transfer-date-modal/transfer-date-modal.component';
 import { CMPaymentRefundRoutingModule } from './c-m-payment-refund-routing.module';
-import { CheckValidKeyComponent } from './c-m-payment-refund-main/components/check-valid-key/check-valid-key.component';
 
 @NgModule({
   declarations: [

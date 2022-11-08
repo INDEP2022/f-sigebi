@@ -19,11 +19,9 @@ import { dataPolicies } from './data';
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './policies-shared.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PoliciesSharedComponent extends BasePage implements OnInit {
-
   @Input() form: FormGroup;
   @Input() policyField: string = 'policy';
 

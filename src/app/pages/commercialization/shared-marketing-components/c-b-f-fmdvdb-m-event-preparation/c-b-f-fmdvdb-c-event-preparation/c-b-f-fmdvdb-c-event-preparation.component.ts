@@ -1,12 +1,12 @@
 import { trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CreateNewEventModalComponent } from '../create-new-event-modal/create-new-event-modal.component';
 import { SelectEventModalComponent } from '../select-event-modal/select-event-modal.component';
 import { EVENT_PREPARATION_GOODS_COLUMNS } from './even-preparation-goods-columns';
 import { EVENT_PREPARATION_ALLOTMENT_COLUMNS } from './event-preparation-allotment-columns';
-import { FormBuilder, FormGroup } from '@angular/forms';
 //XLSX
 import { ExcelService } from 'src/app/common/services/excel.service';
 import * as XLSX from 'xlsx';

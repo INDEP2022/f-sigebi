@@ -31,38 +31,38 @@ const routes: Routes = [
       ),
   },
   {
-    path: "partializes-general-goods-1",
+    path: 'partializes-general-goods-1',
     loadChildren: () =>
-      import("./jpr-partializes-general-goods-1/jpr-partializes-general-goods.module").then(
-        (m) => m.JprPartializesGeneralGoodsModule
+      import(
+        './jpr-partializes-general-goods-1/jpr-partializes-general-goods.module'
+      ).then(m => m.JprPartializesGeneralGoodsModule),
+  },
+  {
+    path: 'partializes-general-goods-2',
+    loadChildren: () =>
+      import(
+        './jpr-partializes-general-goods-2/jpr-partializes-general-goods.module'
+      ).then(m => m.JprPartializesGeneralGoodsModule),
+  },
+  {
+    path: 'partializes-goods',
+    loadChildren: () =>
+      import('./jpr-partializes-goods/jpr-partializes-goods.module').then(
+        m => m.JprPartializesGoodsModule
       ),
   },
   {
-    path: "partializes-general-goods-2",
+    path: 'cancellation-recepcion',
     loadChildren: () =>
-      import("./jpr-partializes-general-goods-2/jpr-partializes-general-goods.module").then(
-        (m) => m.JprPartializesGeneralGoodsModule
-      ),
+      import(
+        './jpr-cancellation-recepcion/jpr-cancellation-recepcion.module'
+      ).then(m => m.JprCancellationRecepcionModule),
   },
   {
-    path: "partializes-goods",
+    path: 'cancellation-sale',
     loadChildren: () =>
-      import("./jpr-partializes-goods/jpr-partializes-goods.module").then(
-        (m) => m.JprPartializesGoodsModule
-      ),
-  },
-  {
-    path: "cancellation-recepcion",
-    loadChildren: () =>
-      import("./jpr-cancellation-recepcion/jpr-cancellation-recepcion.module").then(
-        (m) => m.JprCancellationRecepcionModule
-      ),
-  },
-  {
-    path: "cancellation-sale",
-    loadChildren: () =>
-      import("./jpr-sale-cancellation/jpr-sale-cancellation.module").then(
-        (m) => m.JprSaleCancellationModule
+      import('./jpr-sale-cancellation/jpr-sale-cancellation.module').then(
+        m => m.JprSaleCancellationModule
       ),
   },
 ];

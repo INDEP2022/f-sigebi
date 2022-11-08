@@ -332,6 +332,15 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Ordenes de servicio',
             link: '/pages/administrative-processes/service-orders-format',
           },
+          {
+            label: 'Reporte de implementacion',
+            link: '/pages/administrative-processes/implementation-report',
+          },
+          {
+            label: 'Indicador de Desempeño',
+            link: '/pages/administrative-processes/performance-indicator',
+          },
+
         ],
       },
       {
@@ -518,6 +527,18 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
       /**
        * END LEGASPI
        **/
+      /**START Abner */
+      {
+        label: 'Numerario',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Registro de fichas de deposito',
+            link: '/pages/administrative-processes/numerary/deposit-tokens',
+          },
+        ],
+      },
+      /**END Abner */
     ],
   },
 ];

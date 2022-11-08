@@ -3,7 +3,7 @@
     <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form [formGroup]="typeDoctoForm">
+    <form [formGroup]="typeDoctoForm" class="form-material">
       <div class="row">
         <div class="col-md-12">
           <form-field [control]="typeDoctoForm.get('id')" label="Identificador">

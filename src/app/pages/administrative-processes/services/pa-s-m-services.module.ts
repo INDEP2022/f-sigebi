@@ -14,14 +14,14 @@ import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/good
 import { RecordsSharedComponent } from 'src/app/@standalone/shared-forms/records-shared/records-shared.component';
 import { ServicesSharedComponent } from 'src/app/@standalone/shared-forms/services-shared/services-shared.component';
 //Components
+import { DescriptionOfTheMatterComponent } from './description-of-the-matter/description-of-the-matter.component';
 import { PaGspCGlobalServicePaymentComponent } from './global-service-payments/pa-gsp-c-global-service-payment.component';
 import { PaGspCGoodsServicePaymentComponent } from './goods-service-payments/pa-gsp-c-goods-service-payment.component';
+import { ImplementationReportsInvoicesComponent } from './implementation-reports-invoices/implementation-reports-invoices.component';
 import { PaRspCRecordServicePaymentComponent } from './record-service-payments/pa-rsp-c-record-service-payment.component';
 import { PaRsfCRequestServiceFormComponent } from './request-service-form/pa-rsf-c-request-service-form.component';
 import { PaRspCRequestServicePaymentComponent } from './request-service-payments/pa-rsp-c-request-service-payment.component';
 import { PaSmCServiceMonitoringComponent } from './service-monitoring/pa-sm-c-service-monitoring.component';
-import { DescriptionOfTheMatterComponent } from './description-of-the-matter/description-of-the-matter.component';
-import { ImplementationReportsInvoicesComponent } from './implementation-reports-invoices/implementation-reports-invoices.component';
 
 @NgModule({
   declarations: [

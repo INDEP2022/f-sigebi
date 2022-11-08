@@ -4,12 +4,13 @@ import { GenerateExcelFileComponent } from './generate-excel-file/generate-excel
 
 const routes: Routes = [
   {
-    path: '', component: GenerateExcelFileComponent
-  }
+    path: '',
+    component: GenerateExcelFileComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class GenerateExcelFileRoutingModule { }
+export class GenerateExcelFileRoutingModule {}

@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
@@ -14,6 +16,9 @@ import { DONATION_APPROVAL_COLUMNS } from './donation-approval-columns';
 export class PeAdCDonationApprovalComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
   show = false;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems: number = 0;
+  columns: any[] = [];
 
   constructor(private fb: FormBuilder) {
     super();
@@ -32,6 +37,7 @@ export class PeAdCDonationApprovalComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getPagination();
   }
 
   private prepareForm() {
@@ -50,6 +56,11 @@ export class PeAdCDonationApprovalComponent extends BasePage implements OnInit {
       circumstAct: [null],
       touchPenalty: [null],
     });
+  }
+
+  getPagination() {
+    this.columns = this.data;
+    this.totalItems = this.columns.length;
   }
 
   data = [

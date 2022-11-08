@@ -5,12 +5,11 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 @Component({
   selector: 'app-bills-good',
   templateUrl: './bills-good.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class BillsGoodComponent implements OnInit {
   billGoodForm: ModelForm<any>;
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();
@@ -28,5 +27,4 @@ export class BillsGoodComponent implements OnInit {
       cost: [null, Validators.required],
     });
   }
-
 }

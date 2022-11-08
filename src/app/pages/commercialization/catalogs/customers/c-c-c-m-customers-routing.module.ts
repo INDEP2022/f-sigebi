@@ -5,12 +5,12 @@ import { CClCCustomersListComponent } from './customers-list/c-cl-c-customers-li
 const routes: Routes = [
   {
     path: '',
-    component: CClCCustomersListComponent
-  }
+    component: CClCCustomersListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CCCMCustomersRoutingModule { }
+export class CCCMCustomersRoutingModule {}

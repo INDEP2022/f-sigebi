@@ -4,12 +4,13 @@ import { RealEstateAnalyticalReportComponent } from './real-estate-analytical-re
 
 const routes: Routes = [
   {
-    path: '', component: RealEstateAnalyticalReportComponent
-  }
+    path: '',
+    component: RealEstateAnalyticalReportComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class RealEstateAnalyticalReportRoutingModule { }
+export class RealEstateAnalyticalReportRoutingModule {}

@@ -1,15 +1,14 @@
 import {
-Component,
-OnInit,
-TemplateRef,
-ViewChild,
-ViewContainerRef
+  Component,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+  ViewContainerRef,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-
 
 @Component({
   selector: 'app-address-transferor-tab',

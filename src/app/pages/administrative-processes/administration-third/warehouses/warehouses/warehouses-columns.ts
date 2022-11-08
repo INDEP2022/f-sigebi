@@ -130,4 +130,3 @@ export const GOODSPOSITION_COLUMNS = {
     sort: false,
   },
 };
-

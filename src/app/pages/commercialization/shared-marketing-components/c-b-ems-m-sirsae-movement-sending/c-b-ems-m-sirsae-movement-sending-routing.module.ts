@@ -5,12 +5,12 @@ import { CBEmsCSirsaeMovementSendingMainComponent } from './c-b-ems-c-sirsae-mov
 const routes: Routes = [
   {
     path: ':goodType',
-    component: CBEmsCSirsaeMovementSendingMainComponent
-  }
+    component: CBEmsCSirsaeMovementSendingMainComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CBEmsMSirsaeMovementSendingRoutingModule { }
+export class CBEmsMSirsaeMovementSendingRoutingModule {}

@@ -4,12 +4,13 @@ import { FlatFileForGoodComponent } from './flat-file-for-good/flat-file-for-goo
 
 const routes: Routes = [
   {
-    path: '', component: FlatFileForGoodComponent
-  }
+    path: '',
+    component: FlatFileForGoodComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class FlatFileForGoodRoutingModule { }
+export class FlatFileForGoodRoutingModule {}

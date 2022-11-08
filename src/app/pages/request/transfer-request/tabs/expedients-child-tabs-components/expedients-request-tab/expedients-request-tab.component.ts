@@ -5,11 +5,10 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import { BasePage } from 'src/app/core/shared/base-page';
-import { BehaviorSubject, takeUntil } from 'rxjs';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { IRequest } from 'src/app/core/models/catalogs/request.model';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { EXPEDIENTS_REQUEST_COLUMNS } from './expedients-request-columns';
 
 @Component({

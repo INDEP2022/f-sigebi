@@ -1,6 +1,6 @@
 /** BASE IMPORT */
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { SharedModule } from 'src/app/shared/shared.module';
 /** BASE IMPORT */
 
@@ -12,8 +12,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { PJDAEHistoricalSituationGoodsRoutingModule } from './pj-d-ea-m-historical-situation-goods-routing.module';
 
 /** COMPONENTS IMPORTS */
-import { PJDAEHistoricalSituationGoodsComponent } from './historical-situation-goods/pj-d-ea-c-historical-situation-goods.component';
 import { EventEmitterService } from '../issue-agreements/issue-agreements/eventEmitter.service';
+import { PJDAEHistoricalSituationGoodsComponent } from './historical-situation-goods/pj-d-ea-c-historical-situation-goods.component';
 
 @NgModule({
   declarations: [PJDAEHistoricalSituationGoodsComponent],

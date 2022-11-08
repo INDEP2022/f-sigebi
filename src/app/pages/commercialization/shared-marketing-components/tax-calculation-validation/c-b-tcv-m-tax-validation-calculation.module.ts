@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 //Shared
 import { SharedModule } from 'src/app/shared/shared.module';
 //Reactive Forms
@@ -12,16 +12,15 @@ import { CBTcvMTaxValidationCalculationRoutingModule } from './c-b-tcv-m-tax-val
 //Standalone Components
 import { GoodsSharedComponent } from 'src/app/@standalone/shared-forms/goods-shared/goods-shared.component';
 //Components
-import { CBTcvCTaxValidationCalculationComponent } from './tax-calculation-validation/c-b-tcv-c-tax-validation-calculation.component';
 import { CBICInconsistenciesComponent } from './inconsistencies/c-b-i-c-inconsistencies.component';
 import { CBRcCRateChangeComponent } from './rate-change/c-b-rc-c-rate-change.component';
-
+import { CBTcvCTaxValidationCalculationComponent } from './tax-calculation-validation/c-b-tcv-c-tax-validation-calculation.component';
 
 @NgModule({
   declarations: [
     CBTcvCTaxValidationCalculationComponent,
     CBICInconsistenciesComponent,
-    CBRcCRateChangeComponent
+    CBRcCRateChangeComponent,
   ],
   imports: [
     CommonModule,
@@ -31,7 +30,7 @@ import { CBRcCRateChangeComponent } from './rate-change/c-b-rc-c-rate-change.com
     ReactiveFormsModule,
     BsDatepickerModule,
     ModalModule.forChild(),
-    GoodsSharedComponent
-  ]
+    GoodsSharedComponent,
+  ],
 })
-export class CBTcvMTaxValidationCalculationModule { }
+export class CBTcvMTaxValidationCalculationModule {}

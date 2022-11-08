@@ -1,205 +1,269 @@
 <app-card [header]="true">
-    <div class="ch-content" header>
-        <h5 class="title">Registro de Inventarios para Donación Directa</h5>
-    </div>
+  <div class="ch-content" header>
+    <h5 class="title">Registro de Inventarios para Donación Directa</h5>
+  </div>
 
-    <div body>
-        <div class="mt-5">
-            <div class="row">
-                <div class="col-12">
-                    <h5>Datos Solicitud</h5>
-                </div>
-            </div>
-            <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
-                <div class="row mt-5 justify-content-start justify-content-sm-end">
-                    <div class="col-12 col-md-4">
-                        <div class="mb-3 pl-4 pr-4">
-                            <form-field [control]="form.get('idRequest')" label="Id Solicitud">
-                                <input type="text" class="form-control" formControlName="idRequest" />
-                            </form-field>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-4">
-                        <div class="mb-3 pl-4 pr-4">
-                            <form-field [control]="form.get('idDonee')" label="Id Donatario">
-                                <input type="text" class="form-control" formControlName="idDonee" />
-                            </form-field>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-4">
-                        <div class="mb-3 pl-4 pr-4">
-                            <form-field [control]="form.get('doneeDescrip')" label="Descrip. Donatario">
-                                <input type="text" class="form-control" formControlName="doneeDescrip" />
-                            </form-field>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row mt-4 align-items-center">
-                    <div class="col-12 col-md-6">
-                        <div class="mb-3 pl-4 pr-4">
-                            <form-field [control]="form.get('justification')" label="Justifiación">
-                                <textarea class="form-control" formControlName="justification"></textarea>
-                            </form-field>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-3 mt-3 mt-md-0">
-                        <div class="mb-3 pl-4 pr-4">
-                            <form-field [control]="form.get('representative')" label="Representante">
-                                <input type="text" class="form-control" formControlName="representative" />
-                            </form-field>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-3">
-                        <div class="mb-3 pl-4 pr-4">
-                            <form-field [control]="form.get('position')" label="Puesto">
-                                <input type="text" class="form-control" formControlName="position" />
-                            </form-field>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row mt-4">
-                    <div class="col-12 col-md-3">
-                        <div class="mb-3 pl-4 pr-4">
-                            <form-field [control]="form.get('state')" label="Estado">
-                                <input type="text" class="form-control" formControlName="state" />
-                            </form-field>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-3">
-                        <div class="mb-3 pl-4 pr-4">
-                            <form-field [control]="form.get('municipality')" label="Municipio">
-                                <input type="text" class="form-control" formControlName="municipality" />
-                            </form-field>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-4 mb-2">
-                        <div class="mb-1 pl-4 pr-4">
-                            <form-field [control]="form.get('direction')" label="Dirección">
-                                <input type="text" class="form-control" formControlName="direction" />
-                            </form-field>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-2 mb-2">
-                        <div class="mb-1 pl-4 pr-4">
-                            <form-field [control]="form.get('requestDate')" label="Fecha Solicitud">
-                                <input type="text" class="form-control" formControlName="requestDate" bsDatepicker />
-                            </form-field>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row mt-4 align-items-center">
-                    <div class="col-12 col-md-3">
-                        <div class="mb-3 pl-4 pr-4">
-                            <form-field [control]="form.get('cveAuth')" label="Cve Autorización">
-                                <input type="text" class="form-control" formControlName="cveAuth" />
-                            </form-field>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-3 mt-3 mt-md-0">
-                        <div class="mb-3 pl-4 pr-4">
-                            <form-field [control]="form.get('authDate')" label="Fecha Autoriza">
-                                <input type="text" class="form-control" formControlName="authDate" bsDatepicker />
-                            </form-field>
-                        </div>
-                    </div>
-                    <div class="col-md-6 text-center">
-                        <div class="text-center">
-                            <label class="label text-secondary">Estatus</label>
-                        </div>
-                        <div class="d-flex justify-content-around pl-4 pr-4">
-                            <form-radio label="En Trámite">
-                                <input type="radio" formControlName="status" value="process" />
-                            </form-radio>
-                            <form-radio label="Asignación">
-                                <input type="radio" formControlName="status" value="assignment" />
-                            </form-radio>
-                            <form-radio label="Donación">
-                                <input type="radio" formControlName="status" value="donation" />
-                            </form-radio>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row mt-4">
-                    <div class="col-12 col-md-3 text-center">
-                        <button class="btn btn-secondary btn-sm active">
-                            Autorizar
-                        </button>
-                    </div>
-                    <div class="col-12 col-md-3 text-center">
-                        <button class="btn btn-secondary btn-sm active">
-                            Definir Filtro
-                        </button>
-                    </div>
-                    <div class="col-12 col-md-3 text-center">
-                        <button class="btn btn-secondary btn-sm active">
-                            Bienes
-                        </button>
-                    </div>
-                    <div class="col-12 col-md-3 text-center">
-                        <button class="btn btn-secondary btn-sm active">
-                            Por Rastreador
-                        </button>
-                    </div>
-                </div>
-
-            </form>
-
-            <div class="row mt-5">
-                <div class="col-12">
-                    <h5>Bienes Disponibles</h5>
-                </div>
-            </div>
-            <div class="d-flex justify-content-end mt-5">
-                <app-columns-select [(settings)]="settings" class="row justify-content-end">
-                </app-columns-select>
-            </div>
-            <ng-scrollbar style="min-height: 300px; border: none" class="mt-3" track="horizontal">
-                <div class="row mt-5 scroll-table">
-                    <ng2-smart-table class="col-md-12" [attr.class]="'table-bordered'" [settings]="settings"
-                        [source]="data">
-                    </ng2-smart-table>
-                </div>
-            </ng-scrollbar>
-            <div class="row mt-2 align-items-center">
-                <div class="col-12 col-md-6">
-                    <form class="form-material" [formGroup]="formTable" (ngSubmit)="onSubmit()">
-                        <div class="row mt-5">
-                            <div class="col-6">
-                                <div class="mb-3 pl-4 pr-4">
-                                    <form-field [control]="formTable.get('totalGoods')" label="Total Bienes">
-                                        <input type="text" class="form-control" formControlName="totalGoods" readonly />
-                                    </form-field>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <p>Total de Bienes que Aplican</p>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="col-12 col-md-6">
-                    <div class="row">
-                        <div class="col-12 col-md-6 pl-4 pr-4 text-right">
-                            <button class="btn btn-secondary btn-sm active">
-                                Generar/Modifica Solicitud
-                            </button>
-                        </div>
-                        <div class="col-12 col-md-6 pl-4 mt-3 mtm-md-0 pr-4 text-right">
-                            <button class="btn btn-secondary btn-sm active">
-                                Registrar
-                            </button>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <app-pagination [params]="params" [totalItems]="totalItems">
-            </app-pagination>
-
+  <div body>
+    <div class="mt-5">
+      <div class="row">
+        <div class="col-12">
+          <h5>Datos Solicitud</h5>
         </div>
+      </div>
+      <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="row mt-5 justify-content-start justify-content-sm-end">
+          <div class="col-12 col-md-4">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('idRequest')"
+                label="Id Solicitud">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="idRequest" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field [control]="form.get('idDonee')" label="Id Donatario">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="idDonee" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('doneeDescrip')"
+                label="Descrip. Donatario">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="doneeDescrip" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-4 align-items-center">
+          <div class="col-12 col-md-6">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('justification')"
+                label="Justifiación">
+                <textarea
+                  class="form-control"
+                  formControlName="justification"></textarea>
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-3 mt-3 mt-md-0">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('representative')"
+                label="Representante">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="representative" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-3">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field [control]="form.get('position')" label="Puesto">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="position" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-12 col-md-3">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field [control]="form.get('state')" label="Estado">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="state" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-3">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('municipality')"
+                label="Municipio">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="municipality" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-4 mb-2">
+            <div class="mb-1 pl-4 pr-4">
+              <form-field [control]="form.get('direction')" label="Dirección">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="direction" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-2 mb-2">
+            <div class="mb-1 pl-4 pr-4">
+              <form-field
+                [control]="form.get('requestDate')"
+                label="Fecha Solicitud">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="requestDate"
+                  bsDatepicker />
+              </form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-4 align-items-center">
+          <div class="col-12 col-md-3">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('cveAuth')"
+                label="Cve Autorización">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="cveAuth" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-12 col-md-3 mt-3 mt-md-0">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('authDate')"
+                label="Fecha Autoriza">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="authDate"
+                  bsDatepicker />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-6 text-center">
+            <div class="text-center">
+              <label class="label text-secondary">Estatus</label>
+            </div>
+            <div class="d-flex justify-content-around pl-4 pr-4">
+              <form-radio label="En Trámite">
+                <input type="radio" formControlName="status" value="process" />
+              </form-radio>
+              <form-radio label="Asignación">
+                <input
+                  type="radio"
+                  formControlName="status"
+                  value="assignment" />
+              </form-radio>
+              <form-radio label="Donación">
+                <input type="radio" formControlName="status" value="donation" />
+              </form-radio>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-12 col-md-3 text-center">
+            <button class="btn btn-secondary btn-sm active">Autorizar</button>
+          </div>
+          <div class="col-12 col-md-3 text-center">
+            <button class="btn btn-secondary btn-sm active">
+              Definir Filtro
+            </button>
+          </div>
+          <div class="col-12 col-md-3 text-center">
+            <button class="btn btn-secondary btn-sm active">Bienes</button>
+          </div>
+          <div class="col-12 col-md-3 text-center">
+            <button class="btn btn-secondary btn-sm active">
+              Por Rastreador
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <div class="row mt-5">
+        <div class="col-12">
+          <h5>Bienes Disponibles</h5>
+        </div>
+      </div>
+      <div class="d-flex justify-content-end mt-5">
+        <app-columns-select
+          [(settings)]="settings"
+          class="row justify-content-end">
+        </app-columns-select>
+      </div>
+      <ng-scrollbar
+        style="min-height: 300px; border: none"
+        class="mt-3"
+        track="horizontal">
+        <div class="row mt-5 scroll-table">
+          <ng2-smart-table
+            class="col-md-12"
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data">
+          </ng2-smart-table>
+        </div>
+      </ng-scrollbar>
+      <div class="row mt-2 align-items-center">
+        <div class="col-12 col-md-6">
+          <form
+            class="form-material"
+            [formGroup]="formTable"
+            (ngSubmit)="onSubmit()">
+            <div class="row mt-5">
+              <div class="col-6">
+                <div class="mb-3 pl-4 pr-4">
+                  <form-field
+                    [control]="formTable.get('totalGoods')"
+                    label="Total Bienes">
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="totalGoods"
+                      readonly />
+                  </form-field>
+                </div>
+              </div>
+              <div class="col-6">
+                <p>Total de Bienes que Aplican</p>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="row">
+            <div class="col-12 col-md-6 pl-4 pr-4 text-right">
+              <button class="btn btn-secondary btn-sm active">
+                Generar/Modifica Solicitud
+              </button>
+            </div>
+            <div class="col-12 col-md-6 pl-4 mt-3 mtm-md-0 pr-4 text-right">
+              <button class="btn btn-secondary btn-sm active">Registrar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
     </div>
+  </div>
 </app-card>
