@@ -100,4 +100,11 @@ export const DEPOSITARY_ROUTES_2_ROUTING = [
       ).JpDMReportsAssetsDeclaredAbandonedModule,
     data: { title: DEPOSITARY_ROUTES_2[9].label },
   },
+  {
+    path: DEPOSITARY_ROUTES_2[10].link,
+    loadChildren: async () =>
+      (await import('./text-change/jp-d-m-text-change.module'))
+        .JpDMTextChangeModule,
+    data: { title: DEPOSITARY_ROUTES_2[10].label },
+  },
 ];

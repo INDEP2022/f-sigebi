@@ -50,6 +50,20 @@ const routes: Routes = [
       ).CCCpMCustomersPenaltiesModule,
     data: { title: 'Penalización de Clientes' },
   },
+  {
+    path: 'event-types',
+    loadChildren: async () =>
+      (await import('./event-types/c-c-et-m-event-types.module'))
+        .CCEtMEventTypesModule,
+    data: { title: 'Tipos de Eventos' },
+  },
+  {
+    path: 'sale-status',
+    loadChildren: async () =>
+      (await import('./sale-status/c-c-ss-m-sale-status.module'))
+        .CCSsMSaleStatusModule,
+    data: { title: 'Estatus de Venta' },
+  },
 ];
 
 @NgModule({

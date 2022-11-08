@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { FLYER_SUBJECT_CAT_COLUMNS } from './flyer-subject-catalog-column';
 
@@ -11,6 +13,10 @@ export class CPCFlyerSubjectCatalogComponent
   extends BasePage
   implements OnInit
 {
+  columns: any[] = [];
+  totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+
   constructor() {
     super();
     this.settings = {
@@ -18,6 +24,15 @@ export class CPCFlyerSubjectCatalogComponent
       actions: false,
       columns: { ...FLYER_SUBJECT_CAT_COLUMNS },
     };
+  }
+
+  ngOnInit(): void {
+    this.getPagination();
+  }
+
+  getPagination() {
+    this.columns = this.data;
+    this.totalItems = this.columns.length;
   }
 
   data = [
@@ -50,6 +65,4 @@ export class CPCFlyerSubjectCatalogComponent
       userPermission: 'true',
     },
   ];
-
-  ngOnInit(): void {}
 }

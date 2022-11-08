@@ -5,6 +5,10 @@
     </div>
   </div>
   <div body>
-    <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
+    <div class="table-responsive">
+      <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
   </div>
 </app-card>

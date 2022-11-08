@@ -23,6 +23,9 @@ export class RegistrationOfRequestsComponent
   parameter: any;
   object: any = '';
   btnTitle: string = '';
+  btnSaveTitle: string = '';
+  saveClarifiObject: boolean = false;
+
   //tabs
   tab1: string = '';
   tab2: string = '';
@@ -38,7 +41,9 @@ export class RegistrationOfRequestsComponent
   //clasificacion de bienes
   classifyAssets: boolean = false;
   //validar destino del bien(documento)
-  validateDocument: boolean = true;
+  validateDocument: boolean = false;
+  //notificar aclaraciones o improcedencias
+  notifyClarifiOrImpropriety = true;
 
   constructor(
     public fb: FormBuilder,
@@ -100,6 +105,12 @@ export class RegistrationOfRequestsComponent
       this.tab2 = 'Aclaraciones';
       this.tab3 = 'Identifica Destino Documental';
       this.btnTitle = 'Solicitar Aprobación';
+    } else if (this.notifyClarifiOrImpropriety) {
+      this.tab1 = 'Detalle de la Solicitud';
+      this.tab2 = 'Bienes';
+      this.tab3 = 'Expediente';
+      this.btnTitle = 'Terminar';
+      this.btnSaveTitle = 'Guardar';
     }
   }
   confirm() {
@@ -109,6 +120,10 @@ export class RegistrationOfRequestsComponent
       'Confirmación',
       ''
     );
+  }
+
+  saveClarification(): void {
+    this.saveClarifiObject = true;
   }
 
   close() {

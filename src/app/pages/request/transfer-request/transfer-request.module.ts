@@ -5,7 +5,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { RequestListComponent } from '../view-of-requests/request-list/request-list.component';
-import { UsersSelectedToTurnComponent } from '../view-of-requests/users-selected-to-turn/users-selected-to-turn.component';
+import { SharedRequestModule } from './../shared-request/shared-request.module';
 import { RegistrationOfRequestsComponent } from './registration-of-requests/registration-of-requests.component';
 import { AssociateFileComponent } from './tabs/associate-file/associate-file.component';
 import { AdvancedSearchComponent } from './tabs/classify-assets-components/classify-assets-child-tabs-components/advanced-search/advanced-search.component';
@@ -28,6 +28,12 @@ import { GoodDocTabComponent } from './tabs/expedients-child-tabs-components/goo
 import { NewDocumentComponent } from './tabs/expedients-child-tabs-components/new-document/new-document.component';
 import { RequestOfAssetsComponent } from './tabs/expedients-child-tabs-components/request-of-assets/request-of-assets.component';
 import { GeneralDocumentsFormComponent } from './tabs/general-documents-form/general-documents-form.component';
+import { InputFieldComponent } from './tabs/notify-clarifications-impropriety-tabs-component/input-field/input-field.component';
+import { NotificationAssetsTabComponent } from './tabs/notify-clarifications-impropriety-tabs-component/notification-assets-tab/notification-assets-tab.component';
+import { NotifyAssetsImproprietyFormComponent } from './tabs/notify-clarifications-impropriety-tabs-component/notify-assets-impropriety-form/notify-assets-impropriety-form.component';
+import { PrintReportModalComponent } from './tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
+import { RefuseClarificationModalComponent } from './tabs/notify-clarifications-impropriety-tabs-component/refuse-clarification-modal/refuse-clarification-modal.component';
+import { UploadFielsModalComponent } from './tabs/notify-clarifications-impropriety-tabs-component/upload-fiels-modal/upload-fiels-modal.component';
 import { AddressTransferorTabComponent } from './tabs/records-of-request-components/address-transferor-tab/address-transferor-tab.component';
 import { AssetsComponent } from './tabs/records-of-request-components/assets/assets.component';
 import { MenajeComponent } from './tabs/records-of-request-components/records-of-request-child-tabs-components/menaje/menaje.component';
@@ -42,7 +48,6 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
 @NgModule({
   declarations: [
     //RequestFormComponent,
-    UsersSelectedToTurnComponent,
     RequestListComponent,
     RegistrationOfRequestsComponent,
     RequestRecordTabComponent,
@@ -69,12 +74,18 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     AddressTransferorTabComponent,
     MenajeComponent,
     ClarificationsComponent,
+    NotificationAssetsTabComponent,
     RegistrationRequestFormComponent,
     AssociateFileComponent,
     GeneralDocumentsFormComponent,
     RequestDocumentFormComponent,
     EstateDocumentFormComponent,
     SearchDocumentFormComponent,
+    NotifyAssetsImproprietyFormComponent,
+    PrintReportModalComponent,
+    InputFieldComponent,
+    UploadFielsModalComponent,
+    RefuseClarificationModalComponent,
   ],
   imports: [
     CommonModule,
@@ -83,6 +94,7 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     ModalModule.forChild(),
     TabsModule.forRoot(),
     NgScrollbarModule,
+    SharedRequestModule,
   ],
 })
 export class TransferRequestModule {}

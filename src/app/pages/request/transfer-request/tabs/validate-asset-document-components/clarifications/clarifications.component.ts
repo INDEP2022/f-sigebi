@@ -142,28 +142,18 @@ export class ClarificationsComponent extends BasePage implements OnInit {
 
   newClarification() {
     if (this.assetsSelected.length === 0) {
-      Swal.fire({
-        title: 'Error',
-        text: 'Debes seleccionar al menos un bien',
-        icon: undefined,
-        width: 300,
-        showCancelButton: false,
-        confirmButtonColor: '#9D2449',
-        cancelButtonColor: '#b38e5d',
-        confirmButtonText: 'Aceptar',
-      }).then(result => {
-        if (result.isConfirmed) {
-          console.log('Guardar solicitud');
-          return;
-        }
-      });
+      this.message('Error', 'Debes seleccionar al menos un bien!');
     } else {
       this.openForm();
     }
   }
 
   editForm() {
-    this.openForm(this.clariArraySelected);
+    if (this.clariArraySelected.length === 1) {
+      this.openForm(this.clariArraySelected);
+    } else {
+      this.message('Error', 'Seleccione solo una aclaracion!');
+    }
   }
 
   openForm(event?: any): void {
@@ -179,5 +169,22 @@ export class ClarificationsComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     };
     this.modalService.show(ClarificationFormTabComponent, config);
+  }
+
+  message(title: string, text: string) {
+    Swal.fire({
+      title: title,
+      text: text,
+      icon: undefined,
+      width: 300,
+      showCancelButton: false,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#b38e5d',
+      confirmButtonText: 'Aceptar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        return;
+      }
+    });
   }
 }
