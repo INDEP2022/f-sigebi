@@ -39,6 +39,16 @@ const routes: Routes = [
       ).CPMLogicalTablesRegisterModule,
     data: { title: 'Catálogo de tablas lógicas' },
   },
+  {
+    path: 'maintenance-of-public-ministries',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-maintenance-of-public-ministries/c-p-m-maintenance-of-public-ministries.module'
+        )
+      ).CPMMaintenanceOfPublicMinistriesModule,
+    data: { title: 'Mantenimiento a ministerios publicos' },
+  },
 ];
 
 @NgModule({
