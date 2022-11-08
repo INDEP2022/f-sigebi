@@ -19,6 +19,10 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Catálogo de tablas lógicas',
         link: '/pages/parameterization/c-p-m-logical-tables-register',
       },
+      {
+        label: 'Catálogo de Mantenimiento de Areas',
+        link: '/pages/parameterization/maintenance-of-areas',
+      },
     ],
   },
 ];

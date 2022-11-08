@@ -39,6 +39,16 @@ const routes: Routes = [
       ).CPMLogicalTablesRegisterModule,
     data: { title: 'Catálogo de tablas lógicas' },
   },
+  {
+    path: 'maintenance-of-areas',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-maintenance-of-areas/c-p-m-maintenance-of-areas.module'
+        )
+      ).CPMMaintenanceOfAreasModule,
+    data: { title: 'Catálogo de Mantenimiento de Areas' },
+  },
 ];
 
 @NgModule({
