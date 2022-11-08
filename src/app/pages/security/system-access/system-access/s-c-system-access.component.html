@@ -202,3 +202,29 @@
     </div>
   </div>
 </app-card>
+
+<app-card [header]="true" *ngIf="devolucionDecomiso">
+  <div class="ch-content" header>
+    <h5 class="title">Listado de Devolucion o Decomiso</h5>
+  </div>
+
+  <div body>
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 p-2">
+        <ng2-smart-table
+          class="my-table"
+          [settings]="tableSettingsDevolucionDecomiso"
+          [source]="dataDevolucionDecomiso"></ng2-smart-table>
+      </div>
+      <div class="col-sm-12 col-12 col-md-12 p-2">
+        <div class="form-group">
+          <button
+            class="btn btn-primary btn-sm active m-2"
+            (click)="btnVerOtroLienzo()">
+            Ver Otro Lienzo
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

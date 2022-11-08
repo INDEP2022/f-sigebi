@@ -2,6 +2,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -74,9 +75,35 @@ export class SSystemAccessComponent
     },
   ];
 
+  tableSettingsDevolucionDecomiso = {
+    actions: {
+      columnTitle: '',
+      add: false,
+      edit: false,
+      delete: false,
+    },
+    hideSubHeader: true, //oculta subheaader de filtro
+    mode: 'external', // ventana externa
+
+    columns: {
+      devolucionDecomiso: { title: 'Devolución Decomiso' },
+      estatus: { title: 'Estatus' },
+      descripcion: { title: 'Descripción' },
+    },
+  };
+
+  dataDevolucionDecomiso = [
+    {
+      devolucionDecomiso: 'Devolución Decomiso',
+      estatus: 'Estatus',
+      descripcion: 'Descripción',
+    },
+  ];
+
   permisosEspecialesForm: FormGroup;
   nuevaPantallaForm: FormGroup;
   reglasForm: FormGroup;
+  public devolucionDecomiso: boolean = false;
 
   constructor(private fb: FormBuilder) {
     super();
@@ -114,8 +141,13 @@ export class SSystemAccessComponent
   }
   btnEstatusDecoDevo() {
     console.log('btnEstatusDecoDevo');
+    this.devolucionDecomiso = true;
   }
   btnRegeneraPermisos() {
     console.log('btnRegeneraPermisos');
+  }
+  btnVerOtroLienzo() {
+    console.log('btnVerOtroLienzo');
+    this.devolucionDecomiso = false;
   }
 }
