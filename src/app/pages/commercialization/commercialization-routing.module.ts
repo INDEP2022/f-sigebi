@@ -430,6 +430,13 @@ const routes: Routes = [
       ).CBMrMMarketingRecordsModule,
     data: { title: 'Oficios de Comercialización' },
   },
+  {
+    path: 'good-delivery',
+    loadChildren: async () =>
+      (await import('./c-m-good-delivery/c-m-good-delivery.module'))
+        .CMGoodDeliveryModule,
+    data: { title: 'Entrega de Bienes' },
+  },
 ];
 
 @NgModule({
