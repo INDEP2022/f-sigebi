@@ -128,6 +128,13 @@ const routes: Routes = [
         './review-technical-sheets/fdp-rft-m-review-technical-sheets.module'
       ).then(m => m.FdpRftMReviewTechnicalSheetsModule),
   },
+  {
+    path: 'technical-sheets',
+    loadChildren: () =>
+      import('./technical-sheets/fdp-ft-m-technical-sheets.module').then(
+        m => m.FdpFtMTechnicalSheetsModule
+      ),
+  },
 ];
 
 @NgModule({
