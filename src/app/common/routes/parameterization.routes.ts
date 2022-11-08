@@ -19,6 +19,10 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Catálogo de tablas lógicas',
         link: '/pages/parameterization/c-p-m-logical-tables-register',
       },
+      {
+        label: 'Catálogo de asuntos para volantes',
+        link: '/pages/parameterization/c-p-m-flyer-subject-catalog',
+      },
     ],
   },
 ];

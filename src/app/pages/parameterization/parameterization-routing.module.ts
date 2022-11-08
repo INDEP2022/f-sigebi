@@ -39,6 +39,16 @@ const routes: Routes = [
       ).CPMLogicalTablesRegisterModule,
     data: { title: 'Catálogo de tablas lógicas' },
   },
+  {
+    path: 'c-p-m-flyer-subject-catalog',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-flyer-subject-catalog/c-p-m-flyer-subject-catalog.module'
+        )
+      ).CPMFlyerSubjectCatalogModule,
+    data: { title: 'Catálogo de asuntos para volantes' },
+  },
 ];
 
 @NgModule({
