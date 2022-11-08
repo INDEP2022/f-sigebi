@@ -6,14 +6,15 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { PerformanceIndicatorStrategyComponent } from '../performance-indicator-strategy/performance-indicator-strategy.component';
-import { PERFORMANCEINDICATOR_COLUMNS, REPORTPERFORMANCEINDICATOR_COLUMNS } from './performance-indicator-columns';
-
+import {
+  PERFORMANCEINDICATOR_COLUMNS,
+  REPORTPERFORMANCEINDICATOR_COLUMNS,
+} from './performance-indicator-columns';
 
 @Component({
   selector: 'app-performance-indicator',
   templateUrl: './performance-indicator.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PerformanceIndicatorComponent extends BasePage implements OnInit {
   performanceIndicatorForm: FormGroup;
@@ -44,7 +45,6 @@ export class PerformanceIndicatorComponent extends BasePage implements OnInit {
       month: [null, Validators.required],
       regionalCoordination: [null, Validators.required],
       user: [null, Validators.required],
-
     });
   }
   public getRegionalCoordination(event: any) {
@@ -56,7 +56,7 @@ export class PerformanceIndicatorComponent extends BasePage implements OnInit {
     let config: ModalOptions = {
       initialState: {
         data,
-        callback: (next: boolean) => { },
+        callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,

@@ -530,8 +530,11 @@ const routes: Routes = [
       {
         path: 'implementation-report',
         loadChildren: async () =>
-          (await import('./administration-third/implementation-report/implementation-report.module'))
-            .ImplementationReportModule,
+          (
+            await import(
+              './administration-third/implementation-report/implementation-report.module'
+            )
+          ).ImplementationReportModule,
         data: { title: 'Reporte de implementacion' },
       },
       /**
@@ -613,4 +616,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class AdministrativeProcessesRoutingModule { }
+export class AdministrativeProcessesRoutingModule {}
