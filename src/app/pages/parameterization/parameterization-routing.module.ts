@@ -22,6 +22,23 @@ const routes: Routes = [
       ).CPMCatFinancialIndicatorsModule,
     data: { title: 'Catálogo de indicadores financieros' },
   },
+  {
+    path: 'c-p-m-question-catalog',
+    loadChildren: async () =>
+      (await import('./c-p-m-question-catalog/c-p-m-question-catalog.module'))
+        .CPMQuestionCatalogModule,
+    data: { title: 'Catálogo de preguntas' },
+  },
+  {
+    path: 'c-p-m-logical-tables-register',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-logical-tables-register/c-p-m-logical-tables-register.module'
+        )
+      ).CPMLogicalTablesRegisterModule,
+    data: { title: 'Catálogo de tablas lógicas' },
+  },
 ];
 
 @NgModule({

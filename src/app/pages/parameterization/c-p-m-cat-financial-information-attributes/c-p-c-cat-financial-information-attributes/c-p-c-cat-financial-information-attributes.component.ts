@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CPCCatFinancialInformationAttributesModalComponent } from '../c-p-c-cat-financial-information-attributes-modal/c-p-c-cat-financial-information-attributes-modal.component';
 import { FINANCIAL_INFO_ATTR_COLUMNS } from './financial-information-attributes-columns';
@@ -15,6 +17,7 @@ export class CPCCatFinancialInformationAttributesComponent
 {
   columns: any[] = [];
   totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(private modalService: BsModalService) {
     super();
@@ -57,7 +60,9 @@ export class CPCCatFinancialInformationAttributesComponent
     },
   ];
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getPagination();
+  }
 
   openForm(allotment?: any) {
     this.openModal({ allotment });
@@ -84,5 +89,10 @@ export class CPCCatFinancialInformationAttributesComponent
     this.columns = this.data;
     this.totalItems = this.data.length;
     this.loading = false;
+  }
+
+  getPagination() {
+    this.columns = this.data;
+    this.totalItems = this.columns.length;
   }
 }
