@@ -11,4 +11,10 @@ export const routesSecurity: any = [
     link: 'acceso-sistema',
     menu: 'Acceso al Sistema',
   },
+  {
+    // Cambio de Contraseñas
+    label: 'Cambio de Contraseñas',
+    link: 'cambio-password',
+    menu: 'Cambio de Contraseñas',
+  },
 ];
