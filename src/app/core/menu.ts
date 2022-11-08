@@ -53,6 +53,15 @@ export const MENU: IMenuItem[] = [
         label: 'Solicitudes',
         link: '/pages/request/list',
       },
+      {
+        label: 'Gestionar Bienes Similares',
+        subItems: [
+          {
+            label: 'Documentación Complementaria',
+            link: '/pages/request/manage-similar-goods/register-additional-documentation',
+          },
+        ],
+      },
     ],
   },
 
