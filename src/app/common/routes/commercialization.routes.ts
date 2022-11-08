@@ -247,6 +247,10 @@ export const COMMERCIALIZATION_ROUTES = [
             label: 'Tipos de Eventos',
             link: '/pages/commercialization/catalogs/event-types',
           },
+          {
+            label: 'Estatus de Venta',
+            link: '/pages/commercialization/catalogs/sale-status',
+          },
         ],
       },
       {

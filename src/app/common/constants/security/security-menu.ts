@@ -17,6 +17,11 @@ export const MENU_OPTIONS_SECURITY = [
         label: routesSecurity[1].menu,
         link: baseMenuSecurity + routesSecurity[1].link,
       },
+      {
+        // Cambio de Contraseñas
+        label: routesSecurity[2].menu,
+        link: baseMenuSecurity + routesSecurity[2].link,
+      },
     ],
   },
   // SEGURIDAD
