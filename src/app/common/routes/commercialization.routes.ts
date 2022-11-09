@@ -262,6 +262,10 @@ export const COMMERCIALIZATION_ROUTES = [
           {
             label: 'Parámetros Comercialización',
             link: '/pages/commercialization/catalogs/parameters'
+          },
+          {
+            label: 'Usuarios por Tipo de Evento',
+            link: '/pages/commercialization/catalogs/users-event-types'
           }
         ],
       },

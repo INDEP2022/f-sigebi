@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -8,13 +9,17 @@ import { COLUMNS } from './columns';
 import { data } from './data';
 
 @Component({
-  selector: 'app-c-c-ss-c-sale-status',
-  templateUrl: './c-c-ss-c-sale-status.component.html',
-  styles: [],
+  selector: 'app-c-c-uet-c-users-event-types',
+  templateUrl: './c-c-uet-c-users-event-types.component.html',
+  styles: [
+  ]
 })
-export class CCSsCSaleStatusComponent extends BasePage implements OnInit {
+export class CCUetCUsersEventTypesComponent extends BasePage implements OnInit {
+
+  form: FormGroup = new FormGroup({});
+
   data: LocalDataSource = new LocalDataSource();
-  saleStatusD = data;
+  eventTypesPuD = data;
 
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -25,7 +30,7 @@ export class CCSsCSaleStatusComponent extends BasePage implements OnInit {
   //Columns
   columns = COLUMNS;
 
-  constructor() {
+  constructor(private fb: FormBuilder) {
     super();
     this.settings = {
       ...this.settings,
@@ -36,11 +41,14 @@ export class CCSsCSaleStatusComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.data.load(this.saleStatusD);
+    this.data.load(this.eventTypesPuD);
+    this.prepareForm();
   }
 
-  selectRow(row: any) {
-    this.selectedRow = row;
-    this.rowSelected = true;
+  private prepareForm(): void {
+    this.form = this.fb.group({
+      event: [null, [Validators.required]]
+    });
   }
+
 }
