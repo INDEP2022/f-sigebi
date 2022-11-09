@@ -251,6 +251,10 @@ export const COMMERCIALIZATION_ROUTES = [
             label: 'Estatus de Venta',
             link: '/pages/commercialization/catalogs/sale-status',
           },
+          {
+            label: 'Estatus de Bienes Disponibles para Comercializar',
+            link: '/pages/commercialization/catalogs/goods-available-sale-status',
+          },
         ],
       },
       {
