@@ -40,6 +40,12 @@ const routes: Routes = [
         .SRAUReportAccessUserModule,
     data: { title: routesSecurity[3].label },
   },
+  {
+    path: routesSecurity[4].link,
+    loadChildren: async () =>
+      (await import('./users/s-m-users.module')).SUsersModule,
+    data: { title: routesSecurity[4].label },
+  },
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],
