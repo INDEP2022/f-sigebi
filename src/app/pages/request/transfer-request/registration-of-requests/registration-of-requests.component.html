@@ -142,7 +142,8 @@
                   complianceVerifi ||
                   classifyAssets ||
                   validateDocument ||
-                  notifyClarifiOrImpropriety
+                  notifyClarifiOrImpropriety ||
+                  approvalProcess
                 "
                 [dataObject]="object"></app-request-detail-tab>
               <!-- fin -->
@@ -168,8 +169,13 @@
               <!-- fin -->
               <!-- notificar aclaraciones o improcedencias -->
               <app-notification-assets-tab
+                *ngIf="notifyClarifiOrImpropriety"
                 [isSaving]="saveClarifiObject"></app-notification-assets-tab>
               <!-- fin -->
+              <!-- Aprovar solicitudes -->
+              <app-approval-assets-tabs
+                *ngIf="approvalProcess"
+                [dataObject]="object"></app-approval-assets-tabs>
             </tab>
             <tab heading="{{ tab3 }}">
               <!-- Registro de Solicitud o bien -->
@@ -186,12 +192,19 @@
                 "></app-expedients-tabs>
               <!-- fin -->
             </tab>
-            <tab heading="{{ tab4 }}" *ngIf="requestRegistration">
-              <app-registration-request-form></app-registration-request-form>
+            <tab
+              heading="{{ tab4 }}"
+              *ngIf="requestRegistration || approvalProcess">
+              <app-registration-request-form
+                *ngIf="requestRegistration"></app-registration-request-form>
             </tab>
-            <tab heading="{{ tab5 }}" *ngIf="requestRegistration">
+            <tab
+              heading="{{ tab5 }}"
+              *ngIf="requestRegistration || approvalProcess">
               <app-expedients-tabs
-                *ngIf="requestRegistration"></app-expedients-tabs>
+                *ngIf="
+                  requestRegistration || approvalProcess
+                "></app-expedients-tabs>
             </tab>
           </tabset>
         </div>

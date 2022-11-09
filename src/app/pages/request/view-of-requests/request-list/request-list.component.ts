@@ -63,9 +63,9 @@ export class RequestListComponent extends BasePage implements OnInit {
     this.paragraphs = usuario;
   }
 
-  openCreateRequestForm(event?: IRequestList) {
+  /* openCreateRequestForm(event?: IRequestList) {
     this.router.navigate(['pages/request/list/new-transfer-request']);
-  }
+  } */
 
   openCreateProgrammingRequest() {
     this.router.navigate;
