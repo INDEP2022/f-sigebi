@@ -7,6 +7,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { RequestListComponent } from '../view-of-requests/request-list/request-list.component';
 import { SharedRequestModule } from './../shared-request/shared-request.module';
 import { RegistrationOfRequestsComponent } from './registration-of-requests/registration-of-requests.component';
+import { ApprovalAssetsTabsComponent } from './tabs/approval-requests-components/approval-assets-tabs/approval-assets-tabs.component';
 import { AssociateFileComponent } from './tabs/associate-file/associate-file.component';
 import { AdvancedSearchComponent } from './tabs/classify-assets-components/classify-assets-child-tabs-components/advanced-search/advanced-search.component';
 import { ClarificationFormTabComponent } from './tabs/classify-assets-components/classify-assets-child-tabs-components/clarification-form-tab/clarification-form-tab.component';
@@ -86,6 +87,7 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     InputFieldComponent,
     UploadFielsModalComponent,
     RefuseClarificationModalComponent,
+    ApprovalAssetsTabsComponent,
   ],
   imports: [
     CommonModule,

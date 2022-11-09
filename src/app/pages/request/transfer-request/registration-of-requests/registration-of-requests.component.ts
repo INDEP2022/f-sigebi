@@ -43,7 +43,9 @@ export class RegistrationOfRequestsComponent
   //validar destino del bien(documento)
   validateDocument: boolean = false;
   //notificar aclaraciones o improcedencias
-  notifyClarifiOrImpropriety = true;
+  notifyClarifiOrImpropriety: boolean = true;
+  //aprovacion del proceso (por verse caso contrario borrar)
+  approvalProcess: boolean = false;
 
   constructor(
     public fb: FormBuilder,
@@ -111,8 +113,17 @@ export class RegistrationOfRequestsComponent
       this.tab3 = 'Expediente';
       this.btnTitle = 'Terminar';
       this.btnSaveTitle = 'Guardar';
+    } else if (this.approvalProcess) {
+      this.tab1 = 'Detalle de la Solicitud';
+      this.tab2 = 'Bienes';
+      this.tab3 = 'Domicilio de la Transferente';
+      this.tab4 = 'Verificación del Cumplimiento';
+      this.tab5 = 'Expediente';
+      //this.btnTitle = 'Terminar';
+      this.btnSaveTitle = 'Guardar';
     }
   }
+
   confirm() {
     this.msgAvertanceModal(
       'Aceptar',

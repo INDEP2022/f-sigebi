@@ -55,6 +55,15 @@ const routes: Routes = [
       ).ExecuteReceptionModule,
   },
   {
+    path: 'validate-destiny',
+    loadChildren: async () =>
+      (
+        await import(
+          './programming-request-components/validate-destiny/validate-destiny.module'
+        )
+      ).ValidateDestinyModule,
+  },
+  {
     path: 'formalize-programming',
     loadChildren: async () =>
       (
