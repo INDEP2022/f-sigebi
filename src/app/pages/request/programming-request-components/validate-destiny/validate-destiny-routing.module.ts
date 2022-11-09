@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ServiceOrderReportsComponent } from './service-order-reports/service-order-reports.component';
+import { ValidateDestinyPhysicalAssetComponent } from './validate-destiny-physical-asset/validate-destiny-physical-asset.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: ServiceOrderReportsComponent,
+    component: ValidateDestinyPhysicalAssetComponent,
   },
 ];
 
@@ -13,4 +13,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class ServiceOrderReportsRoutingModule {}
+export class ValidateDestinyRoutingModule {}
