@@ -540,8 +540,11 @@ const routes: Routes = [
       {
         path: 'service-order-reports',
         loadChildren: async () =>
-          (await import('./administration-third/service-order-reports/service-order-reports.module'))
-            .ServiceOrderReportsModule,
+          (
+            await import(
+              './administration-third/service-order-reports/service-order-reports.module'
+            )
+          ).ServiceOrderReportsModule,
         data: { title: 'Reportes de Ordenes de Servicio' },
       },
       /**
