@@ -17,4 +17,10 @@ export const routesSecurity: any = [
     link: 'cambio-password',
     menu: 'Cambio de Contraseñas',
   },
+  {
+    // Reporte de Accesos por Usuarios
+    label: 'Reporte de Accesos por Usuarios',
+    link: 'reporte-accesos-usuarios',
+    menu: 'Reporte de Accesos por Usuarios',
+  },
 ];

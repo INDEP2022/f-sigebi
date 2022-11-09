@@ -7,6 +7,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { CCCClientsModalComponent } from '../c-c-c-clients-modal/c-c-c-clients-modal.component';
+import { CCCProviderCatalogsModalComponent } from '../c-c-c-provider-catalogs-modal/c-c-c-provider-catalogs-modal.component';
 import { PROVIDER_CATALOGS_PROVIDER_COLUMNS } from './c-c-provider-catalogs-columns';
 
 @Component({
@@ -169,7 +170,20 @@ export class CCCProviderCatalogsMainComponent
     }
   }
 
-  openFormProvider(provider?: any) {}
+  openFormProvider(provider?: any) {
+    this.openModalProvider({ provider });
+  }
+
+  openModalProvider(context?: Partial<CCCProviderCatalogsModalComponent>) {
+    const modalRef = this.modalService.show(CCCProviderCatalogsModalComponent, {
+      initialState: { ...context },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.onConfirm.subscribe(data => {
+      if (data) this.getData();
+    });
+  }
 
   openClientsModal() {
     const modalRef = this.modalService.show(CCCClientsModalComponent, {

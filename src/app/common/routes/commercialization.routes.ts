@@ -314,6 +314,10 @@ export const COMMERCIALIZATION_ROUTES = [
         label: 'Devolución de Pagos',
         link: '/pages/commercialization/payment-refund',
       },
+      {
+        label: 'Entrega de Bienes',
+        link: '/pages/commercialization/good-delivery',
+      },
     ],
   },
-]
+];

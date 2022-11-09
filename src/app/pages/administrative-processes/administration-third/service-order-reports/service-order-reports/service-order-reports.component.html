@@ -1,0 +1,36 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Reporte de Ordenes de Servicio</h5>
+  </div>
+  <div body>
+    <form [formGroup]="serviceOrderReportsForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="serviceOrderReportsForm.get('strategy')"
+            label="Estrategia">
+            <textarea
+              class="form-control"
+              formControlName="strategy"
+              placeholder="Estrategia"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="serviceOrderReportsForm.get('report')"
+            label="Reporte">
+            <select class="form-control" formControlName="report">
+              <option [value]="null">Seleccione un reporte</option>
+              <option value="Estrategia por contrato">
+                Estrategia por contrato
+              </option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <button class="btn btn-primary btn-sm active">Reporte</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>
