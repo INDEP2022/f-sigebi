@@ -9,6 +9,13 @@ const routes: Routes = [
         './register-additional-documentation/msg-rdcbs-m-register-additional-documentation.module'
       ).then(m => m.MsgRdcbsMRegisterAdditionalDocumentationModule),
   },
+  {
+    path: 'register-request-goods/:id',
+    loadChildren: () =>
+      import(
+        './register-request-goods/msg-rsb-m-register-request-goods.module'
+      ).then(m => m.MsgRsbMRegisterRequestGoodsModule),
+  },
 ];
 
 @NgModule({
