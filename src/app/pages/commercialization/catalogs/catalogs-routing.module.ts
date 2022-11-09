@@ -71,6 +71,13 @@ const routes: Routes = [
         .CCGasMGoodsAvailableSaleModule,
     data: { title: 'Est. Bienes Disponibles para Comercializar' },
   },
+  {
+    path: 'bank-movements-types',
+    loadChildren: async () =>
+      (await import('./bank-movements-types/c-c-bmt-m-bank-movements-types.module'))
+        .CCBmtMBankMovementsTypesModule,
+    data: { title: 'Tipos Movimiento Banco' },
+  },
 ];
 
 @NgModule({
