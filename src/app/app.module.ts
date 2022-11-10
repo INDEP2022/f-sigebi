@@ -4,6 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { JwtInterceptor, JwtModule } from '@auth0/angular-jwt';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { DateFnsModule } from 'ngx-date-fns';
 import { environment } from 'src/environments/environment.prod';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -37,6 +38,7 @@ export function tokenGetter() {
     }),
     AppRoutingModule,
     HttpClientModule,
+    DateFnsModule.forRoot(),
   ],
   providers: [
     {

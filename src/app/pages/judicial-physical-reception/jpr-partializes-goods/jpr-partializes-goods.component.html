@@ -1,0 +1,57 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Paricialización de Bienes</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row justify-content-center">
+        <div class="col-md-4">
+          <form-field [control]="form.get('noBien')" label="No. Bien">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noBien"
+              placeholder="No Bien" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <button class="mx-1" size="small">Indicador</button>
+            <button class="mx-1" size="small">Exportar Excel</button>
+          </div>
+        </div>
+      </div>
+
+      <hr class="row" />
+      <h5 class="row justify-content-center">Bienes Parcializados</h5>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="scroll-table">
+            <ng2-smart-table
+              [settings]="settings"
+              [source]="data"></ng2-smart-table>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <h5>Arbol Bienes Parcializados</h5>
+          <div class="dropdown">
+            <button
+              class="btn btn-info btn-sm active dropdown-toggle"
+              type="button"
+              id="dropdownMenuButton"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false">
+              HT PARCIALIZADOS
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" href="#">Node 1</a>
+              <a class="dropdown-item" href="#">Node 2</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

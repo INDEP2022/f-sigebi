@@ -300,32 +300,69 @@ ng-scrollbar {
   --scrollbar-border-radius    : 4px;
 }
 
-/** my css table*/
-.css-table {
-  display: table;
+.dropdown-item.bg-primary {
+  background-color: #9d2449 !important;
+}
 
-  .css-table-header {
-    display            : table-header-group;
-    font-weight        : bold;
-    // background-color: rgb(191, 191, 191);
+.bk-danger {
+  background-color: #bc955c;
+}
 
-    div {
-      text-align   : center;
-      // border    : 1px solid rgb(255, 255, 255);
-    }
+.dismiss {
+  float: right;
+
+  &:hover {
+    cursor: pointer;
   }
+}
 
-  .css-table-body {
-    display: table-row-group;
-
-    .css-table-row {
-      display: table-row;
-    }
+.btn-danger:not(.active) {
+  &:hover {
+    background-color: #bc955c !important;
+    border-color    : #bc955c !important;
   }
+}
 
-  .css-table-header div,
-  .css-table-row div {
-    display: table-cell;
-    padding: 0 6px;
+a.dropdown-item {
+  &:hover {
+    cursor: pointer;
   }
+}
+
+ng-scrollbar.table-scrollbar {
+  border: none;
+}
+
+.table-padding {
+  height: 1em;
+}
+
+.tab-content form.no-margin {
+  margin-bottom: 0px !important;
+}
+
+.float-check {
+  position: relative;
+  bottom  : 6px;
+}
+
+.tooltip.tooltip-style .tooltip-inner {
+  background-color  : #fff;
+  color             : #000;
+  box-shadow        : 1px 2px 13px -1px rgba(94, 94, 94, 0.54);
+  -webkit-box-shadow: 1px 2px 13px -1px rgba(94, 94, 94, 0.54);
+  -moz-box-shadow   : 1px 2px 13px -1px rgba(94, 94, 94, 0.54);
+}
+
+.tooltip.top.tooltip-style .tooltip-arrow:before,
+.tooltip.top.tooltip-style .tooltip-arrow {
+  border-top-color: #fff;
+}
+
+.cp {
+  color: #404041 !important;
+}
+
+.cl-table {
+  padding-right: 1em;
 }

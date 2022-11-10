@@ -252,9 +252,190 @@ const routes: Routes = [
   {
     path: 'regular-billing-tab',
     loadChildren: async () =>
-      (await import('./movable-property/regular-billing-tab/regular-billing-tab.module'))
-        .RegularBillingTabModule,
+      (
+        await import(
+          './movable-property/regular-billing-tab/regular-billing-tab.module'
+        )
+      ).RegularBillingTabModule,
     data: { title: 'Facturación normal' },
+  },
+  {
+    path: 'payment-search',
+    loadChildren: async () =>
+      (await import('./c-m-payment-search/c-m-payment-search.module'))
+        .CMPaymentSearchModule,
+    data: { title: 'Búsqueda y Procesamiento de Pagos' },
+  },
+  {
+    path: 'electronic-signatures',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-m-electronic-signatures/c-m-electronic-signatures.module'
+        )
+      ).CMElectronicSignaturesModule,
+    data: { title: 'Gestión de Firmas Electrónicas' },
+  },
+  {
+    path: 'c-bm-f-fr-cr-m-rectification-fields',
+    loadChildren: async () =>
+      (
+        await import(
+          './movable-property/c-bm-f-fr-cr-m-rectification-fields/c-bm-f-fr-cr-m-rectification-fields.module'
+        )
+      ).CBmFFrCrMRectificationFieldsModule,
+    data: { title: 'Campos rectificación' },
+  },
+  {
+    path: 'c-bm-f-fr-prdf-m-invoice-rectification-process',
+    loadChildren: async () =>
+      (
+        await import(
+          './movable-property/c-bm-f-fr-prdf-m-invoice-rectification-process/c-bm-f-fr-prdf-m-invoice-rectification-process.module'
+        )
+      ).CBmFFrPrdfMInvoiceRectificationProcessModule,
+    data: { title: 'Formato de rectificación' },
+  },
+  {
+    path: 'c-bm-vm-m-cp-page-setup',
+    loadChildren: async () =>
+      (
+        await import(
+          './movable-property/c-bm-vm-m-cp-page-setup/c-bm-vm-m-cp-page-setup.module'
+        )
+      ).CBmVmMCpPageSetupModule,
+    data: { title: 'Configuración de Página' },
+  },
+  {
+    path: 'c-bm-vm-cde-m-entity-classification',
+    loadChildren: async () =>
+      (
+        await import(
+          './movable-property/c-bm-vm-cde-m-entity-classification/c-bm-vm-cde-m-entity-classification.module'
+        )
+      ).CBmVmCdeMEntityClassificationModule,
+    data: { title: 'Catálogo de Entidades' },
+  },
+  {
+    path: 'payment-refund',
+    loadChildren: async () =>
+      (await import('./c-m-payment-refund/c-m-payment-refund.module'))
+        .CMPaymentRefundModule,
+    data: { title: 'Devolución de Pagos' },
+  },
+  {
+    path: 'mandate-income-reports',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/mandate-income-reports/c-b-mir-m-mandate-income-reports.module'
+        )
+      ).CBMirMMandateIncomeReportsModule,
+    data: { title: 'Reporte de Ing. por Mandato' },
+  },
+  {
+    path: 'c-bm-r-rrpr-m-remittances-recorded-region',
+    loadChildren: async () =>
+      (
+        await import(
+          './movable-property/c-bm-r-rrpr-m-remittances-recorded-region/c-bm-r-rrpr-m-remittances-recorded-region.module'
+        )
+      ).CBmRRrprMRemittancesRecordedRegionModule,
+    data: { title: 'Remesas registradas por regional' },
+  },
+  {
+    path: 'c-bm-r-exdlr-m-remittance-exportation',
+    loadChildren: async () =>
+      (
+        await import(
+          './movable-property/c-bm-r-exdlr-m-remittance-exportation/c-bm-r-exdlr-m-remittance-exportation.module'
+        )
+      ).CBmRExdlrMRemittanceExportationModule,
+    data: { title: 'Exportación de las Remesas' },
+  },
+  {
+    path: 'c-b-r-oim-electronic-signature-auxiliary-catalogs',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/c-b-r-oim-m-signture-auxiliary-catalogs/c-b-r-oim-m-signture-auxiliary-catalogs.module'
+        )
+      ).CBROimMSigntureAuxiliaryCatalogsModule,
+    data: { title: 'Catálogos Auxiliares para Firmas Electrónicas' },
+  },
+  {
+    path: 'direct-sale-requests-capture/municipality-control',
+    loadChildren: async () =>
+      (
+        await import(
+          './direct-sale-requests-capture/c-csvd-m-municipality-control/c-csvd-m-municipality-control.module'
+        )
+      ).CCsvdMMunicipalityControlModule,
+    data: { title: 'Control de Municipios' },
+  },
+  {
+    path: 'billing',
+    loadChildren: async () =>
+      (await import('./c-fp-m-penalty-billing/c-fp-m-penalty-billing.module'))
+        .CFpMPenaltyBillingModule,
+    data: { title: 'Facturación' },
+  },
+  {
+    path: 'c-b-ems-sirsae-movement-sending',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/c-b-ems-m-sirsae-movement-sending/c-b-ems-m-sirsae-movement-sending.module'
+        )
+      ).CBEmsMSirsaeMovementSendingModule,
+    data: { title: 'Envío de Movimientos a SIRSAE' },
+  },
+  {
+    path: 'c-b-pdp-ec-conciliation-execution',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/c-b-pdp-ec-m-conciliation-execution/c-b-pdp-ec-m-conciliation-execution.module'
+        )
+      ).CBPdpEcMConciliationExecutionModule,
+    data: { title: 'Ejecución de la Conciliación' },
+  },
+  {
+    path: 'tax-validation-calculation',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/tax-calculation-validation/c-b-tcv-m-tax-validation-calculation.module'
+        )
+      ).CBTcvMTaxValidationCalculationModule,
+    data: { title: 'Validación de Cálculo I.V.A' },
+  },
+  {
+    path: 'partiality-direct-adjudication',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/c-b-a-adp-m-partiality-direct-adjudication/c-b-a-adp-m-partiality-direct-adjudication.module'
+        )
+      ).CBAAdpMPartialityDirectAdjudicationModule,
+    data: { title: 'Adjudicaciones Directas en Parcialidades' },
+  },
+  {
+    path: 'marketing-records',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/marketing-records/c-b-mr-m-marketing-records.module'
+        )
+      ).CBMrMMarketingRecordsModule,
+    data: { title: 'Oficios de Comercialización' },
+  },
+  {
+    path: 'good-delivery',
+    loadChildren: async () =>
+      (await import('./c-m-good-delivery/c-m-good-delivery.module'))
+        .CMGoodDeliveryModule,
+    data: { title: 'Entrega de Bienes' },
   },
 ];
 

@@ -45,8 +45,8 @@
       <div class="row pt-4">
         <div class="col-md-6">
           <p for="">
-            <span *ngIf="typeDoc === 'Solicitudes'">No. Solicitud:</span>
-            <span *ngIf="typeDoc === 'expedient'">No. Expediente:</span>
+            <span *ngIf="typeDoc === 'doc-request'">No. Solicitud:</span>
+            <span *ngIf="typeDoc === 'doc-expedient'">No. Expediente:</span>
             <span *ngIf="typeDoc === 'good'">No. Bien:</span>
             <span>{{ newDocForm.get('noExpedient').value }}</span>
           </p>
@@ -149,15 +149,6 @@
           (confirm)="confirm()">
         </confirm-button>
       </div>
-      <!-- <div class="m-3">
-        <button 
-          type="button" 
-          class="btn btn-primary active" 
-          [disabled]="requestForm.invalid" 
-          (click)="confirm()">
-          Turnar
-        </button>
-      </div> -->
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
           Cancelar

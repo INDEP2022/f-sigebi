@@ -1,0 +1,64 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Bienes localizados</h5>
+    <div class="buttons">
+      <div class="btn-group" dropdown>
+        <button
+          id="button-basic"
+          dropdownToggle
+          type="button"
+          class="btn btn-primary dropdown-toggle btn-sm active"
+          aria-controls="dropdown-basic">
+          <div class="d-flex align-items-center">
+            Acciones <span class="caret ml-2"></span>
+          </div>
+        </button>
+        <ul
+          id="dropdown-basic"
+          *dropdownMenu
+          class="dropdown-menu dropdown-menu-right"
+          role="menu"
+          aria-labelledby="button-basic">
+          <li role="menuitem">
+            <a class="dropdown-item" (click)="viewImages()">Imágenes</a>
+          </li>
+          <li role="menuitem">
+            <a class="dropdown-item" (click)="viewPhotos()">Visualizar Fotos</a>
+          </li>
+          <li role="menuitem">
+            <a class="dropdown-item" href="#">Exportar Fotos</a>
+          </li>
+          <li role="menuitem">
+            <a class="dropdown-item" href="#">Ficha Técnica</a>
+          </li>
+          <li role="menuitem">
+            <a class="dropdown-item" href="#">F. Técnica Masiva</a>
+          </li>
+          <li role="menuitem">
+            <a class="dropdown-item" href="#">Excel</a>
+          </li>
+          <li role="menuitem">
+            <a class="dropdown-item" href="#">Histórico Actas/Prog/Sus/Can</a>
+          </li>
+          <li class="divider dropdown-divider"></li>
+          <li role="menuitem">
+            <a class="dropdown-item" href="#">Cedula de Venta</a>
+          </li>
+          <li role="menuitem">
+            <a class="dropdown-item" href="#">C. Venta Masiva</a>
+          </li>
+          <li role="menuitem">
+            <a class="dropdown-item" href="#">Excel C.Venta</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-12">
+        <ng2-smart-table [settings]="settings"></ng2-smart-table>
+      </div>
+    </div>
+  </div>
+</app-card>

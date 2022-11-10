@@ -70,12 +70,11 @@ const routes: Routes = [
         .JuridicalProcessesModule,
     data: { title: 'Juridicos' },
   },
-  // {
-
-  //   path: 'legal-processes',
-  //   loadChildren: () => import('./legal-processes/legal-processes.module')
-  //     .then(m => m.LegalProcessesModule),
-  // },
+  {
+    path: 'seguridad',
+    loadChildren: () =>
+      import('./security/security.module').then(m => m.SecurityModule),
+  },
   {
     path: 'executive-processes',
     loadChildren: async () =>
@@ -96,6 +95,29 @@ const routes: Routes = [
           './judicial-physical-reception/judicial-physical-reception.module'
         )
       ).JudicialPhysicalReceptionModule,
+  },
+
+  {
+    path: 'general-processes',
+    loadChildren: async () =>
+      (await import('./general-processes/general-processes.module'))
+        .GeneralProcessesModule,
+  },
+
+  {
+    path: 'documentation-complementary',
+    loadChildren: async () =>
+      (
+        await import(
+          './documentation-complementary/documentation-complementary.module'
+        )
+      ).DocumentationComplementaryModule,
+  },
+  {
+    path: 'parameterization',
+    loadChildren: async () =>
+      (await import('./parameterization/parameterization.module'))
+        .ParameterizationModule,
   },
 ];
 

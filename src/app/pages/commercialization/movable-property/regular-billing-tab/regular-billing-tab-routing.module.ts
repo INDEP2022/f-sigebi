@@ -5,12 +5,12 @@ import { RegularBillingTabComponent } from './regular-billing-tab/regular-billin
 const routes: Routes = [
   {
     path: '',
-    component: RegularBillingTabComponent
-  }
+    component: RegularBillingTabComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class RegularBillingTabRoutingModule { }
+export class RegularBillingTabRoutingModule {}

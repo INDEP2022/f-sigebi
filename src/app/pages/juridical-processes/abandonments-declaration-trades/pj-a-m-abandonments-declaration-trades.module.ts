@@ -6,7 +6,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 
 /** LIBRERIAS EXTERNAS IMPORTS */
 import { TabsModule } from 'ngx-bootstrap/tabs';
-import { SharedLegalProcessModule } from '../shared-legal-process/shared-legal-process.module';
+import { SharedJuridicalProcessesModule } from '../shared-juridical-processes/shared-juridical-processes.module';
 
 /** SERVICE IMPORTS */
 
@@ -22,7 +22,7 @@ import { PJAAbandonmentsDeclarationTradesComponent } from './abandonments-declar
     CommonModule,
     PJAAbandonmentsDeclarationTradesRoutingModule,
     SharedModule,
-    SharedLegalProcessModule,
+    SharedJuridicalProcessesModule,
     TabsModule,
   ],
 })

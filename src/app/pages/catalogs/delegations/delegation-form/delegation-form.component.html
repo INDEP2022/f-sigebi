@@ -3,7 +3,10 @@
     <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
-    <form [formGroup]="delegationForm" class="form-material">
+    <form
+      [formGroup]="delegationForm"
+      class="form-material"
+      class="form-material">
       <div class="row pt-5">
         <div class="col-md-2">
           <form-field [control]="delegationForm.get('id')" label="Id">

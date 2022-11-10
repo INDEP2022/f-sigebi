@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRequestList } from 'src/app/core/models/catalogs/request-list.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { REQUEST_LIST_COLUMNS } from './request-list-columns';
-import { Router } from '@angular/router';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 
 var usuario: IRequestList[] = [
   {
@@ -16,6 +16,23 @@ var usuario: IRequestList[] = [
     noInstance: 820169,
     created: 'tester_nsbxt',
     process: 'SolicitudeTransferencia',
+  },
+  {
+    title: 'Registo de solicitud (programar solicitud) con folio 45010',
+    noRequest: 45010,
+    numTask: 260302,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'SolicitudProgramación',
+  },
+  {
+    title:
+      'BIENES SIMILARES: Registro de Documentación Complementaria, No. Solicitud: 1851',
+    noRequest: 45010,
+    numTask: 260302,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'RegistroSolicitudes',
   },
 ];
 
@@ -28,7 +45,6 @@ export class RequestListComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: IRequestList[] = [];
   totalItems: number = 0;
-  lastClick: number = 0;
 
   constructor(public modalService: BsModalService, public router: Router) {
     super();
@@ -47,18 +63,30 @@ export class RequestListComponent extends BasePage implements OnInit {
     this.paragraphs = usuario;
   }
 
-  openCreateRequestForm(event?: IRequestList) {
+  /* openCreateRequestForm(event?: IRequestList) {
     this.router.navigate(['pages/request/list/new-transfer-request']);
+  } */
+
+  openCreateProgrammingRequest() {
+    this.router.navigate;
   }
 
   editRequest(event: any) {
-    this.lastClick += 1;
-    setTimeout(() => {
-      if (this.lastClick > 1) {
-        this.router.navigate(['pages/request/list/registration-request', 1]);
-      }
-      this.lastClick = 0;
-    }, 500);
+    console.log(event);
+    if (event.data.process == 'SolicitudProgramación') {
+      // en el caso de que sea una solicitud de programacion
+      this.router.navigate([
+        'pages/request/transfer-request/registration-request',
+        1,
+      ]);
+    }
+    if (event.data.process == 'RegistroSolicitudes') {
+      // en el caso de que el proceso seleccionado sea Bienes Similares
+      this.router.navigate([
+        'pages/request/manage-similar-goods/register-request-goods',
+        event.data.noRequest,
+      ]);
+    }
   }
 
   private openModel(

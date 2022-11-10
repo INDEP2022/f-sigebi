@@ -74,7 +74,7 @@ export class PaGrCGoodsRelationshipComponent
       question => {
         if (question.isConfirmed) {
           //Ejecutar el servicio
-          this.data.remove(event);
+          this.data.remove(event.data);
           this.data.refresh();
         }
       }

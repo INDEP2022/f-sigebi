@@ -58,10 +58,11 @@
           <div class="d-flex justify-content-center">
             <div class="m-3">
               <button
-                type="submit"
-                class="btn-sm btn-primary active"
-                [disabled]="!form.valid">
-                Agregar Bienes
+                type="button"
+                class="btn btn-sm btn-primary active"
+                [disabled]="!form.valid"
+                (click)="show = !show">
+                {{ show ? 'Agregar otros' : 'Agregar bienes' }}
               </button>
             </div>
           </div>
@@ -71,7 +72,7 @@
   </div>
 </app-card>
 
-<app-card>
+<app-card *ngIf="show">
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row pt-5">
@@ -96,10 +97,9 @@
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field [control]="form.get('fromDate')" label="Fecha recepción">
+          <form-field [control]="form.get('fromDate')" label="Fecha">
             <input
               type="text"
-              placeholder="Del"
               class="form-control"
               bsDatepicker
               formControlName="fromDate"
@@ -107,13 +107,12 @@
           </form-field>
         </div>
         <div class="col-md-2">
-          <div class="d-flex justify-content-center">
-            <div class="m-3">
-              <button type="button" class="btn-sm btn-primary active">
-                Abrir
-              </button>
-            </div>
-          </div>
+          <button
+            type="button"
+            class="btn btn-sm btn-primary active"
+            [disabled]="!form.valid">
+            Abrir
+          </button>
         </div>
       </div>
 
@@ -128,42 +127,46 @@
           </div>
         </div>
       </div>
-      <div class="row pt-3">
+      <div class="row pt-3 scroll-table table-responsive">
         <ng2-smart-table
           [settings]="settings"
           [source]="data"></ng2-smart-table>
       </div>
-
-      <div class="row pt-5">
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+      <div class="row">
         <div class="col-md-2">
-          <label> Estado: </label>
-        </div>
-        <div class="col-md-2">
-          <div class="form-check">
-            <input
-              class="form-check-input"
-              type="radio"
-              name="flexRadioDefault"
-              id="flexRadioDefault1" />
-            <label class="form-check-label"> Disponible </label>
-          </div>
+          <button
+            type="button"
+            class="btn btn-success btn-sm active"
+            (click)="fileExcel.click()">
+            Abrir archivo Excel o CSV
+          </button>
+          <input
+            type="file"
+            (change)="ReadExcel($event)"
+            name="fileExcel"
+            #fileExcel
+            class="d-none"
+            accept=".xlsx, .xls, .csv, application/vnd.ms-excel" />
         </div>
         <div class="col-md-5">
-          <div class="form-check">
-            <input
-              class="form-check-input"
-              type="radio"
-              name="flexRadioDefault"
-              id="flexRadioDefault2"
-              checked />
-            <label class="form-check-label"> No disponible </label>
-          </div>
+          <p>
+            Seleccionar archivo de la ruta:
+            src\app\pages\executive-processes\filesTest
+          </p>
         </div>
-        <div class="col-md-3">
-          <button type="submit" class="btn-sm btn-primary active">
-            Insertar vía archivo plano
-          </button>
-        </div>
+      </div>
+
+      <div class="row">
+        <p class="d-flex justify-content-center">
+          <span class="text-success mr-5"
+            ><i class="fa fa-square"></i> Disponibles</span
+          >
+          <span class="text-danger"
+            ><i class="fa fa-square"></i> No disponibles</span
+          >
+        </p>
       </div>
 
       <div class="form-group row pt-5">
@@ -178,19 +181,28 @@
           </form-field>
         </div>
         <div class="col-sm-1">
-          <button type="submit" class="btn-sm btn-primary active">
+          <button
+            type="submit"
+            class="btn-sm btn-info active"
+            (click)="msjRequest()">
             Solicitud
           </button>
         </div>
 
         <div class="col-sm-1">
-          <button type="submit" class="btn-sm btn-primary active">
+          <button
+            type="submit"
+            class="btn-sm btn-info active"
+            (click)="msjScan()">
             Escanear
           </button>
         </div>
 
         <div class="col-sm-1">
-          <button type="submit" class="btn-sm btn-primary active">
+          <button
+            type="submit"
+            class="btn-sm btn-info active"
+            (click)="openPrevImg()">
             Ver IMG
           </button>
         </div>
@@ -207,19 +219,28 @@
         </div>
 
         <div class="col-sm-1">
-          <button type="submit" class="btn-sm btn-primary active">
+          <button
+            type="submit"
+            class="btn-sm btn-info active"
+            (click)="msjRequest()">
             Solicitud
           </button>
         </div>
 
         <div class="col-sm-1">
-          <button type="submit" class="btn-sm btn-primary active">
+          <button
+            type="submit"
+            class="btn-sm btn-info active"
+            (click)="msjScan()">
             Escanear
           </button>
         </div>
 
         <div class="col-sm-1">
-          <button type="submit" class="btn-sm btn-primary active">
+          <button
+            type="submit"
+            class="btn-sm btn-info active"
+            (click)="openPrevImg()">
             Ver IMG
           </button>
         </div>

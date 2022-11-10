@@ -1,0 +1,49 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">NOTIFICACIONES POR EXPEDIENTE</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field
+            [control]="form.get('noExpediente')"
+            label="No. Expediente">
+            <input class="form-control" formControlName="noExpediente" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field [control]="form.get('causaPenal')" label="Causa Penal">
+            <input class="form-control" formControlName="causaPenal" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field
+            [control]="form.get('averiguacionPrevia')"
+            label="Averiguación Previa">
+            <input class="form-control" formControlName="averiguacionPrevia" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2 text-center">
+          <div class="form-group">
+            <button
+              type="button"
+              class="btn btn-primary active"
+              (click)="btnGenerarReporte()">
+              Generar Reporte
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 p-2">
+        <ng2-smart-table
+          class="my-table"
+          [settings]="tableSettings"
+          [source]="dataTable"></ng2-smart-table>
+      </div>
+    </div>
+  </div>
+</app-card>

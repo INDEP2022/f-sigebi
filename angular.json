@@ -66,7 +66,11 @@
               "lodash.memoize",
               "lodash.throttle",
               "sweetalert2",
-              "metismenujs"
+              "metismenujs",
+              "file-saver",
+              "screenfull",
+              "bezier-easing",
+              "apexcharts"
             ],
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
@@ -77,7 +81,7 @@
               "node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": ["node_modules/apexcharts/dist/apexcharts.min.js"]
           },
           "configurations": {
             "production": {

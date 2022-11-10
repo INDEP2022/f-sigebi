@@ -58,6 +58,83 @@ const routes: Routes = [
         m => m.DonationProcessModule
       ),
   },
+  {
+    path: 'circumstantial-acts-suspension-cancellation',
+    loadChildren: () =>
+      import(
+        './circumstantial-acts-suspension-cancellation/fdp-acsc-m-circumstantial-acts-suspension-cancellation.module'
+      ).then(m => m.FdpAcscMCircumstantialActsSuspensionCancellationModule),
+  },
+  {
+    path: 'acts-circumstantiated-cancellation-theft',
+    loadChildren: () =>
+      import(
+        './acts-circumstantiated-cancellation-theft/fdp-accr-m-acts-circumstantiated-cancellation-theft.module'
+      ).then(m => m.FdpAccrMActsCircumstantiatedCancellationTheftModule),
+  },
+  {
+    path: 'proof-of-delivery',
+    loadChildren: () =>
+      import('./proof-of-delivery/fdp-cde-m-proof-of-delivery.module').then(
+        m => m.FdpCdeMProofOfDeliveryModule
+      ),
+  },
+  {
+    path: 'acts-goods-delivered',
+    loadChildren: () =>
+      import(
+        './acts-goods-delivered/fdp-abee-m-acts-goods-delivered.module'
+      ).then(m => m.FdpAbeeMActsGoodsDeliveredModule),
+  },
+  {
+    path: 'acts-regularization-non-existence',
+    loadChildren: () =>
+      import(
+        './acts-regularization-non-existence/fdp-arif-m-acts-regularization-non-existence.module'
+      ).then(m => m.FdpArifMActsRegularizationNonExistenceModule),
+  },
+  {
+    path: 'return-acts-report',
+    loadChildren: () =>
+      import('./return-acts-report/fdp-rad-m-return-acts-report.module').then(
+        m => m.FdpRadMReturnActsReportModule
+      ),
+  },
+  {
+    path: 'check-donation-requirements',
+    loadChildren: () =>
+      import(
+        './check-donation-requirements/fdp-crd-m-check-donation-requirements.module'
+      ).then(m => m.FdpCrdMCheckDonationRequirementsModule),
+  },
+  {
+    path: 'check-destruction-requirements',
+    loadChildren: () =>
+      import(
+        './check-destruction-requirements/fdp-crd-m-check-destruction-requirements.module'
+      ).then(m => m.FdpCrdMCheckDestructionRequirementsModule),
+  },
+  {
+    path: 'check-destination-requirements',
+    loadChildren: () =>
+      import(
+        './check-destination-requirements/fdp-crd-m-check-destination-requirements.module'
+      ).then(m => m.FdpCrdMCheckDestinationRequirementsModule),
+  },
+  {
+    path: 'review-technical-sheets',
+    loadChildren: () =>
+      import(
+        './review-technical-sheets/fdp-rft-m-review-technical-sheets.module'
+      ).then(m => m.FdpRftMReviewTechnicalSheetsModule),
+  },
+  {
+    path: 'technical-sheets',
+    loadChildren: () =>
+      import('./technical-sheets/fdp-ft-m-technical-sheets.module').then(
+        m => m.FdpFtMTechnicalSheetsModule
+      ),
+  },
 ];
 
 @NgModule({

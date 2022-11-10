@@ -40,7 +40,9 @@
           </form-field>
         </div>
         <div class="col-md-3">
-          <button class="btn btn-primary btn-sm active">Buscar usuario</button>
+          <button (click)="searchUser()" class="btn btn-primary btn-sm active">
+            Buscar usuario
+          </button>
         </div>
       </div>
 
@@ -60,7 +62,11 @@
     </form>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <button class="btn btn-primary btn-sm active">Turnar</button>
+        <button
+          [routerLink]="['/pages/request/perform-programming']"
+          class="btn btn-primary btn-sm active">
+          Turnar
+        </button>
       </div>
       <div class="m-3"></div>
     </div>

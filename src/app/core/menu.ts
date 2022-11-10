@@ -1,8 +1,13 @@
 import { MENU_OPTIONS_JURIDICAL_PROCESSES } from '../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
+import { MENU_OPTIONS_SECURITY } from '../common/constants/security/security-menu';
 import { ADMINISTRATIVE_PROCESSES_ROUTES } from '../common/routes/administrative-processes.routes';
 import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
+import { COMMERCIALIZATION_ROUTES } from '../common/routes/commercialization.routes';
+import { DOCUMENTATION_COMPLEMENTARY } from '../common/routes/documentation-complementary';
 import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception.routes';
 import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
+import { GENERAL_PROCESSES_ROUTES } from '../common/routes/general-processes.routes';
+import { PARAMETERIZATION_ROUTES } from '../common/routes/parameterization.routes';
 import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
@@ -41,6 +46,15 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-folder',
     subItems: [
       {
+        label: 'Applicaciones',
+        subItems: [
+          {
+            label: 'Solicitud de transferencia',
+            link: '/pages/request/list/new-transfer-request',
+          },
+        ],
+      },
+      {
         label: 'Solicitudes a turno',
         link: '/pages/request/request-in-turn',
       },
@@ -48,8 +62,21 @@ export const MENU: IMenuItem[] = [
         label: 'Solicitudes',
         link: '/pages/request/list',
       },
+      {
+        label: 'Gestionar Bienes Similares',
+        subItems: [
+          {
+            label: 'Documentación Complementaria',
+            link: '/pages/request/manage-similar-goods/register-additional-documentation',
+          },
+        ],
+      },
     ],
   },
+
+  //Documentación complementaria//
+  ...DOCUMENTATION_COMPLEMENTARY,
+
   //Proceso Destino final
   {
     label: 'Proceso Destino final',
@@ -93,6 +120,7 @@ export const MENU: IMenuItem[] = [
           },
         ],
       },
+      //Proceso de Donación
       {
         label: 'Proceso de Donación',
         subItems: [
@@ -116,216 +144,97 @@ export const MENU: IMenuItem[] = [
             label: 'Aprobación para Donación',
             link: '/pages/final-destination-process/donation-process/approval-for-donation',
           },
+          {
+            label: 'Solicitud y Autorización de Donación',
+            link: '/pages/final-destination-process/donation-process/donation-authorization-request',
+          },
+          {
+            label: 'Registro de Inventarios para Donación Directa',
+            link: '/pages/final-destination-process/donation-process/registration-inventories-donation',
+          },
+          {
+            label: 'Contratos de Donación',
+            link: '/pages/final-destination-process/donation-process/donation-contracts',
+          },
+          {
+            label: 'Contratos de Donación Directa Administrador',
+            link: '/pages/final-destination-process/donation-process/administrator-donation-contract',
+          },
+          //VISTAS A LAS QUE SE LES DEBE VERIFICAR SU RUTA
+          {
+            label: 'Parcialización Bienes en Donación',
+            link: '/pages/final-destination-process/donation-process/partialization-goods-donation',
+          },
+          {
+            label: 'Procesos de Donación',
+            link: '/pages/final-destination-process/donation-process/donation-processes',
+          },
         ],
+      },
+      {
+        label: 'Actas Circunstanciadas de Suspensión/Cancelación',
+        link: '/pages/final-destination-process/circumstantial-acts-suspension-cancellation',
+      },
+      {
+        label: 'Actas Circunstanciadas de Cancelación de Ent por Robo',
+        link: '/pages/final-destination-process/acts-circumstantiated-cancellation-theft',
+      },
+      {
+        label: 'Constancias de Entrega',
+        link: '/pages/final-destination-process/proof-of-delivery',
+      },
+      {
+        label: 'Actas de Bienes Entregados para Estudio',
+        link: '/pages/final-destination-process/acts-goods-delivered',
+      },
+      {
+        label: 'Actas de Regularización por Inexistencia Física',
+        link: '/pages/final-destination-process/acts-regularization-non-existence',
+      },
+      {
+        label: 'Reporte de Actas de Devolución',
+        link: '/pages/final-destination-process/return-acts-report',
+      },
+      {
+        label: 'Fichas Técnicas',
+        link: '/pages/final-destination-process/technical-sheets',
+      },
+      {
+        label: 'Revisión de Fichas Técnicas',
+        link: '/pages/final-destination-process/review-technical-sheets',
+      },
+      //VISTAS A LAS QUE SE LES DEBE VERIFICAR SU RUTA O SI SON LLAMADAS DESDE OTRA VISTA
+      {
+        label: 'Comprobación de Requisitos Documentales por Donación',
+        link: '/pages/final-destination-process/check-donation-requirements',
+      },
+      {
+        label: 'Comprobación de Requisitos Documentales por Destrucción',
+        link: '/pages/final-destination-process/check-destruction-requirements',
+      },
+      {
+        label: 'Comprobación de Requisitos Documentales para Destino',
+        link: '/pages/final-destination-process/check-destination-requirements',
       },
     ],
   },
   ...DOCUMENTS_RECEPTION_ROUTES,
+  ...GENERAL_PROCESSES_ROUTES,
   //Procesos ejecutivos
   ...EXECUTIVE_PROCESSES_ROUTES,
   //Comercialización
-  {
-    label: 'Comercialización',
-    icon: 'bx-folder',
-    subItems: [
-      {
-        label: 'Bienes Muebles',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Preparación del evento',
-            link: '/pages/commercialization/c-b-f-fmdvdb-m-event-preparation',
-          },
-          {
-            label: 'Bienes exentos de validación',
-            link: '/pages/commercialization/c-b-bedv-m-validation-exempted-goods',
-          },
-          {
-            label: 'Reclasificacón OI',
-            link: '/pages/commercialization/c-b-rdodi-m-reclass-recovery-orders',
-          },
-          {
-            label: 'Validación de Pagos',
-            link: '/pages/commercialization/c-b-vdp-m-payment-dispersion-validation',
-          },
-          {
-            label: 'Pagos Referenciados',
-            link: '/pages/commercialization/referenced-payment',
-          },
-          {
-            label: 'Pagos no Conciliados',
-            link: '/pages/commercialization/unreconciled-payment',
-          },
-          {
-            label: 'Dispersión de Pagos',
-            link: '/pages/commercialization/payment-dispersion-monitor',
-          },
-          {
-            label: 'Conversión a numerario',
-            link: '/pages/commercialization/numeraire-conversion-tabs',
-          },
-          {
-            label: 'Consulta de Avalúo',
-            link: '/pages/commercialization/c-b-a-cda-m-appraisal-consultation',
-          },
-          {
-            label: 'Registro de Avalúo',
-            link: '/pages/commercialization/c-b-a-rda-m-appraisal-registration',
-          },
-          {
-            label: 'Captura de Gastos',
-            link: '/pages/commercialization/c-b-ge-cdg-m-expense-capture',
-          },
-          {
-            label: 'Terceros comercializadores',
-            link: '/pages/commercialization/c-bm-ge-cdc-tc-m-third-party-marketers',
-          },
-          {
-            label: 'Consulta de bienes',
-            link: '/pages/commercialization/consultation-goods-commercial-process-tabs',
-          },
-          {
-            label: 'Calcular comisión',
-            link: '/pages/commercialization/c-bm-ge-cdc-clc-m-calculate-commission',
-          },
-          {
-            label: 'Folios y Series',
-            link: '/pages/commercialization/c-bm-f-syf-m-series-folios-control',
-          },
-          {
-            label: 'Causas de Refacturación',
-            link: '/pages/commercialization/c-bm-f-cdr-m-rebilling-causes',
-          },
-          {
-            label: 'Estatus de la facturación',
-            link: '/pages/commercialization/c-bm-f-edf-m-invoice-status',
-          },
-          {
-            label: 'Conceptos de Gasto',
-            link: '/pages/commercialization/expense-concepts',
-          },
-          {
-            label: 'Permisos a Eventos',
-            link: '/pages/commercialization/events',
-          },
-          {
-            label: 'Facturación masiva de venta de bases',
-            link: '/pages/commercialization/mass-biling-base-sales-tab',
-          },
-          {
-            label: 'Facturación normal',
-            link: '/pages/commercialization/regular-billing-tab',
-          },
-        ],
-      },
-      {
-        label: 'Bienes Inmuebles',
-        icon: 'home-outline',
-        subItems: [
-          {
-            label: 'Bienes exentos de validación',
-            link: '/pages/commercialization/c-b-bedv-m-validation-exempted-goods',
-          },
-          {
-            label: 'Reclasificacón OI',
-            link: '/pages/commercialization/c-b-rdodi-m-reclass-recovery-orders',
-          },
-          {
-            label: 'Validación de Pagos',
-            link: '/pages/commercialization/c-b-vdp-m-payment-dispersion-validation',
-          },
-          {
-            label: 'Pagos Referenciados',
-            link: '/pages/commercialization/referenced-payment',
-          },
-          {
-            label: 'Pagos no Conciliados',
-            link: '/pages/commercialization/unreconciled-payment',
-          },
-          {
-            label: 'Dispersión de Pagos',
-            link: '/pages/commercialization/payment-dispersion-monitor',
-          },
-          {
-            label: 'Conversión a numerario',
-            link: '/pages/commercialization/numeraire-conversion-tabs',
-          },
-          {
-            label: 'Consulta de Avalúo',
-            link: '/pages/commercialization/c-b-a-cda-m-appraisal-consultation',
-          },
-          {
-            label: 'Registro de Avalúo',
-            link: '/pages/commercialization/c-b-a-rda-m-appraisal-registration',
-          },
-          {
-            label: 'Captura de Gastos',
-            link: '/pages/commercialization/c-b-ge-cdg-m-expense-capture',
-          },
-          {
-            label: 'Consulta de bienes',
-            link: '/pages/commercialization/consultation-goods-commercial-process-tabs',
-          },
-          {
-            label: 'Conceptos de Gasto',
-            link: '/pages/commercialization/expense-concepts',
-          },
-          {
-            label: 'Permisos a Eventos',
-            link: '/pages/commercialization/events',
-          },
-        ],
-      },
-      {
-        label: 'Catálogos',
-        icon: 'folder',
-        subItems: [
-          {
-            label: 'Tipos de penalización',
-            link: '/pages/commercialization/catalogs/penalty-types',
-          },
-          {
-            label: 'Claves autorización envío ext. OIs',
-            link: '/pages/commercialization/catalogs/authorization-keys-ois',
-          },
-        ],
-      },
-      {
-        label: 'Activos Financieros',
-        icon: 'credit-card-outline',
-        subItems: [],
-      },
-      {
-        label: 'Conversión a Numerario',
-        link: '/pages/commercialization/numeraire-exchange',
-      },
-      {
-        label: 'Consulta de Pagos Sirsae',
-        link: '/pages/commercialization/sirsae-payment-consultation',
-      },
-      {
-        label: 'Conversión Masiva de LCs',
-        link: '/pages/commercialization/lcs-massive-conversion',
-      },
-      {
-        label: 'Parámetros por Lote',
-        link: '/pages/commercialization/batch-parameters',
-      },
-      {
-        label: 'Eventos Relacionados',
-        link: '/pages/commercialization/related-events',
-      },
-    ],
-  },
+  ...COMMERCIALIZATION_ROUTES,
   // PROCESOS JURIDICOS
   ...MENU_OPTIONS_JURIDICAL_PROCESSES,
+  // SEGURIDAD
+  ...MENU_OPTIONS_SECURITY,
   // Recepcion Fisica Judicial
   {
     label: 'Recepcion Fisica Judicial',
     icon: 'bx-folder',
     subItems: [
       {
-        label: 'Complemento Arituclo',
+        label: 'Complemento Aritculo',
         link: '/pages/judicial-physical-reception/articles-complement',
       },
       {
@@ -340,6 +249,30 @@ export const MENU: IMenuItem[] = [
         label: 'Actas de Recepcion',
         link: '/pages/judicial-physical-reception/confiscated-records',
       },
+      {
+        label: 'Parcializa Bienes Generales 1',
+        link: '/pages/judicial-physical-reception/partializes-general-goods-1',
+      },
+
+      {
+        label: 'Parcializa Bienes Generales 2',
+        link: '/pages/judicial-physical-reception/partializes-general-goods-2',
+      },
+      {
+        label: 'Parcializaciond de Bienes',
+        link: '/pages/judicial-physical-reception/partializes-goods',
+      },
+      {
+        label: 'Recepcion Suspencion/Cancelacion',
+        link: '/pages/judicial-physical-reception/cancellation-recepcion',
+      },
+      {
+        label: 'Devolucion x Cancelacion de Venta',
+        link: '/pages/judicial-physical-reception/cancellation-sale',
+      },
     ],
   },
+
+  //Parametrización
+  ...PARAMETERIZATION_ROUTES,
 ];

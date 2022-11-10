@@ -35,10 +35,6 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         link: '/pages/administrative-processes/apply-lif',
       },
       {
-        label: 'Actas Conversión',
-        link: '/pages/administrative-processes/conversion-act',
-      },
-      {
         label: 'Solicitud de Avalúos',
         link: '/pages/administrative-processes/appraisal-request',
       },
@@ -59,13 +55,13 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         link: '/pages/administrative-processes/monitor-unavoidable-assets',
       },
       {
-        label: 'Devoluciones y decomisos',
-        link: '/pages/administrative-processes/returns-confiscation',
-      },
-      {
         label: 'Seguros y Vigilancia',
         icon: 'bx-folder',
         subItems: [
+          {
+            label: 'Acceso a Usuarios',
+            link: '/pages/administrative-processes/user-access',
+          },
           {
             label: 'Mantenimiento de Pólizas',
             link: '/pages/administrative-processes/policy-maintenance',
@@ -134,6 +130,22 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Visitas a inmuebles',
             link: '/pages/administrative-processes/expenses-format',
           },
+          {
+            label: 'Reportes de Incorporación de Bienes a Pólizas',
+            link: '/pages/administrative-processes/goods-to-policies-reports',
+          },
+          {
+            label: 'Porcentajes de Supervisión y vigilancia',
+            link: '/pages/administrative-processes/percentage-surveillance',
+          },
+          {
+            label: 'Movimiento de Bienes en vigilancia',
+            link: '/pages/administrative-processes/movements-goods-surveillance',
+          },
+          {
+            label: 'Servicio de Vigilancia',
+            link: '/pages/administrative-processes/surveillance-service',
+          },
         ],
       },
       {
@@ -167,6 +179,18 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Registro de Gastos',
             link: '/pages/administrative-processes/expenses-register',
+          },
+          {
+            label: 'Conceptos de Gastos',
+            link: '/pages/administrative-processes/expenses-concepts',
+          },
+          {
+            label: 'Criterios de aplicación',
+            link: '/pages/administrative-processes/applicants-criteria',
+          },
+          {
+            label: 'Clasificación costos',
+            link: '/pages/administrative-processes/costs-clasification',
           },
         ],
       },
@@ -287,21 +311,48 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Coordinacion por zonas',
             link: '/pages/administrative-processes/zones',
           },
+          /*{
+            label: 'Almacenes',
+            icon: 'bx-folder',
+            subItems: [],
+          },*/
+          {
+            label: 'Alta de Almacenes por Contrato',
+            link: '/pages/administrative-processes/reg-warehouse-contract',
+          },
+          {
+            label: 'Bienes en almacén',
+            link: '/pages/administrative-processes/warehouses',
+          },
+          {
+            label: 'Reportes de Almacén',
+            link: '/pages/administrative-processes/storehouse',
+          },
+          {
+            label: 'Control de las ordenes de servicio',
+            link: '/pages/administrative-processes/control-service-orders',
+          },
+          {
+            label: 'Ordenes de servicio',
+            link: '/pages/administrative-processes/service-orders-format',
+          },
+          {
+            label: 'Reporte de implementacion',
+            link: '/pages/administrative-processes/implementation-report',
+          },
+          {
+            label: 'Indicador de Desempeño',
+            link: '/pages/administrative-processes/performance-indicator',
+          },
+          {
+            label: 'Reportes de la O.DE S.',
+            link: '/pages/administrative-processes/service-order-reports',
+          },
         ],
       },
       {
         label: 'Cuenta de numerario asegurado',
         link: '/pages/administrative-processes/insured-numerary-account',
-      },
-      {
-        label: 'Empresas',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Reporte de evaluación de desempeño',
-            link: '/pages/administrative-processes/performance-evaluation-report',
-          },
-        ],
       },
       {
         label: 'Conversión de bienes',
@@ -335,6 +386,26 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Resumen Info Financiera',
             link: '/pages/administrative-processes/summary-financial-info',
           },
+          {
+            label: 'Reporte de evaluación de desempeño',
+            link: '/pages/administrative-processes/performance-evaluation-report',
+          },
+          {
+            label: 'Reporte de inventario',
+            link: '/pages/administrative-processes/inventory-report',
+          },
+          {
+            label: 'Indicadores por Bien',
+            link: '/pages/administrative-processes/indicators-per-good',
+          },
+          {
+            label: 'Reporte de información financiera',
+            link: '/pages/administrative-processes/financial-information-report',
+          },
+          {
+            label: 'Información financiera',
+            link: '/pages/administrative-processes/financial-information',
+          },
         ],
       },
       {
@@ -348,6 +419,46 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Expedientes',
             link: '/pages/administrative-processes/record-details',
+          },
+          {
+            label: 'Bienes por Tipo de Delito',
+            link: '/pages/administrative-processes/goods-type-crime-reports',
+          },
+          {
+            label: 'Histórico de situación procesal de los bienes',
+            link: '/pages/administrative-processes/procedural-history',
+          },
+          {
+            label: 'Generación de informacion para reporte COORD',
+            link: '/pages/administrative-processes/information-generation',
+          },
+          {
+            label: 'Bóvedas y Gavetas',
+            link: '/pages/administrative-processes/vaults',
+          },
+          {
+            label: 'Concentrado de bienes por expendiente',
+            link: '/pages/administrative-processes/concentrate-goods-type',
+          },
+          {
+            label: 'Generación de archivo plano',
+            link: '/pages/administrative-processes/flat-file-for-good',
+          },
+          {
+            label: 'Devoluciones y Decomisios de Bienes',
+            link: '/pages/administrative-processes/return-confiscation-property',
+          },
+          {
+            label: 'Archivo plano de avaluos por Bien',
+            link: '/pages/administrative-processes/generate-excel-file',
+          },
+          {
+            label: 'Gastos por bien',
+            link: '/pages/administrative-processes/bills-good',
+          },
+          {
+            label: 'Analitico de bienes inmuebles',
+            link: '/pages/administrative-processes/real-estate-analytical-report',
           },
         ],
       },
@@ -406,11 +517,35 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Registro de Pago de Servicios',
             link: '/pages/administrative-processes/services/record-service-payments',
           },
+          {
+            label: 'Concentrado de bienes para contabilidad',
+            link: '/pages/administrative-processes/services/descripcion-of-the-matter',
+          },
+          {
+            label: 'Factura de reportes de implementación',
+            link: '/pages/administrative-processes/services/implementation-reports-invoices',
+          },
         ],
+      },
+      {
+        label: 'Devoluciones y Decomisos',
+        link: '/pages/administrative-processes/returns-confiscations',
       },
       /**
        * END LEGASPI
        **/
+      /**START Abner */
+      {
+        label: 'Numerario',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Registro de fichas de deposito',
+            link: '/pages/administrative-processes/numerary/deposit-tokens',
+          },
+        ],
+      },
+      /**END Abner */
     ],
   },
 ];

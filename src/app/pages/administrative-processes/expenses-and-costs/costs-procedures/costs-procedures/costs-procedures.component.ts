@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { FormBuilder, FormGroup } from '@angular/forms';
 import {
   CIFRA_PERIOD_COLUMNS,
   STATE_PERIOD_COLUMNS,

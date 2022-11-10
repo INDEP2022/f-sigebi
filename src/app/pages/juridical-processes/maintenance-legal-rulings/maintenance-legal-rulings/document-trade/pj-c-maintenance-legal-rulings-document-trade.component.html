@@ -1,0 +1,146 @@
+<form [formGroup]="form" class="form-material">
+  <div class="row w-100">
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field
+        [control]="form.get('noDictaminacion')"
+        label="No. Dictaminación">
+        <input
+          class="form-control"
+          formControlName="noDictaminacion"
+          placeholder="No. Dictaminación" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-4 p-2">
+      <form-field [control]="form.get('remitente')" label="Remitente">
+        <input
+          class="form-control"
+          formControlName="remitente"
+          placeholder="Remitente" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-2">
+      <form-field [control]="form.get('ciudad')" label="Ciudad">
+        <input
+          class="form-control"
+          formControlName="ciudad"
+          placeholder="ciudad" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-2">
+      <form-field [control]="form.get('destinatario')" label="Destinatario">
+        <input
+          class="form-control"
+          formControlName="destinatario"
+          placeholder="Destinatario" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field
+        [control]="form.get('noDelegacionDestinatario')"
+        label="No. Delegación Destinatario">
+        <input
+          class="form-control"
+          formControlName="noDelegacionDestinatario"
+          placeholder="No. Delegación Destinatario" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field
+        [control]="form.get('noDepartamentoDestinatario')"
+        label="No. Departamento Destinatario">
+        <input
+          class="form-control"
+          formControlName="noDepartamentoDestinatario"
+          placeholder="No. Departamento Destinatario" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field [control]="form.get('noNotario')" label="noNotario">
+        <input
+          class="form-control"
+          formControlName="noNotario"
+          placeholder="noNotario" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-2">
+      <form-field [control]="form.get('estatus')" label="Estatus">
+        <input
+          class="form-control"
+          formControlName="estatus"
+          placeholder="Estatus" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-2">
+      <form-field
+        [control]="form.get('tipoDictaminacion')"
+        label="Tipo Dictaminación">
+        <input
+          class="form-control"
+          formControlName="tipoDictaminacion"
+          placeholder="Tipo Dictaminación" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field [control]="form.get('claveCargo')" label="Clave Cargo">
+        <input
+          class="form-control"
+          formControlName="claveCargo"
+          placeholder="Clave Cargo" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-5 p-2">
+      <form-field
+        [control]="form.get('destinatarioESXT')"
+        label="Destinatario ESXT">
+        <input
+          class="form-control"
+          formControlName="destinatarioESXT"
+          placeholder="Destinatario ESXT" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-5 p-2">
+      <form-field
+        [control]="form.get('destinatarioRemitente')"
+        label="Destinatario Remitente">
+        <input
+          class="form-control"
+          formControlName="destinatarioRemitente"
+          placeholder="Destinatario Remitente" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-6 p-2">
+      <form-field
+        [control]="form.get('parrafoInicial')"
+        label="Parrafo Inicial">
+        <textarea
+          class="form-control"
+          formControlName="parrafoInicial"></textarea>
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-6 p-2">
+      <form-field [control]="form.get('parrafoFinal')" label="Parrafo Final">
+        <textarea
+          class="form-control"
+          formControlName="parrafoFinal"></textarea>
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-6 p-2">
+      <form-field
+        [control]="form.get('masInformacion1')"
+        label="Más Informacion 1">
+        <textarea
+          class="form-control"
+          formControlName="masInformacion1"></textarea>
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-6 p-2">
+      <form-field
+        [control]="form.get('masInformacion3')"
+        label="Más Informacion 3">
+        <textarea
+          class="form-control"
+          formControlName="masInformacion3"></textarea>
+      </form-field>
+    </div>
+  </div>
+</form>

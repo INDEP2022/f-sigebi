@@ -3,10 +3,16 @@
     <h5 class="title">SOLICITUDES</h5>
     <div class="col-md-5 buttons">
       <div>
-        <button
+        <!-- <button
           (click)="openCreateRequestForm()"
           class="btn btn-primary active btn-sm ml-3">
           Crear Solicitud
+        </button> -->
+
+        <button
+          [routerLink]="['/pages/request/schedule-reception']"
+          class="btn btn-pink active btn-sm ml-3">
+          Crear Solicitud Programación
         </button>
       </div>
     </div>

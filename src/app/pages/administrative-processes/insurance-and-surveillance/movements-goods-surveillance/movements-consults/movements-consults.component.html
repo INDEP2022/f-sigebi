@@ -1,0 +1,128 @@
+<form [formGroup]="form" class="form-material mt-4">
+  <div class="row mt-4">
+    <div class="col-md-3">
+      <div class="ch-content">
+        <h5 class="title">Contrato</h5>
+      </div>
+      <form-field [control]="form.get('cveContract')" label="Cve Contrato">
+        <input type="text" class="form-control" formControlName="cveContract" />
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col-md-5">
+      <div class="ch-content">
+        <h5 class="title">Vigilancia compartida</h5>
+      </div>
+      <div class="d-flex">
+        <form-radio label="Si">
+          <input type="radio" formControlName="radio" value="cat" />
+        </form-radio>
+        <form-radio label="No">
+          <input type="radio" formControlName="radio" value="dog" />
+        </form-radio>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col-md-3">
+      <form-field [control]="form.get('h24')" label="Turno 24h">
+        <input type="text" class="form-control" formControlName="h24" />
+      </form-field>
+    </div>
+    <div class="col-md-3">
+      <form-field [control]="form.get('h12')" label="Turno 12h">
+        <input type="text" class="form-control" formControlName="h12" />
+      </form-field>
+    </div>
+    <div class="col-md-3">
+      <form-field [control]="form.get('indirectTurn')" label="Turno indirecto">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="indirectTurn" />
+      </form-field>
+    </div>
+    <div class="col-md-3">
+      <form-field [control]="form.get('canineTurn')" label="Turno canino">
+        <input type="text" class="form-control" formControlName="canineTurn" />
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col">
+      <button class="btn btn-success btn-sm active">
+        CARGA VIGILANCIA COMPARTIDA
+      </button>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-md-12">
+      <div class="ch-content">
+        <h5 class="title">Importar bienes desde rastreador</h5>
+      </div>
+      <button class="btn btn-success btn-sm active">IMPORTAR</button>
+    </div>
+  </div>
+  <hr />
+
+  <div class="">
+    <div class="pt-4">
+      <div class="">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="consults">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
+  </div>
+  <div class="row mt-4">
+    <div class="col-md-12">
+      <button class="btn btn-secondary btn-sm active mx-4">
+        CARGA DE BIENES
+      </button>
+      <button class="btn btn-secondary btn-sm active mx-4">
+        SELECCIONAR TODO
+      </button>
+      <div class="float-right">
+        <span class="text-success mr-5"
+          ><i class="fa fa-square"></i> Bienes autorizados</span
+        >
+        <button class="btn btn-primary btn-sm active mx-4">
+          PROCESAR ALTAS
+        </button>
+      </div>
+    </div>
+  </div>
+  <hr />
+  <div class="row mt-4">
+    <div class="col-md-3">
+      <form-field [control]="form.get('criteria')" label="Criterio">
+        <select class="form-control" formControlName="criteria">
+          <option [value]="null">Seleccione un valor</option>
+          <option [value]="1">Criterio 1</option>
+          <option [value]="2">Criterio 2</option>
+        </select>
+      </form-field>
+    </div>
+    <div class="col-md-6">
+      <form-field
+        [control]="form.get('descCriteria')"
+        label="Descripción criterio">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="descCriteria" />
+      </form-field>
+    </div>
+  </div>
+
+  <hr />
+</form>

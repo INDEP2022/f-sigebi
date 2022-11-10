@@ -1,0 +1,90 @@
+<div>
+  <div class="row">
+    <h5><strong>Lista de Bienes</strong></h5>
+  </div>
+
+  <div class="row">
+    <div class="d-flex">
+      <div class="mr-auto p-2"></div>
+      <div class="p-2">
+        <button
+          class="btn btn-success btn-sm active"
+          (click)="verifyClarification()">
+          <i class="bx bx-check"></i> Verificar Cumplimiento
+        </button>
+      </div>
+      <div class="p-2">
+        <button class="btn btn-success btn-sm active">
+          <i class="bx bx-check-circle"></i> Aceptar Aclaración
+        </button>
+      </div>
+      <div class="p-2">
+        <button class="btn btn-success btn-sm active">
+          <i class="bx bx-check-circle"></i> Aceptar Improcedencias
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="row pt-1">
+    <div class="col-md-12">
+      <ng-scrollbar track="all" style="min-height: 150px; border: none">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="paragraphs"
+            (userRowSelect)="listAssetsRowSelected($event)">
+          </ng2-smart-table>
+        </div>
+      </ng-scrollbar>
+    </div>
+  </div>
+  <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+  <div class="row pt-4">
+    <h5><strong>Notificaciones del Bien</strong></h5>
+  </div>
+  <div class="row">
+    <div class="d-flex">
+      <div class="mr-auto p-2"></div>
+      <div class="p-2">
+        <button
+          class="btn btn-success btn-sm active"
+          (click)="acceptClariImpro()">
+          Aceptar Aclaracion/Improcedencia
+        </button>
+      </div>
+      <div class="p-2">
+        <button
+          *ngIf="!byInterconnection"
+          class="btn btn-success btn-sm active"
+          (click)="finishClarifiImpro()">
+          Finalizar Aclaración Improcedencia
+        </button>
+        <button *ngIf="byInterconnection" class="btn btn-info btn-sm active">
+          Ver Respuesta Aclaracion
+        </button>
+      </div>
+      <div class="p-2">
+        <button
+          class="btn btn-danger btn-sm active"
+          (click)="refuseClarification()">
+          Rechazar
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="row pt-1">
+    <div class="col-md-12">
+      <ng-scrollbar track="all" style="min-height: 150px; border: none">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings2"
+            [source]="paragraphs2"
+            (userRowSelect)="notifyAssetRowSelected($event)">
+          </ng2-smart-table>
+        </div>
+      </ng-scrollbar>
+    </div>
+  </div>
+</div>

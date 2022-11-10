@@ -14,7 +14,7 @@ import { DOCUMENTS_LIST_COLUMNS } from './documents-list-columns';
   styles: [],
 })
 export class DocumentsListComponent extends BasePage implements OnInit {
-  documentsData: any;
+  documentsData: any[] = [];
   showForm: boolean = false;
   documentForm: FormGroup = new FormGroup({});
   typeDocuments = new DefaultSelect();

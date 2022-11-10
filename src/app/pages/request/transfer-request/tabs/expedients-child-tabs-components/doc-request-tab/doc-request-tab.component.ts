@@ -44,6 +44,7 @@ export class DocRequestTabComponent
   container: ViewContainerRef;
   @Input() typeDoc = '';
   title: string = '';
+  showSearchForm: boolean = false;
   selectDocType = new DefaultSelect<any>();
   docRequestForm: ModelForm<any>;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -57,6 +58,7 @@ export class DocRequestTabComponent
 
   public data: any[] = [
     {
+      id: 1,
       noDoc: 'SAE15545',
       noReq: '27448',
       docTit: 'Solicitud_27448',
@@ -65,6 +67,25 @@ export class DocRequestTabComponent
       dateCrea: '10/10/2022',
     },
     {
+      id: 2,
+      noDoc: 'SAE15335',
+      noReq: '27328',
+      docTit: 'Solicitud_27328',
+      docType: 'SOLICITUD DE TRANSFERENCIA',
+      author: 'ALEJANDRO',
+      dateCrea: '01/10/2022',
+    },
+    {
+      id: 2,
+      noDoc: 'SAE15335',
+      noReq: '27328',
+      docTit: 'Solicitud_27328',
+      docType: 'SOLICITUD DE TRANSFERENCIA',
+      author: 'ALEJANDRO',
+      dateCrea: '01/10/2022',
+    },
+    {
+      id: 2,
       noDoc: 'SAE15335',
       noReq: '27328',
       docTit: 'Solicitud_27328',

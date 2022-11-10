@@ -1,7 +1,7 @@
-<app-card [header]="true" [footer]="true">
+<app-card [header]="true">
   <div header>
     <div class="ch-content">
-      <h5 class="title">Documentación recibida por el SERA</h5>
+      <h5 class="title">Documentación recibida en SERA</h5>
     </div>
   </div>
   <div body>
@@ -11,26 +11,38 @@
           <app-delegation-shared [form]="form" [showSubdelegation]="false">
           </app-delegation-shared>
         </div>
-        <div class="col-md-3 mt-3">
+        <div class="col-md-3">
           <app-delegation-shared [form]="form" [showDelegation]="false">
           </app-delegation-shared>
         </div>
-        <div class="col-md-4 mt-3">
-          <app-date-range-shared [form]="form"></app-date-range-shared>
+        <div class="col-md-2 mt-3">
+          <form-field
+            [control]="form.get('rangeDate')"
+            label="Fechas de recepción">
+            <input
+              class="form-control"
+              formControlName="rangeDate"
+              ngModel
+              bsDaterangepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD-MM-YYYY',
+                displayOneMonthRange: true
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <div class="justify-content-center">
+            <button
+              type="button"
+              class="btn btn-sm btn-primary active"
+              [disabled]="!form.valid"
+              (click)="openPrevPdf()">
+              Imprimir
+            </button>
+          </div>
         </div>
       </div>
     </form>
-  </div>
-  <div footer>
-    <div class="d-flex justify-content-center">
-      <div class="m-3">
-        <button
-          type="button"
-          class="btn btn-primary active"
-          [disabled]="!form.valid">
-          Imprimir
-        </button>
-      </div>
-    </div>
   </div>
 </app-card>

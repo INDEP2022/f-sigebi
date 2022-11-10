@@ -10,23 +10,9 @@
           <app-delegation-shared [form]="form" [showSubdelegation]="false">
           </app-delegation-shared>
         </div>
-        <div class="col-md-3 mt-3">
+        <div class="col-md-3">
           <app-delegation-shared [form]="form" [showDelegation]="false">
           </app-delegation-shared>
-        </div>
-        <div class="col-md-2 mt-3">
-          <form-field
-            [control]="form.get('fromYear')"
-            label="Recepciones del año">
-            <input
-              type="text"
-              class="form-control"
-              [bsConfig]="bsConfigYear"
-              #dp="bsDatepicker"
-              formControlName="fromYear"
-              bsDatepicker
-              [(bsValue)]="bsValueYear" />
-          </form-field>
         </div>
         <div class="col-md-2 mt-3">
           <form-field [control]="form.get('fromMonth')" label="Del mes de">
@@ -34,10 +20,8 @@
               type="text"
               class="form-control"
               [bsConfig]="bsConfigFromMonth"
-              #dp="bsDatepicker"
               formControlName="fromMonth"
-              bsDatepicker
-              [(bsValue)]="bsValueFromMonth" />
+              bsDatepicker />
           </form-field>
         </div>
         <div class="col-md-2 mt-3">
@@ -46,10 +30,8 @@
               type="text"
               class="form-control"
               [bsConfig]="bsConfigToMonth"
-              #dp="bsDatepicker"
               formControlName="toMonth"
-              bsDatepicker
-              [(bsValue)]="bsValueToMonth" />
+              bsDatepicker />
           </form-field>
         </div>
       </div>
@@ -61,7 +43,8 @@
         <button
           type="button"
           class="btn btn-primary active"
-          [disabled]="!form.valid">
+          [disabled]="!form.valid"
+          (click)="openPrevPdf()">
           Imprimir
         </button>
       </div>

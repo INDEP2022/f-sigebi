@@ -1,0 +1,34 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">HIST&Oacute;RICO SITUACI&Oacute;N DEL BIEN</h5>
+  </div>
+
+  <div body>
+    <div class="row w-100">
+      <form [formGroup]="form" class="form-material">
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field [control]="form.get('noBien')" label="No. Bien">
+            <input
+              class="form-control"
+              formControlName="noBien"
+              placeholder="No. Bien" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field [control]="form.get('descripcion')" label="Descripción">
+            <input
+              class="form-control"
+              formControlName="descripcion"
+              placeholder="Descripción" />
+          </form-field>
+        </div>
+      </form>
+      <div class="col-sm-12 col-12 col-md-12 p-2">
+        <ng2-smart-table
+          class="my-table"
+          [settings]="tableSettings"
+          [source]="dataTable"></ng2-smart-table>
+      </div>
+    </div>
+  </div>
+</app-card>
