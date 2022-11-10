@@ -1,0 +1,40 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Rechazar</h5>
+  </div>
+  <div body class="body">
+    <form [formGroup]="observationForm" class="form-material">
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <form-field
+            [control]="observationForm.get('observation')"
+            label="observationes">
+            <textarea
+              class="form-control"
+              formControlName="observation"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="refuse()">
+          Guardar
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

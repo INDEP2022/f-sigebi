@@ -6,12 +6,12 @@ import { CCEtCEventTypesComponent } from './event-types/c-c-et-c-event-types.com
 const routes: Routes = [
   {
     path: '',
-    component: CCEtCEventTypesComponent
-  }
+    component: CCEtCEventTypesComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CCEtMEventTypesRoutingModule { }
+export class CCEtMEventTypesRoutingModule {}

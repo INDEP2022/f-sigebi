@@ -64,6 +64,16 @@ const routes: Routes = [
         .CCSsMSaleStatusModule,
     data: { title: 'Estatus de Venta' },
   },
+  {
+    path: 'goods-available-sale-status',
+    loadChildren: async () =>
+      (
+        await import(
+          './goods-available-sale/c-c-gas-m-goods-available-sale.module'
+        )
+      ).CCGasMGoodsAvailableSaleModule,
+    data: { title: 'Est. Bienes Disponibles para Comercializar' },
+  },
 ];
 
 @NgModule({

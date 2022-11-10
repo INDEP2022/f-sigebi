@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
+  //Henry
   {
     path: 'c-p-m-cat-financial-information-attributes',
     loadChildren: async () =>
@@ -40,14 +41,39 @@ const routes: Routes = [
     data: { title: 'Catálogo de tablas lógicas' },
   },
   {
-    path: 'maintenance-of-public-ministries',
+    path: 'c-p-m-flyer-subject-catalog',
     loadChildren: async () =>
       (
         await import(
-          './c-p-m-maintenance-of-public-ministries/c-p-m-maintenance-of-public-ministries.module'
+          './c-p-m-flyer-subject-catalog/c-p-m-flyer-subject-catalog.module'
         )
-      ).CPMMaintenanceOfPublicMinistriesModule,
-    data: { title: 'Mantenimiento a ministerios publicos' },
+      ).CPMFlyerSubjectCatalogModule,
+    data: { title: 'Catálogo de asuntos para volantes' },
+  },
+  //Alexander
+  {
+    path: 'maintenance-of-areas',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-maintenance-of-areas/c-p-m-maintenance-of-areas.module'
+        )
+      ).CPMMaintenanceOfAreasModule,
+    data: { title: 'Catálogo de Mantenimiento de Areas' },
+  },
+  //Félix
+  {
+    path: 'values',
+    loadChildren: async () =>
+      (await import('./c-p-m-values/c-p-m-values.module')).CPMValuesModule,
+    data: { title: 'Valores' },
+  },
+  {
+    path: 'additional-values',
+    loadChildren: async () =>
+      (await import('./c-p-m-additional-values/c-p-m-additional-values.module'))
+        .CPMAdditionalValuesModule,
+    data: { title: 'Valores Adicionales' },
   },
 ];
 

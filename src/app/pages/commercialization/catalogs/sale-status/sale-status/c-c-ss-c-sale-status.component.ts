@@ -10,11 +10,9 @@ import { data } from './data';
 @Component({
   selector: 'app-c-c-ss-c-sale-status',
   templateUrl: './c-c-ss-c-sale-status.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CCSsCSaleStatusComponent extends BasePage implements OnInit {
-
   data: LocalDataSource = new LocalDataSource();
   eventTypesD = data;
 
@@ -45,5 +43,4 @@ export class CCSsCSaleStatusComponent extends BasePage implements OnInit {
     this.selectedRow = row;
     this.rowSelected = true;
   }
-
 }

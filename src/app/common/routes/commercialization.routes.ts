@@ -251,6 +251,10 @@ export const COMMERCIALIZATION_ROUTES = [
             label: 'Estatus de Venta',
             link: '/pages/commercialization/catalogs/sale-status',
           },
+          {
+            label: 'Estatus de Bienes Disponibles para Comercializar',
+            link: '/pages/commercialization/catalogs/goods-available-sale-status',
+          },
         ],
       },
       {
@@ -314,6 +318,10 @@ export const COMMERCIALIZATION_ROUTES = [
         label: 'Devolución de Pagos',
         link: '/pages/commercialization/payment-refund',
       },
+      {
+        label: 'Entrega de Bienes',
+        link: '/pages/commercialization/good-delivery',
+      },
     ],
   },
-]
+];

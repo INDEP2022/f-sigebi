@@ -1,14 +1,14 @@
 export const COLUMNS = {
   id: {
     title: 'Id',
-    sort: false
+    sort: false,
   },
   status: {
     title: 'Estatus',
-    sort: false
+    sort: false,
   },
   descripcion: {
     title: 'Descripción Reportes',
-    sort: false
+    sort: false,
   },
-}
+};
