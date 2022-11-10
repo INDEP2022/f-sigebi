@@ -42,6 +42,10 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Valores Adicionales',
         link: '/pages/parameterization/additional-values',
       },
+      {
+        label: 'Instituciones Valuadoras',
+        link: '/pages/parameterization/appraisal-institutions',
+      },
     ],
   },
 ];
