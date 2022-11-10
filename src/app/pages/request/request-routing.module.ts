@@ -96,6 +96,16 @@ const routes: Routes = [
     data: { title: 'Vista de las Solicitudes' },
   },
   {
+    path: 'sampling-assets',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-sampling-supervision/sampling-assets/sampling-assets.module'
+        )
+      ).SamplingAssetsModule,
+    data: { title: 'Muestreo Bienes' },
+  },
+  {
     path: 'transfer-request',
     loadChildren: async () =>
       (await import('./transfer-request/transfer-request.module'))

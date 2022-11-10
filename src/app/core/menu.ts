@@ -52,6 +52,10 @@ export const MENU: IMenuItem[] = [
             label: 'Solicitud de transferencia',
             link: '/pages/request/list/new-transfer-request',
           },
+          {
+            label: 'Muestreo Bienes',
+            link: '/pages/request/sampling-assets',
+          },
         ],
       },
       {
