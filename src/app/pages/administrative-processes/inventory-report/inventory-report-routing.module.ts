@@ -4,12 +4,13 @@ import { InventoryReportComponent } from './inventory-report/inventory-report.co
 
 const routes: Routes = [
   {
-    path: '', component: InventoryReportComponent
-  }
+    path: '',
+    component: InventoryReportComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class InventoryReportRoutingModule { }
+export class InventoryReportRoutingModule {}

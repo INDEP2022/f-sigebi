@@ -127,11 +127,13 @@
           </div>
         </div>
       </div>
-      <div class="row pt-3 scroll-table">
+      <div class="row pt-3 scroll-table table-responsive">
         <ng2-smart-table
           [settings]="settings"
           [source]="data"></ng2-smart-table>
       </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
       <div class="row">
         <div class="col-md-2">
           <button

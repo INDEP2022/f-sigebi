@@ -123,6 +123,16 @@ const routes: Routes = [
         .PJDJJuridicalRulingGModule,
     data: { title: routesJuridicalProcesses[12].label },
   },
+  {
+    path: routesJuridicalProcesses[13].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './verification-documents-confiscation/pj-cdd-m-verification-documents-confiscation.module'
+        )
+      ).PJCDDVerificationDocumentsConfiscationModule,
+    data: { title: routesJuridicalProcesses[13].label },
+  },
   // DEPOSITARIA
   {
     path: 'depositaria',

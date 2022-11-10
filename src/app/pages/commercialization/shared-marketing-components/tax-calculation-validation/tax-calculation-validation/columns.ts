@@ -1,4 +1,4 @@
- export const COLUMNS = {
+export const COLUMNS = {
   id: {
     title: 'Id',
     sort: false,
@@ -41,5 +41,5 @@ export const COLUMNS2 = {
   typeGood: {
     title: 'Tipo',
     sort: false,
-  }
+  },
 };

@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { EXCHANGE_TYPES_COLUMNS } from './exchange-types-columns';
 import { ExchangeTypesDetailComponent } from '../exchange-types-detail/exchange-types-detail.component';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { EXCHANGE_TYPES_COLUMNS } from './exchange-types-columns';
 
 @Component({
   selector: 'app-exchange-types',

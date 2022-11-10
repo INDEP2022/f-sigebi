@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -10,18 +10,15 @@ import { CBmFFnMRegularBillingModule } from '../c-bm-f-fn-m-regular-billing/c-bm
 import { RegularBillingTabRoutingModule } from './regular-billing-tab-routing.module';
 import { RegularBillingTabComponent } from './regular-billing-tab/regular-billing-tab.component';
 
-
 @NgModule({
-  declarations: [
-    RegularBillingTabComponent
-  ],
+  declarations: [RegularBillingTabComponent],
   imports: [
     CommonModule,
     RegularBillingTabRoutingModule,
     TabsModule,
     SharedModule,
     CBmFFmdvdbMMassBillBaseSalesModule,
-    CBmFFnMRegularBillingModule
-  ]
+    CBmFFnMRegularBillingModule,
+  ],
 })
-export class RegularBillingTabModule { }
+export class RegularBillingTabModule {}

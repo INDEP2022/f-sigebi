@@ -1,86 +1,53 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  BsDatepickerConfig,
+  BsDatepickerViewMode,
+} from 'ngx-bootstrap/datepicker';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { FdpAdpdtDetailDelegationsComponent } from '../../shared-final-destination/detail-delegations/fdp-adpdt-detail-delegations.component';
 import { DELEGATIONS_COLUMNS } from '../delegations-columns';
+import { COLUMNS } from './columns';
 
 @Component({
   selector: 'app-fdp-adpdt-c-third-possession-acts',
   templateUrl: './fdp-adpdt-c-third-possession-acts.component.html',
   styles: [],
 })
-export class FdpAdpdtCThirdPossessionActsComponent implements OnInit {
+export class FdpAdpdtCThirdPossessionActsComponent
+  extends BasePage
+  implements OnInit
+{
   response: boolean = false;
   actForm: FormGroup;
+  formTable1: FormGroup;
   bsModalRef?: BsModalRef;
-
-  settings1 = {
-    rowClassFunction: (row: any) =>
-      row.data.status ? 'available' : 'not-available',
-    pager: {
-      display: false,
-    },
-    hideSubHeader: true,
-    actions: false,
-    selectedRowIndex: -1,
-    mode: 'external',
-    columns: {
-      noBien: {
-        title: 'No. Bien',
-        type: 'number',
-      },
-      description: {
-        title: 'Descripcion',
-        type: 'string',
-      },
-      cantidad: {
-        title: 'Cantidad',
-        type: 'number',
-      },
-      importe: {
-        title: 'Importe',
-        type: 'string',
-      },
-    },
-    noDataMessage: 'No se encontrarón registros',
-  };
-
-  settings2 = {
-    pager: {
-      display: false,
-    },
-    hideSubHeader: true,
-    actions: false,
-    selectedRowIndex: -1,
-    mode: 'external',
-    columns: {
-      noBien: {
-        title: 'No. Bien',
-        type: 'number',
-      },
-      description: {
-        title: 'Descripcion',
-        type: 'string',
-      },
-      cantidad: {
-        title: 'Cantidad',
-        type: 'number',
-      },
-      importe: {
-        title: 'Importe',
-        type: 'string',
-      },
-    },
-    noDataMessage: 'No se encontrarón registros',
-  };
-
+  totalItems: number = 0;
+  settings2: any;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  bsValueFromMonth: Date = new Date();
+  minModeFromMonth: BsDatepickerViewMode = 'month';
+  bsConfigFromMonth: Partial<BsDatepickerConfig>;
+  bsValueFromYear: Date = new Date();
+  minModeFromYear: BsDatepickerViewMode = 'year';
+  bsConfigFromYear: Partial<BsDatepickerConfig>;
   data = EXAMPLE_DATA;
   data2 = EXAMPLE_DATA2;
 
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {}
+  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+    super();
+    this.settings = { ...this.settings, actions: false };
+    this.settings2 = { ...this.settings, actions: false };
+    this.settings.columns = COLUMNS;
+    this.settings2.columns = COLUMNS;
+  }
 
   ngOnInit(): void {
     this.initForm();
+    this.startCalendars();
   }
 
   initForm() {
@@ -98,7 +65,8 @@ export class FdpAdpdtCThirdPossessionActsComponent implements OnInit {
       folio: [null, [Validators.required]],
       act: [null, [Validators.required]],
       elabDate: [null, [Validators.required]],
-      date: [null, [Validators.required]],
+      year: [this.bsValueFromYear, [Validators.required]],
+      month: [this.bsValueFromMonth, [Validators.required]],
       folioScan: [null, [Validators.required]],
       orderingJudge: [null, [Validators.required]],
       observations: [null, [Validators.required]],
@@ -107,6 +75,31 @@ export class FdpAdpdtCThirdPossessionActsComponent implements OnInit {
       witness: [null, [Validators.required]],
       auditor: [null, [Validators.required]],
     });
+
+    this.formTable1 = this.fb.group({
+      detail: [null, []],
+    });
+  }
+
+  settingsChange(event: any, op: number) {
+    op === 1 ? (this.settings = event) : (this.settings2 = event);
+  }
+
+  startCalendars() {
+    this.bsConfigFromMonth = Object.assign(
+      {},
+      {
+        minMode: this.minModeFromMonth,
+        dateInputFormat: 'MM',
+      }
+    );
+    this.bsConfigFromYear = Object.assign(
+      {},
+      {
+        minMode: this.minModeFromYear,
+        dateInputFormat: 'YYYY',
+      }
+    );
   }
 
   search(term: string) {

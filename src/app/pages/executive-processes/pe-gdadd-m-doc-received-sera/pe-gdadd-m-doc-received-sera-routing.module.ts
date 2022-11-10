@@ -5,12 +5,12 @@ import { PeGdaddCDocReceivedSeraComponent } from './pe-gdadd-c-doc-received-sera
 const routes: Routes = [
   {
     path: '',
-    component: PeGdaddCDocReceivedSeraComponent
-  }
+    component: PeGdaddCDocReceivedSeraComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PeGdaddMDocReceivedSeraRoutingModule { }
+export class PeGdaddMDocReceivedSeraRoutingModule {}

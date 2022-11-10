@@ -1,18 +1,17 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Component, OnInit, ViewChild } from '@angular/core';
 //ApexCharts
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
-  ChartComponent,
   ApexAxisChartSeries,
   ApexChart,
-  ApexXAxis,
   ApexDataLabels,
   ApexGrid,
+  ApexPlotOptions,
   ApexTitleSubtitle,
-  ApexPlotOptions
-} from "ng-apexcharts";
+  ApexXAxis,
+  ChartComponent,
+} from 'ng-apexcharts';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 //BasePage
 import { BasePage } from 'src/app/core/shared/base-page';
 //Components
@@ -34,25 +33,28 @@ export type ChartOptions = {
   selector: 'app-pa-rwc-c-reg-warehouse-contract',
   templateUrl: './pa-rwc-c-reg-warehouse-contract.component.html',
   styles: [
-    `canvas { border: 1px solid black;}`
-  ]
+    `
+      canvas {
+        border: 1px solid black;
+      }
+    `,
+  ],
 })
+export class PaRwcCRegWarehouseContractComponent
+  extends BasePage
+  implements OnInit
+{
+  @ViewChild('chart', { static: false }) chart: ChartComponent;
+  public chartOptions: Partial<ChartOptions> | any;
 
-export class PaRwcCRegWarehouseContractComponent extends BasePage implements OnInit {
-
-  @ViewChild("chart",{static: false}) chart: ChartComponent;
-  public chartOptions: Partial<ChartOptions>| any;;
-
-  positions:number=160;
+  positions: number = 160;
   //letter : string = null;
   //number:number=null;
-  config:any;
+  config: any;
 
   form: FormGroup = new FormGroup({});
 
-  constructor(
-    private modalService: BsModalService,
-    private fb: FormBuilder) {
+  constructor(private modalService: BsModalService, private fb: FormBuilder) {
     super();
   }
 
@@ -70,16 +72,12 @@ export class PaRwcCRegWarehouseContractComponent extends BasePage implements OnI
   }
 
   openModal(context?: Partial<PaPdCProceedingsDetailsComponent>): void {
-    const modalRef = this.modalService.show(
-      PaPdCProceedingsDetailsComponent,
-      {
-        initialState: context,
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      }
-    );
+    const modalRef = this.modalService.show(PaPdCProceedingsDetailsComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
     //modalRef.onHidden.subscribe(this.createChart());
-
   }
 
   confirm(): void {
@@ -92,42 +90,48 @@ export class PaRwcCRegWarehouseContractComponent extends BasePage implements OnI
   }
 
   createChart(): void {
+    let letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']; //'K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z', 'AA', 'AB','AC','AD','AE','AF','AG','AH','AI','AJ']
+    letters = letters.reverse();
 
-    let letters=['A','B','C','D','E','F','G','H','I','J']//'K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z', 'AA', 'AB','AC','AD','AE','AF','AG','AH','AI','AJ']
-    letters=letters.reverse()
-
-    let count=letters.length;
-    let series:any=[];
-    letters.map((letter:any)=>{
-      let serie={
+    let count = letters.length;
+    let series: any = [];
+    letters.map((letter: any) => {
+      let serie = {
         name: letter,
-        data:[
+        data: [
           {
             x: letter,
-            y: Math.floor(Math.random() * (55 - 1 + 1)) + 1
-          },{
+            y: Math.floor(Math.random() * (55 - 1 + 1)) + 1,
+          },
+          {
             x: letter,
-            y: Math.floor(Math.random() * (55 - 1 + 1)) + 1
-          },{
+            y: Math.floor(Math.random() * (55 - 1 + 1)) + 1,
+          },
+          {
             x: letter,
-            y: Math.floor(Math.random() * (55 - 1 + 1)) + 1
-          },{
+            y: Math.floor(Math.random() * (55 - 1 + 1)) + 1,
+          },
+          {
             x: letter,
-            y: Math.floor(Math.random() * (55 - 1 + 1)) + 1
-          },{
+            y: Math.floor(Math.random() * (55 - 1 + 1)) + 1,
+          },
+          {
             x: letter,
-            y: Math.floor(Math.random() * (55 - 1 + 1)) + 1
-          },{
+            y: Math.floor(Math.random() * (55 - 1 + 1)) + 1,
+          },
+          {
             x: letter,
-            y: Math.floor(Math.random() * (55 - 1 + 1)) + 1
-          },{
+            y: Math.floor(Math.random() * (55 - 1 + 1)) + 1,
+          },
+          {
             x: letter,
-            y: Math.floor(Math.random() * (55 - 1 + 1)) + 1
-          },{
+            y: Math.floor(Math.random() * (55 - 1 + 1)) + 1,
+          },
+          {
             x: letter,
-            y: Math.floor(Math.random() * (55 - 1 + 1)) + 1
-          }
-        ]
+            y: Math.floor(Math.random() * (55 - 1 + 1)) + 1,
+          },
+        ],
       };
       series.push(serie);
     });
@@ -135,66 +139,67 @@ export class PaRwcCRegWarehouseContractComponent extends BasePage implements OnI
     this.chartOptions = {
       series: series,
       tooltip: {
-        shared: true
+        shared: true,
       },
       chart: {
         height: 350,
-        type: "heatmap",
-        events:{
-          click:((event:any, chartContext:any, config:any)=>{
-            this.config=config;
-          })
-        }
+        type: 'heatmap',
+        events: {
+          click: (event: any, chartContext: any, config: any) => {
+            this.config = config;
+          },
+        },
       },
       dataLabels: {
-        enabled: true
+        enabled: true,
       },
       colors: [
-        "#F3B415",
-        "#F27036",
-        "#663F59",
-        "#6A6E94",
-        "#4E88B4",
-        "#00A7C6",
-        "#18D8D8",
-        "#A9D794",
-        "#46AF78",
-        "#A93F55",
-        "#8C5E58",
-        "#2176FF",
-        "#33A1FD",
-        "#7A918D",
-        "#BAFF29"
+        '#F3B415',
+        '#F27036',
+        '#663F59',
+        '#6A6E94',
+        '#4E88B4',
+        '#00A7C6',
+        '#18D8D8',
+        '#A9D794',
+        '#46AF78',
+        '#A93F55',
+        '#8C5E58',
+        '#2176FF',
+        '#33A1FD',
+        '#7A918D',
+        '#BAFF29',
       ],
       xaxis: {
-        type: "category",
-        categories: ['']
+        type: 'category',
+        categories: [''],
       },
       title: {
-        text: "Actas por Almacén"
+        text: 'Actas por Almacén',
       },
       grid: {
         padding: {
-          right: 20
-        }
-      }
+          right: 20,
+        },
+      },
     };
   }
 
   onClick(): void {
-    if(this.config.seriesIndex !== -1){
+    if (this.config.seriesIndex !== -1) {
       let letter = this.config.config.series[this.config.seriesIndex].name;
-      let number = this.config.config.series[this.config.seriesIndex].data[this.config.dataPointIndex].y;
-      
-      let config={
+      let number =
+        this.config.config.series[this.config.seriesIndex].data[
+          this.config.dataPointIndex
+        ].y;
+
+      let config = {
         letter: letter,
-        number: number
+        number: number,
       };
 
       //this.chart.destroy();
       this.openModal({ edit: false, config });
     }
-    
   }
-  
 }

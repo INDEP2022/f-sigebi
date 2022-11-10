@@ -39,12 +39,12 @@ export const COLUMNS = {
     title: 'Autoridad que Emite Identificación',
     sort: false,
   },
-  street:{
+  street: {
     title: 'Calle',
     sort: false,
   },
   outdoorNumber: {
     title: 'No. Exterior',
     sort: false,
-  }
+  },
 };

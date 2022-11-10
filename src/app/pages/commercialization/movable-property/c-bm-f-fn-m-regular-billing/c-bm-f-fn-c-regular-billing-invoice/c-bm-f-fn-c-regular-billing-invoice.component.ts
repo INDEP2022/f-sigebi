@@ -14,10 +14,12 @@ import { REGULAR_GOODS_COLUMN } from './regular-billing-invoice-goods-columns';
 @Component({
   selector: 'app-c-bm-f-fn-c-regular-billing-invoice',
   templateUrl: './c-bm-f-fn-c-regular-billing-invoice.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CBmFFnCRegularBillingInvoiceComponent extends BasePage implements OnInit {
+export class CBmFFnCRegularBillingInvoiceComponent
+  extends BasePage
+  implements OnInit
+{
   show1 = false;
 
   pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
@@ -41,7 +43,7 @@ export class CBmFFnCRegularBillingInvoiceComponent extends BasePage implements O
   ) {
     super();
 
-    this.settings2.columns = {...REGULAR_GOODS_COLUMN};
+    this.settings2.columns = { ...REGULAR_GOODS_COLUMN };
 
     this.settings = {
       ...this.settings,
@@ -109,20 +111,20 @@ export class CBmFFnCRegularBillingInvoiceComponent extends BasePage implements O
     {
       noBien: 3747689,
       amount: 1,
-      description: "UN ANILLO PARA DAMA EN ORO BLANCO DE 14K, CON 8 SIN",
+      description: 'UN ANILLO PARA DAMA EN ORO BLANCO DE 14K, CON 8 SIN',
       sum: 10000,
-      iva: .00,
+      iva: 0.0,
       total: 10000,
-      brand: "",
-      subBrand: "",
-      model: "ND",
-      serie: "",
-      mandate: "SAT FISCO",
-      registration: "SM",
-      unit: "Pieza",
-      prod: "No existe",
-    }
-  ]
+      brand: '',
+      subBrand: '',
+      model: 'ND',
+      serie: '',
+      mandate: 'SAT FISCO',
+      registration: 'SM',
+      unit: 'Pieza',
+      prod: 'No existe',
+    },
+  ];
 
   ngOnInit(): void {
     this.prepareForm();

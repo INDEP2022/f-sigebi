@@ -11,11 +11,12 @@ import { goodsData } from './data';
 @Component({
   selector: 'app-pa-rcl-c-returns-confications-list',
   templateUrl: './pa-rcl-c-returns-confications-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class PaRclCReturnsConficationsListComponent extends BasePage implements OnInit {
-
+export class PaRclCReturnsConficationsListComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
   formMA: FormGroup = new FormGroup({});
 
@@ -35,11 +36,12 @@ export class PaRclCReturnsConficationsListComponent extends BasePage implements 
     super();
     this.settings = {
       ...this.settings,
-      actions:{ add:false, edit:true, delete: false},
+      actions: { add: false, edit: true, delete: false },
       edit: {
         editButtonContent: '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
         saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-        cancelButtonContent: '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
+        cancelButtonContent:
+          '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
         confirmSave: true,
       },
       mode: '',
@@ -68,7 +70,7 @@ export class PaRclCReturnsConficationsListComponent extends BasePage implements 
            //this.otherFn(data);
         });
       }
-    }*/  
+    }*/
   }
 
   private prepareForm(): void {
@@ -94,34 +96,33 @@ export class PaRclCReturnsConficationsListComponent extends BasePage implements 
     this.alertQuestion(
       'warning',
       'Actualización Masiva',
-      'Desea actualizar todos los bienes?').then(
-        question => {
-          if (question.isConfirmed) {
-            //Ejecutar el servicio
-            if(maVal.dateConfiscation !== null){
-              goodsData.map(good=>{
-                let date=`${maVal.dateConfiscation.getFullYear()}-
-                ${maVal.dateConfiscation.getMonth()+1}-
+      'Desea actualizar todos los bienes?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        if (maVal.dateConfiscation !== null) {
+          goodsData.map(good => {
+            let date = `${maVal.dateConfiscation.getFullYear()}-
+                ${maVal.dateConfiscation.getMonth() + 1}-
                 ${maVal.dateConfiscation.getDate()}`;
 
-                good.dateConfiscation =date;
-              });
-              //Update Table
-              this.data.refresh()
-            }
-
-            if( maVal.promoter !== null){
-              goodsData.map(good=>{
-                good.promoter = maVal.promoter;
-              });
-              //Update Table
-              this.data.refresh()
-            }
-
-            this.onLoadToast('success', 'Elementos Actualizados', '');
-          }
+            good.dateConfiscation = date;
+          });
+          //Update Table
+          this.data.refresh();
         }
-    );
+
+        if (maVal.promoter !== null) {
+          goodsData.map(good => {
+            good.promoter = maVal.promoter;
+          });
+          //Update Table
+          this.data.refresh();
+        }
+
+        this.onLoadToast('success', 'Elementos Actualizados', '');
+      }
+    });
   }
 
   selectRow(row: any) {
@@ -129,7 +130,7 @@ export class PaRclCReturnsConficationsListComponent extends BasePage implements 
     this.rowSelected = true;
   }
 
-  onSaveConfirm(event:any) {
+  onSaveConfirm(event: any) {
     //console.log(event);
     event.confirm.resolve();
     /**
@@ -138,5 +139,4 @@ export class PaRclCReturnsConficationsListComponent extends BasePage implements 
 
     this.onLoadToast('success', 'Elemento Actualizado', '');
   }
-
 }

@@ -39,4 +39,19 @@ export const DEPOSITARY_ROUTES_2: any[] = [
     link: 'deposit-request-monitor',
     menu: 'Monitor de solicitudes de depositaria',
   },
+  {
+    label: 'Generación de archivos de dictamen',
+    link: 'generation-files-opinion',
+    menu: 'Generación de archivos de dictamen',
+  },
+  {
+    label: 'Reportes de bienes declarados como abandono',
+    link: 'reports-assets-declared-abandoned',
+    menu: 'Reportes de bienes declarados como abandono',
+  },
+  {
+    label: 'Cambio de Texto',
+    link: 'text-change',
+    menu: 'Cambio de Texto',
+  },
 ];

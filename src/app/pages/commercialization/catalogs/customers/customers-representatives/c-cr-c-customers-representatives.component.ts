@@ -1,6 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
@@ -11,11 +10,12 @@ import { data } from './data';
 @Component({
   selector: 'app-c-cr-c-customers-representatives',
   templateUrl: './c-cr-c-customers-representatives.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CCrCCustomersRepresentativesComponent extends BasePage implements OnInit {
-
+export class CCrCCustomersRepresentativesComponent
+  extends BasePage
+  implements OnInit
+{
   edit: boolean = false;
   title: string = 'Representantes';
 
@@ -34,8 +34,7 @@ export class CCrCCustomersRepresentativesComponent extends BasePage implements O
     };
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   close() {
     this.modalRef.hide();
@@ -51,4 +50,3 @@ export class CCrCCustomersRepresentativesComponent extends BasePage implements O
     this.settings = $event;
   }
 }
-

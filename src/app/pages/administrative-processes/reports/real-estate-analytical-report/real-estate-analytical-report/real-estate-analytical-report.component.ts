@@ -5,12 +5,11 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 @Component({
   selector: 'app-real-estate-analytical-report',
   templateUrl: './real-estate-analytical-report.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class RealEstateAnalyticalReportComponent implements OnInit {
   businessCardForm: ModelForm<any>;
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.prepareForm();

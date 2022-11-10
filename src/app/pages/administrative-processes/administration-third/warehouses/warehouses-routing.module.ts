@@ -4,12 +4,13 @@ import { WarehousesComponent } from './warehouses/warehouses.component';
 
 const routes: Routes = [
   {
-    path: '', component: WarehousesComponent
-  }
+    path: '',
+    component: WarehousesComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class WarehousesRoutingModule { }
+export class WarehousesRoutingModule {}

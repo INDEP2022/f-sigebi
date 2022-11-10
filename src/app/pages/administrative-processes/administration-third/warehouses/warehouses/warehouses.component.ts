@@ -4,13 +4,19 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { GOODSONPALLET_COLUMNS, GOODSPOSITION_COLUMNS, LEVELS_COLUMNS, PALLET_COLUMNS, POSITIONS_COLUMNS, WAREHOUSES_COLUMNS } from './warehouses-columns';
+import {
+  GOODSONPALLET_COLUMNS,
+  GOODSPOSITION_COLUMNS,
+  LEVELS_COLUMNS,
+  PALLET_COLUMNS,
+  POSITIONS_COLUMNS,
+  WAREHOUSES_COLUMNS,
+} from './warehouses-columns';
 
 @Component({
   selector: 'app-warehouses',
   templateUrl: './warehouses.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class WarehousesComponent extends BasePage implements OnInit {
   settings2 = { ...this.settings, actions: false };

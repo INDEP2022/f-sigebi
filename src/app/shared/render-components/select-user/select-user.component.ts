@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { DefaultEditor } from 'ng2-smart-table';
 
 @Component({
@@ -11,14 +11,13 @@ import { DefaultEditor } from 'ng2-smart-table';
         border: none;
         padding: 0;
       }
-      :host ::ng-deep .ng-select.ng-select-single .ng-select-container{
+      :host ::ng-deep .ng-select.ng-select-single .ng-select-container {
         border: none;
       }
     `,
-  ]
+  ],
 })
 export class SelectUserComponent extends DefaultEditor implements OnInit {
-
   form: FormGroup = new FormGroup({});
 
   constructor(private fb: FormBuilder) {
@@ -28,21 +27,20 @@ export class SelectUserComponent extends DefaultEditor implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     if (this.cell.newValue !== '') {
-      if(this.cell.getValue() !== null){
-        let user=this.cell.getValue;
+      if (this.cell.getValue() !== null) {
+        let user = this.cell.getValue;
         this.form.controls['user'].setValue(user);
       }
     }
 
-    this.form.controls['user'].valueChanges.subscribe(user=>{
+    this.form.controls['user'].valueChanges.subscribe(user => {
       this.cell.newValue = user;
     });
   }
 
   prepareForm(): void {
     this.form = this.fb.group({
-      user: [null]
+      user: [null],
     });
   }
-
 }

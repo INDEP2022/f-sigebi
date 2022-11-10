@@ -55,6 +55,15 @@ const routes: Routes = [
       ).ExecuteReceptionModule,
   },
   {
+    path: 'validate-destiny',
+    loadChildren: async () =>
+      (
+        await import(
+          './programming-request-components/validate-destiny/validate-destiny.module'
+        )
+      ).ValidateDestinyModule,
+  },
+  {
     path: 'formalize-programming',
     loadChildren: async () =>
       (
@@ -92,6 +101,14 @@ const routes: Routes = [
       (await import('./transfer-request/transfer-request.module'))
         .TransferRequestModule,
     data: { title: 'Solicitudes de transferencia' },
+  },
+  //Gestionar Bienes Similares
+  {
+    path: 'manage-similar-goods',
+    loadChildren: async () =>
+      (await import('./manage-similar-goods/manage-similar-goods.module'))
+        .ManageSimilarGoodsModule,
+    data: { title: '' },
   },
 ];
 

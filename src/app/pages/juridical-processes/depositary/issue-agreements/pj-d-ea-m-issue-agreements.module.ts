@@ -1,6 +1,6 @@
 /** BASE IMPORT */
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { SharedModule } from 'src/app/shared/shared.module';
 /** BASE IMPORT */
 
@@ -13,8 +13,8 @@ import { PJDAEHistoricalSituationGoodsModule } from '../historical-situation-goo
 import { PJDEAIssueAgreementsRoutingModule } from './pj-d-ea-m-issue-agreements-routing.module';
 
 /** COMPONENTS IMPORTS */
-import { PJDEAIssueAgreementsComponent } from './issue-agreements/pj-d-ea-c-issue-agreements.component';
 import { EventEmitterService } from './issue-agreements/eventEmitter.service';
+import { PJDEAIssueAgreementsComponent } from './issue-agreements/pj-d-ea-c-issue-agreements.component';
 
 @NgModule({
   declarations: [PJDEAIssueAgreementsComponent],

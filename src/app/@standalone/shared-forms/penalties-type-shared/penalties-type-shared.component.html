@@ -1,0 +1,18 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showTypePenalties">
+    <div class="col-md-12">
+      <form-field [control]="form.get(typePenaltyField)">
+        <ngx-select
+          (fetchItems)="getTypePenalties($event)"
+          [data]="typePenalties"
+          [form]="form"
+          value="id"
+          bindLabel="description"
+          label="Tipo de Penalización"
+          [control]="typePenaltyField"
+          (change)="onTypePenaltiesChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

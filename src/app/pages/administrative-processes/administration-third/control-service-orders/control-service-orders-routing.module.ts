@@ -4,12 +4,13 @@ import { ControlServiceOrdersComponent } from './control-service-orders/control-
 
 const routes: Routes = [
   {
-    path: '', component: ControlServiceOrdersComponent
-  }
+    path: '',
+    component: ControlServiceOrdersComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ControlServiceOrdersRoutingModule { }
+export class ControlServiceOrdersRoutingModule {}
