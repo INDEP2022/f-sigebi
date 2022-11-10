@@ -255,6 +255,10 @@ export const COMMERCIALIZATION_ROUTES = [
             label: 'Estatus de Bienes Disponibles para Comercializar',
             link: '/pages/commercialization/catalogs/goods-available-sale-status',
           },
+          {
+            label: 'Tipos Movimiento Banco',
+            link: '/pages/commercialization/catalogs/bank-movements-types'
+          }
         ],
       },
       {
