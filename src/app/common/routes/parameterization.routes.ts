@@ -40,6 +40,10 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Catalogo de conceptos de pagos depositarias',
         link: '/pages/parameterization/c-p-m-cat-depository-payment',
       },
+      {
+        label: 'Mant. a delegaciones y subdelegaciones',
+        link: '/pages/parameterization/c-p-m-maintenance-deleg-subdeleg',
+      },
       //Alexander
       {
         label: 'Catálogo de Mantenimiento de Areas',
@@ -54,7 +58,6 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Valores Adicionales',
         link: '/pages/parameterization/additional-values',
       },
-
     ],
   },
 ];

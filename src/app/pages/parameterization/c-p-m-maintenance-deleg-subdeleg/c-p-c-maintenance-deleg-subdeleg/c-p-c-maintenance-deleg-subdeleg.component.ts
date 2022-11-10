@@ -3,15 +3,15 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { CPCCatDepositoryPaymentModalComponent } from '../c-p-c-cat-depository-payment-modal/c-p-c-cat-depository-payment-modal.component';
-import { CAT_DEPOSITORY_PAY_COLUMNS } from './cat-depository-payment-columns';
+import { CPCMaintenanceDelegSubdelegModalComponent } from '../c-p-c-maintenance-deleg-subdeleg-modal/c-p-c-maintenance-deleg-subdeleg-modal.component';
+import { MAINTENANCE_DELEG_SUB_COLUMNS } from './maintenance-deleg-sub-columns';
 
 @Component({
-  selector: 'app-c-p-c-cat-depository-payment',
-  templateUrl: './c-p-c-cat-depository-payment.component.html',
+  selector: 'app-c-p-c-maintenance-deleg-subdeleg',
+  templateUrl: './c-p-c-maintenance-deleg-subdeleg.component.html',
   styles: [],
 })
-export class CPCCatDepositoryPaymentComponent
+export class CPCMaintenanceDelegSubdelegComponent
   extends BasePage
   implements OnInit
 {
@@ -29,17 +29,15 @@ export class CPCCatDepositoryPaymentComponent
         delete: false,
         position: 'right',
       },
-      columns: { ...CAT_DEPOSITORY_PAY_COLUMNS },
+      columns: { ...MAINTENANCE_DELEG_SUB_COLUMNS },
     };
   }
 
-  ngOnInit(): void {
-    this.getPagination();
-  }
+  ngOnInit(): void {}
 
-  openModal(context?: Partial<CPCCatDepositoryPaymentModalComponent>) {
+  openModal(context?: Partial<CPCMaintenanceDelegSubdelegModalComponent>) {
     const modalRef = this.modalService.show(
-      CPCCatDepositoryPaymentModalComponent,
+      CPCMaintenanceDelegSubdelegModalComponent,
       {
         initialState: { ...context },
         class: 'modal-lg modal-dialog-centered',
@@ -62,27 +60,12 @@ export class CPCCatDepositoryPaymentComponent
     this.loading = false;
   }
 
-  getPagination() {
-    this.columns = this.data;
-    this.totalItems = this.columns.length;
-  }
-
   data = [
     {
-      payConcept: 'CONCEPTO DE PAGO 01',
-      description: 'DESCRIPCIÓN 01',
-    },
-    {
-      payConcept: 'CONCEPTO DE PAGO 02',
-      description: 'DESCRIPCIÓN 02',
-    },
-    {
-      payConcept: 'CONCEPTO DE PAGO 03',
-      description: 'DESCRIPCIÓN 03',
-    },
-    {
-      payConcept: 'CONCEPTO DE PAGO 04',
-      description: 'DESCRIPCIÓN 04',
+      idDeleg: '0',
+      descriptionDeleg: 'OFICINAS CENTRALES',
+      idSubDeleg: '0',
+      descriptionSubDeleg: 'OFICINAS CENTRALES',
     },
   ];
 }
