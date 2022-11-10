@@ -23,4 +23,10 @@ export const routesSecurity: any = [
     link: 'reporte-accesos-usuarios',
     menu: 'Reporte de Accesos por Usuarios',
   },
+  {
+    // Mantenimiento a Usuarios
+    label: 'Mantenimiento a Usuarios',
+    link: 'mantenimiento-usuarios',
+    menu: 'Mantenimiento a Usuarios',
+  },
 ];

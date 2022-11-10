@@ -1,0 +1,32 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">MANTENIMIENTO A USUARIOS</h5>
+  </div>
+
+  <div body>
+    <div class="md-tabs">
+      <tabset>
+        <tab heading="Alta de Usuario" id="altaUsuario">
+          <ngx-users-alta-usuario
+            (formValues)="btnAltaUsuarios($event)"></ngx-users-alta-usuario>
+        </tab>
+        <tab heading="Área Usuario" id="areaUsuario">
+          <ngx-users-area-usuario></ngx-users-area-usuario>
+        </tab>
+        <tab heading="Desbloqueo Usuario" id="desbloqueoUsuario">
+          <ngx-users-desbloqueo-usuario
+            (formValues)="
+              btnDesbloqueoUsuario($event)
+            "></ngx-users-desbloqueo-usuario>
+        </tab>
+        <tab heading="Baja de Usuario" id="bajaUsuario">
+          <ngx-users-baja-usuario
+            (formValues)="btnBajaUsuarios($event)"></ngx-users-baja-usuario>
+        </tab>
+        <tab heading="Indicadores Desempeño" id="indicadoresDesempenio">
+          <ngx-users-indicadores-usuario></ngx-users-indicadores-usuario>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</app-card>

@@ -72,6 +72,16 @@ const routes: Routes = [
       ).CPMValuesModule,
     data: { title: 'Valores' },
   },
+  {
+    path: 'additional-values',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-additional-values/c-p-m-additional-values.module'
+        )
+      ).CPMAdditionalValuesModule,
+    data: { title: 'Valores Adicionales' },
+  },
 ];
 
 @NgModule({
