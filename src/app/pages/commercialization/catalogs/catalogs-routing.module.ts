@@ -67,15 +67,21 @@ const routes: Routes = [
   {
     path: 'goods-available-sale-status',
     loadChildren: async () =>
-      (await import('./goods-available-sale/c-c-gas-m-goods-available-sale.module'))
-        .CCGasMGoodsAvailableSaleModule,
+      (
+        await import(
+          './goods-available-sale/c-c-gas-m-goods-available-sale.module'
+        )
+      ).CCGasMGoodsAvailableSaleModule,
     data: { title: 'Est. Bienes Disponibles para Comercializar' },
   },
   {
     path: 'bank-movements-types',
     loadChildren: async () =>
-      (await import('./bank-movements-types/c-c-bmt-m-bank-movements-types.module'))
-        .CCBmtMBankMovementsTypesModule,
+      (
+        await import(
+          './bank-movements-types/c-c-bmt-m-bank-movements-types.module'
+        )
+      ).CCBmtMBankMovementsTypesModule,
     data: { title: 'Tipos Movimiento Banco' },
   },
 ];

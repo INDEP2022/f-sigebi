@@ -5,12 +5,12 @@ import { CCGasSCStatusComponent } from './status/c-c-gas-s-c-status.component';
 const routes: Routes = [
   {
     path: '',
-    component: CCGasSCStatusComponent
-  }
+    component: CCGasSCStatusComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CCGasMGoodsAvailableSaleRoutingModule { }
+export class CCGasMGoodsAvailableSaleRoutingModule {}

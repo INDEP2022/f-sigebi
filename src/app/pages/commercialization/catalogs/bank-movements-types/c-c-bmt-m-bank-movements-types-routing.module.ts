@@ -6,12 +6,12 @@ import { CCBmtCBankMovementsTypesComponent } from './bank-movements-types/c-c-bm
 const routes: Routes = [
   {
     path: '',
-    component: CCBmtCBankMovementsTypesComponent
-  }
+    component: CCBmtCBankMovementsTypesComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CCBmtMBankMovementsTypesRoutingModule { }
+export class CCBmtMBankMovementsTypesRoutingModule {}
