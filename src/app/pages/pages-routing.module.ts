@@ -114,6 +114,12 @@ const routes: Routes = [
         )
       ).DocumentationComplementaryModule,
   },
+  {
+    path: 'scheduling-deliveries',
+    loadChildren: async () =>
+      (await import('./scheduling-deliveries/scheduling-deliveries.module'))
+        .SchedulingDeliveriesModule,
+  },
 ];
 
 @NgModule({
