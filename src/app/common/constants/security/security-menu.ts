@@ -27,6 +27,11 @@ export const MENU_OPTIONS_SECURITY = [
         label: routesSecurity[3].menu,
         link: baseMenuSecurity + routesSecurity[3].link,
       },
+      {
+        // Mantenimiento a Usuarios
+        label: routesSecurity[4].menu,
+        link: baseMenuSecurity + routesSecurity[4].link,
+      },
     ],
   },
   // SEGURIDAD

@@ -46,6 +46,15 @@ export const PARAMETERIZATION_ROUTES = [
         link: '/pages/parameterization/maintenance-of-areas',
       },
       //Félix
+      {
+        label: 'Valores',
+        link: '/pages/parameterization/values',
+      },
+      {
+        label: 'Valores Adicionales',
+        link: '/pages/parameterization/additional-values',
+      },
+
     ],
   },
 ];

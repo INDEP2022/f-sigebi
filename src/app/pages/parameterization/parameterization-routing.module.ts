@@ -99,10 +99,30 @@ const routes: Routes = [
     data: { title: 'Catálogo de Mantenimiento de Areas' },
   },
   //Félix
+  {
+    path: 'values',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-values/c-p-m-values.module'
+        )
+      ).CPMValuesModule,
+    data: { title: 'Valores' },
+  },
+  {
+    path: 'additional-values',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-additional-values/c-p-m-additional-values.module'
+        )
+      ).CPMAdditionalValuesModule,
+    data: { title: 'Valores Adicionales' },
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class ParameterizationRoutingModule {}
+export class ParameterizationRoutingModule { }
