@@ -34,6 +34,11 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Valores',
         link: '/pages/parameterization/values',
       },
+      {
+        label: 'Valores Adicionales',
+        link: '/pages/parameterization/additional-values',
+      },
+
     ],
   },
 ];
