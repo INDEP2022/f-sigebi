@@ -1,0 +1,22 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Catalogo de conceptos de pagos depositarias</h5>
+      <div class="col-md-5 buttons">
+        <div>
+          <button
+            class="btn btn-primary active btn-sm ml-3"
+            (click)="openForm()">
+            Nuevo
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <ng2-smart-table
+      [settings]="settings"
+      [source]="data"
+      (edit)="openForm($event.data)"></ng2-smart-table>
+  </div>
+</app-card>
