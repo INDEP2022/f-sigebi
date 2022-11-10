@@ -10,8 +10,7 @@ import { ADDITIONALVALUES_COLUMNS } from './c-p-m-additional-values-columns';
 @Component({
   selector: 'app-c-p-m-additional-values',
   templateUrl: './c-p-m-additional-values.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CPMAdditionalValuesComponent extends BasePage implements OnInit {
   additionalValuesForm: FormGroup;
@@ -41,12 +40,11 @@ export class CPMAdditionalValuesComponent extends BasePage implements OnInit {
     let config: ModalOptions = {
       initialState: {
         data,
-        callback: (next: boolean) => { },
+        callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.modalService.show(CPMAdditionalValuesModalComponent, config);
   }
-
 }

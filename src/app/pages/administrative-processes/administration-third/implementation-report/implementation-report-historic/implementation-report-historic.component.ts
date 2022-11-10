@@ -8,10 +8,12 @@ import { IMPLEMENTATIONREPORTHISTORIC_COLUMNS } from './implementation-report-hi
 @Component({
   selector: 'app-implementation-report-historic',
   templateUrl: './implementation-report-historic.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class ImplementationReportHistoricComponent extends BasePage implements OnInit {
+export class ImplementationReportHistoricComponent
+  extends BasePage
+  implements OnInit
+{
   data1: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
@@ -24,8 +26,7 @@ export class ImplementationReportHistoricComponent extends BasePage implements O
     };
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
   close() {
     this.modalRef.hide();
   }
