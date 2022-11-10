@@ -29,7 +29,19 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Catálogo de Mantenimiento de Areas',
         link: '/pages/parameterization/maintenance-of-areas',
       },
+      {
+        label: 'Mantenimiento a perfiles',
+        link: '/pages/parameterization/profile-maintenance',
+      },
       //Félix
+      {
+        label: 'Valores',
+        link: '/pages/parameterization/values',
+      },
+      {
+        label: 'Valores Adicionales',
+        link: '/pages/parameterization/additional-values',
+      },
     ],
   },
 ];

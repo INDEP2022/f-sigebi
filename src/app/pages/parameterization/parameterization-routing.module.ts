@@ -61,7 +61,30 @@ const routes: Routes = [
       ).CPMMaintenanceOfAreasModule,
     data: { title: 'Catálogo de Mantenimiento de Areas' },
   },
+  {
+    path: 'profile-maintenance',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-profile-maintenance/c-p-m-profile-maintenance.module'
+        )
+      ).CPMProfileMaintenanceModule,
+    data: { title: 'Mantenimiento a perfiles' },
+  },
   //Félix
+  {
+    path: 'values',
+    loadChildren: async () =>
+      (await import('./c-p-m-values/c-p-m-values.module')).CPMValuesModule,
+    data: { title: 'Valores' },
+  },
+  {
+    path: 'additional-values',
+    loadChildren: async () =>
+      (await import('./c-p-m-additional-values/c-p-m-additional-values.module'))
+        .CPMAdditionalValuesModule,
+    data: { title: 'Valores Adicionales' },
+  },
 ];
 
 @NgModule({
