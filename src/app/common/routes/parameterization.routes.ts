@@ -29,6 +29,10 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Catálogo de Mantenimiento de Areas',
         link: '/pages/parameterization/maintenance-of-areas',
       },
+      {
+        label: 'Mantenimiento a ministerios publicos',
+        link: '/pages/parameterization/maintenance-of-public-ministries',
+      },
       //Félix
       {
         label: 'Valores',

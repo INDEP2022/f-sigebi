@@ -61,6 +61,16 @@ const routes: Routes = [
       ).CPMMaintenanceOfAreasModule,
     data: { title: 'Catálogo de Mantenimiento de Areas' },
   },
+  {
+    path: 'maintenance-of-public-ministries',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-maintenance-of-public-ministries/c-p-m-maintenance-of-public-ministries.module'
+        )
+      ).CPMMaintenanceOfPublicMinistriesModule,
+    data: { title: 'Mantenimiento a ministerios publicos' },
+  },
   //Félix
   {
     path: 'values',
