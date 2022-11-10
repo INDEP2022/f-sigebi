@@ -82,6 +82,16 @@ const routes: Routes = [
       ).CPMAdditionalValuesModule,
     data: { title: 'Valores Adicionales' },
   },
+  {
+    path: 'appraisal-institutions',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-appraisal-institutions/c-p-m-appraisal-institutions.module'
+        )
+      ).CPMAppraisalInstitutionsModule,
+    data: { title: 'Instituciones Valuadoras' },
+  },
 ];
 
 @NgModule({
