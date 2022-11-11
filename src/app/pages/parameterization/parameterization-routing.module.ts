@@ -97,6 +97,16 @@ const routes: Routes = [
       ).CPMMaintenanceDelegSubdelegModule,
     data: { title: 'Mant. a delegaciones y subdelegaciones' },
   },
+  {
+    path: 'c-p-m-mnce-adm-depository-auditor',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-mnce-adm-depository-auditor/c-p-m-mnce-adm-depository-auditor.module'
+        )
+      ).CPMMnceAdmDepositoryAuditorModule,
+    data: { title: 'Mantto. a administrador, depositario e interventor' },
+  },
   //Alexander
   {
     path: 'maintenance-of-areas',
@@ -107,6 +117,16 @@ const routes: Routes = [
         )
       ).CPMMaintenanceOfAreasModule,
     data: { title: 'Catálogo de Mantenimiento de Areas' },
+  },
+  {
+    path: 'profile-maintenance',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-profile-maintenance/c-p-m-profile-maintenance.module'
+        )
+      ).CPMProfileMaintenanceModule,
+    data: { title: 'Mantenimiento a perfiles' },
   },
   //Félix
   {
@@ -121,6 +141,16 @@ const routes: Routes = [
       (await import('./c-p-m-additional-values/c-p-m-additional-values.module'))
         .CPMAdditionalValuesModule,
     data: { title: 'Valores Adicionales' },
+  },
+  {
+    path: 'appraisal-institutions',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-appraisal-institutions/c-p-m-appraisal-institutions.module'
+        )
+      ).CPMAppraisalInstitutionsModule,
+    data: { title: 'Instituciones Valuadoras' },
   },
 ];
 

@@ -44,10 +44,18 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Mant. a delegaciones y subdelegaciones',
         link: '/pages/parameterization/c-p-m-maintenance-deleg-subdeleg',
       },
+      {
+        label: 'Mantto. a administrador, depositario e interventor',
+        link: '/pages/parameterization/c-p-m-mnce-adm-depository-auditor',
+      },
       //Alexander
       {
         label: 'Catálogo de Mantenimiento de Areas',
         link: '/pages/parameterization/maintenance-of-areas',
+      },
+      {
+        label: 'Mantenimiento a perfiles',
+        link: '/pages/parameterization/profile-maintenance',
       },
       //Félix
       {
@@ -57,6 +65,10 @@ export const PARAMETERIZATION_ROUTES = [
       {
         label: 'Valores Adicionales',
         link: '/pages/parameterization/additional-values',
+      },
+      {
+        label: 'Instituciones Valuadoras',
+        link: '/pages/parameterization/appraisal-institutions',
       },
     ],
   },

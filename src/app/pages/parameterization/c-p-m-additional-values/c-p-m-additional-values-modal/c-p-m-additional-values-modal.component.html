@@ -6,13 +6,20 @@
     <form [formGroup]="additionalValuesForm" class="form-material">
       <div class="row margin-input">
         <div class="col-md-5">
-          <form-field label="Nombre" [control]="additionalValuesForm.get('name')">
+          <form-field
+            label="Nombre"
+            [control]="additionalValuesForm.get('name')">
             <input class="form-control" formControlName="name" type="text" />
           </form-field>
         </div>
         <div class="col-md-7">
-          <form-field [control]="additionalValuesForm.get('description')" label="Descripción">
-            <textarea class="form-control" formControlName="description" placeholder="Descripción"></textarea>
+          <form-field
+            [control]="additionalValuesForm.get('description')"
+            label="Descripción">
+            <textarea
+              class="form-control"
+              formControlName="description"
+              placeholder="Descripción"></textarea>
           </form-field>
         </div>
       </div>
@@ -21,7 +28,10 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [type]="'button'" [disabled]="!additionalValuesForm.valid" (click)="close()"></confirm-button>
+        <confirm-button
+          [type]="'button'"
+          [disabled]="!additionalValuesForm.valid"
+          (click)="close()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

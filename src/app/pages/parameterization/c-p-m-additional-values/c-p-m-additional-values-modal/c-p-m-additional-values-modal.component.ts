@@ -5,15 +5,14 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 @Component({
   selector: 'app-c-p-m-additional-values-modal',
   templateUrl: './c-p-m-additional-values-modal.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CPMAdditionalValuesModalComponent implements OnInit {
   additionalValuesForm: FormGroup;
 
   title: string = 'Valores Adicionales';
   edit: boolean = false;
-  constructor(private fb: FormBuilder, private modalRef: BsModalRef) { }
+  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {}
 
   ngOnInit(): void {
     this.prepareForm();
