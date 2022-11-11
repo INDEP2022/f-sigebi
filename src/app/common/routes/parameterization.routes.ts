@@ -46,6 +46,16 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Instituciones Valuadoras',
         link: '/pages/parameterization/appraisal-institutions',
       },
+      {
+        label: 'Días Inhábiles',
+        link: '/pages/parameterization/non-working-days',
+      },
+      {
+        label: 'Fechas para Documentos',
+        link: '/pages/parameterization/date-documents',
+      },
+
+
     ],
   },
 ];

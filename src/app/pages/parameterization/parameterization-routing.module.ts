@@ -95,10 +95,30 @@ const routes: Routes = [
       ).CPMAppraisalInstitutionsModule,
     data: { title: 'Instituciones Valuadoras' },
   },
+  {
+    path: 'non-working-days',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-non-working-days/c-p-m-non-working-days.module'
+        )
+      ).CPMNonWorkingDaysModule,
+    data: { title: 'Días Inhábiles' },
+  },
+  {
+    path: 'date-documents',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-date-documents/c-p-m-date-documents.module'
+        )
+      ).CPMDateDocumentsModule,
+    data: { title: 'Fechas para Documentos' },
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class ParameterizationRoutingModule {}
+export class ParameterizationRoutingModule { }
