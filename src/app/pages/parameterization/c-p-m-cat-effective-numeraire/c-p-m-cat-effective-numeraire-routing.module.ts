@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CPMAppraisalInstitutionsComponent } from './c-p-m-appraisal-institutions/c-p-m-appraisal-institutions.component';
+import { CPCCatEffectiveNumeraireComponent } from './c-p-c-cat-effective-numeraire/c-p-c-cat-effective-numeraire.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: CPMAppraisalInstitutionsComponent,
+    component: CPCCatEffectiveNumeraireComponent,
   },
 ];
 
@@ -13,4 +13,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class CPMAppraisalInstitutionsRoutingModule {}
+export class CPMCatEffectiveNumeraireRoutingModule {}

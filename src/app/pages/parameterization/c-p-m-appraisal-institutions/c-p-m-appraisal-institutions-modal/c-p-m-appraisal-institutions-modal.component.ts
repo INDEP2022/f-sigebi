@@ -5,14 +5,13 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 @Component({
   selector: 'app-c-p-m-appraisal-institutions-modal',
   templateUrl: './c-p-m-appraisal-institutions-modal.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CPMAppraisalInstitutionsModalComponent implements OnInit {
   appraisalInstitutionsForm: FormGroup;
   title: string = 'Instituciones Valuadoras';
   edit: boolean = false;
-  constructor(private fb: FormBuilder, private modalRef: BsModalRef) { }
+  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {}
 
   ngOnInit(): void {
     this.prepareForm();
