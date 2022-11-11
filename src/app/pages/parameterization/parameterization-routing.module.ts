@@ -107,6 +107,26 @@ const routes: Routes = [
       ).CPMMnceAdmDepositoryAuditorModule,
     data: { title: 'Mantto. a administrador, depositario e interventor' },
   },
+  {
+    path: 'c-p-m-attributes-reg-logical-tables',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-attributes-reg-logical-tables/c-p-m-attributes-reg-logical-tables.module'
+        )
+      ).CPMAttributesRegLogicalTablesModule,
+    data: { title: 'Registro de atributos para tablas lógicas' },
+  },
+  {
+    path: 'c-p-m-register-keys-logical-tables',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-register-keys-logical-tables/c-p-m-register-keys-logical-tables.module'
+        )
+      ).CPMRegisterKeysLogicalTablesModule,
+    data: { title: 'Registro de claves para tablas logicas' },
+  },
   //Alexander
   {
     path: 'maintenance-of-areas',

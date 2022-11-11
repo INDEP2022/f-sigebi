@@ -1,0 +1,223 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field [control]="form.get('name')" label="Nombre">
+            <input type="text" class="form-control" formControlName="name" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('description')" label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-check label="Una Clave" for="label1">
+            <input id="label1" type="checkbox" formControlName="type1" />
+          </form-check>
+        </div>
+        <div class="col-md-3">
+          <form-check label="Cinco Clave" for="label2">
+            <input id="label2" type="checkbox" formControlName="type5" />
+          </form-check>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field [control]="form.get('cve1')" label="Clave 1">
+            <input type="text" class="form-control" formControlName="cve1" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('format1')" label="Formato 1">
+            <input type="text" class="form-control" formControlName="format1" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('minLong1')" label="Longitud Min. 1">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="minLong1" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('maxLong1')" label="Longitud Max. 1">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="maxLong1" />
+          </form-field>
+        </div>
+      </div>
+
+      <div *ngIf="type5.value">
+        <div class="row pt-5">
+          <div class="col-md-3">
+            <form-field [control]="form.get('cve2')" label="Clave 2">
+              <input type="text" class="form-control" formControlName="cve2" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="form.get('format2')" label="Formato 2">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="format2" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('minLong2')"
+              label="Longitud Min. 2">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="minLong2" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('maxLong2')"
+              label="Longitud Max. 2">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="maxLong2" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-5">
+          <div class="col-md-3">
+            <form-field [control]="form.get('cve3')" label="Clave 3">
+              <input type="text" class="form-control" formControlName="cve3" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="form.get('format3')" label="Formato 3">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="format3" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('minLong3')"
+              label="Longitud Min. 3">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="minLong3" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('maxLong3')"
+              label="Longitud Max. 3">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="maxLong3" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-5">
+          <div class="col-md-3">
+            <form-field [control]="form.get('cve4')" label="Clave 4">
+              <input type="text" class="form-control" formControlName="cve4" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="form.get('format4')" label="Formato 4">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="format4" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('minLong4')"
+              label="Longitud Min. 4">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="minLong4" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('maxLong4')"
+              label="Longitud Max. 4">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="maxLong4" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-5">
+          <div class="col-md-3">
+            <form-field [control]="form.get('cve5')" label="Clave 5">
+              <input type="text" class="form-control" formControlName="cve5" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="form.get('format5')" label="Formato 5">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="format5" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('minLong5')"
+              label="Longitud Min. 5">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="minLong5" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('maxLong5')"
+              label="Longitud Max. 5">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="maxLong5" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="!form.valid"
+          (click)="close()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

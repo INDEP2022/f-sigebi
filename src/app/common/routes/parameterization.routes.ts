@@ -48,6 +48,14 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Mantto. a administrador, depositario e interventor',
         link: '/pages/parameterization/c-p-m-mnce-adm-depository-auditor',
       },
+      {
+        label: 'Registro de atributos para tablas lógicas',
+        link: '/pages/parameterization/c-p-m-attributes-reg-logical-tables',
+      },
+      {
+        label: 'Registro de claves para tablas logicas',
+        link: '/pages/parameterization/c-p-m-register-keys-logical-tables',
+      },
       //Alexander
       {
         label: 'Catálogo de Mantenimiento de Areas',
