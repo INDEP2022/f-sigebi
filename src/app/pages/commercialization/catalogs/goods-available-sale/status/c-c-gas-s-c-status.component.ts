@@ -10,8 +10,7 @@ import { data } from './data';
 @Component({
   selector: 'app-c-c-gas-s-c-status',
   templateUrl: './c-c-gas-s-c-status.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CCGasSCStatusComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
