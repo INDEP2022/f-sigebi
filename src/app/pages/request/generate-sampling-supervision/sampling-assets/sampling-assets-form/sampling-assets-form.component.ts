@@ -2,11 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import Swal from 'sweetalert2';
 import { TABLE_SETTINGS } from '../../../../../common/constants/table-settings';
 import { ListParams } from '../../../../../common/repository/interfaces/list-params';
+import { ExcelService } from '../../../../../common/services/excel.service';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { BasePage } from '../../../../../core/shared/base-page';
+import { JSON_TO_CSV } from '../../../../admin/home/constants/json-to-csv';
 import { UploadExpedientFormComponent } from '../upload-expedient-form/upload-expedient-form.component';
+import { UploadImagesFormComponent } from '../upload-images-form/upload-images-form.component';
 import { LIST_ASSETS_COLUMN } from './columns/list-assets-columns';
 import { LIST_ASSETS_COPIES_COLUMN } from './columns/list-assets-copies';
 import { LIST_WAREHOUSE_COLUMN } from './columns/list-warehouse-columns';
@@ -57,6 +61,8 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   paragraphs: any[] = [];
   totalItems: number = 0;
 
+  jsonToCsv = JSON_TO_CSV;
+
   displaySearchAssetsBtn: boolean = false;
   settings2 = {
     ...TABLE_SETTINGS,
@@ -80,7 +86,11 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   totalItems3: number = 0;
   listAssetsCopiedSelected: any[] = [];
 
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private excelService: ExcelService
+  ) {
     super();
   }
 
@@ -132,6 +142,39 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
 
   uploadExpedient() {
     //if (this.listAssetsCopiedSelected.length == 0) return;
+    this.openModals(UploadExpedientFormComponent, '');
+  }
+
+  uploadImages(): void {
+    //if (this.listAssetsCopiedSelected.length == 0) return;
+    this.openModals(UploadImagesFormComponent, '');
+  }
+
+  exportCsv() {
+    const filename: string = 'Nombre del archivo';
+    this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
+  }
+
+  close(): void {}
+
+  turnForm() {
+    Swal.fire({
+      title: 'Confirmación Turnado',
+      text: '¿Esta seguro que la información es correcta para turnar?',
+      icon: undefined,
+      width: 450,
+      showCancelButton: true,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#b38e5d',
+      confirmButtonText: 'Aceptar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        console.log('Guardar solicitud');
+      }
+    });
+  }
+
+  openModals(component: any, data?: any): void {
     let config: ModalOptions = {
       initialState: {
         data: '',
@@ -142,8 +185,6 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.modalService.show(UploadExpedientFormComponent, config);
+    this.modalService.show(component, config);
   }
-
-  close(): void {}
 }

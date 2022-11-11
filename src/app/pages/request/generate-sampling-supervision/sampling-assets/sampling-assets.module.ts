@@ -10,6 +10,8 @@ import { SamplingAssetsFormComponent } from './sampling-assets-form/sampling-ass
 import { SamplingAssetsRoutingModule } from './sampling-assets-routing.module';
 import { SelectInputComponent } from './select-input/select-input.component';
 import { UploadExpedientFormComponent } from './upload-expedient-form/upload-expedient-form.component';
+import { UploadImagesFormComponent } from './upload-images-form/upload-images-form.component';
+import { VerImagenInputComponent } from './ver-imagen-input/ver-imagen-input.component';
 
 @NgModule({
   declarations: [
@@ -17,6 +19,8 @@ import { UploadExpedientFormComponent } from './upload-expedient-form/upload-exp
     SelectInputComponent,
     UploadExpedientFormComponent,
     NewDocumentFormComponent,
+    UploadImagesFormComponent,
+    VerImagenInputComponent,
   ],
   imports: [
     CommonModule,

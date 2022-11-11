@@ -4,8 +4,15 @@
   </div>
   <div body>
     <div class="row pt-4">
-      <div class="col-md-12">
-        <h5>Muestreo Bienes:Genera Consulta</h5>
+      <div class="d-flex">
+        <div class="mr-auto p-2">
+          <h5>Muestreo Bienes:Genera Consulta</h5>
+        </div>
+        <div class="p-2">
+          <button class="btn btn-primary btn-sm active" (click)="turnForm()">
+            <i class="bx bx-arrow-from-left"></i> Turnar Muestreo
+          </button>
+        </div>
       </div>
     </div>
     <div class="row pt-4">
@@ -188,12 +195,12 @@
                       >
                     </li>
                     <li role="menuitem">
-                      <a class="dropdown-item"
+                      <a class="dropdown-item" (click)="uploadImages()"
                         ><i class="bx bx-images"></i> Fotografía</a
                       >
                     </li>
                     <li role="menuitem">
-                      <a class="dropdown-item"
+                      <a class="dropdown-item" (click)="exportCsv()"
                         ><i class="bx bx-download"></i> Descarga Archivo</a
                       >
                     </li>
@@ -222,35 +229,46 @@
             </div>
           </div>
           <div class="row pt-1">
-            <ng2-smart-table
-              [attr.class]="'table-bordered'"
-              [settings]="settings3"
-              [source]="paragraphs3"
-              (userRowSelect)="selectAsstsCopy($event)">
-            </ng2-smart-table>
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng-scrollbar track="all" style="min-height: 200px; border: none">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settings3"
+                  [source]="paragraphs3"
+                  (userRowSelect)="selectAsstsCopy($event)">
+                </ng2-smart-table>
+              </ng-scrollbar>
+            </div>
             <app-pagination
               [params]="params3"
               [totalItems]="totalItems3"></app-pagination>
           </div>
         </tab>
-        <tab heading="Deductivas"> ingresar datos </tab>
+        <tab heading="Deductivas">
+          <div class="row pt-2">
+            <table class="table table-bordered">
+              <thead>
+                <tr style="text-align: center">
+                  <th scope="col">Descripción deductiva</th>
+                  <th scope="col">Observaciones</th>
+                  <th scope="col">Seleccion</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Desguardo de expediente 25%</td>
+                  <td>
+                    <input type="text" name="" id="observation" />
+                  </td>
+                  <td style="text-align: center">
+                    <input type="checkbox" name="" id="" />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </tab>
       </tabset>
-    </div>
-  </div>
-  <div class="d-flex justify-content-center">
-    <!-- <div class="m-3">
-      <button
-        type="button"
-        class="btn btn-primary active"
-        [disabled]="registRequestForm.invalid"
-        (click)="confirm()">
-        <i class="bx bxs-right-arrow-square"></i> {{ btnTitle }}
-      </button>
-    </div> -->
-    <div class="m-3">
-      <button type="button" class="btn btn-danger active" (click)="close()">
-        Salir
-      </button>
     </div>
   </div>
 </app-card>
