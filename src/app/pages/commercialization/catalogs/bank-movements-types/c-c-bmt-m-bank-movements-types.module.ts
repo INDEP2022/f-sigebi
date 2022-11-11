@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 //Shared
 import { SharedModule } from 'src/app/shared/shared.module';
 //Reactive Forms
@@ -11,18 +11,15 @@ import { CCBmtMBankMovementsTypesRoutingModule } from './c-c-bmt-m-bank-movement
 //Components
 import { CCBmtCBankMovementsTypesComponent } from './bank-movements-types/c-c-bmt-c-bank-movements-types.component';
 
-
 @NgModule({
-  declarations: [
-    CCBmtCBankMovementsTypesComponent
-  ],
+  declarations: [CCBmtCBankMovementsTypesComponent],
   imports: [
     CommonModule,
     CCBmtMBankMovementsTypesRoutingModule,
     SharedModule,
     FormsModule,
     ReactiveFormsModule,
-    BanksSharedComponent
-  ]
+    BanksSharedComponent,
+  ],
 })
-export class CCBmtMBankMovementsTypesModule { }
+export class CCBmtMBankMovementsTypesModule {}

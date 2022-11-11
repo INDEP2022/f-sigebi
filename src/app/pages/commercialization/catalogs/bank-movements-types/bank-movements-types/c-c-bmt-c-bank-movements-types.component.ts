@@ -6,18 +6,19 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
 //Provisional Data
-import { data, dataBA} from './data';
+import { data, dataBA } from './data';
 
 @Component({
   selector: 'app-c-c-bmt-c-bank-movements-types',
   templateUrl: './c-c-bmt-c-bank-movements-types.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CCBmtCBankMovementsTypesComponent extends BasePage implements OnInit {
-
+export class CCBmtCBankMovementsTypesComponent
+  extends BasePage
+  implements OnInit
+{
   //PROVISIONAL Bank Account DATA
-  bankAccounts:any[]=dataBA;
+  bankAccounts: any[] = dataBA;
 
   form: FormGroup = new FormGroup({});
 
@@ -50,8 +51,7 @@ export class CCBmtCBankMovementsTypesComponent extends BasePage implements OnIni
 
   private prepareForm(): void {
     this.form = this.fb.group({
-      bank: [null, [Validators.required]]
+      bank: [null, [Validators.required]],
     });
   }
-
 }

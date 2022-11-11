@@ -6,13 +6,15 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ImplementationReportHistoricComponent } from '../implementation-report-historic/implementation-report-historic.component';
-import { IMPLEMENTATIONREPORT_COLUMNS, IMPLEMENTATION_COLUMNS } from './implementation-report-columns';
+import {
+  IMPLEMENTATIONREPORT_COLUMNS,
+  IMPLEMENTATION_COLUMNS,
+} from './implementation-report-columns';
 
 @Component({
   selector: 'app-implementation-report',
   templateUrl: './implementation-report.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ImplementationReportComponent extends BasePage implements OnInit {
   serviceOrdersForm: FormGroup;
@@ -37,7 +39,6 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
     };
     this.settings2.columns = IMPLEMENTATION_COLUMNS;
   }
-
 
   ngOnInit(): void {
     this.prepareForm();
@@ -84,7 +85,7 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
     let config: ModalOptions = {
       initialState: {
         data,
-        callback: (next: boolean) => { },
+        callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,

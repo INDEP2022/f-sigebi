@@ -5,12 +5,12 @@ import { MsgRsbCRegisterRequestGoodsComponent } from './register-request-goods/m
 const routes: Routes = [
   {
     path: '',
-    component: MsgRsbCRegisterRequestGoodsComponent
-  }
+    component: MsgRsbCRegisterRequestGoodsComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class MsgRsbMRegisterRequestGoodsRoutingModule { }
+export class MsgRsbMRegisterRequestGoodsRoutingModule {}

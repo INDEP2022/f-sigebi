@@ -10,7 +10,9 @@
         <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
           <app-banks-shared [form]="form"></app-banks-shared>
         </div>
-        <div class="col-lg-6 col-md-6 col-sm-12 col-12 align-self-baseline" *ngIf="form.get('bank').value !== null">
+        <div
+          class="col-lg-6 col-md-6 col-sm-12 col-12 align-self-baseline"
+          *ngIf="form.get('bank').value !== null">
           <div class="row justify-content-end">
             <div class="col-12 align-self-baseline">
               <div class="row justify-content-end">
@@ -22,7 +24,7 @@
                 <div class="col-lg-5 col-md-6 col-sm-6 col-12">
                   <div class="mt-4">
                     <h5 class="font-size-14">
-                      <i class='bx bx-card me-1 text-primary'></i>
+                      <i class="bx bx-card me-1 text-primary"></i>
                       No.Cuenta
                     </h5>
                     <p class="text-muted mb-0">{{ bankAccounts[0].id }}</p>
@@ -31,7 +33,7 @@
                 <div class="col-lg-5 col-md-6 col-sm-6 col-12">
                   <div class="mt-4">
                     <h5 class="font-size-14">
-                      <i class='bx bx-building me-1 text-primary'></i>
+                      <i class="bx bx-building me-1 text-primary"></i>
                       Sucursal
                     </h5>
                     <p class="text-muted mb-0">{{ bankAccounts[0].office }}</p>
@@ -43,7 +45,7 @@
         </div>
       </div>
     </form>
-    
+
     <!--SALE STATUS TABLE-->
     <div class="row pt-4">
       <div class="col-md-12">

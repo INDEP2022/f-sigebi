@@ -4,12 +4,13 @@ import { CPMAdditionalValuesComponent } from './c-p-m-additional-values/c-p-m-ad
 
 const routes: Routes = [
   {
-    path: '', component: CPMAdditionalValuesComponent
-  }
+    path: '',
+    component: CPMAdditionalValuesComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CPMAdditionalValuesRoutingModule { }
+export class CPMAdditionalValuesRoutingModule {}

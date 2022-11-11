@@ -4,12 +4,13 @@ import { ImplementationReportComponent } from './implementation-report/implement
 
 const routes: Routes = [
   {
-    path: '', component: ImplementationReportComponent
-  }
+    path: '',
+    component: ImplementationReportComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ImplementationReportRoutingModule { }
+export class ImplementationReportRoutingModule {}
