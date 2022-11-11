@@ -110,6 +110,13 @@ const routes: Routes = [
         .ManageSimilarGoodsModule,
     data: { title: '' },
   },
+  {
+    path: 'economic-compensation',
+    loadChildren: async () =>
+      (await import('./economic-compensation/economic-compensation.module'))
+        .EconomicCompensationModule,
+    data: { title: '' },
+  },
 ];
 
 @NgModule({
