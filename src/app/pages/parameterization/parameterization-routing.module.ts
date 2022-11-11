@@ -50,6 +50,63 @@ const routes: Routes = [
       ).CPMFlyerSubjectCatalogModule,
     data: { title: 'Catálogo de asuntos para volantes' },
   },
+  {
+    path: 'c-p-m-register-attributes-types',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-register-attributes-types/c-p-m-register-attributes-types.module'
+        )
+      ).CPMRegisterAttributesTypesModule,
+    data: { title: 'Alta de atributos por tipo de bien' },
+  },
+  {
+    path: 'c-p-m-cat-effective-numeraire',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-cat-effective-numeraire/c-p-m-cat-effective-numeraire.module'
+        )
+      ).CPMCatEffectiveNumeraireModule,
+    data: { title: 'Categoria para numerario efectivo' },
+  },
+  {
+    path: 'c-p-m-bank-concepts',
+    loadChildren: async () =>
+      (await import('./c-p-m-bank-concepts/c-p-m-bank-concepts.module'))
+        .CPMBankConceptsModule,
+    data: { title: 'Conceptos bancarios' },
+  },
+  {
+    path: 'c-p-m-cat-depository-payment',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-cat-depository-payment/c-p-m-cat-depository-payment.module'
+        )
+      ).CPMCatDepositoryPaymentModule,
+    data: { title: 'Catalogo de conceptos de pagos depositarias' },
+  },
+  {
+    path: 'c-p-m-maintenance-deleg-subdeleg',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-maintenance-deleg-subdeleg/c-p-m-maintenance-deleg-subdeleg.module'
+        )
+      ).CPMMaintenanceDelegSubdelegModule,
+    data: { title: 'Mant. a delegaciones y subdelegaciones' },
+  },
+  {
+    path: 'c-p-m-mnce-adm-depository-auditor',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-mnce-adm-depository-auditor/c-p-m-mnce-adm-depository-auditor.module'
+        )
+      ).CPMMnceAdmDepositoryAuditorModule,
+    data: { title: 'Mantto. a administrador, depositario e interventor' },
+  },
   //Alexander
   {
     path: 'maintenance-of-areas',
@@ -61,16 +118,39 @@ const routes: Routes = [
       ).CPMMaintenanceOfAreasModule,
     data: { title: 'Catálogo de Mantenimiento de Areas' },
   },
+  {
+    path: 'profile-maintenance',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-profile-maintenance/c-p-m-profile-maintenance.module'
+        )
+      ).CPMProfileMaintenanceModule,
+    data: { title: 'Mantenimiento a perfiles' },
+  },
   //Félix
   {
     path: 'values',
     loadChildren: async () =>
+      (await import('./c-p-m-values/c-p-m-values.module')).CPMValuesModule,
+    data: { title: 'Valores' },
+  },
+  {
+    path: 'additional-values',
+    loadChildren: async () =>
+      (await import('./c-p-m-additional-values/c-p-m-additional-values.module'))
+        .CPMAdditionalValuesModule,
+    data: { title: 'Valores Adicionales' },
+  },
+  {
+    path: 'appraisal-institutions',
+    loadChildren: async () =>
       (
         await import(
-          './c-p-m-values/c-p-m-values.module'
+          './c-p-m-appraisal-institutions/c-p-m-appraisal-institutions.module'
         )
-      ).CPMValuesModule,
-    data: { title: 'Valores' },
+      ).CPMAppraisalInstitutionsModule,
+    data: { title: 'Instituciones Valuadoras' },
   },
 ];
 
@@ -78,4 +158,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class ParameterizationRoutingModule { }
+export class ParameterizationRoutingModule {}

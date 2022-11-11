@@ -14,7 +14,7 @@ import { data } from './data';
 })
 export class CCSsCSaleStatusComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
-  eventTypesD = data;
+  saleStatusD = data;
 
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -36,7 +36,7 @@ export class CCSsCSaleStatusComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.data.load(this.eventTypesD);
+    this.data.load(this.saleStatusD);
   }
 
   selectRow(row: any) {

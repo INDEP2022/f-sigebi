@@ -1,0 +1,160 @@
+<form [formGroup]="altaUsuarioForm" class="form-material">
+  <div class="row w-100">
+    <div class="col-sm-12 col-12 col-md-12 p-4">
+      <h6>ALTA DEL USUARIO</h6>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-4">
+      <form-field
+        [control]="altaUsuarioForm.get('fechaSolicitudAlta')"
+        label="Fecha Solicitud Alta">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="fechaSolicitudAlta"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-4">
+      <form-field
+        [control]="altaUsuarioForm.get('fechaAlta')"
+        label="Fecha Alta">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="fechaAlta"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-4">
+      <form-field
+        [control]="altaUsuarioForm.get('usuarioAlta')"
+        label="usuario Alta">
+        <input type="text" class="form-control" formControlName="usuarioAlta" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-4 p-2">
+      <button
+        type="submit"
+        class="btn btn-primary btn-sm active m-2"
+        (click)="btnCrearUsuarioSIAB()">
+        Crear Usuario SIAB
+      </button>
+    </div>
+  </div>
+</form>
+<form [formGroup]="datosUsuarioForm" class="form-material">
+  <div class="row w-100">
+    <div class="col-sm-12 col-12 col-md-12 p-4">
+      <h6>DATOS DEL USUARIO</h6>
+    </div>
+    <div class="col-sm-12 col-12 col-md-4 p-4">
+      <form-field [control]="datosUsuarioForm.get('usuario')" label="Usuario">
+        <input type="text" class="form-control" formControlName="usuario" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-4 p-4">
+      <form-field [control]="datosUsuarioForm.get('perfil')" label="Perfil">
+        <input type="text" class="form-control" formControlName="perfil" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-4 p-4">
+      <form-field [control]="datosUsuarioForm.get('nombre')" label="Nombre">
+        <input type="text" class="form-control" formControlName="nombre" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-4">
+      <form-field [control]="datosUsuarioForm.get('rfc')" label="RFC">
+        <input type="text" class="form-control" formControlName="rfc" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-4">
+      <form-field [control]="datosUsuarioForm.get('curp')" label="CURP">
+        <input type="text" class="form-control" formControlName="curp" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-4 p-4">
+      <form-field [control]="datosUsuarioForm.get('calle')" label="Calle">
+        <input type="text" class="form-control" formControlName="calle" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-4">
+      <form-field
+        [control]="datosUsuarioForm.get('noInterior')"
+        label="noInterior">
+        <input type="text" class="form-control" formControlName="noInterior" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-4">
+      <ngx-select
+        [data]="items"
+        bindLabel="coloniaName"
+        label="Colonia"
+        value="id"
+        (fetchItems)="getFromSelect($event)"
+        [form]="datosUsuarioForm"
+        control="colonia"></ngx-select>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-4">
+      <form-field
+        [control]="datosUsuarioForm.get('codigoPostal')"
+        label="Código Postal">
+        <input
+          type="number"
+          class="form-control"
+          formControlName="codigoPostal" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-4">
+      <form-field [control]="datosUsuarioForm.get('telefono')" label="Teléfono">
+        <input type="text" class="form-control" formControlName="telefono" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-4">
+      <form-field
+        [control]="datosUsuarioForm.get('profesion')"
+        label="Profesión">
+        <input type="text" class="form-control" formControlName="profesion" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-4">
+      <form-field
+        [control]="datosUsuarioForm.get('correoElectronico')"
+        label="Correo Electrónico">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="correoElectronico" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-4 p-4">
+      <form-field [control]="datosUsuarioForm.get('noCargo')" label="No. Cargo">
+        <input type="text" class="form-control" formControlName="noCargo" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-4 p-4">
+      <ngx-select
+        [data]="items"
+        bindLabel="usuarioCopiaPermisosName"
+        label="Usuario Copia Permisos"
+        value="id"
+        (fetchItems)="getFromSelect($event)"
+        [form]="datosUsuarioForm"
+        control="usuarioCopiaPermisos"
+        data-toggle="tooltip"
+        data-placement="top"
+        title="
+        Seleccionar un Usuario, en caso de copiar los permisos a pantallas y
+        privilegios especiales de otro usuario."
+        label="Usuario Copia Permisos"></ngx-select>
+    </div>
+    <div class="col-sm-12 col-12 col-md-4 p-4">
+      <form-field
+        [control]="datosUsuarioForm.get('observaciones')"
+        label="Observaciones">
+        <textarea
+          class="form-control"
+          formControlName="observaciones"></textarea>
+      </form-field>
+    </div>
+  </div>
+</form>

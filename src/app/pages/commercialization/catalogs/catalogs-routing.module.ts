@@ -67,9 +67,36 @@ const routes: Routes = [
   {
     path: 'goods-available-sale-status',
     loadChildren: async () =>
-      (await import('./goods-available-sale/c-c-gas-m-goods-available-sale.module'))
-        .CCGasMGoodsAvailableSaleModule,
+      (
+        await import(
+          './goods-available-sale/c-c-gas-m-goods-available-sale.module'
+        )
+      ).CCGasMGoodsAvailableSaleModule,
     data: { title: 'Est. Bienes Disponibles para Comercializar' },
+  },
+  {
+    path: 'bank-movements-types',
+    loadChildren: async () =>
+      (
+        await import(
+          './bank-movements-types/c-c-bmt-m-bank-movements-types.module'
+        )
+      ).CCBmtMBankMovementsTypesModule,
+    data: { title: 'Tipos Movimiento Banco' },
+  },
+  {
+    path: 'parameters',
+    loadChildren: async () =>
+      (await import('./parameters/c-c-p-m-parameters.module'))
+        .CCPMParametersModule,
+    data: { title: 'Parámetros Comercialización' },
+  },
+  {
+    path: 'users-event-types',
+    loadChildren: async () =>
+      (await import('./users-event-types/c-c-uet-m-users-event-types.module'))
+        .CCUetMUsersEventTypesModule,
+    data: { title: 'Usuarios por Tipo de Evento' },
   },
 ];
 
