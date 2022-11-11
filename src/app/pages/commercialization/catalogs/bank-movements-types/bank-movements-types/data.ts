@@ -20,6 +20,6 @@ export const data = [
 export const dataBA = [
   {
     id: 1109,
-    office: 1
-  }
-]
+    office: 1,
+  },
+];

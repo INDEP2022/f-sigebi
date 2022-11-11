@@ -9,8 +9,7 @@ import { VALUES_COLUMNS } from './c-p-m-values-columns';
 @Component({
   selector: 'app-c-p-m-values',
   templateUrl: './c-p-m-values.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CPMValuesComponent extends BasePage implements OnInit {
   data1: any[] = [];
@@ -25,13 +24,12 @@ export class CPMValuesComponent extends BasePage implements OnInit {
     };
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
   openValues(data: any) {
     let config: ModalOptions = {
       initialState: {
         data,
-        callback: (next: boolean) => { },
+        callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
