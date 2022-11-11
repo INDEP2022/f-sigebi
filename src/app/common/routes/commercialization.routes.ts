@@ -220,11 +220,11 @@ export const COMMERCIALIZATION_ROUTES = [
         icon: 'folder',
         subItems: [
           {
-            label: 'Tipos de penalización',
+            label: 'Tipos de Penalización',
             link: '/pages/commercialization/catalogs/penalty-types',
           },
           {
-            label: 'Claves autorización envío ext. OIs',
+            label: 'Claves Autorización Envío Ext. OIs',
             link: '/pages/commercialization/catalogs/authorization-keys-ois',
           },
           {
@@ -262,6 +262,10 @@ export const COMMERCIALIZATION_ROUTES = [
           {
             label: 'Parámetros Comercialización',
             link: '/pages/commercialization/catalogs/parameters'
+          },
+          {
+            label: 'Usuarios por Tipo de Evento',
+            link: '/pages/commercialization/catalogs/users-event-types'
           }
         ],
       },
