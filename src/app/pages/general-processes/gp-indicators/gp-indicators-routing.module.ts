@@ -64,6 +64,15 @@ const routes: Routes = [
       (await import('./gp-i-consolidated/gp-i-consolidated.module'))
         .GpIConsolidatedModule,
   },
+  {
+    path: 'incident-maintenance',
+    loadChildren: async () =>
+      (
+        await import(
+          './gp-i-incident-maintenance/gp-i-incident-maintenance.module'
+        )
+      ).GpIIncidentMaintenanceModule,
+  },
 ];
 
 @NgModule({

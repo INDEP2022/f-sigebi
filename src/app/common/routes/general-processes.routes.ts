@@ -74,7 +74,27 @@ export const GENERAL_PROCESSES_ROUTES = [
             label: 'Consolidado',
             link: '/pages/general-processes/indicators/consolidated',
           },
+          {
+            label: 'Mantenimiento de Incidentes',
+            link: '/pages/general-processes/indicators/incident-maintenance',
+          },
         ],
+      },
+      {
+        label: 'Generación de Fichas Técnicas',
+        link: '/pages/general-processes/bulk-technical-sheets-generation',
+      },
+      {
+        label: 'Depuración de Imagenes',
+        link: '/pages/general-processes/image-debugging',
+      },
+      {
+        label: 'Cambio de Estatus',
+        link: '/pages/general-processes/status-change',
+      },
+      {
+        label: 'Borrado Masivo de Bienes',
+        link: '/pages/general-processes/mass-goods-deletion',
       },
     ],
   },

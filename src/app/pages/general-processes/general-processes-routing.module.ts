@@ -64,6 +64,33 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./gp-indicators/gp-indicators.module')).GpIndicatorsModule,
   },
+  {
+    path: 'bulk-technical-sheets-generation',
+    loadChildren: async () =>
+      (
+        await import(
+          './gp-bulk-technical-sheets-generation/gp-bulk-technical-sheets-generation.module'
+        )
+      ).GpBulkTechnicalSheetsGenerationModule,
+  },
+  {
+    path: 'image-debugging',
+    loadChildren: async () =>
+      (await import('./gp-image-debugging/gp-image-debugging.module'))
+        .GpImageDebuggingModule,
+  },
+  {
+    path: 'status-change',
+    loadChildren: async () =>
+      (await import('./gp-status-change/gp-status-change.module'))
+        .GpStatusChangeModule,
+  },
+  {
+    path: 'mass-goods-deletion',
+    loadChildren: async () =>
+      (await import('./gp-mass-goods-deletion/gp-mass-goods-deletion.module'))
+        .GpMassGoodsDeletionModule,
+  },
 ];
 
 @NgModule({
