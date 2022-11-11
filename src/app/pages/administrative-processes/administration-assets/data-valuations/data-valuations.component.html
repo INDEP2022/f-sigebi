@@ -1,0 +1,7 @@
+<div class="container">
+  <app-columns-select [(settings)]="settings"></app-columns-select>
+  <br />
+  <ng-scrollbar [track]="'all'" style="min-height: 120px">
+    <ng2-smart-table [settings]="settings" [source]="list"> </ng2-smart-table>
+  </ng-scrollbar>
+</div>
