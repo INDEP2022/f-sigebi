@@ -257,8 +257,12 @@ export const COMMERCIALIZATION_ROUTES = [
           },
           {
             label: 'Tipos Movimiento Banco',
-            link: '/pages/commercialization/catalogs/bank-movements-types',
+            link: '/pages/commercialization/catalogs/bank-movements-types'
           },
+          {
+            label: 'Parámetros Comercialización',
+            link: '/pages/commercialization/catalogs/parameters'
+          }
         ],
       },
       {

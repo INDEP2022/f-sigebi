@@ -1,0 +1,15 @@
+<div class="container">
+  <p>Ingresos del Bien</p>
+  <br />
+  <ng-scrollbar [track]="'all'" style="min-height: 120px">
+    <ng2-smart-table [settings]="assetSettings" [source]="assetList">
+    </ng2-smart-table>
+  </ng-scrollbar>
+  <br />
+  <p>Busqueda de depositos</p>
+  <br />
+  <ng-scrollbar [track]="'all'" style="min-height: 120px">
+    <ng2-smart-table [settings]="depositSettings" [source]="depositList">
+    </ng2-smart-table>
+  </ng-scrollbar>
+</div>

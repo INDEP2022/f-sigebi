@@ -1,0 +1,69 @@
+<form class="form-material" [formGroup]="inventoryDataForm">
+  <div class="row">
+    <div class="col">
+      <form-field
+        [control]="inventoryDataForm.get('noInventario')"
+        label="No. Inventario">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="noInventario" />
+      </form-field>
+    </div>
+    <div class="col">
+      <form-field
+        [control]="inventoryDataForm.get('fechaInventario')"
+        label="Fecha Inventario">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="fechaInventario"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col">
+      <form-field
+        [control]="inventoryDataForm.get('responsable')"
+        label="Responsable">
+        <input type="text" class="form-control" formControlName="responsable" />
+      </form-field>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <button class="btn btn-secondary btn-sm active">Obtener Atributos</button>
+    </div>
+    <div class="col">
+      <ng-scrollbar style="height: calc(100vh - 700px)">
+        <div class="css-table" style="width: 100%">
+          <div class="css-table-header">
+            <div style="width: 50%">Atributo</div>
+            <div style="width: 50%">Valor</div>
+          </div>
+
+          <div class="css-table-body">
+            <div class="css-table-row" *ngFor="let item of list">
+              <div style="text-align: end; font-weight: bold">
+                {{ item.atributo }}
+              </div>
+              <div>
+                <input
+                  type="text"
+                  class="form-control"
+                  [value]="item.valor"
+                  style="background-color: #afeeee" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-scrollbar>
+    </div>
+  </div>
+  <div class="d-flex justify-content-center">
+    <div>
+      <button class="btn btn-secondary btn-sm active">
+        Inventario Autoridad Emisora
+      </button>
+    </div>
+  </div>
+</form>
