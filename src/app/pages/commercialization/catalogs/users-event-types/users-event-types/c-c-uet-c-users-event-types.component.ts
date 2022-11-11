@@ -6,24 +6,20 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
 //Provisional Data
-import { data, dataBA } from './data';
+import { data } from './data';
 
 @Component({
-  selector: 'app-c-c-bmt-c-bank-movements-types',
-  templateUrl: './c-c-bmt-c-bank-movements-types.component.html',
-  styles: [],
+  selector: 'app-c-c-uet-c-users-event-types',
+  templateUrl: './c-c-uet-c-users-event-types.component.html',
+  styles: [
+  ]
 })
-export class CCBmtCBankMovementsTypesComponent
-  extends BasePage
-  implements OnInit
-{
-  //PROVISIONAL Bank Account DATA
-  bankAccounts: any[] = dataBA;
+export class CCUetCUsersEventTypesComponent extends BasePage implements OnInit {
 
   form: FormGroup = new FormGroup({});
 
   data: LocalDataSource = new LocalDataSource();
-  banksMovD = data;
+  eventTypesPuD = data;
 
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -45,13 +41,14 @@ export class CCBmtCBankMovementsTypesComponent
   }
 
   ngOnInit(): void {
-    this.data.load(this.banksMovD);
+    this.data.load(this.eventTypesPuD);
     this.prepareForm();
   }
 
   private prepareForm(): void {
     this.form = this.fb.group({
-      bank: [null, [Validators.required]],
+      event: [null, [Validators.required]]
     });
   }
+
 }

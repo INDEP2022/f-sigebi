@@ -15,7 +15,7 @@ import { data } from './data';
 })
 export class CCPlCParametersListComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();
-  eventTypesD = data;
+  parametersD = data;
 
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -37,7 +37,7 @@ export class CCPlCParametersListComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.data.load(this.eventTypesD);
+    this.data.load(this.parametersD);
   }
 
   selectRow(row: any) {

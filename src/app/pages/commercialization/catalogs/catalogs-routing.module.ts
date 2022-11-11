@@ -91,6 +91,13 @@ const routes: Routes = [
         .CCPMParametersModule,
     data: { title: 'Parámetros Comercialización' },
   },
+  {
+    path: 'users-event-types',
+    loadChildren: async () =>
+      (await import('./users-event-types/c-c-uet-m-users-event-types.module'))
+        .CCUetMUsersEventTypesModule,
+    data: { title: 'Usuarios por Tipo de Evento' },
+  },
 ];
 
 @NgModule({
