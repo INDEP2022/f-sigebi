@@ -11,12 +11,9 @@
           </form-check>
         </div>
         <div class="col-md-2 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('warehouse')" label="Almacén">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="warehouse" />
-          </form-field>
+          <app-warehouse-shared
+            [form]="form"
+            [showWarehouseType]="false"></app-warehouse-shared>
         </div>
         <div class="col-md-2 col-sm-12 col-xs-12">
           <div class="d-flex justify-content-center">

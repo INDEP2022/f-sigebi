@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { WarehouseSharedComponent } from 'src/app/@standalone/shared-forms/warehouse-shared/warehouse-shared.component';
 
 import { SharedModule } from 'src/app/shared/shared.module';
 import { CPMWareahouseCatalogRoutingModule } from './c-p-m-wareahouse-catalog-routing.module';
@@ -7,6 +8,11 @@ import { CPWcCWareahouseCatalogComponent } from './c-p-wc-c-wareahouse-catalog/c
 
 @NgModule({
   declarations: [CPWcCWareahouseCatalogComponent],
-  imports: [CommonModule, CPMWareahouseCatalogRoutingModule, SharedModule],
+  imports: [
+    CommonModule,
+    CPMWareahouseCatalogRoutingModule,
+    SharedModule,
+    WarehouseSharedComponent,
+  ],
 })
 export class CPMWareahouseCatalogModule {}
