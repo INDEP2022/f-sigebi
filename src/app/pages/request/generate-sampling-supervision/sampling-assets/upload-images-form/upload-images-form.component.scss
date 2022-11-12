@@ -1,0 +1,18 @@
+a.text-color:hover,
+a.text-color:active {
+  color: #9d2449;
+  cursor: pointer;
+}
+
+:host {
+  ::ng-deep ng2-smart-table {
+    app-ver-imagen-input {
+      padding-right: 4rem !important;
+
+      button:hover {
+        text-decoration-line: underline !important;
+        color: #9d2449 !important;
+      }
+    }
+  }
+}

@@ -34,6 +34,15 @@ var usuario: IRequestList[] = [
     created: 'tester_nsbxt',
     process: 'RegistroSolicitudes',
   },
+  {
+    title:
+      'RESARCIMIENTO NUMERARIO: Registro de Documentación Complementaria, No. Solicitud: 1896',
+    noRequest: 1896,
+    numTask: 212028,
+    noInstance: 450060,
+    created: 'tester_nsbxt',
+    process: 'RE_RegistrarDocumentacion',
+  },
 ];
 
 @Component({
@@ -73,19 +82,29 @@ export class RequestListComponent extends BasePage implements OnInit {
 
   editRequest(event: any) {
     console.log(event);
-    if (event.data.process == 'SolicitudProgramación') {
-      // en el caso de que sea una solicitud de programacion
-      this.router.navigate([
-        'pages/request/transfer-request/registration-request',
-        1,
-      ]);
-    }
-    if (event.data.process == 'RegistroSolicitudes') {
-      // en el caso de que el proceso seleccionado sea Bienes Similares
-      this.router.navigate([
-        'pages/request/manage-similar-goods/register-request-goods',
-        event.data.noRequest,
-      ]);
+    switch (event.data.process) {
+      case 'SolicitudProgramación':
+        // en el caso de que sea una solicitud de programacion
+        this.router.navigate([
+          'pages/request/transfer-request/registration-request',
+          1,
+        ]);
+        break;
+      case 'RegistroSolicitudes':
+        // en el caso de que el proceso seleccionado sea Bienes Similares
+        this.router.navigate([
+          'pages/request/manage-similar-goods/register-request-goods',
+          event.data.noRequest,
+        ]);
+        break;
+      case 'RE_RegistrarDocumentacion':
+        // en el caso de que sea una solicitud de programacion
+        this.router.navigate([
+          `pages/request/economic-compensation/register-documentation/${event.data.noRequest}`,
+        ]);
+        break;
+      default:
+        break;
     }
   }
 
