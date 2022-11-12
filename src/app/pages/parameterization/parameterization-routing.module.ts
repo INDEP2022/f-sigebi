@@ -128,6 +128,26 @@ const routes: Routes = [
       ).CPMProfileMaintenanceModule,
     data: { title: 'Mantenimiento a perfiles' },
   },
+  {
+    path: 'maintenance-of-public-ministries',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-maintenance-of-public-ministries/c-p-m-maintenance-of-public-ministries.module'
+        )
+      ).CPMMaintenanceOfPublicMinistriesModule,
+    data: { title: 'Mantenimiento a ministerios publicos' },
+  },
+  {
+    path: 'wareahouse-catalog',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-wareahouse-catalog/c-p-m-wareahouse-catalog.module'
+        )
+      ).CPMWareahouseCatalogModule,
+    data: { title: 'Mantenimiento a ministerios publicos' },
+  },
   //Félix
   {
     path: 'values',
