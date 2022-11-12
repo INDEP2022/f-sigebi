@@ -127,6 +127,13 @@ const routes: Routes = [
       ).CPMRegisterKeysLogicalTablesModule,
     data: { title: 'Registro de claves para tablas logicas' },
   },
+  {
+    path: 'c-p-m-cat-doc-require',
+    loadChildren: async () =>
+      (await import('./c-p-m-cat-doc-require/c-p-m-cat-doc-require.module'))
+        .CPMCatDocRequireModule,
+    data: { title: 'Catálogo de requisitos documentales' },
+  },
   //Alexander
   {
     path: 'maintenance-of-areas',

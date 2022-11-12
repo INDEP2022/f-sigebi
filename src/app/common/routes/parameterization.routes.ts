@@ -56,6 +56,10 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Registro de claves para tablas logicas',
         link: '/pages/parameterization/c-p-m-register-keys-logical-tables',
       },
+      {
+        label: 'Catálogo de requisitos documentales',
+        link: '/pages/parameterization/c-p-m-cat-doc-require',
+      },
       //Alexander
       {
         label: 'Catálogo de Mantenimiento de Areas',
