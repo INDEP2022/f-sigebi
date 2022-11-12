@@ -61,6 +61,10 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Catálogo de Bancos',
         link: '/pages/parameterization/banks-catalog',
       },
+      {
+        label: 'Filtros de bienes para donación',
+        link: '/pages/parameterization/filters-of-goods-for-donation',
+      },
       //Félix
       {
         label: 'Valores',

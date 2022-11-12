@@ -135,6 +135,16 @@ const routes: Routes = [
         .CPMBanksCatalogModule,
     data: { title: 'Catálogo de Bancos' },
   },
+  {
+    path: 'filters-of-goods-for-donation',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-filters-of-goods-for-donation/c-p-m-filters-of-goods-for-donation.module'
+        )
+      ).CPMFiltersOfGoodsForDonationModule,
+    data: { title: 'Filtros de bienes para donación' },
+  },
   //Félix
   {
     path: 'values',
