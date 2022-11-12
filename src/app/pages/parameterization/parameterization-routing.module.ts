@@ -128,6 +128,13 @@ const routes: Routes = [
       ).CPMProfileMaintenanceModule,
     data: { title: 'Mantenimiento a perfiles' },
   },
+  {
+    path: 'banks-catalog',
+    loadChildren: async () =>
+      (await import('./c-p-m-banks-catalog/c-p-m-banks-catalog.module'))
+        .CPMBanksCatalogModule,
+    data: { title: 'Catálogo de Bancos' },
+  },
   //Félix
   {
     path: 'values',

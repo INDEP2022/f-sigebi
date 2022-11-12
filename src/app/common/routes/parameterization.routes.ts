@@ -57,6 +57,10 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Mantenimiento a perfiles',
         link: '/pages/parameterization/profile-maintenance',
       },
+      {
+        label: 'Catálogo de Bancos',
+        link: '/pages/parameterization/banks-catalog',
+      },
       //Félix
       {
         label: 'Valores',
