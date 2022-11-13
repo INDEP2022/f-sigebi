@@ -145,6 +145,13 @@ const routes: Routes = [
       ).CPMFiltersOfGoodsForDonationModule,
     data: { title: 'Filtros de bienes para donación' },
   },
+  {
+    path: 'court-maintenance',
+    loadChildren: async () =>
+      (await import('./c-p-m-court-maintenance/c-p-m-court-maintenance.module'))
+        .CPMCourtMaintenanceModule,
+    data: { title: 'Mantenimiento a juzgados' },
+  },
   //Félix
   {
     path: 'values',

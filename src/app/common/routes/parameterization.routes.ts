@@ -65,6 +65,10 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Filtros de bienes para donación',
         link: '/pages/parameterization/filters-of-goods-for-donation',
       },
+      {
+        label: 'Mantenimiento a juzgados',
+        link: '/pages/parameterization/court-maintenance',
+      },
       //Félix
       {
         label: 'Valores',
