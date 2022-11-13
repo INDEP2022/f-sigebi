@@ -69,6 +69,10 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Mantenimiento a juzgados',
         link: '/pages/parameterization/court-maintenance',
       },
+      {
+        label: 'Mantenimiento de personas fisicas y morales',
+        link: '/pages/parameterization/maintenance-individuals-and-companies',
+      },
       //Félix
       {
         label: 'Valores',

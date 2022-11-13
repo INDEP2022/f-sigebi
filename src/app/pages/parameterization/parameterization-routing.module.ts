@@ -152,6 +152,18 @@ const routes: Routes = [
         .CPMCourtMaintenanceModule,
     data: { title: 'Mantenimiento a juzgados' },
   },
+  {
+    path: 'maintenance-individuals-and-companies',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-maintenance-individuals-and-companies/c-p-m-maintenance-individuals-and-companies.module'
+        )
+      ).CPMMaintenanceIndividualsAndCompaniesModule,
+    data: {
+      title: 'Mantenimiento de personas fisicas y morales',
+    },
+  },
   //Félix
   {
     path: 'values',
