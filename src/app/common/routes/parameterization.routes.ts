@@ -73,6 +73,10 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Mantenimiento de personas fisicas y morales',
         link: '/pages/parameterization/maintenance-individuals-and-companies',
       },
+      {
+        label: 'Catálogo de Costos',
+        link: '/pages/parameterization/cost-catalog',
+      },
       //Félix
       {
         label: 'Valores',

@@ -164,6 +164,15 @@ const routes: Routes = [
       title: 'Mantenimiento de personas fisicas y morales',
     },
   },
+  {
+    path: 'cost-catalog',
+    loadChildren: async () =>
+      (await import('./c-p-m-cost-catalog/c-p-m-cost-catalog.module'))
+        .CPMCostCatalogModule,
+    data: {
+      title: 'Catálogo de Costos',
+    },
+  },
   //Félix
   {
     path: 'values',
