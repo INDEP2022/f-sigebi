@@ -1,25 +1,22 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IRequestInformation } from '../../../../../core/models/requests/requestInformation.model';
 
 @Component({
-  selector: 'app-gre-c-register-documentation-main',
-  templateUrl: './gre-c-register-documentation-main.component.html',
+  selector: 'app-gre-c-economic-resources-main',
+  templateUrl: './gre-c-economic-resources-main.component.html',
   styles: [],
 })
-export class GreCRegisterDocumentationMainComponent
+export class GreCEconomicResourcesMainComponent
   extends BasePage
   implements OnInit
 {
   requestId: number = NaN;
+  contributor: string = '';
   requestInfo: IRequestInformation;
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private fb: FormBuilder
-  ) {
+
+  constructor(private route: ActivatedRoute, private router: Router) {
     super();
   }
 
@@ -45,6 +42,7 @@ export class GreCRegisterDocumentationMainComponent
       emitter: 'ALAF',
       authority: 'ADMINISTRACIÓN LOCAL DE AUDITORÍA FISCAL DE MEXICALI',
     };
+    this.contributor = 'CARLOS G. PALMA';
   }
 
   close() {

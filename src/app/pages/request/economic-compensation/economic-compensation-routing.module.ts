@@ -12,6 +12,16 @@ const routes: Routes = [
       ).GreMRegisterDocumentationModule,
     data: { title: 'Registrar Solicitud de Resarcimiento Económico' },
   },
+  {
+    path: 'economic-resources',
+    loadChildren: async () =>
+      (
+        await import(
+          './gre-m-economic-resources/gre-m-economic-resources.module'
+        )
+      ).GreMEconomicResourcesModule,
+    data: { title: 'Solicitud de Recursos Económicos' },
+  },
 ];
 
 @NgModule({

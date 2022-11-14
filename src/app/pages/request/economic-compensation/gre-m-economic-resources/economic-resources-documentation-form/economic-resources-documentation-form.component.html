@@ -27,9 +27,17 @@
     </div>
     <div class="col-md-4">
       <form-field
-        [control]="registerForm.get('contributor')"
-        label="Contribuyente y/o Indiciado">
-        <input type="text" formControlName="contributor" class="form-control" />
+        [control]="registerForm.get('infoOrigin')"
+        label="Tipo Expediente">
+        <ng-select
+          formControlName="infoOrigin"
+          [searchable]="false"
+          class="form-control"
+          [clearable]="false">
+          <ng-option *ngFor="let o of infoOrigins" value="o.id">{{
+            o.description
+          }}</ng-option>
+        </ng-select>
       </form-field>
     </div>
     <div class="col-md-4">
@@ -51,50 +59,11 @@
   <div class="row mt-5">
     <div class="col-md-4">
       <form-field
-        [control]="registerForm.get('infoOrigin')"
-        label="Tipo Expediente">
-        <ng-select
-          formControlName="infoOrigin"
-          [searchable]="false"
-          class="form-control"
-          [clearable]="false">
-          <ng-option *ngFor="let o of infoOrigins" value="o.id">{{
-            o.description
-          }}</ng-option>
-        </ng-select>
-      </form-field>
-    </div>
-    <div class="col-md-4">
-      <form-field
-        [control]="registerForm.get('receptionDate')"
-        label="*Fecha Recepción">
-        <input
-          type="text"
-          formControlName="receptionDate"
-          class="form-control"
-          [maxDate]="maxDate"
-          bsDatepicker />
-      </form-field>
-    </div>
-    <div class="col-md-4">
-      <form-field
         [control]="registerForm.get('memorandumNo')"
         label="*No. Oficio">
         <input
           type="number"
           formControlName="memorandumNo"
-          class="form-control" />
-      </form-field>
-    </div>
-  </div>
-  <div class="row mt-5">
-    <div class="col-md-4">
-      <form-field
-        [control]="registerForm.get('transferFile')"
-        label="*Expediente Transferente / PAMA">
-        <input
-          type="text"
-          formControlName="transferFile"
           class="form-control" />
       </form-field>
     </div>
@@ -111,14 +80,43 @@
       </form-field>
     </div>
     <div class="col-md-4">
+      <p class="font-size-13">
+        <strong class="font-size-13">Asunto: </strong
+        >{{ registerForm.controls['subject'].value }}
+      </p>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-md-4">
+      <form-field
+        [control]="registerForm.get('transferFile')"
+        label="*Expediente Transferente / PAMA">
+        <input
+          type="text"
+          formControlName="transferFile"
+          class="form-control" />
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field [control]="registerForm.get('felony')" label="Delito">
+        <input type="text" formControlName="felony" class="form-control" />
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <p class="font-size-13">
+        <strong class="font-size-13">Vía de Recepción: </strong
+        >{{ registerForm.controls['receptionMethod'].value }}
+      </p>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-md-4">
       <form-field
         [control]="registerForm.get('senderName')"
         label="Nombre del Remitente">
         <input type="text" formControlName="senderName" class="form-control" />
       </form-field>
     </div>
-  </div>
-  <div class="row mt-5">
     <div class="col-md-4">
       <form-field
         [control]="registerForm.get('senderPosition')"
@@ -129,6 +127,14 @@
           class="form-control" />
       </form-field>
     </div>
+    <div class="col-md-4">
+      <p class="font-size-13">
+        <strong class="font-size-13">Tipo Transferencia: </strong
+        >{{ registerForm.controls['transferType'].value }}
+      </p>
+    </div>
+  </div>
+  <div class="row mt-5">
     <div class="col-md-4">
       <form-field
         [control]="registerForm.get('senderPhone')"
@@ -143,25 +149,12 @@
         <input type="text" formControlName="senderEmail" class="form-control" />
       </form-field>
     </div>
-  </div>
-  <div class="row mt-5">
     <div class="col-md-4">
-      <p class="font-size-13">
-        <strong class="font-size-13">Asunto: </strong
-        >{{ registerForm.controls['subject'].value }}
-      </p>
-    </div>
-    <div class="col-md-4">
-      <p class="font-size-13">
-        <strong class="font-size-13">Vía de Recepción: </strong
-        >{{ registerForm.controls['receptionMethod'].value }}
-      </p>
-    </div>
-    <div class="col-md-4">
-      <p class="font-size-13">
-        <strong class="font-size-13">Tipo Transferencia: </strong
-        >{{ registerForm.controls['transferType'].value }}
-      </p>
+      <form-field
+        [control]="registerForm.get('contributor')"
+        label="Contribuyente y/o Indiciado">
+        <input type="text" formControlName="contributor" class="form-control" />
+      </form-field>
     </div>
   </div>
   <div class="row mt-5">
