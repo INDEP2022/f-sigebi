@@ -11,11 +11,13 @@ export class FormDepositariaComponent extends BasePage implements OnInit {
   @Input() form: FormGroup;
   @Input() formDepositario: FormGroup;
   @Input() nombrePantalla: string;
+  @Input() btnDeshacerParam: string;
 
-  //   public form: FormGroup;
   @Output() formValues = new EventEmitter<any>();
   @Output() formDepositariaValues = new EventEmitter<any>();
+  @Output() formValuesValidacion = new EventEmitter<any>();
 
+  @Output() eliminarDispersionPagos = new EventEmitter<boolean>();
   constructor() {
     super();
   }
@@ -30,6 +32,9 @@ export class FormDepositariaComponent extends BasePage implements OnInit {
 
   btnDeshacer() {
     console.log('Deshacer');
+    this.eliminarDispersionPagos.emit(
+      this.form.get(this.btnDeshacerParam).valid
+    );
   }
 
   btnRecargaDepositario() {
@@ -40,11 +45,6 @@ export class FormDepositariaComponent extends BasePage implements OnInit {
 
   btnValidacionPagos() {
     console.log('Validacion');
+    this.formValuesValidacion.emit(this.form);
   }
-
-  /**
-   * Formulario
-   */
-  // public returnField(form, field) { return form.get(field); }
-  // public returnShowRequirements(form, field) { return this.returnField(form, field)?.errors?.required && this.returnField(form, field).touched; }
 }

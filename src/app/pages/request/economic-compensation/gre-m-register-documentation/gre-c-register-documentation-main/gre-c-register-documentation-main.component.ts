@@ -55,4 +55,12 @@ export class GreCRegisterDocumentationMainComponent
   requestRegistered(request: any) {
     console.log(request);
   }
+
+  turnRequest() {
+    this.alertQuestion('question', `¿Desea turnar la solicitud con Folio ${this.requestId}`, '', 'Turnar').then( question => {
+      if (question.isConfirmed) {
+        this.onLoadToast('success','Solicitud turnada con éxito','')
+      }
+    })
+  }
 }

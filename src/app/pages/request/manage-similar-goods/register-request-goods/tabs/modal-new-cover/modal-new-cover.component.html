@@ -1,0 +1,218 @@
+<app-card [header]="true">
+    <div class="ch-content" header>
+        <h5 class="title">Nueva Carátula
+        </h5>
+    </div>
+    <div body>
+        <div *ngIf="!showProceedingsDetail; else elseBlock">
+            <h5>
+                Datos de la Carátula
+            </h5>
+            <div class="pt-5">
+                <div class="col-md-6 border-right border-secondary pl-5 pr-5">
+                    <form class="form-material form-horizontal" [formGroup]="form" (ngSubmit)="onSubmit()">
+                        <div class="row mt-5">
+                            <div class="col-md-6">
+                                <div class="mb-3 pl-4 pr-4">
+                                    <form-field [control]="form.get('user')" label="Usuario">
+                                        <select class="form-control" formControlName="user">
+                                            <option [value]="null">Seleccione un valor</option>
+                                            <option [value]="1">1</option>
+                                            <option [value]="2">2</option>
+                                        </select>
+                                    </form-field>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3 pl-4 pr-4">
+                                    <form-field [control]="form.get('unit')" label="Unidad">
+                                        <select class="form-control" formControlName="unit">
+                                            <option [value]="null">Seleccione un valor</option>
+                                            <option [value]="1">1</option>
+                                            <option [value]="2">2</option>
+                                        </select>
+                                    </form-field>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3 pl-4 pr-4">
+                                    <form-field [control]="form.get('file')" label="Archivo">
+                                        <select class="form-control" formControlName="file">
+                                            <option [value]="null">Seleccione un valor</option>
+                                            <option [value]="1">1</option>
+                                            <option [value]="2">2</option>
+                                        </select>
+                                    </form-field>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3 pl-4 pr-4">
+                                    <form-field [control]="form.get('disposition')" label="Disposición">
+                                        <select class="form-control" formControlName="disposition">
+                                            <option [value]="null">Seleccione un valor</option>
+                                            <option [value]="1">1</option>
+                                            <option [value]="2">2</option>
+                                        </select>
+                                    </form-field>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3 pl-4 pr-4">
+                                    <form-field [control]="form.get('proceedingsDate')" label="Fecha Expediente">
+                                        <input type="text" class="form-control" bsDatepicker formControlName="proceedingsDate" />
+                                    </form-field>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3 pl-4 pr-4">
+                                    <form-field [control]="form.get('reserveDate')" label="Fecha de Reserva">
+                                        <input type="text" class="form-control" bsDatepicker formControlName="reserveDate" />
+                                    </form-field>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3 pl-4 pr-4">
+                                    <form-field [control]="form.get('fojas')" label="Fojas">
+                                        <input type="text" class="form-control" formControlName="fojas" />
+                                    </form-field>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3 pl-4 pr-4">
+                                    <form-field [control]="form.get('legajos')" label="Legajos">
+                                        <input type="text" class="form-control" formControlName="legajos" />
+                                    </form-field>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3 pl-4 pr-4">
+                                    <form-field [control]="form.get('regionalDeleg')" label="Delegación Regional">
+                                        <input type="text" class="form-control" formControlName="regionalDeleg" />
+                                    </form-field>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-6 pl-5 pr-5">
+                    <form class="form-material form-horizontal" [formGroup]="autocompleteForm">
+                        <div class="row mt-5">
+                            <div class="col-md-6">
+                                <div class="mb-3 pl-4 pr-4">
+                                    <form-field [control]="autocompleteForm.get('transf')" label="Transferente">
+                                        <input type="text" class="form-control" formControlName="transf" readonly />
+                                    </form-field>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3 pl-4 pr-4">
+                                    <form-field [control]="autocompleteForm.get('ddcId')" label="ddcId">
+                                        <input type="text" class="form-control" formControlName="ddcId" readonly />
+                                    </form-field>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3 pl-4 pr-4">
+                                    <form-field [control]="autocompleteForm.get('coding')" label="Codificación">
+                                        <input type="text" class="form-control" formControlName="coding" readonly />
+                                    </form-field>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3 pl-4 pr-4">
+                                    <form-field [control]="autocompleteForm.get('reservePeriod')" label="Periodo de Reserva">
+                                        <input type="text" class="form-control" formControlName="reservePeriod" readonly />
+                                    </form-field>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3 pl-4 pr-4">
+                                    <form-field [control]="autocompleteForm.get('clasification')" label="Claficación">
+                                        <input type="text" class="form-control" formControlName="clasification" readonly />
+                                    </form-field>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3 pl-4 pr-4">
+                                    <form-field [control]="autocompleteForm.get('documentarySection')" label="Sección Documental">
+                                        <input type="text" class="form-control" formControlName="documentarySection" readonly />
+                                    </form-field>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="mb-3 pl-4 pr-4">
+                                    <form-field [control]="autocompleteForm.get('documentarySeries')" label="Serie Documental">
+                                        <input type="text" class="form-control" formControlName="documentarySeries" readonly />
+                                    </form-field>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="mb-3 pl-4 pr-4">
+                                    <form-field [control]="autocompleteForm.get('validityFileProcess')" label="Vigencia del Archivo de Trámite">
+                                        <input type="text" class="form-control" formControlName="validityFileProcess" readonly />
+                                    </form-field>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="mb-3 pl-4 pr-4">
+                                    <form-field [control]="autocompleteForm.get('validityFileConcentration')" label="Vigencia de archivo de Concentración">
+                                        <input type="text" class="form-control" formControlName="validityFileConcentration" readonly />
+                                    </form-field>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="mb-3 pl-4 pr-4">
+                                    <form-field [control]="autocompleteForm.get('documentaryValues')" label="Valores Documentales">
+                                        <input type="text" class="form-control" formControlName="documentaryValues" readonly />
+                                    </form-field>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="row mt-4 justify-content-center">
+                <div class="col-md-2">
+                    <button class="btn btn-primary btn-sm active">
+                        Cancelar
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-secondary btn-sm active" (click)="generateCover()">
+                        Generar Carátula
+                    </button>
+                </div>
+            </div>
+        </div>
+        <ng-template #elseBlock>
+            <h5>
+                Detalle del Expediente
+            </h5>
+            <div class="pt-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        No. Expediente: 
+                    </div>
+                    <div class="col-md-6">
+                        Fecha Expediente: 
+                    </div>
+                </div>
+                <div class="row mt-4 justify-content-center">
+                    <div class="col-md-6">
+                        Usuario Creación
+                    </div>
+                    <div class="col-md-6">
+                        Fecha Creación:
+                    </div>
+                </div>
+                <div class="row mt-5 justify-content-center">
+                    <div class="col-md-2">
+                        <button class="btn btn-primary btn-sm active" (click)="closeModal()">
+                            Aceptar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </div>
+</app-card>

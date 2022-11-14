@@ -1,0 +1,14 @@
+a.text-color:hover,
+a.text-color:active {
+  color: #9d2449;
+  cursor: pointer;
+}
+
+:host ::ng-deep ng2-smart-table app-btn-request {
+  padding-right: 4rem !important;
+}
+:host ::ng-deep ng2-smart-table app-btn-request button:hover {
+  -webkit-text-decoration-line: underline !important;
+          text-decoration-line: underline !important;
+  color: #9d2449 !important;
+}/*# sourceMappingURL=doc-request-tab.component.css.map */

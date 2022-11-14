@@ -11,11 +11,9 @@ import { data } from './data';
 @Component({
   selector: 'app-c-c-uet-c-users-event-types',
   templateUrl: './c-c-uet-c-users-event-types.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CCUetCUsersEventTypesComponent extends BasePage implements OnInit {
-
   form: FormGroup = new FormGroup({});
 
   data: LocalDataSource = new LocalDataSource();
@@ -47,8 +45,7 @@ export class CCUetCUsersEventTypesComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.form = this.fb.group({
-      event: [null, [Validators.required]]
+      event: [null, [Validators.required]],
     });
   }
-
 }

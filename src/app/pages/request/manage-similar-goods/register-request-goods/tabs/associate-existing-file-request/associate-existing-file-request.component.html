@@ -1,0 +1,188 @@
+<h5 class="title">Solicitudes</h5>
+<br><br>
+
+<app-card [header]="true">
+    <div class="ch-content" header>
+        <h5 class="title">Buscar
+        </h5>
+    </div>
+    <div body>
+        <div class="pt-5">
+            <form class="form-material form-horizontal" [formGroup]="form" (ngSubmit)="onSubmit()">
+                <div class="row mt-5">
+                    <div class="col-md-3">
+                        <div class="mb-3 pl-4 pr-4">
+                            <form-field [control]="form.get('requestNumb')" label="No. Solicitud">
+                                <input type="text" class="form-control" bsDatepicker formControlName="requestNumb" />
+                            </form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3 pl-4 pr-4">
+                            <form-field [control]="form.get('proceedingsNumb')" label="No. Expediente">
+                                <input type="text" class="form-control" formControlName="proceedingsNumb" />
+                            </form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3 pl-4 pr-4">
+                            <form-field [control]="form.get('regionalDelega')" label="Delegación Regional">
+                                <select class="form-control" formControlName="regionalDelega">
+                                    <option [value]="null">Seleccione un valor</option>
+                                    <option [value]="1">1</option>
+                                    <option [value]="2">2</option>
+                                </select>
+                            </form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3 pl-4 pr-4">
+                            <form-field [control]="form.get('state')" label="Estado">
+                                <select class="form-control" formControlName="state">
+                                    <option [value]="null">Seleccione un valor</option>
+                                    <option [value]="1">1</option>
+                                    <option [value]="2">2</option>
+                                </select>
+                            </form-field>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-3">
+                        <div class="mb-3 pl-4 pr-4">
+                            <form-field [control]="form.get('transf')" label="Transferente">
+                                <select class="form-control" formControlName="transf">
+                                    <option [value]="null">Seleccione un valor</option>
+                                    <option [value]="1">1</option>
+                                    <option [value]="2">2</option>
+                                </select>
+                            </form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3 pl-4 pr-4">
+                            <form-field [control]="form.get('transmitter')" label="Emisora">
+                                <select class="form-control" formControlName="transmitter">
+                                    <option [value]="null">Seleccione un valor</option>
+                                    <option [value]="1">1</option>
+                                    <option [value]="2">2</option>
+                                </select>
+                            </form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3 pl-4 pr-4">
+                            <form-field [control]="form.get('authority')" label="Autoridad">
+                                <select class="form-control" formControlName="authority">
+                                    <option [value]="null">Seleccione un valor</option>
+                                    <option [value]="1">1</option>
+                                    <option [value]="2">2</option>
+                                </select>
+                            </form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3 pl-4 pr-4">
+                            <form-field [control]="form.get('taxpayer')" label="Contribuyente y/o Indiciado">
+                                <input type="text" class="form-control" formControlName="taxpayer" />
+                            </form-field>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="row mt-4">
+                    <div class="col-md-3">
+                        <div class="mb-3 pl-4 pr-4">
+                            <form-field [control]="form.get('proceedingsTransf')" label="Expediente Transferente/PAMA">
+                                <input type="text" class="form-control" formControlName="proceedingsTransf" />
+                            </form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3 pl-4 pr-4">
+                            <form-field [control]="form.get('ascertainmentPreliminary')" label="Averiguación Previa">
+                                <input type="text" class="form-control" formControlName="ascertainmentPreliminary" />
+                            </form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3 pl-4 pr-4">
+                            <form-field [control]="form.get('penalCause')" label="Causa Penal">
+                                <input type="text" class="form-control" formControlName="penalCause" />
+                            </form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3 pl-4 pr-4">
+                            <form-field [control]="form.get('protectionNumb')" label="No. Amparo">
+                                <input type="text" class="form-control" formControlName="protectionNumb" />
+                            </form-field>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="row mt-4">
+                    <div class="col-md-3">
+                        <div class="mb-3 pl-4 pr-4">
+                            <form-field [control]="form.get('transfType')" label="Tipo Transferencia">
+                                <input type="text" class="form-control" bsDatepicker formControlName="transfType" />
+                            </form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3 pl-4 pr-4">
+                            <form-field [control]="form.get('extinction')" label="Extinción de Dominio">
+                                <input type="text" class="form-control" formControlName="extinction" />
+                            </form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3 pl-4 pr-4">
+                            <form-field [control]="form.get('judgmentType')" label="Tipo Juicio">
+                                <input type="text" class="form-control" formControlName="judgmentType" />
+                            </form-field>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mb-3 pl-4 pr-4">
+                            <form-field [control]="form.get('judgment')" label="Juicio">
+                                <input type="text" class="form-control" formControlName="judgment" />
+                            </form-field>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4 justify-content-md-end">
+                    <div class="col-md-2 text-right">
+                        <button class="d-flex align-items-center justify-content-center btn btn-primary btn-sm active ">
+                            <i class="bx bx-search-alt-2 mr-2"></i> Buscar
+                        </button>
+                    </div>
+                    <div class="col-md-2 text-right">
+                        <button class="d-flex align-items-center justify-content-center btn btn-secondary btn-sm active">
+                            Limpiar
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <app-divider></app-divider>
+                    
+            <div class="d-flex justify-content-md-between mt-5">
+                <div>
+                    <button class="btn-secondary btn-sm active" (click)="openModal()">
+                        Nuevo Expediente
+                    </button>
+                </div>
+                <app-columns-select [(settings)]="settings" class="row justify-content-end">
+                </app-columns-select>
+            </div>
+            
+            <div class="row mt-3 pt-2 scroll-table">
+                <ng2-smart-table [attr.class]="'table-bordered'" class="col-md-12" [settings]="settings" [source]="data">
+                </ng2-smart-table>
+            </div>
+            
+            <app-pagination [params]="params" [totalItems]="totalItems">
+            </app-pagination>
+                </div>
+            
+            </div>
