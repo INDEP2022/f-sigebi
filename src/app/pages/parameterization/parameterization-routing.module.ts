@@ -226,6 +226,18 @@ const routes: Routes = [
       title: 'Parametrización de numerario',
     },
   },
+  {
+    path: 'parameter-maintenance',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-parameter-maintenance/c-p-m-parameter-maintenance.module'
+        )
+      ).CPMParameterMaintenanceModule,
+    data: {
+      title: 'Mantenimiento de Parametros',
+    },
+  },
   //Félix
   {
     path: 'values',

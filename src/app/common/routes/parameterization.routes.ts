@@ -97,6 +97,10 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Parametrización de numerario',
         link: '/pages/parameterization/numerary-parameterization',
       },
+      {
+        label: 'Mantenimiento de Parametros',
+        link: '/pages/parameterization/parameter-maintenance',
+      },
       //Félix
       {
         label: 'Valores',
