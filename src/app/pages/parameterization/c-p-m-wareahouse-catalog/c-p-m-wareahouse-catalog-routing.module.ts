@@ -1,12 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-//Components
-import { CCPlCParametersListComponent } from './parameter-list/c-c-pl-c-parameters-list.component';
+import { CPWcCWareahouseCatalogComponent } from './c-p-wc-c-wareahouse-catalog/c-p-wc-c-wareahouse-catalog.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: CCPlCParametersListComponent,
+    component: CPWcCWareahouseCatalogComponent,
   },
 ];
 
@@ -14,4 +13,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class CCPMParametersRoutingModule {}
+export class CPMWareahouseCatalogRoutingModule {}

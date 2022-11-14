@@ -57,6 +57,14 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Mantenimiento a perfiles',
         link: '/pages/parameterization/profile-maintenance',
       },
+      {
+        label: 'Mantenimiento a ministerios publicos',
+        link: '/pages/parameterization/maintenance-of-public-ministries',
+      },
+      {
+        label: 'Catalogo de Almacenes',
+        link: '/pages/parameterization/wareahouse-catalog',
+      },
       //Félix
       {
         label: 'Valores',
@@ -66,6 +74,7 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Valores Adicionales',
         link: '/pages/parameterization/additional-values',
       },
+
       {
         label: 'Instituciones Valuadoras',
         link: '/pages/parameterization/appraisal-institutions',
