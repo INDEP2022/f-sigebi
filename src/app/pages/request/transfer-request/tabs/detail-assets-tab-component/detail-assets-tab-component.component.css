@@ -1,0 +1,18 @@
+/* label {
+    color: #7d788d;
+
+    span {
+        font-size: smaller;
+        font-weight: 600;
+    }
+} */
+.custom-label {
+  color: black;
+  font-weight: 500;
+  padding-left: 1.2%;
+  font-size: small;
+}
+.custom-label span {
+  font-size: smaller;
+  font-weight: 400;
+}/*# sourceMappingURL=detail-assets-tab-component.component.css.map */

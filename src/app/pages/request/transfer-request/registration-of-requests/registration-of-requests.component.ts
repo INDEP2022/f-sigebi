@@ -126,7 +126,7 @@ export class RegistrationOfRequestsComponent
 
   confirm() {
     this.msgAvertanceModal(
-      'Aceptar',
+      '',
       'Asegurse de tener guardado los formularios antes de turnar la solicitud!',
       'Confirmación',
       ''
