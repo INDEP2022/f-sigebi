@@ -10,8 +10,7 @@ import { data } from './data';
 @Component({
   selector: 'app-c-c-pl-c-parameters-list',
   templateUrl: './c-c-pl-c-parameters-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CCPlCParametersListComponent extends BasePage implements OnInit {
   data: LocalDataSource = new LocalDataSource();

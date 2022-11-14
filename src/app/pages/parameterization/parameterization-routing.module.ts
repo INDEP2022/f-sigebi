@@ -128,6 +128,26 @@ const routes: Routes = [
       ).CPMProfileMaintenanceModule,
     data: { title: 'Mantenimiento a perfiles' },
   },
+  {
+    path: 'maintenance-of-public-ministries',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-maintenance-of-public-ministries/c-p-m-maintenance-of-public-ministries.module'
+        )
+      ).CPMMaintenanceOfPublicMinistriesModule,
+    data: { title: 'Mantenimiento a ministerios publicos' },
+  },
+  {
+    path: 'wareahouse-catalog',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-wareahouse-catalog/c-p-m-wareahouse-catalog.module'
+        )
+      ).CPMWareahouseCatalogModule,
+    data: { title: 'Mantenimiento a ministerios publicos' },
+  },
   //Félix
   {
     path: 'values',
@@ -152,10 +172,30 @@ const routes: Routes = [
       ).CPMAppraisalInstitutionsModule,
     data: { title: 'Instituciones Valuadoras' },
   },
+  {
+    path: 'non-working-days',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-non-working-days/c-p-m-non-working-days.module'
+        )
+      ).CPMNonWorkingDaysModule,
+    data: { title: 'Días Inhábiles' },
+  },
+  {
+    path: 'date-documents',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-date-documents/c-p-m-date-documents.module'
+        )
+      ).CPMDateDocumentsModule,
+    data: { title: 'Fechas para Documentos' },
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class ParameterizationRoutingModule {}
+export class ParameterizationRoutingModule { }

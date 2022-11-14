@@ -5,5 +5,5 @@ export const data = [
     value: '121',
     direction: 'Comercial',
     eventType: '13',
-  }
+  },
 ];
