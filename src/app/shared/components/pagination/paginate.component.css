@@ -1,0 +1,22 @@
+.pagination .page-item .page-link {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 2px;
+}
+.pagination .page-item .page-link:hover {
+  color: #000;
+  font-weight: 600;
+  background-color: #f2f2f2;
+  border-color: #c0c0c0;
+}
+
+.page-item.active .page-link {
+  color: #000;
+  font-weight: 600;
+  background-color: #f2f2f2;
+  border-color: #c0c0c0;
+}/*# sourceMappingURL=paginate.component.css.map */

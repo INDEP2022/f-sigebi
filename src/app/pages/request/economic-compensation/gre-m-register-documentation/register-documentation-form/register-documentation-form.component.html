@@ -27,6 +27,13 @@
     </div>
     <div class="col-md-4">
       <form-field
+        [control]="registerForm.get('contributor')"
+        label="Contribuyente y/o Indiciado">
+        <input type="text" formControlName="contributor" class="form-control" />
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field
         [control]="registerForm.get('fileType')"
         label="Tipo Expediente">
         <ng-select
@@ -36,6 +43,23 @@
           [clearable]="false">
           <ng-option *ngFor="let t of fileTypes" value="t.id">{{
             t.description
+          }}</ng-option>
+        </ng-select>
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-md-4">
+      <form-field
+        [control]="registerForm.get('infoOrigin')"
+        label="Tipo Expediente">
+        <ng-select
+          formControlName="infoOrigin"
+          [searchable]="false"
+          class="form-control"
+          [clearable]="false">
+          <ng-option *ngFor="let o of infoOrigins" value="o.id">{{
+            o.description
           }}</ng-option>
         </ng-select>
       </form-field>
@@ -52,6 +76,16 @@
           bsDatepicker />
       </form-field>
     </div>
+    <div class="col-md-4">
+      <form-field
+        [control]="registerForm.get('memorandumNo')"
+        label="*No. Oficio">
+        <input
+          type="number"
+          formControlName="memorandumNo"
+          class="form-control" />
+      </form-field>
+    </div>
   </div>
   <div class="row mt-5">
     <div class="col-md-4">
@@ -65,10 +99,16 @@
       </form-field>
     </div>
     <div class="col-md-4">
-      <p class="font-size-13">
-        <strong class="font-size-13">Asunto: </strong
-        >{{ registerForm.controls['subject'].value }}
-      </p>
+      <form-field
+        [control]="registerForm.get('memorandumDate')"
+        label="*Fecha de Oficio">
+        <input
+          type="text"
+          formControlName="memorandumDate"
+          class="form-control"
+          [maxDate]="maxDate"
+          bsDatepicker />
+      </form-field>
     </div>
     <div class="col-md-4">
       <form-field
@@ -106,50 +146,10 @@
   </div>
   <div class="row mt-5">
     <div class="col-md-4">
-      <form-field
-        [control]="registerForm.get('contributor')"
-        label="Contribuyente y/o Indiciado">
-        <input type="text" formControlName="contributor" class="form-control" />
-      </form-field>
-    </div>
-    <div class="col-md-4">
-      <form-field
-        [control]="registerForm.get('infoOrigin')"
-        label="Tipo Expediente">
-        <ng-select
-          formControlName="infoOrigin"
-          [searchable]="false"
-          class="form-control"
-          [clearable]="false">
-          <ng-option *ngFor="let o of infoOrigins" value="o.id">{{
-            o.description
-          }}</ng-option>
-        </ng-select>
-      </form-field>
-    </div>
-    <div class="col-md-4">
-      <form-field
-        [control]="registerForm.get('memorandumNo')"
-        label="*No. Oficio">
-        <input
-          type="number"
-          formControlName="memorandumNo"
-          class="form-control" />
-      </form-field>
-    </div>
-  </div>
-  <div class="row mt-5">
-    <div class="col-md-4">
-      <form-field
-        [control]="registerForm.get('memorandumDate')"
-        label="*Fecha de Oficio">
-        <input
-          type="text"
-          formControlName="memorandumDate"
-          class="form-control"
-          [maxDate]="maxDate"
-          bsDatepicker />
-      </form-field>
+      <p class="font-size-13">
+        <strong class="font-size-13">Asunto: </strong
+        >{{ registerForm.controls['subject'].value }}
+      </p>
     </div>
     <div class="col-md-4">
       <p class="font-size-13">

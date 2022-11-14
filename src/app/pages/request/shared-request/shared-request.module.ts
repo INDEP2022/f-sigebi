@@ -12,11 +12,11 @@ import { RequestFormComponent } from './request-form/request-form.component';
 import { RequestInformationComponent } from './request-information/request-information.component';
 import { SearchInventoryGoodsComponent } from './search-inventory-goods/search-inventory-goods.component';
 import { SearchRequestsComponent } from './search-requests/search-requests.component';
-import { SelectGoodsComponent } from './select-goods/select-goods.component';
-import { UsersSelectedToTurnComponent } from './users-selected-to-turn/users-selected-to-turn.component';
 import { AddGoodsButtonComponent } from './select-goods/add-goods-button/add-goods-button.component';
-import { ViewFileButtonComponent } from './select-goods/view-file-button/view-file-button.component';
 import { ReserveGoodModalComponent } from './select-goods/reserve-good-modal/reserve-good-modal.component';
+import { SelectGoodsComponent } from './select-goods/select-goods.component';
+import { ViewFileButtonComponent } from './select-goods/view-file-button/view-file-button.component';
+import { UsersSelectedToTurnComponent } from './users-selected-to-turn/users-selected-to-turn.component';
 
 @NgModule({
   declarations: [

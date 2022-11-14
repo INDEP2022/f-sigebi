@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 //Shared
 import { SharedModule } from 'src/app/shared/shared.module';
 //Reactive Forms
@@ -11,18 +11,15 @@ import { CCUetMUsersEventTypesRoutingModule } from './c-c-uet-m-users-event-type
 //Components
 import { CCUetCUsersEventTypesComponent } from './users-event-types/c-c-uet-c-users-event-types.component';
 
-
 @NgModule({
-  declarations: [
-    CCUetCUsersEventTypesComponent
-  ],
+  declarations: [CCUetCUsersEventTypesComponent],
   imports: [
     CommonModule,
     CCUetMUsersEventTypesRoutingModule,
     SharedModule,
     FormsModule,
     ReactiveFormsModule,
-    EventTypeSharedComponent
-  ]
+    EventTypeSharedComponent,
+  ],
 })
-export class CCUetMUsersEventTypesModule { }
+export class CCUetMUsersEventTypesModule {}
