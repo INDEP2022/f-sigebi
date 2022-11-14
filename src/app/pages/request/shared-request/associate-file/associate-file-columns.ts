@@ -50,12 +50,12 @@ export const ASSOCIATE_FILE_COLUMNS = {
     sort: false,
   },
   state: {
-    title: 'Email del Remitente',
+    title: 'Estado',
     type: 'string',
     sort: false,
   },
   transferee: {
-    title: 'Email del Remitente',
+    title: 'Transferente',
     type: 'string',
     sort: false,
   },
