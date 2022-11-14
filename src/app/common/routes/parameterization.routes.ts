@@ -93,6 +93,10 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Catálogo de tasas',
         link: '/pages/parameterization/rate-catalog',
       },
+      {
+        label: 'Parametrización de numerario',
+        link: '/pages/parameterization/numerary-parameterization',
+      },
       //Félix
       {
         label: 'Valores',
