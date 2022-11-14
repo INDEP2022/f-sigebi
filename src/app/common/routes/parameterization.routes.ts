@@ -87,6 +87,10 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Fechas para Documentos',
         link: '/pages/parameterization/date-documents',
       },
+      {
+        label: 'Indicadores de Desempeño',
+        link: '/pages/parameterization/indicators-of-performance',
+      },
 
 
     ],
