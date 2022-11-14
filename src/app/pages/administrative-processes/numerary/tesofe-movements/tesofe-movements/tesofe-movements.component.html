@@ -1,0 +1,42 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">MOVIMIENTOS TESOFE</h5>
+  </div>
+  <div body>
+    <div class="row mt-3 mb-3">
+      <form action="" class="form-material" [formGroup]="form">
+        <div class="row mt-4">
+          <div class="col-md-4">
+            <form-field [control]="form.get('bank')" label="Banco">
+              <input type="text" class="form-control" formControlName="bank" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('account')" label="Cuenta">
+              <input formControlName="account" class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field [control]="form.get('currency')" label="Moneda">
+              <input formControlName="currency" class="form-control" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row pt-4">
+          <div class="col-md-12">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="data1">
+              </ng2-smart-table>
+            </div>
+          </div>
+          <app-pagination [params]="params" [totalItems]="totalItems">
+          </app-pagination>
+        </div>
+      </form>
+    </div>
+  </div>
+</app-card>

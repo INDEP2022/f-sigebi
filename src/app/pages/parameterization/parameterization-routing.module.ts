@@ -129,49 +129,24 @@ const routes: Routes = [
     data: { title: 'Mantenimiento a perfiles' },
   },
   {
-    path: 'banks-catalog',
-    loadChildren: async () =>
-      (await import('./c-p-m-banks-catalog/c-p-m-banks-catalog.module'))
-        .CPMBanksCatalogModule,
-    data: { title: 'Catálogo de Bancos' },
-  },
-  {
-    path: 'filters-of-goods-for-donation',
+    path: 'maintenance-of-public-ministries',
     loadChildren: async () =>
       (
         await import(
-          './c-p-m-filters-of-goods-for-donation/c-p-m-filters-of-goods-for-donation.module'
+          './c-p-m-maintenance-of-public-ministries/c-p-m-maintenance-of-public-ministries.module'
         )
-      ).CPMFiltersOfGoodsForDonationModule,
-    data: { title: 'Filtros de bienes para donación' },
+      ).CPMMaintenanceOfPublicMinistriesModule,
+    data: { title: 'Mantenimiento a ministerios publicos' },
   },
   {
-    path: 'court-maintenance',
-    loadChildren: async () =>
-      (await import('./c-p-m-court-maintenance/c-p-m-court-maintenance.module'))
-        .CPMCourtMaintenanceModule,
-    data: { title: 'Mantenimiento a juzgados' },
-  },
-  {
-    path: 'maintenance-individuals-and-companies',
+    path: 'wareahouse-catalog',
     loadChildren: async () =>
       (
         await import(
-          './c-p-m-maintenance-individuals-and-companies/c-p-m-maintenance-individuals-and-companies.module'
+          './c-p-m-wareahouse-catalog/c-p-m-wareahouse-catalog.module'
         )
-      ).CPMMaintenanceIndividualsAndCompaniesModule,
-    data: {
-      title: 'Mantenimiento de personas fisicas y morales',
-    },
-  },
-  {
-    path: 'cost-catalog',
-    loadChildren: async () =>
-      (await import('./c-p-m-cost-catalog/c-p-m-cost-catalog.module'))
-        .CPMCostCatalogModule,
-    data: {
-      title: 'Catálogo de Costos',
-    },
+      ).CPMWareahouseCatalogModule,
+    data: { title: 'Mantenimiento a ministerios publicos' },
   },
   //Félix
   {
@@ -196,6 +171,20 @@ const routes: Routes = [
         )
       ).CPMAppraisalInstitutionsModule,
     data: { title: 'Instituciones Valuadoras' },
+  },
+  {
+    path: 'non-working-days',
+    loadChildren: async () =>
+      (await import('./c-p-m-non-working-days/c-p-m-non-working-days.module'))
+        .CPMNonWorkingDaysModule,
+    data: { title: 'Días Inhábiles' },
+  },
+  {
+    path: 'date-documents',
+    loadChildren: async () =>
+      (await import('./c-p-m-date-documents/c-p-m-date-documents.module'))
+        .CPMDateDocumentsModule,
+    data: { title: 'Fechas para Documentos' },
   },
 ];
 

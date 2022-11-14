@@ -58,24 +58,12 @@ export const PARAMETERIZATION_ROUTES = [
         link: '/pages/parameterization/profile-maintenance',
       },
       {
-        label: 'Catálogo de Bancos',
-        link: '/pages/parameterization/banks-catalog',
+        label: 'Mantenimiento a ministerios publicos',
+        link: '/pages/parameterization/maintenance-of-public-ministries',
       },
       {
-        label: 'Filtros de bienes para donación',
-        link: '/pages/parameterization/filters-of-goods-for-donation',
-      },
-      {
-        label: 'Mantenimiento a juzgados',
-        link: '/pages/parameterization/court-maintenance',
-      },
-      {
-        label: 'Mantenimiento de personas fisicas y morales',
-        link: '/pages/parameterization/maintenance-individuals-and-companies',
-      },
-      {
-        label: 'Catálogo de Costos',
-        link: '/pages/parameterization/cost-catalog',
+        label: 'Catalogo de Almacenes',
+        link: '/pages/parameterization/wareahouse-catalog',
       },
       //Félix
       {
@@ -86,9 +74,18 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Valores Adicionales',
         link: '/pages/parameterization/additional-values',
       },
+
       {
         label: 'Instituciones Valuadoras',
         link: '/pages/parameterization/appraisal-institutions',
+      },
+      {
+        label: 'Días Inhábiles',
+        link: '/pages/parameterization/non-working-days',
+      },
+      {
+        label: 'Fechas para Documentos',
+        link: '/pages/parameterization/date-documents',
       },
     ],
   },

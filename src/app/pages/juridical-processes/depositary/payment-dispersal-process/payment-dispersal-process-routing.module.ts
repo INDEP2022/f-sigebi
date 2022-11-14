@@ -23,7 +23,19 @@ const routes: Routes = [
     data: { title: DEPOSITARY_ROUTES_1[1].label },
   },
   {
+    // VALIDACION DE PAGOS SIN PARAMETROS
     path: DEPOSITARY_ROUTES_1[2].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './query-related-payments-depositories/pj-d-pdp-m-query-related-payments-depositories.module'
+        )
+      ).PJDPDPQueryRelatedPaymentsDepositoriesModule,
+    data: { title: DEPOSITARY_ROUTES_1[2].label },
+  },
+  {
+    // VALIDACION DE PAGOS CON PARAMETROS
+    path: DEPOSITARY_ROUTES_1[2].link + '/:id',
     loadChildren: async () =>
       (
         await import(
@@ -34,7 +46,6 @@ const routes: Routes = [
   },
   // PROCESO DE DISPERCION DE PAGOS
 ];
-console.log(routes);
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],

@@ -39,20 +39,31 @@
     </div>
     <div
       *ngIf="nombrePantalla == 'concil-pag'"
-      class="col-sm-12 col-12 col-md-3 p-2">
-      <div class="form-group">
-        <button class="btn btn-primary btn-sm active" (click)="btnEjecutar()">
-          Ejecutar
-        </button>
-      </div>
+      class="col-sm-12 col-12 col-md-6 p-2 text-center">
+      <button class="btn btn-primary btn-sm active m-2" (click)="btnEjecutar()">
+        Ejecutar Dispersi&oacute;n de Pagos
+      </button>
     </div>
-    <div
-      *ngIf="nombrePantalla == 'concil-pag'"
-      class="col-sm-12 col-12 col-md-3 p-2">
-      <div class="form-group">
-        <button class="btn btn-primary btn-sm active" (click)="btnDeshacer()">
-          Deshacer
-        </button>
+    <div class="col-sm-12 col-12 col-md-6 p-5 text-center alert alert-danger">
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-12 p-2">
+          <form-field
+            [control]="form.get('fechaEliminarDispersion')"
+            label="Fecha Eliminar Dispersión">
+            <input
+              class="form-control"
+              formControlName="fechaEliminarDispersion"
+              placeholder="Fecha Eliminar Dispersión"
+              bsDatapicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2">
+          <button
+            class="btn btn-primary btn-sm active m-2"
+            (click)="btnDeshacer()">
+            Deshacer Dispersi&oacute;n de Pagos
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -107,21 +118,15 @@
     </div>
     <div
       *ngIf="nombrePantalla == 'concil-pag'"
-      class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
+      class="col-sm-12 col-12 col-md-12 p-2 text-center">
       <div class="form-group">
         <button
-          class="btn btn-primary btn-sm active"
+          class="btn btn-primary btn-sm active text-wrap m-2"
           (click)="btnRecargaDepositario()">
           Recarga Depositario
         </button>
-      </div>
-    </div>
-    <div
-      *ngIf="nombrePantalla == 'concil-pag'"
-      class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
-      <div class="form-group">
         <button
-          class="btn btn-primary btn-sm active"
+          class="btn btn-primary btn-sm active text-wrap m-2"
           (click)="btnValidacionPagos()">
           Validación de Pagos
         </button>

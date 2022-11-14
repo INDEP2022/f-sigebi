@@ -3,14 +3,10 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-depositary-report',
   templateUrl: './depositary-report.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class DepositaryReportComponent implements OnInit {
+  constructor() {}
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }
