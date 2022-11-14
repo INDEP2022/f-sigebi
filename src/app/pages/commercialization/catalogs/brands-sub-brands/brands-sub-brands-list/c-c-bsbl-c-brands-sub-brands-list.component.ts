@@ -15,11 +15,12 @@ import { DATA } from './data';
 @Component({
   selector: 'app-c-c-bsbl-c-brands-sub-brands-list',
   templateUrl: './c-c-bsbl-c-brands-sub-brands-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CCBsblCBrandsSubBrandsListComponent extends BasePage implements OnInit {
-
+export class CCBsblCBrandsSubBrandsListComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
 
   data: LocalDataSource = new LocalDataSource();
@@ -37,10 +38,7 @@ export class CCBsblCBrandsSubBrandsListComponent extends BasePage implements OnI
   rowSelected: boolean = false;
   selectedRow: any = null;
 
-  constructor(
-    private fb: FormBuilder,
-    private modalService: BsModalService
-  ) {
+  constructor(private fb: FormBuilder, private modalService: BsModalService) {
     super();
     this.settings = {
       ...this.settings,
@@ -51,9 +49,8 @@ export class CCBsblCBrandsSubBrandsListComponent extends BasePage implements OnI
     this.settings2 = {
       ...this.settings,
       actions: false,
-      columns: COLUMNS2
+      columns: COLUMNS2,
     };
-
   }
 
   ngOnInit(): void {
@@ -69,13 +66,16 @@ export class CCBsblCBrandsSubBrandsListComponent extends BasePage implements OnI
   }
 
   openModal(context?: Partial<CCBsbfCBrandsSubBrandsFormComponent>) {
-    const modalRef = this.modalService.show(CCBsbfCBrandsSubBrandsFormComponent, {
-      initialState: context,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
+    const modalRef = this.modalService.show(
+      CCBsbfCBrandsSubBrandsFormComponent,
+      {
+        initialState: context,
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
     modalRef.content.refresh.subscribe(next => {
-      if (next) console.log(next)//this.getCities();
+      if (next) console.log(next); //this.getCities();
     });
   }
 
@@ -104,5 +104,4 @@ export class CCBsblCBrandsSubBrandsListComponent extends BasePage implements OnI
     this.data2.refresh();
     this.rowSelected = true;
   }
-
 }

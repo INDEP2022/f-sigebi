@@ -36,6 +36,9 @@ export class UploadImagesFormComponent extends BasePage implements OnInit {
   file: File | null = null;
   displayUploadPhoto: boolean = false;
 
+  //datos pasados desde el modal
+  data: any[] = [];
+
   constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
     super();
   }

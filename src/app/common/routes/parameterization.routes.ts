@@ -81,6 +81,42 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Catalogo de Almacenes',
         link: '/pages/parameterization/wareahouse-catalog',
       },
+      {
+        label: 'Catálogo de Bancos',
+        link: '/pages/parameterization/banks-catalog',
+      },
+      {
+        label: 'Filtros de bienes para donación',
+        link: '/pages/parameterization/filters-of-goods-for-donation',
+      },
+      {
+        label: 'Mantenimiento a juzgados',
+        link: '/pages/parameterization/court-maintenance',
+      },
+      {
+        label: 'Mantenimiento de personas fisicas y morales',
+        link: '/pages/parameterization/maintenance-individuals-and-companies',
+      },
+      {
+        label: 'Catálogo de Costos',
+        link: '/pages/parameterization/cost-catalog',
+      },
+      {
+        label: 'Catálogo de tipos de siniestro',
+        link: '/pages/parameterization/types-of-claims-catalog',
+      },
+      {
+        label: 'Catálogo de tasas',
+        link: '/pages/parameterization/rate-catalog',
+      },
+      {
+        label: 'Parametrización de numerario',
+        link: '/pages/parameterization/numerary-parameterization',
+      },
+      {
+        label: 'Mantenimiento de Parametros',
+        link: '/pages/parameterization/parameter-maintenance',
+      },
       //Félix
       {
         label: 'Valores',
@@ -102,6 +138,10 @@ export const PARAMETERIZATION_ROUTES = [
       {
         label: 'Fechas para Documentos',
         link: '/pages/parameterization/date-documents',
+      },
+      {
+        label: 'Indicadores de Desempeño',
+        link: '/pages/parameterization/indicators-of-performance',
       },
     ],
   },

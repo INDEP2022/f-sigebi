@@ -4,12 +4,13 @@ import { CPMDateDocumentsComponent } from './c-p-m-date-documents/c-p-m-date-doc
 
 const routes: Routes = [
   {
-    path: '', component: CPMDateDocumentsComponent
-  }
+    path: '',
+    component: CPMDateDocumentsComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CPMDateDocumentsRoutingModule { }
+export class CPMDateDocumentsRoutingModule {}

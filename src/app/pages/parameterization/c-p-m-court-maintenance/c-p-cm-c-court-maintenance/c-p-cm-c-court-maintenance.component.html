@@ -1,0 +1,130 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">MANTENIMIENTO A JUZGADOS</h5>
+      <div class="col-md-5 buttons">
+        <div>
+          <button
+            class="btn btn-primary active btn-sm ml-3"
+            (click)="openForm()">
+            Nuevo
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-6">
+          <app-circuit-shared [form]="form"></app-circuit-shared>
+          <!-- <app-goods-status-shared [form]="form"></app-goods-status-shared> -->
+        </div>
+        <div class="col-md-2 mt-3">
+          <form-field
+            [control]="form.get('descriptionStatus')"
+            label="No Juzgado">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descriptionStatus" />
+          </form-field>
+        </div>
+        <div class="col-md-4 mt-3">
+          <form-field
+            [control]="form.get('descriptionStatus')"
+            label="Descrición">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descriptionStatus" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('targetIndicator')"
+            label="Responsable">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="targetIndicator" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('targetIndicatorDesc')" label="Calle">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="targetIndicatorDesc" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('targetIndicatorDesc')"
+            label="No Exterior">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="targetIndicatorDesc" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('targetIndicatorDesc')"
+            label="No Interior">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="targetIndicatorDesc" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="col-md-3 mt-3">
+          <form-field [control]="form.get('descriptionStatus')" label="Colonia">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descriptionStatus" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <app-delegation-shared
+            [form]="form"
+            [showSubdelegation]="false"></app-delegation-shared>
+        </div>
+        <div class="col-md-2 mt-3">
+          <form-field
+            [control]="form.get('descriptionStatus')"
+            label="Codigo Postal">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descriptionStatus" />
+          </form-field>
+        </div>
+        <div class="col-md-3 mt-3">
+          <form-field
+            [control]="form.get('descriptionStatus')"
+            label="Telefono">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descriptionStatus" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="table-responsive">
+      <ng2-smart-table
+        [settings]="settings"
+        [source]="data"
+        (edit)="openForm($event.data)"
+        (delete)="delete($event.data)"></ng2-smart-table>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+  </div>
+</app-card>

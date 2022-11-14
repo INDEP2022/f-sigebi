@@ -5,14 +5,13 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 @Component({
   selector: 'app-c-p-m-non-working-days-modal',
   templateUrl: './c-p-m-non-working-days-modal.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CPMNonWorkingDaysModalComponent implements OnInit {
   nonWorkingDaysForm: FormGroup;
   title: string = 'Días Inhábiles';
   edit: boolean = false;
-  constructor(private fb: FormBuilder, private modalRef: BsModalRef) { }
+  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {}
 
   ngOnInit(): void {
     this.prepareForm();

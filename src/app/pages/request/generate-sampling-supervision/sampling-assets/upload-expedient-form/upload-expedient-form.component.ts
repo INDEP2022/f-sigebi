@@ -39,6 +39,9 @@ export class UploadExpedientFormComponent extends BasePage implements OnInit {
 
   columns = LIST_EXPEDIENTS_COLUMN;
 
+  data: any[] = [];
+  typeComponent: string = '';
+
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -96,6 +99,7 @@ export class UploadExpedientFormComponent extends BasePage implements OnInit {
     let config: ModalOptions = {
       initialState: {
         data: '',
+        typeComponent: this.typeComponent,
         callback: (next: boolean) => {
           //if (next){ this.getData();}
         },
