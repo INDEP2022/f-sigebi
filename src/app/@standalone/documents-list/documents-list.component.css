@@ -1,0 +1,35 @@
+#main-body {
+  background-color: gray !important;
+}
+
+.desc {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-footer {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.file-body {
+  cursor: default;
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+
+.file-body:hover {
+  border: solid 1px #808b96 !important;
+}
+
+.file-body.active {
+  border: solid 1px #566573 !important;
+}
+
+.close {
+  font-size: 20px !important;
+}/*# sourceMappingURL=documents-list.component.css.map */

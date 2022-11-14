@@ -1,0 +1,19 @@
+p {
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+label {
+  color: black;
+}
+label span {
+  font-size: smaller;
+  font-weight: 400;
+}
+
+.custom-label {
+  font-weight: 700;
+  line-height: 1;
+  padding-left: 1.2%;
+  font-size: smaller;
+}/*# sourceMappingURL=verify-compliance-tab.component.css.map */
