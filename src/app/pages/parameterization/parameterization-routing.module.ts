@@ -214,6 +214,18 @@ const routes: Routes = [
       title: 'Catálogo de tasas',
     },
   },
+  {
+    path: 'numerary-parameterization',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-numerary-parameterization/c-p-m-numerary-parameterization.module'
+        )
+      ).CPMNumeraryParameterizationModule,
+    data: {
+      title: 'Parametrización de numerario',
+    },
+  },
   //Félix
   {
     path: 'values',
