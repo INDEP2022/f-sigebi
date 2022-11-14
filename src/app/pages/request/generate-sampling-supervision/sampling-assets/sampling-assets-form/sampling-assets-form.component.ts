@@ -177,7 +177,7 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
   openModals(component: any, data?: any): void {
     let config: ModalOptions = {
       initialState: {
-        data: '',
+        data: 'hola',
         callback: (next: boolean) => {
           //if (next){ this.getData();}
         },

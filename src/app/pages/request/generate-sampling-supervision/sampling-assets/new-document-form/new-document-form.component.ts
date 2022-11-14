@@ -1,4 +1,11 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import Swal from 'sweetalert2';
@@ -11,7 +18,10 @@ import { DefaultSelect } from '../../../../../shared/components/select/default-s
   templateUrl: './new-document-form.component.html',
   styleUrls: ['./new-document-form.component.scss'],
 })
-export class NewDocumentFormComponent extends BasePage implements OnInit {
+export class NewDocumentFormComponent
+  extends BasePage
+  implements OnInit, OnChanges
+{
   @ViewChild('FileInput', { static: false }) inputFile: ElementRef;
   documentForm: ModelForm<any>;
   fileToUpload: File | null = null;
@@ -21,12 +31,25 @@ export class NewDocumentFormComponent extends BasePage implements OnInit {
   stateSelected = new DefaultSelect();
   typeTranferSelected = new DefaultSelect();
 
+  //datos pasados por el modal
+  data: string = '';
+  typeComponent: string = '';
+  isDisable: boolean = true;
+
   constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
     super();
   }
 
   ngOnInit(): void {
+    console.log(this.typeComponent);
+    if (this.typeComponent === 'verify-noncompliance') {
+      this.isDisable = false;
+    }
     this.initForm();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes);
   }
 
   initForm(): void {
@@ -38,7 +61,9 @@ export class NewDocumentFormComponent extends BasePage implements OnInit {
       responsible: [null],
       noSiab: [null],
       contributor: [null],
-      regionalDelegation: [{ value: 'METROPOLITANA', disabled: true }],
+      regionalDelegation: [
+        { value: 'METROPOLITANA', disabled: this.isDisable },
+      ],
       noOfice: [null],
       state: [null],
       noProgramming: [null],
