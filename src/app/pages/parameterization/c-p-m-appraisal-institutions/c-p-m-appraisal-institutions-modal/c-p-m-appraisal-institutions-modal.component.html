@@ -6,84 +6,147 @@
     <form [formGroup]="appraisalInstitutionsForm" class="form-material">
       <div class="row">
         <div class="col-md-2">
-          <form-field [control]="appraisalInstitutionsForm.get('noAppraiser')" label="No.Valuador">
-            <input type="number" class="form-control" formControlName="noAppraiser" />
+          <form-field
+            [control]="appraisalInstitutionsForm.get('noAppraiser')"
+            label="No.Valuador">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noAppraiser" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="appraisalInstitutionsForm.get('nameComplete')"
+          <form-field
+            [control]="appraisalInstitutionsForm.get('nameComplete')"
             label="Apellido Paterno, Materno y Nombre">
-            <input type="text" formControlName="nameComplete" placeholder="Apellido Paterno, Materno y Nombre"
+            <input
+              type="text"
+              formControlName="nameComplete"
+              placeholder="Apellido Paterno, Materno y Nombre"
               class="form-control" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="appraisalInstitutionsForm.get('street')" label="Calle">
-            <input type="text" formControlName="street" placeholder="Calle" class="form-control" />
+          <form-field
+            [control]="appraisalInstitutionsForm.get('street')"
+            label="Calle">
+            <input
+              type="text"
+              formControlName="street"
+              placeholder="Calle"
+              class="form-control" />
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field [control]="appraisalInstitutionsForm.get('noExterior')" label="No.Exterior">
-            <input type="text" class="form-control" formControlName="noExterior" />
+          <form-field
+            [control]="appraisalInstitutionsForm.get('noExterior')"
+            label="No.Exterior">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="noExterior" />
           </form-field>
         </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-4">
-          <form-field [control]="appraisalInstitutionsForm.get('noInside')" label="No.Interior">
-            <input type="text" class="form-control" formControlName="noInside" />
+          <form-field
+            [control]="appraisalInstitutionsForm.get('noInside')"
+            label="No.Interior">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="noInside" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="appraisalInstitutionsForm.get('postalCode')" label="Código postal">
-            <input type="number" class="form-control" formControlName="postalCode" />
+          <form-field
+            [control]="appraisalInstitutionsForm.get('postalCode')"
+            label="Código postal">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="postalCode" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="appraisalInstitutionsForm.get('colony')" label="Colonia">
-            <input type="text" formControlName="colony" placeholder="Colonia" class="form-control" />
+          <form-field
+            [control]="appraisalInstitutionsForm.get('colony')"
+            label="Colonia">
+            <input
+              type="text"
+              formControlName="colony"
+              placeholder="Colonia"
+              class="form-control" />
           </form-field>
         </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-4">
-          <form-field [control]="appraisalInstitutionsForm.get('delegationMunicipality')" label="Delegación Municipio">
-            <input type="text" formControlName="delegationMunicipality" placeholder="Delegación Municipio"
+          <form-field
+            [control]="appraisalInstitutionsForm.get('delegationMunicipality')"
+            label="Delegación Municipio">
+            <input
+              type="text"
+              formControlName="delegationMunicipality"
+              placeholder="Delegación Municipio"
               class="form-control" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="appraisalInstitutionsForm.get('federalEntity')" label="Entidad Federativa">
-            <input type="text" formControlName="federalEntity" placeholder="Entidad Federativa" class="form-control" />
+          <form-field
+            [control]="appraisalInstitutionsForm.get('federalEntity')"
+            label="Entidad Federativa">
+            <input
+              type="text"
+              formControlName="federalEntity"
+              placeholder="Entidad Federativa"
+              class="form-control" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="appraisalInstitutionsForm.get('rfc')" label="RFC">
+          <form-field
+            [control]="appraisalInstitutionsForm.get('rfc')"
+            label="RFC">
             <input type="text" class="form-control" formControlName="rfc" />
           </form-field>
         </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-4">
-          <form-field [control]="appraisalInstitutionsForm.get('curp')" label="CURP">
+          <form-field
+            [control]="appraisalInstitutionsForm.get('curp')"
+            label="CURP">
             <input type="text" class="form-control" formControlName="curp" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="appraisalInstitutionsForm.get('phone')" label="Teléfono">
+          <form-field
+            [control]="appraisalInstitutionsForm.get('phone')"
+            label="Teléfono">
             <input type="text" class="form-control" formControlName="phone" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="appraisalInstitutionsForm.get('representative')" label="Representante">
-            <input type="text" class="form-control" formControlName="representative" />
+          <form-field
+            [control]="appraisalInstitutionsForm.get('representative')"
+            label="Representante">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="representative" />
           </form-field>
         </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-12">
-          <form-field [control]="appraisalInstitutionsForm.get('observations')" label="Observaciones">
-            <textarea class="form-control" formControlName="observations" placeholder="Observaciones"></textarea>
+          <form-field
+            [control]="appraisalInstitutionsForm.get('observations')"
+            label="Observaciones">
+            <textarea
+              class="form-control"
+              formControlName="observations"
+              placeholder="Observaciones"></textarea>
           </form-field>
         </div>
       </div>
@@ -92,7 +155,10 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [type]="'button'" [disabled]="!appraisalInstitutionsForm.valid" (click)="close()">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="!appraisalInstitutionsForm.valid"
+          (click)="close()">
         </confirm-button>
       </div>
       <div class="m-3">

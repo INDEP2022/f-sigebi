@@ -43,6 +43,15 @@ var usuario: IRequestList[] = [
     created: 'tester_nsbxt',
     process: 'RE_RegistrarDocumentacion',
   },
+  {
+    title:
+      'Solicitar Recursos Económicos, No. Solicitud: 1896, Contribuyente CARLOS G. PALMA',
+    noRequest: 1896,
+    numTask: 212097,
+    noInstance: 450060,
+    created: 'tester_nsbxt',
+    process: 'RE_SolicitarRecursos',
+  },
 ];
 
 @Component({
@@ -98,9 +107,17 @@ export class RequestListComponent extends BasePage implements OnInit {
         ]);
         break;
       case 'RE_RegistrarDocumentacion':
-        // en el caso de que sea una solicitud de programacion
+        // en el caso de que sea el proceso de registrar solicitud de resarcimiento economico
         this.router.navigate([
-          `pages/request/economic-compensation/register-documentation/${event.data.noRequest}`,
+          'pages/request/economic-compensation/register-documentation',
+          event.data.noRequest,
+        ]);
+        break;
+      case 'RE_SolicitarRecursos':
+        // en el caso de que sea el proceso de registrar solicitud de recursos economicos
+        this.router.navigate([
+          'pages/request/economic-compensation/economic-resources',
+          event.data.noRequest,
         ]);
         break;
       default:

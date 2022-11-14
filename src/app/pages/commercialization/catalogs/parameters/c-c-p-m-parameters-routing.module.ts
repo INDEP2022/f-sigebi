@@ -6,12 +6,12 @@ import { CCPlCParametersListComponent } from './parameter-list/c-c-pl-c-paramete
 const routes: Routes = [
   {
     path: '',
-    component: CCPlCParametersListComponent
-  }
+    component: CCPlCParametersListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CCPMParametersRoutingModule { }
+export class CCPMParametersRoutingModule {}
