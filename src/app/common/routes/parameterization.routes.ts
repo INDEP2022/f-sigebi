@@ -60,6 +60,10 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Catálogo de requisitos documentales',
         link: '/pages/parameterization/c-p-m-cat-doc-require',
       },
+      {
+        label: 'Catálogo de Archivo General',
+        link: '/pages/parameterization/c-p-m-general-archive-catalog',
+      },
       //Alexander
       {
         label: 'Catálogo de Mantenimiento de Areas',
@@ -99,8 +103,6 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Fechas para Documentos',
         link: '/pages/parameterization/date-documents',
       },
-
-
     ],
   },
 ];

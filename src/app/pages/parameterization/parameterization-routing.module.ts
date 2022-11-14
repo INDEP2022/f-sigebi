@@ -134,6 +134,16 @@ const routes: Routes = [
         .CPMCatDocRequireModule,
     data: { title: 'Catálogo de requisitos documentales' },
   },
+  {
+    path: 'c-p-m-general-archive-catalog',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-general-archive-catalog/c-p-m-general-archive-catalog.module'
+        )
+      ).CPMGeneralArchiveCatalogModule,
+    data: { title: 'Catálogo de Archivo General' },
+  },
   //Alexander
   {
     path: 'maintenance-of-areas',
@@ -202,21 +212,15 @@ const routes: Routes = [
   {
     path: 'non-working-days',
     loadChildren: async () =>
-      (
-        await import(
-          './c-p-m-non-working-days/c-p-m-non-working-days.module'
-        )
-      ).CPMNonWorkingDaysModule,
+      (await import('./c-p-m-non-working-days/c-p-m-non-working-days.module'))
+        .CPMNonWorkingDaysModule,
     data: { title: 'Días Inhábiles' },
   },
   {
     path: 'date-documents',
     loadChildren: async () =>
-      (
-        await import(
-          './c-p-m-date-documents/c-p-m-date-documents.module'
-        )
-      ).CPMDateDocumentsModule,
+      (await import('./c-p-m-date-documents/c-p-m-date-documents.module'))
+        .CPMDateDocumentsModule,
     data: { title: 'Fechas para Documentos' },
   },
 ];
@@ -225,4 +229,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class ParameterizationRoutingModule { }
+export class ParameterizationRoutingModule {}
