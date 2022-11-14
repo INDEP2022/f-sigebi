@@ -8,8 +8,7 @@ import { DATEDOCUMENTS_COLUMNS } from './c-p-m-date-documents-columns';
 @Component({
   selector: 'app-c-p-m-date-documents',
   templateUrl: './c-p-m-date-documents.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CPMDateDocumentsComponent extends BasePage implements OnInit {
   data1: any[] = [];

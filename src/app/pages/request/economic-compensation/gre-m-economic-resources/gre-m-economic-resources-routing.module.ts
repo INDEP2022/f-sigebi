@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
-import { RouterModule,Routes } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { GreCEconomicResourcesMainComponent } from './gre-c-economic-resources-main/gre-c-economic-resources-main.component';
-
 
 const routes: Routes = [
   {

@@ -10,8 +10,7 @@ import { NONWORKINGDAYS_COLUMNS } from './c-p-m-non-working-days-columns';
 @Component({
   selector: 'app-c-p-m-non-working-days',
   templateUrl: './c-p-m-non-working-days.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CPMNonWorkingDaysComponent extends BasePage implements OnInit {
   data1: any[] = [];
@@ -39,7 +38,7 @@ export class CPMNonWorkingDaysComponent extends BasePage implements OnInit {
     let config: ModalOptions = {
       initialState: {
         data,
-        callback: (next: boolean) => { },
+        callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,

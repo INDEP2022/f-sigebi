@@ -1,18 +1,15 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'app-c-c-mf-c-models-form',
   templateUrl: './c-c-mf-c-models-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CCMfCModelsFormComponent extends BasePage implements OnInit {
-
   status: string = 'Nueva';
   edit: boolean = false;
 
@@ -35,9 +32,9 @@ export class CCMfCModelsFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      model: [null,[Validators.required]]
+      model: [null, [Validators.required]],
     });
-    
+
     if (this.edit) {
       //console.log(this.brand)
       this.status = 'Actualizar';
@@ -54,7 +51,6 @@ export class CCMfCModelsFormComponent extends BasePage implements OnInit {
   }
 
   create() {
-    
     this.loading = true;
     this.handleSuccess();
     /*this.bankService.create(this.form.value).subscribe(
@@ -77,5 +73,4 @@ export class CCMfCModelsFormComponent extends BasePage implements OnInit {
       error => (this.loading = false)
     );*/
   }
-
 }

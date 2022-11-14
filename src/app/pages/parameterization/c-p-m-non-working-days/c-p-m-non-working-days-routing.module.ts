@@ -4,12 +4,13 @@ import { CPMNonWorkingDaysComponent } from './c-p-m-non-working-days/c-p-m-non-w
 
 const routes: Routes = [
   {
-    path: '', component: CPMNonWorkingDaysComponent
-  }
+    path: '',
+    component: CPMNonWorkingDaysComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CPMNonWorkingDaysRoutingModule { }
+export class CPMNonWorkingDaysRoutingModule {}

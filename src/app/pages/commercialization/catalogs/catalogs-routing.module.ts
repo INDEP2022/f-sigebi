@@ -108,8 +108,7 @@ const routes: Routes = [
   {
     path: 'models',
     loadChildren: async () =>
-      (await import('./models/c-c-m-m-models.module'))
-        .CCMMModelsModule,
+      (await import('./models/c-c-m-m-models.module')).CCMMModelsModule,
     data: { title: 'Modelos' },
   },
 ];

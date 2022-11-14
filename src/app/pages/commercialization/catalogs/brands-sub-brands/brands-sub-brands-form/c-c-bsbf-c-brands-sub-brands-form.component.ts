@@ -1,9 +1,9 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
-import { LocalDataSource } from 'ng2-smart-table';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -12,11 +12,12 @@ import { COLUMNS } from './columns';
 @Component({
   selector: 'app-c-c-bsbf-c-brands-sub-brands-form',
   templateUrl: './c-c-bsbf-c-brands-sub-brands-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CCBsbfCBrandsSubBrandsFormComponent extends BasePage implements OnInit {
-
+export class CCBsbfCBrandsSubBrandsFormComponent
+  extends BasePage
+  implements OnInit
+{
   data: LocalDataSource = new LocalDataSource();
 
   totalItems: number = 0;
@@ -41,21 +42,24 @@ export class CCBsbfCBrandsSubBrandsFormComponent extends BasePage implements OnI
       actions: { add: true, edit: true, delete: true },
       delete: {
         ...this.settings.delete,
-        confirmDelete:  true
+        confirmDelete: true,
       },
       edit: {
         ...this.settings.edit,
         saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-        cancelButtonContent: '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
+        cancelButtonContent:
+          '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
         confirmSave: true,
       },
       add: {
         addButtonContent: '<i class="fa fa-solid fa-plus mx-2"></i>',
-        createButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-        cancelButtonContent: '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-        confirmCreate : true
+        createButtonContent:
+          '<i class="bx bxs-save me-1 text-success mx-2"></i>',
+        cancelButtonContent:
+          '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
+        confirmCreate: true,
       },
-      mode : 'inline',
+      mode: 'inline',
       hideSubHeader: false,
       columns: COLUMNS,
     };
@@ -67,10 +71,10 @@ export class CCBsbfCBrandsSubBrandsFormComponent extends BasePage implements OnI
 
   prepareForm() {
     this.form = this.fb.group({
-      brand: [null,[Validators.required]],
-      description: [null, [Validators.required]]
+      brand: [null, [Validators.required]],
+      description: [null, [Validators.required]],
     });
-    
+
     if (this.edit) {
       //console.log(this.brand)
       this.status = 'Actualizar';
@@ -104,8 +108,7 @@ export class CCBsbfCBrandsSubBrandsFormComponent extends BasePage implements OnI
   }
 
   create() {
-    
-    this.data.getElements().then((data:any)=>{
+    this.data.getElements().then((data: any) => {
       //console.log(data)
       this.loading = true;
       this.handleSuccess();
@@ -130,5 +133,4 @@ export class CCBsbfCBrandsSubBrandsFormComponent extends BasePage implements OnI
       error => (this.loading = false)
     );*/
   }
-
 }

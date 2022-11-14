@@ -148,6 +148,51 @@ const routes: Routes = [
       ).CPMWareahouseCatalogModule,
     data: { title: 'Mantenimiento a ministerios publicos' },
   },
+  {
+    path: 'banks-catalog',
+    loadChildren: async () =>
+      (await import('./c-p-m-banks-catalog/c-p-m-banks-catalog.module'))
+        .CPMBanksCatalogModule,
+    data: { title: 'Catálogo de Bancos' },
+  },
+  {
+    path: 'filters-of-goods-for-donation',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-filters-of-goods-for-donation/c-p-m-filters-of-goods-for-donation.module'
+        )
+      ).CPMFiltersOfGoodsForDonationModule,
+    data: { title: 'Filtros de bienes para donación' },
+  },
+  {
+    path: 'court-maintenance',
+    loadChildren: async () =>
+      (await import('./c-p-m-court-maintenance/c-p-m-court-maintenance.module'))
+        .CPMCourtMaintenanceModule,
+    data: { title: 'Mantenimiento a juzgados' },
+  },
+  {
+    path: 'maintenance-individuals-and-companies',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-maintenance-individuals-and-companies/c-p-m-maintenance-individuals-and-companies.module'
+        )
+      ).CPMMaintenanceIndividualsAndCompaniesModule,
+    data: {
+      title: 'Mantenimiento de personas fisicas y morales',
+    },
+  },
+  {
+    path: 'cost-catalog',
+    loadChildren: async () =>
+      (await import('./c-p-m-cost-catalog/c-p-m-cost-catalog.module'))
+        .CPMCostCatalogModule,
+    data: {
+      title: 'Catálogo de Costos',
+    },
+  },
   //Félix
   {
     path: 'values',
@@ -175,21 +220,15 @@ const routes: Routes = [
   {
     path: 'non-working-days',
     loadChildren: async () =>
-      (
-        await import(
-          './c-p-m-non-working-days/c-p-m-non-working-days.module'
-        )
-      ).CPMNonWorkingDaysModule,
+      (await import('./c-p-m-non-working-days/c-p-m-non-working-days.module'))
+        .CPMNonWorkingDaysModule,
     data: { title: 'Días Inhábiles' },
   },
   {
     path: 'date-documents',
     loadChildren: async () =>
-      (
-        await import(
-          './c-p-m-date-documents/c-p-m-date-documents.module'
-        )
-      ).CPMDateDocumentsModule,
+      (await import('./c-p-m-date-documents/c-p-m-date-documents.module'))
+        .CPMDateDocumentsModule,
     data: { title: 'Fechas para Documentos' },
   },
 ];
@@ -198,4 +237,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class ParameterizationRoutingModule { }
+export class ParameterizationRoutingModule {}
