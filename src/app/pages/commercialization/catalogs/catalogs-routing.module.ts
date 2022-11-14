@@ -98,6 +98,13 @@ const routes: Routes = [
         .CCUetMUsersEventTypesModule,
     data: { title: 'Usuarios por Tipo de Evento' },
   },
+  {
+    path: 'brands-sub-brands',
+    loadChildren: async () =>
+      (await import('./brands-sub-brands/c-c-bsb-m-brands-sub-brands.module'))
+        .CCBsbMBrandsSubBrandsModule,
+    data: { title: 'Marcas y Sub Marcas' },
+  },
 ];
 
 @NgModule({
