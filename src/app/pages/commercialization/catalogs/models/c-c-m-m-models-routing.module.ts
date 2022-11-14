@@ -6,12 +6,12 @@ import { CCMlCModelsListComponent } from './models-list/c-c-ml-c-models-list.com
 const routes: Routes = [
   {
     path: '',
-    component: CCMlCModelsListComponent
-  }
+    component: CCMlCModelsListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CCMMModelsRoutingModule { }
+export class CCMMModelsRoutingModule {}
