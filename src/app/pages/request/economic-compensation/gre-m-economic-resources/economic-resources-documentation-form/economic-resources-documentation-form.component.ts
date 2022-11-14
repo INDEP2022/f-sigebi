@@ -3,11 +3,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
-  selector: 'app-register-documentation-form',
-  templateUrl: './register-documentation-form.component.html',
+  selector: 'app-economic-resources-documentation-form',
+  templateUrl: './economic-resources-documentation-form.component.html',
   styles: [],
 })
-export class RegisterDocumentationFormComponent
+export class EconomicResourcesDocumentationFormComponent
   extends BasePage
   implements OnInit
 {
@@ -61,20 +61,20 @@ export class RegisterDocumentationFormComponent
   prepareForm() {
     this.registerForm = this.fb.group({
       priority: [null],
-      contributor: [null, [Validators.required]],
-      fileType: [null],
       infoOrigin: [null],
-      receptionDate: [null, [Validators.required]],
+      fileType: [null],
       memorandumNo: [null, [Validators.required]],
-      transferFile: [null, [Validators.required]],
       memorandumDate: [null, [Validators.required]],
       subject: [null],
+      transferFile: [null, [Validators.required]],
+      felony: [null],
       receptionMethod: [null],
       transferType: [null],
       senderName: [null],
       senderPosition: [null],
       senderPhone: [null],
       senderEmail: [null],
+      contributor: [null, [Validators.required]],
       judgementType: [null, [Validators.required]],
       judgement: [null],
       observations: [null],
