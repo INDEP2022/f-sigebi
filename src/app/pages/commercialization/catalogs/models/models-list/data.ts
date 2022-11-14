@@ -5,4 +5,4 @@ export const DATA = [
 	{
 		model:'2015'
 	}
-]
+];

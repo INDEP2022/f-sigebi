@@ -112,6 +112,13 @@ const routes: Routes = [
         .CCMMModelsModule,
     data: { title: 'Modelos' },
   },
+  {
+    path: 'event-process',
+    loadChildren: async () =>
+      (await import('./event-process/c-c-ep-m-event-process.module'))
+        .CCEpMEventProcessModule,
+    data: { title: 'Eventos por Proceso' },
+  },
 ];
 
 @NgModule({

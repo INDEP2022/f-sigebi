@@ -6,19 +6,19 @@ import { BehaviorSubject } from 'rxjs';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { COLUMNS, COLUMNS2 } from './columns';
+import { COLUMNS } from './columns';
 //Components
-import { CCBsbfCBrandsSubBrandsFormComponent } from '../brands-sub-brands-form/c-c-bsbf-c-brands-sub-brands-form.component';
+import { CCEpfCEventProcessFormComponent } from '../event-process-form/c-c-epf-c-event-process-form.component';
 //Provisional Data
 import { DATA } from './data';
 
 @Component({
-  selector: 'app-c-c-bsbl-c-brands-sub-brands-list',
-  templateUrl: './c-c-bsbl-c-brands-sub-brands-list.component.html',
+  selector: 'app-c-c-epl-c-event-process-list',
+  templateUrl: './c-c-epl-c-event-process-list.component.html',
   styles: [
   ]
 })
-export class CCBsblCBrandsSubBrandsListComponent extends BasePage implements OnInit {
+export class CCEplCEventProcessListComponent extends BasePage implements OnInit {
 
   form: FormGroup = new FormGroup({});
 
@@ -27,12 +27,6 @@ export class CCBsblCBrandsSubBrandsListComponent extends BasePage implements OnI
 
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-
-  data2: LocalDataSource = new LocalDataSource();
-  //dataSubBrands: any = [];
-  settings2;
-  totalItems2: number = 0;
-  params2 = new BehaviorSubject<ListParams>(new ListParams());
 
   rowSelected: boolean = false;
   selectedRow: any = null;
@@ -48,12 +42,6 @@ export class CCBsblCBrandsSubBrandsListComponent extends BasePage implements OnI
       columns: COLUMNS,
     };
 
-    this.settings2 = {
-      ...this.settings,
-      actions: false,
-      columns: COLUMNS2
-    };
-
   }
 
   ngOnInit(): void {
@@ -63,13 +51,12 @@ export class CCBsblCBrandsSubBrandsListComponent extends BasePage implements OnI
 
   private prepareForm(): void {
     this.form = this.fb.group({
-      brand: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      goodType: [null, [Validators.required]],
     });
   }
 
-  openModal(context?: Partial<CCBsbfCBrandsSubBrandsFormComponent>) {
-    const modalRef = this.modalService.show(CCBsbfCBrandsSubBrandsFormComponent, {
+  openModal(context?: Partial<CCEpfCEventProcessFormComponent>) {
+    const modalRef = this.modalService.show(CCEpfCEventProcessFormComponent, {
       initialState: context,
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -83,11 +70,11 @@ export class CCBsblCBrandsSubBrandsListComponent extends BasePage implements OnI
     this.openModal();
   }
 
-  openForm(brand: any) {
-    this.openModal({ edit: true, brand });
+  openForm(eventProcess: any) {
+    this.openModal({ edit:true, eventProcess});
   }
 
-  delete(vault: any) {
+  delete(eventProcess: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -97,12 +84,6 @@ export class CCBsblCBrandsSubBrandsListComponent extends BasePage implements OnI
         //Ejecutar el servicio
       }
     });
-  }
-
-  selectRow(row: any) {
-    this.data2.load(row.subbrands);
-    this.data2.refresh();
-    this.rowSelected = true;
   }
 
 }
