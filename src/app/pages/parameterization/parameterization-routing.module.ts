@@ -252,6 +252,16 @@ const routes: Routes = [
         .CPMDateDocumentsModule,
     data: { title: 'Fechas para Documentos' },
   },
+  {
+    path: 'indicators-of-performance',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-indicators-of-performance/c-p-m-indicators-of-performance.module'
+        )
+      ).CPMIndicatorsOfPerformanceModule,
+    data: { title: 'Indicadores de Desempeño' },
+  },
 ];
 
 @NgModule({
