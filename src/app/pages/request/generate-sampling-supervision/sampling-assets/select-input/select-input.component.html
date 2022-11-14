@@ -1,0 +1,11 @@
+<!--<form-field [control]="searchFileForm.get('station')">-->
+<ngx-select
+  [form]="selectForm"
+  control="select"
+  [data]="select"
+  value="id"
+  bindLabel="id"
+  label=""
+  (fetchItems)="getStationSelect($event)">
+</ngx-select>
+<!--</form-field>-->
