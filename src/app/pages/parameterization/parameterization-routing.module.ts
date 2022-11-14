@@ -193,6 +193,18 @@ const routes: Routes = [
       title: 'Catálogo de Costos',
     },
   },
+  {
+    path: 'types-of-claims-catalog',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-types-of-claims-catalog/c-p-m-types-of-claims-catalog.module'
+        )
+      ).CPMTypesOfClaimsCatalogModule,
+    data: {
+      title: 'Catálogo de tipos de siniestro',
+    },
+  },
   //Félix
   {
     path: 'values',
