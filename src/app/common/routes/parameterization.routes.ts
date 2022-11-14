@@ -89,6 +89,10 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Catálogo de tipos de siniestro',
         link: '/pages/parameterization/types-of-claims-catalog',
       },
+      {
+        label: 'Catálogo de tasas',
+        link: '/pages/parameterization/rate-catalog',
+      },
       //Félix
       {
         label: 'Valores',
