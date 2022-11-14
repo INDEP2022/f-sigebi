@@ -105,6 +105,13 @@ const routes: Routes = [
         .CCBsbMBrandsSubBrandsModule,
     data: { title: 'Marcas y Sub Marcas' },
   },
+  {
+    path: 'models',
+    loadChildren: async () =>
+      (await import('./models/c-c-m-m-models.module'))
+        .CCMMModelsModule,
+    data: { title: 'Modelos' },
+  },
 ];
 
 @NgModule({

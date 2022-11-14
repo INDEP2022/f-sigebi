@@ -270,6 +270,10 @@ export const COMMERCIALIZATION_ROUTES = [
           {
             label: 'Marcas y Sub Marcas',
             link: '/pages/commercialization/catalogs/brands-sub-brands'
+          },
+          {
+            label: 'Modelos',
+            link: '/pages/commercialization/catalogs/models'
           }
         ],
       },
