@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -32,6 +32,7 @@ export class HomeComponent extends BasePage implements OnInit {
   pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
   imagenurl =
     'https://images.ctfassets.net/txhaodyqr481/6gyslCh8jbWbh9zYs5Dmpa/a4a184b2d1eda786bf14e050607b80df/plantillas-de-factura-profesional-suscripcion-gratis-con-sumup-facturas.jpg?fm=webp&q=85&w=743&h=892';
+  parentModal: BsModalRef;
   constructor(
     private modalService: BsModalService,
     private fb: FormBuilder,
@@ -70,6 +71,7 @@ export class HomeComponent extends BasePage implements OnInit {
   openModal() {
     let config: ModalOptions = {
       initialState: {
+        parentModal: 'Modal Padre',
         callback: (data: any) => {
           console.log(data);
         },
@@ -77,7 +79,7 @@ export class HomeComponent extends BasePage implements OnInit {
       class: 'modal-sm', //asignar clase de bootstrap o personalizado
       ignoreBackdropClick: true, //ignora el click fuera del modal
     };
-    this.modalService.show(ExampleModalComponent, config);
+    this.parentModal = this.modalService.show(ExampleModalComponent, config);
   }
   chargeFile(event: any) {
     console.log(event.files);
