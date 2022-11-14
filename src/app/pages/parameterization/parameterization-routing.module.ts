@@ -205,6 +205,15 @@ const routes: Routes = [
       title: 'Catálogo de tipos de siniestro',
     },
   },
+  {
+    path: 'rate-catalog',
+    loadChildren: async () =>
+      (await import('./c-p-m-rate-catalog/c-p-m-rate-catalog.module'))
+        .CPMRateCatalogModule,
+    data: {
+      title: 'Catálogo de tasas',
+    },
+  },
   //Félix
   {
     path: 'values',
