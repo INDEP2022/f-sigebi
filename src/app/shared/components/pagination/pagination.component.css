@@ -1,0 +1,132 @@
+.paginator,
+.paginator-page-size .select-trigger {
+  color: rgba(0, 0, 0, 0.54) !important;
+}
+
+.paginator,
+.paginator-page-size .select-trigger {
+  font-family: Roboto, "Helvetica Neue", sans-serif !important;
+  font-size: 12px !important;
+}
+
+.paginator {
+  background: white;
+}
+.paginator .paginator-outer-container {
+  display: flex;
+}
+.paginator .paginator-outer-container .paginator-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 8px;
+  flex-wrap: wrap-reverse;
+  width: 100%;
+  min-height: 56px;
+}
+.paginator .paginator-outer-container .paginator-container .paginator-page-size {
+  display: flex;
+  align-items: baseline;
+  margin-right: 8px;
+}
+.paginator .paginator-outer-container .paginator-container .paginator-page-size .paginator-page-size-label {
+  margin: 0 4px;
+}
+.paginator .paginator-outer-container .paginator-container .paginator-page-size .form-field {
+  display: inline-block;
+  position: relative;
+  text-align: left;
+  font-size: inherit;
+  font-weight: 400;
+  line-height: 1.125;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  letter-spacing: normal;
+}
+.paginator .paginator-outer-container .paginator-container .paginator-page-size .form-field .form-field-wrapper {
+  padding-bottom: 1.25em;
+  position: relative;
+}
+.paginator .paginator-outer-container .paginator-container .paginator-page-size .form-field .form-field-wrapper .form-field-flex {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: baseline;
+  box-sizing: border-box;
+  width: 100%;
+}
+.paginator .paginator-outer-container .paginator-container .paginator-page-size .form-field .form-field-wrapper .form-field-flex .form-field-infix {
+  padding: 0.4375em 0;
+  display: block;
+  position: relative;
+  flex: auto;
+  min-width: 0;
+  width: 180px;
+  padding: 0.5em 0;
+  border-top: 0.84375em solid transparent;
+}
+.paginator .paginator-outer-container .paginator-container .paginator-page-size .form-field .form-field-wrapper .form-field-flex .form-field-infix .select {
+  display: inline-block;
+  width: 100%;
+  outline: none;
+  border: none !important;
+  border-bottom: 1px solid #c0c0c0 !important;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+.paginator .paginator-outer-container .paginator-container .paginator-page-size .paginator-page-size-select {
+  margin: 6px 4px 0 4px;
+  width: 56px;
+}
+.paginator .paginator-outer-container .paginator-container .paginator-range-actions {
+  display: flex;
+  align-items: center;
+}
+.paginator .paginator-outer-container .paginator-container .paginator-range-actions .paginator-range-label {
+  margin: 0 32px 0 24px;
+}
+.paginator .paginator-outer-container .paginator-container .paginator-range-actions .icon-button {
+  padding: 0;
+  min-width: 0;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  line-height: 40px;
+  border-radius: 50%;
+  color: inherit;
+  background: transparent;
+  box-sizing: border-box;
+  position: relative;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+   -ms-user-select: none;
+       user-select: none;
+  cursor: pointer;
+  outline: none;
+  border: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  display: inline-block;
+  white-space: nowrap;
+  text-decoration: none;
+  vertical-align: baseline;
+  text-align: center;
+  margin: 0;
+  overflow: visible;
+}
+.paginator .paginator-outer-container .paginator-container .paginator-range-actions .icon-button:hover {
+  background-color: #f2f2f2;
+}
+.paginator .paginator-outer-container .paginator-container .paginator-range-actions .icon-button:hover .paginator-icon {
+  color: #000;
+}
+.paginator .paginator-outer-container .paginator-container .paginator-range-actions .icon-button .paginator-icon {
+  display: inline-block;
+  width: 28px;
+  color: currentColor;
+  vertical-align: middle;
+}
+.paginator .paginator-outer-container .paginator-container .paginator-range-actions .icon-button:disabled,
+.paginator .paginator-outer-container .paginator-container .paginator-range-actions .icon-button[disabled] {
+  cursor: default;
+}
+.paginator .paginator-outer-container .paginator-container .paginator-range-actions .icon-button:disabled:hover .paginator-icon,
+.paginator .paginator-outer-container .paginator-container .paginator-range-actions .icon-button[disabled]:hover .paginator-icon {
+  color: currentColor;
+}/*# sourceMappingURL=pagination.component.css.map */

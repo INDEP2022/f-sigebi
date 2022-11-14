@@ -84,6 +84,20 @@ const routes: Routes = [
       ).CCBmtMBankMovementsTypesModule,
     data: { title: 'Tipos Movimiento Banco' },
   },
+  {
+    path: 'parameters',
+    loadChildren: async () =>
+      (await import('./parameters/c-c-p-m-parameters.module'))
+        .CCPMParametersModule,
+    data: { title: 'Parámetros Comercialización' },
+  },
+  {
+    path: 'users-event-types',
+    loadChildren: async () =>
+      (await import('./users-event-types/c-c-uet-m-users-event-types.module'))
+        .CCUetMUsersEventTypesModule,
+    data: { title: 'Usuarios por Tipo de Evento' },
+  },
 ];
 
 @NgModule({

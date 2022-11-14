@@ -1,0 +1,102 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field [control]="form.get('cve')" label="Clave">
+            <input type="text" class="form-control" formControlName="cve" />
+          </form-field>
+        </div>
+        <div class="col-md-5">
+          <form-field [control]="form.get('attributes')" label="Atributos">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="attributes" />
+          </form-field>
+        </div>
+        <div class="col-md-5">
+          <form-field [control]="form.get('description')" label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-8">
+          <div class="row">
+            <div class="col-md-4">
+              <form-field [control]="form.get('longMax')" label="Long Máxima">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="longMax" />
+              </form-field>
+            </div>
+            <div class="col-md-8">
+              <form-field [control]="form.get('typeDate')" label="Tipo de dato">
+                <ng-select
+                  formControlName="typeDate"
+                  [searchable]="false"
+                  class="form-control"
+                  [clearable]="false">
+                  <ng-option value="1">Alfanumérico</ng-option>
+                  <ng-option value="2">Numérico</ng-option>
+                  <ng-option value="3">Flotante</ng-option>
+                  <ng-option value="4">Fecha</ng-option>
+                </ng-select>
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="row pt-5">
+              <div class="col-md-12">
+                <form-field
+                  [control]="form.get('tableSupport')"
+                  label="Tabla de soporte">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="tableSupport" />
+                </form-field>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <form-check label="A - Campo actualizable" for="label1">
+            <input id="label1" type="checkbox" formControlName="update" />
+          </form-check>
+          <form-check label="U - Campo único" for="label2">
+            <input id="label2" type="checkbox" formControlName="unique" />
+          </form-check>
+          <form-check label="R - Campo requerido" for="label3">
+            <input id="label3" type="checkbox" formControlName="requerid" />
+          </form-check>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="!form.valid"
+          (click)="close()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

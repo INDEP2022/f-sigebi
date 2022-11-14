@@ -1,6 +1,7 @@
 /** BASE IMPORT */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { BasePage } from 'src/app/core/shared/base-page';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
@@ -151,19 +152,22 @@ export class PJDPDPQueryRelatedPaymentsDepositoriesComponent
 
   public form: FormGroup;
   public formDepositario: FormGroup;
+  public noBienReadOnly: number = null;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private activateRoute: ActivatedRoute) {
     super();
   }
 
   ngOnInit(): void {
+    const id = this.activateRoute.snapshot.paramMap.get('id');
+    if (id) this.noBienReadOnly = Number(id);
     this.prepareForm();
     this.loading = true;
   }
 
   private prepareForm() {
     this.form = this.fb.group({
-      noBien: ['', [Validators.required]], //*
+      noBien: [this.noBienReadOnly, [Validators.required]], //*
       nombramiento: ['', [Validators.required]], //*
       fecha: ['', [Validators.required]], //*
     });
