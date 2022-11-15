@@ -33,6 +33,19 @@ const routes: Routes = [
         .SCCChangePasswordModule,
     data: { title: routesSecurity[2].label },
   },
+  {
+    path: routesSecurity[3].link,
+    loadChildren: async () =>
+      (await import('./report-access-user/s-rau-m-report-access-user.module'))
+        .SRAUReportAccessUserModule,
+    data: { title: routesSecurity[3].label },
+  },
+  {
+    path: routesSecurity[4].link,
+    loadChildren: async () =>
+      (await import('./users/s-m-users.module')).SUsersModule,
+    data: { title: routesSecurity[4].label },
+  },
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],

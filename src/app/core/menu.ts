@@ -8,6 +8,7 @@ import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception
 import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
 import { GENERAL_PROCESSES_ROUTES } from '../common/routes/general-processes.routes';
 import { PARAMETERIZATION_ROUTES } from '../common/routes/parameterization.routes';
+import { SCHEDULING_DELIVERIES } from '../common/routes/scheduling-deliveries.routes';
 import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
@@ -46,6 +47,19 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-folder',
     subItems: [
       {
+        label: 'Applicaciones',
+        subItems: [
+          {
+            label: 'Solicitud de transferencia',
+            link: '/pages/request/list/new-transfer-request',
+          },
+          {
+            label: 'Muestreo Bienes',
+            link: '/pages/request/sampling-assets',
+          },
+        ],
+      },
+      {
         label: 'Solicitudes a turno',
         link: '/pages/request/request-in-turn',
       },
@@ -67,6 +81,9 @@ export const MENU: IMenuItem[] = [
 
   //Documentación complementaria//
   ...DOCUMENTATION_COMPLEMENTARY,
+
+  //Programar entregas//
+  ...SCHEDULING_DELIVERIES,
 
   //Proceso Destino final
   {

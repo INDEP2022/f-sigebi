@@ -1,0 +1,79 @@
+<div class="my-4">
+  <app-card [header]="false" class="p-10">
+    <div body>
+      <div
+        class="ms-n2 mb-2 pointer"
+        (click)="toggleInfo = !toggleInfo"
+        [attr.aria-expanded]="!toggleInfo"
+        aria-controls="collapseInfo">
+        <i
+          class="bx bx-chevron-down bx-md float-icon-md"
+          [ngClass]="{
+            'rotate-down': toggleInfo,
+            'rotate-up': !toggleInfo
+          }"></i>
+        <h6 class="d-inline">Información de la Solicitud</h6>
+      </div>
+      <div
+        class="row"
+        id="collapseInfo"
+        [isAnimated]="true"
+        [collapse]="!toggleInfo">
+        <div class="row pt-2">
+          <div class="col-md-4">
+            <label class="label" for=""
+              >Fecha de Solicitud: <span>{{ requestInfo.date }}</span></label
+            >
+          </div>
+          <div class="col-md-4">
+            <label class="label" for=""
+              >No. Solicitud: <span>{{ requestInfo.requestNo }}</span></label
+            >
+          </div>
+          <div class="col-md-4">
+            <label class="label" for=""
+              >No. Expediente: <span>{{ requestInfo.fileNo }}</span></label
+            >
+          </div>
+        </div>
+        <div class="row pt-2">
+          <div class="col-md-4">
+            <label class="label" for=""
+              >No. Oficio: <span>{{ requestInfo.memorandumNo }}</span></label
+            >
+          </div>
+          <div class="col-md-4">
+            <label class="label" for=""
+              >Delegación Regional:
+              <span>{{ requestInfo.regionalDelegation }}</span></label
+            >
+          </div>
+          <div class="col-md-4">
+            <label class="label" for=""
+              >Estado: <span>{{ requestInfo.state }}</span></label
+            >
+          </div>
+        </div>
+        <div class="row pt-2">
+          <div class="col-md-4">
+            <label class="label" for=""
+              >Transferencia: <span>{{ requestInfo.transferee }}</span></label
+            >
+          </div>
+          <div class="col-md-4">
+            <label class="label" for=""
+              >Emisora:
+              <span>{{ requestInfo.emitter }}</span>
+            </label>
+          </div>
+          <div class="col-md-4">
+            <p class="label">
+              Autoridad:
+              <span>{{ requestInfo.authority }}</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </app-card>
+</div>

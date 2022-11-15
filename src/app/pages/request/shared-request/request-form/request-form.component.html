@@ -4,7 +4,7 @@
       <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} SOLICITUD</h5>
     </div>
     <ng-template #optionTitle>
-      <h5 class="modal-title"> Documentación Complementaria</h5>
+      <h5 class="modal-title">Documentación Complementaria</h5>
     </ng-template>
   </div>
   <div body class="body">
@@ -89,8 +89,13 @@
                 value="regDelega"></ngx-select>
             </div>
             <div *ngIf="op == 2" class="col-md-3">
-              <ngx-select [form]="requestForm" control="state" (fetchItems)="getState($event)" [data]="selectState"
-                label="Estado" value="regDelega"></ngx-select>
+              <ngx-select
+                [form]="requestForm"
+                control="state"
+                (fetchItems)="getState($event)"
+                [data]="selectState"
+                label="Estado"
+                value="regDelega"></ngx-select>
             </div>
           </div>
         </div>
@@ -104,13 +109,17 @@
           <div body>
             <div class="row pt-5">
               <div class="col-md-6">
-                <ngx-select [form]="requestForm" control="issue" (fetchItems)="getIssue($event)" [data]="selectIssue"
-                  label="Asunto" value="regDelega"></ngx-select>
+                <ngx-select
+                  [form]="requestForm"
+                  control="issue"
+                  (fetchItems)="getIssue($event)"
+                  [data]="selectIssue"
+                  label="Asunto"
+                  value="regDelega"></ngx-select>
               </div>
             </div>
           </div>
         </app-card>
-
       </div>
 
       <app-card [header]="true">

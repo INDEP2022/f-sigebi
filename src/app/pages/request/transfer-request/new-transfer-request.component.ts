@@ -3,14 +3,10 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-new-transfer-request',
   templateUrl: './new-transfer-request.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class NewTransferRequestComponent implements OnInit {
+  constructor() {}
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

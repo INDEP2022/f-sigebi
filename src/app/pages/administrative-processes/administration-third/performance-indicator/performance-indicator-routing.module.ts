@@ -4,12 +4,13 @@ import { PerformanceIndicatorComponent } from './performance-indicator/performan
 
 const routes: Routes = [
   {
-    path: '', component: PerformanceIndicatorComponent
-  }
+    path: '',
+    component: PerformanceIndicatorComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PerformanceIndicatorRoutingModule { }
+export class PerformanceIndicatorRoutingModule {}

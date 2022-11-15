@@ -10,13 +10,11 @@ import { data } from './data';
 @Component({
   selector: 'app-c-c-ss-c-sale-status',
   templateUrl: './c-c-ss-c-sale-status.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CCSsCSaleStatusComponent extends BasePage implements OnInit {
-
   data: LocalDataSource = new LocalDataSource();
-  eventTypesD = data;
+  saleStatusD = data;
 
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -38,12 +36,11 @@ export class CCSsCSaleStatusComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.data.load(this.eventTypesD);
+    this.data.load(this.saleStatusD);
   }
 
   selectRow(row: any) {
     this.selectedRow = row;
     this.rowSelected = true;
   }
-
 }

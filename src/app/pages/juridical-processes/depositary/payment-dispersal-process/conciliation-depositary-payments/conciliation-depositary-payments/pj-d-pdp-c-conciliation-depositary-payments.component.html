@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">CONCILIACI&Oacute;N DE PAGOS DEPOSITARIAS</h5>
+    <h5 class="title">PROCESO DE DISPERSI&Oacute;N DE PAGOS</h5>
   </div>
 
   <div body>
@@ -10,7 +10,51 @@
       [formDepositario]="formDepositario"
       (formValues)="mostrarInfo($event)"
       (formDepositariaValues)="mostrarInfoDepositario($event)"
-      [nombrePantalla]="'concil-pag'"></ngx-form-depositaria>
+      (formValuesValidacion)="btnValidacionPagos($event)"
+      (eliminarDispersionPagos)="btnDispersar($event)"
+      [nombrePantalla]="'concil-pag'"
+      [btnDeshacerParam]="'fechaEliminarDispersion'"></ngx-form-depositaria>
     <!-- Forms DEPOSITARIA -->
+  </div>
+</app-card>
+
+<app-card [header]="true" *ngIf="dispersionPagos">
+  <div class="ch-content" header>
+    <h5 class="title">DISPERSI&Oacute;N DE PAGOS DEPOSITARIAS</h5>
+  </div>
+
+  <div body>
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 p-2">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="tableSettingsDispersion"
+          [source]="dataDispersion"></ng2-smart-table>
+      </div>
+      <div class="col-sm-12 col-12 col-md-12 p-2">
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+      <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+        <div class="form-group">
+          <button
+            class="btn btn-primary btn-sm active text-wrap m-2"
+            (click)="btnDispersarPagos()">
+            Dispersar
+          </button>
+          <button
+            class="btn btn-info btn-sm active text-wrap m-2"
+            (click)="btnAplicarPagos()">
+            Aplicar
+          </button>
+          <button
+            class="btn btn-danger btn-sm active text-wrap m-2"
+            (click)="btnSalirDispersion()">
+            Cerrar Ventana
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </app-card>

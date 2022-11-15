@@ -9,6 +9,13 @@ const routes: Routes = [
     component: AdministrativeProcessesComponent,
     children: [
       {
+        path: 'administration-assets',
+        loadChildren: async () =>
+          (await import('./administration-assets/administration-assets.module'))
+            .AdministrationAssetsModule,
+        data: { title: 'Administracion Bienes' },
+      },
+      {
         path: 'numerary-operator',
         loadChildren: async () =>
           (await import('./numerary-operator/numerary-operator.module'))
@@ -530,9 +537,22 @@ const routes: Routes = [
       {
         path: 'implementation-report',
         loadChildren: async () =>
-          (await import('./administration-third/implementation-report/implementation-report.module'))
-            .ImplementationReportModule,
+          (
+            await import(
+              './administration-third/implementation-report/implementation-report.module'
+            )
+          ).ImplementationReportModule,
         data: { title: 'Reporte de implementacion' },
+      },
+      {
+        path: 'service-order-reports',
+        loadChildren: async () =>
+          (
+            await import(
+              './administration-third/service-order-reports/service-order-reports.module'
+            )
+          ).ServiceOrderReportsModule,
+        data: { title: 'Reportes de Ordenes de Servicio' },
       },
       /**
        * Seguros David Lucas
@@ -613,4 +633,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class AdministrativeProcessesRoutingModule { }
+export class AdministrativeProcessesRoutingModule {}

@@ -11,14 +11,16 @@
           </div>
         </div>
       </div>
-      <div class="col-lg-6 col-md-6 col-sm-12 col-12 align-self-baseline" *ngIf="rowSelected">
+      <div
+        class="col-lg-6 col-md-6 col-sm-12 col-12 align-self-baseline"
+        *ngIf="rowSelected">
         <div class="row mb-3 mt-3 justify-content-end">
-          <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+          <div class="col-lg-6 col-md-6 col-sm-6 col-12">
             <label for="">Estatus</label>
             <div class="mt-4">
               <h5 class="font-size-14 text-muted">
                 <i class="bx bxs-circle me-1 text-muted"></i>
-                {{ selectedRow?.status}}
+                {{ selectedRow?.status }}
               </h5>
             </div>
           </div>
@@ -40,14 +42,14 @@
     </div>
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>
-    <!--INFO EVENT TYPE-->
+    <!--STATUS-->
     <div class="row mb-3 mt-3 justify-content-start" *ngIf="rowSelected">
-      <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+      <div class="col-lg-6 col-md-6 col-sm-6 col-12">
         <label for="">Estatus</label>
         <div class="mt-4">
           <h5 class="font-size-14 text-muted">
             <i class="bx bxs-circle me-1 text-muted"></i>
-            {{ selectedRow?.status}}
+            {{ selectedRow?.status }}
           </h5>
         </div>
       </div>

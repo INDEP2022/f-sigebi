@@ -51,6 +51,7 @@ interface TableSettings {
   pager: Object;
   hideSubHeader: boolean;
   mode: string;
+  add: Object;
   edit: Object;
   delete: Object;
   columns: Object;
@@ -83,6 +84,7 @@ const TABLE_SETTINGS: TableSettings = {
   },
   hideSubHeader: true,
   mode: 'external',
+  add: {},
   edit: {
     editButtonContent: '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
   },
