@@ -71,6 +71,43 @@ const routes: Routes = [
           ).DepositConsiliationTokensModule,
         data: { title: 'Conciliacion de fichas de deposito vs expediente' },
       },
+      {
+        path: 'effective-numerary-devolution',
+        loadChildren: async () =>
+          (
+            await import(
+              './effective-numerary-devolution/effective-numerary-devolution.module'
+            )
+          ).EffectiveNumeraryDevolutionModule,
+        data: { title: 'Devolución de numerario efectivo' },
+      },
+      {
+        path: 'accounts-insured-by-file',
+        loadChildren: async () =>
+          (
+            await import(
+              './accounts-insured-by-file/accounts-insured-by-file.module'
+            )
+          ).AccountsInsuredByFileModule,
+        data: { title: 'Cuentas aseguradas por expediente' },
+      },
+      {
+        path: 'effective-numerary-reconciliation',
+        loadChildren: async () =>
+          (
+            await import(
+              './effective-numerary-reconciliation/effective-numerary-reconciliation.module'
+            )
+          ).EffectiveNumeraryReconciliationModule,
+        data: { title: 'Conciliación de numerario efectivo' },
+      },
+      {
+        path: 'bank-accounts-insured',
+        loadChildren: async () =>
+          (await import('./bank-accounts-insured/bank-accounts-insured.module'))
+            .BankAccountsInsuredModule,
+        data: { title: 'Cuentas aseguradas por bancos' },
+      },
     ],
   },
 ];
