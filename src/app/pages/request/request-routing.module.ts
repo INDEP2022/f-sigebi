@@ -14,7 +14,7 @@ const routes: Routes = [
   },
 
   {
-    path: 'perform-programming',
+    path: 'perform-programming/:id',
     loadChildren: async () =>
       (
         await import(
@@ -22,17 +22,6 @@ const routes: Routes = [
         )
       ).PerformProgrammingModule,
     data: { title: 'Programar Recepción' },
-  },
-
-  {
-    path: 'warehouse',
-    loadChildren: async () =>
-      (
-        await import(
-          './programming-request-components/warehouse/warehouse.module'
-        )
-      ).WarehouseModuele,
-    data: { title: 'Almacén' },
   },
 
   {

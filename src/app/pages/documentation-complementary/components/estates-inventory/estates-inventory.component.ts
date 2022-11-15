@@ -6,12 +6,12 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { RequestSiabFormComponent } from '../../../request/shared-request/request-siab-form/request-siab-form.component';
 import {
   ESTATE_EXPEDIENT_COLUMNS,
   ESTATE_EXPEDIENT_SELECT_COLUMNS,
 } from '../../columns/estate-expedient-columns';
 import { ExpedientListComponent } from '../../expedient-list/expedient-list.component';
-import { RequestSiabFormComponent } from '../request-siab-form/request-siab-form.component';
 
 @Component({
   selector: 'app-estates-inventory',
