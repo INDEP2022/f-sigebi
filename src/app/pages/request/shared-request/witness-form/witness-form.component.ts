@@ -31,5 +31,18 @@ export class WitnessFormComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  confirm() {}
+  confirm() {
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Estas seguro que deseas crear un nuevo testigo?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.onLoadToast('success', 'Testigo creado correctamente', '');
+
+        this.close();
+      }
+    });
+  }
 }

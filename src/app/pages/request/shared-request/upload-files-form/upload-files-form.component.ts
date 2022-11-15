@@ -33,7 +33,19 @@ export class UploadFilesFormComponent extends BasePage implements OnInit {
     });
   }
 
-  confirm() {}
+  confirm() {
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Estas seguro de guardar los archivos?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.onLoadToast('success', 'Firma cargada correctamente', '');
+        this.close();
+      }
+    });
+  }
 
   close() {
     this.modalRef.hide();

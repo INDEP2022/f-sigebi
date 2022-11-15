@@ -4,10 +4,10 @@
   </div>
   <div body>
     <div class="btn-toolbar">
-      <button class="btn btn-primary btn-sm active">
+      <button (click)="send()" class="btn btn-primary btn-sm active">
         <i class="fa fa-check-circle"></i> Enviar a firmar
       </button>
-      <button (click)="showSignProg()" class="btn btn-info btn-sm active">
+      <button (click)="next()" class="btn btn-info btn-sm active">
         <i class="fa fa-arrow-right"></i> Paso siguiente
       </button>
     </div>
@@ -27,7 +27,7 @@
           <td>Autorizador</td>
           <td>Datos incompletos</td>
           <td class="text-center">
-            <a style="cursor: pointer" (click)="uploadFiles()"
+            <a style="cursor: pointer" (click)="upload()"
               ><i class="fa fa-key"></i> Cargar archivos</a
             >
           </td>

@@ -44,7 +44,20 @@ export class DocumentFormComponent extends BasePage implements OnInit {
 
   getDocumentSelect(typeDocument: ListParams) {}
 
-  confirm() {}
+  confirm() {
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Estas seguro que deseas crear un nuevo documento?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.onLoadToast('success', 'Documento creado correctamente', '');
+
+        this.close();
+      }
+    });
+  }
 
   close() {
     this.modalRef.hide();

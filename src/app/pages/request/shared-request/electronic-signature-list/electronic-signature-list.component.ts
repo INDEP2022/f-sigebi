@@ -28,14 +28,27 @@ export class ElectronicSignatureListComponent
     this.settings.columns = ELECTRONIC_SGIGNATURE_COLUMNS;
   }
 
-  uploadFiles() {
+  send() {
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Estas seguro que deseas mandar el documento a firmar?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.onLoadToast('success', 'Documento enviado correctamente', '');
+      }
+    });
+  }
+
+  upload() {
     const uploadFile = this.modalService.show(UploadFilesFormComponent, {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
   }
 
-  showSignProg() {
+  next() {
     this.modalRef.content.callback(true);
     this.modalRef.hide();
   }

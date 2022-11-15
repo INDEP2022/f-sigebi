@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { RECEIPT_COLUMNS } from '../execute-reception-form/columns/minute-columns';
+import { RECEIPT_COLUMNS } from '../../programming-request-components/execute-reception/execute-reception-form/columns/minute-columns';
 import { GenerateReceiptFormComponent } from '../generate-receipt-form/generate-receipt-form.component';
 
 @Component({
@@ -23,7 +23,20 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {}
 
-  confirm() {}
+  confirm() {
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Estas seguro que deseas guardar los recibos?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.onLoadToast('success', 'Recibos guardados correctamente', '');
+
+        this.close();
+      }
+    });
+  }
 
   close() {
     this.modalRef.hide();

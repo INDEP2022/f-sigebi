@@ -51,6 +51,25 @@ export class RequestSiabFormComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
+  send() {
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Estas seguro que deseas mandar busqueda a SIAB?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.onLoadToast(
+          'success',
+          'Solicitud de busqueda enviada correctamente',
+          ''
+        );
+
+        this.close();
+      }
+    });
+  }
+
   getRegionalDelegationSelect(regionalDelegation: ListParams) {}
   getStateSelect(state: ListParams) {}
   getTransferentSelect(transferent: ListParams) {}

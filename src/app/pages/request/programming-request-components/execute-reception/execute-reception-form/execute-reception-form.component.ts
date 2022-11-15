@@ -4,14 +4,14 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { AssignReceiptFormComponent } from '../../../shared-request/assign-receipt-form/assign-receipt-form.component';
+import { GenerateReceiptFormComponent } from '../../../shared-request/generate-receipt-form/generate-receipt-form.component';
+import { PhotographyFormComponent } from '../../../shared-request/photography-form/photography-form.component';
 import {
   IUser,
   USER_COLUMNS,
 } from '../../acept-programming/columns/users-columns';
-import { AssignReceiptFormComponent } from '../assign-receipt-form/assign-receipt-form.component';
 import { DocumentsListComponent } from '../documents-list/documents-list.component';
-import { GenerateReceiptFormComponent } from '../generate-receipt-form/generate-receipt-form.component';
-import { PhotographyFormComponent } from '../photography-form/photography-form.component';
 import { ReschedulingFormComponent } from '../rescheduling-form/rescheduling-form.component';
 import { RECEIPT_COLUMNS } from './columns/minute-columns';
 import { TRANSPORTABLE_GOODS } from './columns/transportable-goods-columns';

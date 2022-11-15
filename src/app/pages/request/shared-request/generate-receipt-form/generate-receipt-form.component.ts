@@ -64,7 +64,20 @@ export class GenerateReceiptFormComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
   }
-  confirm() {}
+  confirm() {
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Estas seguro que deseas crear un nuevo recibo?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.onLoadToast('success', 'Recibo creado correctamente', '');
+
+        this.close();
+      }
+    });
+  }
 
   delete(event: Event) {}
 }

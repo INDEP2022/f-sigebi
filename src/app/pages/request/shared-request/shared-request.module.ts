@@ -5,18 +5,33 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { AssignReceiptFormComponent } from './assign-receipt-form/assign-receipt-form.component';
 import { AssociateFileButtonComponent } from './associate-file/associate-file-button/associate-file-button.component';
 import { AssociateFileComponent } from './associate-file/associate-file.component';
 import { NewFileModalComponent } from './associate-file/new-file-modal/new-file-modal.component';
+import { ConfirmProgrammingComponent } from './confirm-programming/confirm-programming.component';
+import { DocumentFormComponent } from './document-form/document-form.component';
+import { DocumentShowComponent } from './document-show/document-show.component';
+import { ElectronicSignatureListComponent } from './electronic-signature-list/electronic-signature-list.component';
+import { GenerateReceiptFormComponent } from './generate-receipt-form/generate-receipt-form.component';
+import { PhotographyFormComponent } from './photography-form/photography-form.component';
 import { RequestFormComponent } from './request-form/request-form.component';
 import { RequestInformationComponent } from './request-information/request-information.component';
+import { RequestSiabFormComponent } from './request-siab-form/request-siab-form.component';
 import { SearchInventoryGoodsComponent } from './search-inventory-goods/search-inventory-goods.component';
 import { SearchRequestsComponent } from './search-requests/search-requests.component';
 import { AddGoodsButtonComponent } from './select-goods/add-goods-button/add-goods-button.component';
 import { ReserveGoodModalComponent } from './select-goods/reserve-good-modal/reserve-good-modal.component';
 import { SelectGoodsComponent } from './select-goods/select-goods.component';
 import { ViewFileButtonComponent } from './select-goods/view-file-button/view-file-button.component';
+import { ShowProgrammingComponent } from './show-programming/show-programming.component';
+import { ShowSignatureProgrammingComponent } from './show-signature-programming/show-signature-programming.component';
+import { UploadFilesFormComponent } from './upload-files-form/upload-files-form.component';
 import { UsersSelectedToTurnComponent } from './users-selected-to-turn/users-selected-to-turn.component';
+import { WarehouseConfirmComponent } from './warehouse-confirm/warehouse-confirm.component';
+import { WarehouseFormComponent } from './warehouse-form/warehouse-form.component';
+import { WarehouseShowComponent } from './warehouse-show/warehouse-show.component';
+import { WitnessFormComponent } from './witness-form/witness-form.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +48,21 @@ import { UsersSelectedToTurnComponent } from './users-selected-to-turn/users-sel
     AddGoodsButtonComponent,
     ViewFileButtonComponent,
     ReserveGoodModalComponent,
+    PhotographyFormComponent,
+    RequestSiabFormComponent,
+    DocumentFormComponent,
+    DocumentShowComponent,
+    ConfirmProgrammingComponent,
+    ElectronicSignatureListComponent,
+    UploadFilesFormComponent,
+    ShowSignatureProgrammingComponent,
+    ShowProgrammingComponent,
+    WarehouseFormComponent,
+    WarehouseConfirmComponent,
+    WarehouseShowComponent,
+    GenerateReceiptFormComponent,
+    AssignReceiptFormComponent,
+    WitnessFormComponent,
   ],
   imports: [
     CommonModule,

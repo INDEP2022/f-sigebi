@@ -25,17 +25,6 @@ const routes: Routes = [
   },
 
   {
-    path: 'warehouse',
-    loadChildren: async () =>
-      (
-        await import(
-          './programming-request-components/warehouse/warehouse.module'
-        )
-      ).WarehouseModuele,
-    data: { title: 'Almacén' },
-  },
-
-  {
     path: 'acept-programming',
     loadChildren: async () =>
       (

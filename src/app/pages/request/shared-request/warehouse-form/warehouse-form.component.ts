@@ -62,8 +62,20 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
     });
   }
   confirm() {
-    this.router.navigate(['/pages/request/warehouse']);
-    this.close();
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Estas seguro de crar almacén?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.onLoadToast('success', 'Almacén creado correctamente', '');
+        this.close();
+        this.router.navigate([
+          '/pages/request/perform-programming/1/warehouse/1',
+        ]);
+      }
+    });
   }
 
   getResponsibleUserSelect(responsibleUser: ListParams) {}

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 
@@ -10,7 +11,11 @@ import { BasePage } from 'src/app/core/shared/base-page';
 })
 export class WarehouseConfirmComponent extends BasePage implements OnInit {
   responseForm: FormGroup = new FormGroup({});
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private router: Router
+  ) {
     super();
   }
 
@@ -25,7 +30,23 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
     });
   }
 
-  confirm() {}
+  confirm() {
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Estas seguro que desea confirmar el alta de almacén?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.onLoadToast(
+          'success',
+          'Alta de almacén confirmada correctamente',
+          ''
+        );
+        this.close();
+      }
+    });
+  }
 
   close() {
     this.modalService.hide();
