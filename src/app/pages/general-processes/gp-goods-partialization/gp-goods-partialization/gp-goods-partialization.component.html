@@ -1,0 +1,50 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Parcialización de Bienes</h5>
+  </div>
+
+  <div body>
+    <div class="row">
+      <div class="col-md-12 md-tabs">
+        <form [formGroup]="form" class="form-material">
+          <div class="row">
+            <form-field [control]="form.get('bien')" class="col-md-4">
+              <ngx-select
+                [form]="form"
+                control="bien"
+                [data]="select"
+                label="No. Bien"></ngx-select>
+            </form-field>
+
+            <form-field
+              [control]="form.get('original')"
+              label="Original"
+              class="col-md-4">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="original" />
+            </form-field>
+
+            <form-field
+              [control]="form.get('en')"
+              label="Parcializar En"
+              class="col-md-4">
+              <input type="text" class="form-control" formControlName="en" />
+            </form-field>
+          </div>
+          <div class="row pt-3">
+            <form-field [control]="form.get('y')" label="Y" class="col-md-4">
+              <input type="text" class="form-control" formControlName="y" />
+            </form-field>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <button class="btn btn-primary active">Aceptar</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</app-card>
