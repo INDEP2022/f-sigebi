@@ -23,7 +23,7 @@ var usuario: IRequestList[] = [
     numTask: 260302,
     noInstance: 820170,
     created: 'tester_nsbxt',
-    process: 'SolicitudProgramación',
+    process: 'SolicitudProgramacion',
   },
   {
     title:
@@ -73,11 +73,11 @@ export class RequestListComponent extends BasePage implements OnInit {
 
   editRequest(event: any) {
     console.log(event);
-    if (event.data.process == 'SolicitudProgramación') {
+    if (event.data.process == 'SolicitudProgramacion') {
       // en el caso de que sea una solicitud de programacion
       this.router.navigate([
-        'pages/request/transfer-request/registration-request',
-        1,
+        'pages/request/perform-programming',
+        event.data.noRequest,
       ]);
     }
     if (event.data.process == 'RegistroSolicitudes') {

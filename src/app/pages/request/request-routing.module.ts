@@ -14,7 +14,7 @@ const routes: Routes = [
   },
 
   {
-    path: 'perform-programming',
+    path: 'perform-programming/:id',
     loadChildren: async () =>
       (
         await import(

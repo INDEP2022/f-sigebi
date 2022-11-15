@@ -4,7 +4,9 @@
   </div>
   <div body>
     <div class="form-inline justify-content-end btn-toolbar">
-      <button class="btn btn-primary btn-sm active">Nuevo recibo</button>
+      <button (click)="createReceipt()" class="btn btn-primary btn-sm active">
+        Nuevo recibo
+      </button>
     </div>
     <ng2-smart-table
       [attr.class]="'table-bordered'"

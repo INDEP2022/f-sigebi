@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { RECEIPT_COLUMNS } from '../execute-reception-form/columns/minute-columns';
+import { GenerateReceiptFormComponent } from '../generate-receipt-form/generate-receipt-form.component';
 
 @Component({
   selector: 'app-assign-receipt-form',
@@ -12,7 +13,10 @@ import { RECEIPT_COLUMNS } from '../execute-reception-form/columns/minute-column
 export class AssignReceiptFormComponent extends BasePage implements OnInit {
   settingsReceipt = { ...TABLE_SETTINGS, actions: false };
   receipts: any[] = [];
-  constructor(private modalRef: BsModalRef) {
+  constructor(
+    private modalRef: BsModalRef,
+    private modalService: BsModalService
+  ) {
     super();
     this.settingsReceipt.columns = RECEIPT_COLUMNS;
   }
@@ -25,5 +29,13 @@ export class AssignReceiptFormComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
-  createReceipt() {}
+  createReceipt() {
+    const generateReceipt = this.modalService.show(
+      GenerateReceiptFormComponent,
+      {
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
+  }
 }
