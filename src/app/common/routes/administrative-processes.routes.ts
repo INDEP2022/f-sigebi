@@ -571,6 +571,22 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Conciliación de fichas de deposito vs expediente',
             link: '/pages/administrative-processes/deposit-tokens-conciliation',
           },
+          {
+            label: 'Devolución de numerario efectivo',
+            link: '/pages/administrative-processes/effective-numerary-devolution',
+          },
+          {
+            label: 'Cuentas aseguradas por expediente',
+            link: '/pages/administrative-processes/accounts-insured-by-file',
+          },
+          {
+            label: 'Conciliación de numerario efectivo',
+            link: '/pages/administrative-processes/effective-numerary-reconciliation',
+          },
+          {
+            label: 'Cuentas aseguradas por bancos',
+            link: '/pages/administrative-processes/bank-accounts-insured',
+          },
         ],
       },
       /**END Abner */

@@ -1,4 +1,4 @@
-import { BtnRequestComponent } from '../../../../transfer-request/tabs/expedients-child-tabs-components/btn-request/btn-request.component';
+import { BtnRequestComponent } from '../../../../shared-request/expedients-tabs/sub-tabs/btn-request/btn-request.component';
 
 export const LIST_EXPEDIENTS_COLUMN = {
   noDoc: {

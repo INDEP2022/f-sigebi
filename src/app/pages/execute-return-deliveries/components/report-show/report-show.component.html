@@ -1,0 +1,23 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Vista previa reporte</h5>
+  </div>
+  <div body>
+    <div class="text-right">
+      <button
+        (click)="chargeDocument($event)"
+        class="btn btn-primary btn-sm active">
+        <i class="fa fa-arrow-right"></i> Firmar reporte
+      </button>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

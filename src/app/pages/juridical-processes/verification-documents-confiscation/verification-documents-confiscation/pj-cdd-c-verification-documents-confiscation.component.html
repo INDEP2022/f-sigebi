@@ -199,7 +199,7 @@
       <div class="col-sm-12 col-12 col-md-12 p-3 ml-2">
         <hr class="row" />
         <ng2-smart-table
-          class="col-md-12"
+          [attr.class]="'table-bordered'"
           [settings]="settingsDocumentos"
           [source]="dataDocumentos"></ng2-smart-table>
       </div>
@@ -284,7 +284,7 @@
           <div class="col-sm-12 col-12 col-md-12 p-3 ml-2">
             <hr class="row" />
             <ng2-smart-table
-              class="col-md-12"
+              [attr.class]="'table-bordered'"
               [settings]="settingsTablaDocumentos"
               [source]="dataTablaDocumentos"></ng2-smart-table>
           </div>
