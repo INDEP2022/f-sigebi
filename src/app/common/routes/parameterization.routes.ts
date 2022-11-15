@@ -121,6 +121,10 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Registro de Indiciados',
         link: '/pages/parameterization/indicia-registration',
       },
+      {
+        label: 'Catálogo de separadores a documentos',
+        link: '/pages/parameterization/catalog-of-document-separators',
+      },
       //Félix
       {
         label: 'Valores',

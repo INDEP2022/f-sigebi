@@ -3,12 +3,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 
 @Component({
-  selector: 'app-modal-indicia-registration',
-  templateUrl: './modal-indicia-registration.component.html',
+  selector: 'app-modal-catalog-of-document-separators',
+  templateUrl: './modal-catalog-of-document-separators.component.html',
   styles: [],
 })
-export class ModalIndiciaRegistrationComponent implements OnInit {
-  title: string = 'REGISTRO DE INDICIADOS';
+export class ModalCatalogOfDocumentSeparatorsComponent implements OnInit {
+  title: string = 'SEPARADORES A DOCUMENTOS';
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
   allotment: any;
@@ -22,9 +22,8 @@ export class ModalIndiciaRegistrationComponent implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      numberIndiciado: [null, [Validators.required]],
-      name: [null, [Validators.required]],
-      curp: [null, [Validators.required]],
+      keySeparators: [null, [Validators.required]],
+      description: [null, [Validators.required]],
     });
     if (this.allotment != null) {
       this.edit = true;

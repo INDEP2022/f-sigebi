@@ -255,6 +255,18 @@ const routes: Routes = [
     },
   },
   {
+    path: 'catalog-of-document-separators',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-catalog-of-document-separators/c-p-m-catalog-of-document-separators.module'
+        )
+      ).CPMCatalogOfDocumentSeparatorsModule,
+    data: {
+      title: 'Catálogo de separadores a documentos',
+    },
+  },
+  {
     path: 'rate-catalog',
     loadChildren: async () =>
       (await import('./c-p-m-rate-catalog/c-p-m-rate-catalog.module'))
