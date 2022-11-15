@@ -14,3 +14,9 @@ a.text-color:active {
     }
   }
 }
+
+:host ::ng-deep ngx-select {
+  ng-select {
+    border: none !important;
+  }
+}

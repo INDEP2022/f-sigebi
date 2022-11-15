@@ -5,6 +5,7 @@ import { AdministrativeProcessesRoutingModule } from './administrative-processes
 import { AdministrativeProcessesComponent } from './administrative-processes.component';
 import { ExpensesAndCostsModule } from './expenses-and-costs/expenses-and-costs.module';
 import { InsuranceAndSurveillanceModule } from './insurance-and-surveillance/insurance-and-surveillance.module';
+import { NumeraryModule } from './numerary/numerary.module';
 
 @NgModule({
   declarations: [AdministrativeProcessesComponent],
@@ -13,6 +14,7 @@ import { InsuranceAndSurveillanceModule } from './insurance-and-surveillance/ins
     AdministrativeProcessesRoutingModule,
     InsuranceAndSurveillanceModule,
     ExpensesAndCostsModule,
+    NumeraryModule,
   ],
 })
 export class AdministrativeProcessesModule {}

@@ -6,12 +6,12 @@ import { CCUetCUsersEventTypesComponent } from './users-event-types/c-c-uet-c-us
 const routes: Routes = [
   {
     path: '',
-    component: CCUetCUsersEventTypesComponent
-  }
+    component: CCUetCUsersEventTypesComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CCUetMUsersEventTypesRoutingModule { }
+export class CCUetMUsersEventTypesRoutingModule {}
