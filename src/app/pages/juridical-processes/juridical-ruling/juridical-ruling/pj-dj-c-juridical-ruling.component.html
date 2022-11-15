@@ -167,7 +167,7 @@
         <h5 class="title">BIENES</h5>
         <br />
         <ng2-smart-table
-          class="col-md-12"
+          [attr.class]="'table-bordered'"
           [settings]="settings1"
           [source]="data1"></ng2-smart-table>
       </div>
@@ -195,7 +195,7 @@
     <div class="row pt-2">
       <div class="col-md-12 mt-4 mb-4">
         <ng2-smart-table
-          class="col-md-12"
+          [attr.class]="'table-bordered'"
           [settings]="settings2"
           [source]="data2"></ng2-smart-table>
       </div>
@@ -210,7 +210,7 @@
         <div class="row">
           <div class="col-md-10">
             <ng2-smart-table
-              class="col-md-12"
+              [attr.class]="'table-bordered'"
               [settings]="settings3"
               [source]="data3"></ng2-smart-table>
           </div>
