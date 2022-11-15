@@ -117,6 +117,10 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Mantenimiento de Parametros',
         link: '/pages/parameterization/parameter-maintenance',
       },
+      {
+        label: 'Registro de Indiciados',
+        link: '/pages/parameterization/indicia-registration',
+      },
       //Félix
       {
         label: 'Valores',
