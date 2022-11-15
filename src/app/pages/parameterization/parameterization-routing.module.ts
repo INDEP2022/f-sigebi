@@ -107,6 +107,43 @@ const routes: Routes = [
       ).CPMMnceAdmDepositoryAuditorModule,
     data: { title: 'Mantto. a administrador, depositario e interventor' },
   },
+  {
+    path: 'c-p-m-attributes-reg-logical-tables',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-attributes-reg-logical-tables/c-p-m-attributes-reg-logical-tables.module'
+        )
+      ).CPMAttributesRegLogicalTablesModule,
+    data: { title: 'Registro de atributos para tablas lógicas' },
+  },
+  {
+    path: 'c-p-m-register-keys-logical-tables',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-register-keys-logical-tables/c-p-m-register-keys-logical-tables.module'
+        )
+      ).CPMRegisterKeysLogicalTablesModule,
+    data: { title: 'Registro de claves para tablas logicas' },
+  },
+  {
+    path: 'c-p-m-cat-doc-require',
+    loadChildren: async () =>
+      (await import('./c-p-m-cat-doc-require/c-p-m-cat-doc-require.module'))
+        .CPMCatDocRequireModule,
+    data: { title: 'Catálogo de requisitos documentales' },
+  },
+  {
+    path: 'c-p-m-general-archive-catalog',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-general-archive-catalog/c-p-m-general-archive-catalog.module'
+        )
+      ).CPMGeneralArchiveCatalogModule,
+    data: { title: 'Catálogo de Archivo General' },
+  },
   //Alexander
   {
     path: 'maintenance-of-areas',

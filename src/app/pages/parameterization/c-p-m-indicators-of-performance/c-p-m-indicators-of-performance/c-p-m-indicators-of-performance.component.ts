@@ -3,15 +3,20 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { INDICATORSOFPERFORMANCE_COLUMNS, INDICATORSPERFORMANCE_COLUMNS } from './c-p-m-indicators-of-performance-columns';
+import {
+  INDICATORSOFPERFORMANCE_COLUMNS,
+  INDICATORSPERFORMANCE_COLUMNS,
+} from './c-p-m-indicators-of-performance-columns';
 
 @Component({
   selector: 'app-c-p-m-indicators-of-performance',
   templateUrl: './c-p-m-indicators-of-performance.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CPMIndicatorsOfPerformanceComponent extends BasePage implements OnInit {
+export class CPMIndicatorsOfPerformanceComponent
+  extends BasePage
+  implements OnInit
+{
   indicatorsOfPerformanceForm: FormGroup;
   settings2 = { ...this.settings, actions: false };
 
@@ -24,7 +29,7 @@ export class CPMIndicatorsOfPerformanceComponent extends BasePage implements OnI
       ...this.settings,
       actions: false,
       columns: INDICATORSOFPERFORMANCE_COLUMNS,
-    }
+    };
     this.settings2.columns = INDICATORSPERFORMANCE_COLUMNS;
   }
   ngOnInit(): void {
