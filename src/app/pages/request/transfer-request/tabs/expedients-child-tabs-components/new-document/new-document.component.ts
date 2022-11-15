@@ -24,6 +24,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(this.typeDoc);
     this.initForm();
     //console.log('NEW DOC TIPO');
     //console.log(this.typeDoc);

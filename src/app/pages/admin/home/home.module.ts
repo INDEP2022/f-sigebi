@@ -9,9 +9,15 @@ import { ChildComponent } from './child/child.component';
 import { ExampleModalComponent } from './example-modal.component';
 import { HomeRoutingModule } from './home-routing.module';
 import { HomeComponent } from './home.component';
+import { ModalNestedComponent } from './modal-nest.component';
 
 @NgModule({
-  declarations: [HomeComponent, ExampleModalComponent, ChildComponent],
+  declarations: [
+    HomeComponent,
+    ExampleModalComponent,
+    ChildComponent,
+    ModalNestedComponent,
+  ],
   imports: [
     CommonModule,
     ReactiveFormsModule,

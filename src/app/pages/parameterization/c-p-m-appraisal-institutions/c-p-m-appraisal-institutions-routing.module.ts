@@ -4,12 +4,13 @@ import { CPMAppraisalInstitutionsComponent } from './c-p-m-appraisal-institution
 
 const routes: Routes = [
   {
-    path: '', component: CPMAppraisalInstitutionsComponent
-  }
+    path: '',
+    component: CPMAppraisalInstitutionsComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CPMAppraisalInstitutionsRoutingModule { }
+export class CPMAppraisalInstitutionsRoutingModule {}

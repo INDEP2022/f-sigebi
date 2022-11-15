@@ -84,6 +84,33 @@ const routes: Routes = [
       ).CCBmtMBankMovementsTypesModule,
     data: { title: 'Tipos Movimiento Banco' },
   },
+  {
+    path: 'parameters',
+    loadChildren: async () =>
+      (await import('./parameters/c-c-p-m-parameters.module'))
+        .CCPMParametersModule,
+    data: { title: 'Parámetros Comercialización' },
+  },
+  {
+    path: 'users-event-types',
+    loadChildren: async () =>
+      (await import('./users-event-types/c-c-uet-m-users-event-types.module'))
+        .CCUetMUsersEventTypesModule,
+    data: { title: 'Usuarios por Tipo de Evento' },
+  },
+  {
+    path: 'brands-sub-brands',
+    loadChildren: async () =>
+      (await import('./brands-sub-brands/c-c-bsb-m-brands-sub-brands.module'))
+        .CCBsbMBrandsSubBrandsModule,
+    data: { title: 'Marcas y Sub Marcas' },
+  },
+  {
+    path: 'models',
+    loadChildren: async () =>
+      (await import('./models/c-c-m-m-models.module')).CCMMModelsModule,
+    data: { title: 'Modelos' },
+  },
 ];
 
 @NgModule({

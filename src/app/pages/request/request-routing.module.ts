@@ -96,6 +96,26 @@ const routes: Routes = [
     data: { title: 'Vista de las Solicitudes' },
   },
   {
+    path: 'sampling-assets',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-sampling-supervision/sampling-assets/sampling-assets.module'
+        )
+      ).SamplingAssetsModule,
+    data: { title: 'Muestreo Bienes' },
+  },
+  {
+    path: 'verify-noncompliance',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-sampling-supervision/generate-formats-verify-noncompliance/generate-formats-verify-noncompliance.module'
+        )
+      ).GenerateFormatsVerifyNoncomplianceModule,
+    data: { title: 'Generar formatos para verificar el incumplimiento' },
+  },
+  {
     path: 'transfer-request',
     loadChildren: async () =>
       (await import('./transfer-request/transfer-request.module'))
@@ -108,6 +128,13 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./manage-similar-goods/manage-similar-goods.module'))
         .ManageSimilarGoodsModule,
+    data: { title: '' },
+  },
+  {
+    path: 'economic-compensation',
+    loadChildren: async () =>
+      (await import('./economic-compensation/economic-compensation.module'))
+        .EconomicCompensationModule,
     data: { title: '' },
   },
 ];

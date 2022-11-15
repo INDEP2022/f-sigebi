@@ -23,7 +23,7 @@ export class CCBmtCBankMovementsTypesComponent
   form: FormGroup = new FormGroup({});
 
   data: LocalDataSource = new LocalDataSource();
-  eventTypesD = data;
+  banksMovD = data;
 
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -45,7 +45,7 @@ export class CCBmtCBankMovementsTypesComponent
   }
 
   ngOnInit(): void {
-    this.data.load(this.eventTypesD);
+    this.data.load(this.banksMovD);
     this.prepareForm();
   }
 

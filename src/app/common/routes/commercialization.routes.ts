@@ -220,11 +220,11 @@ export const COMMERCIALIZATION_ROUTES = [
         icon: 'folder',
         subItems: [
           {
-            label: 'Tipos de penalización',
+            label: 'Tipos de Penalización',
             link: '/pages/commercialization/catalogs/penalty-types',
           },
           {
-            label: 'Claves autorización envío ext. OIs',
+            label: 'Claves Autorización Envío Ext. OIs',
             link: '/pages/commercialization/catalogs/authorization-keys-ois',
           },
           {
@@ -258,6 +258,22 @@ export const COMMERCIALIZATION_ROUTES = [
           {
             label: 'Tipos Movimiento Banco',
             link: '/pages/commercialization/catalogs/bank-movements-types',
+          },
+          {
+            label: 'Parámetros Comercialización',
+            link: '/pages/commercialization/catalogs/parameters',
+          },
+          {
+            label: 'Usuarios por Tipo de Evento',
+            link: '/pages/commercialization/catalogs/users-event-types',
+          },
+          {
+            label: 'Marcas y Sub Marcas',
+            link: '/pages/commercialization/catalogs/brands-sub-brands',
+          },
+          {
+            label: 'Modelos',
+            link: '/pages/commercialization/catalogs/models',
           },
         ],
       },

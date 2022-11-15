@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 * {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .swal2-container.swal2-top-end > .swal2-popup,
@@ -26,7 +26,7 @@
 
   .buttons {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
   }
 }
 
@@ -365,4 +365,35 @@ ng-scrollbar.table-scrollbar {
 
 .cl-table {
   padding-right: 1em;
+}
+
+/** my css table*/
+.css-table {
+  display: table;
+  width: 100%;
+
+  .css-table-header {
+    display: table-header-group;
+    font-weight: bold;
+    // background-color: rgb(191, 191, 191);
+
+    div {
+      text-align: center;
+      // border    : 1px solid rgb(255, 255, 255);
+    }
+  }
+
+  .css-table-body {
+    display: table-row-group;
+
+    .css-table-row {
+      display: table-row;
+    }
+  }
+
+  .css-table-header div,
+  .css-table-row div {
+    display: table-cell;
+    padding: 0 6px;
+  }
 }
