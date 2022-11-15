@@ -127,6 +127,14 @@ const routes: Routes = [
         .EconomicCompensationModule,
     data: { title: '' },
   },
+  // gestionar devolucion
+  {
+    path: 'gestionar-devolucion',
+    loadChildren: async () =>
+      (await import('./manage-return/manage-return.module')).ManageReturnModule,
+    data: { title: 'Registro de Solicitud de Devolución' },
+  },
+  // gestionar devolucion
 ];
 
 @NgModule({

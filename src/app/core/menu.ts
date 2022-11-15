@@ -1,4 +1,5 @@
 import { MENU_OPTIONS_JURIDICAL_PROCESSES } from '../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
+import { MENU_OPTIONS_REQUEST_MANAGE_RETURN } from '../common/constants/request/manage-return/menu-manage-return';
 import { MENU_OPTIONS_SECURITY } from '../common/constants/security/security-menu';
 import { ADMINISTRATIVE_PROCESSES_ROUTES } from '../common/routes/administrative-processes.routes';
 import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
@@ -59,6 +60,8 @@ export const MENU: IMenuItem[] = [
           },
         ],
       },
+      // APP -- GESTIONAR DEVOLUCION -- Registro de Solicitud de Devolución
+      { ...MENU_OPTIONS_REQUEST_MANAGE_RETURN },
       {
         label: 'Solicitudes a turno',
         link: '/pages/request/request-in-turn',
