@@ -9,7 +9,7 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { SelectAddressComponent } from '../records-of-request-components/records-of-request-child-tabs-components/select-address/select-address.component';
+import { SelectAddressComponent } from '../../transfer-request/tabs/records-of-request-components/records-of-request-child-tabs-components/select-address/select-address.component';
 
 @Component({
   selector: 'app-detail-assets-tab-component',
@@ -27,11 +27,11 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
 
   //tipo de bien seleccionado
   otherAssets: boolean = false;
-  carsAssets: boolean = false;
-  boatAssets: boolean = false;
-  jewelerAssets: boolean = false;
-  aircraftAssets: boolean = false;
-  especialMachineryAssets: boolean = false;
+  carsAssets: boolean = true;
+  boatAssets: boolean = true;
+  jewelerAssets: boolean = true;
+  aircraftAssets: boolean = true;
+  especialMachineryAssets: boolean = true;
   mineralsAssets: boolean = false;
   immovablesAssets: boolean = false;
   manejeAssets: boolean = false; //diverso

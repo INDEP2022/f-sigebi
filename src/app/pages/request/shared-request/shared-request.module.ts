@@ -10,9 +10,18 @@ import { AssociateFileButtonComponent } from './associate-file/associate-file-bu
 import { AssociateFileComponent } from './associate-file/associate-file.component';
 import { NewFileModalComponent } from './associate-file/new-file-modal/new-file-modal.component';
 import { ConfirmProgrammingComponent } from './confirm-programming/confirm-programming.component';
+import { DetailAssetsTabComponentComponent } from './detail-assets-tab-component/detail-assets-tab-component.component';
 import { DocumentFormComponent } from './document-form/document-form.component';
 import { DocumentShowComponent } from './document-show/document-show.component';
 import { ElectronicSignatureListComponent } from './electronic-signature-list/electronic-signature-list.component';
+import { ExpedientsTabsComponent } from './expedients-tabs/expedients-tabs.component';
+import { BtnRequestComponent } from './expedients-tabs/sub-tabs/btn-request/btn-request.component';
+import { DocRequestTabComponent } from './expedients-tabs/sub-tabs/doc-request-tab/doc-request-tab.component';
+import { SeeInformationComponent } from './expedients-tabs/sub-tabs/doc-request-tab/see-information/see-information.component';
+import { ExpedientsRequestTabComponent } from './expedients-tabs/sub-tabs/expedients-request-tab/expedients-request-tab.component';
+import { GoodDocTabComponent } from './expedients-tabs/sub-tabs/good-doc-tab/good-doc-tab.component';
+import { NewDocumentComponent } from './expedients-tabs/sub-tabs/new-document/new-document.component';
+import { RequestOfAssetsComponent } from './expedients-tabs/sub-tabs/request-of-assets/request-of-assets.component';
 import { GenerateReceiptFormComponent } from './generate-receipt-form/generate-receipt-form.component';
 import { PhotographyFormComponent } from './photography-form/photography-form.component';
 import { RequestFormComponent } from './request-form/request-form.component';
@@ -63,6 +72,15 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     GenerateReceiptFormComponent,
     AssignReceiptFormComponent,
     WitnessFormComponent,
+    ExpedientsTabsComponent,
+    DocRequestTabComponent,
+    SeeInformationComponent,
+    GoodDocTabComponent,
+    ExpedientsRequestTabComponent,
+    RequestOfAssetsComponent,
+    BtnRequestComponent,
+    NewDocumentComponent,
+    DetailAssetsTabComponentComponent,
   ],
   imports: [
     CommonModule,
@@ -78,6 +96,15 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     RequestInformationComponent,
     AssociateFileComponent,
     SelectGoodsComponent,
+    ExpedientsTabsComponent,
+    DocRequestTabComponent,
+    SeeInformationComponent,
+    GoodDocTabComponent,
+    ExpedientsRequestTabComponent,
+    RequestOfAssetsComponent,
+    BtnRequestComponent,
+    NewDocumentComponent,
+    DetailAssetsTabComponentComponent,
   ],
 })
 export class SharedRequestModule {}

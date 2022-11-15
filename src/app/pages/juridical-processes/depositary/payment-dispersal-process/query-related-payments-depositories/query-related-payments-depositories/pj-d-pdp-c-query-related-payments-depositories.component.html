@@ -63,7 +63,7 @@
       <div class="col-sm-12 col-12 col-md-12 col-lg-12 p-1 mt-4 mb-4">
         <!-- Pagos Recibidos en el Banco -->
         <ng2-smart-table
-          class="my-table"
+          [attr.class]="'table-bordered'"
           [settings]="tableSettingsPagosBanco"
           [source]="dataPagosBanco"></ng2-smart-table>
         <!-- Pagos Recibidos en el Banco -->
@@ -72,7 +72,7 @@
         <hr class="row" />
         <!-- Composicion de Pagos Recibidos -->
         <ng2-smart-table
-          class="my-table"
+          [attr.class]="'table-bordered'"
           [settings]="tableSettingsPagosRecibidos"
           [source]="dataPagosRecibidos"></ng2-smart-table>
         <!-- Composicion de Pagos Recibidos -->

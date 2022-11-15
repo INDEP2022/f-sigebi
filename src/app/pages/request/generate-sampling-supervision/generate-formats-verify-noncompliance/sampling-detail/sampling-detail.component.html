@@ -39,4 +39,12 @@
       </label>
     </div>
   </div>
+  <div class="row pt-4">
+    <div class="col-md-4" *ngIf="this.detailForm.get('dateSampling').value">
+      <label for=""
+        >Fecha de elaboración muestreo :
+        <span>{{ this.detailForm.get('dateSampling').value }}</span>
+      </label>
+    </div>
+  </div>
 </div>

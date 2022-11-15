@@ -24,7 +24,7 @@
       </div>
       <div class="col-sm-12 col-12 col-md-12 p-2">
         <ng2-smart-table
-          class="my-table"
+          [attr.class]="'table-bordered'"
           [settings]="tableSettingsNotificaciones"
           [source]="dataTableNotificaciones">
         </ng2-smart-table>
@@ -37,7 +37,7 @@
       <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-info">
         <h6>BIENES RELACIONADOS CON EL EXPEDIENTE</h6>
         <ng2-smart-table
-          class="my-table"
+          [attr.class]="'table-bordered'"
           [settings]="tableSettingsBienes"
           [source]="dataTableBienes">
         </ng2-smart-table>
@@ -61,7 +61,7 @@
       <div class="col-sm-12 col-12 col-md-5 col-lg-5 p-2 alert alert-info">
         <h6>BIENES RELACIONADOS CON EL OFICIO</h6>
         <ng2-smart-table
-          class="my-table"
+          [attr.class]="'table-bordered'"
           [settings]="tableSettingsBienesOficio"
           [source]="dataTableBienesOficio">
         </ng2-smart-table>

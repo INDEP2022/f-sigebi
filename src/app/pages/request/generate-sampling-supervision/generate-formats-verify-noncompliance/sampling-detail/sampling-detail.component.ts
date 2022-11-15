@@ -26,6 +26,7 @@ export class SamplingDetailComponent implements OnInit {
       delegaRegional: [null],
       initialDate: [null],
       finalDate: [null],
+      dateSampling: ['17/10/2022'],
     });
   }
 }

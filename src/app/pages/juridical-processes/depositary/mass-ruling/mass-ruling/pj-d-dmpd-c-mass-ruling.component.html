@@ -74,7 +74,7 @@
           <div class="form-group ml-2 mr-2">
             <button
               type="button"
-              class="btn btn-primary active text-wrap"
+              class="btn btn-primary active btn-sm text-wrap"
               (click)="btnBienesDictamen()">
               Bienes del Dictamen
             </button>
@@ -85,7 +85,7 @@
           <div class="form-group ml-2 mr-2">
             <button
               type="button"
-              class="btn btn-primary active text-wrap"
+              class="btn btn-primary active btn-sm text-wrap"
               (click)="btnDictamenes()">
               Dictámenes
             </button>
@@ -113,7 +113,7 @@
           <button
             type="button"
             (click)="btnCargarIdentificador()"
-            class="btn btn-primary active text-wrap">
+            class="btn btn-primary active btn-sm text-wrap">
             Cargar de Identificador
           </button>
         </div>
@@ -123,7 +123,7 @@
           <button
             type="button"
             (click)="btnExpedientesCsv()"
-            class="btn btn-primary active text-wrap">
+            class="btn btn-primary active btn-sm text-wrap">
             Carga Expedientes csv
           </button>
         </div>
@@ -133,7 +133,7 @@
           <button
             type="button"
             (click)="btnExpedientesXls()"
-            class="btn btn-primary active text-wrap">
+            class="btn btn-primary active btn-sm text-wrap">
             Carga Expedientes xls
           </button>
         </div>
@@ -146,7 +146,7 @@
           <button
             type="button"
             (click)="btnCrearDictamenes()"
-            class="btn btn-primary active text-wrap">
+            class="btn btn-primary active btn-sm text-wrap">
             Crear Dictámenes
           </button>
         </div>
@@ -156,7 +156,7 @@
           <button
             type="button"
             (click)="btnImprimeOficio()"
-            class="btn btn-primary active text-wrap">
+            class="btn btn-primary active btn-sm text-wrap">
             Imprime Oficio
           </button>
         </div>
@@ -166,7 +166,7 @@
           <button
             type="button"
             (click)="btnImprimeRelacionBienes()"
-            class="btn btn-primary active text-wrap">
+            class="btn btn-primary active btn-sm text-wrap">
             Imprime Relación Bienes
           </button>
         </div>
@@ -176,7 +176,7 @@
           <button
             type="button"
             (click)="btnImprimeRelacionExpediente()"
-            class="btn btn-primary active text-wrap">
+            class="btn btn-primary active btn-sm text-wrap">
             Imprime Relación Expediente
           </button>
         </div>
@@ -186,13 +186,13 @@
     <div class="row w-100">
       <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
         <ng2-smart-table
-          class="my-table"
+          [attr.class]="'table-bordered'"
           [settings]="tableSettings"
           [source]="dataTable"></ng2-smart-table>
       </div>
       <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
         <ng2-smart-table
-          class="my-table"
+          [attr.class]="'table-bordered'"
           [settings]="tableSettings1"
           [source]="dataTable1"></ng2-smart-table>
       </div>
