@@ -61,7 +61,7 @@ export const PROVIDER_CATALOGS_PROVIDER_COLUMNS = {
     sort: false,
   },
   fax: {
-    title: 'fax',
+    title: 'Fax',
     type: 'string',
     sort: false,
   },

@@ -7,11 +7,9 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-pa-is-gpr-c-report',
   templateUrl: './pa-is-gpr-c-report.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class PaIsGprCReportComponent extends BasePage implements OnInit {
-
   form: FormGroup = new FormGroup({});
 
   constructor(private fb: FormBuilder) {

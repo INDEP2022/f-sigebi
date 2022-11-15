@@ -5,10 +5,17 @@
   <div body>
     <div class="row">
       <div class="d-flex">
-        <div class="p-2" header>
-          <h5 class="title">Información de la Solicitud</h5>
+        <div class="mr-auto p-2"></div>
+        <div class="p-2" *ngIf="notifyClarifiOrImpropriety">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]="registRequestForm.invalid"
+            (click)="saveClarification()">
+            <i class="bx bxs-right-arrow-square"></i> {{ btnSaveTitle }}
+          </button>
         </div>
-        <div class="ml-auto p-2">
+        <div class="p-2">
           <button
             type="button"
             class="btn btn-primary btn-sm active"
@@ -17,6 +24,11 @@
             <i class="bx bxs-right-arrow-square"></i> {{ btnTitle }}
           </button>
         </div>
+      </div>
+    </div>
+    <div class="row">
+      <div header>
+        <h5 class="title">Información de la Solicitud</h5>
       </div>
     </div>
     <div>
@@ -126,7 +138,13 @@
               <!-- Fin -->
               <!-- cumplimiento de verificacion y clasificacion de bienes-->
               <app-request-detail-tab
-                *ngIf="complianceVerifi || classifyAssets || validateDocument"
+                *ngIf="
+                  complianceVerifi ||
+                  classifyAssets ||
+                  validateDocument ||
+                  notifyClarifiOrImpropriety ||
+                  approvalProcess
+                "
                 [dataObject]="object"></app-request-detail-tab>
               <!-- fin -->
             </tab>
@@ -149,6 +167,15 @@
               <!-- Validacion de Documentos -->
               <app-clarifications *ngIf="validateDocument"></app-clarifications>
               <!-- fin -->
+              <!-- notificar aclaraciones o improcedencias -->
+              <app-notification-assets-tab
+                *ngIf="notifyClarifiOrImpropriety"
+                [isSaving]="saveClarifiObject"></app-notification-assets-tab>
+              <!-- fin -->
+              <!-- Aprovar solicitudes -->
+              <app-approval-assets-tabs
+                *ngIf="approvalProcess"
+                [dataObject]="object"></app-approval-assets-tabs>
             </tab>
             <tab heading="{{ tab3 }}">
               <!-- Registro de Solicitud o bien -->
@@ -158,16 +185,26 @@
               <!-- cumplimiento de verificacion y clasificacion de bienes -->
               <app-expedients-tabs
                 *ngIf="
-                  complianceVerifi || classifyAssets || validateDocument
+                  complianceVerifi ||
+                  classifyAssets ||
+                  validateDocument ||
+                  notifyClarifiOrImpropriety
                 "></app-expedients-tabs>
               <!-- fin -->
             </tab>
-            <tab heading="{{ tab4 }}" *ngIf="requestRegistration">
-              <app-registration-request-form></app-registration-request-form>
+            <tab
+              heading="{{ tab4 }}"
+              *ngIf="requestRegistration || approvalProcess">
+              <app-registration-request-form
+                *ngIf="requestRegistration"></app-registration-request-form>
             </tab>
-            <tab heading="{{ tab5 }}" *ngIf="requestRegistration">
+            <tab
+              heading="{{ tab5 }}"
+              *ngIf="requestRegistration || approvalProcess">
               <app-expedients-tabs
-                *ngIf="requestRegistration"></app-expedients-tabs>
+                *ngIf="
+                  requestRegistration || approvalProcess
+                "></app-expedients-tabs>
             </tab>
           </tabset>
         </div>

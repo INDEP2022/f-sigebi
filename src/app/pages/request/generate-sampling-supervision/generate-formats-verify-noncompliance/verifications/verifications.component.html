@@ -1,0 +1,32 @@
+<div>
+  <div class="row">
+    <div class="col-md-12">
+      <ng-scrollbar track="all" style="min-height: 200px; border: none">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th scope="col">Descripción Deductiva</th>
+              <th scope="col">Observaciones</th>
+              <th scope="col">Selección</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let verification of listVerifications; let i = index">
+              <td>{{ verification.description }}</td>
+              <td>{{ verification.observation }}</td>
+              <th scope="row">
+                <input
+                  type="checkbox"
+                  value="{{ verification.selected }}"
+                  [(ngModel)]="verification.selected"
+                  id="selectOne"
+                  (change)="checkList($event, verification)"
+                  [disabled]="true" />
+              </th>
+            </tr>
+          </tbody>
+        </table>
+      </ng-scrollbar>
+    </div>
+  </div>
+</div>

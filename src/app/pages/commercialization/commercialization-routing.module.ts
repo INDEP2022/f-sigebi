@@ -410,6 +410,33 @@ const routes: Routes = [
       ).CBTcvMTaxValidationCalculationModule,
     data: { title: 'Validación de Cálculo I.V.A' },
   },
+  {
+    path: 'partiality-direct-adjudication',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/c-b-a-adp-m-partiality-direct-adjudication/c-b-a-adp-m-partiality-direct-adjudication.module'
+        )
+      ).CBAAdpMPartialityDirectAdjudicationModule,
+    data: { title: 'Adjudicaciones Directas en Parcialidades' },
+  },
+  {
+    path: 'marketing-records',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/marketing-records/c-b-mr-m-marketing-records.module'
+        )
+      ).CBMrMMarketingRecordsModule,
+    data: { title: 'Oficios de Comercialización' },
+  },
+  {
+    path: 'good-delivery',
+    loadChildren: async () =>
+      (await import('./c-m-good-delivery/c-m-good-delivery.module'))
+        .CMGoodDeliveryModule,
+    data: { title: 'Entrega de Bienes' },
+  },
 ];
 
 @NgModule({

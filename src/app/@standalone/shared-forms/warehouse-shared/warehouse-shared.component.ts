@@ -5,14 +5,14 @@ import { SharedModule } from 'src/app/shared/shared.module';
 //Rxjs
 //Params
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //Services
-import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { TypeWarehouseService } from 'src/app/core/services/catalogs/type-warehouse.service';
+import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 //Models
-import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
 import { ITypeWarehouse } from 'src/app/core/models/catalogs/type-warehouse.model';
+import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
 
 @Component({
   selector: 'app-warehouse-shared',
@@ -22,11 +22,10 @@ import { ITypeWarehouse } from 'src/app/core/models/catalogs/type-warehouse.mode
   styles: [],
 })
 export class WarehouseSharedComponent extends BasePage implements OnInit {
-
   @Input() form: FormGroup;
 
   @Input() warehouseTypeField: string = 'warehouseType';
-  
+
   @Input() warehouseField: string = 'warehouse';
 
   @Input() showWarehouseType: boolean = true;
@@ -46,8 +45,9 @@ export class WarehouseSharedComponent extends BasePage implements OnInit {
   }
 
   constructor(
-    private serviceTW:TypeWarehouseService,
-    private serviceW: WarehouseService) {
+    private serviceTW: TypeWarehouseService,
+    private serviceW: WarehouseService
+  ) {
     super();
   }
 

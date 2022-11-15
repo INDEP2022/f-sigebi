@@ -1,0 +1,87 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title pull-left">Carga de Archivos</h5>
+  </div>
+  <div body class="body">
+    <form [formGroup]="fileForm" class="form-material">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field [control]="fileForm.get('name')" label="Nombre">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="name"
+              placeholder="" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="fileForm.get('position')" label="Cargo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="position"
+              placeholder="" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field [control]="fileForm.get('password')" label="Contraseña">
+            <input
+              type="password"
+              class="form-control"
+              formControlName="password"
+              placeholder="" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="fileForm.get('certificationFile')"
+            label="Certificado">
+            <input
+              type="file"
+              class="form-control"
+              formControlName="certificationFile"
+              (change)="chargeCertifications($event)" />
+          </form-field>
+          <!-- <input
+            type="file"
+            formControlName="certification"
+            placeholder="Seleccione un certificado"
+            (change)="chargeCertifications($event.target)" /> -->
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="fileForm.get('keyCertificationFile')"
+            label="Key Certificado">
+            <input
+              type="file"
+              class="form-control"
+              formControlName="keyCertificationFile"
+              (change)="chargeKeyCertifications($event)" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="fileForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

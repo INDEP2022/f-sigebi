@@ -5,13 +5,13 @@ import { CBMirCMandateIncomeReportsComponent } from './mandate-income-reports/c-
 
 const routes: Routes = [
   {
-    path:'',
-    component: CBMirCMandateIncomeReportsComponent
-  }
+    path: '',
+    component: CBMirCMandateIncomeReportsComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CBMirMMandateIncomeReportsRoutingModule { }
+export class CBMirMMandateIncomeReportsRoutingModule {}

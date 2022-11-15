@@ -3,6 +3,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
     label: 'Procesos Administrativos',
     icon: 'bx-folder',
     subItems: [
+      {
+        label: 'Administracion Bienes',
+        link: '/pages/administrative-processes/administration-assets',
+      },
       /**
        * DAVID
        **/
@@ -332,6 +336,18 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Ordenes de servicio',
             link: '/pages/administrative-processes/service-orders-format',
           },
+          {
+            label: 'Reporte de implementacion',
+            link: '/pages/administrative-processes/implementation-report',
+          },
+          {
+            label: 'Indicador de Desempeño',
+            link: '/pages/administrative-processes/performance-indicator',
+          },
+          {
+            label: 'Reportes de la O.DE S.',
+            link: '/pages/administrative-processes/service-order-reports',
+          },
         ],
       },
       {
@@ -518,6 +534,46 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
       /**
        * END LEGASPI
        **/
+      /**START Abner */
+      {
+        label: 'Numerario',
+        icon: 'bx-folder',
+        subItems: [
+          {
+            label: 'Registro de fichas de deposito',
+            link: '/pages/administrative-processes/numerary/deposit-tokens',
+          },
+          {
+            label: 'Calculo de numerario',
+            link: '/pages/administrative-processes/numerary/numerary-calc',
+          },
+          {
+            label: 'Solicitud de numerario',
+            link: '/pages/administrative-processes/numerary/numerary-request',
+          },
+          {
+            label: 'Conciliación masiva numerario',
+            link: '/pages/administrative-processes/numerary-massive-consiliation',
+          },
+          {
+            label: 'Transferencia de cuentas a oficinas centrales',
+            link: '/pages/administrative-processes/central-offices-transference',
+          },
+          {
+            label: 'Transferencia de cuentas a Regional',
+            link: '/pages/administrative-processes/regional-accounts-transference',
+          },
+          {
+            label: 'Movimientos tesofe',
+            link: '/pages/administrative-processes/tesofe-movements',
+          },
+          {
+            label: 'Conciliación de fichas de deposito vs expediente',
+            link: '/pages/administrative-processes/deposit-tokens-conciliation',
+          },
+        ],
+      },
+      /**END Abner */
     ],
   },
 ];

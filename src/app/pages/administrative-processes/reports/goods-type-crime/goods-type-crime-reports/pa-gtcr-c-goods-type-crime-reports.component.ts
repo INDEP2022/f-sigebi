@@ -7,11 +7,12 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-pa-gtcr-c-goods-type-crime-reports',
   templateUrl: './pa-gtcr-c-goods-type-crime-reports.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class PaGtcrCGoodsTypeCrimeReportsComponent extends BasePage implements OnInit {
-
+export class PaGtcrCGoodsTypeCrimeReportsComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
 
   constructor(private fb: FormBuilder) {

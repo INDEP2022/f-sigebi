@@ -23,7 +23,34 @@ var usuario: IRequestList[] = [
     numTask: 260302,
     noInstance: 820170,
     created: 'tester_nsbxt',
-    process: 'Solicitud de programación',
+    process: 'SolicitudProgramación',
+  },
+  {
+    title:
+      'BIENES SIMILARES: Registro de Documentación Complementaria, No. Solicitud: 1851',
+    noRequest: 45010,
+    numTask: 260302,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'RegistroSolicitudes',
+  },
+  {
+    title:
+      'RESARCIMIENTO NUMERARIO: Registro de Documentación Complementaria, No. Solicitud: 1896',
+    noRequest: 1896,
+    numTask: 212028,
+    noInstance: 450060,
+    created: 'tester_nsbxt',
+    process: 'RE_RegistrarDocumentacion',
+  },
+  {
+    title:
+      'Solicitar Recursos Económicos, No. Solicitud: 1896, Contribuyente CARLOS G. PALMA',
+    noRequest: 1896,
+    numTask: 212097,
+    noInstance: 450060,
+    created: 'tester_nsbxt',
+    process: 'RE_SolicitarRecursos',
   },
 ];
 
@@ -36,7 +63,6 @@ export class RequestListComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: IRequestList[] = [];
   totalItems: number = 0;
-  lastClick: number = 0;
 
   constructor(public modalService: BsModalService, public router: Router) {
     super();
@@ -55,27 +81,48 @@ export class RequestListComponent extends BasePage implements OnInit {
     this.paragraphs = usuario;
   }
 
-  openCreateRequestForm(event?: IRequestList) {
+  /* openCreateRequestForm(event?: IRequestList) {
     this.router.navigate(['pages/request/list/new-transfer-request']);
-  }
+  } */
 
   openCreateProgrammingRequest() {
     this.router.navigate;
   }
 
   editRequest(event: any) {
-    this.lastClick += 1;
-    setTimeout(() => {
-      if (this.lastClick > 1) {
-        //pages/request/list/registration-request
-        //pages/request/transfer-request/registration-request
+    console.log(event);
+    switch (event.data.process) {
+      case 'SolicitudProgramación':
+        // en el caso de que sea una solicitud de programacion
         this.router.navigate([
           'pages/request/transfer-request/registration-request',
           1,
         ]);
-      }
-      this.lastClick = 0;
-    }, 500);
+        break;
+      case 'RegistroSolicitudes':
+        // en el caso de que el proceso seleccionado sea Bienes Similares
+        this.router.navigate([
+          'pages/request/manage-similar-goods/register-request-goods',
+          event.data.noRequest,
+        ]);
+        break;
+      case 'RE_RegistrarDocumentacion':
+        // en el caso de que sea el proceso de registrar solicitud de resarcimiento economico
+        this.router.navigate([
+          'pages/request/economic-compensation/register-documentation',
+          event.data.noRequest,
+        ]);
+        break;
+      case 'RE_SolicitarRecursos':
+        // en el caso de que sea el proceso de registrar solicitud de recursos economicos
+        this.router.navigate([
+          'pages/request/economic-compensation/economic-resources',
+          event.data.noRequest,
+        ]);
+        break;
+      default:
+        break;
+    }
   }
 
   private openModel(

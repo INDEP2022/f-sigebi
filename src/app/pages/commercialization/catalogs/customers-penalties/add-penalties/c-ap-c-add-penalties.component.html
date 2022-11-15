@@ -1,0 +1,79 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mb-3 mt-3">
+        <!--Customers Component-->
+        <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
+          <app-customers-shared [form]="form"></app-customers-shared>
+        </div>
+        <!--Events Component-->
+        <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
+          <app-events-shared [form]="form"></app-events-shared>
+        </div>
+        <!--Batch Component-->
+        <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
+          <app-batch-shared [form]="form"></app-batch-shared>
+        </div>
+        <!--Penalties Type Component-->
+        <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
+          <app-penalties-type-shared [form]="form"></app-penalties-type-shared>
+        </div>
+        <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
+          <div class="row mb-3 mt-3">
+            <div class="col-md-12">
+              <form-field [control]="form.get('status')" label="Estatus">
+                <select class="form-control" formControlName="status">
+                  <option [value]="null">Selecciona un Valor</option>
+                  <option value="penaltie">Penaliza</option>
+                  <option value="released">Libera</option>
+                </select>
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
+          <div class="row mb-3 mt-3">
+            <div class="col-md-12">
+              <form-field
+                label="Fecha de Penalización o Liberación"
+                [control]="form.get('penaltyDate')">
+                <input
+                  class="form-control"
+                  formControlName="penaltyDate"
+                  bsDatepicker />
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3 mt-3">
+        <div class="col-md-12 mb-3 mt-3">
+          <form-field
+            [control]="form.get('observations')"
+            label="Observaciones">
+            <textarea
+              class="form-control"
+              type="text"
+              formControlName="observations"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button [loading]="loading" (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -9,6 +9,13 @@ const routes: Routes = [
     component: AdministrativeProcessesComponent,
     children: [
       {
+        path: 'administration-assets',
+        loadChildren: async () =>
+          (await import('./administration-assets/administration-assets.module'))
+            .AdministrationAssetsModule,
+        data: { title: 'Administracion Bienes' },
+      },
+      {
         path: 'numerary-operator',
         loadChildren: async () =>
           (await import('./numerary-operator/numerary-operator.module'))
@@ -500,16 +507,52 @@ const routes: Routes = [
       {
         path: 'control-service-orders',
         loadChildren: async () =>
-          (await import('./administration-third/control-service-orders/control-service-orders.module'))
-            .ControlServiceOrdersModule,
+          (
+            await import(
+              './administration-third/control-service-orders/control-service-orders.module'
+            )
+          ).ControlServiceOrdersModule,
         data: { title: 'Control de las ordenes de servicio' },
       },
       {
         path: 'service-orders-format',
         loadChildren: async () =>
-          (await import('./administration-third/service-orders-format/service-orders-format.module'))
-            .ServiceOrdersFormatModule,
+          (
+            await import(
+              './administration-third/service-orders-format/service-orders-format.module'
+            )
+          ).ServiceOrdersFormatModule,
         data: { title: 'Formato ordenes de servicio ' },
+      },
+      {
+        path: 'performance-indicator',
+        loadChildren: async () =>
+          (
+            await import(
+              './administration-third/performance-indicator/performance-indicator.module'
+            )
+          ).PerformanceIndicatorModule,
+        data: { title: 'Indicador de desempeño' },
+      },
+      {
+        path: 'implementation-report',
+        loadChildren: async () =>
+          (
+            await import(
+              './administration-third/implementation-report/implementation-report.module'
+            )
+          ).ImplementationReportModule,
+        data: { title: 'Reporte de implementacion' },
+      },
+      {
+        path: 'service-order-reports',
+        loadChildren: async () =>
+          (
+            await import(
+              './administration-third/service-order-reports/service-order-reports.module'
+            )
+          ).ServiceOrderReportsModule,
+        data: { title: 'Reportes de Ordenes de Servicio' },
       },
       /**
        * Seguros David Lucas
@@ -551,6 +594,13 @@ const routes: Routes = [
           ).PerformanceEvaluationReportModule,
         data: { title: 'Reporte de evaluación de desempeño' },
       },
+      /**Numerario Abner */
+      {
+        path: 'numerary',
+        loadChildren: async () =>
+          (await import('./numerary/numerary.module')).NumeraryModule,
+        data: { title: 'Numerario' },
+      },
       {
         path: 'indicators-per-good',
         loadChildren: async () =>
@@ -583,4 +633,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class AdministrativeProcessesRoutingModule { }
+export class AdministrativeProcessesRoutingModule {}

@@ -4,12 +4,13 @@ import { BillsGoodComponent } from './bills-good/bills-good.component';
 
 const routes: Routes = [
   {
-    path: '', component: BillsGoodComponent
-  }
+    path: '',
+    component: BillsGoodComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class BillsGoodRoutingModule { }
+export class BillsGoodRoutingModule {}

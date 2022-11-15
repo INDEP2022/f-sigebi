@@ -6,11 +6,11 @@ const routes: Routes = [
   {
     path: '',
     component: CBmFFrCrCRectificationFieldsComponent,
-  }
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CBmFFrCrMRectificationFieldsRoutingModule { }
+export class CBmFFrCrMRectificationFieldsRoutingModule {}

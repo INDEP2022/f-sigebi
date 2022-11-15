@@ -24,7 +24,7 @@ export const COLUMNS = {
     title: 'Fecha Decomiso',
     editor: {
       type: 'custom',
-      component: DatePickerComponent
+      component: DatePickerComponent,
     },
     sort: false,
   },
@@ -34,8 +34,8 @@ export const COLUMNS = {
     width: '20%',
     editor: {
       type: 'custom',
-      component: SelectUserComponent
-    }
+      component: SelectUserComponent,
+    },
   },
   quantity: {
     title: 'Cantidad',
@@ -66,5 +66,5 @@ export const COLUMNS = {
     sort: false,
     editable: false,
     addable: false,
-  }
+  },
 };

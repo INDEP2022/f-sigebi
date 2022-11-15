@@ -1,17 +1,18 @@
-import { Component, OnInit } from '@angular/core'; 
-import { BasePage } from 'src/app/core/shared/base-page';
-import { ENTITY_CLASS_COLUMNS } from './entity-classification-columns';
+import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { entity_class_data } from './data';
+import { ENTITY_CLASS_COLUMNS } from './entity-classification-columns';
 
 @Component({
   selector: 'app-c-bm-vm-cde-c-entity-classification',
   templateUrl: './c-bm-vm-cde-c-entity-classification.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CBmVmCdeCEntityClassificationComponent extends BasePage implements OnInit {
-
+export class CBmVmCdeCEntityClassificationComponent
+  extends BasePage
+  implements OnInit
+{
   rowSelected: boolean = false;
   selectedRow: any = null;
 
@@ -24,11 +25,18 @@ export class CBmVmCdeCEntityClassificationComponent extends BasePage implements 
     super();
     this.settings = {
       ...this.settings,
-      actions:{ columnTitle: "Acciones", position: "right", add:false, edit:true, delete: false},
+      actions: {
+        columnTitle: 'Acciones',
+        position: 'right',
+        add: false,
+        edit: true,
+        delete: false,
+      },
       edit: {
         editButtonContent: '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
         saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-        cancelButtonContent: '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
+        cancelButtonContent:
+          '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
         confirmSave: true,
       },
       mode: '',
@@ -39,21 +47,20 @@ export class CBmVmCdeCEntityClassificationComponent extends BasePage implements 
       //     return 'text-danger';
       //   }
       // },
-      columns: {...ENTITY_CLASS_COLUMNS}
-    }
+      columns: { ...ENTITY_CLASS_COLUMNS },
+    };
   }
 
   ngOnInit(): void {
     this.data.load(entity_class_data);
   }
 
-
   selectRow(row: any) {
     this.selectedRow = row;
     this.rowSelected = true;
   }
 
-  onSaveConfirm(event:any) {
+  onSaveConfirm(event: any) {
     //console.log(event);
     event.confirm.resolve();
     /**
@@ -62,5 +69,4 @@ export class CBmVmCdeCEntityClassificationComponent extends BasePage implements 
 
     this.onLoadToast('success', 'Elemento Actualizado', '');
   }
-  
 }

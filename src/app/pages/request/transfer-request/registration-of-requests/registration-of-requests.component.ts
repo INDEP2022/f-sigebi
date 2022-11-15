@@ -23,6 +23,9 @@ export class RegistrationOfRequestsComponent
   parameter: any;
   object: any = '';
   btnTitle: string = '';
+  btnSaveTitle: string = '';
+  saveClarifiObject: boolean = false;
+
   //tabs
   tab1: string = '';
   tab2: string = '';
@@ -32,13 +35,17 @@ export class RegistrationOfRequestsComponent
   tab6: string = '';
 
   //registro de solicitudos o bienes
-  requestRegistration: boolean = false;
+  requestRegistration: boolean = true;
   //verificacion de cumplimientos tab
   complianceVerifi: boolean = false;
   //clasificacion de bienes
   classifyAssets: boolean = false;
   //validar destino del bien(documento)
-  validateDocument: boolean = true;
+  validateDocument: boolean = false;
+  //notificar aclaraciones o improcedencias
+  notifyClarifiOrImpropriety: boolean = false;
+  //aprovacion del proceso (por verse caso contrario borrar)
+  approvalProcess: boolean = false;
 
   constructor(
     public fb: FormBuilder,
@@ -100,15 +107,34 @@ export class RegistrationOfRequestsComponent
       this.tab2 = 'Aclaraciones';
       this.tab3 = 'Identifica Destino Documental';
       this.btnTitle = 'Solicitar Aprobación';
+    } else if (this.notifyClarifiOrImpropriety) {
+      this.tab1 = 'Detalle de la Solicitud';
+      this.tab2 = 'Bienes';
+      this.tab3 = 'Expediente';
+      this.btnTitle = 'Terminar';
+      this.btnSaveTitle = 'Guardar';
+    } else if (this.approvalProcess) {
+      this.tab1 = 'Detalle de la Solicitud';
+      this.tab2 = 'Bienes';
+      this.tab3 = 'Domicilio de la Transferente';
+      this.tab4 = 'Verificación del Cumplimiento';
+      this.tab5 = 'Expediente';
+      //this.btnTitle = 'Terminar';
+      this.btnSaveTitle = 'Guardar';
     }
   }
+
   confirm() {
     this.msgAvertanceModal(
-      'Aceptar',
+      '',
       'Asegurse de tener guardado los formularios antes de turnar la solicitud!',
       'Confirmación',
       ''
     );
+  }
+
+  saveClarification(): void {
+    this.saveClarifiObject = true;
   }
 
   close() {

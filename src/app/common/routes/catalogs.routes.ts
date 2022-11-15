@@ -239,6 +239,30 @@ export const CATALOGS_ROUTES = [
         label: 'Párrafos',
         link: '/pages/catalogs/paragraphs',
       },
+      {
+        label: 'Tipo Docto',
+        link: '/pages/catalogs/type-docto',
+      },
+      {
+        label: 'Tipo Almacen',
+        link: '/pages/catalogs/type-wharehouse',
+      },
+      {
+        label: 'Tipo Orden de Servicio',
+        link: '/pages/catalogs/type-order-service',
+      },
+      {
+        label: 'Tipo Relevante',
+        link: '/pages/catalogs/type-relevant',
+      },
+      {
+        label: 'Tipo Servicios',
+        link: '/pages/catalogs/type-services',
+      },
+      {
+        label: 'Zona geografica',
+        link: '/pages/catalogs/zone-geographic',
+      },
     ],
   },
 ];

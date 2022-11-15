@@ -40,6 +40,39 @@ const routes: Routes = [
       (await import('./gp-i-account-status/gp-i-account-status.module'))
         .GpIAccountStatusModule,
   },
+  {
+    path: 'management-strategies',
+    loadChildren: async () =>
+      (
+        await import(
+          './gp-i-management-strategies/gp-i-management-strategies.module'
+        )
+      ).GpIManagementStrategiesModule,
+  },
+  {
+    path: 'reception-strategies',
+    loadChildren: async () =>
+      (
+        await import(
+          './gp-i-reception-strategies/gp-i-reception-strategies.module'
+        )
+      ).GpIReceptionStrategiesModule,
+  },
+  {
+    path: 'consolidated',
+    loadChildren: async () =>
+      (await import('./gp-i-consolidated/gp-i-consolidated.module'))
+        .GpIConsolidatedModule,
+  },
+  {
+    path: 'incident-maintenance',
+    loadChildren: async () =>
+      (
+        await import(
+          './gp-i-incident-maintenance/gp-i-incident-maintenance.module'
+        )
+      ).GpIIncidentMaintenanceModule,
+  },
 ];
 
 @NgModule({

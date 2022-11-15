@@ -5,12 +5,12 @@ import { CMPaymentRefundMainComponent } from './c-m-payment-refund-main/c-m-paym
 const routes: Routes = [
   {
     path: '',
-    component: CMPaymentRefundMainComponent
-  }
+    component: CMPaymentRefundMainComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CMPaymentRefundRoutingModule { }
+export class CMPaymentRefundRoutingModule {}

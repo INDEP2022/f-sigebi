@@ -1,0 +1,73 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title pull-left">{{ title }}</h5>
+    <button
+      type="button"
+      class="close btn-close pull-right"
+      aria-label="Close"
+      (click)="modalRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div body class="body">
+    <div *ngIf="printReport">
+      <div class="row">
+        <div class="d-flex">
+          <h5 class="mr-auto p-2">Vista Previa Reporte</h5>
+          <div class="p-2">
+            <button class="btn btn-success btn-sm" (click)="signReport()">
+              <i class="bx bx-edit-alt"></i>{{ btnTitle }}
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row">mostrar reporte!</div>
+    </div>
+
+    <!-- Listado de firmas electronicas -->
+    <div *ngIf="listSigns">
+      <div class="row">
+        <div class="d-flex">
+          <h5 class="mr-auto p-2">Lista de Firmas Electronicas</h5>
+          <div class="p-2">
+            <button class="btn btn-success btn-sm" (click)="sendSign()">
+              <i class="bx bxs-right-arrow-square"></i>Enviar a Firmar
+            </button>
+          </div>
+          <div class="p-2">
+            <button class="btn btn-success btn-sm" (click)="backStep()">
+              <i class="bx bx-left-arrow-alt"></i> Anterior Paso
+            </button>
+          </div>
+          <div class="p-2">
+            <button class="btn btn-success btn-sm" (click)="nextStep()">
+              <i class="bx bx-right-arrow-alt"></i> Siguiente Paso
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <ng-scrollbar track="all" style="min-height: 150px; border: none">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng2-smart-table
+                [attr.class]="'table-bordered'"
+                [settings]="settings"
+                [source]="paragraphs">
+              </ng2-smart-table>
+            </div>
+          </ng-scrollbar>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

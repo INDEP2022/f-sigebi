@@ -5,12 +5,12 @@ import { PaGtcrCGoodsTypeCrimeReportsComponent } from './goods-type-crime-report
 const routes: Routes = [
   {
     path: '',
-    component: PaGtcrCGoodsTypeCrimeReportsComponent
-  }
+    component: PaGtcrCGoodsTypeCrimeReportsComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PaGtcMGoodsTypeCrimeRoutingModule { }
+export class PaGtcMGoodsTypeCrimeRoutingModule {}

@@ -1,0 +1,64 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      Solicitar Recursos Económicos, No. Solicitud: {{ requestId }},
+      Contribuyente: {{ contributor }}
+    </h5>
+  </div>
+  <div body>
+    <div class="d-flex flex-row-reverse">
+      <div class="mx-1">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          [disabled]="">
+          <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Solicitud
+          Recursos Económicos
+        </button>
+      </div>
+      <div class="mx-1">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          [disabled]="">
+          <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Guardar
+        </button>
+      </div>
+      <div class="mx-1">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          (click)="turnRequest()"
+          [disabled]="">
+          <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Turnar
+        </button>
+      </div>
+    </div>
+    <app-request-information [request]="requestInfo"></app-request-information>
+    <div class="md-tabs">
+      <tabset>
+        <tab heading="Registro de Documentación" id="documentationTab">
+          <app-economic-resources-documentation-form
+            [requestId]="requestId"
+            (onRegister)="
+              requestRegistered($event)
+            "></app-economic-resources-documentation-form>
+        </tab>
+        <tab heading="Buscar y Asociar al Expediente" id="associateTab">
+          <app-associate-file></app-associate-file>
+        </tab>
+        <tab heading="Seleccionar Bienes" id="selectTab">
+          <app-select-goods></app-select-goods>
+        </tab>
+        <tab heading="Expediente" id="fileTab"></tab>
+      </tabset>
+    </div>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Salir
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

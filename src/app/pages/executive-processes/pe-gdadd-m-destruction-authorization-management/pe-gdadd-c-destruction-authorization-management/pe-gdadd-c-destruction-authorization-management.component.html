@@ -76,12 +76,13 @@
       <div class="row pt-5">
         <div class="col-lg-12">
           <div class="form-group row">
-            <div class="col-md-6">
+            <div class="row"></div>
+            <div class="col-md-6 table-responsive">
               <ng2-smart-table
                 [settings]="settings2"
                 [source]="dataActRec"></ng2-smart-table>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6 table-responsive">
               <ng2-smart-table
                 [settings]="settings3"
                 [source]="dataDictam"></ng2-smart-table>
@@ -136,13 +137,12 @@
           </form-field>
         </div>
 
-        <div class="row pt-5">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="dataNoBien">
+        <div class="row pt-5 table-responsive">
+          <ng2-smart-table [settings]="settings" [source]="dataNoBien">
           </ng2-smart-table>
         </div>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
       </div>
       <div class="row pt-5">
         <div class="col-md-8">

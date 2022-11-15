@@ -5,28 +5,28 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 @Component({
   selector: 'app-jpr-partializes-goods',
   templateUrl: './jpr-partializes-goods.component.html',
-  styleUrls: ["partializes-goods.component.scss"],
+  styleUrls: ['partializes-goods.component.scss'],
 })
 export class JprPartializesGoodsComponent implements OnInit {
-
   form: FormGroup;
 
-  settings = {... TABLE_SETTINGS,
-   
+  settings = {
+    ...TABLE_SETTINGS,
+
     actions: false,
     columns: {
       noBien: {
-        title: "No. Bien",
-        type: "string",
+        title: 'No. Bien',
+        type: 'string',
         sort: false,
       },
       descripcion: {
-        title: "Descripción",
-        type: "string",
+        title: 'Descripción',
+        type: 'string',
         sort: false,
       },
     },
-    noDataMessage: "No se encontrarón registros",
+    noDataMessage: 'No se encontrarón registros',
   };
   data = EXAMPLE_DATA;
   constructor(private fb: FormBuilder) {}
@@ -41,48 +41,47 @@ export class JprPartializesGoodsComponent implements OnInit {
       descripcion: [null, [Validators.required]],
     });
   }
-
 }
 
 const EXAMPLE_DATA = [
   {
     noBien: 123,
-    descripcion: "DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS",
+    descripcion: 'DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS',
   },
   {
     noBien: 123,
-    descripcion: "DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS",
+    descripcion: 'DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS',
   },
   {
     noBien: 123,
-    descripcion: "DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS",
+    descripcion: 'DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS',
   },
   {
     noBien: 123,
-    descripcion: "DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS",
+    descripcion: 'DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS',
   },
   {
     noBien: 123,
-    descripcion: "DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS",
+    descripcion: 'DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS',
   },
   {
     noBien: 123,
-    descripcion: "DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS",
+    descripcion: 'DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS',
   },
   {
     noBien: 123,
-    descripcion: "DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS",
+    descripcion: 'DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS',
   },
   {
     noBien: 123,
-    descripcion: "DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS",
+    descripcion: 'DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS',
   },
   {
     noBien: 123,
-    descripcion: "DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS",
+    descripcion: 'DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS',
   },
   {
     noBien: 123,
-    descripcion: "DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS",
+    descripcion: 'DISCOS COMPACTOS PIRATAS DIFERENTES ARTISTAS',
   },
-]
+];

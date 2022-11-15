@@ -80,4 +80,31 @@ export const DEPOSITARY_ROUTES_2_ROUTING = [
       ).JpDMDepositRequestMonitorModule,
     data: { title: DEPOSITARY_ROUTES_2[7].label },
   },
+  {
+    path: DEPOSITARY_ROUTES_2[8].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './generation-files-opinion/jp-d-m-generation-files-opinion.module'
+        )
+      ).JpDMGenerationFilesOpinionModule,
+    data: { title: DEPOSITARY_ROUTES_2[8].label },
+  },
+  {
+    path: DEPOSITARY_ROUTES_2[9].link,
+    loadChildren: async () =>
+      (
+        await import(
+          './reports-assets-declared-abandoned/jp-d-m-reports-assets-declared-abandoned.module'
+        )
+      ).JpDMReportsAssetsDeclaredAbandonedModule,
+    data: { title: DEPOSITARY_ROUTES_2[9].label },
+  },
+  {
+    path: DEPOSITARY_ROUTES_2[10].link,
+    loadChildren: async () =>
+      (await import('./text-change/jp-d-m-text-change.module'))
+        .JpDMTextChangeModule,
+    data: { title: DEPOSITARY_ROUTES_2[10].label },
+  },
 ];
