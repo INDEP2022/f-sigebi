@@ -243,6 +243,18 @@ const routes: Routes = [
     },
   },
   {
+    path: 'indicia-registration',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-indicia-registration/c-p-m-indicia-registration.module'
+        )
+      ).CPMIndiciaRegistrationModule,
+    data: {
+      title: 'Registro de Indiciados',
+    },
+  },
+  {
     path: 'rate-catalog',
     loadChildren: async () =>
       (await import('./c-p-m-rate-catalog/c-p-m-rate-catalog.module'))
