@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { Store } from '@ngrx/store';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ExcelService } from '../../../../../common/services/excel.service';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
@@ -40,6 +41,7 @@ var data = [
   styles: [],
 })
 export class AssetsTabComponent implements OnInit {
+  @Input() willSave: boolean = false;
   bsModalRef: BsModalRef;
   assetsForm: ModelForm<any>;
   assetsArray: any[] = [];
@@ -49,11 +51,13 @@ export class AssetsTabComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private excelService: ExcelService
+    private excelService: ExcelService,
+    private store: Store<{ data: any[] }>
   ) {}
 
   ngOnInit(): void {
     this.assetsArray = data;
+    console.log(this.willSave);
   }
 
   initAssetForm(): void {
@@ -71,7 +75,6 @@ export class AssetsTabComponent implements OnInit {
   }
 
   selectOne(event: any, data: any) {
-    console.log(event);
     if (event.target.checked == true) {
       this.assetsSelected.push(data);
     } else {
@@ -80,7 +83,9 @@ export class AssetsTabComponent implements OnInit {
       );
       this.assetsSelected.splice(index, 1);
     }
-    console.log(this.assetsSelected);
+    //console.log(this.assetsSelected);
+    //const items:any = {item1: this.assetsSelected}
+    //this.store.dispatch(add({items}))
   }
 
   uploadExpedient() {
