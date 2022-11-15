@@ -144,6 +144,26 @@ const routes: Routes = [
       ).CPMGeneralArchiveCatalogModule,
     data: { title: 'Catálogo de Archivo General' },
   },
+  {
+    path: 'c-p-m-cat-identifier-uni-dbs',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-cat-identifier-uni-dbs/c-p-m-cat-identifier-uni-dbs.module'
+        )
+      ).CPMCatIdentifierUniDbsModule,
+    data: { title: 'Catálogo de identificador para la unificacion de las dbs' },
+  },
+  {
+    path: 'c-p-m-cat-relationship-opinion',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-cat-relationship-opinion/c-p-m-cat-relationship-opinion.module'
+        )
+      ).CPMCatRelationshipOpinionModule,
+    data: { title: 'Catálogo de relación y de asunto dictamen' },
+  },
   //Alexander
   {
     path: 'maintenance-of-areas',

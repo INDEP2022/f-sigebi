@@ -1,0 +1,25 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Catálogo de relación y de asunto dictamen</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-4">
+          <h5 class="font-size-14 d-inline">Seleccione Aseunto</h5>
+          <ngx-select
+            [form]="form"
+            [data]="affairItems"
+            value="id"
+            bindLabel="id"
+            (fetchItems)="getAffair($event)"
+            (change)="selectAffair($event)"
+            control="id">
+          </ngx-select>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>
