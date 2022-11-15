@@ -8,6 +8,15 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { AssociateFileButtonComponent } from './associate-file/associate-file-button/associate-file-button.component';
 import { AssociateFileComponent } from './associate-file/associate-file.component';
 import { NewFileModalComponent } from './associate-file/new-file-modal/new-file-modal.component';
+import { DetailAssetsTabComponentComponent } from './detail-assets-tab-component/detail-assets-tab-component.component';
+import { ExpedientsTabsComponent } from './expedients-tabs/expedients-tabs.component';
+import { BtnRequestComponent } from './expedients-tabs/sub-tabs/btn-request/btn-request.component';
+import { DocRequestTabComponent } from './expedients-tabs/sub-tabs/doc-request-tab/doc-request-tab.component';
+import { SeeInformationComponent } from './expedients-tabs/sub-tabs/doc-request-tab/see-information/see-information.component';
+import { ExpedientsRequestTabComponent } from './expedients-tabs/sub-tabs/expedients-request-tab/expedients-request-tab.component';
+import { GoodDocTabComponent } from './expedients-tabs/sub-tabs/good-doc-tab/good-doc-tab.component';
+import { NewDocumentComponent } from './expedients-tabs/sub-tabs/new-document/new-document.component';
+import { RequestOfAssetsComponent } from './expedients-tabs/sub-tabs/request-of-assets/request-of-assets.component';
 import { RequestFormComponent } from './request-form/request-form.component';
 import { RequestInformationComponent } from './request-information/request-information.component';
 import { SearchInventoryGoodsComponent } from './search-inventory-goods/search-inventory-goods.component';
@@ -33,6 +42,15 @@ import { UsersSelectedToTurnComponent } from './users-selected-to-turn/users-sel
     AddGoodsButtonComponent,
     ViewFileButtonComponent,
     ReserveGoodModalComponent,
+    ExpedientsTabsComponent,
+    DocRequestTabComponent,
+    SeeInformationComponent,
+    GoodDocTabComponent,
+    ExpedientsRequestTabComponent,
+    RequestOfAssetsComponent,
+    BtnRequestComponent,
+    NewDocumentComponent,
+    DetailAssetsTabComponentComponent,
   ],
   imports: [
     CommonModule,
@@ -48,6 +66,15 @@ import { UsersSelectedToTurnComponent } from './users-selected-to-turn/users-sel
     RequestInformationComponent,
     AssociateFileComponent,
     SelectGoodsComponent,
+    ExpedientsTabsComponent,
+    DocRequestTabComponent,
+    SeeInformationComponent,
+    GoodDocTabComponent,
+    ExpedientsRequestTabComponent,
+    RequestOfAssetsComponent,
+    BtnRequestComponent,
+    NewDocumentComponent,
+    DetailAssetsTabComponentComponent,
   ],
 })
 export class SharedRequestModule {}

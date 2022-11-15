@@ -43,7 +43,7 @@ export const MENU: IMenuItem[] = [
   //Administración
   ...ADMINISTRATIVE_PROCESSES_ROUTES,
   {
-    label: 'Solicitudes',
+    label: 'Transferencia de Bienes',
     icon: 'bx-folder',
     subItems: [
       {
@@ -64,7 +64,7 @@ export const MENU: IMenuItem[] = [
         link: '/pages/request/request-in-turn',
       },
       {
-        label: 'Solicitudes',
+        label: 'Lista de Solicitudes',
         link: '/pages/request/list',
       },
       {
