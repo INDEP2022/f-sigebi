@@ -91,6 +91,21 @@ const routes: Routes = [
       (await import('./gp-mass-goods-deletion/gp-mass-goods-deletion.module'))
         .GpMassGoodsDeletionModule,
   },
+  {
+    path: 'goods-partialization',
+    loadChildren: async () =>
+      (await import('./gp-goods-partialization/gp-goods-partialization.module'))
+        .GpGoodsPartializationModule,
+  },
+  {
+    path: 'goods-with-required-information',
+    loadChildren: async () =>
+      (
+        await import(
+          './gp-goods-with-required-info/gp-goods-with-required-info.module'
+        )
+      ).GpGoodsWithRequiredInfoModule,
+  },
 ];
 
 @NgModule({

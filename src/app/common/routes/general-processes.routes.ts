@@ -96,6 +96,14 @@ export const GENERAL_PROCESSES_ROUTES = [
         label: 'Borrado Masivo de Bienes',
         link: '/pages/general-processes/mass-goods-deletion',
       },
+      {
+        label: 'Parcialización de Bienes',
+        link: '/pages/general-processes/goods-partialization',
+      },
+      {
+        label: 'Listado de Bienes con Información Requerida',
+        link: '/pages/general-processes/goods-with-required-information',
+      },
     ],
   },
 ];
