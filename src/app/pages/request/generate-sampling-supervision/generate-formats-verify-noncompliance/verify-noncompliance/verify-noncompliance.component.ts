@@ -20,6 +20,8 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
   isEnableAnex: boolean = false;
   willSave: boolean = false;
 
+  clasificationAnnex: boolean = true;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,

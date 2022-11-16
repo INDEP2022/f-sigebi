@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 var data = [
   {
@@ -22,13 +22,22 @@ var data = [
   styles: [],
 })
 export class DeductivesComponent implements OnInit {
+  @Input() typeTask: string = '';
   listVerifications: any[] = [];
   verificationsSelected: any[] = [];
+  isReadonly: boolean = false;
 
   constructor() {}
 
   ngOnInit(): void {
+    this.setEnableInputs();
     this.listVerifications = data;
+  }
+
+  setEnableInputs(): void {
+    if (this.typeTask === 'verify-warehouse-assets') {
+      this.isReadonly = true;
+    }
   }
 
   checkList(event: any, data: any) {
