@@ -1,5 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 
 @Component({
   selector: 'app-register-documentation',
@@ -7,6 +12,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styles: [],
 })
 export class RegisterDocumentationComponent implements OnInit {
+  /** INPUT VARIABLES */
+  @Input() nombrePantalla: string = 'sinNombre';
+
+  /** OUTPUT VARIABLES */
+  @Output() formValues = new EventEmitter<any>();
+
   form: FormGroup;
 
   constructor(private fb: FormBuilder) {}
@@ -36,7 +47,16 @@ export class RegisterDocumentationComponent implements OnInit {
       judgment: [null, Validators.required],
       observations: [null, Validators.required],
     });
+    if (this.nombrePantalla == 'register-return' && this.form) {
+      this.form.addControl(
+        'orderingAuthority',
+        new FormControl('', [Validators.required])
+      );
+    }
   }
 
-  onSubmit() {}
+  onSubmit() {
+    console.log(this.form.value);
+    this.formValues.emit(this.form.value);
+  }
 }

@@ -5,6 +5,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 /** BASE IMPORT */
 
 /** LIBRERIAS EXTERNAS IMPORTS */
+import { MsgRsbMRegisterRequestGoodsModule } from '../../../manage-similar-goods/register-request-goods/msg-rsb-m-register-request-goods.module';
 
 /** SERVICE IMPORTS */
 
@@ -16,7 +17,12 @@ import { GDRSDRegisterReturnComponent } from './register-return/gd-rsd-c-registe
 
 @NgModule({
   declarations: [GDRSDRegisterReturnComponent],
-  imports: [CommonModule, GDRSDRegisterReturnRoutingModule, SharedModule],
+  imports: [
+    CommonModule,
+    GDRSDRegisterReturnRoutingModule,
+    SharedModule,
+    MsgRsbMRegisterRequestGoodsModule,
+  ],
   providers: [],
 })
 export class GDRSDRegisterReturnModule {}
