@@ -281,6 +281,18 @@ export const MENU: IMenuItem[] = [
         label: 'Devolucion x Cancelacion de Venta',
         link: '/pages/judicial-physical-reception/cancellation-sale',
       },
+      {
+        label: 'Mantenimiento de Programaciones',
+        link: '/pages/judicial-physical-reception/scheduled-maintenance-1',
+      },
+      {
+        label: 'Mantenimiento de Acta Entrega Recepcion',
+        link: '/pages/judicial-physical-reception/scheduled-maintenance-2',
+      },
+       {
+        label: 'Mantenimiento de Acatas',
+        link: '/pages/judicial-physical-reception/maintenance-records',
+      },
     ],
   },
 
