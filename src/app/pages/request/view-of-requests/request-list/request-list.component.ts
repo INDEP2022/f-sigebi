@@ -52,6 +52,15 @@ var usuario: IRequestList[] = [
     created: 'tester_nsbxt',
     process: 'RE_SolicitarRecursos',
   },
+  {
+    title:
+      'Revisión de Lineamientos de Resarcimiento (NUMERARIO), No. Solicitud: 1896, Contribuyente CARLOS G. PALMA',
+    noRequest: 1896,
+    numTask: 212097,
+    noInstance: 450060,
+    created: 'tester_nsbxt',
+    process: 'RE_RevisarLineamientos',
+  },
 ];
 
 @Component({
@@ -116,6 +125,13 @@ export class RequestListComponent extends BasePage implements OnInit {
         // en el caso de que sea el proceso de registrar solicitud de recursos economicos
         this.router.navigate([
           'pages/request/economic-compensation/economic-resources',
+          event.data.noRequest,
+        ]);
+        break;
+      case 'RE_RevisarLineamientos':
+        // en el caso de que sea el proceso de revision de lineamientos
+        this.router.navigate([
+          'pages/request/economic-compensation/guidelines-revision',
           event.data.noRequest,
         ]);
         break;
