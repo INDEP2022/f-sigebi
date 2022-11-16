@@ -307,6 +307,18 @@ const routes: Routes = [
       title: 'Mantenimiento de Parametros',
     },
   },
+  {
+    path: 'catalog-of-document-types',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-catalog-of-document-types/c-p-m-catalog-of-document-types.module'
+        )
+      ).CPMCatalogOfDocumentTypesModule,
+    data: {
+      title: 'Catálogo de tipos de documentos',
+    },
+  },
   //Félix
   {
     path: 'values',
