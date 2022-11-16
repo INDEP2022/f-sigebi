@@ -5,7 +5,7 @@ export const data = [
     event: '15638',
     eventKey: 'SEI-17/17',
     batch: '582405',
-    batchId:998,
+    batchId: 998,
     startDate: '18/01/2018',
     endDate: '08/01/2020',
     reference: 'Oficio 231',
@@ -14,7 +14,7 @@ export const data = [
     observations: 'Descripción Observaciones',
     status: 'penaltie',
     customerId: 1469,
-    customerName: 'RODOLFO SILVEYRA IBARRA'
+    customerName: 'RODOLFO SILVEYRA IBARRA',
   },
   {
     typePenalty: 3,
@@ -22,7 +22,7 @@ export const data = [
     event: '11234',
     eventKey: 'SEI-17/18',
     batch: '582403',
-    batchId:999,
+    batchId: 999,
     startDate: '18/01/2018',
     endDate: '08/01/2020',
     reference: 'Oficio 231',
@@ -31,6 +31,6 @@ export const data = [
     observations: 'Descripción Observaciones',
     status: 'released',
     customerId: 1441,
-    customerName: 'ALCANTARA REYES MIGUEL ANGEL'
+    customerName: 'ALCANTARA REYES MIGUEL ANGEL',
   },
 ];

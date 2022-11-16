@@ -15,11 +15,12 @@ import { DATA } from './data';
 @Component({
   selector: 'app-c-c-epl-c-event-process-list',
   templateUrl: './c-c-epl-c-event-process-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CCEplCEventProcessListComponent extends BasePage implements OnInit {
-
+export class CCEplCEventProcessListComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
 
   data: LocalDataSource = new LocalDataSource();
@@ -31,17 +32,18 @@ export class CCEplCEventProcessListComponent extends BasePage implements OnInit 
   rowSelected: boolean = false;
   selectedRow: any = null;
 
-  constructor(
-    private fb: FormBuilder,
-    private modalService: BsModalService
-  ) {
+  constructor(private fb: FormBuilder, private modalService: BsModalService) {
     super();
     this.settings = {
       ...this.settings,
-      actions: { ...this.settings.actions, add: false, edit: true, delete: true },
+      actions: {
+        ...this.settings.actions,
+        add: false,
+        edit: true,
+        delete: true,
+      },
       columns: COLUMNS,
     };
-
   }
 
   ngOnInit(): void {
@@ -62,7 +64,7 @@ export class CCEplCEventProcessListComponent extends BasePage implements OnInit 
       ignoreBackdropClick: true,
     });
     modalRef.content.refresh.subscribe(next => {
-      if (next) console.log(next)//this.getCities();
+      if (next) console.log(next); //this.getCities();
     });
   }
 
@@ -71,7 +73,7 @@ export class CCEplCEventProcessListComponent extends BasePage implements OnInit 
   }
 
   openForm(eventProcess: any) {
-    this.openModal({ edit:true, eventProcess});
+    this.openModal({ edit: true, eventProcess });
   }
 
   delete(eventProcess: any) {
@@ -85,5 +87,4 @@ export class CCEplCEventProcessListComponent extends BasePage implements OnInit 
       }
     });
   }
-
 }

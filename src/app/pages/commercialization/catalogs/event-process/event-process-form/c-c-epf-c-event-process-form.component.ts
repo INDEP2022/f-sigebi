@@ -1,18 +1,18 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'app-c-c-epf-c-event-process-form',
   templateUrl: './c-c-epf-c-event-process-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CCEpfCEventProcessFormComponent extends BasePage implements OnInit {
-
+export class CCEpfCEventProcessFormComponent
+  extends BasePage
+  implements OnInit
+{
   status: string = 'Nueva';
   edit: boolean = false;
 
@@ -35,15 +35,15 @@ export class CCEpfCEventProcessFormComponent extends BasePage implements OnInit 
 
   prepareForm() {
     this.form = this.fb.group({
-      goodType: [null,[Validators.required]],
-      event: [null,[Validators.required]],
-      eventKey: [null,[Validators.required]],
-      phase: [null,[Validators.required]],
-      warrantyDate: [null,[Validators.required]],
-      year: [null,[Validators.required]],
-      isPublished: [false,[Validators.required]],
+      goodType: [null, [Validators.required]],
+      event: [null, [Validators.required]],
+      eventKey: [null, [Validators.required]],
+      phase: [null, [Validators.required]],
+      warrantyDate: [null, [Validators.required]],
+      year: [null, [Validators.required]],
+      isPublished: [false, [Validators.required]],
     });
-    
+
     if (this.edit) {
       this.status = 'Actualizar';
       this.form.patchValue(this.eventProcess);
@@ -60,7 +60,6 @@ export class CCEpfCEventProcessFormComponent extends BasePage implements OnInit 
   }
 
   create() {
-    
     this.loading = true;
     this.handleSuccess();
     /*this.bankService.create(this.form.value).subscribe(
@@ -83,5 +82,4 @@ export class CCEpfCEventProcessFormComponent extends BasePage implements OnInit 
       error => (this.loading = false)
     );*/
   }
-
 }

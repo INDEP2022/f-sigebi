@@ -1,17 +1,14 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'app-c-c-pf-c-parameter-form',
   templateUrl: './c-c-pf-c-parameter-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CCPfCParameterFormComponent extends BasePage implements OnInit {
-
   status: string = 'Nuevo';
   edit: boolean = false;
 
@@ -20,10 +17,7 @@ export class CCPfCParameterFormComponent extends BasePage implements OnInit {
 
   @Output() refresh = new EventEmitter<true>();
 
-  constructor(
-    private fb: FormBuilder,
-    private modalRef: BsModalRef
-  ) {
+  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
     super();
   }
 
@@ -33,14 +27,14 @@ export class CCPfCParameterFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      parameter: [null,[Validators.required]],
-      description: [null,[Validators.required]],
-      value: [null,[Validators.required]],
-      direction: [null,[Validators.required]],
-      eventType: [null,[Validators.required]],
-      eventDescription: [null]
+      parameter: [null, [Validators.required]],
+      description: [null, [Validators.required]],
+      value: [null, [Validators.required]],
+      direction: [null, [Validators.required]],
+      eventType: [null, [Validators.required]],
+      eventDescription: [null],
     });
-    
+
     if (this.edit) {
       //console.log(this.brand)
       this.status = 'Actualizar';
@@ -79,5 +73,4 @@ export class CCPfCParameterFormComponent extends BasePage implements OnInit {
       error => (this.loading = false)
     );*/
   }
-
 }

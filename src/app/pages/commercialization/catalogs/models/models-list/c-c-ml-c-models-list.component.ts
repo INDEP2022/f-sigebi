@@ -8,7 +8,6 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
 //Components
-import { CCMfCModelsFormComponent } from '../models-form/c-c-mf-c-models-form.component';
 //Provisional Data
 import { DATA } from './data';
 
@@ -33,20 +32,28 @@ export class CCMlCModelsListComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
-      actions: { ...this.settings.actions, add: true, edit: true, delete: true },
+      actions: {
+        ...this.settings.actions,
+        add: true,
+        edit: true,
+        delete: true,
+      },
       edit: {
         ...this.settings.edit,
         saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-        cancelButtonContent: '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
+        cancelButtonContent:
+          '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
         confirmSave: true,
       },
       add: {
         addButtonContent: '<i class="fa fa-solid fa-plus mx-2"></i>',
-        createButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-        cancelButtonContent: '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-        confirmCreate : true
+        createButtonContent:
+          '<i class="bx bxs-save me-1 text-success mx-2"></i>',
+        cancelButtonContent:
+          '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
+        confirmCreate: true,
       },
-      mode : 'inline',
+      mode: 'inline',
       hideSubHeader: false,
       columns: COLUMNS,
     };
@@ -95,7 +102,7 @@ export class CCMlCModelsListComponent extends BasePage implements OnInit {
       }
     });
   }
-  
+
   /*openModal(context?: Partial<CCMfCModelsFormComponent>) {
     const modalRef = this.modalService.show(CCMfCModelsFormComponent, {
       initialState: context,
@@ -126,5 +133,4 @@ export class CCMlCModelsListComponent extends BasePage implements OnInit {
       }
     });
   }*/
-
 }

@@ -1,17 +1,14 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'app-c-c-ssf-c-sale-status-form',
   templateUrl: './c-c-ssf-c-sale-status-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CCSsfCSaleStatusFormComponent extends BasePage implements OnInit {
-
   status: string = 'Nuevo';
   edit: boolean = false;
 
@@ -20,10 +17,7 @@ export class CCSsfCSaleStatusFormComponent extends BasePage implements OnInit {
 
   @Output() refresh = new EventEmitter<true>();
 
-  constructor(
-    private fb: FormBuilder,
-    private modalRef: BsModalRef
-  ) {
+  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
     super();
   }
 
@@ -33,10 +27,10 @@ export class CCSsfCSaleStatusFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      description: [null,[Validators.required]],
-      status: [null,[Validators.required]],
+      description: [null, [Validators.required]],
+      status: [null, [Validators.required]],
     });
-    
+
     if (this.edit) {
       //console.log(this.brand)
       this.status = 'Actualizar';
@@ -75,5 +69,4 @@ export class CCSsfCSaleStatusFormComponent extends BasePage implements OnInit {
       error => (this.loading = false)
     );*/
   }
-
 }

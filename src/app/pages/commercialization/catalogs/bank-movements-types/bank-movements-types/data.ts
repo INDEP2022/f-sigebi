@@ -7,7 +7,7 @@ export const data = [
     affects: 'null',
     satPaymentDescription: 'Efectivo',
     bank: 'SANTANDER',
-    bankName: 'BANCO SANTANDER'
+    bankName: 'BANCO SANTANDER',
   },
   {
     code: '25',
@@ -17,7 +17,7 @@ export const data = [
     affects: 'null',
     satPaymentDescription: 'Transferencia',
     bank: 'SCOTIABAN2',
-    bankName: 'DEPOSITOS DE PAGOS PARA BIENES POR DANIOS CON CTA 0102532069'
+    bankName: 'DEPOSITOS DE PAGOS PARA BIENES POR DANIOS CON CTA 0102532069',
   },
 ];
 

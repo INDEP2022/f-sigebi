@@ -11,11 +11,14 @@ import { BanksSharedComponent } from 'src/app/@standalone/shared-forms/banks-sha
 //Routing
 import { CCBmtMBankMovementsTypesRoutingModule } from './c-c-bmt-m-bank-movements-types-routing.module';
 //Components
-import { CCBmtCBankMovementsTypesComponent } from './bank-movements-types/c-c-bmt-c-bank-movements-types.component';
 import { CCBmfCBankMovementsFormComponent } from './bank-movements-form/c-c-bmf-c-bank-movements-form.component';
+import { CCBmtCBankMovementsTypesComponent } from './bank-movements-types/c-c-bmt-c-bank-movements-types.component';
 
 @NgModule({
-  declarations: [CCBmtCBankMovementsTypesComponent, CCBmfCBankMovementsFormComponent],
+  declarations: [
+    CCBmtCBankMovementsTypesComponent,
+    CCBmfCBankMovementsFormComponent,
+  ],
   imports: [
     CommonModule,
     CCBmtMBankMovementsTypesRoutingModule,

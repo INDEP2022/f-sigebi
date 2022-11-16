@@ -5,12 +5,14 @@ import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { PrintReportModalComponent } from '../../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
 
 @Component({
-  selector: 'app-annex-j-form',
-  templateUrl: './annex-j-form.component.html',
-  styles: [],
+  selector: 'app-annex-k-form',
+  templateUrl: './annex-k-form.component.html',
+  styleUrls: ['./annex-k-form.component.scss'],
 })
-export class AnnexJFormComponent implements OnInit {
-  signForm: ModelForm<any>;
+export class AnnexKFormComponent implements OnInit {
+  detailForm: ModelForm<any>;
+  participantDataForm: ModelForm<any>;
+  detailAnnexForm: ModelForm<any>;
 
   constructor(
     private fb: FormBuilder,
@@ -19,29 +21,43 @@ export class AnnexJFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.initForm();
+    this.initDetailForm();
+    this.initParicipantForm();
+    this.initAnnexDetailForm();
   }
 
-  initForm() {
-    this.signForm = this.fb.group({
+  initDetailForm(): void {
+    this.detailForm = this.fb.group({
       name: [null],
       position: [null],
-      thirdSpecial: [null],
-      relevantFacts: [null],
-      date1: [null],
-      date2: [null],
+      typeSign: [null],
     });
+  }
+
+  initParicipantForm(): void {
+    this.participantDataForm = this.fb.group({
+      name1: [null],
+      position1: [null],
+      name2: [null],
+      position2: [null],
+    });
+  }
+
+  initAnnexDetailForm(): void {
+    this.detailAnnexForm = this.fb.group({
+      warehouseManager: [null],
+      relevantFacts: [null],
+      agreements: [null],
+    });
+  }
+
+  signAnnex(): void {
+    this.openModal(PrintReportModalComponent, '', 'annexK');
+    this.close();
   }
 
   close(): void {
     this.bsModalRef.hide();
-  }
-
-  save(): void {
-    console.log(this.signForm.value);
-
-    //usando el generador de reportes de notify-clarifications/print-report
-    this.openModal(PrintReportModalComponent, '', 'annexj');
   }
 
   openModal(component: any, data?: any, typeReport?: String): void {

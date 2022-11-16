@@ -1,17 +1,14 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'app-c-c-etf-c-event-types-forn',
   templateUrl: './c-c-etf-c-event-types-forn.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CCEtfCEventTypesFornComponent extends BasePage implements OnInit {
-
   status: string = 'Nuevo';
   edit: boolean = false;
 
@@ -20,10 +17,7 @@ export class CCEtfCEventTypesFornComponent extends BasePage implements OnInit {
 
   @Output() refresh = new EventEmitter<true>();
 
-  constructor(
-    private fb: FormBuilder,
-    private modalRef: BsModalRef
-  ) {
+  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
     super();
   }
 
@@ -33,12 +27,12 @@ export class CCEtfCEventTypesFornComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      descripcion: [null,[Validators.required]],
-      desc_recibo: [null,[Validators.required]],
-      id_tipo_disp: [null,[Validators.required]],
-      id_tipo_fallo: [null,[Validators.required]]
+      descripcion: [null, [Validators.required]],
+      desc_recibo: [null, [Validators.required]],
+      id_tipo_disp: [null, [Validators.required]],
+      id_tipo_fallo: [null, [Validators.required]],
     });
-    
+
     if (this.edit) {
       //console.log(this.brand)
       this.status = 'Actualizar';
@@ -77,5 +71,4 @@ export class CCEtfCEventTypesFornComponent extends BasePage implements OnInit {
       error => (this.loading = false)
     );*/
   }
-
 }

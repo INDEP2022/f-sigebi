@@ -6,12 +6,12 @@ import { CCEplCEventProcessListComponent } from './event-process-list/c-c-epl-c-
 const routes: Routes = [
   {
     path: '',
-    component: CCEplCEventProcessListComponent
-  }
+    component: CCEplCEventProcessListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CCEpMEventProcessRoutingModule { }
+export class CCEpMEventProcessRoutingModule {}

@@ -1,17 +1,17 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'app-c-c-bmf-c-bank-movements-form',
   templateUrl: './c-c-bmf-c-bank-movements-form.component.html',
-  styles: [
-  ]
+  styles: [],
 })
-export class CCBmfCBankMovementsFormComponent extends BasePage implements OnInit {
-
+export class CCBmfCBankMovementsFormComponent
+  extends BasePage
+  implements OnInit
+{
   status: string = 'Nuevo';
   edit: boolean = false;
 
@@ -20,10 +20,7 @@ export class CCBmfCBankMovementsFormComponent extends BasePage implements OnInit
 
   @Output() refresh = new EventEmitter<true>();
 
-  constructor(
-    private fb: FormBuilder,
-    private modalRef: BsModalRef
-  ) {
+  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
     super();
   }
 
@@ -33,15 +30,15 @@ export class CCBmfCBankMovementsFormComponent extends BasePage implements OnInit
 
   prepareForm() {
     this.form = this.fb.group({
-      bank: [null,[Validators.required]],
+      bank: [null, [Validators.required]],
       bankName: [null],
-      descripcion: [null,[Validators.required]],
-      type: [null,[Validators.required]],
-      decline: [null,[Validators.required]],
-      affects: [null,[Validators.required]],
-      satPaymentDescription: [null,[Validators.required]],
+      descripcion: [null, [Validators.required]],
+      type: [null, [Validators.required]],
+      decline: [null, [Validators.required]],
+      affects: [null, [Validators.required]],
+      satPaymentDescription: [null, [Validators.required]],
     });
-    
+
     if (this.edit) {
       //console.log(this.brand)
       this.status = 'Actualizar';
@@ -80,5 +77,4 @@ export class CCBmfCBankMovementsFormComponent extends BasePage implements OnInit
       error => (this.loading = false)
     );*/
   }
-
 }

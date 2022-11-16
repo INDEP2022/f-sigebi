@@ -9,8 +9,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 //Routing
 import { CCEtMEventTypesRoutingModule } from './c-c-et-m-event-types-routing.module';
 //Components
-import { CCEtCEventTypesComponent } from './event-types/c-c-et-c-event-types.component';
 import { CCEtfCEventTypesFornComponent } from './event-types-form/c-c-etf-c-event-types-forn.component';
+import { CCEtCEventTypesComponent } from './event-types/c-c-et-c-event-types.component';
 
 @NgModule({
   declarations: [CCEtCEventTypesComponent, CCEtfCEventTypesFornComponent],
@@ -20,7 +20,7 @@ import { CCEtfCEventTypesFornComponent } from './event-types-form/c-c-etf-c-even
     SharedModule,
     FormsModule,
     ReactiveFormsModule,
-    ModalModule.forChild()
+    ModalModule.forChild(),
   ],
 })
 export class CCEtMEventTypesModule {}

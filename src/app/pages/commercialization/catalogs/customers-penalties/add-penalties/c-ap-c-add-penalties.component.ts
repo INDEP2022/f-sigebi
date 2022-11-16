@@ -29,7 +29,7 @@ export class CApCAddPenaltiesComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       status: [null, [Validators.required]],
       event: [null, [Validators.required]],
-      eventKey: [null,[Validators.required]],
+      eventKey: [null, [Validators.required]],
       customerId: [null, [Validators.required]],
       customerName: [null, [Validators.required]],
       batch: [null, [Validators.required]],

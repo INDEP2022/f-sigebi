@@ -5,10 +5,8 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row mb-3 mt-3">
-      	<div class="col-lg-3 col-md-3 col-sm-12 col-12 mb-3 mt-3">
-          <form-field
-            [control]="form.get('parameter')"
-            label="Parámetro">
+        <div class="col-lg-3 col-md-3 col-sm-12 col-12 mb-3 mt-3">
+          <form-field [control]="form.get('parameter')" label="Parámetro">
             <input
               type="text"
               class="form-control"
@@ -16,9 +14,7 @@
           </form-field>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
-          <form-field
-            [control]="form.get('description')"
-            label="Descripción">
+          <form-field [control]="form.get('description')" label="Descripción">
             <input
               type="text"
               class="form-control"
@@ -26,31 +22,24 @@
           </form-field>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-12 col-12 mb-3 mt-3">
-          <form-field
-            [control]="form.get('value')"
-            label="Valor">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="value" />
+          <form-field [control]="form.get('value')" label="Valor">
+            <input type="text" class="form-control" formControlName="value" />
           </form-field>
         </div>
         <!--VALUE SELECT PROVISIONAL-->
         <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
-        	<form-field [control]="form.get('direction')" label="Dirección">
-		        <select class="form-control" formControlName="direction">
-		          <option [value]="null">Selecciona un Valor</option>
-		          <option value="Muebles">Muebles</option>
-		          <option value="Comercial">Comercial</option>
-		          <option value="Conciliación">Conciliación</option>
-		        </select>
-		      </form-field>
+          <form-field [control]="form.get('direction')" label="Dirección">
+            <select class="form-control" formControlName="direction">
+              <option [value]="null">Selecciona un Valor</option>
+              <option value="Muebles">Muebles</option>
+              <option value="Comercial">Comercial</option>
+              <option value="Conciliación">Conciliación</option>
+            </select>
+          </form-field>
         </div>
         <!--Event Types Component-->
         <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
-          <app-event-type-shared 
-          	[form]="form"
-          	[eventField]="'eventType'">
+          <app-event-type-shared [form]="form" [eventField]="'eventType'">
           </app-event-type-shared>
         </div>
       </div>

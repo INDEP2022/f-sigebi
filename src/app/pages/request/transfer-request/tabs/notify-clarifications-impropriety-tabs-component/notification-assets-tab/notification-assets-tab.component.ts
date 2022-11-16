@@ -19,7 +19,7 @@ import { NOTIFY_ASSETS_COLUMNS } from './notify-assets-columns';
 var data1 = [
   {
     id: 1,
-    statusAssets: 'SOLICITUD DE ACLARACION',
+    statusAssets: 'ACLARADO',
     management: '8901547',
     assetDescription: 'RESEPTOR DE SEÑAL CON NUMERO DE SERIE: 123456',
     unitMeasure: 'PIEZA',
@@ -44,7 +44,7 @@ var data2 = [
     clarificationSAT: '',
     typeOfClarification: 'ACLARACION',
     clarification: 'ACLARACION EN ESTADO FISICO',
-    typeClarification: '1',
+    typeClarification: '2',
     dateClarification: '12/10/2022',
     reason: 'ACLARACION DEL ESTADO FISICO DEL BIEN',
     observation: '',

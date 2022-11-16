@@ -41,15 +41,15 @@ export class EventsSharedComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     let eventId = this.form.controls[this.eventField].value;
-    if(eventId !== null && this.form.contains('eventKey')){
-      let eventKP= this.form.controls['eventKey'].value;
-      this.events=new DefaultSelect([
+    if (eventId !== null && this.form.contains('eventKey')) {
+      let eventKP = this.form.controls['eventKey'].value;
+      this.events = new DefaultSelect([
         {
           id: eventId,
-          eventKey: eventKP
-        }
+          eventKey: eventKP,
+        },
       ]);
-    };
+    }
   }
 
   getEvents(params: ListParams) {

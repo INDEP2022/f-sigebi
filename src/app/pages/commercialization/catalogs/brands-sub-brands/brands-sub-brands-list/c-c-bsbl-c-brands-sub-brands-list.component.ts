@@ -43,7 +43,12 @@ export class CCBsblCBrandsSubBrandsListComponent
     super();
     this.settings = {
       ...this.settings,
-      actions: { ...this.settings.actions, add: false, edit: true, delete: true },
+      actions: {
+        ...this.settings.actions,
+        add: false,
+        edit: true,
+        delete: true,
+      },
       columns: COLUMNS,
     };
 
@@ -103,7 +108,7 @@ export class CCBsblCBrandsSubBrandsListComponent
   selectRow(row: any) {
     this.data2.load(row.subbrands);
     this.data2.refresh();
-    this.rowBrand=row.brand;
+    this.rowBrand = row.brand;
     this.rowSelected = true;
   }
 }

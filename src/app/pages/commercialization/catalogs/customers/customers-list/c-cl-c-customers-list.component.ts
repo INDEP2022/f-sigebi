@@ -18,9 +18,7 @@ export class CClCCustomersListComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  constructor(
-    private modalService: BsModalService
-  ) {
+  constructor(private modalService: BsModalService) {
     super();
     this.settings = {
       ...this.settings,
@@ -33,11 +31,12 @@ export class CClCCustomersListComponent extends BasePage implements OnInit {
         custom: [
           {
             name: 'export',
-            title: '<i class="fa fa-solid fa-file-csv text-success mx-2 fa-lg"></i>'
+            title:
+              '<i class="fa fa-solid fa-file-csv text-success mx-2 fa-lg"></i>',
           },
           {
             name: 'info',
-            title: '<i class="fa fa-solid fa-info text-info mx-2 fa-lg"></i>'
+            title: '<i class="fa fa-solid fa-info text-info mx-2 fa-lg"></i>',
           },
         ],
       },

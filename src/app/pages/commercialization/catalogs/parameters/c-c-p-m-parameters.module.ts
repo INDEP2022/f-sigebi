@@ -11,8 +11,8 @@ import { EventTypeSharedComponent } from 'src/app/@standalone/shared-forms/event
 //Routing
 import { CCPMParametersRoutingModule } from './c-c-p-m-parameters-routing.module';
 //Components
-import { CCPlCParametersListComponent } from './parameter-list/c-c-pl-c-parameters-list.component';
 import { CCPfCParameterFormComponent } from './parameter-form/c-c-pf-c-parameter-form.component';
+import { CCPlCParametersListComponent } from './parameter-list/c-c-pl-c-parameters-list.component';
 
 @NgModule({
   declarations: [CCPlCParametersListComponent, CCPfCParameterFormComponent],
@@ -24,7 +24,7 @@ import { CCPfCParameterFormComponent } from './parameter-form/c-c-pf-c-parameter
     ReactiveFormsModule,
     ModalModule.forChild(),
     ReactiveFormsModule,
-    EventTypeSharedComponent
+    EventTypeSharedComponent,
   ],
 })
 export class CCPMParametersModule {}

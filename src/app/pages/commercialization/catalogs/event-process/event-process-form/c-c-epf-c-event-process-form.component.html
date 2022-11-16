@@ -5,16 +5,14 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row mb-3 mt-3">
-      	<!--Event Types Component-->
+        <!--Event Types Component-->
         <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
           <app-events-shared [form]="form"></app-events-shared>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
           <div class="row mb-3 mt-3">
             <div class="col-lg-6 col-md-6 col-sm-6 col-12">
-              <form-field
-                [control]="form.get('goodType')"
-                label="Tipo de Bien">
+              <form-field [control]="form.get('goodType')" label="Tipo de Bien">
                 <select class="form-control" formControlName="goodType">
                   <option [value]="null">Seleccione un valor</option>
                   <option value="movable">Mueble</option>
@@ -23,9 +21,7 @@
               </form-field>
             </div>
             <div class="col-lg-6 col-md-6 col-sm-6 col-12">
-              <form-field
-                [control]="form.get('phase')"
-                label="Fase">
+              <form-field [control]="form.get('phase')" label="Fase">
                 <select class="form-control" formControlName="phase">
                   <option [value]="null">Seleccione un valor</option>
                   <option value="beforeProcess">Proceso Anterior</option>
@@ -36,31 +32,24 @@
           </div>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-12 col-12 mt-3 mb-3">
-        	<form-field
-        		label="Fecha Garantía"
+          <form-field
+            label="Fecha Garantía"
             [control]="form.get('warrantyDate')">
-          	<input
-          		class="form-control"
+            <input
+              class="form-control"
               formControlName="warrantyDate"
               bsDatepicker />
           </form-field>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-12 col-12 mt-3 mb-3">
-          <form-field
-            [control]="form.get('year')"
-            label="Año">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="year" />
+          <form-field [control]="form.get('year')" label="Año">
+            <input type="number" class="form-control" formControlName="year" />
           </form-field>
         </div>
         <div class="col-lg-3 col-md-3 col-sm-12 col-12 mt-3 mb-3">
-        	<form-check
-        		label="Publicar"
-        		for="label">
-        		<input id="label" type="checkbox" formControlName="isPublished" />
-      		</form-check>
+          <form-check label="Publicar" for="label">
+            <input id="label" type="checkbox" formControlName="isPublished" />
+          </form-check>
         </div>
       </div>
     </form>

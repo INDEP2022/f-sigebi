@@ -29,20 +29,28 @@ export class CCGasSCStatusComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
-      actions: { ...this.settings.actions, add: true, edit: true, delete: true },
+      actions: {
+        ...this.settings.actions,
+        add: true,
+        edit: true,
+        delete: true,
+      },
       edit: {
         ...this.settings.edit,
         saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-        cancelButtonContent: '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
+        cancelButtonContent:
+          '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
         confirmSave: true,
       },
       add: {
         addButtonContent: '<i class="fa fa-solid fa-plus mx-2"></i>',
-        createButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-        cancelButtonContent: '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-        confirmCreate : true
+        createButtonContent:
+          '<i class="bx bxs-save me-1 text-success mx-2"></i>',
+        cancelButtonContent:
+          '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
+        confirmCreate: true,
       },
-      mode : 'inline',
+      mode: 'inline',
       hideSubHeader: false,
       columns: COLUMNS,
     };
@@ -81,12 +89,11 @@ export class CCGasSCStatusComponent extends BasePage implements OnInit {
          * */
         this.onLoadToast('success', 'Elemento Eliminado', '');
       }
-    }); 
+    });
   }
-  
+
   selectRow(row: any) {
     this.selectedRow = row;
     this.rowSelected = true;
   }
-
 }

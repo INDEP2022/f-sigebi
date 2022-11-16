@@ -41,15 +41,15 @@ export class CustomersSharedComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     let customerId = this.form.controls[this.customerField].value;
-    if(customerId !== null && this.form.contains('customerName')){
+    if (customerId !== null && this.form.contains('customerName')) {
       let customerN = this.form.controls['customerName'].value;
-      this.customers=new DefaultSelect([
+      this.customers = new DefaultSelect([
         {
           customerId: customerId,
-          customerName: customerN
-        }
+          customerName: customerN,
+        },
       ]);
-    };
+    }
   }
 
   getCustomers(params: ListParams) {

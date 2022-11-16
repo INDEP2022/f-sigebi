@@ -39,15 +39,15 @@ export class BatchSharedComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     let batchId = this.form.controls[this.batchField].value;
-    if(batchId !== null && this.form.contains('batch')){
-      let batch= this.form.controls['batch'].value;
-      this.batchs=new DefaultSelect([
+    if (batchId !== null && this.form.contains('batch')) {
+      let batch = this.form.controls['batch'].value;
+      this.batchs = new DefaultSelect([
         {
           id: batchId,
-          numRegister: batch
-        }
+          numRegister: batch,
+        },
       ]);
-    };
+    }
   }
 
   getBatchs(params: ListParams) {

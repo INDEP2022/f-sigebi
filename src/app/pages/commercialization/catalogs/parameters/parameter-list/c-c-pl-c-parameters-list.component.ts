@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -17,7 +17,6 @@ import { data } from './data';
   styles: [],
 })
 export class CCPlCParametersListComponent extends BasePage implements OnInit {
-
   data: LocalDataSource = new LocalDataSource();
   parametersD = data;
 
@@ -34,7 +33,12 @@ export class CCPlCParametersListComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
-      actions: { ...this.settings.actions, add: false, edit: true, delete: true },
+      actions: {
+        ...this.settings.actions,
+        add: false,
+        edit: true,
+        delete: true,
+      },
       columns: COLUMNS,
     };
   }
@@ -50,7 +54,7 @@ export class CCPlCParametersListComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.refresh.subscribe(next => {
-      if (next) console.log(next)//this.getCities();
+      if (next) console.log(next); //this.getCities();
     });
   }
 
@@ -59,7 +63,7 @@ export class CCPlCParametersListComponent extends BasePage implements OnInit {
   }
 
   openForm(parameter: any) {
-    this.openModal({ edit:true, parameter });
+    this.openModal({ edit: true, parameter });
   }
 
   delete(parameter: any) {
@@ -78,5 +82,4 @@ export class CCPlCParametersListComponent extends BasePage implements OnInit {
     this.selectedRow = row;
     this.rowSelected = true;
   }
-
 }

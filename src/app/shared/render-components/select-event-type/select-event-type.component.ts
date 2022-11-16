@@ -18,7 +18,6 @@ import { DefaultEditor } from 'ng2-smart-table';
   ],
 })
 export class SelectEventTypeComponent extends DefaultEditor implements OnInit {
-
   form: FormGroup = new FormGroup({});
 
   constructor(private fb: FormBuilder) {

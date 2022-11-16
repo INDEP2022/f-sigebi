@@ -18,7 +18,7 @@ import { CCGasSCStatusComponent } from './status/c-c-gas-s-c-status.component';
     SharedModule,
     FormsModule,
     ReactiveFormsModule,
-    ModalModule.forChild()
+    ModalModule.forChild(),
   ],
 })
 export class CCGasMGoodsAvailableSaleModule {}

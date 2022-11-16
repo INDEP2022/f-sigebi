@@ -9,8 +9,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 //Routing
 import { CCSsMSaleStatusRoutingModule } from './c-c-ss-m-sale-status-routing.module';
 //Components
-import { CCSsCSaleStatusComponent } from './sale-status/c-c-ss-c-sale-status.component';
 import { CCSsfCSaleStatusFormComponent } from './sale-status-form/c-c-ssf-c-sale-status-form.component';
+import { CCSsCSaleStatusComponent } from './sale-status/c-c-ss-c-sale-status.component';
 
 @NgModule({
   declarations: [CCSsCSaleStatusComponent, CCSsfCSaleStatusFormComponent],
@@ -20,7 +20,7 @@ import { CCSsfCSaleStatusFormComponent } from './sale-status-form/c-c-ssf-c-sale
     SharedModule,
     FormsModule,
     ReactiveFormsModule,
-    ModalModule.forChild()
+    ModalModule.forChild(),
   ],
 })
 export class CCSsMSaleStatusModule {}

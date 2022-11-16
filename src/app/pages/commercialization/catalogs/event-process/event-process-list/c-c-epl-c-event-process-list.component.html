@@ -36,23 +36,21 @@
     </div>
     <div class="row mb-3 mt-3 justify-content-end">
       <div class="col-lg2 col-md2 col-sm2 col-2 align-self-center">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm active w-100">
+        <button type="button" class="btn btn-primary btn-sm active w-100">
           Aplicar Cambios
         </button>
       </div>
     </div>
     <!--MODELS TABLE-->
     <div class="row pt-4">
-    	<div class="col-md-12">
-    		<div [class]="loading ? 'table-loading' : ''">
-    			<ng2-smart-table
-    					[attr.class]="'table-bordered'"
-              [settings]="settings"
-              [source]="data"
-              (edit)="openForm($event.data)"
-              (delete)="delete($event.data)">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data"
+            (edit)="openForm($event.data)"
+            (delete)="delete($event.data)">
           </ng2-smart-table>
         </div>
       </div>

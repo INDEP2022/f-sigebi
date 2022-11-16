@@ -39,7 +39,12 @@ export class CCBsbfCBrandsSubBrandsFormComponent
     super();
     this.settings = {
       ...this.settings,
-      actions: { ...this.settings.actions, add: true, edit: true, delete: true },
+      actions: {
+        ...this.settings.actions,
+        add: true,
+        edit: true,
+        delete: true,
+      },
       delete: {
         ...this.settings.delete,
         confirmDelete: true,

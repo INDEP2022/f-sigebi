@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -38,14 +38,16 @@ export class CCBmtCBankMovementsTypesComponent
   //Columns
   columns = COLUMNS;
 
-  constructor(
-    private fb: FormBuilder,
-    private modalService: BsModalService
-  ) {
+  constructor(private fb: FormBuilder, private modalService: BsModalService) {
     super();
     this.settings = {
       ...this.settings,
-      actions: { ...this.settings.actions, add: false, edit: true, delete: true },
+      actions: {
+        ...this.settings.actions,
+        add: false,
+        edit: true,
+        delete: true,
+      },
       columns: COLUMNS,
     };
   }
@@ -68,7 +70,7 @@ export class CCBmtCBankMovementsTypesComponent
       ignoreBackdropClick: true,
     });
     modalRef.content.refresh.subscribe(next => {
-      if (next) console.log(next)//this.getCities();
+      if (next) console.log(next); //this.getCities();
     });
   }
 
@@ -77,7 +79,7 @@ export class CCBmtCBankMovementsTypesComponent
   }
 
   openForm(bankMove: any) {
-    this.openModal({ edit:true, bankMove });
+    this.openModal({ edit: true, bankMove });
   }
 
   delete(bankMove: any) {
@@ -91,5 +93,4 @@ export class CCBmtCBankMovementsTypesComponent
       }
     });
   }
-
 }

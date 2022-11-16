@@ -1,23 +1,23 @@
 import { SelectEventTypeComponent } from 'src/app/shared/render-components/select-event-type/select-event-type.component';
 
-const options : any[]=[
+const options: any[] = [
   { value: 'Muebles', title: 'Muebles' },
   { value: 'Inmuebles', title: 'Inmuebles' },
   { value: 'Remesas', title: 'Remesas' },
   { value: 'Disponibles', title: 'Disponibles' },
-  { value: 'Validar SIRSAE', title: 'Validar SIRSAE' }
+  { value: 'Validar SIRSAE', title: 'Validar SIRSAE' },
 ];
 
 export const COLUMNS = {
   status: {
     title: 'Estatus',
     sort: false,
-    filter: false
+    filter: false,
   },
   descripcion: {
     title: 'Descripción',
     sort: false,
-    filter: false
+    filter: false,
   },
   area: {
     title: 'Área',
@@ -27,9 +27,9 @@ export const COLUMNS = {
     editor: {
       type: 'list',
       config: {
-        list: options
-      }
-    }
+        list: options,
+      },
+    },
   },
   eventType: {
     title: 'Tipo de Evento',

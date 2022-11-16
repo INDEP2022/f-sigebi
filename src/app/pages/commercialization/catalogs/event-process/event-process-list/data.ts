@@ -29,8 +29,8 @@ export const DATA = [
     tpsolavaId: 'NULL',
     aplica_iva: 2,
     trial919: 'T',
-    isPublished:true,
-    goodType: 'movable'
+    isPublished: true,
+    goodType: 'movable',
   },
   {
     event: 1416,
@@ -62,8 +62,8 @@ export const DATA = [
     tpsolavaId: 'NULL',
     aplica_iva: 2,
     trial919: 'T',
-    isPublished:false,
-    goodType: 'movable'
+    isPublished: false,
+    goodType: 'movable',
   },
   {
     event: 1417,
@@ -95,8 +95,8 @@ export const DATA = [
     tpsolavaId: 'NULL',
     aplica_iva: 2,
     trial919: 'T',
-    isPublished:true,
-    goodType: 'immovable'
+    isPublished: true,
+    goodType: 'immovable',
   },
   {
     event: 1425,
@@ -128,8 +128,8 @@ export const DATA = [
     tpsolavaId: 'NULL',
     aplica_iva: 2,
     trial919: 'T',
-    isPublished:false,
-    goodType: 'immovable'
+    isPublished: false,
+    goodType: 'immovable',
   },
   {
     event: 1433,
@@ -161,8 +161,8 @@ export const DATA = [
     tpsolavaId: 'NULL',
     aplica_iva: 2,
     trial919: 'T',
-    isPublished:false,
-    goodType: 'immovable'
+    isPublished: false,
+    goodType: 'immovable',
   },
   {
     event: 1434,
@@ -194,8 +194,8 @@ export const DATA = [
     tpsolavaId: 'NULL',
     aplica_iva: 2,
     trial919: 'T',
-    isPublished:false,
-    goodType: 'immovable'
+    isPublished: false,
+    goodType: 'immovable',
   },
   {
     event: 1448,
@@ -227,8 +227,8 @@ export const DATA = [
     tpsolavaId: 'NULL',
     aplica_iva: 2,
     trial919: 'T',
-    isPublished:false,
-    goodType: 'immovable'
+    isPublished: false,
+    goodType: 'immovable',
   },
   {
     event: 1449,
@@ -260,8 +260,8 @@ export const DATA = [
     tpsolavaId: 'NULL',
     aplica_iva: 2,
     trial919: 'T',
-    isPublished:false,
-    goodType: 'immovable'
+    isPublished: false,
+    goodType: 'immovable',
   },
   {
     event: 1450,
@@ -293,8 +293,8 @@ export const DATA = [
     tpsolavaId: 'NULL',
     aplica_iva: 2,
     trial919: 'T',
-    isPublished:false,
-    goodType: 'immovable'
+    isPublished: false,
+    goodType: 'immovable',
   },
   {
     event: 1453,
@@ -326,7 +326,7 @@ export const DATA = [
     tpsolavaId: 'NULL',
     aplica_iva: 2,
     trial919: 'T',
-    isPublished:false,
-    goodType: 'immovable'
+    isPublished: false,
+    goodType: 'immovable',
   },
 ];

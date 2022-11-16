@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
 //Components
-import { CCSsfCSaleStatusFormComponent } from '../sale-status-form/c-c-ssf-c-sale-status-form.component';
 
 //Provisional Data
 import { data } from './data';
@@ -34,20 +33,28 @@ export class CCSsCSaleStatusComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
-      actions: { ...this.settings.actions, add: true, edit: true, delete: true },
+      actions: {
+        ...this.settings.actions,
+        add: true,
+        edit: true,
+        delete: true,
+      },
       edit: {
         ...this.settings.edit,
         saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-        cancelButtonContent: '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
+        cancelButtonContent:
+          '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
         confirmSave: true,
       },
       add: {
         addButtonContent: '<i class="fa fa-solid fa-plus mx-2"></i>',
-        createButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-        cancelButtonContent: '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-        confirmCreate : true
+        createButtonContent:
+          '<i class="bx bxs-save me-1 text-success mx-2"></i>',
+        cancelButtonContent:
+          '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
+        confirmCreate: true,
       },
-      mode : 'inline',
+      mode: 'inline',
       hideSubHeader: false,
       columns: COLUMNS,
     };

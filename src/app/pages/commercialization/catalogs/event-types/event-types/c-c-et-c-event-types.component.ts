@@ -17,7 +17,6 @@ import { data } from './data';
   styles: [],
 })
 export class CCEtCEventTypesComponent extends BasePage implements OnInit {
-
   data: LocalDataSource = new LocalDataSource();
   eventTypesD = data;
 
@@ -34,7 +33,12 @@ export class CCEtCEventTypesComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
-      actions: { ...this.settings.actions, add: false, edit: true, delete: true },
+      actions: {
+        ...this.settings.actions,
+        add: false,
+        edit: true,
+        delete: true,
+      },
       columns: COLUMNS,
     };
   }
@@ -50,7 +54,7 @@ export class CCEtCEventTypesComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.refresh.subscribe(next => {
-      if (next) console.log(next)//this.getCities();
+      if (next) console.log(next); //this.getCities();
     });
   }
 
@@ -59,7 +63,7 @@ export class CCEtCEventTypesComponent extends BasePage implements OnInit {
   }
 
   openForm(eventType: any) {
-    this.openModal({ edit:true, eventType });
+    this.openModal({ edit: true, eventType });
   }
 
   delete(eventType: any) {

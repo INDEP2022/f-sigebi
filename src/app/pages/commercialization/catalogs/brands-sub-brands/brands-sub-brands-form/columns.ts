@@ -9,6 +9,6 @@ export const COLUMNS = {
     title: 'Descripción',
     sort: false,
     editable: true,
-    filter: false
+    filter: false,
   },
 };

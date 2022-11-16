@@ -6,6 +6,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { SharedModule } from '../../../../shared/shared.module';
 import { AnnexJFormComponent } from './annex-j-form/annex-j-form.component';
+import { AnnexKFormComponent } from './annex-k-form/annex-k-form.component';
 import { AssetsTabComponent } from './assets-tab/assets-tab.component';
 import { DeductivesComponent } from './deductives/deductives.component';
 import { GenerateFormatsVerifyNoncomplianceRoutingModule } from './generate-formats-verify-noncompliance-routing.module';
@@ -23,6 +24,7 @@ import { VerifyNoncomplianceComponent } from './verify-noncompliance/verify-nonc
     DeductivesComponent,
     AnnexJFormComponent,
     GenerateReportComponent,
+    AnnexKFormComponent,
   ],
   imports: [
     CommonModule,
