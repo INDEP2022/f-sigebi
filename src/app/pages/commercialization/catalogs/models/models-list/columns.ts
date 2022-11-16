@@ -3,5 +3,6 @@ export const COLUMNS = {
     title: 'Modelo',
     sort: false,
     width: '80%',
+    filter: false,
   },
 };

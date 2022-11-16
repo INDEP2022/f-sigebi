@@ -5,10 +5,29 @@
     </div>
   </div>
   <div body>
-    <div class="table-responsive">
-      <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
+    <div class="col-md-6">
+      <div class="table-responsive">
+        <ng2-smart-table
+          [settings]="settings1"
+          [source]="data"
+          (deleteConfirm)="onDeleteConfirm($event)"
+          (createConfirm)="onAddConfirm($event)"
+          (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
     </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
-    </app-pagination>
+    <div class="col-md-6">
+      <div class="table-responsive">
+        <ng2-smart-table
+          [settings]="settings2"
+          [source]="data2"
+          (deleteConfirm)="onDeleteConfirm($event)"
+          (createConfirm)="onAddConfirm($event)"
+          (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
   </div>
 </app-card>

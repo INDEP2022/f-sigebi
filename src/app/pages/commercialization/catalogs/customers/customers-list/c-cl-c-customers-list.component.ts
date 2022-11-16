@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -19,14 +18,12 @@ export class CClCCustomersListComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  constructor(
-    private sanitizer: DomSanitizer,
-    private modalService: BsModalService
-  ) {
+  constructor(private modalService: BsModalService) {
     super();
     this.settings = {
       ...this.settings,
       actions: {
+        ...this.settings.actions,
         add: false,
         edit: false,
         delete: false,
@@ -34,19 +31,12 @@ export class CClCCustomersListComponent extends BasePage implements OnInit {
         custom: [
           {
             name: 'export',
-            title: this.sanitizer.bypassSecurityTrustHtml(`
-              <button type="button" class="btn btn-success btn-sm active">
-               <i class='bx bx-export' ></i>
-              </button>
-            `),
+            title:
+              '<i class="fa fa-solid fa-file-csv text-success mx-2 fa-lg"></i>',
           },
           {
             name: 'info',
-            title: this.sanitizer.bypassSecurityTrustHtml(`
-              <button type="button" class="btn btn-info btn-sm active">
-              <i class='bx bx-info-circle'></i>
-              </button>
-            `),
+            title: '<i class="fa fa-solid fa-info text-info mx-2 fa-lg"></i>',
           },
         ],
       },

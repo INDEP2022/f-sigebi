@@ -64,6 +64,14 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Catálogo de Archivo General',
         link: '/pages/parameterization/c-p-m-general-archive-catalog',
       },
+      {
+        label: 'Catálogo de identificador para la unificacion de las dbs',
+        link: '/pages/parameterization/c-p-m-cat-identifier-uni-dbs',
+      },
+      {
+        label: 'Catálogo de relación y de asunto dictamen',
+        link: '/pages/parameterization/c-p-m-cat-relationship-opinion',
+      },
       //Alexander
       {
         label: 'Catálogo de Mantenimiento de Areas',
@@ -120,6 +128,10 @@ export const PARAMETERIZATION_ROUTES = [
       {
         label: 'Registro de Indiciados',
         link: '/pages/parameterization/indicia-registration',
+      },
+      {
+        label: 'Catálogo de tipos de documentos',
+        link: '/pages/parameterization/catalog-of-document-types',
       },
       //Félix
       {

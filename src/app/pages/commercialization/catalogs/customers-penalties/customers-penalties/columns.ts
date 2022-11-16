@@ -1,5 +1,5 @@
 export const COLUMNS = {
-  penaltyType: {
+  penaltyDescription: {
     title: 'Tipo de Penalización',
     sort: false,
   },
@@ -38,7 +38,7 @@ export const COLUMNS = {
 };
 
 export const COLUMNS2 = {
-  penaltyType: {
+  penaltyDescription: {
     title: 'Tipo de Penalización',
     sort: false,
   },
