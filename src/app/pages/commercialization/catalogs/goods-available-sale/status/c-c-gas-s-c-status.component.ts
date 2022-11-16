@@ -29,8 +29,21 @@ export class CCGasSCStatusComponent extends BasePage implements OnInit {
     super();
     this.settings = {
       ...this.settings,
-      actions: false,
-      mode: '',
+      actions: { ...this.settings.actions, add: true, edit: true, delete: true },
+      edit: {
+        ...this.settings.edit,
+        saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
+        cancelButtonContent: '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
+        confirmSave: true,
+      },
+      add: {
+        addButtonContent: '<i class="fa fa-solid fa-plus mx-2"></i>',
+        createButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
+        cancelButtonContent: '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
+        confirmCreate : true
+      },
+      mode : 'inline',
+      hideSubHeader: false,
       columns: COLUMNS,
     };
   }
@@ -39,8 +52,41 @@ export class CCGasSCStatusComponent extends BasePage implements OnInit {
     this.data.load(this.goodsAFSD);
   }
 
+  onSaveConfirm(event: any) {
+    event.confirm.resolve();
+    /**
+     * CALL SERVICE
+     * */
+    this.onLoadToast('success', 'Elemento Actualizado', '');
+  }
+
+  onAddConfirm(event: any) {
+    event.confirm.resolve();
+    /**
+     * CALL SERVICE
+     * */
+    this.onLoadToast('success', 'Elemento Creado', '');
+  }
+
+  onDeleteConfirm(event: any) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        event.confirm.resolve();
+        /**
+         * CALL SERVICE
+         * */
+        this.onLoadToast('success', 'Elemento Eliminado', '');
+      }
+    }); 
+  }
+  
   selectRow(row: any) {
     this.selectedRow = row;
     this.rowSelected = true;
   }
+
 }

@@ -1,6 +1,6 @@
 export const DATA = [
   {
-    id: 1408,
+    event: 1408,
     typeEventId: 3,
     status: 'CONC',
     eventKey: 'ADJ.DIRECTA, GOB. B.C.S',
@@ -10,7 +10,7 @@ export const DATA = [
     location: 'MEXICO, D.F., A 18 DE JULIO DE 2008',
     eventDate: '2008-07-18',
     text1: 'NULL',
-    text2: 'NULL',
+    text2: 'NULLs',
     signer: 'NULL',
     positionSigner: 'NULL',
     notes: 'NULL',
@@ -22,17 +22,18 @@ export const DATA = [
     month: 7,
     year: 2008,
     delegationNumber: 0,
-    phase: 2,
+    phase: 'beforeProcess',
     thirdPartyId: 'NULL',
     notificationDate: 'NULL',
     closingDate: 'NULL',
     tpsolavaId: 'NULL',
     aplica_iva: 2,
     trial919: 'T',
-    isPubllished:true
+    isPublished:true,
+    goodType: 'movable'
   },
   {
-    id: 1416,
+    event: 1416,
     typeEventId: 6,
     status: 'PREP',
     eventKey: 'CRHMO/DES/ALAF CHIHUAHUA/145/08',
@@ -61,10 +62,11 @@ export const DATA = [
     tpsolavaId: 'NULL',
     aplica_iva: 2,
     trial919: 'T',
-    isPubllished:false
+    isPublished:false,
+    goodType: 'movable'
   },
   {
-    id: 1417,
+    event: 1417,
     typeEventId: 6,
     status: 'PREP',
     eventKey: 'CRHMO/DES/ADUANA PTO PALOMAS/146/08',
@@ -86,17 +88,18 @@ export const DATA = [
     month: 7,
     year: 2008,
     delegationNumber: 2,
-    phase: 'NULL',
+    phase: 'newProcess',
     thirdPartyId: 'NULL',
     notificationDate: 'NULL',
     closingDate: 'NULL',
     tpsolavaId: 'NULL',
     aplica_iva: 2,
     trial919: 'T',
-    isPubllished:true
+    isPublished:true,
+    goodType: 'immovable'
   },
   {
-    id: 1425,
+    event: 1425,
     typeEventId: 6,
     status: 'PREP',
     eventKey: 'CRHMO/DES/ADUANA CHIHUAHUA/147/08',
@@ -125,10 +128,11 @@ export const DATA = [
     tpsolavaId: 'NULL',
     aplica_iva: 2,
     trial919: 'T',
-    isPubllished:false
+    isPublished:false,
+    goodType: 'immovable'
   },
   {
-    id: 1433,
+    event: 1433,
     typeEventId: 6,
     status: 'PREP',
     eventKey: 'CRTIJ/COMDD/032/08',
@@ -157,10 +161,11 @@ export const DATA = [
     tpsolavaId: 'NULL',
     aplica_iva: 2,
     trial919: 'T',
-    isPubllished:false
+    isPublished:false,
+    goodType: 'immovable'
   },
   {
-    id: 1434,
+    event: 1434,
     typeEventId: 6,
     status: 'PREP',
     eventKey: 'CRTIJ/SEMOVIENTE/07/08',
@@ -189,10 +194,11 @@ export const DATA = [
     tpsolavaId: 'NULL',
     aplica_iva: 2,
     trial919: 'T',
-    isPubllished:false
+    isPublished:false,
+    goodType: 'immovable'
   },
   {
-    id: 1448,
+    event: 1448,
     typeEventId: 6,
     status: 'PREP',
     eventKey: 'CRTG/COMDD/016/2008',
@@ -221,10 +227,11 @@ export const DATA = [
     tpsolavaId: 'NULL',
     aplica_iva: 2,
     trial919: 'T',
-    isPubllished:false
+    isPublished:false,
+    goodType: 'immovable'
   },
   {
-    id: 1449,
+    event: 1449,
     typeEventId: 6,
     status: 'PREP',
     eventKey: 'CRTG/COMDD/017/2008',
@@ -253,10 +260,11 @@ export const DATA = [
     tpsolavaId: 'NULL',
     aplica_iva: 2,
     trial919: 'T',
-    isPubllished:false
+    isPublished:false,
+    goodType: 'immovable'
   },
   {
-    id: 1450,
+    event: 1450,
     typeEventId: 6,
     status: 'PREP',
     eventKey: 'CRTG/COMDD/018/2008',
@@ -285,10 +293,11 @@ export const DATA = [
     tpsolavaId: 'NULL',
     aplica_iva: 2,
     trial919: 'T',
-    isPubllished:false
+    isPublished:false,
+    goodType: 'immovable'
   },
   {
-    id: 1453,
+    event: 1453,
     typeEventId: 6,
     status: 'PREP',
     eventKey: 'COMER/D.F./JULIO/08',
@@ -317,6 +326,7 @@ export const DATA = [
     tpsolavaId: 'NULL',
     aplica_iva: 2,
     trial919: 'T',
-    isPubllished:false
+    isPublished:false,
+    goodType: 'immovable'
   },
 ];

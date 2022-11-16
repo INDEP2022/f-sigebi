@@ -2,7 +2,7 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 export const COLUMNS = {
-  id: {
+  event: {
     title: 'Id Evento',
     sort: false,
   },
@@ -30,7 +30,7 @@ export const COLUMNS = {
     title: 'Fecha Garantía',
     sort: false,
   },
-  isPubllished: {
+  isPublished: {
     title: 'Publicar',
     sort: false,
     type: 'custom',

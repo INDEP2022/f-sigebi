@@ -2,9 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
+import { BsModalService } from 'ngx-bootstrap/modal';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
+//Components
+import { CCBmfCBankMovementsFormComponent } from '../bank-movements-form/c-c-bmf-c-bank-movements-form.component';
 //Provisional Data
 import { data, dataBA } from './data';
 
@@ -34,12 +38,14 @@ export class CCBmtCBankMovementsTypesComponent
   //Columns
   columns = COLUMNS;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService
+  ) {
     super();
     this.settings = {
       ...this.settings,
-      actions: false,
-      mode: '',
+      actions: { ...this.settings.actions, add: false, edit: true, delete: true },
       columns: COLUMNS,
     };
   }
@@ -54,4 +60,36 @@ export class CCBmtCBankMovementsTypesComponent
       bank: [null, [Validators.required]],
     });
   }
+
+  openModal(context?: Partial<CCBmfCBankMovementsFormComponent>) {
+    const modalRef = this.modalService.show(CCBmfCBankMovementsFormComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.refresh.subscribe(next => {
+      if (next) console.log(next)//this.getCities();
+    });
+  }
+
+  add() {
+    this.openModal();
+  }
+
+  openForm(bankMove: any) {
+    this.openModal({ edit:true, bankMove });
+  }
+
+  delete(bankMove: any) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+      }
+    });
+  }
+
 }

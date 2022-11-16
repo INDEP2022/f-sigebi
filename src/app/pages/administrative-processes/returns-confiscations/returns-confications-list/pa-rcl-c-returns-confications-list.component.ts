@@ -36,9 +36,9 @@ export class PaRclCReturnsConficationsListComponent
     super();
     this.settings = {
       ...this.settings,
-      actions: { add: false, edit: true, delete: false },
+      actions: { ...this.settings.actions, add: false, edit: true, delete: false },
       edit: {
-        editButtonContent: '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
+        ...this.settings.edit,
         saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
         cancelButtonContent:
           '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',

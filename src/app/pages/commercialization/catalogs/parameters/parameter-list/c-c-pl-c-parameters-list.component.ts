@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
+import { BsModalService } from 'ngx-bootstrap/modal';
+
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
+//Components
+import { CCPfCParameterFormComponent } from '../parameter-form/c-c-pf-c-parameter-form.component';
 //Provisional Data
 import { data } from './data';
 
@@ -13,6 +17,7 @@ import { data } from './data';
   styles: [],
 })
 export class CCPlCParametersListComponent extends BasePage implements OnInit {
+
   data: LocalDataSource = new LocalDataSource();
   parametersD = data;
 
@@ -25,12 +30,11 @@ export class CCPlCParametersListComponent extends BasePage implements OnInit {
   //Columns
   columns = COLUMNS;
 
-  constructor() {
+  constructor(private modalService: BsModalService) {
     super();
     this.settings = {
       ...this.settings,
-      actions: false,
-      mode: '',
+      actions: { ...this.settings.actions, add: false, edit: true, delete: true },
       columns: COLUMNS,
     };
   }
@@ -39,8 +43,40 @@ export class CCPlCParametersListComponent extends BasePage implements OnInit {
     this.data.load(this.parametersD);
   }
 
+  openModal(context?: Partial<CCPfCParameterFormComponent>) {
+    const modalRef = this.modalService.show(CCPfCParameterFormComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.refresh.subscribe(next => {
+      if (next) console.log(next)//this.getCities();
+    });
+  }
+
+  add() {
+    this.openModal();
+  }
+
+  openForm(parameter: any) {
+    this.openModal({ edit:true, parameter });
+  }
+
+  delete(parameter: any) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+      }
+    });
+  }
+
   selectRow(row: any) {
     this.selectedRow = row;
     this.rowSelected = true;
   }
+
 }

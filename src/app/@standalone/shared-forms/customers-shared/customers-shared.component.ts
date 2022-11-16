@@ -12,6 +12,8 @@ import { CustomerService } from 'src/app/core/services/catalogs/customer.service
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
 import { ICustomer } from 'src/app/core/models/catalogs/customer.model';
+//Provisional Data
+import { dataCustomers } from './data';
 
 @Component({
   selector: 'app-customers-shared',
@@ -22,7 +24,7 @@ import { ICustomer } from 'src/app/core/models/catalogs/customer.model';
 })
 export class CustomersSharedComponent extends BasePage implements OnInit {
   @Input() form: FormGroup;
-  @Input() customerField: string = 'customer';
+  @Input() customerField: string = 'customerId';
 
   @Input() showCustomer: boolean = true;
 
@@ -37,10 +39,25 @@ export class CustomersSharedComponent extends BasePage implements OnInit {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    let customerId = this.form.controls[this.customerField].value;
+    if(customerId !== null && this.form.contains('customerName')){
+      let customerN = this.form.controls['customerName'].value;
+      this.customers=new DefaultSelect([
+        {
+          customerId: customerId,
+          customerName: customerN
+        }
+      ]);
+    };
+  }
 
   getCustomers(params: ListParams) {
-    this.service.getAll(params).subscribe(
+    let data = dataCustomers;
+    let count = data.length;
+    this.customers = new DefaultSelect(data, count);
+
+    /*this.service.getAll(params).subscribe(
       data => {
         this.customers = new DefaultSelect(data.data, data.count);
       },
@@ -54,10 +71,10 @@ export class CustomersSharedComponent extends BasePage implements OnInit {
         this.onLoadToast('error', 'Error', error);
       },
       () => {}
-    );
+    );*/
   }
 
-  onCustomersChange(subdelegation: any) {
+  onCustomersChange(customer: ICustomer) {
     this.customers = new DefaultSelect();
   }
 

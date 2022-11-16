@@ -1,0 +1,84 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ status }} TIPOS MOVIMIENTO BANCO</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mb-3 mt-3">
+      	<!--Banks Component-->
+        <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
+          <app-banks-shared [form]="form"></app-banks-shared>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
+        	<div class="row mb-3 mt-3">
+            <div class="col-md-12">
+            	<form-field
+		            [control]="form.get('descripcion')"
+		            label="Descripción">
+		            <input
+		              type="text"
+		              class="form-control"
+		              formControlName="descripcion" />
+		          </form-field>
+            </div>
+        	</div>
+        </div>
+        <!--VALUE SELECT PROVISIONAL-->
+        <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
+          <form-field [control]="form.get('type')" label="Tipo">
+            <select class="form-control" formControlName="type">
+              <option [value]="null">Selecciona un Valor</option>
+              <option value="Abono">Abono</option>
+              <option value="Cargo">Cargo</option>
+            </select>
+          </form-field>
+        </div>
+         <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
+          <form-field [control]="form.get('decline')" label="Estatus">
+            <select class="form-control" formControlName="decline">
+              <option [value]="null">Selecciona un Valor</option>
+              <option value="Si">Si</option>
+              <option value="No">No</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
+          <form-field
+            [control]="form.get('affects')"
+            label="Afecta a">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="affects" />
+          </form-field>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
+          <form-field
+            [control]="form.get('satPaymentDescription')"
+            label="Desc. Tipo de Pago SAT">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="satPaymentDescription" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
+

@@ -32,7 +32,19 @@ export class PenaltiesTypeSharedComponent extends BasePage implements OnInit {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    let penaltyId = this.form.controls[this.typePenaltyField].value;
+    if(penaltyId !== null && this.form.contains('penaltyDescription')){
+      let penaltyD= this.form.controls['penaltyDescription'].value;
+      this.typePenalties=new DefaultSelect([
+        {
+          id: penaltyId,
+          description: penaltyD
+        }
+      ]);
+      this.form.updateValueAndValidity();
+    };
+  }
 
   getTypePenalties(params: ListParams) {
     //Provisional data

@@ -35,6 +35,7 @@ export class CCBsblCBrandsSubBrandsListComponent extends BasePage implements OnI
   params2 = new BehaviorSubject<ListParams>(new ListParams());
 
   rowSelected: boolean = false;
+  rowBrand: string = null;
   selectedRow: any = null;
 
   constructor(
@@ -87,7 +88,7 @@ export class CCBsblCBrandsSubBrandsListComponent extends BasePage implements OnI
     this.openModal({ edit: true, brand });
   }
 
-  delete(vault: any) {
+  delete(brand: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -102,6 +103,7 @@ export class CCBsblCBrandsSubBrandsListComponent extends BasePage implements OnI
   selectRow(row: any) {
     this.data2.load(row.subbrands);
     this.data2.refresh();
+    this.rowBrand=row.brand;
     this.rowSelected = true;
   }
 

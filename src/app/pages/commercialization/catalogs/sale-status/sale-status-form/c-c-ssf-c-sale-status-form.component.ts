@@ -1,30 +1,28 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
-  selector: 'app-c-c-epf-c-event-process-form',
-  templateUrl: './c-c-epf-c-event-process-form.component.html',
+  selector: 'app-c-c-ssf-c-sale-status-form',
+  templateUrl: './c-c-ssf-c-sale-status-form.component.html',
   styles: [
   ]
 })
-export class CCEpfCEventProcessFormComponent extends BasePage implements OnInit {
+export class CCSsfCSaleStatusFormComponent extends BasePage implements OnInit {
 
-  status: string = 'Nueva';
+  status: string = 'Nuevo';
   edit: boolean = false;
 
   form: FormGroup = new FormGroup({});
-  eventProcess: any;
+  saleStatus: any;
 
   @Output() refresh = new EventEmitter<true>();
 
   constructor(
     private fb: FormBuilder,
-    private modalRef: BsModalRef,
-    private sanitizer: DomSanitizer
+    private modalRef: BsModalRef
   ) {
     super();
   }
@@ -35,19 +33,14 @@ export class CCEpfCEventProcessFormComponent extends BasePage implements OnInit 
 
   prepareForm() {
     this.form = this.fb.group({
-      goodType: [null,[Validators.required]],
-      event: [null,[Validators.required]],
-      eventKey: [null,[Validators.required]],
-      phase: [null,[Validators.required]],
-      warrantyDate: [null,[Validators.required]],
-      year: [null,[Validators.required]],
-      isPublished: [false,[Validators.required]],
+      description: [null,[Validators.required]],
+      status: [null,[Validators.required]],
     });
     
     if (this.edit) {
+      //console.log(this.brand)
       this.status = 'Actualizar';
-      this.form.patchValue(this.eventProcess);
-      this.form.updateValueAndValidity();
+      this.form.patchValue(this.saleStatus);
     }
   }
 
@@ -60,7 +53,6 @@ export class CCEpfCEventProcessFormComponent extends BasePage implements OnInit 
   }
 
   create() {
-    
     this.loading = true;
     this.handleSuccess();
     /*this.bankService.create(this.form.value).subscribe(
