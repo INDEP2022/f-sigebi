@@ -14,7 +14,7 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
   fileForm: ModelForm<any>;
   certiToUpload: File | null = null;
   keyCertiToUpload: File | null = null;
-  typeSign: string = '';
+  typeReport: string = '';
 
   constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
@@ -22,7 +22,7 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     console.log(this.data);
-    console.log(this.typeSign);
+    console.log(this.typeReport);
     this.initForm();
   }
 

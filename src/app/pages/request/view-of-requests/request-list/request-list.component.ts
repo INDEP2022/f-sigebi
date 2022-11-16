@@ -119,6 +119,13 @@ export class RequestListComponent extends BasePage implements OnInit {
           event.data.noRequest,
         ]);
         break;
+      case 'SolicitudeTransferencia':
+        // en el caso de que sea una solicitud de programacion
+        this.router.navigate([
+          'pages/request/transfer-request/registration-request',
+          1,
+        ]);
+        break;
       default:
         break;
     }

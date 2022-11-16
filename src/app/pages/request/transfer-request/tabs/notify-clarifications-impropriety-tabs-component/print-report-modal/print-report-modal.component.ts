@@ -35,6 +35,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   config = {
     keyboard: true,
   };
+  typeReport: string = '';
 
   constructor(
     public modalService: BsModalService,
@@ -44,6 +45,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(this.typeReport);
     this.settings = { ...TABLE_SETTINGS, actions: false };
     this.settings.columns = LIST_REPORTS_COLUMN;
 
@@ -76,7 +78,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
       this.ListReports();
     } else if (!this.listSigns && this.printReport && this.isAttachDoc) {
       //adjuntar el reporte
-
+      let message = '¿Está seguro que quiere cargar el documento?';
+      this.openMessage(message);
       this.close();
     }
   }
@@ -90,7 +93,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     let config: ModalOptions = {
       initialState: {
         data: data,
-        typeSign: 'noncompliance',
+        typeReport: this.typeReport,
         callback: (next: boolean) => {
           //if (next){ this.getData();}
         },
@@ -103,16 +106,8 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
 
   sendSign() {
     //verificar que el estado de registro este como "datos completo" y enviarlo!
-    this.alertQuestion(
-      undefined,
-      'Confirmación',
-      '¿Está seguro a enviar la información a firmar?',
-      'Acepetar'
-    ).then(question => {
-      if (question.isConfirmed) {
-        console.log('enviar mensaje');
-      }
-    });
+    let message = '¿Está seguro a enviar la información a firmar?';
+    this.openMessage(message);
   }
 
   backStep() {
@@ -128,5 +123,15 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     this.printReport = true;
     this.isAttachDoc = true;
     this.btnTitle = 'Adjuntar Documento';
+  }
+
+  openMessage(message: string): void {
+    this.alertQuestion(undefined, 'Confirmación', message, 'Aceptar').then(
+      question => {
+        if (question.isConfirmed) {
+          console.log('enviar mensaje');
+        }
+      }
+    );
   }
 }

@@ -3,8 +3,16 @@
     <h5 class="modal-title pull-left">Captura detalles del anexo</h5>
   </div>
   <div body class="body">
-    <div>
-      <form [formGroup]="detailForm" class="form-material">
+    <div id="signatoryData">
+      <div class="row">
+        <div class="col-md-12">
+          <h5>Capturar datos del firmante</h5>
+        </div>
+      </div>
+      <form
+        [formGroup]="detailForm"
+        class="form-material"
+        style="margin-top: 2rem">
         <div class="row pt-4">
           <div class="col-md-4">
             <form-field [control]="detailForm.get('name')" label="*Nombre">
@@ -52,6 +60,104 @@
         </div>
       </form>
     </div>
+    <div id="participantData">
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <h5>Capturar de datos de los participantes</h5>
+        </div>
+      </div>
+      <form
+        [formGroup]="participantDataForm"
+        class="form-material"
+        style="margin-top: 2rem">
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="participantDataForm.get('name1')"
+              label="*Nombre">
+              <input type="text" class="form-control" formControlName="name1" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="participantDataForm.get('position1')"
+              label="*Cargo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="position1" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="participantDataForm.get('name2')"
+              label="*Nombre">
+              <input type="text" class="form-control" formControlName="name2" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="participantDataForm.get('position2')"
+              label="*Cargo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="position2" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div id="annexDetail">
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <h5>Capturar detalles del anexo</h5>
+        </div>
+      </div>
+      <form
+        [formGroup]="detailAnnexForm"
+        class="form-material"
+        style="margin-top: 2rem">
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="detailAnnexForm.get('warehouseManager')"
+              label="Gerente de Almacén">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="warehouseManager" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="detailAnnexForm.get('relevantFacts')"
+              label="Hechos Relevantes">
+              <textarea
+                type="text"
+                class="form-control"
+                formControlName="relevantFacts">
+              </textarea>
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="detailAnnexForm.get('agreements')"
+              label="Acuerdos">
+              <textarea
+                type="text"
+                class="form-control"
+                formControlName="agreements">
+              </textarea>
+            </form-field>
+          </div>
+        </div>
+      </form>
+    </div>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
@@ -59,8 +165,8 @@
         <button
           type="button"
           class="btn btn-primary btn-sm active"
-          (click)="save()">
-          Aceptar
+          (click)="signAnnex()">
+          Firmar Anexo
         </button>
       </div>
       <div class="m-3">

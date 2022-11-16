@@ -35,7 +35,9 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-4" *ngIf="typeSign === 'noncompliance'">
+      <div
+        class="row pt-4"
+        *ngIf="typeReport === 'annexK' || typeReport === 'annexJ'">
         <div class="col-md-6">
           <form-field [control]="fileForm.get('rfc')" label="RFC">
             <input
