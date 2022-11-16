@@ -19,5 +19,9 @@ import { RegisterDocumentationComponent } from './tabs/register-documentation/re
     TabsModule,
     SharedRequestModule,
   ],
+  exports: [
+    MsgRsbCRegisterRequestGoodsComponent,
+    RegisterDocumentationComponent,
+  ],
 })
 export class MsgRsbMRegisterRequestGoodsModule {}

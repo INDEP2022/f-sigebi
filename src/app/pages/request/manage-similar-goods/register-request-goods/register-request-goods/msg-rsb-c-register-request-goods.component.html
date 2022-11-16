@@ -120,7 +120,8 @@
         <div class="row pt-2">
           <tabset class="md-tabs">
             <tab heading="Registro de Documentación" id="tab1">
-              <app-register-documentation></app-register-documentation>
+              <app-register-documentation
+                [nombrePantalla]="nombrePantalla"></app-register-documentation>
             </tab>
             <tab heading="Buscar y Asociar al Expediente" id="tab1">
               <app-associate-file></app-associate-file>
