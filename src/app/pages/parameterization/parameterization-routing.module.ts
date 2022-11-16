@@ -107,6 +107,43 @@ const routes: Routes = [
       ).CPMMnceAdmDepositoryAuditorModule,
     data: { title: 'Mantto. a administrador, depositario e interventor' },
   },
+  {
+    path: 'c-p-m-attributes-reg-logical-tables',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-attributes-reg-logical-tables/c-p-m-attributes-reg-logical-tables.module'
+        )
+      ).CPMAttributesRegLogicalTablesModule,
+    data: { title: 'Registro de atributos para tablas lógicas' },
+  },
+  {
+    path: 'c-p-m-register-keys-logical-tables',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-register-keys-logical-tables/c-p-m-register-keys-logical-tables.module'
+        )
+      ).CPMRegisterKeysLogicalTablesModule,
+    data: { title: 'Registro de claves para tablas logicas' },
+  },
+  {
+    path: 'c-p-m-cat-doc-require',
+    loadChildren: async () =>
+      (await import('./c-p-m-cat-doc-require/c-p-m-cat-doc-require.module'))
+        .CPMCatDocRequireModule,
+    data: { title: 'Catálogo de requisitos documentales' },
+  },
+  {
+    path: 'c-p-m-general-archive-catalog',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-general-archive-catalog/c-p-m-general-archive-catalog.module'
+        )
+      ).CPMGeneralArchiveCatalogModule,
+    data: { title: 'Catálogo de Archivo General' },
+  },
   //Alexander
   {
     path: 'maintenance-of-areas',
@@ -148,6 +185,108 @@ const routes: Routes = [
       ).CPMWareahouseCatalogModule,
     data: { title: 'Mantenimiento a ministerios publicos' },
   },
+  {
+    path: 'banks-catalog',
+    loadChildren: async () =>
+      (await import('./c-p-m-banks-catalog/c-p-m-banks-catalog.module'))
+        .CPMBanksCatalogModule,
+    data: { title: 'Catálogo de Bancos' },
+  },
+  {
+    path: 'filters-of-goods-for-donation',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-filters-of-goods-for-donation/c-p-m-filters-of-goods-for-donation.module'
+        )
+      ).CPMFiltersOfGoodsForDonationModule,
+    data: { title: 'Filtros de bienes para donación' },
+  },
+  {
+    path: 'court-maintenance',
+    loadChildren: async () =>
+      (await import('./c-p-m-court-maintenance/c-p-m-court-maintenance.module'))
+        .CPMCourtMaintenanceModule,
+    data: { title: 'Mantenimiento a juzgados' },
+  },
+  {
+    path: 'maintenance-individuals-and-companies',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-maintenance-individuals-and-companies/c-p-m-maintenance-individuals-and-companies.module'
+        )
+      ).CPMMaintenanceIndividualsAndCompaniesModule,
+    data: {
+      title: 'Mantenimiento de personas fisicas y morales',
+    },
+  },
+  {
+    path: 'cost-catalog',
+    loadChildren: async () =>
+      (await import('./c-p-m-cost-catalog/c-p-m-cost-catalog.module'))
+        .CPMCostCatalogModule,
+    data: {
+      title: 'Catálogo de Costos',
+    },
+  },
+  {
+    path: 'types-of-claims-catalog',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-types-of-claims-catalog/c-p-m-types-of-claims-catalog.module'
+        )
+      ).CPMTypesOfClaimsCatalogModule,
+    data: {
+      title: 'Catálogo de tipos de siniestro',
+    },
+  },
+  {
+    path: 'indicia-registration',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-indicia-registration/c-p-m-indicia-registration.module'
+        )
+      ).CPMIndiciaRegistrationModule,
+    data: {
+      title: 'Registro de Indiciados',
+    },
+  },
+  {
+    path: 'rate-catalog',
+    loadChildren: async () =>
+      (await import('./c-p-m-rate-catalog/c-p-m-rate-catalog.module'))
+        .CPMRateCatalogModule,
+    data: {
+      title: 'Catálogo de tasas',
+    },
+  },
+  {
+    path: 'numerary-parameterization',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-numerary-parameterization/c-p-m-numerary-parameterization.module'
+        )
+      ).CPMNumeraryParameterizationModule,
+    data: {
+      title: 'Parametrización de numerario',
+    },
+  },
+  {
+    path: 'parameter-maintenance',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-parameter-maintenance/c-p-m-parameter-maintenance.module'
+        )
+      ).CPMParameterMaintenanceModule,
+    data: {
+      title: 'Mantenimiento de Parametros',
+    },
+  },
   //Félix
   {
     path: 'values',
@@ -175,22 +314,26 @@ const routes: Routes = [
   {
     path: 'non-working-days',
     loadChildren: async () =>
-      (
-        await import(
-          './c-p-m-non-working-days/c-p-m-non-working-days.module'
-        )
-      ).CPMNonWorkingDaysModule,
+      (await import('./c-p-m-non-working-days/c-p-m-non-working-days.module'))
+        .CPMNonWorkingDaysModule,
     data: { title: 'Días Inhábiles' },
   },
   {
     path: 'date-documents',
     loadChildren: async () =>
+      (await import('./c-p-m-date-documents/c-p-m-date-documents.module'))
+        .CPMDateDocumentsModule,
+    data: { title: 'Fechas para Documentos' },
+  },
+  {
+    path: 'indicators-of-performance',
+    loadChildren: async () =>
       (
         await import(
-          './c-p-m-date-documents/c-p-m-date-documents.module'
+          './c-p-m-indicators-of-performance/c-p-m-indicators-of-performance.module'
         )
-      ).CPMDateDocumentsModule,
-    data: { title: 'Fechas para Documentos' },
+      ).CPMIndicatorsOfPerformanceModule,
+    data: { title: 'Indicadores de Desempeño' },
   },
 ];
 
@@ -198,4 +341,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class ParameterizationRoutingModule { }
+export class ParameterizationRoutingModule {}

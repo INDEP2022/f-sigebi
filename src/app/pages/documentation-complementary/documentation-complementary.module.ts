@@ -11,7 +11,6 @@ import { EstatesInventoryComponent } from './components/estates-inventory/estate
 import { PhotosGoodComponent } from './components/photos-good/photos-good.component';
 import { RegisterDocumentationComponent } from './components/register-documentation/register-documentation.component';
 import { RequestExpedientComponent } from './components/request-expedient/request-expedient.component';
-import { RequestSiabFormComponent } from './components/request-siab-form/request-siab-form.component';
 import { DocumentationComplementaryFormComponent } from './documentation-complementary-form/documentation-complementary-form.component';
 import { DocumentationComplementaryRegisterFormComponent } from './documentation-complementary-register-form/documentation-complementary-register-form.component';
 import { DocumentationComplementaryRoutingModule } from './documentation-complementary-routing.module';
@@ -27,7 +26,6 @@ import { ExpedientListComponent } from './expedient-list/expedient-list.componen
     EstatesInventoryComponent,
     AssociateExpedientComponent,
     RegisterDocumentationComponent,
-    RequestSiabFormComponent,
     RequestExpedientComponent,
     DocumentEstateComponent,
     PhotosGoodComponent,

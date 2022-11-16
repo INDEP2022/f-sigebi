@@ -1,0 +1,11 @@
+.label {
+  color: black;
+  font-weight: 700;
+}
+
+label,
+span {
+  color: black;
+  font-size: 0.8em;
+  font-weight: 400;
+}/*# sourceMappingURL=request-detail-tab.component.css.map */

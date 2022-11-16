@@ -265,11 +265,11 @@ export const COMMERCIALIZATION_ROUTES = [
           },
           {
             label: 'Usuarios por Tipo de Evento',
-            link: '/pages/commercialization/catalogs/users-event-types'
+            link: '/pages/commercialization/catalogs/users-event-types',
           },
           {
             label: 'Marcas y Sub Marcas',
-            link: '/pages/commercialization/catalogs/brands-sub-brands'
+            link: '/pages/commercialization/catalogs/brands-sub-brands',
           },
           {
             label: 'Modelos',

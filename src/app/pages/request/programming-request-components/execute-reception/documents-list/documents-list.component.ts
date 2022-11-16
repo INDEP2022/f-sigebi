@@ -4,8 +4,8 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { DocumentFormComponent } from '../document-form/document-form.component';
-import { DocumentShowComponent } from '../document-show/document-show.component';
+import { DocumentFormComponent } from '../../../shared-request/document-form/document-form.component';
+import { DocumentShowComponent } from '../../../shared-request/document-show/document-show.component';
 import { DOCUMENTS_LIST_COLUMNS } from './documents-list-columns';
 
 @Component({

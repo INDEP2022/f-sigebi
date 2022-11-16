@@ -6,14 +6,25 @@
     <form [formGroup]="nonWorkingDaysForm" class="form-material">
       <div class="row">
         <div class="col-md-4">
-          <form-field [control]="nonWorkingDaysForm.get('day')" label="Fecha día Inhábiles">
-            <input type="text" formControlName="day" placeholder="Fecha día Inhábiles" class="form-control"
+          <form-field
+            [control]="nonWorkingDaysForm.get('day')"
+            label="Fecha día Inhábiles">
+            <input
+              type="text"
+              formControlName="day"
+              placeholder="Fecha día Inhábiles"
+              class="form-control"
               bsDatepicker />
           </form-field>
         </div>
         <div class="col-md-8">
-          <form-field [control]="nonWorkingDaysForm.get('description')" label="Observaciones">
-            <textarea class="form-control" formControlName="description" placeholder="Observaciones"></textarea>
+          <form-field
+            [control]="nonWorkingDaysForm.get('description')"
+            label="Observaciones">
+            <textarea
+              class="form-control"
+              formControlName="description"
+              placeholder="Observaciones"></textarea>
           </form-field>
         </div>
       </div>
@@ -22,7 +33,10 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button [type]="'button'" [disabled]="!nonWorkingDaysForm.valid" (click)="close()">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="!nonWorkingDaysForm.valid"
+          (click)="close()">
         </confirm-button>
       </div>
       <div class="m-3">

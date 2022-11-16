@@ -15,11 +15,9 @@ import { DATA } from './data';
 @Component({
   selector: 'app-c-c-ml-c-models-list',
   templateUrl: './c-c-ml-c-models-list.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class CCMlCModelsListComponent extends BasePage implements OnInit {
-
   form: FormGroup = new FormGroup({});
 
   data: LocalDataSource = new LocalDataSource();
@@ -31,10 +29,7 @@ export class CCMlCModelsListComponent extends BasePage implements OnInit {
   rowSelected: boolean = false;
   selectedRow: any = null;
 
-  constructor(
-    private fb: FormBuilder,
-    private modalService: BsModalService
-  ) {
+  constructor(private fb: FormBuilder, private modalService: BsModalService) {
     super();
     this.settings = {
       ...this.settings,
@@ -108,7 +103,7 @@ export class CCMlCModelsListComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.refresh.subscribe(next => {
-      if (next) console.log(next)//this.getCities();
+      if (next) console.log(next); //this.getCities();
     });
   }
 
@@ -117,7 +112,7 @@ export class CCMlCModelsListComponent extends BasePage implements OnInit {
   }
 
   openForm(model: any) {
-    this.openModal({ edit:true, model });
+    this.openModal({ edit: true, model });
   }
 
   delete(model: any) {

@@ -4,12 +4,15 @@ import { NgModule } from '@angular/core';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { SharedRequestModule } from '../../shared-request/shared-request.module';
+import { EconomicResourcesDocumentationFormComponent } from './economic-resources-documentation-form/economic-resources-documentation-form.component';
 import { GreCEconomicResourcesMainComponent } from './gre-c-economic-resources-main/gre-c-economic-resources-main.component';
 import { GreMEconomicResourcesRoutingModule } from './gre-m-economic-resources-routing.module';
-import { EconomicResourcesDocumentationFormComponent } from './economic-resources-documentation-form/economic-resources-documentation-form.component';
 
 @NgModule({
-  declarations: [GreCEconomicResourcesMainComponent, EconomicResourcesDocumentationFormComponent],
+  declarations: [
+    GreCEconomicResourcesMainComponent,
+    EconomicResourcesDocumentationFormComponent,
+  ],
   imports: [
     CommonModule,
     GreMEconomicResourcesRoutingModule,

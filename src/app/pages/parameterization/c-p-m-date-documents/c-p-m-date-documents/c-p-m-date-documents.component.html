@@ -6,8 +6,13 @@
     <form [formGroup]="dateDocumentsForm" class="form-material">
       <div class="row margin-input">
         <div class="col-md-4">
-          <form-field label="Nombre" [control]="dateDocumentsForm.get('proceedings')">
-            <input class="form-control" formControlName="proceedings" type="number" />
+          <form-field
+            label="Nombre"
+            [control]="dateDocumentsForm.get('proceedings')">
+            <input
+              class="form-control"
+              formControlName="proceedings"
+              type="number" />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -18,11 +23,16 @@
     <div class="row">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="data1">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data1">
           </ng2-smart-table>
         </div>
       </div>
-      <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
     </div>
   </div>
 </app-card>

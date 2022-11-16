@@ -6,12 +6,12 @@ import { CCBsblCBrandsSubBrandsListComponent } from './brands-sub-brands-list/c-
 const routes: Routes = [
   {
     path: '',
-    component: CCBsblCBrandsSubBrandsListComponent
-  }
+    component: CCBsblCBrandsSubBrandsListComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CCBsbMBrandsSubBrandsRoutingModule { }
+export class CCBsbMBrandsSubBrandsRoutingModule {}

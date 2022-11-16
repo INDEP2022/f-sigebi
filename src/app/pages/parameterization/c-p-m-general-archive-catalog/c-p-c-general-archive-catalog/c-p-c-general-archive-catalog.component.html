@@ -1,0 +1,120 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Catálogo de Archivo General</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-2">
+          <app-delegation-shared [form]="form" [showSubdelegation]="false">
+          </app-delegation-shared>
+        </div>
+        <div class="col-md-4 mt-3">
+          <form-field [control]="form.get('ubication')" label="Ubicación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="ubication" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <app-user-shared
+            [form]="form"
+            [userField]="'responsible'"
+            [label]="'Responsable'"></app-user-shared>
+        </div>
+        <div class="col-md-1 mt-3">
+          <form-field [control]="form.get('battery')" label="Bateria">
+            <input type="text" class="form-control" formControlName="battery" />
+          </form-field>
+        </div>
+        <div class="col-md-1 mt-3">
+          <form-field [control]="form.get('generate')" label="Generar">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="generate" />
+          </form-field>
+        </div>
+        <div class="col-md-2 mt-3">
+          <form-field [control]="form.get('backstage')" label="Entre paños con">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="backstage" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5 d-flex justify-content-center">
+        <div class="col-md-3">
+          <button
+            class="btn btn-sm btn-secondary btn-block active"
+            (click)="show = !show">
+            Generar Baterias
+          </button>
+        </div>
+      </div>
+      <div class="row" *ngIf="show">
+        <div class="col-md-4">
+          <div class="ch-content">
+            <h5 class="title">Baterias</h5>
+          </div>
+          <div class="table-responsive">
+            <ng2-smart-table
+              [settings]="settingsBattery"
+              [source]="data1"
+              (deleteConfirm)="onDeleteConfirm($event)"
+              (createConfirm)="onAddConfirm($event)"
+              (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
+          </div>
+          <div class="row pt-3">
+            <div class="col-md-6">
+              <h5 class="font-size-14">Total:</h5>
+              <p class="text-muted">#</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="ch-content">
+            <h5 class="title">Estantes</h5>
+          </div>
+          <div class="table-responsive">
+            <ng2-smart-table
+              [settings]="settingsLockers"
+              [source]="data2"
+              (deleteConfirm)="onDeleteConfirm($event)"
+              (createConfirm)="onAddConfirm($event)"
+              (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
+          </div>
+          <div class="row pt-3">
+            <div class="col-md-6">
+              <h5 class="font-size-14">Total:</h5>
+              <p class="text-muted">#</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="ch-content">
+            <h5 class="title">Casilleros</h5>
+          </div>
+          <div class="table-responsive">
+            <ng2-smart-table
+              [settings]="settingsShelf"
+              [source]="data3"
+              (deleteConfirm)="onDeleteConfirm($event)"
+              (createConfirm)="onAddConfirm($event)"
+              (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
+          </div>
+          <div class="row pt-3">
+            <div class="col-md-6">
+              <h5 class="font-size-14">Total:</h5>
+              <p class="text-muted">#</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

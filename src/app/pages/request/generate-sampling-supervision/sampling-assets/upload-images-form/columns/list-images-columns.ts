@@ -32,7 +32,7 @@ export const LIST_IMAGES_COLUMNS = {
     sort: false,
   },
   noProgramming: {
-    title: 'No. Inventario',
+    title: 'No. Programación',
     type: 'string',
     sort: false,
   },

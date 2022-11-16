@@ -11,6 +11,10 @@ export const SCHEDULING_DELIVERIES = [
         label: 'Ejecutar entrega',
         link: '/pages/scheduling-deliveries/execute-schelude-delivery',
       },
+      {
+        label: 'Entregas por devolución',
+        link: '/pages/execute-return-deliveries',
+      },
     ],
   },
 ];

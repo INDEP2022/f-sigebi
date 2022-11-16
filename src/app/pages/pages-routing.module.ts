@@ -125,6 +125,15 @@ const routes: Routes = [
       (await import('./parameterization/parameterization.module'))
         .ParameterizationModule,
   },
+  {
+    path: 'execute-return-deliveries',
+    loadChildren: async () =>
+      (
+        await import(
+          './execute-return-deliveries/execute-return-deliveries.module'
+        )
+      ).ExecuteReturnDeliveriesModule,
+  },
 ];
 
 @NgModule({

@@ -19,4 +19,3 @@ export const COLUMNS2 = {
     sort: false,
   },
 };
-

@@ -211,7 +211,7 @@
     <div class="row w-100">
       <div class="col-sm-12 col-12 col-md-5 p-2">
         <ng2-smart-table
-          class="my-table"
+          [attr.class]="'table-bordered'"
           [settings]="tableSettings"
           [source]="dataTable"></ng2-smart-table>
         <br />
@@ -241,7 +241,7 @@
       </div>
       <div class="col-sm-12 col-12 col-md-5 p-2">
         <ng2-smart-table
-          class="my-table"
+          [attr.class]="'table-bordered'"
           [settings]="tableSettings2"
           [source]="dataTable2"></ng2-smart-table>
       </div>

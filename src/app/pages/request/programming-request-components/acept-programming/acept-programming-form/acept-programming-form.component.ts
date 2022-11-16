@@ -5,12 +5,12 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { ConfirmProgrammingComponent } from '../../../shared-request/confirm-programming/confirm-programming.component';
+import { ElectronicSignatureListComponent } from '../../../shared-request/electronic-signature-list/electronic-signature-list.component';
+import { ShowProgrammingComponent } from '../../../shared-request/show-programming/show-programming.component';
+import { ShowSignatureProgrammingComponent } from '../../../shared-request/show-signature-programming/show-signature-programming.component';
 import { ESTATE_COLUMNS } from '../columns/estate-columns';
 import { IUser, USER_COLUMNS } from '../columns/users-columns';
-import { ConfirmProgrammingComponent } from '../confirm-programming/confirm-programming.component';
-import { ElectronicSignatureListComponent } from '../electronic-signature-list/electronic-signature-list.component';
-import { ShowProgrammingComponent } from '../show-programming/show-programming.component';
-import { ShowSignatureProgrammingComponent } from '../show-signature-programming/show-signature-programming.component';
 
 @Component({
   selector: 'app-acept-programming-form',
