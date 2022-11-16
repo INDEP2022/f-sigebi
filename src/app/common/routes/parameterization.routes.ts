@@ -48,6 +48,22 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Mantto. a administrador, depositario e interventor',
         link: '/pages/parameterization/c-p-m-mnce-adm-depository-auditor',
       },
+      {
+        label: 'Registro de atributos para tablas lógicas',
+        link: '/pages/parameterization/c-p-m-attributes-reg-logical-tables',
+      },
+      {
+        label: 'Registro de claves para tablas logicas',
+        link: '/pages/parameterization/c-p-m-register-keys-logical-tables',
+      },
+      {
+        label: 'Catálogo de requisitos documentales',
+        link: '/pages/parameterization/c-p-m-cat-doc-require',
+      },
+      {
+        label: 'Catálogo de Archivo General',
+        link: '/pages/parameterization/c-p-m-general-archive-catalog',
+      },
       //Alexander
       {
         label: 'Catálogo de Mantenimiento de Areas',
@@ -100,6 +116,10 @@ export const PARAMETERIZATION_ROUTES = [
       {
         label: 'Mantenimiento de Parametros',
         link: '/pages/parameterization/parameter-maintenance',
+      },
+      {
+        label: 'Registro de Indiciados',
+        link: '/pages/parameterization/indicia-registration',
       },
       //Félix
       {

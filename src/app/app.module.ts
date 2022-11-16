@@ -13,6 +13,7 @@ import { HttpErrorsInterceptor } from './common/interceptors/http-errors.interce
 import { ContentComponent } from './layouts/content/content.component';
 import { FullModule } from './layouts/full/full.module';
 import { counterReducer } from './pages/admin/reducer/home.reducer';
+import { generateReducer } from './pages/request/generate-sampling-supervision/generate-formats-verify-noncompliance/store/reducer';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -31,6 +32,7 @@ export function tokenGetter() {
     }),
     StoreModule.forRoot({
       count: counterReducer,
+      Item: generateReducer,
     }),
     StoreDevtoolsModule.instrument({
       maxAge: 25,

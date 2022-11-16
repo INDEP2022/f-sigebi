@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { DocumentFormComponent } from '../../request/programming-request-components/execute-reception/document-form/document-form.component';
+import { DocumentFormComponent } from '../../request/shared-request/document-form/document-form.component';
 import { DeliveriesConstancyFormComponent } from '../deliveries-constancy-form/deliveries-constancy-form.component';
 
 @Component({
