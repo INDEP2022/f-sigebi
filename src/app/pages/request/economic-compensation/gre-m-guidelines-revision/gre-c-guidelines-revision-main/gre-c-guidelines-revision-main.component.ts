@@ -15,6 +15,7 @@ export class GreCGuidelinesRevisionMainComponent
   requestId: number = NaN;
   contributor: string = '';
   requestInfo: IRequestInformation;
+  public typeDoc: string = '';
 
   constructor(private route: ActivatedRoute, private router: Router) {
     super();
@@ -27,6 +28,7 @@ export class GreCGuidelinesRevisionMainComponent
         this.getRequestInfo(this.requestId);
       }
     });
+    this.requestSelected(1);
   }
 
   getRequestInfo(rquestId: number) {
@@ -44,6 +46,26 @@ export class GreCGuidelinesRevisionMainComponent
       similarGoodsRequest: 1851,
     };
     this.contributor = 'CARLOS G. PALMA';
+  }
+
+  requestSelected(type: number) {
+    this.typeDocumentMethod(type);
+  }
+
+  typeDocumentMethod(type: number) {
+    switch (type) {
+      case 1:
+        this.typeDoc = 'doc-request';
+        break;
+      case 2:
+        this.typeDoc = 'doc-expedient';
+        break;
+      case 3:
+        this.typeDoc = 'request-expedient';
+        break;
+      default:
+        break;
+    }
   }
 
   close() {
