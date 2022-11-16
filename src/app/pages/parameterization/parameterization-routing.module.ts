@@ -287,6 +287,18 @@ const routes: Routes = [
       title: 'Mantenimiento de Parametros',
     },
   },
+  {
+    path: 'maximum-times-for-abandonment',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-maximum-times-for-abandonment/c-p-m-maximum-times-for-abandonment.module'
+        )
+      ).CPMMaximumTimesForAbandonmentModule,
+    data: {
+      title: 'Tiempos Maximos para abandono',
+    },
+  },
   //Félix
   {
     path: 'values',

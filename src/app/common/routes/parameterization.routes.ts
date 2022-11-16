@@ -121,6 +121,10 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Registro de Indiciados',
         link: '/pages/parameterization/indicia-registration',
       },
+      {
+        label: 'Tiempos Maximos para abandono',
+        link: '/pages/parameterization/maximum-times-for-abandonment',
+      },
       //Félix
       {
         label: 'Valores',
