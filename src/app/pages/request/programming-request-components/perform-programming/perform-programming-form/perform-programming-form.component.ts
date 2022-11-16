@@ -12,9 +12,9 @@ import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { IUser } from 'src/app/core/models/catalogs/user.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { WarehouseFormComponent } from '../../../shared-request/warehouse-form/warehouse-form.component';
 import { ESTATE_COLUMNS } from '../../acept-programming/columns/estate-columns';
 import { USER_COLUMNS } from '../../acept-programming/columns/users-columns';
-import { WarehouseFormComponent } from '../../warehouse/warehouse-form/warehouse-form.component';
 import { EstateSearchFormComponent } from '../estate-search-form/estate-search-form.component';
 import { UserFormComponent } from '../user-form/user-form.component';
 

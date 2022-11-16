@@ -3,9 +3,9 @@ import { FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { DocumentFormComponent } from 'src/app/pages/request/programming-request-components/execute-reception/document-form/document-form.component';
-import { DocumentShowComponent } from 'src/app/pages/request/programming-request-components/execute-reception/document-show/document-show.component';
 import { DOCUMENTS_LIST_EST_COLUMNS } from 'src/app/pages/request/programming-request-components/execute-reception/documents-list/documents-list-columns';
+import { DocumentFormComponent } from 'src/app/pages/request/shared-request/document-form/document-form.component';
+import { DocumentShowComponent } from 'src/app/pages/request/shared-request/document-show/document-show.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({

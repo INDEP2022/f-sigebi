@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { PHOTOGRAPHY_COLUMNS } from 'src/app/pages/request/programming-request-components/execute-reception/photography-form/photography-columns';
+import { PHOTOGRAPHY_COLUMNS } from 'src/app/pages/request/shared-request/photography-form/photography-columns';
 
 @Component({
   selector: 'app-photos-good',
