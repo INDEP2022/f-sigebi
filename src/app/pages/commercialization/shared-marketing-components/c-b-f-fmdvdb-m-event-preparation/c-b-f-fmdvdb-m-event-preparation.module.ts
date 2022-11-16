@@ -18,6 +18,8 @@ import { CreateNewEventModalComponent } from './create-new-event-modal/create-ne
 import { CustomerCatalogsTableComponent } from './customer-catalogs-table/customer-catalogs-table.component';
 import { RejectedGoodsTableComponent } from './rejected-goods-table/rejected-goods-table.component';
 import { SelectEventModalComponent } from './select-event-modal/select-event-modal.component';
+import { GroundsStatusModalComponent } from './grounds-status-modal/grounds-status-modal.component';
+import { ReasonsModelComponent } from './reasons-model/reasons-model.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +30,8 @@ import { SelectEventModalComponent } from './select-event-modal/select-event-mod
     CustomerCatalogsTableComponent,
     AvailableGoodsTableComponent,
     RejectedGoodsTableComponent,
+    GroundsStatusModalComponent,
+    ReasonsModelComponent,
   ],
   imports: [
     CommonModule,

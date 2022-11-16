@@ -11,6 +11,7 @@ import { EVENT_PREPARATION_ALLOTMENT_COLUMNS } from './event-preparation-allotme
 import { ExcelService } from 'src/app/common/services/excel.service';
 import * as XLSX from 'xlsx';
 import { AddEditLoteModalComponent } from '../add-edit-lote-modal/add-edit-lote-modal.component';
+import { GroundsStatusModalComponent } from '../grounds-status-modal/grounds-status-modal.component';
 
 @Component({
   selector: 'app-c-b-f-fmdvdb-c-event-preparation',
@@ -35,8 +36,7 @@ import { AddEditLoteModalComponent } from '../add-edit-lote-modal/add-edit-lote-
 })
 export class CBFFmdvdbCEventPreparationComponent
   extends BasePage
-  implements OnInit
-{
+  implements OnInit {
   form: FormGroup = new FormGroup({});
 
   event: any = null;
@@ -107,7 +107,12 @@ export class CBFFmdvdbCEventPreparationComponent
       ignoreBackdropClick: true,
     });
   }
-
+  groundsStatus(): void {
+    const modalRef = this.modalService.show(GroundsStatusModalComponent, {
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+  }
   // openModal3(): void {
   //   const modalRef = this.modalService.show(
   //     AddEditLoteModalComponent,

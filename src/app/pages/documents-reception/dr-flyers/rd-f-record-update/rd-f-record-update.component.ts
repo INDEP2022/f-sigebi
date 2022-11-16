@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { RdFPublicMinistriesComponent } from '../rd-f-public-ministries/rd-f-public-ministries.component';
 
 @Component({
   selector: 'app-rd-f-record-update',
@@ -21,7 +24,7 @@ export class RdFRecordUpdateComponent extends BasePage implements OnInit {
   flyerForm: FormGroup;
   subjects = new DefaultSelect();
 
-  constructor(private fb: FormBuilder, private activateRoute: ActivatedRoute) {
+  constructor(private fb: FormBuilder, private activateRoute: ActivatedRoute, private modalService: BsModalService) {
     super();
     const id = this.activateRoute.snapshot.paramMap.get('id');
     if (id) this.flyerId = Number(id);
@@ -65,5 +68,21 @@ export class RdFRecordUpdateComponent extends BasePage implements OnInit {
       destinatario: [null],
       justificacion: [null],
     });
+  }
+  publicMinistries() {
+    const modalConfig = {
+      ...MODAL_CONFIG,
+      class: 'modal-dialog-centered',
+      initialState: {
+        // TODO: Deberia recibir todos los datos para que el formulario sea llenado
+        callback: (next: string | number) => {
+          // TODO: LLenar el formulario
+        },
+      },
+    };
+    this.modalService.show(
+      RdFPublicMinistriesComponent,
+      modalConfig
+    );
   }
 }
