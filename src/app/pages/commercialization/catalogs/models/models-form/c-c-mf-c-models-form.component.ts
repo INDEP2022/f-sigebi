@@ -1,6 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { DomSanitizer } from '@angular/platform-browser';
+import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 
@@ -20,8 +19,7 @@ export class CCMfCModelsFormComponent extends BasePage implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private modalRef: BsModalRef,
-    private sanitizer: DomSanitizer
+    private modalRef: BsModalRef
   ) {
     super();
   }
