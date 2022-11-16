@@ -48,6 +48,7 @@ import { UsersSelectedToTurnComponent } from './users-selected-to-turn/users-sel
     RequestInformationComponent,
     AssociateFileComponent,
     SelectGoodsComponent,
+    SearchInventoryGoodsComponent,
   ],
 })
 export class SharedRequestModule {}
