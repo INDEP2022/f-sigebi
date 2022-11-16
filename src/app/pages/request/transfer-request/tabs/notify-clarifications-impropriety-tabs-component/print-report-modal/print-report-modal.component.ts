@@ -90,6 +90,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     let config: ModalOptions = {
       initialState: {
         data: data,
+        typeSign: 'noncompliance',
         callback: (next: boolean) => {
           //if (next){ this.getData();}
         },

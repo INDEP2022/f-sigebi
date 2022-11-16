@@ -3,6 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { AnnexJFormComponent } from '../annex-j-form/annex-j-form.component';
+import { AnnexKFormComponent } from '../annex-k-form/annex-k-form.component';
 
 @Component({
   selector: 'app-verify-noncompliance',
@@ -36,8 +37,12 @@ export class VerifyNoncomplianceComponent implements OnInit {
     });
   }
 
-  openAnnexJ() {
+  openAnnexJ(): void {
     this.openModal(AnnexJFormComponent, '');
+  }
+
+  opemAnnexK(): void {
+    this.openModal(AnnexKFormComponent, '');
   }
 
   save() {
