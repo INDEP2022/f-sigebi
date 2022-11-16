@@ -1,0 +1,62 @@
+<form [formGroup]="form" class="form-material">
+  <div class="row">
+    <div class="col-md-4 col-sm-12 col-xs-12">
+      <form-field
+        [control]="form.get('keyParameter')"
+        label="Cve del Parametro">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="keyParameter" />
+      </form-field>
+    </div>
+    <div class="col-md-8 col-sm-12 col-xs-12">
+      <form-field
+        [control]="form.get('descriptionParameter')"
+        label="Descripción">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="descriptionParameter" />
+      </form-field>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-md-3 col-sm-12 col-xs-12">
+      <form-field [control]="form.get('initialValue')" label="Valor inicial">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="initialValue" />
+      </form-field>
+    </div>
+    <div class="col-md-3 col-sm-12 col-xs-12">
+      <form-field [control]="form.get('finalValue')" label="Valor final">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="finalValue"
+          (change)="emiterForm()" />
+      </form-field>
+    </div>
+    <div class="col-md-3 col-sm-12 col-xs-12">
+      <form-field [control]="form.get('startDate')" label="Fecha Inicial">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="startDate"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col-md-3 col-sm-12 col-xs-12">
+      <form-field [control]="form.get('endDate')" label="Fecha Final">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="endDate"
+          bsDatepicker
+          (blur)="emiterForm()" />
+      </form-field>
+    </div>
+  </div>
+</form>

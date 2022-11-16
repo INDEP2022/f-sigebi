@@ -4,12 +4,13 @@ import { CPMIndicatorsOfPerformanceComponent } from './c-p-m-indicators-of-perfo
 
 const routes: Routes = [
   {
-    path: '', component: CPMIndicatorsOfPerformanceComponent
-  }
+    path: '',
+    component: CPMIndicatorsOfPerformanceComponent,
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class CPMIndicatorsOfPerformanceRoutingModule { }
+export class CPMIndicatorsOfPerformanceRoutingModule {}

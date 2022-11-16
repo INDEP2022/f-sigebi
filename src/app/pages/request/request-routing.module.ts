@@ -14,7 +14,7 @@ const routes: Routes = [
   },
 
   {
-    path: 'perform-programming',
+    path: 'perform-programming/:id',
     loadChildren: async () =>
       (
         await import(
@@ -22,17 +22,6 @@ const routes: Routes = [
         )
       ).PerformProgrammingModule,
     data: { title: 'Programar Recepción' },
-  },
-
-  {
-    path: 'warehouse',
-    loadChildren: async () =>
-      (
-        await import(
-          './programming-request-components/warehouse/warehouse.module'
-        )
-      ).WarehouseModuele,
-    data: { title: 'Almacén' },
   },
 
   {
@@ -106,6 +95,16 @@ const routes: Routes = [
     data: { title: 'Muestreo Bienes' },
   },
   {
+    path: 'verify-noncompliance',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-sampling-supervision/generate-formats-verify-noncompliance/generate-formats-verify-noncompliance.module'
+        )
+      ).GenerateFormatsVerifyNoncomplianceModule,
+    data: { title: 'Generar formatos para verificar el incumplimiento' },
+  },
+  {
     path: 'transfer-request',
     loadChildren: async () =>
       (await import('./transfer-request/transfer-request.module'))
@@ -127,6 +126,14 @@ const routes: Routes = [
         .EconomicCompensationModule,
     data: { title: '' },
   },
+  // gestionar devolucion
+  {
+    path: 'gestionar-devolucion',
+    loadChildren: async () =>
+      (await import('./manage-return/manage-return.module')).ManageReturnModule,
+    data: { title: 'Registro de Solicitud de Devolución' },
+  },
+  // gestionar devolucion
 ];
 
 @NgModule({

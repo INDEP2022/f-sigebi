@@ -6,38 +6,72 @@
     <div class="row pt-4">
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="data1">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data1">
           </ng2-smart-table>
         </div>
       </div>
-      <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
     </div>
     <form [formGroup]="indicatorsOfPerformanceForm" class="form-material">
       <div class="row margin-input">
         <div class="col-md-2">
-          <form-field [control]="indicatorsOfPerformanceForm.get('beginning')" label="Inicio">
-            <input type="text" formControlName="beginning" placeholder="Inicio" class="form-control" bsDatepicker />
+          <form-field
+            [control]="indicatorsOfPerformanceForm.get('beginning')"
+            label="Inicio">
+            <input
+              type="text"
+              formControlName="beginning"
+              placeholder="Inicio"
+              class="form-control"
+              bsDatepicker />
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field label="Días Limite" [control]="indicatorsOfPerformanceForm.get('limitDays')">
-            <input class="form-control" formControlName="limitDays" type="number" />
+          <form-field
+            label="Días Limite"
+            [control]="indicatorsOfPerformanceForm.get('limitDays')">
+            <input
+              class="form-control"
+              formControlName="limitDays"
+              type="number" />
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field label="Zona Contrato" [control]="indicatorsOfPerformanceForm.get('contractZone')">
-            <input class="form-control" formControlName="contractZone" type="number" />
+          <form-field
+            label="Zona Contrato"
+            [control]="indicatorsOfPerformanceForm.get('contractZone')">
+            <input
+              class="form-control"
+              formControlName="contractZone"
+              type="number" />
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field [control]="indicatorsOfPerformanceForm.get('startDate')" label="Fecha Ind. Inicio">
-            <input type="text" formControlName="startDate" placeholder="Fecha Ind. Inicio" class="form-control"
+          <form-field
+            [control]="indicatorsOfPerformanceForm.get('startDate')"
+            label="Fecha Ind. Inicio">
+            <input
+              type="text"
+              formControlName="startDate"
+              placeholder="Fecha Ind. Inicio"
+              class="form-control"
               bsDatepicker />
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field [control]="indicatorsOfPerformanceForm.get('endDate')" label="Fecha Ind. Término">
-            <input type="text" formControlName="endDate" placeholder="Fecha Ind. Término" class="form-control"
+          <form-field
+            [control]="indicatorsOfPerformanceForm.get('endDate')"
+            label="Fecha Ind. Término">
+            <input
+              type="text"
+              formControlName="endDate"
+              placeholder="Fecha Ind. Término"
+              class="form-control"
               bsDatepicker />
           </form-field>
         </div>
@@ -50,7 +84,7 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <button class="btn btn-primary btn-sm active"> Ingresa </button>
+          <button class="btn btn-primary btn-sm active">Ingresa</button>
         </div>
       </div>
     </form>
@@ -60,11 +94,16 @@
       </div>
       <div class="col-md-12">
         <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings2" [source]="data1">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings2"
+            [source]="data1">
           </ng2-smart-table>
         </div>
       </div>
-      <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
     </div>
   </div>
 </app-card>
