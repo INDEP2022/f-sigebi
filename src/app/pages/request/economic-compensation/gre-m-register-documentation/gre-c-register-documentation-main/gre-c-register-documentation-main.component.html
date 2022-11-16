@@ -30,11 +30,11 @@
     <div class="md-tabs">
       <tabset>
         <tab heading="Registro de Documentación" id="documentationTab">
-          <app-register-documentation-form
+          <app-register-documentation-initial-form
             [requestId]="requestId"
             (onRegister)="
               requestRegistered($event)
-            "></app-register-documentation-form>
+            "></app-register-documentation-initial-form>
         </tab>
         <tab heading="Buscar y Asociar al Expediente" id="associateTab">
           <app-associate-file></app-associate-file>

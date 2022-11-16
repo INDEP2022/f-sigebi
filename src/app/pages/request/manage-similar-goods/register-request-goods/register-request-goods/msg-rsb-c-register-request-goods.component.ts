@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 
@@ -8,6 +8,14 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./msg-rsb-c-register-request-goods.component.scss'],
 })
 export class MsgRsbCRegisterRequestGoodsComponent implements OnInit {
+  /** INPUT VARIABLES */
+  @Input() nombrePantalla: string = 'sinNombre';
+  @Input() idParam: number = null;
+
+  /** OUTPUT VARIABLES */
+  @Output() formValuesDataDocumentation = new EventEmitter<any>();
+
+  /** OTHERS VARIABLES */
   requestNumb: number;
   registRequestForm: FormGroup;
 
@@ -22,9 +30,13 @@ export class MsgRsbCRegisterRequestGoodsComponent implements OnInit {
   }
 
   getPathParameter() {
-    this.activatedRoute.paramMap.subscribe(params => {
-      this.requestNumb = parseInt(params.get('id'));
-    });
+    if (this.idParam) {
+      this.requestNumb = this.idParam;
+    } else {
+      this.activatedRoute.paramMap.subscribe(params => {
+        this.requestNumb = parseInt(params.get('id'));
+      });
+    }
   }
 
   prepareForm() {
@@ -41,5 +53,9 @@ export class MsgRsbCRegisterRequestGoodsComponent implements OnInit {
         'ADMINISTRACION DESCONCENTRADA DE RECAUDACION DE BAJA CALIFORNIA',
       ],
     });
+  }
+  dataRegistration(data: any) {
+    console.log(data);
+    this.formValuesDataDocumentation.emit(data);
   }
 }

@@ -22,6 +22,16 @@ const routes: Routes = [
       ).GreMEconomicResourcesModule,
     data: { title: 'Solicitud de Recursos Económicos' },
   },
+  {
+    path: 'guidelines-revision',
+    loadChildren: async () =>
+      (
+        await import(
+          './gre-m-guidelines-revision/gre-m-guidelines-revision.module'
+        )
+      ).GreMGuidelinesRevisionModule,
+    data: { title: 'Solicitud de Revisión de Lineamientos' },
+  },
 ];
 
 @NgModule({

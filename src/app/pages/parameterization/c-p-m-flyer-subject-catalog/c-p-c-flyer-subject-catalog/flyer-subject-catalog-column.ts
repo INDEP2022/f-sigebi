@@ -7,16 +7,4 @@ export const FLYER_SUBJECT_CAT_COLUMNS = {
     title: 'Descripción',
     sort: false,
   },
-  typeFyer: {
-    title: 'Tipo de volante',
-    sort: false,
-  },
-  relationGoods: {
-    title: 'Relación con bien',
-    sort: false,
-  },
-  userPermission: {
-    title: 'Permiso Usuario',
-    sort: false,
-  },
 };

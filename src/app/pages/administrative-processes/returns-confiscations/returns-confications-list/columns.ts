@@ -6,19 +6,16 @@ export const COLUMNS = {
     title: 'Bien',
     sort: false,
     editable: false,
-    addable: false,
   },
   description: {
     title: 'Descripción',
     sort: false,
     editable: false,
-    addable: false,
   },
   domain: {
     title: 'Ext. Dominio',
     sort: false,
     editable: false,
-    addable: false,
   },
   dateConfiscation: {
     title: 'Fecha Decomiso',
@@ -41,30 +38,25 @@ export const COLUMNS = {
     title: 'Cantidad',
     sort: false,
     editable: false,
-    addable: false,
   },
   amount: {
     title: 'Importe',
     sort: false,
     editable: false,
-    addable: false,
   },
   dateTesofe: {
     title: 'Fecha Tesofe',
     sort: false,
     editable: false,
-    addable: false,
   },
   confRet: {
     title: 'Dev/Conf',
     sort: false,
     editable: false,
-    addable: false,
   },
   folioTesofe: {
     title: 'Folio Tesofe',
     sort: false,
     editable: false,
-    addable: false,
   },
 };

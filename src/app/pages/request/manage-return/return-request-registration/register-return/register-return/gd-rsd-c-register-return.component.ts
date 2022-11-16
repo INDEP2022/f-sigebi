@@ -55,6 +55,11 @@ export class GDRSDRegisterReturnComponent
   totalItems: number = 0;
   listSolicitudSelected: any[] = [];
   public form: FormGroup;
+  rutaBienes: string =
+    'pages/request/manage-similar-goods/register-request-goods';
+  public nombrePantalla: string = 'register-return';
+  public idNoRequest: number = null;
+  public mostrarListado: boolean = true;
 
   constructor(
     private fb: FormBuilder,
@@ -74,12 +79,16 @@ export class GDRSDRegisterReturnComponent
 
   editRowTable(event: any) {
     console.log(event);
-    if (event.data.process) {
-      // en el caso de que el proceso seleccionado sea Bienes Similares
-      this.router.navigate([
-        'pages/request/manage-similar-goods/register-request-goods',
-        event.data.noRequest,
-      ]);
+    if (event.data.process == 'RegistroSolicitudes') {
+      // en el caso de que el proceso seleccionado sea Solicitud de DEVOLUCION
+      this.idNoRequest = event.data.noRequest;
+      this.mostrarListado = false;
     }
+  }
+  btnRegresarLista() {
+    this.mostrarListado = true;
+  }
+  dataRegistration(data: any) {
+    console.log(data);
   }
 }
