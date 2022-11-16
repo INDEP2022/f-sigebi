@@ -42,11 +42,14 @@ var data = [
 })
 export class AssetsTabComponent implements OnInit {
   @Input() willSave: boolean = false;
+  @Input() typeTask: string = '';
   bsModalRef: BsModalRef;
   assetsForm: ModelForm<any>;
   assetsArray: any[] = [];
   assetsSelected: any[] = [];
   jsonToCsv = JSON_TO_CSV;
+  isReadonly: boolean = false;
+  checkboxTitle: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -56,8 +59,9 @@ export class AssetsTabComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.setEnableInputs();
     this.assetsArray = data;
-    console.log(this.willSave);
+    //console.log(this.willSave);
   }
 
   initAssetForm(): void {
@@ -72,6 +76,13 @@ export class AssetsTabComponent implements OnInit {
       quantityMissingDamaged: [null],
       observationsAsset: [null],
     });
+  }
+
+  setEnableInputs(): void {
+    if (this.typeTask === 'verify-warehouse-assets') {
+      this.checkboxTitle = 'Localizado';
+      this.isReadonly = true;
+    }
   }
 
   selectOne(event: any, data: any) {
