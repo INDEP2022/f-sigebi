@@ -35,6 +35,9 @@
             [attr.class]="'table-bordered'"
             [settings]="settings"
             [source]="data"
+            (deleteConfirm)="onDeleteConfirm($event)"
+            (createConfirm)="onAddConfirm($event)"
+            (editConfirm)="onSaveConfirm($event)"
             (userRowSelect)="selectRow($event.data)">
           </ng2-smart-table>
         </div>

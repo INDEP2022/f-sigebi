@@ -1,6 +1,11 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">TIPOS DE EVENTO</h5>
+    <div>
+      <button (click)="add()" class="btn btn-primary active btn-sm ml-3">
+        Nuevo
+      </button>
+    </div>
   </div>
   <div body>
     <div class="row mb-3 mt-3">
@@ -44,6 +49,8 @@
             [attr.class]="'table-bordered'"
             [settings]="settings"
             [source]="data"
+            (edit)="openForm($event.data)"
+            (delete)="delete($event.data)"
             (userRowSelect)="selectRow($event.data)">
           </ng2-smart-table>
         </div>

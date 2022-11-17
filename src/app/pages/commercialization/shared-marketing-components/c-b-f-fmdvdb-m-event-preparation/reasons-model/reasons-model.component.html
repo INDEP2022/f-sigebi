@@ -1,0 +1,143 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Motivos</h5>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <form-field [control]="form.get('reasons1')" label="Motivo 1">
+            <input
+              type="text"
+              formControlName="reasons1"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('reasons2')" label="Motivo 2">
+            <input
+              type="text"
+              formControlName="reasons2"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('reasons3')" label="Motivi 3">
+            <input
+              type="text"
+              formControlName="reasons3"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('reasons4')" label="Motivi 4">
+            <input
+              type="text"
+              formControlName="reasons4"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('reasons5')" label="Motivi 5">
+            <input
+              type="text"
+              formControlName="reasons5"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('reasons6')" label="Motivi 6">
+            <input
+              type="text"
+              formControlName="reasons6"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('reasons7')" label="Motivi 7">
+            <input
+              type="text"
+              formControlName="reasons7"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('reasons8')" label="Motivi 8">
+            <input
+              type="text"
+              formControlName="reasons8"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('reasons9')" label="Motivi 9">
+            <input
+              type="text"
+              formControlName="reasons9"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('reasons10')" label="Motivi 10">
+            <input
+              type="text"
+              formControlName="reasons10"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('reasons11')" label="Motivi 11">
+            <input
+              type="text"
+              formControlName="reasons11"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('reasons12')" label="Motivi 12">
+            <input
+              type="text"
+              formControlName="reasons12"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('reasons13')" label="Motivi 13">
+            <input
+              type="text"
+              formControlName="reasons13"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('reasons14')" label="Motivi 14">
+            <input
+              type="text"
+              formControlName="reasons14"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('reasons15')" label="Motivi 15">
+            <input
+              type="text"
+              formControlName="reasons15"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button [disabled]="!form.valid"> </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

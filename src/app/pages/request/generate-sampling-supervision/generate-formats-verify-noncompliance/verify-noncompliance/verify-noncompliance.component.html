@@ -27,7 +27,9 @@
           </button>
         </div>
         <div class="m-3">
-          <button class="btn btn-secondary btn-sm active">
+          <button
+            class="btn btn-secondary btn-sm active"
+            (click)="opemAnnexK()">
             <i class="bx bx-square-rounded"></i> Anexo K
           </button>
         </div>
@@ -146,7 +148,9 @@
     <div class="tabs">
       <tabset class="md-tabs" *ngIf="!isEnableAnex">
         <tab heading="Bienes" id="tab1">
-          <app-assets-tab [willSave]="willSave"></app-assets-tab>
+          <app-assets-tab
+            [willSave]="willSave"
+            [typeTask]="'verify-noncompliance'"></app-assets-tab>
         </tab>
         <tab heading="Verificaciones">
           <app-verifications></app-verifications>

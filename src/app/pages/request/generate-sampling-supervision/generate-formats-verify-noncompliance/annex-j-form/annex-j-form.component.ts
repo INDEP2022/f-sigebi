@@ -39,6 +39,8 @@ export class AnnexJFormComponent implements OnInit {
 
   save(): void {
     console.log(this.signForm.value);
+
+    //usando el generador de reportes de notify-clarifications/print-report
     this.openModal(PrintReportModalComponent, '', 'annexj');
   }
 

@@ -82,7 +82,8 @@ export class NotifyAssetsImproprietyFormComponent
     } else {
       let config: ModalOptions = {
         initialState: {
-          sign: '',
+          data: '',
+          typeReport: 'noncompliance',
           callback: (next: boolean) => {
             //if (next){ this.getData();}
           },

@@ -29,9 +29,13 @@ export class CApCAddPenaltiesComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       status: [null, [Validators.required]],
       event: [null, [Validators.required]],
-      customer: [null, [Validators.required]],
+      eventKey: [null, [Validators.required]],
+      customerId: [null, [Validators.required]],
+      customerName: [null, [Validators.required]],
       batch: [null, [Validators.required]],
+      batchId: [null, [Validators.required]],
       typePenalty: [null, [Validators.required]],
+      penaltyDescription: [null, [Validators.required]],
       observations: [null, [Validators.required]],
       penaltyDate: [null, [Validators.required]],
     });
@@ -39,6 +43,7 @@ export class CApCAddPenaltiesComponent extends BasePage implements OnInit {
     if (this.penalty != null) {
       this.edit = true;
       this.form.patchValue(this.penalty);
+      this.form.updateValueAndValidity();
     }
   }
 

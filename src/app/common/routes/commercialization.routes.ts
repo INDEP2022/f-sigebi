@@ -275,6 +275,10 @@ export const COMMERCIALIZATION_ROUTES = [
             label: 'Modelos',
             link: '/pages/commercialization/catalogs/models',
           },
+          {
+            label: 'Eventos por Proceso',
+            link: '/pages/commercialization/catalogs/event-process',
+          },
         ],
       },
       {

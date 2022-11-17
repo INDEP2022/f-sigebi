@@ -8,6 +8,14 @@
     </div>
   </div>
   <div body>
+    <div class="row">
+      <h5>Carga masiva de archivos</h5>
+      <div class="col-md-12">
+        <file-upload
+          (onUploadFiles)="testFiles($event)"
+          [accept]="'image/*'"></file-upload>
+      </div>
+    </div>
     <div>
       <div class="md-tabs">
         <tabset>

@@ -1,7 +1,7 @@
 export interface ICustomer {
-  id_cliente?: number;
+  customerId?: number;
   rfc?: string;
-  nom_razon: string;
+  customerName: string;
   id_vendedor: number;
   calle: string;
   ciudad: string;
