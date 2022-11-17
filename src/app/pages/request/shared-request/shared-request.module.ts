@@ -125,6 +125,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     GoodsListComponent,
     GuidelinesComponent,
     RequestInformationSimilarGoodsComponent,
+    SearchInventoryGoodsComponent,
   ],
 })
 export class SharedRequestModule {}

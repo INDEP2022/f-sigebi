@@ -22,15 +22,18 @@ const routes: Routes = [
     data: { title: 'Registrar Documentación Complementaria Devolución' },
   },
   // Registrar Documentación Complementaria Devolución
-  // registrar devolucion
+  // registro de solicitud de devolucion
   {
-    path: 'registrar-devolucion',
+    path: 'registro-solicitud-devolucion',
     loadChildren: async () =>
-      (await import('./register-return/register-return.module'))
-        .GDRSDRegisterReturnModule,
-    data: { title: 'Registrar Devolucion' },
+      (
+        await import(
+          './return-request-record/gd-rsd-m-return-request-record.module'
+        )
+      ).GDRSDReturnRequestRecordModule,
+    data: { title: 'Registro de Solicitud de Devolución' },
   },
-  // registrar devolucion
+  // registro de solicitud de devolucion
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],

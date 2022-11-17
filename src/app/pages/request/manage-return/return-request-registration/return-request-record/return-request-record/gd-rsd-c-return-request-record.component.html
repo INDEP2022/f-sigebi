@@ -1,10 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">REGISTRAR DEVOLUCI&Oacute;N</h5>
-    <!-- <div class="row w-100">
-      <div class="col-sm-12 col-12 col-md-12 p-2">
-      </div>
-      <div class="col-sm-12 col-12 col-md-12 text-right p-2"> -->
+    <h5 class="title">REGISTRO DE SOLICITUD DE DEVOLUCI&Oacute;N</h5>
     <div class="form-group text-right" *ngIf="!mostrarListado">
       <button
         class="btn btn-danger btn-sm active m-3"
@@ -12,8 +8,6 @@
         Regresar al Listado
       </button>
     </div>
-    <!-- </div>
-    </div> -->
   </div>
 
   <div body *ngIf="mostrarListado">
@@ -38,6 +32,8 @@
 <ng-container *ngIf="!mostrarListado">
   <app-msg-rsb-c-register-request-goods
     [idParam]="idNoRequest"
+    [registroDocumentacion]="true"
+    [seleccionarBienes]="true"
     (formValuesDataDocumentation)="dataRegistration($event)"
     [nombrePantalla]="nombrePantalla"></app-msg-rsb-c-register-request-goods>
 </ng-container>

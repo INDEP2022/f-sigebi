@@ -1,7 +1,7 @@
 /** BASE IMPORT */
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { GDRSDRegisterReturnComponent } from './register-return/gd-rsd-c-register-return.component';
+import { GDRSDReturnRequestRecordComponent } from './return-request-record/gd-rsd-c-return-request-record.component';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -13,7 +13,7 @@ import { GDRSDRegisterReturnComponent } from './register-return/gd-rsd-c-registe
 const routes: Routes = [
   {
     path: '',
-    component: GDRSDRegisterReturnComponent,
+    component: GDRSDReturnRequestRecordComponent,
     data: { title: 'Registrar Devolución' },
   },
 ];
@@ -21,4 +21,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class GDRSDRegisterReturnRoutingModule {}
+export class GDRSDReturnRequestRecordRoutingModule {}
