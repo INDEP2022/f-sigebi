@@ -121,6 +121,10 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Registro de Indiciados',
         link: '/pages/parameterization/indicia-registration',
       },
+      {
+        label: 'Catálogo de tipos de inventario',
+        link: '/pages/parameterization/catalog-of-inventory-types',
+      },
       //Félix
       {
         label: 'Valores',

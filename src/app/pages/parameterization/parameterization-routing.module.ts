@@ -287,6 +287,18 @@ const routes: Routes = [
       title: 'Mantenimiento de Parametros',
     },
   },
+  {
+    path: 'catalog-of-inventory-types',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-catalog-of-inventory-types/c-p-m-catalog-of-inventory-types.module'
+        )
+      ).CPMCatalogOfInventoryTypesModule,
+    data: {
+      title: 'Catálogo de tipos de inventario',
+    },
+  },
   //Félix
   {
     path: 'values',
