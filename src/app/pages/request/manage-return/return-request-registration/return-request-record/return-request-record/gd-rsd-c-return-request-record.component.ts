@@ -19,11 +19,11 @@ import { ExampleService } from 'src/app/core/services/catalogs/example.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
-  selector: 'app-gd-rsd-c-register-return',
-  templateUrl: './gd-rsd-c-register-return.component.html',
-  styleUrls: ['./gd-rsd-c-register-return.component.scss'],
+  selector: 'app-gd-rsd-c-return-request-record',
+  templateUrl: './gd-rsd-c-return-request-record.component.html',
+  styleUrls: ['./gd-rsd-c-return-request-record.component.scss'],
 })
-export class GDRSDRegisterReturnComponent
+export class GDRSDReturnRequestRecordComponent
   extends BasePage
   implements OnInit, OnDestroy
 {
@@ -55,7 +55,7 @@ export class GDRSDRegisterReturnComponent
   totalItems: number = 0;
   listSolicitudSelected: any[] = [];
   public form: FormGroup;
-  public nombrePantalla: string = 'register-return';
+  public nombrePantalla: string = 'return-request-record';
   public idNoRequest: number = null;
   public mostrarListado: boolean = true;
 
