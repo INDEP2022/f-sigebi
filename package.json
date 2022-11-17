@@ -35,6 +35,8 @@
     "ng2-smart-table": "^1.7.2",
     "ngx-bootstrap": "^9.0.0",
     "ngx-date-fns": "^10.0.0",
+    "ngx-dropzone": "^3.1.0",
+    "ngx-image-compress": "^13.1.13",
     "ngx-scrollbar": "^10.0.1",
     "rxjs": "~7.5.0",
     "screenfull": "^5.2.0",
