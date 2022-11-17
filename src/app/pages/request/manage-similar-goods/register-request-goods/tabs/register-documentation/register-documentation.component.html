@@ -1,9 +1,15 @@
 <div class="row">
-  <div class="col-md-6">
+  <div class="col-md-8">
     <h5 class="title">Correo(s) Electrónico(s) Notificación</h5>
   </div>
-  <div class="col-md-6">
-    <div class="row justify-content-end">
+  <div class="col-md-4 text-center">
+    <button class="btn btn-primary btn-sm active m-2">
+      <i class="bx bxs-x-circle mr-1"></i>Cancelar
+    </button>
+    <button (click)="onSubmit()" class="btn btn-primary btn-sm active m-2">
+      <i class="bx bxs-right-arrow-square mr-1"></i>Guardar
+    </button>
+    <!-- <div class="row justify-content-end">
       <div class="col-md-3 text-center text-md-right">
         <button
           class="btn btn-primary btn-sm active d-flex align-items-center justify-content-center">
@@ -16,7 +22,7 @@
           <i class="bx bxs-right-arrow-square mr-1"></i>Guardar
         </button>
       </div>
-    </div>
+    </div> -->
   </div>
 </div>
 
@@ -25,10 +31,21 @@
 <h5 class="title">Datos de la Solicitud</h5>
 
 <div class="pt-5">
-  <form
-    class="form-material form-horizontal"
-    [formGroup]="form"
-    (ngSubmit)="onSubmit()">
+  <form class="form-material form-horizontal" [formGroup]="form">
+    <div *ngIf="form.contains('orderingAuthority')" class="row mt-5">
+      <div *ngIf="form.contains('orderingAuthority')" class="col-md-3">
+        <div class="mb-3 pl-4 pr-4">
+          <form-field
+            [control]="form.get('orderingAuthority')"
+            label="Autoridad Ordenante">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="orderingAuthority" />
+          </form-field>
+        </div>
+      </div>
+    </div>
     <div class="row mt-5">
       <div class="col-md-2">
         <div class="mb-3 pl-4 pr-4">

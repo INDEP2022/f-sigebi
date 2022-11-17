@@ -22,7 +22,7 @@ import { IBatch } from 'src/app/core/models/catalogs/batch.model';
 })
 export class BatchSharedComponent extends BasePage implements OnInit {
   @Input() form: FormGroup;
-  @Input() batchField: string = 'batch';
+  @Input() batchField: string = 'batchId';
 
   @Input() showBatch: boolean = true;
 
@@ -37,7 +37,18 @@ export class BatchSharedComponent extends BasePage implements OnInit {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    let batchId = this.form.controls[this.batchField].value;
+    if (batchId !== null && this.form.contains('batch')) {
+      let batch = this.form.controls['batch'].value;
+      this.batchs = new DefaultSelect([
+        {
+          id: batchId,
+          numRegister: batch,
+        },
+      ]);
+    }
+  }
 
   getBatchs(params: ListParams) {
     this.service.getAll(params).subscribe(

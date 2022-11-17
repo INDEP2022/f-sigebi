@@ -1,3 +1,5 @@
+import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+
 export const FINANCIAL_INDICATORS_COLUMNS = {
   id: {
     title: 'No. Indicador',
@@ -11,8 +13,19 @@ export const FINANCIAL_INDICATORS_COLUMNS = {
     title: 'Descripción',
     sort: false,
   },
-  formule: {
+  formuleCheck: {
     title: 'C/fórmula?',
+    type: 'custom',
+    renderComponent: CheckboxElementComponent,
+    onComponentInitFunction(instance: any) {
+      instance.toggle.subscribe((data: any) => {
+        data.row.to = data.toggle;
+      });
+    },
+    sort: false,
+  },
+  formule: {
+    title: 'Formula',
     sort: false,
   },
 };

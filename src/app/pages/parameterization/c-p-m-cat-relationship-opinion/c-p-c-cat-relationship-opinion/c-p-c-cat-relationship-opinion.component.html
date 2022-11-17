@@ -1,0 +1,44 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Catálogo de relación y de asunto dictamen</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-4">
+          <h5 class="font-size-14 d-inline">Seleccione el Asunto</h5>
+          <ngx-select
+            [form]="form"
+            [data]="affairItems"
+            value="id"
+            bindLabel="id"
+            (fetchItems)="getAffair($event)"
+            (change)="selectAffair($event)"
+            control="id">
+          </ngx-select>
+        </div>
+        <div class="col-md-2" *ngIf="selectedAffair != null">
+          <h5 class="font-size-14 d-inline">Tipo de volante</h5>
+          <p class="mt-2 font-size-28 text-muted">{{ selectedAffair.type }}</p>
+          <!-- <form-field [control]="form.get('idArea')" label="Área">
+            <input type="text" class="form-control" formControlName="idArea" />
+          </form-field> -->
+        </div>
+      </div>
+      <div class="row pt-5" *ngIf="selectedAffair != null">
+        <div class="table-responsive">
+          <ng2-smart-table
+            [settings]="settings"
+            [source]="data2"
+            (deleteConfirm)="onDeleteConfirm($event)"
+            (createConfirm)="onAddConfirm($event)"
+            (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
+        </div>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
+      </div>
+    </form>
+  </div>
+</app-card>

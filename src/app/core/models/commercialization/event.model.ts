@@ -3,7 +3,7 @@ export interface IEvent {
   id?: number;
   typeEventId: number;
   statusSaleId: string;
-  keyProcess: string;
+  eventKey: string;
   observations: string;
   address: string;
   failureDate: Date;

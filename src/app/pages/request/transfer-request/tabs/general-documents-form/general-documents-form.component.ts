@@ -6,9 +6,9 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { ElectronicSignatureListComponent } from '../../../programming-request-components/acept-programming/electronic-signature-list/electronic-signature-list.component';
-import { ShowSignatureProgrammingComponent } from '../../../programming-request-components/acept-programming/show-signature-programming/show-signature-programming.component';
 import { DocumentsListComponent } from '../../../programming-request-components/execute-reception/documents-list/documents-list.component';
+import { ElectronicSignatureListComponent } from '../../../shared-request/electronic-signature-list/electronic-signature-list.component';
+import { ShowSignatureProgrammingComponent } from '../../../shared-request/show-signature-programming/show-signature-programming.component';
 import { AssociateFileComponent } from '../associate-file/associate-file.component';
 import { EXPEDIENT_DOC_GEN_COLUMNS } from '../registration-request-form/expedient-doc-columns';
 

@@ -40,6 +40,7 @@ export class CCpCCustomersPenaltiesComponent
     this.settings = {
       ...this.settings,
       actions: {
+        ...this.settings.actions,
         add: false,
         edit: true,
         delete: false,
@@ -67,7 +68,7 @@ export class CCpCCustomersPenaltiesComponent
 
   private prepareForm(): void {
     this.form = this.fb.group({
-      customer: [null, [Validators.required]],
+      customerId: [null, [Validators.required]],
       penaltyDate: [null, [Validators.required]],
     });
   }
@@ -80,7 +81,7 @@ export class CCpCCustomersPenaltiesComponent
     });
 
     modalRef.content.data.subscribe((data: any) => {
-      console.log(data);
+      //console.log(data);
       //if (data)
     });
   }

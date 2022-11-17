@@ -5,8 +5,8 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { DocumentShowComponent } from '../../../programming-request-components/execute-reception/document-show/document-show.component';
 import { DocumentsListComponent } from '../../../programming-request-components/execute-reception/documents-list/documents-list.component';
+import { DocumentShowComponent } from '../../../shared-request/document-show/document-show.component';
 import { EXPEDIENT_DOC_SEA_COLUMNS } from '../registration-request-form/expedient-doc-columns';
 
 @Component({

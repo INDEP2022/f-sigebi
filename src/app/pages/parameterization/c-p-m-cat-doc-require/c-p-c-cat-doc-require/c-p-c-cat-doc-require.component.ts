@@ -56,19 +56,19 @@ export class CPCCatDocRequireComponent extends BasePage implements OnInit {
 
   data = [
     {
-      cveDoc: 501,
-      description: 'Descripción 01',
-      typeDic: 'Tipo de Dictamen 01',
+      cveDoc: 28,
+      description: 'Fecha de resolución',
+      typeDic: 'ABANDONO',
     },
     {
-      cveDoc: 503,
-      description: 'Descripción 03',
-      typeDic: 'Tipo de Dictamen 03',
+      cveDoc: 27,
+      description: 'Fecha notificación',
+      typeDic: 'DECOMISO',
     },
     {
-      cveDoc: 504,
-      description: 'Descripción 04',
-      typeDic: 'Tipo de Dictamen 04',
+      cveDoc: 26,
+      description: 'Notificación Acuerdo Aseguramiento',
+      typeDic: 'DESTRUCCIÓN',
     },
   ];
 }
