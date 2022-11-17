@@ -108,22 +108,22 @@ export class CPCFlyerSubjectCatalogComponent
 
   data2 = [
     {
-      typeFyer: 'Tipo volante',
+      typeFyer: 'Procesal',
       relationGoods: true,
       userPermission: true,
     },
     {
-      typeFyer: 'Tipo volante',
+      typeFyer: 'AdminTransferente',
       relationGoods: false,
       userPermission: true,
     },
     {
-      typeFyer: 'Tipo volante',
+      typeFyer: 'Administrativo',
       relationGoods: true,
       userPermission: false,
     },
     {
-      typeFyer: 'Tipo volante',
+      typeFyer: 'Procesal',
       relationGoods: false,
       userPermission: false,
     },
