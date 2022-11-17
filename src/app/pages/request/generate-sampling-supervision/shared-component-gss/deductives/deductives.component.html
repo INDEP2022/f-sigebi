@@ -18,7 +18,8 @@
                   value="{{ verification.selected }}"
                   [(ngModel)]="verification.selected"
                   id="selectOne"
-                  (change)="checkList($event, verification)" />
+                  (change)="checkList($event, verification)"
+                  [disabled]="isReadonly" />
               </th>
               <td>{{ verification.description }}</td>
               <td>
@@ -27,7 +28,8 @@
                   class="form-control"
                   [(ngModel)]="verification.observation"
                   value="{{ verification.observation }}"
-                  style="width: 550px; font-size: smaller"></textarea>
+                  style="width: 550px; font-size: smaller"
+                  [disabled]="isReadonly"></textarea>
               </td>
             </tr>
           </tbody>

@@ -55,8 +55,6 @@ export class GDRSDRegisterReturnComponent
   totalItems: number = 0;
   listSolicitudSelected: any[] = [];
   public form: FormGroup;
-  rutaBienes: string =
-    'pages/request/manage-similar-goods/register-request-goods';
   public nombrePantalla: string = 'register-return';
   public idNoRequest: number = null;
   public mostrarListado: boolean = true;

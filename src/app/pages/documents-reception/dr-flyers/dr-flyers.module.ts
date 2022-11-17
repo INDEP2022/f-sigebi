@@ -7,10 +7,12 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { DrFlyersRoutingModule } from './dr-flyers-routing.module';
 import { DrFDocumentsReceptionFlyerSelectComponent } from './rd-f-documents-reception-register/components/dr-f-documents-reception-flyer-select/dr-f-documents-reception-flyer-select.component';
 import { RdFDocumentsReceptionRegisterComponent } from './rd-f-documents-reception-register/rd-f-documents-reception-register.component';
+import { RdFPublicMinistriesComponent } from './rd-f-public-ministries/rd-f-public-ministries.component';
 import { RdFRecordUpdateComponent } from './rd-f-record-update/rd-f-record-update.component';
 import { RdFRelatedDocumentsComponent } from './rd-f-related-documents/rd-f-related-documents.component';
 import { RdFShiftChangeComponent } from './rd-f-shift-change/rd-f-shift-change.component';
 import { RdFShitChangeHistoryComponent } from './rd-f-shift-change/rd-f-shit-change-history/rd-f-shit-change-history.component';
+
 
 @NgModule({
   declarations: [
@@ -19,7 +21,9 @@ import { RdFShitChangeHistoryComponent } from './rd-f-shift-change/rd-f-shit-cha
     RdFShiftChangeComponent,
     RdFShitChangeHistoryComponent,
     RdFRelatedDocumentsComponent,
+    RdFPublicMinistriesComponent,
     DrFDocumentsReceptionFlyerSelectComponent,
+
   ],
   imports: [
     CommonModule,
@@ -31,4 +35,4 @@ import { RdFShitChangeHistoryComponent } from './rd-f-shift-change/rd-f-shit-cha
     DocumentsListComponent,
   ],
 })
-export class DrFlyersModule {}
+export class DrFlyersModule { }

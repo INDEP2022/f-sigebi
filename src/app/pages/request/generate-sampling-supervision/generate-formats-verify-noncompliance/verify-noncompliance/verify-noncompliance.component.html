@@ -148,7 +148,9 @@
     <div class="tabs">
       <tabset class="md-tabs" *ngIf="!isEnableAnex">
         <tab heading="Bienes" id="tab1">
-          <app-assets-tab [willSave]="willSave"></app-assets-tab>
+          <app-assets-tab
+            [willSave]="willSave"
+            [typeTask]="'verify-noncompliance'"></app-assets-tab>
         </tab>
         <tab heading="Verificaciones">
           <app-verifications></app-verifications>

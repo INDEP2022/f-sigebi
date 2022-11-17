@@ -121,6 +121,7 @@
           <tabset class="md-tabs">
             <tab heading="Registro de Documentación" id="tab1">
               <app-register-documentation
+                (formValues)="dataRegistration($event)"
                 [nombrePantalla]="nombrePantalla"></app-register-documentation>
             </tab>
             <tab heading="Buscar y Asociar al Expediente" id="tab1">
