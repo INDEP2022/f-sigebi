@@ -105,6 +105,16 @@ const routes: Routes = [
     data: { title: 'Generar formatos para verificar el incumplimiento' },
   },
   {
+    path: 'verify-warehouse-assets',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-sampling-supervision/warehouse-verification/warehouse-verification.module'
+        )
+      ).WarehouseVerificationModule,
+    data: { title: 'Verificación de bienes de almacen' },
+  },
+  {
     path: 'transfer-request',
     loadChildren: async () =>
       (await import('./transfer-request/transfer-request.module'))
