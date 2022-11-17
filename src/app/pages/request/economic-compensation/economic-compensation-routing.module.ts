@@ -32,6 +32,16 @@ const routes: Routes = [
       ).GreMGuidelinesRevisionModule,
     data: { title: 'Solicitud de Revisión de Lineamientos' },
   },
+  {
+    path: 'register-appointment',
+    loadChildren: async () =>
+      (
+        await import(
+          './gre-m-register-appointment/gre-m-register-appointment.module'
+        )
+      ).GreMRegisterAppointmentModule,
+    data: { title: 'Solicitud de Registro de Cita Contribuyente' },
+  },
 ];
 
 @NgModule({

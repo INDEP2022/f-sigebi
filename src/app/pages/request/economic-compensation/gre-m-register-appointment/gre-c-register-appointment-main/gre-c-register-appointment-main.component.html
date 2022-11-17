@@ -1,7 +1,7 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">
-      Revisión de Lineamientos de Resarcimiento (NUMERARIO), No. Solicitud:
+      Registrar Citra Contribuyente (Resarcmiento NUMERARIO), No. Solicitud:
       {{ requestId }}, Contribuyente: {{ contributor }}
     </h5>
   </div>
@@ -24,29 +24,26 @@
           <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Guardar
         </button>
       </div>
-      <div class="mx-1">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm active"
-          [disabled]="">
-          <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Dictamen
-          Resarcimiento
-        </button>
-      </div>
     </div>
-    <app-request-information-similar-goods
-      [request]="requestInfo"></app-request-information-similar-goods>
+    <app-request-information-reject
+      [request]="requestInfo"></app-request-information-reject>
     <div class="md-tabs">
       <tabset>
         <tab heading="Registro de Documentación" id="documentationTab">
           <app-register-documentation-form
             [requestId]="requestId"></app-register-documentation-form>
         </tab>
-        <tab heading="Listado de Bienes" id="goodsListTab">
-          <app-goods-list [requestId]="requestId"></app-goods-list>
+        <tab heading="Seleccionar Bienes" id="selectGoodsTab">
+          <app-select-goods></app-select-goods>
         </tab>
         <tab heading="Lineamientos" id="guidelinesTab">
           <app-guidelines></app-guidelines>
+        </tab>
+        <tab heading="Datos del Dictamen" id="dictumTab">
+          <app-dictum-information-tab></app-dictum-information-tab>
+        </tab>
+        <tab heading="Registro de Cita" id="appointmentTab">
+          <app-register-appointment-tab></app-register-appointment-tab>
         </tab>
         <tab heading="Expediente" id="fileTab">
           <tabset class="md-tabs">

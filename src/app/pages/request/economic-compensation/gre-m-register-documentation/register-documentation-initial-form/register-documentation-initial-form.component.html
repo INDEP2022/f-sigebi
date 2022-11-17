@@ -4,7 +4,7 @@
       <button
         class="btn btn-primary btn-sm active"
         (click)="register()"
-        [disabled]="!registerForm.touched && registerForm.invalid">
+        [disabled]="!registerForm.touched || registerForm.invalid">
         <i class="bx bxs-right-arrow-square mr-1 float-icon"></i>Guardar
       </button>
     </div>

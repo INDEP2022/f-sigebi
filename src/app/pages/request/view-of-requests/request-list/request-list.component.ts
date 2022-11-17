@@ -61,6 +61,15 @@ var usuario: IRequestList[] = [
     created: 'tester_nsbxt',
     process: 'RE_RevisarLineamientos',
   },
+  {
+    title:
+      'Registrar Cita Contribuyente (Resarcimiento NUMERARIO), No. Solicitud: 1896, Contribuyente CARLOS G. PALMA',
+    noRequest: 1896,
+    numTask: 212037,
+    noInstance: 450060,
+    created: 'tester_nsbxt',
+    process: 'RE_RegistrarCita',
+  },
 ];
 
 @Component({
@@ -129,16 +138,23 @@ export class RequestListComponent extends BasePage implements OnInit {
         ]);
         break;
       case 'SolicitudeTransferencia':
-        // en el caso de que sea una solicitud de programacion
+        // en el caso de que sea una solicitud de programacion de resarcimiento economico
         this.router.navigate([
           'pages/request/transfer-request/registration-request',
           1,
         ]);
         break;
       case 'RE_RevisarLineamientos':
-        // en el caso de que sea el proceso de revision de lineamientos
+        // en el caso de que sea el proceso de revision de lineamientos de resarcimiento economico
         this.router.navigate([
           'pages/request/economic-compensation/guidelines-revision',
+          event.data.noRequest,
+        ]);
+        break;
+      case 'RE_RegistrarCita':
+        // en el caso de que sea el proceso de registrar cita contributente de resarcimiento economico
+        this.router.navigate([
+          'pages/request/economic-compensation/register-appointment',
           event.data.noRequest,
         ]);
         break;

@@ -38,11 +38,8 @@
     <div class="md-tabs">
       <tabset>
         <tab heading="Registro de Documentación" id="documentationTab">
-          <app-economic-resources-documentation-form
-            [requestId]="requestId"
-            (onRegister)="
-              requestRegistered($event)
-            "></app-economic-resources-documentation-form>
+          <app-register-documentation-form
+            [requestId]="requestId"></app-register-documentation-form>
         </tab>
         <tab heading="Listado de Bienes" id="goodsListTab">
           <app-goods-list [requestId]="requestId"></app-goods-list>
