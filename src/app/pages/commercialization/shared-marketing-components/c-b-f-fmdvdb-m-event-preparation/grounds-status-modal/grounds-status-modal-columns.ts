@@ -13,5 +13,5 @@ export const GROUNDSSTATUSMODAL_COLUMNS = {
     title: 'Seleccionar',
     width: '5px',
     sort: false,
-  }
-}
+  },
+};

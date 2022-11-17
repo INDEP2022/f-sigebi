@@ -6,43 +6,43 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-jpr-scheduled-maintenance',
   templateUrl: './jpr-scheduled-maintenance.component.html',
-  styleUrls: ["scheduled-maintenance.scss"],
+  styleUrls: ['scheduled-maintenance.scss'],
 })
 export class JprScheduledMaintenanceComponent implements OnInit {
-
   itemsSelect = new DefaultSelect();
   form: FormGroup;
-  settings1 = {... TABLE_SETTINGS,
+  settings1 = {
+    ...TABLE_SETTINGS,
     pager: {
       display: false,
     },
     hideSubHeader: true,
     actions: false,
     selectedRowIndex: -1,
-    mode: "external",
+    mode: 'external',
     columns: {
       progRecepcionEntrega: {
-        title: "Programa Recepcion Entrega",
-        type: "string",
+        title: 'Programa Recepcion Entrega',
+        type: 'string',
         sort: false,
       },
       Fechacaptura: {
-        title: "Fecha Captura",
+        title: 'Fecha Captura',
         type: Date,
         sort: false,
       },
       ingreso: {
-        title: "Ingreso",
-        type: "string",
+        title: 'Ingreso',
+        type: 'string',
         sort: false,
       },
       estatusEvento: {
-        title: "Estatus Evento",
-        type: "number",
+        title: 'Estatus Evento',
+        type: 'number',
         sort: false,
       },
     },
-    noDataMessage: "No se encontrarón registros",
+    noDataMessage: 'No se encontrarón registros',
   };
 
   data = EXAMPLE_DATA;
@@ -78,39 +78,39 @@ export class JprScheduledMaintenanceComponent implements OnInit {
 
 const EXAMPLE_DATA = [
   {
-    progRecepcionEntrega: "123",
-    Fechacaptura: new Date,
-    ingreso: "ejemplo",
-    estatusEvento: "ingresado",
+    progRecepcionEntrega: '123',
+    Fechacaptura: new Date(),
+    ingreso: 'ejemplo',
+    estatusEvento: 'ingresado',
   },
   {
-    progRecepcionEntrega: "123",
-    Fechacaptura: new Date,
-    ingreso: "ejemplo",
-    estatusEvento: "no ingresado",
-  },
-   {
-    progRecepcionEntrega: "123",
-    Fechacaptura: new Date,
-    ingreso: "ejemplo",
-    estatusEvento: "ingresado",
+    progRecepcionEntrega: '123',
+    Fechacaptura: new Date(),
+    ingreso: 'ejemplo',
+    estatusEvento: 'no ingresado',
   },
   {
-    progRecepcionEntrega: "123",
-    Fechacaptura: new Date,
-    ingreso: "ejemplo",
-    estatusEvento: "no ingresado",
-  },
-   {
-    progRecepcionEntrega: "123",
-    Fechacaptura: new Date,
-    ingreso: "ejemplo",
-    estatusEvento: "ingresado",
+    progRecepcionEntrega: '123',
+    Fechacaptura: new Date(),
+    ingreso: 'ejemplo',
+    estatusEvento: 'ingresado',
   },
   {
-    progRecepcionEntrega: "123",
-    Fechacaptura: new Date,
-    ingreso: "ejemplo",
-    estatusEvento: "no ingresado",
+    progRecepcionEntrega: '123',
+    Fechacaptura: new Date(),
+    ingreso: 'ejemplo',
+    estatusEvento: 'no ingresado',
+  },
+  {
+    progRecepcionEntrega: '123',
+    Fechacaptura: new Date(),
+    ingreso: 'ejemplo',
+    estatusEvento: 'ingresado',
+  },
+  {
+    progRecepcionEntrega: '123',
+    Fechacaptura: new Date(),
+    ingreso: 'ejemplo',
+    estatusEvento: 'no ingresado',
   },
 ];

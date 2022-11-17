@@ -1,16 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-reasons-model',
   templateUrl: './reasons-model.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class ReasonsModelComponent implements OnInit {
   form: FormGroup;
-  constructor(private fb: FormBuilder, private modalRef: BsModalRef) { }
+  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {}
 
   ngOnInit(): void {
     this.prepareForm();
@@ -32,7 +31,7 @@ export class ReasonsModelComponent implements OnInit {
       reasons13: [null, Validators.required],
       reasons14: [null, Validators.required],
       reasons15: [null, Validators.required],
-    })
+    });
   }
   close() {
     this.modalRef.hide();

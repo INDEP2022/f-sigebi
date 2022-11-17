@@ -3,16 +3,25 @@
     <div class="ch-content">
       <h5 class="title">PREPARACIÓN DE EVENTO</h5>
       <div class="col-md-5 buttons" *ngIf="event != null" @OnEventSelected>
-        <button type="button" class="btn btn-primary btn-sm active ml-3" (click)="openModal2()">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active ml-3"
+          (click)="openModal2()">
           Nuevo
         </button>
         <div *ngIf="event == null">
-          <button type="button" class="btn btn-primary btn-sm active ml-3" (click)="openModal()">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active ml-3"
+            (click)="openModal()">
             Abrir
           </button>
         </div>
         <div *ngIf="event != null">
-          <button type="button" class="btn btn-primary btn-sm active ml-3" (click)="openModal()">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active ml-3"
+            (click)="openModal()">
             Cambiar Evento
           </button>
         </div>
@@ -29,13 +38,19 @@
       </div>
       <div class="row pt-3">
         <div class="col-md-1 buttons">
-          <button type="button" class="btn btn-primary btn-sm active ml-3" (click)="openModal2()">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active ml-3"
+            (click)="openModal2()">
             Crear Evento
           </button>
         </div>
         <div class="col-md-1">
           <div *ngIf="event == null">
-            <button type="button" class="btn btn-primary btn-sm active ml-3" (click)="openModal()">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active ml-3"
+              (click)="openModal()">
               Abrir Evento
             </button>
           </div>
@@ -141,7 +156,10 @@
         <div class="ch-content">
           <div class="col-md-2">
             <div *ngIf="event != null">
-              <button type="button" class="btn btn-primary btn-sm active ml-3" (click)="openForm()">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active ml-3"
+                (click)="openForm()">
                 Agregar Lote
               </button>
             </div>
@@ -149,7 +167,11 @@
 
           <div class="col-md-2">
             <div *ngIf="event != null">
-              <button type="button" class="btn btn-secondary btn-sm active ml-3" (click)="openForm()" disabled>
+              <button
+                type="button"
+                class="btn btn-secondary btn-sm active ml-3"
+                (click)="openForm()"
+                disabled>
                 Generar oficio de Avalúo
               </button>
             </div>
@@ -157,14 +179,21 @@
 
           <div class="col-md-2">
             <div *ngIf="event != null">
-              <button type="button" class="btn btn-secondary btn-sm active ml-3" (click)="openForm()" disabled>
+              <button
+                type="button"
+                class="btn btn-secondary btn-sm active ml-3"
+                (click)="openForm()"
+                disabled>
                 Publicar Evento
               </button>
             </div>
           </div>
           <div class="col-md-2">
             <div>
-              <button type="button" class="btn btn-secondary btn-sm active ml-3" (click)="groundsStatus()">
+              <button
+                type="button"
+                class="btn btn-secondary btn-sm active ml-3"
+                (click)="groundsStatus()">
                 Valida bienes
               </button>
             </div>
@@ -176,7 +205,10 @@
         </div>
         <div class="row">
           <div class="col-md-12">
-            <ng2-smart-table [settings]="settings" [source]="data" (delete)="delete($event.data)"
+            <ng2-smart-table
+              [settings]="settings"
+              [source]="data"
+              (delete)="delete($event.data)"
               (edit)="openForm($event.data)"></ng2-smart-table>
           </div>
         </div>
@@ -186,13 +218,26 @@
         <div class="ch-content">
           <h5 class="title">Bienes</h5>
           <div class="col-md-2 btn-group">
-            <button id="btnGroupExcel" type="button" class="btn btn-success btn-sm active" data-toggle="dropdown">
+            <button
+              id="btnGroupExcel"
+              type="button"
+              class="btn btn-success btn-sm active"
+              data-toggle="dropdown">
               Excel
             </button>
             <div class="dropdown-menu" aria-labelledby="btnGroupExcel">
-              <a class="dropdown-item" (click)="exportAsXLSX()">Exportar a Excel</a>
-              <a class="dropdown-item" (click)="fileExcel.click()">Lotificar bienes desde Archivo Excel</a>
-              <input type="file" (change)="ReadExcel($event)" name="fileExcel" #fileExcel class="d-none"
+              <a class="dropdown-item" (click)="exportAsXLSX()"
+                >Exportar a Excel</a
+              >
+              <a class="dropdown-item" (click)="fileExcel.click()"
+                >Lotificar bienes desde Archivo Excel</a
+              >
+              <input
+                type="file"
+                (change)="ReadExcel($event)"
+                name="fileExcel"
+                #fileExcel
+                class="d-none"
                 accept=".xlsx, .xls, .csv, application/vnd.ms-excel" />
             </div>
           </div>

@@ -24,7 +24,11 @@ export class RdFRecordUpdateComponent extends BasePage implements OnInit {
   flyerForm: FormGroup;
   subjects = new DefaultSelect();
 
-  constructor(private fb: FormBuilder, private activateRoute: ActivatedRoute, private modalService: BsModalService) {
+  constructor(
+    private fb: FormBuilder,
+    private activateRoute: ActivatedRoute,
+    private modalService: BsModalService
+  ) {
     super();
     const id = this.activateRoute.snapshot.paramMap.get('id');
     if (id) this.flyerId = Number(id);
@@ -80,9 +84,6 @@ export class RdFRecordUpdateComponent extends BasePage implements OnInit {
         },
       },
     };
-    this.modalService.show(
-      RdFPublicMinistriesComponent,
-      modalConfig
-    );
+    this.modalService.show(RdFPublicMinistriesComponent, modalConfig);
   }
 }

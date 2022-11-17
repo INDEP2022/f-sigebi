@@ -1,14 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { BsModalRef } from 'ngx-bootstrap/modal';
 import { Location } from '@angular/common';
-
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-rd-f-public-ministries',
   templateUrl: './rd-f-public-ministries.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class RdFPublicMinistriesComponent implements OnInit {
   publicMinistriesForm = this.fb.group({
@@ -21,12 +19,11 @@ export class RdFPublicMinistriesComponent implements OnInit {
     private fb: FormBuilder,
     private location: Location,
     private modalRef: BsModalRef
-  ) { }
+  ) {}
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   close() {
     this.modalRef.hide();
   }
-
 }

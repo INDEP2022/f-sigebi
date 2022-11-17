@@ -289,7 +289,7 @@ export const MENU: IMenuItem[] = [
         label: 'Mantenimiento de Acta Entrega Recepcion',
         link: '/pages/judicial-physical-reception/scheduled-maintenance-2',
       },
-       {
+      {
         label: 'Mantenimiento de Acatas',
         link: '/pages/judicial-physical-reception/maintenance-records',
       },
