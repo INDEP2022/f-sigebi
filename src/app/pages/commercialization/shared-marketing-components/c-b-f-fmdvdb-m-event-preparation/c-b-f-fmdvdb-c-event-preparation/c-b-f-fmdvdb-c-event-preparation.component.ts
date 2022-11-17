@@ -36,7 +36,8 @@ import { GroundsStatusModalComponent } from '../grounds-status-modal/grounds-sta
 })
 export class CBFFmdvdbCEventPreparationComponent
   extends BasePage
-  implements OnInit {
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
 
   event: any = null;

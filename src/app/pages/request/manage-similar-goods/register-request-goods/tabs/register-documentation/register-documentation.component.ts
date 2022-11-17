@@ -47,7 +47,7 @@ export class RegisterDocumentationComponent implements OnInit {
       judgment: [null, Validators.required],
       observations: [null, Validators.required],
     });
-    if (this.nombrePantalla == 'register-return' && this.form) {
+    if (this.nombrePantalla == 'return-request-record' && this.form) {
       this.form.addControl(
         'orderingAuthority',
         new FormControl('', [Validators.required])

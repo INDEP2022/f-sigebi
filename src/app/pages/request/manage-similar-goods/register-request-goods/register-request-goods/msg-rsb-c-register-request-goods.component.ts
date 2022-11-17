@@ -11,10 +11,15 @@ export class MsgRsbCRegisterRequestGoodsComponent implements OnInit {
   /** INPUT VARIABLES */
   @Input() nombrePantalla: string = 'sinNombre';
   @Input() idParam: number = null;
+  @Input() registroDocumentacion: boolean = false;
+  @Input() buscarAsociarExpediente: boolean = false;
+  @Input() seleccionarBienes: boolean = false;
+  @Input() expediente: boolean = false;
   public typeDoc: string = '';
 
   /** OUTPUT VARIABLES */
   @Output() formValuesDataDocumentation = new EventEmitter<any>();
+  @Output() formValuesSeleccionarBienes = new EventEmitter<any>();
 
   /** OTHERS VARIABLES */
   requestNumb: number;
@@ -59,6 +64,10 @@ export class MsgRsbCRegisterRequestGoodsComponent implements OnInit {
   dataRegistration(data: any) {
     console.log(data);
     this.formValuesDataDocumentation.emit(data);
+  }
+  dataSeleccionarBienes(data: any) {
+    console.log(data);
+    this.formValuesSeleccionarBienes.emit(data);
   }
 
   typeDocumentMethod(type: number) {

@@ -16,10 +16,10 @@ import { CBFFmdvdbCEventPreparationComponent } from './c-b-f-fmdvdb-c-event-prep
 import { CBFFmdvdbMEventPreparationRoutingModule } from './c-b-f-fmdvdb-m-event-preparation-routing.module';
 import { CreateNewEventModalComponent } from './create-new-event-modal/create-new-event-modal.component';
 import { CustomerCatalogsTableComponent } from './customer-catalogs-table/customer-catalogs-table.component';
-import { RejectedGoodsTableComponent } from './rejected-goods-table/rejected-goods-table.component';
-import { SelectEventModalComponent } from './select-event-modal/select-event-modal.component';
 import { GroundsStatusModalComponent } from './grounds-status-modal/grounds-status-modal.component';
 import { ReasonsModelComponent } from './reasons-model/reasons-model.component';
+import { RejectedGoodsTableComponent } from './rejected-goods-table/rejected-goods-table.component';
+import { SelectEventModalComponent } from './select-event-modal/select-event-modal.component';
 
 @NgModule({
   declarations: [

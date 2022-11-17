@@ -119,16 +119,28 @@
 
         <div class="row pt-2">
           <tabset class="md-tabs">
-            <tab heading="Registro de Documentación" id="tab1">
-              <app-register-documentation
-                (formValues)="dataRegistration($event)"
-                [nombrePantalla]="nombrePantalla"></app-register-documentation>
+            <tab
+              heading="Registro de Documentación"
+              id="tab1"
+              *ngIf="registroDocumentacion">
+              <ng-container *ngIf="nombrePantalla == 'return-request-record'">
+                <app-register-documentation
+                  (formValues)="dataRegistration($event)"
+                  [nombrePantalla]="
+                    nombrePantalla
+                  "></app-register-documentation>
+              </ng-container>
             </tab>
-            <tab heading="Buscar y Asociar al Expediente" id="tab1">
+            <tab
+              heading="Buscar y Asociar al Expediente"
+              id="tab1"
+              *ngIf="buscarAsociarExpediente">
               <app-associate-file></app-associate-file>
             </tab>
-            <tab heading="Seleccionar Bienes">
-              <app-select-similar-goods></app-select-similar-goods>
+            <tab heading="Seleccionar Bienes" *ngIf="seleccionarBienes">
+              <ng-container *ngIf="nombrePantalla == 'return-request-record'">
+                <app-select-goods></app-select-goods>
+              </ng-container>
             </tab>
             <tab heading="Expediente">
               <tabset class="md-tabs">

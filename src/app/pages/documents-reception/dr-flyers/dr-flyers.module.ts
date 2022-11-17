@@ -13,7 +13,6 @@ import { RdFRelatedDocumentsComponent } from './rd-f-related-documents/rd-f-rela
 import { RdFShiftChangeComponent } from './rd-f-shift-change/rd-f-shift-change.component';
 import { RdFShitChangeHistoryComponent } from './rd-f-shift-change/rd-f-shit-change-history/rd-f-shit-change-history.component';
 
-
 @NgModule({
   declarations: [
     RdFDocumentsReceptionRegisterComponent,
@@ -23,7 +22,6 @@ import { RdFShitChangeHistoryComponent } from './rd-f-shift-change/rd-f-shit-cha
     RdFRelatedDocumentsComponent,
     RdFPublicMinistriesComponent,
     DrFDocumentsReceptionFlyerSelectComponent,
-
   ],
   imports: [
     CommonModule,
@@ -35,4 +33,4 @@ import { RdFShitChangeHistoryComponent } from './rd-f-shift-change/rd-f-shit-cha
     DocumentsListComponent,
   ],
 })
-export class DrFlyersModule { }
+export class DrFlyersModule {}

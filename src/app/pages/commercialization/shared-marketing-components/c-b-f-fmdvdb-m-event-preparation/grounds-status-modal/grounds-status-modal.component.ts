@@ -10,8 +10,7 @@ import { GROUNDSSTATUSMODAL_COLUMNS } from './grounds-status-modal-columns';
 @Component({
   selector: 'app-grounds-status-modal',
   templateUrl: './grounds-status-modal.component.html',
-  styles: [
-  ]
+  styles: [],
 })
 export class GroundsStatusModalComponent extends BasePage implements OnInit {
   form: FormGroup;
@@ -19,7 +18,11 @@ export class GroundsStatusModalComponent extends BasePage implements OnInit {
   data: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  constructor(private fb: FormBuilder, private modalService: BsModalService, private modalRef: BsModalRef) {
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private modalRef: BsModalRef
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -36,7 +39,7 @@ export class GroundsStatusModalComponent extends BasePage implements OnInit {
       file: [null, Validators.required],
       whereMot: [null, Validators.required],
       reasons: [null, Validators.required],
-    })
+    });
   }
   openModal2(): void {
     const modalRef = this.modalService.show(ReasonsModelComponent, {
