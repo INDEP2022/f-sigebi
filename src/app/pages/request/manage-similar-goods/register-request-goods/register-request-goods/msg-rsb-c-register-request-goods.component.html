@@ -142,7 +142,36 @@
                 <app-select-goods></app-select-goods>
               </ng-container>
             </tab>
-            <tab heading="Expediente" *ngIf="expediente"> </tab>
+            <tab heading="Expediente">
+              <tabset class="md-tabs">
+                <tab
+                  heading="Documentos Solicitud"
+                  id="tab1"
+                  (selectTab)="requestSelected(1)">
+                  <app-doc-request-tab
+                    [typeDoc]="typeDoc"></app-doc-request-tab>
+                </tab>
+                <tab
+                  heading="Documentos generales"
+                  (selectTab)="requestSelected(2)">
+                  <tabset class="md-tabs">
+                    <tab
+                      heading="Documento Expedientes"
+                      id="tab1"
+                      (selectTab)="requestSelected(2)">
+                      <app-doc-request-tab
+                        [typeDoc]="typeDoc"></app-doc-request-tab>
+                    </tab>
+                    <tab
+                      heading="Solicitudes del Expediente"
+                      (selectTab)="requestSelected(3)">
+                      <app-expedients-request-tab
+                        [typeDoc]="typeDoc"></app-expedients-request-tab>
+                    </tab>
+                  </tabset>
+                </tab>
+              </tabset>
+            </tab>
           </tabset>
         </div>
       </form>

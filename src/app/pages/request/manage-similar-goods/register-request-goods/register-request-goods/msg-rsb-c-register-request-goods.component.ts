@@ -15,6 +15,7 @@ export class MsgRsbCRegisterRequestGoodsComponent implements OnInit {
   @Input() buscarAsociarExpediente: boolean = false;
   @Input() seleccionarBienes: boolean = false;
   @Input() expediente: boolean = false;
+  public typeDoc: string = '';
 
   /** OUTPUT VARIABLES */
   @Output() formValuesDataDocumentation = new EventEmitter<any>();
@@ -32,6 +33,7 @@ export class MsgRsbCRegisterRequestGoodsComponent implements OnInit {
   ngOnInit(): void {
     this.getPathParameter();
     this.prepareForm();
+    this.requestSelected(1);
   }
 
   getPathParameter() {
@@ -66,5 +68,25 @@ export class MsgRsbCRegisterRequestGoodsComponent implements OnInit {
   dataSeleccionarBienes(data: any) {
     console.log(data);
     this.formValuesSeleccionarBienes.emit(data);
+  }
+
+  typeDocumentMethod(type: number) {
+    switch (type) {
+      case 1:
+        this.typeDoc = 'doc-request';
+        break;
+      case 2:
+        this.typeDoc = 'doc-expedient';
+        break;
+      case 3:
+        this.typeDoc = 'request-expedient';
+        break;
+      default:
+        break;
+    }
+  }
+
+  requestSelected(type: number) {
+    this.typeDocumentMethod(type);
   }
 }
