@@ -11,6 +11,7 @@ export class MsgRsbCRegisterRequestGoodsComponent implements OnInit {
   /** INPUT VARIABLES */
   @Input() nombrePantalla: string = 'sinNombre';
   @Input() idParam: number = null;
+  public typeDoc: string = '';
 
   /** OUTPUT VARIABLES */
   @Output() formValuesDataDocumentation = new EventEmitter<any>();
@@ -27,6 +28,7 @@ export class MsgRsbCRegisterRequestGoodsComponent implements OnInit {
   ngOnInit(): void {
     this.getPathParameter();
     this.prepareForm();
+    this.requestSelected(1);
   }
 
   getPathParameter() {
@@ -57,5 +59,25 @@ export class MsgRsbCRegisterRequestGoodsComponent implements OnInit {
   dataRegistration(data: any) {
     console.log(data);
     this.formValuesDataDocumentation.emit(data);
+  }
+
+  typeDocumentMethod(type: number) {
+    switch (type) {
+      case 1:
+        this.typeDoc = 'doc-request';
+        break;
+      case 2:
+        this.typeDoc = 'doc-expedient';
+        break;
+      case 3:
+        this.typeDoc = 'request-expedient';
+        break;
+      default:
+        break;
+    }
+  }
+
+  requestSelected(type: number) {
+    this.typeDocumentMethod(type);
   }
 }
