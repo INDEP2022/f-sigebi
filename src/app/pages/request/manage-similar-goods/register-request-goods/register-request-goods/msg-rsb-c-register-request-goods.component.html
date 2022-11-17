@@ -21,7 +21,8 @@
           <button
             type="button"
             class="d-flex align-items-center btn btn-primary btn-sm active"
-            [disabled]="registRequestForm.invalid">
+            [disabled]="registRequestForm.invalid"
+            (click)="turnRequest()">
             <i class="bx bxs-right-arrow-square mr-1"></i> Turnar
           </button>
         </div>
