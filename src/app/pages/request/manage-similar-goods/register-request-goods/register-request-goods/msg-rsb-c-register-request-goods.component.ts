@@ -1,13 +1,17 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'app-msg-rsb-c-register-request-goods',
   templateUrl: './msg-rsb-c-register-request-goods.component.html',
   styleUrls: ['./msg-rsb-c-register-request-goods.component.scss'],
 })
-export class MsgRsbCRegisterRequestGoodsComponent implements OnInit {
+export class MsgRsbCRegisterRequestGoodsComponent
+  extends BasePage
+  implements OnInit
+{
   /** INPUT VARIABLES */
   @Input() nombrePantalla: string = 'sinNombre';
   @Input() idParam: number = null;
@@ -25,10 +29,9 @@ export class MsgRsbCRegisterRequestGoodsComponent implements OnInit {
   requestNumb: number;
   registRequestForm: FormGroup;
 
-  constructor(
-    private activatedRoute: ActivatedRoute,
-    private fb: FormBuilder
-  ) {}
+  constructor(private activatedRoute: ActivatedRoute, private fb: FormBuilder) {
+    super();
+  }
 
   ngOnInit(): void {
     this.getPathParameter();
@@ -88,5 +91,18 @@ export class MsgRsbCRegisterRequestGoodsComponent implements OnInit {
 
   requestSelected(type: number) {
     this.typeDocumentMethod(type);
+  }
+
+  turnRequest() {
+    this.alertQuestion(
+      'question',
+      `¿Desea turnar la solicitud con Folio ${this.requestNumb}`,
+      '',
+      'Turnar'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.onLoadToast('success', 'Solicitud turnada con éxito', '');
+      }
+    });
   }
 }
