@@ -10,19 +10,19 @@ import { MsgRsbMRegisterRequestGoodsModule } from '../../../manage-similar-goods
 /** SERVICE IMPORTS */
 
 /** ROUTING MODULE */
-import { GDRSDRegisterReturnRoutingModule } from './register-return-routing.module';
+import { GDRSDReturnRequestRecordRoutingModule } from './gd-rsd-m-return-request-record-routing.module';
 
 /** COMPONENTS IMPORTS */
-import { GDRSDRegisterReturnComponent } from './register-return/gd-rsd-c-register-return.component';
+import { GDRSDReturnRequestRecordComponent } from './return-request-record/gd-rsd-c-return-request-record.component';
 
 @NgModule({
-  declarations: [GDRSDRegisterReturnComponent],
+  declarations: [GDRSDReturnRequestRecordComponent],
   imports: [
     CommonModule,
-    GDRSDRegisterReturnRoutingModule,
+    GDRSDReturnRequestRecordRoutingModule,
     SharedModule,
     MsgRsbMRegisterRequestGoodsModule,
   ],
   providers: [],
 })
-export class GDRSDRegisterReturnModule {}
+export class GDRSDReturnRequestRecordModule {}
