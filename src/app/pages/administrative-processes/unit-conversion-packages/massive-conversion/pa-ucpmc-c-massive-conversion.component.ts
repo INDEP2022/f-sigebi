@@ -3,7 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { MassiveConversionPermissionsComponent } from '../massive-conversion-permissions/massive-conversion-permissions.component';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -22,7 +24,7 @@ export class PaUcpmcCMassiveConversionComponent
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private modalService: BsModalService) {
     super();
     this.settings = {
       ...this.settings,
@@ -92,5 +94,23 @@ export class PaUcpmcCMassiveConversionComponent
 
   settingsChange($event: any): void {
     this.settings = $event;
+  }
+  openPermissions(data: any) {
+    // let config: ModalOptions = {
+    //   initialState: {
+    //     data,
+    //     callback: (next: boolean) => { },
+    //   },
+    //   class: 'modal-xl modal-dialog-centered',
+    //   ignoreBackdropClick: true,
+    // };
+    // this.modalService.show(MassiveConversionPermissionsComponent, config);
+    const modalRef = this.modalService.show(
+      MassiveConversionPermissionsComponent,
+      {
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      }
+    );
   }
 }
