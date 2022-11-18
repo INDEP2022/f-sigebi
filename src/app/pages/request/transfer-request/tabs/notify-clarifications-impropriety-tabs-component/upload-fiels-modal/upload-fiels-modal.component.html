@@ -35,9 +35,7 @@
           </form-field>
         </div>
       </div>
-      <div
-        class="row pt-4"
-        *ngIf="typeReport === 'annexK' || typeReport === 'annexJ'">
+      <div class="row pt-4" *ngIf="!isRFCHided">
         <div class="col-md-6">
           <form-field [control]="fileForm.get('rfc')" label="RFC">
             <input
