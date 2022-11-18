@@ -346,6 +346,11 @@ export const COMMERCIALIZATION_ROUTES = [
         label: 'Entrega de Bienes',
         link: '/pages/commercialization/good-delivery',
       },
+      //Henry2
+      {
+        label: 'Publicación de fotografías',
+        link: '/pages/commercialization/c-pdf-m-publication-photographs',
+      },
     ],
   },
 ];

@@ -437,6 +437,17 @@ const routes: Routes = [
         .CMGoodDeliveryModule,
     data: { title: 'Entrega de Bienes' },
   },
+  //Henry2
+  {
+    path: 'c-pdf-m-publication-photographs',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-pdf-m-publication-photographs/c-pdf-m-publication-photographs.module'
+        )
+      ).CPdfMPublicationPhotographsModule,
+    data: { title: 'Publicación de fotografía' },
+  },
 ];
 
 @NgModule({

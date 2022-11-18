@@ -1,0 +1,52 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Publicación de fotografías</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-3">
+          <h5 class="font-size-14 d-inline">Seleccione Cve Proceso</h5>
+          <ngx-select
+            [form]="form"
+            [data]="cveItems"
+            value="id"
+            bindLabel="description"
+            (fetchItems)="getCve($event)"
+            (change)="selectCve($event)"
+            control="id">
+          </ngx-select>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Lotes</h5>
+    </div>
+  </div>
+  <div body>Cuerpo</div>
+</app-card>
+
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Bienes</h5>
+    </div>
+  </div>
+  <div body>Cuerpo</div>
+</app-card>
+
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Fotografías</h5>
+    </div>
+  </div>
+  <div body>Cuerpo</div>
+</app-card>
