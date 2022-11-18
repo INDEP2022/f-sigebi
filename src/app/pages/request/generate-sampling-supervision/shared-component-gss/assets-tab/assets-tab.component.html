@@ -32,6 +32,20 @@
         bienes en el almacén
       </p>
     </div>
+    <div class="row pt-4" *ngIf="typeTask === 'payment-validatios'">
+      <div class="d-flex">
+        <div class="p-2">
+          <button class="btn btn-success btn-sm active">
+            <i class="bx bx-check"></i> Aprovar
+          </button>
+        </div>
+        <div class="p-2">
+          <button class="btn btn-danger btn-sm active">
+            <i class="bx bx-x"></i> Rechazar
+          </button>
+        </div>
+      </div>
+    </div>
     <div class="col-md-12">
       <!--    <form [formGroup]="assetsForm">-->
       <!--      <div [class]="loading ? 'table-loading' : ''">-->
@@ -65,6 +79,7 @@
             <tr *ngFor="let asset of assetsArray; let i = index">
               <th scope="row" style="text-align: center">
                 <input
+                  #checkbox
                   [ngClass]="isCheckboxReadonly ? 'disable-input' : ''"
                   type="checkbox"
                   value="{{ asset.id }}"

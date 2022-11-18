@@ -135,6 +135,16 @@ const routes: Routes = [
     data: { title: 'Clasificacion de Bienes' },
   },
   {
+    path: 'deposit-payment-validations',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-sampling-supervision/deposit-payment-validations/deposit-payment-validations.module'
+        )
+      ).DepositPaymentValidationsModule,
+    data: { title: 'Validación de pagos de fichas de deposito' },
+  },
+  {
     path: 'transfer-request',
     loadChildren: async () =>
       (await import('./transfer-request/transfer-request.module'))

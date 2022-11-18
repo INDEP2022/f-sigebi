@@ -1,4 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Input,
+  OnInit,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -43,6 +50,7 @@ var data = [
 export class AssetsTabComponent implements OnInit {
   @Input() willSave: boolean = false;
   @Input() typeTask: string = '';
+  @ViewChild('checkbox') input: ElementRef | null;
   bsModalRef: BsModalRef;
   assetsForm: ModelForm<any>;
   assetsArray: any[] = [];
@@ -56,7 +64,8 @@ export class AssetsTabComponent implements OnInit {
     private fb: FormBuilder,
     private modalService: BsModalService,
     private excelService: ExcelService,
-    private store: Store<{ data: any[] }>
+    private store: Store<{ data: any[] }>,
+    private render2: Renderer2
   ) {}
 
   ngOnInit(): void {
@@ -88,6 +97,8 @@ export class AssetsTabComponent implements OnInit {
       this.isReadonly = true;
       this.checkboxTitle = 'Número Gestión';
       this.isCheckboxReadonly = true;
+    } else if (this.typeTask === 'payment-validatios') {
+      this.isReadonly = true;
     }
   }
 
