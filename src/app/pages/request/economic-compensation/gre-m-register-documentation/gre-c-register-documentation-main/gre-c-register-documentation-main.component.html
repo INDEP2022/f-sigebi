@@ -30,11 +30,12 @@
     <div class="md-tabs">
       <tabset>
         <tab heading="Registro de Documentación" id="documentationTab">
-          <app-register-documentation-initial-form
+          <app-register-documentation-form
             [requestId]="requestId"
+            [subject]="'NUMERARIO DECOMISADO DEVUELTO'"
             (onRegister)="
               requestRegistered($event)
-            "></app-register-documentation-initial-form>
+            "></app-register-documentation-form>
         </tab>
         <tab heading="Buscar y Asociar al Expediente" id="associateTab">
           <app-associate-file></app-associate-file>

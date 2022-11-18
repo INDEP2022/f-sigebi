@@ -1,0 +1,38 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Asignar Bien Agrupador</h5>
+  </div>
+  <div body>
+    <form class="form-material mb-3 mt-3" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field
+              [control]="form.get('nameGoodGrouper')"
+              label="Nombre del Bien Agrupador">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="nameGoodGrouper" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="row justify-content-center mt-4">
+      <div class="col-md-3 text-center">
+        <button
+          class="btn-primary btn btn-sm active"
+          [disabled]="form.invalid"
+          (click)="accept()">
+          Aceptar
+        </button>
+      </div>
+      <div class="col-md-3 text-center">
+        <button class="btn-danger btn btn-sm active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -39,11 +39,8 @@
     <div class="md-tabs">
       <tabset>
         <tab heading="Registro de Documentación" id="documentationTab">
-          <app-register-documentation-form
-            [requestId]="requestId"
-            (onRegister)="
-              requestRegistered($event)
-            "></app-register-documentation-form>
+          <app-register-documentation-view
+            [requestId]="requestId"></app-register-documentation-view>
         </tab>
         <tab heading="Listado de Bienes" id="goodsListTab">
           <app-goods-list [requestId]="requestId"></app-goods-list>

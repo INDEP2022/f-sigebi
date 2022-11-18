@@ -1,258 +1,432 @@
 <app-card [header]="true">
-    <div class="ch-content" header>
-        <h5 class="title">
-            Mantenimiento de Actas
-        </h5>
-    </div>
+  <div class="ch-content" header>
+    <h5 class="title">Mantenimiento de Actas</h5>
+  </div>
 
-    <div body>
-        <form class="form-material" [formGroup]="form">
-            <div class="row border border-dark">
-                <h5 class="title">Informacion del Acta</h5>
-                <div class="col-md-6 mt-5">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <form-field [control]="form.get('coordRegional')" label="No. Acta">
-                                <input type="number" class="form-control" formControlName="coordRegional" placeholder="Coord. Regional" />
-                            </form-field>
-                        </div>
-                        <div class="col-md-3">
-                            <form-field [control]="form.get('coordRegional')" label="No Expediente">
-                                <input type="number" class="form-control" formControlName="coordRegional" placeholder="Coord. Regional" />
-                            </form-field>
-                        </div>
-                        <div class="col-md-6">
-                            <form-field [control]="form.get('coordRegional')" label="Cve Acta">
-                                <input type="text" class="form-control" formControlName="coordRegional" placeholder="Coord. Regional" />
-                            </form-field>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-3">
-                            <form-field [control]="form.get('coordRegional')" label="Tipo Acata">
-                                <input type="text" class="form-control" formControlName="coordRegional" placeholder="Coord. Regional" />
-                            </form-field>
-                        </div>
-                        <div class="col-md-3">
-                            <form-field [control]="form.get('coordRegional')" label="Etiqueta">
-                                <input type="text" class="form-control" formControlName="coordRegional" placeholder="Coord. Regional" />
-                            </form-field>
-                        </div>
-                        <div class="col-md-3">
-                            <form-field [control]="form.get('coordRegional')" label="Clave Del Recibe">
-                                <input type="text" class="form-control" formControlName="coordRegional" placeholder="Coord. Regional" />
-                            </form-field>
-                        </div>
-                        <div class="col-md-3">
-                            <form-field [control]="form.get('statusAcata')" label="Estatus Acta">
-                                <ngx-select control="statusAcata" [form]="form" [data]="itemsSelect"></ngx-select>
-                            </form-field>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <form-field [control]="form.get('descripcion')" label="Descripción">
-                            <textarea rows="4" class="form-control" formControlName="descripcion"></textarea>
-                        </form-field>
-                    </div>
-                    <div class="row">
-                        <form-field [control]="form.get('descripcion')" label="Observaciones">
-                            <textarea rows="4" class="form-control" formControlName="descripcion"></textarea>
-                        </form-field>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <form-field [control]="form.get('coordRegional')" label="Recibe">
-                                <input type="text" class="form-control" formControlName="coordRegional" placeholder="Coord. Regional" />
-                            </form-field>
-                        </div>
-                        <div class="col-md-6">
-                            <form-field [control]="form.get('coordRegional')" label="Administra">
-                                <input type="text" class="form-control" formControlName="coordRegional" placeholder="Coord. Regional" />
-                            </form-field>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 mt-5">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <form-field [control]="form.get('fechaAvaluo')" label="Fecha Elaboracion">
-                                <input bsDatepicker class="form-control" formControlName="fechaAvaluo" placeholder="Fecha Avaluo" />
-                            </form-field>
-                        </div>
-                        <div class="col-md-6">
-                            <form-field [control]="form.get('fechaAvaluo')" label="Fecha Cierre">
-                                <input bsDatepicker class="form-control" formControlName="fechaAvaluo" placeholder="Fecha Avaluo" />
-                            </form-field>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                        <form-field [control]="form.get('fechaAvaluo')" label="Fecha Recepcion Fisica">
-                            <input bsDatepicker class="form-control" formControlName="fechaAvaluo" placeholder="Fecha Avaluo" />
-                        </form-field>
-                        </div>
-                        <div class="col-md-6">
-                            <form-field [control]="form.get('fechaAvaluo')" label="Fecha Maxima">
-                                <input bsDatepicker class="form-control" formControlName="fechaAvaluo" placeholder="Fecha Avaluo" />
-                            </form-field>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <form-field [control]="form.get('fechaAvaluo')" label="Fecha Elaboracion Recibo">
-                                <input bsDatepicker class="form-control" formControlName="fechaAvaluo" placeholder="Fecha Avaluo" />
-                            </form-field>
-                        </div>
-                        <div class="col-md-6">
-                            <form-field [control]="form.get('fechaAvaluo')" label="Fecha Captura Hc">
-                                <input bsDatepicker class="form-control" formControlName="fechaAvaluo" placeholder="Fecha Avaluo" />
-                            </form-field>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <form-field [control]="form.get('fechaAvaluo')" label="Fecha Entrega de bienes">
-                                <input bsDatepicker class="form-control" formControlName="fechaAvaluo" placeholder="Fecha Avaluo" />
-                            </form-field>
-                        </div>
-                        <div class="col-md-6">
-                            <form-field [control]="form.get('fechaAvaluo')" label="Fecha Cierre Hc">
-                                <input bsDatepicker class="form-control" formControlName="fechaAvaluo" placeholder="Fecha Avaluo" />
-                            </form-field>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <form-field [control]="form.get('fechaAvaluo')" label="Fecha Captura">
-                                <input bsDatepicker class="form-control" formControlName="fechaAvaluo" placeholder="Fecha Avaluo" />
-                            </form-field>
-                        </div>
-                        <div class="col-md-6">
-                            <form-field [control]="form.get('fechaAvaluo')" label="Fecha Maxima Hc">
-                                <input bsDatepicker class="form-control" formControlName="fechaAvaluo" placeholder="Fecha Avaluo" />
-                            </form-field>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <form-field [control]="form.get('coordRegional')" label="Testigo 1">
-                            <input type="text" class="form-control" formControlName="coordRegional" placeholder="Coord. Regional" />
-                        </form-field>
-                    </div>
-                    <div class="row">
-                        <form-field [control]="form.get('coordRegional')" label="Testigo 2">
-                            <input type="text" class="form-control" formControlName="coordRegional" placeholder="Coord. Regional" />
-                        </form-field>
-                    </div>
-                    <div class="row">
-                        <form-field [control]="form.get('coordRegional')" label="Testigo Contraloria">
-                            <input type="text" class="form-control" formControlName="coordRegional" placeholder="Coord. Regional" />
-                        </form-field>
-                    </div>
-                </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row border border-dark">
+        <h5 class="title">Informacion del Acta</h5>
+        <div class="col-md-6 mt-5">
+          <div class="row">
+            <div class="col-md-3">
+              <form-field
+                [control]="form.get('coordRegional')"
+                label="No. Acta">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="coordRegional"
+                  placeholder="Coord. Regional" />
+              </form-field>
             </div>
-            <hr class="row">
-            <div class="row border border-dark">
-                <h5 class="title">Agregar Nuevo Bien</h5>
-                <div class="col-md-4 mt-5">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <form-field [control]="form.get('coordRegional')" label="Coord. Regional">
-                                <input type="text" class="form-control" formControlName="coordRegional" placeholder="Coord. Regional" />
-                            </form-field>
-                        </div>
-                        <div class="col-md-6">
-                            <button class="btn btn-success btn-sm active" type="submit" size="small">
-                                Agregar
-                            </button>
-                        </div>
-                       
-                    </div>
-                </div>
-                <div class="col-md-8 mt-5">
-                    <div class="row">
-                        <div class="col">
-                            <form-field [control]="form.get('coordRegional')" label="Solicita">
-                                <input type="text" class="form-control" formControlName="coordRegional" placeholder="Coord. Regional" />
-                            </form-field>
-                        </div>
-                        <div class="col">
-                            <form-field [control]="form.get('coordRegional')" label="Nombre Usuario">
-                                <input type="text" class="form-control" formControlName="coordRegional" placeholder="Coord. Regional" />
-                            </form-field>
-                        </div>
-                        <div class="col">
-                            <button class="btn btn-info active" type="submit" size="small">
-                                Aplicar Cambios
-                            </button>
-                        </div>
-                    </div>
-                    <div class="row mt-5">
-                        <div class="col-md-8">
-                            <form-field [control]="form.get('descripcion')" label="Descripción">
-                                <textarea rows="4" class="form-control" formControlName="descripcion"></textarea>
-                            </form-field>
-                        </div>
-                        
-                    </div>
-                    
-                   
-                </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="form.get('coordRegional')"
+                label="No Expediente">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="coordRegional"
+                  placeholder="Coord. Regional" />
+              </form-field>
             </div>
-            <hr class="row">
-            <div class="row border border-dark">
-                <h5 class="title">Bienes Agregados al Acta</h5>
-                <div class="col-md-8 pt-2">
-                    <div class="col scroll-table">
-                        <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
-                    </div>
-                   
-                    <div class="justify-content-center">
-                        <div class="col mt-5">
-                            <div class="row">
-                                <div class="col">
-                                    <button class="btn btn-info btn-sm active" size="small">Replicar</button>
-                                </div>
-                                <div class="col">
-                                    <form-check label="Asignar Almacen o Boveda (masiva)" for="label">
-                                        <input id="label" type="checkbox" formControlName="check" />
-                                    </form-check>
-                                </div>
-                                <div class="col">
-                                    <button class="btn btn-info btn-sm active" size="small">Ok</button>
-                                </div>
-                               
-                            </div>
-                            <div class="row mt-5">
-                                <div class="col-md-6">
-                                    <form-field [control]="form.get('coordRegional')" label="No. Almacen">
-                                        <input type="text" class="form-control" formControlName="coordRegional" placeholder="Coord. Regional" />
-                                    </form-field>
-                                </div>
-                                <div class="col-md-6">
-                                    <form-field [control]="form.get('coordRegional')" label="No. Boveda">
-                                        <input type="text" class="form-control" formControlName="coordRegional" placeholder="Coord. Regional" />
-                                    </form-field>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                   
-                </div>
-               
-               
-                <div class="col">
-                    <form-field [control]="form.get('statusAcata')" label="Accion">
-                        <ngx-select control="statusAcata" [form]="form" [data]="itemsSelect"></ngx-select>
-                    </form-field>
-                </div>
-                <div class="col">
-                    <button class="btn btn-success btn-sm active" type="submit" size="small">
-                        Ejecutar
-                    </button>
-                </div>
-                
+            <div class="col-md-6">
+              <form-field
+                [control]="form.get('coordRegional')"
+                label="Cve Acta">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="coordRegional"
+                  placeholder="Coord. Regional" />
+              </form-field>
             </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3">
+              <form-field
+                [control]="form.get('coordRegional')"
+                label="Tipo Acata">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="coordRegional"
+                  placeholder="Coord. Regional" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="form.get('coordRegional')"
+                label="Etiqueta">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="coordRegional"
+                  placeholder="Coord. Regional" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="form.get('coordRegional')"
+                label="Clave Del Recibe">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="coordRegional"
+                  placeholder="Coord. Regional" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="form.get('statusAcata')"
+                label="Estatus Acta">
+                <ngx-select
+                  control="statusAcata"
+                  [form]="form"
+                  [data]="itemsSelect"></ngx-select>
+              </form-field>
+            </div>
+          </div>
+          <div class="row">
+            <form-field [control]="form.get('descripcion')" label="Descripción">
+              <textarea
+                rows="4"
+                class="form-control"
+                formControlName="descripcion"></textarea>
+            </form-field>
+          </div>
+          <div class="row">
+            <form-field
+              [control]="form.get('descripcion')"
+              label="Observaciones">
+              <textarea
+                rows="4"
+                class="form-control"
+                formControlName="descripcion"></textarea>
+            </form-field>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <form-field [control]="form.get('coordRegional')" label="Recibe">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="coordRegional"
+                  placeholder="Coord. Regional" />
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <form-field
+                [control]="form.get('coordRegional')"
+                label="Administra">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="coordRegional"
+                  placeholder="Coord. Regional" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mt-5">
+          <div class="row">
+            <div class="col-md-6">
+              <form-field
+                [control]="form.get('fechaAvaluo')"
+                label="Fecha Elaboracion">
+                <input
+                  bsDatepicker
+                  class="form-control"
+                  formControlName="fechaAvaluo"
+                  placeholder="Fecha Avaluo" />
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <form-field
+                [control]="form.get('fechaAvaluo')"
+                label="Fecha Cierre">
+                <input
+                  bsDatepicker
+                  class="form-control"
+                  formControlName="fechaAvaluo"
+                  placeholder="Fecha Avaluo" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <form-field
+                [control]="form.get('fechaAvaluo')"
+                label="Fecha Recepcion Fisica">
+                <input
+                  bsDatepicker
+                  class="form-control"
+                  formControlName="fechaAvaluo"
+                  placeholder="Fecha Avaluo" />
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <form-field
+                [control]="form.get('fechaAvaluo')"
+                label="Fecha Maxima">
+                <input
+                  bsDatepicker
+                  class="form-control"
+                  formControlName="fechaAvaluo"
+                  placeholder="Fecha Avaluo" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <form-field
+                [control]="form.get('fechaAvaluo')"
+                label="Fecha Elaboracion Recibo">
+                <input
+                  bsDatepicker
+                  class="form-control"
+                  formControlName="fechaAvaluo"
+                  placeholder="Fecha Avaluo" />
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <form-field
+                [control]="form.get('fechaAvaluo')"
+                label="Fecha Captura Hc">
+                <input
+                  bsDatepicker
+                  class="form-control"
+                  formControlName="fechaAvaluo"
+                  placeholder="Fecha Avaluo" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <form-field
+                [control]="form.get('fechaAvaluo')"
+                label="Fecha Entrega de bienes">
+                <input
+                  bsDatepicker
+                  class="form-control"
+                  formControlName="fechaAvaluo"
+                  placeholder="Fecha Avaluo" />
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <form-field
+                [control]="form.get('fechaAvaluo')"
+                label="Fecha Cierre Hc">
+                <input
+                  bsDatepicker
+                  class="form-control"
+                  formControlName="fechaAvaluo"
+                  placeholder="Fecha Avaluo" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <form-field
+                [control]="form.get('fechaAvaluo')"
+                label="Fecha Captura">
+                <input
+                  bsDatepicker
+                  class="form-control"
+                  formControlName="fechaAvaluo"
+                  placeholder="Fecha Avaluo" />
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <form-field
+                [control]="form.get('fechaAvaluo')"
+                label="Fecha Maxima Hc">
+                <input
+                  bsDatepicker
+                  class="form-control"
+                  formControlName="fechaAvaluo"
+                  placeholder="Fecha Avaluo" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row">
+            <form-field [control]="form.get('coordRegional')" label="Testigo 1">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="coordRegional"
+                placeholder="Coord. Regional" />
+            </form-field>
+          </div>
+          <div class="row">
+            <form-field [control]="form.get('coordRegional')" label="Testigo 2">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="coordRegional"
+                placeholder="Coord. Regional" />
+            </form-field>
+          </div>
+          <div class="row">
+            <form-field
+              [control]="form.get('coordRegional')"
+              label="Testigo Contraloria">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="coordRegional"
+                placeholder="Coord. Regional" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+      <hr class="row" />
+      <div class="row border border-dark">
+        <h5 class="title">Agregar Nuevo Bien</h5>
+        <div class="col-md-4 mt-5">
+          <div class="row">
+            <div class="col-md-6">
+              <form-field
+                [control]="form.get('coordRegional')"
+                label="Coord. Regional">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="coordRegional"
+                  placeholder="Coord. Regional" />
+              </form-field>
+            </div>
+            <div class="col-md-6">
+              <button
+                class="btn btn-success btn-sm active"
+                type="submit"
+                size="small">
+                Agregar
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8 mt-5">
+          <div class="row">
+            <div class="col">
+              <form-field
+                [control]="form.get('coordRegional')"
+                label="Solicita">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="coordRegional"
+                  placeholder="Coord. Regional" />
+              </form-field>
+            </div>
+            <div class="col">
+              <form-field
+                [control]="form.get('coordRegional')"
+                label="Nombre Usuario">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="coordRegional"
+                  placeholder="Coord. Regional" />
+              </form-field>
+            </div>
+            <div class="col">
+              <button class="btn btn-info active" type="submit" size="small">
+                Aplicar Cambios
+              </button>
+            </div>
+          </div>
+          <div class="row mt-5">
+            <div class="col-md-8">
+              <form-field
+                [control]="form.get('descripcion')"
+                label="Descripción">
+                <textarea
+                  rows="4"
+                  class="form-control"
+                  formControlName="descripcion"></textarea>
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr class="row" />
+      <div class="row border border-dark">
+        <h5 class="title">Bienes Agregados al Acta</h5>
+        <div class="col-md-8 pt-2">
+          <div class="col scroll-table">
+            <ng2-smart-table
+              [settings]="settings"
+              [source]="data"></ng2-smart-table>
+          </div>
 
-        </form>
-    </div>
+          <div class="justify-content-center">
+            <div class="col mt-5">
+              <div class="row">
+                <div class="col">
+                  <button class="btn btn-info btn-sm active" size="small">
+                    Replicar
+                  </button>
+                </div>
+                <div class="col">
+                  <form-check
+                    label="Asignar Almacen o Boveda (masiva)"
+                    for="label">
+                    <input id="label" type="checkbox" formControlName="check" />
+                  </form-check>
+                </div>
+                <div class="col">
+                  <button class="btn btn-info btn-sm active" size="small">
+                    Ok
+                  </button>
+                </div>
+              </div>
+              <div class="row mt-5">
+                <div class="col-md-6">
+                  <form-field
+                    [control]="form.get('coordRegional')"
+                    label="No. Almacen">
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="coordRegional"
+                      placeholder="Coord. Regional" />
+                  </form-field>
+                </div>
+                <div class="col-md-6">
+                  <form-field
+                    [control]="form.get('coordRegional')"
+                    label="No. Boveda">
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="coordRegional"
+                      placeholder="Coord. Regional" />
+                  </form-field>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <form-field [control]="form.get('statusAcata')" label="Accion">
+            <ngx-select
+              control="statusAcata"
+              [form]="form"
+              [data]="itemsSelect"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col">
+          <button
+            class="btn btn-success btn-sm active"
+            type="submit"
+            size="small">
+            Ejecutar
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
 </app-card>
