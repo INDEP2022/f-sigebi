@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -22,6 +22,7 @@ var data = [
   styles: [],
 })
 export class PrintReportModalComponent extends BasePage implements OnInit {
+  @ViewChild('FileInput', { static: false }) inputFile: ElementRef;
   params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: any[] = [];
   totalItems: number = 0;
@@ -36,6 +37,7 @@ export class PrintReportModalComponent extends BasePage implements OnInit {
     keyboard: true,
   };
   typeReport: string = '';
+  sizeMessage: boolean = false;
 
   constructor(
     public modalService: BsModalService,
