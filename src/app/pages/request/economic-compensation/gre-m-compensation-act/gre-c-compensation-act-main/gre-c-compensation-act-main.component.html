@@ -1,7 +1,7 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">
-      Registrar Citra Contribuyente (Resarcmiento NUMERARIO), No. Solicitud:
+      Generar Acta de Resarcimiento, No. Solicitud:
       {{ requestId }}, Contribuyente: {{ contributor }}
     </h5>
   </div>
@@ -11,9 +11,9 @@
         <button
           type="button"
           class="btn btn-primary btn-sm active"
-          (click)="turnRequest()"
+          (click)="endRequest()"
           [disabled]="">
-          <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Turnar
+          <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Finalizar
         </button>
       </div>
       <div class="mx-1">
@@ -22,6 +22,23 @@
           class="btn btn-primary btn-sm active"
           [disabled]="">
           <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Guardar
+        </button>
+      </div>
+      <div class="mx-1">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          [disabled]="">
+          <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Notificación
+        </button>
+      </div>
+      <div class="mx-1">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          [disabled]="">
+          <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Acta de
+          Resarcimiento
         </button>
       </div>
     </div>
@@ -42,8 +59,8 @@
         <tab heading="Datos del Dictamen" id="dictumTab">
           <app-dictum-information-tab></app-dictum-information-tab>
         </tab>
-        <tab heading="Registro de Cita" id="appointmentTab">
-          <app-register-appointment-tab></app-register-appointment-tab>
+        <tab heading="Orden Ingreso" id="entryOrderTab">
+          <app-entry-order-view [requestId]="requestId"></app-entry-order-view>
         </tab>
         <tab heading="Expediente" id="fileTab">
           <tabset class="md-tabs">

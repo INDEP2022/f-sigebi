@@ -65,10 +65,28 @@ var usuario: IRequestList[] = [
     title:
       'Registrar Cita Contribuyente (Resarcimiento NUMERARIO), No. Solicitud: 1896, Contribuyente CARLOS G. PALMA',
     noRequest: 1896,
-    numTask: 212037,
+    numTask: 212097,
     noInstance: 450060,
     created: 'tester_nsbxt',
     process: 'RE_RegistrarCita',
+  },
+  {
+    title:
+      'Registrar Orden de Pago (Resarcimiento NUMERARIO), No. Solicitud: 1896, Contribuyente CARLOS G. PALMA',
+    noRequest: 1896,
+    numTask: 212044,
+    noInstance: 450060,
+    created: 'tester_nsbxt',
+    process: 'RE_OrdenPago',
+  },
+  {
+    title:
+      'Generar Acta de Resarcimiento, No. Solicitud: 1896, Contribuyente CARLOS G. PALMA',
+    noRequest: 1896,
+    numTask: 212045,
+    noInstance: 450060,
+    created: 'tester_nsbxt',
+    process: 'RE_GenerarActa',
   },
 ];
 
@@ -155,6 +173,20 @@ export class RequestListComponent extends BasePage implements OnInit {
         // en el caso de que sea el proceso de registrar cita contributente de resarcimiento economico
         this.router.navigate([
           'pages/request/economic-compensation/register-appointment',
+          event.data.noRequest,
+        ]);
+        break;
+      case 'RE_OrdenPago':
+        // en el caso de que sea el proceso de registrar orden de pago de resarcimiento economico
+        this.router.navigate([
+          'pages/request/economic-compensation/payment-order',
+          event.data.noRequest,
+        ]);
+        break;
+      case 'RE_GenerarActa':
+        // en el caso de que sea el proceso de registrar orden de pago de resarcimiento economico
+        this.router.navigate([
+          'pages/request/economic-compensation/compensation-act',
           event.data.noRequest,
         ]);
         break;

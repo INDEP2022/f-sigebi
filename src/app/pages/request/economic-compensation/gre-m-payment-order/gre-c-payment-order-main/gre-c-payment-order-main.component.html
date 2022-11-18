@@ -1,7 +1,7 @@
 <app-card [header]="true">
   <div class="ch-content" header>
     <h5 class="title">
-      Registrar Citra Contribuyente (Resarcmiento NUMERARIO), No. Solicitud:
+      Registrar Orden de Pago (Resarcmiento NUMERARIO), No. Solicitud:
       {{ requestId }}, Contribuyente: {{ contributor }}
     </h5>
   </div>
@@ -42,8 +42,8 @@
         <tab heading="Datos del Dictamen" id="dictumTab">
           <app-dictum-information-tab></app-dictum-information-tab>
         </tab>
-        <tab heading="Registro de Cita" id="appointmentTab">
-          <app-register-appointment-tab></app-register-appointment-tab>
+        <tab heading="Orden Ingreso" id="entryOrderTab">
+          <app-entry-order></app-entry-order>
         </tab>
         <tab heading="Expediente" id="fileTab">
           <tabset class="md-tabs">
