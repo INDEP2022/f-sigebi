@@ -17,21 +17,23 @@
     </div>
   </div>
   <div body>
-    <div class="row pt-4" *ngIf="isEnableAnex">
-      <div class="d-flex justify-content-end">
-        <div class="m-3">
-          <button
-            class="btn btn-secondary btn-sm active"
-            (click)="openAnnexJ()">
-            <i class="bx bx-square-rounded"></i> Anexo J
-          </button>
-        </div>
-        <div class="m-3">
-          <button
-            class="btn btn-secondary btn-sm active"
-            (click)="opemAnnexK()">
-            <i class="bx bx-square-rounded"></i> Anexo K
-          </button>
+    <div id="annex">
+      <div class="row pt-4">
+        <div class="d-flex justify-content-end">
+          <div class="m-3">
+            <button
+              class="btn btn-secondary btn-sm active"
+              (click)="openAnnexJ()">
+              <i class="bx bx-square-rounded"></i> Anexo J
+            </button>
+          </div>
+          <div class="m-3">
+            <button
+              class="btn btn-secondary btn-sm active"
+              (click)="opemAnnexK()">
+              <i class="bx bx-square-rounded"></i> Anexo K
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -99,78 +101,20 @@
         </div>
       </div>
       <div class="row" *ngIf="showFilterAssets" style="padding-left: 1rem">
-        <form [formGroup]="filterForm" class="form-material">
-          <div class="row pt-4">
-            <div class="col-md-3">
-              <form-field
-                [control]="filterForm.get('noManagement')"
-                label="No. Gestion">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="noManagement" />
-              </form-field>
-            </div>
-            <div class="col-md-4">
-              <form-field
-                [control]="filterForm.get('noInventory')"
-                label="No. Inventario">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="noInventory" />
-              </form-field>
-            </div>
-            <div class="col-md-4">
-              <form-field
-                [control]="filterForm.get('descriptionAsset')"
-                label="Descripción Bien">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="descriptionAsset" />
-              </form-field>
-            </div>
-          </div>
-        </form>
-        <div class="row pt-4">
-          <div class="d-flex justify-content-end">
-            <div class="m-3">
-              <button class="btn btn-primary btn-sm active">
-                <i class="bx bx-search-alt-2"></i> Buscar
-              </button>
-            </div>
-            <div class="m-3">
-              <button class="btn btn-danger btn-sm active">
-                <i class="bx bx-trash"></i> Limpiar
-              </button>
-            </div>
-          </div>
-        </div>
+        <app-assets-filter
+          (searchEvent)="getSearchForm($event)"></app-assets-filter>
       </div>
     </div>
     <div class="tabs">
-      <tabset class="md-tabs" *ngIf="!isEnableAnex">
+      <tabset class="md-tabs">
         <tab heading="Bienes" id="tab1">
-          <app-assets-tab
-            [willSave]="willSave"
-            [typeTask]="'verify-noncompliance'"></app-assets-tab>
+          <app-list-restitutions-assets></app-list-restitutions-assets>
         </tab>
         <tab heading="Verificaciones">
           <app-verifications></app-verifications>
         </tab>
-        <tab heading="Detalle Anexo">
+        <tab heading="Detalles Anexo">
           <app-detail-annex [annexData]="annexDetail"></app-detail-annex>
-        </tab>
-      </tabset>
-
-      <!-- Se turno el formulario se muestrea los tabs -->
-      <tabset class="md-tabs" *ngIf="isEnableAnex">
-        <tab heading="Bienes" id="tab1">
-          <app-assets-tab></app-assets-tab>
-        </tab>
-        <tab heading="Deductivas">
-          <app-deductives></app-deductives>
         </tab>
       </tabset>
     </div>

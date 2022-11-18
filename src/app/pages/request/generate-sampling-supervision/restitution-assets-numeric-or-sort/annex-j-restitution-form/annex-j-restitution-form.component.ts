@@ -3,17 +3,14 @@ import { FormBuilder } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { PrintReportModalComponent } from '../../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
-import { PrintReportRestitutionModalComponent } from '../../restitution-assets-numeric-or-sort/print-report-restitution-modal/print-report-restitution-modal.component';
 
 @Component({
-  selector: 'app-annex-k-form',
-  templateUrl: './annex-k-form.component.html',
-  styleUrls: ['./annex-k-form.component.scss'],
+  selector: 'app-annex-j-restitution-form',
+  templateUrl: './annex-j-restitution-form.component.html',
+  styles: [],
 })
-export class AnnexKFormComponent implements OnInit {
-  detailForm: ModelForm<any>;
-  participantDataForm: ModelForm<any>;
-  detailAnnexForm: ModelForm<any>;
+export class AnnexJRestitutionFormComponent implements OnInit {
+  signForm: ModelForm<any>;
   typeAnnex: string = '';
 
   constructor(
@@ -23,43 +20,19 @@ export class AnnexKFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log(this.typeAnnex);
-    this.initDetailForm();
-    this.initParicipantForm();
-    this.initAnnexDetailForm();
+    this.initForm();
   }
 
-  initDetailForm(): void {
-    this.detailForm = this.fb.group({
-      name: [null],
-      position: [null],
-      typeSign: [null],
-    });
-  }
-
-  initParicipantForm(): void {
-    this.participantDataForm = this.fb.group({
-      name1: [null],
-      position1: [null],
-      name2: [null],
-      position2: [null],
-    });
-  }
-
-  initAnnexDetailForm(): void {
-    this.detailAnnexForm = this.fb.group({
-      warehouseManager: [null],
-      relevantFacts: [null],
-      agreements: [null],
+  initForm(): void {
+    this.signForm = this.fb.group({
+      responsibleName: [null],
+      responsibleInCharge: [null],
+      tipeSign: [null],
     });
   }
 
   signAnnex(): void {
-    if (this.typeAnnex === 'annexK-restitution-of-assets') {
-      this.openModal(PrintReportRestitutionModalComponent, '', this.typeAnnex);
-    } else {
-      this.openModal(PrintReportModalComponent, '', this.typeAnnex);
-    }
+    this.openModal(PrintReportModalComponent, '', this.typeAnnex);
     this.close();
   }
 
