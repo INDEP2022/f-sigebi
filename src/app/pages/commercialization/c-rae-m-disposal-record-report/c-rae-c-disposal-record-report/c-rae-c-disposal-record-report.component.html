@@ -1,0 +1,104 @@
+<app-card [header]="true" [footer]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Impresión de actas de enajenación</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field [control]="form.get('delegation')" label="Delegación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegation" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('subDelegation')"
+            label="Sub Delegación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="subDelegation" />
+          </form-field>
+        </div>
+        <div class="col-md-1">
+          <form-field [control]="form.get('noFile')" label="No. Expediente">
+            <input type="text" class="form-control" formControlName="noFile" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('rangeDateFile')"
+            label="Seleccione fecha inicial y final">
+            <input
+              class="form-control"
+              formControlName="rangeDateFile"
+              ngModel
+              bsDaterangepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD-MM-YYYY',
+                displayOneMonthRange: true
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-1">
+          <form-field [control]="form.get('noActa')" label="No. Acta">
+            <input type="text" class="form-control" formControlName="noActa" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('rangeDateActa')"
+            label="Seleccione fecha inicial y final">
+            <input
+              class="form-control"
+              formControlName="rangeDateActa"
+              ngModel
+              bsDaterangepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD-MM-YYYY',
+                displayOneMonthRange: true
+              }" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('rangeDate')"
+            label="Fecha elaboración">
+            <input
+              class="form-control"
+              formControlName="rangeDate"
+              ngModel
+              bsDaterangepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD-MM-YYYY',
+                displayOneMonthRange: true
+              }" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="submit"
+          class="btn btn-primary active"
+          [disabled]="!form.valid"
+          (click)="openPrevPdf()">
+          Imprimir
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>
