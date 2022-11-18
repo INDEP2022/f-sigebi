@@ -19,7 +19,7 @@
         </button>
       </div>
       <div class="m-3">
-        <button class="btn btn-primary btn-sm active">
+        <button class="btn btn-primary btn-sm active" (click)="exportCsv()">
           <i class="bx bx-download"></i> Descargar Archivo
         </button>
       </div>
@@ -65,6 +65,7 @@
             <tr *ngFor="let asset of assetsArray; let i = index">
               <th scope="row" style="text-align: center">
                 <input
+                  [ngClass]="isCheckboxReadonly ? 'disable-input' : ''"
                   type="checkbox"
                   value="{{ asset.id }}"
                   [(ngModel)]="asset.checked"

@@ -38,7 +38,7 @@ var data = [
 @Component({
   selector: 'app-assets-tab',
   templateUrl: './assets-tab.component.html',
-  styles: [],
+  styleUrls: ['./assets-tab.component.scss'],
 })
 export class AssetsTabComponent implements OnInit {
   @Input() willSave: boolean = false;
@@ -49,6 +49,7 @@ export class AssetsTabComponent implements OnInit {
   assetsSelected: any[] = [];
   jsonToCsv = JSON_TO_CSV;
   isReadonly: boolean = false;
+  isCheckboxReadonly: boolean = false;
   checkboxTitle: string = '';
 
   constructor(
@@ -59,6 +60,7 @@ export class AssetsTabComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log(this.typeTask);
     this.setEnableInputs();
     this.assetsArray = data;
     //console.log(this.willSave);
@@ -82,6 +84,10 @@ export class AssetsTabComponent implements OnInit {
     if (this.typeTask === 'verify-warehouse-assets') {
       this.checkboxTitle = 'Localizado';
       this.isReadonly = true;
+    } else if (this.typeTask === 'assets-classification') {
+      this.isReadonly = true;
+      this.checkboxTitle = 'Número Gestión';
+      this.isCheckboxReadonly = true;
     }
   }
 
