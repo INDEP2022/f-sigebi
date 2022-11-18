@@ -279,6 +279,10 @@ export const COMMERCIALIZATION_ROUTES = [
             label: 'Eventos por Proceso',
             link: '/pages/commercialization/catalogs/event-process',
           },
+          {
+            label: 'Registro de Intereses',
+            link: '/pages/commercialization/catalogs/registration-of-interest',
+          },
         ],
       },
       {
@@ -345,6 +349,18 @@ export const COMMERCIALIZATION_ROUTES = [
       {
         label: 'Entrega de Bienes',
         link: '/pages/commercialization/good-delivery',
+      },
+      {
+        label: 'Reporte de Cartas de Liberacion',
+        link: '/pages/commercialization/release-letter-report',
+      },
+      {
+        label: 'Reporte de Cartas de Responsabilidad',
+        link: '/pages/commercialization/responsibility-letters-report',
+      },
+      {
+        label: 'Configuracion de Layouts',
+        link: '/pages/commercialization/layouts-configuration',
       },
     ],
   },
