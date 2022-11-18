@@ -351,6 +351,10 @@ export const COMMERCIALIZATION_ROUTES = [
         label: 'Publicación de fotografías',
         link: '/pages/commercialization/c-pdf-m-publication-photographs',
       },
+      {
+        label: 'Reporte de pagos recibidos',
+        link: '/pages/commercialization/c-rrp-m-payment-receipts-report',
+      },
     ],
   },
 ];

@@ -448,6 +448,16 @@ const routes: Routes = [
       ).CPdfMPublicationPhotographsModule,
     data: { title: 'Publicación de fotografía' },
   },
+  {
+    path: 'c-rrp-m-payment-receipts-report',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-rrp-m-payment-receipts-report/c-rrp-m-payment-receipts-report.module'
+        )
+      ).CRrpMPaymentReceiptsReportModule,
+    data: { title: 'Reporte de pagos recibidos' },
+  },
 ];
 
 @NgModule({
