@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 
@@ -16,7 +16,6 @@ export class RegisterDocumentationFormComponent
   maxDate: Date = new Date();
   @Input() requestId: number;
   registerForm: FormGroup = new FormGroup({});
-  @Output() onRegister = new EventEmitter<any>();
 
   fileTypeTestData: any = [
     {
@@ -102,26 +101,5 @@ export class RegisterDocumentationFormComponent
       this.registerForm.patchValue(request);
       console.log(this.registerForm.value);
     }
-  }
-
-  cancelRequest() {
-    this.alertQuestion(
-      'question',
-      '¿Desea cancelar el registro de la solicitud actual?',
-      '',
-      'Cancelar Solicitud'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.registerForm.reset();
-        this.getRequestInfo();
-        this.registerForm.markAsUntouched();
-      }
-    });
-  }
-
-  register() {
-    // Llamar servicio para registrar solcitud
-    this.onRegister.emit(this.registerForm.value);
-    this.alert('success', 'Solicitud registrada con éxito', '');
   }
 }

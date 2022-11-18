@@ -32,6 +32,7 @@ import { GuidelinesComponent } from './guidelines/guidelines.component';
 import { PhotographyFormComponent } from './photography-form/photography-form.component';
 import { RegisterDocumentationFormComponent } from './register-documentation-form/register-documentation-form.component';
 import { RequestFormComponent } from './request-form/request-form.component';
+import { RequestInformationRejectComponent } from './request-information-reject/request-information-reject.component';
 import { RequestInformationSimilarGoodsComponent } from './request-information-similar-goods/request-information-similar-goods.component';
 import { RequestInformationComponent } from './request-information/request-information.component';
 import { RequestSiabFormComponent } from './request-siab-form/request-siab-form.component';
@@ -96,6 +97,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     GuidelinesRevisionComponent,
     GuidelinesObservationsComponent,
     GuidelinesRevisionViewComponent,
+    RequestInformationRejectComponent,
   ],
   imports: [
     CommonModule,
@@ -125,6 +127,8 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     GoodsListComponent,
     GuidelinesComponent,
     RequestInformationSimilarGoodsComponent,
+    SearchInventoryGoodsComponent,
+    RequestInformationRejectComponent,
   ],
 })
 export class SharedRequestModule {}

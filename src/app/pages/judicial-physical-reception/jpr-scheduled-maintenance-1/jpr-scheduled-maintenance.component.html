@@ -1,0 +1,91 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Mantenimiento de Programaciones</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col">
+          <form-field [control]="form.get('tipoEvento')" label="Tipo Evento">
+            <ngx-select
+              control="tipoEvento"
+              [form]="form"
+              [data]="itemsSelect"></ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col">
+          <form-field [control]="form.get('fechaInicio')" label="Fecha Inicio">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="fechaInicio"
+              placeholder="Fecha Inicio" />
+          </form-field>
+        </div>
+
+        <div class="col">
+          <form-field [control]="form.get('fechaFin')" label="Fecha Fin">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="fechaFin"
+              placeholder="Fecha Fin" />
+          </form-field>
+        </div>
+
+        <div class="col">
+          <form-field
+            [control]="form.get('statusEvento')"
+            label="Status Evento">
+            <ngx-select
+              control="statusEvento"
+              [form]="form"
+              [data]="itemsSelect"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col">
+          <form-field
+            [control]="form.get('coordRegional')"
+            label="Coord. Regional">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="coordRegional"
+              placeholder="Coord. Regional" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <button class="btn btn-primary active" type="submit" size="small">
+            Refrescar Informacioon
+          </button>
+        </div>
+        <div class="col">
+          <button class="btn btn-primary active" type="submit" size="small">
+            Calendario
+          </button>
+        </div>
+        <div class="col">
+          <button class="btn btn-primary active" type="submit" size="small">
+            Buscar Bien en Acta
+          </button>
+        </div>
+        <div class="col">
+          <button class="btn btn-primary active" type="submit" size="small">
+            Borrar Programaciones
+          </button>
+        </div>
+      </div>
+
+      <div class="row pt-2 scroll-table mt-5">
+        <ng2-smart-table
+          class="col-md-12"
+          [settings]="settings1"
+          [source]="data"></ng2-smart-table>
+      </div>
+    </form>
+  </div>
+</app-card>

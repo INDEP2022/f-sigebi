@@ -15,17 +15,12 @@ export const MENU_OPTIONS_REQUEST_MANAGE_RETURN = {
         'registrar-documentacion-devolucion',
     },
     {
-      label: 'Registrar Devolución',
+      label: 'Registro de Solicitud de Devolución',
       link:
         baseMenuRegquest +
         returnManageReturn +
         returnRequestRegistration +
-        'registrar-devolucion',
+        'registro-solicitud-devolucion',
     },
-    // {
-    //   label: 'Búsqueda y Selección de Bienes para Devolución',
-    //   link:
-    //     baseMenuRegquestManageReturn + returnManageReturn + 'sampling-assets',
-    // },
   ],
 };

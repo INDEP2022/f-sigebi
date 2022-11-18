@@ -117,7 +117,8 @@
                 [form]="flyerForm"
                 [data]="subjects"
                 control="desahogoAsunto"
-                label="Desahogo Asunto"></ngx-select>
+                label="Desahogo Asunto">
+              </ngx-select>
             </form-field>
           </div>
 
@@ -257,7 +258,8 @@
                 [form]="flyerForm"
                 [data]="subjects"
                 control="entidadFed"
-                label="Entidad Federativa"></ngx-select>
+                label="Entidad Federativa">
+              </ngx-select>
             </form-field>
           </div>
 
@@ -311,15 +313,19 @@
                 [form]="flyerForm"
                 [data]="subjects"
                 control="institucion"
-                label="Autoridad Emisora"></ngx-select>
+                label="Autoridad Emisora">
+              </ngx-select>
             </form-field>
 
-            <form-field [control]="flyerForm.get('minPub')" class="col-md-6">
-              <ngx-select
-                [form]="flyerForm"
-                [data]="subjects"
-                control="minPub"
-                label="Ministerio público"></ngx-select>
+            <form-field
+              [control]="flyerForm.get('minPub')"
+              class="col-md-6"
+              label="Ministerio público">
+              <input
+                type="text"
+                formControlName="minPub"
+                class="form-control"
+                (click)="publicMinistries()" />
             </form-field>
           </div>
 
