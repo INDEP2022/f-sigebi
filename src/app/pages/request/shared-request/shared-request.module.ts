@@ -25,12 +25,14 @@ import { NewDocumentComponent } from './expedients-tabs/sub-tabs/new-document/ne
 import { RequestOfAssetsComponent } from './expedients-tabs/sub-tabs/request-of-assets/request-of-assets.component';
 import { GenerateReceiptFormComponent } from './generate-receipt-form/generate-receipt-form.component';
 import { GoodsListComponent } from './goods-list/goods-list.component';
+import { GuidelinesViewComponent } from './guidelines-view/guidelines-view.component';
 import { GuidelinesObservationsComponent } from './guidelines/guidelines-observations/guidelines-observations.component';
 import { GuidelinesRevisionViewComponent } from './guidelines/guidelines-revision-view/guidelines-revision-view.component';
 import { GuidelinesRevisionComponent } from './guidelines/guidelines-revision/guidelines-revision.component';
 import { GuidelinesComponent } from './guidelines/guidelines.component';
 import { PhotographyFormComponent } from './photography-form/photography-form.component';
 import { RegisterDocumentationFormComponent } from './register-documentation-form/register-documentation-form.component';
+import { RegisterDocumentationViewComponent } from './register-documentation-view/register-documentation-view.component';
 import { RequestFormComponent } from './request-form/request-form.component';
 import { RequestInformationRejectComponent } from './request-information-reject/request-information-reject.component';
 import { RequestInformationSimilarGoodsComponent } from './request-information-similar-goods/request-information-similar-goods.component';
@@ -90,7 +92,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     BtnRequestComponent,
     NewDocumentComponent,
     DetailAssetsTabComponentComponent,
-    RegisterDocumentationFormComponent,
+    RegisterDocumentationViewComponent,
     GoodsListComponent,
     GuidelinesComponent,
     RequestInformationSimilarGoodsComponent,
@@ -98,6 +100,8 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     GuidelinesObservationsComponent,
     GuidelinesRevisionViewComponent,
     RequestInformationRejectComponent,
+    GuidelinesViewComponent,
+    RegisterDocumentationFormComponent,
   ],
   imports: [
     CommonModule,
@@ -123,12 +127,14 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     BtnRequestComponent,
     NewDocumentComponent,
     DetailAssetsTabComponentComponent,
-    RegisterDocumentationFormComponent,
+    RegisterDocumentationViewComponent,
     GoodsListComponent,
     GuidelinesComponent,
     RequestInformationSimilarGoodsComponent,
     SearchInventoryGoodsComponent,
     RequestInformationRejectComponent,
+    GuidelinesViewComponent,
+    RegisterDocumentationFormComponent,
   ],
 })
 export class SharedRequestModule {}

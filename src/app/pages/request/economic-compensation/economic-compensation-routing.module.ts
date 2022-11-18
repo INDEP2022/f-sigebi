@@ -42,6 +42,20 @@ const routes: Routes = [
       ).GreMRegisterAppointmentModule,
     data: { title: 'Solicitud de Registro de Cita Contribuyente' },
   },
+  {
+    path: 'payment-order',
+    loadChildren: async () =>
+      (await import('./gre-m-payment-order/gre-m-payment-order.module'))
+        .GreMPaymentOrderModule,
+    data: { title: 'Solicitud de Registro de Orden de Pago' },
+  },
+  {
+    path: 'compensation-act',
+    loadChildren: async () =>
+      (await import('./gre-m-compensation-act/gre-m-compensation-act.module'))
+        .GreMCompensationActModule,
+    data: { title: 'Generar Acta de Resarcimiento' },
+  },
 ];
 
 @NgModule({
