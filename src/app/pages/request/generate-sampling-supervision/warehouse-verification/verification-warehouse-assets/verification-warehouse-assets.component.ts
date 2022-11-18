@@ -4,7 +4,7 @@ import { BasePage } from '../../../../../core/shared/base-page';
 @Component({
   selector: 'app-verification-warehouse-assets',
   templateUrl: './verification-warehouse-assets.component.html',
-  styles: [],
+  styleUrls: ['./verification-warehouse-assets.component.scss'],
 })
 export class VerificationWarehouseAssetsComponent
   extends BasePage

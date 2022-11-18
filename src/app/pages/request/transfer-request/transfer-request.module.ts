@@ -77,5 +77,6 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     NgScrollbarModule,
     SharedRequestModule,
   ],
+  exports: [VerifyComplianceTabComponent],
 })
 export class TransferRequestModule {}

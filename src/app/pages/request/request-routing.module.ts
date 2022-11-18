@@ -112,7 +112,17 @@ const routes: Routes = [
           './generate-sampling-supervision/warehouse-verification/warehouse-verification.module'
         )
       ).WarehouseVerificationModule,
-    data: { title: 'Verificación de bienes de almacen' },
+    data: { title: 'Verificación de Bienes de Almacen' },
+  },
+  {
+    path: 'restitution-of-assets',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-sampling-supervision/restitution-assets-numeric-or-sort/restitution-assets-numeric-or-sort.module'
+        )
+      ).RestitutionAssetsNumericOrSortModule,
+    data: { title: 'Restitución de Bienes' },
   },
   {
     path: 'transfer-request',

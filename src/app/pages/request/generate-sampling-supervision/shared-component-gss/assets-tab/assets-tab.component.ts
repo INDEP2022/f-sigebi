@@ -5,8 +5,8 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ExcelService } from '../../../../../common/services/excel.service';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { JSON_TO_CSV } from '../../../../admin/home/constants/json-to-csv';
-import { UploadExpedientFormComponent } from '../../sampling-assets/upload-expedient-form/upload-expedient-form.component';
-import { UploadImagesFormComponent } from '../../sampling-assets/upload-images-form/upload-images-form.component';
+import { UploadExpedientFormComponent } from '../upload-expedient-form/upload-expedient-form.component';
+import { UploadImagesFormComponent } from '../upload-images-form/upload-images-form.component';
 
 var data = [
   {

@@ -1,20 +1,25 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'app-msg-rsb-c-register-request-goods',
   templateUrl: './msg-rsb-c-register-request-goods.component.html',
   styleUrls: ['./msg-rsb-c-register-request-goods.component.scss'],
 })
-export class MsgRsbCRegisterRequestGoodsComponent implements OnInit {
+export class MsgRsbCRegisterRequestGoodsComponent
+  extends BasePage
+  implements OnInit
+{
   /** INPUT VARIABLES */
   @Input() nombrePantalla: string = 'sinNombre';
   @Input() idParam: number = null;
-  @Input() registroDocumentacion: boolean = false;
-  @Input() buscarAsociarExpediente: boolean = false;
-  @Input() seleccionarBienes: boolean = false;
-  @Input() expediente: boolean = false;
+  @Input() registroDocumentacion: boolean = true;
+  @Input() buscarAsociarExpediente: boolean = true;
+  @Input() seleccionarBienes: boolean = true;
+  @Input() expediente: boolean = true;
+  public typeDoc: string = '';
 
   /** OUTPUT VARIABLES */
   @Output() formValuesDataDocumentation = new EventEmitter<any>();
@@ -24,14 +29,14 @@ export class MsgRsbCRegisterRequestGoodsComponent implements OnInit {
   requestNumb: number;
   registRequestForm: FormGroup;
 
-  constructor(
-    private activatedRoute: ActivatedRoute,
-    private fb: FormBuilder
-  ) {}
+  constructor(private activatedRoute: ActivatedRoute, private fb: FormBuilder) {
+    super();
+  }
 
   ngOnInit(): void {
     this.getPathParameter();
     this.prepareForm();
+    this.requestSelected(1);
   }
 
   getPathParameter() {
@@ -66,5 +71,38 @@ export class MsgRsbCRegisterRequestGoodsComponent implements OnInit {
   dataSeleccionarBienes(data: any) {
     console.log(data);
     this.formValuesSeleccionarBienes.emit(data);
+  }
+
+  typeDocumentMethod(type: number) {
+    switch (type) {
+      case 1:
+        this.typeDoc = 'doc-request';
+        break;
+      case 2:
+        this.typeDoc = 'doc-expedient';
+        break;
+      case 3:
+        this.typeDoc = 'request-expedient';
+        break;
+      default:
+        break;
+    }
+  }
+
+  requestSelected(type: number) {
+    this.typeDocumentMethod(type);
+  }
+
+  turnRequest() {
+    this.alertQuestion(
+      'question',
+      `¿Desea turnar la solicitud con Folio ${this.requestNumb}`,
+      '',
+      'Turnar'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.onLoadToast('success', 'Solicitud turnada con éxito', '');
+      }
+    });
   }
 }

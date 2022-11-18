@@ -15,6 +15,7 @@ export class RegisterDocumentationFormComponent
   infoOrigins: any[] = [];
   maxDate: Date = new Date();
   @Input() requestId: number;
+  @Input() subject: string;
   registerForm: FormGroup = new FormGroup({});
   @Output() onRegister = new EventEmitter<any>();
 
@@ -61,20 +62,20 @@ export class RegisterDocumentationFormComponent
   prepareForm() {
     this.registerForm = this.fb.group({
       priority: [null],
-      infoOrigin: [null],
+      contributor: [null, [Validators.required]],
       fileType: [null],
+      infoOrigin: [null],
+      receptionDate: [null, [Validators.required]],
       memorandumNo: [null, [Validators.required]],
-      memorandumDate: [null, [Validators.required]],
-      subject: [null],
       transferFile: [null, [Validators.required]],
-      felony: [null],
+      memorandumDate: [null, [Validators.required]],
+      subject: [this.subject],
       receptionMethod: [null],
       transferType: [null],
       senderName: [null],
       senderPosition: [null],
       senderPhone: [null],
       senderEmail: [null],
-      contributor: [null, [Validators.required]],
       judgementType: [null, [Validators.required]],
       judgement: [null],
       observations: [null],
