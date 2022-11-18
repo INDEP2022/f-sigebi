@@ -124,13 +124,20 @@
               heading="Registro de Documentación"
               id="tab1"
               *ngIf="registroDocumentacion">
-              <ng-container *ngIf="nombrePantalla == 'return-request-record'">
+              <ng-container
+                *ngIf="
+                  nombrePantalla == 'return-request-record';
+                  else elseBlock
+                ">
                 <app-register-documentation
                   (formValues)="dataRegistration($event)"
                   [nombrePantalla]="
                     nombrePantalla
                   "></app-register-documentation>
               </ng-container>
+              <ng-template #elseBlock>
+                <app-register-documentation></app-register-documentation>
+              </ng-template>
             </tab>
             <tab
               heading="Buscar y Asociar al Expediente"
@@ -139,9 +146,16 @@
               <app-associate-file></app-associate-file>
             </tab>
             <tab heading="Seleccionar Bienes" *ngIf="seleccionarBienes">
-              <ng-container *ngIf="nombrePantalla == 'return-request-record'">
+              <ng-container
+                *ngIf="
+                  nombrePantalla == 'return-request-record';
+                  else elseBlock2
+                ">
                 <app-select-goods></app-select-goods>
               </ng-container>
+              <ng-template #elseBlock2>
+                <app-select-similar-goods></app-select-similar-goods>
+              </ng-template>
             </tab>
             <tab heading="Expediente">
               <tabset class="md-tabs">
