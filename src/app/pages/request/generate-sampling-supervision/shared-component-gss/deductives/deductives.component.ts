@@ -37,6 +37,8 @@ export class DeductivesComponent implements OnInit {
   setEnableInputs(): void {
     if (this.typeTask === 'verify-warehouse-assets') {
       this.isReadonly = true;
+    } else if (this.typeTask === 'assets-classification') {
+      this.isReadonly = true;
     }
   }
 

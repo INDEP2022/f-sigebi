@@ -125,6 +125,16 @@ const routes: Routes = [
     data: { title: 'Restitución de Bienes' },
   },
   {
+    path: 'assets-classification',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-sampling-supervision/assets-classification/assets-classification.module'
+        )
+      ).AssetsClassificationModule,
+    data: { title: 'Clasificacion de Bienes' },
+  },
+  {
     path: 'transfer-request',
     loadChildren: async () =>
       (await import('./transfer-request/transfer-request.module'))
