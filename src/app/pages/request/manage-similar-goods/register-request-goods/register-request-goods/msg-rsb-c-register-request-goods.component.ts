@@ -15,10 +15,10 @@ export class MsgRsbCRegisterRequestGoodsComponent
   /** INPUT VARIABLES */
   @Input() nombrePantalla: string = 'sinNombre';
   @Input() idParam: number = null;
-  @Input() registroDocumentacion: boolean = false;
-  @Input() buscarAsociarExpediente: boolean = false;
-  @Input() seleccionarBienes: boolean = false;
-  @Input() expediente: boolean = false;
+  @Input() registroDocumentacion: boolean = true;
+  @Input() buscarAsociarExpediente: boolean = true;
+  @Input() seleccionarBienes: boolean = true;
+  @Input() expediente: boolean = true;
   public typeDoc: string = '';
 
   /** OUTPUT VARIABLES */
