@@ -19,6 +19,8 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
 
   isEnableAnex: boolean = false;
   willSave: boolean = false;
+  //envia los datos para mostrarse en el detalle de anexo
+  annexDetail: any[] = [];
 
   clasificationAnnex: boolean = true;
 
