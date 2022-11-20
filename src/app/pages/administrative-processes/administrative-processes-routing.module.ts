@@ -505,6 +505,16 @@ const routes: Routes = [
         data: { title: 'Reportes de almacen' },
       },
       {
+        path: 'warehouse-type',
+        loadChildren: async () =>
+          (
+            await import(
+              './administration-third/warehouse-type/warehouse-type.module'
+            )
+          ).WarehouseTypeModule,
+        data: { title: 'Tipos de Almacén' },
+      },
+      {
         path: 'control-service-orders',
         loadChildren: async () =>
           (
