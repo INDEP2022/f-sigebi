@@ -58,6 +58,10 @@ export const MENU: IMenuItem[] = [
             label: 'Muestreo Bienes',
             link: '/pages/request/sampling-assets',
           },
+          {
+            label: 'Genera Consultas',
+            link: '/pages/request/generate-sampling-service-orders/generate-query',
+          },
         ],
       },
       // APP -- GESTIONAR DEVOLUCION -- Registro de Solicitud de Devolución
