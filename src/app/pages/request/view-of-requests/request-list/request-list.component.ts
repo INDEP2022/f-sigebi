@@ -53,6 +53,14 @@ var usuario: IRequestList[] = [
     process: 'RE_SolicitarRecursos',
   },
   {
+    title: 'Solicitud orden de servicio (Captura de servicios)',
+    noRequest: 5464,
+    numTask: 212324,
+    noInstance: 4502344,
+    created: 'tester_nsbxt',
+    process: 'OrderServiceProccess',
+  },
+  {
     title:
       'Revisión de Lineamientos de Resarcimiento (NUMERARIO), No. Solicitud: 1896, Contribuyente CARLOS G. PALMA',
     noRequest: 1896,
@@ -134,6 +142,14 @@ export class RequestListComponent extends BasePage implements OnInit {
           event.data.noRequest,
         ]);
         break;
+
+      case 'OrderServiceProccess':
+        this.router.navigate([
+          'pages/request/reception-service-order/service-order-request-capture',
+          event.data.noRequest,
+        ]);
+        break;
+
       case 'RegistroSolicitudes':
         // en el caso de que el proceso seleccionado sea Bienes Similares
         this.router.navigate([
@@ -155,6 +171,11 @@ export class RequestListComponent extends BasePage implements OnInit {
           event.data.noRequest,
         ]);
         break;
+
+      case 'OrderServiceProccess':
+        this.router.navigate([]);
+        break;
+
       case 'SolicitudeTransferencia':
         // en el caso de que sea una solicitud de programacion de resarcimiento economico
         this.router.navigate([
@@ -187,6 +208,7 @@ export class RequestListComponent extends BasePage implements OnInit {
         // en el caso de que sea el proceso de registrar orden de pago de resarcimiento economico
         this.router.navigate([
           'pages/request/economic-compensation/compensation-act',
+
           event.data.noRequest,
         ]);
         break;

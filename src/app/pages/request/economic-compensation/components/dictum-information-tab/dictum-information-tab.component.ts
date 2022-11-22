@@ -1,6 +1,5 @@
-import { Component,Input,OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { IDictumInformation } from './../../../../../core/models/requests/dictumInformation.model';
-
 
 @Component({
   selector: 'app-dictum-information-tab',
