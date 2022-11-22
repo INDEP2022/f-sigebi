@@ -183,6 +183,18 @@ const routes: Routes = [
       (await import('./manage-return/manage-return.module')).ManageReturnModule,
     data: { title: 'Registro de Solicitud de Devolución' },
   },
+  // gestionar devolucion
+
+  //Orden de servicio programación recepción//
+  {
+    path: 'reception-service-order',
+    loadChildren: async () =>
+      (
+        await import(
+          './reception-scheduling-service-order/reception-scheduling-service-order.module'
+        )
+      ).ReceptionSchedulingServiceOrderModule,
+  },
   // Solicitud Documentación Complementaria
   {
     path: 'request-comp-doc',
