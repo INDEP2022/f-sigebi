@@ -329,6 +329,11 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             link: '/pages/administrative-processes/storehouse',
           },
           {
+            label: 'Tipo de Almacén',
+            link: '/pages/administrative-processes/warehouse-type',
+          },
+
+          {
             label: 'Control de las ordenes de servicio',
             link: '/pages/administrative-processes/control-service-orders',
           },
