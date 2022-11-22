@@ -14,6 +14,8 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
   fileForm: ModelForm<any>;
   certiToUpload: File | null = null;
   keyCertiToUpload: File | null = null;
+  typeReport: string = '';
+  isRFCHided: boolean = true;
 
   constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
@@ -21,17 +23,35 @@ export class UploadFielsModalComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     console.log(this.data);
+    console.log(this.typeReport);
     this.initForm();
+    this.setRFCInput();
   }
 
   initForm() {
     this.fileForm = this.fb.group({
-      name: [null],
-      position: [null],
+      name: [{ value: null, disabled: true }],
+      position: [{ value: null, disabled: true }],
       password: [null],
+      rfc: [null],
       certificationFile: [null],
       keyCertificationFile: [null],
     });
+  }
+
+  setRFCInput(): void {
+    //typeReport === 'annexK' || typeReport === 'annexJ'
+    if (
+      this.typeReport === 'annexJ-assets-classification' ||
+      this.typeReport === 'annexK-assets-classification'
+    ) {
+      this.isRFCHided = false;
+    } else if (
+      this.typeReport === 'annexJ-verify-noncompliance' ||
+      this.typeReport === 'annexJ-verify-noncompliance'
+    ) {
+      this.isRFCHided = false;
+    }
   }
 
   chargeCertifications(event: any) {

@@ -4,6 +4,10 @@ export const COLUMNS = {
     sort: false,
   },
   descripcion: {
+    title: 'Descripción',
+    sort: false,
+  },
+  desc_recibo: {
     title: 'Descripción Reportes',
     sort: false,
   },

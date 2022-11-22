@@ -3,7 +3,7 @@ export const COLUMNS = {
     title: 'Marca',
     sort: false,
   },
-  descripcion: {
+  description: {
     title: 'Descripción',
     sort: false,
   },

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { NgScrollbarModule } from 'ngx-scrollbar';
@@ -23,8 +24,18 @@ import { GoodDocTabComponent } from './expedients-tabs/sub-tabs/good-doc-tab/goo
 import { NewDocumentComponent } from './expedients-tabs/sub-tabs/new-document/new-document.component';
 import { RequestOfAssetsComponent } from './expedients-tabs/sub-tabs/request-of-assets/request-of-assets.component';
 import { GenerateReceiptFormComponent } from './generate-receipt-form/generate-receipt-form.component';
+import { GoodsListComponent } from './goods-list/goods-list.component';
+import { GuidelinesViewComponent } from './guidelines-view/guidelines-view.component';
+import { GuidelinesObservationsComponent } from './guidelines/guidelines-observations/guidelines-observations.component';
+import { GuidelinesRevisionViewComponent } from './guidelines/guidelines-revision-view/guidelines-revision-view.component';
+import { GuidelinesRevisionComponent } from './guidelines/guidelines-revision/guidelines-revision.component';
+import { GuidelinesComponent } from './guidelines/guidelines.component';
 import { PhotographyFormComponent } from './photography-form/photography-form.component';
+import { RegisterDocumentationFormComponent } from './register-documentation-form/register-documentation-form.component';
+import { RegisterDocumentationViewComponent } from './register-documentation-view/register-documentation-view.component';
 import { RequestFormComponent } from './request-form/request-form.component';
+import { RequestInformationRejectComponent } from './request-information-reject/request-information-reject.component';
+import { RequestInformationSimilarGoodsComponent } from './request-information-similar-goods/request-information-similar-goods.component';
 import { RequestInformationComponent } from './request-information/request-information.component';
 import { RequestSiabFormComponent } from './request-siab-form/request-siab-form.component';
 import { SearchInventoryGoodsComponent } from './search-inventory-goods/search-inventory-goods.component';
@@ -81,6 +92,16 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     BtnRequestComponent,
     NewDocumentComponent,
     DetailAssetsTabComponentComponent,
+    RegisterDocumentationViewComponent,
+    GoodsListComponent,
+    GuidelinesComponent,
+    RequestInformationSimilarGoodsComponent,
+    GuidelinesRevisionComponent,
+    GuidelinesObservationsComponent,
+    GuidelinesRevisionViewComponent,
+    RequestInformationRejectComponent,
+    GuidelinesViewComponent,
+    RegisterDocumentationFormComponent,
   ],
   imports: [
     CommonModule,
@@ -89,6 +110,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     SharedModule,
     NgScrollbarModule,
     CollapseModule.forRoot(),
+    BsDatepickerModule.forRoot(),
   ],
   exports: [
     RequestFormComponent,
@@ -105,6 +127,14 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     BtnRequestComponent,
     NewDocumentComponent,
     DetailAssetsTabComponentComponent,
+    RegisterDocumentationViewComponent,
+    GoodsListComponent,
+    GuidelinesComponent,
+    RequestInformationSimilarGoodsComponent,
+    SearchInventoryGoodsComponent,
+    RequestInformationRejectComponent,
+    GuidelinesViewComponent,
+    RegisterDocumentationFormComponent,
   ],
 })
 export class SharedRequestModule {}

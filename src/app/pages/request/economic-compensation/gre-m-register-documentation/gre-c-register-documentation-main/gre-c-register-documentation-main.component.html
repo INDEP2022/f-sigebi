@@ -32,6 +32,7 @@
         <tab heading="Registro de Documentación" id="documentationTab">
           <app-register-documentation-form
             [requestId]="requestId"
+            [subject]="'NUMERARIO DECOMISADO DEVUELTO'"
             (onRegister)="
               requestRegistered($event)
             "></app-register-documentation-form>

@@ -275,6 +275,10 @@ export const COMMERCIALIZATION_ROUTES = [
             label: 'Modelos',
             link: '/pages/commercialization/catalogs/models',
           },
+          {
+            label: 'Eventos por Proceso',
+            link: '/pages/commercialization/catalogs/event-process',
+          },
         ],
       },
       {
@@ -341,6 +345,31 @@ export const COMMERCIALIZATION_ROUTES = [
       {
         label: 'Entrega de Bienes',
         link: '/pages/commercialization/good-delivery',
+      },
+      //Henry2
+      {
+        label: 'Publicación de fotografías',
+        link: '/pages/commercialization/c-pdf-m-publication-photographs',
+      },
+      {
+        label: 'Reporte de pagos recibidos',
+        link: '/pages/commercialization/c-rrp-m-payment-receipts-report',
+      },
+      {
+        label: 'Reporte de actas de enajenación',
+        link: '/pages/commercialization/c-rae-m-disposal-record-report',
+      },
+      {
+        label: 'Bienes comercializados',
+        link: '/pages/commercialization/c-bc-m-traded-goods',
+      },
+      {
+        label: 'Licitación de bienes',
+        link: '/pages/commercialization/c-lb-m-goods-tenders',
+      },
+      {
+        label: 'Ficha comercial',
+        link: '/pages/commercialization/c-fc-m-commercial-file',
       },
     ],
   },
