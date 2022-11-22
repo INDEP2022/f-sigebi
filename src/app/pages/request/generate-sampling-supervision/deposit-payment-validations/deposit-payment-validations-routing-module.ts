@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { UnreconciledFilesComponent } from './unreconciled-files/unreconciled-files.component';
+import { PaymentValidationsComponent } from './payment-validations/payment-validations.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: UnreconciledFilesComponent,
+    component: PaymentValidationsComponent,
   },
 ];
 
@@ -13,4 +13,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class UnreconciledFilesRoutingModule {}
+export class DepositPaymentValidationsRoutingModule {}

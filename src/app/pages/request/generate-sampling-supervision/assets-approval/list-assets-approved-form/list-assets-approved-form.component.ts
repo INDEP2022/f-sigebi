@@ -1,12 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ExcelService } from '../../../../../common/services/excel.service';
-import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { JSON_TO_CSV } from '../../../../admin/home/constants/json-to-csv';
 import { UploadExpedientFormComponent } from '../../shared-component-gss/upload-expedient-form/upload-expedient-form.component';
 import { UploadImagesFormComponent } from '../../shared-component-gss/upload-images-form/upload-images-form.component';
-import { DataCaptureForEntryOrderFormComponent } from '../data-capture-for-entry-order-form/data-capture-for-entry-order-form.component';
 
 var data = [
   {
@@ -16,33 +14,39 @@ var data = [
     description: 'AUTO ZERO KILOMETOS TOYOTA SUBARUN',
     quantity: 1,
     unity: 'PIEZA',
-    typeRestitution: '',
-    dateRestitution: '',
-    quantityMissingDamaged: '1',
+    quantityMissingDamaged: '',
+    statusRestitution: '',
+    replacementDate: '',
+    resultEvaluation: 'NO CUMPLE',
+    statusAsset: 'FALTANTE',
+    typeRestitution: 'EN ESPERA',
   },
   {
     id: 2,
     noManagement: '154654',
     noInventory: '000147',
     description: 'AUTO ZERO KILOMETOS TOYOTA SUBARUN',
-    quantity: 1,
     unity: 'PIEZA',
-    typeRestitution: '',
-    dateRestitution: '',
-    quantityMissingDamaged: '2',
+    quantityMissingDamaged: '',
+    statusRestitution: '',
+    replacementDate: '',
+    resultEvaluation: 'NO CUMPLE',
+    statusAsset: 'FALTANTE',
+    typeRestitution: 'EN ESPERA',
   },
 ];
 
 @Component({
-  selector: 'app-list-restitutions-assets',
-  templateUrl: './list-restitutions-assets.component.html',
-  styleUrls: ['./list-restitutions-assets.component.scss'],
+  selector: 'app-list-assets-approved-form',
+  templateUrl: './list-assets-approved-form.component.html',
+  styleUrls: ['./list-assets-approved-form.component.scss'],
 })
-export class ListRestitutionsAssetsComponent implements OnInit {
-  assetsArray: Array<any> = [];
-  assetForm: ModelForm<any>;
-  assetsSelected: any[] = [];
+export class ListAssetsApprovedFormComponent implements OnInit {
+  @Input() willSave: boolean = false;
+  @Input() typeTask: string = '';
   bsModalRef: BsModalRef;
+  assetsArray: any[] = [];
+  assetsSelected: any[] = [];
   jsonToCsv = JSON_TO_CSV;
 
   constructor(
@@ -53,17 +57,9 @@ export class ListRestitutionsAssetsComponent implements OnInit {
 
   ngOnInit(): void {
     this.assetsArray = data;
-
-    this.assetForm = this.fb.group({
-      date: [''],
-    });
   }
 
-  updateMyDate(event: any) {
-    console.log(event);
-  }
-
-  uploadExpedient(): void {
+  uploadExpedient() {
     //if (this.assetsSelected.length == 0) return;
     this.openModals(UploadExpedientFormComponent, '');
   }
@@ -78,40 +74,30 @@ export class ListRestitutionsAssetsComponent implements OnInit {
     this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
   }
 
-  selectOne(event: any, asset: any): void {
+  approve() {
+    //cambiar el select input a aprobado en la tabla
+  }
+
+  refuse() {
+    //  cambiar el select input a rechazar en la tabla
+  }
+
+  selectOne(event: any, asset: any) {
     if (event.target.checked == true) {
-      this.assetsSelected.push(data);
+      this.assetsSelected.push(asset);
     } else {
       let index = this.assetsSelected.indexOf(
         this.assetsArray.find(x => x.id == asset.id)
       );
       this.assetsSelected.splice(index, 1);
     }
-    console.log(this.assetsSelected);
+    //console.log(this.assetsSelected);
+    //const items:any = {item1: this.assetsSelected}
+    //this.store.dispatch(add({items}))
   }
 
-  numeric(): void {
-    //actualiza los bienes para restitucion numerica
-
-    let config: ModalOptions = {
-      initialState: {
-        data: '',
-        typeComponent: '',
-        callback: (next: boolean) => {
-          //if (next){ this.getData();}
-        },
-      },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    };
-    this.modalService.show(DataCaptureForEntryOrderFormComponent, config);
-  }
-
-  inSort(): void {
-    //actualiza el tipo de restitucion
-    console.log(this.assetsSelected);
-  }
-
+  //preguntar si el formulario y los datos que se guardaran son similare
+  //para sampling-assets-form y este
   openModals(component: any, data?: any): void {
     let config: ModalOptions = {
       initialState: {
