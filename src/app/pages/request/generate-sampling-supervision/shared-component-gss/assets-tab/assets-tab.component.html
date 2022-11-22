@@ -19,7 +19,7 @@
         </button>
       </div>
       <div class="m-3">
-        <button class="btn btn-primary btn-sm active">
+        <button class="btn btn-primary btn-sm active" (click)="exportCsv()">
           <i class="bx bx-download"></i> Descargar Archivo
         </button>
       </div>
@@ -32,11 +32,26 @@
         bienes en el almacén
       </p>
     </div>
+    <div class="row pt-4" *ngIf="typeTask === 'payment-validatios'">
+      <div class="d-flex">
+        <div class="p-2">
+          <button class="btn btn-success btn-sm active">
+            <i class="bx bx-check"></i> Aprovar
+          </button>
+        </div>
+        <div class="p-2">
+          <button class="btn btn-danger btn-sm active">
+            <i class="bx bx-x"></i> Rechazar
+          </button>
+        </div>
+      </div>
+    </div>
     <div class="col-md-12">
-      <!--    <form [formGroup]="assetsForm">-->
       <!--      <div [class]="loading ? 'table-loading' : ''">-->
       <ng-scrollbar track="all" style="min-height: 200px; border: none">
-        <table class="table table-bordered">
+        <table
+          class="table table-bordered"
+          style="white-space: nowrap; overflow-x: auto">
           <thead>
             <tr>
               <th scope="col" style="text-align: center">
@@ -52,7 +67,7 @@
               </th>
               <th scope="col">Número Gestión</th>
               <th scope="col">Número Inventario</th>
-              <th scope="col">Descripción</th>
+              <th scope="col" class="description">Descripción</th>
               <th scope="col">Cantidad</th>
               <th scope="col">Unidad</th>
               <th scope="col">Resultados De Evaluación</th>
@@ -65,6 +80,7 @@
             <tr *ngFor="let asset of assetsArray; let i = index">
               <th scope="row" style="text-align: center">
                 <input
+                  [ngClass]="isCheckboxReadonly ? 'disable-input' : ''"
                   type="checkbox"
                   value="{{ asset.id }}"
                   [(ngModel)]="asset.checked"
@@ -108,7 +124,6 @@
           </tbody>
         </table>
       </ng-scrollbar>
-      <!--    </form>-->
     </div>
   </div>
 </div>

@@ -8,6 +8,8 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { UsersSelectedToTurnComponent } from '../users-selected-to-turn/users-selected-to-turn.component';
 import { IRequestInTurnSelected } from './../../../../core/models/catalogs/request-in-turn-selected.model';
+//Provisional Data
+import { issuesData } from './data';
 
 @Component({
   selector: 'app-create-request',
@@ -30,6 +32,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
   selectState = new DefaultSelect<IRequest>();
   selectIssue = new DefaultSelect<IRequest>();
 
+  issues = new DefaultSelect<any>();
+
   constructor(
     public fb: FormBuilder,
     public modalService: BsModalService,
@@ -40,6 +44,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getIssue();
   }
 
   prepareForm(): void {
@@ -53,6 +58,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       authority: [null],
       typeUser: ['all'],
       receiUser: [{ value: '', disabled: true }],
+      issue: [null],
     });
     //se agregan campos documentación complementaria según el valor del parametro OP
     if (this.op == 2) this.complementaryDocumentationField(this.requestForm);
@@ -76,7 +82,12 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
   getState(event: any): void {}
 
-  getIssue(event: any): void {}
+  getIssue(event?: any): void {
+    //Provisional data
+    let data = issuesData;
+    let count = data.length;
+    this.issues = new DefaultSelect(data, count);
+  }
 
   openModalSelectUser() {
     let config: ModalOptions = {

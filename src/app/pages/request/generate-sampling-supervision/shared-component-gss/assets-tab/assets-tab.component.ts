@@ -5,8 +5,8 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ExcelService } from '../../../../../common/services/excel.service';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { JSON_TO_CSV } from '../../../../admin/home/constants/json-to-csv';
-import { UploadExpedientFormComponent } from '../../sampling-assets/upload-expedient-form/upload-expedient-form.component';
-import { UploadImagesFormComponent } from '../../sampling-assets/upload-images-form/upload-images-form.component';
+import { UploadExpedientFormComponent } from '../upload-expedient-form/upload-expedient-form.component';
+import { UploadImagesFormComponent } from '../upload-images-form/upload-images-form.component';
 
 var data = [
   {
@@ -38,7 +38,7 @@ var data = [
 @Component({
   selector: 'app-assets-tab',
   templateUrl: './assets-tab.component.html',
-  styles: [],
+  styleUrls: ['./assets-tab.component.scss'],
 })
 export class AssetsTabComponent implements OnInit {
   @Input() willSave: boolean = false;
@@ -49,6 +49,7 @@ export class AssetsTabComponent implements OnInit {
   assetsSelected: any[] = [];
   jsonToCsv = JSON_TO_CSV;
   isReadonly: boolean = false;
+  isCheckboxReadonly: boolean = false;
   checkboxTitle: string = '';
 
   constructor(
@@ -59,6 +60,7 @@ export class AssetsTabComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log(this.typeTask);
     this.setEnableInputs();
     this.assetsArray = data;
     //console.log(this.willSave);
@@ -81,6 +83,12 @@ export class AssetsTabComponent implements OnInit {
   setEnableInputs(): void {
     if (this.typeTask === 'verify-warehouse-assets') {
       this.checkboxTitle = 'Localizado';
+      this.isReadonly = true;
+    } else if (this.typeTask === 'assets-classification') {
+      this.isReadonly = true;
+      this.checkboxTitle = 'Número Gestión';
+      this.isCheckboxReadonly = true;
+    } else if (this.typeTask === 'payment-validatios') {
       this.isReadonly = true;
     }
   }

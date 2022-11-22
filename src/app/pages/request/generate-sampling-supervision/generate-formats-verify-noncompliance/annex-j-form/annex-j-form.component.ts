@@ -11,6 +11,7 @@ import { PrintReportModalComponent } from '../../../transfer-request/tabs/notify
 })
 export class AnnexJFormComponent implements OnInit {
   signForm: ModelForm<any>;
+  typeAnnex: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -19,6 +20,7 @@ export class AnnexJFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log(this.typeAnnex);
     this.initForm();
   }
 
@@ -41,7 +43,7 @@ export class AnnexJFormComponent implements OnInit {
     console.log(this.signForm.value);
 
     //usando el generador de reportes de notify-clarifications/print-report
-    this.openModal(PrintReportModalComponent, '', 'annexj');
+    this.openModal(PrintReportModalComponent, '', this.typeAnnex);
   }
 
   openModal(component: any, data?: any, typeReport?: String): void {

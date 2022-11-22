@@ -329,6 +329,11 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             link: '/pages/administrative-processes/storehouse',
           },
           {
+            label: 'Tipo de Almacén',
+            link: '/pages/administrative-processes/warehouse-type',
+          },
+
+          {
             label: 'Control de las ordenes de servicio',
             link: '/pages/administrative-processes/control-service-orders',
           },
@@ -586,6 +591,18 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
           {
             label: 'Cuentas aseguradas por bancos',
             link: '/pages/administrative-processes/bank-accounts-insured',
+          },
+          {
+            label: 'Estado de cuenta por Indiciado',
+            link: '/pages/administrative-processes/massive-account-indiciado',
+          },
+          {
+            label: 'Expedientes sin conciliar',
+            link: '/pages/administrative-processes/unreconcilied-files',
+          },
+          {
+            label: 'Fichas de deposito sin conciliar',
+            link: '/pages/administrative-processes/deposit-unreconcilied-files',
           },
         ],
       },

@@ -1,0 +1,36 @@
+<div class="pt-3">
+  <h5 class="title">
+    <p>
+      <a class="text-color" (click)="showComments = true" *ngIf="!showComments">
+        <i class="fa fa-angle-right" aria-hidden="true"></i> Comentarios</a
+      >
+    </p>
+
+    <p>
+      <a class="text-color" (click)="showComments = false" *ngIf="showComments">
+        <i class="fa fa-angle-down" aria-hidden="true"></i> Comentarios</a
+      >
+    </p>
+  </h5>
+
+  <div class="row pt-3" *ngIf="showComments">
+    <div class="col-md-12">
+      <form [formGroup]="commentsForm" class="form-material">
+        <div class="pt-3">
+          <form-field
+            [control]="commentsForm.get('observations')"
+            label="Observaciones">
+            <textarea
+              class="form-control"
+              formControlName="observations"></textarea>
+          </form-field>
+        </div>
+        <div class="pt-3">
+          <form-field [control]="commentsForm.get('note')" label="Notas">
+            <textarea class="form-control" formControlName="note"></textarea>
+          </form-field>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
