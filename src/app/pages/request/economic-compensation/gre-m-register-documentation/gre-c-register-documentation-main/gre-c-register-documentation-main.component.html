@@ -1,31 +1,35 @@
 <app-card [header]="true">
-  <div class="ch-content" header>
-    <h5 class="title">
-      RESARCIMIENTO EN ESPECIE: Registro de Documentación Complementaria, No.
-      Solicitud:
-      {{ requestId }}
-    </h5>
-  </div>
-  <div body>
-    <div class="d-flex flex-row-reverse">
-      <div class="mx-1">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm active"
-          [disabled]="">
-          <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Guardar
-        </button>
-      </div>
-      <div class="mx-1">
-        <button
-          type="button"
-          (click)="turnRequest()"
-          class="btn btn-primary btn-sm active"
-          [disabled]="">
-          <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Turnar
-        </button>
+  <div class="ch-content justify-content-between" header>
+    <div class="">
+      <h5 class="title">
+        RESARCIMIENTO EN ESPECIE: Registro de Documentación Complementaria, No.
+        Solicitud:
+        {{ requestId }}
+      </h5>
+    </div>
+    <div class="mt-2">
+      <div class="d-flex flex-row-reverse">
+        <div class="mx-1">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]="">
+            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Guardar
+          </button>
+        </div>
+        <div class="mx-1">
+          <button
+            type="button"
+            (click)="turnRequest()"
+            class="btn btn-primary btn-sm active"
+            [disabled]="">
+            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Turnar
+          </button>
+        </div>
       </div>
     </div>
+  </div>
+  <div body>
     <app-request-information [request]="requestInfo"></app-request-information>
     <div class="md-tabs">
       <tabset>
