@@ -1,30 +1,34 @@
 <app-card [header]="true">
-  <div class="ch-content" header>
-    <h5 class="title">
-      Registrar Orden de Pago (Resarcmiento NUMERARIO), No. Solicitud:
-      {{ requestId }}, Contribuyente: {{ contributor }}
-    </h5>
-  </div>
-  <div body>
-    <div class="d-flex flex-row-reverse">
-      <div class="mx-1">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm active"
-          (click)="turnRequest()"
-          [disabled]="">
-          <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Turnar
-        </button>
-      </div>
-      <div class="mx-1">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm active"
-          [disabled]="">
-          <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Guardar
-        </button>
+  <div class="ch-content justify-content-between" header>
+    <div class="">
+      <h5 class="title">
+        Registrar Orden de Pago (Resarcmiento NUMERARIO), No. Solicitud:
+        {{ requestId }}, Contribuyente: {{ contributor }}
+      </h5>
+    </div>
+    <div class="mt-2">
+      <div class="d-flex flex-row-reverse">
+        <div class="mx-1">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            (click)="turnRequest()"
+            [disabled]="">
+            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Turnar
+          </button>
+        </div>
+        <div class="mx-1">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]="">
+            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Guardar
+          </button>
+        </div>
       </div>
     </div>
+  </div>
+  <div body>
     <app-request-information-reject
       [request]="requestInfo"></app-request-information-reject>
     <div class="md-tabs">
