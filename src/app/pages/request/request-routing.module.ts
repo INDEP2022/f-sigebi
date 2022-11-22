@@ -195,6 +195,17 @@ const routes: Routes = [
         )
       ).ReceptionSchedulingServiceOrderModule,
   },
+  // Solicitud Documentación Complementaria
+  {
+    path: 'request-comp-doc',
+    loadChildren: async () =>
+      (
+        await import(
+          './request-complementary-documentation/request-complementary-documentation.module'
+        )
+      ).RequestComplementaryDocumentationModule,
+    data: { title: 'Registro de Solicitud Dcoumentación Complementaria' },
+  },
 ];
 
 @NgModule({
