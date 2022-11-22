@@ -52,6 +52,17 @@ var usuario: IRequestList[] = [
     created: 'tester_nsbxt',
     process: 'RE_SolicitarRecursos',
   },
+  {
+    title: 'Solicitud orden de servicio (Captura de servicios)',
+    noRequest: 5464,
+    numTask: 212324,
+    noInstance: 4502344,
+    created: 'tester_nsbxt',
+    process: 'OrderServiceProccess',
+  },
+  {
+    title: 'Validación de ',
+  },
 ];
 
 @Component({
@@ -116,6 +127,12 @@ export class RequestListComponent extends BasePage implements OnInit {
         // en el caso de que sea el proceso de registrar solicitud de recursos economicos
         this.router.navigate([
           'pages/request/economic-compensation/economic-resources',
+          event.data.noRequest,
+        ]);
+        break;
+      case 'OrderServiceProccess':
+        this.router.navigate([
+          'pages/request/reception-service-order/service-order-request-capture',
           event.data.noRequest,
         ]);
         break;
