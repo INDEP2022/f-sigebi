@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IRequestInformation } from '../../../../../core/models/requests/requestInformation.model';
@@ -6,7 +6,7 @@ import { IRequestInformation } from '../../../../../core/models/requests/request
 @Component({
   selector: 'app-gre-c-guidelines-revision-main',
   templateUrl: './gre-c-guidelines-revision-main.component.html',
-  styles: [],
+  styleUrls: ['./gre-c-guidelines-revision-main.component.scss'],
 })
 export class GreCGuidelinesRevisionMainComponent
   extends BasePage
@@ -15,10 +15,15 @@ export class GreCGuidelinesRevisionMainComponent
   requestId: number = NaN;
   contributor: string = '';
   requestInfo: IRequestInformation;
+  screenWidth: number;
   public typeDoc: string = '';
 
   constructor(private route: ActivatedRoute, private router: Router) {
     super();
+    this.screenWidth =
+      window.innerWidth ||
+      document.documentElement.clientWidth ||
+      document.body.clientWidth;
   }
 
   ngOnInit(): void {
@@ -29,6 +34,12 @@ export class GreCGuidelinesRevisionMainComponent
       }
     });
     this.requestSelected(1);
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    let screenWidth = window.innerWidth;
+    this.screenWidth = screenWidth;
   }
 
   getRequestInfo(rquestId: number) {

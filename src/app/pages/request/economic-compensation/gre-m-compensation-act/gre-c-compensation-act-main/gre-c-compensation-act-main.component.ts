@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IRequestInformation } from 'src/app/core/models/requests/requestInformation.model';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -6,7 +6,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-gre-c-compensation-act-main',
   templateUrl: './gre-c-compensation-act-main.component.html',
-  styles: [],
+  styleUrls: ['./gre-c-compensation-act-main.component.scss'],
 })
 export class GreCCompensationActMainComponent
   extends BasePage
@@ -15,10 +15,15 @@ export class GreCCompensationActMainComponent
   requestId: number = NaN;
   contributor: string = '';
   requestInfo: IRequestInformation;
+  screenWidth: number;
   public typeDoc: string = '';
 
   constructor(private route: ActivatedRoute, private router: Router) {
     super();
+    this.screenWidth =
+      window.innerWidth ||
+      document.documentElement.clientWidth ||
+      document.body.clientWidth;
   }
 
   ngOnInit(): void {
@@ -29,6 +34,12 @@ export class GreCCompensationActMainComponent
       }
     });
     this.requestSelected(1);
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    let screenWidth = window.innerWidth;
+    this.screenWidth = screenWidth;
   }
 
   getRequestInfo(rquestId: number) {

@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { RequestSiabFormComponent } from '../request-siab-form/request-siab-form.component';
 import { AddGoodsButtonComponent } from './add-goods-button/add-goods-button.component';
 import { ReserveGoodModalComponent } from './reserve-good-modal/reserve-good-modal.component';
 import { SELECT_GOODS_COLUMNS } from './select-goods-columns';
@@ -185,5 +186,10 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
     });
   }
 
-  siabSearch() {}
+  openSiabSearch() {
+    const modalRef = this.modalService.show(RequestSiabFormComponent, {
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+  }
 }
