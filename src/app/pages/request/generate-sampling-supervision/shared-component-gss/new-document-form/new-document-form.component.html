@@ -91,13 +91,16 @@
             </form-field>
           </div>
           <div class="col-md-4">
-            <form-field
-              [control]="documentForm.get('regionalDelegation')"
-              label="Delegación Regional">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="regionalDelegation" />
+            <form-field [control]="documentForm.get('regionalDelegation')">
+              <ngx-select
+                [form]="documentForm"
+                control="regionalDelegation"
+                [data]="regionalDelegationSelected"
+                value="id"
+                bindLabel="id"
+                label="Delegación Regional"
+                (fetchItems)="getRegionalDelegationSelect($event)">
+              </ngx-select>
             </form-field>
           </div>
         </div>
