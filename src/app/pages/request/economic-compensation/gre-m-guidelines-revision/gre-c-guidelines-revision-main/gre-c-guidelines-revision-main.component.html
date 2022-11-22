@@ -25,17 +25,18 @@
             <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Guardar
           </button>
         </div>
-        <div class="mx-1">
-          <button
-            type="button"
-            class="btn btn-primary btn-sm active"
-            [disabled]="">
-            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Dictamen
-            Resarcimiento
-          </button>
-        </div>
+      <div class="mx-1">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active"
+          [disabled]=""
+          (click)="createReport()">
+          <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Dictamen
+          Resarcimiento
+        </button>
       </div>
-      <div class="" *ngIf="screenWidth < 1200">
+    </div>
+    <div class="" *ngIf="screenWidth < 1200">
         <div
           class="btn-group"
           placement="bottom right"
@@ -77,8 +78,7 @@
             </li>
           </ul>
         </div>
-      </div>
-    </div>
+        </div>
   </div>
   <div body>
     <app-request-information-similar-goods

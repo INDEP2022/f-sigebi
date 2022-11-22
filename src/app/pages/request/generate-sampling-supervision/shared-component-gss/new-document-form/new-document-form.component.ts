@@ -30,11 +30,12 @@ export class NewDocumentFormComponent
   typeDocSelected = new DefaultSelect();
   stateSelected = new DefaultSelect();
   typeTranferSelected = new DefaultSelect();
+  regionalDelegationSelected = new DefaultSelect();
 
   //datos pasados por el modal
   data: string = '';
   typeComponent: string = '';
-  isDisable: boolean = true;
+  isDisable: boolean = false;
 
   constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
     super();
@@ -42,9 +43,9 @@ export class NewDocumentFormComponent
 
   ngOnInit(): void {
     console.log(this.typeComponent);
-    if (this.typeComponent === 'verify-noncompliance') {
+    /*if (this.typeComponent === 'verify-noncompliance') {
       this.isDisable = false;
-    }
+    }*/
     this.initForm();
   }
 
@@ -61,9 +62,7 @@ export class NewDocumentFormComponent
       responsible: [null],
       noSiab: [null],
       contributor: [null],
-      regionalDelegation: [
-        { value: 'METROPOLITANA', disabled: this.isDisable },
-      ],
+      regionalDelegation: [{ value: '', disabled: this.isDisable }],
       noOfice: [null],
       state: [null],
       noProgramming: [null],
@@ -94,6 +93,8 @@ export class NewDocumentFormComponent
   getStateSelect(event: any) {}
 
   getTypeTranferSelect(event: any) {}
+
+  getRegionalDelegationSelect(event: any) {}
 
   close(): void {
     this.modalRef.hide();

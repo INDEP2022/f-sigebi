@@ -135,6 +135,26 @@ const routes: Routes = [
     data: { title: 'Clasificacion de Bienes' },
   },
   {
+    path: 'deposit-payment-validations',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-sampling-supervision/deposit-payment-validations/deposit-payment-validations.module'
+        )
+      ).DepositPaymentValidationsModule,
+    data: { title: 'Validación de pagos de fichas de deposito' },
+  },
+  {
+    path: 'assets-approval',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-sampling-supervision/assets-approval/assets-approval.module'
+        )
+      ).AssetsApprovalModule,
+    data: { title: 'Aprobación de bienes' },
+  },
+  {
     path: 'transfer-request',
     loadChildren: async () =>
       (await import('./transfer-request/transfer-request.module'))
@@ -164,6 +184,28 @@ const routes: Routes = [
     data: { title: 'Registro de Solicitud de Devolución' },
   },
   // gestionar devolucion
+
+  //Orden de servicio programación recepción//
+  {
+    path: 'reception-service-order',
+    loadChildren: async () =>
+      (
+        await import(
+          './reception-scheduling-service-order/reception-scheduling-service-order.module'
+        )
+      ).ReceptionSchedulingServiceOrderModule,
+  },
+  // Solicitud Documentación Complementaria
+  {
+    path: 'request-comp-doc',
+    loadChildren: async () =>
+      (
+        await import(
+          './request-complementary-documentation/request-complementary-documentation.module'
+        )
+      ).RequestComplementaryDocumentationModule,
+    data: { title: 'Registro de Solicitud Dcoumentación Complementaria' },
+  },
 ];
 
 @NgModule({

@@ -36,7 +36,7 @@ var data = [
 @Component({
   selector: 'app-list-restitutions-assets',
   templateUrl: './list-restitutions-assets.component.html',
-  styles: [],
+  styleUrls: ['./list-restitutions-assets.component.scss'],
 })
 export class ListRestitutionsAssetsComponent implements OnInit {
   assetsArray: Array<any> = [];

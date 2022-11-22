@@ -58,6 +58,10 @@ export const MENU: IMenuItem[] = [
             label: 'Muestreo Bienes',
             link: '/pages/request/sampling-assets',
           },
+          {
+            label: 'Solicitud de Documentación Complementaria',
+            link: '/pages/request/request-comp-doc',
+          },
         ],
       },
       // APP -- GESTIONAR DEVOLUCION -- Registro de Solicitud de Devolución
