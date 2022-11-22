@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 var data = [
   {
@@ -19,9 +19,10 @@ var data = [
 @Component({
   selector: 'app-verifications',
   templateUrl: './verifications.component.html',
-  styles: [],
+  styleUrls: ['./verifications.component.scss'],
 })
 export class VerificationsComponent implements OnInit {
+  @Input() data: any;
   listVerifications: any[] = [];
   verificationsSelected: any[] = [];
 

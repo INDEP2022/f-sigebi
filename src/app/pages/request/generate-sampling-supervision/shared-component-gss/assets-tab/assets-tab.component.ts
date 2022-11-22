@@ -88,6 +88,8 @@ export class AssetsTabComponent implements OnInit {
       this.isReadonly = true;
       this.checkboxTitle = 'Número Gestión';
       this.isCheckboxReadonly = true;
+    } else if (this.typeTask === 'payment-validatios') {
+      this.isReadonly = true;
     }
   }
 

@@ -5,6 +5,7 @@ a.text-color:active {
 }
 
 :host ::ng-deep ng2-smart-table {
+  font-size: small;
   app-btn-request {
     padding-right: 4rem !important;
 
@@ -12,6 +13,14 @@ a.text-color:active {
       text-decoration-line: underline !important;
       color: #9d2449 !important;
     }
+  }
+
+  .typeDocument ng2-st-column-title .ng2-smart-title {
+    width: 25rem !important;
+  }
+
+  .titleDocument ng2-st-column-title .ng2-smart-title {
+    width: 25rem !important;
   }
 }
 
