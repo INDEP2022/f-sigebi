@@ -105,6 +105,36 @@ const routes: Routes = [
     data: { title: 'Generar formatos para verificar el incumplimiento' },
   },
   {
+    path: 'verify-warehouse-assets',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-sampling-supervision/warehouse-verification/warehouse-verification.module'
+        )
+      ).WarehouseVerificationModule,
+    data: { title: 'Verificación de Bienes de Almacen' },
+  },
+  {
+    path: 'restitution-of-assets',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-sampling-supervision/restitution-assets-numeric-or-sort/restitution-assets-numeric-or-sort.module'
+        )
+      ).RestitutionAssetsNumericOrSortModule,
+    data: { title: 'Restitución de Bienes' },
+  },
+  {
+    path: 'assets-classification',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-sampling-supervision/assets-classification/assets-classification.module'
+        )
+      ).AssetsClassificationModule,
+    data: { title: 'Clasificacion de Bienes' },
+  },
+  {
     path: 'transfer-request',
     loadChildren: async () =>
       (await import('./transfer-request/transfer-request.module'))

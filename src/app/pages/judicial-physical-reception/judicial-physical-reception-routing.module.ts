@@ -65,6 +65,28 @@ const routes: Routes = [
         m => m.JprSaleCancellationModule
       ),
   },
+  {
+    path: 'scheduled-maintenance-1',
+    loadChildren: () =>
+      import(
+        './jpr-scheduled-maintenance-1/jpr-scheduled-maintenance.module'
+      ).then(m => m.JprScheduledMaintenanceModule),
+  },
+
+  {
+    path: 'scheduled-maintenance-2',
+    loadChildren: () =>
+      import(
+        './jpr-scheduled-maintenance-2/jpr-scheduled-maintenance.module'
+      ).then(m => m.JprScheduledMaintenanceModule),
+  },
+  {
+    path: 'maintenance-records',
+    loadChildren: () =>
+      import('./jpr-maintenance-records/jpr-maintenance-records.module').then(
+        m => m.JprMaintenanceRecordsModule
+      ),
+  },
 ];
 
 @NgModule({

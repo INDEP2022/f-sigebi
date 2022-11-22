@@ -19,6 +19,10 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
 
   isEnableAnex: boolean = false;
   willSave: boolean = false;
+  //envia los datos para mostrarse en el detalle de anexo
+  annexDetail: any[] = [];
+
+  clasificationAnnex: boolean = true;
 
   constructor(
     private fb: FormBuilder,
@@ -41,11 +45,11 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
   }
 
   openAnnexJ(): void {
-    this.openModal(AnnexJFormComponent, '');
+    this.openModal(AnnexJFormComponent, '', 'annexJ-verify-noncompliance');
   }
 
   opemAnnexK(): void {
-    this.openModal(AnnexKFormComponent, '');
+    this.openModal(AnnexKFormComponent, '', 'annexK-verify-noncompliance');
   }
 
   save() {
@@ -67,10 +71,11 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
     });
   }
 
-  openModal(component: any, data?: any): void {
+  openModal(component: any, data?: any, typeAnnex?: string): void {
     let config: ModalOptions = {
       initialState: {
         data: data,
+        typeAnnex: typeAnnex,
         callback: (next: boolean) => {
           //if (next){ this.getData();}
         },

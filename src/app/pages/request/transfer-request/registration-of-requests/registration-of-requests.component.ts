@@ -39,11 +39,11 @@ export class RegistrationOfRequestsComponent
   //verificacion de cumplimientos tab
   complianceVerifi: boolean = false;
   //clasificacion de bienes
-  classifyAssets: boolean = false;
+  classifyAssets: boolean = true;
   //validar destino del bien(documento)
   validateDocument: boolean = false;
   //notificar aclaraciones o improcedencias
-  notifyClarifiOrImpropriety: boolean = true;
+  notifyClarifiOrImpropriety: boolean = false;
   //aprovacion del proceso (por verse caso contrario borrar)
   approvalProcess: boolean = false;
 

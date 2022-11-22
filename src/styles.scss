@@ -398,3 +398,7 @@ ng-scrollbar.table-scrollbar {
     padding: 0 6px;
   }
 }
+
+.bs-datepicker .bs-timepicker-in-datepicker-container {
+  max-width: 280px !important;
+}
