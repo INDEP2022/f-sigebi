@@ -19,49 +19,34 @@
         </button>
       </div>
       <div class="m-3">
-        <button class="btn btn-primary btn-sm active">
+        <button class="btn btn-primary btn-sm active" (click)="exportCsv()">
           <i class="bx bx-download"></i> Descargar Archivo
         </button>
       </div>
     </div>
   </div>
-
-  <div class="row pt-4">
-    <div class="col-md-12">
-      <p style="color: rgba(0, 0, 255, 0.8)">
-        Para los bienes de tipo Numerico se generará una orden de ingreso.
-      </p>
-    </div>
-    <div class="col-md-12">
-      <p style="color: rgba(0, 0, 255, 0.8)">
-        Para los bienes de tipo Especie serán enviados a aprobación.
-      </p>
-    </div>
-  </div>
-
-  <div class="row pt-4">
-    <div class="d-flex">
-      <div class="p-2">
-        <button class="btn btn-primary btn-sm active" (click)="numeric()">
-          <i class="bx bx-check"></i> Numerico
-        </button>
-      </div>
-      <div class="p-2">
-        <button class="btn btn-primary btn-sm active" (click)="inSort()">
-          <i class="bx bx-check"></i> En Especie
-        </button>
-      </div>
-    </div>
-  </div>
-
   <div class="row">
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div class="d-flex">
+          <div class="p-2">
+            <button class="btn btn-success btn-sm active" (click)="approve()">
+              <i class="bx bx-check"></i> Aprovar
+            </button>
+          </div>
+          <div class="p-2">
+            <button class="btn btn-danger btn-sm active" (click)="refuse()">
+              <i class="bx bx-x"></i> Rechazar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="col-md-12">
       <!--    <form [formGroup]="assetsForm">-->
       <!--      <div [class]="loading ? 'table-loading' : ''">-->
       <ng-scrollbar track="all" style="min-height: 200px; border: none">
-        <table
-          class="table table-bordered"
-          style="white-space: nowrap; overflow-x: auto">
+        <table class="table table-bordered" style="width: 100%">
           <thead>
             <tr>
               <th scope="col" style="text-align: center">
@@ -72,9 +57,12 @@
               <th scope="col" class="description">Descripción</th>
               <th scope="col">Cantidad</th>
               <th scope="col">Unidad</th>
-              <th scope="col">Tipo Restitución</th>
+              <th scope="col">Cantidad Faltante/Dañada</th>
+              <th scope="col">Estado Restitución</th>
               <th scope="col">Fecha Reposición</th>
-              <th scope="col">Cantidad</th>
+              <th scope="col">Resultados De Evaluación</th>
+              <th scope="col">Estado De Bien</th>
+              <th scope="col">Tipo de Restitución</th>
             </tr>
           </thead>
           <tbody>
@@ -89,15 +77,16 @@
               </th>
               <td>{{ asset.noManagement }}</td>
               <td>{{ asset.noInventory }}</td>
-              <td>{{ asset.description }}</td>
+              <td class="description">{{ asset.description }}</td>
               <td>{{ asset.quantity }}</td>
               <td>{{ asset.unity }}</td>
+              <td>{{ asset.quantityMissingDamaged }}</td>
               <td>
                 <select
                   class="form-control"
                   style="
                     width: 150px;
-                    height: 3rem;
+                    height: 40px;
                     font-size: 13px !important;
                   ">
                   <option [value]="null">Seleccione un valor</option>
@@ -105,28 +94,16 @@
                 </select>
               </td>
               <td>
-                <div class="form-group mb-3" style="display: flex">
-                  <input
-                    style="height: 3rem; padding-right: 3px"
-                    type="text"
-                    class="form-control"
-                    [(ngModel)]="asset.dateRestitution"
-                    placeholder=""
-                    (ngModelChange)="updateMyDate($event)"
-                    bsDatepicker
-                    [bsConfig]="{
-                      adaptivePosition: true,
-                      dateInputFormat: 'MM/DD/YYYY'
-                    }" />
-                  <i class="bx bxs-calendar" style="color: blue"></i>
-                </div>
+                {{ asset.replacementDate }}
               </td>
               <td>
-                <input
-                  style="width: 70px; height: 3rem"
-                  type="number"
-                  value="{{ asset.quantityMissingDamaged }}"
-                  [(ngModel)]="asset.quantityMissingDamaged" />
+                {{ asset.resultEvaluation }}
+              </td>
+              <td>
+                {{ asset.statusAsset }}
+              </td>
+              <td>
+                {{ asset.typeRestitution }}
               </td>
             </tr>
           </tbody>

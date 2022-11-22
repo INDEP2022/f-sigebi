@@ -145,6 +145,16 @@ const routes: Routes = [
     data: { title: 'Validación de pagos de fichas de deposito' },
   },
   {
+    path: 'assets-approval',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-sampling-supervision/assets-approval/assets-approval.module'
+        )
+      ).AssetsApprovalModule,
+    data: { title: 'Aprobación de bienes' },
+  },
+  {
     path: 'transfer-request',
     loadChildren: async () =>
       (await import('./transfer-request/transfer-request.module'))
