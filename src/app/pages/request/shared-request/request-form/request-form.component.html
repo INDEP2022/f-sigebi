@@ -109,13 +109,17 @@
           <div body>
             <div class="row pt-5">
               <div class="col-md-6">
-                <ngx-select
-                  [form]="requestForm"
-                  control="issue"
-                  (fetchItems)="getIssue($event)"
-                  [data]="selectIssue"
-                  label="Asunto"
-                  value="regDelega"></ngx-select>
+                <form-field [control]="requestForm.get('issue')">
+                  <ngx-select
+                    (fetchItems)="getIssue($event)"
+                    [data]="issues"
+                    [form]="requestForm"
+                    value="id"
+                    bindLabel="issue"
+                    label="Asunto"
+                    [control]="'issue'">
+                  </ngx-select>
+                </form-field>
               </div>
             </div>
           </div>

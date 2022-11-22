@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IRequestInformation } from '../../../../../core/models/requests/requestInformation.model';
+//Components
+import { CreateReportComponent } from '../../../shared-request/create-report/create-report.component';
 
 @Component({
   selector: 'app-gre-c-guidelines-revision-main',
@@ -17,7 +21,11 @@ export class GreCGuidelinesRevisionMainComponent
   requestInfo: IRequestInformation;
   public typeDoc: string = '';
 
-  constructor(private route: ActivatedRoute, private router: Router) {
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private modalService: BsModalService
+  ) {
     super();
   }
 
@@ -75,6 +83,17 @@ export class GreCGuidelinesRevisionMainComponent
 
   requestRegistered(request: any) {
     console.log(request);
+  }
+
+  createReport(context?: Partial<CreateReportComponent>): void {
+    const modalRef = this.modalService.show(CreateReportComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.refresh.subscribe(next => {
+      if (next) console.log(next); //this.getCities();
+    });
   }
 
   turnRequest() {
