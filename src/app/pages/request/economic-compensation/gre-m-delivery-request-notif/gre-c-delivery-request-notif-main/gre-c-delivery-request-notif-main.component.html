@@ -2,8 +2,8 @@
   <div class="ch-content justify-content-between" header>
     <div class="">
       <h5 class="title">
-        Solicitar Recursos Económicos, No. Solicitud: {{ requestId }},
-        Contribuyente: {{ contributor }}
+        Notificación al Contribuyente (Resarcimiento NUMERARIO), No. Solicitud:
+        {{ requestId }}, Contribuyente: {{ contributor }}
       </h5>
     </div>
     <div class="">
@@ -14,7 +14,7 @@
             class="btn btn-primary btn-sm active"
             (click)="turnRequest()"
             [disabled]="">
-            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Turnar
+            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i>Turnar
           </button>
         </div>
         <div class="mx-1">
@@ -22,17 +22,15 @@
             type="button"
             class="btn btn-primary btn-sm active"
             [disabled]="">
-            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Guardar
+            <i class="bx bx-save mr-1 float-icon"></i>Guardar
           </button>
         </div>
         <div class="mx-1">
           <button
             type="button"
             class="btn btn-primary btn-sm active"
-            [disabled]=""
-            (click)="createReport()">
-            <i class="bx bx-notepad mr-1 float-icon"></i> Solicitud Recursos
-            Económicos
+            [disabled]="">
+            <i class="bx bx-notepad mr-1 float-icon"></i>Notificación
           </button>
         </div>
       </div>
@@ -57,17 +55,13 @@
             role="menu"
             aria-labelledby="processBtn">
             <li role="menuitem">
-              <a
-                class="dropdown-item bg-primary text-light"
-                (click)="createReport()"
-                ><i class="bx bx-notepad mr-1 float-icon"></i>Solicitud Recursos
-                Económicos</a
+              <a class="dropdown-item bg-primary text-light" (click)="(true)"
+                ><i class="bx bx-notepad mr-1 float-icon"></i>Notificación</a
               >
             </li>
             <li role="menuitem">
               <a class="dropdown-item bg-primary text-light" (click)="(true)"
-                ><i class="bx bxs-right-arrow-square mr-1 float-icon"></i>
-                Guardar</a
+                ><i class="bx bx-save mr-1 float-icon"></i> Guardar</a
               >
             </li>
             <li role="menuitem">
@@ -84,7 +78,8 @@
     </div>
   </div>
   <div body>
-    <app-request-information [request]="requestInfo"></app-request-information>
+    <app-request-information-reject
+      [request]="requestInfo"></app-request-information-reject>
     <div class="md-tabs">
       <tabset>
         <tab heading="Registro de Documentación" id="documentationTab">
@@ -93,6 +88,12 @@
         </tab>
         <tab heading="Listado de Bienes" id="goodsListTab">
           <app-goods-list [requestId]="requestId"></app-goods-list>
+        </tab>
+        <tab heading="Lineamientos" id="guidelinesTab">
+          <app-guidelines-view [requestId]="requestId"></app-guidelines-view>
+        </tab>
+        <tab heading="Datos del Dictamen" id="dictumTab">
+          <app-register-dictum-information></app-register-dictum-information>
         </tab>
         <tab heading="Expediente" id="fileTab">
           <tabset class="md-tabs">

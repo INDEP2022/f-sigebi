@@ -10,7 +10,7 @@
             class="btn btn-primary btn-sm active"
             (click)="register()"
             [disabled]="!registerForm.touched || registerForm.invalid">
-            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i>Guardar
+            <i class="bx bx-save mr-1 float-icon"></i>Guardar
           </button>
         </div>
         <div class="mx-1">
@@ -26,13 +26,20 @@
   <br />
   <div class="row mt-5">
     <div class="col-md-4">
-      <form-check label="Prioridad" for="priority">
-        <input
-          id="priority"
-          type="checkbox"
-          class=""
-          formControlName="priority" />
-      </form-check>
+      <div class="row">
+        <div class="col-6 d-flex align-items-end">
+          <label class="label" for="">Prioridad:</label>
+        </div>
+        <div class="col-6">
+          <form-check label="" for="priority">
+            <input
+              id="priority"
+              type="checkbox"
+              class=""
+              formControlName="priority" />
+          </form-check>
+        </div>
+      </div>
     </div>
     <div class="col-md-4">
       <form-field
