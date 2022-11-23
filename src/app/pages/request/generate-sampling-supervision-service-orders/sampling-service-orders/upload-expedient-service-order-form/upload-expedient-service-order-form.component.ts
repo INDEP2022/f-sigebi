@@ -7,14 +7,15 @@ import { ListParams } from '../../../../../common/repository/interfaces/list-par
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { BasePage } from '../../../../../core/shared/base-page';
 import { DefaultSelect } from '../../../../../shared/components/select/default-select';
-import { NewDocumentFormComponent } from '../new-document-form/new-document-form.component';
+//import { NewDocumentServiceOrderFormComponent } from '../new-document-form/new-document-form.component';
+import { NewDocumentServiceOrderFormComponent } from '../new-document-service-order-form/new-document-service-order-form.component';
 import { LIST_EXPEDIENTS_COLUMN } from './columns/list-expedients-columns';
 
 var data = [
   {
     id: 1,
     noDoc: '34343',
-    noAsset: 'rerere',
+    noRequest: '145',
     titleDocument: 'DOCUMENTO DE TRASPASO DE DATOS',
     typeDocument: 'ACLARACION DE DOCUMENTO',
     author: 'ENRIQUE SEGOBIANO',
@@ -25,10 +26,13 @@ var data = [
 
 @Component({
   selector: 'app-upload-expedient-service-order-form',
-  templateUrl: './upload-expedient-form.component.html',
-  styleUrls: ['./upload-expedient-form.component.scss'],
+  templateUrl: './upload-expedient-service-order-form.component.html',
+  styleUrls: ['./upload-expedient-service-order-form.component.scss'],
 })
-export class UploadExpedientFormComponent extends BasePage implements OnInit {
+export class UploadExpedientServiceOrderFormComponent
+  extends BasePage
+  implements OnInit
+{
   showSearchForm: boolean = false;
   expedientForm: ModelForm<any>;
   typeDocSelected = new DefaultSelect();
@@ -78,18 +82,17 @@ export class UploadExpedientFormComponent extends BasePage implements OnInit {
       text: [null],
       typeDoc: [null],
       titleDoc: [null],
+      sender: [null],
+      author: [null],
+      senderInCharge: [null],
+      noDoc: [null],
+      responsible: [null],
+      version: [null],
+      contributor: [null],
+      noRequest: [null],
+      noOfice: [null],
       typeTranfer: [null],
       comments: [null],
-      author: [null],
-      sender: [null],
-      noDoc: [null],
-      senderCharge: [null],
-      version: [null],
-      responsible: [null],
-      noAsset: [{ value: null, disabled: true }],
-      contributor: [null],
-      noSab: [null],
-      noOfice: [null],
     });
   }
 
@@ -107,7 +110,7 @@ export class UploadExpedientFormComponent extends BasePage implements OnInit {
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.modalService.show(NewDocumentFormComponent, config);
+    this.modalService.show(NewDocumentServiceOrderFormComponent, config);
   }
 
   openDetail() {}

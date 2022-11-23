@@ -1,4 +1,4 @@
-export const LIST_ORDERS_COLUMNS = {
+export const LIST_ORDERS_SELECTED_COLUMNS = {
   noServiceOrder: {
     title: 'No. Ordern Servicio',
     type: 'text',
@@ -14,16 +14,6 @@ export const LIST_ORDERS_COLUMNS = {
     type: 'text',
     sort: false,
   },
-  regionalDelegation: {
-    title: 'Delegacion Regional',
-    type: 'text',
-    sort: false,
-  },
-  transfer: {
-    title: 'Transferente',
-    type: 'text',
-    sort: false,
-  },
   noContract: {
     title: 'No. Contrato',
     type: 'text',
@@ -35,7 +25,7 @@ export const LIST_ORDERS_COLUMNS = {
     sort: false,
   },
   costServices: {
-    title: 'Costo Servicio',
+    title: 'Costo Servicios',
     type: 'text',
     sort: false,
   },

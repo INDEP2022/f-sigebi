@@ -5,11 +5,26 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { SharedModule } from '../../../../shared/shared.module';
+import { SharedRequestModule } from '../../shared-request/shared-request.module';
+import { AnnexDataComponent } from './annex-data/annex-data.component';
+import { AnnexKComponent } from './annex-k/annex-k.component';
 import { GenerateQueryComponent } from './generate-query/generate-query.component';
+import { ListServiceOrdersComponent } from './list-service-orders/list-service-orders.component';
+import { NewDocumentServiceOrderFormComponent } from './new-document-service-order-form/new-document-service-order-form.component';
 import { SamplingServiceOrdersRoutingModule } from './sampling-service-orders-routing.module';
+import { UploadExpedientServiceOrderFormComponent } from './upload-expedient-service-order-form/upload-expedient-service-order-form.component';
+import { WarehouseDetailComponent } from './warehouse-detail/warehouse-detail.component';
 
 @NgModule({
-  declarations: [GenerateQueryComponent],
+  declarations: [
+    GenerateQueryComponent,
+    ListServiceOrdersComponent,
+    UploadExpedientServiceOrderFormComponent,
+    NewDocumentServiceOrderFormComponent,
+    AnnexDataComponent,
+    WarehouseDetailComponent,
+    AnnexKComponent,
+  ],
   imports: [
     CommonModule,
     SamplingServiceOrdersRoutingModule,
@@ -18,6 +33,7 @@ import { SamplingServiceOrdersRoutingModule } from './sampling-service-orders-ro
     TabsModule.forRoot(),
     NgScrollbarModule,
     SharedModule,
+    SharedRequestModule,
     TabsModule,
   ],
 })

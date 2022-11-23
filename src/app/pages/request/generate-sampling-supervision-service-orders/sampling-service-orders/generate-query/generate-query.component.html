@@ -20,7 +20,11 @@
           </button>
         </div>
         <div class="p-2">
-          <button class="btn btn-secondary btn-sm active">Anexo K</button>
+          <button
+            class="btn btn-secondary btn-sm active"
+            (click)="openAnnexK()">
+            Anexo K
+          </button>
         </div>
       </div>
     </div>
@@ -48,17 +52,14 @@
               </div>
               <div class="col-md-3">
                 <form-field
-                  [control]="orderServiceForm.get('geographicalArea')">
-                  <form-field
-                    [control]="orderServiceForm.get('samplingPeriod')"
-                    label="Periodo Muestreo">
-                    <input
-                      type="text"
-                      class="form-control"
-                      formControlName="samplingPeriod"
-                      placeholder=""
-                      bsDatepicker />
-                  </form-field>
+                  [control]="orderServiceForm.get('samplingPeriod')"
+                  label="*Periodo Muestreo">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="samplingPeriod"
+                    placeholder=""
+                    bsDatepicker />
                 </form-field>
               </div>
             </div>
@@ -71,7 +72,7 @@
                     [data]="contractNumberSelected"
                     value="id"
                     bindLabel="id"
-                    label="Area Geográfica"
+                    label="*No. contrato"
                     (fetchItems)="getContractNumberSelect($event)">
                   </ngx-select>
                 </form-field>
@@ -103,12 +104,32 @@
                   </ng2-smart-table>
                 </div>
               </ng-scrollbar>
-              <app-pagination
-                [params]="params"
-                [totalItems]="totalItems"></app-pagination>
             </div>
+            <app-pagination
+              [params]="params"
+              [totalItems]="totalItems"></app-pagination>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div id="tabs">
+      <div class="row pt-4">
+        <tabset class="md-tabs">
+          <tab heading="Ordenes Servicio" id="tab1">
+            <app-list-service-orders
+              [orders]="sendData"></app-list-service-orders>
+          </tab>
+          <tab heading="Deductivas">
+            <app-create-deductives></app-create-deductives>
+          </tab>
+          <tab heading="Datos Anexo">
+            <app-annex-data></app-annex-data>
+          </tab>
+          <tab heading="Detalles Almacén">
+            <app-warehouse-detail></app-warehouse-detail>
+          </tab>
+        </tabset>
       </div>
     </div>
   </div>
