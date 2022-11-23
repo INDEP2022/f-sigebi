@@ -26,6 +26,7 @@ export class ShowSignatureProgrammingComponent
       if (question.isConfirmed) {
         //Ejecutar el servicio
         this.onLoadToast('success', 'Documento adjuntado correctamente', '');
+        this.modalRef.content.callback(true);
         this.close();
       }
     });

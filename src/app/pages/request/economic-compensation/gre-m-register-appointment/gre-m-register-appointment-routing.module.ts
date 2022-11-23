@@ -6,11 +6,11 @@ const routes: Routes = [
   {
     path: ':request',
     component: GreCRegisterAppointmentMainComponent,
-  }
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class GreMRegisterAppointmentRoutingModule { }
+export class GreMRegisterAppointmentRoutingModule {}

@@ -4,6 +4,7 @@ import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { QuillModule } from 'ngx-quill';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { AssignReceiptFormComponent } from './assign-receipt-form/assign-receipt-form.component';
@@ -12,6 +13,7 @@ import { AssociateFileComponent } from './associate-file/associate-file.componen
 import { NewFileModalComponent } from './associate-file/new-file-modal/new-file-modal.component';
 import { ConfirmProgrammingComponent } from './confirm-programming/confirm-programming.component';
 import { CreateDeductivesComponent } from './create-deductives/create-deductives.component';
+import { CreateReportComponent } from './create-report/create-report.component';
 import { DetailAssetsTabComponentComponent } from './detail-assets-tab-component/detail-assets-tab-component.component';
 import { DocumentFormComponent } from './document-form/document-form.component';
 import { DocumentShowComponent } from './document-show/document-show.component';
@@ -104,6 +106,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     GuidelinesViewComponent,
     RegisterDocumentationFormComponent,
     CreateDeductivesComponent,
+    CreateReportComponent,
   ],
   imports: [
     CommonModule,
@@ -113,6 +116,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     NgScrollbarModule,
     CollapseModule.forRoot(),
     BsDatepickerModule.forRoot(),
+    QuillModule.forRoot(),
   ],
   exports: [
     RequestFormComponent,

@@ -62,6 +62,10 @@ export const MENU: IMenuItem[] = [
             label: 'Genera Consultas',
             link: '/pages/request/generate-sampling-service-orders/generate-query',
           },
+          {
+            label: 'Solicitud de Documentación Complementaria',
+            link: '/pages/request/request-comp-doc',
+          },
         ],
       },
       // APP -- GESTIONAR DEVOLUCION -- Registro de Solicitud de Devolución
