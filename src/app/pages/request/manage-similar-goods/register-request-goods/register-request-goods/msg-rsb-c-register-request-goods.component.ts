@@ -114,7 +114,7 @@ export class MsgRsbCRegisterRequestGoodsComponent
     });
   }
 
-  createReport(context?: Partial<CreateReportComponent>): void {
+  generateReport(context?: Partial<CreateReportComponent>): void {
     const modalRef = this.modalService.show(CreateReportComponent, {
       initialState: context,
       class: 'modal-lg modal-dialog-centered',
