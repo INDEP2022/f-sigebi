@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequest } from 'src/app/core/models/catalogs/request.model';
@@ -18,6 +18,7 @@ export class NewDocumentComponent extends BasePage implements OnInit {
   request: IRequest;
   typeDoc: string = '';
   selectedFile: File;
+  toggleSearch: boolean = true;
 
   constructor(public fb: FormBuilder, public modalRef: BsModalRef) {
     super();
@@ -46,6 +47,10 @@ export class NewDocumentComponent extends BasePage implements OnInit {
       responsible: [null],
       observations: [null],
     });
+    this.newDocForm.addControl(
+      'returnOpinionFolio',
+      new FormControl('', [Validators.required])
+    );
   }
 
   getTypeDoc(event: any) {}

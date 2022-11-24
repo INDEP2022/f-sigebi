@@ -35,6 +35,7 @@ import { GuidelinesComponent } from './guidelines/guidelines.component';
 import { PhotographyFormComponent } from './photography-form/photography-form.component';
 import { RegisterDocumentationFormComponent } from './register-documentation-form/register-documentation-form.component';
 import { RegisterDocumentationViewComponent } from './register-documentation-view/register-documentation-view.component';
+import { RejectRequestModalComponent } from './reject-request-modal/reject-request-modal.component';
 import { RequestFormComponent } from './request-form/request-form.component';
 import { RequestInformationRejectComponent } from './request-information-reject/request-information-reject.component';
 import { RequestInformationSimilarGoodsComponent } from './request-information-similar-goods/request-information-similar-goods.component';
@@ -106,6 +107,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     GuidelinesViewComponent,
     RegisterDocumentationFormComponent,
     CreateReportComponent,
+    RejectRequestModalComponent,
     SearchRequestSimilarGoodsComponent,
   ],
   imports: [
@@ -141,6 +143,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     RequestInformationRejectComponent,
     GuidelinesViewComponent,
     RegisterDocumentationFormComponent,
+    RejectRequestModalComponent,
     SearchRequestSimilarGoodsComponent,
   ],
 })
