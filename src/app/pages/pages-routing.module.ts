@@ -42,6 +42,11 @@ const routes: Routes = [
       ).AdministrativeProcessesModule,
   },
   {
+    path: 'master-file',
+    loadChildren: async () =>
+      (await import('./master-file/master-file.module')).MasterFileModule,
+  },
+  {
     path: 'home',
     loadChildren: async () =>
       (await import('./admin/home/home.module')).HomeModule,

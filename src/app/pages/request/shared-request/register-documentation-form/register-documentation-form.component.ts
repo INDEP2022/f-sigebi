@@ -5,7 +5,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-register-documentation-form',
   templateUrl: './register-documentation-form.component.html',
-  styles: [],
+  styleUrls: ['./register-documentation-form.component.scss'],
 })
 export class RegisterDocumentationFormComponent
   extends BasePage

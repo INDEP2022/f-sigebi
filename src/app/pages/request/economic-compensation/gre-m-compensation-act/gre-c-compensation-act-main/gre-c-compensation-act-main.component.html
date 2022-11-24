@@ -12,17 +12,18 @@
           <button
             type="button"
             class="btn btn-primary btn-sm active"
-            [disabled]="">
-            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i>Acta de
-            Resarcimiento
+            [disabled]=""
+            (click)="openDocument('act')">
+            <i class="bx bx-notepad mr-1 float-icon"></i>Acta de Resarcimiento
           </button>
         </div>
         <div class="mx-1 my-1">
           <button
             type="button"
             class="btn btn-primary btn-sm active"
-            [disabled]="">
-            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i>
+            [disabled]=""
+            (click)="openDocument('notif')">
+            <i class="bx bx-notepad mr-1 float-icon"></i>
             Notificación
           </button>
         </div>
@@ -31,7 +32,7 @@
             type="button"
             class="btn btn-primary btn-sm active"
             [disabled]="">
-            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i>Guardar
+            <i class="bx bx-save mr-1 float-icon"></i>Guardar
           </button>
         </div>
         <div class="mx-1 my-1">
@@ -66,25 +67,29 @@
             role="menu"
             aria-labelledby="processBtn">
             <li role="menuitem">
-              <a class="dropdown-item bg-primary text-light" (click)="(true)"
-                ><i class="bx bxs-right-arrow-square mr-1 float-icon"></i>Acta
-                de Resarcimiento</a
+              <a
+                class="dropdown-item bg-primary text-light"
+                (click)="openDocument('act')"
+                ><i class="bx bx-notepad mr-1 float-icon"></i>Acta de
+                Resarcimiento</a
+              >
+            </li>
+            <li role="menuitem">
+              <a
+                class="dropdown-item bg-primary text-light"
+                (click)="openDocument('notif')"
+                ><i class="bx bx-notepad mr-1 float-icon"></i> Notificación</a
               >
             </li>
             <li role="menuitem">
               <a class="dropdown-item bg-primary text-light" (click)="(true)"
-                ><i class="bx bxs-right-arrow-square mr-1 float-icon"></i>
-                Notificación</a
+                ><i class="bx bx-save mr-1 float-icon"></i>Guardar</a
               >
             </li>
             <li role="menuitem">
-              <a class="dropdown-item bg-primary text-light" (click)="(true)"
-                ><i class="bx bxs-right-arrow-square mr-1 float-icon"></i
-                >Guardar</a
-              >
-            </li>
-            <li role="menuitem">
-              <a class="dropdown-item bg-primary text-light" (click)="(true)"
+              <a
+                class="dropdown-item bg-primary text-light"
+                (click)="endRequest()"
                 ><i class="bx bxs-right-arrow-square mr-1 float-icon"></i
                 >Finalizar</a
               >
