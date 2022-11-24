@@ -1,5 +1,21 @@
 export const dataRequest = [
   {
+    task: 'RESARCIMIENTO EN ESPECIE: Registro de Documentación Complementaria, No. Solicitud: 45010',
+    requestNumber: 4520,
+    taskNumber: 260302,
+    instanceNumber: 820170,
+    created: 'tester_nsbxt',
+    process: 'COMPLEMENTARY-DOCS',
+  },
+  {
+    task: 'Registro de solicitud (Captura de Solicitud) con folio 45009',
+    requestNumber: 45009,
+    taskNumber: 260301,
+    instanceNumber: 820169,
+    created: 'tester_nsbxt',
+    process: 'SolicitudeTransferencia',
+  },
+  {
     task: 'Registro de solicitud (Captura de Solicitud) con folio 45009',
     requestNumber: 45009,
     taskNumber: 260301,
