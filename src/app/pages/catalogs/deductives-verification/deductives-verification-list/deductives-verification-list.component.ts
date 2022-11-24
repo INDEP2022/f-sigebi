@@ -11,7 +11,7 @@ import { DeductivesVerificationFormComponent } from '../deductives-verification-
 import { DEDUCTIVE_VERIFICATION_COLUMNS } from './deductives-verification-columns';
 
 @Component({
-  selector: 'app-deductives-verification-list',
+  selector: 'app-create-deductives-verification-list',
   templateUrl: './deductives-verification-list.component.html',
   styles: [],
 })

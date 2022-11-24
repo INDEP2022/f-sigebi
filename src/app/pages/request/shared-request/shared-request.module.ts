@@ -12,6 +12,7 @@ import { AssociateFileButtonComponent } from './associate-file/associate-file-bu
 import { AssociateFileComponent } from './associate-file/associate-file.component';
 import { NewFileModalComponent } from './associate-file/new-file-modal/new-file-modal.component';
 import { ConfirmProgrammingComponent } from './confirm-programming/confirm-programming.component';
+import { CreateDeductivesComponent } from './create-deductives/create-deductives.component';
 import { CreateReportComponent } from './create-report/create-report.component';
 import { DetailAssetsTabComponentComponent } from './detail-assets-tab-component/detail-assets-tab-component.component';
 import { DocumentFormComponent } from './document-form/document-form.component';
@@ -106,6 +107,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     RequestInformationRejectComponent,
     GuidelinesViewComponent,
     RegisterDocumentationFormComponent,
+    CreateDeductivesComponent,
     CreateReportComponent,
     RejectRequestModalComponent,
     SearchRequestSimilarGoodsComponent,
@@ -143,6 +145,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     RequestInformationRejectComponent,
     GuidelinesViewComponent,
     RegisterDocumentationFormComponent,
+    CreateDeductivesComponent,
     RejectRequestModalComponent,
     SearchRequestSimilarGoodsComponent,
   ],

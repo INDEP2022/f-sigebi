@@ -161,6 +161,17 @@ const routes: Routes = [
         .TransferRequestModule,
     data: { title: 'Solicitudes de transferencia' },
   },
+  //Generacion de muestreo para supervicon (servicio ordenes)
+  {
+    path: 'generate-sampling-service-orders',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-sampling-supervision-service-orders/generate-sampling-supervision-service-orders.module'
+        )
+      ).GenerateSamplingSupervisionServiceOrdersModule,
+    data: { title: 'Solicitudes de transferencia' },
+  },
   //Gestionar Bienes Similares
   {
     path: 'manage-similar-goods',
