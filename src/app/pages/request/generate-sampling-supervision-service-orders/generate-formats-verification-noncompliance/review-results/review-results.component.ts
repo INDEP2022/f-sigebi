@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import Swal from 'sweetalert2';
 import { BasePage } from '../../../../../core/shared/base-page';
 import { AnnexKFormComponent } from '../../../generate-sampling-supervision/generate-formats-verify-noncompliance/annex-k-form/annex-k-form.component';
 
@@ -19,6 +20,9 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
   //datos anexo para pasar
   dataAnnex: any;
 
+  //en el caso de que sera una aprovacion de resultados se pone true
+  isApprovalResult: boolean = true;
+  input = '<input type="text" (keyup)="keyFunc($event)">';
   constructor(private modalService: BsModalService) {
     super();
   }
@@ -26,15 +30,21 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
   ngOnInit(): void {}
 
   turnSampling() {
-    let title = 'Confirmación turnado';
-    let message =
-      '¿Esta de acuerdo qeu la información es correcta para turnar?';
-    this.alertQuestion(undefined, title, message, 'Aceptar').then(question => {
-      if (question.isConfirmed) {
-        //Ejecutar el servicio
-        console.log('guardar documento');
-      }
-    });
+    if (this.isApprovalResult === false) {
+      let title = 'Confirmación turnado';
+      let message =
+        '¿Esta de acuerdo qeu la información es correcta para turnar?';
+      this.alertQuestion(undefined, title, message, 'Aceptar').then(
+        question => {
+          if (question.isConfirmed) {
+            //Ejecutar el servicio
+            console.log('guardar documento');
+          }
+        }
+      );
+    } else {
+      this.confirmTurnModal();
+    }
   }
 
   openAnnexK(): void {
@@ -66,5 +76,21 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
     //this.assetsForm.controls['address'].get('longitud').enable();
     //this.requestForm.get('receiUser').patchValue(res.user);
     //});
+  }
+
+  keyFunc(event: any) {
+    let value = event.target.value;
+  }
+
+  confirmTurnModal() {
+    Swal.fire({
+      title: 'Confirmacion Turnado!',
+      text: 'Observaciones:',
+      input: 'text',
+      showCancelButton: true,
+      confirmButtonColor: '#9D2449',
+    }).then(result => {
+      console.log(result.value);
+    });
   }
 }
