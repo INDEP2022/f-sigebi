@@ -56,6 +56,30 @@ const routes: Routes = [
         .GreMCompensationActModule,
     data: { title: 'Generar Acta de Resarcimiento' },
   },
+  {
+    path: 'analysis-result',
+    loadChildren: async () =>
+      (await import('./gre-m-analysis-result/gre-m-analysis-result.module'))
+        .GreMAnalysisResultModule,
+    data: { title: 'Generar Resultado de Análisis' },
+  },
+  {
+    path: 'validate-dictum',
+    loadChildren: async () =>
+      (await import('./gre-m-validate-dictum/gre-m-validate-dictum.module'))
+        .GreMValidateDictumModule,
+    data: { title: 'Validar Dictamen' },
+  },
+  {
+    path: 'delivery-request-notif',
+    loadChildren: async () =>
+      (
+        await import(
+          './gre-m-delivery-request-notif/gre-m-delivery-request-notif.module'
+        )
+      ).GreMDeliveryRequestNotifModule,
+    data: { title: 'Notificación de Solicitud de Entrega' },
+  },
 ];
 
 @NgModule({

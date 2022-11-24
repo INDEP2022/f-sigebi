@@ -42,6 +42,11 @@ const routes: Routes = [
       ).AdministrativeProcessesModule,
   },
   {
+    path: 'master-file',
+    loadChildren: async () =>
+      (await import('./master-file/master-file.module')).MasterFileModule,
+  },
+  {
     path: 'home',
     loadChildren: async () =>
       (await import('./admin/home/home.module')).HomeModule,
@@ -133,6 +138,11 @@ const routes: Routes = [
           './execute-return-deliveries/execute-return-deliveries.module'
         )
       ).ExecuteReturnDeliveriesModule,
+  },
+  {
+    path: 'siab-web',
+    loadChildren: async () =>
+      (await import('./siab-web/siab-web.module')).SiabWebModule,
   },
 ];
 

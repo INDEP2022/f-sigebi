@@ -6,6 +6,8 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { IRequestInformation } from '../../../../../core/models/requests/requestInformation.model';
 //Components
 import { CreateReportComponent } from '../../../shared-request/create-report/create-report.component';
+import { IRequestDocument } from './../../../../../core/models/requests/document.model';
+import { COMPENSATION_DICTUM_DOCS } from './docs-template';
 
 @Component({
   selector: 'app-gre-c-guidelines-revision-main',
@@ -21,6 +23,7 @@ export class GreCGuidelinesRevisionMainComponent
   requestInfo: IRequestInformation;
   screenWidth: number;
   public typeDoc: string = '';
+  docTemplate: IRequestDocument[];
 
   constructor(
     private route: ActivatedRoute,
@@ -28,6 +31,7 @@ export class GreCGuidelinesRevisionMainComponent
     private modalService: BsModalService
   ) {
     super();
+    this.docTemplate = COMPENSATION_DICTUM_DOCS;
     this.screenWidth =
       window.innerWidth ||
       document.documentElement.clientWidth ||
@@ -98,7 +102,7 @@ export class GreCGuidelinesRevisionMainComponent
 
   createReport(context?: Partial<CreateReportComponent>): void {
     const modalRef = this.modalService.show(CreateReportComponent, {
-      initialState: context,
+      initialState: { documents: this.docTemplate },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });

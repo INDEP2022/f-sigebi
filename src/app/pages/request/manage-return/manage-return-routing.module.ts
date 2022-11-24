@@ -1,6 +1,7 @@
 /** BASE IMPORT */
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -22,6 +23,15 @@ const routes: Routes = [
     data: { title: 'Registro de Solicitud de Devolución' },
   },
   // registro de solicitud de devolucion
+  // Clasificación de Bienes
+  {
+    path: 'clasificacion-bienes',
+    loadChildren: async () =>
+      (await import('./goods-classification/goods-classification.module'))
+        .GDCBGoodsClassificationModule,
+    data: { title: 'Clasificación de Bienes' },
+  },
+  // Clasificación de Bienes
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],

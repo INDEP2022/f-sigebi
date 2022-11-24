@@ -1,0 +1,67 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">MONITOR DE PRESTAMOS</h5>
+  </div>
+  <div body>
+    <div class="row mt-4 mb-3">
+      <form action="" class="form-material" [formGroup]="form">
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field [control]="form.get('file')" label="No expediente">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="file" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('borrowedTo')" label="Prestado a">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="borrowedTo" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field [control]="form.get('document')" label="Documento">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="document" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('adscritTo')" label="Adscrito a">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="adscritTo" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2 text-right">
+          <div class="form-group">
+            <button type="button" class="btn btn-primary active btn-sm">
+              CONSULTAR
+            </button>
+          </div>
+        </div>
+      </form>
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="data1">
+            </ng2-smart-table>
+          </div>
+        </div>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -138,6 +138,39 @@
           </form-field>
         </div>
       </div>
+
+      <div
+        class="ms-n2 mb-2 pointer"
+        (click)="toggleSearch = !toggleSearch"
+        [attr.aria-expanded]="!toggleSearch"
+        aria-controls="collapseAdditional">
+        <i
+          class="bx bx-chevron-down bx-md float-icon-md"
+          [ngClass]="{
+            'rotate-down': toggleSearch,
+            'rotate-up': !toggleSearch
+          }"></i>
+        <h6 class="d-inline">Informaci&oacute;n Adicional</h6>
+      </div>
+      <div
+        *ngIf="newDocForm.contains('returnOpinionFolio')"
+        class="row mt-5"
+        id="collapseAdditional"
+        [isAnimated]="true"
+        [collapse]="!toggleSearch">
+        <div *ngIf="newDocForm.contains('returnOpinionFolio')" class="col-md-3">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field
+              [control]="newDocForm.get('returnOpinionFolio')"
+              label="Folio Dictamen Devolución">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="returnOpinionFolio" />
+            </form-field>
+          </div>
+        </div>
+      </div>
     </form>
   </div>
   <div footer>

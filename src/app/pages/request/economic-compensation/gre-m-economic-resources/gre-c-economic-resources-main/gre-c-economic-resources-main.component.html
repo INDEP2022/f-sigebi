@@ -29,9 +29,10 @@
           <button
             type="button"
             class="btn btn-primary btn-sm active"
-            [disabled]="">
-            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Solicitud
-            Recursos Económicos
+            [disabled]=""
+            (click)="createReport()">
+            <i class="bx bx-notepad mr-1 float-icon"></i> Solicitud Recursos
+            Económicos
           </button>
         </div>
       </div>
@@ -56,9 +57,11 @@
             role="menu"
             aria-labelledby="processBtn">
             <li role="menuitem">
-              <a class="dropdown-item bg-primary text-light" (click)="(true)"
-                ><i class="bx bxs-right-arrow-square mr-1 float-icon"></i
-                >Solicitud Recursos Económicos</a
+              <a
+                class="dropdown-item bg-primary text-light"
+                (click)="createReport()"
+                ><i class="bx bx-notepad mr-1 float-icon"></i>Solicitud Recursos
+                Económicos</a
               >
             </li>
             <li role="menuitem">

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -21,7 +21,7 @@ export class RequestCompDocListComponent extends BasePage implements OnInit {
 
   data: IRequestList[] = dataRequest;
 
-  constructor(public router: Router) {
+  constructor(private activatedRoute: ActivatedRoute, public router: Router) {
     super();
     this.settings = {
       ...this.settings,
@@ -33,13 +33,14 @@ export class RequestCompDocListComponent extends BasePage implements OnInit {
   ngOnInit(): void {}
 
   editRequest(event: any) {
+    console.log(event);
     switch (event.data.process) {
-      case 'SolicitudProgramación':
+      case 'COMPLEMENTARY-DOCS':
         // en el caso de que sea una solicitud de programacion
-        this.router.navigate([
-          'pages/request/perform-programming',
-          event.data.requestNumber,
-        ]);
+        this.router.navigate(
+          ['tasks', event.data.process, event.data.requestNumber],
+          { relativeTo: this.activatedRoute }
+        );
         break;
       case 'RegistroSolicitudes':
         // en el caso de que el proceso seleccionado sea Bienes Similares
