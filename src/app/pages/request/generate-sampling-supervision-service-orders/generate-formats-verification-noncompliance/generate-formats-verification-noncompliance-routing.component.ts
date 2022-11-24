@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { VerifyResultsComponent } from './verify-results/verify-results.component';
+import { ReviewResultsComponent } from './review-results/review-results.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: VerifyResultsComponent,
+    component: ReviewResultsComponent,
   },
 ];
 

@@ -51,6 +51,8 @@ export class GenerateQueryComponent extends BasePage implements OnInit {
   totalItems: number = 0;
 
   sendData: any[] = [];
+  //Datos Anexo para pasar
+  dataAnnex: any;
 
   constructor(
     private fb: FormBuilder,

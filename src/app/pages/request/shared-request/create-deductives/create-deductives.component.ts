@@ -7,9 +7,20 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class CreateDeductivesComponent implements OnInit {
   @Input() deductives: any[] = [];
+  @Input() typeComponent: string = '';
+  isReadOnly: boolean = false;
+
   constructor() {}
 
   ngOnInit(): void {
+    console.log(this.typeComponent);
     console.log(this.deductives);
+    this.setInputs();
+  }
+
+  setInputs() {
+    if (this.typeComponent === 'revition-results') {
+      this.isReadOnly = false;
+    }
   }
 }

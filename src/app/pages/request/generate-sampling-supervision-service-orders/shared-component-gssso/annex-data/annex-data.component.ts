@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 
@@ -8,6 +8,7 @@ import { ModelForm } from '../../../../../core/interfaces/model-form';
   styles: [],
 })
 export class AnnexDataComponent implements OnInit {
+  @Input() dataAnnex: any;
   annexForm: ModelForm<any>;
 
   constructor(private fb: FormBuilder) {}

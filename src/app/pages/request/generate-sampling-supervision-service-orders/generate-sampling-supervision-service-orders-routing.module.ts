@@ -9,6 +9,16 @@ const routes: Routes = [
         .SamplingServiceOrdersModule,
     data: { title: 'Generar Consulta' },
   },
+  {
+    path: 'review-results',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-formats-verification-noncompliance/generate-formats-verification-noncompliance.module'
+        )
+      ).GenerateFormatsVerificationNoncomplianceModule,
+    data: { title: 'Revisar Resultados' },
+  },
 ];
 
 @NgModule({

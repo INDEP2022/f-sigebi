@@ -12,6 +12,22 @@
     </div>
   </div>
   <div body>
+    <div class="row">
+      <div class="d-flex justify-content-end">
+        <div class="p-2">
+          <button
+            class="btn btn-secondary btn-sm active"
+            (click)="openAnnexK()">
+            <i class="bx bx-square-rounded"></i> Anexo K
+          </button>
+        </div>
+        <div class="p-2">
+          <button class="btn btn-primary btn-sm active">
+            <i class="bx bx-save"></i> Guardar
+          </button>
+        </div>
+      </div>
+    </div>
     <div id="detail">
       <app-card [header]="false">
         <div body>
@@ -40,13 +56,16 @@
               </h5>
             </div>
           </div>
-          <div class="row pt-4" *ngIf="showSamplingDetail"></div>
+          <div class="row pt-4" *ngIf="showSamplingDetail">
+            <app-sampling-detail-review-results
+              [data]="samplingDetailData"></app-sampling-detail-review-results>
+          </div>
         </div>
       </app-card>
     </div>
     <div id="assets">
       <div class="row pt-6">
-        <h5>Filtro de Bienes</h5>
+        <h5>Filtro de Ordenes de Bienes</h5>
       </div>
       <div class="row pt-2">
         <div class="col-md-12">
@@ -73,15 +92,24 @@
           </h6>
         </div>
       </div>
-      <div
-        class="row"
-        *ngIf="showFilterAssets"
-        style="padding-left: 1rem"></div>
+      <div class="row" *ngIf="showFilterAssets" style="padding-left: 1rem">
+        <app-service-orders-filter
+          (searchEvent)="searchEvent($event)"></app-service-orders-filter>
+      </div>
     </div>
     <div class="tabs">
       <tabset class="md-tabs">
-        <tab heading="Bienes" id="tab1"> </tab>
-        <tab heading="Deductivas"> </tab>
+        <tab heading="Ordenes Servicio" id="tab1">
+          <app-list-service-orders
+            [searchForm]="searchForm"></app-list-service-orders>
+        </tab>
+        <tab heading="Verificaciones">
+          <app-create-deductives
+            [typeComponent]="'revition-results'"></app-create-deductives>
+        </tab>
+        <tab heading="Datos Anexo">
+          <app-annex-data [dataAnnex]="dataAnnex"></app-annex-data>
+        </tab>
       </tabset>
     </div>
   </div>
