@@ -134,6 +134,11 @@ const routes: Routes = [
         )
       ).ExecuteReturnDeliveriesModule,
   },
+  {
+    path: 'siab-web',
+    loadChildren: async () =>
+      (await import('./siab-web/siab-web.module')).SiabWebModule,
+  },
 ];
 
 @NgModule({
