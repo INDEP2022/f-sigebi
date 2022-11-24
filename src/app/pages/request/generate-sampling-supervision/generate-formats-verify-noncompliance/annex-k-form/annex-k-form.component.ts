@@ -54,8 +54,22 @@ export class AnnexKFormComponent implements OnInit {
     });
   }
 
+  displayDetailAnnex(): boolean {
+    if (
+      this.typeAnnex === 'annexK-restitution-of-assets' ||
+      this.typeAnnex === 'annex-k-review-results'
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   signAnnex(): void {
-    if (this.typeAnnex === 'annexK-restitution-of-assets') {
+    if (
+      this.typeAnnex === 'annexK-restitution-of-assets' ||
+      this.typeAnnex === 'annex-k-review-results'
+    ) {
       this.openModal(PrintReportRestitutionModalComponent, '', this.typeAnnex);
     } else {
       this.openModal(PrintReportModalComponent, '', this.typeAnnex);
