@@ -20,7 +20,9 @@ export class MsgRsbCRegisterRequestGoodsComponent
   @Input() registroDocumentacion: boolean = true;
   @Input() buscarAsociarExpediente: boolean = true;
   @Input() seleccionarBienes: boolean = true;
+  @Input() verificarCumplimientoBienes: boolean = false;
   @Input() expediente: boolean = true;
+  @Input() tabRegisterDocumentation: string = 'Registro de Documentación';
   public typeDoc: string = '';
 
   /** OUTPUT VARIABLES */
@@ -119,7 +121,7 @@ export class MsgRsbCRegisterRequestGoodsComponent
       ignoreBackdropClick: true,
     });
     modalRef.content.refresh.subscribe(next => {
-      if (next) console.log(next);
+      if (next) console.log(next); //this.getCities();
     });
   }
 }

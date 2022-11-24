@@ -6,11 +6,11 @@ const routes: Routes = [
   {
     path: ':request',
     component: GreCDeliveryRequestNotifMainComponent,
-  }
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class GreMDeliveryRequestNotifRoutingModule { }
+export class GreMDeliveryRequestNotifRoutingModule {}

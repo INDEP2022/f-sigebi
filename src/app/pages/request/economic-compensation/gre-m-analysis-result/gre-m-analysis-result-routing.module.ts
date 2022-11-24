@@ -6,11 +6,11 @@ const routes: Routes = [
   {
     path: ':request',
     component: GreCAnalysisResultMainComponent,
-  }
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class GreMAnalysisResultRoutingModule { }
+export class GreMAnalysisResultRoutingModule {}

@@ -3,10 +3,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { IRequestInformation } from 'src/app/core/models/requests/requestInformation.model';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { CreateReportComponent } from '../../../shared-request/create-report/create-report.component';
 import { RejectRequestModalComponent } from '../../../shared-request/reject-request-modal/reject-request-modal.component';
 import { IRequestDocument } from './../../../../../core/models/requests/document.model';
 import { DICTUM_VALIDATION_DOCS } from './docs-template';
-import { CreateReportComponent } from '../../../shared-request/create-report/create-report.component';
 
 @Component({
   selector: 'app-gre-c-validate-dictum',

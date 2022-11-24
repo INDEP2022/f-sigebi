@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -23,6 +23,7 @@ export class SelectGoodsComponent extends BasePage implements OnInit {
   selectedGoodTotalItems: number = 0;
   goodColumns: any[] = [];
   selectedGoodColumns: any[] = [];
+  @Input() nombrePantalla: string = 'sinNombre';
   goodSettings = {
     ...TABLE_SETTINGS,
     actions: false,

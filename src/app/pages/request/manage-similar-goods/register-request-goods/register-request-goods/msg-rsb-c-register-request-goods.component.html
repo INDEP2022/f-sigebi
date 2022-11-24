@@ -130,7 +130,7 @@
         <div class="row pt-2">
           <tabset class="md-tabs">
             <tab
-              heading="Registro de Documentación"
+              [heading]="tabRegisterDocumentation"
               id="tab1"
               *ngIf="registroDocumentacion">
               <ng-container
@@ -157,14 +157,21 @@
             <tab heading="Seleccionar Bienes" *ngIf="seleccionarBienes">
               <ng-container
                 *ngIf="
-                  nombrePantalla == 'return-request-record';
+                  nombrePantalla == 'return-request-record' ||
+                    nombrePantalla == 'goods-classification';
                   else elseBlock2
                 ">
-                <app-select-goods></app-select-goods>
+                <app-select-goods
+                  [nombrePantalla]="nombrePantalla"></app-select-goods>
               </ng-container>
               <ng-template #elseBlock2>
                 <app-select-similar-goods></app-select-similar-goods>
               </ng-template>
+            </tab>
+            <tab
+              heading="Verificar Cumplimiento de Bienes"
+              *ngIf="verificarCumplimientoBienes">
+              verificarCumplimientoBienes
             </tab>
             <tab heading="Expediente">
               <tabset class="md-tabs">
