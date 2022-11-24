@@ -1,23 +1,19 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { IRequestInformation } from 'src/app/core/models/requests/requestInformation.model';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { IRequestInformation } from '../../../../../core/models/requests/requestInformation.model';
-//Components
-import { CreateReportComponent } from '../../../shared-request/create-report/create-report.component';
+import { RejectRequestModalComponent } from '../../../shared-request/reject-request-modal/reject-request-modal.component';
 import { IRequestDocument } from './../../../../../core/models/requests/document.model';
-import { COMPENSATION_DICTUM_DOCS } from './docs-template';
+import { DICTUM_VALIDATION_DOCS } from './docs-template';
+import { CreateReportComponent } from '../../../shared-request/create-report/create-report.component';
 
 @Component({
-  selector: 'app-gre-c-guidelines-revision-main',
-  templateUrl: './gre-c-guidelines-revision-main.component.html',
-  styleUrls: ['./gre-c-guidelines-revision-main.component.scss'],
+  selector: 'app-gre-c-validate-dictum',
+  templateUrl: './gre-c-validate-dictum.component.html',
+  styleUrls: ['./gre-c-validate-dictum.component.scss'],
 })
-export class GreCGuidelinesRevisionMainComponent
-  extends BasePage
-  implements OnInit
-{
+export class GreCValidateDictumComponent extends BasePage implements OnInit {
   requestId: number = NaN;
   contributor: string = '';
   requestInfo: IRequestInformation;
@@ -31,7 +27,7 @@ export class GreCGuidelinesRevisionMainComponent
     private modalService: BsModalService
   ) {
     super();
-    this.docTemplate = COMPENSATION_DICTUM_DOCS;
+    this.docTemplate = DICTUM_VALIDATION_DOCS;
     this.screenWidth =
       window.innerWidth ||
       document.documentElement.clientWidth ||
@@ -66,9 +62,58 @@ export class GreCGuidelinesRevisionMainComponent
       transferee: 'SAT - COMERCIO EXTERIOR',
       emitter: 'ALAF',
       authority: 'ADMINISTRACIÓN LOCAL DE AUDITORÍA FISCAL DE MEXICALI',
-      similarGoodsRequest: 1851,
+      rejectionComment: 'COMENTARIO DE RECHAZO',
     };
     this.contributor = 'CARLOS G. PALMA';
+  }
+
+  close() {
+    // this.registRequestForm.reset();
+    this.router.navigate(['pages/request/list']);
+  }
+
+  requestRegistered(request: any) {
+    console.log(request);
+  }
+
+  turnRequest() {
+    this.alertQuestion(
+      'question',
+      `¿Desea turnar la solicitud con Folio ${this.requestId}`,
+      '',
+      'Turnar'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.onLoadToast('success', 'Solicitud turnada con éxito', '');
+      }
+    });
+  }
+
+  createReport(context?: Partial<CreateReportComponent>): void {
+    const modalRef = this.modalService.show(CreateReportComponent, {
+      initialState: { documents: this.docTemplate },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.refresh.subscribe(next => {
+      if (next) console.log(next); //this.getCities();
+    });
+  }
+
+  rejectRequest() {
+    const modalRef = this.modalService.show(RejectRequestModalComponent, {
+      initialState: {
+        title: 'Confirmar Rechazo',
+        message:
+          'El resultado de la verificación y análisis documental será rechazado.',
+        requestId: this.requestId,
+      },
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.onReject.subscribe((data: boolean) => {
+      if (data) console.log(data);
+    });
   }
 
   requestSelected(type: number) {
@@ -89,38 +134,5 @@ export class GreCGuidelinesRevisionMainComponent
       default:
         break;
     }
-  }
-
-  close() {
-    // this.registRequestForm.reset();
-    this.router.navigate(['pages/request/list']);
-  }
-
-  requestRegistered(request: any) {
-    console.log(request);
-  }
-
-  createReport(context?: Partial<CreateReportComponent>): void {
-    const modalRef = this.modalService.show(CreateReportComponent, {
-      initialState: { documents: this.docTemplate },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) console.log(next); //this.getCities();
-    });
-  }
-
-  turnRequest() {
-    this.alertQuestion(
-      'question',
-      `¿Desea turnar la solicitud con Folio ${this.requestId}`,
-      '',
-      'Turnar'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.onLoadToast('success', 'Solicitud turnada con éxito', '');
-      }
-    });
   }
 }

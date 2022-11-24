@@ -71,6 +71,33 @@ var usuario: IRequestList[] = [
   },
   {
     title:
+      'Generar Resultado de Análisis Resarcmieniento (NUMERARIO), No. Solicitud: 1896, Contribuyente CARLOS G. PALMA',
+    noRequest: 1896,
+    numTask: 212029,
+    noInstance: 450060,
+    created: 'tester_nsbxt',
+    process: 'RE_ResultadoAnalisis',
+  },
+  {
+    title:
+      'Validar Dictamen Resarcmieniento (NUMERARIO), No. Solicitud: 1896, Contribuyente CARLOS G. PALMA',
+    noRequest: 1896,
+    numTask: 212035,
+    noInstance: 450060,
+    created: 'tester_nsbxt',
+    process: 'RE_ValidarDictamen',
+  },
+  {
+    title:
+      'Notificación al Contribuyente (Resarcmieniento NUMERARIO), No. Solicitud: 1896, Contribuyente CARLOS G. PALMA',
+    noRequest: 1896,
+    numTask: 212036,
+    noInstance: 450060,
+    created: 'tester_nsbxt',
+    process: 'RE_Notificar',
+  },
+  {
+    title:
       'Registrar Cita Contribuyente (Resarcimiento NUMERARIO), No. Solicitud: 1896, Contribuyente CARLOS G. PALMA',
     noRequest: 1896,
     numTask: 212097,
@@ -168,6 +195,30 @@ export class RequestListComponent extends BasePage implements OnInit {
         // en el caso de que sea el proceso de registrar solicitud de recursos economicos
         this.router.navigate([
           'pages/request/economic-compensation/economic-resources',
+          event.data.noRequest,
+        ]);
+        break;
+
+      case 'RE_ResultadoAnalisis':
+        // en el caso de que sea el proceso de generar resultado de analisis de recursos economicos
+        this.router.navigate([
+          'pages/request/economic-compensation/analysis-result',
+          event.data.noRequest,
+        ]);
+        break;
+
+      case 'RE_ValidarDictamen':
+        // en el caso de que sea el proceso de validar dictamen de recursos economicos
+        this.router.navigate([
+          'pages/request/economic-compensation/validate-dictum',
+          event.data.noRequest,
+        ]);
+        break;
+
+      case 'RE_Notificar':
+        // en el caso de que sea el proceso de notificación de solicitud de entrega de recursos economicos
+        this.router.navigate([
+          'pages/request/economic-compensation/delivery-request-notif',
           event.data.noRequest,
         ]);
         break;

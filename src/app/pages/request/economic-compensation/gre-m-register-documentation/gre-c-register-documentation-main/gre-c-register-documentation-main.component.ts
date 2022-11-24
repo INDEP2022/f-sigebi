@@ -15,6 +15,8 @@ export class GreCRegisterDocumentationMainComponent
 {
   requestId: number = NaN;
   requestInfo: IRequestInformation;
+  public typeDoc: string = '';
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -30,6 +32,7 @@ export class GreCRegisterDocumentationMainComponent
         this.getRequestInfo(this.requestId);
       }
     });
+    this.requestSelected(1);
   }
 
   getRequestInfo(rquestId: number) {
@@ -67,5 +70,25 @@ export class GreCRegisterDocumentationMainComponent
         this.onLoadToast('success', 'Solicitud turnada con éxito', '');
       }
     });
+  }
+
+  requestSelected(type: number) {
+    this.typeDocumentMethod(type);
+  }
+
+  typeDocumentMethod(type: number) {
+    switch (type) {
+      case 1:
+        this.typeDoc = 'doc-request';
+        break;
+      case 2:
+        this.typeDoc = 'doc-expedient';
+        break;
+      case 3:
+        this.typeDoc = 'request-expedient';
+        break;
+      default:
+        break;
+    }
   }
 }
