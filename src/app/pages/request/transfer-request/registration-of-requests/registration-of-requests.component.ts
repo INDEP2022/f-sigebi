@@ -35,11 +35,11 @@ export class RegistrationOfRequestsComponent
   tab6: string = '';
 
   //registro de solicitudos o bienes
-  requestRegistration: boolean = false;
+  requestRegistration: boolean = true;
   //verificacion de cumplimientos tab
   complianceVerifi: boolean = false;
   //clasificacion de bienes
-  classifyAssets: boolean = true;
+  classifyAssets: boolean = false;
   //validar destino del bien(documento)
   validateDocument: boolean = false;
   //notificar aclaraciones o improcedencias
