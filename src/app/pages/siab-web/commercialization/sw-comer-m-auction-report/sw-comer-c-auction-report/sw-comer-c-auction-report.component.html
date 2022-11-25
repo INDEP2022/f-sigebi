@@ -120,8 +120,10 @@
           [settings]="settings"
           [source]="data"></ng2-smart-table>
       </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
     </div>
-
+    <!-- Es la misma tabla, solo cambia el título, falta configuración por separado (Pendiente) -->
     <div class="row pt-5" *ngIf="showGarantia">
       <div class="ch-content" header>
         <h5 class="title">Garantias</h5>
@@ -141,6 +143,8 @@
           [settings]="settings"
           [source]="data"></ng2-smart-table>
       </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
     </div>
 
     <div class="row pt-5" *ngIf="showGarantia || showLiquidacion">

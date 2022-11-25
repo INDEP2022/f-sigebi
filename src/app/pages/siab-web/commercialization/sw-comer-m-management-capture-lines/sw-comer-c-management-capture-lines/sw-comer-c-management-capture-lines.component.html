@@ -163,5 +163,7 @@
         [source]="data"
         (edit)="openForm($event.data)"></ng2-smart-table>
     </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
   </div>
 </app-card>

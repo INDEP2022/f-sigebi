@@ -41,6 +41,7 @@ export class SwComerCManagementCaptureLinesComponent
   ngOnInit(): void {
     this.prepareFormSearch();
     this.prepareFormAdm();
+    this.getPagination();
   }
 
   private prepareFormSearch() {

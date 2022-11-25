@@ -22,6 +22,26 @@ const routes: Routes = [
       ).SwComerMManagementCaptureLinesModule,
     data: { title: 'Lineas de captura' },
   },
+  {
+    path: 'sw-comer-m-winners-report',
+    loadChildren: async () =>
+      (
+        await import(
+          './sw-comer-m-winners-report/sw-comer-m-winners-report.module'
+        )
+      ).SwComerMWinnersReportModule,
+    data: { title: 'Reporte de ganadores' },
+  },
+  {
+    path: 'sw-comer-m-valid-capture-line',
+    loadChildren: async () =>
+      (
+        await import(
+          './sw-comer-m-valid-capture-line/sw-comer-m-valid-capture-line.module'
+        )
+      ).SwComerMValidCaptureLineModule,
+    data: { title: 'Valida línea captura' },
+  },
 ];
 
 @NgModule({
