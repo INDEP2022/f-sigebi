@@ -11,6 +11,7 @@ import { GENERAL_PROCESSES_ROUTES } from '../common/routes/general-processes.rou
 import { MASTER_FILES } from '../common/routes/master-file.routes';
 import { PARAMETERIZATION_ROUTES } from '../common/routes/parameterization.routes';
 import { SCHEDULING_DELIVERIES } from '../common/routes/scheduling-deliveries.routes';
+import { COMMERCIALIZATION_SW_ROUTES } from '../common/routes/siab-web/commercialization-sw.routes';
 import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
@@ -59,6 +60,10 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Muestreo Bienes',
             link: '/pages/request/sampling-assets',
+          },
+          {
+            label: 'Genera Consultas',
+            link: '/pages/request/generate-sampling-service-orders/generate-query',
           },
           {
             label: 'Solicitud de Documentación Complementaria',
@@ -304,4 +309,10 @@ export const MENU: IMenuItem[] = [
 
   //Parametrización
   ...PARAMETERIZATION_ROUTES,
+
+  {
+    label: 'Siab Web',
+    icon: 'bx-folder',
+    subItems: [...COMMERCIALIZATION_SW_ROUTES],
+  },
 ];
