@@ -42,6 +42,13 @@ const routes: Routes = [
       ).SwComerMValidCaptureLineModule,
     data: { title: 'Valida línea captura' },
   },
+  {
+    path: 'sw-comer-m-report-oi',
+    loadChildren: async () =>
+      (await import('./sw-comer-m-report-oi/sw-comer-m-report-oi.module'))
+        .SwComerMReportOiModule,
+    data: { title: 'Reporte OI' },
+  },
 ];
 
 @NgModule({

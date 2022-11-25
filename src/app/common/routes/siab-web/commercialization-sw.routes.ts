@@ -18,6 +18,10 @@ export const COMMERCIALIZATION_SW_ROUTES = [
         label: 'Valida línea captura',
         link: '/pages/siab-web/commercialization/sw-comer-m-valid-capture-line',
       },
+      {
+        label: 'Reporte OI',
+        link: '/pages/siab-web/commercialization/sw-comer-m-report-oi',
+      },
     ],
   },
 ];
