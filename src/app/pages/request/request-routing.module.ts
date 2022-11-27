@@ -180,6 +180,7 @@ const routes: Routes = [
         .ManageSimilarGoodsModule,
     data: { title: '' },
   },
+  // Resarcimiento Economico
   {
     path: 'economic-compensation',
     loadChildren: async () =>
@@ -216,6 +217,28 @@ const routes: Routes = [
         )
       ).RequestComplementaryDocumentationModule,
     data: { title: 'Registro de Solicitud Dcoumentación Complementaria' },
+  },
+  // Registrar Documentación Complementaria
+  {
+    path: 'register-documentation',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-request/register-request/register-request.module'
+        )
+      ).RegisterRequestModule,
+    data: { title: 'Registro de Dcoumentación Complementaria' },
+  },
+  // Solicitud de Informacion de Destino
+  {
+    path: 'destination-information-request',
+    loadChildren: async () =>
+      (
+        await import(
+          './destination-information-request/destination-information-request.module'
+        )
+      ).DestinationInformationRequestModule,
+    data: { title: 'Solicitud de Información de Destino' },
   },
 ];
 
