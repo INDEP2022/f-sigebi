@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { Store } from '@ngrx/store';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { Observable } from 'rxjs';
+import { AppState } from '../../../../../app.reducers';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { BasePage } from '../../../../../core/shared/base-page';
 import { AnnexJFormComponent } from '../annex-j-form/annex-j-form.component';
 import { AnnexKFormComponent } from '../annex-k-form/annex-k-form.component';
+import { selectListItems } from '../store/item.selectors';
 
 @Component({
   selector: 'app-verify-noncompliance',
@@ -24,10 +28,13 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
 
   clasificationAnnex: boolean = true;
 
+  listItems$: Observable<any> = new Observable();
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private bsModalRef: BsModalRef
+    private bsModalRef: BsModalRef,
+    private store: Store<AppState>
   ) {
     super();
   }
@@ -54,6 +61,12 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
 
   save() {
     this.willSave = true;
+
+    this.listItems$ = this.store.select(selectListItems);
+
+    this.listItems$.subscribe(data => {
+      console.log(data);
+    });
   }
 
   turnSampling() {

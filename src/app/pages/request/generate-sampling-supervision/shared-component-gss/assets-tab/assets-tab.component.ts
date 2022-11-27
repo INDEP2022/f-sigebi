@@ -5,6 +5,8 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ExcelService } from '../../../../../common/services/excel.service';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { JSON_TO_CSV } from '../../../../admin/home/constants/json-to-csv';
+import { listAssets } from '../../generate-formats-verify-noncompliance/store/actions';
+import { Item } from '../../generate-formats-verify-noncompliance/store/item.module';
 import { UploadExpedientFormComponent } from '../upload-expedient-form/upload-expedient-form.component';
 import { UploadImagesFormComponent } from '../upload-images-form/upload-images-form.component';
 
@@ -46,7 +48,7 @@ export class AssetsTabComponent implements OnInit {
   bsModalRef: BsModalRef;
   assetsForm: ModelForm<any>;
   assetsArray: any[] = [];
-  assetsSelected: any[] = [];
+  assetsSelected: Item[] = [];
   jsonToCsv = JSON_TO_CSV;
   isReadonly: boolean = false;
   isCheckboxReadonly: boolean = false;
@@ -56,7 +58,7 @@ export class AssetsTabComponent implements OnInit {
     private fb: FormBuilder,
     private modalService: BsModalService,
     private excelService: ExcelService,
-    private store: Store<{ data: any[] }>
+    private store: Store
   ) {}
 
   ngOnInit(): void {
@@ -102,9 +104,9 @@ export class AssetsTabComponent implements OnInit {
       );
       this.assetsSelected.splice(index, 1);
     }
-    //console.log(this.assetsSelected);
-    //const items:any = {item1: this.assetsSelected}
-    //this.store.dispatch(add({items}))
+
+    //cargar los datos al store
+    this.store.dispatch(listAssets({ items: this.assetsSelected }));
   }
 
   uploadExpedient() {

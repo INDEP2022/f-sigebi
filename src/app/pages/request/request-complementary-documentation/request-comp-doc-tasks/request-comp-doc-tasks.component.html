@@ -98,6 +98,39 @@
         <tab heading="Seleccionar Bienes" id="selectGoodsTab">
           <app-select-goods></app-select-goods>
         </tab>
+        <tab heading="Lineamientos" id="guidelinesTab">
+          <app-guidelines></app-guidelines>
+        </tab>
+        <tab heading="Expediente" id="fileTab">
+          <tabset class="md-tabs">
+            <tab
+              heading="Documentos Solicitud"
+              id="tab1"
+              (selectTab)="requestSelected(1)">
+              <app-doc-request-tab [typeDoc]="typeDoc"></app-doc-request-tab>
+            </tab>
+            <tab
+              heading="Documentos generales"
+              (selectTab)="requestSelected(2)">
+              <tabset class="md-tabs">
+                <tab
+                  heading="Documento Expedientes"
+                  id="tab1"
+                  (selectTab)="requestSelected(2)">
+                  <app-doc-request-tab
+                    [typeDoc]="typeDoc"></app-doc-request-tab>
+                </tab>
+                <tab
+                  heading="Solicitudes del Expediente"
+                  (selectTab)="requestSelected(3)">
+                  <app-expedients-request-tab
+                    [typeDoc]="typeDoc"></app-expedients-request-tab>
+                </tab>
+              </tabset>
+            </tab>
+          </tabset>
+        </tab>
+
         <!--<tab heading="Listado de Bienes" id="goodsListTab">
           <app-goods-list [requestId]="requestId"></app-goods-list>
         </tab>
