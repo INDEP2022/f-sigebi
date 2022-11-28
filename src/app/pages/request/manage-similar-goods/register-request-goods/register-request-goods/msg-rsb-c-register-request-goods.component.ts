@@ -2,7 +2,10 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { IRequestDocument } from 'src/app/core/models/requests/document.model';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { COMPENSATION_ACT_DOCS } from '../../../economic-compensation/gre-m-compensation-act/gre-c-compensation-act-main/docs-template';
+import { CONTRIBUTOR_NOTIFICATION_DOCS } from '../../../economic-compensation/gre-m-delivery-request-notif/gre-c-delivery-request-notif-main/docs-template';
 import { CreateReportComponent } from '../../../shared-request/create-report/create-report.component';
 
 @Component({
@@ -32,6 +35,9 @@ export class MsgRsbCRegisterRequestGoodsComponent
   /** OTHERS VARIABLES */
   requestNumb: number;
   registRequestForm: FormGroup;
+
+  docTemplateAct: IRequestDocument[];
+  docTemplateNotif: IRequestDocument[];
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -114,7 +120,25 @@ export class MsgRsbCRegisterRequestGoodsComponent
     });
   }
 
-  generateReport(context?: Partial<CreateReportComponent>): void {
+  openDocument(type: string) {
+    let context: any;
+    switch (type) {
+      case 'devol':
+        this.docTemplateAct = COMPENSATION_ACT_DOCS;
+        context = { documents: this.docTemplateAct };
+        this.createReport(context);
+        break;
+      case 'notif':
+        this.docTemplateNotif = CONTRIBUTOR_NOTIFICATION_DOCS;
+        context = { documents: this.docTemplateNotif };
+        this.createReport(context);
+        break;
+      default:
+        break;
+    }
+  }
+
+  createReport(context?: Partial<CreateReportComponent>): void {
     const modalRef = this.modalService.show(CreateReportComponent, {
       initialState: context,
       class: 'modal-lg modal-dialog-centered',
