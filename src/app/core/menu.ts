@@ -63,6 +63,10 @@ export const MENU: IMenuItem[] = [
             link: '/pages/request/sampling-assets',
           },
           {
+            label: 'Genera Consultas',
+            link: '/pages/request/generate-sampling-service-orders/generate-query',
+          },
+          {
             label: 'Solicitud de Documentación Complementaria',
             link: '/pages/request/request-comp-doc',
           },
