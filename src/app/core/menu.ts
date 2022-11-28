@@ -90,6 +90,15 @@ export const MENU: IMenuItem[] = [
           },
         ],
       },
+      {
+        label: 'Solicitud de Información de Destino',
+        subItems: [
+          {
+            label: 'Listado de Solicitudes',
+            link: '/pages/request/destination-information-request/list',
+          },
+        ],
+      },
     ],
   },
 

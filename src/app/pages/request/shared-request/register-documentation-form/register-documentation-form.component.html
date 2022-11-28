@@ -15,7 +15,7 @@
         </div>
         <div class="mx-1">
           <button
-            class="btn btn-primary btn-sm active"
+            class="btn btn-danger btn-sm active"
             (click)="cancelRequest()">
             <i class="bx bxs-x-circle mr-1 float-icon"></i>Cancelar
           </button>
@@ -68,7 +68,7 @@
     <div class="col-md-4">
       <form-field
         [control]="registerForm.get('infoOrigin')"
-        label="Tipo Expediente">
+        label="Procedencia Información">
         <ng-select
           formControlName="infoOrigin"
           [searchable]="false"

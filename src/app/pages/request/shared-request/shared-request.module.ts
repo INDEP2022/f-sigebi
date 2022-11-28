@@ -53,6 +53,7 @@ import { ShowProgrammingComponent } from './show-programming/show-programming.co
 import { ShowSignatureProgrammingComponent } from './show-signature-programming/show-signature-programming.component';
 import { UploadFilesFormComponent } from './upload-files-form/upload-files-form.component';
 import { UsersSelectedToTurnComponent } from './users-selected-to-turn/users-selected-to-turn.component';
+import { ViewReportComponent } from './view-report/view-report.component';
 import { WarehouseConfirmComponent } from './warehouse-confirm/warehouse-confirm.component';
 import { WarehouseFormComponent } from './warehouse-form/warehouse-form.component';
 import { WarehouseShowComponent } from './warehouse-show/warehouse-show.component';
@@ -111,6 +112,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     CreateReportComponent,
     RejectRequestModalComponent,
     SearchRequestSimilarGoodsComponent,
+    ViewReportComponent,
   ],
   imports: [
     CommonModule,
@@ -148,6 +150,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     CreateDeductivesComponent,
     RejectRequestModalComponent,
     SearchRequestSimilarGoodsComponent,
+    ViewReportComponent,
   ],
 })
 export class SharedRequestModule {}
