@@ -362,6 +362,10 @@ export const COMMERCIALIZATION_ROUTES = [
         label: 'Configuracion de Layouts',
         link: '/pages/commercialization/layouts-configuration',
       },
+      {
+        label: 'Reporte de Notificacion de Adjudicacion Inmuebles',
+        link: '/pages/commercialization/property-adjudication-notification-report',
+      },
     ],
   },
 ];

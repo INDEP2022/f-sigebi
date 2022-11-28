@@ -467,6 +467,16 @@ const routes: Routes = [
       ).CMLayoutsConfigurationModule,
     data: { title: 'Configuracion de Layouts' },
   },
+  {
+    path: 'property-adjudication-notification-report',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-m-property-adjudication-notification-report/c-m-property-adjudication-notification-report-routing.module'
+        )
+      ).CMPropertyAdjudicationNotificationReportRoutingModule,
+    data: { title: 'Reporte de Notificacion de Adjudicacion Inmuebles' },
+  },
 ];
 
 @NgModule({
