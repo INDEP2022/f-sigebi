@@ -1,0 +1,210 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title" *ngIf="task == 1">
+      Captura de orden de servicio (Programación de entrega:
+      E-METROPOLITANA-335) con folio: METROPOLITANA-1340-OS
+    </h5>
+
+    <h5 class="title" *ngIf="task == 2">
+      Validación de servicios (Programación de entrega: E-METROPOLITANA-335)
+      para la orden de servicio con folio: METROPOLITANA-1545-OS
+    </h5>
+
+    <h5 class="title" *ngIf="task == 3 || task == 6">
+      Aprobración de servicios (Programación de recepción: Programación de
+      entrega E-METROPOLITANA-335) para la orden de servicio con folio:
+      METROPOLITANA-1545-OS
+    </h5>
+
+    <h5 class="title" *ngIf="task == 4">
+      Reporte de implementación (Programación de entrega E-METROPOLITANA-335)
+      para la orden de servicio con folio: METROPOLITANA-1545-OS
+    </h5>
+
+    <h5 class="title" *ngIf="task == 5 || task == 11">
+      Validación de reporte de implementación (Programación de entrega:
+      E-METROPOLITANA-335) para la orden de servicio con folio:
+      METROPOLITANA-1545-OS
+    </h5>
+    <h5 class="title" *ngIf="task == 7">
+      Reporte de implementación aprobado (Programación de entrega
+      E-METROPOLITANA-335) para la orden de servicio con folio:
+      METROPOLITANA-1545-OS
+    </h5>
+    <h5 class="title" *ngIf="task == 8 || task == 10">
+      Validación de servicios (Programación de entrega: E-METROPOLITANA-335)
+      para la orden de servicio con folio: METROPOLITANA-1545-OS
+    </h5>
+    <h5 class="title" *ngIf="task == 9 || task == 13">
+      Rechazo de orden de servicios (Programación de entrega:
+      E-METROPOLITANA-335) con folio: METROPOLITANA-1545-OS
+    </h5>
+
+    <h5 class="title" *ngIf="task == 12 || task == 14">
+      Rechazo de reporte de implementación (Programación de entrega:
+      E-METROPOLITANA-335) para la orden de servicio con folio:
+      METROPOLITANA-1545-OS
+    </h5>
+  </div>
+
+  <div body style="margin-top: -30px">
+    <div class="justify-content-end btn-toolbar">
+      <button
+        *ngIf="(!showForm && task == 1) || task == 2 || task == 3"
+        (click)="showForm = true"
+        class="btn btn-primary btn-sm active">
+        <i class="fa fa-file" aria-hidden="true"></i> Reclamar
+      </button>
+
+      <button
+        (click)="liberateRequest()"
+        *ngIf="(showForm && task != 3) || (!showForm && task == 8)"
+        class="btn btn-info btn-sm active">
+        <i class="fa fa-file" aria-hidden="true"></i> Liberar
+      </button>
+
+      <button
+        (click)="sendRequest()"
+        *ngIf="
+          (showForm && task == 1) ||
+          (!showForm && task == 4) ||
+          (!showForm && task == 9) ||
+          (!showForm && task == 11) ||
+          (!showForm && task == 12) ||
+          (!showForm && task == 13) ||
+          (!showForm && task == 14)
+        "
+        class="btn btn-success btn-sm active">
+        <i class="fa fa-paper-plane" aria-hidden="true"></i> Enviar
+      </button>
+
+      <button
+        (click)="generateReport()"
+        *ngIf="
+          (showForm && task == 2) ||
+          (showForm && task == 3) ||
+          (!showForm && task == 5) ||
+          (!showForm && task == 6) ||
+          (!showForm && task == 7) ||
+          (!showForm && task == 8) ||
+          (!showForm && task == 9) ||
+          (!showForm && task == 10) ||
+          (!showForm && task == 11)
+        "
+        class="btn btn-pink btn-sm active">
+        <i class="fa fa-file-pdf" aria-hidden="true"></i> Generar reporte de
+        orden de servicio
+      </button>
+
+      <button
+        (click)="aprobeRequest()"
+        *ngIf="
+          (showForm && aprobateService && task == 3) ||
+          (!showForm && aprobateService && task == 6) ||
+          (!showForm && aprobateService && task == 7) ||
+          (!showForm && aprobateService && task == 10)
+        "
+        class="btn btn-primary btn-sm active">
+        <i class="fa fa-check" aria-hidden="true"></i> aprobar
+      </button>
+
+      <button
+        (click)="aprobeRequest()"
+        *ngIf="
+          (showForm && aprobateService && task == 2) ||
+          (!showForm && aprobateService && task == 5) ||
+          (!showForm && aprobateService && task == 11)
+        "
+        class="btn btn-success btn-sm active">
+        <i class="fa fa-check" aria-hidden="true"></i> aprobar
+      </button>
+
+      <button
+        (click)="declineOrderService()"
+        *ngIf="
+          (showForm && task == 2 && !aprobateService) ||
+          (!showForm && task == 5 && !aprobateService) ||
+          (!showForm && task == 8 && !aprobateService) ||
+          (!showForm && task == 11 && !aprobateService)
+        "
+        class="btn btn-danger btn-sm active">
+        <i class="fa fa-ban" aria-hidden="true"></i> Rechazar
+      </button>
+
+      <button
+        (click)="sendJustify()"
+        *ngIf="
+          (!showForm && task == 9) ||
+          (!showForm && task == 12) ||
+          (!showForm && task == 13) ||
+          (!showForm && task == 14)
+        "
+        class="btn btn-pink btn-sm active">
+        <i class="fa fa-send" aria-hidden="true"></i> Enviar justificación
+      </button>
+
+      <button
+        (click)="saveRequest()"
+        *ngIf="
+          (showForm && task != 3) ||
+          (!showForm && task == 4) ||
+          (!showForm && task == 5) ||
+          (!showForm && task == 8) ||
+          (!showForm && task == 9) ||
+          (!showForm && task == 10) ||
+          (!showForm && task == 11) ||
+          (!showForm && task == 12) ||
+          (!showForm && task == 13) ||
+          (!showForm && task == 14)
+        "
+        class="btn btn-primary btn-sm active">
+        <i class="fa fa-save" aria-hidden="true"></i> Guardar
+      </button>
+
+      <button
+        *ngIf="
+          (!showForm && task == 5) ||
+          (!showForm && task == 7) ||
+          (!showForm && task == 11)
+        "
+        (click)="createAnnexedW()"
+        class="btn btn-info btn-sm active">
+        <i class="fa fa-file-pdf" aria-hidden="true"></i> Anexo W
+      </button>
+
+      <button
+        *ngIf="!showForm && !rejected && task == 10"
+        (click)="validateJustification()"
+        class="btn btn-danger btn-sm active btn-toolbar">
+        <i class="fa fa-minus-circle" aria-hidden="true"></i> Rechazar
+        justificación
+      </button>
+    </div>
+
+    <app-order-service-form
+      [op]="task"
+      [showForm]="showForm"></app-order-service-form>
+
+    <div *ngIf="task != 5 && task != 6 && task != 7 && task != 10">
+      <app-classificate-vehicle-form
+        [op]="task"
+        [showForm]="showForm"></app-classificate-vehicle-form>
+    </div>
+
+    <div *ngIf="task == 10">
+      <app-classificate-vehicle-form
+        [op]="task"
+        [showForm]="showForm"
+        [rejected]="rejected"></app-classificate-vehicle-form>
+    </div>
+
+    <app-comments-form [op]="task" [showForm]="showForm"></app-comments-form>
+
+    <app-event-detail-form [op]="task"></app-event-detail-form>
+
+    <app-service-transportable-goods-form
+      [op]="task"
+      [showForm]="showForm"
+      [rejected]="rejected"></app-service-transportable-goods-form>
+  </div>
+</app-card>

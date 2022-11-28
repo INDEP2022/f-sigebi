@@ -195,6 +195,16 @@ const routes: Routes = [
         )
       ).ReceptionSchedulingServiceOrderModule,
   },
+
+  {
+    path: 'delivery-service-order',
+    loadChildren: async () =>
+      (
+        await import(
+          './delivery-scheduling-service-order/delivery-scheduling-service.module'
+        )
+      ).DeliverySchedulingServiceModule,
+  },
   // Solicitud Documentación Complementaria
   {
     path: 'request-comp-doc',

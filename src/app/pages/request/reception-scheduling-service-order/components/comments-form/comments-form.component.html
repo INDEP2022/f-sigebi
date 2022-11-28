@@ -21,13 +21,57 @@
             [control]="commentsForm.get('observations')"
             label="Observaciones">
             <textarea
+              *ngIf="
+                (showForm && op == 1) ||
+                (!showForm && op == 9) ||
+                (!showForm && op == 13)
+              "
               class="form-control"
               formControlName="observations"></textarea>
+
+            <textarea
+              *ngIf="
+                (showForm && op == 2) ||
+                (!showForm && op != 9) ||
+                (!showForm && op != 13)
+              "
+              class="form-control"
+              formControlName="observations"
+              readonly></textarea>
+
+            <textarea
+              *ngIf="(showForm && op != 9) || (showForm && op != 13)"
+              class="form-control"
+              formControlName="observations"
+              readonly></textarea>
           </form-field>
         </div>
         <div class="pt-3">
           <form-field [control]="commentsForm.get('note')" label="Notas">
-            <textarea class="form-control" formControlName="note"></textarea>
+            <textarea
+              class="form-control"
+              formControlName="note"
+              *ngIf="
+                (showForm && op == 1) ||
+                (!showForm && op == 9) ||
+                (!showForm && op == 13)
+              "></textarea>
+
+            <textarea
+              class="form-control"
+              formControlName="note"
+              readonly
+              *ngIf="
+                (showForm && op == 2) ||
+                (!showForm && op != 9) ||
+                (!showForm && op != 13)
+              "></textarea>
+
+            <textarea
+              class="form-control"
+              formControlName="note"
+              *ngIf="(showForm && op != 9) || (showForm && op != 13)"
+              readonly></textarea>
           </form-field>
         </div>
       </form>

@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { SharedRequestModule } from '../shared-request/shared-request.module';
 import { AddressOriginFormComponent } from './components/address-origin-form/address-origin-form.component';
 import { AddressTransferentFormComponent } from './components/address-transferent-form/address-transferent-form.component';
 import { AnnexWFormComponent } from './components/annex-w-form/annex-w-form.component';
@@ -62,6 +63,15 @@ import { ValidateReportImplementFormComponent } from './validate-report-implemen
     SharedModule,
     TabsModule,
     ModalModule.forRoot(),
+  ],
+
+  exports: [
+    ReceptionSchedulingServiceOrderRoutingModule,
+    OrderServiceFormComponent,
+    ClassificateVehicleFormComponent,
+    CommentsFormComponent,
+    ServiceTransportableGoodsFormComponent,
+    SharedRequestModule,
   ],
 })
 export class ReceptionSchedulingServiceOrderModule {}

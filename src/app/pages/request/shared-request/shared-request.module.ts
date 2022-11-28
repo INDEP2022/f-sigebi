@@ -17,6 +17,7 @@ import { DetailAssetsTabComponentComponent } from './detail-assets-tab-component
 import { DocumentFormComponent } from './document-form/document-form.component';
 import { DocumentShowComponent } from './document-show/document-show.component';
 import { ElectronicSignatureListComponent } from './electronic-signature-list/electronic-signature-list.component';
+import { EventDetailFormComponent } from './event-detail-form/event-detail-form.component';
 import { ExpedientsTabsComponent } from './expedients-tabs/expedients-tabs.component';
 import { BtnRequestComponent } from './expedients-tabs/sub-tabs/btn-request/btn-request.component';
 import { DocRequestTabComponent } from './expedients-tabs/sub-tabs/doc-request-tab/doc-request-tab.component';
@@ -105,6 +106,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     GuidelinesViewComponent,
     RegisterDocumentationFormComponent,
     CreateReportComponent,
+    EventDetailFormComponent,
   ],
   imports: [
     CommonModule,
@@ -139,6 +141,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     RequestInformationRejectComponent,
     GuidelinesViewComponent,
     RegisterDocumentationFormComponent,
+    EventDetailFormComponent,
   ],
 })
 export class SharedRequestModule {}
