@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -13,6 +14,26 @@ import { CreateReportComponent } from '../../shared-request/create-report/create
   styles: [],
 })
 export class RequestCompDocTasksComponent extends BasePage implements OnInit {
+  /**
+   * SET STATUS OF TABS
+   **/
+  regDocForm: boolean = false;
+  regDocView: boolean = false;
+  searchRequestSimGoods: boolean = false;
+  selectGoods: boolean = false;
+  guidelines: boolean = false;
+  docRequest: boolean = false;
+  expRequest: boolean = false;
+  viewSelectedGoods: boolean = false;
+  dictumValidate: boolean = false;
+  /**
+   * SET STATUS ACTIONS
+   **/
+  saveRequest: boolean = false;
+  turnReq: boolean = false;
+  createReport: boolean = false;
+  rejectReq: boolean = false;
+
   requestId: number = NaN;
   contributor: string = '';
   title: string;
@@ -21,6 +42,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
   public typeDoc: string = '';
 
   constructor(
+    private location: Location,
     private route: ActivatedRoute,
     private router: Router,
     private modalService: BsModalService
@@ -37,8 +59,12 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
       console.log(params);
       if (params.get('request')) {
         this.requestId = parseInt(params.get('request'));
-        this.title = `RESARCIMIENTO EN ESPECIE: Registro de Documentación Complementaria`;
         this.getRequestInfo(this.requestId);
+        /**
+         *MAP TASKS
+         * */
+        let process = params.get('process');
+        this.mapTasks(process);
       }
     });
     this.requestSelected(1);
@@ -52,6 +78,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
 
   getRequestInfo(rquestId: number) {
     // Llamar servicio para obtener informacion de la solicitud
+    this.title = `RESARCIMIENTO EN ESPECIE: Registro de Documentación Complementaria`;
     this.requestInfo = {
       date: '17-abr-2018',
       requestNo: 1896,
@@ -89,14 +116,15 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
 
   close() {
     // this.registRequestForm.reset();
-    this.router.navigate(['pages/request/list']);
+    //this.router.navigate(['pages/request/list']);
+    this.location.back();
   }
 
   requestRegistered(request: any) {
     console.log(request);
   }
 
-  createReport(context?: Partial<CreateReportComponent>): void {
+  openReport(context?: Partial<CreateReportComponent>): void {
     const modalRef = this.modalService.show(CreateReportComponent, {
       initialState: context,
       class: 'modal-lg modal-dialog-centered',
@@ -110,7 +138,7 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
   turnRequest() {
     this.alertQuestion(
       'question',
-      `¿Desea turnar la solicitud con Folio ${this.requestId}`,
+      `¿Desea turnar la solicitud con Folio ${this.requestId}?`,
       '',
       'Turnar'
     ).then(question => {
@@ -118,5 +146,121 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
         this.onLoadToast('success', 'Solicitud turnada con éxito', '');
       }
     });
+  }
+
+  rejectRequest(): void {
+    this.alertQuestion(
+      'question',
+      `¿Desea rechazar la solicitud con Folio ${this.requestId}?`,
+      '',
+      'Rechazar'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.onLoadToast('success', 'Solicitud rechazada con éxito', '');
+      }
+    });
+  }
+
+  mapTasks(process: string): void {
+    //REGISTRAR SOLICITUD
+    /*regRequest
+    associateReqSimGoods
+    selectOriginGoods
+    requestSiabSearch
+    integrateDocFile
+    turn
+    //Revision de lineamientos
+    receive
+    guidelinesReview
+    integrateDocFile
+    createReport
+    turn
+    //GENERAR RESULTADOS
+    receiveRequest
+    reject//AnalysisResults
+    guidelinesReview
+    integrateDocFile
+    sign
+    turn
+    //Validar dictamen
+    receive// request for opinion validation
+    reject// opinion validation
+    regOpinionValidation
+    integrateDocFile
+    createReport
+    turn*/
+
+    switch (process) {
+      case 'register-request':
+        this.regDocForm = true;
+        this.regDocView = false;
+        this.searchRequestSimGoods = true;
+        this.selectGoods = true;
+        this.viewSelectedGoods = false;
+        this.guidelines = false;
+        this.docRequest = false;
+        this.expRequest = true;
+        this.saveRequest = true;
+        this.dictumValidate = false;
+
+        this.turnReq = true;
+        this.createReport = false;
+        this.rejectReq = false;
+
+        break;
+      case 'guidelines-review':
+        this.regDocForm = false;
+        this.regDocView = true;
+        this.searchRequestSimGoods = false;
+        this.selectGoods = false;
+        this.viewSelectedGoods = true;
+        this.guidelines = true;
+        this.docRequest = false;
+        this.expRequest = true;
+        this.saveRequest = true;
+        this.dictumValidate = false;
+
+        this.turnReq = true;
+        this.createReport = true;
+        this.rejectReq = false;
+
+        break;
+      case 'analysis-result':
+        this.regDocForm = false;
+        this.regDocView = true;
+        this.searchRequestSimGoods = false;
+        this.selectGoods = true;
+        this.viewSelectedGoods = false;
+        this.guidelines = true;
+        this.docRequest = false;
+        this.expRequest = true;
+        this.saveRequest = true;
+        this.dictumValidate = false;
+
+        this.turnReq = true;
+        this.createReport = true;
+        this.rejectReq = true;
+
+        break;
+      case 'dictum-validate':
+        this.regDocForm = false;
+        this.regDocView = true;
+        this.searchRequestSimGoods = false;
+        this.selectGoods = true;
+        this.viewSelectedGoods = false;
+        this.guidelines = true;
+        this.docRequest = false;
+        this.expRequest = true;
+        this.saveRequest = true;
+        this.dictumValidate = true;
+
+        this.turnReq = true;
+        this.createReport = true;
+        this.rejectReq = true;
+
+        break;
+      default:
+        break;
+    }
   }
 }
