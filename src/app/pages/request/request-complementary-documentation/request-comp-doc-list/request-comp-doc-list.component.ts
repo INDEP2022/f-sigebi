@@ -3,8 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IRequestList } from 'src/app/core/models/catalogs/request-list.model';
 import { BasePage } from 'src/app/core/shared/base-page';
+//Models
+import { IRequestTask } from 'src/app/core/models/requests/request-task.model';
 import { COLUMNS } from './columns';
 //Provisional Data
 import { dataRequest } from './data';
@@ -15,11 +16,10 @@ import { dataRequest } from './data';
   styles: [],
 })
 export class RequestCompDocListComponent extends BasePage implements OnInit {
-  params = new BehaviorSubject<ListParams>(new ListParams());
-  paragraphs: IRequestList[] = [];
-  totalItems: number = 0;
+  tasks: IRequestTask[] = dataRequest;
 
-  data: IRequestList[] = dataRequest;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems: number = 0;
 
   constructor(private activatedRoute: ActivatedRoute, public router: Router) {
     super();
@@ -34,7 +34,12 @@ export class RequestCompDocListComponent extends BasePage implements OnInit {
 
   editRequest(event: any) {
     console.log(event);
-    switch (event.data.process) {
+    this.router.navigate(
+      ['tasks', event.data.process, event.data.requestNumber],
+      { relativeTo: this.activatedRoute }
+    );
+
+    /*switch (event.data.process) {
       case 'COMPLEMENTARY-DOCS':
         // en el caso de que sea una solicitud de programacion
         this.router.navigate(
@@ -79,6 +84,6 @@ export class RequestCompDocListComponent extends BasePage implements OnInit {
         break;
       default:
         break;
-    }
+    }*/
   }
 }

@@ -15,6 +15,7 @@ import { ConfirmProgrammingComponent } from './confirm-programming/confirm-progr
 import { CreateDeductivesComponent } from './create-deductives/create-deductives.component';
 import { CreateReportComponent } from './create-report/create-report.component';
 import { DetailAssetsTabComponentComponent } from './detail-assets-tab-component/detail-assets-tab-component.component';
+import { DictumInformationTabComponent } from './dictum-information-tab/dictum-information-tab.component';
 import { DocumentFormComponent } from './document-form/document-form.component';
 import { DocumentShowComponent } from './document-show/document-show.component';
 import { ElectronicSignatureListComponent } from './electronic-signature-list/electronic-signature-list.component';
@@ -34,6 +35,8 @@ import { GuidelinesRevisionViewComponent } from './guidelines/guidelines-revisio
 import { GuidelinesRevisionComponent } from './guidelines/guidelines-revision/guidelines-revision.component';
 import { GuidelinesComponent } from './guidelines/guidelines.component';
 import { PhotographyFormComponent } from './photography-form/photography-form.component';
+import { RegisterDictumInformationComponent } from './register-dictum-information/register-dictum-information.component';
+import { RegisterDictumValidationComponent } from './register-dictum-validation/register-dictum-validation.component';
 import { RegisterDocumentationFormComponent } from './register-documentation-form/register-documentation-form.component';
 import { RegisterDocumentationViewComponent } from './register-documentation-view/register-documentation-view.component';
 import { RejectRequestModalComponent } from './reject-request-modal/reject-request-modal.component';
@@ -113,6 +116,9 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     RejectRequestModalComponent,
     SearchRequestSimilarGoodsComponent,
     ViewReportComponent,
+    DictumInformationTabComponent,
+    RegisterDictumInformationComponent,
+    RegisterDictumValidationComponent,
   ],
   imports: [
     CommonModule,
@@ -151,6 +157,9 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     RejectRequestModalComponent,
     SearchRequestSimilarGoodsComponent,
     ViewReportComponent,
+    DictumInformationTabComponent,
+    RegisterDictumInformationComponent,
+    RegisterDictumValidationComponent,
   ],
 })
 export class SharedRequestModule {}
