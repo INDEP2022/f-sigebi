@@ -1,7 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { CreateReportComponent } from '../../../shared-request/create-report/create-report.component';
 
 @Component({
   selector: 'app-msg-rsb-c-register-request-goods',
@@ -18,7 +20,9 @@ export class MsgRsbCRegisterRequestGoodsComponent
   @Input() registroDocumentacion: boolean = true;
   @Input() buscarAsociarExpediente: boolean = true;
   @Input() seleccionarBienes: boolean = true;
+  @Input() verificarCumplimientoBienes: boolean = false;
   @Input() expediente: boolean = true;
+  @Input() tabRegisterDocumentation: string = 'Registro de Documentación';
   public typeDoc: string = '';
 
   /** OUTPUT VARIABLES */
@@ -29,7 +33,11 @@ export class MsgRsbCRegisterRequestGoodsComponent
   requestNumb: number;
   registRequestForm: FormGroup;
 
-  constructor(private activatedRoute: ActivatedRoute, private fb: FormBuilder) {
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private fb: FormBuilder,
+    private modalService: BsModalService
+  ) {
     super();
   }
 
@@ -103,6 +111,17 @@ export class MsgRsbCRegisterRequestGoodsComponent
       if (question.isConfirmed) {
         this.onLoadToast('success', 'Solicitud turnada con éxito', '');
       }
+    });
+  }
+
+  generateReport(context?: Partial<CreateReportComponent>): void {
+    const modalRef = this.modalService.show(CreateReportComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.refresh.subscribe(next => {
+      if (next) console.log(next); //this.getCities();
     });
   }
 }

@@ -5,11 +5,11 @@ export const CATALOGS_ROUTES = [
     subItems: [
       {
         label: 'Deductivas',
-        link: '/pages/catalogs/deductives',
+        link: '/pages/catalogs/create-deductives',
       },
       {
         label: 'Deductivas Verificacion',
-        link: '/pages/catalogs/deductives-verification',
+        link: '/pages/catalogs/create-deductives-verification',
       },
       {
         label: 'Delegaciones Estado',

@@ -2,11 +2,12 @@ import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequest } from 'src/app/core/models/catalogs/request.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
+import { GenerateDictumComponent } from '../tabs/approval-requests-components/generate-dictum/generate-dictum.component';
 
 @Component({
   selector: 'app-registration-of-requests',
@@ -37,19 +38,20 @@ export class RegistrationOfRequestsComponent
   //registro de solicitudos o bienes
   requestRegistration: boolean = false;
   //verificacion de cumplimientos tab
-  complianceVerifi: boolean = false;
+  complianceVerifi: boolean = false; //ok
   //clasificacion de bienes
-  classifyAssets: boolean = true;
+  classifyAssets: boolean = false;
   //validar destino del bien(documento)
   validateDocument: boolean = false;
   //notificar aclaraciones o improcedencias
   notifyClarifiOrImpropriety: boolean = false;
   //aprovacion del proceso (por verse caso contrario borrar)
-  approvalProcess: boolean = false;
+  approvalProcess: boolean = true;
 
   constructor(
     public fb: FormBuilder,
     public modalRef: BsModalRef,
+    public modalService: BsModalService,
     public route: ActivatedRoute,
     public router: Router,
     public location: Location
@@ -119,8 +121,8 @@ export class RegistrationOfRequestsComponent
       this.tab3 = 'Domicilio de la Transferente';
       this.tab4 = 'Verificación del Cumplimiento';
       this.tab5 = 'Expediente';
-      //this.btnTitle = 'Terminar';
-      this.btnSaveTitle = 'Guardar';
+      this.btnTitle = 'Aprovar';
+      this.btnSaveTitle = '';
     }
   }
 
@@ -140,6 +142,11 @@ export class RegistrationOfRequestsComponent
   close() {
     this.registRequestForm.reset();
     this.router.navigate(['pages/request/list']);
+  }
+
+  signDictum() {
+    //habrir modal generar dictamen
+    this.openModal(GenerateDictumComponent, '', 'approval-request');
   }
 
   msgAvertanceModal(
@@ -175,6 +182,26 @@ export class RegistrationOfRequestsComponent
       if (result.isConfirmed) {
         console.log('Guardar solicitud');
       }
+    });
+  }
+
+  openModal(component: any, data?: any, typeAnnex?: String): void {
+    let config: ModalOptions = {
+      initialState: {
+        data: data,
+        typeAnnex: typeAnnex,
+        callback: (next: boolean) => {
+          //if (next){ this.getData();}
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalRef = this.modalService.show(component, config);
+
+    this.modalRef.content.event.subscribe((res: any) => {
+      // cargarlos en el formulario
+      console.log(res);
     });
   }
 }

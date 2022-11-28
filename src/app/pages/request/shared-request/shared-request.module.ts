@@ -12,6 +12,7 @@ import { AssociateFileButtonComponent } from './associate-file/associate-file-bu
 import { AssociateFileComponent } from './associate-file/associate-file.component';
 import { NewFileModalComponent } from './associate-file/new-file-modal/new-file-modal.component';
 import { ConfirmProgrammingComponent } from './confirm-programming/confirm-programming.component';
+import { CreateDeductivesComponent } from './create-deductives/create-deductives.component';
 import { CreateReportComponent } from './create-report/create-report.component';
 import { DetailAssetsTabComponentComponent } from './detail-assets-tab-component/detail-assets-tab-component.component';
 import { DocumentFormComponent } from './document-form/document-form.component';
@@ -36,12 +37,14 @@ import { GuidelinesComponent } from './guidelines/guidelines.component';
 import { PhotographyFormComponent } from './photography-form/photography-form.component';
 import { RegisterDocumentationFormComponent } from './register-documentation-form/register-documentation-form.component';
 import { RegisterDocumentationViewComponent } from './register-documentation-view/register-documentation-view.component';
+import { RejectRequestModalComponent } from './reject-request-modal/reject-request-modal.component';
 import { RequestFormComponent } from './request-form/request-form.component';
 import { RequestInformationRejectComponent } from './request-information-reject/request-information-reject.component';
 import { RequestInformationSimilarGoodsComponent } from './request-information-similar-goods/request-information-similar-goods.component';
 import { RequestInformationComponent } from './request-information/request-information.component';
 import { RequestSiabFormComponent } from './request-siab-form/request-siab-form.component';
 import { SearchInventoryGoodsComponent } from './search-inventory-goods/search-inventory-goods.component';
+import { SearchRequestSimilarGoodsComponent } from './search-request-similar-goods/search-request-similar-goods.component';
 import { SearchRequestsComponent } from './search-requests/search-requests.component';
 import { AddGoodsButtonComponent } from './select-goods/add-goods-button/add-goods-button.component';
 import { ReserveGoodModalComponent } from './select-goods/reserve-good-modal/reserve-good-modal.component';
@@ -105,8 +108,11 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     RequestInformationRejectComponent,
     GuidelinesViewComponent,
     RegisterDocumentationFormComponent,
+    CreateDeductivesComponent,
     CreateReportComponent,
     EventDetailFormComponent,
+    RejectRequestModalComponent,
+    SearchRequestSimilarGoodsComponent,
   ],
   imports: [
     CommonModule,
@@ -142,6 +148,9 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     GuidelinesViewComponent,
     RegisterDocumentationFormComponent,
     EventDetailFormComponent,
+    CreateDeductivesComponent,
+    RejectRequestModalComponent,
+    SearchRequestSimilarGoodsComponent,
   ],
 })
 export class SharedRequestModule {}
