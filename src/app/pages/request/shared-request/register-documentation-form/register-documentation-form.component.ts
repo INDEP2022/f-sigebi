@@ -93,7 +93,6 @@ export class RegisterDocumentationFormComponent
     if (this.requestId !== undefined) {
       const request = {
         receptionDate: '17/04/2018',
-        subject: 'NUMERARIO DECOMISADO DEVUELTO',
         contributor: 'Carlos G',
         memorandumNo: 54543,
         memorandumDate: '11/04/2018',

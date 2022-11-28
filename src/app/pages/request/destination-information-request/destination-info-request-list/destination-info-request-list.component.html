@@ -1,13 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">SOLICITUD DOCUMENTACIÓN COMPLEMENTANRIA</h5>
-    <div>
-      <button
-        [routerLink]="'create'"
-        class="btn btn-primary active btn-sm ml-3">
-        Nueva
-      </button>
-    </div>
+    <h5 class="title">SOLICITUDES</h5>
   </div>
 
   <div body>
@@ -22,8 +15,8 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="tasks"
-            (rowSelect)="editRequest($event)">
+            [source]="requests"
+            (rowSelect)="redirectRequest($event)">
           </ng2-smart-table>
         </div>
       </div>
