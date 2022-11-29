@@ -5,8 +5,10 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ExcelService } from '../../../../../common/services/excel.service';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { JSON_TO_CSV } from '../../../../admin/home/constants/json-to-csv';
-import { UploadExpedientFormComponent } from '../../sampling-assets/upload-expedient-form/upload-expedient-form.component';
-import { UploadImagesFormComponent } from '../../sampling-assets/upload-images-form/upload-images-form.component';
+import { listAssets } from '../../generate-formats-verify-noncompliance/store/actions';
+import { Item } from '../../generate-formats-verify-noncompliance/store/item.module';
+import { UploadExpedientFormComponent } from '../upload-expedient-form/upload-expedient-form.component';
+import { UploadImagesFormComponent } from '../upload-images-form/upload-images-form.component';
 
 var data = [
   {
@@ -38,7 +40,7 @@ var data = [
 @Component({
   selector: 'app-assets-tab',
   templateUrl: './assets-tab.component.html',
-  styles: [],
+  styleUrls: ['./assets-tab.component.scss'],
 })
 export class AssetsTabComponent implements OnInit {
   @Input() willSave: boolean = false;
@@ -46,19 +48,21 @@ export class AssetsTabComponent implements OnInit {
   bsModalRef: BsModalRef;
   assetsForm: ModelForm<any>;
   assetsArray: any[] = [];
-  assetsSelected: any[] = [];
+  assetsSelected: Item[] = [];
   jsonToCsv = JSON_TO_CSV;
   isReadonly: boolean = false;
+  isCheckboxReadonly: boolean = false;
   checkboxTitle: string = '';
 
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
     private excelService: ExcelService,
-    private store: Store<{ data: any[] }>
+    private store: Store
   ) {}
 
   ngOnInit(): void {
+    console.log(this.typeTask);
     this.setEnableInputs();
     this.assetsArray = data;
     //console.log(this.willSave);
@@ -82,6 +86,12 @@ export class AssetsTabComponent implements OnInit {
     if (this.typeTask === 'verify-warehouse-assets') {
       this.checkboxTitle = 'Localizado';
       this.isReadonly = true;
+    } else if (this.typeTask === 'assets-classification') {
+      this.isReadonly = true;
+      this.checkboxTitle = 'Número Gestión';
+      this.isCheckboxReadonly = true;
+    } else if (this.typeTask === 'payment-validatios') {
+      this.isReadonly = true;
     }
   }
 
@@ -94,9 +104,9 @@ export class AssetsTabComponent implements OnInit {
       );
       this.assetsSelected.splice(index, 1);
     }
-    //console.log(this.assetsSelected);
-    //const items:any = {item1: this.assetsSelected}
-    //this.store.dispatch(add({items}))
+
+    //cargar los datos al store
+    this.store.dispatch(listAssets({ items: this.assetsSelected }));
   }
 
   uploadExpedient() {

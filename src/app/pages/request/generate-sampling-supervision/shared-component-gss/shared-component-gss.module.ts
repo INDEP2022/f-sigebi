@@ -9,7 +9,13 @@ import { SharedModule } from '../../../../shared/shared.module';
 import { AssetsFilterComponent } from './assets-filter/assets-filter.component';
 import { AssetsTabComponent } from './assets-tab/assets-tab.component';
 import { DeductivesComponent } from './deductives/deductives.component';
+import { DetailAnnexComponent } from './detail-annex/detail-annex.component';
+import { NewDocumentFormComponent } from './new-document-form/new-document-form.component';
 import { SamplingDetailComponent } from './sampling-detail/sampling-detail.component';
+import { UploadExpedientFormComponent } from './upload-expedient-form/upload-expedient-form.component';
+import { UploadImagesFormComponent } from './upload-images-form/upload-images-form.component';
+import { VerImagenInputComponent } from './ver-imagen-input/ver-imagen-input.component';
+import { VerificationsComponent } from './verifications/verifications.component';
 
 @NgModule({
   declarations: [
@@ -17,6 +23,12 @@ import { SamplingDetailComponent } from './sampling-detail/sampling-detail.compo
     SamplingDetailComponent,
     AssetsTabComponent,
     DeductivesComponent,
+    UploadExpedientFormComponent,
+    NewDocumentFormComponent,
+    UploadImagesFormComponent,
+    VerImagenInputComponent,
+    VerificationsComponent,
+    DetailAnnexComponent,
   ],
   imports: [
     CommonModule,
@@ -32,6 +44,12 @@ import { SamplingDetailComponent } from './sampling-detail/sampling-detail.compo
     SamplingDetailComponent,
     AssetsTabComponent,
     DeductivesComponent,
+    UploadExpedientFormComponent,
+    NewDocumentFormComponent,
+    UploadImagesFormComponent,
+    VerImagenInputComponent,
+    VerificationsComponent,
+    DetailAnnexComponent,
   ],
 })
 export class SharedComponentGssModule {}

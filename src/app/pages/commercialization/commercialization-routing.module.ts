@@ -477,6 +477,58 @@ const routes: Routes = [
       ).CMPropertyAdjudicationNotificationReportRoutingModule,
     data: { title: 'Reporte de Notificacion de Adjudicacion Inmuebles' },
   },
+  //Henry2
+  {
+    path: 'c-pdf-m-publication-photographs',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-pdf-m-publication-photographs/c-pdf-m-publication-photographs.module'
+        )
+      ).CPdfMPublicationPhotographsModule,
+    data: { title: 'Publicación de fotografía' },
+  },
+  {
+    path: 'c-rrp-m-payment-receipts-report',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-rrp-m-payment-receipts-report/c-rrp-m-payment-receipts-report.module'
+        )
+      ).CRrpMPaymentReceiptsReportModule,
+    data: { title: 'Reporte de pagos recibidos' },
+  },
+  {
+    path: 'c-rae-m-disposal-record-report',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-rae-m-disposal-record-report/c-rae-m-disposal-record-report.module'
+        )
+      ).CRaeMDisposalRecordReportModule,
+    data: { title: 'Reporte de actas de enajenación' },
+  },
+  {
+    path: 'c-bc-m-traded-goods',
+    loadChildren: async () =>
+      (await import('./c-bc-m-traded-goods/c-bc-m-traded-goods.module'))
+        .CBcMTradedGoodsModule,
+    data: { title: 'Bienes comercializados' },
+  },
+  {
+    path: 'c-lb-m-goods-tenders',
+    loadChildren: async () =>
+      (await import('./c-lb-m-goods-tenders/c-lb-m-goods-tenders.module'))
+        .CLbMGoodsTendersModule,
+    data: { title: 'Licitación de bienes' },
+  },
+  {
+    path: 'c-fc-m-commercial-file',
+    loadChildren: async () =>
+      (await import('./c-fc-m-commercial-file/c-fc-m-commercial-file.module'))
+        .CFcMCommercialFileModule,
+    data: { title: 'Ficha comercial' },
+  },
 ];
 
 @NgModule({

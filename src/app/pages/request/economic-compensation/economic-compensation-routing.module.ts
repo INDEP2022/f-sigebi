@@ -42,6 +42,44 @@ const routes: Routes = [
       ).GreMRegisterAppointmentModule,
     data: { title: 'Solicitud de Registro de Cita Contribuyente' },
   },
+  {
+    path: 'payment-order',
+    loadChildren: async () =>
+      (await import('./gre-m-payment-order/gre-m-payment-order.module'))
+        .GreMPaymentOrderModule,
+    data: { title: 'Solicitud de Registro de Orden de Pago' },
+  },
+  {
+    path: 'compensation-act',
+    loadChildren: async () =>
+      (await import('./gre-m-compensation-act/gre-m-compensation-act.module'))
+        .GreMCompensationActModule,
+    data: { title: 'Generar Acta de Resarcimiento' },
+  },
+  {
+    path: 'analysis-result',
+    loadChildren: async () =>
+      (await import('./gre-m-analysis-result/gre-m-analysis-result.module'))
+        .GreMAnalysisResultModule,
+    data: { title: 'Generar Resultado de Análisis' },
+  },
+  {
+    path: 'validate-dictum',
+    loadChildren: async () =>
+      (await import('./gre-m-validate-dictum/gre-m-validate-dictum.module'))
+        .GreMValidateDictumModule,
+    data: { title: 'Validar Dictamen' },
+  },
+  {
+    path: 'delivery-request-notif',
+    loadChildren: async () =>
+      (
+        await import(
+          './gre-m-delivery-request-notif/gre-m-delivery-request-notif.module'
+        )
+      ).GreMDeliveryRequestNotifModule,
+    data: { title: 'Notificación de Solicitud de Entrega' },
+  },
 ];
 
 @NgModule({

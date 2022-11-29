@@ -8,8 +8,11 @@ import { DOCUMENTATION_COMPLEMENTARY } from '../common/routes/documentation-comp
 import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception.routes';
 import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
 import { GENERAL_PROCESSES_ROUTES } from '../common/routes/general-processes.routes';
+import { MASTER_FILES } from '../common/routes/master-file.routes';
 import { PARAMETERIZATION_ROUTES } from '../common/routes/parameterization.routes';
 import { SCHEDULING_DELIVERIES } from '../common/routes/scheduling-deliveries.routes';
+import { COMMERCIALIZATION_SW_ROUTES } from '../common/routes/siab-web/commercialization-sw.routes';
+import { SAMI_ROUTES } from '../common/routes/siab-web/simi.routes';
 import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
@@ -43,6 +46,7 @@ export const MENU: IMenuItem[] = [
   ...CATALOGS_ROUTES,
   //Administración
   ...ADMINISTRATIVE_PROCESSES_ROUTES,
+  ...MASTER_FILES,
   {
     label: 'Transferencia de Bienes',
     icon: 'bx-folder',
@@ -57,6 +61,14 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Muestreo Bienes',
             link: '/pages/request/sampling-assets',
+          },
+          {
+            label: 'Genera Consultas',
+            link: '/pages/request/generate-sampling-service-orders/generate-query',
+          },
+          {
+            label: 'Solicitud de Documentación Complementaria',
+            link: '/pages/request/request-comp-doc',
           },
         ],
       },
@@ -76,6 +88,15 @@ export const MENU: IMenuItem[] = [
           {
             label: 'Documentación Complementaria',
             link: '/pages/request/manage-similar-goods/register-additional-documentation',
+          },
+        ],
+      },
+      {
+        label: 'Solicitud de Información de Destino',
+        subItems: [
+          {
+            label: 'Listado de Solicitudes',
+            link: '/pages/request/destination-information-request/list',
           },
         ],
       },
@@ -298,4 +319,10 @@ export const MENU: IMenuItem[] = [
 
   //Parametrización
   ...PARAMETERIZATION_ROUTES,
+
+  {
+    label: 'Siab Web',
+    icon: 'bx-folder',
+    subItems: [...COMMERCIALIZATION_SW_ROUTES, ...SAMI_ROUTES],
+  },
 ];

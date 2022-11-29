@@ -1,0 +1,11 @@
+.disable-input {
+  pointer-events: none;
+}
+
+table {
+  font-size: small;
+
+  tr th.description {
+    width: 25rem !important;
+  }
+}

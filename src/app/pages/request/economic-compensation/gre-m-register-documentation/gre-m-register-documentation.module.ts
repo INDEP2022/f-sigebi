@@ -7,13 +7,9 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { SharedRequestModule } from '../../shared-request/shared-request.module';
 import { GreCRegisterDocumentationMainComponent } from './gre-c-register-documentation-main/gre-c-register-documentation-main.component';
 import { GreMRegisterDocumentationRoutingModule } from './gre-m-register-documentation-routing.module';
-import { RegisterDocumentationInitialFormComponent } from './register-documentation-initial-form/register-documentation-initial-form.component';
 
 @NgModule({
-  declarations: [
-    GreCRegisterDocumentationMainComponent,
-    RegisterDocumentationInitialFormComponent,
-  ],
+  declarations: [GreCRegisterDocumentationMainComponent],
   imports: [
     CommonModule,
     GreMRegisterDocumentationRoutingModule,
