@@ -9,6 +9,13 @@ const routes: Routes = [
         .ReceiptGenerationModule,
     data: { title: 'Generacion de Recibo' },
   },
+  {
+    path: 'schedule-maintenance',
+    loadChildren: async () =>
+      (await import('./schedule-maintenance/schedule-maintenance.module'))
+        .ScheduleMaintenanceModule,
+    data: { title: 'Mantenimiento programación' },
+  },
 ];
 
 @NgModule({

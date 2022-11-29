@@ -61,6 +61,8 @@ import { ShowProgrammingComponent } from './show-programming/show-programming.co
 import { ShowSignatureProgrammingComponent } from './show-signature-programming/show-signature-programming.component';
 import { UploadFilesFormComponent } from './upload-files-form/upload-files-form.component';
 import { UsersSelectedToTurnComponent } from './users-selected-to-turn/users-selected-to-turn.component';
+import { CheckVerifyComplianceComponent } from './verify-compliance-goods/check-verify-compliance/check-verify-compliance.component';
+import { VerifyComplianceGoodsComponent } from './verify-compliance-goods/verify-compliance-goods.component';
 import { ViewReportComponent } from './view-report/view-report.component';
 import { WarehouseConfirmComponent } from './warehouse-confirm/warehouse-confirm.component';
 import { WarehouseFormComponent } from './warehouse-form/warehouse-form.component';
@@ -129,6 +131,9 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     CommentsFormComponent,
     OrderServiceFormComponent,
     ServiceTransportableGoodsFormComponent,
+    VerifyComplianceGoodsComponent,
+    CheckVerifyComplianceComponent,
+
   ],
   imports: [
     CommonModule,
@@ -175,6 +180,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     CommentsFormComponent,
     OrderServiceFormComponent,
     ServiceTransportableGoodsFormComponent,
+    VerifyComplianceGoodsComponent,
   ],
 })
 export class SharedRequestModule {}
