@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
@@ -15,7 +15,11 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   ],
 })
 export class CommentsFormComponent implements OnInit {
+  @Input() op: number;
+  @Input() showForm: boolean;
+
   showComments: boolean = true;
+
   commentsForm: FormGroup = new FormGroup({});
 
   constructor(private fb: FormBuilder) {}

@@ -1,24 +1,27 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { SERVICE_TRANSPORTABLE_COLUMNS } from '../../columns/service-transportable-columns';
-import { CreateManualServiceFormComponent } from '../create-manual-service-form/create-manual-service-form.component';
-import { CreateServiceFormComponent } from '../create-service-form/create-service-form.component';
+import { SERVICE_TRANSPORTABLE_COLUMNS } from '../../reception-scheduling-service-order/columns/service-transportable-columns';
+import { CreateManualServiceFormComponent } from '../../reception-scheduling-service-order/components/create-manual-service-form/create-manual-service-form.component';
+import { CreateServiceFormComponent } from '../../reception-scheduling-service-order/components/create-service-form/create-service-form.component';
 
 @Component({
   selector: 'app-service-transportable-goods-form',
   templateUrl: './service-transportable-goods-form.component.html',
-  styles: [],
+  styleUrls: ['./service-transportable-goods.scss'],
 })
 export class ServiceTransportableGoodsFormComponent
   extends BasePage
   implements OnInit
 {
+  @Input() op: number;
+  @Input() showForm: boolean;
+  @Input() rejected: boolean;
+  title: string = '';
   showButtonServiceManual: boolean = false;
-
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
 
@@ -33,7 +36,17 @@ export class ServiceTransportableGoodsFormComponent
     };
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.titleTab();
+  }
+
+  titleTab() {
+    if (this.op != 0) {
+      this.title = 'Servicios prestados';
+    } else {
+      this.title = 'Servicio para bienes transportables';
+    }
+  }
 
   newService() {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-content-centered' };

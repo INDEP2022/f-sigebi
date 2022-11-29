@@ -62,6 +62,15 @@ var usuario: IRequestList[] = [
   },
   {
     title:
+      'Captura de orden de servicio (Programación de entrega: E-METROPOLITANA-335) con folio: METROPOLITANA-1545-OS',
+    noRequest: 5464,
+    numTask: 212324,
+    noInstance: 4502344,
+    created: 'tester_nsbxt',
+    process: 'OrdenServicioEntrega',
+  },
+  {
+    title:
       'Revisión de Lineamientos de Resarcimiento (NUMERARIO), No. Solicitud: 1896, Contribuyente CARLOS G. PALMA',
     noRequest: 1896,
     numTask: 212097,
@@ -260,6 +269,20 @@ export class RequestListComponent extends BasePage implements OnInit {
         this.router.navigate([
           'pages/request/economic-compensation/compensation-act',
 
+          event.data.noRequest,
+        ]);
+        break;
+
+      case 'OrdenServicioEntrega':
+        this.router.navigate([
+          'pages/request/delivery-service-order/service-delivery-request-capture',
+          event.data.noRequest,
+        ]);
+        break;
+
+      case 'OrdenServicioEntrega':
+        this.router.navigate([
+          'pages/request/delivery-service-order/service-delivery-request-capture',
           event.data.noRequest,
         ]);
         break;
