@@ -118,6 +118,16 @@ const routes: Routes = [
         .CCEpMEventProcessModule,
     data: { title: 'Eventos por Proceso' },
   },
+  {
+    path: 'registration-of-interest',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-c-m-registration-of-interest/c-c-m-registration-of-interest.module'
+        )
+      ).CCMRegistrationOfInterestModule,
+    data: { title: 'Registro de Intereses' },
+  },
 ];
 
 @NgModule({

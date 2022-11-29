@@ -8,6 +8,10 @@ const routes: Routes = [
       (await import('./commercialization/commercialization.module'))
         .CommercializationModule,
   },
+  {
+    path: 'sami',
+    loadChildren: async () => (await import('./sami/sami.module')).SamiModule,
+  },
 ];
 
 @NgModule({

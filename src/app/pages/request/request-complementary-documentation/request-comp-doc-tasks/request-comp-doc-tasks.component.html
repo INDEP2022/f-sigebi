@@ -8,7 +8,7 @@
     </div>
     <div class="">
       <div class="d-flex flex-row-reverse mt-2" *ngIf="screenWidth >= 1200">
-        <div class="mx-1">
+        <div class="mx-1" *ngIf="turnReq">
           <button
             type="button"
             class="btn btn-primary btn-sm active"
@@ -25,12 +25,21 @@
             <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Guardar
           </button>
         </div>
-        <div class="mx-1">
+        <div class="mx-1" *ngIf="rejectReq">
           <button
             type="button"
             class="btn btn-primary btn-sm active"
             [disabled]=""
-            (click)="createReport()">
+            (click)="rejectRequest()">
+            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Rechazar
+          </button>
+        </div>
+        <div class="mx-1" *ngIf="createReport">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]=""
+            (click)="openReport()">
             <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Dictamen
             Resarcimiento
           </button>
@@ -86,25 +95,45 @@
       [request]="requestInfo"></app-request-information-similar-goods>
     <div class="md-tabs">
       <tabset>
-        <tab heading="Registro de Documentación" id="documentationTab">
+        <tab
+          *ngIf="regDocForm"
+          heading="Registro de Documentación"
+          id="documentationTab">
+          <app-register-documentation-form
+            [requestId]="requestId"></app-register-documentation-form>
+        </tab>
+        <tab
+          *ngIf="regDocView"
+          heading="Registro de Documentación"
+          id="documentationTab">
           <app-register-documentation-view
             [requestId]="requestId"></app-register-documentation-view>
         </tab>
         <tab
+          *ngIf="searchRequestSimGoods"
           heading="Buscar Solicitudes de Bienes Similares"
           id="requestSimilarGoodsTab">
           <app-search-request-similar-goods></app-search-request-similar-goods>
         </tab>
-        <tab heading="Seleccionar Bienes" id="selectGoodsTab">
+        <tab
+          *ngIf="selectGoods"
+          heading="Seleccionar Bienes"
+          id="selectGoodsTab">
           <app-select-goods></app-select-goods>
         </tab>
-        <!--<tab heading="Listado de Bienes" id="goodsListTab">
+        <tab
+          *ngIf="viewSelectedGoods"
+          heading="Listado de Bienes"
+          id="goodsListTab">
           <app-goods-list [requestId]="requestId"></app-goods-list>
         </tab>
-        <tab heading="Lineamientos" id="guidelinesTab">
+        <tab *ngIf="guidelines" heading="Lineamientos" id="guidelinesTab">
           <app-guidelines></app-guidelines>
         </tab>
-        <tab heading="Expediente" id="fileTab">
+        <tab *ngIf="dictumValidate" heading="Datos del Dictamen" id="dictumTab">
+          <app-register-dictum-validation></app-register-dictum-validation>
+        </tab>
+        <tab *ngIf="expRequest" heading="Expediente" id="fileTab">
           <tabset class="md-tabs">
             <tab
               heading="Documentos Solicitud"
@@ -132,7 +161,7 @@
               </tabset>
             </tab>
           </tabset>
-        </tab>-->
+        </tab>
       </tabset>
     </div>
     <div class="d-flex justify-content-center">
