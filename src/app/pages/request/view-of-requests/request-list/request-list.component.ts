@@ -132,6 +132,15 @@ var usuario: IRequestList[] = [
     created: 'tester_nsbxt',
     process: 'RE_GenerarActa',
   },
+  {
+    title:
+      'DECOMISO: Registro de Documentación Complementaria, No. Solicitud: 1824',
+    noRequest: 1824,
+    numTask: 211928,
+    noInstance: 430103,
+    created: 'tester_nsbxt',
+    process: 'DC_Decomiso',
+  },
 ];
 
 @Component({
@@ -243,6 +252,7 @@ export class RequestListComponent extends BasePage implements OnInit {
           1,
         ]);
         break;
+
       case 'RE_RevisarLineamientos':
         // en el caso de que sea el proceso de revision de lineamientos de resarcimiento economico
         this.router.navigate([
@@ -250,6 +260,7 @@ export class RequestListComponent extends BasePage implements OnInit {
           event.data.noRequest,
         ]);
         break;
+
       case 'RE_RegistrarCita':
         // en el caso de que sea el proceso de registrar cita contributente de resarcimiento economico
         this.router.navigate([
@@ -257,6 +268,7 @@ export class RequestListComponent extends BasePage implements OnInit {
           event.data.noRequest,
         ]);
         break;
+
       case 'RE_OrdenPago':
         // en el caso de que sea el proceso de registrar orden de pago de resarcimiento economico
         this.router.navigate([
@@ -264,11 +276,19 @@ export class RequestListComponent extends BasePage implements OnInit {
           event.data.noRequest,
         ]);
         break;
+
       case 'RE_GenerarActa':
         // en el caso de que sea el proceso de registrar orden de pago de resarcimiento economico
         this.router.navigate([
           'pages/request/economic-compensation/compensation-act',
+          event.data.noRequest,
+        ]);
+        break;
 
+      case 'DC_Decomiso':
+        // en el caso de que sea el proceso de registrar solicitud de decomiso
+        this.router.navigate([
+          'pages/request/register-documentation/single/forfeiture',
           event.data.noRequest,
         ]);
         break;

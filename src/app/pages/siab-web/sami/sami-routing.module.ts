@@ -16,6 +16,12 @@ const routes: Routes = [
         .ScheduleMaintenanceModule,
     data: { title: 'Mantenimiento programación' },
   },
+  {
+    path: 'consult-goods',
+    loadChildren: async () =>
+      (await import('./consult-goods/consult-goods.module')).ConsultGoodsModule,
+    data: { title: 'Consulta Bienes' },
+  },
 ];
 
 @NgModule({
