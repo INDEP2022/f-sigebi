@@ -1,0 +1,187 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Reporte de Cartas de Liberacion</h5>
+  </div>
+
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('evento')" label="Evento">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="evento"
+              placeholder="Evento" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('lote')" label="Lote">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="lote"
+              placeholder="Lote" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('oficioCartaLiberacion')"
+            label="Oficio Carta Liberacion">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="oficioCartaLiberacion"
+              placeholder="Oficio Carta Liberacion" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('factura')" label="No Factura">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="factura"
+              placeholder="No Factura" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('fechaFactura')"
+            label="Fecha Factura">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="fechaFactura"
+              placeholder="Fecha Factura" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <button class="btn btn-primary btn-sm active">Imprimir</button>
+        </div>
+      </div>
+
+      <hr class="row" />
+      <div class="row">
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('adjudicatorio')"
+            label="Adjudicatorio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="adjudicatorio"
+              placeholder="Adjudicatorio" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('rfc')" label="RFC">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="rfc"
+              placeholder="RFC" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('domicilio')" label="Domicilio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="domicilio"
+              placeholder="Domicilio" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('colonia')" label="Colonia">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="colonia"
+              placeholder="Colonia" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('delegacion')" label="Delegacion">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegacion"
+              placeholder="Delegacion" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('estado')" label="Estado">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="estado"
+              placeholder="Estado" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('cp')" label="CP">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cp"
+              placeholder="CP" />
+          </form-field>
+        </div>
+      </div>
+
+      <hr class="row" />
+
+      <div class="row">
+        <div class="col-md-6">
+          <form-field [control]="form.get('parrafo1')" label="Parrafo 1">
+            <textarea
+              rows="2"
+              class="form-control"
+              formControlName="Parrafo 1"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <hr class="row" />
+      <div class="row">
+        <label for="">Bienes</label>
+      </div>
+
+      <div class="row pt-2 scroll-table">
+        <ng2-smart-table
+          class="col-md-12"
+          [settings]="settings1"
+          [source]="data"></ng2-smart-table>
+      </div>
+
+      <hr class="row mt-5" />
+      <div class="row">
+        <div class="col-md-6">
+          <form-field [control]="form.get('parrafo2')" label="Parrafo 2">
+            <textarea
+              rows="2"
+              class="form-control"
+              formControlName="Parrafo 2"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <form-field [control]="form.get('parrafo3')" label="Parrafo 3">
+            <textarea
+              rows="2"
+              class="form-control"
+              formControlName="Parrafo 3"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>
