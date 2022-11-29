@@ -472,9 +472,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './c-m-property-adjudication-notification-report/c-m-property-adjudication-notification-report-routing.module'
+          './c-m-property-adjudication-notification-report/c-m-property-adjudication-notification-report.module'
         )
-      ).CMPropertyAdjudicationNotificationReportRoutingModule,
+      ).CMPropertyAdjudicationNotificationReportModule,
     data: { title: 'Reporte de Notificacion de Adjudicacion Inmuebles' },
   },
   //Henry2
