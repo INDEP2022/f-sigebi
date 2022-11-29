@@ -49,6 +49,66 @@ const routes: Routes = [
         .SwComerMReportOiModule,
     data: { title: 'Reporte OI' },
   },
+  {
+    path: 'sw-comer-m-billing-payments',
+    loadChildren: async () =>
+      (
+        await import(
+          './sw-comer-m-billing-payments/sw-comer-m-billing-payments.module'
+        )
+      ).SwComerMBillingPaymentsModule,
+    data: { title: 'Pagos facturación' },
+  },
+  {
+    path: 'sw-comer-m-proof-delivery',
+    loadChildren: async () =>
+      (
+        await import(
+          './sw-comer-m-proof-delivery/sw-comer-m-proof-delivery.module'
+        )
+      ).SwComerMProofDeliveryModule,
+    data: { title: 'Constancia de entrega' },
+  },
+  {
+    path: 'sw-comer-m-report-invoices',
+    loadChildren: async () =>
+      (
+        await import(
+          './sw-comer-m-report-invoices/sw-comer-m-report-invoices.module'
+        )
+      ).SwComerMReportInvoicesModule,
+    data: { title: 'Reporte de facturas' },
+  },
+  {
+    path: 'sw-comer-m-report-batches-pending',
+    loadChildren: async () =>
+      (
+        await import(
+          './sw-comer-m-report-batches-pending/sw-comer-m-report-batches-pending.module'
+        )
+      ).SwComerMReportBatchesPendingModule,
+    data: { title: 'Reporte de lotes pendientes de liquidar' },
+  },
+  {
+    path: 'sw-comer-m-monitoring-cps-sps',
+    loadChildren: async () =>
+      (
+        await import(
+          './sw-comer-m-monitoring-cps-sps/sw-comer-m-monitoring-cps-sps.module'
+        )
+      ).SwComerMMonitoringCpsSpsModule,
+    data: { title: 'Monitoreo de cps y sps' },
+  },
+  {
+    path: 'sw-comer-m-appraisal-charge',
+    loadChildren: async () =>
+      (
+        await import(
+          './sw-comer-m-appraisal-charge/sw-comer-m-appraisal-charge.module'
+        )
+      ).SwComerMAppraisalChargeModule,
+    data: { title: 'Carga de Avalúos' },
+  },
 ];
 
 @NgModule({

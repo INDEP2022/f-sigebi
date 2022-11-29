@@ -22,6 +22,30 @@ export const COMMERCIALIZATION_SW_ROUTES = [
         label: 'Reporte OI',
         link: '/pages/siab-web/commercialization/sw-comer-m-report-oi',
       },
+      {
+        label: 'Pagos facturación',
+        link: '/pages/siab-web/commercialization/sw-comer-m-billing-payments',
+      },
+      {
+        label: 'Constancia de entrega',
+        link: '/pages/siab-web/commercialization/sw-comer-m-proof-delivery',
+      },
+      {
+        label: 'Reporte de facturas',
+        link: '/pages/siab-web/commercialization/sw-comer-m-report-invoices',
+      },
+      {
+        label: 'Reporte de lotes pendientes de liquidar',
+        link: '/pages/siab-web/commercialization/sw-comer-m-report-batches-pending',
+      },
+      {
+        label: 'Monitoreo de cps y sps',
+        link: '/pages/siab-web/commercialization/sw-comer-m-monitoring-cps-sps',
+      },
+      {
+        label: 'Carga de Avalúos',
+        link: '/pages/siab-web/commercialization/sw-comer-m-appraisal-charge',
+      },
     ],
   },
 ];
