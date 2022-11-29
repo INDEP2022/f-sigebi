@@ -74,8 +74,8 @@
         </div>
       </div>
       <div class="row pt-5">
-        <div class="col-md-6">
-          <div class="col-md-2">
+        <div class="col-md-6 alert alert-info">
+          <div class="col-md-4">
             <form-field [control]="form.get('sender')" label="Remitente">
               <input
                 type="text"
@@ -83,7 +83,7 @@
                 formControlName="sender" />
             </form-field>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-8">
             <form-field [control]="form.get('senderTxt')" label="Texto Mensaje">
               <textarea
                 class="form-control"
@@ -92,7 +92,37 @@
             </form-field>
           </div>
         </div>
+        <div class="col-md-6 alert alert-info">
+          <div class="col-md-4">
+            <form-field [control]="form.get('addressee')" label="Destinatario">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="addressee" />
+            </form-field>
+          </div>
+          <div class="col-md-8">
+            <form-field
+              [control]="form.get('addresseeTxt')"
+              label="Texto Mensaje">
+              <textarea
+                class="form-control"
+                type="text"
+                formControlName="addresseeTxt"></textarea>
+            </form-field>
+          </div>
+        </div>
       </div>
+      <div class="ch-content">
+        <h5 class="title">Bienes</h5>
+      </div>
+      <div class="table-responsive">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="data"></ng2-smart-table>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
     </form>
   </div>
 </app-card>
