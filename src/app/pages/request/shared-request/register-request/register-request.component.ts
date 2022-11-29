@@ -46,6 +46,10 @@ export class RegisterRequestComponent extends BasePage implements OnInit {
         this.subject = of('SOLICITUD DE INFORMACIÓN DEL DESTINO DEL BIEN');
         break;
 
+      case 'forfeiture':
+        this.subject = of('PUESTA A DISPOSICIÓN DE BIENES DECOMISADOS');
+        break;
+
       default:
         break;
     }
@@ -68,6 +72,11 @@ export class RegisterRequestComponent extends BasePage implements OnInit {
       case 'destination-information':
         this.title =
           'INFORMACIÓN DE BIENES: Registo de Documentación Complementaria, No. Solicitud: 1898';
+        break;
+
+      case 'forfeiture':
+        this.title =
+          'DECOMISO: SOlicitud de Documentación Complementaria, No. Solicitud: 1824';
         break;
 
       default:
