@@ -7,17 +7,13 @@ import { SharedRequestModule } from '../shared-request/shared-request.module';
 import { AddressOriginFormComponent } from './components/address-origin-form/address-origin-form.component';
 import { AddressTransferentFormComponent } from './components/address-transferent-form/address-transferent-form.component';
 import { AnnexWFormComponent } from './components/annex-w-form/annex-w-form.component';
-import { ClassificateVehicleFormComponent } from './components/classificate-vehicle-form/classificate-vehicle-form.component';
-import { CommentsFormComponent } from './components/comments-form/comments-form.component';
 import { CreateClassificateVehicleFormComponent } from './components/create-classificate-vehicle-form/create-classificate-vehicle-form.component';
 import { CreateManualServiceFormComponent } from './components/create-manual-service-form/create-manual-service-form.component';
 import { CreateServiceFormComponent } from './components/create-service-form/create-service-form.component';
 import { DetailServiceOrderComponent } from './components/detail-service-order/detail-service-order.component';
 import { GenerateReportFormComponent } from './components/generate-report-form/generate-report-form.component';
-import { OrderServiceFormComponent } from './components/order-service-form/order-service-form.component';
 import { RejectionCommentFormComponent } from './components/rejection-comment-form/rejection-comment-form.component';
 import { RejectionJustifyFormComponent } from './components/rejection-justify-form/rejection-justify-form.component';
-import { ServiceTransportableGoodsFormComponent } from './components/service-transportable-goods-form/service-transportable-goods-form.component';
 import { TranportableGoodsFormComponent } from './components/tranportable-goods-form/tranportable-goods-form.component';
 import { ReceptionSchedulingServiceOrderRoutingModule } from './reception-scheduling-service-order-routing.module';
 import { RegionalDelegateImplementationReportFormComponent } from './regional-delegate-implementation-report-form/regional-delegate-implementation-report-form.component';
@@ -39,12 +35,8 @@ import { ValidateReportImplementFormComponent } from './validate-report-implemen
     DetailServiceOrderComponent,
     AddressTransferentFormComponent,
     TranportableGoodsFormComponent,
-    OrderServiceFormComponent,
-    ClassificateVehicleFormComponent,
     CreateClassificateVehicleFormComponent,
     AddressOriginFormComponent,
-    CommentsFormComponent,
-    ServiceTransportableGoodsFormComponent,
     GenerateReportFormComponent,
     ServiceOrderRequestAprobateFormComponent,
     ServiceOrderRequestImplementFormComponent,
@@ -63,15 +55,9 @@ import { ValidateReportImplementFormComponent } from './validate-report-implemen
     SharedModule,
     TabsModule,
     ModalModule.forRoot(),
-  ],
-
-  exports: [
-    ReceptionSchedulingServiceOrderRoutingModule,
-    OrderServiceFormComponent,
-    ClassificateVehicleFormComponent,
-    CommentsFormComponent,
-    ServiceTransportableGoodsFormComponent,
     SharedRequestModule,
   ],
+
+  exports: [ReceptionSchedulingServiceOrderRoutingModule, SharedRequestModule],
 })
 export class ReceptionSchedulingServiceOrderModule {}

@@ -4,9 +4,9 @@ import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { SERVICE_TRANSPORTABLE_COLUMNS } from '../../columns/service-transportable-columns';
-import { CreateManualServiceFormComponent } from '../create-manual-service-form/create-manual-service-form.component';
-import { CreateServiceFormComponent } from '../create-service-form/create-service-form.component';
+import { SERVICE_TRANSPORTABLE_COLUMNS } from '../../reception-scheduling-service-order/columns/service-transportable-columns';
+import { CreateManualServiceFormComponent } from '../../reception-scheduling-service-order/components/create-manual-service-form/create-manual-service-form.component';
+import { CreateServiceFormComponent } from '../../reception-scheduling-service-order/components/create-service-form/create-service-form.component';
 
 @Component({
   selector: 'app-service-transportable-goods-form',
@@ -41,9 +41,9 @@ export class ServiceTransportableGoodsFormComponent
   }
 
   titleTab() {
-    if (this.op == 2 || this.op == 4 || this.op == 10 || this.op == 14) {
+    if (this.op != 0) {
       this.title = 'Servicios prestados';
-    } else if (this.op != 2) {
+    } else {
       this.title = 'Servicio para bienes transportables';
     }
   }

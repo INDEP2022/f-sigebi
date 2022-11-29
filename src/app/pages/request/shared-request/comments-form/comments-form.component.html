@@ -32,15 +32,11 @@
             <textarea
               *ngIf="
                 (showForm && op == 2) ||
-                (!showForm && op != 9) ||
-                (!showForm && op != 13)
+                (showForm && op == 3) ||
+                (showForm && op == 8) ||
+                (showForm && op == 13) ||
+                (!showForm && op != 9)
               "
-              class="form-control"
-              formControlName="observations"
-              readonly></textarea>
-
-            <textarea
-              *ngIf="(showForm && op != 9) || (showForm && op != 13)"
               class="form-control"
               formControlName="observations"
               readonly></textarea>
@@ -54,6 +50,7 @@
               *ngIf="
                 (showForm && op == 1) ||
                 (!showForm && op == 9) ||
+                (!showForm && op == 9) ||
                 (!showForm && op == 13)
               "></textarea>
 
@@ -62,16 +59,12 @@
               formControlName="note"
               readonly
               *ngIf="
+                (showForm && op == 8) ||
                 (showForm && op == 2) ||
-                (!showForm && op != 9) ||
-                (!showForm && op != 13)
+                (showForm && op == 3) ||
+                (showForm && op == 13) ||
+                (!showForm && op != 9)
               "></textarea>
-
-            <textarea
-              class="form-control"
-              formControlName="note"
-              *ngIf="(showForm && op != 9) || (showForm && op != 13)"
-              readonly></textarea>
           </form-field>
         </div>
       </form>

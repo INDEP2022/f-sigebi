@@ -22,12 +22,117 @@ export class OrderServiceDeliveryFormComponent
   showForm: boolean = false;
   aprobateService: boolean = false;
   rejected: boolean = false;
-
+  title: string = '';
+  buttonClaim: boolean = false;
+  buttonLiberate: boolean = false;
+  buttonSend: boolean = false;
+  buttonSendFalse: boolean = false;
+  buttonGenerateReport: boolean = false;
+  buttonGenerateReportFalse: boolean = false;
+  buttonAprobate: boolean = false;
+  buttonAprobateFalse: boolean = false;
+  buttonAprobateView2: boolean = false;
+  buttonAprobateView3: boolean = false;
+  buttonAprobateView4: boolean = false;
+  buttonAprobateView5: boolean = false;
+  buttonReject: boolean = false;
+  buttonRejectFalse: boolean = false;
+  sendNotification: boolean = false;
+  sendNotifications: boolean = false;
+  buttonSave: boolean = false;
+  buttonSaveFalse: boolean = false;
+  buttonAnnexedW: boolean = false;
   constructor(private modalService: BsModalService) {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.processTitle();
+  }
+
+  processTitle() {
+    if (this.task == 1) {
+      this.title =
+        'Captura de orden de servicio (Programación de entrega: E-METROPOLITANA-335) con folio: METROPOLITANA-1340-OS';
+      this.buttonClaim = true;
+      this.buttonSend = true;
+    } else if (this.task == 2) {
+      this.title =
+        'Validación de servicios (Programación de entrega: E-METROPOLITANA-335) para la orden de servicio con folio: METROPOLITANA-1545-OS';
+      this.buttonClaim = true;
+      this.buttonGenerateReport = true;
+      this.buttonAprobateView2 = true;
+      this.buttonReject = true;
+    } else if (this.task == 3 || this.task == 6) {
+      this.title =
+        'Aprobración de servicios (Programación de recepción: Programación de entrega E-METROPOLITANA-335) para la orden de servicio con folio: METROPOLITANA-1545-OS';
+
+      if (this.task == 6) {
+        this.buttonGenerateReportFalse = true;
+        this.buttonAprobateFalse = true;
+      } else {
+        this.buttonClaim = true;
+        this.buttonGenerateReport = true;
+        this.buttonAprobate = true;
+      }
+    } else if (this.task == 4) {
+      this.title =
+        'Reporte de implementación (Programación de entrega E-METROPOLITANA-335) para la orden de servicio con folio: METROPOLITANA-1545-OS';
+      this.buttonSendFalse = true;
+      this.buttonSaveFalse = true;
+    } else if (this.task == 5 || this.task == 11) {
+      this.title =
+        'Validación de reporte de implementación (Programación de entrega: E-METROPOLITANA-335) para la orden de servicio con folio: METROPOLITANA-1545-OS';
+      if (this.task == 5) {
+        this.buttonGenerateReportFalse = true;
+        this.buttonAprobateView2 = true;
+        this.buttonRejectFalse = true;
+        this.buttonSaveFalse = true;
+        this.buttonAnnexedW = true;
+      } else {
+        this.buttonGenerateReportFalse = true;
+        this.buttonAprobateView4 = true;
+        this.buttonRejectFalse = true;
+        this.buttonSaveFalse = true;
+        this.buttonAnnexedW = true;
+      }
+    } else if (this.task == 7) {
+      this.title =
+        'Reporte de implementación aprobado (Programación de entrega E-METROPOLITANA-335) para la orden de servicio con folio: METROPOLITANA-1545-OS';
+      this.buttonGenerateReportFalse = true;
+      this.buttonAprobateView3 = true;
+      this.buttonAnnexedW = true;
+    } else if (this.task == 8 || this.task == 10) {
+      this.title =
+        'Validación de servicios (Programación de entrega: E-METROPOLITANA-335) para la orden de servicio con folio: METROPOLITANA-1545-OS';
+      if (this.task == 10) {
+        this.buttonGenerateReportFalse = true;
+        this.buttonAprobateView5 = true;
+        this.buttonSaveFalse = true;
+      } else {
+        this.buttonClaim = true;
+        this.buttonLiberate = true;
+        this.buttonGenerateReport = true;
+        this.buttonReject = true;
+        this.buttonSave = true;
+      }
+    } else if (this.task == 9 || this.task == 13) {
+      this.title =
+        'Rechazo de orden de servicios (Programación de entrega: E-METROPOLITANA-335) con folio: METROPOLITANA-1545-OS';
+      this.buttonSendFalse = true;
+      this.sendNotification = true;
+      this.buttonSaveFalse = true;
+    } else if (this.task == 12 || this.task == 14) {
+      this.title =
+        'Rechazo de reporte de implementación (Programación de entrega: E-METROPOLITANA-335) para la orden de servicio con folio: METROPOLITANA-1545-OS';
+      if (this.task == 14) {
+        this.sendNotification = true;
+        this.buttonSaveFalse = true;
+      }
+      this.buttonSendFalse = true;
+      this.buttonSaveFalse = true;
+    }
+  }
 
   liberateRequest() {
     this.alertQuestion(

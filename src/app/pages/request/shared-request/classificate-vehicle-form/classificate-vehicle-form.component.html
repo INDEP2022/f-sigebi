@@ -25,7 +25,7 @@
     <div class="btn-toolbar">
       <button
         *ngIf="
-          (showForm && createVehicle && op != 1) ||
+          (showForm && createVehicle && op == 1) ||
           (!showForm && createVehicle && op == 9) ||
           (!showForm && createVehicle && op == 10 && rejected) ||
           (!showForm && createVehicle && op == 12) ||

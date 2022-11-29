@@ -105,9 +105,9 @@ export class DeliverySchedulingServiceListComponent
         ]);
         break;
 
-      case 'ProposalReportImplementSent':
+      case 'RejectOrderService':
         this.router.navigate([
-          'pages/request/delivery-service-order/proposal-report-sent',
+          'pages/request/delivery-service-order/reject-order-service',
           event.data.number,
         ]);
         break;

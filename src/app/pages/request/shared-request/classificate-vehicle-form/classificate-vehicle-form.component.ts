@@ -3,8 +3,8 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { CLASSIFICATION_VEHICLE_COLUMS } from '../../columns/classification-vehicle-columns';
-import { CreateClassificateVehicleFormComponent } from '../create-classificate-vehicle-form/create-classificate-vehicle-form.component';
+import { CLASSIFICATION_VEHICLE_COLUMS } from '../../reception-scheduling-service-order/columns/classification-vehicle-columns';
+import { CreateClassificateVehicleFormComponent } from '../../reception-scheduling-service-order/components/create-classificate-vehicle-form/create-classificate-vehicle-form.component';
 
 @Component({
   selector: 'app-classificate-vehicle-form',
