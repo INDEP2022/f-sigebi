@@ -4,25 +4,25 @@
   </div>
   <div body>
     <div class="md-tabs">
-      <form class="form-material" [formGroup]="form">
-        <div class="row mb-3 mt-3 justify-content-end">
-          <div class="col-xs-12 col-12 col-md-6 mb-3 mt-3">
-            <form-field
-              [control]="form.get('template')"
-              label="Aplicar Formato">
-              <select class="form-control" formControlName="template">
-                <option [value]="null">Seleccione un valor</option>
-                <option value="template1">Formato 1</option>
-                <option value="template2">Formato 2</option>
-                <option value="template3">Formato 3</option>
-              </select>
-            </form-field>
-          </div>
-        </div>
-      </form>
-
       <tabset>
-        <tab heading="Editar" id="tab1">
+        <tab heading="Editar" id="editorTab">
+          <!--Templates Editor-->
+          <form class="form-material" [formGroup]="form">
+            <div class="row mb-3 mt-3 justify-content-end">
+              <div class="col-xs-12 col-12 col-md-6 mb-3 mt-3">
+                <form-field
+                  [control]="form.get('template')"
+                  label="Aplicar Formato">
+                  <select class="form-control" formControlName="template">
+                    <option [value]="null">Seleccione un valor</option>
+                    <option value="template1">Formato 1</option>
+                    <option value="template2">Formato 2</option>
+                    <option value="template3">Formato 3</option>
+                  </select>
+                </form-field>
+              </div>
+            </div>
+          </form>
           <quill-editor
             *ngIf="document"
             [sanitize]="true"
@@ -33,14 +33,29 @@
             [styles]="{ height: '80vh', overflow: 'auto' }">
           </quill-editor>
         </tab>
-        <tab heading="Vista Previa" id="tab2">
+        <tab heading="Vista Previa" id="previewTab">
           <quill-view
             [content]="quillInstance"
             [preserveWhitespace]="true"
             format="object"></quill-view>
           <!--<button (click)='pdfCreate()'>Vista previa</button>-->
         </tab>
-        <tab heading="Firmar Reporte" id="tab3"> </tab>
+        <tab heading="Firmar Reporte" id="signTab">
+          <app-sign-report></app-sign-report>
+        </tab>
+        <!--<tab heading="Vista Previa" id="signedReportTab">
+          <div class="row justify-content-end mb-3 mt-3">
+            <div class="col-md-3">
+              <button (click)="attachDocument()" class="btn btn-primary btn-sm active">
+                <i class="fa fa-check-circle"></i> Adjuntar documento
+              </button>
+            </div>
+          </div>
+          <quill-view
+            [content]="quillInstance"
+            [preserveWhitespace]="true"
+            format="object"></quill-view>
+        </tab>-->
       </tabset>
     </div>
   </div>

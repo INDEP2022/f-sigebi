@@ -109,6 +109,21 @@ export class CreateReportComponent extends BasePage implements OnInit {
     //quillDelta = this.quillInstance.getContents();
   }
 
+  attachDocument() {
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Estas seguro que deseas adjuntar el documento?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.onLoadToast('success', 'Documento adjuntado correctamente', '');
+        this.modalRef.content.callback(true);
+        this.close();
+      }
+    });
+  }
+
   /*pdfCreate(): void {
     const quillDelta = this.quillInstance
     console.log(quillDelta)

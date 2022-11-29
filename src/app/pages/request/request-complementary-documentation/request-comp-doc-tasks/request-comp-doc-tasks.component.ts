@@ -7,6 +7,7 @@ import { IRequestInformation } from 'src/app/core/models/requests/requestInforma
 import { BasePage } from 'src/app/core/shared/base-page';
 //Components
 import { CreateReportComponent } from '../../shared-request/create-report/create-report.component';
+import { RejectRequestModalComponent } from '../../shared-request/reject-request-modal/reject-request-modal.component';
 
 @Component({
   selector: 'app-request-comp-doc-tasks',
@@ -149,15 +150,17 @@ export class RequestCompDocTasksComponent extends BasePage implements OnInit {
   }
 
   rejectRequest(): void {
-    this.alertQuestion(
-      'question',
-      `¿Desea rechazar la solicitud con Folio ${this.requestId}?`,
-      '',
-      'Rechazar'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.onLoadToast('success', 'Solicitud rechazada con éxito', '');
-      }
+    const modalRef = this.modalService.show(RejectRequestModalComponent, {
+      initialState: {
+        title: 'Confirmar Rechazo',
+        message: '¿Está seguro que desea rechazar el análisis?',
+        requestId: this.requestId,
+      },
+      class: 'modal-md modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.onReject.subscribe((data: boolean) => {
+      if (data) console.log(data);
     });
   }
 

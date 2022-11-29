@@ -1,0 +1,35 @@
+<div class="row justify-content-end mb-3 mt-3">
+  <div class="col-md-3">
+    <button (click)="send()" class="btn btn-primary btn-sm active">
+      <i class="fa fa-check-circle"></i> Enviar a firmar
+    </button>
+  </div>
+  <div class="col-md-3">
+    <button (click)="next()" class="btn btn-info btn-sm active">
+      <i class="fa fa-arrow-right"></i> Paso siguiente
+    </button>
+  </div>
+</div>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th scope="col">Nombre</th>
+      <th scope="col">Cargo</th>
+      <th scope="col">Estatus registro</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Gustavo Angel</td>
+      <td>Autorizador</td>
+      <td>Datos incompletos</td>
+      <td class="text-center">
+        <a style="cursor: pointer" (click)="upload()"
+          ><i class="fa fa-key"></i> Cargar archivos</a
+        >
+      </td>
+    </tr>
+  </tbody>
+</table>
