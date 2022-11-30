@@ -1,6 +1,8 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Clasificación de vehiculos</h5>
+    <h5 class="modal-title">
+      {{ edit ? 'Editar clasificación' : 'Clasificación de vehiculos' }}
+    </h5>
   </div>
   <div body>
     <div class="row">
@@ -11,7 +13,7 @@
             label="Tipo de vehiculo">
             <select class="form-control" formControlName="typeVehicle">
               <option [value]="null">Seleccione un valor</option>
-              <option [value]="'automovil'">Automovil</option>
+              <option [value]="'Particular'">Automovil</option>
               <option [value]="'camioneta'">Camioneta</option>
             </select>
           </form-field>
