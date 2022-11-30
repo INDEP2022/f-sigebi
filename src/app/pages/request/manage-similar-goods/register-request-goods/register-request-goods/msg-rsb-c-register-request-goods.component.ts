@@ -120,6 +120,23 @@ export class MsgRsbCRegisterRequestGoodsComponent
     });
   }
 
+  agreeRequest() {
+    this.alertQuestion(
+      'question',
+      `¿Desea solicitar la aprobación para la solicitud con Folio: ${this.requestNumb}`,
+      '',
+      'Enviar a aprovación'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.onLoadToast(
+          'success',
+          'Solicitud enviada a aprobación con éxito',
+          ''
+        );
+      }
+    });
+  }
+
   openDocument(type: string) {
     let context: any;
     switch (type) {
