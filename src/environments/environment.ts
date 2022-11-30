@@ -9,7 +9,7 @@ declare const window: any;
 
 export const environment = {
   production: false,
-  API_URL: window.env.API_URL,
+  API_URL: window.env.API_BACKEND_URL,
   api_external_token: window.env.api_external_token,
   api_external_userInfo: window.env.api_external_userInfo,
   api_external_typeUser: window.env.api_external_typeUser,
