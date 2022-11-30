@@ -437,6 +437,46 @@ const routes: Routes = [
         .CMGoodDeliveryModule,
     data: { title: 'Entrega de Bienes' },
   },
+  {
+    path: 'release-letter-report',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-m-release-letter-report/c-m-release-letter-report.module'
+        )
+      ).CMReleaseLetterReportModule,
+    data: { title: 'Reporte de Cartas de Liberacion' },
+  },
+  {
+    path: 'responsibility-letters-report',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-m-responsibility-letters-report/c-m-responsibility-letters-report.module'
+        )
+      ).CMResponsibilityLettersReportModule,
+    data: { title: 'Reporte de Cartas de Responsabilidad' },
+  },
+  {
+    path: 'layouts-configuration',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-m-layouts-configuration/c-m-layouts-configuration.module'
+        )
+      ).CMLayoutsConfigurationModule,
+    data: { title: 'Configuracion de Layouts' },
+  },
+  {
+    path: 'property-adjudication-notification-report',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-m-property-adjudication-notification-report/c-m-property-adjudication-notification-report.module'
+        )
+      ).CMPropertyAdjudicationNotificationReportModule,
+    data: { title: 'Reporte de Notificacion de Adjudicacion Inmuebles' },
+  },
   //Henry2
   {
     path: 'c-pdf-m-publication-photographs',

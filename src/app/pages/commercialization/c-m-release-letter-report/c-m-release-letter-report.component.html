@@ -1,0 +1,166 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Reporte de Cartas de Liberacion</h5>
+  </div>
+
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('evento')" label="Evento">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="evento"
+              placeholder="Evento" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('lote')" label="Lote">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="lote"
+              placeholder="Lote" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <button class="btn btn-primary btn-sm active">Imprimir</button>
+        </div>
+      </div>
+      <hr class="row" />
+
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('oficio')" label="Oficio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="oficio"
+              placeholder="Oficio" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('diridoA')" label="Dirido A">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="diridoA"
+              placeholder="Dirido A" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('puesto')" label="Puesto">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="puesto"
+              placeholder="Puesto" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-4">
+          <form-field [control]="form.get('parrafo1')" label="Parrafo 1">
+            <textarea
+              rows="2"
+              class="form-control"
+              formControlName="Parrafo 1"></textarea>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('adjudicatorio')"
+            label="Adjudicatorio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="adjudicatorio"
+              placeholder="Adjudicatorio" />
+          </form-field>
+        </div>
+      </div>
+
+      <hr class="row" />
+      <div class="row">
+        <label for="">Bienes</label>
+      </div>
+
+      <div class="row pt-2 scroll-table">
+        <ng2-smart-table
+          class="col-md-12"
+          [settings]="settings1"
+          [source]="data"></ng2-smart-table>
+      </div>
+
+      <hr class="row mt-5" />
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('factura')" label="No Factura">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="factura"
+              placeholder="No Factura" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('fechaFactura')"
+            label="Fecha Factura">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="fechaFactura"
+              placeholder="Fecha Factura" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-8">
+          <form-field [control]="form.get('parrafo2')" label="Parrafo 2">
+            <textarea
+              rows="2"
+              class="form-control"
+              formControlName="Parrafo 2"></textarea>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('firmante')" label="Firmante">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="firmante"
+              placeholder="Firmante" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('ccp1')" label="CCP1">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="ccp1"
+              placeholder="CCP1" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('ccp2')" label="CCP2">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="ccp2"
+              placeholder="CCP2" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

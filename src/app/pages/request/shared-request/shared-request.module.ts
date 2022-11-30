@@ -11,6 +11,8 @@ import { AssignReceiptFormComponent } from './assign-receipt-form/assign-receipt
 import { AssociateFileButtonComponent } from './associate-file/associate-file-button/associate-file-button.component';
 import { AssociateFileComponent } from './associate-file/associate-file.component';
 import { NewFileModalComponent } from './associate-file/new-file-modal/new-file-modal.component';
+import { ClassificateVehicleFormComponent } from './classificate-vehicle-form/classificate-vehicle-form.component';
+import { CommentsFormComponent } from './comments-form/comments-form.component';
 import { ConfirmProgrammingComponent } from './confirm-programming/confirm-programming.component';
 import { CreateDeductivesComponent } from './create-deductives/create-deductives.component';
 import { CreateReportComponent } from './create-report/create-report.component';
@@ -19,6 +21,7 @@ import { DictumInformationTabComponent } from './dictum-information-tab/dictum-i
 import { DocumentFormComponent } from './document-form/document-form.component';
 import { DocumentShowComponent } from './document-show/document-show.component';
 import { ElectronicSignatureListComponent } from './electronic-signature-list/electronic-signature-list.component';
+import { EventDetailFormComponent } from './event-detail-form/event-detail-form.component';
 import { ExpedientsTabsComponent } from './expedients-tabs/expedients-tabs.component';
 import { BtnRequestComponent } from './expedients-tabs/sub-tabs/btn-request/btn-request.component';
 import { DocRequestTabComponent } from './expedients-tabs/sub-tabs/doc-request-tab/doc-request-tab.component';
@@ -34,6 +37,7 @@ import { GuidelinesObservationsComponent } from './guidelines/guidelines-observa
 import { GuidelinesRevisionViewComponent } from './guidelines/guidelines-revision-view/guidelines-revision-view.component';
 import { GuidelinesRevisionComponent } from './guidelines/guidelines-revision/guidelines-revision.component';
 import { GuidelinesComponent } from './guidelines/guidelines.component';
+import { OrderServiceFormComponent } from './order-service-form/order-service-form.component';
 import { PhotographyFormComponent } from './photography-form/photography-form.component';
 import { RegisterDictumInformationComponent } from './register-dictum-information/register-dictum-information.component';
 import { RegisterDictumValidationComponent } from './register-dictum-validation/register-dictum-validation.component';
@@ -52,10 +56,13 @@ import { AddGoodsButtonComponent } from './select-goods/add-goods-button/add-goo
 import { ReserveGoodModalComponent } from './select-goods/reserve-good-modal/reserve-good-modal.component';
 import { SelectGoodsComponent } from './select-goods/select-goods.component';
 import { ViewFileButtonComponent } from './select-goods/view-file-button/view-file-button.component';
+import { ServiceTransportableGoodsFormComponent } from './service-transportable-goods-form/service-transportable-goods-form.component';
 import { ShowProgrammingComponent } from './show-programming/show-programming.component';
 import { ShowSignatureProgrammingComponent } from './show-signature-programming/show-signature-programming.component';
 import { UploadFilesFormComponent } from './upload-files-form/upload-files-form.component';
 import { UsersSelectedToTurnComponent } from './users-selected-to-turn/users-selected-to-turn.component';
+import { CheckVerifyComplianceComponent } from './verify-compliance-goods/check-verify-compliance/check-verify-compliance.component';
+import { VerifyComplianceGoodsComponent } from './verify-compliance-goods/verify-compliance-goods.component';
 import { ViewReportComponent } from './view-report/view-report.component';
 import { WarehouseConfirmComponent } from './warehouse-confirm/warehouse-confirm.component';
 import { WarehouseFormComponent } from './warehouse-form/warehouse-form.component';
@@ -113,12 +120,20 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     RegisterDocumentationFormComponent,
     CreateDeductivesComponent,
     CreateReportComponent,
+    EventDetailFormComponent,
     RejectRequestModalComponent,
     SearchRequestSimilarGoodsComponent,
     ViewReportComponent,
     DictumInformationTabComponent,
     RegisterDictumInformationComponent,
     RegisterDictumValidationComponent,
+    ClassificateVehicleFormComponent,
+    CommentsFormComponent,
+    OrderServiceFormComponent,
+    ServiceTransportableGoodsFormComponent,
+    VerifyComplianceGoodsComponent,
+    CheckVerifyComplianceComponent,
+
   ],
   imports: [
     CommonModule,
@@ -153,6 +168,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     RequestInformationRejectComponent,
     GuidelinesViewComponent,
     RegisterDocumentationFormComponent,
+    EventDetailFormComponent,
     CreateDeductivesComponent,
     RejectRequestModalComponent,
     SearchRequestSimilarGoodsComponent,
@@ -160,6 +176,11 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     DictumInformationTabComponent,
     RegisterDictumInformationComponent,
     RegisterDictumValidationComponent,
+    ClassificateVehicleFormComponent,
+    CommentsFormComponent,
+    OrderServiceFormComponent,
+    ServiceTransportableGoodsFormComponent,
+    VerifyComplianceGoodsComponent,
   ],
 })
 export class SharedRequestModule {}
