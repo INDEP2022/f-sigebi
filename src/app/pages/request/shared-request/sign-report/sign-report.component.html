@@ -1,0 +1,37 @@
+<div class="row justify-content-end mb-3 mt-3">
+  <div class="col-md-3">
+    <button (click)="upload()" class="btn btn-primary btn-sm active">
+      <i class="fa fa-file-signature"></i> Nuevo Firmante
+    </button>
+  </div>
+  <div class="col-md-3">
+    <button
+      (click)="send()"
+      class="btn btn-primary btn-sm active"
+      [disabled]="!isSend">
+      <i class="fa fa-check-circle"></i> Enviar a firmar
+    </button>
+  </div>
+  <div class="col-md-3">
+    <button
+      (click)="next()"
+      class="btn btn-info btn-sm active"
+      [disabled]="!isSend">
+      <i class="fa fa-arrow-right"></i> Paso siguiente
+    </button>
+  </div>
+</div>
+<div class="row pt-4">
+  <div class="col-md-12">
+    <div [class]="loading ? 'table-loading' : ''">
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settings"
+        [source]="data"
+        (edit)="openForm($event.data)"
+        (delete)="delete($event.data)">
+      </ng2-smart-table>
+    </div>
+  </div>
+</div>
+<app-pagination [params]="params" [totalItems]="totalItems"> </app-pagination>

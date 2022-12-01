@@ -17,7 +17,7 @@ import { ConfirmProgrammingComponent } from './confirm-programming/confirm-progr
 import { CreateDeductivesComponent } from './create-deductives/create-deductives.component';
 import { CreateReportComponent } from './create-report/create-report.component';
 import { DetailAssetsTabComponentComponent } from './detail-assets-tab-component/detail-assets-tab-component.component';
-import { DictumInformationTabComponent } from './dictum-information-tab/dictum-information-tab.component';
+import { DictumInformationComponent } from './dictum-information/dictum-information.component';
 import { DocumentFormComponent } from './document-form/document-form.component';
 import { DocumentShowComponent } from './document-show/document-show.component';
 import { ElectronicSignatureListComponent } from './electronic-signature-list/electronic-signature-list.component';
@@ -39,8 +39,8 @@ import { GuidelinesRevisionComponent } from './guidelines/guidelines-revision/gu
 import { GuidelinesComponent } from './guidelines/guidelines.component';
 import { OrderServiceFormComponent } from './order-service-form/order-service-form.component';
 import { PhotographyFormComponent } from './photography-form/photography-form.component';
-import { RegisterDictumInformationComponent } from './register-dictum-information/register-dictum-information.component';
-import { RegisterDictumValidationComponent } from './register-dictum-validation/register-dictum-validation.component';
+import { RegisterDictumInfComponent } from './register-dictum-inf/register-dictum-inf.component';
+import { RegisterDictumValComponent } from './register-dictum-val/register-dictum-val.component';
 import { RegisterDocumentationFormComponent } from './register-documentation-form/register-documentation-form.component';
 import { RegisterDocumentationViewComponent } from './register-documentation-view/register-documentation-view.component';
 import { RejectRequestModalComponent } from './reject-request-modal/reject-request-modal.component';
@@ -59,6 +59,9 @@ import { ViewFileButtonComponent } from './select-goods/view-file-button/view-fi
 import { ServiceTransportableGoodsFormComponent } from './service-transportable-goods-form/service-transportable-goods-form.component';
 import { ShowProgrammingComponent } from './show-programming/show-programming.component';
 import { ShowSignatureProgrammingComponent } from './show-signature-programming/show-signature-programming.component';
+import { SignReportComponent } from './sign-report/sign-report.component';
+import { SignatureTypeComponent } from './signature-type/signature-type.component';
+import { UploadElectronicSignatureComponent } from './upload-electronic-signature/upload-electronic-signature.component';
 import { UploadFilesFormComponent } from './upload-files-form/upload-files-form.component';
 import { UsersSelectedToTurnComponent } from './users-selected-to-turn/users-selected-to-turn.component';
 import { CheckVerifyComplianceComponent } from './verify-compliance-goods/check-verify-compliance/check-verify-compliance.component';
@@ -124,16 +127,18 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     RejectRequestModalComponent,
     SearchRequestSimilarGoodsComponent,
     ViewReportComponent,
-    DictumInformationTabComponent,
-    RegisterDictumInformationComponent,
-    RegisterDictumValidationComponent,
+    DictumInformationComponent,
+    RegisterDictumInfComponent,
+    RegisterDictumValComponent,
+    SignReportComponent,
     ClassificateVehicleFormComponent,
     CommentsFormComponent,
     OrderServiceFormComponent,
     ServiceTransportableGoodsFormComponent,
     VerifyComplianceGoodsComponent,
     CheckVerifyComplianceComponent,
-
+    SignatureTypeComponent,
+    UploadElectronicSignatureComponent,
   ],
   imports: [
     CommonModule,
@@ -173,9 +178,9 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     RejectRequestModalComponent,
     SearchRequestSimilarGoodsComponent,
     ViewReportComponent,
-    DictumInformationTabComponent,
-    RegisterDictumInformationComponent,
-    RegisterDictumValidationComponent,
+    DictumInformationComponent,
+    RegisterDictumInfComponent,
+    RegisterDictumValComponent,
     ClassificateVehicleFormComponent,
     CommentsFormComponent,
     OrderServiceFormComponent,

@@ -22,6 +22,12 @@ const routes: Routes = [
       (await import('./consult-goods/consult-goods.module')).ConsultGoodsModule,
     data: { title: 'Consulta Bienes' },
   },
+  {
+    path: 'consult-tasks',
+    loadChildren: async () =>
+      (await import('./consult-tasks/consult-tasks.module')).ConsultTasksModule,
+    data: { title: 'Consulta de Tareas' },
+  },
 ];
 
 @NgModule({

@@ -14,6 +14,10 @@ export const SAMI_ROUTES = [
         label: 'Consulta Bienes',
         link: '/pages/siab-web/sami/consult-goods',
       },
+      {
+        label: 'Consulta de Tareas',
+        link: '/pages/siab-web/sami/consult-tasks',
+      },
     ],
   },
 ];
