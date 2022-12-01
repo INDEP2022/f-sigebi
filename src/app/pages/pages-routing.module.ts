@@ -144,6 +144,13 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./siab-web/siab-web.module')).SiabWebModule,
   },
+  {
+    path: 'assets-for-study',
+    loadChildren: async () =>
+      (await import('./assets-for-study/assets-for-study.module'))
+        .AssetsForStudyModule,
+    data: { title: 'Bienes para estudio' },
+  },
 ];
 
 @NgModule({
