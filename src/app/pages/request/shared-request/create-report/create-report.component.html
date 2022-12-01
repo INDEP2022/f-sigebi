@@ -4,8 +4,19 @@
   </div>
   <div body>
     <div class="md-tabs">
-      <tabset>
-        <tab heading="Editar" id="editorTab">
+      <div class="d-flex justify-content-end">
+        <div>
+          <button
+            (click)="sign()"
+            class="btn btn-primary active btn-sm"
+            *ngIf="!isSigned">
+            <i class="fa fa-file-signature"></i>
+            Firmar
+          </button>
+        </div>
+      </div>
+      <tabset #tabsReport>
+        <tab heading="Editar" id="editorTab" *ngIf="!isSigned">
           <!--Templates Editor-->
           <form class="form-material" [formGroup]="form">
             <div class="row mb-3 mt-3 justify-content-end">
@@ -34,20 +45,13 @@
           </quill-editor>
         </tab>
         <tab heading="Vista Previa" id="previewTab">
-          <quill-view
-            [content]="quillInstance"
-            [preserveWhitespace]="true"
-            format="object"></quill-view>
-          <!--<button (click)='pdfCreate()'>Vista previa</button>-->
-        </tab>
-        <tab heading="Firmar Reporte" id="signTab">
-          <app-sign-report></app-sign-report>
-        </tab>
-        <!--<tab heading="Vista Previa" id="signedReportTab">
-          <div class="row justify-content-end mb-3 mt-3">
+          <div class="row justify-content-end" *ngIf="isSignedReady">
             <div class="col-md-3">
-              <button (click)="attachDocument()" class="btn btn-primary btn-sm active">
-                <i class="fa fa-check-circle"></i> Adjuntar documento
+              <button
+                (click)="attachDocument()"
+                class="btn btn-primary btn-sm active">
+                <i class="fa fa-check-circle"></i>
+                Adjuntar documento
               </button>
             </div>
           </div>
@@ -55,7 +59,11 @@
             [content]="quillInstance"
             [preserveWhitespace]="true"
             format="object"></quill-view>
-        </tab>-->
+          <!--<button (click)='pdfCreate()'>Vista previa</button>-->
+        </tab>
+        <tab heading="Firmar Reporte" id="signTab" *ngIf="isSigned">
+          <app-sign-report (nextStep)="nextStep($event)"></app-sign-report>
+        </tab>
       </tabset>
     </div>
   </div>

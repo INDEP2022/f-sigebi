@@ -1,16 +1,14 @@
 export const COLUMNS = {
-  user: {
+  name: {
     title: 'Usuario',
     type: 'string',
     sort: false,
   },
-
-  userCharge: {
+  charge: {
     title: 'Cargo',
     type: 'string',
     sort: false,
   },
-
   status: {
     title: 'Estatus registro',
     type: 'string',

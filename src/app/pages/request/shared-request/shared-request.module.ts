@@ -60,6 +60,8 @@ import { ServiceTransportableGoodsFormComponent } from './service-transportable-
 import { ShowProgrammingComponent } from './show-programming/show-programming.component';
 import { ShowSignatureProgrammingComponent } from './show-signature-programming/show-signature-programming.component';
 import { SignReportComponent } from './sign-report/sign-report.component';
+import { SignatureTypeComponent } from './signature-type/signature-type.component';
+import { UploadElectronicSignatureComponent } from './upload-electronic-signature/upload-electronic-signature.component';
 import { UploadFilesFormComponent } from './upload-files-form/upload-files-form.component';
 import { UsersSelectedToTurnComponent } from './users-selected-to-turn/users-selected-to-turn.component';
 import { CheckVerifyComplianceComponent } from './verify-compliance-goods/check-verify-compliance/check-verify-compliance.component';
@@ -135,6 +137,8 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     ServiceTransportableGoodsFormComponent,
     VerifyComplianceGoodsComponent,
     CheckVerifyComplianceComponent,
+    SignatureTypeComponent,
+    UploadElectronicSignatureComponent,
   ],
   imports: [
     CommonModule,

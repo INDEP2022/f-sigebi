@@ -1,10 +1,19 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
+import { TabsetComponent } from 'ngx-bootstrap/tabs';
 
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import Quill from 'quill';
 import { BasePage } from 'src/app/core/shared/base-page';
+//Components
+import { SignatureTypeComponent } from '../signature-type/signature-type.component';
 import { DOCS } from './template';
 
 const font = Quill.import('formats/font');
@@ -22,6 +31,8 @@ class Document {
   styles: [],
 })
 export class CreateReportComponent extends BasePage implements OnInit {
+  @ViewChild('tabsReport', { static: false }) tabsReport?: TabsetComponent;
+
   documents: Document[] = DOCS;
   document: Document = new Document();
   // we use this property to store the quill instance
@@ -32,6 +43,9 @@ export class CreateReportComponent extends BasePage implements OnInit {
 
   form: FormGroup = new FormGroup({});
   model: any;
+
+  isSigned: boolean = false;
+  isSignedReady: boolean = false;
 
   @Output() refresh = new EventEmitter<true>();
 
@@ -104,9 +118,36 @@ export class CreateReportComponent extends BasePage implements OnInit {
   };
 
   created(event: any) {
-    //console.log(event);
     this.quillInstance = event.getContents();
     //quillDelta = this.quillInstance.getContents();
+  }
+
+  sign(context?: Partial<SignatureTypeComponent>): void {
+    const modalRef = this.modalService.show(SignatureTypeComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.signatureType.subscribe(next => {
+      if (next) {
+        this.isSigned = true;
+        this.tabsReport.tabs[0].active = true;
+      } else {
+        this.isSignedReady = false;
+        this.isSigned = false;
+        this.tabsReport.tabs[0].disabled = false;
+        this.tabsReport.tabs[0].active = true;
+      }
+    });
+  }
+
+  nextStep($event: any): void {
+    if ($event) {
+      this.isSignedReady = true;
+      this.tabsReport.tabs[0].active = true;
+    } else {
+      this.isSignedReady = false;
+    }
   }
 
   attachDocument() {
@@ -118,7 +159,6 @@ export class CreateReportComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         //Ejecutar el servicio
         this.onLoadToast('success', 'Documento adjuntado correctamente', '');
-        this.modalRef.content.callback(true);
         this.close();
       }
     });
