@@ -317,6 +317,16 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
+  {
+    label: 'Estudio de bienes',
+    icon: 'bx-share-alt',
+    subItems: [
+      {
+        label: 'Generar Solicitud',
+        link: '/pages/assets-for-study/generate-request',
+      },
+    ],
+  },
 
   //Parametrización
   ...PARAMETERIZATION_ROUTES,
