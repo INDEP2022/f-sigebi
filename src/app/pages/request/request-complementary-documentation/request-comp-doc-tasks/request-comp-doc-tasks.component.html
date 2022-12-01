@@ -22,16 +22,16 @@
             type="button"
             class="btn btn-primary btn-sm active"
             [disabled]="">
-            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Guardar
+            <i class="bx bx-save mr-1 float-icon"></i> Guardar
           </button>
         </div>
         <div class="mx-1" *ngIf="rejectReq">
           <button
             type="button"
-            class="btn btn-primary btn-sm active"
+            class="btn btn-danger btn-sm active"
             [disabled]=""
             (click)="rejectRequest()">
-            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Rechazar
+            <i class="bx bx-x-circle mr-1 float-icon"></i> Rechazar
           </button>
         </div>
         <div class="mx-1" *ngIf="createReport">
@@ -40,8 +40,7 @@
             class="btn btn-primary btn-sm active"
             [disabled]=""
             (click)="openReport()">
-            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Dictamen
-            Resarcimiento
+            <i class="bx bx-notepad mr-1 float-icon"></i> Dictamen Resarcimiento
           </button>
         </div>
       </div>
@@ -131,7 +130,7 @@
           <app-guidelines></app-guidelines>
         </tab>
         <tab *ngIf="dictumValidate" heading="Datos del Dictamen" id="dictumTab">
-          <app-register-dictum-validation></app-register-dictum-validation>
+          <app-register-dictum-val></app-register-dictum-val>
         </tab>
         <tab *ngIf="expRequest" heading="Expediente" id="fileTab">
           <tabset class="md-tabs">
