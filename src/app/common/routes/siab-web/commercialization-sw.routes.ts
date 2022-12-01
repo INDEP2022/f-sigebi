@@ -40,7 +40,7 @@ export const COMMERCIALIZATION_SW_ROUTES = [
       },
       {
         label: 'Monitoreo de cps y sps',
-        link: '/pages/siab-web/commercialization/sw-comer-m-monitoring-cps-sps',
+        link: '/pages/siab-web/commercialization/monitoring-cps-sps-tabs',
       },
       {
         label: 'Carga de Avalúos',

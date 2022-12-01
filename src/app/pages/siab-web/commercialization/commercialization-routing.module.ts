@@ -109,6 +109,13 @@ const routes: Routes = [
       ).SwComerMAppraisalChargeModule,
     data: { title: 'Carga de Avalúos' },
   },
+  {
+    path: 'monitoring-cps-sps-tabs',
+    loadChildren: async () =>
+      (await import('./monitoring-cps-sps-tabs/monitoring-cps-sps-tabs.module'))
+        .MonitoringCpsSpsTabsModule,
+    data: { title: 'Monitoreo de cps y sps' },
+  },
 ];
 
 @NgModule({
