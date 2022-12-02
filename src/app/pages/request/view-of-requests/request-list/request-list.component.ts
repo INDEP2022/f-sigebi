@@ -71,6 +71,15 @@ var usuario: IRequestList[] = [
   },
   {
     title:
+      'Captura de orden de servicio (Programación de entrega: E-METROPOLITANA-335) con folio: METROPOLITANA-1545-OS',
+    noRequest: 5464,
+    numTask: 212324,
+    noInstance: 4502344,
+    created: 'tester_nsbxt',
+    process: 'OrdenServicioEntrega',
+  },
+  {
+    title:
       'Revisión de Lineamientos de Resarcimiento (NUMERARIO), No. Solicitud: 1896, Contribuyente CARLOS G. PALMA',
     noRequest: 1896,
     numTask: 212097,
@@ -132,6 +141,15 @@ var usuario: IRequestList[] = [
     created: 'tester_nsbxt',
     process: 'RE_GenerarActa',
   },
+  {
+    title:
+      'DECOMISO: Registro de Documentación Complementaria, No. Solicitud: 1824',
+    noRequest: 1824,
+    numTask: 211928,
+    noInstance: 430103,
+    created: 'tester_nsbxt',
+    process: 'DC_Decomiso',
+  },
 ];
 
 @Component({
@@ -171,7 +189,7 @@ export class RequestListComponent extends BasePage implements OnInit {
 
   editRequest(event: any) {
     switch (event.data.process) {
-      case 'SolicitudProgramación':
+      case 'SolicitudProgramacion':
         // en el caso de que sea una solicitud de programacion
         this.router.navigate([
           'pages/request/perform-programming',
@@ -253,6 +271,7 @@ export class RequestListComponent extends BasePage implements OnInit {
           1,
         ]);
         break;
+
       case 'RE_RevisarLineamientos':
         // en el caso de que sea el proceso de revision de lineamientos de resarcimiento economico
         this.router.navigate([
@@ -260,6 +279,7 @@ export class RequestListComponent extends BasePage implements OnInit {
           event.data.noRequest,
         ]);
         break;
+
       case 'RE_RegistrarCita':
         // en el caso de que sea el proceso de registrar cita contributente de resarcimiento economico
         this.router.navigate([
@@ -267,6 +287,7 @@ export class RequestListComponent extends BasePage implements OnInit {
           event.data.noRequest,
         ]);
         break;
+
       case 'RE_OrdenPago':
         // en el caso de que sea el proceso de registrar orden de pago de resarcimiento economico
         this.router.navigate([
@@ -274,11 +295,33 @@ export class RequestListComponent extends BasePage implements OnInit {
           event.data.noRequest,
         ]);
         break;
+
       case 'RE_GenerarActa':
         // en el caso de que sea el proceso de registrar orden de pago de resarcimiento economico
         this.router.navigate([
           'pages/request/economic-compensation/compensation-act',
+          event.data.noRequest,
+        ]);
+        break;
 
+      case 'DC_Decomiso':
+        // en el caso de que sea el proceso de registrar solicitud de decomiso
+        this.router.navigate([
+          'pages/request/register-documentation/single/forfeiture',
+          event.data.noRequest,
+        ]);
+        break;
+
+      case 'OrdenServicioEntrega':
+        this.router.navigate([
+          'pages/request/delivery-service-order/service-delivery-request-capture',
+          event.data.noRequest,
+        ]);
+        break;
+
+      case 'OrdenServicioEntrega':
+        this.router.navigate([
+          'pages/request/delivery-service-order/service-delivery-request-capture',
           event.data.noRequest,
         ]);
         break;

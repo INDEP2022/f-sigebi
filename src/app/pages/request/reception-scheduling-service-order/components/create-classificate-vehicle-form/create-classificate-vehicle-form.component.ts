@@ -13,6 +13,9 @@ export class CreateClassificateVehicleFormComponent
   implements OnInit
 {
   form: FormGroup = new FormGroup({});
+  item: any;
+  title: string = 'Clasificación de vehiculos';
+  edit: boolean = false;
   constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
     super();
   }
@@ -28,23 +31,45 @@ export class CreateClassificateVehicleFormComponent
       donation: [null],
       destruction: [null],
     });
+
+    if (this.item != null) {
+      this.edit = true;
+      this.form.patchValue(this.item);
+    }
   }
 
   confirm() {
+    this.edit ? this.update() : this.create();
+  }
+
+  update() {
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Deseas editar una clasificación de vehiculos?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar servicio
+        this.onLoadToast('success', 'Clasificación editada correctamente', '');
+        this.modalRef.content.callback(this.form.value);
+        this.close();
+      }
+    });
+  }
+  create() {
     this.alertQuestion(
       'warning',
       'Confirmación',
       '¿Deseas crear una clasificación de vehiculos?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
+        //Ejecutar servicio
         this.onLoadToast('success', 'Clasificación creada correctamente', '');
         this.modalRef.content.callback(this.form.value);
         this.close();
       }
     });
   }
-
   close() {
     this.modalRef.hide();
   }
