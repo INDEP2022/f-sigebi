@@ -7,11 +7,10 @@ import {
 } from '@angular/forms';
 
 @Component({
-  selector: 'app-register-documentation',
-  templateUrl: './register-documentation.component.html',
-  styles: [],
+  selector: 'app-register-complementary-documentation',
+  templateUrl: './register-complementary-documentation.component.html',
 })
-export class RegisterDocumentationComponent implements OnInit {
+export class RegisterComplementaryDocumentationComponent implements OnInit {
   /** INPUT VARIABLES */
   @Input() nombrePantalla: string = 'sinNombre';
 
@@ -24,6 +23,7 @@ export class RegisterDocumentationComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+    console.log(this.nombrePantalla);
   }
 
   initForm() {
@@ -56,6 +56,10 @@ export class RegisterDocumentationComponent implements OnInit {
         'orderingAuthority',
         new FormControl('', [Validators.required])
       );
+    }
+    if (this.nombrePantalla == 'scheduling-eye-visits') {
+      this.form.addControl('crime', new FormControl('', [Validators.required]));
+      this.form.removeControl('recepcionDate');
     }
   }
 

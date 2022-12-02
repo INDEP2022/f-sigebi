@@ -50,6 +50,7 @@ export class GDCBGoodsClassificationComponent
     },
   ];
   items = new DefaultSelect<Example>();
+  title: string;
   params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: any[] = [];
   totalItems: number = 0;
@@ -81,6 +82,7 @@ export class GDCBGoodsClassificationComponent
     if (event.data.process == 'RegistroSolicitudes') {
       // en el caso de que el proceso seleccionado sea Solicitud de DEVOLUCION
       this.idNoRequest = event.data.noRequest;
+      this.title = event.data.title;
       this.mostrarListado = false;
     }
   }

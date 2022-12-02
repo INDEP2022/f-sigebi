@@ -67,19 +67,31 @@
           </form-field>
         </div>
       </div>
-      <div class="col-md-3">
-        <div class="mb-3 pl-4 pr-4">
-          <form-field
-            [control]="form.get('receptionDate')"
-            label="Fecha Recepción">
-            <input
-              type="text"
-              class="form-control"
-              bsDatepicker
-              formControlName="receptionDate" />
-          </form-field>
+      <ng-container
+        *ngIf="nombrePantalla != 'scheduling-eye-visits'; else elseBlock3">
+        <div class="col-md-3">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field
+              [control]="form.get('receptionDate')"
+              label="Fecha Recepción">
+              <input
+                type="text"
+                class="form-control"
+                bsDatepicker
+                formControlName="receptionDate" />
+            </form-field>
+          </div>
         </div>
-      </div>
+      </ng-container>
+      <ng-template #elseBlock3>
+        <div class="col-md-3">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field [control]="form.get('crime')" label="Delito">
+              <input type="text" class="form-control" formControlName="crime" />
+            </form-field>
+          </div>
+        </div>
+      </ng-template>
       <div class="col-md-4">
         <div class="mb-3 pl-4 pr-4">
           <form-field
