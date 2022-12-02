@@ -50,6 +50,10 @@ export class RegisterRequestComponent extends BasePage implements OnInit {
         this.subject = of('PUESTA A DISPOSICIÓN DE BIENES DECOMISADOS');
         break;
 
+      case 'abandonment':
+        this.subject = of('PROCESO DE ABANDONO');
+        break;
+
       default:
         break;
     }
@@ -70,13 +74,15 @@ export class RegisterRequestComponent extends BasePage implements OnInit {
     };
     switch (this.requestType) {
       case 'destination-information':
-        this.title =
-          'INFORMACIÓN DE BIENES: Registo de Documentación Complementaria, No. Solicitud: 1898';
+        this.title = `INFORMACIÓN DE BIENES: Registo de Documentación Complementaria, No. Solicitud: ${this.requestId}`;
         break;
 
       case 'forfeiture':
-        this.title =
-          'DECOMISO: SOlicitud de Documentación Complementaria, No. Solicitud: 1824';
+        this.title = `DECOMISO: SOlicitud de Documentación Complementaria, No. Solicitud: ${this.requestId}`;
+        break;
+
+      case 'abandonment':
+        this.title = `ABANDONO: Registro de Documentación Complementaria, No. Solicitud: ${this.requestId}`;
         break;
 
       default:
