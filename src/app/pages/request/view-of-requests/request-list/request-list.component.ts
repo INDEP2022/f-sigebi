@@ -180,7 +180,7 @@ export class RequestListComponent extends BasePage implements OnInit {
 
   editRequest(event: any) {
     switch (event.data.process) {
-      case 'SolicitudProgramación':
+      case 'SolicitudProgramacion':
         // en el caso de que sea una solicitud de programacion
         this.router.navigate([
           'pages/request/perform-programming',

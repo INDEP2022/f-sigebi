@@ -13,6 +13,7 @@ import { PARAMETERIZATION_ROUTES } from '../common/routes/parameterization.route
 import { SCHEDULING_DELIVERIES } from '../common/routes/scheduling-deliveries.routes';
 import { APPRAISALS_ROUTES } from '../common/routes/siab-web/appraisals.routes';
 import { COMMERCIALIZATION_SW_ROUTES } from '../common/routes/siab-web/commercialization-sw.routes';
+import { INDICATORS_ROUTES } from '../common/routes/siab-web/indicators.routes';
 import { SAMI_ROUTES } from '../common/routes/siab-web/simi.routes';
 import { IMenuItem } from './interfaces/menu.interface';
 
@@ -317,6 +318,16 @@ export const MENU: IMenuItem[] = [
       },
     ],
   },
+  {
+    label: 'Estudio de bienes',
+    icon: 'bx-share-alt',
+    subItems: [
+      {
+        label: 'Generar Solicitud',
+        link: '/pages/assets-for-study/generate-request',
+      },
+    ],
+  },
 
   //Parametrización
   ...PARAMETERIZATION_ROUTES,
@@ -328,6 +339,7 @@ export const MENU: IMenuItem[] = [
       ...COMMERCIALIZATION_SW_ROUTES,
       ...SAMI_ROUTES,
       ...APPRAISALS_ROUTES,
+      ...INDICATORS_ROUTES,
     ],
   },
 ];

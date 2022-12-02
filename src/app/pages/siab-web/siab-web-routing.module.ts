@@ -17,6 +17,11 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./appraisals/appraisals.module')).AppraisalsModule,
   },
+  {
+    path: 'indicators',
+    loadChildren: async () =>
+      (await import('./indicators/indicators.module')).IndicatorsModule,
+  },
 ];
 
 @NgModule({
