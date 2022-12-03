@@ -29,6 +29,11 @@ const routes: Routes = [
       (await import('./tools/load-of-locators/load-of-locators.module'))
         .LoadOfLocatorsModule,
   },
+  {
+    path: 'indicators',
+    loadChildren: async () =>
+      (await import('./indicators/indicators.module')).IndicatorsModule,
+  },
 ];
 
 @NgModule({
