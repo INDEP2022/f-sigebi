@@ -12,6 +12,11 @@ const routes: Routes = [
     path: 'sami',
     loadChildren: async () => (await import('./sami/sami.module')).SamiModule,
   },
+  {
+    path: 'indicators',
+    loadChildren: async () =>
+      (await import('./indicators/indicators.module')).IndicatorsModule,
+  },
 ];
 
 @NgModule({
