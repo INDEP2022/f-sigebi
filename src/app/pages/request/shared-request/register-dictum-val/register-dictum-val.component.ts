@@ -3,14 +3,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
-  selector: 'app-register-dictum-validation',
-  templateUrl: './register-dictum-validation.component.html',
+  selector: 'app-register-dictum-val',
+  templateUrl: './register-dictum-val.component.html',
   styles: [],
 })
-export class RegisterDictumValidationComponent
-  extends BasePage
-  implements OnInit
-{
+export class RegisterDictumValComponent extends BasePage implements OnInit {
   validateForm: FormGroup = new FormGroup({});
   @Output() onSave = new EventEmitter<boolean>();
 

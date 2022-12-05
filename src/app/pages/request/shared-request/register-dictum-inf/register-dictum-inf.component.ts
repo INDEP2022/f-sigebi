@@ -3,14 +3,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
-  selector: 'app-register-dictum-information',
-  templateUrl: './register-dictum-information.component.html',
-  styleUrls: ['./register-dictum-information.component.scss'],
+  selector: 'app-register-dictum-inf',
+  templateUrl: './register-dictum-inf.component.html',
+  styleUrls: ['./register-dictum-inf.component.scss'],
 })
-export class RegisterDictumInformationComponent
-  extends BasePage
-  implements OnInit
-{
+export class RegisterDictumInfComponent extends BasePage implements OnInit {
   dictumForm: FormGroup = new FormGroup({});
   @Output() onSave = new EventEmitter<boolean>();
   maxDate: Date = new Date();
