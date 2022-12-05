@@ -54,6 +54,12 @@ export class RegisterRequestComponent extends BasePage implements OnInit {
         this.subject = of('PROCESO DE ABANDONO');
         break;
 
+      case 'extinction':
+        this.subject = of(
+          'DOCUMENTACIÓN COMPLEMENTARIA DE EXPEDIENTES EXTINCIÓN DE DOMINIO'
+        );
+        break;
+
       default:
         break;
     }
@@ -83,6 +89,10 @@ export class RegisterRequestComponent extends BasePage implements OnInit {
 
       case 'abandonment':
         this.title = `ABANDONO: Registro de Documentación Complementaria, No. Solicitud: ${this.requestId}`;
+        break;
+
+      case 'extinction':
+        this.title = `EXTINCIÓN DE DOMINIO: Registro de Documentación Complementaria, No. Solicitud: ${this.requestId}`;
         break;
 
       default:

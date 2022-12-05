@@ -150,6 +150,15 @@ var usuario: IRequestList[] = [
     created: 'tester_nsbxt',
     process: 'DC_Abandono',
   },
+  {
+    title:
+      'EXTINCIÓN DE DOMINIO: Registro de Documentación Complementaria, No. Solicitud: 1835',
+    noRequest: 1835,
+    numTask: 211955,
+    noInstance: 430143,
+    created: 'tester_nsbxt',
+    process: 'DC_Extincion',
+  },
 ];
 
 @Component({
@@ -306,6 +315,14 @@ export class RequestListComponent extends BasePage implements OnInit {
         // en el caso de que sea el proceso de registrar solicitud de abandono
         this.router.navigate([
           'pages/request/register-documentation/single/abandonment',
+          event.data.noRequest,
+        ]);
+        break;
+
+      case 'DC_Extincion':
+        // en el caso de que sea el proceso de registrar solicitud de extincion
+        this.router.navigate([
+          'pages/request/register-documentation/single/extinction',
           event.data.noRequest,
         ]);
         break;
