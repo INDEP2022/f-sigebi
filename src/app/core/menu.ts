@@ -321,6 +321,10 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-share-alt',
     subItems: [
       {
+        label: 'Lista de Asignaciones',
+        link: '/pages/assets-for-study/assignment-list',
+      },
+      {
         label: 'Generar Solicitud',
         link: '/pages/assets-for-study/generate-request',
       },
