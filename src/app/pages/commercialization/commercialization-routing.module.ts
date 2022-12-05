@@ -150,9 +150,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/expense-concepts/c-b-ec-m-expense-concepts.module'
+          './shared-marketing-components/expense-concepts/expense-concepts.module'
         )
-      ).CBEcMPaymentsConceptsModule,
+      ).ExpenseConceptsModule,
     data: { title: 'Conceptos de Gasto' },
   },
   {
@@ -160,9 +160,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/referenced-payment/c-b-rp-m-referenced-payment.module'
+          './shared-marketing-components/referenced-payment/referenced-payment.module'
         )
-      ).CBRpMReferencedPaymentModule,
+      ).ReferencedPaymentModule,
     data: { title: 'Pagos Referenciados' },
   },
   {
@@ -170,9 +170,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/unreconciled-payment/c-b-up-m-unreconciled-payment.module'
+          './shared-marketing-components/unreconciled-payment/unreconciled-payment.module'
         )
-      ).CBUpMUnreconciledPaymentModule,
+      ).UnreconciledPaymentModule,
     data: { title: 'Pagos no Conciliados' },
   },
   {
@@ -180,19 +180,16 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/payment-dispersion-monitor/c-b-pdm-m-payment-dispersion-monitor.module'
+          './shared-marketing-components/payment-dispersion-monitor/payment-dispersion-monitor.module'
         )
-      ).CBPdmMPaymentDispersionMonitorModule,
+      ).PaymentDispersionMonitorModule,
     data: { title: 'Dispersión de Pagos' },
   },
   {
     path: 'events',
     loadChildren: async () =>
-      (
-        await import(
-          './shared-marketing-components/events/c-b-e-m-events.module'
-        )
-      ).CBEMEventsModule,
+      (await import('./shared-marketing-components/events/events.module'))
+        .EventsModule,
     data: { title: 'Permisos a Eventos' },
   },
   {
@@ -316,9 +313,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/mandate-income-reports/c-b-mir-m-mandate-income-reports.module'
+          './shared-marketing-components/mandate-income-reports/mandate-income-reports.module'
         )
-      ).CBMirMMandateIncomeReportsModule,
+      ).MandateIncomeReportsModule,
     data: { title: 'Reporte de Ing. por Mandato' },
   },
   {
@@ -393,9 +390,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/tax-calculation-validation/c-b-tcv-m-tax-validation-calculation.module'
+          './shared-marketing-components/tax-calculation-validation/tax-validation-calculation.module'
         )
-      ).CBTcvMTaxValidationCalculationModule,
+      ).TaxValidationCalculationModule,
     data: { title: 'Validación de Cálculo I.V.A' },
   },
   {
@@ -413,9 +410,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/marketing-records/c-b-mr-m-marketing-records.module'
+          './shared-marketing-components/marketing-records/marketing-records.module'
         )
-      ).CBMrMMarketingRecordsModule,
+      ).MarketingRecordsModule,
     data: { title: 'Oficios de Comercialización' },
   },
   {
