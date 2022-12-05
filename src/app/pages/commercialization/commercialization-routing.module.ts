@@ -4,43 +4,43 @@ import { CommercializationComponent } from './commercialization.component';
 
 const routes: Routes = [
   {
-    path: 'c-b-f-fmdvdb-m-event-preparation',
+    path: 'event-preparation',
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/c-b-f-fmdvdb-m-event-preparation/c-b-f-fmdvdb-m-event-preparation.module'
+          './shared-marketing-components/event-preparation/event-preparation.module'
         )
-      ).CBFFmdvdbMEventPreparationModule,
+      ).EventPreparationModule,
     data: { title: 'Preparación del evento' },
   },
   {
-    path: 'c-b-vdp-m-payment-dispersion-validation',
+    path: 'payment-dispersion-validation',
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/c-b-vdp-m-payment-dispersion-validation/c-b-vdp-m-payment-dispersion-validation.module'
+          './shared-marketing-components/payment-dispersion-validation/payment-dispersion-validation.module'
         )
-      ).CBVdpMPaymentDispersionValidationModule,
+      ).PaymentDispersionValidationModule,
     data: { title: 'Validación de bienes' },
   },
   {
-    path: 'c-b-bedv-m-validation-exempted-goods',
+    path: 'validation-exempted-goods',
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/c-b-bedv-m-validation-exempted-goods/c-b-bedv-m-validation-exempted-goods.module'
+          './shared-marketing-components/validation-exempted-goods/validation-exempted-goods.module'
         )
-      ).CBBedvMValidationExemptedGoodsModule,
+      ).ValidationExemptedGoodsModule,
     data: { title: 'Bienes exentos de validación' },
   },
   {
-    path: 'c-b-rdodi-m-reclass-recovery-orders',
+    path: 'reclass-recovery-orders',
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/c-b-rdodi-m-reclass-recovery-orders/c-b-rdodi-m-reclass-recovery-orders.module'
+          './shared-marketing-components/reclass-recovery-orders/reclass-recovery-orders.module'
         )
-      ).CBRdodiMReclassRecoveryOrdersModule,
+      ).ReclassRecoveryOrdersModule,
     data: { title: 'Reclasificación OI' },
   },
   {
@@ -54,33 +54,33 @@ const routes: Routes = [
     data: { title: 'Conversión a numerario' },
   },
   {
-    path: 'c-b-a-cda-m-appraisal-consultation',
+    path: 'appraisal-consultation',
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/c-b-a-cda-m-appraisal-consultation/c-b-a-cda-m-appraisal-consultation.module'
+          './shared-marketing-components/appraisal-consultation/appraisal-consultation.module'
         )
-      ).CBACdaMAppraisalConsultationModule,
+      ).AppraisalConsultationModule,
     data: { title: 'Consulta de Avalúo' },
   },
   {
-    path: 'c-b-a-rda-m-appraisal-registration',
+    path: 'appraisal-registration',
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/c-b-a-rda-m-appraisal-registration/c-b-a-rda-m-appraisal-registration.module'
+          './shared-marketing-components/appraisal-registration/appraisal-registration.module'
         )
-      ).CBARdaMAppraisalRegistrationModule,
+      ).AppraisalRegistrationModule,
     data: { title: 'Registro de Avalúos' },
   },
   {
-    path: 'c-b-ge-cdg-m-expense-capture',
+    path: 'expense-capture',
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/c-b-ge-cdg-m-expense-capture/c-b-ge-cdg-m-expense-capture.module'
+          './shared-marketing-components/expense-capture/expense-capture.module'
         )
-      ).CBGeCdgMExpenseCaptureModule,
+      ).ExpenseCaptureModule,
     data: { title: 'Captura de gastos' },
   },
   {
@@ -89,13 +89,13 @@ const routes: Routes = [
       (await import('./catalogs/catalogs.module')).CatalogsModule,
   },
   {
-    path: 'c-bm-ge-cdc-tc-m-third-party-marketers',
+    path: 'third-party-marketers',
     loadChildren: async () =>
       (
         await import(
-          './movable-property/c-bm-ge-cdc-tc-m-third-party-marketers/c-bm-ge-cdc-tc-m-third-party-marketers.module'
+          './movable-property/third-party-marketers/third-party-marketers.module'
         )
-      ).CBmGeCdcTcMThirdPartyMarketersModule,
+      ).ThirdPartyMarketersModule,
     data: { title: 'Terceros comercializadores' },
   },
   {
@@ -109,43 +109,40 @@ const routes: Routes = [
     data: { title: 'Consulta de bienes' },
   },
   {
-    path: 'c-bm-ge-cdc-clc-m-calculate-commission',
+    path: 'calculate-commission',
     loadChildren: async () =>
       (
         await import(
-          './movable-property/c-bm-ge-cdc-clc-m-calculate-commission/c-bm-ge-cdc-clc-m-calculate-commission.module'
+          './movable-property/calculate-commission/calculate-commission.module'
         )
-      ).CBmGeCdcClcMCalculateCommissionModule,
+      ).CalculateCommissionModule,
     data: { title: 'Calcular comisión' },
   },
   {
-    path: 'c-bm-f-syf-m-series-folios-control',
+    path: 'series-folios-control',
     loadChildren: async () =>
       (
         await import(
-          './movable-property/c-bm-f-syf-m-series-folios-control/c-bm-f-syf-m-series-folios-control.module'
+          './movable-property/series-folios-control/series-folios-control.module'
         )
-      ).CBmFSyfMSeriesFoliosControlModule,
+      ).SeriesFoliosControlModule,
     data: { title: 'Folios y series' },
   },
   {
-    path: 'c-bm-f-cdr-m-rebilling-causes',
+    path: 'rebilling-causes',
     loadChildren: async () =>
       (
         await import(
-          './movable-property/c-bm-f-cdr-m-rebilling-causes/c-bm-f-cdr-m-rebilling-causes.module'
+          './movable-property/rebilling-causes/rebilling-causes.module'
         )
-      ).CBmFCdrMRebillingCausesModule,
+      ).RebillingCausesModule,
     data: { title: 'Causas de Refacturación' },
   },
   {
-    path: 'c-bm-f-edf-m-invoice-status',
+    path: 'invoice-status',
     loadChildren: async () =>
-      (
-        await import(
-          './movable-property/c-bm-f-edf-m-invoice-status/c-bm-f-edf-m-invoice-status.module'
-        )
-      ).CBmFEdfMInvoiceStatusModule,
+      (await import('./movable-property/invoice-status/invoice-status.module'))
+        .InvoiceStatusModule,
     data: { title: 'Estatus de la facturación' },
   },
   {
@@ -210,19 +207,16 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './c-m-sirsae-payment-consultation/c-m-sirsae-payment-consultation.module'
+          './sirsae-payment-consultation/sirsae-payment-consultation.module'
         )
-      ).CMSirsaePaymentConsultationModule,
+      ).SirsaePaymentConsultationModule,
     data: { title: 'Consulta de Pagos Sirsae' },
   },
   {
     path: 'lcs-massive-conversion',
     loadChildren: async () =>
-      (
-        await import(
-          './c-m-lcs-massive-conversion/c-m-lcs-massive-conversion.module'
-        )
-      ).CMLcsMassiveConversionModule,
+      (await import('./massive-conversion/massive-conversion.module'))
+        .MassiveConversionModule,
     data: { title: 'Conversión Masiva de LCs' },
   },
   {
@@ -238,15 +232,15 @@ const routes: Routes = [
   {
     path: 'batch-parameters',
     loadChildren: async () =>
-      (await import('./c-m-batch-parameters/c-m-batch-parameters.module'))
+      (await import('./batch-parameters/batch-parameters.module'))
         .CMBatchParametersModule,
     data: { title: 'Parámetros por Lote' },
   },
   {
     path: 'related-events',
     loadChildren: async () =>
-      (await import('./c-m-related-events/c-m-related-events.module'))
-        .CMRelatedEventsModule,
+      (await import('./related-events/related-events.module'))
+        .RelatedEventsModule,
     data: { title: 'Eventos Relacionados' },
   },
   {
@@ -262,65 +256,59 @@ const routes: Routes = [
   {
     path: 'payment-search',
     loadChildren: async () =>
-      (await import('./c-m-payment-search/c-m-payment-search.module'))
-        .CMPaymentSearchModule,
+      (await import('./payment-search/payment-search.module'))
+        .PaymentSearchModule,
     data: { title: 'Búsqueda y Procesamiento de Pagos' },
   },
   {
     path: 'electronic-signatures',
     loadChildren: async () =>
-      (
-        await import(
-          './c-m-electronic-signatures/c-m-electronic-signatures.module'
-        )
-      ).CMElectronicSignaturesModule,
+      (await import('./electronic-signatures/electronic-signatures.module'))
+        .ElectronicSignaturesModule,
     data: { title: 'Gestión de Firmas Electrónicas' },
   },
   {
-    path: 'c-bm-f-fr-cr-m-rectification-fields',
+    path: 'rectification-fields',
     loadChildren: async () =>
       (
         await import(
-          './movable-property/c-bm-f-fr-cr-m-rectification-fields/c-bm-f-fr-cr-m-rectification-fields.module'
+          './movable-property/rectification-fields/rectification-fields.module'
         )
-      ).CBmFFrCrMRectificationFieldsModule,
+      ).RectificationFieldsModule,
     data: { title: 'Campos rectificación' },
   },
   {
-    path: 'c-bm-f-fr-prdf-m-invoice-rectification-process',
+    path: 'invoice-rectification-process',
     loadChildren: async () =>
       (
         await import(
-          './movable-property/c-bm-f-fr-prdf-m-invoice-rectification-process/c-bm-f-fr-prdf-m-invoice-rectification-process.module'
+          './movable-property/invoice-rectification-process/invoice-rectification-process.module'
         )
-      ).CBmFFrPrdfMInvoiceRectificationProcessModule,
+      ).InvoiceRectificationProcessModule,
     data: { title: 'Formato de rectificación' },
   },
   {
-    path: 'c-bm-vm-m-cp-page-setup',
+    path: 'page-setup',
     loadChildren: async () =>
-      (
-        await import(
-          './movable-property/c-bm-vm-m-cp-page-setup/c-bm-vm-m-cp-page-setup.module'
-        )
-      ).CBmVmMCpPageSetupModule,
+      (await import('./movable-property/page-setup/page-setup.module'))
+        .PageSetupModule,
     data: { title: 'Configuración de Página' },
   },
   {
-    path: 'c-bm-vm-cde-m-entity-classification',
+    path: 'entity-classification',
     loadChildren: async () =>
       (
         await import(
-          './movable-property/c-bm-vm-cde-m-entity-classification/c-bm-vm-cde-m-entity-classification.module'
+          './movable-property/entity-classification/entity-classification.module'
         )
-      ).CBmVmCdeMEntityClassificationModule,
+      ).EntityClassificationModule,
     data: { title: 'Catálogo de Entidades' },
   },
   {
     path: 'payment-refund',
     loadChildren: async () =>
-      (await import('./c-m-payment-refund/c-m-payment-refund.module'))
-        .CMPaymentRefundModule,
+      (await import('./payment-refund/payment-refund.module'))
+        .PaymentRefundModule,
     data: { title: 'Devolución de Pagos' },
   },
   {
@@ -334,33 +322,33 @@ const routes: Routes = [
     data: { title: 'Reporte de Ing. por Mandato' },
   },
   {
-    path: 'c-bm-r-rrpr-m-remittances-recorded-region',
+    path: 'remittances-recorded-region',
     loadChildren: async () =>
       (
         await import(
-          './movable-property/c-bm-r-rrpr-m-remittances-recorded-region/c-bm-r-rrpr-m-remittances-recorded-region.module'
+          './movable-property/remittances-recorded-region/remittances-recorded-region.module'
         )
-      ).CBmRRrprMRemittancesRecordedRegionModule,
+      ).RemittancesRecordedRegionModule,
     data: { title: 'Remesas registradas por regional' },
   },
   {
-    path: 'c-bm-r-exdlr-m-remittance-exportation',
+    path: 'remittance-exportation',
     loadChildren: async () =>
       (
         await import(
-          './movable-property/c-bm-r-exdlr-m-remittance-exportation/c-bm-r-exdlr-m-remittance-exportation.module'
+          './movable-property/remittance-exportation/remittance-exportation.module'
         )
-      ).CBmRExdlrMRemittanceExportationModule,
+      ).RemittanceExportationModule,
     data: { title: 'Exportación de las Remesas' },
   },
   {
-    path: 'c-b-r-oim-electronic-signature-auxiliary-catalogs',
+    path: 'electronic-signature-auxiliary-catalogs',
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/c-b-r-oim-m-signture-auxiliary-catalogs/c-b-r-oim-m-signture-auxiliary-catalogs.module'
+          './shared-marketing-components/signature-auxiliary-catalogs/signature-auxiliary-catalogs.module'
         )
-      ).CBROimMSigntureAuxiliaryCatalogsModule,
+      ).SignatureAuxiliaryCatalogsModule,
     data: { title: 'Catálogos Auxiliares para Firmas Electrónicas' },
   },
   {
@@ -376,7 +364,7 @@ const routes: Routes = [
   {
     path: 'billing',
     loadChildren: async () =>
-      (await import('./c-fp-m-penalty-billing/c-fp-m-penalty-billing.module'))
+      (await import('./penalty-billing/penalty-billing.module'))
         .CFpMPenaltyBillingModule,
     data: { title: 'Facturación' },
   },
@@ -385,9 +373,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/c-b-ems-m-sirsae-movement-sending/c-b-ems-m-sirsae-movement-sending.module'
+          './shared-marketing-components/sirsae-movement-sending/sirsae-movement-sending.module'
         )
-      ).CBEmsMSirsaeMovementSendingModule,
+      ).SirsaeMovementSendingModule,
     data: { title: 'Envío de Movimientos a SIRSAE' },
   },
   {
@@ -395,9 +383,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/c-b-pdp-ec-m-conciliation-execution/c-b-pdp-ec-m-conciliation-execution.module'
+          './shared-marketing-components/conciliation-execution/conciliation-execution.module'
         )
-      ).CBPdpEcMConciliationExecutionModule,
+      ).ConciliationExecutionModule,
     data: { title: 'Ejecución de la Conciliación' },
   },
   {
@@ -415,9 +403,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/c-b-a-adp-m-partiality-direct-adjudication/c-b-a-adp-m-partiality-direct-adjudication.module'
+          './shared-marketing-components/partiality-direct-adjudication/partiality-direct-adjudication.module'
         )
-      ).CBAAdpMPartialityDirectAdjudicationModule,
+      ).PartialityDirectAdjudicationModule,
     data: { title: 'Adjudicaciones Directas en Parcialidades' },
   },
   {
@@ -433,18 +421,14 @@ const routes: Routes = [
   {
     path: 'good-delivery',
     loadChildren: async () =>
-      (await import('./c-m-good-delivery/c-m-good-delivery.module'))
-        .CMGoodDeliveryModule,
+      (await import('./good-delivery/good-delivery.module')).GoodDeliveryModule,
     data: { title: 'Entrega de Bienes' },
   },
   {
     path: 'release-letter-report',
     loadChildren: async () =>
-      (
-        await import(
-          './c-m-release-letter-report/c-m-release-letter-report.module'
-        )
-      ).CMReleaseLetterReportModule,
+      (await import('./release-letter-report/release-letter-report.module'))
+        .ReleaseLetterReportModule,
     data: { title: 'Reporte de Cartas de Liberacion' },
   },
   {
@@ -452,19 +436,16 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './c-m-responsibility-letters-report/c-m-responsibility-letters-report.module'
+          './responsibility-letters-report/responsibility-letters-report.module'
         )
-      ).CMResponsibilityLettersReportModule,
+      ).ResponsibilityLettersReportModule,
     data: { title: 'Reporte de Cartas de Responsabilidad' },
   },
   {
     path: 'layouts-configuration',
     loadChildren: async () =>
-      (
-        await import(
-          './c-m-layouts-configuration/c-m-layouts-configuration.module'
-        )
-      ).CMLayoutsConfigurationModule,
+      (await import('./layouts-configuration/layouts-configuration.module'))
+        .LayoutsConfigurationModule,
     data: { title: 'Configuracion de Layouts' },
   },
   {
@@ -472,61 +453,52 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './c-m-property-adjudication-notification-report/c-m-property-adjudication-notification-report.module'
+          './property-adjudication-notification-report/property-adjudication-notification-report.module'
         )
-      ).CMPropertyAdjudicationNotificationReportModule,
+      ).PropertyAdjudicationNotificationReportModule,
     data: { title: 'Reporte de Notificacion de Adjudicacion Inmuebles' },
   },
   //Henry2
   {
-    path: 'c-pdf-m-publication-photographs',
+    path: 'publication-photographs',
     loadChildren: async () =>
-      (
-        await import(
-          './c-pdf-m-publication-photographs/c-pdf-m-publication-photographs.module'
-        )
-      ).CPdfMPublicationPhotographsModule,
+      (await import('./publication-photographs/publication-photographs.module'))
+        .PublicationPhotographsModule,
     data: { title: 'Publicación de fotografía' },
   },
   {
-    path: 'c-rrp-m-payment-receipts-report',
+    path: 'payment-receipts-report',
     loadChildren: async () =>
-      (
-        await import(
-          './c-rrp-m-payment-receipts-report/c-rrp-m-payment-receipts-report.module'
-        )
-      ).CRrpMPaymentReceiptsReportModule,
+      (await import('./payment-receipts-report/payment-receipts-report.module'))
+        .PaymentReceiptsReportModule,
     data: { title: 'Reporte de pagos recibidos' },
   },
   {
-    path: 'c-rae-m-disposal-record-report',
+    path: 'disposal-record-report',
     loadChildren: async () =>
-      (
-        await import(
-          './c-rae-m-disposal-record-report/c-rae-m-disposal-record-report.module'
-        )
-      ).CRaeMDisposalRecordReportModule,
+      (await import('./disposal-record-report/disposal-record-report.module'))
+        .DisposalRecordReportModule,
     data: { title: 'Reporte de actas de enajenación' },
   },
   {
-    path: 'c-bc-m-traded-goods',
+    path: 'traded-goods',
     loadChildren: async () =>
-      (await import('./c-bc-m-traded-goods/c-bc-m-traded-goods.module'))
+      (await import('./traded-goods/traded-goods.module'))
         .CBcMTradedGoodsModule,
     data: { title: 'Bienes comercializados' },
   },
   {
-    path: 'c-lb-m-goods-tenders',
+    path: 'goods-tenders',
     loadChildren: async () =>
-      (await import('./c-lb-m-goods-tenders/c-lb-m-goods-tenders.module'))
+      (await import('./goods-tenders/goods-tenders.module'))
         .CLbMGoodsTendersModule,
     data: { title: 'Licitación de bienes' },
   },
   {
-    path: 'c-fc-m-commercial-file',
+    path: 'commercial-file',
     loadChildren: async () =>
-      (await import('./c-fc-m-commercial-file/c-fc-m-commercial-file.module'))
-        .CFcMCommercialFileModule,
+      (await import('./commercial-file/commercial-file.module'))
+        .CommercialFileModule,
     data: { title: 'Ficha comercial' },
   },
 ];

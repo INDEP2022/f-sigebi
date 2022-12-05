@@ -9,19 +9,19 @@ export const COMMERCIALIZATION_ROUTES = [
         subItems: [
           {
             label: 'Preparación del evento',
-            link: '/pages/commercialization/c-b-f-fmdvdb-m-event-preparation',
+            link: '/pages/commercialization/event-preparation',
           },
           {
             label: 'Bienes exentos de validación',
-            link: '/pages/commercialization/c-b-bedv-m-validation-exempted-goods',
+            link: '/pages/commercialization/validation-exempted-goods',
           },
           {
             label: 'Reclasificacón OI',
-            link: '/pages/commercialization/c-b-rdodi-m-reclass-recovery-orders',
+            link: '/pages/commercialization/reclass-recovery-orders',
           },
           {
             label: 'Validación de Pagos',
-            link: '/pages/commercialization/c-b-vdp-m-payment-dispersion-validation',
+            link: '/pages/commercialization/payment-dispersion-validation',
           },
           {
             label: 'Pagos Referenciados',
@@ -41,19 +41,19 @@ export const COMMERCIALIZATION_ROUTES = [
           },
           {
             label: 'Consulta de Avalúo',
-            link: '/pages/commercialization/c-b-a-cda-m-appraisal-consultation',
+            link: '/pages/commercialization/appraisal-consultation',
           },
           {
             label: 'Registro de Avalúo',
-            link: '/pages/commercialization/c-b-a-rda-m-appraisal-registration',
+            link: '/pages/commercialization/appraisal-registration',
           },
           {
             label: 'Captura de Gastos',
-            link: '/pages/commercialization/c-b-ge-cdg-m-expense-capture',
+            link: '/pages/commercialization/expense-capture',
           },
           {
             label: 'Terceros comercializadores',
-            link: '/pages/commercialization/c-bm-ge-cdc-tc-m-third-party-marketers',
+            link: '/pages/commercialization/third-party-marketers',
           },
           {
             label: 'Consulta de bienes',
@@ -61,19 +61,19 @@ export const COMMERCIALIZATION_ROUTES = [
           },
           {
             label: 'Calcular comisión',
-            link: '/pages/commercialization/c-bm-ge-cdc-clc-m-calculate-commission',
+            link: '/pages/commercialization/calculate-commission',
           },
           {
             label: 'Folios y Series',
-            link: '/pages/commercialization/c-bm-f-syf-m-series-folios-control',
+            link: '/pages/commercialization/series-folios-control',
           },
           {
             label: 'Causas de Refacturación',
-            link: '/pages/commercialization/c-bm-f-cdr-m-rebilling-causes',
+            link: '/pages/commercialization/rebilling-causes',
           },
           {
             label: 'Estatus de la facturación',
-            link: '/pages/commercialization/c-bm-f-edf-m-invoice-status',
+            link: '/pages/commercialization/invoice-status',
           },
           {
             label: 'Conceptos de Gasto',
@@ -93,19 +93,19 @@ export const COMMERCIALIZATION_ROUTES = [
           },
           {
             label: 'Campos Rectificación',
-            link: '/pages/commercialization/c-bm-f-fr-cr-m-rectification-fields',
+            link: '/pages/commercialization/rectification-fields',
           },
           {
             label: 'Formato de rectificación',
-            link: '/pages/commercialization/c-bm-f-fr-prdf-m-invoice-rectification-process',
+            link: '/pages/commercialization/invoice-rectification-process',
           },
           {
             label: 'Configuración de Página',
-            link: '/pages/commercialization/c-bm-vm-m-cp-page-setup',
+            link: '/pages/commercialization/page-setup',
           },
           {
             label: 'Catálogo de Entidades',
-            link: '/pages/commercialization/c-bm-vm-cde-m-entity-classification',
+            link: '/pages/commercialization/entity-classification',
           },
           {
             label: 'Reporte de Ingresos por Mandato',
@@ -113,15 +113,15 @@ export const COMMERCIALIZATION_ROUTES = [
           },
           {
             label: 'Remesas registradas por regional',
-            link: '/pages/commercialization/c-bm-r-rrpr-m-remittances-recorded-region',
+            link: '/pages/commercialization/remittances-recorded-region',
           },
           {
             label: 'Exportación de las Remesas',
-            link: '/pages/commercialization/c-bm-r-exdlr-m-remittance-exportation',
+            link: '/pages/commercialization/remittance-exportation',
           },
           {
             label: 'Catálogos Auxiliares para Firmas Electrónicas',
-            link: '/pages/commercialization/c-b-r-oim-electronic-signature-auxiliary-catalogs/movable',
+            link: '/pages/commercialization/electronic-signature-auxiliary-catalogs/movable',
           },
           {
             label: 'Envío de Movimientos a SIRSAE',
@@ -139,15 +139,15 @@ export const COMMERCIALIZATION_ROUTES = [
         subItems: [
           {
             label: 'Bienes exentos de validación',
-            link: '/pages/commercialization/c-b-bedv-m-validation-exempted-goods',
+            link: '/pages/commercialization/validation-exempted-goods',
           },
           {
             label: 'Reclasificacón OI',
-            link: '/pages/commercialization/c-b-rdodi-m-reclass-recovery-orders',
+            link: '/pages/commercialization/reclass-recovery-orders',
           },
           {
             label: 'Validación de Pagos',
-            link: '/pages/commercialization/c-b-vdp-m-payment-dispersion-validation',
+            link: '/pages/commercialization/payment-dispersion-validation',
           },
           {
             label: 'Pagos Referenciados',
@@ -167,15 +167,15 @@ export const COMMERCIALIZATION_ROUTES = [
           },
           {
             label: 'Consulta de Avalúo',
-            link: '/pages/commercialization/c-b-a-cda-m-appraisal-consultation',
+            link: '/pages/commercialization/appraisal-consultation',
           },
           {
             label: 'Registro de Avalúo',
-            link: '/pages/commercialization/c-b-a-rda-m-appraisal-registration',
+            link: '/pages/commercialization/appraisal-registration',
           },
           {
             label: 'Captura de Gastos',
-            link: '/pages/commercialization/c-b-ge-cdg-m-expense-capture',
+            link: '/pages/commercialization/expense-capture',
           },
           {
             label: 'Consulta de bienes',
@@ -369,27 +369,27 @@ export const COMMERCIALIZATION_ROUTES = [
       //Henry2
       {
         label: 'Publicación de fotografías',
-        link: '/pages/commercialization/c-pdf-m-publication-photographs',
+        link: '/pages/commercialization/publication-photographs',
       },
       {
         label: 'Reporte de pagos recibidos',
-        link: '/pages/commercialization/c-rrp-m-payment-receipts-report',
+        link: '/pages/commercialization/payment-receipts-report',
       },
       {
         label: 'Reporte de actas de enajenación',
-        link: '/pages/commercialization/c-rae-m-disposal-record-report',
+        link: '/pages/commercialization/disposal-record-report',
       },
       {
         label: 'Bienes comercializados',
-        link: '/pages/commercialization/c-bc-m-traded-goods',
+        link: '/pages/commercialization/traded-goods',
       },
       {
         label: 'Licitación de bienes',
-        link: '/pages/commercialization/c-lb-m-goods-tenders',
+        link: '/pages/commercialization/goods-tenders',
       },
       {
         label: 'Ficha comercial',
-        link: '/pages/commercialization/c-fc-m-commercial-file',
+        link: '/pages/commercialization/commercial-file',
       },
     ],
   },
