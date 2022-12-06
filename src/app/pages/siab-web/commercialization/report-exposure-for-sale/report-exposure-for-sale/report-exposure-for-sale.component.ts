@@ -1,26 +1,58 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { UNEXPOSED_GOODS_COLUMNS } from './columns';
 
 @Component({
   selector: 'app-report-exposure-for-sale',
   templateUrl: './report-exposure-for-sale.component.html',
   styles: [],
 })
-export class ReportExposureForSaleComponent implements OnInit {
+export class ReportExposureForSaleComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
 
-  constructor(private fb: FormBuilder) {}
+  show: boolean = false;
 
-  ngOnInit(): void {
-    this.prepareForm2();
+  get filterGoods() {
+    return this.form.get('filterGoods');
   }
 
-  private prepareForm2() {
+  get filterText() {
+    return this.form.get('filterText');
+  }
+
+  constructor(private fb: FormBuilder) {
+    super();
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...UNEXPOSED_GOODS_COLUMNS },
+    };
+  }
+
+  ngOnInit(): void {
+    this.prepareForm();
+  }
+
+  private prepareForm() {
     this.form = this.fb.group({
-      radio: [null, [Validators.required]],
-      typeGood: [null, [Validators.required]],
+      typeGood: [],
+      filterGoods: [],
+      filterText: [],
+      subtype: [null, [Validators.required]],
+      delegation: [null, [Validators.required]],
+      status: [null, [Validators.required]],
     });
   }
 
+  onSubmit() {
+    if (this.form.valid) {
+      this.form.reset();
+    }
+    console.warn('Your order has been submitted');
+  }
+
   chargeFile(event: any) {}
+
+  data: any;
 }

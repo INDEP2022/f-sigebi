@@ -1,12 +1,53 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { maxDate } from 'src/app/common/validations/date.validators';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { GOODS_COLUMNS } from './columns';
 
 @Component({
   selector: 'app-report-unsold-goods',
   templateUrl: './report-unsold-goods.component.html',
   styles: [],
 })
-export class ReportUnsoldGoodsComponent implements OnInit {
-  constructor() {}
+export class ReportUnsoldGoodsComponent extends BasePage implements OnInit {
+  form: FormGroup = new FormGroup({});
 
-  ngOnInit(): void {}
+  show: boolean = false;
+
+  get filterGoods() {
+    return this.form.get('filterGoods');
+  }
+
+  get filterText() {
+    return this.form.get('filterText');
+  }
+
+  constructor(private fb: FormBuilder) {
+    super();
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...GOODS_COLUMNS },
+    };
+  }
+
+  ngOnInit(): void {
+    this.prepareForm();
+  }
+
+  private prepareForm() {
+    this.form = this.fb.group({
+      typeGood: [null, [Validators.required]],
+      subtype: [null, [Validators.required]],
+      delegation: [null, [Validators.required]],
+      status: [null, [Validators.required]],
+      startDate: [null, [Validators.required, maxDate(new Date())]],
+      filterGoods: [],
+      filterText: [],
+    });
+  }
+
+  data: any;
+
+  chargeFile(event: any) {}
 }
