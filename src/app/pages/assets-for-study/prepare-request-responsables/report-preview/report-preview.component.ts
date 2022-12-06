@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import Swal from 'sweetalert2';
 import { RecipientDataComponent } from '../recipient-data/recipient-data.component';
 
 @Component({
@@ -8,8 +9,15 @@ import { RecipientDataComponent } from '../recipient-data/recipient-data.compone
   styles: [],
 })
 export class ReportPreviewComponent implements OnInit {
+  @ViewChild('FileInput', { static: false }) inputFile: ElementRef = null;
   title: string = 'Vista del reporte';
   childModal: BsModalRef;
+  isSignReport: boolean = true;
+  isSendReport: boolean = false;
+
+  fileToUpload: File | null = null;
+  typeReport: string = '';
+  sizeMessage: boolean = false;
 
   constructor(
     private bsModalRef: BsModalRef,
@@ -21,6 +29,43 @@ export class ReportPreviewComponent implements OnInit {
   close() {
     this.bsModalRef.hide();
     this.openModal(RecipientDataComponent);
+  }
+
+  signReport(): void {
+    this.isSignReport = false;
+    this.isSendReport = true;
+  }
+
+  previousStep() {
+    this.isSignReport = true;
+    this.isSendReport = false;
+  }
+
+  sendToSign(): void {
+    //verificar que el reporte y los datos necesarios se envien
+    Swal.fire({
+      icon: undefined,
+      title: 'Confimación',
+      text: '¿Está seguro a enviar la información a firmar?',
+      showCancelButton: true,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#b38e5d',
+      confirmButtonText: 'Aceptar',
+    }).then(result => {
+      console.log('enviar la información');
+    });
+  }
+
+  selectFile(event: any) {
+    console.log(event);
+    let file = event.target.files[0];
+    let size = file.size / 1000000;
+    this.sizeMessage = size > 10 ? true : false;
+    if (this.sizeMessage) {
+      this.inputFile.nativeElement.value = '';
+    } else {
+      this.fileToUpload = file;
+    }
   }
 
   openModal(component: any) {
