@@ -46,6 +46,26 @@ export const COMMERCIALIZATION_SW_ROUTES = [
         label: 'Carga de Avalúos',
         link: '/pages/siab-web/commercialization/sw-comer-m-appraisal-charge',
       },
+      {
+        label: 'Monitoreo estatus lotes',
+        link: '/pages/siab-web/commercialization/batch-status-monitoring',
+      },
+      {
+        label: 'Reporte exposición a venta',
+        link: '/pages/siab-web/commercialization/report-exposure-for-sale',
+      },
+      {
+        label: 'Reporte intentos de venta',
+        link: '/pages/siab-web/commercialization/report-sales-attempts',
+      },
+      {
+        label: 'Reporte bienes sin vender',
+        link: '/pages/siab-web/commercialization/report-unsold-goods',
+      },
+      {
+        label: 'Carga de pagos',
+        link: '/pages/siab-web/commercialization/payload',
+      },
     ],
   },
 ];

@@ -116,6 +116,43 @@ const routes: Routes = [
         .MonitoringCpsSpsTabsModule,
     data: { title: 'Monitoreo de cps y sps' },
   },
+  {
+    path: 'batch-status-monitoring',
+    loadChildren: async () =>
+      (await import('./batch-status-monitoring/batch-status-monitoring.module'))
+        .BatchStatusMonitoringModule,
+    data: { title: 'Monitoreo estatus lotes' },
+  },
+  {
+    path: 'report-exposure-for-sale',
+    loadChildren: async () =>
+      (
+        await import(
+          './report-exposure-for-sale/report-exposure-for-sale.module'
+        )
+      ).ReportExposureForSaleModule,
+    data: { title: 'Reporte exposición a venta' },
+  },
+  {
+    path: 'report-sales-attempts',
+    loadChildren: async () =>
+      (await import('./report-sales-attempts/report-sales-attempts.module'))
+        .ReportSalesAttemptsModule,
+    data: { title: 'Reporte intentos de venta' },
+  },
+  {
+    path: 'report-unsold-goods',
+    loadChildren: async () =>
+      (await import('./report-unsold-goods/report-unsold-goods.module'))
+        .ReportUnsoldGoodsModule,
+    data: { title: 'Reporte bienes sin vender' },
+  },
+  {
+    path: 'payload',
+    loadChildren: async () =>
+      (await import('./payload/payload.module')).PayloadModule,
+    data: { title: 'Carga de pagos' },
+  },
 ];
 
 @NgModule({
