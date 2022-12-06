@@ -125,11 +125,11 @@ export const COMMERCIALIZATION_ROUTES = [
           },
           {
             label: 'Envío de Movimientos a SIRSAE',
-            link: '/pages/commercialization/c-b-ems-sirsae-movement-sending/movable',
+            link: '/pages/commercialization/sirsae-movement-sending/movable',
           },
           {
             label: 'Ejecución de la Conciliación',
-            link: '/pages/commercialization/c-b-pdp-ec-conciliation-execution/movable',
+            link: '/pages/commercialization/conciliation-execution/movable',
           },
         ],
       },
@@ -195,11 +195,11 @@ export const COMMERCIALIZATION_ROUTES = [
           },
           {
             label: 'Envío de Movimientos a SIRSAE',
-            link: '/pages/commercialization/c-b-ems-sirsae-movement-sending/immovable',
+            link: '/pages/commercialization/sirsae-movement-sending/immovable',
           },
           {
             label: 'Ejecución de la Conciliación',
-            link: '/pages/commercialization/c-b-pdp-ec-conciliation-execution/immovable',
+            link: '/pages/commercialization/conciliation-execution/immovable',
           },
           {
             label: 'Validación de Cálculo I.V.A ',

@@ -366,7 +366,7 @@ const routes: Routes = [
     data: { title: 'Facturación' },
   },
   {
-    path: 'c-b-ems-sirsae-movement-sending',
+    path: 'sirsae-movement-sending',
     loadChildren: async () =>
       (
         await import(
@@ -376,7 +376,7 @@ const routes: Routes = [
     data: { title: 'Envío de Movimientos a SIRSAE' },
   },
   {
-    path: 'c-b-pdp-ec-conciliation-execution',
+    path: 'conciliation-execution',
     loadChildren: async () =>
       (
         await import(
