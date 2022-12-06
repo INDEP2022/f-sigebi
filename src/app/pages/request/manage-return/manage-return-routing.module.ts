@@ -32,6 +32,15 @@ const routes: Routes = [
     data: { title: 'Clasificación de Bienes' },
   },
   // Clasificación de Bienes
+  // Aprobar Solicitud de Devolución
+  {
+    path: 'aprobar-solicitud-bienes',
+    loadChildren: async () =>
+      (await import('./approve-return-request/approve-return-request.module'))
+        .GDApproveReturnRequestModule,
+    data: { title: 'Aprobar Solicitud de Devolución' },
+  },
+  // Aprobar Solicitud de Devolución
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],
