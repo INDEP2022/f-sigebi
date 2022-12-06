@@ -5,7 +5,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-check-verify-compliance',
   templateUrl: './check-verify-compliance.component.html',
-  styles: [],
+  styles: ['.check-icon { color: #9d2449 !important }'],
 })
 export class CheckVerifyComplianceComponent
   extends BasePage
@@ -14,17 +14,25 @@ export class CheckVerifyComplianceComponent
   checkForm: FormGroup = new FormGroup({});
   checkState: boolean = false;
   checkbox: any;
+  checkStateEditForm: boolean = false;
   @Input() checkId: string = 'checkbox';
+  @Input() checkIdField: string = 'nameField';
   @Input() value: string | number;
   @Input() rowData: any;
+  @Input() nombrePantalla: string = 'sinNombre';
 
   constructor(private fb: FormBuilder) {
     super();
   }
 
   ngOnInit(): void {
-    this.prepareForm();
     this.checkId = this.checkId + this.rowData._id.toString();
+    if (this.nombrePantalla != 'approve-return-request') {
+      this.checkStateEditForm = true;
+      this.prepareForm();
+    } else {
+      this.checkStateEditForm = false;
+    }
   }
 
   ngAfterViewInit(): void {
@@ -41,7 +49,9 @@ export class CheckVerifyComplianceComponent
     this.checkbox = document.querySelector(
       '#' + this.checkId
     ) as HTMLInputElement;
-    this.checkbox.checked = this.checkState;
+    if (this.checkbox) {
+      this.checkbox.checked = this.checkState;
+    }
   }
 
   change(event: Event) {
