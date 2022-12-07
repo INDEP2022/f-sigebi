@@ -1,13 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ReviewTechnicalSheetsComponent } from './review-technical-sheets/review-technical-sheets.component';
 
 const routes: Routes = [
   {
-    path: 'schedule-of-events',
-    loadChildren: () =>
-      import('./schedule-of-events/schedule-of-events.module').then(
-        m => m.ScheduleOfEventsModule
-      ),
+    path: '',
+    component: ReviewTechnicalSheetsComponent,
   },
 ];
 
@@ -15,4 +13,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class DeliveryScheduleRoutingModule {}
+export class ReviewTechnicalSheetsRoutingModule {}

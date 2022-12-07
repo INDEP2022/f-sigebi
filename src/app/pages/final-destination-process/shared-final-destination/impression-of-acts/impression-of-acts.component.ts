@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { DELEGATIONS_COLUMNS } from '../../report-of-acts/delegations-columns';
-import { FdpAdpdtDetailDelegationsComponent } from '../detail-delegations/fdp-adpdt-detail-delegations.component';
+import { DetailDelegationsComponent } from '../detail-delegations/detail-delegations.component';
 import { SUBDELEGATIONS_COLUMNS } from './../../report-of-acts/sub-delegations-columns';
 
 @Component({
@@ -57,7 +57,7 @@ export class ImpressionOfActsComponent implements OnInit {
       },
     };
     this.bsModalRef = this.modalService.show(
-      FdpAdpdtDetailDelegationsComponent,
+      DetailDelegationsComponent,
       initialState
     );
     this.bsModalRef.content.closeBtnName = 'Close';
