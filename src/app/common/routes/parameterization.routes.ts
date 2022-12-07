@@ -133,6 +133,10 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Catálogo de tipos de documentos',
         link: '/pages/parameterization/catalog-of-document-types',
       },
+      {
+        label: 'Catálogo de tipos de inventario',
+        link: '/pages/parameterization/catalog-of-inventory-types',
+      },
       //Félix
       {
         label: 'Valores',
@@ -158,6 +162,14 @@ export const PARAMETERIZATION_ROUTES = [
       {
         label: 'Indicadores de Desempeño',
         link: '/pages/parameterization/indicators-of-performance',
+      },
+      {
+        label: 'Mantenimiento a validadores de actas',
+        link: '/pages/parameterization/maintenance-document-validators',
+      },
+      {
+        label: 'Tiempo Máximo Para Cierre Actas Devolución',
+        link: '/pages/parameterization/maximum-times',
       },
     ],
   },

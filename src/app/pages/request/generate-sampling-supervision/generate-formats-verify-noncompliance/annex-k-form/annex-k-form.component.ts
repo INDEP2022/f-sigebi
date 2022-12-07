@@ -3,6 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { PrintReportModalComponent } from '../../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
+import { PrintReportRestitutionModalComponent } from '../../restitution-assets-numeric-or-sort/print-report-restitution-modal/print-report-restitution-modal.component';
 
 @Component({
   selector: 'app-annex-k-form',
@@ -13,6 +14,7 @@ export class AnnexKFormComponent implements OnInit {
   detailForm: ModelForm<any>;
   participantDataForm: ModelForm<any>;
   detailAnnexForm: ModelForm<any>;
+  typeAnnex: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -21,6 +23,7 @@ export class AnnexKFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log(this.typeAnnex);
     this.initDetailForm();
     this.initParicipantForm();
     this.initAnnexDetailForm();
@@ -51,8 +54,26 @@ export class AnnexKFormComponent implements OnInit {
     });
   }
 
+  displayDetailAnnex(): boolean {
+    if (
+      this.typeAnnex === 'annexK-restitution-of-assets' ||
+      this.typeAnnex === 'annex-k-review-results'
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   signAnnex(): void {
-    this.openModal(PrintReportModalComponent, '', 'annexK');
+    if (
+      this.typeAnnex === 'annexK-restitution-of-assets' ||
+      this.typeAnnex === 'annex-k-review-results'
+    ) {
+      this.openModal(PrintReportRestitutionModalComponent, '', this.typeAnnex);
+    } else {
+      this.openModal(PrintReportModalComponent, '', this.typeAnnex);
+    }
     this.close();
   }
 

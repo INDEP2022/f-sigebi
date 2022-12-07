@@ -28,7 +28,7 @@ const routes: Routes = [
     data: { title: 'Deductivas' },
   },
   {
-    path: 'deductives-verification',
+    path: 'create-deductives-verification',
     loadChildren: async () =>
       (await import('./deductives-verification/deductives-verification.module'))
         .DeductivesVerificationModule,

@@ -5,7 +5,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-register-documentation-form',
   templateUrl: './register-documentation-form.component.html',
-  styles: [],
+  styleUrls: ['./register-documentation-form.component.scss'],
 })
 export class RegisterDocumentationFormComponent
   extends BasePage
@@ -15,6 +15,7 @@ export class RegisterDocumentationFormComponent
   infoOrigins: any[] = [];
   maxDate: Date = new Date();
   @Input() requestId: number;
+  @Input() subject: string;
   registerForm: FormGroup = new FormGroup({});
   @Output() onRegister = new EventEmitter<any>();
 
@@ -61,20 +62,20 @@ export class RegisterDocumentationFormComponent
   prepareForm() {
     this.registerForm = this.fb.group({
       priority: [null],
-      infoOrigin: [null],
+      contributor: [null, [Validators.required]],
       fileType: [null],
+      infoOrigin: [null],
+      receptionDate: [null, [Validators.required]],
       memorandumNo: [null, [Validators.required]],
-      memorandumDate: [null, [Validators.required]],
-      subject: [null],
       transferFile: [null, [Validators.required]],
-      felony: [null],
+      memorandumDate: [null, [Validators.required]],
+      subject: [this.subject],
       receptionMethod: [null],
       transferType: [null],
       senderName: [null],
       senderPosition: [null],
       senderPhone: [null],
       senderEmail: [null],
-      contributor: [null, [Validators.required]],
       judgementType: [null, [Validators.required]],
       judgement: [null],
       observations: [null],
@@ -92,7 +93,6 @@ export class RegisterDocumentationFormComponent
     if (this.requestId !== undefined) {
       const request = {
         receptionDate: '17/04/2018',
-        subject: 'NUMERARIO DECOMISADO DEVUELTO',
         contributor: 'Carlos G',
         memorandumNo: 54543,
         memorandumDate: '11/04/2018',

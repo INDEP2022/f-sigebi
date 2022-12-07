@@ -8,6 +8,7 @@ import { RequestListComponent } from '../view-of-requests/request-list/request-l
 import { SharedRequestModule } from './../shared-request/shared-request.module';
 import { RegistrationOfRequestsComponent } from './registration-of-requests/registration-of-requests.component';
 import { ApprovalAssetsTabsComponent } from './tabs/approval-requests-components/approval-assets-tabs/approval-assets-tabs.component';
+import { GenerateDictumComponent } from './tabs/approval-requests-components/generate-dictum/generate-dictum.component';
 import { AssociateFileComponent } from './tabs/associate-file/associate-file.component';
 import { AdvancedSearchComponent } from './tabs/classify-assets-components/classify-assets-child-tabs-components/advanced-search/advanced-search.component';
 import { ClarificationFormTabComponent } from './tabs/classify-assets-components/classify-assets-child-tabs-components/clarification-form-tab/clarification-form-tab.component';
@@ -67,6 +68,7 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     UploadFielsModalComponent,
     RefuseClarificationModalComponent,
     ApprovalAssetsTabsComponent,
+    GenerateDictumComponent,
   ],
   imports: [
     CommonModule,
@@ -77,5 +79,6 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     NgScrollbarModule,
     SharedRequestModule,
   ],
+  exports: [VerifyComplianceTabComponent],
 })
 export class TransferRequestModule {}

@@ -1,0 +1,207 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Mantenimiento de Acta Entrega Recepcion</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col">
+          <form-field
+            [control]="form.get('fechaCaptura')"
+            label="Fecha Captura">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="fechaCaptura"
+              placeholder="Fecha Captura" />
+          </form-field>
+        </div>
+
+        <div class="col">
+          <form-field [control]="form.get('statusActa')" label="Status Acta">
+            <ngx-select
+              control="statusActa"
+              [form]="form"
+              [data]="itemsSelect"></ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col">
+          <form-field [control]="form.get('acta')" label="No. Acta">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="acta"
+              placeholder="No. Acta" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <form-field [control]="form.get('tipo')" label="Tipo">
+            <ngx-select
+              control="tipo"
+              [form]="form"
+              [data]="itemsSelect"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col">
+          <form-field [control]="form.get('prog')" label="Prog">
+            <ngx-select
+              control="prog"
+              [form]="form"
+              [data]="itemsSelect"></ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col">
+          <form-field [control]="form.get('transferente')" label="Transferente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="transferente"
+              placeholder="Transferente" />
+          </form-field>
+        </div>
+
+        <div class="col">
+          <form-field [control]="form.get('area')" label="Area">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="area"
+              placeholder="Area" />
+          </form-field>
+        </div>
+
+        <div class="col">
+          <form-field [control]="form.get('usuario')" label="Usuario">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="usuario"
+              placeholder="Usuario" />
+          </form-field>
+        </div>
+
+        <div class="col">
+          <form-field [control]="form.get('folio')" label="Folio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="folio"
+              placeholder="Folio" />
+          </form-field>
+        </div>
+
+        <div class="col">
+          <form-field [control]="form.get('year')" label="Año">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="year"
+              placeholder="Año" />
+          </form-field>
+        </div>
+
+        <div class="col">
+          <form-field [control]="form.get('month')" label="Mes">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="month"
+              placeholder="Mes" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('claveActa')" label="clave Acta">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="claveActa"
+              placeholder="Clave Acta" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <button type="button" class="my-1 mx-2" size="small">
+            Abrir/Cerrar Acta
+          </button>
+          <button type="button" class="my-1 mx-2" size="small">
+            Exportar Excel
+          </button>
+        </div>
+      </div>
+
+      <div class="row pt-2 scroll-table">
+        <ng2-smart-table
+          class="col-md-12"
+          [settings]="settings1"
+          [source]="data"></ng2-smart-table>
+      </div>
+
+      <hr class="row" />
+
+      <div class="row">
+        <div class="d-flex justify-content-center">
+          <div>
+            <button type="button" class="my-1 mx-2" size="small">Aplica</button>
+            <button type="button" class="my-1 mx-2" size="small">
+              Elimina
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-5">
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('cantidadRegistros')"
+            label="Cantidad Registros">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="cantidadRegistros"
+              placeholder="Cantidad Registros" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('cantidadBienes')"
+            label="Cantidad Bienes">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="cantidadBienes"
+              placeholder="Cantidad Bienes" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('cantidadExpedientes')"
+            label="Cantidad Expedientes">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="cantidadExpedientes"
+              placeholder="Cantidad Expedientes" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('cantidadDictamenes')"
+            label="Cantidad Dictamenes">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="cantidadDictamenes"
+              placeholder="Cantidad Dictamenes" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

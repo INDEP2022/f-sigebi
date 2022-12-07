@@ -5,12 +5,12 @@
         <h5 class="title">Muestreo Bienes: {{ title }}</h5>
       </div>
       <div class="p-2">
-        <button class="btn btn-primary btn-sm" (click)="turnSampling()">
+        <button class="btn btn-primary btn-sm active" (click)="turnSampling()">
           <i class="bx bxs-right-arrow-square"></i> Turnar muestreo
         </button>
       </div>
       <div class="p-2">
-        <button class="btn btn-primary btn-sm" (click)="save()">
+        <button class="btn btn-primary btn-sm active" (click)="save()">
           <i class="bx bx-save"></i> Guardar
         </button>
       </div>
@@ -36,34 +36,38 @@
       </div>
     </div>
     <div id="detail">
-      <div class="row">
-        <div class="col-md-12">
-          <h5 class="title">
-            <p>
-              <a
-                class="text-color"
-                (click)="showSamplingDetail = true"
-                *ngIf="!showSamplingDetail">
-                <i class="fa fa-angle-right" aria-hidden="true"></i> Detalles
-                del Muestreo</a
-              >
-            </p>
+      <app-card [header]="false">
+        <div body>
+          <div class="row">
+            <div class="col-md-12">
+              <h5 class="title">
+                <p>
+                  <a
+                    class="text-color"
+                    (click)="showSamplingDetail = true"
+                    *ngIf="!showSamplingDetail">
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    Detalles del Muestreo</a
+                  >
+                </p>
 
-            <p>
-              <a
-                class="text-color"
-                (click)="showSamplingDetail = false"
-                *ngIf="showSamplingDetail">
-                <i class="fa fa-angle-down" aria-hidden="true"></i> Detalles del
-                Muestreo</a
-              >
-            </p>
-          </h5>
+                <p>
+                  <a
+                    class="text-color"
+                    (click)="showSamplingDetail = false"
+                    *ngIf="showSamplingDetail">
+                    <i class="fa fa-angle-down" aria-hidden="true"></i> Detalles
+                    del Muestreo</a
+                  >
+                </p>
+              </h5>
+            </div>
+          </div>
+          <div class="row pt-4" *ngIf="showSamplingDetail">
+            <app-sampling-detail></app-sampling-detail>
+          </div>
         </div>
-      </div>
-      <div class="row pt-4" *ngIf="showSamplingDetail">
-        <app-sampling-detail></app-sampling-detail>
-      </div>
+      </app-card>
     </div>
     <div id="assets">
       <div class="row pt-6">
@@ -148,12 +152,16 @@
     <div class="tabs">
       <tabset class="md-tabs" *ngIf="!isEnableAnex">
         <tab heading="Bienes" id="tab1">
-          <app-assets-tab [willSave]="willSave"></app-assets-tab>
+          <app-assets-tab
+            [willSave]="willSave"
+            [typeTask]="'verify-noncompliance'"></app-assets-tab>
         </tab>
         <tab heading="Verificaciones">
           <app-verifications></app-verifications>
         </tab>
-        <tab heading="Detalle Anexo"></tab>
+        <tab heading="Detalle Anexo">
+          <app-detail-annex [annexData]="annexDetail"></app-detail-annex>
+        </tab>
       </tabset>
 
       <!-- Se turno el formulario se muestrea los tabs -->

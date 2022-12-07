@@ -11,7 +11,7 @@ import { DeductiveFormComponent } from '../deductive-form/deductive-form.compone
 import { DEDUCTIVE_COLUMNS } from './deductive-columns';
 
 @Component({
-  selector: 'app-deductives-list',
+  selector: 'app-create-deductives-list',
   templateUrl: './deductives-list.component.html',
   styles: [],
 })

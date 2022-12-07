@@ -5,13 +5,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { SharedRequestModule } from '../../shared-request/shared-request.module';
 import { MsgRsbMRegisterRequestGoodsRoutingModule } from './msg-rsb-m-register-request-goods-routing.module';
 import { MsgRsbCRegisterRequestGoodsComponent } from './register-request-goods/msg-rsb-c-register-request-goods.component';
-import { RegisterDocumentationComponent } from './tabs/register-documentation/register-documentation.component';
-
 @NgModule({
-  declarations: [
-    MsgRsbCRegisterRequestGoodsComponent,
-    RegisterDocumentationComponent,
-  ],
+  declarations: [MsgRsbCRegisterRequestGoodsComponent],
   imports: [
     CommonModule,
     MsgRsbMRegisterRequestGoodsRoutingModule,
@@ -19,9 +14,6 @@ import { RegisterDocumentationComponent } from './tabs/register-documentation/re
     TabsModule,
     SharedRequestModule,
   ],
-  exports: [
-    MsgRsbCRegisterRequestGoodsComponent,
-    RegisterDocumentationComponent,
-  ],
+  exports: [MsgRsbCRegisterRequestGoodsComponent],
 })
 export class MsgRsbMRegisterRequestGoodsModule {}

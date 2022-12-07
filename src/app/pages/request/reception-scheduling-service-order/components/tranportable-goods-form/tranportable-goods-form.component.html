@@ -1,0 +1,26 @@
+<div class="row pt-4">
+  <div class="md-tabs">
+    <tabset>
+      <tab heading="Bienes transportables">
+        <div class="btn-toolbar">
+          <app-columns-select [(settings)]="settings"></app-columns-select>
+
+          <button class="btn btn-primary btn-sm active">Detach</button>
+        </div>
+
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data"
+            (edit)="showDocument()">
+          </ng2-smart-table>
+        </div>
+
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </tab>
+    </tabset>
+  </div>
+</div>

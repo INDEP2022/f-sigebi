@@ -2,6 +2,8 @@ export const baseMenuRegquest: string = '/pages/request/'; // Base url Menu
 export const returnManageReturn: string = 'gestionar-devolucion/'; // Base url SubMenu
 export const returnRequestRegistration: string =
   'registro-solicitud-devolucion/'; // Base url SubMenu
+export const goodsClassification: string = 'clasificacion-bienes/'; // Base url SubMenu
+export const approveReturnRequest: string = 'aprobar-solicitud-bienes/'; // Base url SubMenu
 
 export const MENU_OPTIONS_REQUEST_MANAGE_RETURN = {
   label: 'Registro de Solicitud de Devolución',
@@ -15,17 +17,28 @@ export const MENU_OPTIONS_REQUEST_MANAGE_RETURN = {
         'registrar-documentacion-devolucion',
     },
     {
-      label: 'Registrar Devolución',
+      label: 'Registro de Solicitud de Devolución',
       link:
         baseMenuRegquest +
         returnManageReturn +
         returnRequestRegistration +
-        'registrar-devolucion',
+        'registro-solicitud-devolucion',
     },
-    // {
-    //   label: 'Búsqueda y Selección de Bienes para Devolución',
-    //   link:
-    //     baseMenuRegquestManageReturn + returnManageReturn + 'sampling-assets',
-    // },
+    {
+      label: 'Clasificación de Bienes',
+      link:
+        baseMenuRegquest +
+        returnManageReturn +
+        goodsClassification +
+        'clasificacion-bienes',
+    },
+    {
+      label: 'Aprobar Solicitud de Devolución',
+      link:
+        baseMenuRegquest +
+        returnManageReturn +
+        approveReturnRequest +
+        'aprobar-solicitud-bienes',
+    },
   ],
 };

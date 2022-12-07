@@ -7,7 +7,7 @@ import { DeductiveVerificationService } from 'src/app/core/services/catalogs/ded
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
-  selector: 'app-deductives-verification-form',
+  selector: 'app-create-deductives-verification-form',
   templateUrl: './deductives-verification-form.component.html',
   styles: [],
 })

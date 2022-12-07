@@ -1,12 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IRequestInformation } from '../../../../../core/models/requests/requestInformation.model';
+import { CreateReportComponent } from '../../../shared-request/create-report/create-report.component';
+import { IRequestDocument } from './../../../../../core/models/requests/document.model';
+import { ECONOMIC_RESOURCES_DOCS } from './docs-template';
 
 @Component({
   selector: 'app-gre-c-economic-resources-main',
   templateUrl: './gre-c-economic-resources-main.component.html',
-  styles: [],
+  styleUrls: ['./gre-c-economic-resources-main.component.scss'],
 })
 export class GreCEconomicResourcesMainComponent
   extends BasePage
@@ -15,9 +19,21 @@ export class GreCEconomicResourcesMainComponent
   requestId: number = NaN;
   contributor: string = '';
   requestInfo: IRequestInformation;
+  screenWidth: number;
+  public typeDoc: string = '';
+  docTemplate: IRequestDocument[];
 
-  constructor(private route: ActivatedRoute, private router: Router) {
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private modalService: BsModalService
+  ) {
     super();
+    this.docTemplate = ECONOMIC_RESOURCES_DOCS;
+    this.screenWidth =
+      window.innerWidth ||
+      document.documentElement.clientWidth ||
+      document.body.clientWidth;
   }
 
   ngOnInit(): void {
@@ -27,6 +43,13 @@ export class GreCEconomicResourcesMainComponent
         this.getRequestInfo(this.requestId);
       }
     });
+    this.requestSelected(1);
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    let screenWidth = window.innerWidth;
+    this.screenWidth = screenWidth;
   }
 
   getRequestInfo(rquestId: number) {
@@ -50,10 +73,6 @@ export class GreCEconomicResourcesMainComponent
     this.router.navigate(['pages/request/list']);
   }
 
-  requestRegistered(request: any) {
-    console.log(request);
-  }
-
   turnRequest() {
     this.alertQuestion(
       'question',
@@ -65,5 +84,36 @@ export class GreCEconomicResourcesMainComponent
         this.onLoadToast('success', 'Solicitud turnada con éxito', '');
       }
     });
+  }
+
+  createReport(context?: Partial<CreateReportComponent>): void {
+    const modalRef = this.modalService.show(CreateReportComponent, {
+      initialState: { documents: this.docTemplate },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.refresh.subscribe(next => {
+      if (next) console.log(next); //this.getCities();
+    });
+  }
+
+  requestSelected(type: number) {
+    this.typeDocumentMethod(type);
+  }
+
+  typeDocumentMethod(type: number) {
+    switch (type) {
+      case 1:
+        this.typeDoc = 'doc-request';
+        break;
+      case 2:
+        this.typeDoc = 'doc-expedient';
+        break;
+      case 3:
+        this.typeDoc = 'request-expedient';
+        break;
+      default:
+        break;
+    }
   }
 }

@@ -9,4 +9,5 @@ export interface IRequestInformation {
   emitter?: string; // Emisora
   authority?: string; // Autoridad
   similarGoodsRequest?: number; // Numero Solicitud Bienes Similares
+  rejectionComment?: string; // Comentario de Rechazo
 }

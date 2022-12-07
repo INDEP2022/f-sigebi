@@ -108,6 +108,33 @@ const routes: Routes = [
             .BankAccountsInsuredModule,
         data: { title: 'Cuentas aseguradas por bancos' },
       },
+      {
+        path: 'massive-account-indiciado',
+        loadChildren: async () =>
+          (
+            await import(
+              './print-massive-accounts/print-massive-accounts.module'
+            )
+          ).PrintMassiveAccountsModule,
+        data: { title: 'Estado de cuenta por Indiciado' },
+      },
+      {
+        path: 'unreconcilied-files',
+        loadChildren: async () =>
+          (await import('./unreconciled-files/unreconciled-files.module'))
+            .UnreconciledFilesModule,
+        data: { title: 'Expedientes sin conciliar' },
+      },
+      {
+        path: 'deposit-unreconcilied-files',
+        loadChildren: async () =>
+          (
+            await import(
+              './deposit-unreconcilied-files/deposit-unreconcilied-files.module'
+            )
+          ).DepositUnreconciliedFilesModule,
+        data: { title: 'Fichas de deposito sin conciliar' },
+      },
     ],
   },
 ];
