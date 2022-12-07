@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { IRequestDocument } from 'src/app/core/models/requests/document.model';
 import { BasePage } from 'src/app/core/shared/base-page';
+import Swal from 'sweetalert2';
 import { COMPENSATION_ACT_DOCS } from '../../../economic-compensation/gre-m-compensation-act/gre-c-compensation-act-main/docs-template';
 import { CONTRIBUTOR_NOTIFICATION_DOCS } from '../../../economic-compensation/gre-m-delivery-request-notif/gre-c-delivery-request-notif-main/docs-template';
 import { CreateReportComponent } from '../../../shared-request/create-report/create-report.component';
@@ -163,6 +164,44 @@ export class MsgRsbCRegisterRequestGoodsComponent
     });
     modalRef.content.refresh.subscribe(next => {
       if (next) console.log(next); //this.getCities();
+    });
+  }
+
+  rejectRequest() {
+    Swal.fire({
+      title: 'Confirma Rechazo',
+      text: 'El resultado de la verificación y análisis documental será rechazado.',
+      input: 'text',
+      inputAttributes: {
+        autocapitalize: 'off',
+      },
+      showCancelButton: true,
+      confirmButtonColor: '#9d2449',
+      confirmButtonText:
+        "<i class='bx bxs-check-circle check-icon fs-2 mr-2'></i>Aceptar",
+      cancelButtonColor: '#b38e5d',
+      cancelButtonText:
+        "<i class='bx bxs-x-circle cancel-icon fs-2 mr-2'></i>Cancelar",
+      showLoaderOnConfirm: true,
+      preConfirm: (comment: any) => {
+        try {
+          if (!comment) {
+            throw new Error(
+              'Se necesita un comentario para retornar la solicitud'
+            );
+          } else {
+            return comment;
+          }
+        } catch (error) {
+          Swal.showValidationMessage(`${error}`);
+        }
+      },
+      // allowOutsideClick: () => !Swal.isLoading(),
+    }).then(result => {
+      console.log(result);
+      if (result.isConfirmed) {
+        console.log(result.value);
+      }
     });
   }
 }

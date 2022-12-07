@@ -1,5 +1,5 @@
 //Components
-import { PaPdmCeCCheckboxElementComponent } from '../checkbox-element/pa-pdm-ce-c-checkbox-element.component';
+import { CheckboxElementComponent } from '../checkbox-element/checkbox-element.component';
 
 export const COLUMNS = {
   user: {
@@ -16,7 +16,7 @@ export const COLUMNS = {
   distributionMail: {
     title: 'Correo de dist.',
     type: 'custom',
-    renderComponent: PaPdmCeCCheckboxElementComponent,
+    renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
         data.row.distributionMail = data.toggle;
@@ -27,7 +27,7 @@ export const COLUMNS = {
   noSendMail: {
     title: 'No enviar a SIRSAE',
     type: 'custom',
-    renderComponent: PaPdmCeCCheckboxElementComponent,
+    renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
         data.row.noSendMail = data.toggle;
@@ -38,7 +38,7 @@ export const COLUMNS = {
   batchEnable: {
     title: 'Hab. Lote Disp. Pagos',
     type: 'custom',
-    renderComponent: PaPdmCeCCheckboxElementComponent,
+    renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
         data.row.batchEnable = data.toggle;
