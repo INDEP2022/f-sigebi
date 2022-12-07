@@ -48,7 +48,6 @@ export class ComplementaryRequestInformationComponent
   }
 
   ngOnInit(): void {
-    console.log(this.title);
     this.getPathParameter();
     this.prepareForm();
     this.requestSelected(1);
@@ -61,7 +60,6 @@ export class ComplementaryRequestInformationComponent
         this.titleArray[this.typeOfRequest - 1] = this.titleArray[
           this.typeOfRequest - 1
         ].replace('requestNumb', params.get('id'));
-        console.log(this.titleArray);
       } else {
         if (this.idParam) {
           this.requestNumb = this.idParam;
@@ -88,11 +86,9 @@ export class ComplementaryRequestInformationComponent
     });
   }
   dataRegistration(data: any) {
-    console.log(data);
     this.formValuesDataDocumentation.emit(data);
   }
   dataSeleccionarBienes(data: any) {
-    console.log(data);
     this.formValuesSeleccionarBienes.emit(data);
   }
 
