@@ -1,0 +1,60 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Datos destinatario</h5>
+  </div>
+  <div body>
+    <form [formGroup]="recipientForm" class="form-material">
+      <div class="row pt-4">
+        <div class="col-md-5">
+          <form-field
+            [control]="recipientForm.get('recipient')"
+            label="*Destinatario">
+            <input
+              type="text"
+              formControlName="recipient"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="recipientForm.get('emailRecipient')"
+            label="*Correo electrónico del destinatario">
+            <input
+              type="email"
+              formControlName="emailRecipient"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-5">
+          <form-field
+            [control]="recipientForm.get('recipientPosition')"
+            label="*Puesto del destinatario">
+            <input
+              type="text"
+              formControlName="recipientPosition"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="p-2">
+        <button
+          class="btn btn-primary btn-sm active"
+          [disabled]="recipientForm.invalid"
+          (click)="send()">
+          Generar Reporte
+        </button>
+      </div>
+      <div class="p-2">
+        <button class="btn btn-danger btn-sm active" (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
