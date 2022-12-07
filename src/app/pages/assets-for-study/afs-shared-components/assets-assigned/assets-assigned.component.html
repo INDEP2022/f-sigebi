@@ -150,11 +150,95 @@
       </div>
       <div class="col-md-4">
         <form-field
-          [control]="assetAssignedForm.get('proyectRequest')"
+          [control]="assetAssignedForm.get('projectRequest')"
           label="*Proyecto de solicitud">
           <input
             type="text"
-            formControlName="proyectRequest"
+            formControlName="projectRequest"
+            class="form-control" />
+        </form-field>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div *ngIf="typeComponent === 'save-answer'">
+  <form [formGroup]="assetAssignedForm" class="form-material">
+    <div class="row">
+      <div class="col-md-4">
+        <form-field
+          [control]="assetAssignedForm.get('noRequest')"
+          label="No. de solicitud">
+          <input type="text" formControlName="noRequest" class="form-control" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="assetAssignedForm.get('reasonStudy')"
+          label="Motivo del estudio">
+          <input
+            type="text"
+            formControlName="reasonStudy"
+            class="form-control" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field [control]="assetAssignedForm.get('warehouse')">
+          <ngx-select
+            [form]="assetAssignedForm"
+            control="warehouse"
+            [data]="warehouseSelected"
+            value="id"
+            bindLabel="id"
+            label="Almacén"
+            (fetchItems)="getWarehouseSelectedSelect($event)">
+          </ngx-select>
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="assetAssignedForm.get('studyMange')"
+          label="Responsable del estudio">
+          <input
+            type="text"
+            formControlName="studyMange"
+            class="form-control" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="assetAssignedForm.get('receiver')"
+          label="Destinatario">
+          <input type="text " formControlName="receiver" class="form-control" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="assetAssignedForm.get('recipientPosition')"
+          label="Puesto del destinatario">
+          <input
+            type="text"
+            formControlName="recipientPosition"
+            class="form-control" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="assetAssignedForm.get('recipientPosition')"
+          label="Puesto del destinatario">
+          <input
+            type="text"
+            formControlName="recipientPosition"
+            class="form-control" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="assetAssignedForm.get('projectRequest')"
+          label="Proyecto de solicitud">
+          <input
+            type="text"
+            formControlName="projectRequest"
             class="form-control" />
         </form-field>
       </div>

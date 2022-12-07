@@ -7,28 +7,28 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { SharedModule } from '../../../shared/shared.module';
 import { SharedRequestModule } from '../../request/shared-request/shared-request.module';
 import { AfsSharedComponentsModule } from '../afs-shared-components/afs-shared-components.module';
-import { PrepareRequestReponsablesRoutingComponent } from './prepare-request-reponsables-routing.component';
-import { PrepareRequestsComponent } from './prepare-requests/prepare-requests.component';
-import { RecipientDataComponent } from './recipient-data/recipient-data.component';
-import { ReportPreviewComponent } from './report-preview/report-preview.component';
+import { SaveAnswerComponent } from './save-answer/save-answer.component';
+import { SaveResponsibleAnswerRoutingModule } from './save-responsible-answer-routing.module';
+import { TextareaModalComponent } from './textarea-modal/textarea-modal.component';
+import { UploadDocumentarySupportComponent } from './upload-documentary-support/upload-documentary-support.component';
 
 @NgModule({
   declarations: [
-    PrepareRequestsComponent,
-    RecipientDataComponent,
-    ReportPreviewComponent,
+    SaveAnswerComponent,
+    UploadDocumentarySupportComponent,
+    TextareaModalComponent,
   ],
   imports: [
     CommonModule,
-    PrepareRequestReponsablesRoutingComponent,
+    SaveResponsibleAnswerRoutingModule,
     BsDatepickerModule.forRoot(),
     ModalModule.forChild(),
     TabsModule.forRoot(),
     NgScrollbarModule,
     SharedModule,
-    AfsSharedComponentsModule,
     SharedRequestModule,
+    AfsSharedComponentsModule,
     TabsModule,
   ],
 })
-export class PrepareRequestResponsablesModule {}
+export class SaveResponsibleAnswerModule {}

@@ -58,6 +58,10 @@ export class AssignmentListComponent extends BasePage implements OnInit {
         ]);
         break;
       }
+      case 'GuardarRespuesta': {
+        this.router.navigate(['pages/assets-for-study/save-answer', data.id]);
+        break;
+      }
     }
   }
 }
