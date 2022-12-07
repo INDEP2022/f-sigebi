@@ -1,13 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { DonationActsComponent } from './donation-acts/donation-acts.component';
 
 const routes: Routes = [
   {
-    path: 'schedule-of-events',
-    loadChildren: () =>
-      import('./schedule-of-events/schedule-of-events.module').then(
-        m => m.ScheduleOfEventsModule
-      ),
+    path: '',
+    component: DonationActsComponent,
+    data: { Title: 'Actas de donación' },
   },
 ];
 
@@ -15,4 +14,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class DeliveryScheduleRoutingModule {}
+export class DonationActsRoutingModule {}

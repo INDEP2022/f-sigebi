@@ -1,13 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ProofOfDeliveryComponent } from './proof of delivery/proof-of-delivery.component';
 
 const routes: Routes = [
   {
-    path: 'schedule-of-events',
-    loadChildren: () =>
-      import('./schedule-of-events/schedule-of-events.module').then(
-        m => m.ScheduleOfEventsModule
-      ),
+    path: '',
+    component: ProofOfDeliveryComponent,
   },
 ];
 
@@ -15,4 +13,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class DeliveryScheduleRoutingModule {}
+export class ProofOfDeliveryRoutingModule {}
