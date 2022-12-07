@@ -3,21 +3,155 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'comer-auction-report',
-    loadChildren: async () =>
-      (await import('./comer-auction-report/comer-auction-report.module'))
-        .ComerAuctionReportModule,
-    data: { title: 'Reporte Subasta' },
-  },
-  {
-    path: 'comer-management-capture-lines',
+    path: 'sw-comer-m-auction-report',
     loadChildren: async () =>
       (
         await import(
-          './comer-management-capture-lines/comer-management-capture-lines.module'
+          './sw-comer-m-auction-report/sw-comer-m-auction-report.module'
         )
-      ).ComerManagementCaptureLinesModule,
+      ).SwComerMAuctionReportModule,
+    data: { title: 'Reporte Subasta' },
+  },
+  {
+    path: 'sw-comer-m-management-capture-lines',
+    loadChildren: async () =>
+      (
+        await import(
+          './sw-comer-m-management-capture-lines/sw-comer-m-management-capture-lines.module'
+        )
+      ).SwComerMManagementCaptureLinesModule,
     data: { title: 'Lineas de captura' },
+  },
+  {
+    path: 'sw-comer-m-winners-report',
+    loadChildren: async () =>
+      (
+        await import(
+          './sw-comer-m-winners-report/sw-comer-m-winners-report.module'
+        )
+      ).SwComerMWinnersReportModule,
+    data: { title: 'Reporte de ganadores' },
+  },
+  {
+    path: 'sw-comer-m-valid-capture-line',
+    loadChildren: async () =>
+      (
+        await import(
+          './sw-comer-m-valid-capture-line/sw-comer-m-valid-capture-line.module'
+        )
+      ).SwComerMValidCaptureLineModule,
+    data: { title: 'Valida línea captura' },
+  },
+  {
+    path: 'sw-comer-m-report-oi',
+    loadChildren: async () =>
+      (await import('./sw-comer-m-report-oi/sw-comer-m-report-oi.module'))
+        .SwComerMReportOiModule,
+    data: { title: 'Reporte OI' },
+  },
+  {
+    path: 'sw-comer-m-billing-payments',
+    loadChildren: async () =>
+      (
+        await import(
+          './sw-comer-m-billing-payments/sw-comer-m-billing-payments.module'
+        )
+      ).SwComerMBillingPaymentsModule,
+    data: { title: 'Pagos facturación' },
+  },
+  {
+    path: 'sw-comer-m-proof-delivery',
+    loadChildren: async () =>
+      (
+        await import(
+          './sw-comer-m-proof-delivery/sw-comer-m-proof-delivery.module'
+        )
+      ).SwComerMProofDeliveryModule,
+    data: { title: 'Constancia de entrega' },
+  },
+  {
+    path: 'sw-comer-m-report-invoices',
+    loadChildren: async () =>
+      (
+        await import(
+          './sw-comer-m-report-invoices/sw-comer-m-report-invoices.module'
+        )
+      ).SwComerMReportInvoicesModule,
+    data: { title: 'Reporte de facturas' },
+  },
+  {
+    path: 'sw-comer-m-report-batches-pending',
+    loadChildren: async () =>
+      (
+        await import(
+          './sw-comer-m-report-batches-pending/sw-comer-m-report-batches-pending.module'
+        )
+      ).SwComerMReportBatchesPendingModule,
+    data: { title: 'Reporte de lotes pendientes de liquidar' },
+  },
+  {
+    path: 'sw-comer-m-monitoring-cps-sps',
+    loadChildren: async () =>
+      (
+        await import(
+          './sw-comer-m-monitoring-cps-sps/sw-comer-m-monitoring-cps-sps.module'
+        )
+      ).SwComerMMonitoringCpsSpsModule,
+    data: { title: 'Monitoreo de cps y sps' },
+  },
+  {
+    path: 'sw-comer-m-appraisal-charge',
+    loadChildren: async () =>
+      (
+        await import(
+          './sw-comer-m-appraisal-charge/sw-comer-m-appraisal-charge.module'
+        )
+      ).SwComerMAppraisalChargeModule,
+    data: { title: 'Carga de Avalúos' },
+  },
+  {
+    path: 'monitoring-cps-sps-tabs',
+    loadChildren: async () =>
+      (await import('./monitoring-cps-sps-tabs/monitoring-cps-sps-tabs.module'))
+        .MonitoringCpsSpsTabsModule,
+    data: { title: 'Monitoreo de cps y sps' },
+  },
+  {
+    path: 'batch-status-monitoring',
+    loadChildren: async () =>
+      (await import('./batch-status-monitoring/batch-status-monitoring.module'))
+        .BatchStatusMonitoringModule,
+    data: { title: 'Monitoreo estatus lotes' },
+  },
+  {
+    path: 'report-exposure-for-sale',
+    loadChildren: async () =>
+      (
+        await import(
+          './report-exposure-for-sale/report-exposure-for-sale.module'
+        )
+      ).ReportExposureForSaleModule,
+    data: { title: 'Reporte exposición a venta' },
+  },
+  {
+    path: 'report-sales-attempts',
+    loadChildren: async () =>
+      (await import('./report-sales-attempts/report-sales-attempts.module'))
+        .ReportSalesAttemptsModule,
+    data: { title: 'Reporte intentos de venta' },
+  },
+  {
+    path: 'report-unsold-goods',
+    loadChildren: async () =>
+      (await import('./report-unsold-goods/report-unsold-goods.module'))
+        .ReportUnsoldGoodsModule,
+    data: { title: 'Reporte bienes sin vender' },
+  },
+  {
+    path: 'payload',
+    loadChildren: async () =>
+      (await import('./payload/payload.module')).PayloadModule,
+    data: { title: 'Carga de pagos' },
   },
 ];
 
