@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ConfirmProgrammingComponent } from '../../../shared-request/confirm-programming/confirm-programming.component';
@@ -18,23 +17,24 @@ import { IUser, USER_COLUMNS } from '../columns/users-columns';
   styles: [],
 })
 export class AceptProgrammingFormComponent extends BasePage implements OnInit {
-  estateSettings = { ...TABLE_SETTINGS, actions: false };
+  estateSettings = {
+    ...this.settings,
+    actions: false,
+    columns: ESTATE_COLUMNS,
+  };
 
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
 
   usersData: IUser[] = [];
-  estateData: [] = [];
+  estateData: any[] = [];
 
   constructor(private modalService: BsModalService) {
     super();
-    this.settings = { ...TABLE_SETTINGS, actions: false };
+    this.settings = { ...this.settings, actions: false, columns: USER_COLUMNS };
   }
 
-  ngOnInit(): void {
-    this.settings.columns = USER_COLUMNS;
-    this.estateSettings.columns = ESTATE_COLUMNS;
-  }
+  ngOnInit(): void {}
 
   confirm() {}
 

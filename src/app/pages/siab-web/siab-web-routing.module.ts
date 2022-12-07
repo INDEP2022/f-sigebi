@@ -30,6 +30,15 @@ const routes: Routes = [
         .LoadOfLocatorsModule,
   },
   {
+    path: 'query-interconnection',
+    loadChildren: async () =>
+      (
+        await import(
+          './tools/query-interconnection/query-interconnection.module'
+        )
+      ).QueryInterconnectionModule,
+  },
+  {
     path: 'indicators',
     loadChildren: async () =>
       (await import('./indicators/indicators.module')).IndicatorsModule,
