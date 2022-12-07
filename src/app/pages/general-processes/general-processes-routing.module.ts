@@ -106,6 +106,59 @@ const routes: Routes = [
         )
       ).GpGoodsWithRequiredInfoModule,
   },
+  {
+    path: 'trades-registration', //! no se migra
+    loadChildren: async () =>
+      (await import('./gp-trades-registration/gp-trades-registration.module'))
+        .GpTradesRegistrationModule,
+  },
+  {
+    path: 'valid-statuses',
+    loadChildren: async () =>
+      (await import('./gp-valid-statuses/gp-valid-statuses.module'))
+        .GpValidStatusesModule,
+  },
+  {
+    path: 'work-mailbox',
+    loadChildren: async () =>
+      (await import('./gp-work-mailbox/gp-work-mailbox.module'))
+        .GpWorkMailboxModule,
+  },
+  {
+    path: 'help-screen',
+    loadChildren: async () =>
+      (await import('./gp-help-screen/gp-help-screen.module'))
+        .GpHelpScreenModule,
+  },
+  {
+    path: 'tree-report',
+    loadChildren: async () =>
+      (await import('./gp-tree-report/gp-tree-report.module'))
+        .GpTreeReportModule,
+  },
+  {
+    path: 'coordination',
+    loadChildren: async () =>
+      (await import('./gp-coordination/gp-coordination.module'))
+        .GpCoordinationModule,
+  },
+  {
+    path: 'transfer',
+    loadChildren: async () =>
+      (await import('./gp-transfer/gp-transfer.module')).GpTransferModule,
+  },
+  {
+    path: 'text-change',
+    loadChildren: async () =>
+      (await import('./gp-text-change/gp-text-change.module'))
+        .GpTextChangeModule,
+  },
+  {
+    path: 'text-change-mod',
+    loadChildren: async () =>
+      (await import('./gp-text-change-mod/gp-text-change-mod.module'))
+        .GpTextChangeModModule,
+  },
 ];
 
 @NgModule({
