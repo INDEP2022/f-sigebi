@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { maxDate } from 'src/app/common/validations/date.validators';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { GOODS_COLUMNS } from './columns';
 
 @Component({
@@ -40,7 +41,7 @@ export class ReportUnsoldGoodsComponent extends BasePage implements OnInit {
       typeGood: [null, [Validators.required]],
       subtype: [null, [Validators.required]],
       delegation: [null, [Validators.required]],
-      status: [null, [Validators.required]],
+      status: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       startDate: [null, [Validators.required, maxDate(new Date())]],
       filterGoods: [],
       filterText: [],
