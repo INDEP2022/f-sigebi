@@ -49,6 +49,7 @@ export class GDRSDReturnRequestRecordComponent
       process: 'RegistroSolicitudes',
     },
   ];
+  title: string;
   items = new DefaultSelect<Example>();
   params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: any[] = [];
@@ -80,6 +81,7 @@ export class GDRSDReturnRequestRecordComponent
     if (event.data.process == 'RegistroSolicitudes') {
       // en el caso de que el proceso seleccionado sea Solicitud de DEVOLUCION
       this.idNoRequest = event.data.noRequest;
+      this.title = event.data.title;
       this.mostrarListado = false;
     }
   }

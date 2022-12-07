@@ -5,9 +5,9 @@ const routes: Routes = [
   {
     path: 'schedule-of-events',
     loadChildren: () =>
-      import(
-        './schedule-of-events/fdp-ds-soe-m-schedule-of-events.module'
-      ).then(m => m.FdpDsSoeMScheduleOfEventsModule),
+      import('./schedule-of-events/schedule-of-events.module').then(
+        m => m.ScheduleOfEventsModule
+      ),
   },
 ];
 

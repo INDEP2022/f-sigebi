@@ -1,5 +1,5 @@
 //Components
-import { PaPdmCeCCheckboxElementComponent } from '../checkbox-element/pa-pdm-ce-c-checkbox-element.component';
+import { CheckboxElementComponent } from '../checkbox-element/checkbox-element.component';
 
 export const COLUMNS = {
   username: {
@@ -20,7 +20,7 @@ export const COLUMNS = {
   to: {
     title: 'Para',
     type: 'custom',
-    renderComponent: PaPdmCeCCheckboxElementComponent,
+    renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
         data.row.to = data.toggle;
@@ -31,7 +31,7 @@ export const COLUMNS = {
   withCopy: {
     title: 'CC',
     type: 'custom',
-    renderComponent: PaPdmCeCCheckboxElementComponent,
+    renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
         data.row.withCopy = data.toggle;
@@ -42,7 +42,7 @@ export const COLUMNS = {
   sendMail: {
     title: 'Enviar',
     type: 'custom',
-    renderComponent: PaPdmCeCCheckboxElementComponent,
+    renderComponent: CheckboxElementComponent,
     onComponentInitFunction(instance: any) {
       instance.toggle.subscribe((data: any) => {
         data.row.sendMail = data.toggle;
