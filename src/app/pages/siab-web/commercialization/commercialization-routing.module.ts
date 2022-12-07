@@ -3,23 +3,20 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'sw-comer-m-auction-report',
+    path: 'comer-auction-report',
     loadChildren: async () =>
-      (
-        await import(
-          './sw-comer-m-auction-report/sw-comer-m-auction-report.module'
-        )
-      ).SwComerMAuctionReportModule,
+      (await import('./comer-auction-report/comer-auction-report.module'))
+        .ComerAuctionReportModule,
     data: { title: 'Reporte Subasta' },
   },
   {
-    path: 'sw-comer-m-management-capture-lines',
+    path: 'comer-management-capture-lines',
     loadChildren: async () =>
       (
         await import(
-          './sw-comer-m-management-capture-lines/sw-comer-m-management-capture-lines.module'
+          './comer-management-capture-lines/comer-management-capture-lines.module'
         )
-      ).SwComerMManagementCaptureLinesModule,
+      ).ComerManagementCaptureLinesModule,
     data: { title: 'Lineas de captura' },
   },
 ];

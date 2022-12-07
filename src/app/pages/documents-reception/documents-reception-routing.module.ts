@@ -8,120 +8,107 @@ const routes: Routes = [
       {
         path: '',
         loadChildren: async () =>
-          (await import('./dr-flyers/dr-flyers.module')).DrFlyersModule,
+          (await import('./flyers/flyers.module')).FlyersModule,
       },
     ],
   },
   {
     path: 'goods-capture',
     loadChildren: async () =>
-      (await import('./dr-goods/dr-goods.module')).DrGoodsModule,
+      (await import('./goods/goods.module')).GoodsModule,
   },
   {
     path: 'shipping-documents',
     loadChildren: async () =>
-      (await import('./dr-shipping-documents/dr-shipping-documents.module'))
-        .DrShippingDocumentsModule,
+      (await import('./shipping-documents/shipping-documents.module'))
+        .ShippingDocumentsModule,
   },
   {
     path: 'print-flyers',
     loadChildren: async () =>
-      (await import('./dr-print-flyers/dr-print-flyers.module'))
-        .DrPrintFlyersModule,
+      (await import('./print-flyers/print-flyers.module')).PrintFlyersModule,
   },
   {
     path: 'report',
     loadChildren: async () =>
-      (await import('./dr-report/dr-report.module')).DrReportModule,
+      (await import('./report/report.module')).ReportModule,
   },
   {
     path: 'summary',
     loadChildren: async () =>
-      (await import('./dr-summary/dr-summary.module')).DrSummaryModule,
+      (await import('./summary/summary.module')).SummaryModule,
   },
   {
     path: 'notifications-flat-file',
     loadChildren: async () =>
-      (
-        await import(
-          './dr-flat-file-notifications/dr-flat-file-notifications.module'
-        )
-      ).DrFlatFileNotificationsModule,
+      (await import('./flat-file-notifications/flat-file-notifications.module'))
+        .FlatFileNotificationsModule,
   },
   {
     path: 'goods-bulk-load',
     loadChildren: async () =>
-      (await import('./dr-goods-bulk-load/dr-goods-bulk-load.module'))
-        .DrGoodsBulkLoadModule,
+      (await import('./goods-bulk-load/goods-bulk-load.module'))
+        .GoodsBulkLoadModule,
   },
   {
     path: 'sat-sae-goods-load',
     loadChildren: async () =>
-      (await import('./dr-sat-sae-goods-load/dr-sat-sae-goods-load.module'))
-        .DrSatSaeGoodsLoadModule,
+      (await import('./sat-sae-goods-load/sat-sae-goods-load.module'))
+        .SatSaeGoodsLoadModule,
   },
   {
     path: 'sat-subjects-register',
     loadChildren: async () =>
-      (
-        await import(
-          './dr-sat-subjects-register/dr-sat-subjects-register.module'
-        )
-      ).DrSatSubjectsRegisterModule,
+      (await import('./sat-subjects-register/sat-subjects-register.module'))
+        .SatSubjectsRegisterModule,
   },
   {
-    path: 'pgr-subjects-register',
+    path: 'subjects-register',
     loadChildren: async () =>
-      (
-        await import(
-          './dr-pgr-subjects-register/dr-pgr-subjects-register.module'
-        )
-      ).DrPgrSubjectsRegisterModule,
+      (await import('./subjects-register/subjects-register.module'))
+        .SubjectsRegisterModule,
   },
   {
     path: 'documents-requirements-verification',
     loadChildren: async () =>
       (
         await import(
-          './dr-documents-requirements-verification/dr-documents-requirements-verification.module'
+          './documents-requirements-verification/documents-requirements-verification.module'
         )
-      ).DrDocumentsRequirementsVerificationModule,
+      ).DocumentsRequirementsVerificationModule,
   },
   {
     path: 'closing-of-confiscation-and-return-records',
     loadChildren: async () =>
       (
         await import(
-          './dr-closing-confiscation-and-return-records/dr-closing-confiscation-and-return-records.module'
+          './closing-confiscation-and-return-records/closing-confiscation-and-return-records.module'
         )
-      ).DrClosingConfiscationAndReturnRecordsModule,
+      ).ClosingConfiscationAndReturnRecordsModule,
   },
   {
     path: 'records-inventory',
     loadChildren: async () =>
-      (await import('./dr-records-inventory/dr-records-inventory.module'))
-        .DrRecordsInventoryModule,
+      (await import('./records-inventory/records-inventory.module'))
+        .RecordsInventoryModule,
   },
   {
     path: 'goods-forecast',
     loadChildren: async () =>
-      (await import('./dr-goods-forecast/dr-goods-forecast.module'))
-        .DrGoodsForecastModule,
+      (await import('./goods-forecast/goods-forecast.module'))
+        .GoodsForecastModule,
   },
   {
     path: 'records-validation',
     loadChildren: async () =>
-      (await import('./dr-records-validation/dr-records-validation.module'))
-        .DrRecordsValidationModule,
+      (await import('./records-validation/records-validation.module'))
+        .RecordsValidationModule,
   },
   {
     path: 'goods-vigilance-service',
     loadChildren: async () =>
-      (
-        await import(
-          './dr-goods-vigilance-service/dr-goods-vigilance-service.module'
-        )
-      ).DrGoodsVigilanceServiceModule,
+      (await import('./goods-vigilance-service/goods-vigilance-service.module'))
+        .GoodsVigilanceServiceModule,
   },
 ];
 

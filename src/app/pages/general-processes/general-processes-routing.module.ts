@@ -100,6 +100,54 @@ const routes: Routes = [
         )
       ).GoodsWithRequiredInfoModule,
   },
+  {
+    path: 'trades-registration', //! no se migra
+    loadChildren: async () =>
+      (await import('./trades-registration/trades-registration.module'))
+        .TradesRegistrationModule,
+  },
+  {
+    path: 'valid-statuses',
+    loadChildren: async () =>
+      (await import('./valid-statuses/valid-statuses.module'))
+        .ValidStatusesModule,
+  },
+  {
+    path: 'work-mailbox',
+    loadChildren: async () =>
+      (await import('./work-mailbox/work-mailbox.module')).WorkMailboxModule,
+  },
+  {
+    path: 'help-screen',
+    loadChildren: async () =>
+      (await import('./help-screen/help-screen.module')).HelpScreenModule,
+  },
+  {
+    path: 'tree-report',
+    loadChildren: async () =>
+      (await import('./tree-report/tree-report.module')).TreeReportModule,
+  },
+  {
+    path: 'coordination',
+    loadChildren: async () =>
+      (await import('./coordination/coordination.module')).CoordinationModule,
+  },
+  {
+    path: 'transfer',
+    loadChildren: async () =>
+      (await import('./transfer/transfer.module')).TransferModule,
+  },
+  {
+    path: 'text-change',
+    loadChildren: async () =>
+      (await import('./text-change/text-change.module')).TextChangeModule,
+  },
+  {
+    path: 'text-change-mod',
+    loadChildren: async () =>
+      (await import('./text-change-mod/text-change-mod.module'))
+        .TextChangeModModule,
+  },
 ];
 
 @NgModule({

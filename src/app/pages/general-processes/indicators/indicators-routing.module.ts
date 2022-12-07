@@ -54,6 +54,12 @@ const routes: Routes = [
       (await import('./incident-maintenance/incident-maintenance.module'))
         .IncidentMaintenanceModule,
   },
+  {
+    path: 'history',
+    loadChildren: async () =>
+      (await import('./indicators-history/indicators-history.module'))
+        .IndicatorsHistoryModule,
+  },
 ];
 
 @NgModule({

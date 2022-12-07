@@ -5,17 +5,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { SharedRequestModule } from '../../shared-request/shared-request.module';
 import { MsgRsbMRegisterRequestGoodsRoutingModule } from './msg-rsb-m-register-request-goods-routing.module';
 import { MsgRsbCRegisterRequestGoodsComponent } from './register-request-goods/msg-rsb-c-register-request-goods.component';
-import { RegisterDocumentationComponent } from './tabs/register-documentation/register-documentation.component';
-import { ModalAssignGoodGrouperComponent } from './tabs/select-similar-goods/modal-assign-good-grouper/modal-assign-good-grouper.component';
-import { SelectSimilarGoodsComponent } from './tabs/select-similar-goods/select-similar-goods.component';
-
 @NgModule({
-  declarations: [
-    MsgRsbCRegisterRequestGoodsComponent,
-    RegisterDocumentationComponent,
-    SelectSimilarGoodsComponent,
-    ModalAssignGoodGrouperComponent,
-  ],
+  declarations: [MsgRsbCRegisterRequestGoodsComponent],
   imports: [
     CommonModule,
     MsgRsbMRegisterRequestGoodsRoutingModule,
@@ -23,9 +14,6 @@ import { SelectSimilarGoodsComponent } from './tabs/select-similar-goods/select-
     TabsModule,
     SharedRequestModule,
   ],
-  exports: [
-    MsgRsbCRegisterRequestGoodsComponent,
-    RegisterDocumentationComponent,
-  ],
+  exports: [MsgRsbCRegisterRequestGoodsComponent],
 })
 export class MsgRsbMRegisterRequestGoodsModule {}

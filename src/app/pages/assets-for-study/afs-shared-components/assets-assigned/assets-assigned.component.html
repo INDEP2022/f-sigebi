@@ -1,0 +1,247 @@
+<div *ngIf="typeComponent === 'search-assets'">
+  <form [formGroup]="assetAssignedForm" class="form-material">
+    <div class="row">
+      <div class="col-md-4">
+        <form-field [control]="assetAssignedForm.get('assignedTo')">
+          <ngx-select
+            [form]="assetAssignedForm"
+            control="assignedTo"
+            [data]="asignToSelected"
+            value="id"
+            bindLabel="id"
+            label="Asignado por"
+            (fetchItems)="getAsignToSelect($event)">
+          </ngx-select>
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="assetAssignedForm.get('assetCharac')"
+          label="Caracteristicas del bien">
+          <input
+            type="text"
+            formControlName="assetCharac"
+            class="form-control" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="assetAssignedForm.get('transfer')"
+          label="Transferente">
+          <input type="text" formControlName="transfer" class="form-control" />
+        </form-field>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <form-field
+          [control]="assetAssignedForm.get('reasonStudy')"
+          label="Motivo del estudio">
+          <input
+            type="text"
+            formControlName="reasonStudy"
+            class="form-control" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="assetAssignedForm.get('assetsClassify')"
+          label="Clasificador de bienes">
+          <input
+            type="text"
+            formControlName="assetsClassify"
+            class="form-control" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field [control]="assetAssignedForm.get('warehouse')">
+          <ngx-select
+            [form]="assetAssignedForm"
+            control="warehouse"
+            [data]="warehouseSelected"
+            value="id"
+            bindLabel="id"
+            label="Almacén"
+            (fetchItems)="getWarehouseSelectedSelect($event)">
+          </ngx-select>
+        </form-field>
+      </div>
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-4">
+        <form-field
+          [control]="assetAssignedForm.get('studyMange')"
+          label="Responsable del estudio">
+          <input
+            type="text"
+            formControlName="studyMange"
+            class="form-control" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="assetAssignedForm.get('expedient')"
+          label="Expediente">
+          <input
+            type="number "
+            formControlName="expedient"
+            class="form-control" />
+        </form-field>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div *ngIf="typeComponent === 'prepare-request'">
+  <form [formGroup]="assetAssignedForm" class="form-material">
+    <div class="row">
+      <div class="col-md-4">
+        <form-field
+          [control]="assetAssignedForm.get('assetCharac')"
+          label="Caracteristicas del bien">
+          <input
+            type="text"
+            formControlName="assetCharac"
+            class="form-control" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="assetAssignedForm.get('reasonStudy')"
+          label="Motivo del estudio">
+          <input
+            type="text"
+            formControlName="reasonStudy"
+            class="form-control" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field [control]="assetAssignedForm.get('warehouse')">
+          <ngx-select
+            [form]="assetAssignedForm"
+            control="warehouse"
+            [data]="warehouseSelected"
+            value="id"
+            bindLabel="id"
+            label="Almacén"
+            (fetchItems)="getWarehouseSelectedSelect($event)">
+          </ngx-select>
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="assetAssignedForm.get('studyMange')"
+          label="Responsable del estudio">
+          <input
+            type="text"
+            formControlName="studyMange"
+            class="form-control" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="assetAssignedForm.get('expedient')"
+          label="Expediente">
+          <input
+            type="number "
+            formControlName="expedient"
+            class="form-control" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="assetAssignedForm.get('projectRequest')"
+          label="*Proyecto de solicitud">
+          <input
+            type="text"
+            formControlName="projectRequest"
+            class="form-control" />
+        </form-field>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div *ngIf="typeComponent === 'save-answer'">
+  <form [formGroup]="assetAssignedForm" class="form-material">
+    <div class="row">
+      <div class="col-md-4">
+        <form-field
+          [control]="assetAssignedForm.get('noRequest')"
+          label="No. de solicitud">
+          <input type="text" formControlName="noRequest" class="form-control" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="assetAssignedForm.get('reasonStudy')"
+          label="Motivo del estudio">
+          <input
+            type="text"
+            formControlName="reasonStudy"
+            class="form-control" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field [control]="assetAssignedForm.get('warehouse')">
+          <ngx-select
+            [form]="assetAssignedForm"
+            control="warehouse"
+            [data]="warehouseSelected"
+            value="id"
+            bindLabel="id"
+            label="Almacén"
+            (fetchItems)="getWarehouseSelectedSelect($event)">
+          </ngx-select>
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="assetAssignedForm.get('studyMange')"
+          label="Responsable del estudio">
+          <input
+            type="text"
+            formControlName="studyMange"
+            class="form-control" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="assetAssignedForm.get('receiver')"
+          label="Destinatario">
+          <input type="text " formControlName="receiver" class="form-control" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="assetAssignedForm.get('recipientPosition')"
+          label="Puesto del destinatario">
+          <input
+            type="text"
+            formControlName="recipientPosition"
+            class="form-control" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="assetAssignedForm.get('recipientPosition')"
+          label="Puesto del destinatario">
+          <input
+            type="text"
+            formControlName="recipientPosition"
+            class="form-control" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="assetAssignedForm.get('projectRequest')"
+          label="Proyecto de solicitud">
+          <input
+            type="text"
+            formControlName="projectRequest"
+            class="form-control" />
+        </form-field>
+      </div>
+    </div>
+  </form>
+</div>
