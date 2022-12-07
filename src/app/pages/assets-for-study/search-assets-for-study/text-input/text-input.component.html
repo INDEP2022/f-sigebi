@@ -1,0 +1,10 @@
+<div>
+  <input
+    type="number"
+    [(ngModel)]="quantity"
+    name="quantity"
+    id="quantity"
+    class="form-control"
+    (keyup)="getChanges($event)"
+    (change)="getChanges($event)" />
+</div>

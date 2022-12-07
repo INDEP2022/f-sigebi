@@ -2,10 +2,11 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { SharedRequestModule } from '../../../shared-request/shared-request.module';
 /** BASE IMPORT */
 
 /** LIBRERIAS EXTERNAS IMPORTS */
-import { MsgRsbMRegisterRequestGoodsModule } from '../../../manage-similar-goods/register-request-goods/msg-rsb-m-register-request-goods.module';
+// import { MsgRsbMRegisterRequestGoodsModule } from '../../../manage-similar-goods/register-request-goods/msg-rsb-m-register-request-goods.module';
 
 /** SERVICE IMPORTS */
 
@@ -21,7 +22,8 @@ import { GDRSDReturnRequestRecordComponent } from './return-request-record/gd-rs
     CommonModule,
     GDRSDReturnRequestRecordRoutingModule,
     SharedModule,
-    MsgRsbMRegisterRequestGoodsModule,
+    // MsgRsbMRegisterRequestGoodsModule,
+    SharedRequestModule,
   ],
   providers: [],
 })
