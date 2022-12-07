@@ -1,0 +1,189 @@
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BasePage } from 'src/app/core/shared/base-page';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+
+@Component({
+  selector: 'app-provider-catalogs-modal',
+  templateUrl: './provider-catalogs-modal.component.html',
+  styles: [],
+})
+export class ProviderCatalogsModalComponent extends BasePage implements OnInit {
+  title: string = 'Proveedor';
+  provider: any;
+  edit: boolean = false;
+  cityItems = new DefaultSelect();
+  stateItems = new DefaultSelect();
+  countryItems = new DefaultSelect();
+  providerForm: FormGroup = new FormGroup({});
+  @Output() onConfirm = new EventEmitter<any>();
+
+  cityTestData = [
+    {
+      id: 1,
+      description: 'CIUDAD 1',
+    },
+    {
+      id: 2,
+      description: 'CIUDAD 2',
+    },
+    {
+      id: 3,
+      description: 'CIUDAD 3',
+    },
+    {
+      id: 4,
+      description: 'CIUDAD 4',
+    },
+    {
+      id: 5,
+      description: 'CIUDAD 5',
+    },
+  ];
+
+  stateTestData = [
+    {
+      id: 1,
+      description: 'ESTADO 1',
+    },
+    {
+      id: 2,
+      description: 'ESTADO 2',
+    },
+    {
+      id: 3,
+      description: 'ESTADO 3',
+    },
+    {
+      id: 4,
+      description: 'ESTADO 4',
+    },
+    {
+      id: 5,
+      description: 'ESTADO 5',
+    },
+  ];
+
+  countryTestData = [
+    {
+      id: 1,
+      description: 'PAÍS 1',
+    },
+    {
+      id: 2,
+      description: 'PAÍS 2',
+    },
+    {
+      id: 3,
+      description: 'PAÍS 3',
+    },
+    {
+      id: 4,
+      description: 'PAÍS 4',
+    },
+    {
+      id: 5,
+      description: 'PAÍS 5',
+    },
+  ];
+
+  typeTestData = [
+    {
+      type: 'S',
+      description: 'TIPO 1',
+    },
+    {
+      type: 'P',
+      description: 'TIPO 2',
+    },
+    {
+      type: 'D',
+      description: 'TIPO 3',
+    },
+  ];
+
+  constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
+    super();
+  }
+
+  ngOnInit(): void {
+    this.prepareForm();
+    this.getCities({ inicio: 1, text: '' });
+    this.getStates({ inicio: 1, text: '' });
+    this.getCountries({ inicio: 1, text: '' });
+  }
+
+  private prepareForm(): void {
+    this.providerForm = this.fb.group({
+      rfc: [null],
+      curp: [null, [Validators.required]],
+      name: [null, [Validators.required]],
+      street: [null, [Validators.required]],
+      neighborhood: [null, [Validators.required]],
+      delegation: [null],
+      state: [null],
+      city: [null],
+      country: [null],
+      cp: [null],
+      phone: [null],
+      fax: [null],
+      email: [null],
+      type: [null],
+      activity: [null],
+      contractNumber: [null],
+    });
+    if (this.provider !== undefined) {
+      this.edit = true;
+      this.providerForm.patchValue(this.provider);
+    } else {
+      this.providerForm.controls['country'].setValue('MÉXICO');
+    }
+  }
+
+  close() {
+    this.modalRef.hide();
+  }
+
+  confirm() {
+    this.handleSuccess();
+  }
+
+  handleSuccess() {
+    this.loading = true;
+    // Llamar servicio para agregar control
+    this.loading = false;
+    this.onConfirm.emit(this.providerForm.value);
+    this.modalRef.hide();
+  }
+
+  getCities(params: ListParams) {
+    if (params.text == '') {
+      this.cityItems = new DefaultSelect(this.cityTestData, 5);
+    } else {
+      const id = parseInt(params.text);
+      const item = [this.cityTestData.filter((i: any) => i.id == id)];
+      this.cityItems = new DefaultSelect(item[0], 1);
+    }
+  }
+
+  getStates(params: ListParams) {
+    if (params.text == '') {
+      this.stateItems = new DefaultSelect(this.stateTestData, 5);
+    } else {
+      const id = parseInt(params.text);
+      const item = [this.stateTestData.filter((i: any) => i.id == id)];
+      this.stateItems = new DefaultSelect(item[0], 1);
+    }
+  }
+  getCountries(params: ListParams) {
+    if (params.text == '') {
+      this.countryItems = new DefaultSelect(this.countryTestData, 5);
+    } else {
+      const id = parseInt(params.text);
+      const item = [this.countryTestData.filter((i: any) => i.id == id)];
+      this.countryItems = new DefaultSelect(item[0], 1);
+    }
+  }
+}
