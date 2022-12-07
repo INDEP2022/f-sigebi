@@ -23,6 +23,16 @@ const routes: Routes = [
         .SearchAssetsForStudyModule,
     data: { title: 'Búsqueda de bienes que se pueden estudiar' },
   },
+  {
+    path: 'prepare-request-for-responsables/:id',
+    loadChildren: async () =>
+      (
+        await import(
+          './prepare-request-responsables/prepare-request-responsables.module'
+        )
+      ).PrepareRequestResponsablesModule,
+    data: { title: 'Elaborar solicitud a responsable del estudio' },
+  },
 ];
 
 @NgModule({

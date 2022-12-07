@@ -7,9 +7,10 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { SharedModule } from '../../../shared/shared.module';
 import { SharedRequestModule } from '../../request/shared-request/shared-request.module';
 import { AssetsAssignedComponent } from './assets-assigned/assets-assigned.component';
+import { TextInputComponent } from './text-input/text-input.component';
 
 @NgModule({
-  declarations: [AssetsAssignedComponent],
+  declarations: [AssetsAssignedComponent, TextInputComponent],
   imports: [
     CommonModule,
     BsDatepickerModule.forRoot(),
@@ -20,6 +21,6 @@ import { AssetsAssignedComponent } from './assets-assigned/assets-assigned.compo
     SharedRequestModule,
     TabsModule,
   ],
-  exports: [AssetsAssignedComponent],
+  exports: [AssetsAssignedComponent, TextInputComponent],
 })
 export class AfsSharedComponentsModule {}

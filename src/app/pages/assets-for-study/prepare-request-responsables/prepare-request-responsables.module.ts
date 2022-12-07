@@ -7,29 +7,30 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { SharedModule } from '../../../shared/shared.module';
 import { SharedRequestModule } from '../../request/shared-request/shared-request.module';
 import { AfsSharedComponentsModule } from '../afs-shared-components/afs-shared-components.module';
-import { AssetsFilterComponent } from './assets-filter/assets-filter.component';
-import { AssetsListComponent } from './assets-list/assets-list.component';
-import { SearchAssetsForStudyRoutingModule } from './search-assets-for-study-routing.module';
-import { SearchAssetsComponent } from './search-assets/search-assets.component';
+import { ListAssetsComponent } from './list-assets/list-assets.component';
+import { PrepareRequestReponsablesRoutingComponent } from './prepare-request-reponsables-routing.component';
+import { PrepareRequestsComponent } from './prepare-requests/prepare-requests.component';
+import { RecipientDataComponent } from './recipient-data/recipient-data.component';
+import { ReportPreviewComponent } from './report-preview/report-preview.component';
 
 @NgModule({
   declarations: [
-    SearchAssetsComponent,
-    AssetsFilterComponent,
-    AssetsListComponent,
+    PrepareRequestsComponent,
+    ListAssetsComponent,
+    RecipientDataComponent,
+    ReportPreviewComponent,
   ],
   imports: [
     CommonModule,
-    SearchAssetsForStudyRoutingModule,
+    PrepareRequestReponsablesRoutingComponent,
     BsDatepickerModule.forRoot(),
     ModalModule.forChild(),
     TabsModule.forRoot(),
     NgScrollbarModule,
     SharedModule,
+    AfsSharedComponentsModule,
     SharedRequestModule,
     TabsModule,
-    AfsSharedComponentsModule,
   ],
-  exports: [AssetsListComponent],
 })
-export class SearchAssetsForStudyModule {}
+export class PrepareRequestResponsablesModule {}

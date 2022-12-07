@@ -10,11 +10,11 @@ export const ASSIGNMENT = [
   },
   {
     id: 2,
-    title: 'Otro',
-    noRequest: 45119,
-    numTask: 260231,
-    noInstance: 820111,
+    title: 'Elaborar Solicitud a responsable del estudio',
+    noRequest: 45239,
+    numTask: 261131,
+    noInstance: 82411,
     created: 'tester_nsbxt',
-    process: 'otro',
+    process: 'ElaborarSolicitud',
   },
 ];

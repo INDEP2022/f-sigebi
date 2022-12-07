@@ -1,6 +1,6 @@
 import { TextInputComponent } from '../../../afs-shared-components/text-input/text-input.component';
 
-export const ASSETS_LIST_SELECTED_COLUMNS = {
+export const ASSETS_LIST_COLUMNS = {
   noAsset: {
     title: 'No. Bien SIGEBI',
     type: 'string',
@@ -23,6 +23,7 @@ export const ASSETS_LIST_SELECTED_COLUMNS = {
   },
   input: {
     title: 'Cantidad para estudio',
+    editable: false,
     type: 'custom',
     class: 'custom-field',
     filter: false,
@@ -77,11 +78,6 @@ export const ASSETS_LIST_SELECTED_COLUMNS = {
   },
   stateConsercationWarehouse: {
     title: 'Estado de Conservación Almacén',
-    type: 'string',
-    sort: false,
-  },
-  warehouse: {
-    title: 'Almacén',
     type: 'string',
     sort: false,
   },
