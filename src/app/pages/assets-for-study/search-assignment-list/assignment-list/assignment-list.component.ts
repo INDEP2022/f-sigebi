@@ -51,7 +51,15 @@ export class AssignmentListComponent extends BasePage implements OnInit {
         ]);
         break;
       }
-      case '': {
+      case 'ElaborarSolicitud': {
+        this.router.navigate([
+          'pages/assets-for-study/prepare-request-for-responsables',
+          data.id,
+        ]);
+        break;
+      }
+      case 'GuardarRespuesta': {
+        this.router.navigate(['pages/assets-for-study/save-answer', data.id]);
         break;
       }
     }

@@ -17,9 +17,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './conciliation-depositary-payments/pj-d-pdp-m-conciliation-depositary-payments.module'
+          './conciliation-depositary-payments/conciliation-depositary-payments.module'
         )
-      ).PJDPDPConciliationDepositaryPaymentsModule,
+      ).ConciliationDepositaryPaymentsModule,
     data: { title: DEPOSITARY_ROUTES_1[1].label },
   },
   {
@@ -28,9 +28,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './query-related-payments-depositories/pj-d-pdp-m-query-related-payments-depositories.module'
+          './query-related-payments-depositories/query-related-payments-depositories.module'
         )
-      ).PJDPDPQueryRelatedPaymentsDepositoriesModule,
+      ).QueryRelatedPaymentsDepositoriesModule,
     data: { title: DEPOSITARY_ROUTES_1[2].label },
   },
   {
@@ -39,9 +39,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './query-related-payments-depositories/pj-d-pdp-m-query-related-payments-depositories.module'
+          './query-related-payments-depositories/query-related-payments-depositories.module'
         )
-      ).PJDPDPQueryRelatedPaymentsDepositoriesModule,
+      ).QueryRelatedPaymentsDepositoriesModule,
     data: { title: DEPOSITARY_ROUTES_1[2].label },
   },
   // PROCESO DE DISPERCION DE PAGOS
