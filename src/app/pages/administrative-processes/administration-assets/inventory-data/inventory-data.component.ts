@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModelForm } from './../../../../core/interfaces/model-form';
 
 @Component({
@@ -20,7 +21,10 @@ export class InventoryDataComponent implements OnInit {
     this.inventoryDataForm = this.fb.group({
       noInventario: [null, [Validators.required]],
       fechaInventario: [new Date(), [Validators.required]],
-      responsable: [null, [Validators.required]],
+      responsable: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 }
