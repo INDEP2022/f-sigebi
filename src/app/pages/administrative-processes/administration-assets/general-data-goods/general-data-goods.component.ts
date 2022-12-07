@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModelForm } from './../../../../core/interfaces/model-form';
 
 @Component({
@@ -68,10 +69,16 @@ export class GeneralDataGoodsComponent implements OnInit {
 
   private prepareForm() {
     this.generalDataForm = this.fb.group({
-      descripcion: [null, [Validators.required]],
+      descripcion: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       cantidad: [null, [Validators.required]],
       fechaFe: [new Date(), [Validators.required]],
-      observacion: [null, [Validators.required]],
+      observacion: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 }

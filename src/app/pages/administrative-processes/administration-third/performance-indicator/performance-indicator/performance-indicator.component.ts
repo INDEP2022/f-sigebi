@@ -4,6 +4,7 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { PerformanceIndicatorStrategyComponent } from '../performance-indicator-strategy/performance-indicator-strategy.component';
 import {
@@ -44,7 +45,7 @@ export class PerformanceIndicatorComponent extends BasePage implements OnInit {
       year: [null, Validators.required],
       month: [null, Validators.required],
       regionalCoordination: [null, Validators.required],
-      user: [null, Validators.required],
+      user: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
     });
   }
   public getRegionalCoordination(event: any) {

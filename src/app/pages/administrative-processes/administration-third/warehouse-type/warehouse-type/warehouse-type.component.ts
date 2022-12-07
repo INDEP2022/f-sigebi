@@ -4,6 +4,7 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { WarehouseTypeModalComponent } from '../warehouse-type-modal/warehouse-type-modal.component';
 import { QUALIFIERS_COLUMNS } from './warehouse-type-columns';
 
@@ -33,13 +34,21 @@ export class WarehouseTypeComponent extends BasePage implements OnInit {
   }
   private prepareForm() {
     this.warehouseForm = this.fb.group({
-      descripction: [null, Validators.required],
+      descripction: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
       noTypeWarehouse: [null, Validators.required],
       area: [null, Validators.required],
     });
     this.warehouseTimeForm = this.fb.group({
       normal: [null, Validators.required],
-      pDestruction: [null, Validators.required],
+      pDestruction: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
     });
   }
   openType(data: any) {

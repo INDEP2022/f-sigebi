@@ -6,6 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { KEYGENERATION_PATTERN } from 'src/app/core/shared/patterns';
 import { AUCTION_REPORT_COLUMNS } from './auction-report-columns';
 
 @Component({
@@ -42,7 +43,10 @@ export class SwComerCAuctionReportComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      event: [null, [Validators.required]],
+      event: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
       filter01: [null, []],
       filter02: [null, []],
       filter03: [null, []],
