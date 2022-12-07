@@ -98,10 +98,7 @@ export class DocumentsReceptionRegisterComponent
         },
       },
     };
-    this.modalService.show(
-      DocumentsReceptionFlyerSelectComponent,
-      modalConfig
-    );
+    this.modalService.show(DocumentsReceptionFlyerSelectComponent, modalConfig);
   }
 
   sendFlyer() {
