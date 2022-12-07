@@ -1,0 +1,71 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">RASTREADOR POR BIENES Y NOTIFICACIONES</h5>
+    <div class="buttons d-flex">
+      <form-check for="irregular-goods" label="Bienes Irregulares">
+        <input type="checkbox" name="" id="irregular-goods" />
+      </form-check>
+      <form-check for="galery" label="Ver Fotos">
+        <input type="checkbox" name="" id="galery" />
+      </form-check>
+      <div>
+        <button class="btn btn-primary btn-sm active">
+          Todos los registros <i class="fa fa-search ml-2"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div body>
+    <form [formGroup]="form">
+      <div class="row">
+        <div class="col-md-12">
+          <span class="label text-secondary">Buscar por:</span>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-12">
+          <form-radio
+            class="col-md-6"
+            *ngFor="let criteria of filterCriterias"
+            [label]="criteria.label">
+            <input
+              type="radio"
+              formControlName="criterio"
+              [value]="criteria.value" />
+          </form-radio>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>
+<div #scrollFilter></div>
+<app-card [header]="true" *ngIf="criteriaControl.value">
+  <div class="ch-content" header>
+    <h5 class="title">Filtro: {{ getFilterName() }}</h5>
+  </div>
+
+  <div body>
+    <clasification-filter
+      *ngIf="criteriaControl.value == criteriasEnum.GOOD_CLASIFICATION"
+      (onSubmit)="searchGoods($event)"></clasification-filter>
+    <data-filter
+      *ngIf="criteriaControl.value == criteriasEnum.GOOD_DATA"
+      (onSubmit)="searchGoods($event)"></data-filter>
+    <record-notification-filter
+      *ngIf="criteriaControl.value == criteriasEnum.GOOD_RECORD_NOTIFICATION"
+      (onSubmit)="searchGoods($event)"></record-notification-filter>
+    <certificates-filter
+      *ngIf="criteriaControl.value == criteriasEnum.GOOD_RECEPTION_CERTIFICATE"
+      (onSubmit)="searchGoods($event)"></certificates-filter>
+    <transfer-autority-filter
+      *ngIf="criteriaControl.value == criteriasEnum.GOOD_TRANSFER"
+      (onSubmit)="searchGoods($event)"></transfer-autority-filter>
+    <location-filter
+      *ngIf="criteriaControl.value == criteriasEnum.GOOD_LOCATION"
+      (onSubmit)="searchGoods($event)"></location-filter>
+  </div>
+</app-card>
+<div #tableItems></div>
+
+<goods-table *ngIf="showTable"></goods-table>
