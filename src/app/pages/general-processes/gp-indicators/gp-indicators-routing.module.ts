@@ -73,6 +73,12 @@ const routes: Routes = [
         )
       ).GpIIncidentMaintenanceModule,
   },
+  {
+    path: 'history',
+    loadChildren: async () =>
+      (await import('./gp-i-indicators-history/gp-i-indicators-history.module'))
+        .GpIIndicatorsHistoryModule,
+  },
 ];
 
 @NgModule({
