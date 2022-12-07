@@ -10,11 +10,14 @@ import {
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import Swal from 'sweetalert2';
 import { TABLE_SETTINGS } from '../../../../common/constants/table-settings';
 import { ListParams } from '../../../../common/repository/interfaces/list-params';
 import { BasePage } from '../../../../core/shared/base-page';
-import { RecipientDataComponent } from '../recipient-data/recipient-data.component';
+import { RecipientDataComponent } from '../../prepare-request-responsables/recipient-data/recipient-data.component';
+import { UploadDocumentarySupportComponent } from '../../save-responsible-answer/upload-documentary-support/upload-documentary-support.component';
 import { ASSETS_LIST_COLUMNS } from './columns/list-asset-columns';
+import { ASSETS_LIST_SAVE_ANSWER_COLUMNS } from './columns/list-assets-save-answer-columns';
 
 var data = [
   {
@@ -63,7 +66,9 @@ var data = [
 export class ListAssetsComponent extends BasePage implements OnInit, OnChanges {
   @Input() dataAssets: any;
   @Input() isSaving: boolean = false;
+  @Input() typeComponent: string = '';
   @Output() listAssetsData = new EventEmitter<any>();
+
   modalParent: BsModalRef;
 
   paragraphs = new LocalDataSource();
@@ -82,33 +87,7 @@ export class ListAssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    //cantidad a estudiar tiene que ser mayor a la cantidad en el almacen
-    this.settings = {
-      ...TABLE_SETTINGS,
-      actions: false,
-      selectMode: 'multi',
-      columns: ASSETS_LIST_COLUMNS,
-    };
-
-    this.columns.input = {
-      ...this.columns.input,
-      onComponentInitFunction: (instance?: any) => {
-        instance.btnclick.subscribe((data: any) => {
-          this.paragraphs['data'].map(x => {
-            if (x.id == data.row.id) {
-              x.quantityForStudy = data.quantity;
-            }
-          });
-        });
-      },
-    };
-
-    this.settings2 = {
-      ...TABLE_SETTINGS,
-      actions: false,
-      selectMode: 'multi',
-      columns: ASSETS_LIST_COLUMNS,
-    };
+    this.settingTheColumns();
 
     this.paragraphs.load(data);
   }
@@ -136,7 +115,7 @@ export class ListAssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   generateReport() {
-    this.openModal(RecipientDataComponent);
+    this.openModal(RecipientDataComponent, '', 'prepare-request');
   }
 
   selectedAssestsDeleted(event: any) {
@@ -154,11 +133,28 @@ export class ListAssetsComponent extends BasePage implements OnInit, OnChanges {
     this.paragraphs.refresh();
   }
 
-  openModal(component: any) {
+  response(): void {
+    if (this.listAssetsDeleted.length > 1) {
+      Swal.fire({
+        icon: undefined,
+        title: 'Información',
+        text: 'Solo puede seleccionar un bien!',
+        confirmButtonColor: '#9D2449',
+      });
+      return;
+    }
+    this.openModal(
+      UploadDocumentarySupportComponent,
+      this.listAssetsToRetrieve,
+      'save-answer'
+    );
+  }
+
+  openModal(component: any, information?: any, typeReport?: string) {
     let config: ModalOptions = {
       initialState: {
-        information: '',
-        typeReport: 'prepare-request',
+        information: information,
+        typeReport: typeReport,
         callback: (next: boolean) => {
           //if (next){ this.getData();}
         },
@@ -167,10 +163,52 @@ export class ListAssetsComponent extends BasePage implements OnInit, OnChanges {
       ignoreBackdropClick: true,
     };
     this.modalParent = this.modalService.show(component, config);
+  }
 
-    /*  this.bsModalRef.content.event.subscribe((res: IRequestInTurnSelected) => {
-      console.log(res);
-      this.requestForm.get('receiUser').patchValue(res.user);
-    }); */
+  settingTheColumns() {
+    if (this.typeComponent === 'save-answer') {
+      this.saveAnswerColumns();
+    } else {
+      this.prepareRequestColumns();
+    }
+  }
+
+  saveAnswerColumns(): void {
+    this.settings = {
+      ...TABLE_SETTINGS,
+      actions: false,
+      selectMode: 'multi',
+      columns: ASSETS_LIST_SAVE_ANSWER_COLUMNS,
+    };
+  }
+
+  prepareRequestColumns(): void {
+    //cantidad a estudiar tiene que ser mayor a la cantidad en el almacen
+    this.settings = {
+      ...TABLE_SETTINGS,
+      actions: false,
+      selectMode: 'multi',
+      columns: ASSETS_LIST_COLUMNS,
+    };
+
+    this.columns.input = {
+      ...this.columns.input,
+      onComponentInitFunction: (instance?: any) => {
+        instance.btnclick.subscribe((data: any) => {
+          this.paragraphs['data'].map(x => {
+            if (x.id == data.row.id) {
+              x.quantityForStudy = data.quantity;
+            }
+          });
+        });
+      },
+    };
+
+    this.settings2 = {
+      ...TABLE_SETTINGS,
+      actions: false,
+      selectMode: 'multi',
+      columns: ASSETS_LIST_COLUMNS,
+    };
   }
 }

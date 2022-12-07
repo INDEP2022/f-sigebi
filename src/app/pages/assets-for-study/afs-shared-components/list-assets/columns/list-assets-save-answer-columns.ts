@@ -1,6 +1,4 @@
-import { TextInputComponent } from '../../../afs-shared-components/text-input/text-input.component';
-
-export const ASSETS_LIST_COLUMNS = {
+export const ASSETS_LIST_SAVE_ANSWER_COLUMNS = {
   noAsset: {
     title: 'No. Bien SIGEBI',
     type: 'string',
@@ -16,21 +14,22 @@ export const ASSETS_LIST_COLUMNS = {
     type: 'string',
     sort: false,
   },
+  description: {
+    title: 'Descripción',
+    type: 'string',
+    sort: false,
+  },
+  quantityForStudy: {
+    title: 'Cantidad para estudio',
+    type: 'string',
+    sort: false,
+  },
   descripTransfer: {
     title: 'Descripción Transferente',
     type: 'string',
     sort: false,
   },
-  input: {
-    title: 'Cantidad para estudio',
-    editable: false,
-    type: 'custom',
-    class: 'custom-field',
-    filter: false,
-    renderComponent: TextInputComponent,
-    onComponentInitFunction(instance?: any) {},
-    sort: false,
-  },
+
   quantityTransfer: {
     title: 'Cantidad Transferente',
     type: 'string',

@@ -4,16 +4,21 @@
   </div>
   <div class="row pt-4">
     <div class="d-flex justify-content-end">
-      <div class="p-2">
+      <div class="p-2" *ngIf="typeComponent !== 'save-answer'">
         <button
           class="btn btn-secondary btn-sm active"
           (click)="generateReport()">
           Generar Reporte
         </button>
       </div>
-      <div class="p-2">
+      <div class="p-2" *ngIf="typeComponent !== 'save-answer'">
         <button class="btn btn-danger btn-sm active" (click)="delete()">
           Eliminar
+        </button>
+      </div>
+      <div class="p-2" *ngIf="typeComponent === 'save-answer'">
+        <button class="btn btn-primary btn-sm active" (click)="response()">
+          Respaldo Documental
         </button>
       </div>
       <div class="p-2">
