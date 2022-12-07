@@ -17,6 +17,12 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./indicators/indicators.module')).IndicatorsModule,
   },
+  {
+    path: 'parametrization',
+    loadChildren: async () =>
+      (await import('./parametrization/parametrization.module'))
+        .ParametrizationModule,
+  },
 ];
 
 @NgModule({
