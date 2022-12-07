@@ -94,7 +94,6 @@ export class AssetsListComponent extends BasePage implements OnInit, OnChanges {
       ...this.columns.input,
       onComponentInitFunction: (instance?: any) => {
         instance.btnclick.subscribe((data: any) => {
-          console.log(data);
           this.paragraphs2.map(x => {
             if (x.id == data.row.id) {
               x.quantityForStudy = data.quantity;
