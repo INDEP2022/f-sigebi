@@ -13,6 +13,7 @@ import { AssociateFileComponent } from './associate-file/associate-file.componen
 import { NewFileModalComponent } from './associate-file/new-file-modal/new-file-modal.component';
 import { ClassificateVehicleFormComponent } from './classificate-vehicle-form/classificate-vehicle-form.component';
 import { CommentsFormComponent } from './comments-form/comments-form.component';
+import { ComplementaryRequestInformationComponent } from './complementary-request-information/complementary-request-information.component';
 import { ConfirmProgrammingComponent } from './confirm-programming/confirm-programming.component';
 import { CreateDeductivesComponent } from './create-deductives/create-deductives.component';
 import { CreateReportComponent } from './create-report/create-report.component';
@@ -39,6 +40,7 @@ import { GuidelinesRevisionComponent } from './guidelines/guidelines-revision/gu
 import { GuidelinesComponent } from './guidelines/guidelines.component';
 import { OrderServiceFormComponent } from './order-service-form/order-service-form.component';
 import { PhotographyFormComponent } from './photography-form/photography-form.component';
+import { RegisterComplementaryDocumentationComponent } from './register-complementary-documentation/register-complementary-documentation.component';
 import { RegisterDictumInfComponent } from './register-dictum-inf/register-dictum-inf.component';
 import { RegisterDictumValComponent } from './register-dictum-val/register-dictum-val.component';
 import { RegisterDocumentationFormComponent } from './register-documentation-form/register-documentation-form.component';
@@ -56,6 +58,8 @@ import { AddGoodsButtonComponent } from './select-goods/add-goods-button/add-goo
 import { ReserveGoodModalComponent } from './select-goods/reserve-good-modal/reserve-good-modal.component';
 import { SelectGoodsComponent } from './select-goods/select-goods.component';
 import { ViewFileButtonComponent } from './select-goods/view-file-button/view-file-button.component';
+import { ModalAssignGoodGrouperComponent } from './select-similar-goods/modal-assign-good-grouper/modal-assign-good-grouper.component';
+import { SelectSimilarGoodsComponent } from './select-similar-goods/select-similar-goods.component';
 import { ServiceTransportableGoodsFormComponent } from './service-transportable-goods-form/service-transportable-goods-form.component';
 import { ShowProgrammingComponent } from './show-programming/show-programming.component';
 import { ShowSignatureProgrammingComponent } from './show-signature-programming/show-signature-programming.component';
@@ -71,7 +75,6 @@ import { WarehouseConfirmComponent } from './warehouse-confirm/warehouse-confirm
 import { WarehouseFormComponent } from './warehouse-form/warehouse-form.component';
 import { WarehouseShowComponent } from './warehouse-show/warehouse-show.component';
 import { WitnessFormComponent } from './witness-form/witness-form.component';
-
 @NgModule({
   declarations: [
     RequestFormComponent,
@@ -139,6 +142,10 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     CheckVerifyComplianceComponent,
     SignatureTypeComponent,
     UploadElectronicSignatureComponent,
+    ComplementaryRequestInformationComponent,
+    SelectSimilarGoodsComponent,
+    RegisterComplementaryDocumentationComponent,
+    ModalAssignGoodGrouperComponent,
   ],
   imports: [
     CommonModule,
@@ -186,6 +193,8 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     OrderServiceFormComponent,
     ServiceTransportableGoodsFormComponent,
     VerifyComplianceGoodsComponent,
+    ModalAssignGoodGrouperComponent,
+    ComplementaryRequestInformationComponent,
   ],
 })
 export class SharedRequestModule {}

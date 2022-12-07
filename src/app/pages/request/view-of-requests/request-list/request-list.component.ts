@@ -36,6 +36,15 @@ var usuario: IRequestList[] = [
   },
   {
     title:
+      'BIENES SIMILARES: Programar Visita Ocular, No. Solicitud: 1852, Contribuyente: LETICIA GARCÍA, PAMA: 235324SDA',
+    noRequest: 45011,
+    numTask: 260302,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'ProgramarVisitaOcular',
+  },
+  {
+    title:
       'RESARCIMIENTO NUMERARIO: Registro de Documentación Complementaria, No. Solicitud: 1896',
     noRequest: 1896,
     numTask: 212028,
@@ -194,14 +203,24 @@ export class RequestListComponent extends BasePage implements OnInit {
           event.data.noRequest,
         ]);
         break;
-
+      // ---------------------- SOLICITUDES DE BIENES SIMILARES
       case 'RegistroSolicitudes':
         // en el caso de que el proceso seleccionado sea Bienes Similares
         this.router.navigate([
           'pages/request/manage-similar-goods/register-request-goods',
           event.data.noRequest,
+          1,
         ]);
         break;
+      case 'ProgramarVisitaOcular':
+        // en el caso de que el proceso seleccionado sea Programar Visita Ocular
+        this.router.navigate([
+          'pages/request/manage-similar-goods/schedule-eye-visits/',
+          event.data.noRequest,
+          2,
+        ]);
+        break;
+      // ---------------------- SOLICITUDES DE BIENES SIMILARES
       case 'RE_RegistrarDocumentacion':
         // en el caso de que sea el proceso de registrar solicitud de resarcimiento economico
         this.router.navigate([
