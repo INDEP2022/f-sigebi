@@ -9,11 +9,14 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { AUCTION_REPORT_COLUMNS } from './auction-report-columns';
 
 @Component({
-  selector: 'app-sw-comer-c-auction-report',
-  templateUrl: './sw-comer-c-auction-report.component.html',
+  selector: 'app-comer-auction-report-form',
+  templateUrl: './comer-auction-report-form.component.html',
   styles: [],
 })
-export class SwComerCAuctionReportComponent extends BasePage implements OnInit {
+export class ComerAuctionReportFormComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
   formReport: FormGroup = new FormGroup({});
   showLiquidacion = false;

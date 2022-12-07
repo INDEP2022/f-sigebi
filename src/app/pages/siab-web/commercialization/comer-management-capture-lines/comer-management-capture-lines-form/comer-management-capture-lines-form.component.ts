@@ -4,11 +4,11 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { CAPTURA_LINES_COLUMNS } from './capture-lines-columns';
 
 @Component({
-  selector: 'app-sw-comer-c-management-capture-lines',
-  templateUrl: './sw-comer-c-management-capture-lines.component.html',
+  selector: 'app-comer-management-capture-lines-form',
+  templateUrl: './comer-management-capture-lines-form.component.html',
   styles: [],
 })
-export class SwComerCManagementCaptureLinesComponent
+export class ComerManagementCaptureLinesComponent
   extends BasePage
   implements OnInit
 {

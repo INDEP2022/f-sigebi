@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { SwComerCAuctionReportComponent } from './sw-comer-c-auction-report/sw-comer-c-auction-report.component';
+import { ComerAuctionReportFormComponent } from './comer-auction-report-form/comer-auction-report-form.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: SwComerCAuctionReportComponent,
+    component: ComerAuctionReportFormComponent,
   },
 ];
 
@@ -13,4 +13,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class SwComerMAuctionReportRoutingModule {}
+export class ComerAuctionReportRoutingModule {}
