@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -9,23 +10,61 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   templateUrl: './user-form.component.html',
   styles: [],
 })
-export class UserFormComponent implements OnInit {
+export class UserFormComponent extends BasePage implements OnInit {
+  userData: any;
+  edit: boolean = false;
   userForm: FormGroup = new FormGroup({});
-  loading: boolean = false;
   chargeUser = new DefaultSelect();
-  constructor(private modalService: BsModalRef, private fb: FormBuilder) {}
+  constructor(private modalService: BsModalRef, private fb: FormBuilder) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
   }
   prepareForm() {
     this.userForm = this.fb.group({
-      name: [null, [Validators.required]],
+      user: [null, [Validators.required]],
       email: [null, [Validators.required]],
       chargeUser: [null, [Validators.required]],
     });
+
+    if (this.userData != null) {
+      this.edit = true;
+      this.userForm.patchValue(this.userData);
+    }
   }
-  confirm() {}
+  confirm() {
+    this.edit ? this.update() : this.create();
+  }
+
+  create() {
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Deseas crear el usuario?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.loading = true;
+        this.onLoadToast('success', 'Usuario creado correctamente', '');
+      }
+    });
+  }
+
+  update() {
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Deseas editar el usuario?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.loading = true;
+        this.onLoadToast('success', 'Usuario editado correctamente', '');
+      }
+    });
+  }
 
   close() {
     this.modalService.hide();

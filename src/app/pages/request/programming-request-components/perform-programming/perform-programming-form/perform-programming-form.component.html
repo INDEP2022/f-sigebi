@@ -70,14 +70,14 @@
 
       <div class="row pt-4">
         <div class="col-md-4">
-          <form-field [control]="performForm.get('transference')">
+          <form-field [control]="performForm.get('transferent')">
             <ngx-select
               [form]="performForm"
-              control="transference"
+              control="transferent"
               [data]="transferences"
               value="id"
-              bindLabel="id"
-              label="Selecciona transferencía"
+              bindLabel="name"
+              label="Selecciona transferente"
               (fetchItems)="getTransferenceSelect($event)"></ngx-select>
           </form-field>
         </div>
@@ -89,7 +89,7 @@
               control="station"
               [data]="stations"
               value="id"
-              bindLabel="id"
+              bindLabel="name"
               label="Selecciona emisora"
               (fetchItems)="getStationSelect($event)"></ngx-select>
           </form-field>
@@ -102,7 +102,7 @@
               control="authority"
               [data]="authority"
               value="id"
-              bindLabel="id"
+              bindLabel="name"
               label="Selecciona una autoridad"
               (fetchItems)="getAuthoritySelect($event)"></ngx-select>
           </form-field>
@@ -117,8 +117,9 @@
               control="typeRelevant"
               [data]="typeRelevant"
               value="id"
-              bindLabel="id"
+              bindLabel="name"
               label="Selecciona un tipo relevante"
+              (change)="typeSchedule($event)"
               (fetchItems)="getTypeRelevantSelect($event)"></ngx-select>
           </form-field>
         </div>
@@ -140,7 +141,8 @@
           </form-field>
         </div>
       </div>
-      <div class="row pt-5">
+
+      <div class="row pt-5" *ngIf="showForm">
         <h5 class="title">Almacén</h5>
 
         <div class="form-inline justify-content-end btn-toolbar">
@@ -152,23 +154,31 @@
         </div>
 
         <div class="col-sm-12 pt-4">
-          <form-field [control]="performForm.get('warehouse')">
-            <ngx-select
-              [form]="performForm"
-              control="warehouse"
-              [data]="warehouse"
-              value="id"
-              bindLabel="id"
-              label="Selecciona un almacén"
-              (fetchItems)="getWarehouseSelect($event)"></ngx-select>
-          </form-field>
+          <div class="col-md-6">
+            <form-field [control]="performForm.get('warehouse')">
+              <ngx-select
+                [form]="performForm"
+                control="warehouse"
+                [data]="warehouse"
+                value="id"
+                bindLabel="name"
+                (change)="showWarehouse($event)"
+                label="Selecciona un almacén"
+                (fetchItems)="getWarehouseSelect($event)"></ngx-select>
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <label class="title"
+              >Dirección Almacén: {{ warehouseAddress }}</label
+            >
+          </div>
         </div>
       </div>
 
-      <div class="row pt-5">
+      <div class="row pt-5" *ngIf="showForm">
         <h5 class="title">Usuarios al operativo</h5>
         <div class="form-inline justify-content-end btn-toolbar">
-          <button (click)="newUser()" class="btn btn-primary btn-sm active">
+          <button (click)="openForm()" class="btn btn-primary btn-sm active">
             Nuevo usuario
           </button>
         </div>
@@ -191,14 +201,16 @@
         <ng2-smart-table
           [attr.class]="'table-bordered'"
           [settings]="settingUser"
-          [source]="usersData">
+          [source]="usersData"
+          (edit)="openForm($event.data)"
+          (delete)="delete($event.data)">
         </ng2-smart-table>
         <app-pagination
           [params]="params"
           [totalItems]="totalItems"></app-pagination>
       </div>
 
-      <div class="row pt-5">
+      <div class="row pt-5" *ngIf="showForm">
         <h5 class="title">Bienes seleccionados</h5>
         <div class="form-inline justify-content-end">
           <button
@@ -259,7 +271,7 @@
       </div>
     </form>
 
-    <div class="d-flex justify-content-center">
+    <div class="d-flex justify-content-center" *ngIf="showForm">
       <div class="m-3">
         <confirm-button
           [disabled]="!performForm.valid"

@@ -24,10 +24,11 @@ export class DocumentsListComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef
   ) {
     super();
-    this.settings.columns = DOCUMENTS_LIST_COLUMNS;
     this.settings.actions.delete = true;
+
     this.settings = {
       ...this.settings,
+      columns: DOCUMENTS_LIST_COLUMNS,
       edit: { editButtonContent: '<i class="fa fa fa-file"></i>' },
       delete: {
         deleteButtonContent: '<i class="fa fa-eye text-info mx-2"></i>',

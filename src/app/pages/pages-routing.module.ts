@@ -110,15 +110,6 @@ const routes: Routes = [
   },
 
   {
-    path: 'documentation-complementary',
-    loadChildren: async () =>
-      (
-        await import(
-          './documentation-complementary/documentation-complementary.module'
-        )
-      ).DocumentationComplementaryModule,
-  },
-  {
     path: 'scheduling-deliveries',
     loadChildren: async () =>
       (await import('./scheduling-deliveries/scheduling-deliveries.module'))
