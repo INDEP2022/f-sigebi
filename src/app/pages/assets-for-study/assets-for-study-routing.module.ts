@@ -33,6 +33,13 @@ const routes: Routes = [
       ).PrepareRequestResponsablesModule,
     data: { title: 'Elaborar solicitud a responsable del estudio' },
   },
+  {
+    path: 'save-answer/:id',
+    loadChildren: async () =>
+      (await import('./save-responsible-answer/save-responsible-answer.module'))
+        .SaveResponsibleAnswerModule,
+    data: { title: 'Guardar respuesta de la responsable del estudio' },
+  },
 ];
 
 @NgModule({

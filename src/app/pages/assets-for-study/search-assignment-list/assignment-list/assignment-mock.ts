@@ -17,4 +17,13 @@ export const ASSIGNMENT = [
     created: 'tester_nsbxt',
     process: 'ElaborarSolicitud',
   },
+  {
+    id: 3,
+    title: 'Guardar respuesta de la responsable del estudio',
+    noRequest: 45539,
+    numTask: 261221,
+    noInstance: 82781,
+    created: 'tester_nsbxt',
+    process: 'GuardarRespuesta',
+  },
 ];

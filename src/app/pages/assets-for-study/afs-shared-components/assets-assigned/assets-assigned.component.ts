@@ -40,6 +40,9 @@ export class AssetsAssignedComponent implements OnInit, OnChanges {
   }
 
   initForm(): void {
+    if (this.typeComponent === 'save-answer') {
+      this.isReadOnly = true;
+    }
     this.assetAssignedForm = this.fb.group({
       assignedTo: [{ value: 'Cristian Antelo', disabled: true }],
       assetCharac: [{ value: 'Material de estdio', disabled: true }],
@@ -51,7 +54,13 @@ export class AssetsAssignedComponent implements OnInit, OnChanges {
       expedient: [{ value: 1447, disabled: true }],
 
       //dato solo para prerar solicitud, revisar si el dato biene en un solo json
-      proyectRequest: [null],
+      projectRequest: [{ value: null, disabled: this.isReadOnly }],
+
+      //datos extras solo para guardar respuesta de la responsable del estudio
+      noRequest: [{ value: 124545, disabled: true }],
+      receiver: [{ value: null, disabled: true }],
+      recipientPosition: [{ value: null, disabled: true }],
+      dateRequest: [{ value: null, disabled: true }],
     });
   }
 
