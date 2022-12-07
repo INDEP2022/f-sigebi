@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-unreconciled-files',
@@ -6,7 +7,23 @@ import { Component, OnInit } from '@angular/core';
   styles: [],
 })
 export class UnreconciledFilesComponent implements OnInit {
-  constructor() {}
+  form: FormGroup;
+  constructor(private fb: FormBuilder) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.prepareForm();
+  }
+
+  prepareForm() {
+    this.form = this.fb.group({
+      delegation: [null, Validators.required],
+      subdelegation: [null, Validators.required],
+
+      file: [null, Validators.required],
+      fileTo: [null, Validators.required],
+
+      receptionDate: [null, Validators.required],
+      receptionDateTo: [null, Validators.required],
+    });
+  }
 }

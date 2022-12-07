@@ -1,4 +1,4 @@
-<app-card [header]="true">
+<app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">REGISTRO DE SOLICITUD DE DEVOLUCI&Oacute;N</h5>
     <div class="form-group text-right" *ngIf="!mostrarListado">
@@ -11,6 +11,14 @@
   </div>
 
   <div body *ngIf="mostrarListado">
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 p-2 alert alert-info">
+        <span>
+          SELECCIONA ALGUNO DE LOS REGISTROS DE LA TABLA PARA PROCEDER AL
+          APARTADO DE ACCIONES.</span
+        >
+      </div>
+    </div>
     <div class="row pt-1">
       <div [class]="loading ? 'table-loading' : ''">
         <ng-scrollbar track="all" style="min-height: 200px; border: none">
@@ -27,13 +35,25 @@
         [totalItems]="totalItems"></app-pagination>
     </div>
   </div>
+  <div footer *ngIf="!mostrarListado">
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 p-2 alert alert-info">
+        <span>
+          SE PUEDE REGRESAR A LA VISTA DEL LISTADO DANDO CLIC EN "REGRESAR AL
+          LISTADO".</span
+        >
+      </div>
+    </div>
+  </div>
 </app-card>
 
 <ng-container *ngIf="!mostrarListado">
-  <app-msg-rsb-c-register-request-goods
+  <app-complementary-request-information
+    [title]="title"
     [idParam]="idNoRequest"
     [registroDocumentacion]="true"
     [seleccionarBienes]="true"
+    [buscarAsociarExpediente]="true"
     (formValuesDataDocumentation)="dataRegistration($event)"
-    [nombrePantalla]="nombrePantalla"></app-msg-rsb-c-register-request-goods>
+    [nombrePantalla]="nombrePantalla"></app-complementary-request-information>
 </ng-container>

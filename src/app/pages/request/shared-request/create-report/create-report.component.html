@@ -1,0 +1,85 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ status }} REPORTE</h5>
+  </div>
+  <div body>
+    <div class="md-tabs">
+      <div class="d-flex justify-content-end">
+        <div>
+          <button
+            (click)="sign()"
+            class="btn btn-primary active btn-sm"
+            *ngIf="!isSigned">
+            <i class="fa fa-file-signature"></i>
+            Firmar
+          </button>
+        </div>
+      </div>
+      <tabset #tabsReport>
+        <tab heading="Editar" id="editorTab" *ngIf="!isSigned">
+          <!--Templates Editor-->
+          <form class="form-material" [formGroup]="form">
+            <div class="row mb-3 mt-3 justify-content-end">
+              <div class="col-xs-12 col-12 col-md-6 mb-3 mt-3">
+                <form-field
+                  [control]="form.get('template')"
+                  label="Aplicar Formato">
+                  <select class="form-control" formControlName="template">
+                    <option [value]="null">Seleccione un valor</option>
+                    <option value="template1">Formato 1</option>
+                    <option value="template2">Formato 2</option>
+                    <option value="template3">Formato 3</option>
+                  </select>
+                </form-field>
+              </div>
+            </div>
+          </form>
+          <quill-editor
+            *ngIf="document"
+            [sanitize]="true"
+            placeholder="Escribe aquí"
+            [(ngModel)]="document.content"
+            (onEditorCreated)="created($event)"
+            (onContentChanged)="onContentChanged($event)"
+            [styles]="{ height: '80vh', overflow: 'auto' }">
+          </quill-editor>
+        </tab>
+        <tab heading="Vista Previa" id="previewTab">
+          <div class="row justify-content-end" *ngIf="isSignedReady">
+            <div class="col-md-3">
+              <button
+                (click)="attachDocument()"
+                class="btn btn-primary btn-sm active">
+                <i class="fa fa-check-circle"></i>
+                Adjuntar documento
+              </button>
+            </div>
+          </div>
+          <quill-view
+            [content]="quillInstance"
+            [preserveWhitespace]="true"
+            format="object"></quill-view>
+          <!--<button (click)='pdfCreate()'>Vista previa</button>-->
+        </tab>
+        <tab heading="Firmar Reporte" id="signTab" *ngIf="isSigned">
+          <app-sign-report (nextStep)="nextStep($event)"></app-sign-report>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

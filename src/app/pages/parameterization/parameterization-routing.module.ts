@@ -379,6 +379,23 @@ const routes: Routes = [
       ).CPMIndicatorsOfPerformanceModule,
     data: { title: 'Indicadores de Desempeño' },
   },
+  {
+    path: 'maintenance-document-validators',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-maintenance-document-validators/c-p-m-maintenance-document-validators.module'
+        )
+      ).CPMMaintenanceDocumentValidatorsModule,
+    data: { title: 'Mantenimiento a validadores de actas' },
+  },
+  {
+    path: 'maximum-times',
+    loadChildren: async () =>
+      (await import('./c-p-m-maximum-times/c-p-m-maximum-times.module'))
+        .CPMMaximumTimesModule,
+    data: { title: 'Tiempo Máximo Para Cierre Actas Devolución' },
+  },
 ];
 
 @NgModule({

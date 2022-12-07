@@ -1,49 +1,96 @@
 <app-card [header]="true">
-  <div class="ch-content" header>
-    <h5 class="title">
-      Revisión de Lineamientos de Resarcimiento (NUMERARIO), No. Solicitud:
-      {{ requestId }}, Contribuyente: {{ contributor }}
-    </h5>
-  </div>
-  <div body>
-    <div class="d-flex flex-row-reverse">
-      <div class="mx-1">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm active"
-          (click)="turnRequest()"
-          [disabled]="">
-          <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Turnar
-        </button>
+  <div class="ch-content justify-content-between" header>
+    <div class="">
+      <h5 class="title">
+        Revisión de Lineamientos de Resarcimiento (NUMERARIO), No. Solicitud:
+        {{ requestId }}, Contribuyente: {{ contributor }}
+      </h5>
+    </div>
+    <div class="">
+      <div class="d-flex flex-row-reverse mt-2" *ngIf="screenWidth >= 1200">
+        <div class="mx-1">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            (click)="turnRequest()"
+            [disabled]="">
+            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Turnar
+          </button>
+        </div>
+        <div class="mx-1">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]="">
+            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Guardar
+          </button>
+        </div>
+        <div class="mx-1">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm active"
+            [disabled]=""
+            (click)="createReport()">
+            <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Dictamen
+            Resarcimiento
+          </button>
+        </div>
       </div>
-      <div class="mx-1">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm active"
-          [disabled]="">
-          <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Guardar
-        </button>
-      </div>
-      <div class="mx-1">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm active"
-          [disabled]="">
-          <i class="bx bxs-right-arrow-square mr-1 float-icon"></i> Dictamen
-          Resarcimiento
-        </button>
+      <div class="" *ngIf="screenWidth < 1200">
+        <div
+          class="btn-group"
+          placement="bottom right"
+          dropdown
+          [isDisabled]="">
+          <button
+            #actionsBtn
+            dropdownToggle
+            type="button"
+            class="btn btn-sm btn-primary btn-block active me-2 font-size-14 dropdown-toggle"
+            aria-controls="dropdown-actions">
+            Acciones
+          </button>
+          <ul
+            id="dropdown-csv"
+            *dropdownMenu
+            class="dropdown-menu dropdown-menu-right bg-primary"
+            role="menu"
+            aria-labelledby="processBtn">
+            <li role="menuitem">
+              <a
+                class="dropdown-item bg-primary text-light"
+                (click)="createReport()"
+                ><i class="bx bx-notepad mr-1 float-icon"></i>Dictamen
+                Resarcimiento</a
+              >
+            </li>
+            <li role="menuitem">
+              <a class="dropdown-item bg-primary text-light" (click)="(true)"
+                ><i class="bx bxs-right-arrow-square mr-1 float-icon"></i>
+                Guardar</a
+              >
+            </li>
+            <li role="menuitem">
+              <a
+                class="dropdown-item bg-primary text-light"
+                (click)="turnRequest()"
+                ><i class="bx bxs-right-arrow-square mr-1 float-icon"></i>
+                Turnar</a
+              >
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
+  </div>
+  <div body>
     <app-request-information-similar-goods
       [request]="requestInfo"></app-request-information-similar-goods>
     <div class="md-tabs">
       <tabset>
         <tab heading="Registro de Documentación" id="documentationTab">
-          <app-register-documentation-form
-            [requestId]="requestId"
-            (onRegister)="
-              requestRegistered($event)
-            "></app-register-documentation-form>
+          <app-register-documentation-view
+            [requestId]="requestId"></app-register-documentation-view>
         </tab>
         <tab heading="Listado de Bienes" id="goodsListTab">
           <app-goods-list [requestId]="requestId"></app-goods-list>
