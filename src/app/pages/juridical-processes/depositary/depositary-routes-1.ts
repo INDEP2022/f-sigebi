@@ -6,8 +6,7 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
     // REGISTRO DE DEPOSITARIA
     path: DEPOSITARY_ROUTES_1[0].link,
     loadChildren: async () =>
-      (await import('./appointments/pj-d-rd-m-appointments.module'))
-        .PJDRDAppointmentsModule,
+      (await import('./appointments/appointments.module')).AppointmentsModule,
     data: { title: DEPOSITARY_ROUTES_1[0].label },
   },
   {
@@ -16,28 +15,25 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
     loadChildren: async () =>
       (
         await import(
-          './request-legal-destination-goods/pj-d-s-md-m-request-legal-destination-goods.module'
+          './request-legal-destination-goods/request-legal-destination-goods.module'
         )
-      ).PJDSMDRequestLegalDestinationGoodsModule,
+      ).RequestLegalDestinationGoodsModule,
     data: { title: DEPOSITARY_ROUTES_1[3].label },
   },
   {
     // REPORTE DE CÉDULAS DE NOMBRAMIENTO
     path: DEPOSITARY_ROUTES_1[4].link,
     loadChildren: async () =>
-      (
-        await import(
-          './appointment-certificate/pj-d-rcn-m-appointment-certificate.module'
-        )
-      ).PJDRCNAppointmentCertificateModule,
+      (await import('./appointment-certificate/appointment-certificate.module'))
+        .AppointmentCertificateModule,
     data: { title: DEPOSITARY_ROUTES_1[4].label },
   },
   {
     // REPORTE DE BIENES POR DEPOSITARIA
     path: DEPOSITARY_ROUTES_1[5].link,
     loadChildren: async () =>
-      (await import('./goods-depositary/pj-d-rbd-m-goods-depositary.module'))
-        .PJDRBDGoodsDepositaryModule,
+      (await import('./goods-depositary/goods-depositary.module'))
+        .GoodsDepositaryModule,
     data: { title: DEPOSITARY_ROUTES_1[5].label },
   },
   {
@@ -45,16 +41,16 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
     loadChildren: async () =>
       (
         await import(
-          './assignation-goods-protection/pj-d-ra-m-assignation-goods-protection.module'
+          './assignation-goods-protection/assignation-goods-protection.module'
         )
-      ).PJDRAAssignationGoodsProtectionModule,
+      ).AssignationGoodsProtectionModule,
     data: { title: DEPOSITARY_ROUTES_1[6].label },
   },
   {
     path: DEPOSITARY_ROUTES_1[7].link,
     loadChildren: async () =>
-      (await import('./issue-agreements/pj-d-ea-m-issue-agreements.module'))
-        .PJDEAIssueAgreementsModule,
+      (await import('./issue-agreements/issue-agreements.module'))
+        .IssueAgreementsModule,
     data: { title: DEPOSITARY_ROUTES_1[7].label },
   },
   {
@@ -62,9 +58,9 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
     loadChildren: async () =>
       (
         await import(
-          './historical-situation-goods/pj-d-ea-m-historical-situation-goods.module'
+          './historical-situation-goods/historical-situation-goods.module'
         )
-      ).PJDAEHistoricalSituationGoodsModule,
+      ).HistoricalSituationGoodsModule,
     data: { title: DEPOSITARY_ROUTES_1[8].label },
   },
   {
@@ -72,9 +68,9 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
     loadChildren: async () =>
       (
         await import(
-          './resolution-revision-resources/pj-d-m-resolution-revision-resources.module'
+          './resolution-revision-resources/resolution-revision-resources.module'
         )
-      ).PJDResolutionRevisionResourcesModule,
+      ).ResolutionRevisionResourcesModule,
     data: { title: DEPOSITARY_ROUTES_1[9].label },
   },
   {
@@ -82,33 +78,29 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
     loadChildren: async () =>
       (
         await import(
-          './document-verification-revision-resources/pj-d-m-document-verification-revision-resources.module'
+          './document-verification-revision-resources/document-verification-revision-resources.module'
         )
-      ).PJDDocumentVerificationRevisionResourcesModule,
+      ).DocumentVerificationRevisionResourcesModule,
     data: { title: DEPOSITARY_ROUTES_1[10].label },
   },
   {
     path: DEPOSITARY_ROUTES_1[11].link,
     loadChildren: async () =>
-      (
-        await import(
-          './review-resource-report/pj-d-m-review-resource-report.module'
-        )
-      ).PJDReviewResourceReportModule,
+      (await import('./review-resource-report/review-resource-report.module'))
+        .ReviewResourceReportModule,
     data: { title: DEPOSITARY_ROUTES_1[11].label },
   },
   {
     path: DEPOSITARY_ROUTES_1[12].link,
     loadChildren: async () =>
-      (await import('./notifications-file/pj-d-ne-m-notifications-file.module'))
-        .PJDNENotificationsFileModule,
+      (await import('./notifications-file/notifications-file.module'))
+        .NotificationsFileModule,
     data: { title: DEPOSITARY_ROUTES_1[12].label },
   },
   {
     path: DEPOSITARY_ROUTES_1[13].link,
     loadChildren: async () =>
-      (await import('./mass-ruling/pj-d-dmpd-m-mass-ruling.module'))
-        .PJDDMPDMassRulingModule,
+      (await import('./mass-ruling/mass-ruling.module')).MassRulingModule,
     data: { title: DEPOSITARY_ROUTES_1[13].label },
   },
   {
@@ -116,19 +108,16 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
     loadChildren: async () =>
       (
         await import(
-          './thirdparties-possession-validation/pj-d-vp-m-thirdparties-possession-validation.module'
+          './thirdparties-possession-validation/thirdparties-possession-validation.module'
         )
-      ).PJDVPThirdpartiesPossessionValidationModule,
+      ).ThirdpartiesPossessionValidationModule,
     data: { title: DEPOSITARY_ROUTES_1[14].label },
   },
   {
     path: DEPOSITARY_ROUTES_1[15].link,
     loadChildren: async () =>
-      (
-        await import(
-          './generation-files-trades/pj-d-gaf-m-generation-files-trades.module'
-        )
-      ).PJDGAFGenerationFilesTradesModule,
+      (await import('./generation-files-trades/generation-files-trades.module'))
+        .GenerationFilesTradesModule,
     data: { title: DEPOSITARY_ROUTES_1[15].label },
   },
 ];

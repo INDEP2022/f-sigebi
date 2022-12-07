@@ -78,6 +78,10 @@ export const GENERAL_PROCESSES_ROUTES = [
             label: 'Mantenimiento de Incidentes',
             link: '/pages/general-processes/indicators/incident-maintenance',
           },
+          {
+            label: 'Historico de Indicadores',
+            link: '/pages/general-processes/indicators/history',
+          },
         ],
       },
       {
@@ -103,6 +107,38 @@ export const GENERAL_PROCESSES_ROUTES = [
       {
         label: 'Listado de Bienes con Información Requerida',
         link: '/pages/general-processes/goods-with-required-information',
+      },
+      {
+        label: 'Estatus Validos por Pantalla',
+        link: '/pages/general-processes/valid-statuses',
+      },
+      {
+        label: 'Buzón de Trabajo',
+        link: '/pages/general-processes/work-mailbox',
+      },
+      {
+        label: 'Pantalla de Ayuda',
+        link: '/pages/general-processes/help-screen',
+      },
+      {
+        label: 'Reporte de Árbol',
+        link: '/pages/general-processes/tree-report',
+      },
+      {
+        label: 'Coordinación',
+        link: '/pages/general-processes/coordination',
+      },
+      {
+        label: 'Transferente',
+        link: '/pages/general-processes/transfer',
+      },
+      {
+        label: 'Cambio de Texto',
+        link: '/pages/general-processes/text-change',
+      },
+      {
+        label: 'Cambio de Texto Mod',
+        link: '/pages/general-processes/text-change-mod',
       },
     ],
   },

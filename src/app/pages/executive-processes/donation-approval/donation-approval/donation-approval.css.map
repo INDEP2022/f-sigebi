@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "sources": [
+    "donation-approval.scss",
+    "donation-approval.css"
+  ],
+  "names": [],
+  "mappings": "AAAA;EACE,aAAA;EACA,gBAAA;ACCF;;ADEA;EACE,WAAA;ACCF;;ADEA;EACE,6BAAA;ACCF;;ADEA;EACE,yBAAA;EACA,mBAAA;EACA,6BAAA;EACA,4BAAA;ACCF;;ADEA;EACE,yBAAA;ACCF;;ADEA;EACE,yBAAA;ACCF;;ADEA;EACE,yBAAA;ACCF",
+  "file": "donation-approval.css"
+}
