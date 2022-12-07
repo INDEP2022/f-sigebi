@@ -16,9 +16,9 @@ const routes: Routes = [
     component: PJDJJuridicalRulingComponent,
   },
   // {
-  //     path: 'pe-atb-m-quarterly-accumulated-assets',
+  //     path: 'quarterly-accumulated-assets',
   //     loadChildren: async () =>
-  //       (await import('./pe-atb-m-quarterly-accumulated-assets/pe-atb-m-quarterly-accumulated-assets.module')).PeAtbMQuarterlyAccumulatedAssetsModule,
+  //       (await import('./quarterly-accumulated-assets/quarterly-accumulated-assets.module')).QuarterlyAccumulatedAssetsModule,
   //     data: { title: 'Acumulado Trimestral de Bienes' },
   //   },
 ];
