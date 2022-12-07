@@ -31,6 +31,9 @@ export class SelectComponent<T> implements OnInit {
   @Input() label: string = '';
   @Input() placeholder: string = '';
   @Input() data = new DefaultSelect<T>();
+  @Input() multiple: boolean = false;
+  @Input() closeOnSelect: boolean = true;
+  @Input() maxSelectedItems: number = 0;
   @Output() fetchItems = new EventEmitter<ListParams>();
   @Output() change = new EventEmitter<any>();
   buffer: any[] = [];

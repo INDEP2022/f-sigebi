@@ -3,8 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IRequestInformation } from '../../../../../core/models/requests/requestInformation.model';
-import { CreateReportComponent } from '../../../shared-request/create-report/create-report.component';
 import { RejectRequestModalComponent } from '../../../shared-request/reject-request-modal/reject-request-modal.component';
+import { ViewReportComponent } from '../../../shared-request/view-report/view-report.component';
 import { COMPENSATION_DICTUM_DOCS } from '../../gre-m-guidelines-revision/gre-c-guidelines-revision-main/docs-template';
 import { IRequestDocument } from './../../../../../core/models/requests/document.model';
 
@@ -87,14 +87,14 @@ export class GreCAnalysisResultMainComponent
     });
   }
 
-  createReport(context?: Partial<CreateReportComponent>): void {
-    const modalRef = this.modalService.show(CreateReportComponent, {
+  viewReport(context?: Partial<ViewReportComponent>): void {
+    const modalRef = this.modalService.show(ViewReportComponent, {
       initialState: { documents: this.docTemplate },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
     modalRef.content.refresh.subscribe(next => {
-      if (next) console.log(next); //this.getCities();
+      if (next) console.log(next);
     });
   }
 

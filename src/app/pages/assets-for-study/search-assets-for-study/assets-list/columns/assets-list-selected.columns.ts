@@ -1,4 +1,4 @@
-import { TextInputComponent } from '../../text-input/text-input.component';
+import { TextInputComponent } from '../../../afs-shared-components/text-input/text-input.component';
 
 export const ASSETS_LIST_SELECTED_COLUMNS = {
   noAsset: {

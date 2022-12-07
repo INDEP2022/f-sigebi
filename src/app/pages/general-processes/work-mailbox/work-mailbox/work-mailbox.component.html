@@ -1,0 +1,122 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Buzón de Trabajo</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-6">
+          <p>Usuario: <b>Usuario</b></p>
+          <p>Buzón de: <b>Área</b></p>
+        </div>
+        <div class="col-md-6">
+          <form-check label="Ver trámites del Grupo">
+            <input
+              type="checkbox"
+              class="form-control"
+              formControlName="verTramite" />
+          </form-check>
+          <form-check label="Actualizar Buzón Automáticamente">
+            <input
+              type="checkbox"
+              class="form-control"
+              formControlName="actualizarBuzon" />
+          </form-check>
+          <form-check label="Pendientes de Digitalizar">
+            <input
+              type="checkbox"
+              class="form-control"
+              formControlName="pendientes" />
+          </form-check>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="btn-group" dropdown>
+            <button
+              id="button-basic"
+              dropdownToggle
+              type="button"
+              class="btn btn-primary btn-sm active dropdown-toggle"
+              aria-controls="dropdown-basic">
+              Acciones <span class="caret"></span>
+            </button>
+            <ul
+              id="dropdown-basic"
+              *dropdownMenu
+              class="dropdown-menu"
+              role="menu"
+              aria-labelledby="button-basic">
+              <li role="menuitem">
+                <a class="dropdown-item" href="#">Turnar</a>
+              </li>
+              <li role="menuitem">
+                <a class="dropdown-item" href="#">Observaciones</a>
+              </li>
+              <li role="menuitem">
+                <a class="dropdown-item" href="#">Volante</a>
+              </li>
+              <li role="menuitem">
+                <a class="dropdown-item" href="#">Solicitud</a>
+              </li>
+              <li role="menuitem">
+                <a class="dropdown-item" href="#">Replicar</a>
+              </li>
+              <li role="menuitem">
+                <a class="dropdown-item" href="#">Imagenes</a>
+              </li>
+              <li role="menuitem">
+                <a class="dropdown-item" href="#">Bienes</a>
+              </li>
+              <li role="menuitem">
+                <a class="dropdown-item" href="#">Historial</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12 md-tabs">
+          <ng2-smart-table [settings]="settings"></ng2-smart-table>
+          <app-pagination></app-pagination>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="row">
+            <form-field
+              [control]="form.get('observaciones')"
+              label="Observaciones">
+              <textarea
+                type="text"
+                class="form-control"
+                formControlName="observaciones"></textarea>
+            </form-field>
+          </div>
+          <div class="row">
+            <form-field
+              [control]="form.get('observaciones')"
+              label="Observaciones">
+              <textarea
+                type="text"
+                class="form-control"
+                formControlName="observaciones"></textarea>
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <button class="btn btn-info btn-sm active mx-1">
+            Reporte de Notificaciones
+          </button>
+          <button class="btn btn-info btn-sm active mx-1">Imágenes SIJ</button>
+          <button class="btn btn-info btn-sm active mx-1">
+            Cambiar Estatus
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

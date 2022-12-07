@@ -7,104 +7,146 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './gp-notification-association/gp-notification-association.module'
+          './notification-association/notification-association.module'
         )
-      ).GpNotificationAssociationModule,
+      ).NotificationAssociationModule,
   },
   {
     path: 'goods-characteristics',
     loadChildren: async () =>
-      (
-        await import(
-          './gp-goods-characteristics/gp-goods-characteristics.module'
-        )
-      ).GpGoodsCharacteristicsModule,
+      (await import('./goods-characteristics/goods-characteristics.module'))
+        .GoodsCharacteristicsModule,
   },
   {
     path: 'historical-good-situation',
     loadChildren: async () =>
       (
         await import(
-          './gp-historical-good-situation/gp-historical-good-situation.module'
+          './historical-good-situation/historical-good-situation.module'
         )
-      ).GpHistoricalGoodSituationModule,
+      ).HistoricalGoodSituationModule,
   },
   {
     path: 'purging-records',
     loadChildren: async () =>
-      (await import('./gp-purging-records/gp-purging-records.module'))
-        .GpPurgingRecordsModule,
+      (await import('./purging-records/purging-records.module'))
+        .PurgingRecordsModule,
   },
   {
     path: 'goods-tracker',
     loadChildren: async () =>
-      (await import('./gp-goods-tracker/gp-goods-tracker.module'))
-        .GpGoodsTrackerModule,
+      (await import('./goods-tracker/goods-tracker.module')).GoodsTrackerModule,
   },
   {
     path: 'records-tracker',
     loadChildren: async () =>
-      (await import('./gp-records-tracker/gp-records-tracker.module'))
-        .GpRecordsTrackerModule,
+      (await import('./records-tracker/records-tracker.module'))
+        .RecordsTrackerModule,
   },
   {
     path: 'scan-request',
     loadChildren: async () =>
-      (await import('./gp-scan-request/gp-scan-request.module'))
-        .GpScanRequestModule,
+      (await import('./scan-request/scan-request.module')).ScanRequestModule,
   },
   {
     path: 'documents-viewer',
     loadChildren: async () =>
-      (await import('./gp-documents-viewer/gp-documents-viewer.module'))
-        .GpDocumentsViewerModule,
+      (await import('./documents-viewer/documents-viewer.module'))
+        .DocumentsViewerModule,
   },
   {
     path: 'indicators',
     loadChildren: async () =>
-      (await import('./gp-indicators/gp-indicators.module')).GpIndicatorsModule,
+      (await import('./indicators/indicators.module')).IndicatorsModule,
   },
   {
     path: 'bulk-technical-sheets-generation',
     loadChildren: async () =>
       (
         await import(
-          './gp-bulk-technical-sheets-generation/gp-bulk-technical-sheets-generation.module'
+          './bulk-technical-sheets-generation/bulk-technical-sheets-generation.module'
         )
-      ).GpBulkTechnicalSheetsGenerationModule,
+      ).BulkTechnicalSheetsGenerationModule,
   },
   {
     path: 'image-debugging',
     loadChildren: async () =>
-      (await import('./gp-image-debugging/gp-image-debugging.module'))
-        .GpImageDebuggingModule,
+      (await import('./image-debugging/image-debugging.module'))
+        .ImageDebuggingModule,
   },
   {
     path: 'status-change',
     loadChildren: async () =>
-      (await import('./gp-status-change/gp-status-change.module'))
-        .GpStatusChangeModule,
+      (await import('./status-change/status-change.module')).StatusChangeModule,
   },
   {
     path: 'mass-goods-deletion',
     loadChildren: async () =>
-      (await import('./gp-mass-goods-deletion/gp-mass-goods-deletion.module'))
-        .GpMassGoodsDeletionModule,
+      (await import('./mass-goods-deletion/mass-goods-deletion.module'))
+        .MassGoodsDeletionModule,
   },
   {
     path: 'goods-partialization',
     loadChildren: async () =>
-      (await import('./gp-goods-partialization/gp-goods-partialization.module'))
-        .GpGoodsPartializationModule,
+      (await import('./goods-partialization/goods-partialization.module'))
+        .GoodsPartializationModule,
   },
   {
     path: 'goods-with-required-information',
     loadChildren: async () =>
       (
         await import(
-          './gp-goods-with-required-info/gp-goods-with-required-info.module'
+          './goods-with-required-info/goods-with-required-info.module'
         )
-      ).GpGoodsWithRequiredInfoModule,
+      ).GoodsWithRequiredInfoModule,
+  },
+  {
+    path: 'trades-registration', //! no se migra
+    loadChildren: async () =>
+      (await import('./trades-registration/trades-registration.module'))
+        .TradesRegistrationModule,
+  },
+  {
+    path: 'valid-statuses',
+    loadChildren: async () =>
+      (await import('./valid-statuses/valid-statuses.module'))
+        .ValidStatusesModule,
+  },
+  {
+    path: 'work-mailbox',
+    loadChildren: async () =>
+      (await import('./work-mailbox/work-mailbox.module')).WorkMailboxModule,
+  },
+  {
+    path: 'help-screen',
+    loadChildren: async () =>
+      (await import('./help-screen/help-screen.module')).HelpScreenModule,
+  },
+  {
+    path: 'tree-report',
+    loadChildren: async () =>
+      (await import('./tree-report/tree-report.module')).TreeReportModule,
+  },
+  {
+    path: 'coordination',
+    loadChildren: async () =>
+      (await import('./coordination/coordination.module')).CoordinationModule,
+  },
+  {
+    path: 'transfer',
+    loadChildren: async () =>
+      (await import('./transfer/transfer.module')).TransferModule,
+  },
+  {
+    path: 'text-change',
+    loadChildren: async () =>
+      (await import('./text-change/text-change.module')).TextChangeModule,
+  },
+  {
+    path: 'text-change-mod',
+    loadChildren: async () =>
+      (await import('./text-change-mod/text-change-mod.module'))
+        .TextChangeModModule,
   },
 ];
 
