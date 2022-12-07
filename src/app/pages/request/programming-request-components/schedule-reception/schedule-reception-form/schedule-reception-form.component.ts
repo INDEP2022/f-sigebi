@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IUser } from 'src/app/core/models/catalogs/user.model';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -41,9 +42,15 @@ export class ScheduleReceptionFormComponent implements OnInit {
   getUserSelect(user: ListParams) {}
 
   searchUser() {
-    const searchUser = this.modalService.show(SearchUserFormComponent, {
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+
+    config.initialState = {
+      callback: (data: any) => {
+        if (data) {
+        }
+      },
+    };
+
+    const searchUser = this.modalService.show(SearchUserFormComponent, config);
   }
 }
