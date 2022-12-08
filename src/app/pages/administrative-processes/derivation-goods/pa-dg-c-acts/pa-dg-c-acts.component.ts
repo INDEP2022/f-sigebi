@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-pa-dg-c-acts',
@@ -58,10 +59,22 @@ export class PaDgCActsComponent implements OnInit {
 
   private buildForm() {
     this.form = this.fb.group({
-      scannerFolio: [null, [Validators.required]],
-      openingParagraph: [null, [Validators.required]],
-      middleParagraph: [null, [Validators.required]],
-      concludingParagraph: [null, [Validators.required]],
+      scannerFolio: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      openingParagraph: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      middleParagraph: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      concludingParagraph: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
   // The master checkbox will check/ uncheck all items
