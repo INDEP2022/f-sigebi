@@ -12,11 +12,11 @@ import { BasePage } from 'src/app/core/shared/base-page';
 /** COMPONENTS IMPORTS */
 
 @Component({
-  selector: 'app-s-c-users',
-  templateUrl: './s-c-users.component.html',
-  styleUrls: ['./s-c-users.component.scss'],
+  selector: 'app-users',
+  templateUrl: './users.component.html',
+  styleUrls: ['./users.component.scss'],
 })
-export class SUsersComponent extends BasePage implements OnInit, OnDestroy {
+export class UsersComponent extends BasePage implements OnInit, OnDestroy {
   public optionsEspeciales = [
     { value: 'Permisos Especiales', label: 'Permisos Especiales' },
     { value: 'Genera/Elimina Dic/Ofic.', label: 'Genera/Elimina Dic/Ofic.' },

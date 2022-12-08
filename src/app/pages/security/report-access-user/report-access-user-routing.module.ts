@@ -8,16 +8,16 @@ import { RouterModule, Routes } from '@angular/router';
 /** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
-import { SCCPasswordCalendarComponent } from './password-calendar/s-cc-c-password-calendar.component';
+import { ReportAccessUserComponent } from './report-access-user/report-access-user.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: SCCPasswordCalendarComponent,
+    component: ReportAccessUserComponent,
   },
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class SCCPasswordCalendarRoutingModule {}
+export class ReportAccessUserRoutingModule {}
