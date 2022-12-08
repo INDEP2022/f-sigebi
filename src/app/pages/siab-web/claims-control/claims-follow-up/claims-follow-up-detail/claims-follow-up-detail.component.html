@@ -1,0 +1,288 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Nuevo</h5>
+    </div>
+  </div>
+  <div body>
+    <form [formGroup]="claimsFollowUpDetailForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            label="Descripción del Bien"
+            [control]="claimsFollowUpDetailForm.get('descriptionGood')">
+            <textarea
+              class="form-control"
+              formControlName="descriptionGood"
+              placeholder="Descripción del Bien"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="claimsFollowUpDetailForm.get('reportDateCABIF')"
+            label="Fecha de reporte a la CABI">
+            <input
+              type="text"
+              formControlName="reportDateCABIF"
+              placeholder="Fecha de reporte a la CABI"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="claimsFollowUpDetailForm.get('insuranceReportDate')"
+            label="Fecha de reporte de aseguradora">
+            <input
+              type="text"
+              formControlName="insuranceReportDate"
+              placeholder="Fecha de reporte de aseguradora"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="claimsFollowUpDetailForm.get('dateSiniester')"
+            label="Fecha de siniestro">
+            <input
+              type="text"
+              formControlName="dateSiniester"
+              placeholder="Fecha de siniestro"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="claimsFollowUpDetailForm.get('typeSiniester')"
+            label="Tipo de siniestro">
+            <select class="form-control" formControlName="typeSiniester">
+              <option [value]="null">Seleccione</option>
+              <option [value]="1">1</option>
+              <option [value]="2">2</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Oficio/Correo"
+            [control]="claimsFollowUpDetailForm.get('officeMail')">
+            <input
+              class="form-control"
+              formControlName="officeMail"
+              type="text" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-6">
+          <label>Selecciona el archivo a cargar(pdf)</label>
+          <input type="file" (change)="chargeFile($event.target)" />
+        </div>
+      </div>
+
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            label="Numero de siniestro"
+            [control]="claimsFollowUpDetailForm.get('numberSiniester')">
+            <input
+              class="form-control"
+              formControlName="numberSiniester"
+              type="number" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Poliza Afectada"
+            [control]="claimsFollowUpDetailForm.get('affectedPolicy')">
+            <input
+              class="form-control"
+              formControlName="affectedPolicy"
+              type="text" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="claimsFollowUpDetailForm.get('administrativeUnitUser')"
+            label="Unidad Administrativa Usuario">
+            <select
+              class="form-control"
+              formControlName="administrativeUnitUser">
+              <option [value]="null">Seleccione</option>
+              <option [value]="1">1</option>
+              <option [value]="2">2</option>
+            </select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            label="Detalle del bien o las partes afectadas"
+            [control]="
+              claimsFollowUpDetailForm.get('detailGoodAffectedParties')
+            ">
+            <textarea
+              class="form-control"
+              formControlName="detailGoodAffectedParties"
+              placeholder="Detalle del bien o las partes afectadas"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Monto reclamo segun carta de reclamación"
+            [control]="
+              claimsFollowUpDetailForm.get('amountClaimedAccordingClaimLetter')
+            ">
+            <input
+              class="form-control"
+              formControlName="amountClaimedAccordingClaimLetter"
+              type="number" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Monto ajustado"
+            [control]="claimsFollowUpDetailForm.get('adjustedAmount')">
+            <input
+              class="form-control"
+              formControlName="adjustedAmount"
+              type="number" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field
+            label="Deducible"
+            [control]="claimsFollowUpDetailForm.get('deductible')">
+            <input
+              class="form-control"
+              formControlName="deductible"
+              type="text" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Coa seguro"
+            [control]="claimsFollowUpDetailForm.get('coaSure')">
+            <input class="form-control" formControlName="coaSure" type="text" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="Monto indemnizado"
+            [control]="claimsFollowUpDetailForm.get('indemnifiedAmount')">
+            <input
+              class="form-control"
+              formControlName="indemnifiedAmount"
+              type="number" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            label="Carta reclamación"
+            [control]="claimsFollowUpDetailForm.get('claimLetter')">
+            <input
+              class="form-control"
+              formControlName="claimLetter"
+              type="text" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            label="Orden de ingreso"
+            [control]="claimsFollowUpDetailForm.get('entryOrder')">
+            <input
+              class="form-control"
+              formControlName="entryOrder"
+              type="text" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Oficio de conclusión/Minuta de conclusión"
+            [control]="claimsFollowUpDetailForm.get('closingDocument')">
+            <input
+              class="form-control"
+              formControlName="closingDocument"
+              type="text" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-6">
+          <h5>Selecciona el archivo a cargar(pdf)</h5>
+          <input type="file" (change)="chargeFile($event.target)" />
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            label="Estatus"
+            [control]="claimsFollowUpDetailForm.get('status')">
+            <input class="form-control" formControlName="status" type="text" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="claimsFollowUpDetailForm.get('firstSecondLayer')"
+            label="1er Capa/2da Capa">
+            <select class="form-control" formControlName="firstSecondLayer">
+              <option [value]="null">Seleccione</option>
+              <option [value]="1">1</option>
+              <option [value]="2">2</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Forma de conclución"
+            [control]="claimsFollowUpDetailForm.get('formConclusion')">
+            <input
+              class="form-control"
+              formControlName="formConclusion"
+              type="text" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-6">
+          <h5>Selecciona el archivo a cargar(pdf)</h5>
+          <input type="file" (change)="chargeFile($event.target)" />
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="claimsFollowUpDetailForm.get('indemnityDate')"
+            label="Fecha indemnización">
+            <input
+              type="text"
+              formControlName="indemnityDate"
+              placeholder="Fecha indemnización"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="row margin-input">
+      <div class="col-md-3">
+        <button type="button" class="btn btn-primary active">Guardar</button>
+      </div>
+      <div class="col-md-3">
+        <button type="button" class="btn btn-primary active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>
