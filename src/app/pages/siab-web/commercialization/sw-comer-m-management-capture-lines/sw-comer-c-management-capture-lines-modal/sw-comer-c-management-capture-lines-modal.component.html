@@ -1,0 +1,103 @@
+<app-modal>
+  <div header>
+    <div class="ch-content">
+      <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field [control]="form.get('id')" label="ID">
+            <input type="text" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('allotment')" label="LP">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="allotment" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('amount')" label="Importe">
+            <input type="text" class="form-control" formControlName="amount" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('status')" label="Estatus">
+            <input type="text" class="form-control" formControlName="status" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field [control]="form.get('type')" label="Tipo">
+            <input type="text" class="form-control" formControlName="type" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('reference')" label="Referencia">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="reference" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('dateValidity')"
+            label="Fecha Vigencia">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="dateValidity" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('rfc')" label="RFC">
+            <input type="text" class="form-control" formControlName="rfc" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field [control]="form.get('idClient')" label="ID Cliente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idClient" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('client')" label="Cliente">
+            <input type="text" class="form-control" formControlName="client" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('penalty')" label="Pena">
+            <input type="text" class="form-control" formControlName="penalty" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('note')" label="Nota">
+            <input type="text" class="form-control" formControlName="note" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button [type]="'button'" (click)="close()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

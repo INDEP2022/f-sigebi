@@ -4,6 +4,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 import { COLUMNS, expediente, Good, statusData } from './columns';
 
@@ -56,10 +57,19 @@ export class PaCsCChangeOfStatusStiComponent
   private buildForm() {
     this.form = this.fb.group({
       numberFile: [null, [Validators.required]],
-      newStatus: [null, [Validators.required]],
-      descriptionStatus: [null, [Validators.required]],
+      newStatus: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      descriptionStatus: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       currentDate: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 

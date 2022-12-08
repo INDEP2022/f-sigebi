@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { PaCsCModalChangeComponent } from '../pa-cs-c-modal-change/pa-cs-c-modal-change.component';
 import { COLUMNS_STATUS, COLUMNS_USER, Data } from './columns';
 
@@ -74,20 +75,47 @@ export class PaCsCChangeOfStatusComponent implements OnInit {
   private buildForm() {
     this.form = this.fb.group({
       numberGood: [null, [Validators.required]],
-      descriptionGood: [null, [Validators.required]],
-      currentStatus: [null, [Validators.required]],
-      descriptionStatus: [null, [Validators.required]],
-      processes: [null, [Validators.required]],
+      descriptionGood: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      currentStatus: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      descriptionStatus: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      processes: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
   private buildFormNew() {
     this.formNew = this.fb.group({
-      newStatus: [null, [Validators.required]],
-      newDescripcionStatus: [null, [Validators.required]],
+      newStatus: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      newDescripcionStatus: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       dateStatus: [null, [Validators.required]],
-      newProcesses: [null, [Validators.required]],
-      userRequesting: [null, [Validators.required]],
-      userName: [null, [Validators.required]],
+      newProcesses: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      userRequesting: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      userName: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       description: [null, [Validators.required]],
     });
   }

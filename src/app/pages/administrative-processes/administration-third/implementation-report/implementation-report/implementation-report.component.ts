@@ -4,6 +4,7 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ImplementationReportHistoricComponent } from '../implementation-report-historic/implementation-report-historic.component';
 import {
@@ -53,7 +54,11 @@ export class ImplementationReportComponent extends BasePage implements OnInit {
       status: [null, Validators.required],
       authorizationDate: [null, Validators.required],
       dateCapture: [null, Validators.required],
-      observations: [null, Validators.required],
+      observations: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
     });
   }
   public getServiceOrderKey(event: any) {

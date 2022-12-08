@@ -1,9 +1,17 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
-import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import Quill from 'quill';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { SignatureTypeComponent } from '../signature-type/signature-type.component';
 
 const font = Quill.import('formats/font');
 font.whitelist = ['mirza', 'roboto', 'aref', 'serif', 'sansserif', 'monospace'];
@@ -22,18 +30,23 @@ class Document {
 export class ViewReportComponent extends BasePage implements OnInit {
   documents: Document[];
   document: Document = new Document();
+  @ViewChild('tabsReport', { static: false }) tabsReport?: TabsetComponent;
 
   quillInstance: any;
 
   form: FormGroup;
   model: any;
 
+  isSigned: boolean = false;
+  isSignedReady: boolean = false;
+
   @Output() refresh = new EventEmitter<true>();
 
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private modalService: BsModalService
   ) {
     super();
   }
@@ -70,5 +83,47 @@ export class ViewReportComponent extends BasePage implements OnInit {
     this.loading = false;
     this.refresh.emit(true);
     this.modalRef.hide();
+  }
+
+  sign(context?: Partial<SignatureTypeComponent>): void {
+    const modalRef = this.modalService.show(SignatureTypeComponent, {
+      initialState: context,
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.signatureType.subscribe(next => {
+      if (next) {
+        this.isSigned = true;
+        this.tabsReport.tabs[0].active = true;
+      } else {
+        this.isSignedReady = false;
+        this.isSigned = false;
+        this.tabsReport.tabs[0].disabled = false;
+        this.tabsReport.tabs[0].active = true;
+      }
+    });
+  }
+
+  nextStep($event: any): void {
+    if ($event) {
+      this.isSignedReady = true;
+      this.tabsReport.tabs[0].active = true;
+    } else {
+      this.isSignedReady = false;
+    }
+  }
+
+  attachDocument() {
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Estas seguro que deseas adjuntar el documento?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecutar el servicio
+        this.onLoadToast('success', 'Documento adjuntado correctamente', '');
+        this.close();
+      }
+    });
   }
 }

@@ -5,11 +5,11 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { ShiftChangeHistoryComponent } from './shift-change-history/shift-change-history.component';
 import {
   SHIFT_CHANGE_COLUMNS,
   SHIFT_CHANGE_EXAMPLE_DATA,
 } from './shift-change-columns';
+import { ShiftChangeHistoryComponent } from './shift-change-history/shift-change-history.component';
 
 @Component({
   selector: 'app-shift-change',
