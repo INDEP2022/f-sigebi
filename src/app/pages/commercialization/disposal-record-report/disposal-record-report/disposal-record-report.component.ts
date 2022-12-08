@@ -4,6 +4,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { maxDate } from 'src/app/common/validations/date.validators';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-disposal-record-report',
@@ -34,8 +35,14 @@ export class DisposalRecordReportComponent implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      delegation: [null, [Validators.required]],
-      subDelegation: [null, [Validators.required]],
+      delegation: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      subDelegation: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       noFile: [null, [Validators.required]],
       rangeDateFile: [null, [Validators.required, maxDate(new Date())]],
       noActa: [null, [Validators.required]],

@@ -6,7 +6,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { maxDate } from 'src/app/common/validations/date.validators';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-new-image-modal',
@@ -32,9 +32,15 @@ export class NewImageModalComponent implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      name: [null, [Validators.required]],
-      lastName: [null, [Validators.required]],
-      motherlastName: [null, [Validators.required]],
+      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      lastName: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      motherlastName: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       idAuth: ['', [Validators.required]],
       date: [null, [maxDate(new Date()), Validators.required]],
       allotment: [
@@ -46,8 +52,11 @@ export class NewImageModalComponent implements OnInit {
           Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
-      siab: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      siab: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       total: [
         null,
         [
