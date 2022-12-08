@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-key-change-modal',
@@ -24,8 +25,11 @@ export class KeyChangeModalComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.keyForm = this.fb.group({
       key: [null, [Validators.required]],
-      observations: [null],
-      userAuthorize: [null, [Validators.required]],
+      observations: [null, Validators.pattern(STRING_PATTERN)],
+      userAuthorize: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       authPass: [null, [Validators.required]],
     });
   }
