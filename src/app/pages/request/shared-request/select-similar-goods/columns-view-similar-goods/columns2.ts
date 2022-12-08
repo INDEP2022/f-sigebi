@@ -4,11 +4,6 @@ export const COLUMNS2 = {
     type: 'string',
     sort: false,
   },
-  taxpayerResult: {
-    title: 'Resultado del Contribuyente',
-    type: 'string',
-    sort: false,
-  },
   origin: {
     title: 'Origen',
     type: 'string',
@@ -27,16 +22,6 @@ export const COLUMNS2 = {
   reservedAmount: {
     title: 'Cantidad Reservada',
     type: 'number',
-    sort: false,
-  },
-  availableAmount: {
-    title: 'Cantidad Disponible',
-    type: 'number',
-    sort: false,
-  },
-  destination: {
-    title: 'Destino',
-    type: 'string',
     sort: false,
   },
   subInventory: {
@@ -61,6 +46,16 @@ export const COLUMNS2 = {
   },
   inventoryNumb: {
     title: 'No. Inventario',
+    type: 'number',
+    sort: false,
+  },
+  inventoryTransactionNumb: {
+    title: 'No. Transacción Inventario',
+    type: 'number',
+    sort: false,
+  },
+  saeNumb: {
+    title: 'No. SAE',
     type: 'number',
     sort: false,
   },

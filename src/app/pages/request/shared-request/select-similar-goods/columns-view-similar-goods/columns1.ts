@@ -1,9 +1,4 @@
 export const COLUMNS1 = {
-  proceedings: {
-    title: 'Expediente',
-    type: 'string',
-    sort: false,
-  },
   origin: {
     title: 'Origen',
     type: 'string',
