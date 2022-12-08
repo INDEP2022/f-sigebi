@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CheckVerifyComplianceComponent } from './check-verify-compliance/check-verify-compliance.component';
 
@@ -9,6 +9,7 @@ import { CheckVerifyComplianceComponent } from './check-verify-compliance/check-
 })
 export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
   toggleInformation: boolean = true;
+  @Input() nombrePantalla: string = 'sinNombre';
 
   tableSettings = {
     actions: {
@@ -34,6 +35,8 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
         valuePrepareFunction: (cell: any, row: any) => cell,
         onComponentInitFunction: (instance: any) => {
           instance.checkId = 'cumpleArticulo24';
+          instance.checkIdField = 'cumpleArticulo24';
+          instance.nombrePantalla = this.nombrePantalla;
         },
         renderComponent: CheckVerifyComplianceComponent,
       },
@@ -43,6 +46,8 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
         valuePrepareFunction: (cell: any, row: any) => cell,
         onComponentInitFunction: (instance: any) => {
           instance.checkId = 'cumpleArticulo28';
+          instance.checkIdField = 'cumpleArticulo28';
+          instance.nombrePantalla = this.nombrePantalla;
         },
         renderComponent: CheckVerifyComplianceComponent,
       },
@@ -52,6 +57,8 @@ export class VerifyComplianceGoodsComponent extends BasePage implements OnInit {
         valuePrepareFunction: (cell: any, row: any) => cell,
         onComponentInitFunction: (instance: any) => {
           instance.checkId = 'cumpleArticulo29';
+          instance.checkIdField = 'cumpleArticulo29';
+          instance.nombrePantalla = this.nombrePantalla;
         },
         renderComponent: CheckVerifyComplianceComponent,
       },

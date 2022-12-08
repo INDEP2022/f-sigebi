@@ -45,7 +45,7 @@ export const DOCUMENTS_RECEPTION_ROUTES = [
       },
       {
         label: 'Buzón de asuntos PGR',
-        link: '/pages/documents-reception/pgr-subjects-register',
+        link: '/pages/documents-reception/subjects-register',
       },
       {
         label: 'Comprobación de Requisitos Documentales',

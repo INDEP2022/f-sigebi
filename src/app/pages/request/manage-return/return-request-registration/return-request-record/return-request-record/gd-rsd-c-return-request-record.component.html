@@ -48,11 +48,12 @@
 </app-card>
 
 <ng-container *ngIf="!mostrarListado">
-  <app-msg-rsb-c-register-request-goods
+  <app-complementary-request-information
+    [title]="title"
     [idParam]="idNoRequest"
     [registroDocumentacion]="true"
     [seleccionarBienes]="true"
     [buscarAsociarExpediente]="true"
     (formValuesDataDocumentation)="dataRegistration($event)"
-    [nombrePantalla]="nombrePantalla"></app-msg-rsb-c-register-request-goods>
+    [nombrePantalla]="nombrePantalla"></app-complementary-request-information>
 </ng-container>

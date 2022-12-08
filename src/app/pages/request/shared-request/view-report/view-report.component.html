@@ -4,24 +4,29 @@
   </div>
   <div body>
     <div class="md-tabs">
-      <form class="form-material" [formGroup]="form">
-        <div class="row mb-3 mt-3 justify-content-end">
-          <div class="col-xs-12 col-12 col-md-6 mb-3 mt-3">
-            <form-field
-              [control]="form.get('template')"
-              label="Aplicar Formato">
-              <select class="form-control" formControlName="template" readonly>
-                <option *ngFor="let doc of documents" value="_id">
-                  {{ doc._id }}
-                </option>
-              </select>
-            </form-field>
-          </div>
+      <div class="d-flex justify-content-end">
+        <div>
+          <button
+            (click)="sign()"
+            class="btn btn-primary active btn-sm"
+            *ngIf="!isSigned">
+            <i class="fa fa-file-signature"></i>
+            Firmar
+          </button>
         </div>
-      </form>
-
-      <tabset>
+      </div>
+      <tabset #tabsReport>
         <tab heading="Vista Previa" id="previewTab">
+          <div class="row justify-content-end" *ngIf="isSignedReady">
+            <div class="col-md-3">
+              <button
+                (click)="attachDocument()"
+                class="btn btn-primary btn-sm active">
+                <i class="fa fa-check-circle"></i>
+                Adjuntar documento
+              </button>
+            </div>
+          </div>
           <quill-view
             [content]="documents[0].content"
             [sanitize]="true"
@@ -29,7 +34,9 @@
             format="html"></quill-view>
           <!--<button (click)='pdfCreate()'>Vista previa</button>-->
         </tab>
-        <tab heading="Firmar Reporte" id="signTab"> </tab>
+        <tab heading="Firmar Reporte" id="signTab" *ngIf="isSigned">
+          <app-sign-report (nextStep)="nextStep($event)"></app-sign-report>
+        </tab>
       </tabset>
     </div>
   </div>

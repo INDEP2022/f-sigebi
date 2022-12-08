@@ -18,6 +18,8 @@ export class SwComerCAuctionReportComponent extends BasePage implements OnInit {
   formReport: FormGroup = new FormGroup({});
   showLiquidacion = false;
   showGarantia = false;
+  columns: any[] = [];
+  totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
 
@@ -38,6 +40,8 @@ export class SwComerCAuctionReportComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.prepareFormReport();
+    this.prepareFormFilter();
+    this.getPagination();
   }
 
   private prepareForm() {
@@ -124,5 +128,10 @@ export class SwComerCAuctionReportComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true, //ignora el click fuera del modal
     };
     this.modalService.show(PreviewDocumentsComponent, config);
+  }
+
+  getPagination() {
+    this.columns = this.data;
+    this.totalItems = this.columns.length;
   }
 }

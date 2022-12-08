@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-loss-of-goods-policy',
@@ -18,9 +22,17 @@ export class LossOfGoodsPolicyComponent implements OnInit {
   prepareForm() {
     this.form = this.fb.group({
       noBien: [null, Validators.required],
-      description: [null, Validators.required],
-      amount: [null, Validators.required],
-      cvePolicy: [null, Validators.required],
+      description: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
+      amount: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
+      cvePolicy: [
+        null,
+        Validators.required,
+        Validators.pattern(KEYGENERATION_PATTERN),
+      ],
       dateOfAdmission: [null, Validators.required],
       premiumAmount: [null, Validators.required],
       dailyFactor: [null, Validators.required],

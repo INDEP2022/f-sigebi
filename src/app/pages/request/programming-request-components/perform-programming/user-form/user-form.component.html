@@ -1,11 +1,13 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Información Usuario</h5>
+    <h5 class="modal-title">
+      {{ edit ? 'Editar información usuario' : 'Información usuario' }}
+    </h5>
   </div>
   <div body>
     <form [formGroup]="userForm" class="form-material">
-      <form-field [control]="userForm.get('name')" label="Nombre usuario">
-        <input type="text" class="form-control" formControlName="name" />
+      <form-field [control]="userForm.get('user')" label="Nombre usuario">
+        <input type="text" class="form-control" formControlName="user" />
       </form-field>
       <div class="row pt-3">
         <form-field

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -23,14 +24,18 @@ export class EmailInformationComponent implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      reasonForChange: [null, Validators.required],
+      reasonForChange: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
       date: [null, Validators.required],
       from: [null, Validators.required],
       to: [null, Validators.required],
       cc: [null, Validators.required],
       type: [null, Validators.required],
-      issue: [null, Validators.required],
-      body: [null, Validators.required],
+      issue: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
+      body: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
     });
   }
 
