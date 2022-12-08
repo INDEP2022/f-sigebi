@@ -8,7 +8,11 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { maxDate } from 'src/app/common/validations/date.validators';
 
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  KEYGENERATION_PATTERN,
+  NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { GOODS_COLUMNS } from './destruction-authorization-management-goods-columns';
 
 import { PROCEEDINGS_COLUMNS } from './destruction-authorization-management-proceedings-columns';
@@ -78,13 +82,25 @@ export class DestructionAuthorizationManagementComponent
           Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
-      requesOffice: ['', [Validators.required]],
-      requesScop: ['', [Validators.required]],
+      requesOffice: [
+        '',
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      requesScop: [
+        '',
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       recepDate: ['', [Validators.required, maxDate(new Date())]],
       scopDate: ['', [Validators.required, maxDate(new Date())]],
       inteDate: ['', [Validators.required, maxDate(new Date())]],
-      scanFolio: ['', [Validators.required]],
-      observations: ['', [Validators.required]],
+      scanFolio: [
+        '',
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      observations: [
+        '',
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 
