@@ -40,6 +40,16 @@ const routes: Routes = [
         .SaveResponsibleAnswerModule,
     data: { title: 'Guardar respuesta de la responsable del estudio' },
   },
+  {
+    path: 'schedule-delivery/:id',
+    loadChildren: async () =>
+      (
+        await import(
+          './schedule-delivery-assets/schedule-delivery-assets.module'
+        )
+      ).ScheduleDeliveryAssetsModule,
+    data: { title: 'Programar entrega de bienes' },
+  },
 ];
 
 @NgModule({

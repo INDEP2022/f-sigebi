@@ -26,4 +26,13 @@ export const ASSIGNMENT = [
     created: 'tester_nsbxt',
     process: 'GuardarRespuesta',
   },
+  {
+    id: 4,
+    title: 'Estudio pendiente de la programacion',
+    noRequest: 45539,
+    numTask: 261221,
+    noInstance: 82781,
+    created: 'tester_nsbxt',
+    process: 'ProgramarEntrega',
+  },
 ];
