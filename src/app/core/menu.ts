@@ -11,7 +11,9 @@ import { GENERAL_PROCESSES_ROUTES } from '../common/routes/general-processes.rou
 import { MASTER_FILES } from '../common/routes/master-file.routes';
 import { PARAMETERIZATION_ROUTES } from '../common/routes/parameterization.routes';
 import { SCHEDULING_DELIVERIES } from '../common/routes/scheduling-deliveries.routes';
+import { APPRAISALS_ROUTES } from '../common/routes/siab-web/appraisals.routes';
 import { COMMERCIALIZATION_SW_ROUTES } from '../common/routes/siab-web/commercialization-sw.routes';
+import { INDICATORS_ROUTES } from '../common/routes/siab-web/indicators.routes';
 import { SAMI_ROUTES } from '../common/routes/siab-web/simi.routes';
 import { IMenuItem } from './interfaces/menu.interface';
 
@@ -321,6 +323,10 @@ export const MENU: IMenuItem[] = [
     icon: 'bx-share-alt',
     subItems: [
       {
+        label: 'Lista de Asignaciones',
+        link: '/pages/assets-for-study/assignment-list',
+      },
+      {
         label: 'Generar Solicitud',
         link: '/pages/assets-for-study/generate-request',
       },
@@ -333,6 +339,11 @@ export const MENU: IMenuItem[] = [
   {
     label: 'Siab Web',
     icon: 'bx-folder',
-    subItems: [...COMMERCIALIZATION_SW_ROUTES, ...SAMI_ROUTES],
+    subItems: [
+      ...COMMERCIALIZATION_SW_ROUTES,
+      ...SAMI_ROUTES,
+      ...APPRAISALS_ROUTES,
+      ...INDICATORS_ROUTES,
+    ],
   },
 ];

@@ -38,6 +38,7 @@
           <button
             type="button"
             class="btn btn-primary btn-sm active"
+            (click)="viewReport()"
             [disabled]="">
             <i class="bx bx-notepad mr-1 float-icon"></i> Dictamen Resarcimiento
           </button>
@@ -64,7 +65,9 @@
             role="menu"
             aria-labelledby="processBtn">
             <li role="menuitem">
-              <a class="dropdown-item bg-primary text-light" (click)="(true)"
+              <a
+                class="dropdown-item bg-primary text-light"
+                (click)="viewReport()"
                 ><i class="bx bx-notepad mr-1 float-icon"></i>Dictamen
                 Resarcimiento</a
               >

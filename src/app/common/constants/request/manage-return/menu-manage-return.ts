@@ -3,6 +3,7 @@ export const returnManageReturn: string = 'gestionar-devolucion/'; // Base url S
 export const returnRequestRegistration: string =
   'registro-solicitud-devolucion/'; // Base url SubMenu
 export const goodsClassification: string = 'clasificacion-bienes/'; // Base url SubMenu
+export const approveReturnRequest: string = 'aprobar-solicitud-bienes/'; // Base url SubMenu
 
 export const MENU_OPTIONS_REQUEST_MANAGE_RETURN = {
   label: 'Registro de Solicitud de Devolución',
@@ -30,6 +31,14 @@ export const MENU_OPTIONS_REQUEST_MANAGE_RETURN = {
         returnManageReturn +
         goodsClassification +
         'clasificacion-bienes',
+    },
+    {
+      label: 'Aprobar Solicitud de Devolución',
+      link:
+        baseMenuRegquest +
+        returnManageReturn +
+        approveReturnRequest +
+        'aprobar-solicitud-bienes',
     },
   ],
 };

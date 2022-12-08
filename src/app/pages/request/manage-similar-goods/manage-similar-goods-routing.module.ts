@@ -10,11 +10,18 @@ const routes: Routes = [
       ).then(m => m.MsgRdcbsMRegisterAdditionalDocumentationModule),
   },
   {
-    path: 'register-request-goods/:id',
+    path: 'register-request-goods/:id/:typeOfRequest',
     loadChildren: () =>
       import(
         './register-request-goods/msg-rsb-m-register-request-goods.module'
       ).then(m => m.MsgRsbMRegisterRequestGoodsModule),
+  },
+  {
+    path: 'schedule-eye-visits/:id/:typeOfRequest',
+    loadChildren: () =>
+      import('./schedule-eye-visits/schedule-eye-visits.module').then(
+        m => m.ScheduleEyeVisitsModule
+      ),
   },
 ];
 
