@@ -5,7 +5,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 @Component({
   selector: 'app-register-documentation-form',
   templateUrl: './register-documentation-form.component.html',
-  styles: [],
+  styleUrls: ['./register-documentation-form.component.scss'],
 })
 export class RegisterDocumentationFormComponent
   extends BasePage
@@ -93,7 +93,6 @@ export class RegisterDocumentationFormComponent
     if (this.requestId !== undefined) {
       const request = {
         receptionDate: '17/04/2018',
-        subject: 'NUMERARIO DECOMISADO DEVUELTO',
         contributor: 'Carlos G',
         memorandumNo: 54543,
         memorandumDate: '11/04/2018',

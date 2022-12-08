@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-search-tab',
@@ -86,16 +87,31 @@ export class SearchTabComponent extends BasePage implements OnInit {
       ssubtipo: [null, [Validators.required]],
       noSssubtipo: [null, [Validators.required]],
       sssubtipo: [null, [Validators.required]],
-      estatus: [null, [Validators.required]],
+      estatus: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       unidadMedida: [null, [Validators.required]],
       cantidad: [null, [Validators.required]],
       noDestino: [null, [Validators.required]],
-      situacion: [null, [Validators.required]],
-      destino: [null, [Validators.required]],
+      situacion: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      destino: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       noBien: [null, [Validators.required]],
       valRef: [null, [Validators.required]],
-      identifica: [null, [Validators.required]],
-      descripcion: [null, [Validators.required]],
+      identifica: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      descripcion: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 }

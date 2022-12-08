@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -27,8 +28,16 @@ export class ChangeGoodsRandomComponent implements OnInit {
       process: [null, Validators.required],
       random: [null, Validators.required],
       noBien: [null, Validators.required],
-      description: [null, Validators.required],
-      transference: [null, Validators.required],
+      description: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
+      transference: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
     });
   }
 

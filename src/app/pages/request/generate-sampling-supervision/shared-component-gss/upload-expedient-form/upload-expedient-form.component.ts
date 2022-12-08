@@ -24,7 +24,7 @@ var data = [
 ];
 
 @Component({
-  selector: 'app-upload-expedient-form',
+  selector: 'app-upload-expedient-service-order-form',
   templateUrl: './upload-expedient-form.component.html',
   styleUrls: ['./upload-expedient-form.component.scss'],
 })

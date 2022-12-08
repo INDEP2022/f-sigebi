@@ -5,86 +5,86 @@ const routes: Routes = [
   {
     path: 'articles-complement',
     loadChildren: () =>
-      import('./jpr-complement-article/jpr-complement-article.module').then(
-        m => m.JprComplementArticleModule
+      import('./complement-article/complement-article.module').then(
+        m => m.ComplementArticleModule
       ),
   },
   {
     path: 'confiscated-reception',
     loadChildren: () =>
-      import(
-        './jpr-confiscated-reception/jpr-confiscated-reception.module'
-      ).then(m => m.JprConfiscatedReceptionModule),
+      import('./confiscated-reception/confiscated-reception.module').then(
+        m => m.ConfiscatedReceptionModule
+      ),
   },
   {
     path: 'records-report',
     loadChildren: () =>
-      import('./jpr-records-report/jpr-records-report.module').then(
-        m => m.JprRecordsReportModule
+      import('./records-report/records-report.module').then(
+        m => m.RecordsReportModule
       ),
   },
   {
     path: 'confiscated-records',
     loadChildren: () =>
-      import('./jpr-confiscated-records/jpr-confiscated-records.module').then(
-        m => m.JprConfiscatedRecordsModule
+      import('./confiscated-records/confiscated-records.module').then(
+        m => m.ConfiscatedRecordsModule
       ),
   },
   {
     path: 'partializes-general-goods-1',
     loadChildren: () =>
       import(
-        './jpr-partializes-general-goods-1/jpr-partializes-general-goods.module'
-      ).then(m => m.JprPartializesGeneralGoodsModule),
+        './partializes-general-goods-1/partializes-general-goods.module'
+      ).then(m => m.PartializesGeneralGoodsModule),
   },
   {
     path: 'partializes-general-goods-2',
     loadChildren: () =>
       import(
-        './jpr-partializes-general-goods-2/jpr-partializes-general-goods.module'
-      ).then(m => m.JprPartializesGeneralGoodsModule),
+        './partializes-general-goods-2/partializes-general-goods.module'
+      ).then(m => m.PartializesGeneralGoodsModule),
   },
   {
     path: 'partializes-goods',
     loadChildren: () =>
-      import('./jpr-partializes-goods/jpr-partializes-goods.module').then(
-        m => m.JprPartializesGoodsModule
+      import('./partializes-goods/partializes-goods.module').then(
+        m => m.PartializesGoodsModule
       ),
   },
   {
     path: 'cancellation-recepcion',
     loadChildren: () =>
-      import(
-        './jpr-cancellation-recepcion/jpr-cancellation-recepcion.module'
-      ).then(m => m.JprCancellationRecepcionModule),
+      import('./cancellation-recepcion/cancellation-recepcion.module').then(
+        m => m.CancellationRecepcionModule
+      ),
   },
   {
     path: 'cancellation-sale',
     loadChildren: () =>
-      import('./jpr-sale-cancellation/jpr-sale-cancellation.module').then(
-        m => m.JprSaleCancellationModule
+      import('./sale-cancellation/sale-cancellation.module').then(
+        m => m.SaleCancellationModule
       ),
   },
   {
     path: 'scheduled-maintenance-1',
     loadChildren: () =>
-      import(
-        './jpr-scheduled-maintenance-1/jpr-scheduled-maintenance.module'
-      ).then(m => m.JprScheduledMaintenanceModule),
+      import('./scheduled-maintenance-1/scheduled-maintenance.module').then(
+        m => m.ScheduledMaintenanceModule
+      ),
   },
 
   {
     path: 'scheduled-maintenance-2',
     loadChildren: () =>
-      import(
-        './jpr-scheduled-maintenance-2/jpr-scheduled-maintenance.module'
-      ).then(m => m.JprScheduledMaintenanceModule),
+      import('./scheduled-maintenance-2/scheduled-maintenance.module').then(
+        m => m.ScheduledMaintenanceModule
+      ),
   },
   {
     path: 'maintenance-records',
     loadChildren: () =>
-      import('./jpr-maintenance-records/jpr-maintenance-records.module').then(
-        m => m.JprMaintenanceRecordsModule
+      import('./maintenance-records/maintenance-records.module').then(
+        m => m.MaintenanceRecordsModule
       ),
   },
 ];

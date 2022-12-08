@@ -6,71 +6,71 @@ export const PARAMETERIZATION_ROUTES = [
       //Henry
       {
         label: 'Catálogo de atributos de información financiera',
-        link: '/pages/parameterization/c-p-m-cat-financial-information-attributes',
+        link: '/pages/parameterization/cat-financial-information-attributes',
       },
       {
         label: 'Catálogo de indicadores financieros',
-        link: '/pages/parameterization/c-p-m-cat-financial-indicators',
+        link: '/pages/parameterization/cat-financial-indicators',
       },
       {
         label: 'Catálogo de preguntas',
-        link: '/pages/parameterization/c-p-m-question-catalog',
+        link: '/pages/parameterization/question-catalog',
       },
       {
         label: 'Catálogo de tablas lógicas',
-        link: '/pages/parameterization/c-p-m-logical-tables-register',
+        link: '/pages/parameterization/logical-tables-register',
       },
       {
         label: 'Catálogo de asuntos para volantes',
-        link: '/pages/parameterization/c-p-m-flyer-subject-catalog',
+        link: '/pages/parameterization/flyer-subject-catalog',
       },
       {
         label: 'Alta de atributos por tipo de bien',
-        link: '/pages/parameterization/c-p-m-register-attributes-types',
+        link: '/pages/parameterization/register-attributes-types',
       },
       {
         label: 'Categoria para numerario efectivo',
-        link: '/pages/parameterization/c-p-m-cat-effective-numeraire',
+        link: '/pages/parameterization/cat-effective-numeraire',
       },
       {
         label: 'Conceptos bancarios',
-        link: '/pages/parameterization/c-p-m-bank-concepts',
+        link: '/pages/parameterization/bank-concepts',
       },
       {
         label: 'Catalogo de conceptos de pagos depositarias',
-        link: '/pages/parameterization/c-p-m-cat-depository-payment',
+        link: '/pages/parameterization/cat-depository-payment',
       },
       {
         label: 'Mant. a delegaciones y subdelegaciones',
-        link: '/pages/parameterization/c-p-m-maintenance-deleg-subdeleg',
+        link: '/pages/parameterization/maintenance-deleg-subdeleg',
       },
       {
         label: 'Mantto. a administrador, depositario e interventor',
-        link: '/pages/parameterization/c-p-m-mnce-adm-depository-auditor',
+        link: '/pages/parameterization/mnce-adm-depository-auditor',
       },
       {
         label: 'Registro de atributos para tablas lógicas',
-        link: '/pages/parameterization/c-p-m-attributes-reg-logical-tables',
+        link: '/pages/parameterization/attributes-reg-logical-tables',
       },
       {
         label: 'Registro de claves para tablas logicas',
-        link: '/pages/parameterization/c-p-m-register-keys-logical-tables',
+        link: '/pages/parameterization/register-keys-logical-tables',
       },
       {
         label: 'Catálogo de requisitos documentales',
-        link: '/pages/parameterization/c-p-m-cat-doc-require',
+        link: '/pages/parameterization/cat-doc-require',
       },
       {
         label: 'Catálogo de Archivo General',
-        link: '/pages/parameterization/c-p-m-general-archive-catalog',
+        link: '/pages/parameterization/general-archive-catalog',
       },
       {
         label: 'Catálogo de identificador para la unificacion de las dbs',
-        link: '/pages/parameterization/c-p-m-cat-identifier-uni-dbs',
+        link: '/pages/parameterization/cat-identifier-uni-dbs',
       },
       {
         label: 'Catálogo de relación y de asunto dictamen',
-        link: '/pages/parameterization/c-p-m-cat-relationship-opinion',
+        link: '/pages/parameterization/cat-relationship-opinion',
       },
       //Alexander
       {
@@ -162,6 +162,14 @@ export const PARAMETERIZATION_ROUTES = [
       {
         label: 'Indicadores de Desempeño',
         link: '/pages/parameterization/indicators-of-performance',
+      },
+      {
+        label: 'Mantenimiento a validadores de actas',
+        link: '/pages/parameterization/maintenance-document-validators',
+      },
+      {
+        label: 'Tiempo Máximo Para Cierre Actas Devolución',
+        link: '/pages/parameterization/maximum-times',
       },
     ],
   },

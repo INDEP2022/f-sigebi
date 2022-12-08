@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-expenses-concepts',
@@ -17,9 +18,15 @@ export class ExpensesConceptsComponent implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      clasification: [null, Validators.required],
-      concept: [null, Validators.required],
-      status: [null, Validators.required],
+      clasification: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      concept: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      status: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
   }
 }

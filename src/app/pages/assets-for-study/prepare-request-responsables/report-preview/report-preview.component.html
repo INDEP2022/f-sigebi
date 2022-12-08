@@ -1,0 +1,61 @@
+<app-modal *ngIf="isSignReport">
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body>
+    <div class="d-flex justify-content-end">
+      <div class="p-2">
+        <button class="btn btn-success btn-sm active" (click)="signReport()">
+          Firmar Reporte
+        </button>
+      </div>
+      <div class="p-2">
+        <button class="btn btn-danger btn-sm active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+    <div class="row pt-4">Se muesta la vista del reporte generado</div>
+  </div>
+</app-modal>
+
+<app-modal *ngIf="isSendReport">
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body>
+    <div class="d-flex justify-content-end">
+      <div class="p-2">
+        <button class="btn btn-success btn-sm active" (click)="sendToSign()">
+          Enviar a Firmar
+        </button>
+      </div>
+      <div class="p-2">
+        <button class="btn btn-success btn-sm active" (click)="previousStep()">
+          Anterior Paso
+        </button>
+      </div>
+      <div class="p-2">
+        <button class="btn btn-danger btn-sm active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+    <form class="form-material">
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <input
+            type="file"
+            #FileInput
+            class="form-control"
+            (change)="selectFile($event)"
+            accept="application/pdf" />
+
+          <span id="size" *ngIf="sizeMessage"
+            >Seleccione un archivo no mayor a 100 MB.</span
+          >
+        </div>
+      </div>
+    </form>
+  </div>
+</app-modal>

@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IRequestList } from 'src/app/core/models/catalogs/request-list.model';
 import { BasePage } from 'src/app/core/shared/base-page';
+//Models
+import { IRequestTask } from 'src/app/core/models/requests/request-task.model';
 import { COLUMNS } from './columns';
 //Provisional Data
 import { dataRequest } from './data';
@@ -15,13 +16,12 @@ import { dataRequest } from './data';
   styles: [],
 })
 export class RequestCompDocListComponent extends BasePage implements OnInit {
+  tasks: IRequestTask[] = dataRequest;
+
   params = new BehaviorSubject<ListParams>(new ListParams());
-  paragraphs: IRequestList[] = [];
   totalItems: number = 0;
 
-  data: IRequestList[] = dataRequest;
-
-  constructor(public router: Router) {
+  constructor(private activatedRoute: ActivatedRoute, public router: Router) {
     super();
     this.settings = {
       ...this.settings,
@@ -33,13 +33,19 @@ export class RequestCompDocListComponent extends BasePage implements OnInit {
   ngOnInit(): void {}
 
   editRequest(event: any) {
-    switch (event.data.process) {
-      case 'SolicitudProgramación':
+    console.log(event);
+    this.router.navigate(
+      ['tasks', event.data.process, event.data.requestNumber],
+      { relativeTo: this.activatedRoute }
+    );
+
+    /*switch (event.data.process) {
+      case 'COMPLEMENTARY-DOCS':
         // en el caso de que sea una solicitud de programacion
-        this.router.navigate([
-          'pages/request/perform-programming',
-          event.data.requestNumber,
-        ]);
+        this.router.navigate(
+          ['tasks', event.data.process, event.data.requestNumber],
+          { relativeTo: this.activatedRoute }
+        );
         break;
       case 'RegistroSolicitudes':
         // en el caso de que el proceso seleccionado sea Bienes Similares
@@ -78,6 +84,6 @@ export class RequestCompDocListComponent extends BasePage implements OnInit {
         break;
       default:
         break;
-    }
+    }*/
   }
 }

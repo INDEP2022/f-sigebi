@@ -1,0 +1,19 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Estatus Valido por Pantalla</h5>
+  </div>
+
+  <div body>
+    <div class="row">
+      <div class="col-md-12 md-tabs">
+        <tabset>
+          <tab heading="Estatus" id="tab1">
+            <ng2-smart-table [settings]="settings"></ng2-smart-table>
+            <app-pagination></app-pagination>
+          </tab>
+          <tab heading="Ayuda"></tab>
+        </tabset>
+      </div>
+    </div>
+  </div>
+</app-card>

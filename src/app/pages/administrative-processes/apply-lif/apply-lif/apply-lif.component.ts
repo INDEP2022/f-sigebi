@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-apply-lif',
@@ -19,14 +20,22 @@ export class ApplyLifComponent implements OnInit {
   public handleForm(): void {
     this.form = this.fb.group({
       noBien: [null, Validators.required],
-      description: ['', Validators.required],
-      status: ['', Validators.required],
+      description: [
+        '',
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
+      status: ['', Validators.required, Validators.pattern(STRING_PATTERN)],
       noRecord: [null, Validators.required],
-      identifier: ['', Validators.required],
-      processExtDom: ['', Validators.required],
+      identifier: ['', Validators.required, Validators.pattern(STRING_PATTERN)],
+      processExtDom: [
+        '',
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
       noConversions: [null, Validators.required],
       noBienNum: [null, Validators.required],
-      statusBien: ['', Validators.required],
+      statusBien: ['', Validators.required, Validators.pattern(STRING_PATTERN)],
       date: ['', [Validators.required]],
       price: [null, Validators.required],
       spend: [null, [Validators.required]],

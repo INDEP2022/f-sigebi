@@ -8,12 +8,11 @@ import { DateFnsModule } from 'ngx-date-fns';
 import { environment } from 'src/environments/environment.prod';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { ROOT_REDUCERS } from './app.reducers';
 import { InputFormDirective } from './common/directives/input-form.directive';
 import { HttpErrorsInterceptor } from './common/interceptors/http-errors.interceptor';
 import { ContentComponent } from './layouts/content/content.component';
 import { FullModule } from './layouts/full/full.module';
-import { counterReducer } from './pages/admin/reducer/home.reducer';
-import { generateReducer } from './pages/request/generate-sampling-supervision/generate-formats-verify-noncompliance/store/reducer';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -30,9 +29,11 @@ export function tokenGetter() {
         disallowedRoutes: [],
       },
     }),
-    StoreModule.forRoot({
-      count: counterReducer,
-      Item: generateReducer,
+    StoreModule.forRoot(ROOT_REDUCERS, {
+      runtimeChecks: {
+        strictStateImmutability: false,
+        strictActionImmutability: false,
+      },
     }),
     StoreDevtoolsModule.instrument({
       maxAge: 25,

@@ -42,6 +42,11 @@ const routes: Routes = [
       ).AdministrativeProcessesModule,
   },
   {
+    path: 'master-file',
+    loadChildren: async () =>
+      (await import('./master-file/master-file.module')).MasterFileModule,
+  },
+  {
     path: 'home',
     loadChildren: async () =>
       (await import('./admin/home/home.module')).HomeModule,
@@ -105,15 +110,6 @@ const routes: Routes = [
   },
 
   {
-    path: 'documentation-complementary',
-    loadChildren: async () =>
-      (
-        await import(
-          './documentation-complementary/documentation-complementary.module'
-        )
-      ).DocumentationComplementaryModule,
-  },
-  {
     path: 'scheduling-deliveries',
     loadChildren: async () =>
       (await import('./scheduling-deliveries/scheduling-deliveries.module'))
@@ -133,6 +129,18 @@ const routes: Routes = [
           './execute-return-deliveries/execute-return-deliveries.module'
         )
       ).ExecuteReturnDeliveriesModule,
+  },
+  {
+    path: 'siab-web',
+    loadChildren: async () =>
+      (await import('./siab-web/siab-web.module')).SiabWebModule,
+  },
+  {
+    path: 'assets-for-study',
+    loadChildren: async () =>
+      (await import('./assets-for-study/assets-for-study.module'))
+        .AssetsForStudyModule,
+    data: { title: 'Bienes para estudio' },
   },
 ];
 

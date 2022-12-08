@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { BsModalService } from 'ngx-bootstrap/modal';
@@ -6,11 +6,13 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { IRequestInformation } from '../../../../../core/models/requests/requestInformation.model';
 //Components
 import { CreateReportComponent } from '../../../shared-request/create-report/create-report.component';
+import { IRequestDocument } from './../../../../../core/models/requests/document.model';
+import { COMPENSATION_DICTUM_DOCS } from './docs-template';
 
 @Component({
   selector: 'app-gre-c-guidelines-revision-main',
   templateUrl: './gre-c-guidelines-revision-main.component.html',
-  styles: [],
+  styleUrls: ['./gre-c-guidelines-revision-main.component.scss'],
 })
 export class GreCGuidelinesRevisionMainComponent
   extends BasePage
@@ -19,7 +21,9 @@ export class GreCGuidelinesRevisionMainComponent
   requestId: number = NaN;
   contributor: string = '';
   requestInfo: IRequestInformation;
+  screenWidth: number;
   public typeDoc: string = '';
+  docTemplate: IRequestDocument[];
 
   constructor(
     private route: ActivatedRoute,
@@ -27,6 +31,11 @@ export class GreCGuidelinesRevisionMainComponent
     private modalService: BsModalService
   ) {
     super();
+    this.docTemplate = COMPENSATION_DICTUM_DOCS;
+    this.screenWidth =
+      window.innerWidth ||
+      document.documentElement.clientWidth ||
+      document.body.clientWidth;
   }
 
   ngOnInit(): void {
@@ -37,6 +46,12 @@ export class GreCGuidelinesRevisionMainComponent
       }
     });
     this.requestSelected(1);
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    let screenWidth = window.innerWidth;
+    this.screenWidth = screenWidth;
   }
 
   getRequestInfo(rquestId: number) {
@@ -87,7 +102,7 @@ export class GreCGuidelinesRevisionMainComponent
 
   createReport(context?: Partial<CreateReportComponent>): void {
     const modalRef = this.modalService.show(CreateReportComponent, {
-      initialState: context,
+      initialState: { documents: this.docTemplate },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });

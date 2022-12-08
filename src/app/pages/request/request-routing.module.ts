@@ -3,72 +3,13 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'schedule-reception',
+    path: 'programming-request',
     loadChildren: async () =>
       (
         await import(
-          './programming-request-components/schedule-reception/schedule-reception.module'
+          './programming-request-components/programming-request.module'
         )
-      ).ScheduleReceptionModule,
-    data: { title: 'Programar Recepción' },
-  },
-
-  {
-    path: 'perform-programming/:id',
-    loadChildren: async () =>
-      (
-        await import(
-          './programming-request-components/perform-programming/perform-programming.module'
-        )
-      ).PerformProgrammingModule,
-    data: { title: 'Programar Recepción' },
-  },
-
-  {
-    path: 'acept-programming',
-    loadChildren: async () =>
-      (
-        await import(
-          './programming-request-components/acept-programming/acept-programming.module'
-        )
-      ).AceptProgrammingModule,
-  },
-
-  {
-    path: 'execute-reception',
-    loadChildren: async () =>
-      (
-        await import(
-          './programming-request-components/execute-reception/execute-reception.module'
-        )
-      ).ExecuteReceptionModule,
-  },
-  {
-    path: 'validate-destiny',
-    loadChildren: async () =>
-      (
-        await import(
-          './programming-request-components/validate-destiny/validate-destiny.module'
-        )
-      ).ValidateDestinyModule,
-  },
-  {
-    path: 'formalize-programming',
-    loadChildren: async () =>
-      (
-        await import(
-          './programming-request-components/formalize-programming/formalize-programming.module'
-        )
-      ).FormalizeProgrammingModule,
-  },
-  {
-    path: 'schedule-notify',
-    loadChildren: async () =>
-      (
-        await import(
-          './programming-request-components/schedule-notify/schedule-notify.module'
-        )
-      ).ScheduleNotifyModule,
+      ).ProgrammingRequestModule,
   },
   {
     path: 'request-in-turn',
@@ -161,6 +102,17 @@ const routes: Routes = [
         .TransferRequestModule,
     data: { title: 'Solicitudes de transferencia' },
   },
+  //Generacion de muestreo para supervicon (servicio ordenes)
+  {
+    path: 'generate-sampling-service-orders',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-sampling-supervision-service-orders/generate-sampling-supervision-service-orders.module'
+        )
+      ).GenerateSamplingSupervisionServiceOrdersModule,
+    data: { title: 'Solicitudes de transferencia' },
+  },
   //Gestionar Bienes Similares
   {
     path: 'manage-similar-goods',
@@ -169,6 +121,7 @@ const routes: Routes = [
         .ManageSimilarGoodsModule,
     data: { title: '' },
   },
+  // Resarcimiento Economico
   {
     path: 'economic-compensation',
     loadChildren: async () =>
@@ -195,6 +148,16 @@ const routes: Routes = [
         )
       ).ReceptionSchedulingServiceOrderModule,
   },
+
+  {
+    path: 'delivery-service-order',
+    loadChildren: async () =>
+      (
+        await import(
+          './delivery-scheduling-service-order/delivery-scheduling-service.module'
+        )
+      ).DeliverySchedulingServiceModule,
+  },
   // Solicitud Documentación Complementaria
   {
     path: 'request-comp-doc',
@@ -205,6 +168,28 @@ const routes: Routes = [
         )
       ).RequestComplementaryDocumentationModule,
     data: { title: 'Registro de Solicitud Dcoumentación Complementaria' },
+  },
+  // Registrar Documentación Complementaria
+  {
+    path: 'register-documentation',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-request/register-request/register-request.module'
+        )
+      ).RegisterRequestModule,
+    data: { title: 'Registro de Dcoumentación Complementaria' },
+  },
+  // Solicitud de Informacion de Destino
+  {
+    path: 'destination-information-request',
+    loadChildren: async () =>
+      (
+        await import(
+          './destination-information-request/destination-information-request.module'
+        )
+      ).DestinationInformationRequestModule,
+    data: { title: 'Solicitud de Información de Destino' },
   },
 ];
 
