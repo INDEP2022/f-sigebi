@@ -16,6 +16,7 @@ import { ListParams } from '../../../../common/repository/interfaces/list-params
 import { BasePage } from '../../../../core/shared/base-page';
 import { RecipientDataComponent } from '../../prepare-request-responsables/recipient-data/recipient-data.component';
 import { UploadDocumentarySupportComponent } from '../../save-responsible-answer/upload-documentary-support/upload-documentary-support.component';
+import { ProgrammingDeliveryComponent } from '../../schedule-delivery-assets/programming-delivery/programming-delivery.component';
 import { ASSETS_LIST_COLUMNS } from './columns/list-asset-columns';
 import { ASSETS_LIST_SAVE_ANSWER_COLUMNS } from './columns/list-assets-save-answer-columns';
 
@@ -88,18 +89,17 @@ export class ListAssetsComponent extends BasePage implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.settingTheColumns();
-
     this.paragraphs.load(data);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.isSaving === true) {
-      //verificar que la lista no este vacia y que las cantidades no sean nulas
+      //enviar los datos al padre y verificar que la lista no este vacia y que las cantidades no sean nulas
       this.listAssetsData.emit(this.paragraphs['data']);
     }
   }
 
-  forStudySelected(event: any): void {
+  assetsSelected(event: any): void {
     this.listAssetsDeleted = event.selected;
   }
 
@@ -150,6 +150,14 @@ export class ListAssetsComponent extends BasePage implements OnInit, OnChanges {
     );
   }
 
+  scheduleDelivery(): void {
+    this.openModal(
+      ProgrammingDeliveryComponent,
+      this.listAssetsDeleted,
+      'schedule-delivery'
+    );
+  }
+
   openModal(component: any, information?: any, typeReport?: string) {
     let config: ModalOptions = {
       initialState: {
@@ -168,9 +176,20 @@ export class ListAssetsComponent extends BasePage implements OnInit, OnChanges {
   settingTheColumns() {
     if (this.typeComponent === 'save-answer') {
       this.saveAnswerColumns();
-    } else {
+    } else if (this.typeComponent === 'prepare-request') {
       this.prepareRequestColumns();
+    } else if (this.typeComponent === 'schedule-delivery') {
+      this.scheduleDeliveryColumns();
     }
+  }
+
+  scheduleDeliveryColumns(): void {
+    this.settings = {
+      ...TABLE_SETTINGS,
+      actions: false,
+      selectMode: 'multi',
+      columns: ASSETS_LIST_SAVE_ANSWER_COLUMNS,
+    };
   }
 
   saveAnswerColumns(): void {

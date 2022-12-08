@@ -19,5 +19,6 @@ import { ModalApprovalDonationComponent } from './modal-approval-donation/modal-
     SharedModule,
     FormsModule,
   ],
+  exports: [ModalApprovalDonationComponent],
 })
 export class ApprovalForDonationModule {}
