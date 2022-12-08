@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import {
   FINANCIAL_INFORMATION_COLUMNS1,
   FINANCIAL_INFORMATION_COLUMNS2,
@@ -41,9 +42,17 @@ export class FinancialInformationComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       noBien: [null, Validators.required],
       date: [null, Validators.required],
-      dictaminatedBy: [null, Validators.required],
-      avaluo: [null, Validators.required],
-      observations: [null, Validators.required],
+      dictaminatedBy: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
+      avaluo: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
+      observations: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
     });
   }
 }

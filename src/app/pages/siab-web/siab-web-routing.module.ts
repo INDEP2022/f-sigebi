@@ -13,6 +13,11 @@ const routes: Routes = [
     loadChildren: async () => (await import('./sami/sami.module')).SamiModule,
   },
   {
+    path: 'appraisals',
+    loadChildren: async () =>
+      (await import('./appraisals/appraisals.module')).AppraisalsModule,
+  },
+  {
     path: 'tracker',
     loadChildren: async () =>
       (await import('./tools/tracker/tracker.module')).TrackerModule,

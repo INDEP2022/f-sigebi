@@ -78,9 +78,9 @@ const routes: Routes = [
         loadChildren: async () =>
           (
             await import(
-              './resquest-numbering-change/pa-m-resquest-numbering-change.module'
+              './resquest-numbering-change/resquest-numbering-change.module'
             )
-          ).PaMResquestNumberingChangeModule,
+          ).ResquestNumberingChangeModule,
         data: { title: 'Solicitud de cambio a numeracion' },
       },
       {
@@ -88,56 +88,44 @@ const routes: Routes = [
         loadChildren: async () =>
           (
             await import(
-              './massive-reclassification-goods/pa-m-massive-reclassification-goods.module'
+              './massive-reclassification-goods/massive-reclassification-goods.module'
             )
-          ).PaMMassiveReclassificationGoodsModule,
+          ).MassiveReclassificationGoodsModule,
         data: { title: 'Reclasificación masiva de bienes' },
       },
       {
         path: 'change-of-status',
         loadChildren: async () =>
-          (await import('./change-of-status/pa-m-change-of-status.module'))
-            .PaMChangeOfStatusModule,
+          (await import('./change-of-status/change-of-status.module'))
+            .ChangeOfStatusModule,
         data: { title: 'Cambio de estatus' },
       },
       {
         path: 'massive-change-status',
         loadChildren: async () =>
-          (
-            await import(
-              './massive-change-status/pa-m-massive-change-status.module'
-            )
-          ).PaMMassiveChangeStatusModule,
+          (await import('./massive-change-status/massive-change-status.module'))
+            .MassiveChangeStatusModule,
         data: { title: 'Cambio masivo de estatus' },
       },
       {
         path: 'change-status-sti',
         loadChildren: async () =>
-          (
-            await import(
-              './change-of-status-sti/pa-m-change-of-status-sti.module'
-            )
-          ).PaMChangeOfStatusStiModule,
+          (await import('./change-of-status-sti/change-of-status-sti.module'))
+            .ChangeOfStatusStiModule,
         data: { title: 'Cambio de estatus sti' },
       },
       {
         path: 'payment-claim-process',
         loadChildren: async () =>
-          (
-            await import(
-              './payment-claim-process/pa-m-payment-claim-process.module'
-            )
-          ).PaMPaymentClaimProcessModule,
+          (await import('./payment-claim-process/payment-claim-process.module'))
+            .PaymentClaimProcessModule,
         data: { title: 'Proceso de reclamacion de pago' },
       },
       {
         path: 'legal-regularization',
         loadChildren: async () =>
-          (
-            await import(
-              './legal-regularization/pa-m-legal-regularization.module'
-            )
-          ).PaMLegalRegularizationModule,
+          (await import('./legal-regularization/legal-regularization.module'))
+            .LegalRegularizationModule,
         data: { title: 'Regularizacion Juridica' },
       },
       /**
@@ -146,32 +134,27 @@ const routes: Routes = [
       {
         path: 'summary-financial-info',
         loadChildren: () =>
-          import(
-            './companies/financial-info/pa-e-fi-m-financial-info.module'
-          ).then(m => m.PaEFiMFinancialInfoModule),
+          import('./companies/financial-info/financial-info.module').then(
+            m => m.FinancialInfoModule
+          ),
       },
       {
         path: 'warehouse-reports',
         loadChildren: () =>
-          import('./reports/warehouse/pa-r-wh-m-warehouse.module').then(
-            m => m.PaRWhMWarehouseModule
+          import('./reports/warehouse/warehouse.module').then(
+            m => m.WarehouseModule
           ),
       },
       {
         path: 'record-details',
         loadChildren: () =>
-          import('./reports/record/pa-r-r-m-record.module').then(
-            m => m.PaRRMRecordModule
-          ),
+          import('./reports/record/record.module').then(m => m.RecordModule),
       },
       {
         path: 'goods-type-crime-reports',
         loadChildren: async () =>
-          (
-            await import(
-              './reports/goods-type-crime/pa-gtc-m-goods-type-crime.module'
-            )
-          ).PaGtcMGoodsTypeCrimeModule,
+          (await import('./reports/goods-type-crime/goods-type-crime.module'))
+            .GoodsTypeCrimeModule,
         data: { title: 'Reporte de Bienes por Tipo de Delito' },
       },
       {
@@ -206,48 +189,42 @@ const routes: Routes = [
         path: 'unit-conversion-packages',
         loadChildren: () =>
           import(
-            './unit-conversion-packages/pa-ucp-m-unit-conversion-packages.module'
-          ).then(m => m.PaUcpMUnitConversionPackagesModule),
+            './unit-conversion-packages/unit-conversion-packages.module'
+          ).then(m => m.UnitConversionPackagesModule),
       },
       {
         path: 'goods-tracking',
         loadChildren: () =>
-          import('./goods-tracking/pa-gt-m-goods-tracking.module').then(
-            m => m.PaGtMGoodsTrackingModule
+          import('./goods-tracking/goods-tracking.module').then(
+            m => m.GoodsTrackingModule
           ),
       },
       {
         path: 'goods-management',
         loadChildren: () =>
-          import('./goods-management/pa-gm-m-goods-management.module').then(
-            m => m.PaGmMGoodsManagementModule
+          import('./goods-management/goods-management.module').then(
+            m => m.GoodsManagementModule
           ),
       },
       {
         path: 'siab-sami-interaction',
         loadChildren: () =>
-          import(
-            './siab-sami-interaction/pa-ssi-m-siab-sami-interaction.module'
-          ).then(m => m.PaSsiMSiabSamiInteractionModule),
+          import('./siab-sami-interaction/siab-sami-interaction.module').then(
+            m => m.SiabSamiInteractionModule
+          ),
       },
       {
         path: 'returns-confiscations',
         loadChildren: async () =>
-          (
-            await import(
-              './returns-confiscations/pa-rc-m-returns-confications.module'
-            )
-          ).PaRcMReturnsConficationsModule,
+          (await import('./returns-confiscations/returns-confications.module'))
+            .ReturnsConficationsModule,
         data: { title: 'Devoluciones y Decomisos' },
       },
       {
         path: 'reg-warehouse-contract',
         loadChildren: async () =>
-          (
-            await import(
-              './third-party-admin/warehouse/pa-tp-w-m-warehouse.module'
-            )
-          ).PaTpWMWarehouseModule,
+          (await import('./third-party-admin/warehouse/warehouse.module'))
+            .WarehouseModule,
         data: { title: 'Alta de Almacenes por Contrato' },
       },
       /**
@@ -258,7 +235,7 @@ const routes: Routes = [
         loadChildren: async () =>
           (
             await import(
-              './location-of-goods/location-goods-warehouses-storage/pa-lg-m-location-goods-warehouses-storage.module'
+              './location-of-goods/location-goods-warehouses-storage/location-goods-warehouses-storage.module'
             )
           ).PaLgMLocationGoodsWarehousesStorageModule,
         data: { title: 'Ubicacion de bienes' },
@@ -266,25 +243,21 @@ const routes: Routes = [
       {
         path: 'warehouse-inquiries',
         loadChildren: async () =>
-          (
-            await import(
-              './warehouse-inquiries/pa-m-warehouse-inquiries.module'
-            )
-          ).PaMWarehouseInquiriesModule,
+          (await import('./warehouse-inquiries/warehouse-inquiries.module'))
+            .WarehouseInquiriesModule,
         data: { title: 'Consulta Almacenes' },
       },
       {
         path: 'vault-consultation',
         loadChildren: async () =>
-          (await import('./vault-consultation/pa-m-vault-consultation.module'))
-            .PaMVaultConsultationModule,
+          (await import('./vault-consultation/vault-consultation.module'))
+            .VaultConsultationModule,
         data: { title: 'Consulta Bovedas' },
       },
       {
         path: 'property-registration',
         loadChildren: async () =>
-          (await import('./kitchenware/pa-m-kitchenware.module'))
-            .PaMKitchenwareModule,
+          (await import('./kitchenware/kitchenware.module')).KitchenwareModule,
         data: { title: 'Registro de mensaje del bien' },
       },
       {
@@ -337,8 +310,7 @@ const routes: Routes = [
       {
         path: 'services',
         loadChildren: async () =>
-          (await import('./services/pa-s-m-services.module'))
-            .PaSMServicesModule,
+          (await import('./services/services.module')).PaSMServicesModule,
         data: { title: 'Servicios' },
       },
       /**
