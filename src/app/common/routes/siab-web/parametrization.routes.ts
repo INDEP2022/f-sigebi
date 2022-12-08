@@ -10,6 +10,14 @@ export const PARAMETRIZATION_ROUTES = [
         label: 'Directrices',
         link: '/pages/siab-web/parametrization/guidelines',
       },
+      {
+        label: 'Consideraciones',
+        link: '/pages/siab-web/parametrization/considerations',
+      },
+      {
+        label: 'Regulaciones',
+        link: '/pages/siab-web/parametrization/regulations',
+      },
     ],
   },
 ];

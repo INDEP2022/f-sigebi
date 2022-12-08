@@ -13,6 +13,17 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./guidelines/guidelines.module')).GuidelinesModule,
   },
+  {
+    path: 'considerations',
+    loadChildren: async () =>
+      (await import('./considerations/considerations.module'))
+        .ConsiderationsModule,
+  },
+  {
+    path: 'regulations',
+    loadChildren: async () =>
+      (await import('./regulations/regulations.module')).RegulationsModule,
+  },
 ];
 
 @NgModule({
