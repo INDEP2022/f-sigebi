@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
@@ -8,6 +8,10 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { ModalApprovalDonationComponent } from './../modal-approval-donation/modal-approval-donation.component';
 import { COLUMNS_APPROVAL_DONATION } from './columns-approval-donation';
 
@@ -65,11 +69,11 @@ export class CaptureApprovalDonationComponent
   initForm() {
     this.regisForm = this.fb.group({
       type: [null, []],
-      area: [null, []],
+      area: [null, [Validators.pattern(STRING_PATTERN)]],
       year: [this.bsValueToYear, []],
-      folio: [null, []],
+      folio: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       captureDate: [null, []],
-      keyEvent: [null, []],
+      keyEvent: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
     });
   }
 

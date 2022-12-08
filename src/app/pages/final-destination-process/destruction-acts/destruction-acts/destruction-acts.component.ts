@@ -6,6 +6,10 @@ import {
 } from 'ngx-bootstrap/datepicker';
 import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { ListParams } from './../../../../common/repository/interfaces/list-params';
 import { COLUMNSTABL1 } from './columnsTable1';
 import { COLUMNSTABLE2 } from './columnsTable2';
@@ -72,28 +76,61 @@ export class DestructionActsComponent extends BasePage implements OnInit {
 
   initForm() {
     this.actForm = this.fb.group({
-      statusAct: [null, [Validators.required]],
-      preliminaryAscertainment: [null, [Validators.required]],
-      causePenal: [null, [Validators.required]],
+      statusAct: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      preliminaryAscertainment: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      causePenal: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       elabDate: [null, [Validators.required]],
       destructDate: [null, [Validators.required]],
       actSelect: [null, [Validators.required]],
       status: [null, [Validators.required]],
-      trans: [null, [Validators.required]],
-      destr: [null, [Validators.required]],
-      admin: [null, [Validators.required]],
-      folio: [null, [Validators.required]],
+      trans: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      destr: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      admin: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      folio: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
       year: [this.bsValueFromYear, [Validators.required]],
       month: [this.bsValueFromMonth, [Validators.required]],
-      act: [null, [Validators.required]],
-      address: [null, [Validators.required]],
-      observations: [null, [Validators.required]],
-      responsible: [null, [Validators.required]],
-      witness1: [null, [Validators.required]],
-      witness2: [null, []],
-      methodDestruct: [null, [Validators.required]],
-      witnessContr: [null, [Validators.required]],
-      folioScan: [null, [Validators.required]],
+      act: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      address: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      observations: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      responsible: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      witness1: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      witness2: [null, [Validators.pattern(STRING_PATTERN)]],
+      methodDestruct: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      witnessContr: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      folioScan: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
     });
 
     this.formTable1 = this.fb.group({

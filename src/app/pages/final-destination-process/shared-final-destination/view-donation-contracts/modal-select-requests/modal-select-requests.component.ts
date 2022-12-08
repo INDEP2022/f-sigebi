@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -32,7 +33,10 @@ export class ModalSelectRequestsComponent extends BasePage implements OnInit {
       this.form = this.fb.group({
         idDonee: [null, [Validators.required]],
         numbWarehouse: [null, [Validators.required]],
-        typeRequest: [null, [Validators.required]],
+        typeRequest: [
+          null,
+          [Validators.required, Validators.pattern(STRING_PATTERN)],
+        ],
       });
     } else {
       this.form = this.fb.group({
