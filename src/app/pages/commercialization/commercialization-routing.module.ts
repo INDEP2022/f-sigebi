@@ -353,9 +353,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './direct-sale-requests-capture/c-csvd-m-municipality-control/c-csvd-m-municipality-control.module'
+          './direct-sale-requests-capture/municipality-control/municipality-control.module'
         )
-      ).CCsvdMMunicipalityControlModule,
+      ).MunicipalityControlModule,
     data: { title: 'Control de Municipios' },
   },
   {

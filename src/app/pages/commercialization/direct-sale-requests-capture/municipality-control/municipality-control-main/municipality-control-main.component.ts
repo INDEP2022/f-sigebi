@@ -4,19 +4,19 @@ import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { CCsvdCApplicantsModalComponent } from '../c-csvd-c-applicants-modal/c-csvd-c-applicants-modal.component';
-import { CCsvdCAssignedGoodsModalComponent } from '../c-csvd-c-assigned-goods-modal/c-csvd-c-assigned-goods-modal.component';
+import { ApplicantsModalComponent } from '../applicants-modal/applicants-modal.component';
+import { AssignedGoodsModalComponent } from '../assigned-goods-modal/assigned-goods-modal.component';
 import {
   MUNICIPALITY_CONTROL_APPLICANT_COLUMNS,
   MUNICIPALITY_CONTROL_ASSIGNED_GOOD_COLUMNS,
-} from './c-csvd-municipality-control-columns';
+} from './municipality-control-columns';
 
 @Component({
-  selector: 'app-c-csvd-c-municipality-control-main',
-  templateUrl: './c-csvd-c-municipality-control-main.component.html',
+  selector: 'app-municipality-control-main',
+  templateUrl: './municipality-control-main.component.html',
   styles: [],
 })
-export class CCsvdCMunicipalityControlMainComponent
+export class MunicipalityControlMainComponent
   extends BasePage
   implements OnInit
 {
@@ -196,8 +196,8 @@ export class CCsvdCMunicipalityControlMainComponent
     this.openModalApplicant({ applicant });
   }
 
-  openModalApplicant(context?: Partial<CCsvdCApplicantsModalComponent>) {
-    const modalRef = this.modalService.show(CCsvdCApplicantsModalComponent, {
+  openModalApplicant(context?: Partial<ApplicantsModalComponent>) {
+    const modalRef = this.modalService.show(ApplicantsModalComponent, {
       initialState: { ...context },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
@@ -211,8 +211,8 @@ export class CCsvdCMunicipalityControlMainComponent
     this.openModalAssignedGood({ good });
   }
 
-  openModalAssignedGood(context?: Partial<CCsvdCAssignedGoodsModalComponent>) {
-    const modalRef = this.modalService.show(CCsvdCAssignedGoodsModalComponent, {
+  openModalAssignedGood(context?: Partial<AssignedGoodsModalComponent>) {
+    const modalRef = this.modalService.show(AssignedGoodsModalComponent, {
       initialState: { ...context },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
