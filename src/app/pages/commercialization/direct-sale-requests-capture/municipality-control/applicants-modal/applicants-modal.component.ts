@@ -6,11 +6,11 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
-  selector: 'app-c-csvd-c-applicants-modal',
-  templateUrl: './c-csvd-c-applicants-modal.component.html',
+  selector: 'app-applicants-modal',
+  templateUrl: './applicants-modal.component.html',
   styles: [],
 })
-export class CCsvdCApplicantsModalComponent extends BasePage implements OnInit {
+export class ApplicantsModalComponent extends BasePage implements OnInit {
   title: string = 'Solicitante';
   applicant: any;
   positions: number[] = [];
