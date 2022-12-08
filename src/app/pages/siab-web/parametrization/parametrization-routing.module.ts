@@ -8,6 +8,11 @@ const routes: Routes = [
       (await import('./ligies-chapters/ligies-chapters.module'))
         .LigiesChaptersModule,
   },
+  {
+    path: 'guidelines',
+    loadChildren: async () =>
+      (await import('./guidelines/guidelines.module')).GuidelinesModule,
+  },
 ];
 
 @NgModule({
