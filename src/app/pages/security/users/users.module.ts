@@ -11,19 +11,19 @@ import { SharedComponentsSecurityModule } from '../shared-components-security/sh
 /** SERVICE IMPORTS */
 
 /** ROUTING MODULE */
-import { SUsersRoutingModule } from './s-m-users-routing.module';
+import { UsersRoutingModule } from './users-routing.module';
 
 /** COMPONENTS IMPORTS */
-import { SUsersComponent } from './users/s-c-users.component';
+import { UsersComponent } from './users/users.component';
 
 @NgModule({
-  declarations: [SUsersComponent],
+  declarations: [UsersComponent],
   imports: [
     CommonModule,
-    SUsersRoutingModule,
+    UsersRoutingModule,
     SharedModule,
     TabsModule,
     SharedComponentsSecurityModule,
   ],
 })
-export class SUsersModule {}
+export class UsersModule {}

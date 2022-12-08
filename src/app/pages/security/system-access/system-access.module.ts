@@ -10,13 +10,13 @@ import { SharedModule } from 'src/app/shared/shared.module';
 /** SERVICE IMPORTS */
 
 /** ROUTING MODULE */
-import { SSystemAccessRoutingModule } from './s-m-system-access-routing.module';
+import { SystemAccessRoutingModule } from './system-access-routing.module';
 
 /** COMPONENTS IMPORTS */
-import { SSystemAccessComponent } from './system-access/s-c-system-access.component';
+import { SystemAccessComponent } from './system-access/system-access.component';
 
 @NgModule({
-  declarations: [SSystemAccessComponent],
-  imports: [CommonModule, SSystemAccessRoutingModule, SharedModule, TabsModule],
+  declarations: [SystemAccessComponent],
+  imports: [CommonModule, SystemAccessRoutingModule, SharedModule, TabsModule],
 })
-export class SSystemAccessModule {}
+export class SystemAccessModule {}

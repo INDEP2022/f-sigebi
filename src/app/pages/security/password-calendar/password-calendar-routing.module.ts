@@ -8,16 +8,16 @@ import { RouterModule, Routes } from '@angular/router';
 /** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
-import { SRAUReportAccessUserComponent } from './report-access-user/s-rau-c-report-access-user.component';
+import { PasswordCalendarComponent } from './password-calendar/password-calendar.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: SRAUReportAccessUserComponent,
+    component: PasswordCalendarComponent,
   },
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class SRAUReportAccessUserRoutingModule {}
+export class PasswordCalendarRoutingModule {}

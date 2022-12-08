@@ -15,11 +15,11 @@ import { ExampleService } from 'src/app/core/services/catalogs/example.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
-  selector: 'app-s-rau-c-report-access-user',
-  templateUrl: './s-rau-c-report-access-user.component.html',
-  styleUrls: ['./s-rau-c-report-access-user.component.scss'],
+  selector: 'app-report-access-user',
+  templateUrl: './report-access-user.component.html',
+  styleUrls: ['./report-access-user.component.scss'],
 })
-export class SRAUReportAccessUserComponent
+export class ReportAccessUserComponent
   extends BasePage
   implements OnInit, OnDestroy
 {

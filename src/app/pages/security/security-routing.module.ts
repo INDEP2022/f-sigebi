@@ -15,35 +15,34 @@ const routes: Routes = [
   {
     path: routesSecurity[0].link,
     loadChildren: async () =>
-      (await import('./password-calendar/s-cc-m-password-calendar.module'))
-        .SCCPasswordCalendarModule,
+      (await import('./password-calendar/password-calendar.module'))
+        .PasswordCalendarModule,
     data: { title: routesSecurity[0].label },
   },
   {
     path: routesSecurity[1].link,
     loadChildren: async () =>
-      (await import('./system-access/s-m-system-access.module'))
-        .SSystemAccessModule,
+      (await import('./system-access/system-access.module')).SystemAccessModule,
     data: { title: routesSecurity[1].label },
   },
   {
     path: routesSecurity[2].link,
     loadChildren: async () =>
-      (await import('./change-password/s-cc-m-change-password.module'))
-        .SCCChangePasswordModule,
+      (await import('./change-password/change-password.module'))
+        .ChangePasswordModule,
     data: { title: routesSecurity[2].label },
   },
   {
     path: routesSecurity[3].link,
     loadChildren: async () =>
-      (await import('./report-access-user/s-rau-m-report-access-user.module'))
-        .SRAUReportAccessUserModule,
+      (await import('./report-access-user/report-access-user.module'))
+        .ReportAccessUserModule,
     data: { title: routesSecurity[3].label },
   },
   {
     path: routesSecurity[4].link,
     loadChildren: async () =>
-      (await import('./users/s-m-users.module')).SUsersModule,
+      (await import('./users/users.module')).UsersModule,
     data: { title: routesSecurity[4].label },
   },
 ];

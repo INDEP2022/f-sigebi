@@ -9,19 +9,19 @@ import { SharedModule } from 'src/app/shared/shared.module';
 /** SERVICE IMPORTS */
 
 /** ROUTING MODULE */
-import { SRAUReportAccessUserRoutingModule } from './s-rau-m-report-access-user-routing.module';
+import { ReportAccessUserRoutingModule } from './report-access-user-routing.module';
 
 /** COMPONENTS IMPORTS */
 import { NgSelectModule } from '@ng-select/ng-select';
-import { SRAUReportAccessUserComponent } from './report-access-user/s-rau-c-report-access-user.component';
+import { ReportAccessUserComponent } from './report-access-user/report-access-user.component';
 
 @NgModule({
-  declarations: [SRAUReportAccessUserComponent],
+  declarations: [ReportAccessUserComponent],
   imports: [
     CommonModule,
-    SRAUReportAccessUserRoutingModule,
+    ReportAccessUserRoutingModule,
     SharedModule,
     NgSelectModule,
   ],
 })
-export class SRAUReportAccessUserModule {}
+export class ReportAccessUserModule {}

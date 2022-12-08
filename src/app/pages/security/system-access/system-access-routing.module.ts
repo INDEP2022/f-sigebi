@@ -8,16 +8,16 @@ import { RouterModule, Routes } from '@angular/router';
 /** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
-import { SUsersComponent } from './users/s-c-users.component';
+import { SystemAccessComponent } from './system-access/system-access.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: SUsersComponent,
+    component: SystemAccessComponent,
   },
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class SUsersRoutingModule {}
+export class SystemAccessRoutingModule {}

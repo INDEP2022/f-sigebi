@@ -8,16 +8,16 @@ import { RouterModule, Routes } from '@angular/router';
 /** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
-import { SCCChangePasswordComponent } from './change-password/s-cc-c-change-password.component';
+import { UsersComponent } from './users/users.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: SCCChangePasswordComponent,
+    component: UsersComponent,
   },
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class SCCChangePasswordRoutingModule {}
+export class UsersRoutingModule {}

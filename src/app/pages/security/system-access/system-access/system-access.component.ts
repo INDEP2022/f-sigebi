@@ -12,11 +12,11 @@ import { BasePage } from 'src/app/core/shared/base-page';
 /** COMPONENTS IMPORTS */
 
 @Component({
-  selector: 'app-s-c-system-access',
-  templateUrl: './s-c-system-access.component.html',
-  styleUrls: ['./s-c-system-access.component.scss'],
+  selector: 'app-system-access',
+  templateUrl: './system-access.component.html',
+  styleUrls: ['./system-access.component.scss'],
 })
-export class SSystemAccessComponent
+export class SystemAccessComponent
   extends BasePage
   implements OnInit, OnDestroy
 {

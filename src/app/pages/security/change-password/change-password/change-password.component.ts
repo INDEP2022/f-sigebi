@@ -12,11 +12,11 @@ import Swal from 'sweetalert2';
 /** COMPONENTS IMPORTS */
 
 @Component({
-  selector: 'app-s-cc-c-change-password',
-  templateUrl: './s-cc-c-change-password.component.html',
-  styleUrls: ['./s-cc-c-change-password.component.scss'],
+  selector: 'app-change-password',
+  templateUrl: './change-password.component.html',
+  styleUrls: ['./change-password.component.scss'],
 })
-export class SCCChangePasswordComponent
+export class ChangePasswordComponent
   extends BasePage
   implements OnInit, OnDestroy
 {

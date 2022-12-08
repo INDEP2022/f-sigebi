@@ -11,11 +11,11 @@ import { BasePage } from 'src/app/core/shared/base-page';
 /** COMPONENTS IMPORTS */
 
 @Component({
-  selector: 'app-s-cc-c-password-calendar',
-  templateUrl: './s-cc-c-password-calendar.component.html',
-  styleUrls: ['./s-cc-c-password-calendar.component.scss'],
+  selector: 'app-password-calendar',
+  templateUrl: './password-calendar.component.html',
+  styleUrls: ['./password-calendar.component.scss'],
 })
-export class SCCPasswordCalendarComponent
+export class PasswordCalendarComponent
   extends BasePage
   implements OnInit, OnDestroy
 {

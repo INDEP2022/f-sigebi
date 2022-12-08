@@ -8,16 +8,16 @@ import { RouterModule, Routes } from '@angular/router';
 /** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
-import { SSystemAccessComponent } from './system-access/s-c-system-access.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: SSystemAccessComponent,
+    component: ChangePasswordComponent,
   },
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class SSystemAccessRoutingModule {}
+export class ChangePasswordRoutingModule {}
