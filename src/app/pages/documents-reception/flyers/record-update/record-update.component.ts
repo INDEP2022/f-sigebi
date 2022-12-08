@@ -4,6 +4,10 @@ import { ActivatedRoute } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { PublicMinistriesComponent } from '../public-ministries/public-ministries.component';
 
@@ -43,14 +47,14 @@ export class RecordUpdateComponent extends BasePage implements OnInit {
       tipoVolante: ['Administrativo', [Validators.required]],
       fecRecepcion: [null],
       noConsecutivoDiario: [null],
-      actaCircust: [null],
-      averiguacionPrevia: [null],
-      causaPenal: [null],
-      cveAmparo: [null],
-      cveTocaPenal: [null],
-      cveOficioExterno: [null],
+      actaCircust: [null, Validators.pattern(STRING_PATTERN)],
+      averiguacionPrevia: [null, Validators.pattern(STRING_PATTERN)],
+      causaPenal: [null, Validators.pattern(STRING_PATTERN)],
+      cveAmparo: [null, Validators.pattern(KEYGENERATION_PATTERN)],
+      cveTocaPenal: [null, Validators.pattern(KEYGENERATION_PATTERN)],
+      cveOficioExterno: [null, Validators.pattern(KEYGENERATION_PATTERN)],
       fecOficioExterno: [null],
-      observaciones: [null],
+      observaciones: [null, Validators.pattern(STRING_PATTERN)],
       noExpediente: [null],
       remitenteExterno: [null],
       asunto: [null],
@@ -62,15 +66,15 @@ export class RecordUpdateComponent extends BasePage implements OnInit {
       emisora: [null],
       autoridad: [null],
       institucion: [null],
-      minPub: [null],
+      minPub: [null, Validators.pattern(STRING_PATTERN)],
       juzgado: [null],
       indicado: [null],
       delito: [null],
       recepcion: [null],
       area: [null],
       del: [null],
-      destinatario: [null],
-      justificacion: [null],
+      destinatario: [null, Validators.pattern(STRING_PATTERN)],
+      justificacion: [null, Validators.pattern(STRING_PATTERN)],
     });
   }
   publicMinistries() {

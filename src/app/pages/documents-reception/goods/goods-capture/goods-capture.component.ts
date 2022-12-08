@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { GoodsCaptureRecordSelectComponent } from './components/goods-capture-record-select/goods-capture-record-select.component';
 
@@ -31,14 +32,23 @@ export class GoodsCaptureComponent extends BasePage implements OnInit {
       subtype: [null, [Validators.required]],
       ssubtype: [null, [Validators.required]],
       sssubtype: [null, [Validators.required]],
-      unidadMedida: [null, [Validators.required]],
+      unidadMedida: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       cantidad: [null, [Validators.required]],
       noDestino: [null, [Validators.required]],
       destino: [null, [Validators.required]],
       noBien: [null, [Validators.required]],
-      valRef: [null, [Validators.required]],
-      identifica: [null, [Validators.required]],
-      descripcion: [null, [Validators.required]],
+      valRef: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      identifica: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      descripcion: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 
