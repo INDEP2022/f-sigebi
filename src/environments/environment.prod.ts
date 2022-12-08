@@ -2,7 +2,7 @@
  * Type window Object()
  */
 declare const window: any;
-
+console.log(window);
 export const environment = {
   production: true,
   API_URL: window.env.API_BACKEND_URL,
