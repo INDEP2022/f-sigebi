@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { WORK_MAILBOX_COLUMNS } from './work-mailbox-columns';
 
 @Component({
@@ -22,7 +23,7 @@ export class WorkMailboxComponent extends BasePage implements OnInit {
     verTramite: [null],
     actualizarBuzon: [null],
     pendientes: [null],
-    observaciones: [null],
+    observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
   });
   constructor(private fb: FormBuilder) {
     super();

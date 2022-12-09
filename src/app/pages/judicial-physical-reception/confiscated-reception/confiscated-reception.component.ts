@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { CONFISCATED_RECEPCION_COLUMNS } from './confiscated-recepcion-columns';
 
 @Component({
@@ -30,17 +34,38 @@ export class ConfiscatedReceptionComponent implements OnInit {
   prepareForm() {
     this.form = this.fb.group({
       expediente: [null, [Validators.required]],
-      averPrevia: [null, [Validators.required]],
-      causaPenal: [null, [Validators.required]],
-      cveActa: [null, [Validators.required]],
-      tipo: [null, [Validators.required]],
-      estatusFec: [null, [Validators.required]],
+      averPrevia: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      causaPenal: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      cveActa: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      tipo: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      estatusFec: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       fechaElab: [null, [Validators.required]],
       fechaElabRecibo: [null, [Validators.required]],
       fechaEntrega: [null, [Validators.required]],
-      recibeNombre: [null, [Validators.required]],
-      entregaNombre: [null, [Validators.required]],
-      observaciones: [null, [Validators.required]],
+      recibeNombre: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      entregaNombre: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      observaciones: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       estatus: [null, [Validators.required]],
     });
   }
