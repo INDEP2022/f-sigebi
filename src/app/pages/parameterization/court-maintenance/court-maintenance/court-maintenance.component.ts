@@ -4,6 +4,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -40,8 +41,14 @@ export class CourtMaintenanceComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       circuit: [null, [Validators.required]],
       descriptionStatus: [null, [Validators.required]],
-      targetIndicator: [null, [Validators.required]],
-      targetIndicatorDesc: [null, [Validators.required]],
+      targetIndicator: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      targetIndicatorDesc: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       delegation: [null, [Validators.required]],
     });
   }

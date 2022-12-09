@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 @Component({
   selector: 'app-register-attributes-types-modal',
   templateUrl: './register-attributes-types-modal.component.html',
@@ -31,8 +31,14 @@ export class RegisterAttributesTypesModalComponent implements OnInit {
           Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
-      description: [null, [Validators.required]],
-      attributes: [null, [Validators.required]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      attributes: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       typeDate: [null, [Validators.required]],
       longMax: [
         null,
@@ -46,7 +52,10 @@ export class RegisterAttributesTypesModalComponent implements OnInit {
       update: [null, [Validators.required]],
       unique: [null, [Validators.required]],
       requerid: [null, [Validators.required]],
-      tableSupport: [null, [Validators.required]],
+      tableSupport: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
     if (this.allotment != null) {
       this.edit = true;

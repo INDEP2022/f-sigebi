@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-banks-catalog',
@@ -22,16 +23,34 @@ export class BanksCatalogComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       bank: [null, [Validators.required]],
       nameBank: [null, [Validators.required]],
-      account: [null, [Validators.required]],
-      square: [null, [Validators.required]],
-      branch: [null, [Validators.required]],
-      currency: [null, [Validators.required]],
+      account: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      square: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      branch: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      currency: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       accountType: [null, [Validators.required]],
       delegation: [null, [Validators.required]],
-      accountTransferred: [null, [Validators.required]],
-      square_I: [null, [Validators.required]],
-      branch_I: [null, [Validators.required]],
-      currency_I: [null, [Validators.required]],
+      accountTransferred: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      square_I: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      branch_I: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      currency_I: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       accountType_I: [null, [Validators.required]],
     });
   }

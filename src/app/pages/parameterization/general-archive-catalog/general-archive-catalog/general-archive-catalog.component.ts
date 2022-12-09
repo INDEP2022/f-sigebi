@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { BATTERY_COLUMNS } from './battery-colums';
 import { LOCKERS_COLUMNS } from './lockers-columns';
 import { SHELF_COLUMNS } from './shelf-columns';
@@ -113,11 +114,23 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       delegation: [null, [Validators.required]],
-      ubication: [null, [Validators.required]],
+      ubication: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       responsible: [null, [Validators.required]],
-      battery: [null, [Validators.required]],
-      generate: [null, [Validators.required]],
-      backstage: [null, [Validators.required]],
+      battery: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      generate: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      backstage: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 

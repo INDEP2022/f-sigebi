@@ -1,6 +1,10 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-cat-doc-require-modal',
@@ -22,8 +26,14 @@ export class CatDocRequireModalComponent implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      cveDoc: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      cveDoc: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       typeDic: [null, [Validators.required]],
     });
     if (this.allotment != null) {

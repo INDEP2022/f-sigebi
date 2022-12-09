@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-cat-financial-information-attributes-modal',
@@ -28,8 +29,11 @@ export class CatFinancialInformationAttributesModalComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      name: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       type: [null, [Validators.required]],
       subType: [null, [Validators.required]],
     });

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DATEDOCUMENTS_COLUMNS } from './date-documents-columns';
 
 @Component({
@@ -31,7 +32,11 @@ export class DateDocumentsComponent extends BasePage implements OnInit {
   }
   private prepareForm() {
     this.dateDocumentsForm = this.fb.group({
-      proceedings: [null, Validators.required],
+      proceedings: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
     });
   }
 }

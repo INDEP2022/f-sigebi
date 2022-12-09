@@ -4,6 +4,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModalCatalogOfInventoryTypesComponent } from '../modal-catalog-of-inventory-types/modal-catalog-of-inventory-types.component';
 
 @Component({
@@ -54,8 +55,14 @@ export class CatalogOfInventoryTypesComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      inventoryType: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      inventoryType: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
   openModal(context?: Partial<ModalCatalogOfInventoryTypesComponent>) {
