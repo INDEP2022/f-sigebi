@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'certificates-filter',
@@ -11,13 +12,13 @@ export class CertificatesFilterComponent implements OnInit {
   form = this.fb.group({
     fechaFrom: [null, [Validators.required]],
     fechaTo: [null, [Validators.required]],
-    acta: [null, [Validators.required]],
-    estatus: [null, [Validators.required]],
+    acta: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+    estatus: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     cambioFrom: [null, [Validators.required]],
     cambioTo: [null, [Validators.required]],
     noEvento: [null, [Validators.required]],
     enProceso: [null, [Validators.required]],
-    proceso: [null, [Validators.required]],
+    proceso: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
   });
   constructor(private fb: FormBuilder) {}
 
