@@ -120,7 +120,7 @@ export class SelectSimilarGoodsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.nombrePantalla == 'similar-goods') {
+    if (this.nombrePantalla == 'register-documentation') {
       this.titleSelectedGoods = 'Bienes Seleccionados';
       this.initTableViewSimilarGoods();
     } else {
@@ -180,7 +180,7 @@ export class SelectSimilarGoodsComponent extends BasePage implements OnInit {
 
   initTableSelectedGood() {
     const self = this;
-    if (this.nombrePantalla == 'similar-goods') {
+    if (this.nombrePantalla == 'register-documentation') {
       this.selectedGoodSettings = this.selectedGoodSimilarGoodsSettings;
       this.data.load(this.goodTestData);
     } else {

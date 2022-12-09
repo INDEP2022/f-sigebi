@@ -23,6 +23,13 @@ const routes: Routes = [
         m => m.ScheduleEyeVisitsModule
       ),
   },
+  {
+    path: 'validate-eye-visit-result/:id/:typeOfRequest',
+    loadChildren: () =>
+      import(
+        './validate-eye-visit-result/validate-eye-visit-result.module'
+      ).then(m => m.ValidateEyeVisitResultModule),
+  },
 ];
 
 @NgModule({
