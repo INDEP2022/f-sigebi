@@ -17,6 +17,10 @@ import { ExampleService } from 'src/app/core/services/catalogs/example.service';
 /** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -66,21 +70,21 @@ export class FileDataUpdateComponent
       tipoVolante: [null, [Validators.required]],
       fecRecepcion: [null],
       noConsecutivoDiario: [null],
-      actaCircunst: [null],
-      averiguacionPrevia: [null],
-      causaPenal: [null],
+      actaCircunst: [null, [Validators.pattern(STRING_PATTERN)]],
+      averiguacionPrevia: [null, [Validators.pattern(STRING_PATTERN)]],
+      causaPenal: [null, [Validators.pattern(STRING_PATTERN)]],
       cveAmparo: [null],
-      cveTocaPenal: [null],
-      cveOficioExterno: [null],
+      cveTocaPenal: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      cveOficioExterno: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       fecOficioExterno: [null],
-      observaciones: [null],
+      observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
       noExpediente: [null],
-      remitenteExterno: [null],
-      asunto: [null],
-      desahogoAsunto: [null],
-      ciudad: [null],
+      remitenteExterno: [null, [Validators.pattern(STRING_PATTERN)]],
+      asunto: [null, [Validators.pattern(STRING_PATTERN)]],
+      desahogoAsunto: [null, [Validators.pattern(STRING_PATTERN)]],
+      ciudad: [null, [Validators.pattern(STRING_PATTERN)]],
       entidadFed: [null],
-      claveUnica: [null],
+      claveUnica: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       transferente: [null],
       emisora: [null],
       autoridad: [null],
@@ -92,8 +96,8 @@ export class FileDataUpdateComponent
       recepcion: [null],
       area: [null],
       del: [null],
-      destinatario: [null],
-      justificacion: [null],
+      destinatario: [null, [Validators.pattern(STRING_PATTERN)]],
+      justificacion: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

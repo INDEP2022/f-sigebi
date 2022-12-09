@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { inputSelect } from '../interfaces/input-select';
 import { COLUMNS_CAPTURE_EVENTS } from './columns-capture-events';
 
@@ -43,21 +47,21 @@ export class EventCaptureComponent extends BasePage implements OnInit {
       captureDate: [null, []],
       responsible: [null, []],
       prog: [null, []],
-      transference: [null, []],
+      transference: [null, [Validators.pattern(STRING_PATTERN)]],
       type: [null, []],
-      area: [null, []],
-      user: [null, []],
-      folio: [null, []],
+      area: [null, [Validators.pattern(STRING_PATTERN)]],
+      user: [null, [Validators.pattern(STRING_PATTERN)]],
+      folio: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       date: [null, []],
     });
 
     this.formSiab = this.fb.group({
       dateSiab: [null, []],
-      proceedings: [null, []],
-      delegation: [null, []],
-      transferenceSiab: [null, []],
-      transmitter: [null, []],
-      authority: [null, []],
+      proceedings: [null, [Validators.pattern(STRING_PATTERN)]],
+      delegation: [null, [Validators.pattern(STRING_PATTERN)]],
+      transferenceSiab: [null, [Validators.pattern(STRING_PATTERN)]],
+      transmitter: [null, [Validators.pattern(STRING_PATTERN)]],
+      authority: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModalReasonComponent } from './modal-reason.component';
 
 @Component({
@@ -71,8 +72,14 @@ export class ReturnAbandonmentMonitorComponent
   private buildForm() {
     this.form = this.fb.group({
       goodNumber: [null, [Validators.required]],
-      descriptionGood: [null, [Validators.required]],
-      descriptionStatus: [null, [Validators.required]],
+      descriptionGood: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      descriptionStatus: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       typeGood: [null, [Validators.required]],
       dateReturn: [null, [Validators.required]],
       notificationDate: [null, [Validators.required]],

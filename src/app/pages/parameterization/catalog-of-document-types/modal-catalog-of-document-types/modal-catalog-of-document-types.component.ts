@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-modal-catalog-of-document-types',
@@ -22,8 +23,14 @@ export class ModalCatalogOfDocumentTypesComponent implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      typesDocuments: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      typesDocuments: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
     if (this.allotment != null) {
       this.edit = true;

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -42,7 +43,10 @@ export class WareahouseCatalogComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       property: [null, [Validators.required]],
       warehouse: [null, [Validators.required]],
-      warehouse_I: [null, [Validators.required]],
+      warehouse_I: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 

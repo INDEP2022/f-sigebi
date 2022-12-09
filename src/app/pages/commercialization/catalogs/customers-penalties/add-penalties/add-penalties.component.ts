@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-add-penalties',
@@ -36,7 +37,10 @@ export class AddPenaltiesComponent extends BasePage implements OnInit {
       batchId: [null, [Validators.required]],
       typePenalty: [null, [Validators.required]],
       penaltyDescription: [null, [Validators.required]],
-      observations: [null, [Validators.required]],
+      observations: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       penaltyDate: [null, [Validators.required]],
     });
 

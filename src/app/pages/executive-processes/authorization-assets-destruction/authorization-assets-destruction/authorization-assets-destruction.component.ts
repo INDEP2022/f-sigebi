@@ -5,7 +5,11 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { maxDate } from 'src/app/common/validations/date.validators';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  KEYGENERATION_PATTERN,
+  NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { ASSETS_DESTRUCTION_COLUMLNS } from './authorization-assets-destruction-columns';
 //XLSX
 import { BehaviorSubject } from 'rxjs';
@@ -66,15 +70,15 @@ export class AuthorizationAssetsDestructionComponent
           Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
-      preInquiry: [null],
-      criminalCase: [null],
-      circumstAct: [null],
-      touchPenalty: [null],
-      noAuth: [null],
-      authNotice: [null],
+      preInquiry: [null, Validators.pattern(STRING_PATTERN)],
+      criminalCase: [null, Validators.pattern(STRING_PATTERN)],
+      circumstAct: [null, Validators.pattern(STRING_PATTERN)],
+      touchPenalty: [null, Validators.pattern(STRING_PATTERN)],
+      noAuth: [null, Validators.pattern(STRING_PATTERN)],
+      authNotice: [null, Validators.pattern(STRING_PATTERN)],
       fromDate: [null, maxDate(new Date())],
-      scanFolio: [null],
-      cancelSheet: [null],
+      scanFolio: [null, Validators.pattern(KEYGENERATION_PATTERN)],
+      cancelSheet: [null, Validators.pattern(KEYGENERATION_PATTERN)],
     });
   }
 

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { SEPARATE_FOLIOS_COLUMNS } from './separate-folios-columns';
 
 @Component({
@@ -29,8 +30,14 @@ export class SeparateFoliosModalComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       serie: [null, [Validators.required]],
       folio: [null, [Validators.required]],
-      separate: [null, [Validators.required]],
-      userRegister: [null, [Validators.required]],
+      separate: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      userRegister: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       dateRegister: [null, [Validators.required]],
     });
   }

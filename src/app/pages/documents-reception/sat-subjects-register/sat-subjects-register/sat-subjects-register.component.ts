@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
@@ -34,13 +38,13 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
     this.satForm = this.fb.group({
       from: [null],
       to: [null],
-      asunto: [null],
+      asunto: [null, Validators.pattern(STRING_PATTERN)],
       cordinador: [null],
-      document: [null],
-      status: [null],
-      cve: [null],
-      master: [null],
-      house: [null],
+      document: [null, Validators.pattern(STRING_PATTERN)],
+      status: [null, Validators.pattern(STRING_PATTERN)],
+      cve: [null, Validators.pattern(KEYGENERATION_PATTERN)],
+      master: [null, Validators.pattern(STRING_PATTERN)],
+      house: [null, Validators.pattern(STRING_PATTERN)],
       expediente: [null],
     });
   }

@@ -2,6 +2,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -34,13 +38,13 @@ export class GenerationFilesTradesComponent
       noVolante: ['', [Validators.required]], //*
       noExpediente: '',
       noOficio: '',
-      tipoOficio: '',
-      estatus: '',
-      cveOficio: '', // Campo extenso
-      oficioPor: '',
-      remitente: '',
-      destinatario: '',
-      nomPerExt: '', // Campo extenso
+      tipoOficio: ['', [Validators.pattern(STRING_PATTERN)]],
+      estatus: ['', [Validators.pattern(STRING_PATTERN)]],
+      cveOficio: ['', [Validators.pattern(KEYGENERATION_PATTERN)]], // Campo extenso
+      oficioPor: ['', [Validators.pattern(STRING_PATTERN)]],
+      remitente: ['', [Validators.pattern(STRING_PATTERN)]],
+      destinatario: ['', [Validators.pattern(STRING_PATTERN)]],
+      nomPerExt: ['', [Validators.pattern(STRING_PATTERN)]], // Campo extenso
     });
   }
 

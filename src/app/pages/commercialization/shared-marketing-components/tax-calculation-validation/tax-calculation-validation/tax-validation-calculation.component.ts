@@ -8,6 +8,10 @@ import { InconsistenciesComponent } from '../inconsistencies/inconsistencies.com
 import { RateChangeComponent } from '../rate-change/rate-change.component';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { COLUMNS, COLUMNS2 } from './columns';
 
 @Component({
@@ -55,13 +59,25 @@ export class TaxValidationCalculationComponent
     this.form = this.fb.group({
       range: [20, [Validators.required]],
       eventId: [null, [Validators.required]],
-      processKey: [null, [Validators.required]],
+      processKey: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
       eventDate: [null, [Validators.required]],
-      observations: [null, [Validators.required]],
+      observations: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       requestDate: [null, [Validators.required]],
-      requestType: [null, [Validators.required]],
-      status: [null, [Validators.required]],
-      reference: [null, [Validators.required]],
+      requestType: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      status: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      reference: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 

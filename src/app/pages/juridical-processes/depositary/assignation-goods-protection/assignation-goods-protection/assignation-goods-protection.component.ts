@@ -12,6 +12,7 @@ import { ExampleService } from 'src/app/core/services/catalogs/example.service';
 /** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -88,25 +89,25 @@ export class AssignationGoodsProtectionComponent
   private prepareForm() {
     this.form = this.fb.group({
       noExpediente: ['', [Validators.required]], //*
-      averiguacionPrevia: '',
-      causaPenal: '',
+      averiguacionPrevia: ['', [Validators.pattern(STRING_PATTERN)]],
+      causaPenal: ['', [Validators.pattern(STRING_PATTERN)]],
     });
     this.formTipoSuspersion = this.fb.group({
       tipoSuspersion: '', // Provisional, Definitiva, De plano
       fechaInformePrevio: '',
-      justificado: '',
-      observaciones: '',
+      justificado: ['', [Validators.pattern(STRING_PATTERN)]],
+      observaciones: ['', [Validators.pattern(STRING_PATTERN)]],
     });
     this.formAmparo = this.fb.group({
-      amparo: ['', [Validators.required]],
+      amparo: ['', [Validators.required, Validators.pattern(STRING_PATTERN)]],
       tipoAmparo: ['', [Validators.required]], //* Directo, Indirecto
       fechaOficio: '',
       minPub: '', // Detalle Min. Pub.
       noJuzgado: '', // Detalle No Juzgado
       responsable: '',
       delegacion: '', // 4 campos con el primero en id
-      quejosos: '',
-      actoReclamado: '',
+      quejosos: ['', [Validators.pattern(STRING_PATTERN)]],
+      actoReclamado: ['', [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

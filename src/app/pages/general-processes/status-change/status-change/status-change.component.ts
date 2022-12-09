@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -12,7 +13,7 @@ export class StatusChangeComponent implements OnInit {
     bien: [null, [Validators.required]],
     actual: [null, [Validators.required]],
     nuevo: [null, [Validators.required]],
-    motivo: [null, [Validators.required]],
+    motivo: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
   });
   select = new DefaultSelect();
   constructor(private fb: FormBuilder) {}

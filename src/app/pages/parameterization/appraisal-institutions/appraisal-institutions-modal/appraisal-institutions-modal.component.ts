@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import {
+  PHONE_PATTERN,
+  RFCCURP_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-appraisal-institutions-modal',
@@ -19,19 +24,39 @@ export class AppraisalInstitutionsModalComponent implements OnInit {
   private prepareForm() {
     this.appraisalInstitutionsForm = this.fb.group({
       noAppraiser: [null, Validators.required],
-      nameComplete: [null, Validators.required],
-      street: [null, Validators.required],
+      nameComplete: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
+      street: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
       noExterior: [null, Validators.required],
       noInside: [null, Validators.required],
       postalCode: [null, Validators.required],
-      colony: [null, Validators.required],
-      delegationMunicipality: [null, Validators.required],
-      federalEntity: [null, Validators.required],
-      rfc: [null, Validators.required],
-      curp: [null, Validators.required],
-      phone: [null, Validators.required],
-      representative: [null, Validators.required],
-      observations: [null, Validators.required],
+      colony: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
+      delegationMunicipality: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
+      federalEntity: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
+      rfc: [null, Validators.required, Validators.pattern(RFCCURP_PATTERN)],
+      curp: [null, Validators.required, Validators.pattern(RFCCURP_PATTERN)],
+      phone: [null, Validators.required, Validators.pattern(PHONE_PATTERN)],
+      representative: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
+      observations: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
     });
   }
   close() {
