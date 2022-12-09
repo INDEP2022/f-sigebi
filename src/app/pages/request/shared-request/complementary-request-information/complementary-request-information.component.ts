@@ -37,6 +37,7 @@ export class ComplementaryRequestInformationComponent
   titleArray = [
     'Bienes Similares: Registro de Documentación Complementaria, No. Solicitud: requestNumb',
     'Bienes Similares: Programar Visita Ocular, No. Solicitud requestNumb, Contribuyente: taxPayer, PAMA: pama',
+    'Bienes Similares: Validar Resultado Visita Ocular, No. Solicitud requestNumb, Contribuyente: taxPayer, PAMA: pama',
   ];
 
   constructor(
