@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { BasePage } from '../../../../../core/shared/base-page';
 
 @Component({
@@ -23,7 +24,7 @@ export class CBROimCReportsModalComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.titleForm = this.fb.group({
-      title: [null, [Validators.required]],
+      title: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
   }
 

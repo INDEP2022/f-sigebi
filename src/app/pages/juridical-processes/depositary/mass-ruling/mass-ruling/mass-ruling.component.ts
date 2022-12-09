@@ -1,7 +1,11 @@
 /** BASE IMPORT */
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -82,16 +86,19 @@ export class MassRulingComponent extends BasePage implements OnInit, OnDestroy {
       noOficio: '', //*
       tipoDictaminacion: '',
       fecha: '',
-      estatus: '',
-      claveOficioArmada: '',
+      estatus: ['', [Validators.pattern(STRING_PATTERN)]],
+      claveOficioArmada: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
       fechaInstructora: '',
-      usuarioDictamina: '',
+      usuarioDictamina: ['', [Validators.pattern(STRING_PATTERN)]],
       noVolante: '',
       noExpediente: '',
       eliminar: '', // Check
     });
     this.formCargaMasiva = this.fb.group({
-      identificadorCargaMasiva: '',
+      identificadorCargaMasiva: [
+        '',
+        [Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
     });
   }
 

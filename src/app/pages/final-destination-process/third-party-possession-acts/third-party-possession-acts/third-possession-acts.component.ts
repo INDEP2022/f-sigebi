@@ -8,6 +8,10 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DetailDelegationsComponent } from '../../shared-final-destination/detail-delegations/detail-delegations.component';
 import { DELEGATIONS_COLUMNS } from '../delegations-columns';
 import { COLUMNS } from './columns';
@@ -49,28 +53,70 @@ export class ThirdPossessionActsComponent extends BasePage implements OnInit {
 
   initForm() {
     this.actForm = this.fb.group({
-      statusAct: [null, [Validators.required]],
-      preliminaryAscertainment: [null, [Validators.required]],
-      causePenal: [null, [Validators.required]],
-      crimeKey: [null, [Validators.required]],
-      crime: [null, [Validators.required]],
+      statusAct: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      preliminaryAscertainment: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      causePenal: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      crimeKey: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      crime: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       actSelect: [null, [Validators.required]],
       status: [null, [Validators.required]],
-      authority: [null, [Validators.required]],
-      delivery: [null, [Validators.required]],
-      admin: [null, [Validators.required]],
-      folio: [null, [Validators.required]],
-      act: [null, [Validators.required]],
+      authority: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      delivery: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      admin: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      folio: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      act: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       elabDate: [null, [Validators.required]],
       year: [this.bsValueFromYear, [Validators.required]],
       month: [this.bsValueFromMonth, [Validators.required]],
-      folioScan: [null, [Validators.required]],
-      orderingJudge: [null, [Validators.required]],
-      observations: [null, [Validators.required]],
-      deliveryName: [null, [Validators.required]],
-      beneficiary: [null, [Validators.required]],
-      witness: [null, [Validators.required]],
-      auditor: [null, [Validators.required]],
+      folioScan: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      orderingJudge: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      observations: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      deliveryName: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      beneficiary: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      witness: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      auditor: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
 
     this.formTable1 = this.fb.group({

@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ASSETS_DESTINATION_COLUMNS } from './approval-assets-destination-columns';
 
 @Component({
@@ -54,10 +54,10 @@ export class ApprovalAssetsDestinationComponent
           Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
-      preInquiry: [null],
-      criminalCase: [null],
-      circumstAct: [null],
-      touchPenalty: [null],
+      preInquiry: [null, Validators.pattern(STRING_PATTERN)],
+      criminalCase: [null, Validators.pattern(STRING_PATTERN)],
+      circumstAct: [null, Validators.pattern(STRING_PATTERN)],
+      touchPenalty: [null, Validators.pattern(STRING_PATTERN)],
     });
   }
 

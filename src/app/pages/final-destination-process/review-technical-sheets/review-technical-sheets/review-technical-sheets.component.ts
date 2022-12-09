@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -30,14 +31,29 @@ export class ReviewTechnicalSheetsComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       initDate: [null, [Validators.required]],
       endDate: [null, [Validators.required]],
-      proceedingsSiab: [null, [Validators.required]],
+      proceedingsSiab: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       initAct: [null, [Validators.required]],
       endAct: [null, [Validators.required]],
-      userUploadAct: [null, [Validators.required]],
-      regCoordination: [null, [Validators.required]],
-      transf: [null, [Validators.required]],
-      issuing: [null, [Validators.required]],
-      authority: [null, [Validators.required]],
+      userUploadAct: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      regCoordination: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      transf: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      issuing: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      authority: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 

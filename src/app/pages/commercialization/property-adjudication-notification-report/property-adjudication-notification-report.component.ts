@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 @Component({
@@ -61,17 +65,26 @@ export class PropertyAdjudicationNotificationReportComponent implements OnInit {
   prepareForm() {
     this.form = this.fb.group({
       evento: [null, [Validators.required]],
-      claveOficio: [null, [Validators.required]],
+      claveOficio: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
       fechaFallo: [null, [Validators.required]],
       FechaLimPago: [null, [Validators.required]],
-      texto1: [null, [Validators.required]],
-      texto2: [null, [Validators.required]],
-      texto3: [null, [Validators.required]],
-      texto4: [null, [Validators.required]],
-      firmante: [null, [Validators.required]],
-      elaboro: [null, [Validators.required]],
-      ccp1: [null, [Validators.required]],
-      ccp2: [null, [Validators.required]],
+      texto1: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      texto2: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      texto3: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      texto4: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      firmante: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      elaboro: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      ccp1: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      ccp2: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
   }
 }

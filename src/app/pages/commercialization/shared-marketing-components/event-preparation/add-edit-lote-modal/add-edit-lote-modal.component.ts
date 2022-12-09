@@ -2,7 +2,11 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  NUMBERS_PATTERN,
+  RFCCURP_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-add-edit-lote-modal',
@@ -40,10 +44,13 @@ export class AddEditLoteModalComponent extends BasePage implements OnInit {
           Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
-      descripcion: [null, [Validators.required]],
+      descripcion: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       valorbase: [null, [Validators.required]],
       idcliente: [null],
-      rfc: [null],
+      rfc: [null, Validators.pattern(RFCCURP_PATTERN)],
       check: [false],
     });
     if (this.allotment != null) {

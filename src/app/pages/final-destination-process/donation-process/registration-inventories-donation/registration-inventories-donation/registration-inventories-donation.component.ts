@@ -3,6 +3,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -34,16 +38,37 @@ export class RegistrationInventoriesDonationComponent
     this.form = this.fb.group({
       idRequest: [null, [Validators.required]],
       idDonee: [null, [Validators.required]],
-      doneeDescrip: [null, [Validators.required]],
-      justification: [null, [Validators.required]],
-      representative: [null, [Validators.required]],
-      position: [null, [Validators.required]],
-      state: [null, [Validators.required]],
-      municipality: [null, [Validators.required]],
-      direction: [null, [Validators.required]],
+      doneeDescrip: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      justification: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      representative: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      position: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      state: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      municipality: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      direction: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       requestDate: [null, [Validators.required]],
       status: [null, [Validators.required]],
-      cveAuth: [null, [Validators.required]],
+      cveAuth: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
       authDate: [null, [Validators.required]],
     });
 

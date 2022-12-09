@@ -6,6 +6,10 @@ import {
 } from 'ngx-bootstrap/datepicker';
 import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { ListParams } from './../../../../common/repository/interfaces/list-params';
 import { COLUMNS1 } from './columns1';
 import { COLUMNS2 } from './columns2';
@@ -53,27 +57,54 @@ export class DonationActsComponent extends BasePage implements OnInit {
 
   initForm() {
     this.actForm = this.fb.group({
-      statusAct: [null, [Validators.required]],
-      preliminaryAscertainment: [null, [Validators.required]],
-      causePenal: [null, [Validators.required]],
+      statusAct: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      preliminaryAscertainment: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      causePenal: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       actSelect: [null, [Validators.required]],
       status: [null, [Validators.required]],
-      trans: [null, [Validators.required]],
-      don: [null, [Validators.required]],
-      admin: [null, [Validators.required]],
-      folio: [null, [Validators.required]],
+      trans: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      don: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      admin: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      folio: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
       year: [this.bsValueFromYear, [Validators.required]],
       month: [this.bsValueFromMonth, [Validators.required]],
-      act: [null, [Validators.required]],
-      address: [null, [Validators.required]],
+      act: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      address: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       elabDate: [null, [Validators.required]],
       donationDate: [null, [Validators.required]],
       observations: [null, [Validators.required]],
-      deliveryName: [null, [Validators.required]],
-      receiverName: [null, [Validators.required]],
-      auditor: [null, []],
-      comptrollerWitness: [null, [Validators.required]],
-      folioScan: [null, [Validators.required]],
+      deliveryName: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      receiverName: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      auditor: [null, [Validators.pattern(STRING_PATTERN)]],
+      comptrollerWitness: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      folioScan: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
     });
 
     this.formTable1 = this.fb.group({

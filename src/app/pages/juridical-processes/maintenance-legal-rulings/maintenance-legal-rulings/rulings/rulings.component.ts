@@ -6,8 +6,12 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -37,22 +41,22 @@ export class RulingsComponent extends BasePage implements OnInit, OnDestroy {
   private prepareForm() {
     this.form = this.fb.group({
       noDictaminacion: '',
-      claveDictaminacion: '',
+      claveDictaminacion: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
       noExpediente: '',
       tipo: '',
-      estatusDictaminacion: '',
+      estatusDictaminacion: ['', [Validators.pattern(STRING_PATTERN)]],
       fechaDictaminacion: '',
-      usuarioDictamina: '',
-      observaciones: '',
+      usuarioDictamina: ['', [Validators.pattern(STRING_PATTERN)]],
+      observaciones: ['', [Validators.pattern(STRING_PATTERN)]],
       noDelegacion: '',
-      areaDictamina: '',
+      areaDictamina: ['', [Validators.pattern(STRING_PATTERN)]],
       fechaInstructora: '',
-      delito: '',
+      delito: ['', [Validators.pattern(STRING_PATTERN)]],
       noVolante: '',
       fechaAseguramiento: '',
       fechaResolucion: '',
       fechaNotificaResolucion: '',
-      folioUniversal: '',
+      folioUniversal: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
       fechaIngreso: '',
       fechaDictaminacionHC: '',
       fechaIngresoHC: '',
