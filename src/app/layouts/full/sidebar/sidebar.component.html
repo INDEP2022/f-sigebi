@@ -81,7 +81,10 @@
 <!-- Sidebar -->
 
 <div class="vertical-menu">
-  <ng-scrollbar class="h-100" #componentRef>
+  <ng-scrollbar
+    class="h-100 scrollbar-menu"
+    #componentRef
+    thumbClass="scrollbar-thumb">
     <div *ngIf="!isCondensed">
       <ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
     </div>
