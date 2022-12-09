@@ -2,6 +2,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -69,7 +70,10 @@ export class ResolutionRevisionResourcesComponent
 
   startApp() {
     this.form = this.fb.group({
-      resolucion: ['', [Validators.required]], //*
+      resolucion: [
+        '',
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ], //*
     });
   }
 

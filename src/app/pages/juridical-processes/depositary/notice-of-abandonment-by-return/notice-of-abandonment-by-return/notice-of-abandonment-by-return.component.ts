@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -57,11 +58,23 @@ export class NoticeOfAbandonmentByReturnComponent
   private buildForm() {
     this.form = this.fb.group({
       numberGood: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       amount: [null, [Validators.required]],
-      periods: [null, [Validators.required]],
-      periods1: [null, [Validators.required]],
-      periods2: [null, [Validators.required]],
+      periods: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      periods1: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      periods2: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 }
