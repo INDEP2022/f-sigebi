@@ -332,6 +332,24 @@ export const MENU: IMenuItem[] = [
         label: 'Generar Solicitud',
         link: '/pages/assets-for-study/generate-request',
       },
+
+      //David routes
+      {
+        label: 'Clasificar bienes programados',
+        link: '/pages/assets-for-study/clasify-programmed-goods',
+      },
+      {
+        label: 'Generar e imprimir constancia de bienes programados',
+        link: '/pages/assets-for-study/generate-document-of-programmed-goods',
+      },
+      {
+        label: 'Cambiar destino al bien entregado',
+        link: '/pages/assets-for-study/change-destiny-delivered-goods',
+      },
+      {
+        label: 'Generar e imprimir constancia de bienes no aceptados',
+        link: '/pages/assets-for-study/generate-document-not-accepted-goods',
+      },
     ],
   },
 
