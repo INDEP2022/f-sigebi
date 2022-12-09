@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -52,9 +53,9 @@ export class DepositaryPaymentChargesComponent
   private buildForm() {
     this.form = this.fb.group({
       numberGood: [null, [Validators.required]],
-      event: [null, [Validators.required]],
-      bank: [null, [Validators.required]],
-      loand: [null, [Validators.required]],
+      event: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      bank: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      loand: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
   }
 

@@ -3,6 +3,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-income-orders-depository-goods',
@@ -59,13 +63,22 @@ export class IncomeOrdersDepositoryGoodsComponent
   private buildForm() {
     this.form = this.fb.group({
       numberGood: [null, [Validators.required]],
-      contractKey: [null, [Validators.required]],
-      depositary: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      contractKey: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      depositary: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       date: [null, [Validators.required]],
-      user: [null, [Validators.required]],
+      user: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       username: [null, [Validators.required]],
-      charge: [null, [Validators.required]],
+      charge: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
   }
 

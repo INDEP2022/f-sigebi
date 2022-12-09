@@ -2,6 +2,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -133,27 +137,27 @@ export class GoodsProcessValidationExtdomComponent
       noVolante: ['', [Validators.required]], //*
       fechaRecepcion: '',
       noExpedienteTransferente: '',
-      cveOficioExterno: '',
+      cveOficioExterno: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
       fechaOficioExterno: '',
-      remitenteExterno: '',
-      cveAmparo: '',
-      cveTocaPenal: '',
-      actaCircunstanciada: '',
-      averiguacionPrevia: '',
-      causaPenal: '',
-      asunto: '', // extenso
-      indiciado: '', // extenso
-      ministerioPublico: '', // extenso
-      juzgado: '', // extenso
-      delegacion: '', // extenso
-      entidadFederativa: '', // extenso
-      ciudad: '', // extenso
-      transferente: '', // extenso
-      emisora: '', // extenso
-      autoridad: '', // extenso
+      remitenteExterno: ['', [Validators.pattern(STRING_PATTERN)]],
+      cveAmparo: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
+      cveTocaPenal: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
+      actaCircunstanciada: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
+      averiguacionPrevia: ['', [Validators.pattern(STRING_PATTERN)]],
+      causaPenal: ['', [Validators.pattern(STRING_PATTERN)]],
+      asunto: ['', [Validators.pattern(STRING_PATTERN)]], // extenso
+      indiciado: ['', [Validators.pattern(STRING_PATTERN)]], // extenso
+      ministerioPublico: ['', [Validators.pattern(STRING_PATTERN)]], // extenso
+      juzgado: ['', [Validators.pattern(STRING_PATTERN)]], // extenso
+      delegacion: ['', [Validators.pattern(STRING_PATTERN)]], // extenso
+      entidadFederativa: ['', [Validators.pattern(STRING_PATTERN)]], // extenso
+      ciudad: ['', [Validators.pattern(STRING_PATTERN)]], // extenso
+      transferente: ['', [Validators.pattern(STRING_PATTERN)]], // extenso
+      emisora: ['', [Validators.pattern(STRING_PATTERN)]], // extenso
+      autoridad: ['', [Validators.pattern(STRING_PATTERN)]], // extenso
     });
     this.formEscaneo = this.fb.group({
-      folioEscaneo: '',
+      folioEscaneo: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
     });
   }
 

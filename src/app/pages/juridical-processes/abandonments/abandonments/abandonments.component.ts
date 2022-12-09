@@ -1,7 +1,8 @@
 /** BASE IMPORT */
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -36,7 +37,7 @@ export class AbandonmentsComponent
       descripcion: '',
       cantidad: '',
       estatus: '',
-      clasificacion: '',
+      clasificacion: ['', [Validators.pattern(STRING_PATTERN)]],
       destino: '',
       unidad: '',
     });
