@@ -7,14 +7,11 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
-  selector: 'app-c-csvd-c-assigned-goods-modal',
-  templateUrl: './c-csvd-c-assigned-goods-modal.component.html',
+  selector: 'app-assigned-goods-modal',
+  templateUrl: './assigned-goods-modal.component.html',
   styles: [],
 })
-export class CCsvdCAssignedGoodsModalComponent
-  extends BasePage
-  implements OnInit
-{
+export class AssignedGoodsModalComponent extends BasePage implements OnInit {
   title: string = 'Bien Asignado';
   good: any;
   positions: number[] = [];
