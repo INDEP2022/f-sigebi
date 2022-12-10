@@ -339,16 +339,9 @@ export const MENU: IMenuItem[] = [
         link: '/pages/assets-for-study/clasify-programmed-goods',
       },
       {
-        label: 'Generar e imprimir constancia de bienes programados',
+        label:
+          'Generar e imprimir constancia de bienes programados y no aceptados',
         link: '/pages/assets-for-study/generate-document-of-programmed-goods',
-      },
-      {
-        label: 'Cambiar destino al bien entregado',
-        link: '/pages/assets-for-study/change-destiny-delivered-goods',
-      },
-      {
-        label: 'Generar e imprimir constancia de bienes no aceptados',
-        link: '/pages/assets-for-study/generate-document-not-accepted-goods',
       },
     ],
   },
