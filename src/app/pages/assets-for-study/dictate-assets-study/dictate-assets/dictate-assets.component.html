@@ -2,9 +2,7 @@
   <div class="ch-content" header>
     <div class="d-flex">
       <div class="mr-auto p-2">
-        <h5 class="title pull-left">
-          Elaborar solicitud a responsable del estudio
-        </h5>
+        <h5 class="title pull-left">Estudio pendiente de la programación</h5>
       </div>
       <div class="p-2">
         <button class="btn btn-primary btn-sm active" (click)="finish()">
@@ -46,7 +44,7 @@
           <div class="row pt-4" *ngIf="showAssetsDetail">
             <app-assets-assigned
               [data]="data"
-              [typeComponent]="'prepare-request'"
+              [typeComponent]="'dictate-assets'"
               [isSaving]="save"
               (assetData)="getAssetDta($event)"></app-assets-assigned>
           </div>
@@ -59,8 +57,8 @@
         <tab heading="Bienes" id="tab1">
           <app-list-assets
             [dataAssets]="dataAssets"
-            [typeComponent]="'prepare-request'"
             [isSaving]="save"
+            [typeComponent]="'dictate-assets'"
             (listAssetsData)="getListAssetsData($event)"></app-list-assets>
         </tab>
       </tabset>

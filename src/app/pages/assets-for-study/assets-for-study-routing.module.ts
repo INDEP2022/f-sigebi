@@ -50,6 +50,14 @@ const routes: Routes = [
       ).ScheduleDeliveryAssetsModule,
     data: { title: 'Programar entrega de bienes' },
   },
+
+  {
+    path: 'dictate-assets-to-be-study/:id',
+    loadChildren: async () =>
+      (await import('./dictate-assets-study/dictate-assets-study.module'))
+        .DictateAssetsStudyModule,
+    data: { title: 'Dictaminar bien a ser estudiado' },
+  },
   //David modules
   {
     path: 'clasify-programmed-goods',
