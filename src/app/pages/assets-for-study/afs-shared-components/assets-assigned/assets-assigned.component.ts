@@ -14,7 +14,7 @@ import { DefaultSelect } from '../../../../shared/components/select/default-sele
 @Component({
   selector: 'app-assets-assigned',
   templateUrl: './assets-assigned.component.html',
-  styles: [],
+  styleUrls: ['./assets-assigned.component.scss'],
 })
 export class AssetsAssignedComponent implements OnInit, OnChanges {
   @Input() data: any;
@@ -61,6 +61,11 @@ export class AssetsAssignedComponent implements OnInit, OnChanges {
       receiver: [{ value: null, disabled: true }],
       recipientPosition: [{ value: null, disabled: true }],
       dateRequest: [{ value: null, disabled: true }],
+
+      //datos de dictamen de bienes a ser estudiados
+      meaningAnswer: [{ value: 'Positivo', disabled: true }],
+      operationDayStart: [{ value: null, disabled: true }],
+      operationDayEnd: [{ value: null, disabled: true }],
     });
   }
 

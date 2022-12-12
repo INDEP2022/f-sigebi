@@ -59,6 +59,11 @@ const routes: Routes = [
       (await import('./claims-control/claims-control.module'))
         .ClaimsControlModule,
   },
+  {
+    path: 'maintenance',
+    loadChildren: async () =>
+      (await import('./maintenance/maintenance.module')).MaintenanceModule,
+  },
 ];
 
 @NgModule({
