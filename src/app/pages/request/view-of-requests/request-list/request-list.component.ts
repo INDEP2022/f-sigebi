@@ -150,6 +150,15 @@ var usuario: IRequestList[] = [
     created: 'tester_nsbxt',
     process: 'DC_Decomiso',
   },
+  {
+    title:
+      'AMPARO: Registro de Documentación complementaria, No. Solicitud: 1836',
+    noRequest: 1836,
+    numTask: 211958,
+    noInstance: 430146,
+    created: 'tester_nsbxt',
+    process: 'AP_Amparo',
+  },
 ];
 
 @Component({
@@ -308,6 +317,14 @@ export class RequestListComponent extends BasePage implements OnInit {
         // en el caso de que sea el proceso de registrar solicitud de decomiso
         this.router.navigate([
           'pages/request/register-documentation/single/forfeiture',
+          event.data.noRequest,
+        ]);
+        break;
+
+      case 'AP_Amparo':
+        // en el caso de que sea el proceso de registrar solicitud de Amparo
+        this.router.navigate([
+          'pages/request/register-documentation-amparo/single/forfeiture',
           event.data.noRequest,
         ]);
         break;

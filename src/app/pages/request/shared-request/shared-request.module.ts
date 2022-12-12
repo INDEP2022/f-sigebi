@@ -33,6 +33,8 @@ import { NewDocumentComponent } from './expedients-tabs/sub-tabs/new-document/ne
 import { RequestOfAssetsComponent } from './expedients-tabs/sub-tabs/request-of-assets/request-of-assets.component';
 import { GenerateReceiptFormComponent } from './generate-receipt-form/generate-receipt-form.component';
 import { GoodsListComponent } from './goods-list/goods-list.component';
+import { GoodsNotTransferredComponent } from './goods-not-transferred/goods-not-transferred.component';
+import { ModalNotTransferredComponent } from './goods-not-transferred/modal-not-transferred/modal-not-transferred.component';
 import { GuidelinesViewComponent } from './guidelines-view/guidelines-view.component';
 import { GuidelinesObservationsComponent } from './guidelines/guidelines-observations/guidelines-observations.component';
 import { GuidelinesRevisionViewComponent } from './guidelines/guidelines-revision-view/guidelines-revision-view.component';
@@ -146,6 +148,8 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     SelectSimilarGoodsComponent,
     RegisterComplementaryDocumentationComponent,
     ModalAssignGoodGrouperComponent,
+    GoodsNotTransferredComponent,
+    ModalNotTransferredComponent,
   ],
   imports: [
     CommonModule,
@@ -195,6 +199,8 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     VerifyComplianceGoodsComponent,
     ModalAssignGoodGrouperComponent,
     ComplementaryRequestInformationComponent,
+    GoodsNotTransferredComponent,
+    ModalNotTransferredComponent,
   ],
 })
 export class SharedRequestModule {}

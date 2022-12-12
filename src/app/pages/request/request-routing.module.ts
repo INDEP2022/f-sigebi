@@ -250,6 +250,14 @@ const routes: Routes = [
       ).DestinationInformationRequestModule,
     data: { title: 'Solicitud de Información de Destino' },
   },
+  // Registrar Documentación Complementaria Amparos
+  {
+    path: 'register-documentation-amparo',
+    loadChildren: async () =>
+      (await import('./req-comp-doc-amp/req-comp-doc-amp.module'))
+        .ReqCompDocAmpModule,
+    data: { title: 'Registro de Documentación Complementaria de Amparos' },
+  },
 ];
 
 @NgModule({
