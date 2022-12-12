@@ -33,8 +33,6 @@ import { NewDocumentComponent } from './expedients-tabs/sub-tabs/new-document/ne
 import { RequestOfAssetsComponent } from './expedients-tabs/sub-tabs/request-of-assets/request-of-assets.component';
 import { GenerateReceiptFormComponent } from './generate-receipt-form/generate-receipt-form.component';
 import { GoodsListComponent } from './goods-list/goods-list.component';
-import { GoodsNotTransferredComponent } from './goods-not-transferred/goods-not-transferred.component';
-import { ModalNotTransferredComponent } from './goods-not-transferred/modal-not-transferred/modal-not-transferred.component';
 import { GuidelinesViewComponent } from './guidelines-view/guidelines-view.component';
 import { GuidelinesObservationsComponent } from './guidelines/guidelines-observations/guidelines-observations.component';
 import { GuidelinesRevisionViewComponent } from './guidelines/guidelines-revision-view/guidelines-revision-view.component';
@@ -61,6 +59,7 @@ import { ReserveGoodModalComponent } from './select-goods/reserve-good-modal/res
 import { SelectGoodsComponent } from './select-goods/select-goods.component';
 import { ViewFileButtonComponent } from './select-goods/view-file-button/view-file-button.component';
 import { ModalAssignGoodGrouperComponent } from './select-similar-goods/modal-assign-good-grouper/modal-assign-good-grouper.component';
+import { ModalModifyDatesComponent } from './select-similar-goods/modal-modify-dates/modal-modify-dates.component';
 import { SelectSimilarGoodsComponent } from './select-similar-goods/select-similar-goods.component';
 import { ServiceTransportableGoodsFormComponent } from './service-transportable-goods-form/service-transportable-goods-form.component';
 import { ShowProgrammingComponent } from './show-programming/show-programming.component';
@@ -148,8 +147,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     SelectSimilarGoodsComponent,
     RegisterComplementaryDocumentationComponent,
     ModalAssignGoodGrouperComponent,
-    GoodsNotTransferredComponent,
-    ModalNotTransferredComponent,
+    ModalModifyDatesComponent,
   ],
   imports: [
     CommonModule,
@@ -199,8 +197,6 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     VerifyComplianceGoodsComponent,
     ModalAssignGoodGrouperComponent,
     ComplementaryRequestInformationComponent,
-    GoodsNotTransferredComponent,
-    ModalNotTransferredComponent,
   ],
 })
 export class SharedRequestModule {}

@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { APPROVAL_COLUMNS } from './approval-columns';
 
 @Component({
@@ -32,7 +33,7 @@ export class ApprovalForDonationComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       keyEvent: [null, []],
       status: [null, []],
-      regionalCoord: [null, []],
+      regionalCoord: [null, [Validators.pattern(STRING_PATTERN)]],
       typeUser: [null, []],
     });
   }

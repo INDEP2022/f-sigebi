@@ -3,72 +3,13 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'schedule-reception',
+    path: 'programming-request',
     loadChildren: async () =>
       (
         await import(
-          './programming-request-components/schedule-reception/schedule-reception.module'
+          './programming-request-components/programming-request.module'
         )
-      ).ScheduleReceptionModule,
-    data: { title: 'Programar Recepción' },
-  },
-
-  {
-    path: 'perform-programming/:id',
-    loadChildren: async () =>
-      (
-        await import(
-          './programming-request-components/perform-programming/perform-programming.module'
-        )
-      ).PerformProgrammingModule,
-    data: { title: 'Programar Recepción' },
-  },
-
-  {
-    path: 'acept-programming',
-    loadChildren: async () =>
-      (
-        await import(
-          './programming-request-components/acept-programming/acept-programming.module'
-        )
-      ).AceptProgrammingModule,
-  },
-
-  {
-    path: 'execute-reception',
-    loadChildren: async () =>
-      (
-        await import(
-          './programming-request-components/execute-reception/execute-reception.module'
-        )
-      ).ExecuteReceptionModule,
-  },
-  {
-    path: 'validate-destiny',
-    loadChildren: async () =>
-      (
-        await import(
-          './programming-request-components/validate-destiny/validate-destiny.module'
-        )
-      ).ValidateDestinyModule,
-  },
-  {
-    path: 'formalize-programming',
-    loadChildren: async () =>
-      (
-        await import(
-          './programming-request-components/formalize-programming/formalize-programming.module'
-        )
-      ).FormalizeProgrammingModule,
-  },
-  {
-    path: 'schedule-notify',
-    loadChildren: async () =>
-      (
-        await import(
-          './programming-request-components/schedule-notify/schedule-notify.module'
-        )
-      ).ScheduleNotifyModule,
+      ).ProgrammingRequestModule,
   },
   {
     path: 'request-in-turn',

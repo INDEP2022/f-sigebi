@@ -2,13 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
 import { IState } from 'src/app/core/models/catalogs/city.model';
 import { IRegionalDelegation } from 'src/app/core/models/catalogs/regional-delegation.model';
-import { IStation } from 'src/app/core/models/catalogs/station.model';
-import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { IUser } from 'src/app/core/models/catalogs/user.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -17,7 +14,14 @@ import { ESTATE_COLUMNS } from '../../acept-programming/columns/estate-columns';
 import { USER_COLUMNS } from '../../acept-programming/columns/users-columns';
 import { EstateSearchFormComponent } from '../estate-search-form/estate-search-form.component';
 import { UserFormComponent } from '../user-form/user-form.component';
-
+import { userData } from './data-perfom-programming';
+import {
+  AuthorityOptions,
+  stationsOptions,
+  transferentOptions,
+  typeRelevantOptions,
+  typeWarehouseOptions,
+} from './perfom-programming-options';
 @Component({
   selector: 'app-perform-programming-form',
   templateUrl: './perform-programming-form.component.html',
@@ -27,26 +31,33 @@ export class PerformProgrammingFormComponent
   extends BasePage
   implements OnInit
 {
-  settingEstate = { ...TABLE_SETTINGS, actions: false };
-  settingUser = { ...TABLE_SETTINGS, actions: false };
+  settingEstate = { ...this.settings, actions: false, columns: ESTATE_COLUMNS };
+  settingUser = {
+    ...this.settings,
+    actions: {
+      columnTitle: 'Acciones',
+      position: 'right',
+      delete: true,
+    },
+    columns: USER_COLUMNS,
+  };
   estates: any[] = [];
-  usersData: any[] = [];
+  usersData = userData;
   performForm: FormGroup = new FormGroup({});
   users = new DefaultSelect<IUser>();
   regionalsDelegations = new DefaultSelect<IRegionalDelegation>();
   states = new DefaultSelect<IState>();
-  transferences = new DefaultSelect<ITransferente>();
-  stations = new DefaultSelect<IStation>();
-  authority = new DefaultSelect<IAuthority>();
-  typeRelevant = new DefaultSelect();
-  warehouse = new DefaultSelect();
+  transferences = new DefaultSelect(transferentOptions);
+  stations = new DefaultSelect(stationsOptions);
+  authority = new DefaultSelect(AuthorityOptions);
+  typeRelevant = new DefaultSelect(typeRelevantOptions);
+  warehouse = new DefaultSelect(typeWarehouseOptions);
+  warehouseAddress: string = '';
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-
+  showForm: boolean = false;
   constructor(private fb: FormBuilder, private modalService: BsModalService) {
     super();
-    this.settingEstate.columns = ESTATE_COLUMNS;
-    this.settingUser.columns = USER_COLUMNS;
   }
 
   ngOnInit(): void {
@@ -63,7 +74,7 @@ export class PerformProgrammingFormComponent
       observation: [null],
       regionalDelegation: [null],
       state: [null],
-      transference: [null],
+      transferent: [null],
       station: [null],
       authority: [null],
       typeRelevant: [null],
@@ -72,11 +83,29 @@ export class PerformProgrammingFormComponent
     });
   }
 
-  newUser() {
-    const newUser = this.modalService.show(UserFormComponent, {
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
+  typeSchedule(type: any) {
+    if (type.id == 1) {
+      this.showForm = true;
+    }
+  }
+
+  showWarehouse(warehouse: any) {
+    console.log(warehouse.address);
+    this.warehouseAddress = warehouse.address;
+  }
+
+  openForm(userData?: any) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+
+    config.initialState = {
+      userData,
+      callback: (data: any) => {
+        if (data) {
+        }
+      },
+    };
+
+    const rejectionComment = this.modalService.show(UserFormComponent, config);
   }
 
   newWarehouse() {
@@ -87,10 +116,20 @@ export class PerformProgrammingFormComponent
   }
 
   estateSearch() {
-    const estateSearch = this.modalService.show(EstateSearchFormComponent, {
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+
+    config.initialState = {
+      userData,
+      callback: (data: any) => {
+        if (data) {
+        }
+      },
+    };
+
+    const estateSearch = this.modalService.show(
+      EstateSearchFormComponent,
+      config
+    );
   }
 
   getUsersSelect(user: ListParams) {}
@@ -110,6 +149,19 @@ export class PerformProgrammingFormComponent
   getWarehouseSelect(warehouse: ListParams) {}
 
   confirm() {}
+
+  delete(user: any) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        //Ejecuta el servicio//
+        this.onLoadToast('success', 'Usuario eliminado correctamente', '');
+      }
+    });
+  }
 
   close() {
     this.modalService.hide();

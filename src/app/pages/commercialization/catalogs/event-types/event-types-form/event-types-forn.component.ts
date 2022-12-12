@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-event-types-forn',
@@ -27,8 +28,14 @@ export class EventTypesFornComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      descripcion: [null, [Validators.required]],
-      desc_recibo: [null, [Validators.required]],
+      descripcion: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      desc_recibo: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       id_tipo_disp: [null, [Validators.required]],
       id_tipo_fallo: [null, [Validators.required]],
     });

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { COLUMNS1 } from './columns1';
 import { COLUMNS2 } from './columns2';
 
@@ -33,18 +34,39 @@ export class DestinationGoodsActsComponent extends BasePage implements OnInit {
 
   initForm() {
     this.actForm = this.fb.group({
-      statusAct: [null, [Validators.required]],
-      act: [null, [Validators.required]],
-      preliminaryAscertainment: [null, [Validators.required]],
+      statusAct: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      act: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      preliminaryAscertainment: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       causePenal: [null, [Validators.required]],
       elabDate: [null, [Validators.required]],
       captureDate: [null, [Validators.required]],
       destinationDelivDate: [null, [Validators.required]],
-      address: [null, [Validators.required]],
-      observations: [null, [Validators.required]],
-      deliveryName: [null, [Validators.required]],
-      receiverName: [null, [Validators.required]],
-      auditor: [null, [Validators.required]],
+      address: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      observations: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      deliveryName: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      receiverName: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      auditor: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
 
     this.formTable1 = this.fb.group({

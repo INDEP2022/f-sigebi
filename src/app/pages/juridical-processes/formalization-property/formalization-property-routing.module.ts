@@ -16,19 +16,16 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './capture-formalizing-lawyers/pj-fi-af-m-capture-formalizing-lawyers.module'
+          './capture-formalizing-lawyers/capture-formalizing-lawyers.module'
         )
-      ).PJFIAFCaptureFormalizingLawyersModule,
+      ).CaptureFormalizingLawyersModule,
     data: { title: routesFormalizacionInmuebles[0].label },
   },
   {
     path: routesFormalizacionInmuebles[1].link,
     loadChildren: async () =>
-      (
-        await import(
-          './formal-goods-estate/pj-fi-pf-m-formal-goods-estate.module'
-        )
-      ).PJFIPFFormalGoodsEstateModule,
+      (await import('./formal-goods-estate/formal-goods-estate.module'))
+        .FormalGoodsEstateModule,
     data: { title: routesFormalizacionInmuebles[1].label },
   },
 ];

@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-layout-maintenance-structure-modal',
@@ -31,14 +32,17 @@ export class LayoutMaintenanceStructureModalComponent
   private prepareForm(): void {
     this.structureForm = this.fb.group({
       position: [null, [Validators.required]],
-      column: [null],
+      column: [null, Validators.pattern(STRING_PATTERN)],
       type: [null],
       length: [null, [Validators.required, Validators.maxLength(1)]],
-      constant: [null],
-      fillCharacter: [null, [Validators.required]],
+      constant: [null, Validators.pattern(STRING_PATTERN)],
+      fillCharacter: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       fillPosition: [null, [Validators.required]],
       decimals: [null],
-      dateFormat: [null],
+      dateFormat: [null, Validators.pattern(STRING_PATTERN)],
     });
     if (this.structure !== undefined) {
       this.edit = true;

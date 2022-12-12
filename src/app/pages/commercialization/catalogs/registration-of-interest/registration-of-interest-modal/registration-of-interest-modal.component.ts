@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-registration-of-interest-modal',
@@ -28,9 +29,12 @@ export class RegistrationOfInterestModalComponent
 
   private prepareForm(): void {
     this.providerForm = this.fb.group({
-      tille: [null, [Validators.required]],
-      mesTille: [null, [Validators.required]],
-      mes: [null, [Validators.required]],
+      tille: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      mesTille: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      mes: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       anioTille: [null, [Validators.required]],
     });
     if (this.provider !== undefined) {
