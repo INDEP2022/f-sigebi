@@ -35,4 +35,13 @@ export const ASSIGNMENT = [
     created: 'tester_nsbxt',
     process: 'ProgramarEntrega',
   },
+  {
+    id: 4,
+    title: 'Programación pendiente de autorización',
+    noRequest: 45539,
+    numTask: 261221,
+    noInstance: 82781,
+    created: 'tester_nsbxt',
+    process: 'DictaminarBienes',
+  },
 ];

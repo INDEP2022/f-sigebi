@@ -14,10 +14,12 @@ import Swal from 'sweetalert2';
 import { TABLE_SETTINGS } from '../../../../common/constants/table-settings';
 import { ListParams } from '../../../../common/repository/interfaces/list-params';
 import { BasePage } from '../../../../core/shared/base-page';
+import { GenerateAutorizationComponent } from '../../dictate-assets-study/generate-autorization/generate-autorization.component';
 import { RecipientDataComponent } from '../../prepare-request-responsables/recipient-data/recipient-data.component';
 import { UploadDocumentarySupportComponent } from '../../save-responsible-answer/upload-documentary-support/upload-documentary-support.component';
 import { ProgrammingDeliveryComponent } from '../../schedule-delivery-assets/programming-delivery/programming-delivery.component';
 import { ASSETS_LIST_COLUMNS } from './columns/list-asset-columns';
+import { LIST_ASSETS_DICTATE_ASSETS_COLUMNS } from './columns/list-assets-dictate-assets-columns';
 import { ASSETS_LIST_SAVE_ANSWER_COLUMNS } from './columns/list-assets-save-answer-columns';
 
 var data = [
@@ -158,6 +160,14 @@ export class ListAssetsComponent extends BasePage implements OnInit, OnChanges {
     );
   }
 
+  generateAuthorization() {
+    this.openModal(
+      GenerateAutorizationComponent,
+      this.listAssetsDeleted,
+      'dictate-assets'
+    );
+  }
+
   openModal(component: any, information?: any, typeReport?: string) {
     let config: ModalOptions = {
       initialState: {
@@ -174,13 +184,25 @@ export class ListAssetsComponent extends BasePage implements OnInit, OnChanges {
   }
 
   settingTheColumns() {
+    console.log(this.typeComponent);
     if (this.typeComponent === 'save-answer') {
       this.saveAnswerColumns();
     } else if (this.typeComponent === 'prepare-request') {
       this.prepareRequestColumns();
     } else if (this.typeComponent === 'schedule-delivery') {
       this.scheduleDeliveryColumns();
+    } else if (this.typeComponent === 'dictate-assets') {
+      this.dictateAssetsColumns();
     }
+  }
+
+  dictateAssetsColumns(): void {
+    this.settings = {
+      ...TABLE_SETTINGS,
+      actions: false,
+      selectMode: 'multi',
+      columns: LIST_ASSETS_DICTATE_ASSETS_COLUMNS,
+    };
   }
 
   scheduleDeliveryColumns(): void {

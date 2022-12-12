@@ -69,6 +69,13 @@ export class AssignmentListComponent extends BasePage implements OnInit {
         ]);
         break;
       }
+      case 'DictaminarBienes': {
+        this.router.navigate([
+          'pages/assets-for-study/dictate-assets-to-be-study',
+          data.id,
+        ]);
+        break;
+      }
     }
   }
 }
