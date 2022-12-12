@@ -6,6 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-records-inventory',
@@ -36,7 +37,10 @@ export class RecordsInventoryComponent extends BasePage implements OnInit {
   prepareForm() {
     this.form = this.fb.group({
       fecha: [null, [Validators.required]],
-      realizo: [null, [Validators.required]],
+      realizo: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       anexar: [null, [Validators.required]],
     });
   }

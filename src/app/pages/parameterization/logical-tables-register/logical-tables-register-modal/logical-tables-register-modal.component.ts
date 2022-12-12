@@ -2,7 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-logical-tables-register-modal',
@@ -37,10 +37,13 @@ export class LogicalTablesRegisterModalComponent
           Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
-      name: [null, [Validators.required]],
+      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       access: [null, [Validators.required]],
       type: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
     if (this.allotment != null) {
       this.edit = true;

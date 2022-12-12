@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { KEYGENERATION_PATTERN } from 'src/app/core/shared/patterns';
 import { RECORDS_VALDIATION_COLUMNS } from './records-validation-columns';
 
 @Component({
@@ -25,8 +26,14 @@ export class RecordsValidationComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      noActa: [null, [Validators.required]],
-      clave: [null, [Validators.required]],
+      noActa: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      clave: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
     });
   }
 }

@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from '../../../shared/components/select/default-select';
 
 @Component({
@@ -114,26 +118,50 @@ export class CancellationRecepcionComponent implements OnInit {
       expediente: [null, [Validators.required]],
       averPrev: [null, [Validators.required]],
       acta: [null, [Validators.required]],
-      autoridad: [null, [Validators.required]],
+      autoridad: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       ident: [null, [Validators.required]],
-      recibe: [null, [Validators.required]],
-      admin: [null, [Validators.required]],
-      folio: [null, [Validators.required]],
+      recibe: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      admin: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      folio: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
       year: [null, [Validators.required]],
       mes: [null, [Validators.required]],
       status: [null, [Validators.required]],
       nombre: [null, [Validators.required]],
-      acta2: [null, [Validators.required]],
-      direccion: [null, [Validators.required]],
-      observaciones: [null],
-      folioEscaneo: [null, [Validators.required]],
+      acta2: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      direccion: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
+      folioEscaneo: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
       fecElab: [null, [Validators.required]],
       fecCierreActa: [null, [Validators.required]],
       fecCaptura: [null, [Validators.required]],
-      elabora: [null, [Validators.required]],
-      testigo: [null, [Validators.required]],
-      estatusPrueba: [null, [Validators.required]],
-      etiqueta: [null, [Validators.required]],
+      elabora: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      testigo: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      estatusPrueba: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      etiqueta: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 }

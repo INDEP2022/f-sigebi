@@ -1,0 +1,41 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Actas Destrucción</h5>
+    </div>
+  </div>
+  <div body>
+    <form [formGroup]="actDestructionForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-3"></div>
+        <div class="col-md-3">
+          <form-field
+            label="Criterio de búsqueda de actas:"
+            [control]="actDestructionForm.get('recordsSearchCriteria')">
+            <input
+              class="form-control"
+              formControlName="recordsSearchCriteria"
+              type="text" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <button type="button" class="btn btn-primary active">Buscar</button>
+        </div>
+      </div>
+    </form>
+    <div class="row margin-input">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data1">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+  </div>
+</app-card>

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-entry-order-form',
@@ -25,12 +26,12 @@ export class EntryOrderFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      bankingInstitution: [null],
-      concept: [null],
-      wayToPay: [null],
+      bankingInstitution: [null, Validators.pattern(STRING_PATTERN)],
+      concept: [null, Validators.pattern(STRING_PATTERN)],
+      wayToPay: [null, Validators.pattern(STRING_PATTERN)],
       import: [null],
-      referenceNumber: [null],
-      specialized: [null],
+      referenceNumber: [null, Validators.pattern(STRING_PATTERN)],
+      specialized: [null, Validators.pattern(STRING_PATTERN)],
       unitAdministrative: [null],
     });
   }

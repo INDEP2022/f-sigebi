@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { inputSelect } from '../interfaces/input-select';
 import { MAIN_COLUMNS } from '../main-columns';
 
@@ -45,9 +46,9 @@ export class EventTrackingComponent extends BasePage implements OnInit {
       typeEvent: [null, []],
       date: [null, []],
       status: [null, []],
-      regionalCoord: [null, []],
+      regionalCoord: [null, [Validators.pattern(STRING_PATTERN)]],
       typeUser: [null, []],
-      sheduling: [null, []],
+      sheduling: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

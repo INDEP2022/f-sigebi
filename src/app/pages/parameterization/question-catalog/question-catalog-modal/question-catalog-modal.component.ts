@@ -2,7 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-question-catalog-modal',
@@ -35,13 +35,22 @@ export class QuestionCatalogModalComponent extends BasePage implements OnInit {
           Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
-      textQuestion: [null, [Validators.required]],
+      textQuestion: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       maxScore: [null, [Validators.required]],
-      typeQuestion: [null, [Validators.required]],
+      typeQuestion: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       noResponse: [null, [Validators.required]],
       initValue: [null, [Validators.required]],
       resValue: [null, [Validators.required]],
-      resText: [null, [Validators.required]],
+      resText: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
     if (this.allotment != null) {
       this.edit = true;

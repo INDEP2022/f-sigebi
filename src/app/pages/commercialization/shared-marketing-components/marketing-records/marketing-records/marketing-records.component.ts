@@ -6,6 +6,10 @@ import { BehaviorSubject } from 'rxjs';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 //Components
 import { AddDocsComponent } from '../add-docs/add-docs.component';
 import { COLUMNS, COLUMNS2 } from './columns';
@@ -64,16 +68,28 @@ export class MarketingRecordsComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       recordType: ['physicalDelivery', [Validators.required]],
       goodId: [null, [Validators.required]],
-      portfolio: [null, [Validators.required]],
+      portfolio: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       recordCommerType: ['goodId', [Validators.required]],
-      recordKey: [null],
+      recordKey: [null, Validators.pattern(KEYGENERATION_PATTERN)],
       sender: [null, [Validators.required]],
       recipient: [null, [Validators.required]],
       salesProcess: [null, [Validators.required]],
       city: [null, [Validators.required]],
-      paragraph1: [null, [Validators.required]],
-      paragraph2: [null, [Validators.required]],
-      paragraph3: [null, [Validators.required]],
+      paragraph1: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      paragraph2: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      paragraph3: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
 
     this.form.get('recordCommerType').valueChanges.subscribe(value => {

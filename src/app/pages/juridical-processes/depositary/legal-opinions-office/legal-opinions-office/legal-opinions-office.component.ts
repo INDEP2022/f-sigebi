@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -134,21 +135,51 @@ export class LegalOpinionsOfficeComponent extends BasePage implements OnInit {
       numberOfficeDic: [null, [Validators.required]],
       typeOffice: [null, [Validators.required]],
       passwordArmedOffice: [null, [Validators.required]],
-      authorizedDic: [null, [Validators.required]],
-      name: [null, [Validators.required]],
-      addressee: [null, [Validators.required]],
-      nameAddressee: [null, [Validators.required]],
-      city: [null, [Validators.required]],
-      descriptionCity: [null, [Validators.required]],
-      introductoryParagraph: [null, [Validators.required]],
-      finalParagraph: [null, [Validators.required]],
+      authorizedDic: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      addressee: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      nameAddressee: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      city: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      descriptionCity: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      introductoryParagraph: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      finalParagraph: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       numberNotary: [null, [Validators.required]],
       ccp_person: [null, [Validators.required]],
-      ccp_addressee: [null, [Validators.required]],
-      ccp_TiPerson: [null, [Validators.required]],
+      ccp_addressee: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      ccp_TiPerson: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       ccp_person_I: [null, [Validators.required]],
-      ccp_addressee_I: [null, [Validators.required]],
-      ccp_TiPerson_I: [null, [Validators.required]],
+      ccp_addressee_I: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      ccp_TiPerson_I: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 }

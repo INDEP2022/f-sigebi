@@ -12,7 +12,9 @@ import { MASTER_FILES } from '../common/routes/master-file.routes';
 import { PARAMETERIZATION_ROUTES } from '../common/routes/parameterization.routes';
 import { SCHEDULING_DELIVERIES } from '../common/routes/scheduling-deliveries.routes';
 import { APPRAISALS_ROUTES } from '../common/routes/siab-web/appraisals.routes';
+import { CLAIMS_CONTROL_ROUTES } from '../common/routes/siab-web/claims-control.routes';
 import { COMMERCIALIZATION_SW_ROUTES } from '../common/routes/siab-web/commercialization-sw.routes';
+import { CONSULTATION_ROUTES } from '../common/routes/siab-web/consultation.routes';
 import { INDICATORS_ROUTES } from '../common/routes/siab-web/indicators.routes';
 import { SAMI_ROUTES } from '../common/routes/siab-web/simi.routes';
 import { IMenuItem } from './interfaces/menu.interface';
@@ -330,6 +332,17 @@ export const MENU: IMenuItem[] = [
         label: 'Generar Solicitud',
         link: '/pages/assets-for-study/generate-request',
       },
+
+      //David routes
+      {
+        label: 'Clasificar bienes programados',
+        link: '/pages/assets-for-study/clasify-programmed-goods',
+      },
+      {
+        label:
+          'Generar e imprimir constancia de bienes programados y no aceptados',
+        link: '/pages/assets-for-study/generate-document-of-programmed-goods',
+      },
     ],
   },
 
@@ -344,6 +357,8 @@ export const MENU: IMenuItem[] = [
       ...SAMI_ROUTES,
       ...APPRAISALS_ROUTES,
       ...INDICATORS_ROUTES,
+      ...CONSULTATION_ROUTES,
+      ...CLAIMS_CONTROL_ROUTES,
     ],
   },
 ];

@@ -1,7 +1,8 @@
 /** BASE IMPORT */
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -76,28 +77,28 @@ export class DocumentVerificationRevisionResourcesComponent
   private prepareForm() {
     this.form = this.fb.group({
       noExpediente: '',
-      averiguacionPrevia: '',
-      causaPenal: '',
+      averiguacionPrevia: ['', [Validators.pattern(STRING_PATTERN)]],
+      causaPenal: ['', [Validators.pattern(STRING_PATTERN)]],
       fechaPresentacionRecursoRevision: '',
       noAmparo: '',
 
       noBien: '',
-      acuerdoInicial: '',
+      acuerdoInicial: ['', [Validators.pattern(STRING_PATTERN)]],
       statusDictaminacion: '',
-      descripcion: '',
+      descripcion: ['', [Validators.pattern(STRING_PATTERN)]],
       fechaAcuerdoInicial: '',
-      estatusBien: '', //Estatus del bien detalle
+      estatusBien: ['', [Validators.pattern(STRING_PATTERN)]], //Estatus del bien detalle
       fechaNotificacion: '',
-      estatusDictaminacion: '',
-      motivoRecursoRevision: '',
-      observaciones: '',
+      estatusDictaminacion: ['', [Validators.pattern(STRING_PATTERN)]],
+      motivoRecursoRevision: ['', [Validators.pattern(STRING_PATTERN)]],
+      observaciones: ['', [Validators.pattern(STRING_PATTERN)]],
     });
     this.formInforme = this.fb.group({
       noExpediente: '',
       noBien: '',
     });
     this.formAutoridad = this.fb.group({
-      autoridad: '',
+      autoridad: ['', [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

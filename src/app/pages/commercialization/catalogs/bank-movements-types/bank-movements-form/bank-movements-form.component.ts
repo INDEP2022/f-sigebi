@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-bank-movements-form',
@@ -29,11 +30,20 @@ export class BankMovementsFormComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       bank: [null, [Validators.required]],
       bankName: [null],
-      descripcion: [null, [Validators.required]],
+      descripcion: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       type: [null, [Validators.required]],
       decline: [null, [Validators.required]],
-      affects: [null, [Validators.required]],
-      satPaymentDescription: [null, [Validators.required]],
+      affects: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      satPaymentDescription: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
 
     if (this.edit) {

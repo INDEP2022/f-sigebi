@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-numeraire-conversion-allotments',
@@ -19,9 +20,12 @@ export class NumeraireConversionAllotmentsComponent implements OnInit {
     this.form = this.fb.group({
       idEvent: ['', [Validators.required]],
       cveEvent: ['', [Validators.required]],
-      nameEvent: ['', [Validators.required]],
-      obsEvent: ['', [Validators.required]],
-      place: ['', [Validators.required]],
+      nameEvent: [
+        '',
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      obsEvent: ['', [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      place: ['', [Validators.required, Validators.pattern(STRING_PATTERN)]],
       eventDate: ['', [Validators.required]],
       failureDate: ['', [Validators.required]],
     });

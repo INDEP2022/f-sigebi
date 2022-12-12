@@ -10,6 +10,7 @@ import { COLUMNS, COLUMNS2 } from './columns';
 //Components
 import { BrandsSubBrandsFormComponent } from '../brands-sub-brands-form/brands-sub-brands-form.component';
 //Provisional Data
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DATA } from './data';
 
 @Component({
@@ -63,8 +64,11 @@ export class BrandsSubBrandsListComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.form = this.fb.group({
-      brand: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      brand: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 

@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-types-modal',
@@ -26,7 +27,10 @@ export class TypesModalComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.typeForm = this.fb.group({
-      denomination: [null, [Validators.required]],
+      denomination: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       order: [null, [Validators.required]],
     });
     console.log(this.type);

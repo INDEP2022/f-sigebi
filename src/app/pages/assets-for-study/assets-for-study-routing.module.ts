@@ -50,12 +50,54 @@ const routes: Routes = [
       ).ScheduleDeliveryAssetsModule,
     data: { title: 'Programar entrega de bienes' },
   },
+
   {
     path: 'dictate-assets-to-be-study/:id',
     loadChildren: async () =>
       (await import('./dictate-assets-study/dictate-assets-study.module'))
         .DictateAssetsStudyModule,
     data: { title: 'Dictaminar bien a ser estudiado' },
+  },
+  //David modules
+  {
+    path: 'clasify-programmed-goods',
+    loadChildren: async () =>
+      (
+        await import(
+          './clasify-programmed-goods/clasify-programmed-goods.module'
+        )
+      ).ClasifyProgrammedGoodsModule,
+    data: { title: 'Clasificar bienes programados' },
+  },
+  {
+    path: 'generate-document-of-programmed-goods',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-document-of-programmed-goods/generate-document-of-programmed-goods.module'
+        )
+      ).GenerateDocumentOfProgrammedGoodsModule,
+    data: { title: 'Generar e imprimir constancia de bienes programados' },
+  },
+  {
+    path: 'change-destiny-delivered-goods',
+    loadChildren: async () =>
+      (
+        await import(
+          './change-destiny-delivered-good/change-destiny-delivered-good.module'
+        )
+      ).ChangeDestinyDeliveredGoodModule,
+    data: { title: 'Cambiar destino al bien entregado' },
+  },
+  {
+    path: 'generate-document-not-accepted-goods',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-document-not-accepted-goods/generate-document-not-accepted-goods.module'
+        )
+      ).GenerateDocumentNotAcceptedGoodsModule,
+    data: { title: 'Generar e imprimir constancia de bienes no aceptados' },
   },
 ];
 

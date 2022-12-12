@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -76,7 +77,10 @@ export class PartializesGeneralGoodsComponent implements OnInit {
     this.form = this.fb.group({
       noBien: [null, [Validators.required]],
       cantidadBien: [null, [Validators.required]],
-      descripcion: [null, [Validators.required]],
+      descripcion: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       cantidad: [null, [Validators.required]],
       avaluo: [null, [Validators.required]],
       estatus: [null, [Validators.required]],

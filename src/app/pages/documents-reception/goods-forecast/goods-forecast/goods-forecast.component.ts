@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-goods-forecast',
@@ -17,7 +18,10 @@ export class GoodsForecastComponent implements OnInit {
   prepareForm() {
     this.form = this.fb.group({
       prevision: [false, [Validators.required]],
-      observaciones: [null, [Validators.required]],
+      observaciones: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 }

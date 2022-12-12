@@ -7,6 +7,10 @@ import {
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { COLUMNS1 } from './columns1';
 import { COLUMNS2 } from './columns2';
 
@@ -52,25 +56,49 @@ export class ActsRegularizationNonExistenceComponent
 
   initForm() {
     this.form = this.fb.group({
-      preliminaryAscertainment: [null, [Validators.required]],
-      causePenal: [null, [Validators.required]],
+      preliminaryAscertainment: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      causePenal: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       actSelect: [null, [Validators.required]],
       type: [null, [Validators.required]],
-      del: [null, [Validators.required]],
-      trans: [null, [Validators.required]],
+      del: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      trans: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       folio: [null, [Validators.required]],
       year: [this.bsValueFromYear, [Validators.required]],
       month: [this.bsValueFromMonth, [Validators.required]],
-      act: [null, [Validators.required]],
+      act: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       elabDate: [null, [Validators.required]],
-      authorization: [null, [Validators.required]],
+      authorization: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       sessionNumb: [null, [Validators.required]],
       caseNumb: [null, [Validators.required]],
-      folioScan: [null, [Validators.required]],
-      responsible: [null, [Validators.required]],
-      witness1: [null, [Validators.required]],
-      witness2: [null, [Validators.required]],
-      observations: [null, [Validators.required]],
+      folioScan: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      responsible: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      witness1: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      witness2: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      observations: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
 
     this.formTable1 = this.fb.group({

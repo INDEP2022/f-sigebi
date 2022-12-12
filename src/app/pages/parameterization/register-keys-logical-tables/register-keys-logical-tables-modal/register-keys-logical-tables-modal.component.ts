@@ -1,6 +1,10 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-register-keys-logical-tables-modal',
@@ -30,32 +34,35 @@ export class RegisterKeysLogicalTablesModalComponent implements OnInit {
 
   private prepareForom() {
     this.form = this.fb.group({
-      name: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       type1: [{ value: true, disabled: true }],
       type5: [null, [Validators.required]],
-      cve1: [null],
-      format1: [null],
+      cve1: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      format1: [null, [Validators.pattern(STRING_PATTERN)]],
       minLong1: [null, [Validators.required]],
       maxLong1: [null, [Validators.required]],
 
-      cve2: [null],
-      format2: [null],
+      cve2: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      format2: [null, [Validators.pattern(STRING_PATTERN)]],
       minLong2: [null],
       maxLong2: [null],
 
-      cve3: [null],
-      format3: [null],
+      cve3: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      format3: [null, [Validators.pattern(STRING_PATTERN)]],
       minLong3: [null],
       maxLong3: [null],
 
-      cve4: [null],
-      format4: [null],
+      cve4: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      format4: [null, [Validators.pattern(STRING_PATTERN)]],
       minLong4: [null],
       maxLong4: [null],
 
-      cve5: [null],
-      format5: [null],
+      cve5: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      format5: [null, [Validators.pattern(STRING_PATTERN)]],
       minLong5: [null],
       maxLong5: [null],
     });
