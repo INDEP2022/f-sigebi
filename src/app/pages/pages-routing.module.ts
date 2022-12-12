@@ -142,6 +142,14 @@ const routes: Routes = [
         .AssetsForStudyModule,
     data: { title: 'Bienes para estudio' },
   },
+  {
+    path: '404-not-found',
+    pathMatch: 'full',
+    loadChildren: async () =>
+      (await import('./errors/error-404/error-404.module')).Error404Module,
+    data: { title: 'Página no Encontrada' },
+  },
+  { path: '**', redirectTo: '404-not-found' },
 ];
 
 @NgModule({
