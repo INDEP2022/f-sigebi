@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-layout-maintenance-modal',
@@ -29,10 +30,13 @@ export class LayoutMaintenanceModalComponent
 
   private prepareForm(): void {
     this.layoutForm = this.fb.group({
-      description: [null, [Validators.required]],
-      screen: [null, [Validators.required]],
-      table: [null, [Validators.required]],
-      filter: [null, [Validators.required]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      screen: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      table: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      filter: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       status: [null, [Validators.required]],
     });
     if (this.layout !== undefined) {

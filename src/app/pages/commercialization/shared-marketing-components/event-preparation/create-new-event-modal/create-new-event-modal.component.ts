@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-create-new-event-modal',
@@ -21,8 +22,8 @@ export class CreateNewEventModalComponent implements OnInit {
       id_event: [{ value: null, disabled: true }],
       cve: ['', [Validators.required]],
       event: ['', [Validators.required]],
-      place: ['', [Validators.required]],
-      observ: ['', [Validators.required]],
+      place: ['', [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      observ: ['', [Validators.required, Validators.pattern(STRING_PATTERN)]],
       dateEvent: ['', [Validators.required]],
       dateClose: ['', [Validators.required]],
     });

@@ -7,6 +7,10 @@ import {
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { ListParams } from './../../../../common/repository/interfaces/list-params';
 import { CheckboxElementComponent } from './../../../../shared/components/checkbox-element-smarttable/checkbox-element';
 import { COLUMNS } from './columns';
@@ -79,22 +83,55 @@ export class ViewDonationContractsComponent extends BasePage implements OnInit {
       folio: [null, [Validators.required]],
       year: [this.bsValueFromYear, [Validators.required]],
       month: [this.bsValueFromMonth, [Validators.required]],
-      key: [null, [Validators.required]],
-      cve: [null, [Validators.required]],
-      donee: [null, [Validators.required]],
-      reasonSocial: [null, [Validators.required]],
+      key: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      cve: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      donee: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      reasonSocial: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       subscribeDate: [null, [Validators.required]],
-      domicilie: [null, [Validators.required]],
-      nameRepDon: [null, [Validators.required]],
-      positionRepDon: [null, [Validators.required]],
+      domicilie: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      nameRepDon: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      positionRepDon: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       nameRepSae: [null, [Validators.required]],
-      nameFunSae: [null, [Validators.required]],
-      positionFunSae: [null, [Validators.required]],
-      witness1: [null, [Validators.required]],
+      nameFunSae: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      positionFunSae: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      witness1: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       witness2: [null, [Validators.required]],
-      observations: [null, [Validators.required]],
+      observations: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       deliveryDate: [null, [Validators.required]],
-      folioScan: [null, [Validators.required]],
+      folioScan: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
       contractStatus: [null, [Validators.required]],
     });
   }

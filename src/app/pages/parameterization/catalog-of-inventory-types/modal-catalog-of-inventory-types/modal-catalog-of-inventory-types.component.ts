@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-modal-catalog-of-inventory-types',
@@ -23,7 +24,10 @@ export class ModalCatalogOfInventoryTypesComponent implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       number: [null, [Validators.required]],
-      propertyInventory: [null, [Validators.required]],
+      propertyInventory: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       dateType: [null, [Validators.required]],
     });
     if (this.allotment != null) {

@@ -7,6 +7,10 @@ import {
   baseMenuDepositaria,
 } from 'src/app/common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -225,18 +229,18 @@ export class JuridicalRulingGComponent
     this.expedientesForm = this.fb.group({
       tipoDictaminacion: [null, [Validators.required]],
       noExpediente: [null, [Validators.required]],
-      averiguacionPrevia: [null],
-      causaPenal: [null],
+      averiguacionPrevia: [null, [Validators.pattern(STRING_PATTERN)]],
+      causaPenal: [null, [Validators.pattern(STRING_PATTERN)]],
       delito: [false],
-      observaciones: [null],
+      observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
     });
 
     this.dictaminacionesForm = this.fb.group({
-      etiqueta: [null],
+      etiqueta: [null, [Validators.pattern(STRING_PATTERN)]],
       fechaResolucion: [null],
       fechaNotificacion: [null],
       fechaNotificacionAseg: [null],
-      cveOficio: [null],
+      cveOficio: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       estatus: [null],
     });
     this.subtipoForm = this.fb.group({
@@ -244,7 +248,7 @@ export class JuridicalRulingGComponent
       noExpediente: [null],
     });
     this.gestionDestinoForm = this.fb.group({
-      estatus: [null],
+      estatus: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
   btnDocumentos() {

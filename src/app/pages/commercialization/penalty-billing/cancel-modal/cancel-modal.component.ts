@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-cancel-modal',
@@ -23,8 +24,11 @@ export class CancelModalComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.cancelForm = this.fb.group({
-      cause: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      cause: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 

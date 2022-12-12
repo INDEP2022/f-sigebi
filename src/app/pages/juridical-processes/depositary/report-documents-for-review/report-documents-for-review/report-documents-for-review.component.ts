@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-report-documents-for-review',
@@ -48,9 +49,9 @@ export class ReportDocumentsForReviewComponent
   private buildForm() {
     this.form = this.fb.group({
       delegationNumber: [null, [Validators.required]],
-      param1: [null, [Validators.required]],
+      param1: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       subdelegationNumber: [null, [Validators.required]],
-      param2: [null, [Validators.required]],
+      param2: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       file: [null, [Validators.required]],
       at: [null, [Validators.required]],
     });

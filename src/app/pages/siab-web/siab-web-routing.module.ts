@@ -48,6 +48,22 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./indicators/indicators.module')).IndicatorsModule,
   },
+  {
+    path: 'consultation',
+    loadChildren: async () =>
+      (await import('./consultation/consultation.module')).ConsultationModule,
+  },
+  {
+    path: 'claims-control',
+    loadChildren: async () =>
+      (await import('./claims-control/claims-control.module'))
+        .ClaimsControlModule,
+  },
+  {
+    path: 'maintenance',
+    loadChildren: async () =>
+      (await import('./maintenance/maintenance.module')).MaintenanceModule,
+  },
 ];
 
 @NgModule({

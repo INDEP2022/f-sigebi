@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { PERSONAL_ESTATE_COLUMNS } from './personal-estate-columns';
 
 @Component({
@@ -37,12 +38,12 @@ export class DeliveriesConstancyFormComponent
       typeConstancy: [null],
       identification: [null],
       numIdentification: [null],
-      issuedBy: [null],
-      name: [null],
-      position: [null],
+      issuedBy: [null, [Validators.pattern(STRING_PATTERN)]],
+      name: [null, [Validators.pattern(STRING_PATTERN)]],
+      position: [null, [Validators.pattern(STRING_PATTERN)]],
       identificationEstate: [null],
       numIdentificationEstate: [null],
-      issuedByEstate: [null],
+      issuedByEstate: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

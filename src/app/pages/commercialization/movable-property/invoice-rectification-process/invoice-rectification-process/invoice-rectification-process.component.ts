@@ -5,7 +5,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { maxDate } from 'src/app/common/validations/date.validators';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { NewImageModalComponent } from '../new-image-modal/new-image-modal.component';
 
 @Component({
@@ -41,7 +41,7 @@ export class InvoiceRectificationProcessComponent implements OnInit {
         ],
       ],
       ExpDate: [null, [Validators.required, maxDate(new Date())]],
-      serie: [null, [Validators.required]],
+      serie: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       invoiceFolio: [
         null,
         [
@@ -51,9 +51,15 @@ export class InvoiceRectificationProcessComponent implements OnInit {
           Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
-      name: [null, [Validators.required]],
-      lastName: [null, [Validators.required]],
-      motherlastName: [null, [Validators.required]],
+      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      lastName: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      motherlastName: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       agent: [null, [Validators.required]],
 
       idInvoice: [
@@ -66,11 +72,26 @@ export class InvoiceRectificationProcessComponent implements OnInit {
         ],
       ],
       time: [null, [Validators.required, maxDate(new Date())]],
-      paragraph1: [null, [Validators.required]],
-      paragraph2: [null, [Validators.required]],
-      paragraph3: [null, [Validators.required]],
-      paragraph4: [null, [Validators.required]],
-      paragraph5: [null, [Validators.required]],
+      paragraph1: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      paragraph2: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      paragraph3: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      paragraph4: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      paragraph5: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
 
       idCapture: ['', [Validators.required]],
       idAuth: ['', [Validators.required]],

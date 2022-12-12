@@ -1,8 +1,9 @@
 /** BASE IMPORT */
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
@@ -40,12 +41,12 @@ export class ReturnAbandonmentMonitorComponent
       noBien: [this.idBien ? this.idBien : ''],
       descripcion: [''],
       cantidad: [''],
-      estatus: [''],
+      estatus: ['', [Validators.pattern(STRING_PATTERN)]],
       fechaNotificacion: [''],
       fechaNotificacion2: [''],
       fechaTerminoPeriodo: [''],
       fechaTerminoPeriodo2: [''],
-      declaracionAbandonoSERA: [''],
+      declaracionAbandonoSERA: ['', [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

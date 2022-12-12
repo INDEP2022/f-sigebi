@@ -1,6 +1,10 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-modal-cost-catalog',
@@ -22,8 +26,14 @@ export class ModalCostCatalogComponent implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      keyServices: [null, [Validators.required]],
-      descriptionServices: [null, [Validators.required]],
+      keyServices: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      descriptionServices: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       typeExpenditure: [null, [Validators.required]],
       unaffordable: [null, [Validators.required]],
       cost: [null, [Validators.required]],

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -23,7 +24,7 @@ export class PrintFlyersComponent implements OnInit {
       subdelegation: [null, [Validators.required]],
       noArea: [null, [Validators.required]],
       area: [null, [Validators.required]],
-      from: [null],
+      from: [null, Validators.pattern(STRING_PATTERN)],
       to: [null],
       type: [null],
       fromDate: [null],

@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-cat-effective-numeraire-modal',
@@ -22,8 +23,14 @@ export class CatEffectiveNumeraireModalComponent implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      category: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      category: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       entry: [null, [Validators.required]],
       exit: [null, [Validators.required]],
     });

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-reasons-model',
@@ -14,23 +15,48 @@ export class ReasonsModelComponent implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
   }
+
   prepareForm() {
     this.form = this.fb.group({
-      reasons1: [null, Validators.required],
-      reasons2: [null, Validators.required],
-      reasons3: [null, Validators.required],
-      reasons4: [null, Validators.required],
-      reasons5: [null, Validators.required],
-      reasons6: [null, Validators.required],
-      reasons7: [null, Validators.required],
-      reasons8: [null, Validators.required],
-      reasons9: [null, Validators.required],
-      reasons10: [null, Validators.required],
-      reasons11: [null, Validators.required],
-      reasons12: [null, Validators.required],
-      reasons13: [null, Validators.required],
-      reasons14: [null, Validators.required],
-      reasons15: [null, Validators.required],
+      reasons1: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
+      reasons2: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
+      reasons3: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
+      reasons4: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
+      reasons5: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
+      reasons6: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
+      reasons7: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
+      reasons8: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
+      reasons9: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
+      reasons10: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
+      reasons11: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
+      reasons12: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
+      reasons13: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
+      reasons14: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
+      reasons15: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
     });
   }
   close() {
