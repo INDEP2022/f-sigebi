@@ -8,6 +8,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
 //Provisional Data
 //Components
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { AddGoodsComponent } from '../add-goods/add-goods.component';
 
 @Component({
@@ -46,9 +47,18 @@ export class GoodsRelationshipComponent extends BasePage implements OnInit {
       status: [null, [Validators.required]],
       delegation: [null, [Validators.required]],
       satDocNumber: [null, [Validators.required]],
-      satExpedientNumber: [null, [Validators.required]],
-      saeExpedientNumber: [null, [Validators.required]],
-      satDocType: [null, [Validators.required]],
+      satExpedientNumber: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      saeExpedientNumber: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      satDocType: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       processType: [null, [Validators.required]],
       amountRepay: [null, [Validators.required]],
     });

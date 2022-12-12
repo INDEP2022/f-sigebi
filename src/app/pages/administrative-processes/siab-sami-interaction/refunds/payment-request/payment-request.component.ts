@@ -11,6 +11,7 @@ import { CheckDetailComponent } from '../check-detail/check-detail.component';
 import { PaymentRequestItemsComponent } from '../payment-request-items/payment-request-items.component';
 //Models
 import { ICheck } from 'src/app/core/models/administrative-processes/siab-sami-interaction/check.model';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 //Provisional Data
 
 @Component({
@@ -82,7 +83,10 @@ export class PaymentRequestComponent extends BasePage implements OnInit {
       specialInstructions: [null, [Validators.required]],
       requestDocs: [null, [Validators.required]],
       taxReceipts: [null],
-      docsDescription: [null, [Validators.required]],
+      docsDescription: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       contractRecNumber: [null, [Validators.required]],
       contractRecDate: [null, [Validators.required]],
       voucherNumber: [null, [Validators.required]],

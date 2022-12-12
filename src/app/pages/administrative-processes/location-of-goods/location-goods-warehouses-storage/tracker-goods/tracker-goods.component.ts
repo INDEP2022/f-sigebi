@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-tracker-goods',
@@ -156,10 +157,19 @@ export class TrackerGoodsComponent implements OnInit {
 
   private buildForm() {
     this.form = this.fb.group({
-      tariffFraction: [null, [Validators.required]],
-      goodsClassificationNumber: [null, [Validators.required]],
-      alternateClassificationGood: [null, [Validators.required]],
-      search: [null, [Validators.required]],
+      tariffFraction: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      goodsClassificationNumber: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      alternateClassificationGood: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      search: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
   }
 
@@ -167,9 +177,15 @@ export class TrackerGoodsComponent implements OnInit {
     this.formCriteria = this.fb.group({
       numberGood: [null, [Validators.required]],
       listGoods: [null, [Validators.required]],
-      inventorySAMI: [null, [Validators.required]],
+      inventorySAMI: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       listInventory: [null, [Validators.required]],
-      process: [null, [Validators.required]],
+      process: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       targetIndicator: [null, [Validators.required]],
       status: [null, [Validators.required]],
       goods: [null, [Validators.required]],

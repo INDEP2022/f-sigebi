@@ -5,6 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModalJustifier } from './modal-justifier.component';
 
 @Component({
@@ -65,7 +66,10 @@ export class PaymentClaimProcessComponent extends BasePage implements OnInit {
 
   private buildForm() {
     this.form = this.fb.group({
-      justification: [null, [Validators.required]],
+      justification: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 
