@@ -30,7 +30,7 @@
       </div>
       <div class="row mt-4">
         <div class="col-md-4">
-          <form-field [control]="form.get('address')" label="Dirección">
+          <form-field [control]="form.get('address')" label="Direcci&oacute;n">
             <input type="text" class="form-control" formControlName="address" />
           </form-field>
         </div>
@@ -58,7 +58,9 @@
       </div>
       <div class="row mt-2">
         <div class="col-md-3 mt-3">
-          <form-field [control]="form.get('zipCode')" label="Codigo Postal">
+          <form-field
+            [control]="form.get('zipCode')"
+            label="C&oacute;digo Postal">
             <input type="text" class="form-control" formControlName="zipCode" />
           </form-field>
         </div>
@@ -73,7 +75,7 @@
       </div>
       <div class="row mt-2">
         <div class="col-md-3">
-          <form-field [control]="form.get('phone')" label="Telefono">
+          <form-field [control]="form.get('phone')" label="Tel&eacute;fono">
             <input type="text" class="form-control" formControlName="phone" />
           </form-field>
         </div>
@@ -98,7 +100,7 @@
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-check label="Curriculum" for="curriculum">
+          <form-check label="Curr&iacute;culum" for="curriculum">
             <input
               id="curriculum"
               type="checkbox"
@@ -114,7 +116,7 @@
           </form-radio>
         </div>
         <div class="col-md-3 col-sm-6 col-xs-6">
-          <form-radio label="Persona Fisica">
+          <form-radio label="Persona F&iacute;sica">
             <input
               type="radio"
               formControlName="personPhysics"

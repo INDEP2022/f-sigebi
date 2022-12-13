@@ -15,17 +15,16 @@
             <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
               <form-field
                 [control]="flyerForm.get('noVolante')"
-                label="No. Volante">
+                label="No&#46; Volante">
                 <input class="form-control" formControlName="noVolante" />
               </form-field>
             </div>
             <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
               <form-field
                 [control]="flyerForm.get('fecRecepcion')"
-                label="Fec. Recepción.">
+                label="Fec&#46; Recepción&#46;">
                 <input
                   formControlName="fecRecepcion"
-                  placeholder="Selección de Fecha Recepción."
                   class="form-control"
                   bsDatepicker />
               </form-field>
@@ -64,7 +63,7 @@
             <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
               <form-field
                 [control]="flyerForm.get('averiguacionPrevia')"
-                label="Averig. Previa">
+                label="Averig&#46; Previa">
                 <input
                   class="form-control"
                   formControlName="averiguacionPrevia" />
@@ -80,7 +79,7 @@
             <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
               <form-field
                 [control]="flyerForm.get('cveAmparo')"
-                label="No. Amparo">
+                label="No&#46; Amparo">
                 <input class="form-control" formControlName="cveAmparo" />
               </form-field>
             </div>
@@ -99,7 +98,7 @@
             <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
               <form-field
                 [control]="flyerForm.get('cveOficioExterno')"
-                label="No. Oficio">
+                label="No&#46; Oficio">
                 <input
                   class="form-control"
                   formControlName="cveOficioExterno" />
@@ -111,7 +110,6 @@
                 label="Fecha Oficio">
                 <input
                   formControlName="fecOficioExterno"
-                  placeholder="Selección de Fecha Oficio"
                   class="form-control"
                   bsDatepicker />
               </form-field>
@@ -119,7 +117,7 @@
             <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
               <form-field
                 [control]="flyerForm.get('observaciones')"
-                label="Descripción del Asunto">
+                label="Descripci&oacute;n del Asunto">
                 <textarea
                   class="form-control"
                   formControlName="observaciones"></textarea>
@@ -132,7 +130,7 @@
             <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
               <form-field
                 [control]="flyerForm.get('noExpediente')"
-                label="No. Expediente">
+                label="No&#46; Expediente">
                 <input class="form-control" formControlName="noExpediente" />
               </form-field>
             </div>
@@ -168,13 +166,13 @@
                 type="button"
                 class="btn btn-link btn-sm"
                 [routerLink]="[linkDictaminacionesJuridicas, flyerId]">
-                Dictaminación Jurídicca
+                Dictaminaci&oacute;n Jur&iacute;dicca
               </button>
             </div>
             <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
               <form-field
                 [control]="flyerForm.get('claveUnica')"
-                label="Clave única">
+                label="Clave &uacute;nica">
                 <input class="form-control" formControlName="claveUnica" />
               </form-field>
             </div>
@@ -249,7 +247,7 @@
               <ngx-select
                 [data]="items"
                 bindLabel="publicMinisteryName"
-                label="Ministerio público"
+                label="Ministerio p&uacute;blico"
                 value="id"
                 (fetchItems)="getFromSelect($event)"
                 [form]="flyerForm"
@@ -293,7 +291,7 @@
               <ngx-select
                 [data]="items"
                 bindLabel="viaReceptionName"
-                label="Vía Recepción"
+                label="V&iacute;a Recepci&oacute;n"
                 value="id"
                 (fetchItems)="getFromSelect($event)"
                 [form]="flyerForm"
@@ -304,7 +302,7 @@
               <ngx-select
                 [data]="items"
                 bindLabel="destinityAreaName"
-                label="Área Destino"
+                label="&Aacute;rea Destino"
                 value="id"
                 (fetchItems)="getFromSelect($event)"
                 [form]="flyerForm"
@@ -320,7 +318,7 @@
             <div class="col-sm-12 col-12 col-md-7 col-lg-7 p-2">
               <form-field
                 [control]="flyerForm.get('justificacion')"
-                label="Justificación del conocimiento">
+                label="Justificaci&oacute;n del conocimiento">
                 <textarea
                   class="form-control"
                   formControlName="justificacion"></textarea>
@@ -332,7 +330,7 @@
                 type="button"
                 class="btn btn-link btn-sm"
                 [routerLink]="[linkReaccionacionTurno, flyerId]">
-                Reasignación de Turno
+                Reasignaci&oacute;n de Turno
               </button>
               <button
                 type="button"

@@ -1,6 +1,6 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">Notificación de abandono por devolución</h5>
+    <h5 class="title">Notificaci&oacute;n de abandono por devoluci&oacute;n</h5>
   </div>
   <div body>
     <form [formGroup]="form" class="form-material">
@@ -14,7 +14,9 @@
           </form-field>
         </div>
         <div class="col-md-6 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('description')" label="Descripcion">
+          <form-field
+            [control]="form.get('description')"
+            label="Descripci&oacute;n">
             <input
               type="text"
               class="form-control"

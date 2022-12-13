@@ -6,7 +6,7 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-4">
-          <form-field label="No. Tabla" [control]="form.get('noTable')">
+          <form-field label="No&#46; Tabla" [control]="form.get('noTable')">
             <input type="text" class="form-control" formControlName="noTable" />
           </form-field>
         </div>
@@ -23,7 +23,7 @@
               class="form-control"
               [clearable]="false">
               <ng-option value="1">Acceso por Tramos</ng-option>
-              <ng-option value="2">Acceso Único</ng-option>
+              <ng-option value="2">Acceso &Uacute;nico</ng-option>
             </ng-select>
           </form-field>
         </div>
@@ -42,7 +42,9 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field label="Descripción" [control]="form.get('description')">
+          <form-field
+            label="Descripci&oacute;n"
+            [control]="form.get('description')">
             <input
               type="text"
               class="form-control"

@@ -1,6 +1,8 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">Ordenes de ingreso por bien de depositaria</h5>
+    <h5 class="title">
+      &Oacute;rdenes de ingreso por bien de depositar&iacute;a
+    </h5>
   </div>
   <div body>
     <form [formGroup]="form" class="form-material">
@@ -32,7 +34,9 @@
       </div>
       <div class="row">
         <div class="col-md-6 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('description')" label="Descripción">
+          <form-field
+            [control]="form.get('description')"
+            label="Descripci&oacute;n">
             <input
               type="text"
               class="form-control"
@@ -62,7 +66,7 @@
         </div>
       </div>
       <div class="row pl-3">
-        Se reportarán los pagos a partir de la fecha seleccionada
+        Se reportar&aacute;n los pagos a partir de la fecha seleccionada
       </div>
       <hr />
       <div class="row pl-3">Firmante</div>

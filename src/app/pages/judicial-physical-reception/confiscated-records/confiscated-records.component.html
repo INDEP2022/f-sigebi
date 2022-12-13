@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Actas de Entrega Recepción</h5>
+    <h5 class="title">Actas de Entrega Recepci&oacute;n</h5>
   </div>
 
   <div body>
@@ -13,8 +13,7 @@
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="expediente"
-                  placeholder="expediente" />
+                  formControlName="expediente" />
               </form-field>
             </div>
           </div>
@@ -24,12 +23,11 @@
             <div class="col-md-9">
               <form-field
                 [control]="form.get('averPrev')"
-                label="Averiguación Previa">
+                label="Averiguaci&oacute;n Previa">
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="averPrev"
-                  placeholder="Aver Prev" />
+                  formControlName="averPrev" />
               </form-field>
             </div>
           </div>
@@ -43,8 +41,7 @@
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="causaPenal"
-                  placeholder="Causa Penal" />
+                  formControlName="causaPenal" />
               </form-field>
             </div>
           </div>
@@ -68,8 +65,7 @@
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="transfer"
-                  placeholder="Transfer" />
+                  formControlName="transfer" />
               </form-field>
             </div>
 
@@ -78,8 +74,7 @@
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="ident"
-                  placeholder="Ident" />
+                  formControlName="ident" />
               </form-field>
             </div>
 
@@ -88,8 +83,7 @@
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="recibe"
-                  placeholder="Recibe" />
+                  formControlName="recibe" />
               </form-field>
             </div>
 
@@ -98,8 +92,7 @@
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="admin"
-                  placeholder="Admin" />
+                  formControlName="admin" />
               </form-field>
             </div>
 
@@ -108,17 +101,15 @@
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="folio"
-                  placeholder="Folio" />
+                  formControlName="folio" />
               </form-field>
             </div>
             <div class="col">
-              <form-field [control]="form.get('year')" label="Año">
+              <form-field [control]="form.get('year')" label="A&ntilde;o">
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="year"
-                  placeholder="Año" />
+                  formControlName="year" />
               </form-field>
             </div>
             <div class="col">
@@ -126,8 +117,7 @@
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="mes"
-                  placeholder="Mes" />
+                  formControlName="mes" />
               </form-field>
             </div>
           </div>
@@ -140,14 +130,15 @@
               <input
                 type="number"
                 class="form-control"
-                formControlName="acta2"
-                placeholder="Acta" />
+                formControlName="acta2" />
             </form-field>
           </div>
 
           <div class="row pt-4">
             <div class="col-md-9">
-              <form-field [control]="form.get('direccion')" label="Dirección">
+              <form-field
+                [control]="form.get('direccion')"
+                label="Direcci&oacute;n">
                 <textarea
                   rows="2"
                   class="form-control"
@@ -162,8 +153,7 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="entrega"
-                  placeholder="Entrega" />
+                  formControlName="entrega" />
               </form-field>
             </div>
           </div>
@@ -172,12 +162,11 @@
             <div class="col-md-9">
               <form-field
                 [control]="form.get('fecElabRec')"
-                label="Fecha Elaboración Recibo">
+                label="Fecha Elaboraci&oacute;n Recibo">
                 <input
                   bsDatepicker
                   class="form-control"
-                  formControlName="fecElabRec"
-                  placeholder="Fecha Elaboración Recibo" />
+                  formControlName="fecElabRec" />
               </form-field>
             </div>
           </div>
@@ -190,8 +179,7 @@
                 <input
                   bsDatepicker
                   class="form-control"
-                  formControlName="fecEntBien"
-                  placeholder="Fecha Entrega de Bienes" />
+                  formControlName="fecEntBien" />
               </form-field>
             </div>
           </div>
@@ -204,8 +192,7 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="folioEscaneo"
-                  placeholder="Folio de Escaneo" />
+                  formControlName="folioEscaneo" />
               </form-field>
             </div>
 
@@ -219,24 +206,22 @@
             <div class="col-md-4">
               <form-field
                 [control]="form.get('fecElab')"
-                label="Fecha Elaboración">
+                label="Fecha Elaboraci&oacute;n">
                 <input
                   bsDatepicker
                   class="form-control"
-                  formControlName="fecElab"
-                  placeholder="Fecha Elaboración" />
+                  formControlName="fecElab" />
               </form-field>
             </div>
 
             <div class="col-md-4">
               <form-field
                 [control]="form.get('fecReception')"
-                label="Fecha Recepción Física">
+                label="Fecha Recepci&oacute;n F&iacute;sica">
                 <input
                   bsDatepicker
                   class="form-control"
-                  formControlName="fecReception"
-                  placeholder="Fecha Recepción Física" />
+                  formControlName="fecReception" />
               </form-field>
             </div>
 
@@ -247,8 +232,7 @@
                 <input
                   bsDatepicker
                   class="form-control"
-                  formControlName="fecCaptura"
-                  placeholder="Fecha Captura" />
+                  formControlName="fecCaptura" />
               </form-field>
             </div>
           </div>
@@ -272,8 +256,7 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="recibe2"
-                  placeholder="Recibe" />
+                  formControlName="recibe2" />
               </form-field>
             </div>
           </div>
@@ -282,12 +265,11 @@
             <div class="col-md-9">
               <form-field
                 [control]="form.get('testigo')"
-                label="Testigo de la Contr.">
+                label="Testigo de la Contr&#46;">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="testigo"
-                  placeholder="Testigo de la Contr" />
+                  formControlName="testigo" />
               </form-field>
             </div>
           </div>
@@ -303,7 +285,7 @@
                 [routerLink]="['partialization']"
                 class="my-1 mx-2 btn btn-warning active btn-sm"
                 size="small"
-                >Parcialización
+                >Parcializaci&oacute;n
               </a>
 
               <button
@@ -338,8 +320,7 @@
             <input
               type="text"
               class="form-control"
-              formControlName="estatusPrueba"
-              placeholder="prueba" />
+              formControlName="estatusPrueba" />
           </form-field>
 
           <p class="pt-4">
@@ -376,12 +357,11 @@
           <form-field
             class="col-md-3"
             [control]="form.get('edoFisico')"
-            label="Estado Físico">
+            label="Estado F&iacute;sico">
             <input
               type="text"
               class="form-control"
-              formControlName="edoFisico"
-              placeholder="Estado Físico" />
+              formControlName="edoFisico" />
           </form-field>
           <form-check label="Requerido" for="label">
             <input id="label" type="checkbox" formControlName="requerido" />
@@ -393,8 +373,7 @@
             <input
               type="text"
               class="form-control"
-              formControlName="etiqueta"
-              placeholder="Etiqueta" />
+              formControlName="etiqueta" />
           </form-field>
         </div>
       </div>
@@ -404,7 +383,9 @@
         <div class="col-md-6">
           <div class="row">
             <div class="col-md-9">
-              <form-field [control]="form.get('almacen')" label="Almacen">
+              <form-field
+                [control]="form.get('almacen')"
+                label="Almac&eacute;n">
                 <ngx-select
                   control="almacen"
                   [form]="form"
@@ -415,7 +396,7 @@
 
           <div class="row">
             <div class="col-md-9">
-              <form-field [control]="form.get('boveda')" label="Bóveda">
+              <form-field [control]="form.get('boveda')" label="B&oacute;veda">
                 <ngx-select
                   control="boveda"
                   [form]="form"
@@ -426,10 +407,10 @@
         </div>
         <div class="col-md-6">
           <button type="button" size="small" class="mx-2 my-1">
-            Especifica Edo. Físico
+            Espec&iacute;fica Edo&#46; F&iacute;sico
           </button>
           <button type="button" size="small" class="mx-2 my-1">
-            Aplica Alm./Bov.
+            Aplica Alm&#46;&#47;Bov&#46;
           </button>
           <a
             [routerLink]="['flat-file']"

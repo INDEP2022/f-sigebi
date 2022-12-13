@@ -22,7 +22,7 @@
             type="button"
             class="btn btn-primary btn-sm active p-2"
             (click)="btnResolucion()">
-            Resolución
+            Resoluci&oacute;n
           </button>
           <button
             *ngIf="showResolucion == true"
@@ -46,7 +46,9 @@
     <form [formGroup]="form" class="form-material">
       <div class="row w-100">
         <div class="col-sm-12 col-12 col-md-12 p-2">
-          <form-field [control]="form.get('resolucion')" label="Resolución">
+          <form-field
+            [control]="form.get('resolucion')"
+            label="Resoluci&oacute;n">
             <textarea
               class="form-control"
               rows="6"
