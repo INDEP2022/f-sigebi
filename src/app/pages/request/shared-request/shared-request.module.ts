@@ -33,6 +33,8 @@ import { NewDocumentComponent } from './expedients-tabs/sub-tabs/new-document/ne
 import { RequestOfAssetsComponent } from './expedients-tabs/sub-tabs/request-of-assets/request-of-assets.component';
 import { GenerateReceiptFormComponent } from './generate-receipt-form/generate-receipt-form.component';
 import { GoodsListComponent } from './goods-list/goods-list.component';
+import { GoodsNotTransferredComponent } from './goods-not-transferred/goods-not-transferred.component';
+import { ModalNotTransferredComponent } from './goods-not-transferred/modal-not-transferred/modal-not-transferred.component';
 import { GuidelinesViewComponent } from './guidelines-view/guidelines-view.component';
 import { GuidelinesObservationsComponent } from './guidelines/guidelines-observations/guidelines-observations.component';
 import { GuidelinesRevisionViewComponent } from './guidelines/guidelines-revision-view/guidelines-revision-view.component';
@@ -69,6 +71,9 @@ import { SignatureTypeComponent } from './signature-type/signature-type.componen
 import { UploadElectronicSignatureComponent } from './upload-electronic-signature/upload-electronic-signature.component';
 import { UploadFilesFormComponent } from './upload-files-form/upload-files-form.component';
 import { UsersSelectedToTurnComponent } from './users-selected-to-turn/users-selected-to-turn.component';
+import { ConfirmValidationComponent } from './validate-visit-result/confirm-validation/confirm-validation.component';
+import { ValidateVisitResultComponent } from './validate-visit-result/validate-visit-result.component';
+import { ViewExpedientComponent } from './validate-visit-result/view-expedient/view-expedient.component';
 import { CheckVerifyComplianceComponent } from './verify-compliance-goods/check-verify-compliance/check-verify-compliance.component';
 import { VerifyComplianceGoodsComponent } from './verify-compliance-goods/verify-compliance-goods.component';
 import { ViewReportComponent } from './view-report/view-report.component';
@@ -76,6 +81,7 @@ import { WarehouseConfirmComponent } from './warehouse-confirm/warehouse-confirm
 import { WarehouseFormComponent } from './warehouse-form/warehouse-form.component';
 import { WarehouseShowComponent } from './warehouse-show/warehouse-show.component';
 import { WitnessFormComponent } from './witness-form/witness-form.component';
+
 @NgModule({
   declarations: [
     RequestFormComponent,
@@ -148,6 +154,11 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     RegisterComplementaryDocumentationComponent,
     ModalAssignGoodGrouperComponent,
     ModalModifyDatesComponent,
+    GoodsNotTransferredComponent,
+    ModalNotTransferredComponent,
+    ValidateVisitResultComponent,
+    ConfirmValidationComponent,
+    ViewExpedientComponent,
   ],
   imports: [
     CommonModule,
@@ -197,6 +208,8 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     VerifyComplianceGoodsComponent,
     ModalAssignGoodGrouperComponent,
     ComplementaryRequestInformationComponent,
+    GoodsNotTransferredComponent,
+    ModalNotTransferredComponent,
   ],
 })
 export class SharedRequestModule {}

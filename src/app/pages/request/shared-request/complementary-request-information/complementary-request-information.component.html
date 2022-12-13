@@ -164,6 +164,11 @@
               </ng-template>
             </tab>
             <tab
+              heading="Validar Resultado Visitas"
+              *ngIf="validarResultadoVisitas">
+              <app-validate-visit-result></app-validate-visit-result>
+            </tab>
+            <tab
               heading="Verificar Cumplimiento de Bienes"
               *ngIf="verificarCumplimientoBienes">
               verificarCumplimientoBienes

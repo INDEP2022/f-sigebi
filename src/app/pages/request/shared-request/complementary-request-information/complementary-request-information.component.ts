@@ -21,6 +21,7 @@ export class ComplementaryRequestInformationComponent
   @Input() registroDocumentacion: boolean = true;
   @Input() buscarAsociarExpediente: boolean = true;
   @Input() seleccionarBienes: boolean = true;
+  @Input() validarResultadoVisitas: boolean = false;
   @Input() verificarCumplimientoBienes: boolean = false;
   @Input() expediente: boolean = true;
   @Input() tabRegisterDocumentation: string = 'Registro de Documentación';
