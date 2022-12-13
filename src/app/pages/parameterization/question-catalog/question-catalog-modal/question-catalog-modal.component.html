@@ -6,7 +6,9 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-3">
-          <form-field [control]="form.get('noQuestion')" label="No. Pregunta">
+          <form-field
+            [control]="form.get('noQuestion')"
+            label="No&#46; Pregunta">
             <input
               type="text"
               class="form-control"
@@ -26,7 +28,7 @@
         <div class="col-md-3">
           <form-field
             [control]="form.get('maxScore')"
-            label="Puntuación Máxima">
+            label="Puntuaci&oacute;n M&aacute;xima">
             <input
               type="text"
               class="form-control"
@@ -46,7 +48,9 @@
       </div>
       <div class="row pt-5">
         <div class="col-md-3">
-          <form-field [control]="form.get('noResponse')" label="No. Respuesta">
+          <form-field
+            [control]="form.get('noResponse')"
+            label="No&#46; Respuesta">
             <input
               type="text"
               class="form-control"

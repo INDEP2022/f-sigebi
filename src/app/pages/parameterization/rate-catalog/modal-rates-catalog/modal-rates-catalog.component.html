@@ -14,7 +14,7 @@
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field [control]="form.get('year')" label="Año">
+          <form-field [control]="form.get('year')" label="A&ntilde;o">
             <input
               type="text"
               class="form-control"
@@ -48,7 +48,9 @@
       </div>
       <div class="row mt-3">
         <div class="d-flex justify-content-center">
-          <form-field [control]="form.get('rate')" label="Tasas (%)">
+          <form-field
+            [control]="form.get('rate')"
+            label="Tasas &#40;&#37;&#41;">
             <input type="text" class="form-control" formControlName="rate" />
           </form-field>
         </div>

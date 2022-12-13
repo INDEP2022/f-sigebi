@@ -19,7 +19,9 @@
           </form-field>
         </div>
         <div class="col-md-5">
-          <form-field [control]="form.get('description')" label="Descripción">
+          <form-field
+            [control]="form.get('description')"
+            label="Descripci&oacute;n">
             <input
               type="text"
               class="form-control"
@@ -31,7 +33,9 @@
         <div class="col-md-8">
           <div class="row">
             <div class="col-md-4">
-              <form-field [control]="form.get('longMax')" label="Long Máxima">
+              <form-field
+                [control]="form.get('longMax')"
+                label="Long M&aacute;xima">
                 <input
                   type="text"
                   class="form-control"
@@ -45,8 +49,8 @@
                   [searchable]="false"
                   class="form-control"
                   [clearable]="false">
-                  <ng-option value="1">Alfanumérico</ng-option>
-                  <ng-option value="2">Numérico</ng-option>
+                  <ng-option value="1">Alfanum&eacute;rico</ng-option>
+                  <ng-option value="2">Num&eacute;rico</ng-option>
                   <ng-option value="3">Flotante</ng-option>
                   <ng-option value="4">Fecha</ng-option>
                 </ng-select>
@@ -71,13 +75,13 @@
         </div>
 
         <div class="col-md-4">
-          <form-check label="A - Campo actualizable" for="label1">
+          <form-check label="A &#45; Campo actualizable" for="label1">
             <input id="label1" type="checkbox" formControlName="update" />
           </form-check>
-          <form-check label="U - Campo único" for="label2">
+          <form-check label="U &#45; Campo &uacute;nico" for="label2">
             <input id="label2" type="checkbox" formControlName="unique" />
           </form-check>
-          <form-check label="R - Campo requerido" for="label3">
+          <form-check label="R &#45; Campo requerido" for="label3">
             <input id="label3" type="checkbox" formControlName="requerid" />
           </form-check>
         </div>

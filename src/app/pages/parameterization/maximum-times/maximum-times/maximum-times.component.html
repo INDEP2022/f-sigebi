@@ -1,14 +1,18 @@
 <app-card [header]="true">
   <div header>
     <div class="ch-content">
-      <h5 class="title">Tiempo Máximo Para Cierre Actas Devolución</h5>
+      <h5 class="title">
+        Tiempo M&aacute;ximo Para Cierre Actas Devoluci&oacute;n
+      </h5>
     </div>
   </div>
   <div body>
     <form class="form-material" [formGroup]="maximumTimesForm">
       <div class="row">
         <div class="col-md-4">
-          <form-field [control]="maximumTimesForm.get('type')" label="Tipo:">
+          <form-field
+            [control]="maximumTimesForm.get('type')"
+            label="Tipo&#58;">
             <select class="form-control" formControlName="type">
               <option [value]="null">Seleccione un tipo</option>
               <option value="Enero">Tipo de acta</option>
