@@ -268,7 +268,7 @@ export class RequestListComponent extends BasePage implements OnInit {
       case 'ValidarResultadoVisitaOcular':
         // en el caso de que el proceso seleccionado sea Programar Visita Ocular
         this.router.navigate([
-          'pages/request/manage-similar-goods/validate-eye-visit-result/',
+          'pages/request/manage-similar-goods/receive-validation-of-eye-visit-result/',
           event.data.noRequest,
           3,
         ]);

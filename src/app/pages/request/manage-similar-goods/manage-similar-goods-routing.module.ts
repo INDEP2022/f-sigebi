@@ -24,11 +24,11 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'validate-eye-visit-result/:id/:typeOfRequest',
+    path: 'receive-validation-of-eye-visit-result/:id/:typeOfRequest',
     loadChildren: () =>
       import(
-        './validate-eye-visit-result/validate-eye-visit-result.module'
-      ).then(m => m.ValidateEyeVisitResultModule),
+        './receive-validation-of-eye-visit-result/receive-validation-of-eye-visit-result.module'
+      ).then(m => m.ReceiveValidationOfEyeVisitResultModule),
   },
 ];
 
