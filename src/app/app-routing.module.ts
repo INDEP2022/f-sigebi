@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from './core/guards/auth.guard';
 import { ContentComponent } from './layouts/content/content.component';
 import { FullComponent } from './layouts/full/full.component';
 
@@ -15,13 +16,22 @@ const routes: Routes = [
     component: FullComponent,
     loadChildren: async () =>
       (await import('./pages/pages.module')).PagesModule,
-    //canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
   },
   {
     path: '',
     redirectTo: 'auth',
     pathMatch: 'full',
   },
+  {
+    path: '404-not-found',
+    pathMatch: 'full',
+    loadChildren: async () =>
+      (await import('./pages/errors/error-404/error-404.module'))
+        .Error404Module,
+    data: { title: 'Página no Encontrada' },
+  },
+  { path: '**', redirectTo: '404-not-found' },
 ];
 
 @NgModule({

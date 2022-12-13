@@ -5,6 +5,10 @@ import { BasePage } from 'src/app/core/shared/base-page';
 
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { MassiveConversionPermissionsComponent } from '../massive-conversion-permissions/massive-conversion-permissions.component';
 import { COLUMNS } from './columns';
 
@@ -50,18 +54,33 @@ export class MassiveConversionComponent extends BasePage implements OnInit {
       goodClassification: [null, [Validators.required]],
       targetTag: [null, [Validators.required]],
       warehouse: [null, [Validators.required]],
-      scanFolio: [null, [Validators.required]],
-      paragraphF: [null, [Validators.required]],
-      paragraphS: [null, [Validators.required]],
-      paragraphL: [null, [Validators.required]],
+      scanFolio: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      paragraphF: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      paragraphS: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      paragraphL: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
 
     this.form2 = this.fb.group({
       numberGood: [null, [Validators.required]],
       record: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       amount: [null, [Validators.required]],
-      unit: [null, [Validators.required]],
+      unit: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       status: [null, [Validators.required]],
       check: [false],
     });

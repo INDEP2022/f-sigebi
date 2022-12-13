@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-legal-regularization',
@@ -63,9 +64,15 @@ export class LegalRegularizationComponent extends BasePage implements OnInit {
   private buildForm() {
     this.form = this.fb.group({
       numberGood: [null, [Validators.required]],
-      status: [null, [Validators.required]],
-      description: [null, [Validators.required]],
-      justifier: [null, [Validators.required]],
+      status: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      justifier: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 
