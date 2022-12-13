@@ -1,12 +1,12 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Aprobar restitución de bienes</h5>
+    <h5 class="title">Aprobar restituci&oacute;n de bienes</h5>
   </div>
 
   <div body style="margin-top: -30px">
     <div class="justify-content-end btn-toolbar">
       <button (click)="send()" class="btn btn-primary btn-sm active">
-        <i class="bx bxs-send"></i> Enviar aprobración
+        <i class="bx bxs-send"></i> Enviar aprobraci&oacute;n
       </button>
     </div>
     <h5 class="title">
@@ -16,7 +16,7 @@
           (click)="showSearchForm = true"
           *ngIf="!showSearchForm">
           <i class="fa fa-angle-right" aria-hidden="true"></i> Detalles
-          programación</a
+          programaci&oacute;n</a
         >
       </p>
 
@@ -26,7 +26,7 @@
           (click)="showSearchForm = false"
           *ngIf="showSearchForm">
           <i class="fa fa-angle-down" aria-hidden="true"></i> Detalles
-          programación</a
+          programaci&oacute;n</a
         >
       </p>
     </h5>
@@ -35,7 +35,7 @@
         <div class="col-md-6">
           <div class="form-group">
             <label class="col-lg-3 text-right">Tipo evento:</label>
-            <span> Devolución </span>
+            <span> Devoluci&oacute;n </span>
           </div>
         </div>
 
@@ -62,15 +62,15 @@
 
         <div class="col-md-6">
           <div class="form-group">
-            <label class="col-lg-3 text-right">Almacén:</label>
-            <span> Almacén de prueba </span>
+            <label class="col-lg-3 text-right">Almac&eacute;n:</label>
+            <span> Almac&eacute;n de prueba </span>
           </div>
         </div>
       </div>
     </form>
 
     <div class="row pt-5">
-      <h5 class="title">Ejecución de entrega de bienes</h5>
+      <h5 class="title">Ejecuci&oacute;n de entrega de bienes</h5>
       <div class="d-flex justify-content-end">
         <div class="m-3 btn-toolbar">
           <button (click)="photographs()" class="btn btn-info btn-sm active">
@@ -78,7 +78,7 @@
           </button>
 
           <button (click)="warehouse()" class="btn btn-pink btn-sm active">
-            <i class="bx bxs-customize"></i> Almacén
+            <i class="bx bxs-customize"></i> Almac&eacute;n
           </button>
 
           <button (click)="save()" class="btn btn-primary btn-sm active">
@@ -99,12 +99,12 @@
             <button
               (click)="submitApproval()"
               class="btn btn-primary btn-sm active">
-              <i class="bx bxs-send"></i> Enviar a aprobación
+              <i class="bx bxs-send"></i> Enviar a aprobaci&oacute;n
             </button>
             <button
               (click)="formatReclamation()"
               class="btn btn-primary btn-sm active">
-              <i class="bx bx-file"></i> Formato de reclamación
+              <i class="bx bx-file"></i> Formato de reclamaci&oacute;n
             </button>
 
             <button (click)="numerary()" class="btn btn-primary btn-sm active">
@@ -126,19 +126,19 @@
                       ng-reflect-model="true"
                       value="second_checkbox" />
                   </th>
-                  <th>Tipo Restitución</th>
-                  <th>Fecha reposición</th>
+                  <th>Tipo Restituci&oacute;n</th>
+                  <th>Fecha reposici&oacute;n</th>
                   <th>ITEM</th>
-                  <th>Número inventario</th>
-                  <th>Número gestión</th>
-                  <th>Descripción bien</th>
+                  <th>N&uacute;mero inventario</th>
+                  <th>N&uacute;mero gesti&oacute;n</th>
+                  <th>Descripci&oacute;n bien</th>
                   <th>Cantidad bienes</th>
                   <th>Unidad de medida</th>
-                  <th>Número SAE</th>
+                  <th>N&uacute;mero SAE</th>
                   <th>Total bienes no entregados</th>
                   <th>Causa no entrega</th>
                   <th>Obervaciones</th>
-                  <th>No. orden ingreso</th>
+                  <th>No&#46; orden ingreso</th>
                 </tr>
               </thead>
 
