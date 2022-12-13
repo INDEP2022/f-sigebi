@@ -1,17 +1,16 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Paricialización de Bienes</h5>
+    <h5 class="title">Paricializaci&oacute;n de Bienes</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row justify-content-center">
         <div class="col-md-4">
-          <form-field [control]="form.get('noBien')" label="No. Bien">
+          <form-field [control]="form.get('noBien')" label="No&#46; Bien">
             <input
               type="number"
               class="form-control"
-              formControlName="noBien"
-              placeholder="No Bien" />
+              formControlName="noBien" />
           </form-field>
         </div>
 
@@ -34,7 +33,7 @@
           </div>
         </div>
         <div class="col-md-6">
-          <h5>Arbol Bienes Parcializados</h5>
+          <h5>&Aacute;rbol Bienes Parcializados</h5>
           <div class="dropdown">
             <button
               class="btn btn-info btn-sm active dropdown-toggle"
