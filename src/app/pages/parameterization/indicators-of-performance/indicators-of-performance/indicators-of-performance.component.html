@@ -26,14 +26,13 @@
             <input
               type="text"
               formControlName="beginning"
-              placeholder="Inicio"
               class="form-control"
               bsDatepicker />
           </form-field>
         </div>
         <div class="col-md-2">
           <form-field
-            label="Días Limite"
+            label="D&iacute;as L&iacute;mite"
             [control]="indicatorsOfPerformanceForm.get('limitDays')">
             <input
               class="form-control"
@@ -54,11 +53,10 @@
         <div class="col-md-3">
           <form-field
             [control]="indicatorsOfPerformanceForm.get('startDate')"
-            label="Fecha Ind. Inicio">
+            label="Fecha Ind&#46; Inicio">
             <input
               type="text"
               formControlName="startDate"
-              placeholder="Fecha Ind. Inicio"
               class="form-control"
               bsDatepicker />
           </form-field>
@@ -66,11 +64,10 @@
         <div class="col-md-3">
           <form-field
             [control]="indicatorsOfPerformanceForm.get('endDate')"
-            label="Fecha Ind. Término">
+            label="Fecha Ind&#46; Término">
             <input
               type="text"
               formControlName="endDate"
-              placeholder="Fecha Ind. Término"
               class="form-control"
               bsDatepicker />
           </form-field>
@@ -78,7 +75,7 @@
       </div>
       <div class="row margin-input">
         <div class="col-md-4">
-          <label for="timeLimit">Hora limite</label>
+          <label for="timeLimit">Hora l&iacute;mite</label>
           <form-field [control]="indicatorsOfPerformanceForm.get('timeLimit')">
             <timepicker formControlName="timeLimit"></timepicker>
           </form-field>

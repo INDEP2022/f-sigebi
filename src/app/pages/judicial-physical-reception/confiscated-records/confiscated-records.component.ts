@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -101,7 +105,10 @@ export class ConfiscatedRecordsComponent implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      expediente: [null, [Validators.required]],
+      expediente: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       averPrev: [null, [Validators.required]],
       causaPenal: [null, [Validators.required]],
       acta: [null, [Validators.required]],
@@ -113,23 +120,47 @@ export class ConfiscatedRecordsComponent implements OnInit {
       year: [null, [Validators.required]],
       mes: [null, [Validators.required]],
       acta2: [null, [Validators.required]],
-      direccion: [null, [Validators.required]],
-      entrega: [null, [Validators.required]],
+      direccion: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      entrega: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       fecElabRec: [null, [Validators.required]],
       fecEntBien: [null, [Validators.required]],
       fecElab: [null, [Validators.required]],
       fecReception: [null, [Validators.required]],
       fecCaptura: [null, [Validators.required]],
-      observaciones: [null],
-      recibe2: [null, [Validators.required]],
-      testigo: [null, [Validators.required]],
-      folioEscaneo: [null, [Validators.required]],
-      edoFisico: [null, [Validators.required]],
+      observaciones: [null, [Validators.pattern(STRING_PATTERN)]],
+      recibe2: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      testigo: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      folioEscaneo: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      edoFisico: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       requerido: [false, [Validators.required]],
       almacen: [null, [Validators.required]],
       boveda: [null, [Validators.required]],
-      estatusPrueba: [null, [Validators.required]],
-      etiqueta: [null, [Validators.required]],
+      estatusPrueba: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      etiqueta: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 }

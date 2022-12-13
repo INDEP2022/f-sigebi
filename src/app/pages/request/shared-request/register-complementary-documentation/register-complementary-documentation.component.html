@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row" *ngIf="nombrePantalla == 'register-documentation'">
   <div class="col-md-8">
     <h5 class="title">Correo(s) Electrónico(s) Notificación</h5>
   </div>
@@ -68,7 +68,7 @@
         </div>
       </div>
       <ng-container
-        *ngIf="nombrePantalla != 'scheduling-eye-visits'; else elseBlock3">
+        *ngIf="nombrePantalla == 'register-documentation'; else elseBlock3">
         <div class="col-md-3">
           <div class="mb-3 pl-4 pr-4">
             <form-field

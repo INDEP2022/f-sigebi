@@ -4,6 +4,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ReasonsModelComponent } from '../reasons-model/reasons-model.component';
 import { GROUNDSSTATUSMODAL_COLUMNS } from './grounds-status-modal-columns';
 
@@ -37,8 +38,8 @@ export class GroundsStatusModalComponent extends BasePage implements OnInit {
   prepareForm() {
     this.form = this.fb.group({
       file: [null, Validators.required],
-      whereMot: [null, Validators.required],
-      reasons: [null, Validators.required],
+      whereMot: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
+      reasons: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
     });
   }
   openModal2(): void {

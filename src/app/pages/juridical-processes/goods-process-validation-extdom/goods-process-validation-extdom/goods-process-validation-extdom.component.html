@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">BIENES EN PROCESO DE VALIDACI&Oacute;N EXT_DOM</h5>
+    <h5 class="title">BIENES EN PROCESO DE VALIDACI&Oacute;N EXT&#95;DOM</h5>
   </div>
 
   <div body>
@@ -10,42 +10,34 @@
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
             [control]="form.get('noExpediente')"
-            label="No. Expediente">
-            <input
-              class="form-control"
-              formControlName="noExpediente"
-              placeholder="No. Expediente" />
+            label="No&#46; Expediente">
+            <input class="form-control" formControlName="noExpediente" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
             [control]="form.get('fechaRecepcion')"
-            label="Fecha Recepción">
+            label="Fecha Recepci&oacute;n">
             <input
               class="form-control"
               formControlName="fechaRecepcion"
-              placeholder="Fecha Recepción"
               bsDatepicker />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field
             [control]="form.get('noExpedienteTransferente')"
-            label="No. Expediente Transferente">
+            label="No&#46; Expediente Transferente">
             <input
               class="form-control"
-              formControlName="noExpedienteTransferente"
-              placeholder="No. Expediente Transferente" />
+              formControlName="noExpedienteTransferente" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
             [control]="form.get('cveOficioExterno')"
-            label="Cve. Oficio Externo">
-            <input
-              class="form-control"
-              formControlName="cveOficioExterno"
-              placeholder="Cve. Oficio Externo" />
+            label="Cve&#46; Oficio Externo">
+            <input class="form-control" formControlName="cveOficioExterno" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
@@ -55,7 +47,6 @@
             <input
               class="form-control"
               formControlName="fechaOficioExterno"
-              placeholder="Fecha Oficio Externo"
               bsDatepicker />
           </form-field>
         </div>
@@ -63,140 +54,94 @@
           <form-field
             [control]="form.get('remitenteExterno')"
             label="Remitente Externo">
-            <input
-              class="form-control"
-              formControlName="remitenteExterno"
-              placeholder="Remitente Externo" />
+            <input class="form-control" formControlName="remitenteExterno" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('cveAmparo')" label="Cve. Amparo">
-            <input
-              class="form-control"
-              formControlName="cveAmparo"
-              placeholder="Cve. Amparo" />
+          <form-field [control]="form.get('cveAmparo')" label="Cve&#46; Amparo">
+            <input class="form-control" formControlName="cveAmparo" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
             [control]="form.get('cveTocaPenal')"
-            label="Cve. Toca Penal">
-            <input
-              class="form-control"
-              formControlName="cveTocaPenal"
-              placeholder="Cve. Toca Penal" />
+            label="Cve&#46; Toca Penal">
+            <input class="form-control" formControlName="cveTocaPenal" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field
             [control]="form.get('actaCircunstanciada')"
             label="Acta Circunstanciada">
-            <input
-              class="form-control"
-              formControlName="actaCircunstanciada"
-              placeholder="Acta Circunstanciada" />
+            <input class="form-control" formControlName="actaCircunstanciada" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('averiguacionPrevia')"
-            label="Averiguación Previa">
-            <input
-              class="form-control"
-              formControlName="averiguacionPrevia"
-              placeholder="Averiguación Previa" />
+            label="Averiguaci&oacute;n Previa">
+            <input class="form-control" formControlName="averiguacionPrevia" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('causaPenal')" label="Causa Penal">
-            <input
-              class="form-control"
-              formControlName="causaPenal"
-              placeholder="Causa Penal" />
+            <input class="form-control" formControlName="causaPenal" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('asunto')" label="Asunto">
-            <input
-              class="form-control"
-              formControlName="asunto"
-              placeholder="Asunto" />
+            <input class="form-control" formControlName="asunto" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('indiciado')" label="Indiciado">
-            <input
-              class="form-control"
-              formControlName="indiciado"
-              placeholder="Indiciado" />
+            <input class="form-control" formControlName="indiciado" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('ministerioPublico')"
-            label="Ministerio Público">
-            <input
-              class="form-control"
-              formControlName="ministerioPublico"
-              placeholder="Ministerio Público" />
+            label="Ministerio P&uacute;blico">
+            <input class="form-control" formControlName="ministerioPublico" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('juzgado')" label="Juzgado">
-            <input
-              class="form-control"
-              formControlName="juzgado"
-              placeholder="Juzgado" />
+            <input class="form-control" formControlName="juzgado" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('delegacion')" label="Delegación">
-            <input
-              class="form-control"
-              formControlName="delegacion"
-              placeholder="Delegación" />
+          <form-field
+            [control]="form.get('delegacion')"
+            label="Delegaci&oacute;n">
+            <input class="form-control" formControlName="delegacion" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('entidadFederativa')"
             label="Entidad Federativa">
-            <input
-              class="form-control"
-              formControlName="entidadFederativa"
-              placeholder="Entidad Federativa" />
+            <input class="form-control" formControlName="entidadFederativa" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('ciudad')" label="Ciudad">
-            <input
-              class="form-control"
-              formControlName="ciudad"
-              placeholder="Ciudad" />
+            <input class="form-control" formControlName="ciudad" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('transferente')" label="Transferente">
-            <input
-              class="form-control"
-              formControlName="transferente"
-              placeholder="Transferente" />
+            <input class="form-control" formControlName="transferente" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('emisora')" label="Emisora">
-            <input
-              class="form-control"
-              formControlName="emisora"
-              placeholder="Emisora" />
+            <input class="form-control" formControlName="emisora" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('autoridad')" label="Autoridad">
-            <input
-              class="form-control"
-              formControlName="autoridad"
-              placeholder="Autoridad" />
+            <input class="form-control" formControlName="autoridad" />
           </form-field>
         </div>
       </div>
@@ -244,10 +189,7 @@
               <form-field
                 [control]="formEscaneo.get('folioEscaneo')"
                 label="Folio Escaneo">
-                <input
-                  class="form-control"
-                  formControlName="folioEscaneo"
-                  placeholder="Folio Escaneo" />
+                <input class="form-control" formControlName="folioEscaneo" />
               </form-field>
             </div>
           </div>
@@ -273,7 +215,7 @@
 
 <app-card [header]="true" *ngIf="listadoHistorico == true">
   <div class="ch-content" header>
-    <h5 class="title">Historico Bienes Aseg_Ext_Dom</h5>
+    <h5 class="title">Hist&oacute;rico Bienes Aseg&#95;Ext&#95;Dom</h5>
   </div>
 
   <div body>
@@ -292,7 +234,7 @@
       <div class="col-sm-12 col-12 col-md-6 text-right p-2">
         <div class="form-group">
           <button class="btn btn-danger btn-sm active m-3" (click)="btnSalir()">
-            Cerrar Consulta Historico
+            Cerrar Consulta Hist&oacute;rico
           </button>
         </div>
       </div>

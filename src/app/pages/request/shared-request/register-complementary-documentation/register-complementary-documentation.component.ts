@@ -57,7 +57,7 @@ export class RegisterComplementaryDocumentationComponent implements OnInit {
         new FormControl('', [Validators.required])
       );
     }
-    if (this.nombrePantalla == 'scheduling-eye-visits') {
+    if (this.nombrePantalla != 'register-documentation') {
       this.form.addControl('crime', new FormControl('', [Validators.required]));
       this.form.removeControl('recepcionDate');
     }

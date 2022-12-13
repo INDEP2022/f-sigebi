@@ -24,39 +24,27 @@
           </div>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('noBien')" label="No. Bien">
-            <input
-              class="form-control"
-              formControlName="noBien"
-              placeholder="No. Bien" />
+          <form-field [control]="form.get('noBien')" label="No&#46; Bien">
+            <input class="form-control" formControlName="noBien" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('averiguacionPrevia')"
-            label="Averiguación Previa">
-            <input
-              class="form-control"
-              formControlName="averiguacionPrevia"
-              placeholder="Averiguación Previa" />
+            label="Averiguaci&oacute;n Previa">
+            <input class="form-control" formControlName="averiguacionPrevia" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('causaPenal')" label="Causa Penal">
-            <input
-              class="form-control"
-              formControlName="causaPenal"
-              placeholder="Causa Penal" />
+            <input class="form-control" formControlName="causaPenal" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('estatusBien')"
             label="Estatus del Bien">
-            <input
-              class="form-control"
-              formControlName="estatusBien"
-              placeholder="Estatus del Bien" />
+            <input class="form-control" formControlName="estatusBien" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
@@ -66,18 +54,16 @@
             <input
               class="form-control"
               formControlName="fechaAcuerdoAsegurado"
-              placeholder="Fecha de Acuerdo Asegurado"
               bsDatepicker />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
             [control]="form.get('fechaRecepcion')"
-            label="Fecha de Recepcion">
+            label="Fecha de Recepci&oacute;n">
             <input
               class="form-control"
               formControlName="fechaRecepcion"
-              placeholder="Fecha de Recepcion"
               bsDatepicker />
           </form-field>
         </div>
@@ -88,7 +74,6 @@
             <input
               class="form-control"
               formControlName="fechaDecomiso"
-              placeholder="Fecha de Decomiso"
               bsDatepicker />
           </form-field>
         </div>
@@ -99,9 +84,9 @@
             <select class="form-control" formControlName="tipoNombramiento">
               <option [value]="null">Seleccione un valor</option>
               <option [value]="'Administrador'">Administrador</option>
-              <option [value]="'Depositaría'">Depositaría</option>
+              <option [value]="'Depositaría'">Depositar&iacute;a</option>
               <option [value]="'Interventor'">Interventor</option>
-              <option [value]="'Comodatarío'">Comodatarío</option>
+              <option [value]="'Comodatarío'">Comodatar&iacute;o</option>
               <option [value]="'Bien en uso del SAE'">
                 Bien en uso del SAE
               </option>
@@ -120,29 +105,20 @@
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('tipoDepositaria')"
-            label="Tipo de Depositaria">
-            <input
-              class="form-control"
-              formControlName="tipoDepositaria"
-              placeholder="Tipo de Depositaria" />
+            label="Tipo de Depositar&iacute;a">
+            <input class="form-control" formControlName="tipoDepositaria" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('representanteSAE')"
             label="Representante SAE">
-            <input
-              class="form-control"
-              formControlName="representanteSAE"
-              placeholder="Representante SAE" />
+            <input class="form-control" formControlName="representanteSAE" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
           <form-field [control]="form.get('nombre')" label="Nombre">
-            <input
-              class="form-control"
-              formControlName="nombre"
-              placeholder="Nombre" />
+            <input class="form-control" formControlName="nombre" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
@@ -179,52 +155,39 @@
                   type="button"
                   class="btn btn-primary btn-sm active"
                   (click)="btnCatalogoDepositarias()">
-                  Catálogo Depositarías
+                  Cat&aacute;logo Depositar&iacute;as
                 </button>
               </div>
             </div>
           </div>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('depositaria')" label="Depositaria">
-            <input
-              class="form-control"
-              formControlName="depositaria"
-              placeholder="Depositaria" />
+          <form-field
+            [control]="form.get('depositaria')"
+            label="Depositar&iacute;ia">
+            <input class="form-control" formControlName="depositaria" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('representante')"
             label="Representante">
-            <input
-              class="form-control"
-              formControlName="representante"
-              placeholder="Representante" />
+            <input class="form-control" formControlName="representante" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
           <form-field [control]="form.get('calle')" label="Calle">
-            <input
-              class="form-control"
-              formControlName="calle"
-              placeholder="Calle" />
+            <input class="form-control" formControlName="calle" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('noExterno')" label="No. Externo">
-            <input
-              class="form-control"
-              formControlName="noExterno"
-              placeholder="No. Externo" />
+          <form-field [control]="form.get('noExterno')" label="No&#46; Externo">
+            <input class="form-control" formControlName="noExterno" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('noInterno')" label="No. Interno">
-            <input
-              class="form-control"
-              formControlName="noInterno"
-              placeholder="No. Interno" />
+          <form-field [control]="form.get('noInterno')" label="No&#46; Interno">
+            <input class="form-control" formControlName="noInterno" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
@@ -241,7 +204,7 @@
           <ngx-select
             [data]="items"
             bindLabel="delegacionMunicipioName"
-            label="Delegación/Municipio"
+            label="Delegaci&oacute;n&#47;Municipio"
             value="id"
             (fetchItems)="getFromSelect($event)"
             [form]="form"
@@ -250,11 +213,8 @@
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
             [control]="form.get('codigoPostal')"
-            label="Codigo Postal">
-            <input
-              class="form-control"
-              formControlName="codigoPostal"
-              placeholder="Codigo Postal" />
+            label="C&oacute;digo Postal">
+            <input class="form-control" formControlName="codigoPostal" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
@@ -268,67 +228,46 @@
             control="entidadFederativa"></ngx-select>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('telefono')" label="Teléfono">
-            <input
-              class="form-control"
-              formControlName="telefono"
-              placeholder="Teléfono" />
+          <form-field [control]="form.get('telefono')" label="Tel&eacute;fono">
+            <input class="form-control" formControlName="telefono" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('rfc')" label="RFC">
-            <input
-              class="form-control"
-              formControlName="rfc"
-              placeholder="RFC" />
+            <input class="form-control" formControlName="rfc" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('curp')" label="CURP">
-            <input
-              class="form-control"
-              formControlName="curp"
-              placeholder="CURP" />
+            <input class="form-control" formControlName="curp" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('tipoPersona')"
-            label="Tipo Persona (FÍSICA/MORAL)">
-            <input
-              class="form-control"
-              formControlName="tipoPersona"
-              placeholder="Tipo Persona (FÍSICA/MORAL)" />
+            label="Tipo Persona &#40;F&iacute;SICA&#47;MORAL&#41;">
+            <input class="form-control" formControlName="tipoPersona" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('tipoPersona2')"
-            label="Tipo Persona (DEDICACIÓN)">
-            <input
-              class="form-control"
-              formControlName="tipoPersona2"
-              placeholder="Tipo Persona (DEDICACIÓN) 2" />
+            label="Tipo Persona &#40;DEDICACI&Oacute;N&#41;">
+            <input class="form-control" formControlName="tipoPersona2" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-6 p-2">
           <form-field [control]="form.get('referencia')" label="Referencia">
-            <input
-              class="form-control"
-              formControlName="referencia"
-              placeholder="Referencia" />
+            <input class="form-control" formControlName="referencia" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field [control]="form.get('giro')" label="Giro">
-            <input
-              class="form-control"
-              formControlName="giro"
-              placeholder="Giro" />
+            <input class="form-control" formControlName="giro" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-check label="Con Remoción" for="remocion">
+          <form-check label="Con Remoci&oacute;n" for="remocion">
             <input
               id="remocion"
               type="checkbox"
@@ -338,19 +277,12 @@
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('fecha')" label="Fecha">
-            <input
-              class="form-control"
-              formControlName="fecha"
-              placeholder="Fecha"
-              bsDatepicker />
+            <input class="form-control" formControlName="fecha" bsDatepicker />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('noOficio')" label="No. Oficio">
-            <input
-              class="form-control"
-              formControlName="noOficio"
-              placeholder="No. Oficio" />
+          <form-field [control]="form.get('noOficio')" label="No&#46; Oficio">
+            <input class="form-control" placeholder="No. Oficio" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-12 p-2">
@@ -363,67 +295,50 @@
             <input
               class="form-control"
               formControlName="fechaAcuerdo"
-              placeholder="Fecha Acuerdo"
               bsDatapicker />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-8 p-2">
-          <form-field [control]="form.get('noAcuerdo')" label="No. Acuerdo">
-            <input
-              class="form-control"
-              formControlName="noAcuerdo"
-              placeholder="No. Acuerdo" />
+          <form-field [control]="form.get('noAcuerdo')" label="No&#46; Acuerdo">
+            <input class="form-control" formControlName="noAcuerdo" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-12 p-2">
-          <h6>Contrapresentación/Nombramiento</h6>
+          <h6>Contrapresentaci&oacute;n/Nombramiento</h6>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <div class="form-group m-1">
-            <input class="form-control" placeholder="Contrapresentación" />
-            <label class="label w-100">Contrapresentación</label>
+            <input
+              class="form-control"
+              placeholder="Contrapresentaci&oacute;n" />
+            <label class="label w-100">Contrapresentaci&oacute;n</label>
           </div>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field [control]="form.get('honorarios')" label="Honorarios">
-            <input
-              class="form-control"
-              formControlName="honorarios"
-              placeholder="Honorarios" />
+            <input class="form-control" formControlName="honorarios" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field [control]="form.get('iva')" label="Iva">
-            <input
-              class="form-control"
-              formControlName="iva"
-              placeholder="Iva" />
+            <input class="form-control" formControlName="iva" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field [control]="form.get('fechaInicio')" label="Fecha Inicio">
-            <input
-              class="form-control"
-              formControlName="fechaInicio"
-              placeholder="Fecha Inicio" />
+            <input class="form-control" formControlName="fechaInicio" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field
             [control]="form.get('noNombramiento')"
-            label="No. Nombramiento">
-            <input
-              class="form-control"
-              formControlName="noNombramiento"
-              placeholder="No. Nombramiento" />
+            label="No&#46; Nombramiento">
+            <input class="form-control" formControlName="noNombramiento" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('anexo')" label="Anexo">
-            <textarea
-              placeholder="Anexo"
-              class="form-control"
-              formControlName="anexo"></textarea>
+            <textarea class="form-control" formControlName="anexo"></textarea>
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-9 p-2">
@@ -431,7 +346,6 @@
             [control]="form.get('observaciones')"
             label="Observaciones">
             <textarea
-              placeholder="Observaciones"
               class="form-control"
               formControlName="observaciones"></textarea>
           </form-field>
@@ -439,26 +353,22 @@
         <div class="col-sm-12 col-12 col-md-12 P-2">
           <div class="row">
             <div class="col-sm-12 col-12 col-md-12 p-2">
-              <h6>DATOS DE LA DIRECCIÓN</h6>
+              <h6>DATOS DE LA DIRECCI&Oacute;N</h6>
             </div>
             <div class="col-sm-12 col-12 col-md-5 p-2">
               <form-field
                 [control]="form.get('folioRemocion')"
-                label="Folio de Remoción">
-                <input
-                  class="form-control"
-                  formControlName="folioRemocion"
-                  placeholder="Folio de Remoción" />
+                label="Folio de Remoci&oacute;n">
+                <input class="form-control" formControlName="folioRemocion" />
               </form-field>
             </div>
             <div class="col-sm-12 col-12 col-md-5 p-2">
               <form-field
                 [control]="form.get('folioActaDepositaria')"
-                label="Folio Acta Depositaria">
+                label="Folio Acta Depositar&iacute;a">
                 <input
                   class="form-control"
-                  formControlName="folioActaDepositaria"
-                  placeholder="Folio Acta Depositaria" />
+                  formControlName="folioActaDepositaria" />
               </form-field>
             </div>
             <div class="col-sm-12 col-12 col-md-2 p-4 text-center">
@@ -482,7 +392,7 @@
                   type="button"
                   class="btn btn-primary btn-sm active text-wrap h-100"
                   (click)="btnCatalogoDepositariasPersona()">
-                  Cátalogo Depositarias
+                  C&aacute;talogo Depositar&iacute;as
                 </button>
               </div>
             </div>
@@ -492,7 +402,7 @@
                   type="button"
                   class="btn btn-primary btn-sm active text-wrap h-100"
                   (click)="btnConsultarImagenesEscaneadas()">
-                  Consultar Imágenes Escaneadas
+                  Consultar Im&aacute;genes Escaneadas
                 </button>
               </div>
             </div>
@@ -502,7 +412,7 @@
                   type="button"
                   class="btn btn-primary btn-sm active text-wrap h-100"
                   (click)="btnCatalogoConceptosPagos()">
-                  Cátalogo Conceptos de Pagos
+                  C&aacute;talogo Conceptos de Pagos
                 </button>
               </div>
             </div>
@@ -519,7 +429,7 @@
                   type="button"
                   class="btn btn-primary btn-sm active text-wrap h-100"
                   (click)="btnReportesJuridicos()">
-                  Reportes Jurídicos
+                  Reportes Jur&iacute;dicos
                 </button>
               </div>
             </div>

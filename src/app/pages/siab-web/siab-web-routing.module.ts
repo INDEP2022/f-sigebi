@@ -49,6 +49,12 @@ const routes: Routes = [
       (await import('./indicators/indicators.module')).IndicatorsModule,
   },
   {
+    path: 'parametrization',
+    loadChildren: async () =>
+      (await import('./parametrization/parametrization.module'))
+        .ParametrizationModule,
+  },
+  {
     path: 'consultation',
     loadChildren: async () =>
       (await import('./consultation/consultation.module')).ConsultationModule,
@@ -58,6 +64,11 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./claims-control/claims-control.module'))
         .ClaimsControlModule,
+  },
+  {
+    path: 'maintenance',
+    loadChildren: async () =>
+      (await import('./maintenance/maintenance.module')).MaintenanceModule,
   },
 ];
 

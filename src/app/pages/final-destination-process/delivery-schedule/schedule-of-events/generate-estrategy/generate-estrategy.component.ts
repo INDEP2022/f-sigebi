@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DetailDelegationsComponent } from '../../../shared-final-destination/detail-delegations/detail-delegations.component';
 import { COLUMNS_GOODS } from './columns-goods';
 import { COLUMNS_ORDERS } from './columns-orders';
@@ -34,22 +38,22 @@ export class GenerateEstrategyComponent extends BasePage implements OnInit {
     this.formService = this.fb.group({
       type: [null, []],
       process: [null, []],
-      processDescrip: [null, []],
+      processDescrip: [null, [Validators.pattern(STRING_PATTERN)]],
       captureDate: [null, []],
-      regionalCoord: [null, []],
-      coordinationDescrip: [null, []],
-      serviceKey: [null, []],
+      regionalCoord: [null, [Validators.pattern(STRING_PATTERN)]],
+      coordinationDescrip: [null, [Validators.pattern(STRING_PATTERN)]],
+      serviceKey: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       cancellAuthDate: [null, []],
-      uniqueKey: [null, []],
+      uniqueKey: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       transferenceId: [null, []],
-      transferenceDescrip: [null, []],
+      transferenceDescrip: [null, [Validators.pattern(STRING_PATTERN)]],
       transmitterId: [null, []],
-      transmitterDescrip: [null, []],
+      transmitterDescrip: [null, [Validators.pattern(STRING_PATTERN)]],
       authorityId: [null, []],
-      authorityDescrip: [null, []],
-      keyStore: [null, []],
-      storeDescrip: [null, []],
-      ubication: [null, []],
+      authorityDescrip: [null, [Validators.pattern(STRING_PATTERN)]],
+      keyStore: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      storeDescrip: [null, [Validators.pattern(STRING_PATTERN)]],
+      ubication: [null, [Validators.pattern(STRING_PATTERN)]],
     });
 
     this.formGoods = this.fb.group({

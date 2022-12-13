@@ -43,6 +43,7 @@ export class DocRequestTabComponent
   @ViewChild('myTemplate', { static: true, read: ViewContainerRef })
   container: ViewContainerRef;
   @Input() typeDoc = '';
+  @Input() displayName: string = '';
   title: string = '';
   showSearchForm: boolean = false;
   selectDocType = new DefaultSelect<any>();
@@ -226,10 +227,14 @@ export class DocRequestTabComponent
   getTransfe(event: any) {}
 
   setTypeColumn() {
-    if (this.typeDoc === 'request-assets') {
-      this.columns.noReq.title = 'No. Bien';
+    if (this.displayName === 'validateEyeVisitResult') {
+      this.columns.noReq.title = 'No. Expediente';
     } else {
-      this.columns.noReq.title = 'No. Solicitud';
+      if (this.typeDoc === 'request-assets') {
+        this.columns.noReq.title = 'No. Bien';
+      } else {
+        this.columns.noReq.title = 'No. Solicitud';
+      }
     }
   }
 

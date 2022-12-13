@@ -2,6 +2,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -180,11 +184,11 @@ export class JuridicalRulingComponent
     this.legalForm = this.fb.group({
       tipoDictaminacion: [null, [Validators.required]],
       noExpediente: [null, [Validators.required]],
-      averPrevia: [null],
-      causaPenal: [null],
+      averPrevia: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      causaPenal: [null, [['', [Validators.pattern(STRING_PATTERN)]]]],
       tipo: [null],
       esPropiedad: [false],
-      observaciones: [null],
+      observaciones: [null, [['', [Validators.pattern(STRING_PATTERN)]]]],
       fecDest: [null, [Validators.required]],
       fecDicta: [null, [Validators.required]],
       autoriza: [null, [Validators.required]],

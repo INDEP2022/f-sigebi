@@ -1,6 +1,6 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">Monitor de abandono por devolución</h5>
+    <h5 class="title">Monitor de abandono por devoluci&oacute;n</h5>
   </div>
   <div body>
     <form [formGroup]="form" class="form-material">
@@ -16,7 +16,7 @@
         <div class="col-md-5 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('descriptionGood')"
-            label="Descripción">
+            label="Descripci&oacute;n">
             <input
               type="text"
               class="form-control"
@@ -26,7 +26,7 @@
         <div class="col-md-5 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('descriptionStatus')"
-            label="Descripción Estatus">
+            label="Descripci&oacute;n Estatus">
             <input
               type="text"
               class="form-control"
@@ -46,7 +46,7 @@
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('dateReturn')"
-            label="Fecha Devolución">
+            label="Fecha Devoluci&oacute;n">
             <input
               type="text"
               class="form-control"
@@ -72,7 +72,7 @@
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('suspensionDate')"
-            label="Fecha de Suspensión">
+            label="Fecha de Suspensi&oacute;n">
             <input
               type="text"
               class="form-control"
@@ -83,7 +83,7 @@
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('notificationDate1')"
-            label="Fecha de Notificación">
+            label="Fecha de Notificaci&oacute;n">
             <input
               type="text"
               class="form-control"
@@ -94,7 +94,7 @@
         <div class="col-md-2 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('currentDays')"
-            label="Dias Corrientes">
+            label="D&iacute;as Corrientes">
             <input
               type="text"
               class="form-control"
@@ -102,7 +102,9 @@
           </form-field>
         </div>
         <div class="col-md-2 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('daysTerm')" label="Dias de Plazo">
+          <form-field
+            [control]="form.get('daysTerm')"
+            label="D&iacute;as de Plazo">
             <input
               type="text"
               class="form-control"
@@ -112,7 +114,7 @@
         <div class="col-md-2 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('daysExpiration')"
-            label="Dias para vencimiento">
+            label="D&iacute;as para vencimiento">
             <input
               type="text"
               class="form-control"
@@ -143,7 +145,9 @@
           </div>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-check label="Suspensión Temporal" for="temporarySuspension">
+          <form-check
+            label="Suspensi&oacute;n Temporal"
+            for="temporarySuspension">
             <input
               id="temporarySuspension"
               type="checkbox"
@@ -151,7 +155,9 @@
           </form-check>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-check label="Suspensión Definitiva" for="definitiveSuspension">
+          <form-check
+            label="Suspensi&oacute;n Definitiva"
+            for="definitiveSuspension">
             <input
               id="definitiveSuspension"
               type="checkbox"

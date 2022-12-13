@@ -6,8 +6,9 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -41,9 +42,9 @@ export class MoreInformationComponent
     this.form = this.fb.group({
       noDictaminacion: '',
       tipoDictaminacion: '',
-      texto1: '',
-      texto2: '',
-      texto3: '',
+      texto1: ['', [Validators.pattern(STRING_PATTERN)]],
+      texto2: ['', [Validators.pattern(STRING_PATTERN)]],
+      texto3: ['', [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

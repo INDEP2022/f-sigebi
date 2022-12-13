@@ -6,6 +6,7 @@ import {
 } from 'ngx-bootstrap/datepicker';
 import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ListParams } from './../../../../common/repository/interfaces/list-params';
 import { COLUMNS } from './columns';
 
@@ -62,8 +63,11 @@ export class TechnicalSheetsComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       year: [this.bsValueFromYear, [Validators.required]],
       month: [this.bsValueFromMonth, [Validators.required]],
-      user: [null, [Validators.required]],
-      regionalCoord: [null, [Validators.required]],
+      user: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      regionalCoord: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 

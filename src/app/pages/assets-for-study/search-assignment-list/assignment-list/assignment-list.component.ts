@@ -62,6 +62,20 @@ export class AssignmentListComponent extends BasePage implements OnInit {
         this.router.navigate(['pages/assets-for-study/save-answer', data.id]);
         break;
       }
+      case 'ProgramarEntrega': {
+        this.router.navigate([
+          'pages/assets-for-study/schedule-delivery',
+          data.id,
+        ]);
+        break;
+      }
+      case 'DictaminarBienes': {
+        this.router.navigate([
+          'pages/assets-for-study/dictate-assets-to-be-study',
+          data.id,
+        ]);
+        break;
+      }
     }
   }
 }

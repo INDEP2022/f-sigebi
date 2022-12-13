@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -59,7 +60,10 @@ export class ScheduledMaintenanceComponent implements OnInit {
       fechaInicio: [null, [Validators.required]],
       fechaFin: [null, [Validators.required]],
       statusEvento: [null, [Validators.required]],
-      coordRegional: [null, [Validators.required]],
+      coordRegional: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       usuario: [null, [Validators.required]],
     });
   }

@@ -6,6 +6,11 @@ import * as FileSaver from 'file-saver';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  KEYGENERATION_PATTERN,
+  RFCCURP_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { CancelModalComponent } from '../cancel-modal/cancel-modal.component';
 import { FolioModalComponent } from '../folio-modal/folio-modal.component';
@@ -167,21 +172,33 @@ export class PenaltyBillingMainComponent implements OnInit {
     this.billingForm = this.fb.group({
       event: [null, [Validators.required]],
       batch: [null, [Validators.required]],
-      cve: [null],
+      cve: [null, Validators.pattern(KEYGENERATION_PATTERN)],
       eventDate: [null],
       voucherType: [null, [Validators.required]],
       eventType: [null, [Validators.required]],
       printDate: [null],
-      transferor: [null, [Validators.required]],
-      transferorDesc: [null, [Validators.required]],
+      transferor: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      transferorDesc: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       delegationNumber: [null],
-      delegationDesc: [null],
-      authorize: [null, [Validators.required]],
-      description: [null],
-      client: [null, [Validators.required]],
-      rfc: [null, [Validators.required]],
-      street: [null, [Validators.required]],
-      neighborhood: [null, [Validators.required]],
+      delegationDesc: [null, Validators.pattern(STRING_PATTERN)],
+      authorize: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      description: [null, Validators.pattern(STRING_PATTERN)],
+      client: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      rfc: [null, [Validators.required, Validators.pattern(RFCCURP_PATTERN)]],
+      street: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      neighborhood: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       municipality: [null, [Validators.required]],
       state: [null, [Validators.required]],
       cp: [null, [Validators.required]],

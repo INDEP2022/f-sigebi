@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-attributes-reg-logical-tables-modal',
@@ -22,11 +23,14 @@ export class AttributesRegLogicalTablesModalComponent implements OnInit {
 
   private prepareForom() {
     this.form = this.fb.group({
-      name: [null, [Validators.required]],
-      type: [null, [Validators.required]],
+      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      type: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       noAtt: [null, [Validators.required]],
-      description: [null, [Validators.required]],
-      format: [null, [Validators.required]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      format: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       maxLong: [null, [Validators.required]],
     });
     if (this.allotment != null) {

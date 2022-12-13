@@ -1,6 +1,6 @@
 /** BASE IMPORT */
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -12,6 +12,12 @@ import { ExampleService } from 'src/app/core/services/catalogs/example.service';
 /** ROUTING MODULE */
 
 /** COMPONENTS IMPORTS */
+import {
+  KEYGENERATION_PATTERN,
+  PHONE_PATTERN,
+  RFCCURP_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -38,37 +44,37 @@ export class AppointmentsComponent
   private prepareForm() {
     this.form = this.fb.group({
       noBien: '', //*
-      averiguacionPrevia: '', //*
-      causaPenal: '',
-      estatusBien: '', //*
+      averiguacionPrevia: ['', [Validators.pattern(STRING_PATTERN)]], //*
+      causaPenal: ['', [Validators.pattern(STRING_PATTERN)]],
+      estatusBien: ['', [Validators.pattern(STRING_PATTERN)]], //*
       fechaAcuerdoAsegurado: '', //*
       fechaRecepcion: '', //*
       fechaDecomiso: '', //*
 
       tipoNombramiento: '', //*
       ///*"Administrador, Depositaría, Interventor, Comodatarío,Bien en uso del SAE"
-      tipoDepositaria: '', //*
+      tipoDepositaria: ['', [Validators.pattern(STRING_PATTERN)]], //*
       estatus: '', //* Provisional, Definitiva
-      representanteSAE: '', //*
-      nombre: '', //*
+      representanteSAE: ['', [Validators.pattern(STRING_PATTERN)]], //*
+      nombre: ['', [Validators.pattern(STRING_PATTERN)]], //*
       bienesMensaje: '', //* Sin Mensaje, Con Mensaje
 
-      depositaria: '', //*
-      representante: '', //*
-      calle: '', //*
+      depositaria: ['', [Validators.pattern(STRING_PATTERN)]], //*
+      representante: ['', [Validators.pattern(STRING_PATTERN)]], //*
+      calle: ['', [Validators.pattern(STRING_PATTERN)]], //*
       noExterno: '', //*
       noInterno: '', //*
       colonia: '', //*
       delegacionMunicipio: '', //*
       codigoPostal: '', //*
       entidadFederativa: '', //*
-      telefono: '', //*
-      rfc: '', //*
-      curp: '', //*
-      tipoPersona: '', //*
-      tipoPersona2: '', //*
-      giro: '',
-      referencia: '',
+      telefono: ['', [Validators.pattern(PHONE_PATTERN)]], //*
+      rfc: ['', [Validators.pattern(RFCCURP_PATTERN)]], //*
+      curp: ['', [Validators.pattern(RFCCURP_PATTERN)]], //*
+      tipoPersona: ['', [Validators.pattern(STRING_PATTERN)]], //*
+      tipoPersona2: ['', [Validators.pattern(STRING_PATTERN)]], //*
+      giro: ['', [Validators.pattern(STRING_PATTERN)]],
+      referencia: ['', [Validators.pattern(STRING_PATTERN)]],
 
       remocion: '',
       fecha: '',
@@ -79,16 +85,16 @@ export class AppointmentsComponent
       noAcuerdo: '',
 
       contraprestacion: '',
-      honorarios: '',
+      honorarios: ['', [Validators.pattern(STRING_PATTERN)]],
       iva: '',
       noNombramiento: '',
       fechaInicio: '',
 
-      anexo: '',
-      observaciones: '',
+      anexo: ['', [Validators.pattern(STRING_PATTERN)]],
+      observaciones: ['', [Validators.pattern(STRING_PATTERN)]],
 
-      folioRemocion: '',
-      folioActaDepositaria: '',
+      folioRemocion: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
+      folioActaDepositaria: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
     });
   }
 

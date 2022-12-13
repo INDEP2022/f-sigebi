@@ -1,6 +1,10 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-mnce-adm-depository-auditor-modal',
@@ -22,12 +26,18 @@ export class MnceAdmDepositoryAuditorModalComponent implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      cve: [null, [Validators.required]],
-      description: [null, [Validators.required]],
-      street: [null, [Validators.required]],
+      cve: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      street: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       noExt: [null, [Validators.required]],
       noInt: [null, [Validators.required]],
-      suburb: [null, [Validators.required]],
+      suburb: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       zipCode: [null, [Validators.required]],
     });
   }

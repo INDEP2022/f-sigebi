@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { PaDgCGoodsComponent } from '../pa-dg-c-goods/pa-dg-c-goods.component';
+import { GoodsComponent } from '../goods/goods.component';
 
 @Component({
   selector: 'app-derivation-goods',
@@ -141,7 +141,7 @@ export class DerivationGoodsComponent implements OnInit {
   imgUpload() {}
 
   openModal(): void {
-    this.modalService.show(PaDgCGoodsComponent, {
+    this.modalService.show(GoodsComponent, {
       initialState: {},
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,

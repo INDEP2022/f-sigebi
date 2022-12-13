@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 import {
   DOCUMENTS_REQUIREMENTS_VERIFICATION_COLUMNS,
@@ -36,18 +37,18 @@ export class DocumentsRequirementsVerificationComponent
   prepareForm() {
     this.requirementsForm = this.fb.group({
       expediente: [null, [Validators.required]],
-      causaPenal: [null],
-      tipoDicta: [null],
-      oficio: [null],
-      volante: [null],
-      averPrevia: [null],
-      indiciado: [null],
-      bien: [null],
-      descripcion: [null],
-      statusBien: [null],
-      estatusDicta: [null],
+      causaPenal: [null, Validators.pattern(STRING_PATTERN)],
+      tipoDicta: [null, Validators.pattern(STRING_PATTERN)],
+      oficio: [null, Validators.pattern(STRING_PATTERN)],
+      volante: [null, Validators.pattern(STRING_PATTERN)],
+      averPrevia: [null, Validators.pattern(STRING_PATTERN)],
+      indiciado: [null, Validators.pattern(STRING_PATTERN)],
+      bien: [null, Validators.pattern(STRING_PATTERN)],
+      descripcion: [null, Validators.pattern(STRING_PATTERN)],
+      statusBien: [null, Validators.pattern(STRING_PATTERN)],
+      estatusDicta: [null, Validators.pattern(STRING_PATTERN)],
       fechAseg: [null],
-      observaciones: [null],
+      observaciones: [null, Validators.pattern(STRING_PATTERN)],
     });
   }
 }

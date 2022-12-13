@@ -1,12 +1,14 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">Generación de archivos por dictamen</h5>
+    <h5 class="title">Generaci&oacute;n de archivos por dictamen</h5>
   </div>
   <div body>
     <form [formGroup]="form" class="form-material">
       <div class="row mt-5">
         <div class="col-md-3 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('numberFlyer')" label="No. Volante">
+          <form-field
+            [control]="form.get('numberFlyer')"
+            label="No&#46; Volante">
             <input
               type="text"
               class="form-control"
@@ -14,7 +16,9 @@
           </form-field>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
-          <form-field [control]="form.get('numberFile')" label="No. Expediente">
+          <form-field
+            [control]="form.get('numberFile')"
+            label="No&#46; Expediente">
             <input
               type="text"
               class="form-control"
@@ -24,7 +28,7 @@
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('numberOpinion')"
-            label="No. dictamen">
+            label="No&#46; dictamen">
             <input
               type="text"
               class="form-control"
@@ -34,7 +38,7 @@
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('typeDictamination')"
-            label="Tipo Dictaminación">
+            label="Tipo Dictaminaci&oacute;n">
             <input
               type="text"
               class="form-control"
@@ -46,7 +50,7 @@
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('dateDictamination')"
-            label="Fecha Dictaminación">
+            label="Fecha Dictaminaci&oacute;n">
             <input
               type="text"
               class="form-control"

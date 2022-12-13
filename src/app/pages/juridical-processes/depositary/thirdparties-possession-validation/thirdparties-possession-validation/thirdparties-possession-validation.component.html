@@ -12,7 +12,7 @@
             <div class="col-sm-12 col-12 col-md-2 p-2">
               <form-field
                 [control]="noExpediente.get('noExpediente')"
-                label="No. Expediente">
+                label="No&#46; Expediente">
                 <input class="form-control" formControlName="noExpediente" />
               </form-field>
             </div>
@@ -42,8 +42,12 @@
           [source]="dataTableBienes">
         </ng2-smart-table>
         <br />
-        <span class="badge m-2 badge-pill bg-primary">**Disponibles</span>
-        <span class="badge m-2 badge-pill bg-danger">**No Disponibles</span>
+        <span class="badge m-2 badge-pill bg-primary"
+          >&#42;&#42;Disponibles</span
+        >
+        <span class="badge m-2 badge-pill bg-danger"
+          >&#42;&#42;No Disponibles</span
+        >
       </div>
       <!-- TABLA----BIENES RELACIONADOS CON EL EXPEDIENTE -->
       <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2 text-center">
@@ -75,12 +79,14 @@
           <h6>Datos del Volante</h6>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('noVolante')" label="No. Volante">
+          <form-field [control]="form.get('noVolante')" label="No&#46; Volante">
             <input class="form-control" formControlName="noVolante" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('claveOficio')" label="Cve. Oficio">
+          <form-field
+            [control]="form.get('claveOficio')"
+            label="Cve&#46; Oficio">
             <input class="form-control" formControlName="claveOficio" />
           </form-field>
         </div>
@@ -131,12 +137,16 @@
         <form [formGroup]="formCcpOficio" class="form-material">
           <div class="row tp-2 mb-2">
             <div class="col-sm-12 col-12 col-md-6 p-2">
-              <form-field [control]="formCcpOficio.get('ccp1')" label="C.P.P 1">
+              <form-field
+                [control]="formCcpOficio.get('ccp1')"
+                label="C&#46;P&#46;P 1">
                 <input class="form-control" formControlName="ccp1" />
               </form-field>
             </div>
             <div class="col-sm-12 col-12 col-md-6 p-2">
-              <form-field [control]="formCcpOficio.get('ccp2')" label="C.P.P 2">
+              <form-field
+                [control]="formCcpOficio.get('ccp2')"
+                label="C&#46;P&#46;P 2">
                 <input class="form-control" formControlName="ccp2" />
               </form-field>
             </div>

@@ -43,6 +43,24 @@ var usuario: IRequestList[] = [
     created: 'tester_nsbxt',
     process: 'ProgramarVisitaOcular',
   },
+  // {
+  //   title:
+  //     'BIENES SIMILARES: Registro de Documentación Complementaria, No. Solicitud: 1851',
+  //   noRequest: 45010,
+  //   numTask: 260302,
+  //   noInstance: 820170,
+  //   created: 'tester_nsbxt',
+  //   process: 'RegistroSolicitudes',
+  // },
+  {
+    title:
+      'BIENES SIMILARES: Validar Resultado Visita Ocular, No. Solicitud: 1851, Contribuyente: LETICIA GARCÍA, PAMA: 235324SDA',
+    noRequest: 45011,
+    numTask: 260302,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'ValidarResultadoVisitaOcular',
+  },
   {
     title:
       'RESARCIMIENTO NUMERARIO: Registro de Documentación Complementaria, No. Solicitud: 1896',
@@ -168,8 +186,17 @@ var usuario: IRequestList[] = [
     created: 'tester_nsbxt',
     process: 'DC_Extincion',
   },
+  {
+    title:
+      'AMPARO: Registro de Documentación Complementaria, No. Solicitud: 1835',
+    noRequest: 1836,
+    numTask: 211955,
+    noInstance: 430143,
+    created: 'tester_nsbxt',
+    process: 'AP_Amparo',
+  },
 ];
-
+//AP_Amparo
 @Component({
   selector: 'app-request-list',
   templateUrl: './request-list.component.html',
@@ -236,6 +263,14 @@ export class RequestListComponent extends BasePage implements OnInit {
           'pages/request/manage-similar-goods/schedule-eye-visits/',
           event.data.noRequest,
           2,
+        ]);
+        break;
+      case 'ValidarResultadoVisitaOcular':
+        // en el caso de que el proceso seleccionado sea Programar Visita Ocular
+        this.router.navigate([
+          'pages/request/manage-similar-goods/receive-validation-of-eye-visit-result/',
+          event.data.noRequest,
+          3,
         ]);
         break;
       // ---------------------- SOLICITUDES DE BIENES SIMILARES
@@ -356,6 +391,14 @@ export class RequestListComponent extends BasePage implements OnInit {
       case 'OrdenServicioEntrega':
         this.router.navigate([
           'pages/request/delivery-service-order/service-delivery-request-capture',
+          event.data.noRequest,
+        ]);
+        break;
+
+      case 'AP_Amparo':
+        // en el caso de que sea el proceso de registrar solicitud de Amparo
+        this.router.navigate([
+          'pages/request/register-documentation-amparo/single/forfeiture',
           event.data.noRequest,
         ]);
         break;

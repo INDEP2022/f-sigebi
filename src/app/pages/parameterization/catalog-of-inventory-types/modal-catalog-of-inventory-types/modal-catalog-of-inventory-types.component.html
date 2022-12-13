@@ -6,7 +6,7 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-3">
-          <form-field [control]="form.get('number')" label="Numero">
+          <form-field [control]="form.get('number')" label="N&uacute;mero">
             <input type="text" class="form-control" formControlName="number" />
           </form-field>
         </div>
@@ -25,9 +25,9 @@
             <select class="form-control" formControlName="dateType">
               <option [value]="null">Seleccione un valor</option>
               <option [value]="1">FECHA</option>
-              <option [value]="2">NUMERO FLOTANTE</option>
+              <option [value]="2">N&Uacute;MERO FLOTANTE</option>
               <option [value]="3">NUMERICO</option>
-              <option [value]="4">ALFANUMERICO</option>
+              <option [value]="4">ALFANUM&Eacute;RICO</option>
             </select>
           </form-field>
         </div>

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
   GENERAL_DOCS_DOCUMENTS_VIEWER_COLUMNS,
@@ -19,10 +20,19 @@ export class DocumentsViewerComponent extends BasePage implements OnInit {
     separador: [null, [Validators.required]],
     tipoDoc: [null, [Validators.required]],
     fecha: [null, [Validators.required]],
-    descripcion: [null, [Validators.required]],
-    averPrevia: [null, [Validators.required]],
+    descripcion: [
+      null,
+      [Validators.required, Validators.pattern(STRING_PATTERN)],
+    ],
+    averPrevia: [
+      null,
+      [Validators.required, Validators.pattern(STRING_PATTERN)],
+    ],
     tipos: [null, [Validators.required]],
-    causaPenal: [null, [Validators.required]],
+    causaPenal: [
+      null,
+      [Validators.required, Validators.pattern(STRING_PATTERN)],
+    ],
     origen: [null, [Validators.required]],
   });
   select = new DefaultSelect();

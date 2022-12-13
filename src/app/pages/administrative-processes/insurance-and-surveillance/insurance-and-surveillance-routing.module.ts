@@ -142,9 +142,9 @@ const routes: Routes = [
         loadChildren: async () =>
           (
             await import(
-              './goods-to-policies-reports/pa-is-gpr-m-goods-to-policies-reports.module'
+              './goods-to-policies-reports/goods-to-policies-reports.module'
             )
-          ).PaIsGprMGoodsToPoliciesReportsModule,
+          ).GoodsToPoliciesReportsModule,
         data: { title: 'Reportes de Incorporación de Bienes a Pólizas' },
       },
       {

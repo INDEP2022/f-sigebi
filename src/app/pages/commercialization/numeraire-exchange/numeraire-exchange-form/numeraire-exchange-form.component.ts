@@ -7,6 +7,7 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { TableSelectComponent } from '../components/table-select/table-select.component';
 import {
@@ -224,7 +225,10 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
       commissionTax: [null, [Validators.required]],
       account: [null, [Validators.required]],
       depositDate: [null, [Validators.required]],
-      depositReferece: [null, [Validators.required]],
+      depositReferece: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       depositAmount: [null, [Validators.required]],
       exchangeType: [null, [Validators.required]],
       expenses: this.fb.array([null]),

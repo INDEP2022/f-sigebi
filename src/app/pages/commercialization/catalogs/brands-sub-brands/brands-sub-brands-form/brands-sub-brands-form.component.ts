@@ -7,6 +7,7 @@ import { BehaviorSubject } from 'rxjs';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -73,8 +74,11 @@ export class BrandsSubBrandsFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      brand: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      brand: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
 
     if (this.edit) {

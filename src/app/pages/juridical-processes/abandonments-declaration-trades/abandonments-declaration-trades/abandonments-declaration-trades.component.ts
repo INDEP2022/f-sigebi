@@ -6,6 +6,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 
 /** SERVICE IMPORTS */
 import { ExampleService } from 'src/app/core/services/catalogs/example.service';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 /** ROUTING MODULE */
 
@@ -189,8 +190,8 @@ export class AbandonmentsDeclarationTradesComponent
       averiPrevia: ['', [Validators.required]], //*
     });
     this.formDeclaratoriaInicioFin = this.fb.group({
-      inicio: ['', [Validators.required]], //*
-      fin: ['', [Validators.required]], //*
+      inicio: ['', [Validators.required, Validators.pattern(STRING_PATTERN)]], //*
+      fin: ['', [Validators.required, Validators.pattern(STRING_PATTERN)]], //*
     });
     this.formOficioInicioFin = this.fb.group({
       inicio: ['', [Validators.required]], //*

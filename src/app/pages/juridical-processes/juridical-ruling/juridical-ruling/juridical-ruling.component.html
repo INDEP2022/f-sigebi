@@ -18,7 +18,7 @@
             <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
               <form-field
                 [control]="legalForm.get('tipoDictaminacion')"
-                label="Tipo de dictaminación">
+                label="Tipo de dictaminaci&oacute;n">
                 <select
                   class="form-control"
                   formControlName="tipoDictaminacion">
@@ -29,14 +29,14 @@
             <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
               <form-field
                 [control]="legalForm.get('cveOficio')"
-                label="Cve. Oficio">
+                label="Cve&#46; Oficio">
                 <input class="form-control" formControlName="cveOficio" />
               </form-field>
             </div>
             <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
               <form-field
                 [control]="legalForm.get('averPrevia')"
-                label="Averiguación Previa">
+                label="Averiguaci&oacute;n Previa">
                 <input class="form-control" formControlName="averPrevia" />
               </form-field>
             </div>
@@ -50,10 +50,9 @@
             <div class="col-sm-12 col-12 col-md-2 col-lg-2 p-2">
               <form-field
                 [control]="legalForm.get('fecDicta')"
-                label="Fec. Dictamina">
+                label="Fec&#46; Dictamina">
                 <input
                   formControlName="fecDicta"
-                  placeholder="Selección de Fec. Dictamina"
                   class="form-control"
                   bsDatepicker />
               </form-field>
@@ -61,7 +60,7 @@
             <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
               <form-field
                 [control]="legalForm.get('autoriza')"
-                label="Autoriza Dict.">
+                label="Autoriza Dict&#46;">
                 <!-- <ngx-select [form]="legalForm" control="autoriza"></ngx-select> -->
                 <select class="form-control" formControlName="autoriza">
                   <option [value]="null">Seleccione un valor</option>
@@ -71,10 +70,9 @@
             <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2">
               <form-field
                 [control]="legalForm.get('fecDest')"
-                label="Fec. Dest.">
+                label="Fec&#46; Dest&#46;">
                 <input
                   formControlName="fecDest"
-                  placeholder="Selección de Fec. Dest."
                   class="form-control"
                   bsDatepicker />
               </form-field>
@@ -109,7 +107,7 @@
             <div class="col-sm-12 col-12 col-md-3 col-lg-3 p-2 text-center">
               <form-check
                 class="col-md-12 ml-4"
-                label="¿El expediente es delito propiedad intelectual?"
+                label="&#191;El expediente es delito propiedad intelectual&#63;"
                 for="esPropiedad">
                 <input
                   id="esPropiedad-check"
@@ -134,7 +132,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="subtipoForm.get('tipoDictaminacion')"
-                label="Ident.">
+                label="Ident&#46;">
                 <select
                   class="form-control"
                   formControlName="tipoDictaminacion">
@@ -148,7 +146,7 @@
             <div class="col-md-4">
               <form-field
                 [control]="subtipoForm.get('noExpediente')"
-                label="Subtipo - Ssubtipo - Sssubtipo">
+                label="Subtipo &#45; Ssubtipo &#45; Sssubtipo">
                 <select class="form-control" formControlName="noExpediente">
                   <option [value]="null">Seleccione un valor</option>
                   <option [value]="'Alta'">Alta</option>
@@ -215,7 +213,7 @@
               [source]="data3"></ng2-smart-table>
           </div>
           <div class="col-md-2">
-            <p class="text-info h5">No. bien</p>
+            <p class="text-info h5">No&#46; bien</p>
             <p class="text-info h5">66345</p>
           </div>
         </div>

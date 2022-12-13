@@ -4,26 +4,15 @@
 # This is needed to build and compile our code 
 # while generating the docker image
 
-FROM node:14.16.0-alpine3.12
-
-WORKDIR /src
-
-COPY package*.json ./
-
-# Update Alpine & Install Libs
-RUN apk add --no-cache --virtual .build-deps git bzip2 && \
-  npm install -g @angular/cli@latest && \
-  npm install --silent && \
-  npm cache clean --force && \
-  npm rebuild node-sass
-
-# Copy app source code
-COPY . .
-RUN npm install
-RUN npm run build --prod
-
+FROM tiangolo/node-frontend:10 as build-1
+WORKDIR /app
+COPY ./src /app/src/
+COPY *.* /app/
 
 ### STAGE 2:RUN ###
+RUN npm install && npm run build --prod
+
+
 # Defining nginx image to be used
 FROM nginx
 
@@ -33,3 +22,7 @@ COPY dist/f-sigebi /usr/share/nginx/html
 
 # Expose port 80
 EXPOSE 80
+
+#ENV FILES
+CMD ["/bin/sh",  "-c",  "envsubst < /usr/share/nginx/html/assets/env.template.js > /usr/share/nginx/html/assets/env.js && exec nginx -g 'daemon off;'"]
+

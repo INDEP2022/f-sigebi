@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 const lorem = `
@@ -18,10 +22,19 @@ export class IncidentMaintenanceComponent implements OnInit {
     aprueba: [null, [Validators.required]],
     incidencia: [null, [Validators.required]],
     ticket: [null, [Validators.required]],
-    oficio: [null, [Validators.required]],
-    solicitud: [lorem, [Validators.required]],
-    solucion: [lorem, [Validators.required]],
-    scripts: [lorem, [Validators.required]],
+    oficio: [
+      null,
+      [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+    ],
+    solicitud: [
+      lorem,
+      [Validators.required, Validators.pattern(STRING_PATTERN)],
+    ],
+    solucion: [
+      lorem,
+      [Validators.required, Validators.pattern(STRING_PATTERN)],
+    ],
+    scripts: [lorem, [Validators.required, Validators.pattern(STRING_PATTERN)]],
   });
   select = new DefaultSelect();
   constructor(private fb: FormBuilder) {}

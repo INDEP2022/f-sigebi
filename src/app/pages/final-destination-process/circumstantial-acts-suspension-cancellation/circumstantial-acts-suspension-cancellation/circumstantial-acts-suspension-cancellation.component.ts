@@ -6,6 +6,10 @@ import {
 } from 'ngx-bootstrap/datepicker';
 import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { ListParams } from './../../../../common/repository/interfaces/list-params';
 import { COLUMNS1 } from './columns1';
 import { COLUMNS2 } from './columns2';
@@ -67,28 +71,70 @@ export class CircumstantialActsSuspensionCancellationComponent
 
   initForm() {
     this.form = this.fb.group({
-      statusAct: [null, [Validators.required]],
-      preliminaryAscertainment: [null, [Validators.required]],
-      causePenal: [null, [Validators.required]],
+      statusAct: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      preliminaryAscertainment: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      causePenal: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       elabDate: [null, [Validators.required]],
       closingDate: [null, [Validators.required]],
       captureDate: [null, [Validators.required]],
       actSelect: [null, [Validators.required]],
-      authority: [null, [Validators.required]],
-      ident: [null, [Validators.required]],
-      receive: [null, [Validators.required]],
-      admin: [null, [Validators.required]],
-      folio: [null, [Validators.required]],
+      authority: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      ident: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      receive: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      admin: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      folio: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
       year: [this.bsValueFromYear, [Validators.required]],
       month: [this.bsValueFromMonth, [Validators.required]],
-      act: [null, [Validators.required]],
-      address: [null, [Validators.required]],
-      autorithyCS: [null, [Validators.required]],
-      observations: [null, [Validators.required]],
-      elaboration: [null, [Validators.required]],
-      responsible: [null, [Validators.required]],
-      witnessContr: [null, [Validators.required]],
-      folioScan: [null, [Validators.required]],
+      act: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      address: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      autorithyCS: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      observations: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      elaboration: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      responsible: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      witnessContr: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      folioScan: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
     });
 
     this.formTable1 = this.fb.group({
