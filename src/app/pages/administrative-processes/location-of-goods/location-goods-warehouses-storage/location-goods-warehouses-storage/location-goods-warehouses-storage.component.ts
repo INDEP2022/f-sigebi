@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModalSelectsGoodsComponent } from '../modal-selects-goods/modal-selects-goods.component';
 
 @Component({
@@ -69,17 +70,44 @@ export class LocationGoodsWarehousesStorageComponent implements OnInit {
   private buildForm() {
     this.form = this.fb.group({
       good: [null, [Validators.required]],
-      description: [null, [Validators.required]],
-      statusGoods: [null, [Validators.required]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      statusGoods: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       radio: [null, [Validators.required]],
       currentLocationWare: [null, [Validators.required]],
-      currentDescriptionWare: [null, [Validators.required]],
-      newLocationWare: [null, [Validators.required]],
-      newDescriptionWare: [null, [Validators.required]],
-      currentLocationVault: [null, [Validators.required]],
-      currentDescriptionVault: [null, [Validators.required]],
-      newLocationVault: [null, [Validators.required]],
-      newDescriptionVault: [null, [Validators.required]],
+      currentDescriptionWare: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      newLocationWare: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      newDescriptionWare: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      currentLocationVault: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      currentDescriptionVault: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      newLocationVault: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      newDescriptionVault: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 

@@ -6,8 +6,12 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -40,21 +44,21 @@ export class DocumentTradeComponent
   private prepareForm() {
     this.form = this.fb.group({
       noDictaminacion: '',
-      remitente: '',
-      ciudad: '',
-      parrafoInicial: '',
-      parrafoFinal: '',
-      masInformacion1: '',
-      masInformacion3: '',
-      destinatario: '',
+      remitente: ['', [Validators.pattern(STRING_PATTERN)]],
+      ciudad: ['', [Validators.pattern(STRING_PATTERN)]],
+      parrafoInicial: ['', [Validators.pattern(STRING_PATTERN)]],
+      parrafoFinal: ['', [Validators.pattern(STRING_PATTERN)]],
+      masInformacion1: ['', [Validators.pattern(STRING_PATTERN)]],
+      masInformacion3: ['', [Validators.pattern(STRING_PATTERN)]],
+      destinatario: ['', [Validators.pattern(STRING_PATTERN)]],
       noDelegacionDestinatario: '',
       noDepartamentoDestinatario: '',
-      estatus: '',
-      tipoDictaminacion: '',
-      destinatarioESXT: '',
-      destinatarioRemitente: '',
+      estatus: ['', [Validators.pattern(STRING_PATTERN)]],
+      tipoDictaminacion: ['', [Validators.pattern(STRING_PATTERN)]],
+      destinatarioESXT: ['', [Validators.pattern(STRING_PATTERN)]],
+      destinatarioRemitente: ['', [Validators.pattern(STRING_PATTERN)]],
       noNotario: '',
-      claveCargo: '',
+      claveCargo: ['', [Validators.pattern(KEYGENERATION_PATTERN)]],
     });
   }
 

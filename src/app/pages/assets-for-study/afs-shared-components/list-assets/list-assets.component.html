@@ -28,6 +28,13 @@
           Programar entrega
         </button>
       </div>
+      <div class="p-2" *ngIf="typeComponent === 'dictate-assets'">
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="generateAuthorization()">
+          Generar Autorización
+        </button>
+      </div>
       <div class="p-2">
         <app-columns-select [(settings)]="settings"></app-columns-select>
       </div>

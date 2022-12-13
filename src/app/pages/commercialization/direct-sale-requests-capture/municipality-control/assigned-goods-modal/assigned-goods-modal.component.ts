@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -89,16 +90,22 @@ export class AssignedGoodsModalComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.goodForm = this.fb.group({
       goodId: [null, [Validators.required]],
-      appraisal: [null],
+      appraisal: [null, Validators.pattern(STRING_PATTERN)],
       appraisalDate: [null],
       sessionNumber: [null],
       goodClasification: [null],
-      description: [null, [Validators.required]],
-      delegation: [null, [Validators.required]],
-      location: [null],
-      mandate: [null],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      delegation: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      location: [null, Validators.pattern(STRING_PATTERN)],
+      mandate: [null, Validators.pattern(STRING_PATTERN)],
       siabClassification: [null],
-      commentary: [null],
+      commentary: [null, Validators.pattern(STRING_PATTERN)],
     });
     if (this.good !== undefined) {
       this.edit = true;

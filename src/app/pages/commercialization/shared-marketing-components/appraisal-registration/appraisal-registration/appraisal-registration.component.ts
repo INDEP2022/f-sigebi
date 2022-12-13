@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 import { APPRAISAL_REGISTRATION_APPRAISALS_COLUMNS } from './appraisal-registration-appraisals-columns';
 import { APPRAISAL_REGISTRATION_DETAIL_COLUMNS } from './appraisal-registration-detail-columns';
@@ -40,13 +41,22 @@ export class AppraisalRegistrationComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       idEvento: ['', [Validators.required]],
-      descriptionEvent: ['', [Validators.required]],
+      descriptionEvent: [
+        '',
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       eventDate: ['', [Validators.required]],
-      observations: ['', [Validators.required]],
+      observations: [
+        '',
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       appDate: ['', [Validators.required]],
       type: ['', [Validators.required]],
-      status: ['', [Validators.required]],
-      reference: ['', [Validators.required]],
+      status: ['', [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      reference: [
+        '',
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       typeEvent: ['', [Validators.required]],
     });
   }

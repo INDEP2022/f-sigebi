@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -61,10 +65,19 @@ export class ScheduledMaintenanceComponent implements OnInit {
       tipoEvento: [null, [Validators.required]],
       tipo: [null, [Validators.required]],
       prog: [null, [Validators.required]],
-      transferente: [null, [Validators.required]],
-      area: [null, [Validators.required]],
-      usuario: [null, [Validators.required]],
-      folio: [null, [Validators.required]],
+      transferente: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      area: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      usuario: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      folio: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
       year: [null, [Validators.required]],
       month: [null, [Validators.required]],
       claveActa: [null, [Validators.required]],

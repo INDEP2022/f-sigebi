@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-series-folios-control-modal',
@@ -31,20 +32,38 @@ export class SeriesFoliosControlModalComponent
   private prepareForm() {
     this.form = this.fb.group({
       id: [null, [Validators.required]],
-      coord: [null, [Validators.required]],
-      regional: [null, [Validators.required]],
-      serie: [null, [Validators.required]],
-      foInicial: [null, [Validators.required]],
-      foFinal: [null, [Validators.required]],
-      validez: [null, [Validators.required]],
-      tipo: [null, [Validators.required]],
-      estatus: [null, [Validators.required]],
+      coord: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      regional: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      serie: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      foInicial: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      foFinal: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      validez: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      tipo: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      estatus: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       totalFolios: [null, [Validators.required]],
       folRegistrados: [null, [Validators.required]],
       folUtilizados: [null, [Validators.required]],
       fecUsuario: [null, [Validators.required]],
       fecRegistro: [null, [Validators.required]],
-      direccion: [null, [Validators.required]],
+      direccion: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
     if (this.allotment != null) {
       this.edit = true;

@@ -5,6 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { KEYGENERATION_PATTERN } from 'src/app/core/shared/patterns';
 import { ADD_RELATED_EVENT_COLUMNS } from './create-modal-columns';
 
 @Component({
@@ -70,7 +71,10 @@ export class CreateControlModalComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.controlForm = this.fb.group({
-      key: [null, [Validators.required]],
+      key: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
       direction: [null, [Validators.required]],
       dispersionType: [null, [Validators.required]],
       origin: [null, [Validators.required]],

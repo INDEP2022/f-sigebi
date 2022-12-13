@@ -15,7 +15,14 @@ import { MENU } from 'src/app/core/menu';
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
-  styles: [],
+  styles: [
+    `
+      .scrollbar-menu {
+        --scrollbar-thumb-color: #10312b;
+        --scrollbar-thumb-hover-color: var(--scrollbar-thumb-color);
+      }
+    `,
+  ],
 })
 export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
   @ViewChild('componentRef') scrollRef: any;

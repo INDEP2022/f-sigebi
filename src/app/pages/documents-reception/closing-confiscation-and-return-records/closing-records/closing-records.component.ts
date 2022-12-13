@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { CLOSING_RECORDS_COLUMNS } from './closing-records-columns';
 
 @Component({
@@ -28,7 +29,10 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
       tipoActa: [null, [Validators.required]],
       folio: [null, [Validators.required]],
       cerrarActa: [null, [Validators.required]],
-      observaciones: [null, [Validators.required]],
+      observaciones: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 }

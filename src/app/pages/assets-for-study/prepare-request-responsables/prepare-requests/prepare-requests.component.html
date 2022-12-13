@@ -59,6 +59,7 @@
         <tab heading="Bienes" id="tab1">
           <app-list-assets
             [dataAssets]="dataAssets"
+            [typeComponent]="'prepare-request'"
             [isSaving]="save"
             (listAssetsData)="getListAssetsData($event)"></app-list-assets>
         </tab>

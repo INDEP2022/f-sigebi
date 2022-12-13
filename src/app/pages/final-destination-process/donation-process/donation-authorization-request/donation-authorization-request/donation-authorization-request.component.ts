@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModalViewComponent } from '../modal-view/modal-view.component';
 import { ListParams } from './../../../../../common/repository/interfaces/list-params';
 import { COLUMNS_GOODS } from './columns-goods';
@@ -45,9 +46,9 @@ export class DonationAuthorizationRequestComponent
 
   initForm() {
     this.form = this.fb.group({
-      proposal: [null, []],
+      proposal: [null, [Validators.pattern(STRING_PATTERN)]],
       classifNumbGood: [null, []],
-      descripClassif: [null, []],
+      descripClassif: [null, [Validators.pattern(STRING_PATTERN)]],
     });
 
     this.formTable1 = this.fb.group({

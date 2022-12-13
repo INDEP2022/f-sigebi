@@ -5,6 +5,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModalClassificationGoodsComponent } from '../modal-classification-goods/modal-classification-goods.component';
 import { COLUMNS } from './columns';
 
@@ -62,10 +63,19 @@ export class MassiveReclassificationGoodsComponent
     this.form = this.fb.group({
       mode: [null, [Validators.required]],
       numberClassificationGood: [null, [Validators.required]],
-      description: [null, [Validators.required]],
-      filterByStatus: [null, [Validators.required]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      filterByStatus: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       numberClassificationGoodAlterning: [null, [Validators.required]],
-      descriptionAlternating: [null, [Validators.required]],
+      descriptionAlternating: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 

@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -36,7 +37,7 @@ export class GoodsManagementSocialCabinetComponent
   private prepareForm(): void {
     this.form = this.fb.group({
       option: [null, [Validators.required]],
-      excuse: [null, [Validators.required]],
+      excuse: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       file: [null, [Validators.required]],
       //message: [null, [Validators.required]]
     });

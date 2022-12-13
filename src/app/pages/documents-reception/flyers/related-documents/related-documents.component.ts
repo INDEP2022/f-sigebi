@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
   RELATED_DOCUMENTS_COLUMNS,
@@ -46,7 +47,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       noVolante: [null, [Validators.required]],
       noExpediente: [null, [Validators.required]],
       tipoOficio: [null],
-      relacionado: [null],
+      relacionado: [null, Validators.pattern(STRING_PATTERN)],
       numero: [null],
       noRemitente: [null],
       remitente: [null],
@@ -55,7 +56,7 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       noCiudad: [null],
       ciudad: [null],
       claveOficio: [null],
-      parrafoInicial: [null],
+      parrafoInicial: [null, Validators.pattern(STRING_PATTERN)],
       subtipo: [null],
       indPDoctos: [null],
       noBienes: [null],
@@ -66,8 +67,8 @@ export class RelatedDocumentsComponent extends BasePage implements OnInit {
       documento: [null],
       noDocumento2: [null],
       documento2: [null],
-      parrafoFinal: [null],
-      parrafoAusencia: [null],
+      parrafoFinal: [null, Validators.pattern(STRING_PATTERN)],
+      parrafoAusencia: [null, Validators.pattern(STRING_PATTERN)],
       ccp: [null],
       ccp2: [null],
       ccp3: [null],

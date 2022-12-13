@@ -5,6 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { minDate } from 'src/app/common/validations/date.validators';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import {
   SCHEDULING_DELIVERIES_COLUMNS,
   SCHEDULING_DELIVERIES_SALES_COLUMNS,
@@ -100,14 +101,14 @@ export class SchedulingDeliveriesFormComponent
       ],
       transferent: [null],
       client: [null],
-      emails: [null, [Validators.required]],
+      emails: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
   }
 
   prepareSearchForm() {
     this.searchForm = this.fb.group({
-      goodDescription: [null],
-      commercialEvent: [null],
+      goodDescription: [null, [Validators.pattern(STRING_PATTERN)]],
+      commercialEvent: [null, [Validators.pattern(STRING_PATTERN)]],
       invoice: [null],
       commercialLot: [null],
       numberSae: [null],

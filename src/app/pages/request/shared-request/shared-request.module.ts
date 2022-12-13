@@ -33,6 +33,8 @@ import { NewDocumentComponent } from './expedients-tabs/sub-tabs/new-document/ne
 import { RequestOfAssetsComponent } from './expedients-tabs/sub-tabs/request-of-assets/request-of-assets.component';
 import { GenerateReceiptFormComponent } from './generate-receipt-form/generate-receipt-form.component';
 import { GoodsListComponent } from './goods-list/goods-list.component';
+import { GoodsNotTransferredComponent } from './goods-not-transferred/goods-not-transferred.component';
+import { ModalNotTransferredComponent } from './goods-not-transferred/modal-not-transferred/modal-not-transferred.component';
 import { GuidelinesViewComponent } from './guidelines-view/guidelines-view.component';
 import { GuidelinesObservationsComponent } from './guidelines/guidelines-observations/guidelines-observations.component';
 import { GuidelinesRevisionViewComponent } from './guidelines/guidelines-revision-view/guidelines-revision-view.component';
@@ -79,6 +81,7 @@ import { WarehouseConfirmComponent } from './warehouse-confirm/warehouse-confirm
 import { WarehouseFormComponent } from './warehouse-form/warehouse-form.component';
 import { WarehouseShowComponent } from './warehouse-show/warehouse-show.component';
 import { WitnessFormComponent } from './witness-form/witness-form.component';
+
 @NgModule({
   declarations: [
     RequestFormComponent,
@@ -151,6 +154,8 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     RegisterComplementaryDocumentationComponent,
     ModalAssignGoodGrouperComponent,
     ModalModifyDatesComponent,
+    GoodsNotTransferredComponent,
+    ModalNotTransferredComponent,
     ValidateVisitResultComponent,
     ConfirmValidationComponent,
     ViewExpedientComponent,
@@ -203,6 +208,8 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     VerifyComplianceGoodsComponent,
     ModalAssignGoodGrouperComponent,
     ComplementaryRequestInformationComponent,
+    GoodsNotTransferredComponent,
+    ModalNotTransferredComponent,
   ],
 })
 export class SharedRequestModule {}

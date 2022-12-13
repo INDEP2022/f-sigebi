@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'record-notification-filter',
@@ -12,18 +13,30 @@ export class RecordNotificationFilterComponent implements OnInit {
     expediente: [null, [Validators.required]],
     volante: [null, [Validators.required]],
     noJuzgado: [null, [Validators.required]],
-    expTrans: [null, [Validators.required]],
+    expTrans: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     tipoVolante: [null, [Validators.required]],
     listadoExp: [null, [Validators.required]],
     fechaOficio: [null, [Validators.required]],
-    amparo: [null, [Validators.required]],
-    indiciado: [null, [Validators.required]],
-    minPub: [null, [Validators.required]],
-    tocaPenal: [null, [Validators.required]],
+    amparo: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+    indiciado: [
+      null,
+      [Validators.required, Validators.pattern(STRING_PATTERN)],
+    ],
+    minPub: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+    tocaPenal: [
+      null,
+      [Validators.required, Validators.pattern(STRING_PATTERN)],
+    ],
     oficExt: [null, [Validators.required]],
-    averPrevia: [null, [Validators.required]],
-    dictamen: [null, [Validators.required]],
-    causaPenal: [null, [Validators.required]],
+    averPrevia: [
+      null,
+      [Validators.required, Validators.pattern(STRING_PATTERN)],
+    ],
+    dictamen: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+    causaPenal: [
+      null,
+      [Validators.required, Validators.pattern(STRING_PATTERN)],
+    ],
   });
   constructor(private fb: FormBuilder) {}
 

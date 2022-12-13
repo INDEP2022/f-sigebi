@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-expenses-request-modal',
@@ -27,10 +28,16 @@ export class ExpensesRequestModalComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.dataForm = this.fb.group({
       beneficiary: [null, [Validators.required]],
-      name: [null, [Validators.required]],
+      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       amount: [null, [Validators.required]],
-      service: [null, [Validators.required]],
-      documentation: [null, [Validators.required]],
+      service: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      documentation: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
     if (this.data !== undefined) {
       this.edit = true;

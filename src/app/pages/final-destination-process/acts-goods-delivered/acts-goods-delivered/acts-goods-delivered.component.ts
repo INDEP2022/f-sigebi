@@ -3,6 +3,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -29,13 +33,28 @@ export class ActsGoodsDeliveredComponent extends BasePage implements OnInit {
 
   initForm() {
     this.form = this.fb.group({
-      statusAct: [null, Validators.required],
-      keyAct: [null, [Validators.required]],
-      proceedings: [null, [Validators.required]],
-      observations: [null, [Validators.required]],
+      statusAct: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      keyAct: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      proceedings: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      observations: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       captureDate: [null, [Validators.required]],
       closingDate: [null, [Validators.required]],
-      universalFolio: [null, Validators.required],
+      universalFolio: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
     });
   }
 

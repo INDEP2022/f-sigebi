@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DEPOSIT_TOKENS, NUMERARY_FILE } from './deposit-conciliations-columns';
 
 @Component({
@@ -43,9 +44,17 @@ export class DepositConsiliationTokensComponent
   prepareForm() {
     this.form = this.fb.group({
       file: [null, Validators.required],
-      penalCause: [null, Validators.required],
+      penalCause: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
 
-      previousAveriguation: [null, Validators.required],
+      previousAveriguation: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
       description: [null, Validators.required],
       status: [null, Validators.required],
     });

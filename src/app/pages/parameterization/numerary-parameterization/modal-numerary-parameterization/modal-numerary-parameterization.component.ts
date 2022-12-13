@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-modal-numerary-parameterization',
@@ -22,9 +23,18 @@ export class ModalNumeraryParameterizationComponent implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      typeAct: [null, [Validators.required]],
-      initialCategory: [null, [Validators.required]],
-      finalCategory: [null, [Validators.required]],
+      typeAct: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      initialCategory: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      finalCategory: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
     if (this.allotment != null) {
       this.edit = true;

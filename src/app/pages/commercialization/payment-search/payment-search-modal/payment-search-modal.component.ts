@@ -3,6 +3,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -76,21 +80,36 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.paymentForm = this.fb.group({
       date: [null, [Validators.required]],
-      originalReference: [null, [Validators.required]],
-      reference: [null, [Validators.required]],
-      amount: [null, [Validators.required]],
+      originalReference: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      reference: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      amount: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
       cve: [null, [Validators.required]],
       code: [null, [Validators.required]],
       publicBatch: [null, [Validators.required]],
       event: [null, [Validators.required]],
       systemValidity: [null, [Validators.required]],
-      result: [null, [Validators.required]],
+      result: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       paymentId: [null, [Validators.required]],
       batchId: [null, [Validators.required]],
       entryOrderId: [null, [Validators.required]],
-      satDescription: [null, [Validators.required]],
+      satDescription: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       type: [null, [Validators.required]],
-      inconsistencies: [null, [Validators.required]],
+      inconsistencies: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
     if (this.payment != null) {
       this.edit = true;

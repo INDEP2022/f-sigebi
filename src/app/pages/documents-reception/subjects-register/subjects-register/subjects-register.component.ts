@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
@@ -37,13 +38,13 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
     this.satForm = this.fb.group({
       from: [null],
       to: [null],
-      aver: [null],
+      aver: [null, Validators.pattern(STRING_PATTERN)],
       cordinador: [null],
-      document: [null],
-      status: [null],
+      document: [null, Validators.pattern(STRING_PATTERN)],
+      status: [null, Validators.pattern(STRING_PATTERN)],
       pgrGood: [null],
       saeGood: [null],
-      saeStatus: [null],
+      saeStatus: [null, Validators.pattern(STRING_PATTERN)],
     });
   }
 }

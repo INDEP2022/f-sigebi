@@ -3,6 +3,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  EMAIL_PATTERN,
+  PHONE_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -79,15 +84,27 @@ export class ApplicantsModalComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.applicantForm = this.fb.group({
       entityId: [null, [Validators.required]],
-      applicant: [null, [Validators.required]],
-      position: [null, [Validators.required]],
+      applicant: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      position: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       municipality: [null, [Validators.required]],
       state: [null, [Validators.required]],
       applicationDate: [null, [Validators.required]],
-      description: [null, [Validators.required]],
-      phone: [null],
-      adjudication: [null, [Validators.required]],
-      email: [null],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      phone: [null, Validators.pattern(PHONE_PATTERN)],
+      adjudication: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      email: [null, Validators.pattern(EMAIL_PATTERN)],
     });
     if (this.applicant !== undefined) {
       this.edit = true;

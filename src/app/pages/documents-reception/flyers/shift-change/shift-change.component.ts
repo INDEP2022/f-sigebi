@@ -4,6 +4,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
   SHIFT_CHANGE_COLUMNS,
@@ -37,15 +38,21 @@ export class RdFShiftChangeComponent extends BasePage implements OnInit {
   prepareForm() {
     this.turnForm = this.fb.group({
       noVolante: [null, [Validators.required]],
-      asunto: [null, [Validators.required]],
+      asunto: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       fecRec: [null, [Validators.required]],
       fecCap: [null, [Validators.required]],
-      remitente: [null, [Validators.required]],
+      remitente: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       noAtencion: [null, [Validators.required]],
       atencion: [null, Validators.required],
       noAtencion2: [null, Validators.required],
       atencion2: [null, Validators.required],
-      argumento: [null, [Validators.required]],
+      argumento: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
   save() {

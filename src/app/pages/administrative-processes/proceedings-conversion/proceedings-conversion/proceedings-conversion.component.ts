@@ -5,6 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ProceedingsConversionDetailComponent } from '../proceedings-conversion-detail/proceedings-conversion-detail.component';
 import {
   PROCEEDINGSCONVERSIONS_COLUMNS,
@@ -41,23 +42,50 @@ export class ProceedingsConversionComponent extends BasePage implements OnInit {
       idConversion: [null, Validators.required],
       noWellConverted: [null, Validators.required],
       noProceedings: [null, Validators.required],
-      priorInvestigation: [null, Validators.required],
-      criminalCase: [null, Validators.required],
+      priorInvestigation: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      criminalCase: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       proceedings: [null, Validators.required],
       status: [null, Validators.required],
-      trans: [null, Validators.required],
-      conv: [null, Validators.required],
-      admin: [null, Validators.required],
-      invoice: [null, Validators.required],
+      trans: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      conv: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      admin: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      invoice: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       year: [null, Validators.required],
       month: [null, Validators.required],
       dateElaboration: [null, Validators.required],
-      proceedingsDesc: [{ value: null, disabled: true }, Validators.required],
-      address: [null, Validators.required],
-      responsible: [null, Validators.required],
-      witness: [null, Validators.required],
-      witnessTwo: [null, Validators.required],
-      witnessContr: [null, Validators.required],
+      proceedingsDesc: [
+        { value: null, disabled: true },
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      address: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      responsible: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      witness: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      witnessTwo: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      witnessContr: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
   openProceedingsConversionDetail(data: any) {
