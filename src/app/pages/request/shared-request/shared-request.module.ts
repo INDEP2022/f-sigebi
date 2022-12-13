@@ -69,6 +69,9 @@ import { SignatureTypeComponent } from './signature-type/signature-type.componen
 import { UploadElectronicSignatureComponent } from './upload-electronic-signature/upload-electronic-signature.component';
 import { UploadFilesFormComponent } from './upload-files-form/upload-files-form.component';
 import { UsersSelectedToTurnComponent } from './users-selected-to-turn/users-selected-to-turn.component';
+import { ConfirmValidationComponent } from './validate-visit-result/confirm-validation/confirm-validation.component';
+import { ValidateVisitResultComponent } from './validate-visit-result/validate-visit-result.component';
+import { ViewExpedientComponent } from './validate-visit-result/view-expedient/view-expedient.component';
 import { CheckVerifyComplianceComponent } from './verify-compliance-goods/check-verify-compliance/check-verify-compliance.component';
 import { VerifyComplianceGoodsComponent } from './verify-compliance-goods/verify-compliance-goods.component';
 import { ViewReportComponent } from './view-report/view-report.component';
@@ -148,6 +151,9 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     RegisterComplementaryDocumentationComponent,
     ModalAssignGoodGrouperComponent,
     ModalModifyDatesComponent,
+    ValidateVisitResultComponent,
+    ConfirmValidationComponent,
+    ViewExpedientComponent,
   ],
   imports: [
     CommonModule,
