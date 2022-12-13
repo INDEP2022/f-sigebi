@@ -1,0 +1,46 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Cat&aacute;logo de Almacenes</h5>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-check label="Inmueble" for="property">
+            <input id="property" type="checkbox" formControlName="property" />
+          </form-check>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <app-warehouse-shared
+            [form]="form"
+            [showWarehouseType]="false"></app-warehouse-shared>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                (click)="execute()">
+                Ejecuta
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('warehouse_I')" label="">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="warehouse_I" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="table-responsive mt-5">
+      <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+  </div>
+</app-card>

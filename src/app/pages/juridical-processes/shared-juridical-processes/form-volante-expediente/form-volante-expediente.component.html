@@ -13,19 +13,16 @@
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-1">
       <form-field [control]="form.get('noVolante')" label="No Volante">
-        <input
-          type="number"
-          class="form-control"
-          formControlName="noVolante"
-          placeholder="No Volante" />
+        <input type="number" class="form-control" formControlName="noVolante" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-1">
-      <form-field [control]="form.get('fechaRecepcion')" label="Fec. Recepción">
+      <form-field
+        [control]="form.get('fechaRecepcion')"
+        label="Fec&#46; Recepción">
         <input
           class="form-control"
           formControlName="fechaRecepcion"
-          placeholder="Fec. Recepción"
           bsDatepicker />
       </form-field>
     </div>
@@ -36,73 +33,54 @@
         <input
           type="number"
           class="form-control"
-          formControlName="consecutivoDiario"
-          placeholder="Consecutivo Diario" />
+          formControlName="consecutivoDiario" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-3 p-1">
-      <form-field [control]="form.get('actaCircunst')" label="Acta Circunst.">
-        <input
-          class="form-control"
-          formControlName="actaCircunst"
-          placeholder="Acta Circunst." />
+      <form-field
+        [control]="form.get('actaCircunst')"
+        label="Acta Circunst&#46;">
+        <input class="form-control" formControlName="actaCircunst" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-3 p-1">
-      <form-field [control]="form.get('averigPrevia')" label="Averig. Previa">
-        <input
-          class="form-control"
-          formControlName="averigPrevia"
-          placeholder="Averig. Previa" />
+      <form-field
+        [control]="form.get('averigPrevia')"
+        label="Averig&#46; Previa">
+        <input class="form-control" formControlName="averigPrevia" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-3 p-1">
       <form-field [control]="form.get('causaPenal')" label="Causa Penal">
-        <input
-          class="form-control"
-          formControlName="causaPenal"
-          placeholder="Causa Penal" />
+        <input class="form-control" formControlName="causaPenal" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-1">
-      <form-field [control]="form.get('noAmparo')" label="No. Amparo">
-        <input
-          class="form-control"
-          formControlName="noAmparo"
-          placeholder="No. Amparo" />
+      <form-field [control]="form.get('noAmparo')" label="No&#46; Amparo">
+        <input class="form-control" formControlName="noAmparo" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-3 p-1">
       <form-field [control]="form.get('tocaPenal')" label="Toca Penal">
-        <input
-          class="form-control"
-          formControlName="tocaPenal"
-          placeholder="Toca Penal" />
+        <input class="form-control" formControlName="tocaPenal" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-1">
-      <form-field [control]="form.get('noOficio')" label="No. Oficio">
-        <input
-          class="form-control"
-          formControlName="noOficio"
-          placeholder="No. Oficio" />
+      <form-field [control]="form.get('noOficio')" label="No&#46; Oficio">
+        <input class="form-control" formControlName="noOficio" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-2 p-1">
       <form-field [control]="form.get('fechaOficio')" label="Fecha Oficio">
-        <input
-          class="form-control"
-          formControlName="fechaOficio"
-          placeholder="Fecha Oficio" />
+        <input class="form-control" formControlName="fechaOficio" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-6 p-1">
       <form-field
         [control]="form.get('descripcionAsunto')"
-        label="Descripción del Asunto">
+        label="Descripci&oacute;n del Asunto">
         <textarea
           fullWidth
-          placeholder="Descripción del Asunto"
           class="form-control"
           formControlName="descripcionAsunto"></textarea>
       </form-field>
@@ -130,22 +108,20 @@
       <hr class="row" />
     </div>
     <div class="col-sm-12 col-12 col-md-2 offset-md-6 p-1">
-      <form-field [control]="form.get('noExpediente')" label="No. Expediente">
+      <form-field
+        [control]="form.get('noExpediente')"
+        label="No&#46; Expediente">
         <!-- <label class="label w-100">No. Expediente</label> -->
         <input
           type="number"
           class="form-control"
-          formControlName="noExpediente"
-          placeholder="No. Expediente" />
+          formControlName="noExpediente" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-4 p-1">
       <form-field [control]="form.get('remitente')" label="Remitente">
         <!-- <label class="label w-100">Remitente</label> -->
-        <input
-          class="form-control"
-          formControlName="remitente"
-          placeholder="Remitente" />
+        <input class="form-control" formControlName="remitente" />
       </form-field>
     </div>
     <!-- <div class="col-sm-12 col-12 col-md-1 p-1">
@@ -247,26 +223,19 @@
     <div class="col-sm-12 col-12 col-md-2 offset-md-3 p-1">
       <form-field [control]="form.get('claveUnica')" label="Clave Única">
         <!-- <label class="label w-100">Clave Única</label> -->
-        <input
-          class="form-control"
-          formControlName="claveUnica"
-          placeholder="Clave Única" />
+        <input class="form-control" formControlName="claveUnica" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-3 p-1">
-      <form-field [control]="form.get('areaDestino')" label="Área Destino">
-        <input
-          class="form-control"
-          formControlName="areaDestino"
-          placeholder="Ärea Destino" />
+      <form-field
+        [control]="form.get('areaDestino')"
+        label="&Aacute;rea Destino">
+        <input class="form-control" formControlName="areaDestino" />
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-4 p-1">
       <form-field [control]="form.get('destinatario')" label="Destinatario">
-        <input
-          class="form-control"
-          formControlName="destinatario"
-          placeholder="Destinatario" />
+        <input class="form-control" formControlName="destinatario" />
       </form-field>
     </div>
     <!-- <div class="col-sm-12 col-12 col-md-2 p-1">
@@ -368,7 +337,7 @@
       <ngx-select
         [data]="items"
         bindLabel="ministerioPublicoName"
-        label="Ministerio Público"
+        label="Ministerio P&uacute;blico"
         value="id"
         (fetchItems)="getFromSelect($event)"
         [form]="form"
@@ -456,7 +425,7 @@
       <ngx-select
         [data]="items"
         bindLabel="viaRecepcionName"
-        label="Vía Recepción"
+        label="V&iacute;a Recepci&oacute;n"
         value="id"
         (fetchItems)="getFromSelect($event)"
         [form]="form"
@@ -470,9 +439,8 @@
     <div class="col-sm-12 col-12 col-md-9 p-1">
       <form-field
         [control]="form.get('justificacionConocimiento')"
-        label="Justificación del Conocimiento">
+        label="Justificaci&oacute;n del Conocimiento">
         <textarea
-          placeholder="Justificación del Conocimiento"
           class="form-control"
           formControlName="justificacionConocimiento"></textarea>
       </form-field>
@@ -486,7 +454,7 @@
                 </div> -->
     <div class="col-sm-12 col-12 col-md-12 p-1 text-center">
       <button type="submit" class="btn btn-primary btn-sm active">
-        Resignación de Turno
+        Resignaci&oacute;n de Turno
       </button>
       <button
         *ngIf="botonOficio"

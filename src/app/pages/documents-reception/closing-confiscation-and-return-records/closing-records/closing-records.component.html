@@ -1,0 +1,74 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Cierre de Actas de decomiso y devoluci&oacute;n</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-12 d-flex justify-content-between">
+          <div>
+            <span>No&#46; Expediente: <b>123456</b></span>
+          </div>
+          <div>
+            <span>Averiguaci&oacute;n Previa: <b>12346</b></span>
+          </div>
+          <div>
+            <span>Causa Penal: <b>Causa penal</b></span>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <p>
+          <i class="bx bx-calendar me-1 text-primary"></i> Fecha
+          Elaboraci&oacute;n:
+          <b>2022-01-01</b>
+        </p>
+        <p>Autoridad / Juez que ordena: <b>Autoridad o juez que ordena</b></p>
+      </div>
+
+      <hr />
+      <div class="row">
+        <form-field
+          class="col-md-3"
+          [control]="form.get('tipoActa')"
+          label="Tipo de Acta">
+          <select class="form-control" formControlName="tipoActa">
+            <option value="">Selecciona una opci&oacute;n</option>
+          </select>
+        </form-field>
+
+        <form-field
+          class="col-md-2"
+          [control]="form.get('folio')"
+          label="Folio">
+          <input class="form-control" type="number" formControlName="folio" />
+        </form-field>
+
+        <form-field
+          class="col-md-2"
+          [control]="form.get('cerrarActa')"
+          label="Cerrar acta">
+          <input
+            class="form-control"
+            type="number"
+            formControlName="cerrarActa" />
+        </form-field>
+
+        <form-field
+          [control]="form.get('observaciones')"
+          label="Observaciones"
+          class="col-md-5">
+          <textarea
+            class="form-control"
+            rows="5"
+            formControlName="observaciones"></textarea>
+        </form-field>
+      </div>
+
+      <div class="row">
+        <ng2-smart-table [settings]="settings"></ng2-smart-table>
+      </div>
+    </form>
+  </div>
+</app-card>

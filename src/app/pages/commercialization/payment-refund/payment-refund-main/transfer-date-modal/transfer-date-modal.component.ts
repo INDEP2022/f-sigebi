@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-transfer-date-modal',
@@ -25,7 +26,7 @@ export class TransferDateModalComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.dateForm = this.fb.group({
       transferDate: [null, [Validators.required]],
-      observations: [null],
+      observations: [null, Validators.pattern(STRING_PATTERN)],
     });
   }
 

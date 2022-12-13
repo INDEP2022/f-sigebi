@@ -1,0 +1,179 @@
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
+import { maxDate } from 'src/app/common/validations/date.validators';
+import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
+import { ASSETS_DESTRUCTION_COLUMLNS } from './authorization-assets-destruction-columns';
+//XLSX
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import * as XLSX from 'xlsx';
+
+@Component({
+  selector: 'app-authorization-assets-destruction',
+  templateUrl: './authorization-assets-destruction.component.html',
+  styleUrls: ['./authorization-assets-destruction.scss'],
+})
+export class AuthorizationAssetsDestructionComponent
+  extends BasePage
+  implements OnInit
+{
+  form: FormGroup = new FormGroup({});
+  show = false;
+  ExcelData: any;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems: number = 0;
+  columns: any[] = [];
+
+  imagenurl =
+    'https://images.ctfassets.net/txhaodyqr481/6gyslCh8jbWbh9zYs5Dmpa/a4a184b2d1eda786bf14e050607b80df/plantillas-de-factura-profesional-suscripcion-gratis-con-sumup-facturas.jpg?fm=webp&q=85&w=743&h=892';
+
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private sanitizer: DomSanitizer
+  ) {
+    super();
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      selectMode: 'multi',
+      columns: { ...ASSETS_DESTRUCTION_COLUMLNS },
+      rowClassFunction: function (row: {
+        data: { availability: any };
+      }): 'available' | 'not-available' {
+        return row.data.availability ? 'available' : 'not-available';
+      },
+    };
+  }
+
+  ngOnInit(): void {
+    this.prepareForm();
+    this.getPagination();
+  }
+
+  private prepareForm() {
+    this.form = this.fb.group({
+      idExp: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(10),
+          Validators.minLength(1),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      preInquiry: [null, Validators.pattern(STRING_PATTERN)],
+      criminalCase: [null, Validators.pattern(STRING_PATTERN)],
+      circumstAct: [null, Validators.pattern(STRING_PATTERN)],
+      touchPenalty: [null, Validators.pattern(STRING_PATTERN)],
+      noAuth: [null, Validators.pattern(STRING_PATTERN)],
+      authNotice: [null, Validators.pattern(STRING_PATTERN)],
+      fromDate: [null, maxDate(new Date())],
+      scanFolio: [null, Validators.pattern(KEYGENERATION_PATTERN)],
+      cancelSheet: [null, Validators.pattern(KEYGENERATION_PATTERN)],
+    });
+  }
+
+  getPagination() {
+    this.columns = this.data;
+    this.totalItems = this.columns.length;
+  }
+
+  msjRequest() {
+    this.alertQuestion(
+      'question',
+      'Atención',
+      '¿Desea imprimir la solicitud de digitalización?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.alert('success', 'Listo', 'Se ha solicitado');
+      }
+    });
+  }
+
+  msjScan() {
+    this.alertQuestion(
+      'info',
+      'Atención',
+      'Para escanear debe de abrir la aplicación de su preferencia'
+    );
+  }
+
+  openPrevImg() {
+    let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(this.imagenurl),
+          type: 'img',
+        },
+        callback: (data: any) => {
+          console.log(data);
+        },
+      }, //pasar datos por aca
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+    this.modalService.show(PreviewDocumentsComponent, config);
+  }
+
+  ReadExcel(event: any) {
+    let file = event.target.files[0];
+
+    let fileReader = new FileReader();
+    fileReader.readAsBinaryString(file);
+
+    fileReader.onload = e => {
+      var workbook = XLSX.read(fileReader.result, { type: 'binary' });
+      var sheetNames = workbook.SheetNames;
+      this.data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetNames[0]]);
+      console.log(this.data);
+    };
+  }
+
+  data = [
+    {
+      noBien: 1448,
+      description: 'CUARENTA Y DOS CHAMARRAS',
+      ubiExact: 'ALMACEN',
+      direction: 'PROLONGACIÓN MORELOS',
+      passed: true,
+      noOficio: 'DG/006/2004',
+      fecha: '12/12/2005',
+      status: 'ADE',
+      extraDom: 'DECOMISO',
+      availability: false,
+    },
+    {
+      noBien: 1449,
+      description: 'SETENTA Y DOS CELULARES',
+      ubiExact: 'ALMACEN',
+      direction: 'PROLONGACIÓN MORELOS',
+      passed: true,
+      noOficio: 'DG/006/2004',
+      fecha: '12/12/2005',
+      status: 'ADE',
+      extraDom: 'DECOMISO',
+      availability: false,
+    },
+    {
+      noBien: 1450,
+      description: 'CUARENTA Y TRES CABLES USB',
+      ubiExact: 'ALMACEN',
+      direction: 'PROLONGACIÓN MORELOS',
+      passed: false,
+      noOficio: 'DG/006/2004',
+      fecha: '12/12/2005',
+      status: 'ADE',
+      extraDom: 'DECOMISO',
+      availability: true,
+    },
+  ];
+}

@@ -1,0 +1,55 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Reporte Acumulado de Bienes Anual</h5>
+  </div>
+
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-4">
+          <app-delegation-shared [form]="form" [showSubdelegation]="false">
+          </app-delegation-shared>
+        </div>
+        <div class="col-md-4">
+          <app-delegation-shared [form]="form" [showDelegation]="false">
+          </app-delegation-shared>
+        </div>
+        <div class="col-md-2 mb-3 mt-3">
+          <form-field
+            [control]="form.get('fromYear')"
+            label="A&ntilde;o Inicial">
+            <input
+              type="text"
+              class="form-control"
+              [bsConfig]="bsConfigFromYear"
+              formControlName="fromYear"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-2 mb-3 mt-3">
+          <form-field [control]="form.get('toYear')" label="A&ntilde;o final">
+            <input
+              type="text"
+              class="form-control"
+              [bsConfig]="bsConfigToYear"
+              formControlName="toYear"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="submit"
+          class="btn btn-primary active"
+          [disabled]="!form.valid"
+          (click)="openPrevPdf()">
+          Imprimir
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

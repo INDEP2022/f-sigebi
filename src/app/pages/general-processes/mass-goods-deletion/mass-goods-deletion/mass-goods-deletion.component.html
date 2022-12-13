@@ -1,0 +1,67 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Borrado Masivo de Bienes</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <form-field
+          [control]="form.get('expediente')"
+          class="col-md-3"
+          label="No&#46; Expediente">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="expediente" />
+        </form-field>
+        <form-field
+          [control]="form.get('aver')"
+          class="col-md-3"
+          label="Averiguaci&oacute;n Previa">
+          <input type="number" class="form-control" formControlName="aver" />
+        </form-field>
+        <form-field
+          [control]="form.get('causa')"
+          class="col-md-3"
+          label="Causa Penal">
+          <input type="number" class="form-control" formControlName="causa" />
+        </form-field>
+        <form-field
+          [control]="form.get('acta')"
+          class="col-md-3"
+          label="Acta Circunstanciada">
+          <input type="number" class="form-control" formControlName="acta" />
+        </form-field>
+      </div>
+      <div class="row pt-3">
+        <form-field
+          [control]="form.get('amparo')"
+          class="col-md-3"
+          label="Amparo">
+          <input type="number" class="form-control" formControlName="amparo" />
+        </form-field>
+        <form-field
+          [control]="form.get('toca')"
+          class="col-md-3"
+          label="Toca Penal">
+          <input type="number" class="form-control" formControlName="toca" />
+        </form-field>
+        <form-field
+          [control]="form.get('identificador')"
+          class="col-md-3"
+          label="Identificador">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="identificador" />
+        </form-field>
+      </div>
+      <hr />
+      <div class="row">
+        <ng2-smart-table [settings]="settings"></ng2-smart-table>
+        <app-pagination></app-pagination>
+      </div>
+    </form>
+  </div>
+</app-card>

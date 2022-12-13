@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-edit-validation-exempted-goods-modal',
@@ -31,7 +32,10 @@ export class EditValidationExemptedGoodsModalComponent
       noBien: [{ value: null, disabled: true }],
       unit: [{ value: null, disabled: true }],
       proccess: [null, [Validators.required]],
-      description: [{ value: null, disabled: true }],
+      description: [
+        { value: null, disabled: true },
+        Validators.pattern(STRING_PATTERN),
+      ],
     });
     if (this.allotment != null) {
       this.edit = true;

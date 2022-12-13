@@ -1,0 +1,56 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Carga de bienes SAT&#45;SAE</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="satForm" class="form-material">
+      <div class="row">
+        <form-field
+          class="col-md-4"
+          [control]="satForm.get('noDocument')"
+          label="Nombre">
+          <input
+            type="text"
+            formControlName="noDocument"
+            class="form-control" />
+        </form-field>
+
+        <form-field
+          class="col-md-3"
+          [control]="satForm.get('expediente')"
+          label="Expediente SIAB">
+          <input
+            type="text"
+            formControlName="expediente"
+            class="form-control" />
+        </form-field>
+
+        <form-field
+          class="col-md-3"
+          [control]="satForm.get('volante')"
+          label="Volante SIAB">
+          <input type="text" formControlName="volante" class="form-control" />
+        </form-field>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <button type="button" class="mr-2 btn btn-secondary active btn-sm">
+            Cargar bienes
+          </button>
+          <button type="button" class="btn btn-primary btn-sm active">
+            Ejecutar proceso
+          </button>
+        </div>
+      </div>
+
+      <div class="row pt-3">
+        <app-columns-select
+          [(settings)]="settings"
+          class="mb-3"></app-columns-select>
+        <ng2-smart-table [settings]="settings"></ng2-smart-table>
+      </div>
+    </form>
+  </div>
+</app-card>

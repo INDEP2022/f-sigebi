@@ -4,6 +4,10 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ServiceOrdersFormatHistoricComponent } from '../service-orders-format-historic/service-orders-format-historic.component';
 import {
@@ -49,17 +53,33 @@ export class ServiceOrdersFormatComponent extends BasePage implements OnInit {
       process: [null, Validators.required],
       dateCapture: [null, Validators.required],
       regionalCoordination: [null, Validators.required],
-      serviceOrderKey: [null, Validators.required],
+      serviceOrderKey: [
+        null,
+        Validators.required,
+        Validators.pattern(KEYGENERATION_PATTERN),
+      ],
       cancellationAuthorizationDate: [null, Validators.required],
-      uniqueKey: [null, Validators.required],
+      uniqueKey: [
+        null,
+        Validators.required,
+        Validators.pattern(KEYGENERATION_PATTERN),
+      ],
       transference: [null, Validators.required],
       station: [null, Validators.required],
       authority: [null, Validators.required],
       keyStore: [null, Validators.required],
-      location: [null, Validators.required],
-      municipality: [null, Validators.required],
-      entity: [null, Validators.required],
-      supplierFolio: [null, Validators.required],
+      location: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
+      municipality: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
+      entity: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
+      supplierFolio: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
       start: [null, Validators.required],
       finished: [null, Validators.required],
       hour: [null, Validators.required],

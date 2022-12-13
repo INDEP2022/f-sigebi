@@ -1,0 +1,86 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Programación</h5>
+  </div>
+  <div body>
+    <div>
+      <form [formGroup]="generateProgrammingForm" class="form-material">
+        <div class="row">
+          <div class="col-md-6">
+            <label>*Autorización de la programación</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <form-radio label="Programación autorizada">
+              <input
+                id="accepted"
+                type="radio"
+                formControlName="typeAuthProgramming"
+                value="programacion autorizada" />
+            </form-radio>
+          </div>
+          <div class="col-md-4">
+            <form-radio label="Programación rechazada">
+              <input
+                id="refused"
+                type="radio"
+                formControlName="typeAuthProgramming"
+                value="programacion rechazada" />
+            </form-radio>
+          </div>
+        </div>
+
+        <div class="row">
+          <div
+            class="col-md-6"
+            *ngIf="
+              generateProgrammingForm.get('typeAuthProgramming').value ===
+              'programacion rechazada'
+            ">
+            <form-field
+              [control]="generateProgrammingForm.get('refuseProgramming')"
+              label="*Motivo del rechazo de la programación">
+              <textarea
+                class="form-control"
+                rows="3"
+                formControlName="refuseProgramming"></textarea>
+            </form-field>
+          </div>
+          <div
+            class="col-md-6"
+            *ngIf="
+              generateProgrammingForm.get('typeAuthProgramming').value ===
+              'programacion autorizada'
+            ">
+            <form-field
+              [control]="generateProgrammingForm.get('acceptProgramming')"
+              label="*Cuerpo del dictamen de bienes para estudio">
+              <textarea
+                class="form-control"
+                rows="3"
+                formControlName="acceptProgramming"></textarea>
+            </form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="p-2">
+        <confirm-button
+          [disabled]="isInvalid"
+          [btnSmall]="true"
+          [loading]="loading"
+          [text]="btnTitle"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="p-2">
+        <button class="btn btn-danger btn-sm active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

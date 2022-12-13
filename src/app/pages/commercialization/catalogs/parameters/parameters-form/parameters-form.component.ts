@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-parameters-form',
@@ -27,9 +28,15 @@ export class ParametersFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      parameter: [null, [Validators.required]],
-      description: [null, [Validators.required]],
-      value: [null, [Validators.required]],
+      parameter: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      value: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       direction: [null, [Validators.required]],
       eventType: [null, [Validators.required]],
       eventDescription: [null],

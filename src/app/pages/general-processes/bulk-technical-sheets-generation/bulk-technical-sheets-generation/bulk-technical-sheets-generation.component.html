@@ -1,0 +1,34 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Generaci&Oacute;n Masiva de Fichas T&Eacute;cnicas</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <form-field [control]="form.get('bien')" class="col-md-4">
+          <ngx-select
+            [form]="form"
+            control="bien"
+            [data]="select"
+            label="Separador"></ngx-select>
+        </form-field>
+
+        <div class="col-md-4">
+          <form-check for="goods-list" label="Listado de Bienes">
+            <input type="checkbox" formControlName="listado" id="goods-list" />
+          </form-check>
+        </div>
+
+        <form-field [control]="form.get('path')" class="col-md-4" label="path">
+          <input type="text" class="form-control" formControlName="path" />
+        </form-field>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <button class="btn btn-primary active">Guardar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

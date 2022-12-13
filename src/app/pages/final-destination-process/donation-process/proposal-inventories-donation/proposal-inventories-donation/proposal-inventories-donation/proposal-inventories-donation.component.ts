@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { COLUMNS_TABLE_2 } from '../columns-table-2';
 import { COLUMNS_TABLE_1 } from './../columns-table-1';
 
@@ -35,7 +36,7 @@ export class ProposalInventoriesDonationComponent
   initForm() {
     this.form = this.fb.group({
       warehouseNumb: [null, []],
-      coordination: [null, []],
+      coordination: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">conversión a numerario</h5>
+    <h5 class="title">conversi&oacute;n a numerario</h5>
   </div>
   <div body>
     <div class="md-tabs mt-n3">
@@ -245,7 +245,9 @@
                     *ngIf="selectedAccount != null">
                     <i
                       class="bx bx-detail text-success me-2 d-inline float-icon"></i>
-                    <h5 class="font-size-14 mb-2 d-inline">Descripción</h5>
+                    <h5 class="font-size-14 mb-2 d-inline">
+                      Descripci&oacute;n
+                    </h5>
                     <p class="text-muted">
                       {{ selectedAccount.description }}
                     </p>
@@ -276,7 +278,7 @@
             <div class="row" *ngIf="selectedGood != null" @OnGoodSelected>
               <div class="ms-n2 mb-2">
                 <i class="bx bx-radio-circle bx-sm float-icon mx-1"></i>
-                <h6 class="d-inline">Datos de depósito</h6>
+                <h6 class="d-inline">Datos de dep&oacute;sito</h6>
               </div>
               <hr class="mw-98" />
               <div class="row">
@@ -317,7 +319,7 @@
             <div class="row" *ngIf="selectedGood != null" @OnGoodSelected>
               <div class="ms-n2 mb-2">
                 <i class="bx bx-radio-circle bx-sm float-icon mx-1"></i>
-                <h6 class="d-inline">Conversión</h6>
+                <h6 class="d-inline">Conversi&oacute;n</h6>
               </div>
               <hr class="mw-98" />
               <div class="row">
@@ -354,8 +356,8 @@
                         responsabilidad</ng-option
                       >
                       <ng-option value="CNE"
-                        >Bien cambiado a numerario por enajenación de valores y
-                        divisas</ng-option
+                        >Bien cambiado a numerario por enajenaci&oacute;n de
+                        valores y divisas</ng-option
                       >
                       <ng-option value="1">Activo</ng-option>
                     </ng-select>

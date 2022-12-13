@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { CALCULATE_COMISSION_COLUMNS } from './caculate-comission-columns';
 
 @Component({
@@ -32,7 +33,10 @@ export class CalculateCommissionComponent extends BasePage implements OnInit {
       startDate: ['', [Validators.required]],
       endDate: ['', [Validators.required]],
       idEvent: ['', [Validators.required]],
-      typeChange: ['', [Validators.required]],
+      typeChange: [
+        '',
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 }

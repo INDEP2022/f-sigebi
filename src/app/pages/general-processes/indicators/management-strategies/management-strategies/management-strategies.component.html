@@ -1,0 +1,133 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Indicador de Estrategias de Administraci&oacute;n</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-12">
+        <form [formGroup]="form" class="form-material">
+          <div class="row">
+            <form-field
+              [control]="form.get('fecha')"
+              label="Fecha de Captura"
+              class="col-md-2">
+              <input
+                class="form-control"
+                formControlName="fecha"
+                bsDatepicker />
+            </form-field>
+
+            <form-field
+              [control]="form.get('month')"
+              label="A&ntilde;o&#47;Mes de Evaluaci&oacute;n"
+              class="col-md-2">
+              <input
+                class="form-control"
+                formControlName="month"
+                bsDatepicker
+                [bsConfig]="{
+                  minMode: 'month',
+                  adaptivePosition: true,
+                  dateInputFormat: 'MM/YYYY'
+                }" />
+            </form-field>
+
+            <form-field [control]="form.get('usuario')" class="col-md-4">
+              <ngx-select
+                [form]="form"
+                control="usuario"
+                label="Usuario"
+                [data]="select">
+              </ngx-select>
+            </form-field>
+
+            <form-field [control]="form.get('coord')" class="col-md-4">
+              <ngx-select
+                [form]="form"
+                control="coord"
+                label="Coordinaci&oacute;n General"
+                [data]="select">
+              </ngx-select>
+            </form-field>
+          </div>
+          <div class="row">
+            <div class="col-md-5">
+              <small class="text-secondary"
+                >N&uacute;mero de Estrategias y Reportes de
+                Implementaci&oacute;n que de debieron preparar</small
+              >
+            </div>
+            <div class="col-md-5 offset-md-2">
+              <small class="text-secondary"
+                >N&uacute;mero de Estrategias y Reportes entregados a
+                tiempo</small
+              >
+            </div>
+          </div>
+          <div class="row pt-3">
+            <div class="col-md-5">
+              <div class="row">
+                <form-field
+                  [control]="form.get('estrategiasPreparar')"
+                  label="Estrategias de Administraci&oacute;n"
+                  class="col-md-6">
+                  <input
+                    class="form-control"
+                    type="number"
+                    formControlName="estrategiasPreparar" />
+                </form-field>
+
+                <form-field
+                  [control]="form.get('reportePreparar')"
+                  label="Reporte de Implementaci&oacute;n"
+                  class="col-md-6">
+                  <input
+                    class="form-control"
+                    type="number"
+                    formControlName="reportePreparar" />
+                </form-field>
+              </div>
+            </div>
+
+            <div class="col-md-5 offset-md-2">
+              <div class="row">
+                <form-field
+                  [control]="form.get('estrategiasEntregadas')"
+                  label="Estrategias de Administraci&oacute;n"
+                  class="col-md-6">
+                  <input
+                    class="form-control"
+                    type="number"
+                    formControlName="estrategiasEntregadas" />
+                </form-field>
+
+                <form-field
+                  [control]="form.get('reporteEntregadas')"
+                  label="Reporte de Implementaci&oacute;n"
+                  class="col-md-6">
+                  <input
+                    class="form-control"
+                    type="number"
+                    formControlName="reporteEntregadas" />
+                </form-field>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <button class="btn btn-primary active">Reporte</button>
+            </div>
+          </div>
+          <div class="row pt-3">
+            <div class="col-md-12 text-right">
+              <span>Porcentaje de Cumplimiento&#58; <b>11&#37;</b></span>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="row">
+      <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
+    </div>
+  </div>
+</app-card>

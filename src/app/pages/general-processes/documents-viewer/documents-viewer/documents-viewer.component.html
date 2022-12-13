@@ -1,0 +1,143 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Visualizaci&oacute;n de Documentos</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <form-field
+          [control]="form.get('expediente')"
+          label="No Expediente"
+          class="col-md-3">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="expediente" />
+        </form-field>
+        <form-field
+          [control]="form.get('volante')"
+          label="No Volante"
+          class="col-md-3">
+          <input type="text" class="form-control" formControlName="volante" />
+        </form-field>
+        <form-field [control]="form.get('separador')" class="col-md-4">
+          <ngx-select
+            [form]="form"
+            control="separador"
+            [data]="select"
+            label="Separador"></ngx-select>
+        </form-field>
+
+        <form-field
+          [control]="form.get('fecha')"
+          label="Fecha Significativa"
+          class="col-md-2">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="fecha"
+            bsDatepicker />
+        </form-field>
+      </div>
+      <div class="row pt-3">
+        <form-field [control]="form.get('tipoDoc')" class="col-md-4">
+          <ngx-select
+            [form]="form"
+            control="tipoDoc"
+            [data]="select"
+            label="Tipo de Documento"></ngx-select>
+        </form-field>
+
+        <form-field
+          [control]="form.get('descripcion')"
+          label="Descripci&oacute;n del Documento"
+          class="col-md-8">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="descripcion" />
+        </form-field>
+      </div>
+      <div class="row pt-3">
+        <form-field
+          [control]="form.get('averPrevia')"
+          label="Averiguaci&oacute;n Previa"
+          class="col-md-3">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="averPrevia" />
+        </form-field>
+
+        <form-field
+          [control]="form.get('causaPenal')"
+          label="Causa Penal"
+          class="col-md-3">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="causaPenal" />
+        </form-field>
+        <div class="col d-flex">
+          <form-radio label="Digitalizados">
+            <input type="radio" formControlName="tipos" value="1" />
+          </form-radio>
+          <form-radio label="Pendientes">
+            <input type="radio" formControlName="tipos" value="2" />
+          </form-radio>
+          <form-radio label="Todos">
+            <input type="radio" formControlName="tipos" value="3" />
+          </form-radio>
+        </div>
+      </div>
+      <div class="row pt-3">
+        <div class="col">
+          <small class="text-secondary"
+            >Consultar Im&aacute;genes en&#58;</small
+          >
+          <div class="d-flex align-items-center">
+            <form-radio label="SIAB">
+              <input type="radio" formControlName="origen" value="1" />
+            </form-radio>
+            <form-radio label="SID">
+              <input type="radio" formControlName="origen" value="2" />
+            </form-radio>
+            <div class="ml-5">
+              <button class="btn btn-primary active">Consultar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr />
+      <div class="row pt-3">
+        <div class="row">
+          <div class="col-md-12 d-flex justify-content-between">
+            <div>
+              <span class="text-success mr-5"
+                ><i class="fa fa-square"></i> Documento Digitalizado</span
+              >
+              <span class="text-danger"
+                ><i class="fa fa-square"></i>Documento pendiente de
+                digitalizar</span
+              >
+            </div>
+            <div>
+              <small class="text-secondary"
+                >(Doble click en la imagen para visualizar)</small
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <ng2-smart-table
+              [settings]="settings"
+              [source]="data"></ng2-smart-table>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

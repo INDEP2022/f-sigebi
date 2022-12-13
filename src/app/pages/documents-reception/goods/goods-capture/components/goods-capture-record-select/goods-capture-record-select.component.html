@@ -1,0 +1,57 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Volante a trabajar</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row pt-3">
+        <form-field class="col-md-10" [control]="form.get('noExpediente')">
+          <ngx-select
+            [form]="form"
+            value="id"
+            bindLabel="id"
+            control="noExpediente"
+            [data]="select"
+            label="No&#46; Expediente"></ngx-select>
+        </form-field>
+      </div>
+
+      <div class="row pt-3">
+        <form-check label="¿Es Empresa?" for="isCompany">
+          <input type="checkbox" formControlName="esEmpresa" id="isCompany" />
+        </form-check>
+      </div>
+
+      <div class="row pt-3">
+        <form-field
+          *ngIf="isCompany"
+          class="col-md-10"
+          [control]="form.get('noBien')">
+          <ngx-select
+            [form]="form"
+            value="id"
+            bindLabel="id"
+            control="noBien"
+            [data]="select"
+            label="No. Bien de la Empresa"></ngx-select>
+        </form-field>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          text="Aceptar"
+          [disabled]="!form.valid"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -14,15 +14,15 @@ const routes: Routes = [
   {
     path: routesJuridicalProcesses[0].link + '/:id',
     loadChildren: async () =>
-      (await import('./juridical-ruling/pj-dj-m-juridical-ruling.module'))
-        .PJDJJuridicalRulingModule,
+      (await import('./juridical-ruling/juridical-ruling.module'))
+        .JuridicalRulingModule,
     data: { title: routesJuridicalProcesses[0].label },
   },
   {
     path: routesJuridicalProcesses[1].link + '/:id',
     loadChildren: async () =>
-      (await import('./file-data-update/pj-ade-m-file-data-update.module'))
-        .PJADEFileDataUpdateModule,
+      (await import('./file-data-update/file-data-update.module'))
+        .FileDataUpdateModule,
     data: { title: routesJuridicalProcesses[1].label },
   },
   {
@@ -30,9 +30,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './notification-file-update/pj-aen-m-notification-file-update.module'
+          './notification-file-update/notification-file-update.module'
         )
-      ).PJAENNotificationFileUpdateModule,
+      ).NotificationFileUpdateModule,
     data: { title: routesJuridicalProcesses[2].label },
   },
   {
@@ -40,9 +40,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './abandonments-declaration-trades/pj-a-m-abandonments-declaration-trades.module'
+          './abandonments-declaration-trades/abandonments-declaration-trades.module'
         )
-      ).PJAAbandonmentsDeclarationTradesModule,
+      ).AbandonmentsDeclarationTradesModule,
     data: { title: routesJuridicalProcesses[3].label },
   },
   {
@@ -50,30 +50,28 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './goods-process-validation-extdom/pj-bvae-m-goods-process-validation-extdom.module'
+          './goods-process-validation-extdom/goods-process-validation-extdom.module'
         )
-      ).PJBVAEGoodsProcessValidationExtdomModule,
+      ).GoodsProcessValidationExtdomModule,
     data: { title: routesJuridicalProcesses[4].label },
   },
   {
     path: routesJuridicalProcesses[5].link,
     loadChildren: async () =>
-      (await import('./relief-delete/pj-m-relief-delete.module'))
-        .PJReliefDeleteModule,
+      (await import('./relief-delete/relief-delete.module')).ReliefDeleteModule,
     data: { title: routesJuridicalProcesses[5].label },
   },
   {
     path: routesJuridicalProcesses[6].link,
     loadChildren: async () =>
-      (await import('./abandonments/pj-m-abandonments.module'))
-        .PJAbandonmentsModule,
+      (await import('./abandonments/abandonments.module')).AbandonmentsModule,
     data: { title: routesJuridicalProcesses[6].label },
   },
   {
     path: routesJuridicalProcesses[7].link,
     loadChildren: async () =>
-      (await import('./tracing-judgment/pj-m-tracing-judgment.module'))
-        .PJTracingJudgmentModule,
+      (await import('./tracing-judgment/tracing-judgment.module'))
+        .TracingJudgmentModule,
     data: { title: routesJuridicalProcesses[7].label },
   },
   {
@@ -81,9 +79,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './monitor-return-abandonment/pj-m-monitor-return-abandonment.module'
+          './monitor-return-abandonment/monitor-return-abandonment.module'
         )
-      ).PJMonitorReturnAbandonmentModule,
+      ).MonitorReturnAbandonmentModule,
     data: { title: routesJuridicalProcesses[8].label },
   },
   {
@@ -91,9 +89,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './return-abandonment-monitor/pj-m-return-abandonment-monitor.module'
+          './return-abandonment-monitor/return-abandonment-monitor.module'
         )
-      ).PJReturnAbandonmentMonitorModule,
+      ).ReturnAbandonmentMonitorModule,
     data: { title: routesJuridicalProcesses[9].label },
   },
   {
@@ -101,9 +99,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './declaration-abandonment-insurance/pj-m-declaration-abandonment-insurance.module'
+          './declaration-abandonment-insurance/declaration-abandonment-insurance.module'
         )
-      ).PJDeclarationAbandonmentInsuranceModule,
+      ).DeclarationAbandonmentInsuranceModule,
     data: { title: routesJuridicalProcesses[10].label },
   },
   {
@@ -111,16 +109,16 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './maintenance-legal-rulings/pj-m-maintenance-legal-rulings.module'
+          './maintenance-legal-rulings/maintenance-legal-rulings.module'
         )
-      ).PJMaintenanceLegalRulingModule,
+      ).MaintenanceLegalRulingModule,
     data: { title: routesJuridicalProcesses[11].label },
   },
   {
     path: routesJuridicalProcesses[12].link,
     loadChildren: async () =>
-      (await import('./juridical-ruling-g/pj-dj-m-juridical-ruling-g.module'))
-        .PJDJJuridicalRulingGModule,
+      (await import('./juridical-ruling-g/juridical-ruling-g.module'))
+        .JuridicalRulingGModule,
     data: { title: routesJuridicalProcesses[12].label },
   },
   {
@@ -128,9 +126,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './verification-documents-confiscation/pj-cdd-m-verification-documents-confiscation.module'
+          './verification-documents-confiscation/verification-documents-confiscation.module'
         )
-      ).PJCDDVerificationDocumentsConfiscationModule,
+      ).VerificationDocumentsConfiscationModule,
     data: { title: routesJuridicalProcesses[13].label },
   },
   // DEPOSITARIA

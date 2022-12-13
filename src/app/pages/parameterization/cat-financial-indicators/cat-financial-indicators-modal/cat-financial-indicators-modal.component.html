@@ -1,0 +1,69 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field [control]="form.get('id')" label="No&#46; Indicador">
+            <input type="text" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('name')" label="Nombre">
+            <input type="text" class="form-control" formControlName="name" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('description')"
+            label="Descripci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <div class="d-flex justify-content-center">
+            <form-check label="C&#47;F&oacute;rmula" for="label">
+              <input
+                id="label"
+                type="checkbox"
+                formControlName="formuleCheck" />
+            </form-check>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-12">
+          <div style="text-align: center">
+            <form-field
+              [control]="form.get('formule')"
+              label="Escriba la f&oacute;rmula con el teclado virtual">
+              <input
+                (input)="onInputChange($event)"
+                class="form-control"
+                value="{{ value }}"
+                formControlName="formule" />
+            </form-field>
+            <div class="simple-keyboard"></div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button [type]="'button'" (click)="close()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,0 +1,33 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Cat&aacute;logo de asuntos para volantes</h5>
+    </div>
+  </div>
+  <div body>
+    <div class="col-md-6">
+      <div class="table-responsive">
+        <ng2-smart-table
+          [settings]="settings1"
+          [source]="data"
+          (deleteConfirm)="onDeleteConfirm($event)"
+          (createConfirm)="onAddConfirm($event)"
+          (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
+    <div class="col-md-6">
+      <div class="table-responsive">
+        <ng2-smart-table
+          [settings]="settings2"
+          [source]="data2"
+          (deleteConfirm)="onDeleteConfirm($event)"
+          (createConfirm)="onAddConfirm($event)"
+          (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
+  </div>
+</app-card>

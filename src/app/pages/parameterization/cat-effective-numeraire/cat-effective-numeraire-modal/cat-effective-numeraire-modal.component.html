@@ -1,0 +1,54 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field [control]="form.get('category')" label="Categoria">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="category" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('description')"
+            label="Descripci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-check label="Entrada" for="label1">
+            <input id="label1" type="checkbox" formControlName="entry" />
+          </form-check>
+        </div>
+        <div class="col-md-3">
+          <form-check label="Salida" for="label2">
+            <input id="label2" type="checkbox" formControlName="exit" />
+          </form-check>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="!form.valid"
+          (click)="close()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

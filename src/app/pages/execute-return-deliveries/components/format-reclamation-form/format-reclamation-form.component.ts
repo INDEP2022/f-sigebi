@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-format-reclamation-form',
@@ -25,8 +26,11 @@ export class FormatReclamationFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      responsible: [null, [Validators.required]],
-      charge: [null, [Validators.required]],
+      responsible: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      charge: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       check: [null],
     });
   }

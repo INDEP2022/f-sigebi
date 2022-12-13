@@ -6,6 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { SALEGOODSGAMESESTATE_COLUMNS } from './sale-goods-games-estate-columns';
 
 @Component({
@@ -32,14 +33,32 @@ export class SaleGoodsGamesEstateComponent extends BasePage implements OnInit {
   }
   private prepareForm() {
     this.estateForm = this.fb.group({
-      delegation: [null, Validators.required],
-      store: [null, Validators.required],
-      vault: [null, Validators.required],
-      proceedings: [null, Validators.required],
-      typeEstate: [null, Validators.required],
-      subType: [null, Validators.required],
-      subSubType: [null, Validators.required],
-      subSubSubType: [null, Validators.required],
+      delegation: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      store: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      vault: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      proceedings: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      typeEstate: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      subType: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      subSubType: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      subSubSubType: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
   close() {

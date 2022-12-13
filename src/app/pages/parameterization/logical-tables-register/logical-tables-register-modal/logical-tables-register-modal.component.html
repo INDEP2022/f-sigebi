@@ -1,0 +1,72 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field label="No&#46; Tabla" [control]="form.get('noTable')">
+            <input type="text" class="form-control" formControlName="noTable" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Nombre" [control]="form.get('name')">
+            <input type="text" class="form-control" formControlName="name" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Acceso" [control]="form.get('access')">
+            <ng-select
+              formControlName="access"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="1">Acceso por Tramos</ng-option>
+              <ng-option value="2">Acceso &Uacute;nico</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field label="Tipo" [control]="form.get('type')">
+            <ng-select
+              formControlName="type"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="1">Una clave</ng-option>
+              <ng-option value="2">Cinco claves</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Descripci&oacute;n"
+            [control]="form.get('description')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="!form.valid"
+          (click)="close()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

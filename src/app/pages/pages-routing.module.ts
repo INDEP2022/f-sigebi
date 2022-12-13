@@ -110,15 +110,6 @@ const routes: Routes = [
   },
 
   {
-    path: 'documentation-complementary',
-    loadChildren: async () =>
-      (
-        await import(
-          './documentation-complementary/documentation-complementary.module'
-        )
-      ).DocumentationComplementaryModule,
-  },
-  {
     path: 'scheduling-deliveries',
     loadChildren: async () =>
       (await import('./scheduling-deliveries/scheduling-deliveries.module'))
@@ -151,6 +142,14 @@ const routes: Routes = [
         .AssetsForStudyModule,
     data: { title: 'Bienes para estudio' },
   },
+  {
+    path: '404-not-found',
+    pathMatch: 'full',
+    loadChildren: async () =>
+      (await import('./errors/error-404/error-404.module')).Error404Module,
+    data: { title: 'Página no Encontrada' },
+  },
+  { path: '**', redirectTo: '404-not-found' },
 ];
 
 @NgModule({
