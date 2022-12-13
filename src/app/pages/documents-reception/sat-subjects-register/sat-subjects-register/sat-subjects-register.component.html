@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Buzón de tramites SAT</h5>
+    <h5 class="title">Buz&oacute;n de tramites SAT</h5>
   </div>
 
   <div body>
@@ -46,7 +46,7 @@
             [form]="satForm"
             control="cordinador"
             [data]="cordinators"
-            label="Cord. Regional">
+            label="Cord&#46; Regional">
           </ngx-select>
         </form-field>
       </div>
@@ -78,14 +78,14 @@
       <div class="row">
         <form-field
           [control]="satForm.get('cve')"
-          label="SAT Cve. Única"
+          label="SAT Cve&#46; Única"
           class="col-md-3">
           <input class="form-control" formControlName="cve" />
         </form-field>
 
         <form-field
           [control]="satForm.get('master')"
-          label="SAT Guía Master"
+          label="SAT Gu&iacute;a Master"
           class="col-md-3">
           <input class="form-control" formControlName="master" />
         </form-field>
@@ -99,7 +99,7 @@
 
         <form-field
           [control]="satForm.get('house')"
-          label="SAT Guíahouse"
+          label="SAT Gu&iacute;ahouse"
           class="col-md-3">
           <input class="form-control" formControlName="house" />
         </form-field>
