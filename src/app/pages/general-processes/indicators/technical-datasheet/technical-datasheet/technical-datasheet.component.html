@@ -1,13 +1,15 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Seguimiento de Revisión de Fichas Técnicas</h5>
+    <h5 class="title">
+      Seguimiento de Revisi&oacute;n de Fichas T&eacute;cnicas
+    </h5>
   </div>
   <div body>
     <div class="row">
       <form [formGroup]="form" class="form-material">
         <form-field
           [control]="form.get('month')"
-          label="Año/Mes"
+          label="A&ntilde;o&#47;Mes"
           class="col-md-2">
           <input
             class="form-control"
@@ -33,7 +35,7 @@
           <ngx-select
             [form]="form"
             control="coord"
-            label="Coord. Regional"
+            label="Coord&#46; Regional"
             [data]="select">
           </ngx-select>
         </form-field>
@@ -43,7 +45,7 @@
       <div class="col-md-12 d-flex justify-content-around">
         <div>
           <button class="btn btn-info btn-sm active">
-            Refrescar Información
+            Refrescar Informaci&oacute;n
           </button>
         </div>
 
@@ -53,7 +55,7 @@
 
         <div>
           <button class="btn btn-primary btn-sm active">
-            Revisión de Fichas
+            Revisi&oacute;n de Fichas
           </button>
         </div>
       </div>
