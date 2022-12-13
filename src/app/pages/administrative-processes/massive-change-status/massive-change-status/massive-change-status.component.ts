@@ -5,6 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { COLUMNS } from './columns';
 
 interface ExampleData {
@@ -58,7 +59,10 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
   private buildForm() {
     this.form = this.fb.group({
       status: [null, [Validators.required]],
-      observation: [null, [Validators.required]],
+      observation: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       csv: [null, [Validators.required]],
     });
   }

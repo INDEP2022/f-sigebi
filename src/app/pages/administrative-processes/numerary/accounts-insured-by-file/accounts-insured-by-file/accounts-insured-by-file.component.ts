@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-accounts-insured-by-file',
@@ -16,11 +17,20 @@ export class AccountsInsuredByFileComponent implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      delegation: [null, Validators.required],
-      subdelegation: [null, Validators.required],
+      delegation: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      subdelegation: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
 
-      currency: [null, Validators.required],
-      bank: [null, Validators.required],
+      currency: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      bank: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
 
       depositFrom: [null, Validators.required],
       depositTo: [null, Validators.required],

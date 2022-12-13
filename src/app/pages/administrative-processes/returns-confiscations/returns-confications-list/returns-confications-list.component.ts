@@ -4,6 +4,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { COLUMNS } from './columns';
 //Provisional Data
 import { goodsData } from './data';
@@ -82,8 +83,14 @@ export class ReturnsConficationsListComponent
     //Form
     this.form = this.fb.group({
       record: [null, [Validators.required]],
-      preliminaryInquiry: [null, [Validators.required]],
-      criminalCase: [null, [Validators.required]],
+      preliminaryInquiry: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      criminalCase: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
     //Massive Application Form
     this.formMA = this.fb.group({

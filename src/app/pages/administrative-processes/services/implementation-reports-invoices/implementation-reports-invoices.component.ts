@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import {
   IMPLEMENTATION_COLUMNS,
   INVOICE_COLUMNS,
@@ -45,12 +46,18 @@ export class ImplementationReportsInvoicesComponent
       quantity: [null, Validators.required],
       status: [null, Validators.required],
       captureDate: [null, Validators.required],
-      observations: [null, Validators.required],
+      observations: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       scanFolio: [null, Validators.required],
     });
     this.delegationForm = this.fb.group({
       number: [null, Validators.required],
-      description: [null, Validators.required],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 }
