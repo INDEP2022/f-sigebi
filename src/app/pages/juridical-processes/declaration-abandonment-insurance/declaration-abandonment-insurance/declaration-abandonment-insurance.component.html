@@ -7,59 +7,47 @@
     <form [formGroup]="form" class="form-material">
       <div class="row w-100">
         <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('noBien')" label="No. Bien">
-            <input
-              class="form-control"
-              formControlName="noBien"
-              placeholder="No. Bien" />
+          <form-field [control]="form.get('noBien')" label="No&#46; Bien">
+            <input class="form-control" formControlName="noBien" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field [control]="form.get('estatus')" label="Estatus">
-            <input
-              class="form-control"
-              formControlName="estatus"
-              placeholder="Estatus" />
+            <input class="form-control" formControlName="estatus" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field [control]="form.get('cantidad')" label="Cantidad">
-            <input
-              class="form-control"
-              formControlName="cantidad"
-              placeholder="Cantidad" />
+            <input class="form-control" formControlName="cantidad" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
             [control]="form.get('fechaNotificacion')"
-            label="Fecha Notificación">
+            label="Fecha Notificaci&oacute;n">
             <input
               class="form-control"
               formControlName="fechaNotificacion"
-              placeholder="Fecha Notificacion"
               bsDatepicker />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
             [control]="form.get('fechaNotificacion2')"
-            label="Fecha Notificación 2">
+            label="Fecha Notificaci&oacute;n 2">
             <input
               class="form-control"
               formControlName="fechaNotificacion2"
-              placeholder="Fecha Notificacion 2"
               bsDatepicker />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
             [control]="form.get('fechaNotificacion3')"
-            label="Fecha Notificación 3">
+            label="Fecha Notificaci&oacute;n 3">
             <input
               class="form-control"
               formControlName="fechaNotificacion3"
-              placeholder="Fecha Notificacion 3"
               bsDatepicker />
           </form-field>
         </div>
@@ -70,7 +58,6 @@
             <input
               class="form-control"
               formControlName="fechaTerminoPeriodo"
-              placeholder="Fecha Termino Periodo"
               bsDatepicker />
           </form-field>
         </div>
@@ -81,7 +68,6 @@
             <input
               class="form-control"
               formControlName="fechaTerminoPeriodo2"
-              placeholder="Fecha Termino Periodo 2"
               bsDatepicker />
           </form-field>
         </div>
@@ -92,14 +78,13 @@
             <input
               class="form-control"
               formControlName="fechaTerminoPeriodo3"
-              placeholder="Fecha Termino Periodo 3"
               bsDatepicker />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field
             [control]="form.get('declaracionAbandonoSERA')"
-            label="Declaración Abandonos SERA">
+            label="Declaraci&oacute;n Abandonos SERA">
             <textarea
               class="form-control"
               formControlName="declaracionAbandonoSERA"></textarea>

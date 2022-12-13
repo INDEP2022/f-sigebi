@@ -42,7 +42,7 @@
               <div class="col-sm-12 col-12 col-md-2">
                 <form-field
                   [control]="formDeclaratoriaTabla.get('noExpediente')"
-                  label="No. Expediente">
+                  label="No&#46; Expediente">
                   <select class="form-control" formControlName="noExpediente">
                     <option [value]="null">Seleccione un valor</option>
                     <option [value]="'3767'">3767</option>
@@ -54,7 +54,7 @@
               <div class="col-sm-12 col-12 col-md-10">
                 <form-field
                   [control]="formDeclaratoriaTabla.get('averiPrevia')"
-                  label="Tipo - Subtipo - Descripción">
+                  label="Tipo &#45; Subtipo &#45; Descripci&oacute;n">
                   <select class="form-control" formControlName="averiPrevia">
                     <option [value]="null">Seleccione un valor</option>
                     <option
@@ -78,7 +78,7 @@
           <div class="row">
             <div class="col-sm-12 col-12 col-md-6">
               <span class="badge bagde-danger">
-                Bien entregado en administración
+                Bien entregado en administraci&oacute;n
               </span>
             </div>
           </div>
@@ -97,7 +97,6 @@
                   label="Inicio">
                   <!-- <label class="label w-100">Inicio</label> -->
                   <textarea
-                    placeholder="Inicio"
                     class="form-control w-100"
                     formControlName="inicio"></textarea>
                 </form-field>
@@ -108,7 +107,6 @@
                   label="Fin">
                   <!-- <label class="label w-100">Fin</label> -->
                   <textarea
-                    placeholder="Fin"
                     class="form-control w-100"
                     formControlName="fin"></textarea>
                 </form-field>
@@ -133,12 +131,7 @@
                   <form-field
                     [control]="formFolioEscaneo.get('folioEscaneo')"
                     label="Folio Escaneo">
-                    <input
-                      nbInput
-                      fullWidth
-                      type="number"
-                      class="w-100"
-                      placeholder="Folio Escaneo" />
+                    <input nbInput fullWidth type="number" class="w-100" />
                   </form-field>
                 </div>
                 <div class="col-sm-12 col-12 col-md-3 text-center">
