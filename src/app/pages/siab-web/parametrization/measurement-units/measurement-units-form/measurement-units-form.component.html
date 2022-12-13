@@ -1,26 +1,20 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Agregar Regulación</h5>
+    <h5 class="modal-title">Agregar Unidad de Medida</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <form-field [control]="form.get('regulacion')" label="Regulación">
-          <input class="form-control" formControlName="regulacion" />
-        </form-field>
-      </div>
-
-      <div class="row pt-4">
         <form-field
-          [control]="form.get('mercancia')"
-          label="Mercancia que recibe">
-          <input class="form-control" formControlName="mercancia" />
+          [control]="form.get('ligie')"
+          label="Unidad de medida LIGIE">
+          <input class="form-control" formControlName="ligie" />
         </form-field>
       </div>
 
       <div class="row pt-4">
-        <form-field [control]="form.get('descripcion')" label="Descripción">
-          <input class="form-control" formControlName="descripcion" />
+        <form-field [control]="form.get('siab')" label="Unidad de medida SIAB">
+          <input class="form-control" formControlName="siab" />
         </form-field>
       </div>
     </form>

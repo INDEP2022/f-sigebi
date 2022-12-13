@@ -24,6 +24,48 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./regulations/regulations.module')).RegulationsModule,
   },
+  {
+    path: 'attributes-parametrization',
+    loadChildren: async () =>
+      (
+        await import(
+          './attribute-parametrization/attribute-parametrization.module'
+        )
+      ).AttributeParametrizationModule,
+  },
+  {
+    path: 'ligie-departures',
+    loadChildren: async () =>
+      (await import('./ligies-departures/ligies-departures.module'))
+        .LigiesDeparturesModule,
+  },
+  {
+    path: 'measurements-units',
+    loadChildren: async () =>
+      (await import('./measurement-units/measurement-units.module'))
+        .MeasurementUnitsModule,
+  },
+  {
+    path: 'ligie-sub-departures',
+    loadChildren: async () =>
+      (await import('./ligie-sub-departures/ligie-sub-departures.module'))
+        .LigieSubDeparturesModule,
+  },
+  {
+    path: 'ligie-measurement-units',
+    loadChildren: async () =>
+      (await import('./ligie-measurement-units/ligie-measurement-units.module'))
+        .LigieMeasurementUnitsModule,
+  },
+  {
+    path: 'fraction-with-classifier',
+    loadChildren: async () =>
+      (
+        await import(
+          './fraction-with-classifier/fraction-with-classifier.module'
+        )
+      ).FractionWithClassifierModule,
+  },
 ];
 
 @NgModule({

@@ -3,18 +3,17 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 
 @Component({
-  selector: 'app-consideration-form',
-  templateUrl: './consideration-form.component.html',
+  selector: 'app-fraction-with-classifier-form',
+  templateUrl: './fraction-with-classifier-form.component.html',
   styles: [],
 })
-export class ConsiderationFormComponent implements OnInit {
+export class FractionWithClassifierFormComponent implements OnInit {
   form = this.fb.group({
     capitulo: [null, [Validators.required]],
-    partida: [null, [Validators.required]],
     subsubpartida: [null, [Validators.required]],
-    nom: [null, [Validators.required]],
+    partida: [null, [Validators.required]],
     subpartida: [null, [Validators.required]],
-    destino: [null, [Validators.required]],
+    clasificador: [null, [Validators.required]],
   });
   loading: boolean = false;
 

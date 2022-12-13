@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Agregar Consideración</h5>
+    <h5 class="modal-title">Agregar Subpartida</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
@@ -11,32 +11,13 @@
       </div>
 
       <div class="row pt-4">
-        <form-field [control]="form.get('subsubpartida')" label="SubsubPartida">
-          <input class="form-control" formControlName="subsubpartida" />
-        </form-field>
-      </div>
-
-      <div class="row pt-4">
-        <form-field [control]="form.get('partida')" label="Partida">
-          <input class="form-control" formControlName="partida" />
-        </form-field>
-      </div>
-
-      <div class="row pt-4">
-        <form-field [control]="form.get('nom')" label="NOM">
-          <input class="form-control" formControlName="nom" />
-        </form-field>
-      </div>
-
-      <div class="row pt-4">
         <form-field [control]="form.get('subpartida')" label="Subpartida">
           <input class="form-control" formControlName="subpartida" />
         </form-field>
       </div>
-
       <div class="row pt-4">
-        <form-field [control]="form.get('destino')" label="Destino">
-          <input class="form-control" formControlName="destino" />
+        <form-field [control]="form.get('partida')" label="Partida">
+          <input class="form-control" formControlName="partida" />
         </form-field>
       </div>
     </form>

@@ -3,14 +3,13 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 
 @Component({
-  selector: 'app-regulation-form',
-  templateUrl: './regulation-form.component.html',
+  selector: 'app-ligie-measurement-units-form',
+  templateUrl: './ligie-measurement-units-form.component.html',
   styles: [],
 })
-export class RegulationFormComponent implements OnInit {
+export class LigieMeasurementUnitsFormComponent implements OnInit {
   form = this.fb.group({
-    regulacion: [null, [Validators.required]],
-    mercancia: [null, [Validators.required]],
+    unidad: [null, [Validators.required]],
     descripcion: [null, [Validators.required]],
   });
   loading: boolean = false;

@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Agregar Consideración</h5>
+    <h5 class="modal-title">Agregar Fracción</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
@@ -23,20 +23,16 @@
       </div>
 
       <div class="row pt-4">
-        <form-field [control]="form.get('nom')" label="NOM">
-          <input class="form-control" formControlName="nom" />
+        <form-field
+          [control]="form.get('clasificador')"
+          label="Clasificador SIAB">
+          <input class="form-control" formControlName="clasificador" />
         </form-field>
       </div>
 
       <div class="row pt-4">
         <form-field [control]="form.get('subpartida')" label="Subpartida">
           <input class="form-control" formControlName="subpartida" />
-        </form-field>
-      </div>
-
-      <div class="row pt-4">
-        <form-field [control]="form.get('destino')" label="Destino">
-          <input class="form-control" formControlName="destino" />
         </form-field>
       </div>
     </form>
