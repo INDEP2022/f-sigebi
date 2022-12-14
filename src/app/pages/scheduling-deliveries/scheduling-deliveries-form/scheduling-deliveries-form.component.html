@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Nueva programación de entrega</h5>
+    <h5 class="title">Nueva programaci&oacute;n de entrega</h5>
   </div>
   <div body style="margin-top: -30px">
     <div class="justify-content-end btn-toolbar">
@@ -8,14 +8,14 @@
         type="button"
         [routerLink]="['execute-schelude-delivery']"
         class="btn btn-primary btn-sm active">
-        Enviar programación
+        Enviar programaci&oacute;n
       </button>
       <button type="button" class="btn btn-success btn-sm active">
         Guardar
       </button>
     </div>
 
-    <h5 class="title">Detalle de la programación de entrega</h5>
+    <h5 class="title">Detalle de la programaci&oacute;n de entrega</h5>
     <form [formGroup]="schedulingDeliverieForm" class="form-material">
       <div class="row pt-3">
         <div class="col-md-6">
@@ -29,9 +29,9 @@
                 (change)="selectEvent($event)">
                 <option [value]="null">Tipo evento</option>
                 <option [value]="'ventas'">Ventas</option>
-                <option [value]="'donacion'">Donación</option>
-                <option [value]="'devolucion'">Devolución</option>
-                <option [value]="'destruccion'">Destrucción</option>
+                <option [value]="'donacion'">Donaci&oacute;n</option>
+                <option [value]="'devolucion'">Devoluci&oacute;n</option>
+                <option [value]="'destruccion'">Destrucci&oacute;n</option>
               </select>
             </form-field>
           </div>
@@ -64,7 +64,7 @@
               [control]="schedulingDeliverieForm.get('warehouse')"
               label="Almacén">
               <select class="form-control" formControlName="warehouse">
-                <option [value]="null">Almacén</option>
+                <option [value]="null">Almac&eacute;n</option>
               </select>
             </form-field>
           </div>
@@ -100,15 +100,16 @@
         <div class="col-md-12">
           <div class="pt-3">
             <p>
-              En la siguiente linea escriba los correos electrónicos a los que
-              desea enviar información de la programación, debe separar los
-              correos con ; como: ejemplo@correo.com; ejemplo@correo.com.
+              En la siguiente l&iacute;nea escriba los correos
+              electr&oacute;nicos a los que desea enviar informaci&oacute;n de
+              la programaci&oacute;n, debe separar los correos con ; como:
+              ejemplo@correo.com; ejemplo@correo.com.
             </p>
           </div>
           <div class="pt-3">
             <form-field
               [control]="schedulingDeliverieForm.get('emails')"
-              label="Correos electrónicos">
+              label="Correos electr&oacute;nicos">
               <textarea
                 class="form-control"
                 formControlName="emails"></textarea>
@@ -145,7 +146,7 @@
               <div>
                 <form-field
                   [control]="searchForm.get('goodDescription')"
-                  label="Descripción bien">
+                  label="Descripci&oacute;n bien">
                   <input
                     type="text"
                     class="form-control"
@@ -191,7 +192,7 @@
               <div>
                 <form-field
                   [control]="searchForm.get('numberSae')"
-                  label="Número SAE">
+                  label="N&uacute;mero SAE">
                   <input
                     type="text"
                     class="form-control"
@@ -202,7 +203,7 @@
               <div class="pt-3">
                 <form-field
                   [control]="searchForm.get('gestionNumber')"
-                  label="Número gestión">
+                  label="N&uacute;mero gesti&oacute;n">
                   <input
                     type="text"
                     class="form-control"
@@ -213,7 +214,7 @@
               <div class="pt-3">
                 <form-field
                   [control]="searchForm.get('numberIventory')"
-                  label="Número de inventario">
+                  label="N&uacute;mero de inventario">
                   <input
                     type="text"
                     class="form-control"
