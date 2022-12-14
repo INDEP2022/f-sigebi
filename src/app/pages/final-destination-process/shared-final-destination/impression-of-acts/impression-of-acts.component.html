@@ -1,6 +1,9 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Impresión de Actas de Destrucción/Donación/Destino</h5>
+    <h5 class="title">
+      Impresi&oacute;n de &Aacute;ctas de
+      Destrucci&oacute;n/Donaci&oacute;n/Destino
+    </h5>
   </div>
 
   <div body>
@@ -15,14 +18,14 @@
               <button
                 class="btn btn-primary active mw-100 pl-1 pr-1"
                 (click)="openModal('Delegaciones', 'DELEGATIONS-COLUMNS')">
-                Delegación Ejecutora
+                Delegaci&oacute;n Ejecutora
               </button>
             </div>
             <ng-template #elseBlock>
               <button
                 class="btn btn-primary active mw-100 pl-1 pr-1"
                 (click)="openModal('Delegaciones', 'DELEGATIONS-COLUMNS')">
-                Delegación
+                Delegaci&oacute;n
               </button>
             </ng-template>
           </div>
@@ -61,7 +64,7 @@
               <button
                 class="btn btn-primary active pl-1 pr-1 mw-100"
                 (click)="openModal('Delegaciones', 'SUBDELEGATIONS-COLUMNS')">
-                Delegación Administra
+                Delegaci&oacute;n Administra
               </button>
             </div>
             <ng-template #elseBlock2>
@@ -70,7 +73,7 @@
                 (click)="
                   openModal('Sub-Delegaciones', 'SUBDELEGATIONS-COLUMNS')
                 ">
-                Sub-Delegación
+                Sub-Delegaci&oacute;n
               </button>
             </ng-template>
           </div>
@@ -135,7 +138,7 @@
             <div class="mb-3 pl-4 pr-4">
               <form-field
                 [control]="actForm.get('statusAct')"
-                label="Estatus Acta">
+                label="Estatus &Aacute;cta">
                 <select class="form-control" formControlName="statusAct">
                   <option [value]="null">Seleccione un valor</option>
                   <option [value]="1">1</option>
@@ -148,7 +151,7 @@
             <div class="mb-3 pl-4 pr-4">
               <form-field
                 [control]="actForm.get('typeAct')"
-                label="Tipo de Acta">
+                label="Tipo de &Aacute;cta">
                 <select class="form-control" formControlName="typeAct">
                   <option [value]="null">Seleccione un valor</option>
                   <option [value]="1">1</option>

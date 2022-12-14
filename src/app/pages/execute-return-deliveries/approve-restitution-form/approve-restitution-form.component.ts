@@ -9,7 +9,15 @@ import { APPROVE_RESTITUTION_COLUMNS } from './approve-restitution-columns';
 @Component({
   selector: 'app-approve-restitution-form',
   templateUrl: './approve-restitution-form.component.html',
-  styleUrls: ['../styles/detail-form.scss'],
+  styles: [
+    `
+      a.text-color:hover,
+      a.text-color:active {
+        color: #9d2449;
+        cursor: pointer;
+      }
+    `,
+  ],
 })
 export class ApproveRestitutionFormComponent
   extends BasePage

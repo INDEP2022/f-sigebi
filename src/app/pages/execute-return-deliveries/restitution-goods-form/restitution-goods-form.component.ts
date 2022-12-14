@@ -12,7 +12,15 @@ import { ReportShowComponent } from '../components/report-show/report-show.compo
 @Component({
   selector: 'app-restitution-goods-form',
   templateUrl: './restitution-goods-form.component.html',
-  styleUrls: ['./restitution-goods-form.scss'],
+  styles: [
+    `
+      a.text-color:hover,
+      a.text-color:active {
+        color: #9d2449;
+        cursor: pointer;
+      }
+    `,
+  ],
 })
 export class RestitutionGoodsFormComponent extends BasePage implements OnInit {
   showSearchForm: boolean = true;
