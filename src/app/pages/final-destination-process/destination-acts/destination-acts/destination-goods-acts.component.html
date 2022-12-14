@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Actas de Destino de Bienes</h5>
+    <h5 class="title">&Aacute;ctas de Destino de Bienes</h5>
   </div>
 
   <div body>
@@ -9,7 +9,7 @@
         <search-bar-simple
           (eventEmit)="search($event)"
           [label]="''"
-          [placeholder]="'Número de expediente'">
+          [placeholder]="'N&uacute;mero de expediente'">
         </search-bar-simple>
       </div>
     </div>
@@ -33,7 +33,7 @@
               <div class="mb-3 pl-4 pr-4">
                 <form-field
                   [control]="actForm.get('statusAct')"
-                  label="Estatus Acta">
+                  label="Estatus &Aacute;cta">
                   <input
                     type="text"
                     class="form-control"
@@ -45,7 +45,7 @@
           <div class="row mt-5">
             <div class="col-md-4">
               <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="actForm.get('act')" label="Acta">
+                <form-field [control]="actForm.get('act')" label="&Aacute;cta">
                   <input
                     type="text"
                     class="form-control"
@@ -57,7 +57,7 @@
               <div class="mb-3 pl-4 pr-4">
                 <form-field
                   [control]="actForm.get('preliminaryAscertainment')"
-                  label="Averiguación Previa">
+                  label="Averiguaci&oacute;n Previa">
                   <input
                     type="text"
                     class="form-control"
@@ -125,7 +125,7 @@
               <div class="mb-1 pl-4 pr-4">
                 <form-field
                   [control]="actForm.get('address')"
-                  label="Dirección">
+                  label="Direcci&oacute;n">
                   <input
                     type="text"
                     class="form-control"
