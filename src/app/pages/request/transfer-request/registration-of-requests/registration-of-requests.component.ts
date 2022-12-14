@@ -36,7 +36,7 @@ export class RegistrationOfRequestsComponent
   tab6: string = '';
 
   //registro de solicitudos o bienes
-  requestRegistration: boolean = false;
+  requestRegistration: boolean = true;
   //verificacion de cumplimientos tab
   complianceVerifi: boolean = false; //ok
   //clasificacion de bienes
@@ -46,7 +46,7 @@ export class RegistrationOfRequestsComponent
   //notificar aclaraciones o improcedencias
   notifyClarifiOrImpropriety: boolean = false;
   //aprovacion del proceso (por verse caso contrario borrar)
-  approvalProcess: boolean = true;
+  approvalProcess: boolean = false;
 
   constructor(
     public fb: FormBuilder,

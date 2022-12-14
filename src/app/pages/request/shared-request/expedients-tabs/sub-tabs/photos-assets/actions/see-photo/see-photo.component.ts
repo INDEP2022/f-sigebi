@@ -1,12 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ViewCell } from 'ng2-smart-table';
 
 @Component({
-  selector: 'app-input-field',
-  templateUrl: './input-field.component.html',
-  styles: [],
+  selector: 'app-see-photo',
+  templateUrl: './see-photo.component.html',
+  styleUrls: ['./see-photo.component.scss'],
 })
-export class InputFieldComponent implements ViewCell, OnInit {
+export class SeePhotoComponent implements OnInit {
   renderValue: string;
   @Input() value: string | number;
   @Input() rowData: any = '';
@@ -18,7 +17,7 @@ export class InputFieldComponent implements ViewCell, OnInit {
     this.renderValue = this.value.toString().toUpperCase();
   }
 
-  onActionBtn() {
+  seeImage(): void {
     this.btnclick.emit(this.rowData);
   }
 }
