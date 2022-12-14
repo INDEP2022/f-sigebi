@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
@@ -10,9 +11,13 @@ export class CaptureServiceOrderFormComponent
   extends BasePage
   implements OnInit
 {
-  constructor() {
+  numberTask: number = 0;
+  constructor(private activatedRoute: ActivatedRoute) {
     super();
+    this.numberTask = Number(this.activatedRoute.snapshot.paramMap.get('id'));
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log('numero de tarea', this.numberTask);
+  }
 }

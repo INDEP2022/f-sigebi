@@ -8,7 +8,15 @@ import { COLUMNS } from './columns';
 @Component({
   selector: 'app-classification-goods-form',
   templateUrl: './classification-goods-form.component.html',
-  styleUrls: ['../styles/detail-form.scss'],
+  styles: [
+    `
+      a.text-color:hover,
+      a.text-color:active {
+        color: #9d2449;
+        cursor: pointer;
+      }
+    `,
+  ],
 })
 export class ClassificationGoodsFormComponent
   extends BasePage
