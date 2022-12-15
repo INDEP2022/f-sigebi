@@ -9,14 +9,16 @@
     <form [formGroup]="identifierForm" class="form-material">
       <div class="row">
         <div class="col-md-5">
-          <form-field [control]="identifierForm.get('code')" label="Código">
+          <form-field
+            [control]="identifierForm.get('code')"
+            label="C&oacute;digo">
             <input type="text" class="form-control" formControlName="code" />
           </form-field>
         </div>
         <div class="col-md-12">
           <form-field
             [control]="identifierForm.get('description')"
-            label="Descripción">
+            label="Descripci&oacute;n">
             <input
               type="text"
               class="form-control"
@@ -35,7 +37,7 @@
         <div class="col-md-6">
           <form-field
             [control]="identifierForm.get('noRegistration')"
-            label="Número de registro">
+            label="N&uacute;mero de registro">
             <input
               type="text"
               class="form-control"
