@@ -26,6 +26,7 @@ export class ComplementaryRequestInformationComponent
   @Input() verificarCumplimientoBienes: boolean = false;
   @Input() expediente: boolean = true;
   @Input() tabRegisterDocumentation: string = 'Registro de Documentación';
+  signedReport: boolean = false;
   public typeDoc: string = '';
 
   /** OUTPUT VARIABLES */
@@ -143,13 +144,30 @@ export class ComplementaryRequestInformationComponent
   }
 
   generateReport(context?: Partial<CreateReportComponent>): void {
-    const modalRef = this.modalService.show(CreateReportComponent, {
-      initialState: context,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) console.log(next); //this.getCities();
+    if (!this.signedReport) {
+      const modalRef = this.modalService.show(CreateReportComponent, {
+        initialState: context,
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      });
+      modalRef.content.refresh.subscribe(next => {
+        if (next) console.log(next); //this.getCities();
+      });
+    } else {
+      this.finishRequest();
+    }
+  }
+
+  finishRequest() {
+    this.alertQuestion(
+      'question',
+      `¿Desea Finalizar la solicitud con Folio: `,
+      '',
+      'Finalizar'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.onLoadToast('success', 'Solicitud Finalizada', '');
+      }
     });
   }
 }
