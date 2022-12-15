@@ -19,7 +19,7 @@
         <div class="col-md-3">
           <form-field
             [control]="form.get('registerNumber')"
-            label="Numero de Registro">
+            label="N&uacute;mero de Registro">
             <input
               type="number"
               class="form-control"
@@ -45,7 +45,9 @@
 
       <div class="row mt-4">
         <div class="col-md-4">
-          <form-field [control]="form.get('streetNumber')" label="No. Exterior">
+          <form-field
+            [control]="form.get('streetNumber')"
+            label="No&#46; Exterior">
             <input
               type="number"
               class="form-control"
@@ -57,7 +59,7 @@
         <div class="col-md-4">
           <form-field
             [control]="form.get('apartmentNumber')"
-            label="No. Interior">
+            label="No&#46; Interior">
             <input
               type="number"
               min="1"
@@ -79,13 +81,15 @@
             [form]="form"
             [data]="delegations"
             bindLabel="delegation"
-            label="Delegación"
+            label="Delegaci&oacute;n"
             value="id"
             (fetchItems)="getFromSelect($event)"
             control="delegation"></ngx-select>
         </div>
         <div class="col-md-4">
-          <form-field [control]="form.get('zipCode')" label="Código Postal">
+          <form-field
+            [control]="form.get('zipCode')"
+            label="C&oacute;digo Postal">
             <input
               type="number"
               class="form-control"
@@ -103,7 +107,7 @@
 
       <div class="row mt-4">
         <div class="col-md-6">
-          <form-field [control]="form.get('phone')" label="Telefono">
+          <form-field [control]="form.get('phone')" label="Tel&eacute;fono">
             <input type="text" class="form-control" formControlName="phone" />
           </form-field>
         </div>

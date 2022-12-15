@@ -5,6 +5,10 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ILegend } from 'src/app/core/models/catalogs/legend.model';
 import { LegendService } from 'src/app/core/services/catalogs/legend.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from '../../../../core/shared/patterns';
 
 @Component({
   selector: 'app-legend-form',
@@ -30,9 +34,18 @@ export class LegendFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.legendForm = this.fb.group({
-      legend: [null, [Validators.required]],
-      version: [null, [Validators.required]],
-      status: ['1', Validators.compose([Validators.required])],
+      legend: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      version: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      status: [
+        '1',
+        Validators.compose([
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+        ]),
+      ],
     });
     if (this.legend != null) {
       this.edit = true;
