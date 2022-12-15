@@ -30,6 +30,20 @@ const routes: Routes = [
         './receive-validation-of-eye-visit-result/receive-validation-of-eye-visit-result.module'
       ).then(m => m.ReceiveValidationOfEyeVisitResultModule),
   },
+  {
+    path: 'transf-notification/:id/:typeOfRequest',
+    loadChildren: () =>
+      import('./transf-notification/transf-notification.module').then(
+        m => m.TransfNotificationModule
+      ),
+  },
+  {
+    path: 'prepare-response-office/:id/:typeOfRequest',
+    loadChildren: () =>
+      import('./prepare-response-office/prepare-response-office.module').then(
+        m => m.PrepareResponseOfficeModule
+      ),
+  },
 ];
 
 @NgModule({
