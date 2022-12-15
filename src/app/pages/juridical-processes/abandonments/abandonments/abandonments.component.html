@@ -7,7 +7,7 @@
     <form [formGroup]="form" class="container-fluid form-material">
       <div class="row w-100">
         <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('noBien')" label="No. Bien">
+          <form-field [control]="form.get('noBien')" label="No&#46; Bien">
             <input class="form-control" formControlName="noBien" />
           </form-field>
         </div>
@@ -29,7 +29,7 @@
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('clasificacion')"
-            label="Clasificación">
+            label="Clasificaci&oacute;n">
             <input class="form-control" formControlName="clasificacion" />
           </form-field>
         </div>
@@ -39,7 +39,9 @@
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('descripcion')" label="Descripción">
+          <form-field
+            [control]="form.get('descripcion')"
+            label="Descripci&oacute;n">
             <input class="form-control" formControlName="descripcion" />
           </form-field>
         </div>

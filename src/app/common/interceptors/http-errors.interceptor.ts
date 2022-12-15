@@ -8,7 +8,7 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, map, Observable, throwError } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 interface BaseResponse {
@@ -36,9 +36,9 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(
-      map(response => {
-        return this.handleSuccess(response);
-      }),
+      // map(response => {
+      //   return this.handleSuccess(response);
+      // }),
       catchError((error: HttpErrorResponse) => {
         this.handleError(error);
         return throwError(() => error);

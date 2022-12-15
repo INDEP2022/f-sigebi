@@ -1,17 +1,16 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Paricialización de Bienes Generales 1</h5>
+    <h5 class="title">Paricializaci&oacute;n de Bienes Generales 1</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-4">
-          <form-field [control]="form.get('noBien')" label="No. Bien">
+          <form-field [control]="form.get('noBien')" label="No&#46; Bien">
             <input
               type="number"
               class="form-control"
-              formControlName="noBien"
-              placeholder="No Bien" />
+              formControlName="noBien" />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -21,15 +20,16 @@
             <input
               type="number"
               class="form-control"
-              formControlName="cantidadBien"
-              placeholder="Cantidad" />
+              formControlName="cantidadBien" />
           </form-field>
         </div>
       </div>
 
       <div class="row">
         <div class="col-md-12">
-          <form-field [control]="form.get('descripcion')" label="Descripción">
+          <form-field
+            [control]="form.get('descripcion')"
+            label="Descripci&oacute;n">
             <textarea
               rows="5"
               class="form-control"
@@ -43,18 +43,18 @@
             <input
               type="number"
               class="form-control"
-              formControlName="cantidad"
-              placeholder="Cantidad" />
+              formControlName="cantidad" />
           </form-field>
         </div>
 
         <div class="col-md-4">
-          <form-field [control]="form.get('avaluo')" label="Valor Avalúo">
+          <form-field
+            [control]="form.get('avaluo')"
+            label="Valor Aval&uacute;o">
             <input
               type="number"
               class="form-control"
-              formControlName="avaluo"
-              placeholder="Valor Avalúo" />
+              formControlName="avaluo" />
           </form-field>
         </div>
       </div>
@@ -69,21 +69,21 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="form.get('extDom')" label="Ext. Dom">
+          <form-field [control]="form.get('extDom')" label="Ext&#46; Dom">
             <input
               type="number"
               class="form-control"
-              formControlName="extDom"
-              placeholder="Ext. Dom" />
+              formControlName="extDom" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="form.get('expediente')" label="No. Expediente">
+          <form-field
+            [control]="form.get('expediente')"
+            label="No&#46; Expediente">
             <input
               type="number"
               class="form-control"
-              formControlName="expediente"
-              placeholder="No Expediente" />
+              formControlName="expediente" />
           </form-field>
         </div>
       </div>
@@ -101,8 +101,7 @@
             <input
               type="number"
               class="form-control"
-              formControlName="moneda"
-              placeholder="Moneda" />
+              formControlName="moneda" />
           </form-field>
         </div>
       </div>
@@ -113,18 +112,13 @@
             <input
               type="number"
               class="form-control"
-              formControlName="importe"
-              placeholder="Importe" />
+              formControlName="importe" />
           </form-field>
         </div>
 
         <div class="col-md-3">
           <form-field [control]="form.get('veces')" label="Veces a Parcializar">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="veces"
-              placeholder="Veces a Parcializar" />
+            <input type="number" class="form-control" formControlName="veces" />
           </form-field>
         </div>
 
@@ -133,18 +127,13 @@
             <input
               type="number"
               class="form-control"
-              formControlName="cantidad2"
-              placeholder="Cantidad" />
+              formControlName="cantidad2" />
           </form-field>
         </div>
 
         <div class="col-md-3">
           <form-field [control]="form.get('saldo')" label="Saldo">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="saldo"
-              placeholder="Saldo" />
+            <input type="number" class="form-control" formControlName="saldo" />
           </form-field>
         </div>
       </div>

@@ -49,6 +49,12 @@ const routes: Routes = [
       (await import('./indicators/indicators.module')).IndicatorsModule,
   },
   {
+    path: 'parametrization',
+    loadChildren: async () =>
+      (await import('./parametrization/parametrization.module'))
+        .ParametrizationModule,
+  },
+  {
     path: 'consultation',
     loadChildren: async () =>
       (await import('./consultation/consultation.module')).ConsultationModule,

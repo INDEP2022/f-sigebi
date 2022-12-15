@@ -3,3 +3,9 @@ a.text-color:active {
   color: #9d2449;
   cursor: pointer;
 }
+
+:host {
+  ::ng-deep .transferDescription {
+    min-width: 30rem;
+  }
+}

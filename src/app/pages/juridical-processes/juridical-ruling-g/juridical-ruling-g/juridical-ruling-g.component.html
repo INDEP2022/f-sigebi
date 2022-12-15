@@ -21,7 +21,7 @@
             <div class="col-sm-12 col-12 col-md-4 p-2">
               <form-field
                 [control]="expedientesForm.get('tipoDictaminacion')"
-                label="Tipo de dictaminación">
+                label="Tipo de dictaminaci&oacute;n">
                 <select
                   class="form-control"
                   formControlName="tipoDictaminacion">
@@ -32,7 +32,7 @@
             <div class="col-sm-12 col-12 col-md-3 p-2">
               <form-field
                 [control]="expedientesForm.get('averiguacionPrevia')"
-                label="Averiguación Previa">
+                label="Averiguaci&oacute;n Previa">
                 <input
                   class="form-control"
                   formControlName="averiguacionPrevia" />
@@ -88,7 +88,7 @@
             <div class="col-sm-12 col-12 col-md-2 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('fechaResolucion')"
-                label="Fecha Resolución">
+                label="Fecha Resoluci&oacute;n">
                 <input
                   class="form-control"
                   formControlName="fechaResolucion"
@@ -98,7 +98,7 @@
             <div class="col-sm-12 col-12 col-md-2 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('fechaNotificacion')"
-                label="Fecha Notificación">
+                label="Fecha Notificaci&oacute;n">
                 <input
                   class="form-control"
                   formControlName="fechaNotificacion"
@@ -108,7 +108,7 @@
             <div class="col-sm-12 col-12 col-md-2 p-2">
               <form-field
                 [control]="dictaminacionesForm.get('fechaNotificacionAseg')"
-                label="Fecha Notificación Aseg">
+                label="Fecha Notificaci&oacute;n Aseg">
                 <input
                   class="form-control"
                   formControlName="fechaNotificacionAseg"
@@ -146,7 +146,7 @@
             <div class="col-md-4">
               <form-field
                 [control]="subtipoForm.get('tipoDictaminacion')"
-                label="Ident.">
+                label="Ident&#46;">
                 <select
                   class="form-control"
                   formControlName="tipoDictaminacion">
@@ -160,7 +160,7 @@
             <div class="col-md-8">
               <form-field
                 [control]="subtipoForm.get('noExpediente')"
-                label="Subtipo - Ssubtipo - Sssubtipo">
+                label="Subtipo &#45; Ssubtipo &#45; Sssubtipo">
                 <select class="form-control" formControlName="noExpediente">
                   <option [value]="null">Seleccione un valor</option>
                   <option [value]="'Alta'">Alta</option>
@@ -227,7 +227,7 @@
               [source]="data3"></ng2-smart-table>
           </div>
           <div class="col-md-2">
-            <p class="text-info h5">No. bien</p>
+            <p class="text-info h5">No&#46; bien</p>
             <p class="text-info h5">66345</p>
           </div>
         </div>
@@ -266,7 +266,7 @@
         <button
           class="btn btn-info btn-sm active m-3 text-wrap"
           (click)="btnOficioSubstanciacion()">
-          Oficio Substanciación
+          Oficio Substanciaci&oacute;n
         </button>
         <button
           class="btn btn-info btn-sm active m-3 text-wrap"
@@ -302,7 +302,7 @@
 
 <app-card [header]="true" *ngIf="listadoDocumentos == true">
   <div class="ch-content" header>
-    <h5 class="title">Fecha de Documentos Asociados al Trámite</h5>
+    <h5 class="title">Fecha de Documentos Asociados al Tr&aacute;mite</h5>
   </div>
 
   <div body>

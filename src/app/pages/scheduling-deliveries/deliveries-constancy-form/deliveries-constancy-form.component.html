@@ -11,7 +11,7 @@
         class="form-material"
         style="margin: 0 auto">
         <div class="form-group">
-          <label>Destinario constancía:</label>
+          <label>Destinario constancia:</label>
           <form-radio label="Cliente" class="radio-inline align-baseline">
             <input
               type="radio"
@@ -33,7 +33,7 @@
         <div class="form-group">
           <form-field
             [control]="deliveryConstancyForm.get('typeConstancy')"
-            label="Tipo constancía">
+            label="Tipo constancia">
             <select
               class="form-control"
               formControlName="typeConstancy"
@@ -69,11 +69,11 @@
               [control]="deliveryConstancyForm.get('identification')"
               label="Identificación">
               <select class="form-control" formControlName="identification">
-                <option [value]="null">Seleccione identificación</option>
+                <option [value]="null">Seleccione identificaci&oacute;n</option>
                 <option [value]="1">Credencial de elector</option>
                 <option [value]="2">Pasaporte</option>
                 <option [value]="3">Cartilla militar</option>
-                <option [value]="4">Cedula profesional</option>
+                <option [value]="4">C&eacute;dula profesional</option>
                 <option [value]="5">Crendecial del SAT</option>
                 <option [value]="6">Crendecial del SAE</option>
               </select>
@@ -83,7 +83,7 @@
           <div class="col-md-6 pt-2" *ngIf="showClientForm">
             <form-field
               [control]="deliveryConstancyForm.get('numIdentification')"
-              label="No°. identificación">
+              label="No°. identificaci&oacute;n">
               <input
                 type="text"
                 class="form-control"
@@ -155,15 +155,15 @@
           <div class="form-group pt-4" *ngIf="personalEstates">
             <form-field
               [control]="deliveryConstancyForm.get('identificationEstate')"
-              label="Identificación">
+              label="Identificaci&oacute;n">
               <select
                 class="form-control"
                 formControlName="identificationEstate">
-                <option [value]="null">Seleccione identificación</option>
+                <option [value]="null">Seleccione identificaci&oacute;n</option>
                 <option [value]="1">Credencial de elector</option>
                 <option [value]="2">Pasaporte</option>
                 <option [value]="3">Cartilla militar</option>
-                <option [value]="4">Cedula profesional</option>
+                <option [value]="4">C&eacute;dula profesional</option>
                 <option [value]="5">Crendecial del SAT</option>
                 <option [value]="6">Crendecial del SAE</option>
               </select>
@@ -173,7 +173,7 @@
           <div class="col-md-6 pt-2" *ngIf="personalEstates">
             <form-field
               [control]="deliveryConstancyForm.get('numIdentificationEstate')"
-              label="No°. identificación">
+              label="No°. identificaci&oacute;n">
               <input
                 type="text"
                 class="form-control"

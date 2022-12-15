@@ -6,7 +6,7 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-3">
-          <form-field [control]="form.get('id')" label="No. Indicador">
+          <form-field [control]="form.get('id')" label="No&#46; Indicador">
             <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
@@ -16,7 +16,9 @@
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field [control]="form.get('description')" label="Descripción">
+          <form-field
+            [control]="form.get('description')"
+            label="Descripci&oacute;n">
             <input
               type="text"
               class="form-control"
@@ -25,7 +27,7 @@
         </div>
         <div class="col-md-3">
           <div class="d-flex justify-content-center">
-            <form-check label="C/Fórmula" for="label">
+            <form-check label="C&#47;F&oacute;rmula" for="label">
               <input
                 id="label"
                 type="checkbox"
@@ -39,7 +41,7 @@
           <div style="text-align: center">
             <form-field
               [control]="form.get('formule')"
-              label="Escriba la formula con el teclado virtual">
+              label="Escriba la f&oacute;rmula con el teclado virtual">
               <input
                 (input)="onInputChange($event)"
                 class="form-control"

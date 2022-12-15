@@ -6,12 +6,16 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-3">
-          <form-field [control]="form.get('cve')" label="Cve. Depositaría">
+          <form-field
+            [control]="form.get('cve')"
+            label="Cve&#46; Depositar&iacute;a">
             <input type="text" class="form-control" formControlName="cve" />
           </form-field>
         </div>
         <div class="col-md-9">
-          <form-field [control]="form.get('description')" label="Descripción">
+          <form-field
+            [control]="form.get('description')"
+            label="Descripci&oacute;n">
             <input
               type="text"
               class="form-control"
@@ -29,12 +33,12 @@
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field [control]="form.get('noExt')" label="No. Exterior">
+          <form-field [control]="form.get('noExt')" label="No&#46; Exterior">
             <input type="text" class="form-control" formControlName="noExt" />
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field [control]="form.get('noInt')" label="No. Interior">
+          <form-field [control]="form.get('noInt')" label="No&#46; Interior">
             <input type="text" class="form-control" formControlName="noInt" />
           </form-field>
         </div>
@@ -46,7 +50,9 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="form.get('zipCode')" label="Código Postal">
+          <form-field
+            [control]="form.get('zipCode')"
+            label="C&oacute;digo Postal">
             <input type="text" class="form-control" formControlName="zipCode" />
           </form-field>
         </div>

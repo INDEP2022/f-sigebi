@@ -8,7 +8,7 @@
         <div class="col-md-2">
           <form-field
             [control]="appraisalInstitutionsForm.get('noAppraiser')"
-            label="No.Valuador">
+            label="No&#46; Valuador">
             <input
               type="number"
               class="form-control"
@@ -18,11 +18,11 @@
         <div class="col-md-4">
           <form-field
             [control]="appraisalInstitutionsForm.get('nameComplete')"
-            label="Apellido Paterno, Materno y Nombre">
+            label="Apellido Paterno&#44; Materno y Nombre">
             <input
               type="text"
               formControlName="nameComplete"
-              placeholder="Apellido Paterno, Materno y Nombre"
+              placeholder="Apellido Paterno&#44; Materno y Nombre"
               class="form-control" />
           </form-field>
         </div>
@@ -30,17 +30,13 @@
           <form-field
             [control]="appraisalInstitutionsForm.get('street')"
             label="Calle">
-            <input
-              type="text"
-              formControlName="street"
-              placeholder="Calle"
-              class="form-control" />
+            <input type="text" formControlName="street" class="form-control" />
           </form-field>
         </div>
         <div class="col-md-2">
           <form-field
             [control]="appraisalInstitutionsForm.get('noExterior')"
-            label="No.Exterior">
+            label="No&#46; Exterior">
             <input
               type="text"
               class="form-control"
@@ -52,7 +48,7 @@
         <div class="col-md-4">
           <form-field
             [control]="appraisalInstitutionsForm.get('noInside')"
-            label="No.Interior">
+            label="No&#46; Interior">
             <input
               type="text"
               class="form-control"
@@ -62,7 +58,7 @@
         <div class="col-md-4">
           <form-field
             [control]="appraisalInstitutionsForm.get('postalCode')"
-            label="Código postal">
+            label="C&oacute;digo postal">
             <input
               type="number"
               class="form-control"
@@ -73,11 +69,7 @@
           <form-field
             [control]="appraisalInstitutionsForm.get('colony')"
             label="Colonia">
-            <input
-              type="text"
-              formControlName="colony"
-              placeholder="Colonia"
-              class="form-control" />
+            <input type="text" formControlName="colony" class="form-control" />
           </form-field>
         </div>
       </div>
@@ -85,11 +77,10 @@
         <div class="col-md-4">
           <form-field
             [control]="appraisalInstitutionsForm.get('delegationMunicipality')"
-            label="Delegación Municipio">
+            label="Delegaci&oacute;n Municipio">
             <input
               type="text"
               formControlName="delegationMunicipality"
-              placeholder="Delegación Municipio"
               class="form-control" />
           </form-field>
         </div>
@@ -100,7 +91,6 @@
             <input
               type="text"
               formControlName="federalEntity"
-              placeholder="Entidad Federativa"
               class="form-control" />
           </form-field>
         </div>
@@ -123,7 +113,7 @@
         <div class="col-md-4">
           <form-field
             [control]="appraisalInstitutionsForm.get('phone')"
-            label="Teléfono">
+            label="Tel&eacute;fono">
             <input type="text" class="form-control" formControlName="phone" />
           </form-field>
         </div>
@@ -145,8 +135,7 @@
             label="Observaciones">
             <textarea
               class="form-control"
-              formControlName="observations"
-              placeholder="Observaciones"></textarea>
+              formControlName="observations"></textarea>
           </form-field>
         </div>
       </div>

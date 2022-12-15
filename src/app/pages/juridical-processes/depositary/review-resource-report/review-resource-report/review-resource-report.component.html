@@ -7,36 +7,40 @@
     <form [formGroup]="form" class="form-material">
       <div class="row w-100">
         <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('delegacion')" label="Delegación">
+          <form-field
+            [control]="form.get('delegacion')"
+            label="Delegaci&oacute;n">
             <input class="form-control" formControlName="delegacion" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('subdelegacion')"
-            label="SubDelegación">
+            label="SubDelegaci&oacute;n">
             <input class="form-control" formControlName="subdelegacion" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('delBien')"
-            label="Desde el No. Bien:">
+            label="Desde el No&#46; Bien&#58;">
             <input class="form-control" formControlName="delBien" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-2">
-          <form-field [control]="form.get('alBien')" label="Al No. Bien:">
+          <form-field
+            [control]="form.get('alBien')"
+            label="Al No&#46; Bien&#58;">
             <input class="form-control" formControlName="alBien" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-12 p-2">
-          <h6>Fecha Presentación Recurso:</h6>
+          <h6>Fecha Presentaci&oacute;n Recurso&#58;</h6>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field
             [control]="form.get('fechaPresentacionRecursoDesde')"
-            label="Fecha desde:">
+            label="Fecha desde&#58;">
             <input
               class="form-control"
               formControlName="fechaPresentacionRecursoDesde"
@@ -46,7 +50,7 @@
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field
             [control]="form.get('fechaPresentacionRecursoHasta')"
-            label="Fecha hasta:">
+            label="Fecha hasta&#58;">
             <input
               class="form-control"
               formControlName="fechaPresentacionRecursoHasta"
