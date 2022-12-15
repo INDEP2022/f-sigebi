@@ -1,6 +1,8 @@
 /** BASE IMPORT */
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ApproveReturnRequestComponent } from './approve-return-request/approve-return-request.component';
+
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -10,18 +12,14 @@ import { RouterModule, Routes } from '@angular/router';
 /** COMPONENTS IMPORTS */
 
 const routes: Routes = [
-  // Clasificación Bienes
   {
-    path: 'clasificacion-bienes',
-    loadChildren: async () =>
-      (await import('./goods-classification/goods-classification.module'))
-        .GoodsClassificationModule,
-    data: { title: 'Clasificación Bienes' },
+    path: '',
+    component: ApproveReturnRequestComponent,
+    data: { title: 'Clasificación de Bienes' },
   },
-  // Clasificación Bienes
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class GoodsClassificationRoutingModule {}
+export class ApproveReturnRequestRoutingModule {}

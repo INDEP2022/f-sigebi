@@ -6,15 +6,15 @@ const routes: Routes = [
     path: 'register-additional-documentation',
     loadChildren: () =>
       import(
-        './register-additional-documentation/msg-rdcbs-m-register-additional-documentation.module'
-      ).then(m => m.MsgRdcbsMRegisterAdditionalDocumentationModule),
+        './register-additional-documentation/register-additional-documentation.module'
+      ).then(m => m.RegisterAdditionalDocumentationModule),
   },
   {
     path: 'register-request-goods/:id/:typeOfRequest',
     loadChildren: () =>
-      import(
-        './register-request-goods/msg-rsb-m-register-request-goods.module'
-      ).then(m => m.MsgRsbMRegisterRequestGoodsModule),
+      import('./register-request-goods/register-request-goods.module').then(
+        m => m.RegisterRequestGoodsModule
+      ),
   },
   {
     path: 'schedule-eye-visits/:id/:typeOfRequest',
