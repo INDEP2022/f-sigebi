@@ -13,13 +13,18 @@
     <div class="row">
       <div class="d-flex">
         <div class="mr-auto p-2"></div>
-        <div class="p-2">
+        <div
+          class="p-2"
+          *ngIf="
+            nombrePantalla === 'transf-notification' ||
+            nombrePantalla === 'validate-eye-visit-result' ||
+            nombrePantalla === 'prepare-response-office'
+          ">
           <button
             type="button"
             class="d-flex align-items-center btn btn-primary btn-sm active"
             (click)="generateReport()">
-            <i class="bx bxs-right-arrow-square mr-1"></i> Reporte de
-            Notificación
+            <i class="bx bxs-right-arrow-square mr-1"></i> {{ titleReport }}
           </button>
         </div>
         <div class="p-2">
@@ -167,6 +172,9 @@
               heading="Validar Resultado Visitas"
               *ngIf="validarResultadoVisitas">
               <app-validate-visit-result></app-validate-visit-result>
+            </tab>
+            <tab heading="Resultado Visitas" *ngIf="'resultadoVisitas'">
+              <app-result-visits></app-result-visits>
             </tab>
             <tab
               heading="Verificar Cumplimiento de Bienes"

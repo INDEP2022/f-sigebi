@@ -19,7 +19,7 @@ const routes: Routes = [
         await import(
           './return-request-registration/return-request-registration.module'
         )
-      ).GDReturnRequestRegistrationModule,
+      ).ReturnRequestRegistrationModule,
     data: { title: 'Registro de Solicitud de Devolución' },
   },
   // registro de solicitud de devolucion
@@ -28,7 +28,7 @@ const routes: Routes = [
     path: 'clasificacion-bienes',
     loadChildren: async () =>
       (await import('./goods-classification/goods-classification.module'))
-        .GDCBGoodsClassificationModule,
+        .GoodsClassificationModule,
     data: { title: 'Clasificación de Bienes' },
   },
   // Clasificación de Bienes
@@ -37,7 +37,7 @@ const routes: Routes = [
     path: 'aprobar-solicitud-bienes',
     loadChildren: async () =>
       (await import('./approve-return-request/approve-return-request.module'))
-        .GDApproveReturnRequestModule,
+        .ApproveReturnRequestModule,
     data: { title: 'Aprobar Solicitud de Devolución' },
   },
   // Aprobar Solicitud de Devolución

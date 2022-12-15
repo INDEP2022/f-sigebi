@@ -6,6 +6,7 @@ import { ListParams } from '../../../../common/repository/interfaces/list-params
 import { ModelForm } from '../../../../core/interfaces/model-form';
 import { IIndicatorReport } from '../../../../core/models/catalogs/indicator-report.model';
 import { ProeficientService } from '../../../../core/services/catalogs/proficient.service';
+import { STRING_PATTERN } from '../../../../core/shared/patterns';
 import { DefaultSelect } from '../../../../shared/components/select/default-select';
 
 @Component({
@@ -34,7 +35,10 @@ export class IndicatorReportFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       id: [null],
-      tipo_servicio: [null, [Validators.required]],
+      tipo_servicio: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       rango_porcentaje_inicial: [null, [Validators.required]],
       rango_porcentaje_final: [null, [Validators.required]],
       pena_convencional: [null, [Validators.required]],

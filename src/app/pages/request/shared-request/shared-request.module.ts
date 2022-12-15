@@ -58,6 +58,7 @@ import { RequestInformationRejectComponent } from './request-information-reject/
 import { RequestInformationSimilarGoodsComponent } from './request-information-similar-goods/request-information-similar-goods.component';
 import { RequestInformationComponent } from './request-information/request-information.component';
 import { RequestSiabFormComponent } from './request-siab-form/request-siab-form.component';
+import { ResultVisitsComponent } from './result-visits/result-visits.component';
 import { SearchInventoryGoodsComponent } from './search-inventory-goods/search-inventory-goods.component';
 import { SearchRequestSimilarGoodsComponent } from './search-request-similar-goods/search-request-similar-goods.component';
 import { SearchRequestsComponent } from './search-requests/search-requests.component';
@@ -169,6 +170,7 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     UploadFileComponent,
     OpenPhotosComponent,
     SeePhotoComponent,
+    ResultVisitsComponent,
   ],
   imports: [
     CommonModule,

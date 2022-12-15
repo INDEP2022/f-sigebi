@@ -13,7 +13,7 @@
         <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field
             [control]="notaryForm.get('notaryNumber')"
-            label="Número Notaria">
+            label="N&uacute;mero Notaria">
             <input
               type="number"
               class="form-control"
@@ -25,7 +25,7 @@
         <div class="col-md-6 pt-sm-5 pt-md-2">
           <form-field
             [control]="notaryForm.get('registryNumber')"
-            label="Número de registro">
+            label="N&uacute;mero de registro">
             <input
               type="number"
               class="form-control"
@@ -33,14 +33,16 @@
           </form-field>
         </div>
         <div class="col-md-6 pt-sm-5 pt-md-2">
-          <form-field [control]="notaryForm.get('valid')" label="Válido">
+          <form-field [control]="notaryForm.get('valid')" label="V&aacute;lido">
             <input type="text" class="form-control" formControlName="valid" />
           </form-field>
         </div>
       </div>
       <div class="row pt-md-5">
         <div class="col-md-6 pt-sm-5 pt-md-2">
-          <form-field [control]="notaryForm.get('ubication')" label="Ubicación">
+          <form-field
+            [control]="notaryForm.get('ubication')"
+            label="Ubicaci&oacute;n">
             <input
               type="text"
               class="form-control"
@@ -58,7 +60,9 @@
       </div>
       <div class="row pt-md-5">
         <div class="col-md-6 pt-sm-5 pt-md-2">
-          <form-field [control]="notaryForm.get('phone')" label="Teléfono">
+          <form-field
+            [control]="notaryForm.get('phone')"
+            label="Tel&eacute;fono">
             <input type="text" class="form-control" formControlName="phone" />
           </form-field>
         </div>
