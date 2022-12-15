@@ -43,15 +43,15 @@ var usuario: IRequestList[] = [
     created: 'tester_nsbxt',
     process: 'ProgramarVisitaOcular',
   },
-  // {
-  //   title:
-  //     'BIENES SIMILARES: Registro de Documentación Complementaria, No. Solicitud: 1851',
-  //   noRequest: 45010,
-  //   numTask: 260302,
-  //   noInstance: 820170,
-  //   created: 'tester_nsbxt',
-  //   process: 'RegistroSolicitudes',
-  // },
+  {
+    title:
+      'BIENES SIMILARES: Notificar a Transferente, No. Solicitud 1851, Contribuyente: LETICIA GARCÍA, PAMA: 235324SDA',
+    noRequest: 1851,
+    numTask: 260302,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'NotificacionTransferente',
+  },
   {
     title:
       'BIENES SIMILARES: Validar Resultado Visita Ocular, No. Solicitud: 1851, Contribuyente: LETICIA GARCÍA, PAMA: 235324SDA',
@@ -60,6 +60,15 @@ var usuario: IRequestList[] = [
     noInstance: 820170,
     created: 'tester_nsbxt',
     process: 'ValidarResultadoVisitaOcular',
+  },
+  {
+    title:
+      'BIENES SIMILARES: Elaborar Oficio de Respuesta, No. Solicitud: 1851, Contribuyente: LETICIA GARCÍA, PAMA: 235324SDA',
+    noRequest: 45011,
+    numTask: 260302,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'ElaborarOficio',
   },
   {
     title:
@@ -271,6 +280,22 @@ export class RequestListComponent extends BasePage implements OnInit {
           'pages/request/manage-similar-goods/receive-validation-of-eye-visit-result/',
           event.data.noRequest,
           3,
+        ]);
+        break;
+      case 'NotificacionTransferente':
+        // en el caso de que el proceso seleccionado sea Bienes Similares
+        this.router.navigate([
+          'pages/request/manage-similar-goods/transf-notification',
+          event.data.noRequest,
+          4,
+        ]);
+        break;
+      case 'ElaborarOficio':
+        // en el caso de que el proceso seleccionado sea Bienes Similares
+        this.router.navigate([
+          'pages/request/manage-similar-goods/prepare-response-office',
+          event.data.noRequest,
+          5,
         ]);
         break;
       // ---------------------- SOLICITUDES DE BIENES SIMILARES
