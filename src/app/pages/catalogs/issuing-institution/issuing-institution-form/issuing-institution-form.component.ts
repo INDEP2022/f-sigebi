@@ -7,6 +7,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IIssuingInstitution } from '../../../../core/models/catalogs/issuing-institution.model';
 import { ITransferente } from '../../../../core/models/catalogs/transferente.model';
+import { STRING_PATTERN } from '../../../../core/shared/patterns';
 import { IssuingInstitutionService } from './../../../../core/services/catalogs/issuing-institution.service';
 
 @Component({
@@ -40,11 +41,14 @@ export class IssuingInstitutionFormComponent
 
   private prepareForm(): void {
     this.issuingInstitutionForm = this.fb.group({
-      name: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       manager: [null, [Validators.required]],
-      street: [null, [Validators.required]],
-      calle: [null, [Validators.required]],
+      street: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      calle: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       numInside: [null, [Validators.required]],
       numExterior: [null, [Validators.required]],
       cologne: [null, [Validators.required]],
