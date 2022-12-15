@@ -18,7 +18,7 @@ const routes: Routes = [
         await import(
           './register-document-return/register-document-return.module'
         )
-      ).GDRSDRegisterDocumentReturnModule,
+      ).RegisterDocumentReturnModule,
     data: { title: 'Registrar Documentación Complementaria Devolución' },
   },
   // Registrar Documentación Complementaria Devolución
@@ -26,11 +26,8 @@ const routes: Routes = [
   {
     path: 'registro-solicitud-devolucion',
     loadChildren: async () =>
-      (
-        await import(
-          './return-request-record/gd-rsd-m-return-request-record.module'
-        )
-      ).GDRSDReturnRequestRecordModule,
+      (await import('./return-request-record/return-request-record.module'))
+        .ReturnRequestRecordModule,
     data: { title: 'Registro de Solicitud de Devolución' },
   },
   // registro de solicitud de devolucion
@@ -39,4 +36,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class GDReturnRequestRegistrationRoutingModule {}
+export class ReturnRequestRegistrationRoutingModule {}

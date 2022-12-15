@@ -14,11 +14,8 @@ const routes: Routes = [
   {
     path: 'clasificacion-bienes',
     loadChildren: async () =>
-      (
-        await import(
-          './goods-classification/gd-cb-m-goods-classification.module'
-        )
-      ).GDCBGoodsClassificationModule,
+      (await import('./goods-classification/goods-classification.module'))
+        .GoodsClassificationModule,
     data: { title: 'Clasificación Bienes' },
   },
   // Clasificación Bienes
@@ -27,4 +24,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class GDCBGoodsClassificationRoutingModule {}
+export class GoodsClassificationRoutingModule {}
