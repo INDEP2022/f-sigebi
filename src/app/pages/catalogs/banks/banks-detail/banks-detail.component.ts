@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { BankService } from '../../../../core/services/catalogs/bank.service';
 
 @Component({
@@ -32,13 +33,32 @@ export class BanksDetailComponent implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      bankCode: ['', [Validators.required, Validators.maxLength(10)]],
-      name: ['', [Validators.required, Validators.maxLength(60)]],
-      registerNumber: ['', Validators.required],
-      ifdsc: ['', [Validators.required, Validators.maxLength(60)]],
-      dateType: ['', Validators.required],
-      code: ['', Validators.required],
-      idProvider: ['', Validators.required],
+      bankCode: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(10),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      name: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(60),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
+      registerNumber: [
+        null,
+        Validators.required,
+        Validators.pattern(NUMBERS_PATTERN),
+        Validators.minLength(1),
+      ],
+      ifdsc: [null, [Validators.required, Validators.maxLength(60)]],
+      dateType: [null, [Validators.required]],
+      code: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      idProvider: [null, [Validators.required]],
     });
     if (this.edit) {
       this.status = 'Actualizar';

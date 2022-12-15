@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { CityService } from '../../../../core/services/catalogs/city.service';
 
 @Component({
@@ -40,22 +41,48 @@ export class CityDetailComponent implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      idCity: ['', Validators.required],
+      idCity: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.minLength(1),
+        ],
+      ],
       nameCity: [
         null,
-        Validators.compose([
-          Validators.pattern(
-            '[a-zA-Z]((.|_|-)?[a-zA-ZáéíóúÁÉÍÓÚ\u0020]+){0,255}'
-          ),
-          Validators.required,
-        ]),
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      cveState: ['', Validators.required],
-      noDelegation: [null, Validators.required],
-      noSubDelegation: [null, Validators.required],
-      legendOffice: [null, [Validators.required]],
-      noRegister: [null, [Validators.required]],
+      cveState: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      noDelegation: [
+        null,
+        Validators.required,
+        Validators.pattern(NUMBERS_PATTERN),
+        Validators.minLength(1),
+      ],
+      noSubDelegation: [
+        null,
+        Validators.required,
+        Validators.pattern(NUMBERS_PATTERN),
+        Validators.minLength(1),
+      ],
+      legendOffice: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      noRegister: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.minLength(1),
+        ],
+      ],
     });
+
     if (this.edit) {
       this.status = 'Actualizar';
       this.form.patchValue(this.city);

@@ -6,12 +6,10 @@
     <form [formGroup]="catserviceForm" class="form-material">
       <div class="row">
         <div class="col-md-4">
-          <form-field [control]="catserviceForm.get('code')" label="Código">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="code"
-              placeholder="Código de serie ej. 1123" />
+          <form-field
+            [control]="catserviceForm.get('code')"
+            label="C&oacute;digo">
+            <input type="text" class="form-control" formControlName="code" />
           </form-field>
         </div>
 
@@ -22,8 +20,7 @@
             <input
               type="string"
               class="form-control"
-              formControlName="unaffordabilityCriterion"
-              placeholder="Criterio de incosteabilidad" />
+              formControlName="unaffordabilityCriterion" />
           </form-field>
         </div>
 
@@ -34,20 +31,18 @@
             <input
               type="text"
               class="form-control"
-              formControlName="subaccount"
-              placeholder="Subcuenta" />
+              formControlName="subaccount" />
           </form-field>
         </div>
 
         <div class="col-md-12">
           <form-field
             [control]="catserviceForm.get('description')"
-            label="Descripción">
+            label="Descripci&oacute;n">
             <textarea
               type="text"
               class="form-control"
-              formControlName="description"
-              placeholder="Descripción">
+              formControlName="description">
             </textarea>
           </form-field>
         </div>
@@ -59,18 +54,13 @@
             <input
               type="number"
               class="form-control"
-              formControlName="registryNumber"
-              placeholder="No. de registro" />
+              formControlName="registryNumber" />
           </form-field>
         </div>
 
         <div class="col-md-6">
           <form-field [control]="catserviceForm.get('cost')" label="Costo">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="cost"
-              placeholder="Costo" />
+            <input type="text" class="form-control" formControlName="cost" />
           </form-field>
         </div>
       </div>

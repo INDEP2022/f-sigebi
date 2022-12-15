@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { IGeneric } from '../../../../core/models/catalogs/generic.model';
 import { GenericService } from './../../../../core/services/catalogs/generic.service';
 
@@ -32,7 +33,7 @@ export class GenericsFormComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.genericsForm = this.fb.group({
       name: [null, [Validators.required]],
-      keyId: [null, [Validators.required]],
+      keyId: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       description: [null, [Validators.required]],
       version: [null, [Validators.required]],
       active: [null, [Validators.required]],
