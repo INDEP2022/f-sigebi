@@ -19,7 +19,7 @@
               [data]="delegations"
               value="id"
               bindLabel="nameGoodType"
-              label="Delegación"
+              label="Delegaci&oacute;n"
               (fetchItems)="getDelegations($event)"></ngx-select>
           </form-field>
         </div>
@@ -32,7 +32,7 @@
               [data]="subdelegations"
               value="id"
               bindLabel="nameGoodType"
-              label="Subdelegación"
+              label="Subdelegaci&oacute;n"
               (fetchItems)="getSubdelegations($event)"></ngx-select>
           </form-field>
         </div>
@@ -41,11 +41,8 @@
         <div class="col-md-12">
           <form-field
             [control]="departmentForm.get('dsarea')"
-            label="Descripción de area">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="dsarea" />
+            label="Descripci&oacute;n de &aacute;rea">
+            <input type="text" class="form-control" formControlName="dsarea" />
           </form-field>
         </div>
       </div>
@@ -53,9 +50,9 @@
         <div class="col-md-3">
           <form-field
             [control]="departmentForm.get('lastOffice')"
-            label="Último oficio">
+            label="&Uacute;ltimo oficio">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="lastOffice" />
           </form-field>
@@ -82,10 +79,7 @@
           <form-field
             [control]="departmentForm.get('depend')"
             label="Dependencia">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="depend" />
+            <input type="text" class="form-control" formControlName="depend" />
           </form-field>
         </div>
       </div>
@@ -94,7 +88,7 @@
         <div class="col-md-6">
           <form-field
             [control]="departmentForm.get('depend')"
-            label="Departamento delegación">
+            label="Departamento delegaci&oacute;n">
             <input
               type="number"
               class="form-control"
@@ -114,9 +108,9 @@
       <div class="row pt-5">
         <form-field
           [control]="departmentForm.get('description')"
-          label="Descripción">
+          label="Descripci&oacute;n">
           <input
-            type="number"
+            type="text"
             class="form-control"
             formControlName="description" />
         </form-field>

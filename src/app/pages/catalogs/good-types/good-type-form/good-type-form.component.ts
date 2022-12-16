@@ -4,6 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -33,17 +34,44 @@ export class GoodTypeFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.goodTypeForm = this.fb.group({
-      id: [null],
+      id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       nameGoodType: [null, [Validators.required, Validators.maxLength(70)]],
-      maxAsseguranceTime: [null, [Validators.required]],
-      maxFractionTime: [null, [Validators.required]],
-      maxExtensionTime: [null, [Validators.required]],
-      maxStatementTime: [null, [Validators.required]],
-      maxLimitTime1: [null, [Validators.required]],
-      maxLimitTime2: [null, [Validators.required]],
-      maxLimitTime3: [null, [Validators.required]],
-      noRegister: [null, [Validators.required]],
-      version: [null, [Validators.required]],
+      maxAsseguranceTime: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      maxFractionTime: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      maxExtensionTime: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      maxStatementTime: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      maxLimitTime1: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      maxLimitTime2: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      maxLimitTime3: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      noRegister: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      version: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
     });
     if (this.goodType != null) {
       this.edit = true;

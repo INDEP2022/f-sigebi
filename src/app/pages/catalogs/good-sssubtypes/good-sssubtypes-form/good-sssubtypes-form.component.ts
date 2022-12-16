@@ -12,6 +12,7 @@ import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtyp
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -46,13 +47,34 @@ export class GoodSssubtypesFormComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.goodSssubtypeForm = this.fb.group({
       id: [null],
-      description: [null, [Validators.required]],
-      numSubType: [null, [Validators.required]],
-      numSsubType: [null, [Validators.required]],
-      numType: [null, [Validators.required]],
-      numRegister: [null, [Validators.required]],
-      numClasifAlterna: [null, [Validators.required]],
-      numClasifGoods: [null, [Validators.required]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      numSubType: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      numSsubType: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      numType: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      numRegister: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      numClasifAlterna: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      numClasifGoods: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
     });
     if (this.goodSssubtype != null) {
       this.edit = true;
