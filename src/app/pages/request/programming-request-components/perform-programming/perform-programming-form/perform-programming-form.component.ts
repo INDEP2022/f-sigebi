@@ -8,6 +8,7 @@ import { IState } from 'src/app/core/models/catalogs/city.model';
 import { IRegionalDelegation } from 'src/app/core/models/catalogs/regional-delegation.model';
 import { IUser } from 'src/app/core/models/catalogs/user.model';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { EMAIL_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { WarehouseFormComponent } from '../../../shared-request/warehouse-form/warehouse-form.component';
 import { ESTATE_COLUMNS } from '../../acept-programming/columns/estate-columns';
@@ -66,12 +67,15 @@ export class PerformProgrammingFormComponent
 
   prepareForm() {
     this.performForm = this.fb.group({
-      email: [null, [Validators.required]],
-      address: [null, [Validators.required]],
-      city: [null],
+      email: [null, [Validators.required, Validators.pattern(EMAIL_PATTERN)]],
+      address: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      city: [null, [Validators.pattern(STRING_PATTERN)]],
       startDate: [null],
       endDate: [null],
-      observation: [null],
+      observation: [null, [Validators.pattern(STRING_PATTERN)]],
       regionalDelegation: [null],
       state: [null],
       transferent: [null],

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { TABLE_SETTINGS } from '../../../../../common/constants/table-settings';
 import { ListParams } from '../../../../../common/repository/interfaces/list-params';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
@@ -48,8 +49,8 @@ export class WarehouseDetailComponent extends BasePage implements OnInit {
     this.searchForm = this.fb.group({
       noWarehouse: [null],
       postalCode: [null],
-      warehouseName: [null],
-      description: [null],
+      warehouseName: [null, [Validators.pattern(STRING_PATTERN)]],
+      description: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

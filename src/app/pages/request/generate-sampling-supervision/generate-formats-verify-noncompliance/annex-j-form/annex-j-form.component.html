@@ -7,12 +7,12 @@
       <form [formGroup]="signForm" class="form-material">
         <div class="row pt-4">
           <div class="col-md-4">
-            <form-field [control]="signForm.get('name')" label="*Nombre">
+            <form-field [control]="signForm.get('name')" label="&#42;Nombre">
               <input type="text" class="form-control" formControlName="name" />
             </form-field>
           </div>
           <div class="col-md-4">
-            <form-field [control]="signForm.get('position')" label="*Cargo">
+            <form-field [control]="signForm.get('position')" label="&#42;Cargo">
               <input
                 type="text"
                 class="form-control"
@@ -56,7 +56,7 @@
           <div class="col-md-4">
             <form-field
               [control]="signForm.get('date2')"
-              label="Fecha reposición servicios">
+              label="Fecha reposici&oacute;n servicios">
               <input
                 type="text"
                 class="form-control"
