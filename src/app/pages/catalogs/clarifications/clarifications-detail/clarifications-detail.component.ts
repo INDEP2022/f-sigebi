@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ClarificationService } from '../../../../core/services/catalogs/clarification.service';
 
 @Component({
@@ -33,11 +34,38 @@ export class ClarificationsDetailComponent implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      id: [null, Validators.required],
-      clarification: ['', Validators.required],
-      type: [null, Validators.required],
-      active: [null, Validators.required],
-      version: [null, Validators.required],
+      id: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.minLength(1),
+        ],
+      ],
+      clarification: [
+        '',
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      type: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.minLength(1),
+        ],
+      ],
+      active: [
+        null,
+        Validators.required,
+        Validators.pattern(NUMBERS_PATTERN),
+        Validators.minLength(1),
+      ],
+      version: [
+        null,
+        Validators.required,
+        Validators.pattern(NUMBERS_PATTERN),
+        Validators.minLength(1),
+      ],
     });
     if (this.edit) {
       this.status = 'Actualizar';

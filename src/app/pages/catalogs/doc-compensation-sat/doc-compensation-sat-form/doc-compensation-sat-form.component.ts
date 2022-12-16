@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDocCompesationSat } from 'src/app/core/models/catalogs/doc-compesation-sat.model';
 import { DocCompensationSATService } from 'src/app/core/services/catalogs/doc-compesation-sat.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-doc-compensation-sat-form',
@@ -33,11 +34,20 @@ export class DocCompensationSatFormComponent
 
   private prepareForm() {
     this.docCompesationSatForm = this.fb.group({
-      id: [null],
-      idcat: [null, Validators.compose([Validators.required])],
-      typeDocSat: [null, Validators.compose([Validators.required])],
-      addressee: [null, Validators.compose([Validators.required])],
-      subjectCode: [null, Validators.compose([Validators.required])],
+      id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      idcat: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      typeDocSat: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      addressee: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      subjectCode: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
     });
     if (this.docCompesationSat != null) {
       this.edit = true;

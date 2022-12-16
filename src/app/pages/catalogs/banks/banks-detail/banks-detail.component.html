@@ -2,6 +2,7 @@
   <div header>
     <h5 class="modal-title">{{ status }} ABOGADO</h5>
   </div>
+  y
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
@@ -26,13 +27,11 @@
         <div class="col-md-6">
           <form-field
             [control]="form.get('registerNumber')"
-            label="Número de Registro">
+            label="N&uacute;mero de Registro">
             <input
               type="number"
               class="form-control"
-              formControlName="registerNumber"
-              min="1"
-              pattern="^[0-9]+" />
+              formControlName="registerNumber" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -45,21 +44,16 @@
         <div class="col-md-6">
           <form-field [control]="form.get('dateType')" label="Tipo">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="dateType"
-              min="1"
-              pattern="^[0-9]+" />
+              formControlName="dateType" />
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="form.get('code')" label="Código de Banco">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="code"
-              min="1"
-              pattern="^[0-9]+" />
+          <form-field
+            [control]="form.get('code')"
+            label="C&oacute;digo de Banco">
+            <input type="number" class="form-control" formControlName="code" />
           </form-field>
         </div>
       </div>
