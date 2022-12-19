@@ -12,7 +12,7 @@
     <tabset class="md-tabs">
       <tab id="tab1">
         <ng-template tabHeading>
-          <i class="bx bx-info-circle"></i> Información del Bien
+          <i class="bx bx-info-circle"></i> Informaci&oacute;n del Bien
         </ng-template>
         <div class="infoAsset">
           <div class="row">
@@ -28,7 +28,7 @@
               ">
               <form-field
                 [control]="assetsForm.get('noManagement')"
-                label="No. Gestion">
+                label="No&#46; Gesti&oacute;n">
                 <input
                   type="text"
                   class="form-control"
@@ -58,7 +58,7 @@
             <div class="col-md-5">
               <form-field
                 [control]="assetsForm.get('descripTransfeAsset')"
-                label="Descripción de bien Transferente">
+                label="Descripci&oacute;n de bien Transferente">
                 <textarea
                   class="form-control"
                   formControlName="descripTransfeAsset"></textarea>
@@ -67,7 +67,7 @@
             <div class="col-md-4">
               <form-field
                 [control]="assetsForm.get('transferQuantity')"
-                label="*Cantidad de la Transferente">
+                label="&#42;Cantidad de la Transferente">
                 <input
                   type="number"
                   class="form-control"
@@ -88,7 +88,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="assetsForm.get('capacityLts')"
-                label="Capacidad (lts.)">
+                label="Capacidad &#40;lts&#46;&#41;">
                 <input
                   type="text"
                   class="form-control"
@@ -98,7 +98,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="assetsForm.get('volumem3')"
-                label="Volumen (m3)">
+                label="Volumen m3">
                 <input
                   type="text"
                   class="form-control"
@@ -108,7 +108,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="assetsForm.get('noExpedient')"
-                label="No. Exp. de la transferente">
+                label="No&#46; Exp&#46; de la transferente">
                 <input
                   type="text"
                   class="form-control"
@@ -134,7 +134,7 @@
                 control="physicalState"
                 (fetchItems)="getPhysicalState($event)"
                 [data]="selectPhysicalState"
-                label="Estado Fisico"
+                label="Estado F&iacute;sico"
                 value="id"
                 bindLabel="physicalState"></ngx-select>
             </div>
@@ -144,7 +144,7 @@
                 control="conservationState"
                 (fetchItems)="getConcervationState($event)"
                 [data]="selectConcervationState"
-                label="Estado de Concervación"
+                label="Estado de Concervaci&iacute;n"
                 value="id"
                 bindLabel="conservationState"></ngx-select>
             </div>
@@ -169,7 +169,7 @@
               </form-field>
             </div>
             <div class="col-md-2">
-              <form-check label="Avalúo" for="avaluo">
+              <form-check label="Avalúo" for="aval&uacute;o">
                 <input id="avaluo" type="checkbox" formControlName="avaluo" />
               </form-check>
             </div>
@@ -192,7 +192,7 @@
                 control="destinyTransfer"
                 (fetchItems)="getDestinyTransfer($event)"
                 [data]="selectDestinyTransfer"
-                label="*Destino Transferente"
+                label="&#42;Destino Transferente"
                 value="id"
                 bindLabel="destinyTransfer"></ngx-select>
             </div>
@@ -234,7 +234,7 @@
                 control="tansferUnitMeasure"
                 (fetchItems)="getTansferUnitMeasure($event)"
                 [data]="selectTansferUnitMeasure"
-                label="*Unid. Medida Transferente"
+                label="&#42;Unid&#46; Medida Transferente"
                 value="id"
                 bindLabel="tansferUnitMeasure"></ngx-select>
             </div>
@@ -285,7 +285,7 @@
           <div class="row pt-5">
             <div class="col-md-4">
               <label class="custom-label" for=""
-                >Alias Almacén:
+                >Alias Almac&eacute;n:
                 <span for="">DOMICILIO TRANSFERENTE</span></label
               >
             </div>
@@ -329,7 +329,7 @@
                 control="municipe"
                 (fetchItems)="getMunicipe($event)"
                 [data]="selectMunicipe"
-                label="Municipe"
+                label="Municipio"
                 value="id"
                 bindLabel="municipe"></ngx-select>
             </div>
@@ -352,7 +352,7 @@
                 control="cp"
                 (fetchItems)="getCP($event)"
                 [data]="selectCP"
-                label="C.P."
+                label="C&#46;P&#46;"
                 value="id"
                 bindLabel="cp"></ngx-select>
             </div>
@@ -380,7 +380,7 @@
             <div class="col-md-4">
               <form-field
                 [control]="assetsForm.get('address')"
-                label="Nombre de la Via">
+                label="Nombre de la V&iacute;a">
                 <input
                   type="text"
                   class="form-control"
@@ -390,7 +390,7 @@
             <div class="col-md-4">
               <form-field
                 [control]="assetsForm.get('address')"
-                label="Num. Ext.">
+                label="Num&#46; Ext&#46;">
                 <input
                   type="text"
                   class="form-control"
@@ -400,7 +400,7 @@
             <div class="col-md-4">
               <form-field
                 [control]="assetsForm.get('address')"
-                label="Origin de la Via">
+                label="Origen de la V&iacute;a">
                 <input
                   type="text"
                   class="form-control"
@@ -413,7 +413,7 @@
             <div class="col-md-4">
               <form-field
                 [control]="assetsForm.get('address')"
-                label="Num. Int.">
+                label="Num&#46; Int&#46;">
                 <input
                   type="text"
                   class="form-control"
@@ -423,7 +423,7 @@
             <div class="col-md-4">
               <form-field
                 [control]="assetsForm.get('address')"
-                label="Destino de la Via">
+                label="Destino de la V&iacute;a">
                 <input
                   type="text"
                   class="form-control"
@@ -433,7 +433,7 @@
             <div class="col-md-4">
               <form-field
                 [control]="assetsForm.get('address')"
-                label="Referencia Via 1">
+                label="Referencia V&iacute;a 1">
                 <input
                   type="text"
                   class="form-control"
@@ -446,7 +446,7 @@
             <div class="col-md-4">
               <form-field
                 [control]="assetsForm.get('address')"
-                label="Kiloometro de la Via">
+                label="Kil&oacute;metro de la V&iacute;a">
                 <input
                   type="number"
                   class="form-control"
@@ -456,7 +456,7 @@
             <div class="col-md-4">
               <form-field
                 [control]="assetsForm.get('address')"
-                label="Descripción">
+                label="Descripci&oacute;n">
                 <textarea
                   class="form-control"
                   formControlName="description"></textarea>
@@ -468,7 +468,7 @@
       <!-- Información del  vehiculo tab -->
       <tab *ngIf="carsAssets">
         <ng-template tabHeading>
-          <i class="bx bxs-car"></i> Información de Vehiculo
+          <i class="bx bxs-car"></i> Informaci&oacute;n de Veh&iacute;culo
         </ng-template>
         <div formGroupName="vehicle" class="vehicleDateSheet">
           <div class="row pt-5">
@@ -485,7 +485,7 @@
             <div class="col-md-4">
               <form-field
                 [control]="assetsForm.get('vehicle')"
-                label="Matricula">
+                label="Matr&iacute;cula">
                 <input
                   type="text"
                   class="form-control"
@@ -541,7 +541,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="assetsForm.get('vehicle')"
-                label="Num. Puertas">
+                label="Num&#46; Puertas">
                 <input
                   type="number"
                   class="form-control"
@@ -559,7 +559,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="assetsForm.get('vehicle')"
-                label="Num. Ejes">
+                label="Num&#46; Ejes">
                 <input
                   type="number"
                   class="form-control"
@@ -582,7 +582,7 @@
             <div class="col-md-4">
               <form-field
                 [control]="assetsForm.get('vehicle')"
-                label="Num. Motor">
+                label="Num&#46; Motor">
                 <input
                   type="text"
                   class="form-control"
@@ -613,7 +613,7 @@
       <!-- Información de Embarcación  -->
       <tab *ngIf="boatAssets">
         <ng-template tabHeading>
-          <i class="bx bx-anchor"></i> Información de Embarcación
+          <i class="bx bx-anchor"></i> Informaci&oacute;n de Embarcaci&oacute;n
         </ng-template>
         <div formGroupName="boat" class="boatInformation">
           <div class="row pt-5">
@@ -628,7 +628,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="assetsForm.get('boat')"
-                label="*Estado Operativo">
+                label="&#42;Estado Operativo">
                 <input
                   type="text"
                   class="form-control"
@@ -638,7 +638,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="assetsForm.get('boat')"
-                label="*Num. Motor">
+                label="&#42;Num&#46; Motor">
                 <input
                   type="number"
                   class="form-control"
@@ -648,7 +648,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="assetsForm.get('boat')"
-                label="*Num. Motores">
+                label="&#42;Num&#46; Motores">
                 <input
                   type="number"
                   class="form-control"
@@ -658,7 +658,9 @@
           </div>
           <div class="row pt-4">
             <div class="col-md-4">
-              <form-field [control]="assetsForm.get('boat')" label="*Matricula">
+              <form-field
+                [control]="assetsForm.get('boat')"
+                label="&#42;Matr&iacute;cula">
                 <input
                   type="string"
                   class="form-control"
@@ -666,7 +668,9 @@
               </form-field>
             </div>
             <div class="col-md-4">
-              <form-field [control]="assetsForm.get('boat')" label="*Bandera">
+              <form-field
+                [control]="assetsForm.get('boat')"
+                label="&#42;Bandera">
                 <input
                   type="string"
                   class="form-control"
@@ -684,7 +688,9 @@
           </div>
           <div class="row pt-4">
             <div class="col-md-3">
-              <form-field [control]="assetsForm.get('boat')" label="*Calado">
+              <form-field
+                [control]="assetsForm.get('boat')"
+                label="&#42;Calado">
                 <input
                   type="string"
                   class="form-control"
@@ -694,7 +700,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="assetsForm.get('boat')"
-                label="Volumen(m3)">
+                label="Volumen&#40;m3&#41;">
                 <input
                   type="number"
                   class="form-control"
@@ -702,7 +708,9 @@
               </form-field>
             </div>
             <div class="col-md-3">
-              <form-field [control]="assetsForm.get('boat')" label="*Eslora">
+              <form-field
+                [control]="assetsForm.get('boat')"
+                label="&#42;Eslora">
                 <input
                   type="string"
                   class="form-control"
@@ -712,7 +720,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="assetsForm.get('boat')"
-                label="*Procedencia">
+                label="&#42;Procedencia">
                 <input
                   type="string"
                   class="form-control"
@@ -742,7 +750,7 @@
             <div class="col-md-4">
               <form-field
                 [control]="assetsForm.get('boat')"
-                label="Mombre de Embarcación">
+                label="Nombre de Embarcaci&oacute;n">
                 <input
                   type="string"
                   class="form-control"
@@ -754,7 +762,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="assetsForm.get('boat')"
-                label="*Año de Fabricación">
+                label="&#42;A&ntilde;o de Fabricaci&oacute;n">
                 <input
                   type="number"
                   class="form-control"
@@ -764,7 +772,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="assetsForm.get('boat')"
-                label="*Registro Publico de la Embarcación">
+                label="&#42;Registro P&uacute;blico de la Embarcaci&oacute;n">
                 <input
                   type="text"
                   class="form-control"
@@ -774,7 +782,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="assetsForm.get('boat')"
-                label="*Registro Publico de la Embarcación">
+                label="&#42;Registro P&uacute;blico de la Embarcaci&oacute;n">
                 <input
                   type="text"
                   class="form-control"
@@ -784,7 +792,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="assetsForm.get('boat')"
-                label="Capacidad (lts)">
+                label="Capacidad &#40;lts&#41;">
                 <input
                   type="number"
                   class="form-control"
@@ -796,7 +804,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="assetsForm.get('boat')"
-                label="Embarcaciónes">
+                label="Embarcaciones">
                 <input
                   type="string"
                   class="form-control"
@@ -809,7 +817,7 @@
       <!-- Informacion Joyeria -->
       <tab *ngIf="jewelerAssets">
         <ng-template tabHeading>
-          <i class="bx bx-disc"></i> Información de Joya
+          <i class="bx bx-disc"></i> Informaci&oacute;n de Joya
         </ng-template>
         <div formGroupName="jewel" class="jewelInformation">
           <div class="row-pt-5">
@@ -830,7 +838,9 @@
               </form-field>
             </div>
             <div class="col-md-4">
-              <form-field [control]="assetsForm.get('jewel')" label="Peso(Kgs)">
+              <form-field
+                [control]="assetsForm.get('jewel')"
+                label="Peso&#40;Kgs&#41;">
                 <input
                   type="text"
                   class="form-control"
@@ -843,7 +853,7 @@
       <!-- Informacion aereonaves -->
       <tab *ngIf="aircraftAssets">
         <ng-template tabHeading>
-          <i class="bx bx-flag"></i> Información de Aeronave
+          <i class="bx bx-flag"></i> Informaci&oacute;n de Aeronave
         </ng-template>
         <div formGroupName="aircraft" class="aircraftInformation">
           <div class="row pt-5">
@@ -858,7 +868,7 @@
             <div class="col-md-4">
               <form-field
                 [control]="assetsForm.get('aircraft')"
-                label="Año de Fabricación">
+                label="A&ntilde;o de Fabricaci&oacute;n">
                 <input
                   type="number"
                   class="form-control"
@@ -888,7 +898,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="assetsForm.get('aircraft')"
-                label="Num. Motor">
+                label="Num&#46; Motor">
                 <input
                   type="number"
                   class="form-control"
@@ -898,7 +908,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="assetsForm.get('aircraft')"
-                label="Num. Motores">
+                label="Num&#46; Motores">
                 <input
                   type="number"
                   class="form-control"
@@ -908,7 +918,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="assetsForm.get('aircraft')"
-                label="Matrícula">
+                label="Matr&iacute;cula">
                 <input
                   type="text"
                   class="form-control"
@@ -920,7 +930,7 @@
             <div class="col-md-4">
               <form-field
                 [control]="assetsForm.get('aircraft')"
-                label="Registro Dirección Gral. de Aeronáutica Civil">
+                label="Registro Direcci&oacute;n Gral&#46; de Aeron&aacute;utica Civil">
                 <input
                   type="text"
                   class="form-control"
@@ -941,7 +951,7 @@
                 control="typeAirplane"
                 (fetchItems)="getTypeAirplane($event)"
                 [data]="selectTypeAirplane"
-                label="Tipo de Avion"
+                label="Tipo de Avi&oacute;n"
                 value="id"
                 bindLabel="typeAirplane"></ngx-select>
             </div>
@@ -990,7 +1000,7 @@
             <div class="col-md-4">
               <form-field
                 [control]="assetsForm.get('descripTransfeAsset')"
-                label="Descripción">
+                label="Descripci&oacute;n">
                 <textarea
                   class="form-control"
                   formControlName="descriptionImmovable"></textarea>
@@ -1063,7 +1073,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="assetsForm.get('immovables')"
-                label="Mts. de Terreno">
+                label="Mts&#46; de Terreno">
                 <input
                   type="number"
                   class="form-control"
@@ -1083,7 +1093,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="assetsForm.get('immovables')"
-                label="Mts. Construidos de Terreno">
+                label="Mts&#46; Construidos de Terreno">
                 <input
                   type="number"
                   class="form-control"
@@ -1093,7 +1103,9 @@
           </div>
           <div class="row pt-4">
             <div class="col-md-3">
-              <form-field [control]="assetsForm.get('immovables')" label="Baño">
+              <form-field
+                [control]="assetsForm.get('immovables')"
+                label="Ba&ntilde;o">
                 <input
                   type="number"
                   class="form-control"
@@ -1183,7 +1195,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="assetsForm.get('immovables')"
-                label="Valor Avaluo">
+                label="Valor Aval&uacute;o">
                 <input
                   type="text"
                   class="form-control"
@@ -1193,7 +1205,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="assetsForm.get('immovables')"
-                label="Fecha de Avaluo">
+                label="Fecha de Aval&uacute;o">
                 <input
                   type="text"
                   class="form-control"
@@ -1205,7 +1217,7 @@
             <div class="col-md-3">
               <form-field
                 [control]="assetsForm.get('immovables')"
-                label="Certificado de Liberación de Gravamen">
+                label="Certificado de Liberaci&oacute;n de Gravamen">
                 <input
                   type="text"
                   class="form-control"
