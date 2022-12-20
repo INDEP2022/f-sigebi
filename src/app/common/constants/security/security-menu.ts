@@ -1,6 +1,7 @@
 import { routesSecurity } from './rutas-nombres-pantallas-security';
 
-export const baseMenuSecurity: string = '/pages/seguridad/'; // Base url Menu
+// export const baseMenuSecurity: string = '/pages/seguridad/'; // Base url Menu
+export const baseMenuSecurity: string = '/pages/security/'; // Base url Menu
 export const MENU_OPTIONS_SECURITY = [
   // SEGURIDAD
   {
