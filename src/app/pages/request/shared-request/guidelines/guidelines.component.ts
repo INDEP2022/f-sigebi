@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { GUIDELINES_COLUMNS } from './guidelines-columns';
 import { GuidelinesObservationsComponent } from './guidelines-observations/guidelines-observations.component';
 import { GuidelinesRevisionViewComponent } from './guidelines-revision-view/guidelines-revision-view.component';
@@ -137,7 +138,7 @@ export class GuidelinesComponent extends BasePage implements OnInit {
     this.guidelinesForm = this.fb.group({
       firstRevisionDate: [null, [Validators.required]],
       secondRevisionDate: [null],
-      observations: [null],
+      observations: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

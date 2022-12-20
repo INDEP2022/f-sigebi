@@ -4,6 +4,12 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IPerson } from 'src/app/core/models/catalogs/person.model';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  PHONE_PATTERN,
+  RFCCURP_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ModelForm } from '../../../../core/interfaces/model-form';
 import { PersonService } from '../../../../core/services/catalogs/person.service';
@@ -35,34 +41,82 @@ export class PersonFormComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       id: [null],
       personNumber: [null, [Validators.required]],
-      name: [null, [Validators.required]],
-      street: [null, [Validators.required]],
+      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      street: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       streetNumber: [null, [Validators.required]],
       apartmentNumber: [null, [Validators.required]],
-      suburb: [null, [Validators.required]],
-      delegation: [null, [Validators.required]],
+      suburb: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      delegation: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       zipCode: [null, [Validators.required]],
-      rfc: [null, [Validators.required]],
-      curp: [null, [Validators.required]],
-      phone: [null, [Validators.required]],
-      typePerson: [null, [Validators.required]],
-      typeResponsible: [null, [Validators.required]],
-      manager: [null, [Validators.required]],
-      numberDeep: [null, [Validators.required]],
-      profesion: [null, [Validators.required]],
-      curriculum: [null, [Validators.required]],
-      keyEntFed: [null, [Validators.required]],
-      keyOperation: [null, [Validators.required]],
-      observations: [null, [Validators.required]],
-      profile: [null, [Validators.required]],
-      precedentSecodam: [null, [Validators.required]],
-      precedentPgr: [null, [Validators.required]],
-      precedentPff: [null, [Validators.required]],
-      precedentSera: [null, [Validators.required]],
-      precedent0ther: [null, [Validators.required]],
+      rfc: [null, [Validators.required, Validators.pattern(RFCCURP_PATTERN)]],
+      curp: [null, [Validators.required, Validators.pattern(RFCCURP_PATTERN)]],
+      phone: [null, [Validators.required, Validators.pattern(PHONE_PATTERN)]],
+      typePerson: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      typeResponsible: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      manager: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      numberDeep: [
+        null,
+        [Validators.required, Validators.pattern(PHONE_PATTERN)],
+      ],
+      profesion: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      curriculum: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      keyEntFed: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      keyOperation: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      observations: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      profile: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      precedentSecodam: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      precedentPgr: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      precedentPff: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      precedentSera: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      precedent0ther: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       registryNumber: [null, [Validators.required]],
-      email: [null, [Validators.required], [Validators.email]],
-      blackList: [null, [Validators.required]],
+      email: [null, [Validators.required, Validators.email]],
+      blackList: [null, [Validators.required, Validators.email]],
     });
     if (this.person != null) {
       this.edit = true;

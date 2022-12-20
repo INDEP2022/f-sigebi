@@ -4,6 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequest } from 'src/app/core/models/catalogs/request.model';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -35,17 +36,17 @@ export class NewDocumentComponent extends BasePage implements OnInit {
     this.newDocForm = this.fb.group({
       docType: [null],
       docFile: [null],
-      docTit: [null],
+      docTit: [null, [Validators.pattern(STRING_PATTERN)]],
       noExpedient: ['23360'],
-      contributor: [null],
+      contributor: [null, [Validators.pattern(STRING_PATTERN)]],
       regDelega: ['BAJA CALIFORNIA'],
       noOfi: [null],
       state: ['BAJA CALIFORNIA'],
       tranfe: ['SAT FISCO FEDERAL'],
-      sender: [null],
-      senderCharge: [null],
-      responsible: [null],
-      observations: [null],
+      sender: [null, [Validators.pattern(STRING_PATTERN)]],
+      senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
+      responsible: [null, [Validators.pattern(STRING_PATTERN)]],
+      observations: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     this.newDocForm.addControl(
       'returnOpinionFolio',

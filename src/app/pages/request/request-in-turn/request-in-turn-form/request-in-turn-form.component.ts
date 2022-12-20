@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
@@ -7,6 +7,7 @@ import { IRequestInTurn } from 'src/app/core/models/catalogs/request-in-turn.mod
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 import { EventEmitter, Output } from '@angular/core';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-request-in-turn-form',
@@ -56,15 +57,15 @@ export class RequestInTurnFormComponent implements OnInit {
       transfer: [null],
       transmitter: [null],
       authority: [null],
-      expedient: [null],
+      expedient: [null, [Validators.pattern(STRING_PATTERN)]],
       reception: [null],
       subject: [null],
       type: [null],
       appliStatus: [null],
-      contributor: [null],
-      acta: [null],
-      ascertainment: [null],
-      cause: [null],
+      contributor: [null, [Validators.pattern(STRING_PATTERN)]],
+      acta: [null, [Validators.pattern(STRING_PATTERN)]],
+      ascertainment: [null, [Validators.pattern(STRING_PATTERN)]],
+      cause: [null, [Validators.pattern(STRING_PATTERN)]],
       typeMach: ['all'],
     });
     if (this.requestInTurn != null) {

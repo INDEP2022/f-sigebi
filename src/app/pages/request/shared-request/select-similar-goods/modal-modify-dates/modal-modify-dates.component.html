@@ -10,7 +10,7 @@
           <div class="mb-3 pr-4">
             <form-field
               [control]="form.get('initDate')"
-              label="*Fecha Hora Inicio">
+              label="&#42;Fecha Hora Inicio">
               <input
                 type="text"
                 formControlName="initDate"
@@ -25,7 +25,9 @@
         </div>
         <div class="col-md-6">
           <div class="mb-3 pl-4">
-            <form-field [control]="form.get('endDate')" label="*Fecha Hora Fin">
+            <form-field
+              [control]="form.get('endDate')"
+              label="&#42;Fecha Hora Fin">
               <input
                 type="text"
                 formControlName="endDate"

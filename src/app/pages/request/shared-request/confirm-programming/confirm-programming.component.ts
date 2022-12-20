@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ElectronicSignatureListComponent } from '../electronic-signature-list/electronic-signature-list.component';
 
 @Component({
@@ -25,8 +26,8 @@ export class ConfirmProgrammingComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.confirmForm = this.fb.group({
-      name: [null, [Validators.required]],
-      charge: [null, [Validators.required]],
+      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      charge: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
   }
 

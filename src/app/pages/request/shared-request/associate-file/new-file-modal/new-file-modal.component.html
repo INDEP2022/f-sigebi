@@ -7,7 +7,7 @@
       class="form-material pt-0 mt-n5"
       [formGroup]="coverForm"
       *ngIf="!coverGenerated">
-      <h6>Datos de la Carátula</h6>
+      <h6>Datos de la Car&aacute;tula</h6>
       <div class="row mt-5">
         <div class="col-md-6">
           <form-field [control]="coverForm.get('user')">
@@ -24,7 +24,7 @@
         </div>
         <div class="col-md-6">
           <p class="font-size-13 mt-2">
-            <strong class="font-size-13">Transferente: </strong
+            <strong class="font-size-13">Transferente&#58; </strong
             >{{ coverForm.controls['transferee'].value }}
           </p>
         </div>
@@ -45,7 +45,7 @@
         </div>
         <div class="col-md-6">
           <p class="font-size-13 mt-2">
-            <strong class="font-size-13">ddcId: </strong
+            <strong class="font-size-13">ddcId&#58; </strong
             >{{ coverForm.controls['ddcId'].value }}
           </p>
         </div>
@@ -66,7 +66,7 @@
         </div>
         <div class="col-md-6">
           <p class="font-size-13 mt-2">
-            <strong class="font-size-13">Codificación: </strong
+            <strong class="font-size-13">Codificaci&oacute;n&#58; </strong
             >{{ coverForm.controls['coding'].value }}
           </p>
         </div>
@@ -89,7 +89,7 @@
         </div>
         <div class="col-md-6">
           <p class="font-size-13 mt-2">
-            <strong class="font-size-13">Periodo de Reserva: </strong
+            <strong class="font-size-13">Periodo de Reserva&#58; </strong
             >{{ coverForm.controls['reservePeriod'].value }}
           </p>
         </div>
@@ -110,7 +110,7 @@
         </div>
         <div class="col-md-6">
           <p class="font-size-13 mt-2">
-            <strong class="font-size-13">Clasificación: </strong
+            <strong class="font-size-13">Clasificaci&oacute;n&#58; </strong
             >{{ coverForm.controls['clasificacition'].value }}
           </p>
         </div>
@@ -130,7 +130,7 @@
         </div>
         <div class="col-md-6">
           <p class="font-size-13 mt-2">
-            <strong class="font-size-13">Sección Documental: </strong
+            <strong class="font-size-13">Secci&oacute;n Documental&#58; </strong
             >{{ coverForm.controls['documentSection'].value }}
           </p>
         </div>
@@ -150,28 +150,30 @@
         </div>
         <div class="col-md-6">
           <p class="font-size-13 mt-2">
-            <strong class="font-size-13">Serie Documental: </strong
+            <strong class="font-size-13">Serie Documental&#58; </strong
             >{{ coverForm.controls['documentSeries'].value }}
           </p>
         </div>
       </div>
       <div class="row mt-5">
         <div class="col-md-6">
-          <form-field [control]="coverForm.get('pages')" label="*Fojas">
+          <form-field [control]="coverForm.get('pages')" label="&#42;Fojas">
             <input type="text" formControlName="pages" class="form-control" />
           </form-field>
         </div>
         <div class="col-md-6">
           <p class="font-size-13 mt-2">
             <strong class="font-size-13"
-              >Vigencia del Archivo de Trámite: </strong
+              >Vigencia del Archivo de Tr&aacute;mite&#58; </strong
             >{{ coverForm.controls['procedureFileLifetime'].value }}
           </p>
         </div>
       </div>
       <div class="row mt-5">
         <div class="col-md-6">
-          <form-field [control]="coverForm.get('dossiers')" label="*Legajos">
+          <form-field
+            [control]="coverForm.get('dossiers')"
+            label="&#42;Legajos">
             <input
               type="text"
               formControlName="dossiers"
@@ -181,7 +183,7 @@
         <div class="col-md-6">
           <p class="font-size-13 mt-2">
             <strong class="font-size-13"
-              >Vigencia del Archivo de Concentración: </strong
+              >Vigencia del Archivo de Concentraci&oacute;n&#58; </strong
             >{{ coverForm.controls['concentrationFileLifetime'].value }}
           </p>
         </div>
@@ -199,7 +201,7 @@
         </div>
         <div class="col-md-6">
           <p class="font-size-13 mt-2">
-            <strong class="font-size-13">Valores Documentales: </strong
+            <strong class="font-size-13">Valores Documentales&#58; </strong
             >{{ coverForm.controls['documentValues'].value }}
           </p>
         </div>
@@ -210,25 +212,25 @@
       <div class="d-flex flex-column">
         <div class="text-center">
           <p class="font-size-13">
-            <strong class="font-size-13">No. Expediente: </strong
+            <strong class="font-size-13">No&#46; Expediente&#58; </strong
             >{{ fileInfo.fileNo }}
           </p>
         </div>
         <div class="text-center">
           <p class="font-size-13">
-            <strong class="font-size-13">Fecha Expediente: </strong
+            <strong class="font-size-13">Fecha Expediente&#58; </strong
             >{{ fileInfo.fileDate }}
           </p>
         </div>
         <div class="text-center">
           <p class="font-size-13">
-            <strong class="font-size-13">Usuario Creación: </strong
+            <strong class="font-size-13">Usuario Creaci&oacute;n&#58; </strong
             >{{ fileInfo.userCreate }}
           </p>
         </div>
         <div class="text-center">
           <p class="font-size-13">
-            <strong class="font-size-13">Fecha Creación: </strong
+            <strong class="font-size-13">Fecha Creaci&oacute;n&#58; </strong
             >{{ fileInfo.creationDate }}
           </p>
         </div>
@@ -243,7 +245,7 @@
           class="btn btn-primary active"
           [disabled]="!coverForm.valid"
           (click)="confirm()">
-          Generar Carátula
+          Generar Car&aacute;tula
         </button>
       </div>
       <div class="m-3" *ngIf="!coverGenerated">
@@ -256,7 +258,7 @@
           type="button"
           class="btn btn-secondary active"
           (click)="openCover()">
-          Ver Carátula
+          Ver Car&aacute;tula
         </button>
       </div>
       <div class="m-3" *ngIf="coverGenerated">

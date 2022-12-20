@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -25,20 +26,23 @@ export class DocumentFormComponent extends BasePage implements OnInit {
     this.documentForm = this.fb.group({
       typeDocument: [null, [Validators.required]],
       document: [null, [Validators.required]],
-      titleDocument: [null, [Validators.required]],
+      titleDocument: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       numberGestion: [5296016],
       noSIAB: [null],
-      responsible: [null],
-      delegation: ['Metropolitana'],
-      taxpayer: [null],
+      responsible: [null, [Validators.pattern(STRING_PATTERN)]],
+      delegation: ['Metropolitana', [Validators.pattern(STRING_PATTERN)]],
+      taxpayer: [null, [Validators.pattern(STRING_PATTERN)]],
       state: [null],
       numberOffice: [null],
       transferent: [null],
       numberProgramming: [5397],
-      sender: [null],
+      sender: [null, [Validators.pattern(STRING_PATTERN)]],
       programmingFolio: ['R-METROPOLITANA-SAT-5397-OS'],
-      senderCharge: [null],
-      comments: [null],
+      senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
+      comments: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

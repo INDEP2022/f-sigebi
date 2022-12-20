@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IZoneGeographic } from 'src/app/core/models/catalogs/zone-geographic.model';
 import { ZoneGeographicService } from 'src/app/core/services/catalogs/zone-geographic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-zone-geographic-form',
@@ -33,13 +34,21 @@ export class ZoneGeographicFormComponent extends BasePage implements OnInit {
       id_zona_geografica: [null],
       descripcion: [
         null,
-        Validators.compose([Validators.required, Validators.maxLength(200)]),
+        Validators.compose([
+          Validators.required,
+          Validators.maxLength(200),
+          Validators.pattern(STRING_PATTERN),
+        ]),
       ],
       no_contrato: [null, Validators.compose([Validators.required])],
       version: [null, Validators.compose([Validators.required])],
       tercero_especializado: [
         null,
-        Validators.compose([Validators.required, Validators.maxLength(20)]),
+        Validators.compose([
+          Validators.required,
+          Validators.maxLength(20),
+          Validators.pattern(STRING_PATTERN),
+        ]),
       ],
       iva: [null, Validators.compose([Validators.required])],
       estatus: [null, Validators.compose([Validators.required])],

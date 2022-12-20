@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ITypeDocto } from 'src/app/core/models/catalogs/type-docto.model';
 import { TypeDoctoService } from 'src/app/core/services/catalogs/type-docto.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-type-docto-form',
@@ -33,7 +34,11 @@ export class TypeDoctoFormComponent extends BasePage implements OnInit {
       id: [null, [Validators.required]],
       description: [
         null,
-        Validators.compose([Validators.required, Validators.maxLength(200)]),
+        Validators.compose([
+          Validators.required,
+          Validators.maxLength(200),
+          Validators.pattern(STRING_PATTERN),
+        ]),
       ],
       version: [null, Validators.compose([Validators.required])],
       estatus: [null, Validators.compose([Validators.required])],

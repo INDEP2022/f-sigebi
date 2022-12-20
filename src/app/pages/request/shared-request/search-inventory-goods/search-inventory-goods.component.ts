@@ -1,7 +1,11 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -124,16 +128,16 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
       manageNo: [null],
       regionalDelegation: [null],
       saeNo: [null],
-      key: [null],
+      key: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       state: [null],
       warehouseCode: [null],
-      description: [null],
+      description: [null, [Validators.pattern(STRING_PATTERN)]],
       emitter: [null],
       origin: [null],
       fileNo: [null],
       authority: [null],
       folio: [null],
-      transferee: [null],
+      transferee: [null, [Validators.pattern(STRING_PATTERN)]],
       goodType: [null],
     });
   }

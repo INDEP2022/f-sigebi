@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-confirm-validation',
@@ -20,7 +21,7 @@ export class ConfirmValidationComponent implements OnInit {
   initForm(): void {
     this.form = this.fb.group({
       contributingResult: [null, Validators.required],
-      observations: [null],
+      observations: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

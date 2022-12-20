@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { DocumentFormComponent } from '../../../shared-request/document-form/document-form.component';
 import { DocumentShowComponent } from '../../../shared-request/document-show/document-show.component';
@@ -53,17 +54,17 @@ export class DocumentsListComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.documentForm = this.fb.group({
-      text: [null],
+      text: [null, [Validators.pattern(STRING_PATTERN)]],
       typeDocument: [null],
-      titleDocument: [null],
+      titleDocument: [null, [Validators.pattern(STRING_PATTERN)]],
       noSiab: [null],
-      responsible: [null],
-      author: [null],
-      typeTransference: [null],
-      taxpayer: [null],
+      responsible: [null, [Validators.pattern(STRING_PATTERN)]],
+      author: [null, [Validators.pattern(STRING_PATTERN)]],
+      typeTransference: [null, [Validators.pattern(STRING_PATTERN)]],
+      taxpayer: [null, [Validators.pattern(STRING_PATTERN)]],
       noGestion: [5296016],
-      senderCharge: [null],
-      comments: [null],
+      senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
+      comments: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
 import { TABLE_SETTINGS } from '../../../../../common/constants/table-settings';
 import { ListParams } from '../../../../../common/repository/interfaces/list-params';
@@ -118,8 +119,8 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     this.searchForm = this.fb.group({
       noWarehouse: [null],
       postalCode: [null],
-      nameWarehouse: [null],
-      address: [null],
+      nameWarehouse: [null, [Validators.pattern(STRING_PATTERN)]],
+      address: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

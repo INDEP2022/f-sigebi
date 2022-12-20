@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-state-form',
@@ -31,11 +32,20 @@ export class StateFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.stateForm = this.fb.group({
       cveState: [null, [Validators.required]],
-      descState: [null, [Validators.required]],
+      descState: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       codeState: [null, [Validators.required]],
       version: [null, [Validators.required]],
-      timeZonaStd: [null, [Validators.required]],
-      timeZonaView: [null, [Validators.required]],
+      timeZonaStd: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      timeZonaView: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
     if (this.state != null) {
       this.edit = true;
