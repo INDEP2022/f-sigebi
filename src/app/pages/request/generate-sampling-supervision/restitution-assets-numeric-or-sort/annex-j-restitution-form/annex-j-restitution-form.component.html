@@ -12,7 +12,7 @@
           <div class="col-md-6">
             <form-field
               [control]="signForm.get('responsibleName')"
-              label="*Nombre Responsable TE">
+              label="&#42;Nombre Responsable TE">
               <input
                 type="text"
                 class="form-control"
@@ -22,7 +22,7 @@
           <div class="col-md-6">
             <form-field
               [control]="signForm.get('responsibleInCharge')"
-              label="*Cargo Responsable TE">
+              label="&#42;Cargo Responsable TE">
               <input
                 type="text"
                 class="form-control"
@@ -34,7 +34,7 @@
         <div class="row pt-4">
           <div class="col-md-12" style="display: flex">
             <div style="line-height: 3">
-              <label for="electronica">*Tipo de firma</label>
+              <label for="electronica">&#42;Tipo de firma</label>
             </div>
             <div style="padding-left: 7px">
               <div>
@@ -45,7 +45,7 @@
                   formControlName="tipeSign"
                   value="electronica" />
                 <label class="label-annexk" for="electronica"
-                  >Electrónica</label
+                  >Electr&oacute;nica</label
                 >
               </div>
               <div>
@@ -55,7 +55,9 @@
                   style="height: 1.5rem !important"
                   formControlName="tipeSign"
                   value="autograma" />
-                <label class="label-annexk" for="autograma">Autógrama</label>
+                <label class="label-annexk" for="autograma"
+                  >Aut&oacute;grama</label
+                >
               </div>
             </div>
           </div>

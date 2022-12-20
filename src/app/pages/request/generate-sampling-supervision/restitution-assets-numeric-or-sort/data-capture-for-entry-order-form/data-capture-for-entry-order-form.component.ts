@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { DefaultSelect } from '../../../../../shared/components/select/default-select';
@@ -22,12 +23,12 @@ export class DataCaptureForEntryOrderFormComponent implements OnInit {
 
   initData(): void {
     this.dataForm = this.fb.group({
-      concept: [null], //required
-      wayPay: [null], //required
+      concept: [null, [Validators.pattern(STRING_PATTERN)]], //required
+      wayPay: [null, [Validators.pattern(STRING_PATTERN)]], //required
       import: [null], //required
       reference: [null], //requierd
-      specializedThird: [null], //required
-      bank: [null], //required
+      specializedThird: [null, [Validators.pattern(STRING_PATTERN)]], //required
+      bank: [null, [Validators.pattern(STRING_PATTERN)]], //required
       unitAdministrative: [null], //required
     });
   }

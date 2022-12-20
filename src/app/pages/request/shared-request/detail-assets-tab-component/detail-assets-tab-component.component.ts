@@ -5,9 +5,15 @@ import {
   OnInit,
   SimpleChanges,
 } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { SelectAddressComponent } from '../../transfer-request/tabs/records-of-request-components/records-of-request-child-tabs-components/select-address/select-address.component';
 
@@ -75,24 +81,30 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
   initForm() {
     this.assetsForm = this.fb.group({
       noManagement: [null],
-      typeAsset: [null],
-      color: [null],
+      typeAsset: [null, [Validators.pattern(STRING_PATTERN)]],
+      color: [null, [Validators.pattern(STRING_PATTERN)]],
       transferQuantity: [null],
-      descripTransfeAsset: [null],
+      descripTransfeAsset: [null, [Validators.pattern(STRING_PATTERN)]],
       duplicity: [false],
-      capacityLts: [null],
-      volumem3: [null],
+      capacityLts: [null, [Validators.pattern(STRING_PATTERN)]],
+      volumem3: [null, [Validators.pattern(STRING_PATTERN)]],
       noExpedient: [null],
       typeUse: [null],
       conservationState: [null],
-      origin: [null],
-      LigieUnitMeasure: [{ value: '', disabled: true }],
+      origin: [null, [Validators.pattern(STRING_PATTERN)]],
+      LigieUnitMeasure: [
+        { value: '', disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
       avaluo: [null],
-      destinyLigie: [{ value: '', disabled: true }],
+      destinyLigie: [
+        { value: '', disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ],
       meetNoraml: [true],
       destinyTransfer: [null],
       tansferUnitMeasure: [null],
-      notes: [null],
+      notes: [null, [Validators.pattern(STRING_PATTERN)]],
       sae: [null],
       physicalState: [null],
       destintSae: [{ value: null, disabled: true }],

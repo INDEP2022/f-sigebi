@@ -6,7 +6,7 @@
     <div class="row pt-4">
       <div class="d-flex">
         <div class="mr-auto p-2">
-          <h5>Muestreo Bienes:Genera Consulta</h5>
+          <h5>Muestreo Bienes&#58; Genera Consulta</h5>
         </div>
         <div class="p-2">
           <button class="btn btn-primary btn-sm active" (click)="turnForm()">
@@ -26,7 +26,6 @@
                 type="text"
                 class="form-control"
                 formControlName="initialDate"
-                placeholder=""
                 bsDatepicker />
             </form-field>
           </div>
@@ -38,7 +37,6 @@
                 type="text"
                 class="form-control"
                 formControlName="finalDate"
-                placeholder=""
                 bsDatepicker />
             </form-field>
           </div>
@@ -52,7 +50,7 @@
             class="text-color"
             (click)="showSearchForm = true"
             *ngIf="!showSearchForm">
-            <i class="fa fa-angle-right" aria-hidden="true"></i> Búsqueda
+            <i class="fa fa-angle-right" aria-hidden="true"></i> B&uacute;squeda
             expedientes</a
           >
         </p>
@@ -62,7 +60,7 @@
             class="text-color"
             (click)="showSearchForm = false"
             *ngIf="showSearchForm">
-            <i class="fa fa-angle-down" aria-hidden="true"></i> Búsqueda
+            <i class="fa fa-angle-down" aria-hidden="true"></i> B&uacute;squeda
             expedientes</a
           >
         </p>
@@ -74,7 +72,7 @@
           <div class="col-md-4">
             <form-field
               [control]="searchForm.get('noWarehouse')"
-              label="No. Almacén">
+              label="No&#46; Almacén">
               <input
                 type="text"
                 class="form-control"
@@ -84,7 +82,7 @@
           <div class="col-md-4">
             <form-field
               [control]="searchForm.get('postalCode')"
-              label="Codigo Postal">
+              label="C&oacute;digo Postal">
               <input
                 type="text"
                 class="form-control"
@@ -94,7 +92,7 @@
           <div class="col-md-4">
             <form-field
               [control]="searchForm.get('nameWarehouse')"
-              label="Nombre del Almacén">
+              label="Nombre del Almac&eacute;n">
               <input
                 type="text"
                 class="form-control"
@@ -104,7 +102,9 @@
         </div>
         <div class="row pt-4">
           <div class="col-md-6">
-            <form-field [control]="searchForm.get('address')" label="Dirección">
+            <form-field
+              [control]="searchForm.get('address')"
+              label="Direcci&oacute;n">
               <textarea
                 class="form-control"
                 formControlName="address"></textarea>
@@ -127,7 +127,7 @@
       <div class="d-flex justify-content-end">
         <div class="m-3">
           <button class="btn btn-primary btn-sm active">
-            <i class="bx bx-search-alt-2"></i> Búsqueda Bienes
+            <i class="bx bx-search-alt-2"></i> B&uacute;squeda Bienes
           </button>
         </div>
       </div>
@@ -196,7 +196,7 @@
                     </li>
                     <li role="menuitem">
                       <a class="dropdown-item" (click)="uploadImages()"
-                        ><i class="bx bx-images"></i> Fotografía</a
+                        ><i class="bx bx-images"></i> Fotograf&iacute;a</a
                       >
                     </li>
                     <li role="menuitem">
@@ -249,14 +249,14 @@
             <table class="table table-bordered">
               <thead>
                 <tr style="text-align: center">
-                  <th scope="col">Descripción deductiva</th>
+                  <th scope="col">Descripci&oacute;n deductiva</th>
                   <th scope="col">Observaciones</th>
                   <th scope="col">Seleccion</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>Desguardo de expediente 25%</td>
+                  <td>Desguardo de expediente 25&#37;</td>
                   <td>
                     <input type="text" name="" id="observation" />
                   </td>

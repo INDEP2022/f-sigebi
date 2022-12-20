@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IStatusTransfer } from 'src/app/core/models/catalogs/status-transfer.model';
 import { StatusTransferService } from 'src/app/core/services/catalogs/status-transfer.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-status-transfer-form',
@@ -31,9 +32,23 @@ export class StatusTransferFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.statusTransferForm = this.fb.group({
       id: [null],
-      bank: [null, [Validators.required, Validators.maxLength(30)]],
+      bank: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(30),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       code: [null, [Validators.required, Validators.maxLength(20)]],
-      description: [null, [Validators.required, Validators.maxLength(300)]],
+      description: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(300),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
     });
     if (this.statusTransfer != null) {
       this.edit = true;

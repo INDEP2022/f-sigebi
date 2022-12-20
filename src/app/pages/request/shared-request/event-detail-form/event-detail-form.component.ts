@@ -1,8 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { SCHEDULING_DELIVERIES_COLUMNS } from './columns/scheduling-deliveries-columns';
 @Component({
   selector: 'app-event-detail-form',
@@ -44,12 +45,12 @@ export class EventDetailFormComponent extends BasePage implements OnInit {
       numberGestion: [null],
       numberSae: [null],
       numberInventory: [null],
-      goodDescription: [null],
-      item: [null],
+      goodDescription: [null, [Validators.pattern(STRING_PATTERN)]],
+      item: [null, [Validators.pattern(STRING_PATTERN)]],
       quantityGoods: [null],
-      typeGood: [null],
+      typeGood: [null, [Validators.pattern(STRING_PATTERN)]],
       unitOfMeasurement: [null],
-      origin: [null],
+      origin: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

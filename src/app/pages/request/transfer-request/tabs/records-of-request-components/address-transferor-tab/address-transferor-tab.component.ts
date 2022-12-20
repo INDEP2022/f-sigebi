@@ -5,9 +5,10 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -39,23 +40,23 @@ export class AddressTransferorTabComponent implements OnInit {
 
   initForm() {
     this.addressForm = this.fb.group({
-      aliasWarehouse: [null],
-      referenceVia2: [null],
+      aliasWarehouse: [null, [Validators.pattern(STRING_PATTERN)]],
+      referenceVia2: [null, [Validators.pattern(STRING_PATTERN)]],
       state: [null],
-      referenceVia3: [null],
+      referenceVia3: [null, [Validators.pattern(STRING_PATTERN)]],
       municipe: [null],
       suburb: [null],
       cp: [null],
-      longitud: [null],
-      latitud: [null],
-      nameRoute: [null],
+      longitud: [null, [Validators.pattern(STRING_PATTERN)]],
+      latitud: [null, [Validators.pattern(STRING_PATTERN)]],
+      nameRoute: [null, [Validators.pattern(STRING_PATTERN)]],
       numExt: [null],
-      originRoute: [null],
+      originRoute: [null, [Validators.pattern(STRING_PATTERN)]],
       numInt: [null],
-      routeDestination: [null],
-      referenceVia1: [null],
+      routeDestination: [null, [Validators.pattern(STRING_PATTERN)]],
+      referenceVia1: [null, [Validators.pattern(STRING_PATTERN)]],
       kilometerRoute: [null],
-      description: [null],
+      description: [null, [Validators.pattern(STRING_PATTERN)]],
     });
 
     if (this.isNewAddress != true) {

@@ -3,6 +3,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -38,11 +42,11 @@ export class RequestSiabFormComponent extends BasePage implements OnInit {
       typeRelevant: [null],
       quantityReserve: [null, [Validators.required]],
       expedientTransferent: [null],
-      descriptionRequest: [null],
-      uniqueKey: [null],
-      descriptionGood: [null],
+      descriptionRequest: [null, [Validators.pattern(STRING_PATTERN)]],
+      uniqueKey: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
+      descriptionGood: [null, [Validators.pattern(STRING_PATTERN)]],
       numberGoodSiab: [null],
-      codeWarehouse: [null],
+      codeWarehouse: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       numberExpedient: [null],
     });
   }

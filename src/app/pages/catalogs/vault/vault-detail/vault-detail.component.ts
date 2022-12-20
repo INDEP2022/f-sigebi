@@ -6,6 +6,7 @@ import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { SafeService } from '../../../../core/services/catalogs/safe.service';
 
@@ -50,15 +51,24 @@ export class VaultDetailComponent implements OnInit {
       idSafe: ['', Validators.required],
       manager: [
         null,
-        Validators.compose([Validators.pattern(''), Validators.required]),
+        Validators.compose([
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ]),
       ],
       description: [
         null,
-        Validators.compose([Validators.pattern(''), Validators.required]),
+        Validators.compose([
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ]),
       ],
       ubication: [
         null,
-        Validators.compose([Validators.pattern(''), Validators.required]),
+        Validators.compose([
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ]),
       ],
       registerNumber: [null, Validators.compose([Validators.pattern('')])],
       municipalityCode: [null, Validators.compose([Validators.pattern('')])],

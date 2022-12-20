@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { TABLE_SETTINGS } from '../../../../../common/constants/table-settings';
 import { ListParams } from '../../../../../common/repository/interfaces/list-params';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
@@ -79,20 +80,20 @@ export class UploadExpedientServiceOrderFormComponent
 
   initForm(): void {
     this.expedientForm = this.fb.group({
-      text: [null],
+      text: [null, [Validators.pattern(STRING_PATTERN)]],
       typeDoc: [null],
-      titleDoc: [null],
-      sender: [null],
-      author: [null],
-      senderInCharge: [null],
+      titleDoc: [null, [Validators.pattern(STRING_PATTERN)]],
+      sender: [null, [Validators.pattern(STRING_PATTERN)]],
+      author: [null, [Validators.pattern(STRING_PATTERN)]],
+      senderInCharge: [null, [Validators.pattern(STRING_PATTERN)]],
       noDoc: [null],
-      responsible: [null],
+      responsible: [null, [Validators.pattern(STRING_PATTERN)]],
       version: [null],
-      contributor: [null],
+      contributor: [null, [Validators.pattern(STRING_PATTERN)]],
       noRequest: [null],
       noOfice: [null],
-      typeTranfer: [null],
-      comments: [null],
+      typeTranfer: [null, [Validators.pattern(STRING_PATTERN)]],
+      comments: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

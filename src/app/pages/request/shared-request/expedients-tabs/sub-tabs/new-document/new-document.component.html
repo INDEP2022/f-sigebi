@@ -24,8 +24,7 @@
               type="file"
               class="form-control"
               formControlName="docFile"
-              (change)="selectFile($event)"
-              placeholder="" />
+              (change)="selectFile($event)" />
           </form-field>
         </div>
       </div>
@@ -33,21 +32,21 @@
         <div class="col-md-7">
           <form-field
             [control]="newDocForm.get('docTit')"
-            label="*Titulo del Documento">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="docTit"
-              placeholder="" />
+            label="&#42;T&iacute;tulo del Documento">
+            <input type="text" class="form-control" formControlName="docTit" />
           </form-field>
         </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-6">
           <p for="">
-            <span *ngIf="typeDoc === 'doc-request'">No. Solicitud:</span>
-            <span *ngIf="typeDoc === 'doc-expedient'">No. Expediente:</span>
-            <span *ngIf="typeDoc === 'good'">No. Bien:</span>
+            <span *ngIf="typeDoc === 'doc-request'"
+              >No&#46; Solicitud&#58;</span
+            >
+            <span *ngIf="typeDoc === 'doc-expedient'"
+              >No&#46; Expediente&#58;</span
+            >
+            <span *ngIf="typeDoc === 'good'">No&#46; Bien&#58;</span>
             <span>{{ newDocForm.get('noExpedient').value }}</span>
           </p>
         </div>
@@ -58,48 +57,41 @@
             <input
               type="text"
               class="form-control"
-              formControlName="contributor"
-              placeholder="" />
+              formControlName="contributor" />
           </form-field>
         </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-6">
           <p for="">
-            Delegación Regional:
+            Delegaci&oacute;n Regional&#58;
             <span>{{ newDocForm.get('regDelega').value }}</span>
           </p>
         </div>
         <div class="col-md-6">
-          <form-field [control]="newDocForm.get('noOfi')" label="No. Oficina">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="noOfi"
-              placeholder="" />
+          <form-field
+            [control]="newDocForm.get('noOfi')"
+            label="No&#46; Oficina">
+            <input type="text" class="form-control" formControlName="noOfi" />
           </form-field>
         </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-6">
           <p for="">
-            Estado: <span>{{ newDocForm.get('state').value }}</span>
+            Estado&#58; <span>{{ newDocForm.get('state').value }}</span>
           </p>
         </div>
         <div class="col-md-6">
           <p for="">
-            Transferente: <span>{{ newDocForm.get('tranfe').value }}</span>
+            Transferente&#58; <span>{{ newDocForm.get('tranfe').value }}</span>
           </p>
         </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-6">
           <form-field [control]="newDocForm.get('sender')" label="Remitente">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="sender"
-              placeholder="" />
+            <input type="text" class="form-control" formControlName="sender" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -109,8 +101,7 @@
             <input
               type="text"
               class="form-control"
-              formControlName="senderCharge"
-              placeholder="" />
+              formControlName="senderCharge" />
           </form-field>
         </div>
       </div>
@@ -122,18 +113,14 @@
             <input
               type="text"
               class="form-control"
-              formControlName="responsible"
-              placeholder="" />
+              formControlName="responsible" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field
             [control]="newDocForm.get('observations')"
             label="Comentarios">
-            <textarea
-              class="form-control"
-              formControlName="observations"
-              placeholder="">
+            <textarea class="form-control" formControlName="observations">
             </textarea>
           </form-field>
         </div>
