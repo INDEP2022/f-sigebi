@@ -19,7 +19,7 @@
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('noOficio')" label="No. Oficio">
+          <form-field [control]="form.get('noOficio')" label="No&#46; Oficio">
             <input class="form-control" formControlName="noOficio" />
           </form-field>
         </div>
@@ -37,7 +37,7 @@
           <ngx-select
             [data]="items"
             bindLabel="delegacionRegionalName"
-            label="Delegación Regional"
+            label="Delegaci&oacute;n Regional"
             value="id"
             (fetchItems)="getFromSelect($event)"
             [form]="form"
@@ -87,7 +87,7 @@
           <div class="row w-100 pl-4">
             <label class="form-control-label">Tipo Usuario</label>
             <div class="col-sm-12 col-12 col-md-6 p-2 text-center">
-              <form-radio label="T.E.">
+              <form-radio label="T&#46;E&#46;">
                 <input
                   type="radio"
                   formControlName="tipoUsuario"

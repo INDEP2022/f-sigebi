@@ -1,11 +1,12 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ADVANCED_SEARCH_COLUMNS } from './advanced-search-columns';
 
@@ -55,7 +56,7 @@ export class AdvancedSearchComponent extends BasePage implements OnInit {
   initForm(): void {
     this.searchForm = this.fb.group({
       code: [null],
-      description: [null],
+      description: [null, [Validators.pattern(STRING_PATTERN)]],
       typeRelevant: [null],
     });
   }

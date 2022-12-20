@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { TABLE_SETTINGS } from '../../../../../common/constants/table-settings';
 import { ListParams } from '../../../../../common/repository/interfaces/list-params';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
@@ -75,19 +76,19 @@ export class UploadExpedientFormComponent extends BasePage implements OnInit {
 
   initForm(): void {
     this.expedientForm = this.fb.group({
-      text: [null],
+      text: [null, [Validators.pattern(STRING_PATTERN)]],
       typeDoc: [null],
-      titleDoc: [null],
-      typeTranfer: [null],
-      comments: [null],
-      author: [null],
-      sender: [null],
+      titleDoc: [null, [Validators.pattern(STRING_PATTERN)]],
+      typeTranfer: [null, [Validators.pattern(STRING_PATTERN)]],
+      comments: [null, [Validators.pattern(STRING_PATTERN)]],
+      author: [null, [Validators.pattern(STRING_PATTERN)]],
+      sender: [null, [Validators.pattern(STRING_PATTERN)]],
       noDoc: [null],
-      senderCharge: [null],
+      senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
       version: [null],
-      responsible: [null],
+      responsible: [null, [Validators.pattern(STRING_PATTERN)]],
       noAsset: [{ value: null, disabled: true }],
-      contributor: [null],
+      contributor: [null, [Validators.pattern(STRING_PATTERN)]],
       noSab: [null],
       noOfice: [null],
     });

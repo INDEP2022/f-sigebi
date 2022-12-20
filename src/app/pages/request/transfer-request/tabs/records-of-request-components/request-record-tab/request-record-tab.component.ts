@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequest } from 'src/app/core/models/catalogs/request.model';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -29,29 +30,33 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
     let fecha = this.getCurrentDate();
     this.receptionForm = this.fb.group({
       priority: [false],
-      infoProvenance: [null],
+      infoProvenance: [null, [Validators.pattern(STRING_PATTERN)]],
       receptDate: [{ value: fecha, disabled: true }],
       officeDate: [null, Validators.required],
       typeExpedient: [null],
-      indiciado: [null],
-      nameSender: [null],
-      roleSender: [null],
+      indiciado: [null, [Validators.pattern(STRING_PATTERN)]],
+      nameSender: [null, [Validators.pattern(STRING_PATTERN)]],
+      roleSender: [null, [Validators.pattern(STRING_PATTERN)]],
       phoneSender: [null],
       emailSender: [null, Validators.email],
       publicMinister: [null],
-      sender: [null],
-      tribunal: [null],
-      crime: [null],
-      typeReception: [{ value: 'FISICO', disabled: true }], //esta campo depende de que tipo de recepcion es el formulario
-      destinationManage: [null],
-      contributor: [null],
+      sender: [null, [Validators.pattern(STRING_PATTERN)]],
+      tribunal: [null, [Validators.pattern(STRING_PATTERN)]],
+      crime: [null, [Validators.pattern(STRING_PATTERN)]],
+      typeReception: [
+        { value: 'FISICO', disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
+      ], //esta campo depende de que tipo de recepcion es el formulario
+      destinationManage: [null, [Validators.pattern(STRING_PATTERN)]],
+      contributor: [null, [Validators.pattern(STRING_PATTERN)]],
       subject: [
         { value: 'SOLICITUD DE TRANSFERENCIA DE BIENES', disabled: true },
+        [Validators.pattern(STRING_PATTERN)],
       ],
-      transExpedient: [null],
-      typeTransfer: [null],
-      transferEntityNotes: [null],
-      observations: [null],
+      transExpedient: [null, [Validators.pattern(STRING_PATTERN)]],
+      typeTransfer: [null, [Validators.pattern(STRING_PATTERN)]],
+      transferEntityNotes: [null, [Validators.pattern(STRING_PATTERN)]],
+      observations: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

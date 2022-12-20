@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -37,7 +38,7 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     this.clarificationForm = this.fb.group({
       typeClarification: [null],
       clarification: [null],
-      reason: [null],
+      reason: [null, [Validators.pattern(STRING_PATTERN)]],
     });
 
     if (this.docClarification != undefined) {

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
 import { TABLE_SETTINGS } from '../../../../../common/constants/table-settings';
 import { ListParams } from '../../../../../common/repository/interfaces/list-params';
@@ -67,9 +68,9 @@ export class UploadImagesFormComponent extends BasePage implements OnInit {
       noManagement: [{ value: 0.0, disabled: true }],
       noProgramming: [null],
       noPhoto: [null],
-      author: [null],
-      titleImage: [null],
-      text: [null],
+      author: [null, [Validators.pattern(STRING_PATTERN)]],
+      titleImage: [null, [Validators.pattern(STRING_PATTERN)]],
+      text: [null, [Validators.pattern(STRING_PATTERN)]],
       folioProgramming: [null],
     });
   }

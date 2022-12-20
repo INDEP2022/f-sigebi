@@ -1,7 +1,8 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -107,18 +108,18 @@ export class SearchRequestsComponent extends BasePage implements OnInit {
     this.searchForm = this.fb.group({
       requestNo: [null],
       authority: [null],
-      transferType: [null],
+      transferType: [null, [Validators.pattern(STRING_PATTERN)]],
       fileNo: [null],
-      contributor: [null],
-      domainExtinction: [null],
+      contributor: [null, [Validators.pattern(STRING_PATTERN)]],
+      domainExtinction: [null, [Validators.pattern(STRING_PATTERN)]],
       regionalDelegation: [null],
-      transferFile: [null],
-      judgementType: [null],
+      transferFile: [null, [Validators.pattern(STRING_PATTERN)]],
+      judgementType: [null, [Validators.pattern(STRING_PATTERN)]],
       state: [null],
-      previousAscertainment: [null],
-      judgement: [null],
+      previousAscertainment: [null, [Validators.pattern(STRING_PATTERN)]],
+      judgement: [null, [Validators.pattern(STRING_PATTERN)]],
       transferee: [null],
-      criminalCase: [null],
+      criminalCase: [null, [Validators.pattern(STRING_PATTERN)]],
       emitter: [null],
       protectionNo: [null],
     });
