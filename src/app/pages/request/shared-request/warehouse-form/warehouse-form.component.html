@@ -1,6 +1,6 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Alta almacén</h5>
+    <h5 class="modal-title">Alta almac&eacute;n</h5>
   </div>
   <div body>
     <form [formGroup]="warehouseForm" class="form-material">
@@ -8,7 +8,7 @@
         <div class="col-md-6">
           <form-field
             [control]="warehouseForm.get('numberRegister')"
-            label="No° de registro">
+            label="No&#46; de registro">
             <input
               type="text"
               class="form-control"
@@ -33,7 +33,7 @@
         <div class="col-md-6">
           <form-field
             [control]="warehouseForm.get('nameWarehouse')"
-            label="Nombre del almacén">
+            label="Nombre del almac&eacute;n">
             <input
               type="text"
               class="form-control"
@@ -59,7 +59,7 @@
         <div class="col-md-6">
           <form-field
             [control]="warehouseForm.get('numberManagement')"
-            label="Número de gestión">
+            label="N&uacute;mero de gesti&oacute;n">
             <input
               type="text"
               class="form-control"
@@ -78,7 +78,7 @@
         <div class="col-md-6">
           <form-field
             [control]="warehouseForm.get('contractNumber')"
-            label="Número de contrato">
+            label="N&uacute;mero de contrato">
             <input
               type="text"
               class="form-control"
@@ -89,7 +89,7 @@
         <div class="col-md-6">
           <form-field
             [control]="warehouseForm.get('siabWarehouse')"
-            label="Almacén SIAB">
+            label="Almac&eacute;n SIAB">
             <input
               type="text"
               class="form-control"
@@ -126,7 +126,7 @@
         <div class="col-md-6">
           <form-field
             [control]="warehouseForm.get('regionalDelegation')"
-            label="Delegación regional">
+            label="Delegaci&oacute;n regional">
             <input
               type="text"
               class="form-control"
@@ -213,7 +213,7 @@
               [data]="cp"
               value="id"
               bindLabel="id"
-              label="Código postal"
+              label="C&oacute;digo postal"
               (fetchItems)="getCpSelect($event)"></ngx-select>
           </form-field>
         </div>
@@ -229,7 +229,7 @@
         <div class="col-md-6">
           <form-field
             [control]="warehouseForm.get('numberOutside')"
-            label="Número exterior">
+            label="N&uacute;mero exterior">
             <input
               type="text"
               class="form-control"
@@ -267,7 +267,7 @@
               [data]="typeWarehouse"
               value="id"
               bindLabel="norm"
-              label="Tipo de almacén"
+              label="Tipo de almac&eacute;n"
               (fetchItems)="getTypeWarehouseSelect($event)"></ngx-select>
           </form-field>
         </div>

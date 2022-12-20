@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-witness-form',
@@ -21,8 +22,8 @@ export class WitnessFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.witnessForm = this.fb.group({
-      nameWitness: [null],
-      chargeWitness: [null],
+      nameWitness: [null, [Validators.pattern(STRING_PATTERN)]],
+      chargeWitness: [null, [Validators.pattern(STRING_PATTERN)]],
       electronicSignature: [null],
     });
   }

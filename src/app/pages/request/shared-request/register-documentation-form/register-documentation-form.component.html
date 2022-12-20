@@ -28,7 +28,7 @@
     <div class="col-md-4">
       <div class="row">
         <div class="col-6 d-flex align-items-end">
-          <label class="label" for="">Prioridad:</label>
+          <label class="label" for="">Prioridad&#58;</label>
         </div>
         <div class="col-6">
           <form-check label="" for="priority">
@@ -44,7 +44,7 @@
     <div class="col-md-4">
       <form-field
         [control]="registerForm.get('contributor')"
-        label="Contribuyente y/o Indiciado">
+        label="Contribuyente y&#47;o Indiciado">
         <input type="text" formControlName="contributor" class="form-control" />
       </form-field>
     </div>
@@ -68,7 +68,7 @@
     <div class="col-md-4">
       <form-field
         [control]="registerForm.get('infoOrigin')"
-        label="Procedencia Información">
+        label="Procedencia Informaci&oacute;n">
         <ng-select
           formControlName="infoOrigin"
           [searchable]="false"
@@ -83,7 +83,7 @@
     <div class="col-md-4">
       <form-field
         [control]="registerForm.get('receptionDate')"
-        label="*Fecha Recepción">
+        label="&#42;Fecha Recepci&oacute;n">
         <input
           type="text"
           formControlName="receptionDate"
@@ -95,7 +95,7 @@
     <div class="col-md-4">
       <form-field
         [control]="registerForm.get('memorandumNo')"
-        label="*No. Oficio">
+        label="&#42;No&#46; Oficio">
         <input
           type="number"
           formControlName="memorandumNo"
@@ -107,7 +107,7 @@
     <div class="col-md-4">
       <form-field
         [control]="registerForm.get('transferFile')"
-        label="*Expediente Transferente / PAMA">
+        label="&#42;Expediente Transferente &#47; PAMA">
         <input
           type="text"
           formControlName="transferFile"
@@ -117,7 +117,7 @@
     <div class="col-md-4">
       <form-field
         [control]="registerForm.get('memorandumDate')"
-        label="*Fecha de Oficio">
+        label="&#42;Fecha de Oficio">
         <input
           type="text"
           formControlName="memorandumDate"
@@ -148,7 +148,7 @@
     <div class="col-md-4">
       <form-field
         [control]="registerForm.get('senderPhone')"
-        label="Teléfono del Remitente">
+        label="Tel&eacute;fono del Remitente">
         <input type="text" formControlName="senderPhone" class="form-control" />
       </form-field>
     </div>
@@ -163,19 +163,20 @@
   <div class="row mt-5">
     <div class="col-md-4">
       <p class="font-size-13">
-        <strong class="font-size-13">Asunto: </strong
+        <strong class="font-size-13">Asunto&#58; </strong
         >{{ registerForm.controls['subject'].value }}
       </p>
     </div>
     <div class="col-md-4">
       <p class="font-size-13">
-        <strong class="font-size-13">Vía de Recepción: </strong
+        <strong class="font-size-13"
+          >V&iacute;a de Recepci&oacute;n&#58; </strong
         >{{ registerForm.controls['receptionMethod'].value }}
       </p>
     </div>
     <div class="col-md-4">
       <p class="font-size-13">
-        <strong class="font-size-13">Tipo Transferencia: </strong
+        <strong class="font-size-13">Tipo Transferencia&#58; </strong
         >{{ registerForm.controls['transferType'].value }}
       </p>
     </div>
@@ -184,7 +185,7 @@
     <div class="col-md-4">
       <form-field
         [control]="registerForm.get('judgementType')"
-        label="*Tipo Juicio">
+        label="&#42;Tipo Juicio">
         <input
           type="text"
           formControlName="judgementType"

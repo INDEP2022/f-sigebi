@@ -24,7 +24,7 @@
             <div class="col-md-4">
               <form-field
                 [control]="searchForm.get('manageNo')"
-                label="No. Gestión">
+                label="No&#46; Gesti&oacute;n">
                 <input
                   type="number"
                   formControlName="manageNo"
@@ -38,14 +38,16 @@
                   [data]="delegationItems"
                   value="id"
                   bindLabel="description"
-                  label="Delegación Regional"
+                  label="Delegaci&oacute;n Regional"
                   (fetchItems)="getDelegations($event)"
                   control="regionalDelegation">
                 </ngx-select>
               </form-field>
             </div>
             <div class="col-md-4">
-              <form-field [control]="searchForm.get('saeNo')" label="No. SAE">
+              <form-field
+                [control]="searchForm.get('saeNo')"
+                label="No&#46; SAE">
                 <input
                   type="number"
                   formControlName="saeNo"
@@ -55,7 +57,9 @@
           </div>
           <div class="row mt-5">
             <div class="col-md-4">
-              <form-field [control]="searchForm.get('key')" label="Llave Única">
+              <form-field
+                [control]="searchForm.get('key')"
+                label="Llave &Uacute;nica">
                 <input type="text" formControlName="key" class="form-control" />
               </form-field>
             </div>
@@ -75,7 +79,7 @@
             <div class="col-md-4">
               <form-field
                 [control]="searchForm.get('warehouseCode')"
-                label="Código Almacén">
+                label="C&oacute;digo Almac&eacute;n">
                 <input
                   type="text"
                   formControlName="warehouseCode"
@@ -87,7 +91,7 @@
             <div class="col-md-4">
               <form-field
                 [control]="searchForm.get('description')"
-                label="Descripción">
+                label="Descripci&oacute;n">
                 <input
                   type="text"
                   formControlName="description"
@@ -125,7 +129,7 @@
             <div class="col-md-4">
               <form-field
                 [control]="searchForm.get('fileNo')"
-                label="No. Expediente">
+                label="No&#46; Expediente">
                 <input
                   type="number"
                   formControlName="fileNo"
@@ -162,7 +166,7 @@
             <div class="col-md-4">
               <form-field
                 [control]="searchForm.get('transferee')"
-                label="Expediente Transferente / PAMA">
+                label="Expediente Transferente &#47; PAMA">
                 <input
                   type="text"
                   formControlName="transferee"
