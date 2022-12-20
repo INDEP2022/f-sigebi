@@ -76,7 +76,7 @@ const routes: Routes = [
     data: { title: 'Juridicos' },
   },
   {
-    path: 'seguridad',
+    path: 'security',
     loadChildren: () =>
       import('./security/security.module').then(m => m.SecurityModule),
   },
