@@ -37,6 +37,7 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
     data: { title: DEPOSITARY_ROUTES_1[5].label },
   },
   {
+    // RELACION DE AMPAROS
     path: DEPOSITARY_ROUTES_1[6].link,
     loadChildren: async () =>
       (
@@ -47,6 +48,7 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
     data: { title: DEPOSITARY_ROUTES_1[6].label },
   },
   {
+    // EMISION DE ACUERDOS
     path: DEPOSITARY_ROUTES_1[7].link,
     loadChildren: async () =>
       (await import('./issue-agreements/issue-agreements.module'))
@@ -54,6 +56,7 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
     data: { title: DEPOSITARY_ROUTES_1[7].label },
   },
   {
+    // HISTORICO SITUACION DEL BIEN
     path: DEPOSITARY_ROUTES_1[8].link,
     loadChildren: async () =>
       (
@@ -64,6 +67,7 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
     data: { title: DEPOSITARY_ROUTES_1[8].label },
   },
   {
+    // RESOLUCION DE RECURSOS DE REVISION
     path: DEPOSITARY_ROUTES_1[9].link,
     loadChildren: async () =>
       (
@@ -74,6 +78,7 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
     data: { title: DEPOSITARY_ROUTES_1[9].label },
   },
   {
+    // COMPROBACION DE DOCUMENTOS PARA RECURSOS REVISION
     path: DEPOSITARY_ROUTES_1[10].link,
     loadChildren: async () =>
       (
@@ -84,6 +89,7 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
     data: { title: DEPOSITARY_ROUTES_1[10].label },
   },
   {
+    // REPORTE DE RECURSOS DE REVISION
     path: DEPOSITARY_ROUTES_1[11].link,
     loadChildren: async () =>
       (await import('./review-resource-report/review-resource-report.module'))
@@ -91,6 +97,7 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
     data: { title: DEPOSITARY_ROUTES_1[11].label },
   },
   {
+    // NOTIFICACIONES POR EXPEDIENTE
     path: DEPOSITARY_ROUTES_1[12].link,
     loadChildren: async () =>
       (await import('./notifications-file/notifications-file.module'))
@@ -98,12 +105,14 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
     data: { title: DEPOSITARY_ROUTES_1[12].label },
   },
   {
+    // DICTAMINACION MASIVA PROG. DESALOJO
     path: DEPOSITARY_ROUTES_1[13].link,
     loadChildren: async () =>
       (await import('./mass-ruling/mass-ruling.module')).MassRulingModule,
     data: { title: DEPOSITARY_ROUTES_1[13].label },
   },
   {
+    // VALIDACION DE POSESION A TERCEROS
     path: DEPOSITARY_ROUTES_1[14].link,
     loadChildren: async () =>
       (
@@ -114,6 +123,7 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
     data: { title: DEPOSITARY_ROUTES_1[14].label },
   },
   {
+    // GENERACION DE ARCHIVOS DE OFICIO
     path: DEPOSITARY_ROUTES_1[15].link,
     loadChildren: async () =>
       (await import('./generation-files-trades/generation-files-trades.module'))
