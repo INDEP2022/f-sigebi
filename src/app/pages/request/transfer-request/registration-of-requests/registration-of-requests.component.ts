@@ -36,7 +36,7 @@ export class RegistrationOfRequestsComponent
   tab6: string = '';
 
   //registro de solicitudos o bienes
-  requestRegistration: boolean = true;
+  requestRegistration: boolean = false;
   //verificacion de cumplimientos tab
   complianceVerifi: boolean = false; //ok
   //clasificacion de bienes
@@ -45,7 +45,7 @@ export class RegistrationOfRequestsComponent
   validateDocument: boolean = false;
   //notificar aclaraciones o improcedencias
   notifyClarifiOrImpropriety: boolean = false;
-  //aprovacion del proceso (por verse caso contrario borrar)
+  //aprovacion del proceso
   approvalProcess: boolean = false;
 
   constructor(
@@ -60,6 +60,8 @@ export class RegistrationOfRequestsComponent
   }
 
   ngOnInit(): void {
+    let path: any = window.location.pathname.split('/');
+    this.setView(path[4]);
     this.intiTabs();
     this.prepareForm();
     this.route.params.subscribe(params => {
@@ -84,6 +86,32 @@ export class RegistrationOfRequestsComponent
       typeExpedient: ['AGR'],
       noRequest: ['27445'],
     });
+  }
+
+  setView(path: string): void {
+    switch (path) {
+      case 'registration-request':
+        this.requestRegistration = true;
+        break;
+      case 'verify-compliance':
+        this.complianceVerifi = true;
+        break;
+      case 'classify-assets':
+        this.classifyAssets = true;
+        break;
+      case 'validate-document':
+        this.validateDocument = true;
+        break;
+      case 'notify-clarification-inadmissibility':
+        this.notifyClarifiOrImpropriety = true;
+        break;
+      case 'process-approval':
+        this.approvalProcess = true;
+        break;
+      default:
+        this.requestRegistration = true;
+        break;
+    }
   }
 
   intiTabs(): void {
