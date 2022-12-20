@@ -5,7 +5,7 @@ import { JwtInterceptor, JwtModule } from '@auth0/angular-jwt';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { DateFnsModule } from 'ngx-date-fns';
-import { environment } from 'src/environments/environment.prod';
+import { environment } from 'src/environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ROOT_REDUCERS } from './app.reducers';
@@ -49,6 +49,11 @@ export function tokenGetter() {
       useClass: HttpErrorsInterceptor,
       multi: true,
     },
+    /*{
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    },*/
     JwtInterceptor,
   ],
   bootstrap: [AppComponent],
