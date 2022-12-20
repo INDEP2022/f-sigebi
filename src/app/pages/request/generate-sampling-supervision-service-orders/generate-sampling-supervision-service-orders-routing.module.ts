@@ -19,6 +19,16 @@ const routes: Routes = [
       ).GenerateFormatsVerificationNoncomplianceModule,
     data: { title: 'Revisar Resultados' },
   },
+  {
+    path: 'result-approval',
+    loadChildren: async () =>
+      (
+        await import(
+          './generate-formats-verification-noncompliance/generate-formats-verification-noncompliance.module'
+        )
+      ).GenerateFormatsVerificationNoncomplianceModule,
+    data: { title: 'Aprovación de resultado' },
+  },
 ];
 
 @NgModule({
