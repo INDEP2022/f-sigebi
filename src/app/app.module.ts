@@ -10,6 +10,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ROOT_REDUCERS } from './app.reducers';
 import { InputFormDirective } from './common/directives/input-form.directive';
+import { AuthInterceptor } from './common/interceptors/auth.interceptor';
 import { HttpErrorsInterceptor } from './common/interceptors/http-errors.interceptor';
 import { ContentComponent } from './layouts/content/content.component';
 import { FullModule } from './layouts/full/full.module';
@@ -49,11 +50,11 @@ export function tokenGetter() {
       useClass: HttpErrorsInterceptor,
       multi: true,
     },
-    /*{
+    {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true,
-    },*/
+    },
     JwtInterceptor,
   ],
   bootstrap: [AppComponent],
