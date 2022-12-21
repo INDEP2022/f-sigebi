@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { maxDate } from 'src/app/common/validations/date.validators';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { RES_CANCEL_VALUATION_COLUMS } from './res-cancel-valuation-columns';
 
 @Component({
@@ -39,15 +40,24 @@ export class resCancelValuationComponent extends BasePage implements OnInit {
       folios: [null, [Validators.required]],
       radio: [null, [Validators.required]],
       folio: [null, [Validators.required]],
-      cve: [null, [Validators.required]],
-      city: [null, [Validators.required]],
+      cve: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      city: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       receptionDate: [null, [Validators.required, maxDate(new Date())]],
       elaborationDate: [null, [Validators.required, maxDate(new Date())]],
-      sender: [null, [Validators.required]],
-      senderTxt: [null, [Validators.required]],
+      sender: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      senderTxt: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
 
-      addressee: [null, [Validators.required]],
-      addresseeTxt: [null, [Validators.required]],
+      addressee: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      addresseeTxt: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 

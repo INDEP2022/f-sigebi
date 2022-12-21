@@ -3,6 +3,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { maxDate } from 'src/app/common/validations/date.validators';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
+import {
   APPRAISAL_CHARGE,
   APPRAISAL_CHARGE_DETAILS,
   APPRAISAL_CHARGE_GOODS,
@@ -48,14 +52,23 @@ export class appraisalChargeComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       noEvent: [null, [Validators.required]],
-      cveProcess: [null, [Validators.required]],
+      cveProcess: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
       eventDate: [null, [Validators.required, maxDate(new Date())]],
-      observations: [null, [Validators.required]],
+      observations: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
 
       appliDate: [null, [Validators.required, maxDate(new Date())]],
-      type: [null, [Validators.required]],
-      status: [null, [Validators.required]],
-      reference: [null, [Validators.required]],
+      type: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      status: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      reference: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 

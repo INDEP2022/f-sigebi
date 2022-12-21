@@ -39,8 +39,14 @@ export class ReportUnsoldGoodsComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       typeGood: [null, [Validators.required]],
-      subtype: [null, [Validators.required]],
-      delegation: [null, [Validators.required]],
+      subtype: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      delegation: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       status: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       startDate: [null, [Validators.required, maxDate(new Date())]],
       filterGoods: [],

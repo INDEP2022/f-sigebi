@@ -5,6 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { maxDate } from 'src/app/common/validations/date.validators';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { RFCCURP_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { managementCaptureLinesModalComponent } from '../management-capture-lines-modal/management-capture-lines-modal.component';
 import { CAPTURA_LINES_COLUMNS } from './capture-lines-columns';
 
@@ -49,7 +50,7 @@ export class managementCaptureLinesComponent
       idEvent: [null, [Validators.required]],
       allotment: [null, [Validators.required]],
       idClient: [null, [Validators.required]],
-      rfc: [null, [Validators.required]],
+      rfc: [null, [Validators.required, Validators.pattern(RFCCURP_PATTERN)]],
     });
   }
 
@@ -58,10 +59,13 @@ export class managementCaptureLinesComponent
       typeReference: [null, [Validators.required]],
       dateValidity: [null, [Validators.required, maxDate(new Date())]],
       allotment: [null, [Validators.required]],
-      client: [null, [Validators.required]],
+      client: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       event: [null, [Validators.required]],
       amount: [null, [Validators.required]],
-      amountPenality: [null, [Validators.required]],
+      amountPenality: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 

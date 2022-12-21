@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { UNEXPOSED_GOODS_COLUMNS } from './columns';
 
 @Component({
@@ -39,9 +40,15 @@ export class ReportExposureForSaleComponent extends BasePage implements OnInit {
       typeGood: [],
       filterGoods: [],
       filterText: [],
-      subtype: [null, [Validators.required]],
-      delegation: [null, [Validators.required]],
-      status: [null, [Validators.required]],
+      subtype: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      delegation: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      status: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
   }
 

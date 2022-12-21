@@ -1,7 +1,7 @@
 <app-card [header]="true">
   <div header>
     <div class="ch-content">
-      <h5 class="title">Buscar Líneas de Captura</h5>
+      <h5 class="title">Buscar L&iacute;neas de Captura</h5>
     </div>
   </div>
   <div body>
@@ -15,7 +15,7 @@
         <div class="col-md-2">
           <form-field
             [control]="formSearch.get('allotment')"
-            label="Lote público">
+            label="Lote p&uacute;blico">
             <input
               type="text"
               class="form-control"
@@ -53,7 +53,7 @@
 <app-card [header]="true">
   <div header>
     <div class="ch-content">
-      <h5 class="title">ADMINISTRACIÓN DE LÍNEA DE CAPTURA</h5>
+      <h5 class="title">ADMINISTRACI&Oacute;N DE L&Iacute;NEA DE CAPTURA</h5>
     </div>
   </div>
   <div body>
@@ -68,13 +68,15 @@
               [searchable]="false"
               class="form-control"
               [clearable]="false">
-              <ng-option value="1">Garantía de seriedad</ng-option>
-              <ng-option value="2">Garantía de cumplimiento</ng-option>
+              <ng-option value="1">Garant&iacute;a de seriedad</ng-option>
+              <ng-option value="2">Garant&iacute;a de cumplimiento</ng-option>
               <ng-option value="1"
-                >Garantía de cumplimiento Extemporánea</ng-option
+                >Garant&iacute;a de cumplimiento Extempor&aacute;nea</ng-option
               >
-              <ng-option value="2">Liquidación</ng-option>
-              <ng-option value="2">Liquidación Extemporánea</ng-option>
+              <ng-option value="2">Liquidaci&oacute;n</ng-option>
+              <ng-option value="2"
+                >Liquidaci&oacute;n Extempor&aacute;nea</ng-option
+              >
             </ng-select>
           </form-field>
         </div>
@@ -92,7 +94,9 @@
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field [control]="formAdm.get('allotment')" label="Lote Público">
+          <form-field
+            [control]="formAdm.get('allotment')"
+            label="Lote P&uacute;blico">
             <input
               type="text"
               class="form-control"
@@ -144,14 +148,14 @@
 <app-card [header]="true">
   <div header>
     <div class="ch-content">
-      <h5 class="title">Actualizar línea de Captura</h5>
+      <h5 class="title">Actualizar l&iacute;nea de Captura</h5>
     </div>
   </div>
   <div body>
     <div class="ch-content" header>
       <h5 class="title">
-        *Los clientes que se encuentran en lista negra no podrán visualizar sus
-        líneas de captura en el Portal de Pagos
+        &#42;Los clientes que se encuentran en lista negra no podr&aacute;n
+        visualizar sus líneas de captura en el Portal de Pagos
       </h5>
       <div class="col-md-4 buttons">
         <app-columns-select [(settings)]="settings"></app-columns-select>
