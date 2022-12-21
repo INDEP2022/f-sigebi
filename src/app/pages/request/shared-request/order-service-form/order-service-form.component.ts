@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-order-service-form',
@@ -27,10 +28,10 @@ export class OrderServiceFormComponent implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      tranportZone: [null],
+      tranportZone: [null, [Validators.pattern(STRING_PATTERN)]],
       folioTlp: [null],
       visit: [null],
-      razonsNoRealization: [null],
+      razonsNoRealization: [null, [Validators.pattern(STRING_PATTERN)]],
       consolidate: [null],
     });
   }

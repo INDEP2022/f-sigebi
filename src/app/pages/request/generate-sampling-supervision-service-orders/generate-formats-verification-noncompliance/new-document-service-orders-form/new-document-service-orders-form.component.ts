@@ -6,8 +6,9 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { BasePage } from '../../../../../core/shared/base-page';
@@ -57,23 +58,23 @@ export class NewDocumentServiceOrdersFormComponent
     this.documentForm = this.fb.group({
       typeDoc: [null],
       noDoc: [null],
-      titleDoc: [null],
+      titleDoc: [null, [Validators.pattern(STRING_PATTERN)]],
       noExpedient: [null],
       noRequest: [null],
       noAsset: [{ value: null, disabled: true }],
 
-      responsible: [null],
+      responsible: [null, [Validators.pattern(STRING_PATTERN)]],
       noSiab: [null],
-      contributor: [null],
+      contributor: [null, [Validators.pattern(STRING_PATTERN)]],
       regionalDelegation: [{ value: '', disabled: this.isDisable }],
       noOfice: [null],
       state: [null],
       noProgramming: [null],
       typeTranfer: [null],
 
-      sender: [null],
-      comments: [null],
-      senderCharge: [null],
+      sender: [null, [Validators.pattern(STRING_PATTERN)]],
+      comments: [null, [Validators.pattern(STRING_PATTERN)]],
+      senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

@@ -1,12 +1,14 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ status }} BÓVEDA</h5>
+    <h5 class="modal-title">{{ status }} B&Oacute;VEDA</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-4">
-          <form-field [control]="form.get('idSafe')" label="Id de la Bóveda">
+          <form-field
+            [control]="form.get('idSafe')"
+            label="Id de la B&oacute;veda">
             <input
               type="number"
               class="form-control"
@@ -18,7 +20,9 @@
       </div>
       <div class="row mt-4">
         <div class="col-md-6">
-          <form-field [control]="form.get('description')" label="Descripción">
+          <form-field
+            [control]="form.get('description')"
+            label="Descripci&oacute;n">
             <textarea
               type="text"
               rows="3"
@@ -27,7 +31,9 @@
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="form.get('ubication')" label="Ubicación">
+          <form-field
+            [control]="form.get('ubication')"
+            label="Ubicaci&oacute;n">
             <textarea
               type="text"
               rows="3"
@@ -48,7 +54,7 @@
         <div class="col-md-6">
           <form-field
             [control]="form.get('registerNumber')"
-            label="Numero de registro">
+            label="N&uacute;mero de registro">
             <input
               type="number"
               class="form-control"

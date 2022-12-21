@@ -3,7 +3,7 @@
     <div class="d-flex bd-highlight">
       <div class="p-2 flex-grow-1 bd-highlight">
         <h5 class="title">
-          <strong>Informacion de Recepción de Solicitud</strong>
+          <strong>Informaci&oacute;n de Recepci&oacute;n de Solicitud</strong>
         </h5>
       </div>
       <div class="p-2 bd-highlight buttons">
@@ -32,12 +32,11 @@
         <div class="col-md-4">
           <form-field
             [control]="receptionForm.get('infoProvenance')"
-            label="Procedencia Información">
+            label="Procedencia Informaci&oacute;n">
             <input
               type="text"
               class="form-control"
-              formControlName="infoProvenance"
-              placeholder="" />
+              formControlName="infoProvenance" />
           </form-field>
         </div>
       </div>
@@ -45,24 +44,22 @@
         <div class="col-md-2">
           <form-field
             [control]="receptionForm.get('receptDate')"
-            label="Fecha de Recepcion">
+            label="Fecha de Recepci&oacute;n">
             <input
               type="text"
               class="form-control"
               formControlName="receptDate"
-              placeholder=""
               bsDatepicker />
           </form-field>
         </div>
         <div class="col-md-2">
           <form-field
             [control]="receptionForm.get('officeDate')"
-            label="*Fecha de Oficion">
+            label="&#42;Fecha de Ofici&oacute;n">
             <input
               type="text"
               class="form-control"
               formControlName="officeDate"
-              placeholder=""
               bsDatepicker />
           </form-field>
         </div>
@@ -85,8 +82,7 @@
             <input
               type="text"
               class="form-control"
-              formControlName="indiciado"
-              placeholder="" />
+              formControlName="indiciado" />
           </form-field>
         </div>
       </div>
@@ -98,8 +94,7 @@
             <input
               type="text"
               class="form-control"
-              formControlName="nameSender"
-              placeholder="" />
+              formControlName="nameSender" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -109,19 +104,17 @@
             <input
               type="text"
               class="form-control"
-              formControlName="roleSender"
-              placeholder="" />
+              formControlName="roleSender" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
             [control]="receptionForm.get('phoneSender')"
-            label="Telefono del Remitente">
+            label="Tel&eacute;fono del Remitente">
             <input
               type="number"
               class="form-control"
-              formControlName="phoneSender"
-              placeholder="" />
+              formControlName="phoneSender" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -131,48 +124,37 @@
             <input
               type="email"
               class="form-control"
-              formControlName="emailSender"
-              placeholder="" />
+              formControlName="emailSender" />
           </form-field>
         </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-3">
           <form-field [control]="receptionForm.get('sender')" label="Remitente">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="sender"
-              placeholder="" />
+            <input type="text" class="form-control" formControlName="sender" />
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field [control]="receptionForm.get('tribunal')" label="Jusgado">
+          <form-field [control]="receptionForm.get('tribunal')" label="Juzgado">
             <input
               type="text"
               class="form-control"
-              formControlName="tribunal"
-              placeholder="" />
+              formControlName="tribunal" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field [control]="receptionForm.get('crime')" label="Delito">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="crime"
-              placeholder="" />
+            <input type="text" class="form-control" formControlName="crime" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
             [control]="receptionForm.get('typeReception')"
-            label="Via de Recepción">
+            label="V&iacute;a de Recepci&oacute;n">
             <input
               type="text"
               class="form-control"
-              formControlName="typeReception"
-              placeholder="" />
+              formControlName="typeReception" />
           </form-field>
         </div>
       </div>
@@ -180,32 +162,26 @@
         <div class="col-md-3">
           <form-field
             [control]="receptionForm.get('destinationManage')"
-            label="Gestión de Destino">
+            label="Gesti&oacute;n de Destino">
             <input
               type="text"
               class="form-control"
-              formControlName="destinationManage"
-              placeholder="" />
+              formControlName="destinationManage" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
             [control]="receptionForm.get('contributor')"
-            label="Contribuyente y/o Indiciado">
+            label="Contribuyente y&#47;o Indiciado">
             <input
               type="text"
               class="form-control"
-              formControlName="contributor"
-              placeholder="" />
+              formControlName="contributor" />
           </form-field>
         </div>
         <div class="col-md-5">
           <form-field [control]="receptionForm.get('subject')" label="Asunto">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="subject"
-              placeholder="" />
+            <input type="text" class="form-control" formControlName="subject" />
           </form-field>
         </div>
       </div>
@@ -213,12 +189,11 @@
         <div class="col-md-3">
           <form-field
             [control]="receptionForm.get('transExpedient')"
-            label="Expediente Transferente/PAMA">
+            label="Expediente Transferente&#47;PAMA">
             <input
               type="text"
               class="form-control"
-              formControlName="transExpedient"
-              placeholder="" />
+              formControlName="transExpedient" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -228,8 +203,7 @@
             <input
               type="text"
               class="form-control"
-              formControlName="typeTransfer"
-              placeholder="" />
+              formControlName="typeTransfer" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -239,19 +213,14 @@
             <input
               type="text"
               class="form-control"
-              formControlName="transferEntityNotes"
-              placeholder="" />
+              formControlName="transferEntityNotes" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
             [control]="receptionForm.get('observations')"
             label="Observaciones">
-            <textarea
-              class="form-control"
-              placeholder=""
-              id=""
-              formControlName="observations">
+            <textarea class="form-control" id="" formControlName="observations">
             </textarea>
           </form-field>
         </div>

@@ -4,7 +4,7 @@
   </div>
   <div body class="body">
     <div class="row">
-      <h5 class="title">Información General</h5>
+      <h5 class="title">Informaci&oacute;n General</h5>
     </div>
     <div>
       <form [formGroup]="documentForm" class="form-material">
@@ -35,7 +35,7 @@
                 (change)="selectFile($event)" />
             </form-field>
             <span id="size" *ngIf="sizeMessage"
-              >Seleccione un archivo no mayor a 100 MB.</span
+              >Seleccione un archivo no mayor a 100 MB&#46;</span
             >
           </div>
         </div>
@@ -43,7 +43,7 @@
           <div class="col-md-4">
             <form-field
               [control]="documentForm.get('titleDoc')"
-              label="Titulo del Documento">
+              label="T&iacute;tulo del Documento">
               <input
                 type="text"
                 class="form-control"
@@ -55,7 +55,7 @@
           <div class="col-md-4">
             <form-field
               [control]="documentForm.get('noExpedient')"
-              label="No. Expediente">
+              label="No&#46; Expediente">
               <input
                 type="text"
                 class="form-control"
@@ -65,7 +65,7 @@
           <div class="col-md-4">
             <form-field
               [control]="documentForm.get('noRequest')"
-              label="No. Solicitud">
+              label="No&#46; Solicitud">
               <input
                 type="text"
                 class="form-control"
@@ -75,7 +75,7 @@
           <div class="col-md-4">
             <form-field
               [control]="documentForm.get('noAsset')"
-              label="No. Bien">
+              label="No&#46; Bien">
               <input
                 type="text"
                 class="form-control"
@@ -85,7 +85,9 @@
         </div>
         <div class="row pt-4">
           <div class="col-md-4">
-            <form-field [control]="documentForm.get('noSiab')" label="No. SIAB">
+            <form-field
+              [control]="documentForm.get('noSiab')"
+              label="No&#46; SIAB">
               <input
                 type="text"
                 class="form-control"
@@ -100,7 +102,7 @@
                 [data]="regionalDelegationSelected"
                 value="id"
                 bindLabel="id"
-                label="Delegación Regional"
+                label="Delegaci&oacute;n Regional"
                 (fetchItems)="getRegionalDelegationSelect($event)">
               </ngx-select>
             </form-field>
@@ -178,7 +180,7 @@
           <div class="col-md-4">
             <form-field
               [control]="documentForm.get('noOfice')"
-              label="No. Oficio">
+              label="No&#46; Oficio">
               <input
                 type="text"
                 class="form-control"

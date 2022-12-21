@@ -5,6 +5,7 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -125,8 +126,14 @@ export class NewFileModalComponent extends BasePage implements OnInit {
       fileDate: [null, [Validators.required]],
       reserveDate: [null],
       pages: [null, [Validators.required]],
-      dossiers: [null, [Validators.required]],
-      regionalDelegation: ['BAJA CALIFORNIA'],
+      dossiers: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      regionalDelegation: [
+        'BAJA CALIFORNIA',
+        [Validators.pattern(STRING_PATTERN)],
+      ],
       transferee: ['SAT - COMERCIO EXTERIOR'],
       ddcId: [3919],
       coding: ['AND/AC/10'],

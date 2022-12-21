@@ -5,6 +5,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { StorehouseService } from '../../../../core/services/catalogs/storehouse.service';
 
@@ -50,11 +51,19 @@ export class StorehouseDetailComponent implements OnInit {
       ],
       manager: [
         null,
-        Validators.compose([Validators.pattern(''), Validators.maxLength(255)]),
+        Validators.compose([
+          Validators.pattern(''),
+          Validators.maxLength(255),
+          Validators.pattern(STRING_PATTERN),
+        ]),
       ],
       description: [
         null,
-        Validators.compose([Validators.pattern(''), Validators.maxLength(255)]),
+        Validators.compose([
+          Validators.pattern(''),
+          Validators.maxLength(255),
+          Validators.pattern(STRING_PATTERN),
+        ]),
       ],
       municipality: [
         null,
@@ -66,7 +75,11 @@ export class StorehouseDetailComponent implements OnInit {
       ],
       ubication: [
         null,
-        Validators.compose([Validators.pattern(''), Validators.maxLength(255)]),
+        Validators.compose([
+          Validators.pattern(''),
+          Validators.maxLength(255),
+          Validators.pattern(STRING_PATTERN),
+        ]),
       ],
       idEntity: [null, Validators.compose([Validators.maxLength(255)])],
     });

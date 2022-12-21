@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 
 @Component({
@@ -19,12 +20,12 @@ export class AnnexDataComponent implements OnInit {
 
   initForm() {
     this.annexForm = this.fb.group({
-      relevantFacts: [null],
-      noncomplianceDescription: [null],
+      relevantFacts: [null, [Validators.pattern(STRING_PATTERN)]],
+      noncomplianceDescription: [null, [Validators.pattern(STRING_PATTERN)]],
       datenoncompliance: [null],
-      agreements: [null],
+      agreements: [null, [Validators.pattern(STRING_PATTERN)]],
       dateRepositionServices: [null],
-      warehouseManagement: [null],
+      warehouseManagement: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 }

@@ -1,6 +1,8 @@
 <div class="row" *ngIf="nombrePantalla == 'register-documentation'">
   <div class="col-md-8">
-    <h5 class="title">Correo(s) Electrónico(s) Notificación</h5>
+    <h5 class="title">
+      Correo&#40;s&#41; Electr&oacute;nico&#40;s&#41; Notificaci&oacute;n
+    </h5>
   </div>
   <div class="col-md-4 text-center">
     <button class="btn btn-primary btn-sm active m-2">
@@ -73,7 +75,7 @@
           <div class="mb-3 pl-4 pr-4">
             <form-field
               [control]="form.get('receptionDate')"
-              label="Fecha Recepción">
+              label="Fecha Recepci&oacute;n">
               <input
                 type="text"
                 class="form-control"
@@ -96,7 +98,7 @@
         <div class="mb-3 pl-4 pr-4">
           <form-field
             [control]="form.get('proceedingsTransf')"
-            label="Expediente Tranferente/PAMA">
+            label="Expediente Tranferente&#47;PAMA">
             <input
               type="text"
               class="form-control"
@@ -142,7 +144,7 @@
         <div class="mb-3 pl-4 pr-4">
           <form-field
             [control]="form.get('senderPhone')"
-            label="Teléfono del Remitente">
+            label="Tel&eacute;fono del Remitente">
             <input
               type="text"
               class="form-control"
@@ -169,7 +171,7 @@
         <div class="mb-3 pl-4 pr-4">
           <form-field
             [control]="form.get('taxpayer')"
-            label="Contribuyente y/o Indiciado">
+            label="Contribuyente y&#47;o Indiciado">
             <input
               type="text"
               class="form-control"
@@ -181,7 +183,7 @@
         <div class="mb-3 pl-4 pr-4">
           <form-field
             [control]="form.get('sourceInfo')"
-            label="Procedencia Información">
+            label="Procedencia Informaci&oacute;n">
             <select class="form-control" formControlName="sourceInfo">
               <option [value]="null">Seleccione un valor</option>
               <option [value]="1">1</option>
@@ -192,7 +194,7 @@
       </div>
       <div class="col-md-3">
         <div class="mb-3 pl-4 pr-4">
-          <form-field [control]="form.get('officeNumb')" label="No. Oficio">
+          <form-field [control]="form.get('officeNumb')" label="No&#46; Oficio">
             <input
               type="text"
               class="form-control"
@@ -220,7 +222,7 @@
         <div class="mb-3 pl-4 pr-4">
           <form-field
             [control]="form.get('viaRecept')"
-            label="Vía de Recepción">
+            label="V&iacute;a de Recepci&oacute;n">
             <input
               type="text"
               class="form-control"

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { RevisionReasonService } from 'src/app/core/services/catalogs/revision-reason.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IRevisionReason } from '../../../../core/models/catalogs/revision-reason.model';
 
@@ -35,13 +36,22 @@ export class RevisionReasonFormComponent extends BasePage implements OnInit {
     this.revisionReasonForm = this.fb.group({
       id: [null, [Validators.required]],
       estatus_inicial: [null, [Validators.required, Validators.maxLength(3)]],
-      descripcion_motivo: [null, [Validators.required]],
+      descripcion_motivo: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       tipo_bien: [null, [Validators.required, Validators.maxLength(1)]],
       estatus_rev: [null, [Validators.required, Validators.maxLength(3)]],
-      area_responsable: [null, [Validators.required]],
+      area_responsable: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       estatus_fin: [null, [Validators.required, Validators.maxLength(3)]],
       pantalla: [null, [Validators.required]],
-      parametro: [null, [Validators.required]],
+      parametro: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
     if (this.revisionReason != null) {
       this.edit = true;

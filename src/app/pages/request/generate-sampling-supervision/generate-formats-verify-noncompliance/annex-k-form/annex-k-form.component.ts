@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { PrintReportModalComponent } from '../../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
 import { PrintReportRestitutionModalComponent } from '../../restitution-assets-numeric-or-sort/print-report-restitution-modal/print-report-restitution-modal.component';
@@ -31,26 +32,26 @@ export class AnnexKFormComponent implements OnInit {
 
   initDetailForm(): void {
     this.detailForm = this.fb.group({
-      name: [null],
-      position: [null],
+      name: [null, [Validators.pattern(STRING_PATTERN)]],
+      position: [null, [Validators.pattern(STRING_PATTERN)]],
       typeSign: [null],
     });
   }
 
   initParicipantForm(): void {
     this.participantDataForm = this.fb.group({
-      name1: [null],
-      position1: [null],
-      name2: [null],
-      position2: [null],
+      name1: [null, [Validators.pattern(STRING_PATTERN)]],
+      position1: [null, [Validators.pattern(STRING_PATTERN)]],
+      name2: [null, [Validators.pattern(STRING_PATTERN)]],
+      position2: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
   initAnnexDetailForm(): void {
     this.detailAnnexForm = this.fb.group({
-      warehouseManager: [null],
-      relevantFacts: [null],
-      agreements: [null],
+      warehouseManager: [null, [Validators.pattern(STRING_PATTERN)]],
+      relevantFacts: [null, [Validators.pattern(STRING_PATTERN)]],
+      agreements: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

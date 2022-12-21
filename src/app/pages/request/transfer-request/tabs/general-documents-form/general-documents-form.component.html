@@ -4,7 +4,7 @@
       class="text-color"
       (click)="showSearchForm = true"
       *ngIf="!showSearchForm">
-      <i class="fa fa-angle-right" aria-hidden="true"></i> Búsqueda
+      <i class="fa fa-angle-right" aria-hidden="true"></i> B&uacute;squeda
       expedientes</a
     >
   </p>
@@ -14,7 +14,7 @@
       class="text-color"
       (click)="showSearchForm = false"
       *ngIf="showSearchForm">
-      <i class="fa fa-angle-down" aria-hidden="true"></i> Búsqueda
+      <i class="fa fa-angle-down" aria-hidden="true"></i> B&uacute;squeda
       expedientes</a
     >
   </p>
@@ -26,7 +26,7 @@
       <div class="col-md-4">
         <form-field
           [control]="searchFileForm.get('requestNumber')"
-          label="No. solicitud">
+          label="No&#46; solicitud">
           <input
             type="text"
             class="form-control"
@@ -64,7 +64,7 @@
       <div class="col-md-4">
         <form-field
           [control]="searchFileForm.get('expedientNumber')"
-          label="No. expediente">
+          label="No&#46; expediente">
           <input
             type="number"
             class="form-control"
@@ -74,14 +74,14 @@
       <div class="col-md-4">
         <form-field
           [control]="searchFileForm.get('indicated')"
-          label="Contribuyente y/o indiciado">
+          label="Contribuyente y&#47;o indiciado">
           <input type="text" class="form-control" formControlName="indicated" />
         </form-field>
       </div>
       <div class="col-md-4">
         <form-field
           [control]="searchFileForm.get('domainExtinction')"
-          label="Extinción de dominio">
+          label="Extinci&oacute;n de dominio">
           <input
             type="text"
             class="form-control"
@@ -99,7 +99,7 @@
             [data]="regionalsDelegations"
             value="id"
             bindLabel="id"
-            label="Delegación regional"
+            label="Delegaci&oacute;n regional"
             (fetchItems)="getRegionalDelegationSelect($event)">
           </ngx-select>
         </form-field>
@@ -108,7 +108,7 @@
       <div class="col-md-4">
         <form-field
           [control]="searchFileForm.get('transferFile')"
-          label="Expediente transferente / PAMA">
+          label="Expediente transferente &#47; PAMA">
           <input
             type="text"
             class="form-control"
@@ -152,7 +152,7 @@
       <div class="col-md-4">
         <form-field
           [control]="searchFileForm.get('inquiryPreliminary')"
-          label="Averiguación prevía">
+          label="Averiguaci&uacute;n previa">
           <input
             type="text"
             class="form-control"
@@ -203,7 +203,7 @@
       <div class="col-md-4">
         <form-field
           [control]="searchFileForm.get('protectionNumber')"
-          label="No° Amparo">
+          label="No. Amparo">
           <input
             type="text"
             class="form-control"
@@ -232,7 +232,7 @@
   </button>
 
   <button (click)="electronicSign()" class="btn btn-pink btn-sm active">
-    <i class="fa fa-key"></i> Firma electrónica
+    <i class="fa fa-key"></i> Firma electr&oacute;nica
   </button>
 </div>
 <div class="d-flex justify-content-end">

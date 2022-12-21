@@ -4,14 +4,14 @@
       <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} SOLICITUD</h5>
     </div>
     <ng-template #optionTitle>
-      <h5 class="modal-title">Documentación Complementaria</h5>
+      <h5 class="modal-title">Documentaci&oacute;n Complementaria</h5>
     </ng-template>
   </div>
   <div body class="body">
     <form [formGroup]="requestForm" class="form-material">
       <app-card [header]="true">
         <div class="ch-content" header>
-          <h6 class="title">Informacion de la Solicitud</h6>
+          <h6 class="title">Informaci&oacute;n de la Solicitud</h6>
         </div>
         <div body>
           <div class="row pt-5">
@@ -23,7 +23,6 @@
                   type="text"
                   class="form-control"
                   formControlName="date"
-                  placeholder=""
                   bsDatepicker />
               </form-field>
             </div>
@@ -34,7 +33,7 @@
                 control="regDelega"
                 (fetchItems)="getRegionalDeleg($event)"
                 [data]="selectRegionalDeleg"
-                label="Delegacion Regional"
+                label="Delegaci&oacute;n Regional"
                 value="regDelega"></ngx-select>
             </div>
 
@@ -51,12 +50,11 @@
             <div class="col-md-3">
               <form-field
                 [control]="requestForm.get('noOfi')"
-                label="No. Oficina">
+                label="No&#46; Oficina">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="noOfi"
-                  placeholder="" />
+                  formControlName="noOfi" />
               </form-field>
             </div>
           </div>
@@ -133,7 +131,7 @@
         <div body>
           <div class="row pt-5">
             <div class="col-md-3" style="line-height: 2.5">
-              Tipo de Usuario:
+              Tipo de Usuario&#58;
             </div>
             <div class="col-sm-1">
               <form-radio label="All">
@@ -164,13 +162,12 @@
           </div>
 
           <div class="row pt-5">
-            <div class="col-md-3">Usuario Recepción:</div>
+            <div class="col-md-3">Usuario Recepci&oacute;n&#58;</div>
             <div class="col-md-3">
               <input
                 type="text"
                 class="form-control"
-                formControlName="receiUser"
-                placeholder="" />
+                formControlName="receiUser" />
             </div>
           </div>
         </div>

@@ -2,6 +2,11 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  RFCCURP_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-upload-electronic-signature',
@@ -34,12 +39,21 @@ export class UploadElectronicSignatureComponent
 
   prepareForm() {
     this.uploadFileForm = this.fb.group({
-      name: [null, [Validators.required]],
-      charge: [null, [Validators.required]],
-      password: [null, [Validators.required]],
-      rfc: [null, [Validators.required]],
-      certificate: [null, [Validators.required]],
-      keyCertificate: [null, [Validators.required]],
+      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      charge: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      password: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      rfc: [null, [Validators.required, Validators.pattern(RFCCURP_PATTERN)]],
+      certificate: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      keyCertificate: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
     });
 
     if (this.edit) {

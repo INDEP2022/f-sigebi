@@ -6,6 +6,7 @@ import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { WarehouseService } from '../../../../core/services/catalogs/warehouse.service';
 
@@ -51,15 +52,24 @@ export class WarehousesDetailComponent implements OnInit {
       idWarehouse: [null],
       description: [
         '',
-        Validators.compose([Validators.pattern(''), Validators.required]),
+        Validators.compose([
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ]),
       ],
       ubication: [
         null,
-        Validators.compose([Validators.pattern(''), Validators.required]),
+        Validators.compose([
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ]),
       ],
       manager: [
         null,
-        Validators.compose([Validators.pattern(''), Validators.required]),
+        Validators.compose([
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ]),
       ],
       registerNumber: [
         null,
@@ -83,15 +93,24 @@ export class WarehousesDetailComponent implements OnInit {
       ],
       indActive: [
         null,
-        Validators.compose([Validators.pattern(''), Validators.required]),
+        Validators.compose([
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ]),
       ],
       type: [
         null,
-        Validators.compose([Validators.pattern(''), Validators.required]),
+        Validators.compose([
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ]),
       ],
       responsibleDelegation: [
         null,
-        Validators.compose([Validators.pattern(''), Validators.required]),
+        Validators.compose([
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ]),
       ],
     });
     if (this.edit) {

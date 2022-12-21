@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-address-origin-form',
@@ -26,10 +27,10 @@ export class AddressOriginFormComponent implements OnInit {
 
   prepareForm() {
     this.addressOriginForm = this.fb.group({
-      warehouse: [null],
-      street: [null],
-      cp: [null],
-      colony: [null],
+      warehouse: [null, [Validators.pattern(STRING_PATTERN)]],
+      street: [null, [Validators.pattern(STRING_PATTERN)]],
+      cp: [null, [Validators.pattern(STRING_PATTERN)]],
+      colony: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 }

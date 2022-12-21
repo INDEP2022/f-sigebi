@@ -1,6 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  EMAIL_PATTERN,
+  PHONE_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-register-documentation-form',
@@ -62,23 +67,32 @@ export class RegisterDocumentationFormComponent
   prepareForm() {
     this.registerForm = this.fb.group({
       priority: [null],
-      contributor: [null, [Validators.required]],
+      contributor: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       fileType: [null],
       infoOrigin: [null],
       receptionDate: [null, [Validators.required]],
       memorandumNo: [null, [Validators.required]],
-      transferFile: [null, [Validators.required]],
+      transferFile: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       memorandumDate: [null, [Validators.required]],
       subject: [this.subject],
       receptionMethod: [null],
       transferType: [null],
-      senderName: [null],
-      senderPosition: [null],
-      senderPhone: [null],
-      senderEmail: [null],
-      judgementType: [null, [Validators.required]],
-      judgement: [null],
-      observations: [null],
+      senderName: [null, [Validators.pattern(STRING_PATTERN)]],
+      senderPosition: [null, [Validators.pattern(STRING_PATTERN)]],
+      senderPhone: [null, [Validators.pattern(PHONE_PATTERN)]],
+      senderEmail: [null, [Validators.pattern(EMAIL_PATTERN)]],
+      judgementType: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      judgement: [null, [Validators.pattern(STRING_PATTERN)]],
+      observations: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

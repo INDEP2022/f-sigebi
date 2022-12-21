@@ -12,7 +12,9 @@
         </div>
 
         <div class="col-md-6">
-          <form-field [control]="statusTransferForm.get('code')" label="Código">
+          <form-field
+            [control]="statusTransferForm.get('code')"
+            label="C&oacute;digo">
             <input type="number" class="form-control" formControlName="code" />
           </form-field>
         </div>
@@ -20,13 +22,12 @@
         <div class="col-md-12">
           <form-field
             [control]="statusTransferForm.get('description')"
-            label="Descripción">
+            label="Descripci&oacute;n">
             <textarea
               class="form-control"
               type="text"
               rows="2"
-              formControlName="description"
-              placeholder="Descripción"></textarea>
+              formControlName="description"></textarea>
           </form-field>
         </div>
       </div>

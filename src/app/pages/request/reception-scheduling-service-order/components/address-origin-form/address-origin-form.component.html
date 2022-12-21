@@ -5,7 +5,8 @@
         class="text-color"
         (click)="showaddressOrigin = true"
         *ngIf="!showaddressOrigin">
-        <i class="fa fa-angle-right" aria-hidden="true"></i> Dirección origen</a
+        <i class="fa fa-angle-right" aria-hidden="true"></i> Direcci&oacute;n
+        origen</a
       >
     </p>
 
@@ -14,7 +15,8 @@
         class="text-color"
         (click)="showaddressOrigin = false"
         *ngIf="showaddressOrigin">
-        <i class="fa fa-angle-down" aria-hidden="true"></i> Dirección origen</a
+        <i class="fa fa-angle-down" aria-hidden="true"></i> Direcci&oacute;n
+        origen</a
       >
     </p>
   </h5>
@@ -23,7 +25,7 @@
       <div class="pt-4">
         <form-field
           [control]="addressOriginForm.get('warehouse')"
-          label="Almacén">
+          label="Almac&eacute;n">
           <input type="text" class="form-control" formControlName="warehouse" />
         </form-field>
       </div>
@@ -36,7 +38,7 @@
       <div class="pt-3">
         <form-field
           [control]="addressOriginForm.get('cp')"
-          label="Código postal">
+          label="C&oacute;digo postal">
           <input type="text" class="form-control" formControlName="cp" />
         </form-field>
       </div>

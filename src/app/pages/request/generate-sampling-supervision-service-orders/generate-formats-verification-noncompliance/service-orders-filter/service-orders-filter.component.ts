@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 
 @Component({
@@ -20,7 +21,7 @@ export class ServiceOrdersFilterComponent implements OnInit {
   initFilterForm() {
     this.filterForm = this.fb.group({
       noServiceOrder: [null],
-      folioServiseOrder: [null],
+      folioServiseOrder: [null, [Validators.pattern(STRING_PATTERN)]],
       noRequest: [null],
     });
   }
