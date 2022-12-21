@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { PhotographyFormComponent } from '../../request/shared-request/photography-form/photography-form.component';
+import { PhotographyFormComponent } from '../../shared-request/photography-form/photography-form.component';
 import { ChargeDocumentsFormComponent } from '../components/charge-documents-form/charge-documents-form.component';
 import { EntryOrderFormComponent } from '../components/entry-order-form/entry-order-form.component';
 import { FormatReclamationFormComponent } from '../components/format-reclamation-form/format-reclamation-form.component';
