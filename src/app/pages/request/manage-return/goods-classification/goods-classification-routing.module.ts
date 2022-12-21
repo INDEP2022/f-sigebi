@@ -12,7 +12,7 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   // Clasificación Bienes
   {
-    path: 'clasificacion-bienes',
+    path: 'goods-classification',
     loadChildren: async () =>
       (await import('./goods-classification/goods-classification.module'))
         .GoodsClassificationModule,
