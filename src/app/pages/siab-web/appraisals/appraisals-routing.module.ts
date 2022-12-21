@@ -3,23 +3,17 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'sw-avaluos-m-valuation-request',
+    path: 'valuation-request',
     loadChildren: async () =>
-      (
-        await import(
-          './sw-avaluos-m-valuation-request/sw-avaluos-m-valuation-request.module'
-        )
-      ).SwAvaluosMValuationRequestModule,
+      (await import('./valuation-request/valuation-request.module'))
+        .valuationRequestModule,
     data: { title: 'Solicitud valuacion' },
   },
   {
-    path: 'sw-avaluos-m-res-cancel-valuation',
+    path: 'res-cancel-valuation',
     loadChildren: async () =>
-      (
-        await import(
-          './sw-avaluos-m-res-cancel-valuation/sw-avaluos-m-res-cancel-valuation.module'
-        )
-      ).SwAvaluosMResCancelValuationModule,
+      (await import('./res-cancel-valuation/res-cancel-valuation.module'))
+        .resCancelValuationModule,
     data: { title: 'Res / cancel valuacion' },
   },
 ];
