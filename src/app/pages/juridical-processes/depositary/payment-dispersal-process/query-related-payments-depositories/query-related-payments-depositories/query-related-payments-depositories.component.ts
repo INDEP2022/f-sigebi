@@ -167,6 +167,10 @@ export class QueryRelatedPaymentsDepositoriesComponent
       noBien: [this.noBienReadOnly, [Validators.required]], //*
       nombramiento: ['', [Validators.required]], //*
       fecha: ['', [Validators.required]], //*
+      fechaEliminarDispersion: [
+        '',
+        [Validators.minLength(2), Validators.maxLength(10)],
+      ], //*
     });
     this.formDepositario = this.fb.group({
       idDepositario: ['', [Validators.required]], //*

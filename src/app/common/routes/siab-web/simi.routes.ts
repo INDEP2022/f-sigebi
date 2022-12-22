@@ -18,10 +18,6 @@ export const SAMI_ROUTES = [
         label: 'Consulta de Tareas',
         link: '/pages/siab-web/sami/consult-tasks',
       },
-      {
-        label: 'Indicadores SAT',
-        link: '/pages/siab-web/sami/indicators-sat',
-      },
     ],
   },
 ];

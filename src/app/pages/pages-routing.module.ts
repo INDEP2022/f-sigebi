@@ -69,14 +69,14 @@ const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path: 'juridicos',
+    path: 'juridical',
     loadChildren: async () =>
       (await import('./juridical-processes/juridical-processes.module'))
         .JuridicalProcessesModule,
     data: { title: 'Juridicos' },
   },
   {
-    path: 'seguridad',
+    path: 'security',
     loadChildren: () =>
       import('./security/security.module').then(m => m.SecurityModule),
   },
