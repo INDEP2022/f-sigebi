@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { GRV_DETALLES_COLUMNS, GV_LOTES_COLUMNS } from './columns';
 
 @Component({
@@ -40,8 +41,14 @@ export class BatchStatusMonitoringComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       typeGood: [null, [Validators.required]],
       event: [null, [Validators.required]],
-      transferee: [null, [Validators.required]],
-      allotment: [null, [Validators.required]],
+      transferee: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      allotment: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 

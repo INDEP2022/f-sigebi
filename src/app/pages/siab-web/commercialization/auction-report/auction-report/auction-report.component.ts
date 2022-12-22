@@ -6,6 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { AUCTION_REPORT_COLUMNS } from './auction-report-columns';
 
 @Component({
@@ -56,13 +57,19 @@ export class auctionReportComponent extends BasePage implements OnInit {
 
   private prepareFormFilter() {
     this.formReport = this.fb.group({
-      nameReport: [null, [Validators.required]],
+      nameReport: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 
   private prepareFormReport() {
     this.formReport = this.fb.group({
-      nameReport: [null, [Validators.required]],
+      nameReport: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 

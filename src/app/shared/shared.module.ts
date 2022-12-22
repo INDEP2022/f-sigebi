@@ -25,6 +25,7 @@ import { SearchBarSimpleComponent } from './components/search-bar-simple/search-
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
 import { SeeMoreComponent } from './components/see-more/see-more.component';
 import { SelectComponent } from './components/select/select.component';
+import { PermissionsDirective } from './directives/permissions.directive';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { SelectComponent } from './components/select/select.component';
     SearchBarSimpleComponent,
     DividerComponent,
     CheckboxElementComponent,
+    PermissionsDirective,
   ],
   imports: [
     CommonModule,
@@ -80,6 +82,7 @@ import { SelectComponent } from './components/select/select.component';
     CheckboxElementComponent,
     CheckboxColumnComponent,
     NgScrollbarModule,
+    PermissionsDirective,
   ],
 })
 export class SharedModule {
