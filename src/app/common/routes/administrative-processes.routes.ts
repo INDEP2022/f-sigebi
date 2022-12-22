@@ -465,6 +465,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Analitico de bienes inmuebles',
             link: '/pages/administrative-processes/real-estate-analytical-report',
           },
+          {
+            label: 'Acumulado de bienes mensual',
+            link: '/pages/administrative-processes/accumulated-monthly-assets',
+          },
         ],
       },
       {
