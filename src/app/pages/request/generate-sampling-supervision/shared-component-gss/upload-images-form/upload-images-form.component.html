@@ -10,8 +10,8 @@
             class="text-color"
             (click)="showSearchForm = true"
             *ngIf="!showSearchForm">
-            <i class="fa fa-angle-right" aria-hidden="true"></i> Búsqueda de
-            Imágenes</a
+            <i class="fa fa-angle-right" aria-hidden="true"></i> B&uacute;squeda
+            de Im&aacute;genes</a
           >
         </p>
 
@@ -20,8 +20,8 @@
             class="text-color"
             (click)="showSearchForm = false"
             *ngIf="showSearchForm">
-            <i class="fa fa-angle-down" aria-hidden="true"></i> Búsqueda de
-            Imágenes</a
+            <i class="fa fa-angle-down" aria-hidden="true"></i> B&uacute;squeda
+            de Im&aacute;genes</a
           >
         </p>
       </h5>
@@ -32,7 +32,7 @@
           <div class="col-md-4">
             <form-field
               [control]="searchPhotoForm.get('noManagement')"
-              label="No. Gestion">
+              label="No&#46; Gesti&oacute;n">
               <input
                 type="text"
                 class="form-control"
@@ -42,7 +42,7 @@
           <div class="col-md-4">
             <form-field
               [control]="searchPhotoForm.get('noProgramming')"
-              label="No. Programación">
+              label="No&#46; Programaci&oacute;n">
               <input
                 type="text"
                 class="form-control"
@@ -52,7 +52,7 @@
           <div class="col-md-4">
             <form-field
               [control]="searchPhotoForm.get('noPhoto')"
-              label="No. Fotografia">
+              label="No&#46; Fotograf&iacute;a">
               <input
                 type="text"
                 class="form-control"
@@ -72,7 +72,7 @@
           <div class="col-md-4">
             <form-field
               [control]="searchPhotoForm.get('titleImage')"
-              label="Titulo Imagen">
+              label="T&iacute;tulo Im&aacute;gen">
               <input
                 type="text"
                 class="form-control"
@@ -82,7 +82,7 @@
           <div class="col-md-4">
             <form-field
               [control]="searchPhotoForm.get('folioProgramming')"
-              label="Folio Programación">
+              label="Folio Programaci&oacute;n">
               <input
                 type="text"
                 class="form-control"
@@ -120,7 +120,7 @@
             class="btn btn-success btn-sm ml-2"
             type="button"
             (click)="file.click()">
-            Adjuntar Imagen
+            Adjuntar Im&aacute;gen
           </button>
           <input
             type="file"

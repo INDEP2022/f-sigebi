@@ -4,7 +4,8 @@
       class="text-color"
       (click)="showSearchForm = true"
       *ngIf="!showSearchForm">
-      <i class="fa fa-angle-right" aria-hidden="true"></i> Búsqueda solicitud</a
+      <i class="fa fa-angle-right" aria-hidden="true"></i> B&uacute;squeda
+      solicitud</a
     >
   </p>
 
@@ -13,7 +14,8 @@
       class="text-color"
       (click)="showSearchForm = false"
       *ngIf="showSearchForm">
-      <i class="fa fa-angle-down" aria-hidden="true"></i> Búsqueda solicitud</a
+      <i class="fa fa-angle-down" aria-hidden="true"></i> B&uacute;squeda
+      solicitud</a
     >
   </p>
 </h5>
@@ -23,7 +25,7 @@
       <div class="col-md-6">
         <form-field
           [control]="searchFileForm.get('requestNumber')"
-          label="Número de solicitud">
+          label="N&uacute;mero de solicitud">
           <input
             type="text"
             class="form-control"
@@ -38,7 +40,7 @@
             [data]="regionalsDelegations"
             value="id"
             bindLabel="id"
-            label="Delegación regional"
+            label="Delegaci&oacute;n regional"
             (fetchItems)="getRegionalDelegationSelect($event)">
           </ngx-select>
         </form-field>
@@ -49,7 +51,7 @@
       <div class="col-md-6">
         <form-field
           [control]="searchFileForm.get('expedientNumber')"
-          label="Número de expediente">
+          label="N&uacute;mero de expediente">
           <input
             type="text"
             class="form-control"

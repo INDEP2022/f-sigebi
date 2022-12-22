@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Registro de Inventarios para Donación Directa</h5>
+    <h5 class="title">Registro de Inventarios para Donaci&oacute;n Directa</h5>
   </div>
 
   <div body>
@@ -53,7 +53,7 @@
             <div class="mb-3 pl-4 pr-4">
               <form-field
                 [control]="form.get('justification')"
-                label="Justifiación">
+                label="Justifiaci&oacute;n">
                 <textarea
                   class="form-control"
                   formControlName="justification"></textarea>
@@ -109,7 +109,9 @@
           </div>
           <div class="col-12 col-md-4 mb-2">
             <div class="mb-1 pl-4 pr-4">
-              <form-field [control]="form.get('direction')" label="Dirección">
+              <form-field
+                [control]="form.get('direction')"
+                label="Direcci&oacute;n">
                 <input
                   type="text"
                   class="form-control"
@@ -137,7 +139,7 @@
             <div class="mb-3 pl-4 pr-4">
               <form-field
                 [control]="form.get('cveAuth')"
-                label="Cve Autorización">
+                label="Cve Autorizaci&oacute;n">
                 <input
                   type="text"
                   class="form-control"
@@ -166,13 +168,13 @@
               <form-radio label="En Trámite">
                 <input type="radio" formControlName="status" value="process" />
               </form-radio>
-              <form-radio label="Asignación">
+              <form-radio label="Asignaci&oacute;n">
                 <input
                   type="radio"
                   formControlName="status"
                   value="assignment" />
               </form-radio>
-              <form-radio label="Donación">
+              <form-radio label="Donaci&oacute;n">
                 <input type="radio" formControlName="status" value="donation" />
               </form-radio>
             </div>

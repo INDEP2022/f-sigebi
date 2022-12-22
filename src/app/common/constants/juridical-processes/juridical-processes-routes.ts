@@ -4,10 +4,14 @@ import {
 } from './juridical-processes-nombres-rutas-archivos';
 
 const JURIDICAL_PROCESSES: string[] = [
-  'dictaminaciones-juridicas',
-  'actualizacion-datos-expediente',
-  'abandono-devolucion-monitor',
-  'declaracion-abandono-aseguramiento',
+  // 'dictaminaciones-juridicas',
+  'juridical-ruling',
+  // 'actualizacion-datos-expediente',
+  'file-data-update',
+  // 'abandono-devolucion-monitor',
+  'return-abandonment-monitor',
+  // 'declaracion-abandono-aseguramiento',
+  'declaration-abandonment-insurance',
 ];
 
 export const CREAR_MENU_JURIDICAL_PROCESSES = function () {

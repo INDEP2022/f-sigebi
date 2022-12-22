@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Realizar programación</h5>
+    <h5 class="title">Realizar programaci&oacute;n</h5>
   </div>
   <div body>
     <form [formGroup]="performForm" class="form-material">
@@ -13,13 +13,15 @@
               [data]="regionalsDelegations"
               value="id"
               bindLabel="id"
-              label="Selecciona una delegación regional"
+              label="Selecciona una delegaci&oacute;n regional"
               (fetchItems)="getRegionalDelegationSelect($event)"></ngx-select>
           </form-field>
         </div>
 
         <div class="col-md-4">
-          <form-field [control]="performForm.get('address')" label="Dirección">
+          <form-field
+            [control]="performForm.get('address')"
+            label="Direcci&oacute;n">
             <input type="text" class="form-control" formControlName="address" />
           </form-field>
         </div>
@@ -133,7 +135,7 @@
         <div class="col-md-4">
           <form-field
             [control]="performForm.get('observation')"
-            label="Observación">
+            label="Observaci&oacute;n">
             <input
               type="text"
               class="form-control"
@@ -143,13 +145,13 @@
       </div>
 
       <div class="row pt-5" *ngIf="showForm">
-        <h5 class="title">Almacén</h5>
+        <h5 class="title">Almac&eacute;n</h5>
 
         <div class="form-inline justify-content-end btn-toolbar">
           <button
             (click)="newWarehouse()"
             class="btn btn-primary btn-sm active">
-            Solicitar alta almacén
+            Solicitar alta almac&eacute;n
           </button>
         </div>
 
@@ -163,13 +165,14 @@
                 value="id"
                 bindLabel="name"
                 (change)="showWarehouse($event)"
-                label="Selecciona un almacén"
+                label="Selecciona un almac&eacute;n"
                 (fetchItems)="getWarehouseSelect($event)"></ngx-select>
             </form-field>
           </div>
           <div class="col-md-6">
             <label class="title"
-              >Dirección Almacén: {{ warehouseAddress }}</label
+              >Direcci&oacute;n Almac&eacute;n&#58;
+              {{ warehouseAddress }}</label
             >
           </div>
         </div>

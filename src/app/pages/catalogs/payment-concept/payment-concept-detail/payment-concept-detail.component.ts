@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { PaymentConceptService } from 'src/app/core/services/catalogs/payment-concept.service';
+import { STRING_PATTERN } from '../../../../core/shared/patterns';
 
 @Component({
   selector: 'app-payment-concept-detail',
@@ -37,7 +38,7 @@ export class PaymentConceptDetailComponent implements OnInit {
       description: [
         null,
         Validators.compose([
-          Validators.pattern(''),
+          Validators.pattern(STRING_PATTERN),
           Validators.required,
           Validators.maxLength(100),
         ]),

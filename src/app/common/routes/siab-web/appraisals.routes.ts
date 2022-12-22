@@ -4,11 +4,11 @@ export const APPRAISALS_ROUTES = [
     subItems: [
       {
         label: 'Solicitud valuacion',
-        link: '/pages/siab-web/appraisals/sw-avaluos-m-valuation-request',
+        link: '/pages/siab-web/appraisals/valuation-request',
       },
       {
         label: 'Res / cancel valuacion',
-        link: '/pages/siab-web/appraisals/sw-avaluos-m-res-cancel-valuation',
+        link: '/pages/siab-web/appraisals/res-cancel-valuation',
       },
     ],
   },

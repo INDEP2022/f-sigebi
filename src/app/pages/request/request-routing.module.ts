@@ -131,7 +131,7 @@ const routes: Routes = [
   },
   // gestionar devolucion
   {
-    path: 'gestionar-devolucion',
+    path: 'manage-return',
     loadChildren: async () =>
       (await import('./manage-return/manage-return.module')).ManageReturnModule,
     data: { title: 'Registro de Solicitud de Devolución' },

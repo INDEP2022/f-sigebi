@@ -8,13 +8,11 @@
         <div class="col-md-6">
           <form-field
             [control]="form.get('noRegister')"
-            label="Número de Registro">
+            label="N&uacute;mero de Registro">
             <input
               type="number"
               class="form-control"
-              formControlName="noRegister"
-              min="1"
-              pattern="^[0-9]+" />
+              formControlName="noRegister" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -22,9 +20,7 @@
             <input
               type="number"
               class="form-control"
-              formControlName="idCity"
-              min="1"
-              pattern="^[0-9]+" />
+              formControlName="idCity" />
           </form-field>
         </div>
       </div>
@@ -50,25 +46,23 @@
       </div>
       <div class="row mt-4">
         <div class="col-md-4">
-          <form-field [control]="form.get('noDelegation')" label="Delegacíon">
+          <form-field
+            [control]="form.get('noDelegation')"
+            label="Delegací&oacute;n">
             <input
               type="number"
               class="form-control"
-              formControlName="noDelegation"
-              min="1"
-              pattern="^[0-9]+" />
+              formControlName="noDelegation" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
             [control]="form.get('noSubDelegation')"
-            label="Subdelegación">
+            label="Subdelegaci&oacute;n">
             <input
               type="number"
               class="form-control"
-              formControlName="noSubDelegation"
-              min="1"
-              pattern="^[0-9]+" />
+              formControlName="noSubDelegation" />
           </form-field>
         </div>
         <div class="col-md-4">

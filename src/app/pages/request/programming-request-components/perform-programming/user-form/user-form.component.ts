@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { EMAIL_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -24,8 +25,8 @@ export class UserFormComponent extends BasePage implements OnInit {
   }
   prepareForm() {
     this.userForm = this.fb.group({
-      user: [null, [Validators.required]],
-      email: [null, [Validators.required]],
+      user: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      email: [null, [Validators.required, Validators.pattern(EMAIL_PATTERN)]],
       chargeUser: [null, [Validators.required]],
     });
 

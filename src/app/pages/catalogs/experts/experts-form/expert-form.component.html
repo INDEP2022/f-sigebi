@@ -7,11 +7,7 @@
       <div class="row">
         <div class="col-md-12">
           <form-field [control]="form.get('name')" label="Nombre del experto">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="name"
-              placeholder="ejemplo" />
+            <input type="text" class="form-control" formControlName="name" />
           </form-field>
         </div>
         <div class="col-md-12">
@@ -19,19 +15,17 @@
             <input
               type="text"
               class="form-control"
-              formControlName="position"
-              placeholder="ejemplo" />
+              formControlName="position" />
           </form-field>
         </div>
         <div class="col-md-12">
           <form-field
             [control]="form.get('registryNumber')"
-            label="Numero de Registro">
+            label="N&uacute;mero de Registro">
             <input
               type="number"
               class="form-control"
-              formControlName="registryNumber"
-              placeholder="ejemplo" />
+              formControlName="registryNumber" />
           </form-field>
         </div>
       </div>

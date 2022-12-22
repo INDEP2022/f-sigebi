@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { AuthGuard } from '../../core/guards/auth.guard';
+
 const routes: Routes = [
   {
     path: 'good-types',
@@ -379,7 +381,8 @@ const routes: Routes = [
     path: 'minpub',
     loadChildren: async () =>
       (await import('./minpub/minpub.module')).MinpubModule,
-    data: { title: 'Minpub' },
+    data: { title: 'Minpub', screen: 'FCATCATMINPUBLICO' },
+    canActivate: [AuthGuard],
   },
   {
     path: 'photograph-media',

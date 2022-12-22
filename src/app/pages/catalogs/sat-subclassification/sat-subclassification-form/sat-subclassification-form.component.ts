@@ -8,6 +8,7 @@ import { ISatSubclassification } from 'src/app/core/models/catalogs/sat-subclass
 import { SatClassificationService } from 'src/app/core/services/catalogs/sat-classification.service';
 import { SATSubclassificationService } from 'src/app/core/services/catalogs/sat-subclassification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -41,7 +42,10 @@ export class SatSubclassificationFormComponent
     console.log(this.satSubclassification);
     this.satSubclassificationForm = this.fb.group({
       id: [null],
-      nameSubClasification: [null, [Validators.required]],
+      nameSubClasification: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       idClasification: [null, [Validators.required]],
     });
     if (this.satSubclassification != null) {

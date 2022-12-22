@@ -7,8 +7,10 @@ import {
 } from './juridical-processes-nombres-rutas-archivos';
 
 const DISPERSION_PAGOS: string[] = [
-  'conciliacion-pagos-depositaria',
-  'consulta-pagos-relacionados-depositaria',
+  'conciliation-depositary-payments',
+  'query-related-payments-depositories',
+  // 'conciliacion-pagos-depositaria',
+  // 'consulta-pagos-relacionados-depositaria',
 ];
 
 export const CREAR_MENU_DEPOSITARY = function () {

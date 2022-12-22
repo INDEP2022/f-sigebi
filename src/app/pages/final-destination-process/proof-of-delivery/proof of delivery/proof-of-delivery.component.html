@@ -9,7 +9,7 @@
         <search-bar-simple
           (eventEmit)="search($event)"
           [label]="''"
-          [placeholder]="'Número de expediente'">
+          [placeholder]="'N&uacute;mero de expediente'">
         </search-bar-simple>
       </div>
     </div>
@@ -28,14 +28,16 @@
         <div
           class="col-12 col-md-4 mt-3 md-0 text-center text-md-right mt-3 mt-md-0">
           <button class="btn btn-secondary btn-sm active">
-            Bienes Donación
+            Bienes Donaci&oacute;n
           </button>
         </div>
       </div>
 
       <div class="row mt-3 mt-md-5 justify-content-md-end">
         <div class="col-12 col-md-4 text-center text-md-right mt-3 mt-md-0">
-          <button class="btn btn-secondary btn-sm active">Abrir Acta</button>
+          <button class="btn btn-secondary btn-sm active">
+            Abrir &Aacute;cta
+          </button>
         </div>
         <div
           class="col-12 col-md-4 mt-3 md-0 text-center text-md-right mt-3 mt-md-0">
@@ -52,7 +54,7 @@
               <div class="mb-3 pl-4 pr-4">
                 <form-field
                   [control]="form.get('statusAct')"
-                  label="Estatus Acta">
+                  label="Estatus &Aacute;cta">
                   <input
                     type="text"
                     class="form-control"
@@ -87,7 +89,7 @@
               <div class="mb-3 pl-4 pr-4">
                 <form-field
                   [control]="form.get('programmingType')"
-                  label="Tipo Programación de Entrega">
+                  label="Tipo Programaci&oacute;n de Entrega">
                   <select
                     class="form-control"
                     formControlName="programmingType">
@@ -104,7 +106,7 @@
               <div class="mb-3 pl-4 pr-4">
                 <form-field
                   [control]="form.get('preliminaryAscertainment')"
-                  label="Averiguación Previa">
+                  label="Averiguaci&oacute;n Previa">
                   <input
                     type="text"
                     class="form-control"
@@ -141,7 +143,9 @@
             </div>
             <div class="col-12 col-md-4">
               <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="form.get('actDate')" label="Fecha Acta">
+                <form-field
+                  [control]="form.get('actDate')"
+                  label="Fecha &Aacute;cta">
                   <input
                     type="text"
                     class="form-control"
@@ -168,7 +172,9 @@
           <div class="row mt-4">
             <div class="col-md-4">
               <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="form.get('actSelect')" label="Acta">
+                <form-field
+                  [control]="form.get('actSelect')"
+                  label="&Aacute;cta">
                   <select class="form-control" formControlName="actSelect">
                     <option [value]="null">Seleccione un valor</option>
                     <option [value]="1">1</option>
@@ -253,7 +259,7 @@
           <div class="row mt-4">
             <div class="col-md-4">
               <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="form.get('act')" label="Acta">
+                <form-field [control]="form.get('act')" label="&Aacute;cta">
                   <input
                     type="text"
                     class="form-control"
@@ -263,7 +269,9 @@
             </div>
             <div class="col-md-4">
               <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="form.get('address')" label="Dirección">
+                <form-field
+                  [control]="form.get('address')"
+                  label="Direcci&oacute;n">
                   <input
                     type="text"
                     class="form-control"
@@ -335,7 +343,7 @@
           <div class="row mt-4">
             <div class="col-12 col-md-6 text-center text-md-right">
               <button class="btn btn-sm btn-secondary active">
-                Eliminar Acta
+                Eliminar &Aacute;cta
               </button>
             </div>
             <div class="col-12 col-md-6 mt-3 mt-md-0 text-center text-md-right">

@@ -10,7 +10,11 @@ import { FractionService } from 'src/app/core/services/catalogs/fraction.service
 import { NormService } from 'src/app/core/services/catalogs/norm.service';
 import { SIABClasificationService } from 'src/app/core/services/catalogs/siab-clasification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  DOUBLE_PATTERN,
+  NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -41,12 +45,18 @@ export class FractionsFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.fractionForm = this.fb.group({
-      code: [null, [Validators.required]],
+      code: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       level: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       normId: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       unit: [null, [Validators.required]],
-      clasificationId: [null, [Validators.required]],
+      clasificationId: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
       version: [null, [Validators.required]],
       relevantTypeId: [
         null,
@@ -66,7 +76,7 @@ export class FractionsFormComponent extends BasePage implements OnInit {
       ],
       decimalAmount: [
         null,
-        [Validators.pattern(STRING_PATTERN), Validators.maxLength(1)],
+        [Validators.pattern(DOUBLE_PATTERN), Validators.maxLength(1)],
       ],
       status: [null],
       fractionCode: [

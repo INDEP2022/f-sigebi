@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-modal-not-transferred',
@@ -23,7 +24,10 @@ export class ModalNotTransferredComponent implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       typeRelevant: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       unitOfMeasure: [null, [Validators.required]],
       quantity: [null, [Validators.required]],
     });

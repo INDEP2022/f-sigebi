@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -37,12 +38,12 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   //Verificar typeTercero//
   prepareForm() {
     this.warehouseForm = this.fb.group({
-      nameWarehouse: [null],
+      nameWarehouse: [null, [Validators.pattern(STRING_PATTERN)]],
       responsibleUser: [null],
       numberRegister: [null],
       typeTercero: [null],
-      regionalDelegation: ['OCCIDENTE'],
-      managedBy: [null],
+      regionalDelegation: ['OCCIDENTE', [Validators.pattern(STRING_PATTERN)]],
+      managedBy: [null, [Validators.pattern(STRING_PATTERN)]],
       state: [null],
       municipality: [null],
       city: [null],
@@ -54,11 +55,11 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
       numberManagement: [null],
       locator: [null],
       contractNumber: [null],
-      siabWarehouse: [null],
+      siabWarehouse: [null, [Validators.pattern(STRING_PATTERN)]],
       startOperation: [null],
       endOperation: [null],
-      latitude: [null],
-      longitude: [null],
+      latitude: [null, [Validators.pattern(STRING_PATTERN)]],
+      longitude: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
   confirm() {

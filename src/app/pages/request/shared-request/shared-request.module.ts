@@ -30,6 +30,11 @@ import { SeeInformationComponent } from './expedients-tabs/sub-tabs/doc-request-
 import { ExpedientsRequestTabComponent } from './expedients-tabs/sub-tabs/expedients-request-tab/expedients-request-tab.component';
 import { GoodDocTabComponent } from './expedients-tabs/sub-tabs/good-doc-tab/good-doc-tab.component';
 import { NewDocumentComponent } from './expedients-tabs/sub-tabs/new-document/new-document.component';
+import { PhotosActionComponent } from './expedients-tabs/sub-tabs/photos-assets/actions/see-action/photos-action.component';
+import { SeePhotoComponent } from './expedients-tabs/sub-tabs/photos-assets/actions/see-photo/see-photo.component';
+import { OpenPhotosComponent } from './expedients-tabs/sub-tabs/photos-assets/open-photos/open-photos.component';
+import { PhotosAssetsComponent } from './expedients-tabs/sub-tabs/photos-assets/photos-assets.component';
+import { UploadFileComponent } from './expedients-tabs/sub-tabs/photos-assets/upload-file/upload-file.component';
 import { RequestOfAssetsComponent } from './expedients-tabs/sub-tabs/request-of-assets/request-of-assets.component';
 import { GenerateReceiptFormComponent } from './generate-receipt-form/generate-receipt-form.component';
 import { GoodsListComponent } from './goods-list/goods-list.component';
@@ -53,6 +58,7 @@ import { RequestInformationRejectComponent } from './request-information-reject/
 import { RequestInformationSimilarGoodsComponent } from './request-information-similar-goods/request-information-similar-goods.component';
 import { RequestInformationComponent } from './request-information/request-information.component';
 import { RequestSiabFormComponent } from './request-siab-form/request-siab-form.component';
+import { ResultVisitsComponent } from './result-visits/result-visits.component';
 import { SearchInventoryGoodsComponent } from './search-inventory-goods/search-inventory-goods.component';
 import { SearchRequestSimilarGoodsComponent } from './search-request-similar-goods/search-request-similar-goods.component';
 import { SearchRequestsComponent } from './search-requests/search-requests.component';
@@ -159,6 +165,12 @@ import { WitnessFormComponent } from './witness-form/witness-form.component';
     ValidateVisitResultComponent,
     ConfirmValidationComponent,
     ViewExpedientComponent,
+    PhotosAssetsComponent,
+    PhotosActionComponent,
+    UploadFileComponent,
+    OpenPhotosComponent,
+    SeePhotoComponent,
+    ResultVisitsComponent,
   ],
   imports: [
     CommonModule,

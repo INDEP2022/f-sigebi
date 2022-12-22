@@ -3,110 +3,82 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'sw-comer-m-auction-report',
+    path: 'auction-report',
     loadChildren: async () =>
-      (
-        await import(
-          './sw-comer-m-auction-report/sw-comer-m-auction-report.module'
-        )
-      ).SwComerMAuctionReportModule,
+      (await import('./auction-report/auction-report.module'))
+        .auctionReportModule,
     data: { title: 'Reporte Subasta' },
   },
   {
-    path: 'sw-comer-m-management-capture-lines',
+    path: 'management-capture-lines',
     loadChildren: async () =>
       (
         await import(
-          './sw-comer-m-management-capture-lines/sw-comer-m-management-capture-lines.module'
+          './management-capture-lines/management-capture-lines.module'
         )
-      ).SwComerMManagementCaptureLinesModule,
+      ).managementCaptureLinesModule,
     data: { title: 'Lineas de captura' },
   },
   {
-    path: 'sw-comer-m-winners-report',
+    path: 'winners-report',
     loadChildren: async () =>
-      (
-        await import(
-          './sw-comer-m-winners-report/sw-comer-m-winners-report.module'
-        )
-      ).SwComerMWinnersReportModule,
+      (await import('./winners-report/winners-report.module'))
+        .winnersReportModule,
     data: { title: 'Reporte de ganadores' },
   },
   {
-    path: 'sw-comer-m-valid-capture-line',
+    path: 'valid-capture-line',
     loadChildren: async () =>
-      (
-        await import(
-          './sw-comer-m-valid-capture-line/sw-comer-m-valid-capture-line.module'
-        )
-      ).SwComerMValidCaptureLineModule,
+      (await import('./valid-capture-line/valid-capture-line.module'))
+        .validCaptureLineModule,
     data: { title: 'Valida línea captura' },
   },
   {
-    path: 'sw-comer-m-report-oi',
+    path: 'report-oi',
     loadChildren: async () =>
-      (await import('./sw-comer-m-report-oi/sw-comer-m-report-oi.module'))
-        .SwComerMReportOiModule,
+      (await import('./report-oi/report-oi.module')).reportOiModule,
     data: { title: 'Reporte OI' },
   },
   {
-    path: 'sw-comer-m-billing-payments',
+    path: 'billing-payments',
     loadChildren: async () =>
-      (
-        await import(
-          './sw-comer-m-billing-payments/sw-comer-m-billing-payments.module'
-        )
-      ).SwComerMBillingPaymentsModule,
+      (await import('./billing-payments/billing-payments.module'))
+        .billingPaymentsModule,
     data: { title: 'Pagos facturación' },
   },
   {
-    path: 'sw-comer-m-proof-delivery',
+    path: 'proof-delivery',
     loadChildren: async () =>
-      (
-        await import(
-          './sw-comer-m-proof-delivery/sw-comer-m-proof-delivery.module'
-        )
-      ).SwComerMProofDeliveryModule,
+      (await import('./proof-delivery/proof-delivery.module'))
+        .proofDeliveryModule,
     data: { title: 'Constancia de entrega' },
   },
   {
-    path: 'sw-comer-m-report-invoices',
+    path: 'report-invoices',
     loadChildren: async () =>
-      (
-        await import(
-          './sw-comer-m-report-invoices/sw-comer-m-report-invoices.module'
-        )
-      ).SwComerMReportInvoicesModule,
+      (await import('./report-invoices/report-invoices.module'))
+        .reportInvoicesModule,
     data: { title: 'Reporte de facturas' },
   },
   {
-    path: 'sw-comer-m-report-batches-pending',
+    path: 'report-batches-pending',
     loadChildren: async () =>
-      (
-        await import(
-          './sw-comer-m-report-batches-pending/sw-comer-m-report-batches-pending.module'
-        )
-      ).SwComerMReportBatchesPendingModule,
+      (await import('./report-batches-pending/report-batches-pending.module'))
+        .reportBatchesPendingModule,
     data: { title: 'Reporte de lotes pendientes de liquidar' },
   },
   {
-    path: 'sw-comer-m-monitoring-cps-sps',
+    path: 'monitoring-cps-sps',
     loadChildren: async () =>
-      (
-        await import(
-          './sw-comer-m-monitoring-cps-sps/sw-comer-m-monitoring-cps-sps.module'
-        )
-      ).SwComerMMonitoringCpsSpsModule,
+      (await import('./monitoring-cps-sps/monitoring-cps-sps.module'))
+        .monitoringCpsSpsModule,
     data: { title: 'Monitoreo de cps y sps' },
   },
   {
-    path: 'sw-comer-m-appraisal-charge',
+    path: 'appraisal-charge',
     loadChildren: async () =>
-      (
-        await import(
-          './sw-comer-m-appraisal-charge/sw-comer-m-appraisal-charge.module'
-        )
-      ).SwComerMAppraisalChargeModule,
+      (await import('./appraisal-charge/appraisal-charge.module'))
+        .appraisalChargeModule,
     data: { title: 'Carga de Avalúos' },
   },
   {

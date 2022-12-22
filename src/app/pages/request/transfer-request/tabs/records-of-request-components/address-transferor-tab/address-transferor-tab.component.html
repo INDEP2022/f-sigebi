@@ -3,7 +3,7 @@
     <div class="d-flex">
       <div class="mr-auto p-2">
         <h5 class="title" style="font-weight: bold">
-          Domicillio de la transferencia
+          Domicilio de la transferencia
         </h5>
       </div>
       <div *ngIf="isNewAddress === false">
@@ -19,7 +19,7 @@
         <div class="col-md-4">
           <form-field
             [control]="addressForm.get('aliasWarehouse')"
-            label="Alias Almacen">
+            label="Alias Almac&eacute;n">
             <input
               type="text"
               class="form-control"
@@ -29,7 +29,7 @@
         <div class="col-md-4">
           <form-field
             [control]="addressForm.get('referenceVia2')"
-            label="Referencia Via 2">
+            label="Referencia V&iacute;a 2">
             <input
               type="text"
               class="form-control"
@@ -39,7 +39,7 @@
         <div class="col-md-4">
           <form-field
             [control]="addressForm.get('referenceVia3')"
-            label="Referencia Via 3">
+            label="Referencia V&iacute;a 3">
             <input
               type="text"
               class="form-control"
@@ -66,7 +66,7 @@
             control="municipe"
             (fetchItems)="getMunicipe($event)"
             [data]="selectMunicipe"
-            label="Municipe"
+            label="Municipio"
             value="id"
             bindLabel="municipe"></ngx-select>
         </div>
@@ -89,7 +89,7 @@
             control="cp"
             (fetchItems)="getCP($event)"
             [data]="selectCP"
-            label="C.P."
+            label="C&#46;P&#46;"
             value="id"
             bindLabel="cp"></ngx-select>
         </div>
@@ -112,7 +112,7 @@
         <div class="col-md-4">
           <form-field
             [control]="addressForm.get('nameRoute')"
-            label="Nombre de la Via">
+            label="Nombre de la V&iacute;a">
             <input
               type="text"
               class="form-control"
@@ -120,14 +120,16 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="addressForm.get('numExt')" label="Num. Ext.">
+          <form-field
+            [control]="addressForm.get('numExt')"
+            label="Num&#46; Ext&#46;">
             <input type="text" class="form-control" formControlName="numExt" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
             [control]="addressForm.get('originRoute')"
-            label="Origin de la Via">
+            label="Origin de la V&iacute;a">
             <input
               type="text"
               class="form-control"
@@ -138,14 +140,16 @@
 
       <div class="row pt-4">
         <div class="col-md-4">
-          <form-field [control]="addressForm.get('numInt')" label="Num. Int.">
+          <form-field
+            [control]="addressForm.get('numInt')"
+            label="Num&#46; Int&#46;">
             <input type="text" class="form-control" formControlName="numInt" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
             [control]="addressForm.get('routeDestination')"
-            label="Destino de la Via">
+            label="Destino de la V&iacute;a">
             <input
               type="text"
               class="form-control"
@@ -155,7 +159,7 @@
         <div class="col-md-4">
           <form-field
             [control]="addressForm.get('referenceVia1')"
-            label="Referencia Via 1">
+            label="Referencia V&iacute;a 1">
             <input
               type="text"
               class="form-control"
@@ -168,7 +172,7 @@
         <div class="col-md-4">
           <form-field
             [control]="addressForm.get('kilometerRoute')"
-            label="Kiloometro de la Via">
+            label="Kil&oacute;metro de la V&iacute;a">
             <input
               type="number"
               class="form-control"
@@ -178,7 +182,7 @@
         <div class="col-md-4">
           <form-field
             [control]="addressForm.get('description')"
-            label="Descripción">
+            label="Descripci&oacute;n">
             <textarea
               class="form-control"
               formControlName="description"></textarea>

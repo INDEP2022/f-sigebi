@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Actas de Devolución</h5>
+    <h5 class="title">&Aacute;ctas de Devoluci&oacute;n</h5>
   </div>
 
   <div body>
@@ -9,7 +9,7 @@
         <search-bar-simple
           (eventEmit)="search($event)"
           [label]="''"
-          [placeholder]="'Número de expediente'">
+          [placeholder]="'N&uacute;mero de expediente'">
         </search-bar-simple>
       </div>
     </div>
@@ -25,7 +25,7 @@
               <div class="mb-3 pl-4 pr-4">
                 <form-field
                   [control]="actForm.get('statusAct')"
-                  label="Estatus Acta">
+                  label="Estatus &Aacute;cta">
                   <input
                     type="text"
                     class="form-control"
@@ -39,7 +39,7 @@
               <div class="mb-3 pl-4 pr-4">
                 <form-field
                   [control]="actForm.get('preliminaryAscertainment')"
-                  label="Averiguación Previa">
+                  label="Averiguaci&oacute;n Previa">
                   <input
                     type="text"
                     class="form-control"
@@ -89,7 +89,9 @@
           <div class="row mt-4">
             <div class="col-md-6">
               <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="actForm.get('actSelect')" label="Acta">
+                <form-field
+                  [control]="actForm.get('actSelect')"
+                  label="&Aacute;cta">
                   <select class="form-control" formControlName="actSelect">
                     <option [value]="null">Seleccione un valor</option>
                     <option [value]="1">1</option>
@@ -128,7 +130,7 @@
               <div class="mb-3 pl-4 pr-4">
                 <form-field
                   [control]="actForm.get('returnNumber')"
-                  label="No. Devolución">
+                  label="No. Devoluci&oacute;n">
                   <input
                     type="text"
                     class="form-control"
@@ -190,7 +192,9 @@
 
             <div class="col-md-6">
               <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="actForm.get('act')" label="Acta/Oficio">
+                <form-field
+                  [control]="actForm.get('act')"
+                  label="&Aacute;cta/Oficio">
                   <input
                     type="text"
                     class="form-control"

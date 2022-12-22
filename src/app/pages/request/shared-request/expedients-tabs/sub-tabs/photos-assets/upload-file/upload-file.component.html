@@ -1,0 +1,38 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Subir I&aacute;mgenes</h5>
+  </div>
+  <div body>
+    <form class="form-material">
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <label for="file">Fotograf&iacute;as a Subir</label>
+          <input
+            id="file"
+            type="file"
+            #FileInput
+            class="form-control"
+            accept="image/*"
+            multiple
+            (change)="selectFile($event)" />
+
+          <span id="size" *ngIf="sizeMessage"
+            >Seleccione un archivo no mayor a 100 MB&#46;</span
+          >
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="p-2">
+        <button class="btn btn-primary btn-sm active">Subir</button>
+      </div>
+      <div class="p-2">
+        <button class="btn btn-danger btn-sm active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

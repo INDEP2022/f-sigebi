@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-register-dictum-inf',
@@ -24,15 +25,24 @@ export class RegisterDictumInfComponent extends BasePage implements OnInit {
     this.dictumForm = this.fb.group({
       dictumNo: [null, [Validators.required]],
       dictumDate: [null],
-      courtroom: [null, [Validators.required]],
-      judgementNullity: [null, [Validators.required]],
+      courtroom: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      judgementNullity: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       adminiResolutionNo: [null],
       paymentOrderNo: [null],
       paymentAmount: [null],
-      contributor: [null, [Validators.required]],
-      address1: [null],
-      address2: [null],
-      legalRepresentative: [null],
+      contributor: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      address1: [null, [Validators.pattern(STRING_PATTERN)]],
+      address2: [null, [Validators.pattern(STRING_PATTERN)]],
+      legalRepresentative: [null, [Validators.pattern(STRING_PATTERN)]],
       requiredSatCopy: [null],
     });
   }

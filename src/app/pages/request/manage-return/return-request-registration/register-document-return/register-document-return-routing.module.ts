@@ -1,7 +1,7 @@
 /** BASE IMPORT */
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { GDRSDRegisterDocumentReturnComponent } from './register-document-return/gd-rsd-c-register-document-return.component';
+import { RegisterDocumentReturnComponent } from './register-document-return/register-document-return.component';
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -13,7 +13,7 @@ import { GDRSDRegisterDocumentReturnComponent } from './register-document-return
 const routes: Routes = [
   {
     path: '',
-    component: GDRSDRegisterDocumentReturnComponent,
+    component: RegisterDocumentReturnComponent,
     data: {
       title: 'Registrar Documentación Complementaria Devolución',
     },
@@ -23,4 +23,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class GDRSDRegisterDocumentReturnRoutingModule {}
+export class RegisterDocumentReturnRoutingModule {}

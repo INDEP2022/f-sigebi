@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDeductiveVerification } from 'src/app/core/models/catalogs/deductive-verification.model';
 import { DeductiveVerificationService } from 'src/app/core/services/catalogs/deductive-verification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-create-deductives-verification-form',
@@ -33,10 +34,19 @@ export class DeductivesVerificationFormComponent
 
   private prepareForm() {
     this.deductiveForm = this.fb.group({
-      id: [null, Validators.required],
-      description: [null, Validators.required],
-      percentagePena: [null, Validators.required],
-      verificationType: [null, Validators.required],
+      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      percentagePena: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      verificationType: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
     if (this.deductive != null) {
       this.edit = true;
