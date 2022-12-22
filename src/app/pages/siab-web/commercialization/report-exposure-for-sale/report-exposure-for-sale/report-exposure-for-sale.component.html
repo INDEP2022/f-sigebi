@@ -1,14 +1,14 @@
 <app-card [header]="true">
   <div header>
     <div class="ch-content">
-      <h5 class="title">Reporte exposición a venta</h5>
+      <h5 class="title">Reporte exposici&oacute;n a venta</h5>
     </div>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="row">
         <div class="ch-content">
-          <h5 class="title">Búsqueda por bien:</h5>
+          <h5 class="title">B&uacute;squeda por bien&#58;</h5>
         </div>
         <div class="row">
           <div class="col-md-2">
@@ -42,7 +42,7 @@
       </div>
       <div class="row" *ngIf="filterGoods.value">
         <div class="ch-content">
-          <h5 class="title">Filtros de Búsqueda</h5>
+          <h5 class="title">Filtros de B&uacute;squeda</h5>
         </div>
         <div class="row pt-3">
           <div class="col-md-2">
@@ -68,7 +68,7 @@
           <div class="col-md-2">
             <form-field
               [control]="form.get('delegation')"
-              label="Delegación Regional">
+              label="Delegaci&oacute;n Regional">
               <input
                 type="text"
                 class="form-control"
@@ -91,7 +91,7 @@
                 type="button"
                 class="btn btn-primary btn-sm active"
                 [disabled]="!form.valid">
-                Reporte ningún intento
+                Reporte ning&uacute;n intento
               </button>
             </div>
           </div>

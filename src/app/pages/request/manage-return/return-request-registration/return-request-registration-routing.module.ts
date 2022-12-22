@@ -12,7 +12,7 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   // Registrar Documentación Complementaria Devolución
   {
-    path: 'registrar-documentacion-devolucion',
+    path: 'register-document-return',
     loadChildren: async () =>
       (
         await import(
@@ -24,7 +24,7 @@ const routes: Routes = [
   // Registrar Documentación Complementaria Devolución
   // registro de solicitud de devolucion
   {
-    path: 'registro-solicitud-devolucion',
+    path: 'return-request-record',
     loadChildren: async () =>
       (await import('./return-request-record/return-request-record.module'))
         .ReturnRequestRecordModule,

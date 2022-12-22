@@ -1,7 +1,7 @@
 <app-card [header]="true" [footer]="true">
   <div header>
     <div class="ch-content">
-      <h5 class="title">Solicitud valuación</h5>
+      <h5 class="title">Solicitud valuaci&oacute;n</h5>
     </div>
   </div>
   <div body>
@@ -76,7 +76,9 @@
       <div class="row pt-5">
         <div class="col-md-4">
           <div class="col-md-12 alert alert-success">
-            <form-field [control]="form.get('paragraph1')" label="Parrafo 1">
+            <form-field
+              [control]="form.get('paragraph1')"
+              label="P&aacute;rrafo 1">
               <textarea
                 class="form-control"
                 type="text"
@@ -86,7 +88,9 @@
         </div>
         <div class="col-md-4">
           <div class="col-md-12 alert alert-success">
-            <form-field [control]="form.get('paragraph2')" label="Parrafo 2">
+            <form-field
+              [control]="form.get('paragraph2')"
+              label="P&aacute;rrafo 2">
               <textarea
                 class="form-control"
                 type="text"
@@ -98,7 +102,7 @@
           <div class="col-md-12 alert alert-success">
             <form-field
               [control]="form.get('paragraph3')"
-              label="Parrafo final">
+              label="P&aacute;rrafo final">
               <textarea
                 class="form-control"
                 type="text"
@@ -120,7 +124,7 @@
         </app-pagination>
 
         <div class="ch-content">
-          <h5 class="title">Con copia para:</h5>
+          <h5 class="title">Con copia para&#58;</h5>
         </div>
         <div class="row pt-5">
           <div class="col-md-2">
@@ -178,7 +182,7 @@
           type="button"
           class="btn btn-danger active"
           [disabled]="form.invalid">
-          Enviar a Valuación
+          Enviar a Valuaci&oacute;n
         </button>
       </div>
       <div class="m-3">

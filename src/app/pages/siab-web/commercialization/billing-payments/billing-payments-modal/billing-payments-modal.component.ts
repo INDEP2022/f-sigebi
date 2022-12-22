@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-billing-payments-modal',
@@ -25,7 +26,10 @@ export class billingPaymentsModalComponent implements OnInit {
     this.form = this.fb.group({
       event: [null, [Validators.required]],
       allotment: [null, [Validators.required]],
-      reference: [null, [Validators.required]],
+      reference: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       amount: [null, [Validators.required]],
     });
     if (this.allotment != null) {

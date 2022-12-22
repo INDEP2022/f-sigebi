@@ -3,17 +3,18 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { VALUATION_REQUEST_COLUMNS } from './valuation-request-columns';
 
 @Component({
-  selector: 'app-sw-avaluos-c-valuation-request',
-  templateUrl: './sw-avaluos-c-valuation-request.component.html',
+  selector: 'app-valuation-request',
+  templateUrl: './valuation-request.component.html',
   styles: [],
 })
-export class SwAvaluosCValuationRequestComponent
-  extends BasePage
-  implements OnInit
-{
+export class valuationRequestComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
 
   columns: any[] = [];
@@ -37,23 +38,47 @@ export class SwAvaluosCValuationRequestComponent
   private prepareForm() {
     this.form = this.fb.group({
       event: [null, [Validators.required]],
-      cveService: [null, [Validators.required]],
+      cveService: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
       folio: [null, [Validators.required]],
 
-      sender: [null, [Validators.required]],
-      senderTxt: [null, [Validators.required]],
+      sender: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      senderTxt: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
 
-      addressee: [null, [Validators.required]],
-      addresseeTxt: [null, [Validators.required]],
+      addressee: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      addresseeTxt: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
 
-      city: [null, [Validators.required]],
+      city: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
 
-      paragraph1: [null, [Validators.required]],
-      paragraph2: [null, [Validators.required]],
-      paragraph3: [null, [Validators.required]],
+      paragraph1: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      paragraph2: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      paragraph3: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
 
       user: [null, [Validators.required]],
-      txtUserCCP: [null, [Validators.required]],
+      txtUserCCP: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 

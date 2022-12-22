@@ -10,6 +10,7 @@ import { Observable } from 'rxjs';
 import { PermissionsService } from 'src/app/common/services/permissions.service';
 import { AuthService } from '../services/authentication/auth.service';
 const READ_PERMISSION = 'read';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -33,7 +34,9 @@ export class AuthGuard implements CanActivate, CanLoad {
   verify(route: Route) {
     this.authService.getTokenExpiration();
     if (this.authService.existToken() && !this.authService.isTokenExpired()) {
-      return this.checkRoles(route);
+      return true;
+      //TODO: Habilitar checkRoles()
+      //this.checkRoles(route);
     } else {
       this.router.navigate(['/auth/login']);
       return false;

@@ -13,7 +13,7 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   // registro de solicitud de devolucion
   {
-    path: 'registro-solicitud-devolucion',
+    path: 'return-request-registration',
     loadChildren: async () =>
       (
         await import(
@@ -25,7 +25,7 @@ const routes: Routes = [
   // registro de solicitud de devolucion
   // Clasificación de Bienes
   {
-    path: 'clasificacion-bienes',
+    path: 'goods-classification',
     loadChildren: async () =>
       (await import('./goods-classification/goods-classification.module'))
         .GoodsClassificationModule,
@@ -34,7 +34,7 @@ const routes: Routes = [
   // Clasificación de Bienes
   // Aprobar Solicitud de Devolución
   {
-    path: 'aprobar-solicitud-bienes',
+    path: 'approve-return-request',
     loadChildren: async () =>
       (await import('./approve-return-request/approve-return-request.module'))
         .ApproveReturnRequestModule,
