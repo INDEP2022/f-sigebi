@@ -1,0 +1,191 @@
+export const DOCUMENTS_COLUMNS = {
+  noDocument: {
+    title: 'No. documento',
+    type: 'string',
+    sort: false,
+  },
+
+  noRequest: {
+    title: 'No. solicitud',
+    type: 'number',
+    sort: false,
+  },
+
+  titleDocument: {
+    title: 'titulo documento',
+    type: 'string',
+    sort: false,
+  },
+
+  typeDocument: {
+    title: 'Tipo documento',
+    type: 'string',
+    sort: false,
+  },
+
+  Author: {
+    title: 'Autor',
+    type: 'string',
+    sort: false,
+  },
+
+  createDate: {
+    title: 'Fecha creación',
+    type: 'string',
+    sort: false,
+  },
+};
+
+export const GOODS_REQUEST_COLUMNS = {
+  noRequest: {
+    title: 'No. solicitud',
+    type: 'string',
+    sort: false,
+  },
+
+  noGestion: {
+    title: 'No. gestión',
+    type: 'string',
+    sort: false,
+  },
+
+  uniqueKey: {
+    title: 'Clave única',
+    type: 'string',
+    sort: false,
+  },
+
+  goodType: {
+    title: 'Tipo bien',
+    type: 'string',
+    sort: false,
+  },
+
+  fraction: {
+    title: 'Fracción',
+    type: 'string',
+    sort: false,
+  },
+
+  folioRequest: {
+    title: 'Folio solicitud',
+    type: 'string',
+    sort: false,
+  },
+
+  descriptionGoodSae: {
+    title: 'Descripción bien sae',
+    type: 'string',
+    sort: false,
+  },
+
+  statePhysic: {
+    title: 'Estado físico',
+    type: 'string',
+    sort: false,
+  },
+
+  stateConservation: {
+    title: 'Estado de conservación',
+    type: 'string',
+    sort: false,
+  },
+
+  transferUnitMeasure: {
+    title: 'Unidad de medida transferente',
+    type: 'string',
+    sort: false,
+  },
+
+  ligieUnitMeasure: {
+    title: 'Unidad de medida ligie',
+    type: 'string',
+    sort: false,
+  },
+
+  quantityTransferent: {
+    title: 'Cantidad de la transferente',
+    type: 'string',
+    sort: false,
+  },
+
+  saeDestiny: {
+    title: 'Destino sae',
+    type: 'string',
+    sort: false,
+  },
+};
+
+export const SELECT_GOODS_REQUEST_COLUMNS = {
+  nameGoodAgrupáte: {
+    title: 'Nombre del bien agrupador',
+    type: 'string',
+    sort: false,
+  },
+
+  resultContribuyent: {
+    title: 'Resultado del contribuyente',
+    type: 'string',
+    sort: false,
+  },
+
+  origin: {
+    title: 'Origen',
+    type: 'string',
+    sort: false,
+  },
+
+  description: {
+    title: 'Descripción',
+    type: 'string',
+    sort: false,
+  },
+
+  uniqueKey: {
+    title: 'Clave Única',
+    type: 'string',
+    sort: false,
+  },
+
+  quantityReserved: {
+    title: 'Cantidad reservada',
+    type: 'string',
+    sort: false,
+  },
+
+  subInventary: {
+    title: 'Sub inventario',
+    type: 'string',
+    sort: false,
+  },
+
+  noExpedient: {
+    title: 'No. expediente',
+    type: 'number',
+    sort: false,
+  },
+
+  noRequestTrasference: {
+    title: 'No. solicitud de transferencía',
+    type: 'string',
+    sort: false,
+  },
+
+  noGestion: {
+    title: 'No. gestión',
+    type: 'string',
+    sort: false,
+  },
+
+  noInventary: {
+    title: 'No. inventario',
+    type: 'string',
+    sort: false,
+  },
+
+  noTransactionInventary: {
+    title: 'No. transacción inventarios',
+    type: 'number',
+    sort: false,
+  },
+};
