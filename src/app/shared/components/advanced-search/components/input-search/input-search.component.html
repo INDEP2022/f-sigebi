@@ -1,0 +1,47 @@
+<div class="d-flex">
+  <div class="input-group-prepend">
+    <span class="input-group-text">{{ field.name }}</span>
+    <div class="btn-group" dropdown placement="bottom left">
+      <span dropdownToggle class="input-group-text h-100">{{
+        operatorSelected
+      }}</span>
+      <ul
+        id="dropdown-basic"
+        *dropdownMenu
+        class="dropdown-menu"
+        role="menu"
+        aria-labelledby="button-basic">
+        <li
+          role="menuitem"
+          *ngFor="let typeSearch of field.typeSearch"
+          (click)="toggleOperator(typeSearch)">
+          <a class="dropdown-item"
+            >{{ typeSearch.symbol }} - {{ typeSearch.name }}</a
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+  <ng-container [ngSwitch]="field.type" [formGroup]="form">
+    <input
+      *ngSwitchDefault
+      type="text"
+      class="form-control"
+      formControlName="value" />
+    <input
+      *ngSwitchCase="'number'"
+      type="number"
+      class="form-control"
+      formControlName="value" />
+    <input
+      *ngSwitchCase="'text'"
+      type="text"
+      class="form-control"
+      formControlName="value" />
+    <input
+      *ngSwitchCase="'date'"
+      class="form-control"
+      bsDatepicker
+      formControlName="value" />
+  </ng-container>
+</div>

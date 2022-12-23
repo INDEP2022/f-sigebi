@@ -1,0 +1,52 @@
+<ng-container [formGroup]="dynamicSearchForm">
+  <div class="row">
+    <div class="btn-group" dropdown>
+      <button
+        id="button-basic"
+        dropdownToggle
+        type="button"
+        class="btn btn-sm btn-secondary dropdown-toggle active"
+        aria-controls="dropdown-basic">
+        Filtros <i class="fa fa-filter" aria-hidden="true"></i>
+      </button>
+
+      <button
+        *ngIf="showButton()"
+        type="submit"
+        (click)="onSubmit()"
+        [disabled]="isFormInvalid()"
+        class="btn btn-primary active btn-sm ml-3">
+        Buscar <i class="fa fa-search" aria-hidden="true"></i>
+      </button>
+      <ul
+        id="dropdown-basic"
+        *dropdownMenu
+        class="dropdown-menu"
+        role="menu"
+        aria-labelledby="button-basic">
+        <li
+          role="menuitem"
+          *ngFor="let field of fieldsToSearch"
+          (click)="showField($event, field)">
+          <input
+            type="checkbox"
+            (click)="showField($event, field)"
+            [checked]="field.selected" />
+          {{ field.name }}
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="row pt-3">
+    <div action="" class="form-group" formArrayName="filters">
+      <ng-container *ngFor="let field of fieldsToSearch; let i = index">
+        <div *ngIf="field.selected" class="col-md-4">
+          <dynamic-input-search
+            [field]="field"
+            [form]="getFormFromArray(i)"></dynamic-input-search>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</ng-container>

@@ -3,12 +3,15 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
+import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { defineLocale } from 'ngx-bootstrap/chronos';
 import { BsDatepickerModule, BsLocaleService } from 'ngx-bootstrap/datepicker';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { esLocale } from 'ngx-bootstrap/locale';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { NgScrollbarModule } from 'ngx-scrollbar';
+import { AdvancedSearchComponent } from './components/advanced-search/advanced-search.component';
+import { InputSearchComponent } from './components/advanced-search/components/input-search/input-search.component';
 import { CardComponent } from './components/card/card.component';
 import { CheckboxColumnComponent } from './components/checkbox-column/checkbox-column.component';
 import { CheckboxElementComponent } from './components/checkbox-element-smarttable/checkbox-element';
@@ -46,6 +49,8 @@ import { PermissionsDirective } from './directives/permissions.directive';
     DividerComponent,
     CheckboxElementComponent,
     PermissionsDirective,
+    AdvancedSearchComponent,
+    InputSearchComponent,
   ],
   imports: [
     CommonModule,
@@ -57,6 +62,7 @@ import { PermissionsDirective } from './directives/permissions.directive';
     Ng2SmartTableModule,
     BsDatepickerModule.forRoot(),
     NgScrollbarModule,
+    AccordionModule,
   ],
   exports: [
     ColumnsSelectComponent,
@@ -83,6 +89,7 @@ import { PermissionsDirective } from './directives/permissions.directive';
     CheckboxColumnComponent,
     NgScrollbarModule,
     PermissionsDirective,
+    AdvancedSearchComponent,
   ],
 })
 export class SharedModule {
