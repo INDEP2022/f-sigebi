@@ -11,7 +11,7 @@ const routes: Routes = [
           './shared-marketing-components/event-preparation/event-preparation.module'
         )
       ).EventPreparationModule,
-    data: { title: 'Preparación del evento' },
+    data: { title: 'Preparación del evento', screen: 'FCOMEREVENTOS' },
   },
   {
     path: 'payment-dispersion-validation',
@@ -21,7 +21,7 @@ const routes: Routes = [
           './shared-marketing-components/payment-dispersion-validation/payment-dispersion-validation.module'
         )
       ).PaymentDispersionValidationModule,
-    data: { title: 'Validación de bienes' },
+    data: { title: 'Validación de bienes', screen: 'FCOMER0115' },
   },
   {
     path: 'validation-exempted-goods',
@@ -31,7 +31,7 @@ const routes: Routes = [
           './shared-marketing-components/validation-exempted-goods/validation-exempted-goods.module'
         )
       ).ValidationExemptedGoodsModule,
-    data: { title: 'Bienes exentos de validación' },
+    data: { title: 'Bienes exentos de validación', screen: 'FCOMERBIENEX' },
   },
   {
     path: 'reclass-recovery-orders',
@@ -41,7 +41,7 @@ const routes: Routes = [
           './shared-marketing-components/reclass-recovery-orders/reclass-recovery-orders.module'
         )
       ).ReclassRecoveryOrdersModule,
-    data: { title: 'Reclasificación OI' },
+    data: { title: 'Reclasificación OI', screen: 'FCOMER085' },
   },
   {
     path: 'numeraire-conversion-tabs',
@@ -51,7 +51,7 @@ const routes: Routes = [
           './shared-marketing-components/numeraire-conversion-tabs/numeraire-conversion-tabs.module'
         )
       ).NumeraireConversionTabsModule,
-    data: { title: 'Conversión a numerario' },
+    data: { title: 'Conversión a numerario', screen: 'FCOMER087' },
   },
   {
     path: 'appraisal-consultation',
@@ -61,7 +61,7 @@ const routes: Routes = [
           './shared-marketing-components/appraisal-consultation/appraisal-consultation.module'
         )
       ).AppraisalConsultationModule,
-    data: { title: 'Consulta de Avalúo' },
+    data: { title: 'Consulta de Avalúo', screen: 'FCOMERCONSAVALUO' },
   },
   {
     path: 'appraisal-registration',
@@ -71,7 +71,7 @@ const routes: Routes = [
           './shared-marketing-components/appraisal-registration/appraisal-registration.module'
         )
       ).AppraisalRegistrationModule,
-    data: { title: 'Registro de Avalúos' },
+    data: { title: 'Registro de Avalúos', screen: 'FCOMERREGAVALUO' },
   },
   {
     path: 'expense-capture',
@@ -81,7 +81,7 @@ const routes: Routes = [
           './shared-marketing-components/expense-capture/expense-capture.module'
         )
       ).ExpenseCaptureModule,
-    data: { title: 'Captura de gastos' },
+    data: { title: 'Captura de gastos', screen: 'FCOMER084' },
   },
   {
     path: 'catalogs',
@@ -96,7 +96,7 @@ const routes: Routes = [
           './movable-property/third-party-marketers/third-party-marketers.module'
         )
       ).ThirdPartyMarketersModule,
-    data: { title: 'Terceros comercializadores' },
+    data: { title: 'Terceros comercializadores', screen: 'FCOMER063' },
   },
   {
     path: 'consultation-goods-commercial-process-tabs',
@@ -116,7 +116,7 @@ const routes: Routes = [
           './movable-property/calculate-commission/calculate-commission.module'
         )
       ).CalculateCommissionModule,
-    data: { title: 'Calcular comisión' },
+    data: { title: 'Calcular comisión', screen: 'FCOMER064' },
   },
   {
     path: 'series-folios-control',
@@ -126,7 +126,7 @@ const routes: Routes = [
           './movable-property/series-folios-control/series-folios-control.module'
         )
       ).SeriesFoliosControlModule,
-    data: { title: 'Folios y series' },
+    data: { title: 'Folios y series', screen: 'FCOMER093' },
   },
   {
     path: 'rebilling-causes',
@@ -136,14 +136,14 @@ const routes: Routes = [
           './movable-property/rebilling-causes/rebilling-causes.module'
         )
       ).RebillingCausesModule,
-    data: { title: 'Causas de Refacturación' },
+    data: { title: 'Causas de Refacturación', screen: 'FCOMER091' },
   },
   {
     path: 'invoice-status',
     loadChildren: async () =>
       (await import('./movable-property/invoice-status/invoice-status.module'))
         .InvoiceStatusModule,
-    data: { title: 'Estatus de la facturación' },
+    data: { title: 'Estatus de la facturación', screen: 'FCOMER072' },
   },
   {
     path: 'expense-concepts',
@@ -224,7 +224,10 @@ const routes: Routes = [
           './movable-property/mass-biling-base-sales-tab/mass-biling-base-sales-tab.module'
         )
       ).MassBilingBaseSalesTabModule,
-    data: { title: 'Facturación masiva de VTA. de bases ' },
+    data: {
+      title: 'Facturación masiva de VTA. de bases',
+      screen: 'FCOMER_VTA_BASES',
+    },
   },
   {
     path: 'batch-parameters',
@@ -248,7 +251,7 @@ const routes: Routes = [
           './movable-property/regular-billing-tab/regular-billing-tab.module'
         )
       ).RegularBillingTabModule,
-    data: { title: 'Facturación normal' },
+    data: { title: 'Facturación normal', screen: 'FCOMER086' },
   },
   {
     path: 'payment-search',
@@ -272,7 +275,7 @@ const routes: Routes = [
           './movable-property/rectification-fields/rectification-fields.module'
         )
       ).RectificationFieldsModule,
-    data: { title: 'Campos rectificación' },
+    data: { title: 'Campos rectificación', screen: 'FCOMER070' },
   },
   {
     path: 'invoice-rectification-process',
@@ -282,14 +285,14 @@ const routes: Routes = [
           './movable-property/invoice-rectification-process/invoice-rectification-process.module'
         )
       ).InvoiceRectificationProcessModule,
-    data: { title: 'Formato de rectificación' },
+    data: { title: 'Formato de rectificación', screen: 'FCOMER097' },
   },
   {
     path: 'page-setup',
     loadChildren: async () =>
       (await import('./movable-property/page-setup/page-setup.module'))
         .PageSetupModule,
-    data: { title: 'Configuración de Página' },
+    data: { title: 'Configuración de Página', screen: 'FCOMER090' },
   },
   {
     path: 'entity-classification',
@@ -299,7 +302,7 @@ const routes: Routes = [
           './movable-property/entity-classification/entity-classification.module'
         )
       ).EntityClassificationModule,
-    data: { title: 'Catálogo de Entidades' },
+    data: { title: 'Catálogo de Entidades', screen: 'FCOMER088' },
   },
   {
     path: 'payment-refund',
@@ -326,7 +329,10 @@ const routes: Routes = [
           './movable-property/remittances-recorded-region/remittances-recorded-region.module'
         )
       ).RemittancesRecordedRegionModule,
-    data: { title: 'Remesas registradas por regional' },
+    data: {
+      title: 'Remesas registradas por regional',
+      screen: 'RCOMERREMESA1',
+    },
   },
   {
     path: 'remittance-exportation',
@@ -336,7 +342,7 @@ const routes: Routes = [
           './movable-property/remittance-exportation/remittance-exportation.module'
         )
       ).RemittanceExportationModule,
-    data: { title: 'Exportación de las Remesas' },
+    data: { title: 'Exportación de las Remesas', screen: 'RCOMERREMESA2' },
   },
   {
     path: 'electronic-signature-auxiliary-catalogs',
@@ -461,42 +467,45 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./publication-photographs/publication-photographs.module'))
         .PublicationPhotographsModule,
-    data: { title: 'Publicación de fotografía' },
+    data: { title: 'Publicación de fotografía', screen: 'FCOMERPUBLICFOTOS' },
   },
   {
     path: 'payment-receipts-report',
     loadChildren: async () =>
       (await import('./payment-receipts-report/payment-receipts-report.module'))
         .PaymentReceiptsReportModule,
-    data: { title: 'Reporte de pagos recibidos' },
+    data: { title: 'Reporte de pagos recibidos', screen: 'FCOMERRECIBOS' },
   },
   {
     path: 'disposal-record-report',
     loadChildren: async () =>
       (await import('./disposal-record-report/disposal-record-report.module'))
         .DisposalRecordReportModule,
-    data: { title: 'Reporte de actas de enajenación' },
+    data: {
+      title: 'Reporte de actas de enajenación',
+      screen: 'FGERDESACTAENAJEN',
+    },
   },
   {
     path: 'traded-goods',
     loadChildren: async () =>
       (await import('./traded-goods/traded-goods.module'))
         .CBcMTradedGoodsModule,
-    data: { title: 'Bienes comercializados' },
+    data: { title: 'Bienes comercializados', screen: 'FGERDESBIECOMERCI' },
   },
   {
     path: 'goods-tenders',
     loadChildren: async () =>
       (await import('./goods-tenders/goods-tenders.module'))
         .CLbMGoodsTendersModule,
-    data: { title: 'Licitación de bienes' },
+    data: { title: 'Licitación de bienes', screen: 'FGERDESLICITXBIEN' },
   },
   {
     path: 'commercial-file',
     loadChildren: async () =>
       (await import('./commercial-file/commercial-file.module'))
         .CommercialFileModule,
-    data: { title: 'Ficha comercial' },
+    data: { title: 'Ficha comercial', screen: 'FINFFICHACOMERCIAL' },
   },
 ];
 
