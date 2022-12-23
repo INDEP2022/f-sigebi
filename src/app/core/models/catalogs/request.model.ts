@@ -1,5 +1,5 @@
 export interface IRequest {
-  date?: Date;
+  date?: string;
   noOfi?: string;
   regDelega?: string;
   entity?: string;

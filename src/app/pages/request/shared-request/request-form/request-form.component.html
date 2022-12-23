@@ -1,99 +1,155 @@
-<app-modal>
-  <div header>
-    <div *ngIf="op == 1; else optionTitle">
-      <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} SOLICITUD</h5>
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <div class="d-flex">
+      <div class="mr-auto p-2">
+        <div *ngIf="op == 1; else optionTitle">
+          <h5 class="modal-title">
+            {{ edit ? 'ACTUALIZAR' : 'NUEVA' }} SOLICITUD
+          </h5>
+        </div>
+        <ng-template #optionTitle>
+          <h5 class="modal-title">Documentaci&oacute;n Complementaria</h5>
+        </ng-template>
+      </div>
+
+      <div class="p-2">
+        <confirm-button
+          [disabled]="requestForm.invalid"
+          [loading]="loading"
+          [btnSmall]="true"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="p-2">
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm active"
+          [disabled]="requestForm.invalid"
+          (click)="confirm()">
+          Turnar
+        </button>
+      </div>
+      <div class="p-2">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
     </div>
-    <ng-template #optionTitle>
-      <h5 class="modal-title">Documentaci&oacute;n Complementaria</h5>
-    </ng-template>
   </div>
   <div body class="body">
     <form [formGroup]="requestForm" class="form-material">
-      <app-card [header]="true">
-        <div class="ch-content" header>
-          <h6 class="title">Informaci&oacute;n de la Solicitud</h6>
-        </div>
+      <app-card [header]="false">
         <div body>
-          <div class="row pt-5">
-            <div class="col-md-2">
-              <form-field
-                [control]="requestForm.get('date')"
-                label="Fecha de solicitud">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="date"
-                  bsDatepicker />
-              </form-field>
-            </div>
+          <div class="row">
+            <h5 class="title">
+              <p>
+                <a
+                  class="text-color"
+                  (click)="showSearchForm = true"
+                  *ngIf="!showSearchForm">
+                  <i class="fa fa-angle-right" aria-hidden="true"></i>
+                  Información de la solicitud</a
+                >
+              </p>
 
-            <div class="col-md-3">
-              <ngx-select
-                [form]="requestForm"
-                control="regDelega"
-                (fetchItems)="getRegionalDeleg($event)"
-                [data]="selectRegionalDeleg"
-                label="Delegaci&oacute;n Regional"
-                value="regDelega"></ngx-select>
-            </div>
-
-            <div class="col-md-4">
-              <ngx-select
-                [form]="requestForm"
-                control="transmitter"
-                (fetchItems)="getTransmitter($event)"
-                [data]="selectTransmitter"
-                label="Emisora"
-                value="transmitter"></ngx-select>
-            </div>
-
-            <div class="col-md-3">
-              <form-field
-                [control]="requestForm.get('noOfi')"
-                label="No&#46; Oficina">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="noOfi" />
-              </form-field>
-            </div>
+              <p>
+                <a
+                  class="text-color"
+                  (click)="showSearchForm = false"
+                  *ngIf="showSearchForm">
+                  <i class="fa fa-angle-down" aria-hidden="true"></i>
+                  Información de la solicitud</a
+                >
+              </p>
+            </h5>
           </div>
-          <div class="row pt-5">
-            <div class="col-md-3">
-              <ngx-select
-                [form]="requestForm"
-                control="entity"
-                (fetchItems)="getEntity($event)"
-                [data]="selectEntity"
-                label="Entidad"
-                value="regDelega"></ngx-select>
+          <div *ngIf="showSearchForm">
+            <div class="row pt-5">
+              <div class="col-md-2">
+                <form-field
+                  [control]="requestForm.get('date')"
+                  label="Fecha de solicitud">
+                  <input
+                    type="text"
+                    class="form-control"
+                    #dp="bsDatepicker"
+                    formControlName="date"
+                    bsDatepicker
+                    [bsValue]="bsValue" />
+                </form-field>
+              </div>
+
+              <div class="col-md-3">
+                <ngx-select
+                  [form]="requestForm"
+                  control="regDelega"
+                  (fetchItems)="getRegionalDeleg($event)"
+                  [data]="selectRegionalDeleg"
+                  label="Delegaci&oacute;n Regional"
+                  value="regDelega"></ngx-select>
+              </div>
+
+              <div class="col-md-4">
+                <ngx-select
+                  [form]="requestForm"
+                  control="transmitter"
+                  (fetchItems)="getTransmitter($event)"
+                  [data]="selectTransmitter"
+                  label="Emisora"
+                  value="transmitter"></ngx-select>
+              </div>
+
+              <div class="col-md-3">
+                <form-field
+                  [control]="requestForm.get('noOfi')"
+                  label="No&#46; Oficina">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="noOfi" />
+                </form-field>
+              </div>
             </div>
-            <div class="col-md-3">
-              <ngx-select
-                [form]="requestForm"
-                control="authority"
-                (fetchItems)="getAuthority($event)"
-                [data]="selectAuthority"
-                label="Autoridad"
-                value="regDelega"></ngx-select>
-            </div>
-            <div class="col-md-3">
-              <ngx-select
-                [form]="requestForm"
-                control="tranfe"
-                (fetchItems)="getTransfe($event)"
-                [data]="selectTransfe"
-                label="Transferencia"
-                value="regDelega"></ngx-select>
-            </div>
-            <div *ngIf="op == 2" class="col-md-3">
-              <ngx-select
-                [form]="requestForm"
-                control="state"
-                (fetchItems)="getState($event)"
-                [data]="selectState"
-                label="Estado"
-                value="regDelega"></ngx-select>
+            <div class="row pt-5">
+              <div class="col-md-3">
+                <ngx-select
+                  [form]="requestForm"
+                  control="entity"
+                  (fetchItems)="getEntity($event)"
+                  [data]="selectEntity"
+                  label="Entidad"
+                  value="regDelega"></ngx-select>
+              </div>
+              <div class="col-md-3">
+                <ngx-select
+                  [form]="requestForm"
+                  control="authority"
+                  (fetchItems)="getAuthority($event)"
+                  [data]="selectAuthority"
+                  label="Autoridad"
+                  value="regDelega"></ngx-select>
+              </div>
+              <div class="col-md-3">
+                <ngx-select
+                  [form]="requestForm"
+                  control="tranfe"
+                  (fetchItems)="getTransfe($event)"
+                  [data]="selectTransfe"
+                  label="Transferente"
+                  value="regDelega"></ngx-select>
+              </div>
+              <div *ngIf="op == 2" class="col-md-3">
+                <ngx-select
+                  [form]="requestForm"
+                  control="state"
+                  (fetchItems)="getState($event)"
+                  [data]="selectState"
+                  label="Estado"
+                  value="regDelega"></ngx-select>
+              </div>
             </div>
           </div>
         </div>
@@ -134,22 +190,22 @@
               Tipo de Usuario&#58;
             </div>
             <div class="col-sm-1">
-              <form-radio label="All">
+              <form-radio label="T.E">
                 <input
                   type="radio"
                   formControlName="typeUser"
-                  value="all"
-                  id="all"
+                  value="te"
+                  id="te"
                   [checked]="checked" />
               </form-radio>
             </div>
             <div class="col-sm-1">
-              <form-radio label="Any">
+              <form-radio label="SAE">
                 <input
                   type="radio"
                   formControlName="typeUser"
-                  value="any"
-                  id="any" />
+                  value="sae"
+                  id="sae" />
               </form-radio>
             </div>
             <div class="col-md-3">
@@ -174,29 +230,4 @@
       </app-card>
     </form>
   </div>
-  <div footer>
-    <div class="d-flex justify-content-center">
-      <div class="m-3">
-        <confirm-button
-          [disabled]="requestForm.invalid"
-          [loading]="loading"
-          (confirm)="confirm()">
-        </confirm-button>
-      </div>
-      <div class="m-3">
-        <button
-          type="button"
-          class="btn btn-secondary active"
-          [disabled]="requestForm.invalid"
-          (click)="confirm()">
-          Turnar
-        </button>
-      </div>
-      <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
-          Cancelar
-        </button>
-      </div>
-    </div>
-  </div>
-</app-modal>
+</app-card>

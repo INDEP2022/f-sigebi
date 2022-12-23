@@ -12,10 +12,11 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 @Component({
   selector: 'app-request-in-turn-form',
   templateUrl: './request-in-turn-form.component.html',
-  styles: [],
+  styleUrls: ['./request-in-turn-form.component.scss'],
 })
 export class RequestInTurnFormComponent implements OnInit {
   @Output() sendSearchForm = new EventEmitter<ModelForm<IRequestInTurn>>();
+  showSearchForm: boolean = true;
 
   edit: boolean = false;
   title: string = 'SOliCITUD A TURNO';
