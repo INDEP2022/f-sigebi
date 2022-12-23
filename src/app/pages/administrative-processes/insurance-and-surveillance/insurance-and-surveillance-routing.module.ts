@@ -13,14 +13,17 @@ const routes: Routes = [
         loadChildren: async () =>
           (await import('./policy-maintenance/policy-maintenance.module'))
             .PolicyMaintenanceModule,
-        data: { title: 'Mantenimiento de Pólizas' },
+        data: {
+          title: 'Mantenimiento de Pólizas',
+          screen: 'FACTADBSINSEGBIEN',
+        },
       },
       {
         path: 'insurance-policy',
         loadChildren: async () =>
           (await import('./insurance-policy/insurance-policy.module'))
             .InsurancePolicyModule,
-        data: { title: 'Pólizas de seguro' },
+        data: { title: 'Pólizas de seguro', screen: 'FCATCATMTOPOLISEG' },
       },
       {
         path: 'registration-of-policy',
@@ -30,7 +33,10 @@ const routes: Routes = [
               './registration-of-goods-policy/registration-of-goods-policy.module'
             )
           ).RegistrationOfGoodsPolicyModule,
-        data: { title: 'Alta de bienes en pólizas' },
+        data: {
+          title: 'Alta de bienes en pólizas',
+          screen: 'FACTADBALTSEGBIEN',
+        },
       },
       {
         path: 'loss-of-policy',
@@ -43,14 +49,14 @@ const routes: Routes = [
         path: 'maintenance',
         loadChildren: async () =>
           (await import('./maintenance/maintenance.module')).MaintenanceModule,
-        data: { title: 'Mantenimiento' },
+        data: { title: 'Mantenimiento', screen: 'FVIGMANTENIMIENTO' },
       },
       {
         path: 'surveillance-log',
         loadChildren: async () =>
           (await import('./surveillance-log/surveillance-log.module'))
             .SurveillanceLogModule,
-        data: { title: 'Bitacora de vigilancia' },
+        data: { title: 'Bitacora de vigilancia', screen: 'FVIGBITACORA' },
       },
       {
         path: 'maintenance-mail-configuration',
@@ -60,14 +66,20 @@ const routes: Routes = [
               './maintenance-mail-configuration/maintenance-mail-configuration.module'
             )
           ).MaintenanceMailConfigurationModule,
-        data: { title: 'Configuración de correos de mantenimiento' },
+        data: {
+          title: 'Configuración de correos de mantenimiento',
+          screen: 'FVIGDATCORREO',
+        },
       },
       {
         path: 'email-book-config',
         loadChildren: async () =>
           (await import('./email-book-config/email-book-config.module'))
             .EmailBookConfigModule,
-        data: { title: 'Configuración de libreta de correos' },
+        data: {
+          title: 'Configuración de libreta de correos',
+          screen: 'FVIGLIBRETAREG',
+        },
       },
       {
         path: 'surveillance-contracts',
@@ -77,21 +89,24 @@ const routes: Routes = [
               './surveillance-contracts/surveillance-contracts.module'
             )
           ).SurveillanceContractsModule,
-        data: { title: 'Contratos de Vigilancia' },
+        data: { title: 'Contratos de Vigilancia', screen: 'FCATCATMTOCONTVIG' },
       },
       {
         path: 'surveillance-zones',
         loadChildren: async () =>
           (await import('./surveillance-zones/surveillance-zones.module'))
             .SurveillanceZonesModule,
-        data: { title: 'Zonas de Vigilancia' },
+        data: { title: 'Zonas de Vigilancia', screen: 'FACTADBMTOCONTVIG' },
       },
       {
         path: 'surveillance-concepts',
         loadChildren: async () =>
           (await import('./surveillance-concepts/surveillance-concepts.module'))
             .SurveillanceConceptsModule,
-        data: { title: 'Conceptos de Vigilancia' },
+        data: {
+          title: 'Conceptos de Vigilancia',
+          screen: 'FCONADBINCORPOLIZA',
+        },
       },
       {
         path: 'surveillance-calculate',
@@ -101,7 +116,7 @@ const routes: Routes = [
               './surveillance-calculate/surveillance-calculate.module'
             )
           ).SurveillanceCalculateModule,
-        data: { title: 'Calculo de Vigilancia' },
+        data: { title: 'Calculo de Vigilancia', screen: 'FACTADBSOLSEGUROS' },
       },
       {
         path: 'prorrateo-goods-surveillance',
@@ -111,21 +126,21 @@ const routes: Routes = [
               './prorrateo-goods-surveillance/prorrateo-goods-surveillance.module'
             )
           ).ProrrateoGoodsSurveillanceModule,
-        data: { title: 'Prorrateo de vigilancia' },
+        data: { title: 'Prorrateo de vigilancia', screen: 'FACTADBREGSEGUROS' },
       },
       {
         path: 'surveillance-reports',
         loadChildren: async () =>
           (await import('./surveillance-reports/surveillance-reports.module'))
             .SurveillanceReportsModule,
-        data: { title: 'Reportes de Vigilancia' },
+        data: { title: 'Reportes de Vigilancia', screen: 'FVIGREPORTES' },
       },
       {
         path: 'centralized-expenses',
         loadChildren: async () =>
           (await import('./centralized-expenses/centralized-expenses.module'))
             .CentralizedExpensesModule,
-        data: { title: 'Gastos centralizados' },
+        data: { title: 'Gastos centralizados', screen: 'FVIGREPORTES' },
       },
       {
         path: 'deregistration-of-goods',
@@ -135,7 +150,10 @@ const routes: Routes = [
               './deregistration-of-goods/deregistration-of-goods.module'
             )
           ).DeregistrationOfGoodsModule,
-        data: { title: 'Baja de bienes en polizas' },
+        data: {
+          title: 'Baja de bienes en polizas',
+          screen: 'FACTADBBAJSEGBIEN',
+        },
       },
       {
         path: 'goods-to-policies-reports',
@@ -155,7 +173,10 @@ const routes: Routes = [
               './percentages-surveillance/percentages-surveillance.module'
             )
           ).PercentagesSurveillanceModule,
-        data: { title: 'Porcentaje de supervisión de Bienes' },
+        data: {
+          title: 'Porcentaje de supervisión de Bienes',
+          screen: 'PAORCENTAJES',
+        },
       },
       {
         path: 'movements-goods-surveillance',
@@ -165,20 +186,26 @@ const routes: Routes = [
               './movements-goods-surveillance/movements-goods-surveillance.module'
             )
           ).MovementsGoodsSurveillanceModule,
-        data: { title: 'Movimeinto de bienes en vigilaancia' },
+        data: {
+          title: 'Movimiento de bienes en vigilancia',
+          screen: 'FACTADBALTVIGBIEN',
+        },
       },
       {
         path: 'user-access',
         loadChildren: async () =>
           (await import('./access/access.module')).AccessModule,
-        data: { title: 'Acceso a usuarios' },
+        data: { title: 'Acceso a usuarios', screen: 'USUARIOS' },
       },
       {
         path: 'surveillance-service',
         loadChildren: async () =>
           (await import('./surveillance-service/surveillance-service.module'))
             .SurveillanceServiceModule,
-        data: { title: 'Servicio de vigilancia' },
+        data: {
+          title: 'Servicio de vigilancia',
+          screen: 'SERVICIO_VIGILANCIA',
+        },
       },
     ],
   },

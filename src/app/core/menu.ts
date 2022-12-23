@@ -81,7 +81,7 @@ export const MENU: IMenuItem[] = [
       // APP -- GESTIONAR DEVOLUCION -- Registro de Solicitud de Devolución
       { ...MENU_OPTIONS_REQUEST_MANAGE_RETURN },
       {
-        label: 'Solicitudes a turno',
+        label: 'Turnado Masivo Solicitudes',
         link: '/pages/request/request-in-turn',
       },
       {

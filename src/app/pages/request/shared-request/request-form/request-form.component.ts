@@ -19,6 +19,8 @@ import { issuesData } from './data';
 export class RequestFormComponent extends BasePage implements OnInit {
   @Input() op: number; // op con valor 1 = Recepción Manual, op con valor 2 = Documentación Complementaria
   @Input() edit: boolean = false;
+  showSearchForm: boolean = true;
+  bsValue = new Date();
   requestForm: ModelForm<IRequest>;
   typeTurn: String = '';
   bsModalRef: BsModalRef;
@@ -49,7 +51,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
   prepareForm(): void {
     this.requestForm = this.fb.group({
-      date: [null],
+      date: [{ value: null, disabled: true }],
       noOfi: [null, Validators.required],
       regDelega: [{ value: '', disabled: true }], // cargar la delegacion a la que pertence
       entity: [null],
@@ -60,6 +62,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       receiUser: [{ value: '', disabled: true }],
       issue: [null],
     });
+    this.requestForm.controls['date'].patchValue(this.bsValue);
     //se agregan campos documentación complementaria según el valor del parametro OP
     if (this.op == 2) this.complementaryDocumentationField(this.requestForm);
   }
