@@ -24,7 +24,7 @@ const routes: Routes = [
     data: { title: 'Sub Delegaciones' },
   },
   {
-    path: 'deductives',
+    path: 'create-deductives',
     loadChildren: async () =>
       (await import('./deductives/deductives.module')).DeductivesModule,
     data: { title: 'Deductivas' },
@@ -138,12 +138,6 @@ const routes: Routes = [
       (await import('./legal-support/legal-support.module')).LegalSupportModule,
     data: { title: 'Soporte Legal' },
   },
-  {
-    path: 'label-okey',
-    loadChildren: async () =>
-      (await import('./label-okey/label-okey.module')).LabelOkeyModule,
-    data: { title: 'Etiquetas Bien' },
-  },
 
   {
     path: 'fractions',
@@ -158,33 +152,11 @@ const routes: Routes = [
       (await import('./drawers/drawers.module')).DrawersModule,
     data: { title: 'Gavetas' },
   },
-
-  {
-    path: 'management',
-    loadChildren: async () =>
-      (await import('./management/management.module')).ManagementModule,
-    data: { title: 'Gestión' },
-  },
-
-  {
-    path: 'save-values',
-    loadChildren: async () =>
-      (await import('./save-values/save-values.module')).SaveValuesModule,
-    data: { title: 'Gestión' },
-  },
-
   {
     path: 'identifier',
     loadChildren: async () =>
       (await import('./identifiers/identifiers.module')).IdentifiersModule,
     data: { title: 'Identificador' },
-  },
-
-  {
-    path: 'indicated',
-    loadChildren: async () =>
-      (await import('./indicated/indicated.module')).IndicatedModule,
-    data: { title: 'Indiciados' },
   },
   {
     path: 'doc-compensation-sat-xml',
@@ -209,18 +181,6 @@ const routes: Routes = [
     data: { title: 'Etiquetas Bien' },
   },
   {
-    path: 'fractions',
-    loadChildren: async () =>
-      (await import('./fractions/fractions.module')).FractionsModule,
-    data: { title: 'Fracciones' },
-  },
-  {
-    path: 'drawers',
-    loadChildren: async () =>
-      (await import('./drawers/drawers.module')).DrawersModule,
-    data: { title: 'Gavetas' },
-  },
-  {
     path: 'management',
     loadChildren: async () =>
       (await import('./management/management.module')).ManagementModule,
@@ -230,13 +190,7 @@ const routes: Routes = [
     path: 'save-values',
     loadChildren: async () =>
       (await import('./save-values/save-values.module')).SaveValuesModule,
-    data: { title: 'Gestión' },
-  },
-  {
-    path: 'identifier',
-    loadChildren: async () =>
-      (await import('./identifiers/identifiers.module')).IdentifiersModule,
-    data: { title: 'Identificador' },
+    data: { title: 'Valores Guardados' },
   },
   {
     path: 'indicated',
@@ -309,13 +263,6 @@ const routes: Routes = [
         )
       ).InstitutionClassificationModule,
     data: { title: 'Institución Clasificación' },
-  },
-  {
-    path: 'payment-concept',
-    loadChildren: async () =>
-      (await import('./sub-delegations/sub-delegations.module'))
-        .SubDelegationsModule,
-    data: { title: 'Sub Delegaciones' },
   },
   {
     path: 'expert',
@@ -584,6 +531,13 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./penalty/penalty.module')).PenaltyModule,
     data: { title: 'Lista Penalizacion' },
+  },
+  {
+    path: 'payment-concept',
+    loadChildren: async () =>
+      (await import('./payment-concept/payment-concept.module'))
+        .PaymentConceptModule,
+    data: { title: 'Concepto de pagos' },
   },
 ];
 

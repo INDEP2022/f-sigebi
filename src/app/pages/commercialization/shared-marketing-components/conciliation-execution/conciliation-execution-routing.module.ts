@@ -6,6 +6,7 @@ const routes: Routes = [
   {
     path: ':goodType',
     component: ConciliationExecutionMainComponent,
+    data: { screen: 'FCOMER612' },
   },
 ];
 

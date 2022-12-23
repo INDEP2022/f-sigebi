@@ -1,7 +1,7 @@
 <app-card [header]="true">
   <div header>
     <div class="ch-content">
-      <h5 class="title">Validar línea de captura</h5>
+      <h5 class="title">Validar l&iacute;nea de captura</h5>
     </div>
   </div>
   <div body>
@@ -14,7 +14,7 @@
               [searchable]="false"
               class="form-control"
               [clearable]="false">
-              <ng-option value="Electrónica">Electrónica</ng-option>
+              <ng-option value="Electrónica">Electr&oacute;nica</ng-option>
               <ng-option value="Presencial">Presencial</ng-option>
             </ng-select>
           </form-field>
@@ -22,7 +22,7 @@
       </div>
       <div class="row pt-5">
         <div class="mb-3 ch-content">
-          <h5 class="title">Consultar Línea de captura</h5>
+          <h5 class="title">Consultar L&iacute;nea de captura</h5>
         </div>
         <div class="col-md-2">
           <form-field [control]="form.get('idEvent')" label="ID Evento">
@@ -30,7 +30,9 @@
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field [control]="form.get('allotment')" label="Lote público">
+          <form-field
+            [control]="form.get('allotment')"
+            label="Lote p&uacute;blico">
             <input
               type="text"
               class="form-control"

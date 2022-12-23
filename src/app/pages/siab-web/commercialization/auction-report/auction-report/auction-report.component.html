@@ -19,7 +19,7 @@
               class="btn btn-primary btn-sm active"
               [disabled]="!form.valid"
               (click)="showLiquidacion = !showLiquidacion">
-              Liquidación
+              Liquidaci&oacute;n
             </button>
           </div>
         </div>
@@ -30,7 +30,7 @@
               class="btn btn-primary btn-sm active"
               [disabled]="!form.valid"
               (click)="showGarantia = !showGarantia">
-              Garantías
+              Garant&iacute;as
             </button>
           </div>
         </div>
@@ -63,7 +63,7 @@
           </form-field>
         </div>
         <div class="col-md-2" *ngIf="showGarantia || showLiquidacion">
-          <form-field [control]="form.get('filter03')" label="Estatus:">
+          <form-field [control]="form.get('filter03')" label="Estatus&#58;">
             <ng-select
               formControlName="filter03"
               [searchable]="false"
@@ -75,7 +75,9 @@
           </form-field>
         </div>
         <div class="col-md-2" *ngIf="showGarantia || showLiquidacion">
-          <form-field [control]="form.get('filter04')" label="LC's Vistas:">
+          <form-field
+            [control]="form.get('filter04')"
+            label="LC&#39;s Vistas&#58;">
             <ng-select
               formControlName="filter03"
               [searchable]="false"
@@ -103,7 +105,7 @@
     </form>
     <div class="row pt-5" *ngIf="showLiquidacion">
       <div class="ch-content" header>
-        <h5 class="title">Liquidación</h5>
+        <h5 class="title">Liquidaci&oacute;n</h5>
         <div class="col-md-5 buttons">
           <app-columns-select [(settings)]="settings"></app-columns-select>
         </div>
@@ -126,7 +128,7 @@
     <!-- Es la misma tabla, solo cambia el título, falta configuración por separado (Pendiente) -->
     <div class="row pt-5" *ngIf="showGarantia">
       <div class="ch-content" header>
-        <h5 class="title">Garantias</h5>
+        <h5 class="title">Garant&iacute;as</h5>
         <div class="col-md-5 buttons">
           <app-columns-select [(settings)]="settings"></app-columns-select>
         </div>
@@ -152,7 +154,7 @@
         <div class="col-md-2">
           <form-field
             [control]="formReport.get('nameReport')"
-            label="Nombre del reporte:">
+            label="Nombre del reporte&#58;">
             <input
               type="text"
               class="form-control"

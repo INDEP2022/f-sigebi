@@ -6,6 +6,7 @@ const routes: Routes = [
   {
     path: ':goodType',
     component: SirsaeMovementSendingMainComponent,
+    data: { screen: 'FCOMER112' },
   },
 ];
 

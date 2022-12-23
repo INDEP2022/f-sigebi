@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { RFCCURP_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-management-capture-lines-modal',
@@ -26,15 +27,21 @@ export class managementCaptureLinesModalComponent implements OnInit {
       id: [null, [Validators.required]],
       allotment: [null, [Validators.required]],
       amount: [null, [Validators.required]],
-      status: [null, [Validators.required]],
-      type: [null, [Validators.required]],
-      reference: [null, [Validators.required]],
+      status: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      type: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      reference: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       dateValidity: [null, [Validators.required]],
-      rfc: [null, [Validators.required]],
+      rfc: [null, [Validators.required, Validators.pattern(RFCCURP_PATTERN)]],
       idClient: [null, [Validators.required]],
-      client: [null, [Validators.required]],
-      penalty: [null, [Validators.required]],
-      note: [null, [Validators.required]],
+      client: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      penalty: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      note: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
     if (this.allotment != null) {
       this.edit = true;

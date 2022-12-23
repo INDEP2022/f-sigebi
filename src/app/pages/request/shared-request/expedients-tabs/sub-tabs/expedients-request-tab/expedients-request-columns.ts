@@ -49,13 +49,13 @@ export const EXPEDIENTS_REQUEST_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  typeTransfer: {
-    title: 'Tipo Transferencia',
+  subject: {
+    title: 'Asunto',
     type: 'string',
     sort: false,
   },
-  subject: {
-    title: 'Asunto',
+  typeTransfer: {
+    title: 'Tipo Transferencia',
     type: 'string',
     sort: false,
   },

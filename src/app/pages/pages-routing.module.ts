@@ -110,26 +110,12 @@ const routes: Routes = [
   },
 
   {
-    path: 'scheduling-deliveries',
-    loadChildren: async () =>
-      (await import('./scheduling-deliveries/scheduling-deliveries.module'))
-        .SchedulingDeliveriesModule,
-  },
-  {
     path: 'parameterization',
     loadChildren: async () =>
       (await import('./parameterization/parameterization.module'))
         .ParameterizationModule,
   },
-  {
-    path: 'execute-return-deliveries',
-    loadChildren: async () =>
-      (
-        await import(
-          './execute-return-deliveries/execute-return-deliveries.module'
-        )
-      ).ExecuteReturnDeliveriesModule,
-  },
+
   {
     path: 'siab-web',
     loadChildren: async () =>

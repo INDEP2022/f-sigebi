@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  //Henry
+  //Henryy
   {
     path: 'cat-financial-information-attributes',
     loadChildren: async () =>
@@ -11,7 +11,10 @@ const routes: Routes = [
           './cat-financial-information-attributes/cat-financial-information-attributes.module'
         )
       ).CatFinancialInformationAttributesModule,
-    data: { title: 'Catálogo de atributos de información financiera' },
+    data: {
+      title: 'Catálogo de atributos de información financiera',
+      screen: 'FCATADBATRIBINFIN',
+    },
   },
   {
     path: 'cat-financial-indicators',
@@ -21,28 +24,34 @@ const routes: Routes = [
           './cat-financial-indicators/cat-financial-indicators.module'
         )
       ).CatFinancialIndicatorsModule,
-    data: { title: 'Catálogo de indicadores financieros' },
+    data: {
+      title: 'Catálogo de indicadores financieros',
+      screen: 'FCATADBINDICFINAN',
+    },
   },
   {
     path: 'question-catalog',
     loadChildren: async () =>
       (await import('./question-catalog/question-catalog.module'))
         .QuestionCatalogModule,
-    data: { title: 'Catálogo de preguntas' },
+    data: { title: 'Catálogo de preguntas', screen: 'FCATADBINFOREMPRE' },
   },
   {
     path: 'logical-tables-register',
     loadChildren: async () =>
       (await import('./logical-tables-register/logical-tables-register.module'))
         .LogicalTablesRegisterModule,
-    data: { title: 'Catálogo de tablas lógicas' },
+    data: { title: 'Catálogo de tablas lógicas', screen: 'FCATCATALTATABLAS' },
   },
   {
     path: 'flyer-subject-catalog',
     loadChildren: async () =>
       (await import('./flyer-subject-catalog/flyer-subject-catalog.module'))
         .FlyerSubjectCatalogModule,
-    data: { title: 'Catálogo de asuntos para volantes' },
+    data: {
+      title: 'Catálogo de asuntos para volantes',
+      screen: 'FCATCATASUNTOS',
+    },
   },
   {
     path: 'register-attributes-types',
@@ -52,27 +61,36 @@ const routes: Routes = [
           './register-attributes-types/register-attributes-types.module'
         )
       ).RegisterAttributesTypesModule,
-    data: { title: 'Alta de atributos por tipo de bien' },
+    data: {
+      title: 'Alta de atributos por tipo de bien',
+      screen: 'FCATCATATRIBXBIEN',
+    },
   },
   {
     path: 'cat-effective-numeraire',
     loadChildren: async () =>
       (await import('./cat-effective-numeraire/cat-effective-numeraire.module'))
         .CatEffectiveNumeraireModule,
-    data: { title: 'Categoria para numerario efectivo' },
+    data: {
+      title: 'Categoria para numerario efectivo',
+      screen: 'FCATCATCATEGONUME',
+    },
   },
   {
     path: 'bank-concepts',
     loadChildren: async () =>
       (await import('./bank-concepts/bank-concepts.module')).BankConceptsModule,
-    data: { title: 'Conceptos bancarios' },
+    data: { title: 'Conceptos bancarios', screen: 'FCATCATCONCEPBANC' },
   },
   {
     path: 'cat-depository-payment',
     loadChildren: async () =>
       (await import('./cat-depository-payment/cat-depository-payment.module'))
         .CatDepositoryPaymentModule,
-    data: { title: 'Catalogo de conceptos de pagos depositarias' },
+    data: {
+      title: 'Catalogo de conceptos de pagos depositarias',
+      screen: 'FCATCATCONCEPPAGO',
+    },
   },
   {
     path: 'maintenance-deleg-subdeleg',
@@ -82,7 +100,10 @@ const routes: Routes = [
           './maintenance-deleg-subdeleg/maintenance-deleg-subdeleg.module'
         )
       ).MaintenanceDelegSubdelegModule,
-    data: { title: 'Mant. a delegaciones y subdelegaciones' },
+    data: {
+      title: 'Mant. a delegaciones y subdelegaciones',
+      screen: 'FCATCATDELYSUBDEL',
+    },
   },
   {
     path: 'mnce-adm-depository-auditor',
@@ -92,7 +113,10 @@ const routes: Routes = [
           './mnce-adm-depository-auditor/mnce-adm-depository-auditor.module'
         )
       ).MnceAdmDepositoryAuditorModule,
-    data: { title: 'Mantto. a administrador, depositario e interventor' },
+    data: {
+      title: 'Mantto. a administrador, depositario e interventor',
+      screen: 'FCATCATDEPOINTEAD',
+    },
   },
   {
     path: 'attributes-reg-logical-tables',
@@ -102,7 +126,10 @@ const routes: Routes = [
           './attributes-reg-logical-tables/attributes-reg-logical-tables.module'
         )
       ).ttributesRegLogicalTablesModule,
-    data: { title: 'Registro de atributos para tablas lógicas' },
+    data: {
+      title: 'Registro de atributos para tablas lógicas',
+      screen: 'FCATCATDESCATRIBU',
+    },
   },
   {
     path: 'register-keys-logical-tables',
@@ -112,28 +139,37 @@ const routes: Routes = [
           './register-keys-logical-tables/register-keys-logical-tables.module'
         )
       ).RegisterKeysLogicalTablesModule,
-    data: { title: 'Registro de claves para tablas logicas' },
+    data: {
+      title: 'Registro de claves para tablas logicas',
+      screen: 'FCATCATDESCCLAVES',
+    },
   },
   {
     path: 'cat-doc-require',
     loadChildren: async () =>
       (await import('./cat-doc-require/cat-doc-require.module'))
         .CatDocRequireModule,
-    data: { title: 'Catálogo de requisitos documentales' },
+    data: {
+      title: 'Catálogo de requisitos documentales',
+      screen: 'FCATCATDOCUMDICTA',
+    },
   },
   {
     path: 'general-archive-catalog',
     loadChildren: async () =>
       (await import('./general-archive-catalog/general-archive-catalog.module'))
         .GeneralArchiveCatalogModule,
-    data: { title: 'Catálogo de Archivo General' },
+    data: { title: 'Catálogo de Archivo General', screen: 'FCATCATGUARDAVALO' },
   },
   {
     path: 'cat-identifier-uni-dbs',
     loadChildren: async () =>
       (await import('./cat-identifier-uni-dbs/cat-identifier-uni-dbs.module'))
         .CatIdentifierUniDbsModule,
-    data: { title: 'Catálogo de identificador para la unificacion de las dbs' },
+    data: {
+      title: 'Catálogo de identificador para la unificacion de las dbs',
+      screen: 'FCATCATIDENTIFICADOR',
+    },
   },
   {
     path: 'cat-relationship-opinion',
@@ -143,7 +179,10 @@ const routes: Routes = [
           './cat-relationship-opinion/cat-relationship-opinion.module'
         )
       ).CatRelationshipOpinionModule,
-    data: { title: 'Catálogo de relación y de asunto dictamen' },
+    data: {
+      title: 'Catálogo de relación y de asunto dictamen',
+      screen: 'FCATADBRELASDIC',
+    },
   },
   //Alexander
   {

@@ -131,7 +131,7 @@ const routes: Routes = [
   },
   // gestionar devolucion
   {
-    path: 'gestionar-devolucion',
+    path: 'manage-return',
     loadChildren: async () =>
       (await import('./manage-return/manage-return.module')).ManageReturnModule,
     data: { title: 'Registro de Solicitud de Devolución' },
@@ -198,6 +198,32 @@ const routes: Routes = [
       (await import('./req-comp-doc-amp/req-comp-doc-amp.module'))
         .ReqCompDocAmpModule,
     data: { title: 'Registro de Documentación Complementaria de Amparos' },
+  },
+
+  {
+    path: 'execute-return-deliveries',
+    loadChildren: async () =>
+      (
+        await import(
+          './execute-return-deliveries/execute-return-deliveries.module'
+        )
+      ).ExecuteReturnDeliveriesModule,
+  },
+
+  {
+    path: 'scheduling-deliveries',
+    loadChildren: async () =>
+      (await import('./scheduling-deliveries/scheduling-deliveries.module'))
+        .SchedulingDeliveriesModule,
+  },
+  {
+    path: 'notification-request-delivery',
+    loadChildren: async () =>
+      (
+        await import(
+          './notification-request-delivery/notification-request-delivery.module'
+        )
+      ).NotificationRequestDeliveryModule,
   },
 ];
 

@@ -10,7 +10,10 @@ const routes: Routes = [
           './quarterly-accumulated-assets/quarterly-accumulated-assets.module'
         )
       ).QuarterlyAccumulatedAssetsModule,
-    data: { title: 'Acumulado Trimestral de Bienes' },
+    data: {
+      title: 'Acumulado Trimestral de Bienes',
+      screen: 'FGERDIRBIACUMTRIM',
+    },
   },
   {
     path: 'annual-accumulated-assets',
@@ -20,7 +23,7 @@ const routes: Routes = [
           './annual-accumulated-assets/annual-accumulated-assets.module'
         )
       ).AnnualAccumulatedAssetsModule,
-    data: { title: 'Acumulado Anual de Bienes' },
+    data: { title: 'Acumulado Anual de Bienes', screen: 'FGERDIRBIACUMANUA' },
   },
   {
     path: 'acumulative-asset-tabs',
@@ -34,7 +37,10 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./cumulative-goods/cumulative-goods.module'))
         .CumulativeGoodsModule,
-    data: { title: 'Control Mensual de Recepción Documental' },
+    data: {
+      title: 'Control Mensual de Recepción Documental',
+      screen: 'FGERDIRCTRLXMES',
+    },
   },
   {
     path: 'report-registration-module',
@@ -44,21 +50,30 @@ const routes: Routes = [
           './report-registration-module/report-registration-module.module'
         )
       ).ReportRegistrationModuleModule,
-    data: { title: 'Información Bienes Asegurados/Decomisos/Abandonos' },
+    data: {
+      title: 'Información Bienes Asegurados/Decomisos/Abandonos',
+      screen: 'FGERDIRREGISTROBI',
+    },
   },
   {
     path: 'doc-received-authority',
     loadChildren: async () =>
       (await import('./doc-received-authority/doc-received-authority.module'))
         .DocReceivedAuthorityModule,
-    data: { title: 'Recepción de Doctos. Por Autoridad Emisora' },
+    data: {
+      title: 'Recepción de Doctos. Por Autoridad Emisora',
+      screen: 'FCONDIRRECEPAUTEM',
+    },
   },
   {
     path: 'daily-control-reception',
     loadChildren: async () =>
       (await import('./daily-control-reception/daily-control-reception.module'))
         .DailyControlReceptionModule,
-    data: { title: 'Recepción Diaria de Expedientes' },
+    data: {
+      title: 'Recepción Diaria de Expedientes',
+      screen: 'FGERDIRCTRLDIARIO',
+    },
   },
   {
     path: 'destruction-authorization-management',
@@ -68,7 +83,10 @@ const routes: Routes = [
           './destruction-authorization-management/destruction-authorization-management.module'
         )
       ).DestructionAuthorizationManagementModule,
-    data: { title: 'Gestión de Autorización de Destrucción' },
+    data: {
+      title: 'Gestión de Autorización de Destrucción',
+      screen: 'FESTATUSRGA',
+    },
   },
   {
     path: 'authorization-assets-destruction',
@@ -78,7 +96,7 @@ const routes: Routes = [
           './authorization-assets-destruction/authorization-assets-destruction.module'
         )
       ).AuthorizationAssetsDestructionModule,
-    data: { title: 'Aprobación destrucción' },
+    data: { title: 'Aprobación destrucción', screen: 'FACTDIRAPROBDESTR' },
   },
   {
     path: 'approval-assets-destination',
@@ -88,14 +106,17 @@ const routes: Routes = [
           './approval-assets-destination/approval-assets-destination.module'
         )
       ).ApprovalAssetsDestinationModule,
-    data: { title: 'Aprobación destino' },
+    data: { title: 'Aprobación destino', screen: 'FACTDESAPROBUTILI' },
   },
   {
     path: 'reception-area-sera',
     loadChildren: async () =>
       (await import('./reception-area-sera/reception-area-sera.module'))
         .ReceptionAreaSeraModule,
-    data: { title: 'Recepción de Doctos. x Destino en el SERA' },
+    data: {
+      title: 'Recepción de Doctos. x Destino en el SERA',
+      screen: 'FCONDIRRECEPDOCTOA',
+    },
   },
   {
     path: 'totaldoc-received-destinationarea',
@@ -105,35 +126,47 @@ const routes: Routes = [
           './totaldoc-received-destinationarea/totaldoc-received-destinationarea.module'
         )
       ).TotaldocReceivedDestinationareaModule,
-    data: { title: 'Documentación recibida X Área Destino' },
+    data: {
+      title: 'Documentación recibida X Área Destino',
+      screen: 'FCONDIRREPORECDOCA',
+    },
   },
   {
     path: 'report-doc-received',
     loadChildren: async () =>
       (await import('./report-doc-received/report-doc-received.module'))
         .ReportDocReceivedModule,
-    data: { title: 'Total de Documentación Recibida' },
+    data: {
+      title: 'Total de Documentación Recibida',
+      screen: 'FCONDIRREPORECDOC',
+    },
   },
   {
     path: 'assets-received-admon',
     loadChildren: async () =>
       (await import('./assets-received-admon/assets-received-admon.module'))
         .AssetsReceivedAdmonModule,
-    data: { title: 'Bienes recibidos en Administración' },
+    data: {
+      title: 'Bienes recibidos en Administración',
+      screen: 'FCONDIRREPORBIERE',
+    },
   },
   {
     path: 'update-mss-value',
     loadChildren: async () =>
       (await import('./update-mss-value/update-mss-value.module'))
         .UpdateMssValueModule,
-    data: { title: 'Actualización masiva de Valor de Avalúo' },
+    data: {
+      title: 'Actualización masiva de Valor de Avalúo',
+      screen: 'FMASUPDAVALUOS',
+    },
   },
   {
     path: 'donation-approval',
     loadChildren: async () =>
       (await import('./donation-approval/donation-approval.module'))
         .DonationApprovalModule,
-    data: { title: 'Aprobación donación' },
+    data: { title: 'Aprobación donación', screen: 'FACTDESAPROBDONAC' },
   },
   {
     path: 'approval-change-numeraire',
@@ -143,14 +176,20 @@ const routes: Routes = [
           './approval-change-numeraire/approval-change-numeraire.module'
         )
       ).ApprovalChangeNumeraireModule,
-    data: { title: ' Aprobación de cambio a numerario' },
+    data: {
+      title: ' Aprobación de cambio a numerario',
+      screen: 'FACTDIRAPROBCAMNU',
+    },
   },
   {
     path: 'doc-received-sera',
     loadChildren: async () =>
       (await import('./doc-received-sera/doc-received-sera.module'))
         .DocReceivedSeraModule,
-    data: { title: 'Documentación recibida en sera' },
+    data: {
+      title: 'Documentación recibida en sera',
+      screen: 'FCONDIRRECEPDOCTO',
+    },
   },
 ];
 
