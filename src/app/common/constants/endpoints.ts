@@ -107,6 +107,6 @@ export enum ENDPOINT_LINKS {
   TypeOrderServices = 'type-order-service',
   TypeServices = 'type-services',
   Warehouse = 'warehouse',
-  ZipCode = 'zip-code',
+  ZipCode = 'zip-code', //
   ZoneGeographic = 'zone-geographic',
 }
