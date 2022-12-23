@@ -372,7 +372,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./penalty-billing/penalty-billing.module'))
         .CFpMPenaltyBillingModule,
-    data: { title: 'Facturación' },
+    data: { title: 'Facturación', screen: 'FCOMER089' },
   },
   {
     path: 'sirsae-movement-sending',
@@ -382,7 +382,7 @@ const routes: Routes = [
           './shared-marketing-components/sirsae-movement-sending/sirsae-movement-sending.module'
         )
       ).SirsaeMovementSendingModule,
-    data: { title: 'Envío de Movimientos a SIRSAE' },
+    data: { title: 'Envío de Movimientos a SIRSAE', screen: 'FCOMER112' },
   },
   {
     path: 'conciliation-execution',
@@ -392,7 +392,7 @@ const routes: Routes = [
           './shared-marketing-components/conciliation-execution/conciliation-execution.module'
         )
       ).ConciliationExecutionModule,
-    data: { title: 'Ejecución de la Conciliación' },
+    data: { title: 'Ejecución de la Conciliación', screen: 'FCOMER612' },
   },
   {
     path: 'tax-validation-calculation',
