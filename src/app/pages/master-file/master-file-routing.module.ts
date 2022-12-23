@@ -10,13 +10,16 @@ const routes: Routes = [
           './documents-sent-to-masterfile/documents-sent-to-masterfile.module'
         )
       ).DocumentsSentToMasterfileModule,
-    data: { title: 'Documentos enviados al A. Mastro' },
+    data: {
+      title: 'Documentos enviados al A. Mastro',
+      screen: 'FACTARGENVIODOCS',
+    },
   },
   {
     path: 'loan-monitor',
     loadChildren: async () =>
       (await import('./loan-monitor/loan-monitor.module')).LoanMonitorModule,
-    data: { title: 'Monitor de prestamos' },
+    data: { title: 'Monitor de prestamos', screen: 'FACTARGMONPRESTAM' },
   },
 ];
 
