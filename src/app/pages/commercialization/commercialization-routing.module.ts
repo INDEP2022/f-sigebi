@@ -197,7 +197,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./numeraire-exchange/numeraire-exchange.module'))
         .NumeraireExchangeModule,
-    data: { title: 'Cambio a Numerario' },
+    data: { title: 'Cambio a Numerario', screen: 'FACTADBCAMBIONUME' },
   },
   {
     path: 'sirsae-payment-consultation',
@@ -207,14 +207,14 @@ const routes: Routes = [
           './sirsae-payment-consultation/sirsae-payment-consultation.module'
         )
       ).SirsaePaymentConsultationModule,
-    data: { title: 'Consulta de Pagos Sirsae' },
+    data: { title: 'Consulta de Pagos Sirsae', screen: 'FCOM_CONSPAGSIRSAE' },
   },
   {
     path: 'lcs-massive-conversion',
     loadChildren: async () =>
       (await import('./massive-conversion/massive-conversion.module'))
         .MassiveConversionModule,
-    data: { title: 'Conversión Masiva de LCs' },
+    data: { title: 'Conversión Masiva de LCs', screen: 'FCOMERGENLCMASIV' },
   },
   {
     path: 'mass-biling-base-sales-tab',
@@ -231,14 +231,14 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./batch-parameters/batch-parameters.module'))
         .CMBatchParametersModule,
-    data: { title: 'Parámetros por Lote' },
+    data: { title: 'Parámetros por Lote', screen: 'FCOMERPARAMLOTE' },
   },
   {
     path: 'related-events',
     loadChildren: async () =>
       (await import('./related-events/related-events.module'))
         .RelatedEventsModule,
-    data: { title: 'Eventos Relacionados' },
+    data: { title: 'Eventos Relacionados', screen: 'FCOMEREVEREL' },
   },
   {
     path: 'regular-billing-tab',
@@ -255,14 +255,20 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./payment-search/payment-search.module'))
         .PaymentSearchModule,
-    data: { title: 'Búsqueda y Procesamiento de Pagos' },
+    data: {
+      title: 'Búsqueda y Procesamiento de Pagos',
+      screen: 'FCOMER_PAGOS',
+    },
   },
   {
     path: 'electronic-signatures',
     loadChildren: async () =>
       (await import('./electronic-signatures/electronic-signatures.module'))
         .ElectronicSignaturesModule,
-    data: { title: 'Gestión de Firmas Electrónicas' },
+    data: {
+      title: 'Gestión de Firmas Electrónicas',
+      screen: 'FCOMER_CTLFIRMAS_ELEC',
+    },
   },
   {
     path: 'rectification-fields',
@@ -306,7 +312,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./payment-refund/payment-refund.module'))
         .PaymentRefundModule,
-    data: { title: 'Devolución de Pagos' },
+    data: { title: 'Devolución de Pagos', screen: 'FCOMERCTLDPAG' },
   },
   {
     path: 'mandate-income-reports',
@@ -346,7 +352,10 @@ const routes: Routes = [
           './shared-marketing-components/signature-auxiliary-catalogs/signature-auxiliary-catalogs.module'
         )
       ).SignatureAuxiliaryCatalogsModule,
-    data: { title: 'Catálogos Auxiliares para Firmas Electrónicas' },
+    data: {
+      title: 'Catálogos Auxiliares para Firmas Electrónicas',
+      screen: 'FCOMER_CAT_FELEC',
+    },
   },
   {
     path: 'direct-sale-requests-capture/municipality-control',
@@ -356,7 +365,7 @@ const routes: Routes = [
           './direct-sale-requests-capture/municipality-control/municipality-control.module'
         )
       ).MunicipalityControlModule,
-    data: { title: 'Control de Municipios' },
+    data: { title: 'Control de Municipios', screen: 'FCOMER089' },
   },
   {
     path: 'billing',
@@ -403,7 +412,10 @@ const routes: Routes = [
           './shared-marketing-components/partiality-direct-adjudication/partiality-direct-adjudication.module'
         )
       ).PartialityDirectAdjudicationModule,
-    data: { title: 'Adjudicaciones Directas en Parcialidades' },
+    data: {
+      title: 'Adjudicaciones Directas en Parcialidades',
+      screen: 'FCOMERAMORTIZACIONES',
+    },
   },
   {
     path: 'marketing-records',
@@ -419,7 +431,7 @@ const routes: Routes = [
     path: 'good-delivery',
     loadChildren: async () =>
       (await import('./good-delivery/good-delivery.module')).GoodDeliveryModule,
-    data: { title: 'Entrega de Bienes' },
+    data: { title: 'Entrega de Bienes', screen: 'FCOMERCAMESTBIEN' },
   },
   {
     path: 'release-letter-report',
