@@ -3,7 +3,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { PhotographyFormComponent } from '../../request/shared-request/photography-form/photography-form.component';
+import { PhotographyFormComponent } from '../../shared-request/photography-form/photography-form.component';
 import { APPROVE_RESTITUTION_COLUMNS } from './approve-restitution-columns';
 
 @Component({

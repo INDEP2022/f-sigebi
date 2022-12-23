@@ -204,6 +204,15 @@ var usuario: IRequestList[] = [
     created: 'tester_nsbxt',
     process: 'AP_Amparo',
   },
+  {
+    title:
+      'Notificación al contribuyente (Resarcimiento en especie), No solicitud 1899, contribuyente: Leticia Garcia, PAMA: 235324SDA',
+    noRequest: 1899,
+    numTask: 211956,
+    noInstance: 430144,
+    created: 'tester_nsbxt',
+    process: 'Notification_Taxpayer',
+  },
 ];
 //AP_Amparo
 @Component({
@@ -426,6 +435,11 @@ export class RequestListComponent extends BasePage implements OnInit {
           'pages/request/register-documentation-amparo/single/forfeiture',
           event.data.noRequest,
         ]);
+        break;
+
+      case 'Notification_Taxpayer':
+        //En el caso que sea recibir la notificación del contibuyente resarcimiento (especie)
+        this.router.navigate(['pages/request/notification-request-delivery/']);
         break;
       default:
         break;
