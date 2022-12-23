@@ -17,7 +17,10 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./juridical-ruling/juridical-ruling.module'))
         .JuridicalRulingModule,
-    data: { title: routesJuridicalProcesses[0].label },
+    data: {
+      title: routesJuridicalProcesses[0].label,
+      screen: 'FACTJURDICTAMAS',
+    },
   },
   {
     // ACTUALIZACIÓN DE EXPEDIENTE
@@ -25,7 +28,10 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./file-data-update/file-data-update.module'))
         .FileDataUpdateModule,
-    data: { title: routesJuridicalProcesses[1].label },
+    data: {
+      title: routesJuridicalProcesses[1].label,
+      screen: 'FACTGENACTDATEX',
+    },
   },
   {
     // ACTUALIZACIÓN DE EXPEDIENTE EN NOTIFICACIÓN
@@ -36,7 +42,10 @@ const routes: Routes = [
           './notification-file-update/notification-file-update.module'
         )
       ).NotificationFileUpdateModule,
-    data: { title: routesJuridicalProcesses[2].label },
+    data: {
+      title: routesJuridicalProcesses[2].label,
+      screen: 'FACTGENEXPEDNOTIF',
+    },
   },
   {
     // DECLARATORIA Y OFICIOS DE ABANDONOS
@@ -47,7 +56,10 @@ const routes: Routes = [
           './abandonments-declaration-trades/abandonments-declaration-trades.module'
         )
       ).AbandonmentsDeclarationTradesModule,
-    data: { title: routesJuridicalProcesses[3].label },
+    data: {
+      title: routesJuridicalProcesses[3].label,
+      screen: 'FACTJURABANDONOS',
+    },
   },
   {
     // BIENES EN PROCESO DE VALIDACIÓN EXT_DOM
@@ -58,21 +70,24 @@ const routes: Routes = [
           './goods-process-validation-extdom/goods-process-validation-extdom.module'
         )
       ).GoodsProcessValidationExtdomModule,
-    data: { title: routesJuridicalProcesses[4].label },
+    data: {
+      title: routesJuridicalProcesses[4].label,
+      screen: 'FADMAPROEXTDOM',
+    },
   },
   {
     // Quitar Desahogo
     path: routesJuridicalProcesses[5].link,
     loadChildren: async () =>
       (await import('./relief-delete/relief-delete.module')).ReliefDeleteModule,
-    data: { title: routesJuridicalProcesses[5].label },
+    data: { title: routesJuridicalProcesses[5].label, screen: 'DESAHOGO' },
   },
   {
     // Abandonos
     path: routesJuridicalProcesses[6].link,
     loadChildren: async () =>
       (await import('./abandonments/abandonments.module')).AbandonmentsModule,
-    data: { title: routesJuridicalProcesses[6].label },
+    data: { title: routesJuridicalProcesses[6].label, screen: 'FABANDONOS' },
   },
   {
     // Seguimiento a Juicios
@@ -80,7 +95,10 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./tracing-judgment/tracing-judgment.module'))
         .TracingJudgmentModule,
-    data: { title: routesJuridicalProcesses[7].label },
+    data: {
+      title: routesJuridicalProcesses[7].label,
+      screen: 'FACTJURACCIONJUIC',
+    },
   },
   {
     // Lista - Monitor de Abandono por Devolución
@@ -91,7 +109,10 @@ const routes: Routes = [
           './monitor-return-abandonment/monitor-return-abandonment.module'
         )
       ).MonitorReturnAbandonmentModule,
-    data: { title: routesJuridicalProcesses[8].label },
+    data: {
+      title: routesJuridicalProcesses[8].label,
+      screen: 'FACTJURCONABANDEV',
+    },
   },
   {
     // Formulario - Monitor Abandono por Devolución
@@ -102,7 +123,10 @@ const routes: Routes = [
           './return-abandonment-monitor/return-abandonment-monitor.module'
         )
       ).ReturnAbandonmentMonitorModule,
-    data: { title: routesJuridicalProcesses[9].label },
+    data: {
+      title: routesJuridicalProcesses[9].label,
+      screen: 'FACTJURDECABANDEV',
+    },
   },
   {
     // Declaración de Abandono por Aseguramiento
@@ -113,7 +137,10 @@ const routes: Routes = [
           './declaration-abandonment-insurance/declaration-abandonment-insurance.module'
         )
       ).DeclarationAbandonmentInsuranceModule,
-    data: { title: routesJuridicalProcesses[10].label },
+    data: {
+      title: routesJuridicalProcesses[10].label,
+      screen: 'FACTJURDECLABAND',
+    },
   },
   {
     // Dictaminaciones juridicas mantenimiento
@@ -124,7 +151,10 @@ const routes: Routes = [
           './maintenance-legal-rulings/maintenance-legal-rulings.module'
         )
       ).MaintenanceLegalRulingModule,
-    data: { title: routesJuridicalProcesses[11].label },
+    data: {
+      title: routesJuridicalProcesses[11].label,
+      screen: 'FACTJURDICTADEPURA',
+    },
   },
   {
     // DICTAMINACIONES JURIDICAS-G
@@ -132,7 +162,10 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./juridical-ruling-g/juridical-ruling-g.module'))
         .JuridicalRulingGModule,
-    data: { title: routesJuridicalProcesses[12].label },
+    data: {
+      title: routesJuridicalProcesses[12].label,
+      screen: 'FACTJURDICTAMASG',
+    },
   },
   {
     // Comprobacion de Documentos para Decomiso
@@ -143,7 +176,10 @@ const routes: Routes = [
           './verification-documents-confiscation/verification-documents-confiscation.module'
         )
       ).VerificationDocumentsConfiscationModule,
-    data: { title: routesJuridicalProcesses[13].label },
+    data: {
+      title: routesJuridicalProcesses[13].label,
+      screen: 'FACTJURDICTAMDECO',
+    },
   },
   // DEPOSITARIA
   {

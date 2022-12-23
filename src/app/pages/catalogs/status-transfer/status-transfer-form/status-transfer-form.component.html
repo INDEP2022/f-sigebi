@@ -3,7 +3,7 @@
     <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form [formGroup]="statusTransferForm">
+    <form [formGroup]="statusTransferForm" class="form-material">
       <div class="row">
         <div class="col-md-6">
           <form-field [control]="statusTransferForm.get('bank')" label="Banco">
