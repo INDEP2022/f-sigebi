@@ -187,7 +187,7 @@ export const MENU: IMenuItem[] = [
             link: '/pages/final-destination-process/donation-process/donation-authorization-request',
           },
           {
-            label: 'Registro de Inventarios para Donación Directa',
+            label: 'Registro para Inventarios y Donación Directa',
             link: '/pages/final-destination-process/donation-process/registration-inventories-donation',
           },
           {
