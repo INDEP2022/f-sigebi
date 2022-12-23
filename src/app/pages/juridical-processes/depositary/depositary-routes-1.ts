@@ -7,7 +7,7 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
     path: DEPOSITARY_ROUTES_1[0].link,
     loadChildren: async () =>
       (await import('./appointments/appointments.module')).AppointmentsModule,
-    data: { title: DEPOSITARY_ROUTES_1[0].label },
+    data: { title: DEPOSITARY_ROUTES_1[0].label, screen: 'FACTJURREGDESTLEG' },
   },
   {
     // SOLICITUD/MONITOR DE DEPOSITARIA
@@ -18,7 +18,7 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
           './request-legal-destination-goods/request-legal-destination-goods.module'
         )
       ).RequestLegalDestinationGoodsModule,
-    data: { title: DEPOSITARY_ROUTES_1[3].label },
+    data: { title: DEPOSITARY_ROUTES_1[3].label, screen: 'FACTADBSOLDESTLEG' },
   },
   {
     // REPORTE DE CÉDULAS DE NOMBRAMIENTO
@@ -26,7 +26,7 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
     loadChildren: async () =>
       (await import('./appointment-certificate/appointment-certificate.module'))
         .AppointmentCertificateModule,
-    data: { title: DEPOSITARY_ROUTES_1[4].label },
+    data: { title: DEPOSITARY_ROUTES_1[4].label, screen: 'FGERDIRNOMBRADEPO' },
   },
   {
     // REPORTE DE BIENES POR DEPOSITARIA
@@ -34,7 +34,7 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
     loadChildren: async () =>
       (await import('./goods-depositary/goods-depositary.module'))
         .GoodsDepositaryModule,
-    data: { title: DEPOSITARY_ROUTES_1[5].label },
+    data: { title: DEPOSITARY_ROUTES_1[5].label, screen: 'FGENADBBIENESXDEP' },
   },
   {
     // RELACION DE AMPAROS
@@ -45,7 +45,7 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
           './assignation-goods-protection/assignation-goods-protection.module'
         )
       ).AssignationGoodsProtectionModule,
-    data: { title: DEPOSITARY_ROUTES_1[6].label },
+    data: { title: DEPOSITARY_ROUTES_1[6].label, screen: 'FACTJURBIENESXAMP' },
   },
   {
     // EMISION DE ACUERDOS
@@ -53,10 +53,10 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
     loadChildren: async () =>
       (await import('./issue-agreements/issue-agreements.module'))
         .IssueAgreementsModule,
-    data: { title: DEPOSITARY_ROUTES_1[7].label },
+    data: { title: DEPOSITARY_ROUTES_1[7].label, screen: 'FACTJUREMISIONACU' },
   },
   {
-    // HISTORICO SITUACION DEL BIEN
+    // HISTORICO SITUACION DEL BIEN -- SE LLAMA DE GENERALES
     path: DEPOSITARY_ROUTES_1[8].link,
     loadChildren: async () =>
       (
@@ -64,7 +64,7 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
           './historical-situation-goods/historical-situation-goods.module'
         )
       ).HistoricalSituationGoodsModule,
-    data: { title: DEPOSITARY_ROUTES_1[8].label },
+    data: { title: DEPOSITARY_ROUTES_1[8].label, screen: '' },
   },
   {
     // RESOLUCION DE RECURSOS DE REVISION
@@ -75,7 +75,7 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
           './resolution-revision-resources/resolution-revision-resources.module'
         )
       ).ResolutionRevisionResourcesModule,
-    data: { title: DEPOSITARY_ROUTES_1[9].label },
+    data: { title: DEPOSITARY_ROUTES_1[9].label, screen: 'FACTJURRESORECREV' },
   },
   {
     // COMPROBACION DE DOCUMENTOS PARA RECURSOS REVISION
@@ -86,7 +86,7 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
           './document-verification-revision-resources/document-verification-revision-resources.module'
         )
       ).DocumentVerificationRevisionResourcesModule,
-    data: { title: DEPOSITARY_ROUTES_1[10].label },
+    data: { title: DEPOSITARY_ROUTES_1[10].label, screen: 'FACTJURDICTAMRECR' },
   },
   {
     // REPORTE DE RECURSOS DE REVISION
@@ -94,7 +94,7 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
     loadChildren: async () =>
       (await import('./review-resource-report/review-resource-report.module'))
         .ReviewResourceReportModule,
-    data: { title: DEPOSITARY_ROUTES_1[11].label },
+    data: { title: DEPOSITARY_ROUTES_1[11].label, screen: 'FGERJURRECDEREV' },
   },
   {
     // NOTIFICACIONES POR EXPEDIENTE
@@ -102,14 +102,14 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
     loadChildren: async () =>
       (await import('./notifications-file/notifications-file.module'))
         .NotificationsFileModule,
-    data: { title: DEPOSITARY_ROUTES_1[12].label },
+    data: { title: DEPOSITARY_ROUTES_1[12].label, screen: 'FCONJURNOTIPOSTER' },
   },
   {
     // DICTAMINACION MASIVA PROG. DESALOJO
     path: DEPOSITARY_ROUTES_1[13].link,
     loadChildren: async () =>
       (await import('./mass-ruling/mass-ruling.module')).MassRulingModule,
-    data: { title: DEPOSITARY_ROUTES_1[13].label },
+    data: { title: DEPOSITARY_ROUTES_1[13].label, screen: 'FCARGAMASDESAHOGO' },
   },
   {
     // VALIDACION DE POSESION A TERCEROS
@@ -120,7 +120,7 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
           './thirdparties-possession-validation/thirdparties-possession-validation.module'
         )
       ).ThirdpartiesPossessionValidationModule,
-    data: { title: DEPOSITARY_ROUTES_1[14].label },
+    data: { title: DEPOSITARY_ROUTES_1[14].label, screen: 'FBIEVALPOSTERCERO' },
   },
   {
     // GENERACION DE ARCHIVOS DE OFICIO
@@ -128,6 +128,6 @@ export const DEPOSITARY_ROUTES_1_ROUTING = [
     loadChildren: async () =>
       (await import('./generation-files-trades/generation-files-trades.module'))
         .GenerationFilesTradesModule,
-    data: { title: DEPOSITARY_ROUTES_1[15].label },
+    data: { title: DEPOSITARY_ROUTES_1[15].label, screen: 'FGENARCHOFICIO' },
   },
 ];

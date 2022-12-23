@@ -19,14 +19,14 @@ const routes: Routes = [
           './capture-formalizing-lawyers/capture-formalizing-lawyers.module'
         )
       ).CaptureFormalizingLawyersModule,
-    data: { title: routesFormalizacionInmuebles[0].label },
+    data: { title: routesFormalizacionInmuebles[0].label, screen: 'FCOMER095' },
   },
   {
     path: routesFormalizacionInmuebles[1].link,
     loadChildren: async () =>
       (await import('./formal-goods-estate/formal-goods-estate.module'))
         .FormalGoodsEstateModule,
-    data: { title: routesFormalizacionInmuebles[1].label },
+    data: { title: routesFormalizacionInmuebles[1].label, screen: 'FCOMER094' },
   },
 ];
 console.log(routes);
