@@ -109,4 +109,7 @@ export enum ENDPOINT_LINKS {
   Warehouse = 'warehouse',
   ZipCode = 'zip-code', //
   ZoneGeographic = 'zone-geographic',
+  //Nuevos catálogos de Parametrización
+  DocumentsForDictum = 'documents-for-dictum',
+  DinamicTables = 'dinamic-tables/',
 }

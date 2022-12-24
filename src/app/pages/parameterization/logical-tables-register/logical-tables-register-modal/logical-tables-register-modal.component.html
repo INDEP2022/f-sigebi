@@ -6,8 +6,8 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-4">
-          <form-field label="No&#46; Tabla" [control]="form.get('noTable')">
-            <input type="text" class="form-control" formControlName="noTable" />
+          <form-field label="No&#46; Tabla" [control]="form.get('table')">
+            <input type="text" class="form-control" formControlName="table" />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -16,9 +16,9 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field label="Acceso" [control]="form.get('access')">
+          <form-field label="Acceso" [control]="form.get('actionType')">
             <ng-select
-              formControlName="access"
+              formControlName="actionType"
               [searchable]="false"
               class="form-control"
               [clearable]="false">
@@ -30,9 +30,9 @@
       </div>
       <div class="row pt-5">
         <div class="col-md-4">
-          <form-field label="Tipo" [control]="form.get('type')">
+          <form-field label="Tipo" [control]="form.get('tableType')">
             <ng-select
-              formControlName="type"
+              formControlName="tableType"
               [searchable]="false"
               class="form-control"
               [clearable]="false">

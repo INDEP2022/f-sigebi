@@ -1,5 +1,5 @@
 export const LOGICAL_TABLES_REGISTER_COLUMNS = {
-  noTable: {
+  table: {
     title: 'No. Tabla',
     sort: false,
   },
@@ -7,16 +7,16 @@ export const LOGICAL_TABLES_REGISTER_COLUMNS = {
     title: 'Nombre',
     sort: false,
   },
-  access: {
+  description: {
+    title: 'Descripción',
+    sort: false,
+  },
+  actionType: {
     title: 'Acceso',
     sort: false,
   },
-  type: {
+  tableType: {
     title: 'Tipo',
-    sort: false,
-  },
-  description: {
-    title: 'Descripción',
     sort: false,
   },
 };

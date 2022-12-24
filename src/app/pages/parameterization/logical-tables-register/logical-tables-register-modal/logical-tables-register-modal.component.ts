@@ -28,7 +28,7 @@ export class LogicalTablesRegisterModalComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      noTable: [
+      table: [
         null,
         [
           Validators.required,
@@ -38,8 +38,8 @@ export class LogicalTablesRegisterModalComponent
         ],
       ],
       name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      access: [null, [Validators.required]],
-      type: [null, [Validators.required]],
+      actionType: [null, [Validators.required]],
+      tableType: [null, [Validators.required]],
       description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
