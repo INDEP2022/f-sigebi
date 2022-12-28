@@ -3,5 +3,5 @@ export interface IQuestion {
   text: string;
   type: string;
   maximumScore: number | null;
-  registerNumber: number | null;
+  //registerNumber: number | null;
 }

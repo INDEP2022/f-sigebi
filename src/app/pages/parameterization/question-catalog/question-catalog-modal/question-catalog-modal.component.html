@@ -3,50 +3,41 @@
     <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
+    <form class="form-material" [formGroup]="questionForm">
       <div class="row">
         <div class="col-md-3">
           <form-field
-            [control]="form.get('noQuestion')"
+            [control]="questionForm.get('id')"
             label="No&#46; Pregunta">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="noQuestion" />
+            <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
-            [control]="form.get('textQuestion')"
+            [control]="questionForm.get('text')"
             label="Texto de la pregunta">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="textQuestion" />
+            <input type="text" class="form-control" formControlName="text" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
-            [control]="form.get('maxScore')"
+            [control]="questionForm.get('maximumScore')"
             label="Puntuaci&oacute;n M&aacute;xima">
             <input
               type="text"
               class="form-control"
-              formControlName="maxScore" />
+              formControlName="maximumScore" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
-            [control]="form.get('typeQuestion')"
+            [control]="questionForm.get('type')"
             label="Tipo de pregunta">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="typeQuestion" />
+            <input type="text" class="form-control" formControlName="type" />
           </form-field>
         </div>
       </div>
-      <div class="row pt-5">
+      <!-- <div class="row pt-5">
         <div class="col-md-3">
           <form-field
             [control]="form.get('noResponse')"
@@ -82,15 +73,16 @@
             <input type="text" class="form-control" formControlName="resText" />
           </form-field>
         </div>
-      </div>
+      </div>-->
     </form>
   </div>
+
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
           [type]="'button'"
-          [disabled]="!form.valid"
+          [disabled]="!questionForm.valid"
           (click)="close()"></confirm-button>
       </div>
       <div class="m-3">
