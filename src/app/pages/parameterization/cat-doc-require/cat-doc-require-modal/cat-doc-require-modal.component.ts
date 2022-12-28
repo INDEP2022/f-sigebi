@@ -2,13 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IDocumentsForDictum } from 'src/app/core/models/catalogs/documents-for-dictum.model';
-import { DocumentsForDictumService } from 'src/app/core/services/catalogs/documents-for-dictum.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+//models
+import { IDocumentsForDictum } from 'src/app/core/models/catalogs/documents-for-dictum.model';
+//Services
+import { DocumentsForDictumService } from 'src/app/core/services/catalogs/documents-for-dictum.service';
 
 @Component({
   selector: 'app-cat-doc-require-modal',
@@ -20,7 +22,6 @@ export class CatDocRequireModalComponent extends BasePage implements OnInit {
   documentsForDictum: IDocumentsForDictum;
   title: string = 'Catálogo de requisitos documentales';
   edit: boolean = false;
-  allotment: any;
 
   constructor(
     private fb: FormBuilder,

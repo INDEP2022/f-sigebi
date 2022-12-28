@@ -4,5 +4,5 @@ export interface ITables {
   description: string;
   actionType: string;
   tableType: number;
-  numRegister: number;
+  //numRegister: number;
 }

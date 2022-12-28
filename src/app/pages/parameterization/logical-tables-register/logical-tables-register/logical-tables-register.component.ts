@@ -1,11 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ITables } from 'src/app/core/models/catalogs/dinamic-tables.model';
-import { DinamicTablesService } from 'src/app/core/services/catalogs/dinamic-tables.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { LogicalTablesRegisterModalComponent } from '../logical-tables-register-modal/logical-tables-register-modal.component';
 import { LOGICAL_TABLES_REGISTER_COLUMNS } from './logical-tables-register-columns';
+//models
+import { ITables } from 'src/app/core/models/catalogs/dinamic-tables.model';
+//service
+import { DinamicTablesService } from 'src/app/core/services/catalogs/dinamic-tables.service';
 
 @Component({
   selector: 'app-logical-tables-register',
@@ -41,6 +45,35 @@ export class LogicalTablesRegisterComponent extends BasePage implements OnInit {
         this.loading = false;
       },
       error: error => (this.loading = false),
+    });
+  }
+
+  openForm(dinamicTables?: ITables) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      dinamicTables,
+      callback: (next: boolean) => {
+        if (next) this.getDinamicTables();
+      },
+    };
+    this.modalService.show(LogicalTablesRegisterModalComponent, modalConfig);
+  }
+
+  showDeleteAlert(documentsForDictum: ITables) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete(documentsForDictum.table);
+      }
+    });
+  }
+
+  delete(id: number) {
+    this.dinamicTablesService.remove(id).subscribe({
+      next: () => this.getDinamicTables(),
     });
   }
 

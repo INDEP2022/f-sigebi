@@ -111,6 +111,7 @@ export enum ENDPOINT_LINKS {
   ZoneGeographic = 'zone-geographic',
   //Nuevos catálogos de Parametrización
   DocumentsForDictum = 'documents-for-dictum',
-  DinamicTables = 'dinamic-tables',
+  DinamicTables = 'dynamiccatalog/api/v1/dinamic-tables',
   AffairType = 'affair-type',
+  FinancialInformation = 'parameterfinantial/api/v1/financial-information',
 }

@@ -3,11 +3,13 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IDocumentsForDictum } from 'src/app/core/models/catalogs/documents-for-dictum.model';
-import { DocumentsForDictumService } from 'src/app/core/services/catalogs/documents-for-dictum.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CatDocRequireModalComponent } from '../cat-doc-require-modal/cat-doc-require-modal.component';
 import { CAT_DOC_REQUIRE_COLUMNS } from './cat-doc-require-columns';
+//Models
+import { IDocumentsForDictum } from 'src/app/core/models/catalogs/documents-for-dictum.model';
+//services
+import { DocumentsForDictumService } from 'src/app/core/services/catalogs/documents-for-dictum.service';
 
 @Component({
   selector: 'app-cat-doc-require',
