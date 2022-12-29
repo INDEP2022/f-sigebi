@@ -72,3 +72,58 @@ export const REL_OPINION_COLUMNS = {
     },
   },
 };
+
+export const AFFAIR_COLUMNS = {
+  id: {
+    title: 'Código',
+    sort: false,
+  },
+  description: {
+    title: 'Descripción',
+    sort: false,
+  },
+  referralNoteType: {
+    title: 'tipo_volante',
+    sort: false,
+  },
+  creationUser: {
+    title: 'Usuario creado',
+    sort: false,
+  },
+  creationDate: {
+    title: 'Fecha creación',
+    sort: false,
+  },
+  additionUser: {
+    title: 'usuario_adicion',
+    sort: false,
+  },
+  modificationDate: {
+    title: 'Fecha modificación',
+    sort: false,
+  },
+  versionUser: {
+    title: 'ver_usuario',
+    sort: false,
+  },
+  status: {
+    title: 'Estado',
+    sort: false,
+  },
+  registerNumber: {
+    title: 'Número registrado',
+    sort: false,
+  },
+  version: {
+    title: 'Versión',
+    sort: false,
+  },
+  processDetonate: {
+    title: 'processDetonate',
+    sort: false,
+  },
+  clv: {
+    title: 'clv',
+    sort: false,
+  },
+};
