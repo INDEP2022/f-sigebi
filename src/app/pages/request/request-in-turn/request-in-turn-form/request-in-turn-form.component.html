@@ -74,7 +74,7 @@
             <ngx-select
               [form]="requestForm"
               control="authority"
-              (fetchItems)="getSubDelegations($event)"
+              (fetchItems)="getAuthority($event)"
               [data]="selectAuthority"
               label="Autoridad"
               value="Autoridad"></ngx-select>
@@ -97,10 +97,11 @@
             <ngx-select
               [form]="requestForm"
               control="state"
-              (fetchItems)="getSubDelegations($event)"
+              (fetchItems)="getStateOfRepublic($event)"
               [data]="selectState"
+              bindLabel="descState"
               label="Estado"
-              value="estado"></ngx-select>
+              value="codeState"></ngx-select>
           </div>
           <div class="col-md-4">
             <form-field
@@ -125,11 +126,12 @@
           <div class="col-md-4">
             <ngx-select
               [form]="requestForm"
-              control="transfer"
-              (fetchItems)="getSubDelegations($event)"
               [data]="selectTransfer"
+              control="transfer"
+              bindLabel="name"
+              (fetchItems)="getTransferente($event)"
               label="Transferente"
-              value="transferencia"></ngx-select>
+              value="id"></ngx-select>
           </div>
           <div class="col-md-4">
             <form-field
@@ -159,13 +161,12 @@
           <div class="col-md-4">
             <ngx-select
               [form]="requestForm"
-              control="transmitter"
-              (fetchItems)="getSubDelegations($event)"
-              [data]="selectTransmitter"
+              control="station"
+              (fetchItems)="getStation($event)"
+              [data]="selectStation"
               label="Emisora"
-              bindLabel=""
+              bindLabel="stationName"
               value="id"></ngx-select>
-            <!-- bindLabel = name field -->
           </div>
           <div class="col-md-4">
             <form-field
@@ -177,23 +178,11 @@
           <div class="col-md-4">
             <ngx-select
               [form]="requestForm"
-              control="subject"
-              (fetchItems)="getSubDelegations($event)"
-              [data]="selectSubject"
+              control="affair"
+              (fetchItems)="getAffair($event)"
+              [data]="selectAffeir"
               label="Asunto"
               value="asunto"></ngx-select>
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <div class="col-md-4">
-            <ngx-select
-              [form]="requestForm"
-              control="deleRegional"
-              (fetchItems)="getSubDelegations($event)"
-              [data]="selectDeleRegional"
-              label="Delegación regional"
-              value="Autoridad"></ngx-select>
           </div>
         </div>
 
