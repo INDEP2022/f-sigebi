@@ -17,6 +17,9 @@ import { EXCEL_TO_JSON_COLUMNS } from './constants/excel-to-json-columns';
 import { JSON_TO_CSV } from './constants/json-to-csv';
 import { ExampleModalComponent } from './example-modal.component';
 import { HomeService } from './home.service';
+/*Redux NgRX Global Vars Service*/
+import { IGlobalVars } from '../../../shared/global-vars/models/IGlobalVars.model';
+import { GlobalVarsService } from '../../../shared/global-vars/services/global-vars.service';
 
 interface IExcelToJson {
   id: number;
@@ -40,13 +43,17 @@ export class HomeComponent extends BasePage implements OnInit {
   imagenurl =
     'https://images.ctfassets.net/txhaodyqr481/6gyslCh8jbWbh9zYs5Dmpa/a4a184b2d1eda786bf14e050607b80df/plantillas-de-factura-profesional-suscripcion-gratis-con-sumup-facturas.jpg?fm=webp&q=85&w=743&h=892';
   parentModal: BsModalRef;
+  /*Redux NgRX Global Vars Model*/
+  globalVars: IGlobalVars;
+
   constructor(
     private modalService: BsModalService,
     private fb: FormBuilder,
     private sanitizer: DomSanitizer,
     private excelService: ExcelService,
     private store: Store<AppState>,
-    private homeService: HomeService
+    private homeService: HomeService,
+    private globalVarsService: GlobalVarsService
   ) {
     super();
     this.settings = {
@@ -100,7 +107,19 @@ export class HomeComponent extends BasePage implements OnInit {
         console.error(err);
       },
     });
+
+    this.getGlobalVars();
   }
+
+  /*Redux NgRX Global Vars Get Initial State*/
+  getGlobalVars() {
+    this.globalVarsService
+      .getGlobalVars$()
+      .subscribe((globalVars: IGlobalVars) => {
+        this.globalVars = globalVars;
+      });
+  }
+
   private prepareForm() {
     this.formExample = this.fb.group({
       input: [null, [Validators.required]],
@@ -110,6 +129,7 @@ export class HomeComponent extends BasePage implements OnInit {
       check: [false],
     });
   }
+
   openModal() {
     let config: ModalOptions = {
       initialState: {
@@ -121,7 +141,9 @@ export class HomeComponent extends BasePage implements OnInit {
     };
     this.parentModal = this.modalService.show(ExampleModalComponent, config);
   }
+
   chargeFile(event: any) {}
+
   openPrevImg() {
     let config: ModalOptions = {
       initialState: {
@@ -136,6 +158,7 @@ export class HomeComponent extends BasePage implements OnInit {
     };
     this.modalService.show(PreviewDocumentsComponent, config);
   }
+
   openPrevPdf() {
     let config: ModalOptions = {
       initialState: {
@@ -172,8 +195,49 @@ export class HomeComponent extends BasePage implements OnInit {
     // El type no es necesario ya que por defecto toma 'xlsx'
     this.excelService.export(this.jsonToCsv, { filename });
   }
+
   exportCsv() {
     const filename: string = 'Nombre del archivo';
     this.excelService.export(this.jsonToCsv, { type: 'csv', filename });
+  }
+
+  newStateGlobalVars(option: string) {
+    let newState = { ...this.globalVars };
+
+    switch (option) {
+      case 'allP':
+        /*All Object*/
+        newState = {
+          RAST_BIEN: 'NEW RAST_BIEN',
+          RAST_BIEN_REL: 'NEW RAST_BIEN_REL',
+          NO_EXPEDIENTE: 'NEW NO_EXPDEDIENTE',
+          RAST_EXPEDIENTE_REL: 'NEW RAST_EXPEDIENTE_REL',
+          CREA_EXPEDIENTE: 'NEW CREA_EXPEDIENTE',
+          RAST_EXPEDIENTE: 'NEW RAST_EXPEDIENTE',
+          RAST_DESCRIPCION_BIEN: 'NEW RAST_DESCRIPCION_BIEN',
+          RAST_TIPO: 'NEW RAST_TIPO',
+        };
+
+        this.globalVarsService.updateGlobalVars(newState);
+
+        break;
+      case 'oneP':
+        /*OR ONLY ONE PROPERTY*/
+        newState = {
+          ...this.globalVars,
+          RAST_BIEN_REL: 'ONLY ONE PROPERTY RAST_BIEN_REL',
+        };
+
+        this.globalVarsService.updateGlobalVars(newState);
+
+        break;
+      case 'reset':
+        this.globalVarsService.resetGlobalVars();
+        break;
+      default:
+        newState = { ...this.globalVars };
+        this.globalVarsService.updateGlobalVars(newState);
+        break;
+    }
   }
 }
