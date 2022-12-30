@@ -7,13 +7,16 @@ import { IRequestInTurn } from 'src/app/core/models/catalogs/request-in-turn.mod
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 import { EventEmitter, Output } from '@angular/core';
+import { Observable } from 'rxjs';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
 import { IAffair } from '../../../../core/models/catalogs/affair.model';
+import { IAuthority } from '../../../../core/models/catalogs/authority.model';
 import { IStateOfRepublic } from '../../../../core/models/catalogs/state-of-republic.model';
 import { IStation } from '../../../../core/models/catalogs/station.model';
 import { ITransferente } from '../../../../core/models/catalogs/transferente.model';
 import { AffairService } from '../../../../core/services/catalogs/affair.service';
+import { AuthorityService } from '../../../../core/services/catalogs/Authority.service';
 import { StateOfRepublicService } from '../../../../core/services/catalogs/state-of-republic.service';
 import { StationService } from '../../../../core/services/catalogs/station.service';
 import { TransferenteService } from '../../../../core/services/catalogs/transferente.service';
@@ -29,23 +32,24 @@ export class RequestInTurnFormComponent implements OnInit {
 
   edit: boolean = false;
   title: string = 'SOliCITUD A TURNO';
-  requestForm: ModelForm<IRequestInTurn>;
+  searchForm: ModelForm<any>;
   requestInTurn: IRequestInTurn;
   checked: string = 'checked';
 
   loading: boolean = false;
 
   selectStation = new DefaultSelect<any>();
-  selectAuthority = new DefaultSelect<IRequestInTurn>();
+  selectAuthority = new DefaultSelect<any>();
   selectState = new DefaultSelect<any>();
-  selectAffeir = new DefaultSelect<IRequestInTurn>();
+  selectAffeir = new DefaultSelect<any>();
   selectTransfer = new DefaultSelect<any>();
 
-  match: string = '';
+  listAuthorities$: Observable<any>;
   transferenteSevice = inject(TransferenteService);
   stateOfRepublic = inject(StateOfRepublicService);
   stationService = inject(StationService);
   affairService = inject(AffairService);
+  authorityService = inject(AuthorityService);
 
   constructor(
     public modalRef: BsModalRef,
@@ -58,35 +62,27 @@ export class RequestInTurnFormComponent implements OnInit {
     this.getStateOfRepublic(new ListParams());
     this.getStation(new ListParams());
     this.getAffair(new ListParams());
+    this.getAuthority(new ListParams());
   }
 
   initialForm(): void {
-    this.requestForm = this.fb.group({
-      check: [null],
-      noRequest: [null],
+    this.searchForm = this.fb.group({
       dateRequest: [null],
-      titularName: [null],
-      senderCharger: [null],
-      noJob: [null],
       dateJob: [null],
       state: [null],
       transfer: [null],
       station: [null],
       authority: [null],
       expedient: [null, [Validators.pattern(STRING_PATTERN)]],
-      reception: [null],
       affair: [null],
-      type: [null],
-      appliStatus: [null],
       contributor: [null, [Validators.pattern(STRING_PATTERN)]],
       acta: [null, [Validators.pattern(STRING_PATTERN)]],
       ascertainment: [null, [Validators.pattern(STRING_PATTERN)]],
       cause: [null, [Validators.pattern(STRING_PATTERN)]],
-      typeMach: ['all'],
     });
     if (this.requestInTurn != null) {
       this.edit = true;
-      this.requestForm.patchValue(this.requestForm);
+      this.searchForm.patchValue(this.searchForm);
     }
   }
 
@@ -94,6 +90,7 @@ export class RequestInTurnFormComponent implements OnInit {
     this.transferenteSevice
       .getAll(params)
       .subscribe((data: IListResponse<ITransferente>) => {
+        console.log('tranferente', data.data);
         this.selectTransfer = new DefaultSelect(data.data, data.count);
       });
   }
@@ -102,20 +99,28 @@ export class RequestInTurnFormComponent implements OnInit {
     this.stateOfRepublic
       .getAll(params)
       .subscribe((data: IListResponse<IStateOfRepublic>) => {
+        console.log('state of republic', data.data);
         this.selectState = new DefaultSelect(data.data, data.count);
       });
   }
 
-  //no funciona
   getStation(params?: ListParams) {
     this.stationService
       .getAll(params)
       .subscribe((data: IListResponse<IStation>) => {
+        console.log('state', data.data);
         this.selectStation = new DefaultSelect(data.data, data.count);
       });
   }
 
-  getAuthority(params?: ListParams) {}
+  getAuthority(params?: ListParams) {
+    this.authorityService
+      .getAll(params)
+      .subscribe((data: IListResponse<IAuthority>) => {
+        console.log('authority', data.data);
+        this.selectAuthority = new DefaultSelect(data.data, data.count);
+      });
+  }
 
   getAffair(params?: ListParams) {
     this.affairService
@@ -127,16 +132,10 @@ export class RequestInTurnFormComponent implements OnInit {
   }
 
   search(): void {
-    //console.log(this.requestForm.getRawValue());
-    if (this.match == 'all') {
-      //retrieve all list
-    } else {
-      //retrieve data filtered
-      this.sendSearchForm.emit(this.requestForm);
-    }
+    this.sendSearchForm.emit(this.searchForm.getRawValue());
   }
 
   reset(): void {
-    this.requestForm.reset();
+    this.searchForm.reset();
   }
 }

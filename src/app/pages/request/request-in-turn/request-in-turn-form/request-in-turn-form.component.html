@@ -30,8 +30,8 @@
       </h5>
     </div>
     <div class="row" *ngIf="showSearchForm">
-      <form [formGroup]="requestForm" class="form-material">
-        <div class="row mb-2">
+      <form [formGroup]="searchForm" class="form-material">
+        <!--<div class="row mb-2">
           <div class="col-sm-2">
             <span style="line-height: 3">Match</span>
           </div>
@@ -54,12 +54,12 @@
                 id="any" />
             </form-radio>
           </div>
-        </div>
+        </div>-->
 
         <div class="row mb-3">
           <div class="col-md-4">
             <form-field
-              [control]="requestForm.get('dateRequest')"
+              [control]="searchForm.get('dateRequest')"
               label="Fecha de solicitud">
               <input
                 type="text"
@@ -72,17 +72,18 @@
 
           <div class="col-md-4">
             <ngx-select
-              [form]="requestForm"
+              [form]="searchForm"
               control="authority"
               (fetchItems)="getAuthority($event)"
               [data]="selectAuthority"
+              bindLabel="authorityName"
               label="Autoridad"
-              value="Autoridad"></ngx-select>
+              value="idAuthority"></ngx-select>
           </div>
 
           <div class="col-md-4">
             <form-field
-              [control]="requestForm.get('ascertainment')"
+              [control]="searchForm.get('ascertainment')"
               label="Averiguación previa">
               <input
                 type="text"
@@ -95,7 +96,7 @@
         <div class="row mb-3">
           <div class="col-md-4">
             <ngx-select
-              [form]="requestForm"
+              [form]="searchForm"
               control="state"
               (fetchItems)="getStateOfRepublic($event)"
               [data]="selectState"
@@ -105,7 +106,7 @@
           </div>
           <div class="col-md-4">
             <form-field
-              [control]="requestForm.get('contributor')"
+              [control]="searchForm.get('contributor')"
               label="Contribuyente y/o Indiciado">
               <input
                 type="text"
@@ -114,9 +115,7 @@
             </form-field>
           </div>
           <div class="col-md-4">
-            <form-field
-              [control]="requestForm.get('cause')"
-              label="Causa penal">
+            <form-field [control]="searchForm.get('cause')" label="Causa penal">
               <input type="text" class="form-control" formControlName="cause" />
             </form-field>
           </div>
@@ -125,7 +124,7 @@
         <div class="row mb-3">
           <div class="col-md-4">
             <ngx-select
-              [form]="requestForm"
+              [form]="searchForm"
               [data]="selectTransfer"
               control="transfer"
               bindLabel="name"
@@ -135,7 +134,7 @@
           </div>
           <div class="col-md-4">
             <form-field
-              [control]="requestForm.get('dateJob')"
+              [control]="searchForm.get('dateJob')"
               label="Fecha de oficio">
               <input
                 type="text"
@@ -147,7 +146,7 @@
           </div>
           <div class="col-md-4">
             <form-field
-              [control]="requestForm.get('expedient')"
+              [control]="searchForm.get('expedient')"
               label="Expediente transferente/PAMA">
               <input
                 type="text"
@@ -160,7 +159,7 @@
         <div class="row mb-3">
           <div class="col-md-4">
             <ngx-select
-              [form]="requestForm"
+              [form]="searchForm"
               control="station"
               (fetchItems)="getStation($event)"
               [data]="selectStation"
@@ -170,19 +169,20 @@
           </div>
           <div class="col-md-4">
             <form-field
-              [control]="requestForm.get('acta')"
+              [control]="searchForm.get('acta')"
               label="Acta Circunstanciada">
               <input type="text" class="form-control" formControlName="acta" />
             </form-field>
           </div>
           <div class="col-md-4">
             <ngx-select
-              [form]="requestForm"
+              [form]="searchForm"
               control="affair"
               (fetchItems)="getAffair($event)"
               [data]="selectAffeir"
+              bindLabel="description"
               label="Asunto"
-              value="asunto"></ngx-select>
+              value="id"></ngx-select>
           </div>
         </div>
 

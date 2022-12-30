@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
@@ -9,6 +9,14 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { UsersSelectedToTurnComponent } from '../users-selected-to-turn/users-selected-to-turn.component';
 import { IRequestInTurnSelected } from './../../../../core/models/catalogs/request-in-turn-selected.model';
 //Provisional Data
+import { ListParams } from '../../../../common/repository/interfaces/list-params';
+import { IListResponse } from '../../../../core/interfaces/list-response.interface';
+import { IAuthority } from '../../../../core/models/catalogs/authority.model';
+import { IRegionalDelegation } from '../../../../core/models/catalogs/regional-delegation.model';
+import { IStation } from '../../../../core/models/catalogs/station.model';
+import { AuthorityService } from '../../../../core/services/catalogs/Authority.service';
+import { RegionalDelegationService } from '../../../../core/services/catalogs/regional-delegation.service';
+import { StationService } from '../../../../core/services/catalogs/station.service';
 import { issuesData } from './data';
 
 @Component({
@@ -26,15 +34,19 @@ export class RequestFormComponent extends BasePage implements OnInit {
   bsModalRef: BsModalRef;
   checked: string = 'checked';
 
-  selectRegionalDeleg = new DefaultSelect<IRequest>();
-  selectTransmitter = new DefaultSelect<IRequest>();
+  selectRegionalDeleg = new DefaultSelect<any>();
+  selectStation = new DefaultSelect<any>();
   selectEntity = new DefaultSelect<IRequest>();
-  selectAuthority = new DefaultSelect<IRequest>();
+  selectAuthority = new DefaultSelect<any>();
   selectTransfe = new DefaultSelect<IRequest>();
   selectState = new DefaultSelect<IRequest>();
   selectIssue = new DefaultSelect<IRequest>();
 
   issues = new DefaultSelect<any>();
+
+  regionalDelegationService = inject(RegionalDelegationService);
+  stationService = inject(StationService);
+  authorityService = inject(AuthorityService);
 
   constructor(
     public fb: FormBuilder,
@@ -47,6 +59,9 @@ export class RequestFormComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.getIssue();
+    this.getRegionalDeleg(new ListParams());
+    this.getStation(new ListParams());
+    this.getAuthority(new ListParams());
   }
 
   prepareForm(): void {
@@ -73,13 +88,34 @@ export class RequestFormComponent extends BasePage implements OnInit {
     form.addControl('issue', this.fb.control('', []));
   }
 
-  getRegionalDeleg(event: any): void {}
+  getRegionalDeleg(params?: ListParams) {
+    this.regionalDelegationService
+      .getAll(params)
+      .subscribe((data: IListResponse<IRegionalDelegation>) => {
+        console.log('reginal delegacion', data);
+        this.selectRegionalDeleg = new DefaultSelect(data.data, data.count);
+      });
+  }
 
-  getTransmitter(event: any): void {}
+  getStation(params?: ListParams) {
+    this.stationService
+      .getAll(params)
+      .subscribe((data: IListResponse<IStation>) => {
+        console.log('emisora', data.data);
+        this.selectStation = new DefaultSelect(data.data, data.count);
+      });
+  }
 
   getEntity(event: any): void {}
 
-  getAuthority(event: any): void {}
+  getAuthority(params?: ListParams) {
+    this.authorityService
+      .getAll(params)
+      .subscribe((data: IListResponse<IAuthority>) => {
+        console.log('autoridad', data.data);
+        this.selectAuthority = new DefaultSelect(data.data, data.count);
+      });
+  }
 
   getTransfe(event: any): void {}
 

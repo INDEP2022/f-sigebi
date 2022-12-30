@@ -82,22 +82,10 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
       selectMode: 'multi',
       columns: REQUEST_IN_TURN_COLUMNS,
     };
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getExample());
   }
 
   getExample(): void {
     this.paragraphs = ejemplo;
-    //this.loading = true;
-    /* this.requestService.getAll(this.params.getValue()).subscribe({
-      next: response => {
-        this.paragraphs = response.data;
-        this.totalItems = response.count;
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
-    }); */
   }
 
   getSubDelegations(params: ListParams) {
@@ -121,8 +109,12 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
     this.modalService.show(RequestInTurnSelectedComponent, config);
   }
 
-  searchForm(requestFrom: ModelForm<IRequestInTurn>) {
-    console.log(requestFrom.getRawValue());
+  searchForm(requestFrom: ModelForm<any>) {
+    console.log(requestFrom);
+
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getExample());
   }
 
   onCustomAction(event: any) {

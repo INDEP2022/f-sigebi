@@ -96,10 +96,11 @@
                 <ngx-select
                   [form]="requestForm"
                   control="transmitter"
-                  (fetchItems)="getTransmitter($event)"
-                  [data]="selectTransmitter"
+                  (fetchItems)="getStation($event)"
+                  [data]="selectStation"
+                  bindLabel="stationName"
                   label="Emisora"
-                  value="transmitter"></ngx-select>
+                  value="id"></ngx-select>
               </div>
 
               <div class="col-md-3">
@@ -123,14 +124,15 @@
                   label="Entidad"
                   value="regDelega"></ngx-select>
               </div>
-              <div class="col-md-3">
+              <div class="col-md-5">
                 <ngx-select
                   [form]="requestForm"
                   control="authority"
                   (fetchItems)="getAuthority($event)"
                   [data]="selectAuthority"
+                  bindLabel="authorityName"
                   label="Autoridad"
-                  value="regDelega"></ngx-select>
+                  value="idTransferer"></ngx-select>
               </div>
               <div class="col-md-3">
                 <ngx-select
