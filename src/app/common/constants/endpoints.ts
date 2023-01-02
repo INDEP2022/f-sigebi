@@ -116,4 +116,5 @@ export enum ENDPOINT_LINKS {
   FinancialInformation = 'parameterfinantial/api/v1/financial-information',
   FinancialIndicators = 'financial-indicators',
   AttributesFinancialInfo = 'attributes-financial-information',
+  BankConcepts = 'concept-movis-bank',
 }
