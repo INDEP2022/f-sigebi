@@ -79,4 +79,56 @@ export class Repository<T> implements IRepository<T> {
     });
     return httpParams;
   }
+  //Temporales
+  getAllPaginated2(
+    route: string,
+    _params?: ListParams
+  ): Observable<IListResponse<T>> {
+    const params = this.makeParams(_params);
+    return this.httpClient.get<IListResponse<T>>(
+      `${environment.API_URL2}${route}`,
+      { params }
+    );
+  }
+
+  getById2(route: string, id: number | string): Observable<T> {
+    return this.httpClient.get<T>(`${environment.API_URL2}${route}/${id}`);
+  }
+
+  create2(route: string, formData: Object) {
+    return this.httpClient.post<T>(`${environment.API_URL2}${route}`, formData);
+  }
+
+  update2(route: string, id: number | string, formData: Object) {
+    return this.httpClient.put(
+      `${environment.API_URL2}${route}/${id}`,
+      formData
+    );
+  }
+
+  remove2(route: string, id: number | string) {
+    return this.httpClient.delete(`${environment.API_URL2}${route}/${id}`);
+  }
+
+  updateByIds2(route: string, ids: Partial<T>, formData: Object) {
+    const idsRoute: string = this.makeIdsRoute(ids);
+    return this.httpClient.put(
+      `${environment.API_URL2}${route}/${idsRoute}`,
+      formData
+    );
+  }
+
+  getByIds2(route: string, ids: Partial<T>) {
+    const idsRoute: string = this.makeIdsRoute(ids);
+    return this.httpClient.get<T>(
+      `${environment.API_URL2}${route}/${idsRoute}`
+    );
+  }
+
+  removeByIds2(route: string, ids: Partial<T>) {
+    const idsRoute: string = this.makeIdsRoute(ids);
+    return this.httpClient.delete(
+      `${environment.API_URL2}${route}/${idsRoute}`
+    );
+  }
 }

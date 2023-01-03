@@ -109,4 +109,11 @@ export enum ENDPOINT_LINKS {
   Warehouse = 'catalog/warehouse',
   ZipCode = 'catalog/zip-code', //
   ZoneGeographic = 'catalog/zone-geographic',
+  DocumentsForDictum = 'documents-for-dictum',
+  DinamicTables = 'dynamiccatalog/dinamic-tables',
+  AffairType = 'affair-type',
+  FinancialInformation = 'parameterfinantial/financial-information',
+  FinancialIndicators = 'financial-indicators',
+  AttributesFinancialInfo = 'attributes-financial-information',
+  BankConcepts = 'concept-movis-bank',
 }

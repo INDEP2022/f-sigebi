@@ -1,10 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { BankConceptsModalComponent } from '../bank-concepts-modal/bank-concepts-modal.component';
 import { BANK_CONCEPTS_COLUMNS } from './bank-concepts-columns';
+//models
+import { IBankConcepts } from 'src/app/core/models/catalogs/bank-concepts-model';
+//services
+import { BankConceptsService } from 'src/app/core/services/catalogs/bank-concepts-service';
 
 @Component({
   selector: 'app-bank-concepts',
@@ -12,11 +17,14 @@ import { BANK_CONCEPTS_COLUMNS } from './bank-concepts-columns';
   styles: [],
 })
 export class BankConceptsComponent extends BasePage implements OnInit {
-  columns: any[] = [];
+  bankConcepts: IBankConcepts[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  constructor(private modalService: BsModalService) {
+  constructor(
+    private modalService: BsModalService,
+    private bankConceptsService: BankConceptsService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -31,44 +39,49 @@ export class BankConceptsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getPagination();
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getBankConcepts());
   }
 
-  openModal(context?: Partial<BankConceptsModalComponent>) {
-    const modalRef = this.modalService.show(BankConceptsModalComponent, {
-      initialState: { ...context },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getData();
-    });
-  }
-
-  openForm(allotment?: any) {
-    this.openModal({ allotment });
-  }
-
-  getData() {
+  getBankConcepts() {
     this.loading = true;
-    this.columns = this.data;
-    this.totalItems = this.data.length;
-    this.loading = false;
+    this.bankConceptsService.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        this.bankConcepts = response.data;
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
   }
 
-  getPagination() {
-    this.columns = this.data;
-    this.totalItems = this.columns.length;
+  openForm(bankConcepts?: IBankConcepts) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      bankConcepts,
+      callback: (next: boolean) => {
+        if (next) this.getBankConcepts();
+      },
+    };
+    this.modalService.show(BankConceptsModalComponent, modalConfig);
   }
 
-  data = [
-    {
-      concept: 'TRASPASO',
-      description: 'TRASPASO COBRO DE COCHE',
-    },
-    {
-      concept: 'RENTA',
-      description: 'PRODUCTO DE LA RENTA DE UN INMUEBLE',
-    },
-  ];
+  showDeleteAlert(bankConcepts: IBankConcepts) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete(bankConcepts.noRegistration);
+      }
+    });
+  }
+
+  delete(id: number) {
+    this.bankConceptsService.remove(id).subscribe({
+      next: () => this.getBankConcepts(),
+    });
+  }
 }

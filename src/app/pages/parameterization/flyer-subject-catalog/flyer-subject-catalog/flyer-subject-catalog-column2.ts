@@ -1,47 +1,52 @@
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+const type: any[] = [
+  { value: 'A', title: 'Administrativo' },
+  { value: 'P', title: 'Procesal' },
+  { value: 'T', title: 'Transferente' },
+  { value: 'AT', title: 'AdminTransferente' },
+];
 
-const options: any[] = [
-  { value: 'Administrativo', title: 'Administrativo' },
-  { value: 'Procesal', title: 'Procesal' },
-  { value: 'Transferente', title: 'Transferente' },
-  { value: 'AdminTransferente', title: 'AdminTransferente' },
+const relation: any[] = [
+  { value: 'S', title: 'SI' },
+  { value: 'N', title: 'NO' },
+];
+
+const user: any[] = [
+  { value: 'S', title: 'SI' },
+  { value: 'N', title: 'NO' },
 ];
 
 export const FLYER_SUBJECT_CAT_COLUMNS2 = {
-  typeFyer: {
+  referralNoteType: {
     title: 'Tipo de volante',
     sort: false,
     filter: false,
-    defaultValue: 'Administrativo',
     editor: {
       type: 'list',
       config: {
-        list: options,
+        list: type,
       },
     },
   },
-  relationGoods: {
+  relationPropertyKey: {
     title: 'Relación con bien',
     sort: false,
     filter: false,
-    type: 'custom',
-    renderComponent: CheckboxElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
-      });
+    editor: {
+      type: 'list',
+      config: {
+        list: relation,
+      },
     },
   },
-  userPermission: {
+  versionUser: {
     title: 'Permiso Usuario',
     sort: false,
     filter: false,
-    type: 'custom',
-    renderComponent: CheckboxElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
-      });
+    editor: {
+      type: 'list',
+      config: {
+        list: user,
+      },
     },
   },
 };
