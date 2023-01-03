@@ -1,8 +1,13 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import Keyboard from 'simple-keyboard';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+//models
+import { IFinancialIndicators } from 'src/app/core/models/catalogs/financial-indicators-model';
+//services
+import { FinancialIndicatorsService } from 'src/app/core/services/catalogs/financial-indicators-service';
 
 @Component({
   selector: 'app-cat-financial-indicators-modal',
@@ -12,41 +17,36 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 export class CatFinancialIndicatorsModalComponent implements OnInit {
   value = '';
   keyboard: Keyboard;
+  financialIndicatorsForm: ModelForm<IFinancialIndicators>;
+  financialIndicators: IFinancialIndicators;
 
   title: string = 'Catálogo de indicadores financieros';
   edit: boolean = false;
-  form: FormGroup = new FormGroup({});
-  allotment: any;
-  @Output() refresh = new EventEmitter<true>();
 
-  get formuleCheck() {
-    return this.form.get('formuleCheck');
-  }
-
-  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {}
+  constructor(
+    private fb: FormBuilder,
+    private modalRef: BsModalRef,
+    private financialIndicatorsService: FinancialIndicatorsService
+  ) {}
 
   ngOnInit(): void {
     this.prepareform();
   }
 
   private prepareform() {
-    this.form = this.fb.group({
+    this.financialIndicatorsForm = this.fb.group({
       id: [null, [Validators.required]],
       name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      formuleCheck: [null, [Validators.required]],
-      formule: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      formula: [null, [Validators.required]],
     });
-    if (this.allotment != null) {
+    if (this.financialIndicators != null) {
       this.edit = true;
-      console.log(this.allotment);
-      this.form.patchValue(this.allotment);
+      console.log(this.financialIndicators);
+      this.financialIndicatorsForm.patchValue(this.financialIndicators);
     }
   }
 

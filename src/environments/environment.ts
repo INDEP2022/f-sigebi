@@ -6,6 +6,7 @@ export const environment = {
   production: false,
   //API_URL_MS: `http://sigebimsqa.indep.gob.mx/`,
   API_URL: 'http://sigebimsqa.indep.gob.mx/api/v1/', //'http://localhost:3000/api/v1/',
+  API_URL2: 'http://sigebimsqa.indep.gob.mx/',
   api_external_token:
     'http://52.142.23.169/realms/indep/protocol/openid-connect/token',
   api_external_userInfo:

@@ -1,4 +1,8 @@
 export const FINANCIAL_INFO_ATTR_COLUMNS = {
+  id: {
+    title: 'ID',
+    sort: false,
+  },
   name: {
     title: 'Nombre',
     sort: false,
