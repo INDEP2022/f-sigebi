@@ -12,6 +12,9 @@ import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.servic
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
 import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
+import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
+import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtype.service';
+import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
 
 @Component({
   selector: 'app-goods-types-shared',
@@ -35,10 +38,10 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
   rowClass: string;
 
   params = new BehaviorSubject<ListParams>(new ListParams());
-  types = new DefaultSelect<IGoodType>();
-  subtypes = new DefaultSelect();
-  ssubtypes = new DefaultSelect();
-  sssubtypes = new DefaultSelect();
+  @Input() types = new DefaultSelect<Partial<IGoodType>>();
+  @Input() subtypes = new DefaultSelect();
+  @Input() ssubtypes = new DefaultSelect();
+  @Input() sssubtypes = new DefaultSelect();
 
   get type() {
     return this.form.get(this.typeField);
@@ -53,7 +56,12 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     return this.form.get(this.sssubtypeField);
   }
 
-  constructor(private service: GoodTypeService) {
+  constructor(
+    private service: GoodTypeService,
+    private goodSubtypesService: GoodSubtypeService,
+    private goodSsubtypeService: GoodSsubtypeService,
+    private goodSssubtypeService: GoodSssubtypeService
+  ) {
     super();
   }
 
@@ -64,7 +72,7 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
   }
 
   getTypes(params: ListParams) {
-    this.service.getAll(params).subscribe(
+    this.service.search(params).subscribe(
       data => {
         this.types = new DefaultSelect(data.data, data.count);
       },
@@ -83,36 +91,36 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
   }
 
   getSubtypes(params: ListParams) {
-    // this.service
-    //   .getSubtypes({ type: this.type.value, ...params })
-    //   .subscribe((data) => {
-    //     this.subtypes = new DefaultSelect(data.data, data.count);
-    //   });
+    this.goodSubtypesService
+      .getAll({ type: this.type.value, ...params })
+      .subscribe(data => {
+        this.subtypes = new DefaultSelect(data.data, data.count);
+      });
   }
 
   getSsubtypes(params: ListParams) {
-    // this.service
-    //   .getSsubtypes({
-    //     type: this.type.value,
-    //     subtype: this.subtype.value,
-    //     ...params,
-    //   })
-    //   .subscribe((data) => {
-    //     this.ssubtypes = new DefaultSelect(data.data, data.count);
-    //   });
+    this.goodSsubtypeService
+      .getAll({
+        type: this.type.value,
+        subtype: this.subtype.value,
+        ...params,
+      })
+      .subscribe(data => {
+        this.ssubtypes = new DefaultSelect(data.data, data.count);
+      });
   }
 
   getSssubtypes(params: ListParams) {
-    // this.service
-    //   .getSssubtypes({
-    //     type: this.type.value,
-    //     subtype: this.subtype.value,
-    //     ssubtype: this.ssubtype.value,
-    //     ...params,
-    //   })
-    //   .subscribe((data) => {
-    //     this.sssubtypes = new DefaultSelect(data.data, data.count);
-    //   });
+    this.goodSssubtypeService
+      .getAll({
+        type: this.type.value,
+        subtype: this.subtype.value,
+        ssubtype: this.ssubtype.value,
+        ...params,
+      })
+      .subscribe(data => {
+        this.sssubtypes = new DefaultSelect(data.data, data.count);
+      });
   }
 
   onTypesChange(type: any) {

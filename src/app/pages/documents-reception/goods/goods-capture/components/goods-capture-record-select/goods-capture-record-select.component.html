@@ -1,18 +1,18 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Volante a trabajar</h5>
+    <h5 class="modal-title">Selección de Expediente</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row pt-3">
-        <form-field class="col-md-10" [control]="form.get('noExpediente')">
-          <ngx-select
-            [form]="form"
-            value="id"
-            bindLabel="id"
-            control="noExpediente"
-            [data]="select"
-            label="No&#46; Expediente"></ngx-select>
+        <form-field
+          class="col-md-10"
+          [control]="form.get('recordId')"
+          label="No: Expediente">
+          <input
+            type="number"
+            class="form-control"
+            formControlName="recordId" />
         </form-field>
       </div>
 
@@ -43,7 +43,9 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          text="Aceptar"
+          text="Buscar"
+          loadingText="Buscando ..."
+          [loading]="loading"
           [disabled]="!form.valid"
           (confirm)="confirm()"></confirm-button>
       </div>
