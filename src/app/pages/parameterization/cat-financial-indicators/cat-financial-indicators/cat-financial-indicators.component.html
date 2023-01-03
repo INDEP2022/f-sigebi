@@ -15,10 +15,12 @@
   </div>
   <div body>
     <div class="table-responsive">
-      <ng2-smart-table
-        [settings]="settings"
-        [source]="financialIndicators"
-        (edit)="openForm($event.data)"></ng2-smart-table>
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="financialIndicators"
+          (edit)="openForm($event.data)"></ng2-smart-table>
+      </div>
     </div>
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>

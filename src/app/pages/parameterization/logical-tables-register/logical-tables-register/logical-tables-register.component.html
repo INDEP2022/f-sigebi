@@ -15,11 +15,13 @@
   </div>
   <div body>
     <div class="table-responsive">
-      <ng2-smart-table
-        [settings]="settings"
-        [source]="dinamicTables"
-        (edit)="openForm($event.data)"
-        (delete)="showDeleteAlert($event.data)"></ng2-smart-table>
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="dinamicTables"
+          (edit)="openForm($event.data)"
+          (delete)="showDeleteAlert($event.data)"></ng2-smart-table>
+      </div>
     </div>
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>

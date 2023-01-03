@@ -1,5 +1,5 @@
 export const CAT_EFFECTIVE_NUM_COLUMNS = {
-  category: {
+  cat: {
     title: 'Categoria',
     sort: false,
   },
@@ -7,12 +7,8 @@ export const CAT_EFFECTIVE_NUM_COLUMNS = {
     title: 'Descripción',
     sort: false,
   },
-  entry: {
-    title: 'Entrada',
-    sort: false,
-  },
-  exit: {
-    title: 'Salida',
+  enterExit: {
+    title: 'Entrada/Salida',
     sort: false,
   },
 };
