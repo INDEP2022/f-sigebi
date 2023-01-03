@@ -22,10 +22,10 @@ export interface IRequest {
   holderCharge?: string;
   phoneOfOwner?: string;
   emailOfOwner?: string;
-  idTransference?: number;
-  idStation?: number;
-  idAuthority?: number;
-  idRegionalDelegation?: number;
+  transferenceId?: number;
+  stationId?: number;
+  authorityId?: number;
+  regionalDelegationId?: number;
   sender?: string;
   observations?: string;
   targetUser?: string;
@@ -38,9 +38,9 @@ export interface IRequest {
   circumstantialRecord?: string;
   previousInquiry?: string;
   lawsuit?: string;
-  noProtect?: string;
+  protectNumber?: string;
   tocaPenal?: string;
-  noPaper?: string;
+  paperNumber?: string;
   paperDate?: string;
   indicated?: string;
   publicMinistry?: string;
@@ -70,11 +70,11 @@ export interface IRequest {
   instanceBpm?: string;
   trial?: string;
   compensationType?: string;
-  idStateRequest?: number;
+  stateRequestId?: number;
   searchSiab: number;
   priorityDate?: string;
-  numberOfRejections?: number;
-  idRulingDocument?: string;
+  ofRejectionsNumber?: number;
+  rulingDocumentId?: string;
   reportSheet?: string;
   nameRecipientRuling?: string;
   postRecipientRuling?: string;
@@ -90,5 +90,6 @@ export interface IRequest {
   keyStateOfRepublic?: number;
   instanceBpel?: number;
   verificationDateCump?: string;
-  idRecordTmp?: number;
+  recordTmpId?: number;
+  coordregsae_ktl?: string;
 }
