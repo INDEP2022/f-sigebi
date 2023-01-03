@@ -1,12 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequestInTurn } from 'src/app/core/models/catalogs/request-in-turn.model';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { IListResponse } from '../../../../core/interfaces/list-response.interface';
+import { IRequest } from '../../../../core/models/requests/request.model';
+import { RequestService } from '../../../../core/services/requests/request.service';
 import { RequestInTurnSelectedComponent } from '../request-in-turn-selected/request-in-turn-selected.component';
 import { REQUEST_IN_TURN_COLUMNS } from './request-in-turn-columns';
 
@@ -71,6 +74,8 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
 
   requestSelected: IRequestInTurn[] = [];
 
+  requestService = inject(RequestService);
+
   constructor(private modalService: BsModalService, public fb: FormBuilder) {
     super();
   }
@@ -83,11 +88,6 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
       columns: REQUEST_IN_TURN_COLUMNS,
     };
   }
-
-  getExample(): void {
-    this.paragraphs = ejemplo;
-  }
-
   getSubDelegations(params: ListParams) {
     /* this.requestService.getAll(params).subscribe(data => {
       this.station = new DefaultSelect(data.data, data.count);
@@ -100,7 +100,7 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
       initialState: {
         requestInTurn,
         callback: (next: boolean) => {
-          if (next) this.getExample();
+          if (next) this.getRequest();
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -112,9 +112,21 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
   searchForm(requestFrom: ModelForm<any>) {
     console.log(requestFrom);
 
-    this.params
+    this.getRequest();
+    /*this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getExample());
+      .subscribe(() => this.getRequest());*/
+  }
+
+  getRequest(): void {
+    let params = { page: 1, take: 20, order: 'DESC' };
+    this.requestService
+      .getAll(new ListParams())
+      .subscribe((data: IListResponse<IRequest>) => {
+        console.log(data);
+        //this.paragraphs =
+      });
+    this.paragraphs = ejemplo;
   }
 
   onCustomAction(event: any) {

@@ -118,4 +118,6 @@ export enum ENDPOINT_LINKS {
   FinancialIndicators = 'financial-indicators',
   AttributesFinancialInfo = 'attributes-financial-information',
   BankConcepts = 'concept-movis-bank',
+  //request
+  request = 'request/api/v1/request',
 }
