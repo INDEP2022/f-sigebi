@@ -1,5 +1,5 @@
 export const CAT_DOC_REQUIRE_COLUMNS = {
-  cveDoc: {
+  cve: {
     title: 'Clave del Documento',
     sort: false,
   },
@@ -7,7 +7,7 @@ export const CAT_DOC_REQUIRE_COLUMNS = {
     title: 'Descripción',
     sort: false,
   },
-  typeDic: {
+  typeDictum: {
     title: 'Tipo de Dictamen',
     sort: false,
   },

@@ -4,26 +4,26 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 //models
-import { IQuestion } from 'src/app/core/models/catalogs/question.model';
+import { IResponse } from 'src/app/core/models/catalogs/response.model';
 //services
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { QuestionService } from 'src/app/core/services/catalogs/question.service';
+import { ResponseService } from 'src/app/core/services/catalogs/response.service';
 
 @Component({
-  selector: 'app-question-catalog-modal',
-  templateUrl: './question-catalog-modal.component.html',
+  selector: 'app-response-catalog-modal',
+  templateUrl: './response-catalog-modal.component.html',
   styles: [],
 })
-export class QuestionCatalogModalComponent extends BasePage implements OnInit {
-  questionForm: ModelForm<IQuestion>;
-  questionI: IQuestion;
-  title: string = 'Catálogo de preguntas';
+export class ResponseCatalogModalComponent extends BasePage implements OnInit {
+  responseForm: ModelForm<IResponse>;
+  responseI: IResponse;
+  title: string = 'Catálogo de Respuestas';
   edit: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
-    private questionService: QuestionService
+    private responseService: ResponseService
   ) {
     super();
   }
@@ -33,7 +33,7 @@ export class QuestionCatalogModalComponent extends BasePage implements OnInit {
   }
 
   private prepareForm() {
-    this.questionForm = this.fb.group({
+    this.responseForm = this.fb.group({
       id: [
         null,
         [
@@ -43,21 +43,39 @@ export class QuestionCatalogModalComponent extends BasePage implements OnInit {
           Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
+      idQuestion: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(8),
+          Validators.minLength(1),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
       text: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      maximumScore: [null, [Validators.required]],
-      type: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      // noResponse: [null, [Validators.required]],
-      // initValue: [null, [Validators.required]],
-      // resValue: [null, [Validators.required]],
-      // resText: [
-      //   null,
-      //   [Validators.required, Validators.pattern(STRING_PATTERN)],
-      // ],
+      startValue: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(8),
+          Validators.minLength(1),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      endValue: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(8),
+          Validators.minLength(1),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
     });
-    if (this.questionI != null) {
+    if (this.responseI != null) {
       this.edit = true;
       // console.log(this.questionI);
-      this.questionForm.patchValue(this.questionI);
+      this.responseForm.patchValue(this.responseI);
     }
   }
 
@@ -71,7 +89,7 @@ export class QuestionCatalogModalComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.questionService.create(this.questionForm.value).subscribe(
+    this.responseService.create(this.responseForm.value).subscribe(
       data => this.handleSuccess(),
       error => (this.loading = false)
     );
@@ -88,8 +106,8 @@ export class QuestionCatalogModalComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
 
-    this.questionService
-      .update(this.questionI.id, this.questionForm.value)
+    this.responseService
+      .update(this.responseI.id, this.responseForm.value)
       .subscribe(
         data => this.handleSuccess(),
         error => (this.loading = false)

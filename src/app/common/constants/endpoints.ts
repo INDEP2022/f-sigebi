@@ -1,5 +1,5 @@
 export enum ENDPOINT_LINKS {
-  Affair = 'affair-sera',
+  Affair = 'affair',
   Bank = 'bank',
   Batch = 'batch',
   Battery = 'battery',
@@ -109,4 +109,12 @@ export enum ENDPOINT_LINKS {
   Warehouse = 'warehouse',
   ZipCode = 'zip-code', //
   ZoneGeographic = 'zone-geographic',
+  //Nuevos catálogos de Parametrización
+  DocumentsForDictum = 'documents-for-dictum',
+  DinamicTables = 'dynamiccatalog/api/v1/dinamic-tables',
+  AffairType = 'affair-type',
+  FinancialInformation = 'parameterfinantial/api/v1/financial-information',
+  FinancialIndicators = 'financial-indicators',
+  AttributesFinancialInfo = 'attributes-financial-information',
+  BankConcepts = 'concept-movis-bank',
 }
