@@ -131,4 +131,8 @@ export class RequestInTurnFormComponent implements OnInit {
   reset(): void {
     this.searchForm.reset();
   }
+
+  generateFiltro() {
+    this.searchForm.get('dateRequest');
+  }
 }

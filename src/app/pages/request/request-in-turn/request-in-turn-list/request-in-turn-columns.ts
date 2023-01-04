@@ -29,42 +29,42 @@ export const REQUEST_IN_TURN_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  /* deleRegional: {
+  delegationName: {
     title: 'Delegacion regional',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
-  state: {
+  stateOfRepublicName: {
     title: 'Estado',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
-  transfer: {
+  transferentName: {
     title: 'Transferente',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
-  transmitter: {
+  stationName: {
     title: 'Emisora',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
-  authority: {
+  authorityName: {
     title: 'Autoridad',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
-  expedient: {
+  transferenceFile: {
     title: 'Expediente transferente',
     type: 'number',
     sort: false,
   },
-  reception: {
+  receiptRoute: {
     title: 'Via recepción',
     type: 'string',
     sort: false,
   },
-  affair: {
+  affairName: {
     title: 'Asunto',
     type: 'string',
     sort: false,
@@ -79,24 +79,24 @@ export const REQUEST_IN_TURN_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  contributor: {
+  indicatedTaxpayer: {
     title: 'Contribuyente y/o Indiciado',
     type: 'string',
     sort: false,
   },
-  acta: {
+  circumstantialRecord: {
     title: 'Acta circunstanciada',
     type: 'string',
     sort: false,
   },
-  ascertainment: {
+  previousInquiry: {
     title: 'Averiguación previa',
     type: 'string',
     sort: false,
   },
-  cause: {
+  tocaPenal: {
     title: 'Causa penal',
     type: 'string',
     sort: false,
-  },*/
+  },
 };

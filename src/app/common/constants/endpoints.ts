@@ -98,7 +98,7 @@ export enum ENDPOINT_LINKS {
   Subcategory = 'catalog/', // ? Checar si se implementa este catalogo
   Subdelegation = 'catalog/subdelegation',
   ThirdParty = 'catalog/third-party-company',
-  Transferente = 'catalog/transferentes',
+  Transferente = 'catalog/transferent',
   TypeDocto = 'catalog/type-docto',
   TypeGoods = 'catalog/type-state',
   TypeRelevant = 'catalog/type-relevant',

@@ -1,8 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, forkJoin, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
@@ -10,7 +9,12 @@ import { IRequestInTurn } from 'src/app/core/models/catalogs/request-in-turn.mod
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
 import { IRequest } from '../../../../core/models/requests/request.model';
+import { AffairService } from '../../../../core/services/catalogs/affair.service';
+import { AuthorityService } from '../../../../core/services/catalogs/Authority.service';
 import { RegionalDelegationService } from '../../../../core/services/catalogs/regional-delegation.service';
+import { StateOfRepublicService } from '../../../../core/services/catalogs/state-of-republic.service';
+import { StationService } from '../../../../core/services/catalogs/station.service';
+import { TransferenteService } from '../../../../core/services/catalogs/transferente.service';
 import { RequestService } from '../../../../core/services/requests/request.service';
 import { RequestInTurnSelectedComponent } from '../request-in-turn-selected/request-in-turn-selected.component';
 import { REQUEST_IN_TURN_COLUMNS } from './request-in-turn-columns';
@@ -71,14 +75,20 @@ var ejemplo: IRequestInTurn[] = [
 })
 export class RequestInTurnListComponent extends BasePage implements OnInit {
   totalItems: number = 0;
-  paragraphs = new LocalDataSource();
+  paragraphs: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   requestSelected: IRequestInTurn[] = [];
 
   requestService = inject(RequestService);
   regionalDelegacionService = inject(RegionalDelegationService);
-  listRequest: IRequest;
+  stateOfRepublicService = inject(StateOfRepublicService);
+  transferentService = inject(TransferenteService);
+  stationService = inject(StationService);
+  authorityService = inject(AuthorityService);
+  affairService = inject(AffairService);
+
+  listRequest: any;
   listTable: any[] = [];
 
   constructor(private modalService: BsModalService, public fb: FormBuilder) {
@@ -120,37 +130,79 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
       .subscribe(() => this.getRequest());
   }
 
-  getRequest(): void {
+  getRequest(): any {
     let params = new ListParams();
+    this.loading = true;
     this.requestService
       .getAll(params)
       .subscribe((data: IListResponse<IRequest>) => {
         this.totalItems = data.count;
-        console.log(data.data);
-
-        for (let i = 0; i < data.data.length; i++) {
-          let register = data.data[i];
-          this.listRequest = register;
-
-          this.listTable.push(this.listRequest);
-
-          this.regionalDelegacionService
-            .getById(register.regionalDelegationId)
-            .subscribe((data: any) => {
-              //console.log(data)
-              console.log('regi', data.data);
-            });
-        }
-        this.paragraphs.load(this.listTable);
-        console.log(this.paragraphs['data']);
-        this.paragraphs.refresh();
+        this.getresponse(data.data);
       });
   }
 
-  getresponse(id: any) {
-    this.regionalDelegacionService.getById(id).subscribe((data: any) => {
-      //console.log(data)
-      console.log('regi', data.data);
+  getresponse(data: any) {
+    return new Promise((resolve, reject) => {
+      let promises = [];
+      promises.push(
+        data.map((item: any) => {
+          const delegacionService = this.regionalDelegacionService.getById(
+            item.regionalDelegationId
+          );
+          const stateOfRepublicService = this.stateOfRepublicService.getById(
+            item.keyStateOfRepublic
+          );
+          const transferenteService = this.transferentService.getById(
+            item.transferenceId
+          );
+          const stationService = this.stationService.getById(item.stationId);
+          const authorityService = this.authorityService.getById(
+            item.authorityId
+          );
+          const affairService = this.affairService.getById(item.affair);
+
+          this.listTable = [];
+          forkJoin([
+            delegacionService,
+            stateOfRepublicService,
+            transferenteService,
+            stationService,
+            authorityService,
+            affairService,
+          ]).subscribe(
+            ([
+              _delegation,
+              _state,
+              _transferent,
+              _station,
+              _authority,
+              _affair,
+            ]) => {
+              let delegation = _delegation as any;
+              let state = _state as any;
+              let transferent = _transferent as any;
+              let station = _station as any;
+              let authority = _authority as any;
+
+              item['delegationName'] = delegation.data.description;
+              item['stateOfRepublicName'] = state.data.descCondition;
+              item['transferentName'] = transferent.data.nameTransferent;
+              item['stationName'] = station.data.stationName;
+              item['authorityName'] = authority.data.authorityName;
+              item['affairName'] = authority.data.description;
+            }
+          );
+        })
+      );
+
+      Promise.all(promises)
+        .then(result => {
+          console.log(data);
+          this.paragraphs = data;
+          this.loading = false;
+          resolve(data);
+        })
+        .catch(err => reject(err));
     });
   }
 
