@@ -165,6 +165,16 @@ const routes: Routes = [
           screen: 'FGERADBFICHADEPOS',
         },
       },
+      {
+        path: 'confiscation-ratio',
+        loadChildren: async () =>
+          (await import('./confiscation-ratio/confiscation-ratio.module'))
+            .ConfiscationRatioModule,
+        data: {
+          title: 'Relación de decomiso',
+          screen: 'FRELDECOMISO',
+        },
+      },
     ],
   },
 ];
