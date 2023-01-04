@@ -1,9 +1,13 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { FLYER_SUBJECT_CAT_COLUMNS } from './flyer-subject-catalog-column';
 import { FLYER_SUBJECT_CAT_COLUMNS2 } from './flyer-subject-catalog-column2';
+//models
+import { IAffairType } from 'src/app/core/models/catalogs/affair-type-model';
+//service
+import { AffairTypeService } from 'src/app/core/services/catalogs/affair-type-service';
 
 @Component({
   selector: 'app-flyer-subject-catalog',
@@ -11,6 +15,7 @@ import { FLYER_SUBJECT_CAT_COLUMNS2 } from './flyer-subject-catalog-column2';
   styles: [],
 })
 export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
+  affairType: IAffairType[] = [];
   columns: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -69,7 +74,7 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
     hideSubHeader: false,
   };
 
-  constructor() {
+  constructor(private affairTypeService: AffairTypeService) {
     super();
     this.settings1.columns = { ...FLYER_SUBJECT_CAT_COLUMNS };
     this.settings2.columns = { ...FLYER_SUBJECT_CAT_COLUMNS2 };
@@ -77,6 +82,21 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.getPagination();
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getIaffairType());
+  }
+
+  getIaffairType() {
+    this.loading = true;
+    this.affairTypeService.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        this.affairType = response.data;
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
   }
 
   getPagination() {
@@ -103,28 +123,28 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
     },
   ];
 
-  data2 = [
-    {
-      typeFyer: 'Procesal',
-      relationGoods: true,
-      userPermission: true,
-    },
-    {
-      typeFyer: 'AdminTransferente',
-      relationGoods: false,
-      userPermission: true,
-    },
-    {
-      typeFyer: 'Administrativo',
-      relationGoods: true,
-      userPermission: false,
-    },
-    {
-      typeFyer: 'Procesal',
-      relationGoods: false,
-      userPermission: false,
-    },
-  ];
+  // data2 = [
+  //   {
+  //     typeFyer: 'Procesal',
+  //     relationGoods: true,
+  //     userPermission: true,
+  //   },
+  //   {
+  //     typeFyer: 'AdminTransferente',
+  //     relationGoods: false,
+  //     userPermission: true,
+  //   },
+  //   {
+  //     typeFyer: 'Administrativo',
+  //     relationGoods: true,
+  //     userPermission: false,
+  //   },
+  //   {
+  //     typeFyer: 'Procesal',
+  //     relationGoods: false,
+  //     userPermission: false,
+  //   },
+  // ];
 
   onSaveConfirm(event: any) {
     event.confirm.resolve();
@@ -140,17 +160,6 @@ export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
     event.confirm.resolve();
     this.onLoadToast('success', 'Elemento Eliminado', '');
   }
-
-  // create() {
-  //   this.data1.getElements().then((data: any) => {
-  //     this.loading = true;
-  //     this.handleSuccess();
-  //   });
-  // }
-
-  // confirm() {
-  //   this.edit ? this.update() : this.create();
-  // }
 
   handleSuccess() {
     this.loading = false;

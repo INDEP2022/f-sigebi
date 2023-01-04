@@ -3,18 +3,18 @@
     <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
+    <form class="form-material" [formGroup]="documentsForDictumForm">
       <div class="row">
         <div class="col-md-4">
           <form-field
-            [control]="form.get('cveDoc')"
+            [control]="documentsForDictumForm.get('cve')"
             label="Clave del documento">
-            <input type="text" class="form-control" formControlName="cveDoc" />
+            <input type="text" class="form-control" formControlName="cve" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="form.get('description')"
+            [control]="documentsForDictumForm.get('description')"
             label="Descripci&oacute;n">
             <input
               type="text"
@@ -23,9 +23,11 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="form.get('typeDic')" label="Tipo de Dictamen">
+          <form-field
+            [control]="documentsForDictumForm.get('typeDictum')"
+            label="Tipo de Dictamen">
             <ng-select
-              formControlName="typeDic"
+              formControlName="typeDictum"
               [searchable]="false"
               class="form-control"
               [clearable]="false">

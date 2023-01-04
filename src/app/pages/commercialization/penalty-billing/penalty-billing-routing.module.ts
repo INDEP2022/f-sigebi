@@ -6,6 +6,7 @@ const routes: Routes = [
   {
     path: ':type',
     component: PenaltyBillingMainComponent,
+    data: { screen: 'FCOMER089' },
   },
 ];
 

@@ -7,14 +7,14 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./valuation-request/valuation-request.module'))
         .valuationRequestModule,
-    data: { title: 'Solicitud valuacion' },
+    data: { title: 'Solicitud valuacion', screen: 'RespuestaAvaluo' },
   },
   {
     path: 'res-cancel-valuation',
     loadChildren: async () =>
       (await import('./res-cancel-valuation/res-cancel-valuation.module'))
         .resCancelValuationModule,
-    data: { title: 'Res / cancel valuacion' },
+    data: { title: 'Res / cancel valuacion', screen: 'SolicitudAvaluo' },
   },
 ];
 

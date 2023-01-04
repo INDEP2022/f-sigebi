@@ -81,7 +81,7 @@ export const MENU: IMenuItem[] = [
       // APP -- GESTIONAR DEVOLUCION -- Registro de Solicitud de Devolución
       { ...MENU_OPTIONS_REQUEST_MANAGE_RETURN },
       {
-        label: 'Solicitudes a turno',
+        label: 'Turnado Masivo Solicitudes',
         link: '/pages/request/request-in-turn',
       },
       {
@@ -187,7 +187,7 @@ export const MENU: IMenuItem[] = [
             link: '/pages/final-destination-process/donation-process/donation-authorization-request',
           },
           {
-            label: 'Registro de Inventarios para Donación Directa',
+            label: 'Registro para Inventarios y Donación Directa',
             link: '/pages/final-destination-process/donation-process/registration-inventories-donation',
           },
           {

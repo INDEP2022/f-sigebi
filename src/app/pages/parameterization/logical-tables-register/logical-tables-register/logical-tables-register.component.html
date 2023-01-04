@@ -5,8 +5,8 @@
       <div class="col-md-5 buttons">
         <div>
           <button
-            class="btn btn-primary active btn-sm ml-3"
-            (click)="openForm()">
+            (click)="openForm()"
+            class="btn btn-primary active btn-sm ml-3">
             Nuevo
           </button>
         </div>
@@ -17,8 +17,9 @@
     <div class="table-responsive">
       <ng2-smart-table
         [settings]="settings"
-        [source]="data"
-        (edit)="openForm($event.data)"></ng2-smart-table>
+        [source]="dinamicTables"
+        (edit)="openForm($event.data)"
+        (delete)="showDeleteAlert($event.data)"></ng2-smart-table>
     </div>
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>

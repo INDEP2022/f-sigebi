@@ -17,33 +17,33 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./password-calendar/password-calendar.module'))
         .PasswordCalendarModule,
-    data: { title: routesSecurity[0].label },
+    data: { title: routesSecurity[0].label, screen: 'FACTSEGCALENDPASS' },
   },
   {
     path: routesSecurity[1].link,
     loadChildren: async () =>
       (await import('./system-access/system-access.module')).SystemAccessModule,
-    data: { title: routesSecurity[1].label },
+    data: { title: routesSecurity[1].label, screen: 'FACTSEGACCESOS' },
   },
   {
     path: routesSecurity[2].link,
     loadChildren: async () =>
       (await import('./change-password/change-password.module'))
         .ChangePasswordModule,
-    data: { title: routesSecurity[2].label },
+    data: { title: routesSecurity[2].label, screen: 'FACTSEGPASSWORD' },
   },
   {
     path: routesSecurity[3].link,
     loadChildren: async () =>
       (await import('./report-access-user/report-access-user.module'))
         .ReportAccessUserModule,
-    data: { title: routesSecurity[3].label },
+    data: { title: routesSecurity[3].label, screen: 'FGERSEGPANTALLUSU' },
   },
   {
     path: routesSecurity[4].link,
     loadChildren: async () =>
       (await import('./users/users.module')).UsersModule,
-    data: { title: routesSecurity[4].label },
+    data: { title: routesSecurity[4].label, screen: 'FCATSEGMANUSUARIO' },
   },
 ];
 @NgModule({

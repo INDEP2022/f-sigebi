@@ -3,16 +3,16 @@
     <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
+    <form class="form-material" [formGroup]="bankConceptsForm">
       <div class="row">
         <div class="col-md-6">
-          <form-field [control]="form.get('concept')" label="Concepto">
-            <input type="text" class="form-control" formControlName="concept" />
+          <form-field [control]="bankConceptsForm.get('cve')" label="Concepto">
+            <input type="text" class="form-control" formControlName="cve" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field
-            [control]="form.get('description')"
+            [control]="bankConceptsForm.get('description')"
             label="Descripci&oacute;n">
             <input
               type="text"
@@ -28,7 +28,7 @@
       <div class="m-3">
         <confirm-button
           [type]="'button'"
-          [disabled]="!form.valid"
+          [disabled]="!bankConceptsForm.valid"
           (click)="close()"></confirm-button>
       </div>
       <div class="m-3">

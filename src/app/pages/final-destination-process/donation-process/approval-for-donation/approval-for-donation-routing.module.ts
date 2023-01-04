@@ -11,6 +11,10 @@ const routes: Routes = [
   {
     path: 'capture-approval-donation',
     component: CaptureApprovalDonationComponent,
+    data: {
+      title: 'Captura de Aprobación para Donación',
+      screen: 'FMCOMDONAC_1',
+    },
   },
 ];
 

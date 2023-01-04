@@ -15,14 +15,14 @@ const routes: Routes = [
         loadChildren: async () =>
           (await import('./numerary-calc/numerary-calc.module'))
             .NumeraryCalcModule,
-        data: { title: 'Calculo de numerario' },
+        data: { title: 'Calculo de numerario', screen: 'FPROSOLNUMERARIO' },
       },
       {
         path: 'numerary-request',
         loadChildren: async () =>
           (await import('./numerary-request/numerary-request.module'))
             .NumeraryRequestModule,
-        data: { title: 'Solicitud de numerario' },
+        data: { title: 'Solicitud de numerario', screen: 'FREGSOLNUMERARIO' },
       },
       {
         path: 'numerary-massive-consiliation',
@@ -32,7 +32,10 @@ const routes: Routes = [
               './numerary-massive-conciliation/numerary-massive-conciliation.module'
             )
           ).NumeraryMassiveConciliationModule,
-        data: { title: 'Conciliación masiva numerario' },
+        data: {
+          title: 'Conciliación masiva numerario',
+          screen: 'FMASIVCONCILNUME',
+        },
       },
       {
         path: 'central-offices-transference',
@@ -42,7 +45,10 @@ const routes: Routes = [
               './central-offices-transference/central-offices-transference.module'
             )
           ).CentralOfficesTransferenceModule,
-        data: { title: 'Transferencia de cuentas a oficinas centrales' },
+        data: {
+          title: 'Transferencia de cuentas a oficinas centrales',
+          scrren: 'FTRANSFCUENXREG_DEV',
+        },
       },
       {
         path: 'regional-accounts-transference',
@@ -52,14 +58,17 @@ const routes: Routes = [
               './regional-account-transference/regional-account-transference.module'
             )
           ).RegionalAccountTransferenceModule,
-        data: { title: 'Transferencia de cuentas Regionales' },
+        data: {
+          title: 'Transferencia de cuentas Regionales',
+          screen: 'FTRANSFCUENXREG',
+        },
       },
       {
         path: 'tesofe-movements',
         loadChildren: async () =>
           (await import('./tesofe-movements/tesofe-movements.module'))
             .TesofeMovementsModule,
-        data: { title: 'Movimientos tesofe' },
+        data: { title: 'Movimientos tesofe', screen: 'FACTADBINTERESCTA' },
       },
       {
         path: 'deposit-tokens-conciliation',
@@ -79,7 +88,10 @@ const routes: Routes = [
               './effective-numerary-devolution/effective-numerary-devolution.module'
             )
           ).EffectiveNumeraryDevolutionModule,
-        data: { title: 'Devolución de numerario efectivo' },
+        data: {
+          title: 'Devolución de numerario efectivo',
+          screen: 'FGERADBDEVNUMEFEC',
+        },
       },
       {
         path: 'accounts-insured-by-file',
@@ -89,7 +101,10 @@ const routes: Routes = [
               './accounts-insured-by-file/accounts-insured-by-file.module'
             )
           ).AccountsInsuredByFileModule,
-        data: { title: 'Cuentas aseguradas por expediente' },
+        data: {
+          title: 'Cuentas aseguradas por expediente',
+          screen: 'FGENADBCTASASEGEX',
+        },
       },
       {
         path: 'effective-numerary-reconciliation',
@@ -99,14 +114,20 @@ const routes: Routes = [
               './effective-numerary-reconciliation/effective-numerary-reconciliation.module'
             )
           ).EffectiveNumeraryReconciliationModule,
-        data: { title: 'Conciliación de numerario efectivo' },
+        data: {
+          title: 'Conciliación de numerario efectivo',
+          screen: 'FGERADBCONCNUMEFE',
+        },
       },
       {
         path: 'bank-accounts-insured',
         loadChildren: async () =>
           (await import('./bank-accounts-insured/bank-accounts-insured.module'))
             .BankAccountsInsuredModule,
-        data: { title: 'Cuentas aseguradas por bancos' },
+        data: {
+          title: 'Cuentas aseguradas por bancos',
+          screen: 'FGENADBCTASASEGBA',
+        },
       },
       {
         path: 'massive-account-indiciado',
@@ -116,14 +137,20 @@ const routes: Routes = [
               './print-massive-accounts/print-massive-accounts.module'
             )
           ).PrintMassiveAccountsModule,
-        data: { title: 'Estado de cuenta por Indiciado' },
+        data: {
+          title: 'Estado de cuenta por Indiciado',
+          screen: 'FGERADBIMPRMASIVA',
+        },
       },
       {
         path: 'unreconcilied-files',
         loadChildren: async () =>
           (await import('./unreconciled-files/unreconciled-files.module'))
             .UnreconciledFilesModule,
-        data: { title: 'Expedientes sin conciliar' },
+        data: {
+          title: 'Expedientes sin conciliar',
+          screen: 'FGERADBEXPESCONCI',
+        },
       },
       {
         path: 'deposit-unreconcilied-files',
@@ -133,7 +160,20 @@ const routes: Routes = [
               './deposit-unreconcilied-files/deposit-unreconcilied-files.module'
             )
           ).DepositUnreconciliedFilesModule,
-        data: { title: 'Fichas de deposito sin conciliar' },
+        data: {
+          title: 'Fichas de deposito sin conciliar',
+          screen: 'FGERADBFICHADEPOS',
+        },
+      },
+      {
+        path: 'confiscation-ratio',
+        loadChildren: async () =>
+          (await import('./confiscation-ratio/confiscation-ratio.module'))
+            .ConfiscationRatioModule,
+        data: {
+          title: 'Relación de decomiso',
+          screen: 'FRELDECOMISO',
+        },
       },
     ],
   },

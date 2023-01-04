@@ -1,34 +1,41 @@
 export const QUESTION_CATALOG_COLUMNS = {
-  noQuestion: {
+  id: {
     title: 'No. Pregunta',
     sort: false,
   },
-  textQuestion: {
+  text: {
     title: 'Texto de la pregunta',
     sort: false,
   },
-  maxScore: {
+  maximumScore: {
     title: 'Puntuación Máxima',
     sort: false,
   },
-  typeQuestion: {
+  type: {
     title: 'Tipo de pregunta',
     sort: false,
   },
-  noResponse: {
+};
+
+export const RESPONSE_CATALOG_COLUMNS = {
+  id: {
     title: 'No. Respuesta',
     sort: false,
   },
-  initValue: {
+  idQuestion: {
+    title: 'No. Pregunta',
+    sort: false,
+  },
+  text: {
+    title: 'Texto de la respuesta',
+    sort: false,
+  },
+  startValue: {
     title: 'Valor inicial',
     sort: false,
   },
-  resValue: {
-    title: 'Valor de respuesta',
-    sort: false,
-  },
-  resText: {
-    title: 'Texto de la respuesta',
+  endValue: {
+    title: 'Valor final',
     sort: false,
   },
 };

@@ -21,7 +21,7 @@ var ejemplo: IRequestInTurn[] = [
     dateJob: 11,
     deleRegional: 22,
     state: 2,
-    transfer: 2,
+    transfer: 28,
     transmitter: 2,
     authority: 33,
     expedient: 234,

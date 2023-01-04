@@ -6,20 +6,23 @@ const routes: Routes = [
     path: 'penalty-types',
     loadChildren: async () =>
       (await import('./penalty-types/penalty-types.module')).PenaltyTypesModule,
-    data: { title: 'Tipos de Penalización' },
+    data: { title: 'Tipos de Penalización', screen: 'FCOMERTIPOPENALIZA' },
   },
   {
     path: 'authorization-keys-ois',
     loadChildren: async () =>
       (await import('./authorization-keys-ois/authorization-keys-ois.module'))
         .CCMAuthorizationKeysOisModule,
-    data: { title: 'Claves de Autorización Envío Ext. OIs' },
+    data: {
+      title: 'Claves de Autorización Envío Ext. OIs',
+      screen: 'FCOMERCVEAUTOI',
+    },
   },
   {
     path: 'capture-lines',
     loadChildren: async () =>
       (await import('./capture-lines/capture-lines.module')).CaptureLinesModule,
-    data: { title: 'Líneas de Captura' },
+    data: { title: 'Líneas de Captura', screen: 'FCOMER065' },
   },
   {
     path: 'customers',
@@ -32,7 +35,7 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./provider-catalogs/provider-catalogs.module'))
         .ProviderCatalogsModule,
-    data: { title: 'Proveedores' },
+    data: { title: 'Proveedores', screen: 'FCOMER082' },
   },
   {
     path: 'customers-penalties',
