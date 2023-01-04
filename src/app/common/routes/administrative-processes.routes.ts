@@ -608,6 +608,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Fichas de deposito sin conciliar',
             link: '/pages/administrative-processes/deposit-unreconcilied-files',
           },
+          {
+            label: 'Relación de decomiso',
+            link: '/pages/administrative-processes/confiscation-ratio',
+          },
         ],
       },
       /**END Abner */
