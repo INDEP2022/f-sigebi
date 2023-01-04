@@ -612,6 +612,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Relación de decomiso',
             link: '/pages/administrative-processes/confiscation-ratio',
           },
+          {
+            label: 'Registro de Estados de cuenta',
+            link: '/pages/administrative-processes/record-account-statements',
+          },
         ],
       },
       /**END Abner */

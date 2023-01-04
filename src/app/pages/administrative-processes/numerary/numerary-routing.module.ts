@@ -175,6 +175,19 @@ const routes: Routes = [
           screen: 'FRELDECOMISO',
         },
       },
+      {
+        path: 'record-account-statements',
+        loadChildren: async () =>
+          (
+            await import(
+              './record-account-statements/record-account-statements.module'
+            )
+          ).RecordAccountStatementsModule,
+        data: {
+          title: 'Registro de Estados de cuenta',
+          screen: 'FACTADBESTADOSCTA',
+        },
+      },
     ],
   },
 ];
