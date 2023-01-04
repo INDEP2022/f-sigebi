@@ -1,7 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
@@ -9,6 +10,7 @@ import { IRequestInTurn } from 'src/app/core/models/catalogs/request-in-turn.mod
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
 import { IRequest } from '../../../../core/models/requests/request.model';
+import { RegionalDelegationService } from '../../../../core/services/catalogs/regional-delegation.service';
 import { RequestService } from '../../../../core/services/requests/request.service';
 import { RequestInTurnSelectedComponent } from '../request-in-turn-selected/request-in-turn-selected.component';
 import { REQUEST_IN_TURN_COLUMNS } from './request-in-turn-columns';
@@ -69,12 +71,15 @@ var ejemplo: IRequestInTurn[] = [
 })
 export class RequestInTurnListComponent extends BasePage implements OnInit {
   totalItems: number = 0;
-  paragraphs: IRequestInTurn[] = [];
+  paragraphs = new LocalDataSource();
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   requestSelected: IRequestInTurn[] = [];
 
   requestService = inject(RequestService);
+  regionalDelegacionService = inject(RegionalDelegationService);
+  listRequest: IRequest;
+  listTable: any[] = [];
 
   constructor(private modalService: BsModalService, public fb: FormBuilder) {
     super();
@@ -110,23 +115,43 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
   }
 
   searchForm(requestFrom: ModelForm<any>) {
-    console.log(requestFrom);
-
-    this.getRequest();
-    /*this.params
+    this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getRequest());*/
+      .subscribe(() => this.getRequest());
   }
 
   getRequest(): void {
-    let params = { page: 1, take: 20, order: 'DESC' };
+    let params = new ListParams();
     this.requestService
-      .getAll(new ListParams())
+      .getAll(params)
       .subscribe((data: IListResponse<IRequest>) => {
-        console.log(data);
-        //this.paragraphs =
+        this.totalItems = data.count;
+        console.log(data.data);
+
+        for (let i = 0; i < data.data.length; i++) {
+          let register = data.data[i];
+          this.listRequest = register;
+
+          this.listTable.push(this.listRequest);
+
+          this.regionalDelegacionService
+            .getById(register.regionalDelegationId)
+            .subscribe((data: any) => {
+              //console.log(data)
+              console.log('regi', data.data);
+            });
+        }
+        this.paragraphs.load(this.listTable);
+        console.log(this.paragraphs['data']);
+        this.paragraphs.refresh();
       });
-    this.paragraphs = ejemplo;
+  }
+
+  getresponse(id: any) {
+    this.regionalDelegacionService.getById(id).subscribe((data: any) => {
+      //console.log(data)
+      console.log('regi', data.data);
+    });
   }
 
   onCustomAction(event: any) {

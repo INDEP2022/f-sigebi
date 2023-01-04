@@ -1,35 +1,35 @@
 export const REQUEST_IN_TURN_COLUMNS = {
-  noRequest: {
+  id: {
     title: 'No. Solicitud',
-    type: 'string',
+    type: 'number',
     sort: false,
   },
-  dateRequest: {
+  applicationDate: {
     title: 'Fecha solicitud',
     type: 'string',
     sort: false,
   },
-  titularName: {
+  nameOfOwner: {
     title: 'Nombre titular',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
-  senderCharger: {
+  holderCharge: {
     title: 'Cargo del remitente',
     type: 'string',
     sort: false,
   },
-  noJob: {
+  paperNumber: {
     title: 'No. oficio',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
-  dateJob: {
+  paperDate: {
     title: 'Fecha de oficio',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
-  deleRegional: {
+  /* deleRegional: {
     title: 'Delegacion regional',
     type: 'number',
     sort: false,
@@ -64,23 +64,23 @@ export const REQUEST_IN_TURN_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  subject: {
+  affair: {
     title: 'Asunto',
     type: 'string',
     sort: false,
   },
-  type: {
+  typeOfTransfer: {
     title: 'Tipo Transferencia',
     type: 'string',
     sort: false,
   },
-  appliStatus: {
+  requestStatus: {
     title: 'Estado solicitud',
     type: 'string',
     sort: false,
   },
   contributor: {
-    title: 'Contribuyente indiciado',
+    title: 'Contribuyente y/o Indiciado',
     type: 'string',
     sort: false,
   },
@@ -90,7 +90,7 @@ export const REQUEST_IN_TURN_COLUMNS = {
     sort: false,
   },
   ascertainment: {
-    title: 'Averiguacion previa',
+    title: 'Averiguación previa',
     type: 'string',
     sort: false,
   },
@@ -98,5 +98,5 @@ export const REQUEST_IN_TURN_COLUMNS = {
     title: 'Causa penal',
     type: 'string',
     sort: false,
-  },
+  },*/
 };

@@ -16,7 +16,7 @@ export class RequestService implements ICrudMethods<IRequest> {
   constructor(private requestRepository: Repository<IRequest>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IRequest>> {
-    return this.requestRepository.getAllPaginated2(this.route, params);
+    return this.requestRepository.getAllPaginated(this.route, params);
   }
 
   getById(id: string | number): Observable<IRequest> {

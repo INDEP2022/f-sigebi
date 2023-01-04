@@ -7,7 +7,6 @@ import { IRequestInTurn } from 'src/app/core/models/catalogs/request-in-turn.mod
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 import { EventEmitter, Output } from '@angular/core';
-import { Observable } from 'rxjs';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
 import { IAffair } from '../../../../core/models/catalogs/affair.model';
@@ -44,7 +43,6 @@ export class RequestInTurnFormComponent implements OnInit {
   selectAffeir = new DefaultSelect<any>();
   selectTransfer = new DefaultSelect<any>();
 
-  listAuthorities$: Observable<any>;
   transferenteSevice = inject(TransferenteService);
   stateOfRepublic = inject(StateOfRepublicService);
   stationService = inject(StationService);
@@ -90,7 +88,6 @@ export class RequestInTurnFormComponent implements OnInit {
     this.transferenteSevice
       .getAll(params)
       .subscribe((data: IListResponse<ITransferente>) => {
-        console.log('tranferente', data.data);
         this.selectTransfer = new DefaultSelect(data.data, data.count);
       });
   }
@@ -99,7 +96,6 @@ export class RequestInTurnFormComponent implements OnInit {
     this.stateOfRepublic
       .getAll(params)
       .subscribe((data: IListResponse<IStateOfRepublic>) => {
-        console.log('state of republic', data.data);
         this.selectState = new DefaultSelect(data.data, data.count);
       });
   }
@@ -108,7 +104,6 @@ export class RequestInTurnFormComponent implements OnInit {
     this.stationService
       .getAll(params)
       .subscribe((data: IListResponse<IStation>) => {
-        console.log('state', data.data);
         this.selectStation = new DefaultSelect(data.data, data.count);
       });
   }
@@ -117,7 +112,6 @@ export class RequestInTurnFormComponent implements OnInit {
     this.authorityService
       .getAll(params)
       .subscribe((data: IListResponse<IAuthority>) => {
-        console.log('authority', data.data);
         this.selectAuthority = new DefaultSelect(data.data, data.count);
       });
   }
@@ -126,7 +120,6 @@ export class RequestInTurnFormComponent implements OnInit {
     this.affairService
       .getAll(params)
       .subscribe((data: IListResponse<IAffair>) => {
-        console.log(data);
         this.selectAffeir = new DefaultSelect(data.data, data.count);
       });
   }
