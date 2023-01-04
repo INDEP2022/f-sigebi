@@ -15,47 +15,56 @@ export class Repository<T> implements IRepository<T> {
     _params?: ListParams
   ): Observable<IListResponse<T>> {
     const params = this.makeParams(_params);
-    return this.httpClient.get<IListResponse<T>>(
-      `${environment.API_URL}${route}`,
-      { params }
-    );
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.get<IListResponse<T>>(`${fullRoute}`, { params });
   }
 
   getById(route: string, id: number | string): Observable<T> {
-    return this.httpClient.get<T>(`${environment.API_URL}${route}/${id}`);
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.get<T>(`${fullRoute}/${id}`);
   }
 
   create(route: string, formData: Object) {
-    return this.httpClient.post<T>(`${environment.API_URL}${route}`, formData);
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.post<T>(`${fullRoute}`, formData);
   }
 
   update(route: string, id: number | string, formData: Object) {
-    return this.httpClient.put(
-      `${environment.API_URL}${route}/${id}`,
-      formData
-    );
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.put(`${fullRoute}/${id}`, formData);
   }
 
   remove(route: string, id: number | string) {
-    return this.httpClient.delete(`${environment.API_URL}${route}/${id}`);
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.delete(`${fullRoute}/${id}`);
   }
 
   updateByIds(route: string, ids: Partial<T>, formData: Object) {
+    const fullRoute = this.buildRoute(route);
     const idsRoute: string = this.makeIdsRoute(ids);
-    return this.httpClient.put(
-      `${environment.API_URL}${route}/${idsRoute}`,
-      formData
-    );
+    return this.httpClient.put(`${fullRoute}/${idsRoute}`, formData);
   }
 
   getByIds(route: string, ids: Partial<T>) {
+    const fullRoute = this.buildRoute(route);
     const idsRoute: string = this.makeIdsRoute(ids);
-    return this.httpClient.get<T>(`${environment.API_URL}${route}/${idsRoute}`);
+    return this.httpClient.get<T>(`${fullRoute}/${idsRoute}`);
   }
 
   removeByIds(route: string, ids: Partial<T>) {
+    const fullRoute = this.buildRoute(route);
     const idsRoute: string = this.makeIdsRoute(ids);
-    return this.httpClient.delete(`${environment.API_URL}${route}/${idsRoute}`);
+    return this.httpClient.delete(`${fullRoute}/${idsRoute}`);
+  }
+
+  private buildRoute(route: string) {
+    const paths = route.split('/');
+    paths.shift();
+    if (paths.length === 0) {
+      return `${environment.API_URL}catalog/api/v1/${route}`;
+    }
+    const ms = route.split('/')[0];
+    return `${environment.API_URL}${ms}/api/v1/${paths.join('/')}`;
   }
 
   private makeIdsRoute(ids: Partial<T>): string {
@@ -69,5 +78,57 @@ export class Repository<T> implements IRepository<T> {
       httpParams = httpParams.append(key, (params as any)[key]);
     });
     return httpParams;
+  }
+  //Temporales
+  getAllPaginated2(
+    route: string,
+    _params?: ListParams
+  ): Observable<IListResponse<T>> {
+    const params = this.makeParams(_params);
+    return this.httpClient.get<IListResponse<T>>(
+      `${environment.API_URL2}${route}`,
+      { params }
+    );
+  }
+
+  getById2(route: string, id: number | string): Observable<T> {
+    return this.httpClient.get<T>(`${environment.API_URL2}${route}/${id}`);
+  }
+
+  create2(route: string, formData: Object) {
+    return this.httpClient.post<T>(`${environment.API_URL2}${route}`, formData);
+  }
+
+  update2(route: string, id: number | string, formData: Object) {
+    return this.httpClient.put(
+      `${environment.API_URL2}${route}/${id}`,
+      formData
+    );
+  }
+
+  remove2(route: string, id: number | string) {
+    return this.httpClient.delete(`${environment.API_URL2}${route}/${id}`);
+  }
+
+  updateByIds2(route: string, ids: Partial<T>, formData: Object) {
+    const idsRoute: string = this.makeIdsRoute(ids);
+    return this.httpClient.put(
+      `${environment.API_URL2}${route}/${idsRoute}`,
+      formData
+    );
+  }
+
+  getByIds2(route: string, ids: Partial<T>) {
+    const idsRoute: string = this.makeIdsRoute(ids);
+    return this.httpClient.get<T>(
+      `${environment.API_URL2}${route}/${idsRoute}`
+    );
+  }
+
+  removeByIds2(route: string, ids: Partial<T>) {
+    const idsRoute: string = this.makeIdsRoute(ids);
+    return this.httpClient.delete(
+      `${environment.API_URL2}${route}/${idsRoute}`
+    );
   }
 }

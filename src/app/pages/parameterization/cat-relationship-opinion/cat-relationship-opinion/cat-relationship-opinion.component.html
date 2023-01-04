@@ -4,10 +4,20 @@
       <h5 class="title">
         Cat&aacute;logo de relaci&oacute;n y de asunto dictamen
       </h5>
+      <div class="col-md-5 buttons">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
     </div>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
+    <div class="table-responsive">
+      <ng2-smart-table
+        [settings]="settings"
+        [source]="affair"></ng2-smart-table>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+    <!-- <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-4">
           <h5 class="font-size-14 d-inline">Seleccione el Asunto</h5>
@@ -24,9 +34,6 @@
         <div class="col-md-2" *ngIf="selectedAffair != null">
           <h5 class="font-size-14 d-inline">Tipo de volante</h5>
           <p class="mt-2 font-size-28 text-muted">{{ selectedAffair.type }}</p>
-          <!-- <form-field [control]="form.get('idArea')" label="Área">
-            <input type="text" class="form-control" formControlName="idArea" />
-          </form-field> -->
         </div>
       </div>
       <div class="row pt-5" *ngIf="selectedAffair != null">
@@ -41,6 +48,6 @@
         <app-pagination [params]="params" [totalItems]="totalItems">
         </app-pagination>
       </div>
-    </form>
+    </form> -->
   </div>
 </app-card>

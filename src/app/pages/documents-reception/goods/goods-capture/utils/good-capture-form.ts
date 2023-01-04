@@ -1,0 +1,43 @@
+import { Validators } from '@angular/forms';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+
+export const GOOD_CAPTURE_FORM = {
+  noPartida: ['', [Validators.required]],
+  valorAvaluo: ['', [Validators.required]],
+  capitulo: ['', [Validators.required]],
+  partida: ['', [Validators.required]],
+  subpartida: ['', [Validators.required]],
+  ssubpartida: ['', [Validators.required]],
+  noClasifBien: ['', [Validators.required]],
+  type: ['', [Validators.required]],
+  subtype: ['', [Validators.required]],
+  ssubtype: ['', [Validators.required]],
+  sssubtype: ['', [Validators.required]],
+  unidadLigie: ['', [Validators.required]],
+  unidadMedida: [
+    null,
+    [Validators.required, Validators.pattern(STRING_PATTERN)],
+  ],
+  cantidad: [null, [Validators.required]],
+  destino: [null, [Validators.required]],
+  estadoConservacion: [null, [Validators.required]],
+  noBien: [null, [Validators.required]],
+  valRef: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+  identifica: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+  descripcion: [
+    null,
+    [Validators.required, Validators.pattern(STRING_PATTERN)],
+  ],
+  fichaNumerario: [null, [Validators.required]],
+  captura: [null, [Validators.required]],
+  cambioValor: [null, [Validators.required]],
+  requery: [null, [Validators.required]],
+  satTipoExpediente: [null, [Validators.required]],
+  satIndicator: [null, [Validators.required]],
+  validFrac: [null, [Validators.required]],
+  almacen: [false, [Validators.required]],
+  entFed: [null, [Validators.required]],
+  municipio: [null, [Validators.required]],
+  ciudad: [null, [Validators.required]],
+  localidad: [null, [Validators.required]],
+};

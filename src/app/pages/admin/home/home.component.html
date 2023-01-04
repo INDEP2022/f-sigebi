@@ -130,6 +130,32 @@
           [source]="data"></ng2-smart-table>
       </div>
     </div>
+
+    <div class="row mb-3 mt-3">
+      <div class="col-md-12">
+        <h5>Cambiar estado Variables Globales</h5>
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="newStateGlobalVars('allP')">
+          Cambiar Todo
+        </button>
+        <button
+          class="btn btn-primary btn-sm active ml-3"
+          (click)="newStateGlobalVars('oneP')">
+          Cambiar 1 Var
+        </button>
+        <button
+          class="btn btn-primary btn-sm active ml-3"
+          (click)="newStateGlobalVars('reset')">
+          Estado inicial
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12" style="height: 250px; overflow-y: auto">
+        <pre>{{ globalVars | json }}</pre>
+      </div>
+    </div>
   </div>
 
   <div footer class="d-flex justify-content-around">

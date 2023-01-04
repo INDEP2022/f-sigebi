@@ -1,8 +1,13 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+//Models
+import { IAttributesFinancialInfo } from 'src/app/core/models/catalogs/attributes-financial-info-model';
+//Services
+import { AttributesInfoFinancialService } from 'src/app/core/services/catalogs/attributes-info-financial-service';
 
 @Component({
   selector: 'app-cat-financial-information-attributes-modal',
@@ -13,13 +18,16 @@ export class CatFinancialInformationAttributesModalComponent
   extends BasePage
   implements OnInit
 {
-  form: FormGroup = new FormGroup({});
-  allotment: any;
+  attributesFinancialInfoForm: ModelForm<IAttributesFinancialInfo>;
+  attributesFinancialInfo: IAttributesFinancialInfo;
   title: string = 'Catálogo de Atributos de Información Financiera';
   edit: boolean = false;
-  @Output() refresh = new EventEmitter<true>();
 
-  constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
+  constructor(
+    private modalRef: BsModalRef,
+    private fb: FormBuilder,
+    private attributesInfoFinancialService: AttributesInfoFinancialService
+  ) {
     super();
   }
 
@@ -28,7 +36,16 @@ export class CatFinancialInformationAttributesModalComponent
   }
 
   private prepareForm() {
-    this.form = this.fb.group({
+    this.attributesFinancialInfoForm = this.fb.group({
+      id: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(8),
+          Validators.minLength(1),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
       name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       description: [
         null,
@@ -37,14 +54,49 @@ export class CatFinancialInformationAttributesModalComponent
       type: [null, [Validators.required]],
       subType: [null, [Validators.required]],
     });
-    if (this.allotment != null) {
+    if (this.attributesFinancialInfo != null) {
       this.edit = true;
-      console.log(this.allotment);
-      this.form.patchValue(this.allotment);
+      console.log(this.attributesFinancialInfo);
+      this.attributesFinancialInfoForm.patchValue(this.attributesFinancialInfo);
     }
   }
 
   close() {
+    this.modalRef.hide();
+  }
+
+  confirm() {
+    this.edit ? this.update() : this.create();
+  }
+
+  create() {
+    this.loading = true;
+    this.attributesInfoFinancialService
+      .create(this.attributesFinancialInfoForm.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+  }
+
+  update() {
+    this.loading = true;
+    this.attributesInfoFinancialService
+      .update(
+        this.attributesFinancialInfo.id,
+        this.attributesFinancialInfoForm.value
+      )
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+  }
+
+  handleSuccess() {
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.loading = false;
+    this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 }
