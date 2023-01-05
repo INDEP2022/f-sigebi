@@ -188,6 +188,19 @@ const routes: Routes = [
           screen: 'FACTADBESTADOSCTA',
         },
       },
+      {
+        path: 'deposit-account-statement',
+        loadChildren: async () =>
+          (
+            await import(
+              './deposit-account-statement/deposit-account-statement.module'
+            )
+          ).DepositAccountStatementModule,
+        data: {
+          title: 'Estado de cuenta (Deposito)',
+          screen: 'FCONADBEDOCTAXIND',
+        },
+      },
     ],
   },
 ];
