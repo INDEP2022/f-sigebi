@@ -165,6 +165,29 @@ const routes: Routes = [
           screen: 'FGERADBFICHADEPOS',
         },
       },
+      {
+        path: 'confiscation-ratio',
+        loadChildren: async () =>
+          (await import('./confiscation-ratio/confiscation-ratio.module'))
+            .ConfiscationRatioModule,
+        data: {
+          title: 'Relación de decomiso',
+          screen: 'FRELDECOMISO',
+        },
+      },
+      {
+        path: 'record-account-statements',
+        loadChildren: async () =>
+          (
+            await import(
+              './record-account-statements/record-account-statements.module'
+            )
+          ).RecordAccountStatementsModule,
+        data: {
+          title: 'Registro de Estados de cuenta',
+          screen: 'FACTADBESTADOSCTA',
+        },
+      },
     ],
   },
 ];
