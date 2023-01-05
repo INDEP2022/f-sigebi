@@ -47,25 +47,25 @@ export class RecordAccountStatementsComponent
       balanceAt: [null, Validators.nullValidator],
     });
   }
-  getAttributesFinancialInfo() {
+  getAttributes() {
     this.loading = true;
     // this.attributesInfoFinancialService
     //   .getAll(this.params.getValue())
     //   .subscribe({
     //     next: response => {
-    //       this.attributesFinancialInfo = response.data;
+    //       this.attributes = response.data;
     //       this.totalItems = response.count;
     //       this.loading = false;
     //     },
     //     error: error => (this.loading = false),
     //   });
   }
-  openForm(attributesFinancialInfo?: any) {
+  openForm(data?: any) {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
-      attributesFinancialInfo,
+      data,
       callback: (next: boolean) => {
-        if (next) this.getAttributesFinancialInfo();
+        if (next) this.getAttributes();
       },
     };
     this.modalService.show(RecordAccountStatementsModalComponent, modalConfig);
