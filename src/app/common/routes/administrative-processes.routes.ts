@@ -620,6 +620,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Estado de cuenta (Deposito)',
             link: '/pages/administrative-processes/deposit-account-statement',
           },
+          {
+            label: 'Tasas para interes',
+            link: '/pages/administrative-processes/rate-catalog',
+          },
         ],
       },
       /**END Abner */
