@@ -201,6 +201,16 @@ const routes: Routes = [
           screen: 'FCONADBEDOCTAXIND',
         },
       },
+      {
+        path: 'rate-catalog',
+        loadChildren: async () =>
+          (await import('./rate-catalog/rate-catalog.module'))
+            .RateCatalogModule,
+        data: {
+          title: 'Tasas para interes',
+          screen: 'FPROINTERES',
+        },
+      },
     ],
   },
 ];
