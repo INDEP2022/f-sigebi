@@ -616,6 +616,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Registro de Estados de cuenta',
             link: '/pages/administrative-processes/record-account-statements',
           },
+          {
+            label: 'Estado de cuenta (Deposito)',
+            link: '/pages/administrative-processes/deposit-account-statement',
+          },
         ],
       },
       /**END Abner */
