@@ -624,6 +624,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Tasas para interes',
             link: '/pages/administrative-processes/rate-catalog',
           },
+          {
+            label: 'Cambio a numerario',
+            link: '/pages/commercialization/numeraire-exchange',
+          },
         ],
       },
       /**END Abner */

@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { DepositTokensComponent } from './deposit-tokens/deposit-tokens.component';
 import { NumeraryComponent } from './numerary.component';
 
 const routes: Routes = [
@@ -9,7 +8,13 @@ const routes: Routes = [
     pathMatch: 'prefix',
     component: NumeraryComponent,
     children: [
-      { path: 'deposit-tokens', component: DepositTokensComponent },
+      {
+        path: 'deposit-tokens',
+        loadChildren: async () =>
+          (await import('./deposit-tokens/deposit-tokens.module'))
+            .DepositTokensModule,
+        data: { title: 'Fichas de depósito', screen: 'FACTADBFICASDEPO' },
+      },
       {
         path: 'numerary-calc',
         loadChildren: async () =>
