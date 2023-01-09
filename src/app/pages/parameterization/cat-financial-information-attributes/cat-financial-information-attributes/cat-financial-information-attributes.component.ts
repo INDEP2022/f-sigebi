@@ -34,7 +34,7 @@ export class CatFinancialInformationAttributesComponent
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: false,
+        delete: true,
         position: 'right',
       },
       columns: { ...FINANCIAL_INFO_ATTR_COLUMNS },

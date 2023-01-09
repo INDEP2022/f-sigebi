@@ -8,13 +8,17 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { IFinancialIndicators } from 'src/app/core/models/catalogs/financial-indicators-model';
 //services
 import { FinancialIndicatorsService } from 'src/app/core/services/catalogs/financial-indicators-service';
+import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'app-cat-financial-indicators-modal',
   templateUrl: './cat-financial-indicators-modal.component.html',
   styleUrls: ['./cat-financial-indicators-modal.css'],
 })
-export class CatFinancialIndicatorsModalComponent implements OnInit {
+export class CatFinancialIndicatorsModalComponent
+  extends BasePage
+  implements OnInit
+{
   value = '';
   keyboard: Keyboard;
   financialIndicatorsForm: ModelForm<IFinancialIndicators>;
@@ -27,7 +31,9 @@ export class CatFinancialIndicatorsModalComponent implements OnInit {
     private fb: FormBuilder,
     private modalRef: BsModalRef,
     private financialIndicatorsService: FinancialIndicatorsService
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareform();
@@ -48,10 +54,6 @@ export class CatFinancialIndicatorsModalComponent implements OnInit {
       console.log(this.financialIndicators);
       this.financialIndicatorsForm.patchValue(this.financialIndicators);
     }
-  }
-
-  close() {
-    this.modalRef.hide();
   }
 
   //Teclado virtual
@@ -94,4 +96,41 @@ export class CatFinancialIndicatorsModalComponent implements OnInit {
       layoutName: shiftToggle,
     });
   };
+
+  //CRUD
+  close() {
+    this.modalRef.hide();
+  }
+
+  confirm() {
+    this.edit ? this.update() : this.create();
+  }
+
+  create() {
+    this.loading = true;
+    this.financialIndicatorsService
+      .create(this.financialIndicatorsForm.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+  }
+
+  update() {
+    this.loading = true;
+    this.financialIndicatorsService
+      .update(this.financialIndicators.id, this.financialIndicatorsForm.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+  }
+
+  handleSuccess() {
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.loading = false;
+    this.modalRef.content.callback(true);
+    this.modalRef.hide();
+  }
 }
