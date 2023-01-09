@@ -43,7 +43,7 @@ export enum ENDPOINT_LINKS {
   IndicatorReport = 'catalog/indicator-report',
   InstitutionClasification = 'catalog/institution-classification',
   IssuingInstitution = 'catalog/issuing-institution',
-  LabelOkey = 'catalog/label-okey',
+  LabelOkey = 'catalog/label-good',
   Lawyer = 'catalog/lawyer',
   LegalSupport = 'catalog/legal-supports',
   Legend = 'catalog/official-legends',

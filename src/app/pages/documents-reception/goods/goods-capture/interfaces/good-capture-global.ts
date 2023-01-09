@@ -1,0 +1,24 @@
+export interface IGlobalGoodsCapture {
+  satIndicator: string | number;
+  gNoExpediente: string | number;
+  gRastBien: string | number;
+  gRastBienExpedienteRel: string | number;
+  gRastBienRel: string | number;
+  gRastDescripcionBien: string | number;
+  gRastTipo: string | number;
+  gRastSubtipo: string | number;
+  gRastSsubtipo: string | number;
+  gRastSssubtipo: string | number;
+  gCreaExpediente: string | number;
+  gClasifNumber: string | number;
+  vPgrOficio: string | number;
+  gCommit: string | number;
+  gFlag: string | number;
+  val1: string | number;
+  val2: string | number;
+  val3: string | number;
+  val4: string | number;
+  contador: string | number;
+  gnuActivaGestion: string | number;
+  pIndicadorSat: string | number;
+}

@@ -16,6 +16,7 @@
         <div class="col">
           <button
             class="btn btn-secondary btn-sm active"
+            *ngIf="global.satIndicator"
             [disabled]="!ligieButtonEnabled">
             Buscar Fracción
           </button>
@@ -91,12 +92,14 @@
             [types]="types"
             [subtypes]="subtypes"
             [ssubtypes]="ssubtypes"
-            [sssubtypes]="sssubtypes"></app-goods-types-shared>
+            [sssubtypes]="sssubtypes"
+            (goodTypeChange)="isGoodTypeValid()"></app-goods-types-shared>
         </div>
       </div>
       <hr />
       <div class="row pt-4">
         <form-field
+          *ngIf="global.satIndicator"
           class="col-md-2"
           [control]="assetsForm.get('unidadLigie')"
           label="Unidad LIGIE">
@@ -118,7 +121,11 @@
           class="col-md-2"
           [control]="assetsForm.get('cantidad')"
           label="Cantidad">
-          <input class="form-control" type="text" formControlName="cantidad" />
+          <input
+            class="form-control"
+            type="text"
+            formControlName="cantidad"
+            (change)="amountChange()" />
         </form-field>
 
         <form-field
@@ -156,6 +163,7 @@
         </form-field>
 
         <form-field
+          *ngIf="global.satIndicator"
           class="col-md-4"
           [control]="assetsForm.get('estadoConservacion')">
           <ngx-select
@@ -167,6 +175,7 @@
 
         <div class="col">
           <button
+            *ngIf="global.satIndicator"
             class="btn btn-secondary btn-sm active"
             [disabled]="!regulationsButtonEnabled">
             Regulaciones Aplicadas
@@ -187,12 +196,15 @@
           <div class="col-md-12">
             <button
               class="btn btn-info active btn-sm"
-              [disabled]="!normsButtonEnabled">
+              [disabled]="!normsButtonEnabled"
+              *ngIf="global.satIndicator">
               Consultar Normatividad en SIAVI
             </button>
           </div>
         </div>
       </div>
+
+      <div class="row"></div>
 
       <div class="row">
         <div class="col-md-12">
