@@ -216,6 +216,32 @@ const routes: Routes = [
           screen: 'FPROINTERES',
         },
       },
+      {
+        path: 'massive-numerary-change',
+        loadChildren: async () =>
+          (
+            await import(
+              './massive-numerary-change/massive-numerary-change.module'
+            )
+          ).MassiveNumeraryChangeModule,
+        data: {
+          title: 'Cambio a numerario masivo',
+          screen: 'FMASINSUNUMERARIO',
+        },
+      },
+      {
+        path: 'numerary-historical-closing',
+        loadChildren: async () =>
+          (
+            await import(
+              './numerary-historical-closing/numerary-historical-closing.module'
+            )
+          ).NumeraryHistoricalClosingModule,
+        data: {
+          title: 'Cierre historico de numerario',
+          screen: 'FACTADBACIERRENUM',
+        },
+      },
     ],
   },
 ];

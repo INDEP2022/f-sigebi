@@ -628,6 +628,14 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
             label: 'Cambio a numerario',
             link: '/pages/commercialization/numeraire-exchange',
           },
+          {
+            label: 'Cambio a numerario masivo',
+            link: '/pages/administrative-processes/massive-numerary-change',
+          },
+          {
+            label: 'Cierre historico de numerario',
+            link: '/pages/administrative-processes/numerary-historical-closing',
+          },
         ],
       },
       /**END Abner */
