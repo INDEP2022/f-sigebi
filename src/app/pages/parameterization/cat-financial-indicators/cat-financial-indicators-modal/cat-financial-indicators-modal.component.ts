@@ -3,7 +3,6 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import Keyboard from 'simple-keyboard';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 //models
 import { IFinancialIndicators } from 'src/app/core/models/catalogs/financial-indicators-model';
 //services
@@ -42,11 +41,8 @@ export class CatFinancialIndicatorsModalComponent
   private prepareform() {
     this.financialIndicatorsForm = this.fb.group({
       id: [null, [Validators.required]],
-      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      description: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      name: [null, [Validators.required]],
+      description: [null, [Validators.required]],
       formula: [null, [Validators.required]],
     });
     if (this.financialIndicators != null) {

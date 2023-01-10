@@ -10,6 +10,7 @@ import { CAT_EFFECTIVE_NUM_COLUMNS } from './cat-effective-num-columns';
 import { INumeraryCategories } from 'src/app/core/models/catalogs/numerary-categories-model';
 //Services
 import { NumeraryCategoriesService } from 'src/app/core/services/catalogs/numerary-categories-service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-cat-effective-numeraire',
@@ -31,7 +32,7 @@ export class CatEffectiveNumeraireComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: false,
+        delete: true,
         position: 'right',
       },
       columns: { ...CAT_EFFECTIVE_NUM_COLUMNS },
@@ -71,15 +72,16 @@ export class CatEffectiveNumeraireComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(numeraryCategories.noRegistration);
+        this.delete(numeraryCategories.cat);
+        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
-  delete(id: number) {
+  delete(id: string) {
     this.numeraryCategoriesService.remove(id).subscribe({
       next: () => this.getAttributesFinancialInfo(),
     });

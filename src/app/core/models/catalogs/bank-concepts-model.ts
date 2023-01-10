@@ -1,5 +1,5 @@
 export interface IBankConcepts {
-  key: string;
+  key?: string;
   description: string;
   noRegistration: number;
 }

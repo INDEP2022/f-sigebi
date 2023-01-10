@@ -31,7 +31,7 @@ export class CatDocRequireComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: false,
+        delete: true,
         position: 'right',
       },
       columns: { ...CAT_DOC_REQUIRE_COLUMNS },
@@ -79,7 +79,7 @@ export class CatDocRequireComponent extends BasePage implements OnInit {
     });
   }
 
-  delete(id: number) {
+  delete(id: string) {
     this.documentsForDictumService.remove(id).subscribe({
       next: () => this.getDocumentsForDictum(),
     });

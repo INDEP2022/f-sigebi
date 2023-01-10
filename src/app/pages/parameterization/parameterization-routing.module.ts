@@ -17,6 +17,7 @@ const routes: Routes = [
     },
   },
   {
+    //YA EXISTE EN CATALOGS
     path: 'cat-financial-indicators',
     loadChildren: async () =>
       (
@@ -83,6 +84,7 @@ const routes: Routes = [
     data: { title: 'Conceptos bancarios', screen: 'FCATCATCONCEPBANC' },
   },
   {
+    //YA EXISTE EN CATALOGS
     path: 'cat-depository-payment',
     loadChildren: async () =>
       (await import('./cat-depository-payment/cat-depository-payment.module'))

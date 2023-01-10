@@ -1,5 +1,5 @@
 export enum ENDPOINT_LINKS {
-  Affair = 'catalog/affair-sera',
+  Affair = 'catalog/affair', // 'catalog/affair-sera',
   Bank = 'catalog/bank',
   Batch = 'catalog/batch',
   Battery = 'catalog/battery',

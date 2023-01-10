@@ -73,10 +73,7 @@ export class CatEffectiveNumeraireModalComponent
   update() {
     this.loading = true;
     this.numeraryCategoriesService
-      .update(
-        this.numeraryCategories.noRegistration,
-        this.numeraryCategoriesForm.value
-      )
+      .update(this.numeraryCategories.cat, this.numeraryCategoriesForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

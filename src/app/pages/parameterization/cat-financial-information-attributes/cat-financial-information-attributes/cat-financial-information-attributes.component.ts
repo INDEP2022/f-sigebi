@@ -10,6 +10,7 @@ import { FINANCIAL_INFO_ATTR_COLUMNS } from './financial-information-attributes-
 import { IAttributesFinancialInfo } from 'src/app/core/models/catalogs/attributes-financial-info-model';
 //Services
 import { AttributesInfoFinancialService } from 'src/app/core/services/catalogs/attributes-info-financial-service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-cat-financial-information-attributes',
@@ -79,10 +80,11 @@ export class CatFinancialInformationAttributesComponent
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(attributesFinancialInfo.id);
+        Swal.fire('Borrado', '', 'success');
       }
     });
   }
