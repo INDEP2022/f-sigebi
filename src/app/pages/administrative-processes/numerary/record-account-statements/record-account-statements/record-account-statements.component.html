@@ -1,0 +1,127 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Estado de cuenta (Bancos)</h5>
+  </div>
+  <div body>
+    <div class="row mt-3 mb-3">
+      <form action="" class="form-material" [formGroup]="form">
+        <div class="row mt-4">
+          <div class="col-md-3">
+            <form-field [control]="form.get('bank')" label="Banco">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="bank"
+                (click)="openForm()" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="form.get('account')" label="Cuenta">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="account"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="form.get('square')" label="Plaza">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="square" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="form.get('branch')" label="Sucursal">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="branch"
+                min="1"
+                pattern="^[0-9]+" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-3">
+            <form-field
+              [control]="form.get('accountType')"
+              label="Tipo de cuenta">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="accountType" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="form.get('currency')" label="Moneda">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="currency" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="form.get('description')" label="Descripción">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="description" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field [control]="form.get('balanceOf')" label="Saldo de">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="balanceOf" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-3">
+            <form-field [control]="form.get('balanceAt')" label="Saldo al">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="balanceAt" />
+            </form-field>
+          </div>
+        </div>
+      </form>
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="data1">
+            </ng2-smart-table>
+          </div>
+        </div>
+        <app-pagination [params]="params" [totalItems]="totalItems">
+        </app-pagination>
+      </div>
+      <p>(Doble click para traspasar movimientos)</p>
+      <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-10">
+          <p>
+            .
+            <span class="text-success mr-5"
+              ><i class="fa fa-square"></i> Movimiento de transferencia(Padre)
+            </span>
+            <span class="text-yellow mr-5"
+              ><i class="fa fa-square"></i> Movimiento de transferencia(Hijo)
+            </span>
+            <span class="text-blue"
+              ><i class="fa fa-square"></i> Cobro de Cheque x Dev
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>
