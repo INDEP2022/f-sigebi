@@ -116,4 +116,5 @@ export enum ENDPOINT_LINKS {
   FinancialIndicators = 'financial-indicators',
   AttributesFinancialInfo = 'attributes-financial-information',
   BankConcepts = 'concept-movis-bank',
+  Authority = 'authority',
 }

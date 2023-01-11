@@ -3,6 +3,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ITypeWarehouse } from 'src/app/core/models/catalogs/type-warehouse.model';
+import { CityService } from 'src/app/core/services/catalogs/city.service';
+import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
+import { TypeWarehouseService } from 'src/app/core/services/catalogs/type-warehouse.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -22,12 +26,15 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   colonies = new DefaultSelect();
   cp = new DefaultSelect();
   street = new DefaultSelect();
-  typeWarehouse = new DefaultSelect();
+  typeWarehouse = new DefaultSelect<ITypeWarehouse>();
 
   constructor(
     private modalService: BsModalService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private stateService: StateOfRepublicService,
+    private typeWarehouseService: TypeWarehouseService,
+    private cityService: CityService
   ) {
     super();
   }
@@ -83,19 +90,30 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
 
   getTypeTerceroSelect(typeTercero: ListParams) {}
 
-  getStateSelect(state: ListParams) {}
+  //Revisar error //
+  getStateSelect(params: ListParams) {
+    this.stateService.getAll(params).subscribe(data => {
+      console.log('Estado de la republica', data);
+    });
+  }
 
   getMunicipalitySelect(municipally: ListParams) {}
 
-  getCitySelect(city: ListParams) {}
+  getCitySelect(params: ListParams) {
+    this.cityService.getAll(params).subscribe(data => {
+      console.log('Ciudad seleccionada', data);
+    });
+  }
 
   getColonySelect(colony: ListParams) {}
 
   getCpSelect(cp: ListParams) {}
 
-  getStreetSelect(cp: ListParams) {}
-
-  getTypeWarehouseSelect(typeWarehouse: ListParams) {}
+  getTypeWarehouseSelect(params: ListParams) {
+    this.typeWarehouseService.getAll(params).subscribe(data => {
+      this.typeWarehouse = new DefaultSelect(data.data, data.count);
+    });
+  }
 
   close() {
     this.modalService.hide();

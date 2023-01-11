@@ -4,25 +4,31 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
 import { IState } from 'src/app/core/models/catalogs/city.model';
 import { IRegionalDelegation } from 'src/app/core/models/catalogs/regional-delegation.model';
-import { IUser } from 'src/app/core/models/catalogs/user.model';
+import { IStation } from 'src/app/core/models/catalogs/station.model';
+import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
+import { ITypeRelevant } from 'src/app/core/models/catalogs/type-relevant.model';
+import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
+import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
+import { StationService } from 'src/app/core/services/catalogs/station.service';
+import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
+import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { EMAIL_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { WarehouseFormComponent } from '../../../shared-request/warehouse-form/warehouse-form.component';
 import { ESTATE_COLUMNS } from '../../acept-programming/columns/estate-columns';
 import { USER_COLUMNS } from '../../acept-programming/columns/users-columns';
+import { SearchUserFormComponent } from '../../schedule-reception/search-user-form/search-user-form.component';
+import { ProgrammingRequestService } from '../../service/programming-request.service';
 import { EstateSearchFormComponent } from '../estate-search-form/estate-search-form.component';
 import { UserFormComponent } from '../user-form/user-form.component';
 import { userData } from './data-perfom-programming';
-import {
-  AuthorityOptions,
-  stationsOptions,
-  transferentOptions,
-  typeRelevantOptions,
-  typeWarehouseOptions,
-} from './perfom-programming-options';
 @Component({
   selector: 'app-perform-programming-form',
   templateUrl: './perform-programming-form.component.html',
@@ -43,22 +49,42 @@ export class PerformProgrammingFormComponent
     columns: USER_COLUMNS,
   };
   estates: any[] = [];
+  estatesList: any[] = [];
   usersData = userData;
   performForm: FormGroup = new FormGroup({});
-  users = new DefaultSelect<IUser>();
+  estateForm: FormGroup = new FormGroup({});
   regionalsDelegations = new DefaultSelect<IRegionalDelegation>();
   states = new DefaultSelect<IState>();
-  transferences = new DefaultSelect(transferentOptions);
-  stations = new DefaultSelect(stationsOptions);
-  authority = new DefaultSelect(AuthorityOptions);
-  typeRelevant = new DefaultSelect(typeRelevantOptions);
-  warehouse = new DefaultSelect(typeWarehouseOptions);
-  warehouseAddress: string = '';
+  transferences = new DefaultSelect<ITransferente>();
+  stations = new DefaultSelect<IStation>();
+  authorities = new DefaultSelect<IAuthority>();
+  typeRelevant = new DefaultSelect<ITypeRelevant>();
+  warehouse = new DefaultSelect<IWarehouse>();
+  warehouseUbication: string = '';
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   showForm: boolean = false;
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  showUbication: boolean = false;
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private programmingRequestService: ProgrammingRequestService,
+    private stationService: StationService,
+    private regionalDelegationService: RegionalDelegationService,
+    private stateService: StateOfRepublicService,
+    private transferentService: TransferenteService,
+    private typeRelevantService: TypeRelevantService,
+    private warehouseService: WarehouseService,
+    private authorityService: AuthorityService
+  ) {
     super();
+
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      selectMode: 'multi',
+      columns: ESTATE_COLUMNS,
+    };
   }
 
   ngOnInit(): void {
@@ -87,15 +113,25 @@ export class PerformProgrammingFormComponent
     });
   }
 
-  typeSchedule(type: any) {
-    if (type.id == 1) {
+  searchEstate() {
+    this.estateForm = this.fb.group({
+      akaWarehouse: [null],
+      state: [null],
+      municipality: [null],
+      colony: [null],
+      cp: [null],
+    });
+  }
+
+  typeSchedule(type: ITypeRelevant) {
+    if (type.id != null) {
       this.showForm = true;
     }
   }
 
-  showWarehouse(warehouse: any) {
-    console.log(warehouse.address);
-    this.warehouseAddress = warehouse.address;
+  showWarehouse(warehouse: IWarehouse) {
+    this.warehouseUbication = warehouse.ubication;
+    this.showUbication = true;
   }
 
   openForm(userData?: any) {
@@ -110,6 +146,19 @@ export class PerformProgrammingFormComponent
     };
 
     const rejectionComment = this.modalService.show(UserFormComponent, config);
+  }
+
+  listUsers() {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+
+    config.initialState = {
+      callback: (data: any) => {
+        if (data) {
+        }
+      },
+    };
+
+    const searchUser = this.modalService.show(SearchUserFormComponent, config);
   }
 
   newWarehouse() {
@@ -136,21 +185,53 @@ export class PerformProgrammingFormComponent
     );
   }
 
-  getUsersSelect(user: ListParams) {}
+  //Errores back//
+  // Corregir ruta cuando ya se cambie a /catalog //
+  getRegionalDelegationSelect(params: ListParams) {
+    this.regionalDelegationService.getAll(params).subscribe(data => {
+      this.regionalsDelegations = new DefaultSelect(data.data, data.count);
+    });
+  }
+  // Corregir ruta cuando ya se cambie a /catalog //
+  getStateSelect(params: ListParams) {
+    this.stateService.getAll(params).subscribe(data => {
+      console.log(data);
+      this.states = new DefaultSelect(data.data, data.count);
+    });
+  }
 
-  getRegionalDelegationSelect(regionalDelegation: ListParams) {}
+  getTransferentSelect(params?: ListParams) {
+    console.log(params);
+    this.transferentService.getAll(params).subscribe(data => {
+      this.transferences = new DefaultSelect(data.data, data.count);
+    });
+  }
 
-  getStateSelect(state: ListParams) {}
+  transferentSelect(item: ITransferente) {
+    this.getStations(item.id);
+  }
 
-  getTransferenceSelect(transference: ListParams) {}
+  getStations(id: number) {
+    const idTransferent = {
+      idTransferent: id,
+    };
 
-  getStationSelect(station: ListParams) {}
+    this.stationService.getByColumn(idTransferent).subscribe(data => {
+      this.stations = new DefaultSelect(data.data);
+    });
+  }
 
-  getAuthoritySelect(authority: ListParams) {}
+  getTypeRelevantSelect(params: ListParams) {
+    this.typeRelevantService.getAll(params).subscribe(data => {
+      this.typeRelevant = new DefaultSelect(data.data, data.count);
+    });
+  }
 
-  getTypeRelevantSelect(typeRelevant: ListParams) {}
-
-  getWarehouseSelect(warehouse: ListParams) {}
+  getWarehouseSelect(params: ListParams) {
+    this.warehouseService.getAll(params).subscribe(data => {
+      this.warehouse = new DefaultSelect(data.data, data.count);
+    });
+  }
 
   confirm() {}
 
