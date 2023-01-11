@@ -119,4 +119,6 @@ export enum ENDPOINT_LINKS {
   BankConcepts = 'concept-movis-bank',
   //request
   request = 'request/request',
+  //expedient
+  Expedient = 'expedient',
 }

@@ -6,6 +6,7 @@ export interface IRead<T> {
   getById?(id: number | string): Observable<T>;
   getAll?(params?: ListParams): Observable<IListResponse<T>>;
   getByIds?(ids: Partial<T>): Observable<T>;
+  postByIds?(model: T): Observable<T>;
 }
 
 export interface IWrite<T> {

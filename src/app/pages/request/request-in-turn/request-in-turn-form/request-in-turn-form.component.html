@@ -97,12 +97,12 @@
           <div class="col-md-4">
             <ngx-select
               [form]="searchForm"
-              control="state"
+              control="stateOfRepublic"
               (fetchItems)="getStateOfRepublic($event)"
               [data]="selectState"
-              bindLabel="descState"
+              bindLabel="descCondition"
               label="Estado"
-              value="codeState"></ngx-select>
+              value="id"></ngx-select>
           </div>
           <div class="col-md-4">
             <form-field
@@ -127,7 +127,7 @@
               [form]="searchForm"
               [data]="selectTransfer"
               control="transfer"
-              bindLabel="name"
+              bindLabel="nameTransferent"
               (fetchItems)="getTransferente($event)"
               label="Transferente"
               value="id"></ngx-select>

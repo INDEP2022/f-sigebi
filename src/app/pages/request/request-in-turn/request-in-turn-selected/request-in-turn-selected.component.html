@@ -8,12 +8,12 @@
         <div class="col-md-3">Tipo de usuario</div>
         <div class="col-md-3">
           <form-radio label="T.E">
-            <input type="radio" formControlName="typeUser" value="te" />
+            <input type="radio" formControlName="typeUser" value="TE" />
           </form-radio>
         </div>
         <div class="col-md-3">
           <form-radio label="SAE">
-            <input type="radio" formControlName="typeUser" value="sae" />
+            <input type="radio" formControlName="typeUser" value="SAE" />
           </form-radio>
         </div>
       </div>
@@ -30,6 +30,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
+            (rowSelect)="getRow($event)"
             [source]="paragraphs">
           </ng2-smart-table>
         </div>
@@ -51,14 +52,17 @@
       <div class="m-3">
         <button
           type="button"
-          class="btn btn-primary active"
+          class="btn btn-primary btn-sm active"
           [disabled]="requestForm.invalid"
           (click)="confirm()">
           Turnar
         </button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
           Cancelar
         </button>
       </div>

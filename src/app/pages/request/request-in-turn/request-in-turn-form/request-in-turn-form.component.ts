@@ -26,7 +26,7 @@ import { TransferenteService } from '../../../../core/services/catalogs/transfer
   styleUrls: ['./request-in-turn-form.component.scss'],
 })
 export class RequestInTurnFormComponent implements OnInit {
-  @Output() sendSearchForm = new EventEmitter<ModelForm<IRequestInTurn>>();
+  @Output() sendSearchForm = new EventEmitter<any>();
   showSearchForm: boolean = true;
 
   edit: boolean = false;
@@ -49,6 +49,8 @@ export class RequestInTurnFormComponent implements OnInit {
   affairService = inject(AffairService);
   authorityService = inject(AuthorityService);
 
+  filters: any = [];
+
   constructor(
     public modalRef: BsModalRef,
     public fb: FormBuilder //public requestService: ResquestService
@@ -67,7 +69,7 @@ export class RequestInTurnFormComponent implements OnInit {
     this.searchForm = this.fb.group({
       dateRequest: [null],
       dateJob: [null],
-      state: [null],
+      stateOfRepublic: [null],
       transfer: [null],
       station: [null],
       authority: [null],
@@ -75,7 +77,7 @@ export class RequestInTurnFormComponent implements OnInit {
       affair: [null],
       contributor: [null, [Validators.pattern(STRING_PATTERN)]],
       acta: [null, [Validators.pattern(STRING_PATTERN)]],
-      ascertainment: [null, [Validators.pattern(STRING_PATTERN)]],
+      ascertainment: [null],
       cause: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     if (this.requestInTurn != null) {
@@ -125,14 +127,140 @@ export class RequestInTurnFormComponent implements OnInit {
   }
 
   search(): void {
-    this.sendSearchForm.emit(this.searchForm.getRawValue());
+    this.filters = [];
+    this.getFormChanges();
+    let params: any = { page: 1, take: 20 };
+
+    for (let i = 0; i < this.filters.length; i++) {
+      let index = i.toString();
+      params[`filters[${index}]`] = JSON.stringify(this.filters[i]);
+    }
+
+    this.sendSearchForm.emit(params);
   }
 
   reset(): void {
     this.searchForm.reset();
   }
 
-  generateFiltro() {
-    this.searchForm.get('dateRequest');
+  getFormChanges() {
+    //filtro de la delegacion regional
+    /*let reginalDelegationFiltro = {
+      property: 'id_delegacion_regional',
+      comparison: 'EQUAL',
+      value: 12,
+    };
+    this.filters.push(reginalDelegationFiltro);*/
+
+    //filtro estado solicitudes por tunar
+    let porTurnarFiltro = {
+      property: 'estatus_solicitud',
+      comparison: 'EQUAL',
+      value: 'POR_TURNAR',
+    };
+    this.filters.push(porTurnarFiltro);
+
+    if (this.searchForm.controls['dateRequest'].value != null) {
+      let filtro = {
+        property: 'fecha_solicitud',
+        comparison: 'EQUAL',
+        value: this.searchForm.controls['dateRequest'].value,
+      };
+      this.filters.push(filtro);
+    }
+    if (this.searchForm.controls['authority'].value != null) {
+      let filtro = {
+        property: 'id_autoridad',
+        comparison: 'EQUAL',
+        value: this.searchForm.controls['authority'].value,
+      };
+      this.filters.push(filtro);
+    }
+    if (this.searchForm.controls['ascertainment'].value != null) {
+      let filtro = {
+        property: 'averiguacion_previa',
+        comparison: 'EQUAL',
+        value: this.searchForm.controls['ascertainment'].value,
+      };
+      this.filters.push(filtro);
+    }
+
+    if (this.searchForm.controls['stateOfRepublic'].value != null) {
+      let filtro = {
+        property: 'cve_estado',
+        comparison: 'EQUAL',
+        value: this.searchForm.controls['ascertainment'].value,
+      };
+      this.filters.push(filtro);
+    }
+
+    if (this.searchForm.controls['contributor'].value != null) {
+      let filtro = {
+        property: 'contribuyente_indiciado',
+        comparison: 'EQUAL',
+        value: this.searchForm.controls['contributor'].value,
+      };
+      this.filters.push(filtro);
+    }
+
+    if (this.searchForm.controls['cause'].value != null) {
+      let filtro = {
+        property: 'causa_penal',
+        comparison: 'EQUAL',
+        value: this.searchForm.controls['cause'].value,
+      };
+      this.filters.push(filtro);
+    }
+
+    if (this.searchForm.controls['transfer'].value != null) {
+      let filtro = {
+        property: 'id_transferente',
+        comparison: 'EQUAL',
+        value: this.searchForm.controls['transfer'].value,
+      };
+      this.filters.push(filtro);
+    }
+
+    if (this.searchForm.controls['dateJob'].value != null) {
+      let filtro = {
+        property: 'fecha_oficio',
+        comparison: 'EQUAL',
+        value: this.searchForm.controls['dateJob'].value,
+      };
+      this.filters.push(filtro);
+    }
+    if (this.searchForm.controls['expedient'].value != null) {
+      let filtro = {
+        property: 'expediente_transferente',
+        comparison: 'EQUAL',
+        value: this.searchForm.controls['expedient'].value,
+      };
+      this.filters.push(filtro);
+    }
+
+    if (this.searchForm.controls['station'].value != null) {
+      let filtro = {
+        property: 'id_emisora',
+        comparison: 'EQUAL',
+        value: this.searchForm.controls['station'].value,
+      };
+      this.filters.push(filtro);
+    }
+    if (this.searchForm.controls['acta'].value != null) {
+      let filtro = {
+        property: 'acta_circunstanciada',
+        comparison: 'EQUAL',
+        value: this.searchForm.controls['acta'].value,
+      };
+      this.filters.push(filtro);
+    }
+    if (this.searchForm.controls['affair'].value != null) {
+      let filtro = {
+        property: 'asunto',
+        comparison: 'EQUAL',
+        value: this.searchForm.controls['affair'].value,
+      };
+      this.filters.push(filtro);
+    }
   }
 }

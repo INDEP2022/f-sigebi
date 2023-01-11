@@ -4,7 +4,7 @@ export const REQUEST_IN_TURN_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  applicationDate: {
+  dateApplication: {
     title: 'Fecha solicitud',
     type: 'string',
     sort: false,
@@ -24,7 +24,7 @@ export const REQUEST_IN_TURN_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  paperDate: {
+  datePaper: {
     title: 'Fecha de oficio',
     type: 'string',
     sort: false,

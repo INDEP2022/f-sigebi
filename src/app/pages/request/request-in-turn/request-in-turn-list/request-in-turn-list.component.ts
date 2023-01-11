@@ -1,10 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, forkJoin, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequestInTurn } from 'src/app/core/models/catalogs/request-in-turn.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
@@ -19,63 +19,14 @@ import { RequestService } from '../../../../core/services/requests/request.servi
 import { RequestInTurnSelectedComponent } from '../request-in-turn-selected/request-in-turn-selected.component';
 import { REQUEST_IN_TURN_COLUMNS } from './request-in-turn-columns';
 
-var ejemplo: IRequestInTurn[] = [
-  {
-    check: false,
-    noRequest: '1458',
-    dateRequest: '1-10-2021',
-    titularName: 123,
-    senderCharger: 'AMPF',
-    noJob: 33,
-    dateJob: 11,
-    deleRegional: 22,
-    state: 2,
-    transfer: 28,
-    transmitter: 2,
-    authority: 33,
-    expedient: 234,
-    reception: 'Metropolital',
-    subject: 'asunto',
-    type: 'type',
-    appliStatus: 'estado',
-    contributor: 'contribuidor',
-    acta: 'acta',
-    ascertainment: 'averiguacion',
-    cause: 'causa',
-  },
-  {
-    check: false,
-    noRequest: '1458',
-    dateRequest: '1-10-2021',
-    titularName: 123,
-    senderCharger: 'AMPF',
-    noJob: 33,
-    dateJob: 11,
-    deleRegional: 22,
-    state: 2,
-    transfer: 2,
-    transmitter: 2,
-    authority: 33,
-    expedient: 234,
-    reception: 'Metropolital',
-    subject: 'asunto',
-    type: 'type',
-    appliStatus: 'estado',
-    contributor: 'contribuidor',
-    acta: 'acta',
-    ascertainment: 'averiguacion',
-    cause: 'causa',
-  },
-];
-
 @Component({
   selector: 'app-request-in-turn-list',
   templateUrl: './request-in-turn-list.component.html',
-  styles: [],
+  styleUrls: ['./request-in-turn-list.component.scss'],
 })
 export class RequestInTurnListComponent extends BasePage implements OnInit {
   totalItems: number = 0;
-  paragraphs: any[] = [];
+  paragraphs = new LocalDataSource(); //: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   requestSelected: IRequestInTurn[] = [];
@@ -103,19 +54,24 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
       columns: REQUEST_IN_TURN_COLUMNS,
     };
   }
-  getSubDelegations(params: ListParams) {
-    /* this.requestService.getAll(params).subscribe(data => {
-      this.station = new DefaultSelect(data.data, data.count);
-    }); */
-  }
 
-  openTurnRequests(requestInTurn?: IRequestInTurn[]) {
-    requestInTurn = this.requestSelected;
+  openTurnRequests() {
+    if (this.requestSelected.length === 0) {
+      this.onLoadToast(
+        'info',
+        'Informacion',
+        `Seleccione una o muchas solicitudes!`
+      );
+      return;
+    }
+
     let config: ModalOptions = {
       initialState: {
-        requestInTurn,
+        requestToTurn: this.requestSelected,
         callback: (next: boolean) => {
-          if (next) this.getRequest();
+          if (next) {
+            this.paragraphs = new LocalDataSource();
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
@@ -124,21 +80,26 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
     this.modalService.show(RequestInTurnSelectedComponent, config);
   }
 
-  searchForm(requestFrom: ModelForm<any>) {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getRequest());
+  searchForm(params: any) {
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+      params.page = data.inicio;
+      params.take = data.pageSize;
+      this.getRequest(params);
+    });
   }
 
-  getRequest(): any {
-    let params = new ListParams();
+  getRequest(params?: any): any {
     this.loading = true;
-    this.requestService
-      .getAll(params)
-      .subscribe((data: IListResponse<IRequest>) => {
-        this.totalItems = data.count;
+    this.requestService.getAll(params).subscribe(
+      (data: IListResponse<IRequest>) => {
+        this.totalItems = Number(data.count);
         this.getresponse(data.data);
-      });
+      },
+      error => {
+        this.loading = false;
+        console.log(error);
+      }
+    );
   }
 
   getresponse(data: any) {
@@ -146,6 +107,14 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
       let promises = [];
       promises.push(
         data.map((item: any) => {
+          item['dateApplication'] = new Date(item.applicationDate)
+            .toLocaleDateString()
+            .toString();
+          item['datePaper'] = new Date(item.paperDate)
+            .toLocaleDateString()
+            .toString();
+          item['authorityName'] = item.authority.authorityName;
+
           const delegacionService = this.regionalDelegacionService.getById(
             item.regionalDelegationId
           );
@@ -156,9 +125,7 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
             item.transferenceId
           );
           const stationService = this.stationService.getById(item.stationId);
-          const authorityService = this.authorityService.getById(
-            item.authorityId
-          );
+
           const affairService = this.affairService.getById(item.affair);
 
           this.listTable = [];
@@ -167,29 +134,26 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
             stateOfRepublicService,
             transferenteService,
             stationService,
-            authorityService,
+
             affairService,
           ]).subscribe(
-            ([
-              _delegation,
-              _state,
-              _transferent,
-              _station,
-              _authority,
-              _affair,
-            ]) => {
+            ([_delegation, _state, _transferent, _station, _affair]) => {
               let delegation = _delegation as any;
               let state = _state as any;
               let transferent = _transferent as any;
               let station = _station as any;
-              let authority = _authority as any;
+              //let authority = _authority as any;
+              let affair = _affair as any;
 
               item['delegationName'] = delegation.data.description;
               item['stateOfRepublicName'] = state.data.descCondition;
               item['transferentName'] = transferent.data.nameTransferent;
               item['stationName'] = station.data.stationName;
-              item['authorityName'] = authority.data.authorityName;
-              item['affairName'] = authority.data.description;
+              //item['authorityName'] = authority.data.authorityName;
+              item['affairName'] = affair.data.description;
+            },
+            error => {
+              this.loading = false;
             }
           );
         })
@@ -197,8 +161,7 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
 
       Promise.all(promises)
         .then(result => {
-          console.log(data);
-          this.paragraphs = data;
+          this.paragraphs.load(data);
           this.loading = false;
           resolve(data);
         })
@@ -207,8 +170,6 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
   }
 
   onCustomAction(event: any) {
-    console.log(event);
     this.requestSelected = event.selected;
-    //console.log(this.requestForm.);
   }
 }

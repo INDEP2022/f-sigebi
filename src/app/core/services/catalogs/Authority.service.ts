@@ -33,4 +33,8 @@ export class AuthorityService implements ICrudMethods<IAuthority> {
   remove(id: string | number): Observable<Object> {
     return this.authorityRepository.remove(this.route, id);
   }
+
+  postByIds(model: Object): Observable<IAuthority> {
+    return this.authorityRepository.postByIds(this.route, model);
+  }
 }
