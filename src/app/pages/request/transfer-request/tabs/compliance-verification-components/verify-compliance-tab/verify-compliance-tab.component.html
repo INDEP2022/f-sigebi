@@ -57,16 +57,7 @@
 
   <div class="row pt-4">
     <div class="col-md-12" style="overflow-x: scroll">
-      <!--  <div [class]="loading ? 'table-loading' : ''">
-        <ng2-smart-table
-          #table
-          (userRowSelect)="getAllSelectedGoods($event)"
-          [attr.class]="'table-bordered'"
-          [settings]="settingsEstate"
-          [source]="detallesBienes">
-        </ng2-smart-table>
-      </div> -->
-      <table class="table table-bordered border-primary">
+      <table class="table table-bordered">
         <thead>
           <tr>
             <th scope="col">
@@ -111,6 +102,14 @@
             <td>{{ detail.descripEstateTransfe }}</td>
             <td>
               <input
+                style="
+                  width: 20rem;
+                  height: 3rem;
+                  border: 1px solid #ccc;
+                  border-radius: 4px;
+                "
+                class="form-control"
+                type="text"
                 [(ngModel)]="detail.descriptionEstateSAE"
                 value="{{ detail.descriptionEstateSAE }}" />
             </td>

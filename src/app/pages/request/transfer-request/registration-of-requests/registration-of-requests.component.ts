@@ -1,12 +1,19 @@
 import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { forkJoin } from 'rxjs';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IRequest } from 'src/app/core/models/catalogs/request.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import Swal from 'sweetalert2';
+import { IRequest } from '../../../../core/models/requests/request.model';
+import { AuthorityService } from '../../../../core/services/catalogs/Authority.service';
+import { RegionalDelegationService } from '../../../../core/services/catalogs/regional-delegation.service';
+import { StateOfRepublicService } from '../../../../core/services/catalogs/state-of-republic.service';
+import { StationService } from '../../../../core/services/catalogs/station.service';
+import { TransferenteService } from '../../../../core/services/catalogs/transferente.service';
+import { RequestService } from '../../../../core/services/requests/request.service';
 import { GenerateDictumComponent } from '../tabs/approval-requests-components/generate-dictum/generate-dictum.component';
 
 @Component({
@@ -23,9 +30,11 @@ export class RegistrationOfRequestsComponent
   title: string = 'title';
   parameter: any;
   object: any = '';
+  request: any = {};
   btnTitle: string = '';
   btnSaveTitle: string = '';
   saveClarifiObject: boolean = false;
+  bsValue = new Date();
 
   //tabs
   tab1: string = '';
@@ -48,13 +57,26 @@ export class RegistrationOfRequestsComponent
   //aprovacion del proceso
   approvalProcess: boolean = false;
 
+  location = inject(Location);
+  requestService = inject(RequestService);
+  stateOfRepublicService = inject(StateOfRepublicService);
+  transferentService = inject(TransferenteService);
+  stationService = inject(StationService);
+  delegationService = inject(RegionalDelegationService);
+  authorityService = inject(AuthorityService);
+
+  stateOfRepublicName: string = '';
+  transferentName: string = '';
+  stationName: string = '';
+  delegationName: string = '';
+  authorityName: string = '';
+
   constructor(
     public fb: FormBuilder,
     public modalRef: BsModalRef,
     public modalService: BsModalService,
     public route: ActivatedRoute,
-    public router: Router,
-    public location: Location
+    public router: Router
   ) {
     super();
   }
@@ -64,28 +86,95 @@ export class RegistrationOfRequestsComponent
     this.setView(path[4]);
     this.intiTabs();
     this.prepareForm();
-    this.route.params.subscribe(params => {
-      this.object = this.registRequestForm.value;
+
+    const id = this.route.snapshot.paramMap.get('id');
+
+    this.requestService.getById(id).subscribe((data: any) => {
+      let request = data.data;
+      request.receptionDate = this.bsValue;
+      this.object = request as IRequest;
+
+      this.registRequestForm.patchValue(request);
+      this.getData(request);
     });
   }
 
   prepareForm() {
     this.registRequestForm = this.fb.group({
-      date: [],
-      noOfi: ['400-10-00-01*00*2020-7824'],
-      regDelega: ['BAJA CALIFORNIA'],
-      entity: ['Juan Pablo'],
-      tranfe: ['SAT FISCO FEDERAL'],
-      transmitter: ['ADMINISTRACION GENERAL DE RECAUDACION'],
-      authority: [
-        'ADMINISTRACION DESCONCENTRADA DE RECAUDACION DE BAJA CALIFORNIA',
-      ],
+      applicationDate: [null],
+      paperNumber: [null],
+      regionalDelegationId: [null],
+      keyStateOfRepublic: [null],
+      transferenceId: [null],
+      stationId: [null],
+      authorityId: [null],
       typeUser: [''],
       receiUser: [''],
-      noExpedient: ['24355'],
-      typeExpedient: ['AGR'],
-      noRequest: ['27445'],
+      //noExpedient: [null],
+      //typeExpedient: [null],
+      id: [null],
+      urgentPriority: [null],
+      originInfo: [null],
+      receptionDate: [null],
+      paperDate: [null],
+      typeRecord: [null],
+      publicMinistry: [null],
+
+      court: [null],
+      crime: [null],
+      receiptRoute: [null],
+      destinationManagement: [null],
+      indicatedTaxpayer: [null],
+      affair: [null],
+      transferEntNotes: [null],
+      observations: [null],
     });
+  }
+
+  getData(request: any) {
+    debugger;
+    const stateOfRepublicService = this.stateOfRepublicService.getById(
+      request.keyStateOfRepublic
+    );
+    const transferentService = this.transferentService.getById(
+      request.transferenceId
+    );
+    const stationService = this.stationService.getById(request.stationId);
+    const delegationService = this.delegationService.getById(
+      request.regionalDelegationId
+    );
+    let ids = {
+      idAuthority: Number(request.authorityId),
+      idTransferer: Number(request.transferenceId),
+      idStation: Number(request.stationId),
+    };
+    const authorityervice = this.authorityService.postByIds(ids);
+
+    forkJoin([
+      stateOfRepublicService,
+      transferentService,
+      stationService,
+      delegationService,
+      authorityervice,
+    ]).subscribe(
+      ([_state, _transferent, _station, _delegation, _authority]) => {
+        debugger;
+        let state = _state as any;
+        let transferent = _transferent as any;
+        let station = _station as any;
+        let delegation = _delegation as any;
+        let authority = _authority as any;
+
+        this.stateOfRepublicName = state.data.descCondition;
+        this.transferentName = transferent.data.nameTransferent;
+        this.stationName = station.data.stationName;
+        this.delegationName = delegation.data.description;
+        this.authorityName = authority.data.authorityName;
+      },
+      error => {
+        console.log(error);
+      }
+    );
   }
 
   setView(path: string): void {
@@ -155,6 +244,7 @@ export class RegistrationOfRequestsComponent
   }
 
   confirm() {
+    console.log(this.registRequestForm.getRawValue());
     this.msgAvertanceModal(
       '',
       'Asegurse de tener guardado los formularios antes de turnar la solicitud!',

@@ -8,6 +8,8 @@ export interface IRead<T> {
     route: string,
     params?: ListParams
   ): Observable<IListResponse<T>>;
+  postByIds(route: string, model: T): Observable<T>;
+  postColumns(route: string, model: T): Observable<IListResponse<T>>;
 }
 
 export interface IWrite<T> {

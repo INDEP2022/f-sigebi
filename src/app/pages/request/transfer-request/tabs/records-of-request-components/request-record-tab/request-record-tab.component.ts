@@ -1,20 +1,34 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import {
+  Component,
+  inject,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IRequest } from 'src/app/core/models/catalogs/request.model';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { IRequest } from '../../../../../../core/models/requests/request.model';
+import { AffairService } from '../../../../../../core/services/catalogs/affair.service';
 
 @Component({
   selector: 'app-request-record-tab',
   templateUrl: './request-record-tab.component.html',
   styles: [],
 })
-export class RequestRecordTabComponent extends BasePage implements OnInit {
-  @Input() dataObject: any;
+export class RequestRecordTabComponent
+  extends BasePage
+  implements OnInit, OnChanges
+{
+  @Input() requestForm: ModelForm<IRequest>;
   receptionForm: ModelForm<IRequest>;
-  selectTypeExpedient = new DefaultSelect<IRequest>();
+  bsValue = new Date();
+  selectTypeExpedient = new DefaultSelect<any>();
+  affairName: string = '';
+
+  affairService = inject(AffairService);
 
   constructor(public fb: FormBuilder) {
     super();
@@ -22,41 +36,43 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.getCurrentDate();
-    this.prepareForm();
+    /*setTimeout(()=>{
+      this.requestForm.controls['receptionDate'].patchValue(this.bsValue);
+      this.requestForm.controls['paperDate'].patchValue('');
+      this.requestForm.controls['receiptRoute'].value;
+    },1000)*/
+
+    this.requestForm.valueChanges.subscribe(val => {
+      if (this.requestForm.controls['id'].value != null) {
+        console.log(this.requestForm.getRawValue());
+        this.getAffair(this.requestForm.controls['affair'].value);
+      }
+    });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.requestForm.controls['id'].value != null) {
+      debugger;
+    }
   }
 
   prepareForm(): void {
     //console.log(this.dataObject);
     let fecha = this.getCurrentDate();
     this.receptionForm = this.fb.group({
-      priority: [false],
-      infoProvenance: [null, [Validators.pattern(STRING_PATTERN)]],
-      receptDate: [{ value: fecha, disabled: true }],
-      officeDate: [null, Validators.required],
-      typeExpedient: [null],
-      indiciado: [null, [Validators.pattern(STRING_PATTERN)]],
-      nameSender: [null, [Validators.pattern(STRING_PATTERN)]],
-      roleSender: [null, [Validators.pattern(STRING_PATTERN)]],
-      phoneSender: [null],
-      emailSender: [null, Validators.email],
-      publicMinister: [null],
-      sender: [null, [Validators.pattern(STRING_PATTERN)]],
-      tribunal: [null, [Validators.pattern(STRING_PATTERN)]],
-      crime: [null, [Validators.pattern(STRING_PATTERN)]],
-      typeReception: [
-        { value: 'FISICO', disabled: true },
-        [Validators.pattern(STRING_PATTERN)],
-      ], //esta campo depende de que tipo de recepcion es el formulario
-      destinationManage: [null, [Validators.pattern(STRING_PATTERN)]],
-      contributor: [null, [Validators.pattern(STRING_PATTERN)]],
-      subject: [
-        { value: 'SOLICITUD DE TRANSFERENCIA DE BIENES', disabled: true },
-        [Validators.pattern(STRING_PATTERN)],
-      ],
-      transExpedient: [null, [Validators.pattern(STRING_PATTERN)]],
-      typeTransfer: [null, [Validators.pattern(STRING_PATTERN)]],
-      transferEntityNotes: [null, [Validators.pattern(STRING_PATTERN)]],
-      observations: [null, [Validators.pattern(STRING_PATTERN)]],
+      applicationDate: [null],
+      paperNumber: [null],
+      regionalDelegationId: [null],
+      keyStateOfRepublic: [null],
+      transferenceId: [null],
+      stationId: [null],
+      authorityId: [null],
+      typeUser: [''],
+      receiUser: [''],
+      id: [null],
+      urgentPriority: [null],
+      originInfo: [null],
+      receptionDate: [null],
     });
   }
 
@@ -71,8 +87,14 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
 
   getTypeExpedient(event: any) {}
 
+  getAffair(id: number) {
+    this.affairService.getById(id).subscribe((data: any) => {
+      this.affairName = data.data.description;
+    });
+  }
+
   confirm() {
     this.loading = true;
-    console.log(this.receptionForm.value);
+    console.log(this.requestForm.getRawValue());
   }
 }
