@@ -11,7 +11,6 @@ import { IStation } from 'src/app/core/models/catalogs/station.model';
 import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { ITypeRelevant } from 'src/app/core/models/catalogs/type-relevant.model';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
-import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
@@ -74,8 +73,7 @@ export class PerformProgrammingFormComponent
     private stateService: StateOfRepublicService,
     private transferentService: TransferenteService,
     private typeRelevantService: TypeRelevantService,
-    private warehouseService: WarehouseService,
-    private authorityService: AuthorityService
+    private warehouseService: WarehouseService
   ) {
     super();
 
