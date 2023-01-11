@@ -21,6 +21,10 @@ export class StationService implements ICrudMethods<IStation> {
     return this.stationRepository.getById(this.route, id);
   }
 
+  getByColumn(column?: Object): Observable<IListResponse<IStation>> {
+    return this.stationRepository.getByColumn(this.route, column);
+  }
+
   create(model: IStation): Observable<IStation> {
     return this.stationRepository.create(this.route, model);
   }
