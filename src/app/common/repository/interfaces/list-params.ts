@@ -3,4 +3,6 @@ export class ListParams {
   text: string = '';
   pageSize?: number = 10;
   [others: string]: string | number;
+  page?: number = 1;
+  take?: number = 10;
 }
