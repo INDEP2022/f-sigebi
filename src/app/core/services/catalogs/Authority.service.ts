@@ -37,4 +37,8 @@ export class AuthorityService implements ICrudMethods<IAuthority> {
   postByIds(model: Object): Observable<IAuthority> {
     return this.authorityRepository.postByIds(this.route, model);
   }
+
+  postColumns(model: Object): Observable<IListResponse<IAuthority>> {
+    return this.authorityRepository.postColumns(this.route, model);
+  }
 }

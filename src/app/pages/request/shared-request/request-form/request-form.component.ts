@@ -9,6 +9,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
 import { UsersSelectedToTurnComponent } from '../users-selected-to-turn/users-selected-to-turn.component';
 //Provisional Data
+import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
 import { ListParams } from '../../../../common/repository/interfaces/list-params';
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
 import { IStation } from '../../../../core/models/catalogs/station.model';
@@ -38,7 +39,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
   checked: string = 'checked';
   userName: string = '';
   idsObject: any = {
-    idAuthority: null,
     idTransferer: null,
     idStation: null,
   };
@@ -80,6 +80,20 @@ export class RequestFormComponent extends BasePage implements OnInit {
     this.requestForm.controls['transferenceId'].valueChanges.subscribe(
       (data: any) => {
         console.log(data);
+        this.idsObject.idTransferer = data;
+      }
+    );
+
+    this.requestForm.controls['stationId'].valueChanges.subscribe(
+      (data: any) => {
+        console.log(data);
+        this.idsObject.idStation = data;
+        let ids = {
+          idTransferer: '120',
+          idStation: '115',
+        };
+        debugger;
+        this.getAuthority(ids);
       }
     );
   }
@@ -124,7 +138,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
   getEntity(params: ListParams): void {
     this.stateOfRepublicService.getAll(params).subscribe((data: any) => {
-      console.log(data.data);
       this.selectEntity = new DefaultSelect(data.data, data.count);
     });
   }
@@ -133,30 +146,31 @@ export class RequestFormComponent extends BasePage implements OnInit {
     this.stationService
       .getAll(params)
       .subscribe((data: IListResponse<IStation>) => {
-        debugger;
-        let station = data.data as any;
         this.selectStation = new DefaultSelect(data.data, data.count);
-        this.idsObject.idStation = Number(83);
 
         this.getAuthority(new ListParams());
       });
   }
 
-  getAuthority(params?: ListParams) {
-    this.idsObject.idAuthority = 696;
-    this.authorityService.postByIds(this.idsObject).subscribe((data: any) => {
+  getAuthority(params: any) {
+    /*this.authorityService.postByIds(this.idsObject).subscribe((data: any) => {
       console.log('authorites', data);
       this.selectAuthority = new DefaultSelect([data.data], data.count);
-    });
+    });*/
+    this.authorityService
+      .postColumns(params)
+      .subscribe((data: IListResponse<IAuthority>) => {
+        console.log(data);
+        this.selectAuthority = new DefaultSelect(data.data, data.count);
+        debugger;
+      });
   }
 
   getTransferent(params?: ListParams): void {
     this.transferentService
       .getAll(params)
       .subscribe((data: IListResponse<ITransferente>) => {
-        let transferent = data.data as any;
         this.selectTransfe = new DefaultSelect(data.data, data.count);
-        this.idsObject.idTransferer = Number(3);
       });
   }
 
