@@ -1,5 +1,6 @@
 export enum ENDPOINT_LINKS {
-  Affair = 'catalog/affair-sera',
+  Affair = 'catalog/affair',
+  Authority = 'catalog/authority',
   Bank = 'catalog/bank',
   Batch = 'catalog/batch',
   Battery = 'catalog/battery',
@@ -97,7 +98,7 @@ export enum ENDPOINT_LINKS {
   Subcategory = 'catalog/', // ? Checar si se implementa este catalogo
   Subdelegation = 'catalog/subdelegation',
   ThirdParty = 'catalog/third-party-company',
-  Transferente = 'catalog/transferentes',
+  Transferente = 'catalog/transferent',
   TypeDocto = 'catalog/type-docto',
   TypeGoods = 'catalog/type-state',
   TypeRelevant = 'catalog/type-relevant',
@@ -116,4 +117,8 @@ export enum ENDPOINT_LINKS {
   FinancialIndicators = 'financial-indicators',
   AttributesFinancialInfo = 'attributes-financial-information',
   BankConcepts = 'concept-movis-bank',
+  //request
+  request = 'request/request',
+  //expedient
+  Expedient = 'expedient',
 }
