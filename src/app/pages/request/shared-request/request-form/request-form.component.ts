@@ -86,14 +86,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
     this.requestForm.controls['stationId'].valueChanges.subscribe(
       (data: any) => {
-        console.log(data);
         this.idsObject.idStation = data;
-        let ids = {
-          idTransferer: '120',
-          idStation: '115',
-        };
-        debugger;
-        this.getAuthority(ids);
+        this.getAuthority(this.idsObject);
       }
     );
   }
@@ -103,7 +97,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
       applicationDate: [{ value: null, disabled: true }],
       paperNumber: [null, Validators.required],
       regionalDelegationId: [{ value: null, disabled: true }], // cargar la delegacion a la que pertence
-      //entity: [null, Validators.required],
       transferenceId: [null, Validators.required],
       keyStateOfRepublic: [null, Validators.required],
       stationId: [null, Validators.required],
@@ -147,26 +140,18 @@ export class RequestFormComponent extends BasePage implements OnInit {
       .getAll(params)
       .subscribe((data: IListResponse<IStation>) => {
         this.selectStation = new DefaultSelect(data.data, data.count);
-
-        this.getAuthority(new ListParams());
       });
   }
 
   getAuthority(params: any) {
-    /*this.authorityService.postByIds(this.idsObject).subscribe((data: any) => {
-      console.log('authorites', data);
-      this.selectAuthority = new DefaultSelect([data.data], data.count);
-    });*/
     this.authorityService
       .postColumns(params)
       .subscribe((data: IListResponse<IAuthority>) => {
-        console.log(data);
         this.selectAuthority = new DefaultSelect(data.data, data.count);
-        debugger;
       });
   }
 
-  getTransferent(params?: ListParams): void {
+  getTransferent(params?: ListParams) {
     this.transferentService
       .getAll(params)
       .subscribe((data: IListResponse<ITransferente>) => {
