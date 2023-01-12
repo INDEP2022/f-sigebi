@@ -65,7 +65,7 @@ export class StatesListComponent extends BasePage implements OnInit {
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(state.cveState);
+        this.delete(state.id);
       }
     });
   }

@@ -31,6 +31,7 @@ export class DeductiveFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.deductiveForm = this.fb.group({
+      id: [null],
       serviceType: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],

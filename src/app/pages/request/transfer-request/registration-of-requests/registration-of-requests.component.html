@@ -50,93 +50,77 @@
         <app-card [header]="false">
           <div body>
             <div class="row pt-2">
-              <div class="col-md-3">
-                <label class="label" for=""
-                  >Fecha de Solicitud&#58;
-                  <span for="">{{
-                    registRequestForm.get('date').value
-                  }}</span></label
-                >
+              <div class="col-md-4">
+                <label
+                  ><span class="label">Fecha de Solicitud&#58;</span>
+                  {{
+                    registRequestForm.get('applicationDate').value
+                      | date: 'dd/MM/yyyy'
+                  }}
+                </label>
               </div>
-              <div class="col-md-3">
-                <label class="label" for=""
-                  >Entidad&#58;
-                  <label for="">{{
-                    registRequestForm.get('entity').value
-                  }}</label></label
-                >
+              <div class="col-md-4">
+                <label class="label"
+                  >Estado:
+                  <span>{{ stateOfRepublicName }}</span>
+                </label>
               </div>
-              <div class="col-md-3">
-                <label class="label" for=""
-                  >No&#46; Solicitud&#58;
-                  <label for="">{{
-                    registRequestForm.get('noRequest').value
-                  }}</label></label
-                >
-              </div>
-              <div class="col-md-3">
-                <label class="label" for=""
-                  >Transferencia&#58;
-                  <label for="">{{
-                    registRequestForm.get('tranfe').value
-                  }}</label></label
+              <div class="col-md-4">
+                <label
+                  ><span class="label">No&#46; Solicitud&#58;</span>
+                  {{ registRequestForm.get('id').value }}</label
                 >
               </div>
             </div>
             <div class="row pt-2">
-              <div class="col-md-3">
+              <!--<div class="col-md-3">
                 <label class="label" for=""
                   >No&#46; Expediente&#58;
                   <label for="">{{
                     registRequestForm.get('noExpedient').value
                   }}</label></label
                 >
-              </div>
-
-              <div class="col-md-3">
-                <label class="label" for=""
-                  >No&#46; Oficina&#58;
-                  <label for="">{{
-                    registRequestForm.get('noOfi').value
-                  }}</label></label
+              </div>-->
+              <div class="col-lg-4">
+                <label
+                  ><span class="label">Transferente:</span>
+                  {{ transferentName }}</label
                 >
               </div>
-
-              <div class="col-md-3">
-                <label class="label" for=""
-                  >Delegaci&oacute;n Regional&#58;
-                  <label for="">{{
-                    registRequestForm.get('regDelega').value
-                  }}</label></label
+              <div class="col-md-4">
+                <label
+                  ><span class="label">No&#46; Oficio:</span>
+                  {{ registRequestForm.get('paperNumber').value }}</label
                 >
               </div>
-              <div class="col-md-3">
+              <div class="col-md-4">
+                <label
+                  ><span class="label">Emisora:</span>
+                  {{ stationName }}
+                </label>
+              </div>
+
+              <!--<div class="col-md-3">
                 <label class="label" for=""
                   >Tipo de Expediente&#58;
                   <label for="">{{
                     registRequestForm.get('typeExpedient').value
                   }}</label></label
                 >
-              </div>
+              </div>-->
             </div>
             <div class="row pt-2">
-              <div class="col-md-12">
-                <label class="label" for=""
-                  >Autoridad&#58;
-                  <label for="">{{
-                    registRequestForm.get('authority').value
-                  }}</label></label
-                >
+              <div class="col-md-4">
+                <label
+                  ><span class="label">Delegaci&oacute;n Regional&#58;</span>
+                  {{ delegationName }}
+                </label>
               </div>
-            </div>
-            <div class="row pt-2">
-              <div class="col-md-12">
-                <label class="label" for=""
-                  >Emisor&#58;
-                  <label for="">{{
-                    registRequestForm.get('transmitter').value
-                  }}</label></label
-                >
+              <div class="col-md-4">
+                <label
+                  ><span class="label">Autoridad&#58;</span>
+                  {{ authorityName }}
+                </label>
               </div>
             </div>
           </div>
@@ -148,7 +132,7 @@
               <!-- Registro de Solicitudes o bines -->
               <app-request-record-tab
                 *ngIf="requestRegistration"
-                [dataObject]="object"></app-request-record-tab>
+                [requestForm]="registRequestForm"></app-request-record-tab>
               <!-- Fin -->
               <!-- cumplimiento de verificacion y clasificacion de bienes-->
               <app-request-detail-tab
@@ -245,7 +229,10 @@
         </button>
       </div> -->
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
           Salir
         </button>
       </div>

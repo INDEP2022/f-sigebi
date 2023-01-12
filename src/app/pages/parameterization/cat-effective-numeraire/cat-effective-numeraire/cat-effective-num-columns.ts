@@ -1,5 +1,5 @@
 export const CAT_EFFECTIVE_NUM_COLUMNS = {
-  cat: {
+  id: {
     title: 'Categoria',
     sort: false,
   },

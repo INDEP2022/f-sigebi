@@ -74,7 +74,7 @@ export class CatDocRequireComponent extends BasePage implements OnInit {
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(documentsForDictum.cve);
+        this.delete(documentsForDictum.id);
       }
     });
   }

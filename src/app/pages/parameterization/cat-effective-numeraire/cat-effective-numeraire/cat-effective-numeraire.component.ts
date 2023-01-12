@@ -75,7 +75,7 @@ export class CatEffectiveNumeraireComponent extends BasePage implements OnInit {
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(numeraryCategories.cat);
+        this.delete(numeraryCategories.id);
         Swal.fire('Borrado', '', 'success');
       }
     });

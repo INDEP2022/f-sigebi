@@ -37,7 +37,7 @@ export class CatEffectiveNumeraireModalComponent
 
   private prepareForm() {
     this.numeraryCategoriesForm = this.fb.group({
-      cat: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      id: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -73,7 +73,7 @@ export class CatEffectiveNumeraireModalComponent
   update() {
     this.loading = true;
     this.numeraryCategoriesService
-      .update(this.numeraryCategories.cat, this.numeraryCategoriesForm.value)
+      .update(this.numeraryCategories.id, this.numeraryCategoriesForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
