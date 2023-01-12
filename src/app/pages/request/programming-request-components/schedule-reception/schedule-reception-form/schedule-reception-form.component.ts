@@ -5,6 +5,7 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IUser } from 'src/app/core/models/catalogs/user.model';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { ProgrammingRequestService } from '../../service/programming-request.service';
 import { SearchUserFormComponent } from '../search-user-form/search-user-form.component';
 
 @Component({
@@ -17,13 +18,26 @@ export class ScheduleReceptionFormComponent implements OnInit {
   loading: boolean = false;
   users = new DefaultSelect<IUser>();
   date = new Date();
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {}
+  nameUser: string = '';
+  typeUser: string = 'T.E';
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private programmingRequestService: ProgrammingRequestService
+  ) {}
 
   ngOnInit(): void {
-    this.schedule();
+    this.prepareForm();
+    this.getUserInfo();
   }
 
-  schedule() {
+  getUserInfo() {
+    this.programmingRequestService.getUserInfo().subscribe((data: any) => {
+      this.nameUser = data.name;
+    });
+  }
+
+  prepareForm() {
     this.scheduleForm = this.fb.group({
       radio: ['T.E'],
       userId: [null, [Validators.required]],
@@ -31,8 +45,8 @@ export class ScheduleReceptionFormComponent implements OnInit {
     });
   }
 
-  typeUser(event: Event): string {
-    return (event.target as HTMLInputElement).value;
+  selectTypeUser(event: Event) {
+    this.typeUser = (event.target as HTMLInputElement).value;
   }
 
   confirm() {
@@ -42,9 +56,11 @@ export class ScheduleReceptionFormComponent implements OnInit {
   getUserSelect(user: ListParams) {}
 
   searchUser() {
+    const typeUser = this.typeUser;
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
 
     config.initialState = {
+      typeUser,
       callback: (data: any) => {
         if (data) {
         }
