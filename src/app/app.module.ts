@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -56,6 +57,7 @@ export function tokenGetter() {
       multi: true,
     },
     JwtInterceptor,
+    DatePipe,
   ],
   bootstrap: [AppComponent],
 })
