@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -132,7 +132,13 @@ export class ReturnsConficationsListComponent
   }
 
   getGoodsByExpedient(id: string | number): void {
-    this.goodService.getByExpedient(id).subscribe(
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getGoods(id));
+  }
+  getGoods(id: string | number): void {
+    console.log(this.params.getValue());
+    this.goodService.getByExpedient(id, this.params.getValue()).subscribe(
       response => {
         console.log(response);
         let data = response.data.map((item: IGood) => {

@@ -34,12 +34,12 @@ export const COLUMNS = {
       component: SelectUserComponent,
     },
   },
-  cant: {
+  quantity: {
     title: 'Cantidad',
     sort: false,
     editable: false,
   },
-  amount: {
+  appraisedValue: {
     title: 'Importe',
     sort: false,
     editable: false,
@@ -49,11 +49,11 @@ export const COLUMNS = {
     sort: false,
     editable: false,
   },
-  confRet: {
+  /*confRet: {
     title: 'Dev/Conf',
     sort: false,
     editable: false,
-  },
+  },*/
   InvoiceTesofe: {
     title: 'Folio Tesofe',
     sort: false,

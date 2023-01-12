@@ -7,7 +7,8 @@ export interface IRead<T> {
   getById?(route: string, id: number | string): Observable<T>;
   getByExpedient?(
     route: string,
-    id: number | string
+    id: number | string,
+    params?: ListParams
   ): Observable<IListResponse<T>>;
   getByReference?(route: string, id: number | string): Observable<T>;
   getStatus?(route: string, id: number | string): Observable<T>;

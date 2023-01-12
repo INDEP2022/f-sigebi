@@ -19,10 +19,14 @@ export class GoodRepository<T> implements IGoodMethods<T> {
 
   getByExpedient?(
     route: string,
-    id: number | string
+    id: number | string,
+    _params?: ListParams
   ): Observable<IListResponse<T>> {
     const fullRoute = `${environment.API_URL}/good/api/v1/${route}`;
-    return this.httpClient.get<IListResponse<T>>(`${fullRoute}/${id}`);
+    const params = this.makeParams(_params);
+    return this.httpClient.get<IListResponse<T>>(`${fullRoute}/${id}`, {
+      params,
+    });
   }
 
   /*create(route: string, formData: Object) {

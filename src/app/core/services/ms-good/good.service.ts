@@ -19,8 +19,15 @@ export class GoodService {
     return this.goodRepository.getAll(this.route.Good, params);
   }
 
-  getByExpedient(id: string | number): Observable<IListResponse<IGood>> {
-    return this.goodRepository.getByExpedient(this.route.SearchByExpedient, id);
+  getByExpedient(
+    id: string | number,
+    params?: ListParams
+  ): Observable<IListResponse<IGood>> {
+    return this.goodRepository.getByExpedient(
+      this.route.SearchByExpedient,
+      id,
+      params
+    );
   }
 
   /*getGoodsByRecordId(recordId: number) {
