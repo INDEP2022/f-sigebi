@@ -12,12 +12,12 @@ export const COLUMNS = {
     sort: false,
     editable: false,
   },
-  processExtDom: {
+  extDomProcess: {
     title: 'Ext. Dominio',
     sort: false,
     editable: false,
   },
-  fecProgramerXDecoDevo: {
+  scheduledDateDecoDev: {
     title: 'Fecha Decomiso',
     editor: {
       type: 'custom',
@@ -25,7 +25,7 @@ export const COLUMNS = {
     },
     sort: false,
   },
-  promoter: {
+  promoterUserDecoDevo: {
     title: 'Promovente',
     sort: false,
     width: '20%',
@@ -44,7 +44,7 @@ export const COLUMNS = {
     sort: false,
     editable: false,
   },
-  fectesofe: {
+  tesofeDate: {
     title: 'Fecha Tesofe',
     sort: false,
     editable: false,
@@ -54,7 +54,7 @@ export const COLUMNS = {
     sort: false,
     editable: false,
   },*/
-  InvoiceTesofe: {
+  tesofeFolio: {
     title: 'Folio Tesofe',
     sort: false,
     editable: false,

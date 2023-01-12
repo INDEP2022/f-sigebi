@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
@@ -39,6 +40,7 @@ export class ReturnsConficationsListComponent
   columns = COLUMNS;
 
   constructor(
+    private datePipe: DatePipe,
     private goodService: GoodService,
     private expedientService: ExpedientService,
     private fb: FormBuilder
@@ -137,13 +139,19 @@ export class ReturnsConficationsListComponent
       .subscribe(() => this.getGoods(id));
   }
   getGoods(id: string | number): void {
-    console.log(this.params.getValue());
     this.goodService.getByExpedient(id, this.params.getValue()).subscribe(
       response => {
-        console.log(response);
+        //console.log(response);
         let data = response.data.map((item: IGood) => {
-          console.log(item);
+          //console.log(item);
           item.promoter = item.userPromoterDecoDevo?.id;
+          let dateDecoDev = item.scheduledDateDecoDev;
+          let dateTeso = item.tesofeDate;
+          item.scheduledDateDecoDev = this.datePipe.transform(
+            dateDecoDev,
+            'yyyy-MM-dd'
+          );
+          item.tesofeDate = this.datePipe.transform(dateTeso, 'yyyy-MM-dd');
           return item;
         });
         this.data.load(data);

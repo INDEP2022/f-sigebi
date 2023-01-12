@@ -62,39 +62,9 @@
         </div>-->
       </div>
     </form>
-    <div class="row mb-3 mt-3">
-      <!--Info Good-->
-      <div class="col-lg-4 col-md-4 col-sm-12 col-12">
-        <label for="">Estatus Bien</label>
-        <div class="row mb-3 mt-3">
-          <div class="col-lg-6 col-md-6 col-sm-12 col-12 align-content-end">
-            <div class="mt-4">
-              <h5 class="font-size-14 text-success">
-                <i class="bx bxs-circle me-1 text-success"></i>
-                Disponible
-              </h5>
-            </div>
-          </div>
-          <div class="col-lg-6 col-md-6 col-sm-12 col-12 align-content-end">
-            <div class="mt-4">
-              <h5 class="font-size-14 text-danger">
-                <i class="bx bxs-circle me-1 text-danger"></i>
-                No disponible
-              </h5>
-            </div>
-          </div>
-        </div>
-        <div class="row mb-3 mt-3" *ngIf="rowSelected">
-          <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-            <div class="mt-4">
-              <h5 class="font-size-14">Estatus</h5>
-              <p class="text-muted mb-0">
-                {{ selectedRow?.estatus.descriptionStatus }}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div
+      class="row mb-3 mt-3 justify-content-end"
+      *ngIf="form.get('criminalCase').value !== null">
       <!--Actions-->
       <div class="col-lg-6 col-md-6 col-sm-12 col-12 offset-md-2">
         <label for="">Aplicar Fecha y Promovente</label>
@@ -130,11 +100,45 @@
       </div>
     </div>
     <!--COLUMNS-->
-    <div class="d-flex justify-content-end mr-1">
-      <app-columns-select
-        (settingsChange)="settingsChange($event)"
-        [settings]="settings">
-      </app-columns-select>
+    <div class="d-flex justify-content-between mr-1">
+      <!--Info Good-->
+      <div class="col-lg-4 col-md-4 col-sm-12 col-12">
+        <label for="">Estatus Bien</label>
+        <div class="row mb-3 mt-3">
+          <div class="col-lg-6 col-md-6 col-sm-12 col-12 align-content-end">
+            <div class="mt-4">
+              <h5 class="font-size-14 text-success">
+                <i class="bx bxs-circle me-1 text-success"></i>
+                Disponible
+              </h5>
+            </div>
+          </div>
+          <div class="col-lg-6 col-md-6 col-sm-12 col-12 align-content-end">
+            <div class="mt-4">
+              <h5 class="font-size-14 text-danger">
+                <i class="bx bxs-circle me-1 text-danger"></i>
+                No disponible
+              </h5>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-3 mt-3" *ngIf="rowSelected">
+          <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+            <div class="mt-4">
+              <h5 class="font-size-14">Estatus</h5>
+              <p class="text-muted mb-0">
+                {{ selectedRow?.estatus.descriptionStatus }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="align-self-end">
+        <app-columns-select
+          (settingsChange)="settingsChange($event)"
+          [settings]="settings">
+        </app-columns-select>
+      </div>
     </div>
     <!--TABLE-->
     <div class="row pt-4">
