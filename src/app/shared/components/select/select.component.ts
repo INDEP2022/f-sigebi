@@ -34,6 +34,7 @@ export class SelectComponent<T> implements OnInit {
   @Input() multiple: boolean = false;
   @Input() closeOnSelect: boolean = true;
   @Input() maxSelectedItems: number = 0;
+  @Input() searchable: boolean = true;
   @Output() fetchItems = new EventEmitter<ListParams>();
   @Output() change = new EventEmitter<any>();
   buffer: any[] = [];
