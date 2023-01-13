@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRegionalDelegation } from 'src/app/core/models/catalogs/regional-delegation.model';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
@@ -19,7 +18,7 @@ export class RegionalDelegationsListComponent
   extends BasePage
   implements OnInit
 {
-  regionalDelegations: IRegionalDelegation[] = [];
+  regionalDelegation: IRegionalDelegation[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -28,8 +27,16 @@ export class RegionalDelegationsListComponent
     private modalService: BsModalService
   ) {
     super();
-    this.settings.columns = REGIONAL_DELEGATIONS_COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings = {
+      ...this.settings,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: true,
+        position: 'right',
+      },
+      columns: { ...REGIONAL_DELEGATIONS_COLUMNS },
+    };
   }
 
   ngOnInit(): void {
@@ -42,7 +49,7 @@ export class RegionalDelegationsListComponent
     this.loading = true;
     this.regionalDelegationService.getAll(this.params.getValue()).subscribe({
       next: response => {
-        this.regionalDelegations = response.data;
+        this.regionalDelegation = response.data;
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -61,15 +68,21 @@ export class RegionalDelegationsListComponent
     this.modalService.show(RegionalDelegationFormComponent, modalConfig);
   }
 
-  delete(reginalDelegation: IRegionalDelegation) {
+  showDeleteAlert(reginalDelegation: IRegionalDelegation) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
+        this.delete(reginalDelegation.id);
       }
+    });
+  }
+
+  delete(id: number) {
+    this.regionalDelegationService.remove(id).subscribe({
+      next: () => this.getReginalDelegations(),
     });
   }
 }

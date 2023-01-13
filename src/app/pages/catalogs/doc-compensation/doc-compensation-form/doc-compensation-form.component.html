@@ -43,6 +43,29 @@
 
       <div class="row pt-5">
         <div class="col-md-6">
+          <form-field
+            [control]="docCompensationForm.get('idTypeDocSat')"
+            label="Doc Resarcimiento SAT">
+            <input
+              type="string"
+              class="form-control"
+              formControlName="idTypeDocSat" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="docCompensationForm.get('idTypeDocSatXml')"
+            label="Doc Resarcimiento SAT XML">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="idTypeDocSatXml" />
+          </form-field>
+        </div>
+      </div>
+
+      <!-- <div class="row pt-5">
+        <div class="col-md-6">
           <form-field [control]="docCompensationForm.get('idTypeDocSat')">
             <ngx-select
               [form]="docCompensationForm"
@@ -66,7 +89,7 @@
               (fetchItems)="getDocCompensationSATXML($event)"></ngx-select>
           </form-field>
         </div>
-      </div>
+      </div> -->
     </form>
   </div>
   <div footer>
