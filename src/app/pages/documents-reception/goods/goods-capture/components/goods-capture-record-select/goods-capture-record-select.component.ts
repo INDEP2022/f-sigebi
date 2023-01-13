@@ -5,6 +5,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { GoodsCaptureService } from '../../../service/goods-capture.service';
+import { EXPEDIENT_NOT_FOUND } from '../../utils/goods-capture-messages';
 
 @Component({
   selector: 'app-goods-capture-record-select',
@@ -50,16 +51,11 @@ export class GoodsCaptureRecordSelectComponent
     this.loading = true;
     this.goodsCaptureService.findById(recordId).subscribe({
       next: record => {
-        console.log(record);
-        if (!record) {
-          console.log('no llego nada');
-        }
         this.loading = false;
         this.modalRef.content.callback(record);
         this.modalRef.hide();
       },
       error: error => {
-        console.log(error);
         this.handleError(error);
         this.loading = false;
       },
@@ -67,12 +63,8 @@ export class GoodsCaptureRecordSelectComponent
   }
 
   handleError(error: HttpErrorResponse) {
-    if (error.error === 404) {
-      this.onLoadToast(
-        'error',
-        'Error',
-        'El expediente no existe, por favor verifique'
-      );
+    if (error.status === 404) {
+      this.onLoadToast('error', 'Error', EXPEDIENT_NOT_FOUND);
     }
   }
 
