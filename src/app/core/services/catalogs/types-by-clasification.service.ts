@@ -44,10 +44,10 @@ export class TypesByClasificationService
     } = rawTypes;
     return {
       id: id,
-      type: { id: Number(noType), nameGoodType: descType },
-      subtype: { id: Number(noSubtype), nameSubtypeGood: descSubtype },
-      ssubtype: { id: Number(noSsubtype), description: descSsubtype },
-      sssubtype: { id: Number(noSssubtype), description: descSssubtype },
+      type: { id: noType, nameGoodType: descType },
+      subtype: { id: noSubtype, nameSubtypeGood: descSubtype },
+      ssubtype: { id: noSsubtype, description: descSsubtype },
+      sssubtype: { id: noSssubtype, description: descSssubtype },
     };
   }
 }

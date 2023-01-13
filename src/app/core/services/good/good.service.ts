@@ -25,4 +25,10 @@ export class GoodService implements ICrudMethods<IGood> {
       'good/good/getidReferenceGood/' + recordId
     );
   }
+
+  getGoodAtributesByClasifNum(clasifNum: number) {
+    const route = `good/good/searchAttributeClasifGood/${clasifNum}`;
+    const params = { inicio: 1, pageSize: 150 };
+    return this.goodRepository.getAllPaginated(route, params);
+  }
 }

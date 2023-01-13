@@ -3,26 +3,26 @@
     <h5 class="title">Captura de bienes y sus caracter&iacute;sticas</h5>
   </div>
 
-  <div body>
+  <div body #form>
     <form [formGroup]="assetsForm" (submit)="save()" class="form-material">
       <div class="row">
         <form-field
+          *ngIf="global.pIndicadorSat != null"
           class="col-md-3"
           [control]="assetsForm.get('noPartida')"
           label="Fracción Arancelaria">
           <input class="form-control" type="text" formControlName="noPartida" />
         </form-field>
 
-        <div class="col">
+        <div class="col" *ngIf="global.pIndicadorSat != null">
           <button
             class="btn btn-secondary btn-sm active"
-            *ngIf="global.satIndicator"
             [disabled]="!ligieButtonEnabled">
             Buscar Fracción
           </button>
         </div>
 
-        <form-field
+        <!-- <form-field
           class="col-md-3"
           [control]="assetsForm.get('valorAvaluo')"
           label="Valor Avalúo">
@@ -30,21 +30,22 @@
             class="form-control"
             type="text"
             formControlName="valorAvaluo" />
-        </form-field>
+        </form-field> -->
 
         <form-field
           class="col-md-3"
           [control]="assetsForm.get('noClasifBien')"
           label="No&#46; Clasificaci&oacute;n Bien">
           <input
+            #goodClasifNumField
             class="form-control"
-            type="text"
+            type="number"
             formControlName="noClasifBien"
             (change)="goodClasifNumberChange()" />
         </form-field>
       </div>
       <div class="row pt-3">
-        <div class="col-md-6" *ngIf="global.satIndicator">
+        <div class="col-md-6" *ngIf="global.pIndicadorSat != null">
           <div class="row pt-3">
             <form-field [control]="assetsForm.get('capitulo')">
               <ngx-select
@@ -93,13 +94,18 @@
             [subtypes]="subtypes"
             [ssubtypes]="ssubtypes"
             [sssubtypes]="sssubtypes"
-            (goodTypeChange)="isGoodTypeValid()"></app-goods-types-shared>
+            (goodTypeChange)="isGoodTypeValid()"
+            (goodSubtypeChange)="goodSubtypeChange()"
+            (goodSsubtypeChange)="goodSsubtypeChange()"
+            (goodSssubtypeChange)="
+              goodSssubtypeChange($event)
+            "></app-goods-types-shared>
         </div>
       </div>
       <hr />
       <div class="row pt-4">
         <form-field
-          *ngIf="global.satIndicator"
+          *ngIf="global.pIndicadorSat != null"
           class="col-md-2"
           [control]="assetsForm.get('unidadLigie')"
           label="Unidad LIGIE">
@@ -148,7 +154,7 @@
         <form-field
           class="col-md-2"
           [control]="assetsForm.get('valRef')"
-          label="Val&#46; Ref&#46;">
+          label="Valor de Referencia">
           <input class="form-control" type="number" formControlName="valRef" />
         </form-field>
 
@@ -163,7 +169,7 @@
         </form-field>
 
         <form-field
-          *ngIf="global.satIndicator"
+          *ngIf="global.pIndicadorSat != null"
           class="col-md-4"
           [control]="assetsForm.get('estadoConservacion')">
           <ngx-select
@@ -175,7 +181,7 @@
 
         <div class="col">
           <button
-            *ngIf="global.satIndicator"
+            *ngIf="global.pIndicadorSat != null"
             class="btn btn-secondary btn-sm active"
             [disabled]="!regulationsButtonEnabled">
             Regulaciones Aplicadas
@@ -197,7 +203,7 @@
             <button
               class="btn btn-info active btn-sm"
               [disabled]="!normsButtonEnabled"
-              *ngIf="global.satIndicator">
+              *ngIf="global.pIndicadorSat != null">
               Consultar Normatividad en SIAVI
             </button>
           </div>
@@ -208,7 +214,10 @@
 
       <div class="row">
         <div class="col-md-12">
-          ----------- Atributos de bienes
+          <good-features
+            [good]="good"
+            [goodForm]="goodForm"
+            [goodFeatures]="goodFeatures"></good-features>
           <button
             type="button"
             class="btn btn-info btn-sm"
@@ -223,6 +232,9 @@
         </form-check>
       </div>
       <hr />
+      <div class="row pt-3" *ngIf="formControls.almacen.value">
+        <state-locality></state-locality>
+      </div>
       <div class="row pt-3" *ngIf="formControls.almacen.value">
         <form-field class="col-md-3" [control]="assetsForm.get('entFed')">
           <ngx-select
@@ -272,14 +284,20 @@
           </div>
           <div body>
             <div class="row">
-              <textarea class="form-control" rows="5"></textarea>
+              <textarea
+                class="form-control"
+                formControlName="observaciones"
+                rows="5"></textarea>
             </div>
           </div>
 
           <div footer>
             <div class="d-flex justify-content-center">
               <div class="m-3">
-                <button type="button" class="btn btn-primary active">
+                <button
+                  type="button"
+                  class="btn btn-primary active"
+                  (click)="hideObservations()">
                   Guardar
                 </button>
               </div>
