@@ -1,1 +1,52 @@
-<p>regional-delegation-form works!</p>
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="regionalDelegationForm">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="regionalDelegationForm.get('id')" label="ID">
+            <input type="text" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="regionalDelegationForm.get('description')"
+            label="Descripción Hola">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="regionalDelegationForm.get('creationUser')"
+            label="creationUser">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="creationUser" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="regionalDelegationForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

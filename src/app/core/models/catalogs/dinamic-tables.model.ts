@@ -1,5 +1,5 @@
 export interface ITables {
-  table: number;
+  table?: number;
   name: string;
   description: string;
   actionType: string;

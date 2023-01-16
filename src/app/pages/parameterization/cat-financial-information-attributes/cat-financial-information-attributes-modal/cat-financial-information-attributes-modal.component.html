@@ -12,6 +12,16 @@
             <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
+        <div class="col-md-3">
+          <form-field
+            label="NoRegistration"
+            [control]="attributesFinancialInfoForm.get('registerNumber')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="registerNumber" />
+          </form-field>
+        </div>
       </div>
       <div class="row pt-5">
         <div class="col-md-3">
@@ -75,7 +85,7 @@
           [type]="'button'"
           [loading]="loading"
           [disabled]="!attributesFinancialInfoForm.valid"
-          (click)="close()"></confirm-button>
+          (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
