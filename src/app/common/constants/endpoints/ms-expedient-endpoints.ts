@@ -1,3 +1,3 @@
 export enum ExpedientEndpoints {
-  FindByKey = `find-count-by-key`,
+  GetCountByKey = `get-count-by-id`,
 }

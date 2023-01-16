@@ -72,7 +72,8 @@
               "bezier-easing",
               "apexcharts",
               "simple-keyboard",
-              "quill"
+              "quill",
+              "crypto-js"
             ],
             "assets": [
               "src/favicon.ico",

@@ -341,6 +341,7 @@ export interface IGood {
   estatus: Estatus;
   no_expediente: NoExpediente;
   promoter?: string;
+  dateRenderDecoDev?: Date | string;
   //TODO: Implement Promoter Interface
   userPromoterDecoDevo?: any;
 }
