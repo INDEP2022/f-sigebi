@@ -83,9 +83,9 @@
           <ngx-select
             [form]="form"
             [data]="states"
-            bindLabel="descState"
+            bindLabel="descCondition"
             label="Estado"
-            value="codeState"
+            value="id"
             (fetchItems)="getStates($event)"
             control="stateCode"></ngx-select>
         </div>
@@ -106,9 +106,9 @@
           <ngx-select
             [form]="form"
             [data]="municipalities"
-            bindLabel="municipalityName"
+            bindLabel="description"
             label="Municipio"
-            value="key"
+            value="codeMunicipalityId"
             (fetchItems)="getMunicipalities($event)"
             control="municipalityCode"></ngx-select>
         </div>

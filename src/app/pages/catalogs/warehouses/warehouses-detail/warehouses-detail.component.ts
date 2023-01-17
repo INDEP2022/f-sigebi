@@ -116,15 +116,15 @@ export class WarehousesDetailComponent implements OnInit {
     if (this.edit) {
       this.status = 'Actualizar';
       console.log(this.warehouse);
-      const { descState, nameCity, municipalityName, localityName } =
+      const { descCondition, nameCity, description, localityName } =
         this.warehouse;
       this.form.patchValue(this.warehouse);
       this.idWarehouse.disable();
       //TODO: Revisar con backend que regrese el objeto de bodega completo para poder pintar la informacion en los select
-      // this.states = new DefaultSelect([descState], 1);
-      // this.cities = new DefaultSelect([nameCity], 1);
-      // this.municipalities = new DefaultSelect([municipalityName], 1);
-      // this.localities = new DefaultSelect([localityName], 1);
+      this.states = new DefaultSelect([descCondition], 1);
+      this.cities = new DefaultSelect([nameCity], 1);
+      this.municipalities = new DefaultSelect([description], 1);
+      this.localities = new DefaultSelect([localityName], 1);
     }
   }
 

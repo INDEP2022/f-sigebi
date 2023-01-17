@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 //models
 import { INumeraryCategories } from 'src/app/core/models/catalogs/numerary-categories-model';
 //Services
 import { NumeraryCategoriesService } from 'src/app/core/services/catalogs/numerary-categories-service';
-import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
   selector: 'app-cat-effective-numeraire-modal',
