@@ -5,12 +5,13 @@ import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
-import { IState } from 'src/app/core/models/catalogs/city.model';
 import { IRegionalDelegation } from 'src/app/core/models/catalogs/regional-delegation.model';
+import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
 import { IStation } from 'src/app/core/models/catalogs/station.model';
 import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { ITypeRelevant } from 'src/app/core/models/catalogs/type-relevant.model';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
+import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
@@ -53,7 +54,7 @@ export class PerformProgrammingFormComponent
   performForm: FormGroup = new FormGroup({});
   estateForm: FormGroup = new FormGroup({});
   regionalsDelegations = new DefaultSelect<IRegionalDelegation>();
-  states = new DefaultSelect<IState>();
+  states = new DefaultSelect<IStateOfRepublic>();
   transferences = new DefaultSelect<ITransferente>();
   stations = new DefaultSelect<IStation>();
   authorities = new DefaultSelect<IAuthority>();
@@ -64,6 +65,9 @@ export class PerformProgrammingFormComponent
   totalItems: number = 0;
   showForm: boolean = false;
   showUbication: boolean = false;
+  idTrans: number = 0;
+  idState: number = 0;
+  idStation: number = 0;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -73,7 +77,8 @@ export class PerformProgrammingFormComponent
     private stateService: StateOfRepublicService,
     private transferentService: TransferenteService,
     private typeRelevantService: TypeRelevantService,
-    private warehouseService: WarehouseService
+    private warehouseService: WarehouseService,
+    private authorityService: AuthorityService
   ) {
     super();
 
@@ -183,44 +188,75 @@ export class PerformProgrammingFormComponent
     );
   }
 
-  //Errores back//
   // Corregir ruta cuando ya se cambie a /catalog //
-  getRegionalDelegationSelect(params: ListParams) {
+  getRegionalDelegationSelect(params?: ListParams) {
+    if (params.text == null) params.text = '';
     this.regionalDelegationService.getAll(params).subscribe(data => {
       this.regionalsDelegations = new DefaultSelect(data.data, data.count);
     });
   }
+
+  regionalDelegationSelect(item: IRegionalDelegation) {
+    console.log('delegación seleccionada', item);
+  }
+
   // Corregir ruta cuando ya se cambie a /catalog //
-  getStateSelect(params: ListParams) {
+  getStateSelect(params?: ListParams) {
     this.stateService.getAll(params).subscribe(data => {
-      console.log(data);
       this.states = new DefaultSelect(data.data, data.count);
+    });
+
+    this.states.data.find(item => {
+      console.log(item.id);
+      this.idState = item.id;
     });
   }
 
   getTransferentSelect(params?: ListParams) {
-    console.log(params);
+    if (params.text == null) params.text = '';
     this.transferentService.getAll(params).subscribe(data => {
       this.transferences = new DefaultSelect(data.data, data.count);
     });
   }
 
-  transferentSelect(item: ITransferente) {
-    this.getStations(item.id);
+  transferentSelect(transferent: ITransferente) {
+    this.idTrans = transferent.id;
+    this.getStations(new ListParams());
   }
 
-  getStations(id: number) {
-    const idTransferent = {
-      idTransferent: id,
+  getStations(params?: ListParams) {
+    const column = {
+      idTransferent: Number(this.idTrans),
+      keyState: Number(this.idState),
     };
+    this.stationService.getByColumn(params, column).subscribe(data => {
+      console.log('emisoras', data);
+      this.stations = new DefaultSelect(data.data, data.count);
+    });
+  }
 
-    this.stationService.getByColumn(idTransferent).subscribe(data => {
-      this.stations = new DefaultSelect(data.data);
+  stationSelect(item: IStation) {
+    this.idStation = item.id;
+    this.getAuthoritiesSelect(new ListParams());
+  }
+
+  getAuthoritiesSelect(params?: ListParams) {
+    const columns = {
+      idTransferer: Number(this.idTrans),
+      idStation: Number(this.idStation),
+    };
+    console.log('se manda', columns);
+
+    this.authorityService.postByColumns(params, columns).subscribe(data => {
+      console.log(data);
+      this.authorities = new DefaultSelect(data.data, data.count);
     });
   }
 
   getTypeRelevantSelect(params: ListParams) {
+    if (params.text == null) params.text = '';
     this.typeRelevantService.getAll(params).subscribe(data => {
+      console.log('jj', params, data);
       this.typeRelevant = new DefaultSelect(data.data, data.count);
     });
   }

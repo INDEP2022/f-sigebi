@@ -15,7 +15,7 @@ import { IStateOfRepublic } from '../../../../core/models/catalogs/state-of-repu
 import { IStation } from '../../../../core/models/catalogs/station.model';
 import { ITransferente } from '../../../../core/models/catalogs/transferente.model';
 import { AffairService } from '../../../../core/services/catalogs/affair.service';
-import { AuthorityService } from '../../../../core/services/catalogs/Authority.service';
+import { AuthorityService } from '../../../../core/services/catalogs/authority.service';
 import { StateOfRepublicService } from '../../../../core/services/catalogs/state-of-republic.service';
 import { StationService } from '../../../../core/services/catalogs/station.service';
 import { TransferenteService } from '../../../../core/services/catalogs/transferente.service';

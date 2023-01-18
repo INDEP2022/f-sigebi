@@ -12,8 +12,9 @@
               control="regionalDelegation"
               [data]="regionalsDelegations"
               value="id"
-              bindLabel="id"
+              bindLabel="description"
               label="Selecciona una delegaci&oacute;n regional"
+              (change)="regionalDelegationSelect($event)"
               (fetchItems)="getRegionalDelegationSelect($event)"></ngx-select>
           </form-field>
         </div>
@@ -33,7 +34,7 @@
               control="state"
               [data]="states"
               value="id"
-              bindLabel="descState"
+              bindLabel="descCondition"
               label="Selecciona un estado"
               (fetchItems)="getStateSelect($event)"></ngx-select>
           </form-field>
@@ -78,7 +79,7 @@
               control="transferent"
               [data]="transferences"
               value="id"
-              bindLabel="name"
+              bindLabel="nameTransferent"
               label="Selecciona transferente"
               (change)="transferentSelect($event)"
               (fetchItems)="getTransferentSelect($event)"></ngx-select>
@@ -92,7 +93,9 @@
               [data]="stations"
               value="id"
               bindLabel="stationName"
-              label="Selecciona emisora"></ngx-select>
+              (change)="stationSelect($event)"
+              label="Selecciona emisora"
+              (fetchItems)="getStations($event)"></ngx-select>
           </form-field>
         </div>
         <div class="col-md-4">
@@ -103,7 +106,8 @@
               [data]="authorities"
               value="idAuthority"
               bindLabel="authorityName"
-              label="Selecciona una autoridad"></ngx-select>
+              label="Selecciona una autoridad"
+              (fetchItems)="getAuthoritiesSelect($event)"></ngx-select>
           </form-field>
         </div>
       </div>

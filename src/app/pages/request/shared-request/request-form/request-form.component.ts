@@ -14,7 +14,7 @@ import { ListParams } from '../../../../common/repository/interfaces/list-params
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
 import { IStation } from '../../../../core/models/catalogs/station.model';
 import { ITransferente } from '../../../../core/models/catalogs/transferente.model';
-import { AuthorityService } from '../../../../core/services/catalogs/Authority.service';
+import { AuthorityService } from '../../../../core/services/catalogs/authority.service';
 import { RegionalDelegationService } from '../../../../core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from '../../../../core/services/catalogs/state-of-republic.service';
 import { StationService } from '../../../../core/services/catalogs/station.service';
@@ -145,7 +145,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
   getAuthority(params: any) {
     this.authorityService
-      .postColumns(params)
+      .postByColumns(params)
       .subscribe((data: IListResponse<IAuthority>) => {
         this.selectAuthority = new DefaultSelect(data.data, data.count);
       });

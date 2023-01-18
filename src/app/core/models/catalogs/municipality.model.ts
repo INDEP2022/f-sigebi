@@ -1,7 +1,7 @@
 export interface IMunicipality {
-  key?: string;
+  idMunicipality?: string;
   entity: string;
-  municipalityName: string;
+  nameMunicipality: string;
   userCreation: string;
   creationDate: Date;
   userModification: string;
