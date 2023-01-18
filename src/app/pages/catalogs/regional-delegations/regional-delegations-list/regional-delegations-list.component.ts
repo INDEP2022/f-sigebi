@@ -6,6 +6,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRegionalDelegation } from 'src/app/core/models/catalogs/regional-delegation.model';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import Swal from 'sweetalert2';
 import { RegionalDelegationFormComponent } from '../regional-delegation-form/regional-delegation-form.component';
 import { REGIONAL_DELEGATIONS_COLUMNS } from './regional-delegations-columns';
 
@@ -42,10 +43,10 @@ export class RegionalDelegationsListComponent
   ngOnInit(): void {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getReginalDelegations());
+      .subscribe(() => this.getRegionalDelegations());
   }
 
-  getReginalDelegations() {
+  getRegionalDelegations() {
     this.loading = true;
     this.regionalDelegationService.getAll(this.params.getValue()).subscribe({
       next: response => {
@@ -57,12 +58,12 @@ export class RegionalDelegationsListComponent
     });
   }
 
-  openForm(reginalDelegation?: IRegionalDelegation) {
+  openForm(regionalDelegation?: IRegionalDelegation) {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
-      reginalDelegation,
+      regionalDelegation,
       callback: (next: boolean) => {
-        if (next) this.getReginalDelegations();
+        if (next) this.getRegionalDelegations();
       },
     };
     this.modalService.show(RegionalDelegationFormComponent, modalConfig);
@@ -76,13 +77,14 @@ export class RegionalDelegationsListComponent
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(reginalDelegation.id);
+        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.regionalDelegationService.remove(id).subscribe({
-      next: () => this.getReginalDelegations(),
+      next: () => this.getRegionalDelegations(),
     });
   }
 }

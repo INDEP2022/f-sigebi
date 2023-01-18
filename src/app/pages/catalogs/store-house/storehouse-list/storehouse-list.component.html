@@ -4,7 +4,7 @@
     <div class="col-md-5 buttons">
       <app-columns-select [(settings)]="settings"></app-columns-select>
       <div>
-        <button (click)="add()" class="btn btn-primary active btn-sm ml-3">
+        <button (click)="openForm()" class="btn btn-primary active btn-sm ml-3">
           Nueva
         </button>
       </div>
@@ -23,9 +23,9 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="lawyers"
-            (edit)="edit($event.data)"
-            (delete)="delete($event.data)">
+            [source]="storeHouse"
+            (edit)="openForm($event.data)"
+            (delete)="showDeleteAlert($event.data)">
           </ng2-smart-table>
         </div>
       </div>

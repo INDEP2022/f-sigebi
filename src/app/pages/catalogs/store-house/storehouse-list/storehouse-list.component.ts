@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import Swal from 'sweetalert2';
 import { IStorehouse } from '../../../../core/models/catalogs/storehouse.model';
 import { StorehouseService } from '../../../../core/services/catalogs/storehouse.service';
 import { StorehouseDetailComponent } from '../storehouse-detail/storehouse-detail.component';
@@ -15,12 +17,12 @@ import { STOREHOUSE_COLUMNS } from './storehouse-columns';
   styles: [],
 })
 export class StorehouseListComponent extends BasePage implements OnInit {
-  lawyers: IStorehouse[] = [];
+  storeHouse: IStorehouse[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(
-    private StorehouseService: StorehouseService,
+    private storehouseService: StorehouseService,
     private modalService: BsModalService
   ) {
     super();
@@ -36,44 +38,43 @@ export class StorehouseListComponent extends BasePage implements OnInit {
 
   getStorehouses() {
     this.loading = true;
-    this.StorehouseService.getAll(this.params.getValue()).subscribe(
-      response => {
-        this.lawyers = response.data;
+    this.storehouseService.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        this.storeHouse = response.data;
         this.totalItems = response.count;
         this.loading = false;
       },
-      error => (this.loading = false)
-    );
-  }
-
-  add() {
-    this.openModal();
-  }
-
-  openModal(context?: Partial<StorehouseDetailComponent>) {
-    const modalRef = this.modalService.show(StorehouseDetailComponent, {
-      initialState: context,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getStorehouses();
+      error: error => (this.loading = false),
     });
   }
 
-  edit(storehouse: IStorehouse) {
-    this.openModal({ edit: true, storehouse });
+  openForm(storeHouse?: IStorehouse) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      storeHouse,
+      callback: (next: boolean) => {
+        if (next) this.getStorehouses();
+      },
+    };
+    this.modalService.show(StorehouseDetailComponent, modalConfig);
   }
 
-  delete(bank: IStorehouse) {
+  showDeleteAlert(storeHouse: IStorehouse) {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
+        this.delete(storeHouse.idStorehouse);
+        Swal.fire('Borrado', '', 'success');
       }
+    });
+  }
+
+  delete(id: string) {
+    this.storehouseService.remove(id).subscribe({
+      next: () => this.getStorehouses(),
     });
   }
 }
