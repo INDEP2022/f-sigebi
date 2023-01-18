@@ -1,12 +1,14 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ status }} BODEGA</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
+    <form class="form-material" [formGroup]="storeHouseForm">
       <div class="row">
         <div class="col-md-6">
-          <form-field [control]="form.get('idStorehouse')" label="ID Bodega">
+          <form-field
+            [control]="storeHouseForm.get('idStorehouse')"
+            label="ID Bodega">
             <input
               type="number"
               class="form-control"
@@ -16,20 +18,22 @@
           </form-field>
         </div>
         <div class="col-md-6">
-          <ngx-select
-            [form]="form"
-            [data]="states"
-            bindLabel="descState"
-            label="Estado"
-            value="codeState"
-            (fetchItems)="getStates($event)"
-            control="idEntity"></ngx-select>
+          <form-field [control]="storeHouseForm.get('idEntity')">
+            <ngx-select
+              [form]="storeHouseForm"
+              [data]="states"
+              bindLabel="descCondition"
+              label="Estado"
+              value="id"
+              (fetchItems)="getStates($event)"
+              control="idEntity"></ngx-select>
+          </form-field>
         </div>
       </div>
       <div class="row mt-4">
         <div class="col-md-12">
           <form-field
-            [control]="form.get('manager')"
+            [control]="storeHouseForm.get('manager')"
             label="Responsable de la bodega">
             <input type="text" class="form-control" formControlName="manager" />
           </form-field>
@@ -37,30 +41,34 @@
       </div>
       <div class="row mt-4">
         <div class="col-md-6">
-          <ngx-select
-            [form]="form"
-            [data]="municipalities"
-            bindLabel="municipalityName"
-            label="Municipio"
-            value="key"
-            (fetchItems)="getMunicipalities($event)"
-            control="municipality"></ngx-select>
+          <form-field [control]="storeHouseForm.get('municipality')">
+            <ngx-select
+              [form]="storeHouseForm"
+              [data]="municipalities"
+              bindLabel="description"
+              label="Municipio"
+              value="codeMunicipalityId"
+              (fetchItems)="getMunicipalities($event)"
+              control="municipality"></ngx-select>
+          </form-field>
         </div>
         <div class="col-md-6">
-          <ngx-select
-            [form]="form"
-            [data]="localities"
-            label="Localidad"
-            bindLabel="localityName"
-            value="key"
-            (fetchItems)="getLocalities($event)"
-            control="locality"></ngx-select>
+          <form-field [control]="storeHouseForm.get('locality')">
+            <ngx-select
+              [form]="storeHouseForm"
+              [data]="localities"
+              label="Localidad"
+              bindLabel="localityName"
+              value="key"
+              (fetchItems)="getLocalities($event)"
+              control="locality"></ngx-select>
+          </form-field>
         </div>
       </div>
       <div class="row mt-4">
         <div class="col-md-6">
           <form-field
-            [control]="form.get('description')"
+            [control]="storeHouseForm.get('description')"
             label="Descripci&oacute;n">
             <textarea
               rows="3"
@@ -70,7 +78,7 @@
         </div>
         <div class="col-md-6">
           <form-field
-            [control]="form.get('ubication')"
+            [control]="storeHouseForm.get('ubication')"
             label="Ubicaci&oacute;n">
             <textarea
               rows="3"
@@ -86,7 +94,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="!form.valid"
+          [disabled]="!storeHouseForm.valid"
           [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>
