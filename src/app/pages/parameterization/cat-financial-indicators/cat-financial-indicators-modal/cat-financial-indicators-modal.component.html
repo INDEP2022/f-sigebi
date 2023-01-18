@@ -35,7 +35,7 @@
           <div style="text-align: center">
             <form-field
               [control]="financialIndicatorsForm.get('formula')"
-              label="Escriba la f&oacute;rmula con el teclado virtual">
+              label="Escriba la f&oacute;rmula">
               <input
                 (input)="onInputChange($event)"
                 class="form-control"
@@ -54,7 +54,7 @@
         <confirm-button
           [type]="'button'"
           [disabled]="!financialIndicatorsForm.valid"
-          (click)="close()"></confirm-button>
+          (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

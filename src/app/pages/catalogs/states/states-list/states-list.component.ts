@@ -6,6 +6,7 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import Swal from 'sweetalert2';
 import { IStateOfRepublic } from '../../../../core/models/catalogs/state-of-republic.model';
 import { StateFormComponent } from '../state-form/state-form.component';
 import { STATES_COLUMNS } from './states-columns';
@@ -65,7 +66,8 @@ export class StatesListComponent extends BasePage implements OnInit {
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(state.cveState);
+        this.delete(state.id);
+        Swal.fire('Borrado', '', 'success');
       }
     });
   }

@@ -20,6 +20,7 @@
       [formControlName]="control"
       (scrollToEnd)="fetchMore(select.searchTerm)"
       (change)="onChange($event)"
+      [searchable]="searchable"
       [placeholder]="placeholder">
     </ng-select>
     <span class="form-bar"></span>

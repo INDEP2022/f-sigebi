@@ -1,5 +1,6 @@
 export enum ENDPOINT_LINKS {
-  Affair = 'catalog/affair-sera',
+  Affair = 'catalog/affair',
+  Authority = 'catalog/authority',
   Bank = 'catalog/bank',
   Batch = 'catalog/batch',
   Battery = 'catalog/battery',
@@ -97,7 +98,7 @@ export enum ENDPOINT_LINKS {
   Subcategory = 'catalog/', // ? Checar si se implementa este catalogo
   Subdelegation = 'catalog/subdelegation',
   ThirdParty = 'catalog/third-party-company',
-  Transferente = 'catalog/transferentes',
+  Transferente = 'catalog/transferent',
   TypeDocto = 'catalog/type-docto',
   TypeGoods = 'catalog/type-state',
   TypeRelevant = 'catalog/type-relevant',
@@ -110,10 +111,15 @@ export enum ENDPOINT_LINKS {
   ZipCode = 'catalog/zip-code', //
   ZoneGeographic = 'catalog/zone-geographic',
   DocumentsForDictum = 'documents-for-dictum',
-  DinamicTables = 'dynamiccatalog/dinamic-tables',
+  DinamicTables = 'dynamiccatalog/api/v1/dinamic-tables',
   AffairType = 'affair-type',
   FinancialInformation = 'parameterfinantial/financial-information',
   FinancialIndicators = 'financial-indicators',
   AttributesFinancialInfo = 'attributes-financial-information',
   BankConcepts = 'concept-movis-bank',
+  NumeraryCategories = 'numerary-categories',
+  //request
+  request = 'request/request',
+  //expedient
+  Expedient = 'expedient',
 }

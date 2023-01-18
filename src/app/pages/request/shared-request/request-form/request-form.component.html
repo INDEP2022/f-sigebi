@@ -14,7 +14,6 @@
 
       <div class="p-2">
         <confirm-button
-          [disabled]="requestForm.invalid"
           [loading]="loading"
           [btnSmall]="true"
           (confirm)="confirm()">
@@ -25,7 +24,7 @@
           type="button"
           class="btn btn-secondary btn-sm active"
           [disabled]="requestForm.invalid"
-          (click)="confirm()">
+          (click)="turnRequest()">
           Turnar
         </button>
       </div>
@@ -70,13 +69,12 @@
             <div class="row pt-5">
               <div class="col-md-2">
                 <form-field
-                  [control]="requestForm.get('date')"
+                  [control]="requestForm.get('applicationDate')"
                   label="Fecha de solicitud">
                   <input
-                    type="text"
                     class="form-control"
                     #dp="bsDatepicker"
-                    formControlName="date"
+                    formControlName="applicationDate"
                     bsDatepicker
                     [bsValue]="bsValue" />
                 </form-field>
@@ -85,70 +83,74 @@
               <div class="col-md-3">
                 <ngx-select
                   [form]="requestForm"
-                  control="regDelega"
+                  control="regionalDelegationId"
                   (fetchItems)="getRegionalDeleg($event)"
                   [data]="selectRegionalDeleg"
+                  bindLabel="description"
                   label="Delegaci&oacute;n Regional"
-                  value="regDelega"></ngx-select>
+                  value="id"></ngx-select>
               </div>
-
-              <div class="col-md-4">
-                <ngx-select
-                  [form]="requestForm"
-                  control="transmitter"
-                  (fetchItems)="getTransmitter($event)"
-                  [data]="selectTransmitter"
-                  label="Emisora"
-                  value="transmitter"></ngx-select>
-              </div>
-
               <div class="col-md-3">
                 <form-field
-                  [control]="requestForm.get('noOfi')"
-                  label="No&#46; Oficina">
+                  [control]="requestForm.get('paperNumber')"
+                  label="*No&#46; Oficio">
                   <input
                     type="text"
                     class="form-control"
-                    formControlName="noOfi" />
+                    formControlName="paperNumber" />
                 </form-field>
+              </div>
+              <div class="col-md-3">
+                <ngx-select
+                  [form]="requestForm"
+                  control="keyStateOfRepublic"
+                  (fetchItems)="getEntity($event)"
+                  [data]="selectEntity"
+                  bindLabel="descCondition"
+                  label="*Entidad"
+                  value="id"></ngx-select>
               </div>
             </div>
             <div class="row pt-5">
               <div class="col-md-3">
                 <ngx-select
                   [form]="requestForm"
-                  control="entity"
-                  (fetchItems)="getEntity($event)"
-                  [data]="selectEntity"
-                  label="Entidad"
-                  value="regDelega"></ngx-select>
+                  control="transferenceId"
+                  (fetchItems)="getTransferent($event)"
+                  [data]="selectTransfe"
+                  bindLabel="nameTransferent"
+                  label="*Transferente"
+                  value="id"></ngx-select>
               </div>
-              <div class="col-md-3">
+              <div class="col-md-4">
                 <ngx-select
                   [form]="requestForm"
-                  control="authority"
+                  control="stationId"
+                  (fetchItems)="getStation($event)"
+                  [data]="selectStation"
+                  bindLabel="stationName"
+                  label="*Emisora"
+                  value="id"></ngx-select>
+              </div>
+              <div class="col-md-4">
+                <ngx-select
+                  [form]="requestForm"
+                  control="authorityId"
                   (fetchItems)="getAuthority($event)"
                   [data]="selectAuthority"
-                  label="Autoridad"
-                  value="regDelega"></ngx-select>
-              </div>
-              <div class="col-md-3">
-                <ngx-select
-                  [form]="requestForm"
-                  control="tranfe"
-                  (fetchItems)="getTransfe($event)"
-                  [data]="selectTransfe"
-                  label="Transferente"
-                  value="regDelega"></ngx-select>
+                  bindLabel="authorityName"
+                  label="*Autoridad"
+                  value="idAuthority"></ngx-select>
               </div>
               <div *ngIf="op == 2" class="col-md-3">
                 <ngx-select
                   [form]="requestForm"
-                  control="state"
+                  control="keyStateOfRepublic"
                   (fetchItems)="getState($event)"
                   [data]="selectState"
+                  bindLabel="descCondition"
                   label="Estado"
-                  value="regDelega"></ngx-select>
+                  value="id"></ngx-select>
               </div>
             </div>
           </div>
@@ -163,7 +165,7 @@
           <div body>
             <div class="row pt-5">
               <div class="col-md-6">
-                <form-field [control]="requestForm.get('issue')">
+                <form-field [control]="requestForm.get('affair')">
                   <ngx-select
                     (fetchItems)="getIssue($event)"
                     [data]="issues"
@@ -171,7 +173,7 @@
                     value="id"
                     bindLabel="issue"
                     label="Asunto"
-                    [control]="'issue'">
+                    [control]="'affair'">
                   </ngx-select>
                 </form-field>
               </div>
@@ -193,8 +195,8 @@
               <form-radio label="T.E">
                 <input
                   type="radio"
-                  formControlName="typeUser"
-                  value="te"
+                  formControlName="targetUserType"
+                  value="TE"
                   id="te"
                   [checked]="checked" />
               </form-radio>
@@ -203,8 +205,8 @@
               <form-radio label="SAE">
                 <input
                   type="radio"
-                  formControlName="typeUser"
-                  value="sae"
+                  formControlName="targetUserType"
+                  value="SAE"
                   id="sae" />
               </form-radio>
             </div>
@@ -223,7 +225,9 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="receiUser" />
+                [ngModelOptions]="{ standalone: true }"
+                [(ngModel)]="userName"
+                [readOnly]="true" />
             </div>
           </div>
         </div>

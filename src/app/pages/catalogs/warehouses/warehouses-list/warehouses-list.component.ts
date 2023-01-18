@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import Swal from 'sweetalert2';
 import { IWarehouse } from '../../../../core/models/catalogs/warehouse.model';
 import { WarehouseService } from '../../../../core/services/catalogs/warehouse.service';
 import { WarehousesDetailComponent } from '../warehouses-detail/warehouses-detail.component';
@@ -36,44 +38,43 @@ export class WarehousesListComponent extends BasePage implements OnInit {
 
   getWarehouses() {
     this.loading = true;
-    this.warehouseService.getAll(this.params.getValue()).subscribe(
-      response => {
+    this.warehouseService.getAll(this.params.getValue()).subscribe({
+      next: response => {
         this.warehouses = response.data;
         this.totalItems = response.count;
         this.loading = false;
       },
-      error => (this.loading = false)
-    );
-  }
-
-  add() {
-    this.openModal();
-  }
-
-  openModal(context?: Partial<WarehousesDetailComponent>) {
-    const modalRef = this.modalService.show(WarehousesDetailComponent, {
-      initialState: context,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getWarehouses();
+      error: error => (this.loading = false),
     });
   }
 
-  edit(warehouse: IWarehouse) {
-    this.openModal({ edit: true, warehouse });
+  openForm(warehouse?: IWarehouse) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      warehouse,
+      callback: (next: boolean) => {
+        if (next) this.getWarehouses();
+      },
+    };
+    this.modalService.show(WarehousesDetailComponent, modalConfig);
   }
 
-  delete(warehouse: IWarehouse) {
+  showDeleteAlert(warehouse: IWarehouse) {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
+        this.delete(warehouse.idWarehouse);
+        Swal.fire('Borrado', '', 'success');
       }
+    });
+  }
+
+  delete(id: number) {
+    this.warehouseService.remove(id).subscribe({
+      next: () => this.getWarehouses(),
     });
   }
 }
