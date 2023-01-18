@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtype.service';
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
@@ -10,6 +11,7 @@ import { DynamicCatalogService } from 'src/app/core/services/dynamic-catalogs/dy
 import { ExpedientService } from 'src/app/core/services/expedients/expedient.service';
 import { GoodParameterService } from 'src/app/core/services/good-parameters/good-parameters.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
+import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
 import { SatInterfaceService } from 'src/app/core/services/sat-interface/sat-interface.service';
 
@@ -49,7 +51,8 @@ export class GoodsCaptureService {
     private goodSssubtypeService: GoodSssubtypeService,
     private notificationService: NotificationService,
     private satInterfaceService: SatInterfaceService,
-    private dynamicCatalogService: DynamicCatalogService
+    private dynamicCatalogService: DynamicCatalogService,
+    private goodsQueryService: GoodsQueryService
   ) {}
 
   getInitialParameter(id: string) {
@@ -133,5 +136,25 @@ export class GoodsCaptureService {
 
   getMaxPaperWorkByExpedient(expedientId: number) {
     return of(2);
+  }
+
+  getUnitsByClasifNum(clasifNum: number, params: ListParams) {
+    return this.httClient.get(
+      'http://sigebimsqa.indep.gob.mx/goodsquery/api/v1/ligie-units-measure/getUnit/' +
+        clasifNum,
+      { params }
+    );
+  }
+
+  getFractions(body: any) {
+    return this.goodsQueryService.getFractions(body);
+  }
+
+  getLigieUnitDesc(unit: string) {
+    return this.goodsQueryService.getLigieUnitDescription(unit);
+  }
+
+  getSatTransfer(body: any) {
+    return this.satInterfaceService.getSatTransfer(body);
   }
 }

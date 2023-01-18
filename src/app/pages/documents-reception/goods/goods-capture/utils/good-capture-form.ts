@@ -1,8 +1,14 @@
 import { FormControl, Validators } from '@angular/forms';
+import { onlyNumbers } from 'src/app/common/validations/numeric.validators';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 export const GOOD_CAPTURE_FORM = {
-  noPartida: new FormControl('', [Validators.required]),
+  noPartida: new FormControl<string>(null, [
+    Validators.required,
+    Validators.minLength(8),
+    Validators.maxLength(8),
+    onlyNumbers(),
+  ]),
   valorAvaluo: new FormControl('', [Validators.required]),
   capitulo: new FormControl('', [Validators.required]),
   partida: new FormControl('', [Validators.required]),

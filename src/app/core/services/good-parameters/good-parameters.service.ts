@@ -9,7 +9,7 @@ import { IGoodParameter } from '../../models/good-parameters/good-parameter.mode
   providedIn: 'root',
 })
 export class GoodParameterService implements ICrudMethods<IGoodParameter> {
-  private readonly route: string = 'parametergood/parametros';
+  private readonly route: string = 'parametergood/parameters';
   constructor(private goodParameterRepository: Repository<IGoodParameter>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IGoodParameter>> {

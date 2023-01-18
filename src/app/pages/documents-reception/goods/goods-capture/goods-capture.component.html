@@ -11,7 +11,11 @@
           class="col-md-3"
           [control]="assetsForm.get('noPartida')"
           label="Fracción Arancelaria">
-          <input class="form-control" type="text" formControlName="noPartida" />
+          <input
+            class="form-control"
+            type="text"
+            formControlName="noPartida"
+            (change)="fractionChange()" />
         </form-field>
 
         <div class="col" *ngIf="global.pIndicadorSat != null">
@@ -51,7 +55,9 @@
               <ngx-select
                 [form]="assetsForm"
                 control="capitulo"
-                [data]="select"
+                [data]="chapters"
+                value="chapter"
+                bindLabel="chapterDesc"
                 label="Capítulo"></ngx-select>
             </form-field>
           </div>
@@ -60,7 +66,9 @@
               <ngx-select
                 [form]="assetsForm"
                 control="partida"
-                [data]="select"
+                [data]="departures"
+                value="departure"
+                bindLabel="departureDesc"
                 label="Partida"></ngx-select>
             </form-field>
           </div>
@@ -69,7 +77,9 @@
               <ngx-select
                 [form]="assetsForm"
                 control="subpartida"
-                [data]="select"
+                [data]="sdepartures"
+                value="sDeparture"
+                bindLabel="sDepartureDesc"
                 label="Subpartida"></ngx-select>
             </form-field>
           </div>
@@ -78,7 +88,9 @@
               <ngx-select
                 [form]="assetsForm"
                 control="ssubpartida"
-                [data]="select"
+                [data]="ssdepartures"
+                value="ssDeparture"
+                bindLabel="ssDepartureDesc"
                 label="Ssubpartida"></ngx-select>
             </form-field>
           </div>
@@ -114,14 +126,16 @@
             type="text"
             formControlName="unidadLigie" />
         </form-field>
-        <form-field
-          class="col-md-2"
-          [control]="assetsForm.get('unidadMedida')"
-          label="Unidad de medida">
-          <input
-            class="form-control"
-            type="text"
-            formControlName="unidadMedida" />
+        <form-field class="col-md-2" [control]="assetsForm.get('unidadMedida')">
+          <ngx-select
+            (fetchItems)="getMeasureUnits($event)"
+            [data]="unitsMeasures"
+            [form]="assetsForm"
+            value="unit"
+            label="Unidad de Medida"
+            bindLabel="unit"
+            control="unidadMedida">
+          </ngx-select>
         </form-field>
         <form-field
           class="col-md-2"
@@ -233,7 +247,12 @@
       </div>
       <hr />
       <div class="row pt-3" *ngIf="formControls.almacen.value">
-        <state-locality></state-locality>
+        <state-locality
+          [form]="assetsForm"
+          stateField="entFed"
+          municipalityField="municipio"
+          cityField="ciudad"
+          localityField="localidad"></state-locality>
       </div>
       <div class="row pt-3" *ngIf="formControls.almacen.value">
         <form-field class="col-md-3" [control]="assetsForm.get('entFed')">

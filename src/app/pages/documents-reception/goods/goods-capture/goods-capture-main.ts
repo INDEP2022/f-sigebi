@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { catchError, of, switchMap, tap, throwError } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
 import { IGoodSsubType } from 'src/app/core/models/catalogs/good-ssubtype.model';
 import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
@@ -32,16 +33,17 @@ import {
 })
 export class GoodsCaptureMain extends BasePage {
   @ViewChild('form') form: ElementRef;
+  satTransfer: any = {};
   params: Partial<IGoodCaptureParams> = {
     origin: null,
     // transferId: null,
     // recordId: null,
     // ? Entra a this.validateSat()
-    // satSubject: '2012/157',
-    // pOfficeNumber: '800-51-00-02-01-2012-2184',
+    satSubject: '2012/157',
+    pOfficeNumber: '800-51-00-02-01-2012-2184',
     // ? Entra a this.fillData()
-    satSubject: 'PD7500140022',
-    pOfficeNumber: '800-45-00-02-01-2014-3783',
+    // satSubject: 'PD7500140022',
+    // pOfficeNumber: '800-45-00-02-01-2014-3783',
     iden: '',
   };
   counter: number = 0;
@@ -80,6 +82,10 @@ export class GoodsCaptureMain extends BasePage {
   ssubtypes = new DefaultSelect();
   sssubtypes = new DefaultSelect();
   select = new DefaultSelect();
+  chapters = new DefaultSelect();
+  departures = new DefaultSelect();
+  sdepartures = new DefaultSelect();
+  ssdepartures = new DefaultSelect();
   modalRef: BsModalRef;
   vCount: number;
   vPartida: number;
@@ -89,6 +95,7 @@ export class GoodsCaptureMain extends BasePage {
   type: number;
   satCveUnique: number;
   good: any;
+  unitsMeasures = new DefaultSelect();
   constructor(
     public fb: FormBuilder,
     public modalService: BsModalService,
@@ -219,11 +226,227 @@ export class GoodsCaptureMain extends BasePage {
         .subscribe({
           next: () => {
             this.fillGoodForm();
+            // this.f
           },
         });
       this.formControls.noBien.setValue(this.global.gRastBien);
       this.formControls.cantidad.setValue(1);
     }
+  }
+
+  fillSatSubject() {
+    const body: any = {
+      officeKey: this.params.pOfficeNumber,
+      missingAttribute: 1,
+    };
+    if (this.global.pIndicadorSat == 0) {
+      body.asunto = this.params.satSubject;
+    }
+    this.formControls.satIndicator;
+    let vCount = 0,
+      vDeparture = 0;
+    this.getSatTransfer(body)
+      .pipe(
+        tap((response: any) => {
+          if (response.count < 1) {
+            return;
+          }
+          const satTransfer = response.data[0];
+          vCount = response.count;
+          vDeparture = satTransfer.satDepartureNumber?.length ?? 0;
+        })
+      )
+      .subscribe()
+      .add(() => this.determinateWithTempExp(vCount, vDeparture));
+  }
+
+  determinateWithTempExp(vCount: number, vDeparture: number) {
+    let type = 0;
+    if (this.global.pIndicadorSat == 0 && vCount != 0) {
+      this.formControls.satIndicator.setValue(1);
+      this.disableFields(['noPartida']);
+    } else if (this.global.pIndicadorSat == 1) {
+      this.formControls.satIndicator.setValue(0);
+    }
+    this.getTempExp(this.global.gNoExpediente).subscribe({
+      next: res => {
+        type = res.type;
+        this.global.vPgrOficio = res.officeNumber;
+        if (type == 0) return;
+        vDeparture >= 7 ? this.validateSat() : this.fillData();
+      },
+    });
+  }
+
+  // PUP_VALIDATE_SAT
+  validateSat() {
+    console.log('entro a validar sat');
+    let satCveUnique: number = null;
+    if (this.global.pIndicadorSat == 0) {
+      // TODO: Implementar consultas
+      this.validateSatCveUnique(satCveUnique);
+    } else if (this.global.pIndicadorSat == 1) {
+      // TODO: Implementar consultas
+      this.validateSatCveUnique(satCveUnique);
+    } else {
+      this.validateSatCveUnique(satCveUnique);
+    }
+  }
+
+  validateSatCveUnique(satCveUnique: number) {
+    /** 
+     *     IF :BIENES.CVE_UNICA_SAT IS NULL THEN
+        :BIENES.CVE_UNICA_SAT := C_SAT_CVE_UNICA;
+        :BIENES.INVENTARIO := C_SAT_CVE_UNICA;
+    END IF;
+    this.global.satCveUnique = satCveUnique
+     */
+    let long: number;
+    if (!satCveUnique) {
+      return;
+    }
+    if (this.global.pIndicadorSat == 0) {
+      // TODO: volver a hacer consultas de vPartida
+      // long = this.vPartida;
+      this.validateLong(long);
+    } else if (this.global.pIndicadorSat == 1) {
+      // TODO: volver a hacer consultas de vPartida
+      // long = this.vPartida
+      this.validateLong(long);
+    }
+  }
+
+  // PUP_LLENA_DATOS
+  fillData() {
+    console.log('Entra a llenar datos');
+    // ? LA consulta que se va a implementar ya se ejecuta antes
+    // ? se podria declarar un objeto global con la respuesta para no hacerla otra vez
+    // of({vSubject, paperWorkType, vOfficeNumber})
+    of({}).subscribe({
+      next: () => {
+        let vSubject;
+        let paperWorkType;
+        let vOfficeNumber;
+        // get from temp exp
+        if (paperWorkType == 3) {
+          this.fillDataPgr();
+          return;
+        }
+
+        let partida;
+        // select from sat_transferencia
+        if (partida && vSubject) {
+          if (paperWorkType == 2) {
+            // select tipos subtipos etc
+            // select descripcion y observaciones
+            // select unidad de medida
+            this.params.iden = 'TRANS';
+            return;
+          }
+          return;
+        }
+        if (paperWorkType == 2) {
+          if (vSubject) {
+            this.formControls.cantidad.setValue(1);
+            let lClasif: number;
+            let clasif;
+            if (lClasif <= 4) {
+              this.formControls.noClasifBien.setValue(clasif);
+            } else {
+              this.formControls.noClasifBien.setValue(null);
+            }
+            this.formControls.cantidad.setValue(1);
+            this.params.iden = 'TRANS';
+          } else {
+            this.formControls.cantidad.setValue(1);
+            let lClasif: number;
+            let clasif;
+          }
+        }
+      },
+    });
+  }
+
+  validateLong(long: number) {
+    if (long == 8) {
+      if (this.global.pIndicadorSat == 0) {
+        return;
+      }
+
+      if (this.global.pIndicadorSat == 1) {
+        return;
+      }
+      return;
+    }
+
+    if (long == 7) {
+      if (this.global.pIndicadorSat == 0) {
+        return;
+      }
+
+      if (this.global.pIndicadorSat == 1) {
+        return;
+      }
+      return;
+    }
+
+    if (long == 7 || long == 8) {
+      // obtener partidas
+      this.setLigieUnit();
+      const goodClasifNum = this.formControls.noClasifBien.value;
+      if (goodClasifNum != null) {
+        if (goodClasifNum == 1427) {
+          // marcar error
+          return;
+        }
+        this.formControls.requery.setValue('S');
+        // get tipos descripcion etc etc
+        // ? Se puede pasar a type change
+        const type = this.formControls.type.value;
+        if (this.global.noTransferente == 121 && type != 5) {
+          this.showError(
+            'Para esta transferente solamente se pueden capturar muebles'
+          );
+          // throw error
+        }
+        if (this.global.noTransferente == 123 && type != 6) {
+          this.showError(
+            'Para esta transferente solamente se pueden capturar inmuebles'
+          );
+          // throw error
+        }
+        // fill types
+        // IF goodclasifnum in 1424, 1426, 1590
+        if (goodClasifNum == 1424) {
+          this.formControls.cantidad.setValue(1);
+        }
+
+        // TODO: Hacer consultas para cada uno
+        let nSAtTypeExpedient;
+        let vSatRefIncumple;
+        if (vSatRefIncumple == 0) {
+          this.formControls.destino.setValue(1);
+        } else {
+          // foreach raro para obtener la etiqueta
+          // y obtner la desc etiqueta
+        }
+        if (this.global.pIndicadorSat) {
+          this.disableFields([]);
+        } else {
+          // this.enableFields([])
+        }
+      }
+    }
+  }
+
+  setLigieUnit() {
+    // FUP_SSF3_UNID_LIGIE
+    // this.formControls.unidadLigie.setValue
+  }
+
+  // PUP_LLENA_DATOS_PGR
+  fillDataPgr() {
+    console.log('entro a llenar pgr');
   }
 
   fillGoodForm() {
@@ -233,16 +456,6 @@ export class GoodsCaptureMain extends BasePage {
       valRef: this.good.appraisedValue,
     });
   }
-
-  // getGoodById() {
-  //   this.goodsCaptureService.findGoodById(this.global.gRastBien).subscribe({
-  //     next: good => {
-  //       // TODO: Hacer match de los valores
-  //       this.formControls.captura.setValue('E');
-  //       this.formControls.requery.setValue('N');
-  //     },
-  //   });
-  // }
 
   async isCompensationGoodDialog() {
     return await this.alertQuestion(
@@ -390,6 +603,11 @@ export class GoodsCaptureMain extends BasePage {
     );
   }
 
+  getMeasureUnits(params: ListParams) {
+    const clasifNum = this.formControls.noClasifBien.value;
+    this.getUnitsByClasifNum(clasifNum, params).subscribe();
+  }
+
   getGoodTypesByClasifNum(clasifNum: number) {
     return this.goodsCaptureService.getTypesByClasification(clasifNum).pipe(
       // share(),
@@ -436,6 +654,55 @@ export class GoodsCaptureMain extends BasePage {
     return this.goodsCaptureService
       .findGoodById(id)
       .pipe(tap((good: any) => (this.good = good.data)));
+  }
+
+  getUnitsByClasifNum(clasifNum: number, params?: ListParams) {
+    return this.goodsCaptureService.getUnitsByClasifNum(clasifNum, params).pipe(
+      tap((response: any) => {
+        // console.log(response);
+        this.unitsMeasures = new DefaultSelect(
+          response.data,
+          response.data.length
+        );
+      })
+    );
+  }
+
+  getFractions(body: any) {
+    return this.goodsCaptureService.getFractions(body);
+    // .pipe();
+  }
+
+  getLigieUinitDescription(unit: string) {
+    return this.goodsCaptureService.getLigieUnitDesc(unit).pipe(
+      tap((response: any) => {
+        this.formControls.unidadLigie.setValue(response.description);
+      })
+    );
+  }
+
+  fillFractions(fraction: any) {
+    this.chapters = new DefaultSelect([fraction], 1);
+    this.formControls.capitulo.setValue(fraction.chapter);
+    this.departures = new DefaultSelect([fraction], 1);
+    this.formControls.partida.setValue(fraction.departure);
+    this.sdepartures = new DefaultSelect([fraction], 1);
+    this.formControls.subpartida.setValue(fraction.sDeparture);
+    this.ssdepartures = new DefaultSelect([fraction], 1);
+    this.formControls.ssubpartida.setValue(fraction.ssDeparture);
+  }
+
+  getSatTransfer(body: any) {
+    return this.goodsCaptureService.getSatTransfer(body).pipe(
+      tap(response => {
+        console.log(response);
+      })
+    );
+  }
+
+  // TODO: Implementar micorservicio cuando este listo
+  getTempExp(officeKey: number | string) {
+    return of({ type: 1, officeNumber: '123' });
   }
 }
 

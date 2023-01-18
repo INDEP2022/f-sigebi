@@ -1,31 +1,43 @@
-<form-field class="col-md-3" [control]="form.get('entFed')">
+<form-field class="col-md-3" [control]="form.get(stateField)">
   <ngx-select
     [form]="form"
-    control="entFed"
+    [control]="stateField"
     [data]="states"
-    label="Entidad Federativa"></ngx-select>
+    value="id"
+    label="Entidad Federativa"
+    bindLabel="otWorth"
+    (fetchItems)="getStates($event)"></ngx-select>
 </form-field>
 
-<form-field class="col-md-3" [control]="form.get('municipio')">
+<form-field class="col-md-3" [control]="form.get(municipalityField)">
   <ngx-select
     [form]="form"
-    control="municipio"
+    [control]="municipalityField"
     [data]="municipalities"
-    label="Municipio"></ngx-select>
+    label="Municipio"
+    bindLabel="nameMunicipality"
+    value="idMunicipality"
+    (fetchItems)="getMunicipalities($event)"></ngx-select>
 </form-field>
 
-<form-field class="col-md-3" [control]="form.get('ciudad')">
+<form-field class="col-md-3" [control]="form.get(cityField)">
   <ngx-select
     [form]="form"
-    control="ciudad"
+    [control]="cityField"
     [data]="cities"
-    label="Ciudad"></ngx-select>
+    label="Ciudad"
+    bindLabel="nameCity"
+    value="idCity"
+    (fetchItems)="getCities($event)"></ngx-select>
 </form-field>
 
-<form-field class="col-md-3" [control]="form.get('localidad')">
+<form-field class="col-md-3" [control]="form.get(localityField)">
   <ngx-select
     [form]="form"
-    control="localidad"
+    [control]="localityField"
     [data]="localities"
-    label="Localidad"></ngx-select>
+    label="Localidad"
+    bindLabel="nameLocation"
+    value="id"
+    (fetchItems)="getLocalities($event)"></ngx-select>
 </form-field>

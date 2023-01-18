@@ -58,4 +58,11 @@ export class SatInterfaceService {
         })
       );
   }
+
+  getSatTransfer(body: any) {
+    return this.satInterfaceRepository.create(
+      'interfacesat/transfersat-v3/dynamicQuery',
+      body
+    );
+  }
 }
