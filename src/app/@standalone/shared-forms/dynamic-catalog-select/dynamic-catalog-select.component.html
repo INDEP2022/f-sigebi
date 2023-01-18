@@ -1,0 +1,50 @@
+<div [formGroup]="goodForm">
+  <ng-container *ngIf="!feature.cdtabla; then textInput; else selectInput">
+  </ng-container>
+  <ng-template #selectInput>
+    <form-field [control]="goodForm.get('val' + feature.no_columna)">
+      <ngx-select
+        (fetchItems)="getDynamicData($event)"
+        [data]="dynamicData"
+        [form]="goodForm"
+        value="value"
+        bindLabel="value"
+        [label]="feature.dsatributo"
+        [control]="'val' + feature.no_columna">
+      </ngx-select>
+    </form-field>
+  </ng-template>
+  <ng-template #textInput>
+    <form-field
+      [showRequiredMark]="true"
+      [control]="goodForm.get('val' + feature.no_columna)"
+      [label]="feature.dsatributo"
+      [ngSwitch]="feature.tipo_dato">
+      <input
+        type="number"
+        [formControlName]="'val' + feature.no_columna"
+        class="form-control"
+        [placeholder]="feature.descripcion"
+        *ngSwitchCase="'N'" />
+      <input
+        type="number"
+        [formControlName]="'val' + feature.no_columna"
+        class="form-control"
+        [placeholder]="feature.descripcion"
+        *ngSwitchCase="'F'" />
+      <input
+        type="text"
+        [formControlName]="'val' + feature.no_columna"
+        class="form-control"
+        [placeholder]="feature.descripcion"
+        *ngSwitchCase="'D'"
+        bsDatepicker />
+      <input
+        type="text"
+        [formControlName]="'val' + feature.no_columna"
+        class="form-control"
+        [placeholder]="feature.descripcion"
+        *ngSwitchDefault />
+    </form-field>
+  </ng-template>
+</div>
