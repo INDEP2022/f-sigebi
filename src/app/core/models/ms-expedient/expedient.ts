@@ -5,4 +5,6 @@ export interface IExpedient {
   preliminaryInquiry: string;
   criminalCase: string;
   noVolante: string;
+  circumstantialRecord: String;
+  keyPenalty: String;
 }

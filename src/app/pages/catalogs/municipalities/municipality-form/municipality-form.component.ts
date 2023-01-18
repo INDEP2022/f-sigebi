@@ -66,7 +66,7 @@ export class MunicipalityFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.municipalityService
-      .update(this.municipality.idMunicipality, this.municipalityForm.value)
+      .update(this.municipality.codeMunicipalityId, this.municipalityForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

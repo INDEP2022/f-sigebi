@@ -44,7 +44,7 @@ export enum ENDPOINT_LINKS {
   IndicatorReport = 'catalog/indicator-report',
   InstitutionClasification = 'catalog/institution-classification',
   IssuingInstitution = 'catalog/issuing-institution',
-  LabelOkey = 'catalog/label-okey',
+  LabelOkey = 'catalog/label-good',
   Lawyer = 'catalog/lawyer',
   LegalSupport = 'catalog/legal-supports',
   Legend = 'catalog/official-legends',
@@ -111,12 +111,13 @@ export enum ENDPOINT_LINKS {
   ZipCode = 'catalog/zip-code', //
   ZoneGeographic = 'catalog/zone-geographic',
   DocumentsForDictum = 'documents-for-dictum',
-  DinamicTables = 'dynamiccatalog/dinamic-tables',
+  DinamicTables = 'dynamiccatalog/api/v1/dinamic-tables',
   AffairType = 'affair-type',
   FinancialInformation = 'parameterfinantial/financial-information',
   FinancialIndicators = 'financial-indicators',
   AttributesFinancialInfo = 'attributes-financial-information',
   BankConcepts = 'concept-movis-bank',
+  NumeraryCategories = 'numerary-categories',
   //request
   request = 'request/request',
   //expedient

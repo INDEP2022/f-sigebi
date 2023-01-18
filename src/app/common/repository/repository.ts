@@ -14,7 +14,7 @@ export class Repository<T> implements IRepository<T> {
     route: string,
     _params?: ListParams
   ): Observable<IListResponse<T>> {
-    const params = this.makeParams(_params);
+    const params = _params ? this.makeParams(_params) : {};
     const fullRoute = this.buildRoute(route);
     return this.httpClient.get<IListResponse<T>>(`${fullRoute}`, { params });
   }
@@ -101,7 +101,7 @@ export class Repository<T> implements IRepository<T> {
   private makeParams(params: ListParams): HttpParams {
     let httpParams: HttpParams = new HttpParams();
     Object.keys(params).forEach(key => {
-      httpParams = httpParams.append(key, (params as any)[key]);
+      httpParams = httpParams.append(key, (params as any)[key] ?? '');
     });
     return httpParams;
   }
