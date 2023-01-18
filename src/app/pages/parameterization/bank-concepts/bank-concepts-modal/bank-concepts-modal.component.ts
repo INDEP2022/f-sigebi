@@ -34,7 +34,7 @@ export class BankConceptsModalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.bankConceptsForm = this.fb.group({
-      cve: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      key: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -67,7 +67,7 @@ export class BankConceptsModalComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.bankConceptsService
-      .update(this.bankConcepts.cve, this.bankConceptsForm.value)
+      .update(this.bankConcepts.key, this.bankConceptsForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

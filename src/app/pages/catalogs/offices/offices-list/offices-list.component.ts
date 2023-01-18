@@ -7,6 +7,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IOffice } from 'src/app/core/models/catalogs/office.model';
 import { OfficeService } from 'src/app/core/services/catalogs/office.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import Swal from 'sweetalert2';
 import { OfficeFormComponent } from '../office-form/office-form.component';
 import { OFFICES_COLUMNS } from './offices-columns';
 
@@ -66,6 +67,7 @@ export class OfficesListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(office.id);
+        Swal.fire('Borrado', '', 'success');
       }
     });
   }

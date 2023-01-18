@@ -56,7 +56,7 @@ export const CATALOGS_ROUTES = [
         link: '/pages/catalogs/clarifications',
       },
       {
-        label: 'Bodegas',
+        label: 'Almacenes',
         link: '/pages/catalogs/warehouses',
       },
       {
