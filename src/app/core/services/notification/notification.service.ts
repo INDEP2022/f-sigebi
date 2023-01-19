@@ -18,7 +18,7 @@ export class NotificationService implements ICrudMethods<AnyFn> {
   getMaxFlyer(expedientId: number | string) {
     return this.notificationRepository.getById(
       'notification/notification/max-flyer-number',
-      expedientId
+      expedientId + '/option/max'
     );
   }
 }

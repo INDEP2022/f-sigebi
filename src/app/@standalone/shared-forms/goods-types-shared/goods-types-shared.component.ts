@@ -143,7 +143,6 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
     if (!this.type.value) {
       this.types = new DefaultSelect([subtype.idTypeGood], 1);
       this.type.setValue(subtype.idTypeGood.id);
-      this.goodTypeChange.emit(subtype.idTypeGood);
     }
     this.resetFields([this.ssubtype, this.sssubtype]);
     this.ssubtypes = new DefaultSelect();
@@ -157,25 +156,20 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
       this.subtypes = new DefaultSelect([ssubtype.noSubType], 1);
       this.type.setValue(ssubtype.noType.id);
       this.subtype.setValue(ssubtype.noSubType.id);
-      this.goodTypeChange.emit(ssubtype.noType);
-      this.goodSubtypeChange.emit(ssubtype.noSubType);
     }
     this.resetFields([this.sssubtype]);
     this.goodSsubtypeChange.emit(ssubtype);
   }
 
   onSssubtypesChange(sssubtype: any) {
-    console.log(sssubtype);
     if (!this.type.value || !this.subtype.value || !this.ssubtype.value) {
+      console.log(sssubtype);
       this.types = new DefaultSelect([sssubtype.numType], 1);
       this.subtypes = new DefaultSelect([sssubtype.numSubType], 1);
       this.ssubtypes = new DefaultSelect([sssubtype.numSsubType], 1);
       this.type.setValue(sssubtype.numType.id);
       this.subtype.setValue(sssubtype.numSubType.id);
       this.ssubtype.setValue(sssubtype.numSsubType.id);
-      this.goodTypeChange.emit(sssubtype.numType);
-      this.goodSubtypeChange.emit(sssubtype.numSubType);
-      this.goodSsubtypeChange.emit(sssubtype.numSsubType);
     }
 
     this.goodSssubtypeChange.emit(sssubtype);

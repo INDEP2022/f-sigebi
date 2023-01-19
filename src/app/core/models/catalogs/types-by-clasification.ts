@@ -5,13 +5,13 @@ import { IGoodType } from './good-type.model';
 
 export interface ITypesByClasificationRaw {
   id: string;
-  noType: string;
+  noType: number;
   descType: string;
-  noSubtype: string;
+  noSubtype: number;
   descSubtype: string;
-  noSsubtype: string;
+  noSsubtype: number;
   descSsubtype: string;
-  noSssubtype: string;
+  noSssubtype: number;
   descSssubtype: string;
 }
 
