@@ -41,11 +41,6 @@ export class RegionalDelegationFormComponent
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       registerNumber: [null],
-      idEntity: [null],
-      creationUser: [null],
-      creationDate: [null],
-      editionUser: [null],
-      modificationDate: [null],
       idGeographicZona: [null],
       version: [null],
       regionalDelegate: [null],
@@ -84,10 +79,7 @@ export class RegionalDelegationFormComponent
   update() {
     this.loading = true;
     this.regionalDelegationService
-      .update(
-        this.regionalDelegation.id,
-        this.regionalDelegationForm.getRawValue()
-      )
+      .update(this.regionalDelegation.id, this.regionalDelegationForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

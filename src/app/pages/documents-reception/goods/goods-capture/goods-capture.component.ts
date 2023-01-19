@@ -1,174 +1,202 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { of } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { switchMap } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
-import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
-import { BasePage } from 'src/app/core/shared/base-page';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { GoodsCaptureService, IRecord } from '../service/goods-capture.service';
+import { GoodsCaptureMain } from './goods-capture-main';
 import {
-  GoodsCaptureService,
-  ICompensationGood,
-  IRecord,
-} from '../service/goods-capture.service';
-import { GoodsCaptureRecordSelectComponent } from './components/goods-capture-record-select/goods-capture-record-select.component';
-import { GOOD_CAPTURE_FORM } from './utils/good-capture-form';
-interface IGlobalVariables {
-  satIndicator: number;
-}
+  COMPENSATION_GOOD_CLASIF_NUMBER,
+  FLYERS_REGISTRATION_CODE,
+} from './utils/good-capture-constants';
+import { getDeparturesIdsFromFraction } from './utils/goods-capture-functions';
+import {
+  EXPEDIENT_IS_SAT,
+  TRANSFER_NULL_RECIVED,
+} from './utils/goods-capture-messages';
+
 @Component({
   selector: 'app-goods-capture',
   templateUrl: './goods-capture.component.html',
   styles: [],
 })
-export class GoodsCaptureComponent extends BasePage implements OnInit {
-  global: IGlobalVariables = {
-    satIndicator: null,
-  };
-  SAT_RECORD: number;
-  ligieButtonEnabled: boolean = true;
-  normsButtonEnabled: boolean = true;
-  regulationsButtonEnabled: boolean = true;
-  types = new DefaultSelect<IGoodType>();
-  subtypes = new DefaultSelect();
-  ssubtypes = new DefaultSelect();
-  sssubtypes = new DefaultSelect();
-  assetsForm = this.fb.group(GOOD_CAPTURE_FORM);
-  select = new DefaultSelect();
-  modalRef: BsModalRef;
+export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
   constructor(
-    private fb: FormBuilder,
-    private modalService: BsModalService,
-    private goodsCaptureService: GoodsCaptureService
+    fb: FormBuilder,
+    modalService: BsModalService,
+    goodsCaptureService: GoodsCaptureService,
+    activatedRoute: ActivatedRoute,
+    router: Router
   ) {
-    super();
-  }
-
-  get formControls() {
-    return this.assetsForm.controls;
+    super(fb, modalService, goodsCaptureService, activatedRoute, router);
   }
 
   ngOnInit(): void {
-    this.selectRecord();
+    this.getInitalParameter().subscribe({
+      next: () => this.initialParameterFound(),
+    });
   }
 
-  selectRecord() {
+  initialParameterFound() {
+    if (this.isCalledFrom(FLYERS_REGISTRATION_CODE)) {
+      this.whenIsCalledFromFlyers();
+      this.fillGoodFromParameters();
+    } else {
+      this.selectExpedient();
+    }
+
+    if (this.global.pIndicadorSat == 1 || this.global.pIndicadorSat == 0) {
+      this.fillSatSubject();
+    }
+  }
+
+  whenIsCalledFromFlyers() {
+    if (this.global.noTransferente == null) {
+      this.showError(TRANSFER_NULL_RECIVED);
+      this.router.navigate(['/pages/general-processes/work-mailbox']);
+      return;
+    }
+
+    if (this.global.gNoExpediente != null) {
+      // ? No hace nada
+      // this.getExpedientById(this.global.gNoExpediente as number).subscribe();
+      // .add({
+      //  this.validateExpedient()
+      // });
+    }
+  }
+
+  /**
+   * validateExpedient() {
+    this.goodsCaptureService
+      .getGoodsByRecordId(Number(this.global.gNoExpediente))
+      .subscribe({
+        next: response => {
+          console.log(response);
+          this.vExp = response.count;
+        },
+      });
+  }
+   * 
+   */
+
+  // ? ---------- La pantalla es llamanda desde el menú
+
+  selectExpedient() {
     const modalConfig: ModalOptions = {
       ...MODAL_CONFIG,
       class: 'modal-dialog-centered',
       initialState: {
-        callback: (record: IRecord) => {
-          this.getMaxPaperwork(record);
+        callback: (
+          expedient: IRecord,
+          isCompany: boolean,
+          goodCompany?: number
+        ) => {
+          this.afterSelectExpedient(expedient, isCompany, goodCompany);
         },
       },
     };
-    this.modalService.show(GoodsCaptureRecordSelectComponent, modalConfig);
+    this.showSelectRecord(modalConfig);
   }
 
-  handleMaxPaperworkError(error: HttpErrorResponse) {
-    this.SAT_RECORD = error.status == 404 ? 1 : 2;
-  }
-
-  getMaxPaperwork(record?: IRecord) {
-    of(2).subscribe({
-      next: max => (this.SAT_RECORD = max),
-      error: error => this.handleMaxPaperworkError(error),
-      complete: () => this.validateSatRecord(),
+  afterSelectExpedient(
+    expedient: IRecord,
+    isCompany: boolean,
+    companyGood?: number
+  ) {
+    const companyCtrl = this.assetsForm.controls.esEmpresa;
+    const expedientNum = this.assetsForm.controls.noExpediente;
+    this.global.gNoExpediente = expedient.idExpedient;
+    companyCtrl.setValue(isCompany);
+    expedientNum.setValue(Number(expedient.idExpedient));
+    this.focusInput('noClasifBien');
+    this.getMaxPaperWork(expedient).subscribe({
+      next: max => this.validateMaxPaperwork(max),
     });
+    if (this.global.gnuActivaGestion == '1') {
+      this.getMaxFlyerFromNotifications(expedient);
+    }
+    this.setIdenParam(expedient.identifies);
   }
 
-  validateSatRecord() {
-    if ((this.SAT_RECORD = 2)) {
-      this.onLoadToast(
-        'warning',
-        'Alerta',
-        'El nuevo bien es de Resarcimiento'
-      );
+  getMaxFlyerFromNotifications(record: IRecord) {
+    this.goodsCaptureService
+      .getMaxFlyerFromRecord(record.idExpedient)
+      .subscribe({
+        next: value => {
+          this.formControls.flyerNumber.setValue(value.no_volante);
+        },
+      });
+  }
+
+  async validateMaxPaperwork(max: number) {
+    if (max == 2) {
+      const response = await this.isCompensationGoodDialog();
+      if (!response.isConfirmed) {
+        this.showError(EXPEDIENT_IS_SAT);
+        return;
+      }
       this.getCompensationGood();
     }
   }
 
+  areTypesRequired() {
+    if (this.assetsForm.controls.esEmpresa.value) {
+      this.typesRequired(true);
+      this.focusInput('cantidad');
+    } else {
+      this.global.gNoExpediente = this.assetsForm.controls.noExpediente.value;
+      this.typesRequired(false);
+      this.focusInput('noClasifBien');
+    }
+  }
+
   getCompensationGood() {
-    this.goodsCaptureService.getGoodCompensation().subscribe({
-      next: response => this.fillGoodCompensation(response.data[0]),
+    this.getGoodTypesByClasifNum(COMPENSATION_GOOD_CLASIF_NUMBER).subscribe({
+      next: () => {
+        this.disableElementsWhenGoodCompensation();
+        this.focusInput('cantidad');
+      },
     });
   }
 
   goodClasifNumberChange() {
+    const clasifNum = this.formControls.noClasifBien.value;
+    this.getUnitsByClasifNum(clasifNum).subscribe();
+    if (!clasifNum) {
+      return;
+    }
     if (this.formControls.satIndicator.value == 0) {
     }
-    if (this.formControls.satIndicator.value == null) {
-      this.getGoodTypesByClasificationNumber();
+    if (this.formControls.satIndicator.value == 1) {
     }
-  }
-
-  getGoodTypesByClasificationNumber() {
-    const clasificationNumber = this.formControls.noClasifBien.value;
-    this.goodsCaptureService
-      .getGoodTypesByClasificationNumber(clasificationNumber)
-      .subscribe({
-        next: goodTypes => this.fillGoodCompensation(goodTypes.data[0]),
-        error: error => console.log(error),
-      });
-  }
-
-  /**
-   *
-   * @param compensationGood Bien de resarcimiento
-   */
-  fillGoodCompensation(compensationGood: ICompensationGood) {
-    const {
-      id,
-      noType,
-      descType,
-      noSubtype,
-      descSubtype,
-      noSsubtype,
-      descSsubtype,
-      noSssubtype,
-      descSssubtype,
-    } = compensationGood;
-
-    this.types = new DefaultSelect([{ id: noType, nameGoodType: descType }], 1);
-    this.subtypes = new DefaultSelect(
-      [{ id: noSubtype, nameSubtypeGood: descSubtype }],
-      1
-    );
-    this.ssubtypes = new DefaultSelect(
-      [{ id: noSsubtype, description: descSsubtype }],
-      1
-    );
-    this.sssubtypes = new DefaultSelect([
-      { id: noSssubtype, description: descSssubtype },
-      1,
-    ]);
-    this.formControls.noClasifBien.setValue(id);
-    this.formControls.type.setValue(noType);
-    this.formControls.subtype.setValue(noSubtype);
-    this.formControls.ssubtype.setValue(noSsubtype);
-    this.formControls.sssubtype.setValue(noSssubtype);
-    this.formControls.noClasifBien.disable();
-    this.formControls.type.disable();
-    this.formControls.subtype.disable();
-    this.formControls.ssubtype.disable();
-    this.formControls.sssubtype.disable();
-    this.ligieButtonEnabled = false;
-    this.normsButtonEnabled = false;
-    this.regulationsButtonEnabled = false;
-    this.formControls.estadoConservacion.disable();
-  }
-
-  hideObservations() {
-    this.modalRef.hide();
-  }
-
-  showObservations(modal: TemplateRef<any>) {
-    const modalConfig = { ...MODAL_CONFIG, class: 'modal-dialog-centered' };
-    this.modalRef = this.modalService.show(modal, modalConfig);
+    if (this.formControls.satIndicator.value == null) {
+      const clasifNum = this.formControls.noClasifBien.value;
+      this.getGoodTypesByClasifNum(clasifNum)
+        .pipe(switchMap(() => this.getGoodFeaturesByClasif(clasifNum)))
+        .subscribe();
+    }
   }
 
   save() {
     this.assetsForm.markAllAsTouched();
+  }
+
+  fractionChange() {
+    const fractionCtrl = this.formControls.noPartida;
+    if (!fractionCtrl.valid || !fractionCtrl.value) {
+      return;
+    }
+    const body = getDeparturesIdsFromFraction(fractionCtrl.value);
+    // if (this.formControls.satIndicator.value == 0) {
+    this.getFractions(body).subscribe({
+      next: (response: any) => {
+        this.fillFractions(response);
+        this.getGoodTypesByClasifNum(response.clasifGoodNumber).subscribe();
+        this.getLigieUinitDescription(response.ligieUnit).subscribe();
+      },
+    });
+    // }
   }
 }

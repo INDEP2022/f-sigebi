@@ -18,7 +18,11 @@
 
       <div class="row pt-3">
         <form-check label="¿Es Empresa?" for="isCompany">
-          <input type="checkbox" formControlName="esEmpresa" id="isCompany" />
+          <input
+            type="checkbox"
+            formControlName="esEmpresa"
+            id="isCompany"
+            (change)="isCompanyChange()" />
         </form-check>
       </div>
 

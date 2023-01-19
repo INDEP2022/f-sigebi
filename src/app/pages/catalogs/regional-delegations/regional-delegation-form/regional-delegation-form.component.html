@@ -13,7 +13,7 @@
         <div class="col-md-4">
           <form-field
             [control]="regionalDelegationForm.get('description')"
-            label="Descripción Hola">
+            label="Descripci&oacute;n">
             <input
               type="text"
               class="form-control"
@@ -22,12 +22,94 @@
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="regionalDelegationForm.get('creationUser')"
-            label="creationUser">
+            [control]="regionalDelegationForm.get('registerNumber')"
+            label="N&uacute;mero de registro">
             <input
               type="text"
               class="form-control"
-              formControlName="creationUser" />
+              formControlName="registerNumber" />
+          </form-field>
+        </div>
+      </div>
+      <!-- ------ -->
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field
+            [control]="regionalDelegationForm.get('idGeographicZona')"
+            label="ID Entidad">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idGeographicZona" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="regionalDelegationForm.get('version')"
+            label="Versi&oacute;n">
+            <input type="text" class="form-control" formControlName="version" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="regionalDelegationForm.get('regionalDelegate')"
+            label="Delegado Regional">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="regionalDelegate" />
+          </form-field>
+        </div>
+      </div>
+      <!-- ------ -->
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field
+            [control]="regionalDelegationForm.get('officeAddress')"
+            label="Domicilio de la oficina">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="officeAddress" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="regionalDelegationForm.get('status')"
+            label="Estado">
+            <input type="text" class="form-control" formControlName="status" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="regionalDelegationForm.get('keyZone')"
+            label="clave de la zona">
+            <input type="text" class="form-control" formControlName="keyZone" />
+          </form-field>
+        </div>
+      </div>
+      <!-- ------ -->
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field [control]="regionalDelegationForm.get('iva')" label="IVA">
+            <input type="text" class="form-control" formControlName="iva" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="regionalDelegationForm.get('city')"
+            label="Ciudad">
+            <input type="text" class="form-control" formControlName="city" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="regionalDelegationForm.get('keyState')"
+            label="Clave del estado">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="keyState" />
           </form-field>
         </div>
       </div>
