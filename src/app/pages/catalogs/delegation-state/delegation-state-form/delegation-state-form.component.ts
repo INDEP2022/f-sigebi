@@ -77,7 +77,7 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
   }
 
   stateChange(state: IStateOfRepublic) {
-    this.delegationStateForm.controls.keyState.setValue(state.cveState);
+    this.delegationStateForm.controls.keyState.setValue(state.id);
   }
 
   close() {

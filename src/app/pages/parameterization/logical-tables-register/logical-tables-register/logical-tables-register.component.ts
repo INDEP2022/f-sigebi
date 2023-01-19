@@ -10,6 +10,7 @@ import { LOGICAL_TABLES_REGISTER_COLUMNS } from './logical-tables-register-colum
 import { ITables } from 'src/app/core/models/catalogs/dinamic-tables.model';
 //service
 import { DinamicTablesService } from 'src/app/core/services/catalogs/dinamic-tables.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-logical-tables-register',
@@ -59,14 +60,15 @@ export class LogicalTablesRegisterComponent extends BasePage implements OnInit {
     this.modalService.show(LogicalTablesRegisterModalComponent, modalConfig);
   }
 
-  showDeleteAlert(documentsForDictum: ITables) {
+  showDeleteAlert(dinamicTables: ITables) {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.delete(documentsForDictum.table);
+        this.delete(dinamicTables.table);
+        Swal.fire('Borrado', '', 'success');
       }
     });
   }

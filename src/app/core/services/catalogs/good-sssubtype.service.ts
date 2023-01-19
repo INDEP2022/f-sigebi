@@ -17,10 +17,13 @@ export class GoodSssubtypeService implements ICrudMethods<IGoodSssubtype> {
     return this.goodSssubtypeRepository.getAllPaginated(this.route, params);
   }
 
-  getById(id: string | number): Observable<IGoodSssubtype> {
-    return this.goodSssubtypeRepository.getById(this.route, id);
-  }
+  // getById(id: string | number): Observable<IGoodSssubtype> {
+  //   return this.goodSssubtypeRepository.getById(this.route, id);
+  // }
 
+  getByIds(ids: Partial<IGoodSssubtype>): Observable<IGoodSssubtype> {
+    return this.goodSssubtypeRepository.getByIds(this.route, ids);
+  }
   create(model: IGoodSssubtype): Observable<IGoodSssubtype> {
     return this.goodSssubtypeRepository.create(this.route, model);
   }
