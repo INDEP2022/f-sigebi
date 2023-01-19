@@ -3,9 +3,9 @@
     <h5 class="title">Cat&aacute;logo de Mantenimiento de &Aacute;reas</h5>
     <div class="col-md-5 buttons">
       <div>
-        <button class="btn btn-primary active btn-sm ml-3" (click)="openForm()">
+        <!-- <button class="btn btn-primary active btn-sm ml-3" (click)="openForm()">
           Nuevo
-        </button>
+        </button> -->
       </div>
     </div>
   </div>
@@ -20,15 +20,17 @@
         <div class="col-md-6 col-sm-12 col-xs-12">
           <app-delegation-shared
             [form]="form"
-            [showDelegation]="false"></app-delegation-shared>
+            [showDelegation]="false"
+            (change)="onSubDelegationChange()"></app-delegation-shared>
         </div>
       </div>
     </form>
     <div class="table-responsive mt-5">
       <ng2-smart-table
         [settings]="settings"
-        [source]="data"
-        (edit)="openForm($event.data)"></ng2-smart-table>
+        [source]="departments"
+        (edit)="openForm($event.data)"
+        (delete)="delete($event.data.id)"></ng2-smart-table>
     </div>
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>
