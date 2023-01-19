@@ -1,3 +1,4 @@
 export enum ExpedientEndpoints {
-  GetCountByKey = `get-count-by-id`,
+  GetCountByKey = `expedient/get-count-by-id`,
+  FindIdentificator = `expedient/find-identificator`,
 }

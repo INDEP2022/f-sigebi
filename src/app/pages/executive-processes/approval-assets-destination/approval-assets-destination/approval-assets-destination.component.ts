@@ -87,7 +87,7 @@ export class ApprovalAssetsDestinationComponent
         if (response !== null) {
           this.form.patchValue(response);
           this.form.updateValueAndValidity();
-          this.getGoodsByExpedient(response.idExpedient);
+          this.getGoodsByExpedient(response.id);
         } else {
           //TODO: CHECK MESSAGE
           this.alert('info', 'No se encontrarón registros', '');

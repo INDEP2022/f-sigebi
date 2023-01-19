@@ -1,9 +1,8 @@
 import { Observable } from 'rxjs';
-import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 
 export interface IRead<T> {
   //TODO: ADD NEWS METHODS
-  getById?(route: string, id: number | string): Observable<IListResponse<T>>;
+  getById?(route: string, id: number | string): Observable<T>;
 }
 
 export interface IWrite<T> {}

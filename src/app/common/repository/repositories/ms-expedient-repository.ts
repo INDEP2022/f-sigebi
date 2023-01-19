@@ -1,18 +1,19 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { environment } from 'src/environments/environment';
 import { ListParams } from '../interfaces/list-params';
 import { IExpedientMethods } from '../interfaces/ms-expedient-methods';
 
 @Injectable({ providedIn: 'root' })
 export class ExpedientRepository<T> implements IExpedientMethods<T> {
+  ms: string = `${environment.API_URL}/expedient/api/v1`;
+
   constructor(public readonly httpClient: HttpClient) {}
 
-  getById(route: string, _id?: number | string): Observable<IListResponse<T>> {
-    const fullRoute = `${environment.API_URL}expedient/api/v1/expedient/${route}`;
-    return this.httpClient.get<IListResponse<T>>(`${fullRoute}/${_id}`);
+  getById(route: string, _id?: number | string): Observable<T> {
+    const fullRoute = `${this.ms}/${route}`;
+    return this.httpClient.get<T>(`${fullRoute}/${_id}`);
   }
 
   /*create(route: string, formData: Object) {

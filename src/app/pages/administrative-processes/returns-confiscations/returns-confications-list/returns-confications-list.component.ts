@@ -119,10 +119,10 @@ export class ReturnsConficationsListComponent
       response => {
         console.log(response);
         //TODO: Validate Response
-        if (response.data !== null) {
-          this.form.patchValue(response.data[0]);
+        if (response !== null) {
+          this.form.patchValue(response);
           this.form.updateValueAndValidity();
-          this.getGoodsByExpedient(response.data[0].id);
+          this.getGoodsByExpedient(response.id);
         } else {
           //TODO: CHECK MESSAGE
           this.alert('info', 'No se encontrarón registros', '');
@@ -139,6 +139,7 @@ export class ReturnsConficationsListComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGoods(id));
   }
+
   getGoods(id: string | number): void {
     this.goodService.getByExpedient(id, this.params.getValue()).subscribe(
       response => {

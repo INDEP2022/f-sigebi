@@ -8,12 +8,12 @@ import { IGoodMethods } from '../interfaces/ms-good-methods';
 
 @Injectable({ providedIn: 'root' })
 export class GoodRepository<T> implements IGoodMethods<T> {
-  ms: string = `${environment.API_URL}/good`;
+  ms: string = `${environment.API_URL}/good/api/v1`;
 
   constructor(public readonly httpClient: HttpClient) {}
 
   getAll(route: string, _params?: ListParams): Observable<IListResponse<T>> {
-    const fullRoute = `${this.ms}/api/v1/${route}`;
+    const fullRoute = `${this.ms}/${route}`;
     const params = this.makeParams(_params);
 
     return this.httpClient.get<IListResponse<T>>(`${fullRoute}`, { params });
@@ -24,7 +24,7 @@ export class GoodRepository<T> implements IGoodMethods<T> {
     id: number | string,
     _params?: ListParams
   ): Observable<IListResponse<T>> {
-    const fullRoute = `${this.ms}/api/v1/${route}`;
+    const fullRoute = `${this.ms}/${route}`;
     const params = this.makeParams(_params);
     return this.httpClient.get<IListResponse<T>>(`${fullRoute}/${id}`, {
       params,
@@ -32,7 +32,7 @@ export class GoodRepository<T> implements IGoodMethods<T> {
   }
 
   update(route: string, id: number | string, formData: Object) {
-    const fullRoute = `${this.ms}/api/v1/${route}`;
+    const fullRoute = `${this.ms}/${route}`;
     return this.httpClient.put(`${fullRoute}/${id}`, formData);
   }
   /*create(route: string, formData: Object) {
