@@ -7,7 +7,7 @@ import { IExpedientMethods } from '../interfaces/ms-expedient-methods';
 
 @Injectable({ providedIn: 'root' })
 export class ExpedientRepository<T> implements IExpedientMethods<T> {
-  ms: string = `${environment.API_URL}/expedient/api/v1`;
+  ms: string = `${environment.API_URL}expedient/api/v1`;
 
   constructor(public readonly httpClient: HttpClient) {}
 
