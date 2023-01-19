@@ -14,6 +14,6 @@ export class ExpedientService {
   constructor(private expedientRepository: ExpedientRepository<IExpedient>) {}
 
   getById(id: string | number): Observable<IExpedient> {
-    return this.expedientRepository.getById(this.route.FindByKey, id);
+    return this.expedientRepository.getById(this.route.FindIdentificator, id);
   }
 }
