@@ -1,14 +1,15 @@
 import { Location } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { forkJoin } from 'rxjs';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { PHONE_PATTERN } from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
 import { IRequest } from '../../../../core/models/requests/request.model';
-import { AuthorityService } from '../../../../core/services/catalogs/Authority.service';
+import { AuthorityService } from '../../../../core/services/catalogs/authority.service';
 import { RegionalDelegationService } from '../../../../core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from '../../../../core/services/catalogs/state-of-republic.service';
 import { StationService } from '../../../../core/services/catalogs/station.service';
@@ -27,7 +28,7 @@ export class RegistrationOfRequestsComponent
 {
   registRequestForm: ModelForm<IRequest>;
   edit: boolean = false;
-  title: string = 'title';
+  title: string = 'Registro de solicitud con folio: ';
   parameter: any;
   object: any = '';
   request: any = {};
@@ -82,21 +83,13 @@ export class RegistrationOfRequestsComponent
   }
 
   ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    this.title = 'Registro de solicitud con folio: ' + id;
     let path: any = window.location.pathname.split('/');
     this.setView(path[4]);
     this.intiTabs();
     this.prepareForm();
-
-    const id = this.route.snapshot.paramMap.get('id');
-
-    this.requestService.getById(id).subscribe((data: any) => {
-      let request = data.data;
-      request.receptionDate = this.bsValue;
-      this.object = request as IRequest;
-
-      this.registRequestForm.patchValue(request);
-      this.getData(request);
-    });
+    this.getRequest(id);
   }
 
   prepareForm() {
@@ -115,11 +108,14 @@ export class RegistrationOfRequestsComponent
       id: [null],
       urgentPriority: [null],
       originInfo: [null],
-      receptionDate: [null],
-      paperDate: [null],
+      receptionDate: [{ value: null, disabled: true }],
+      paperDate: [null, Validators.required],
       typeRecord: [null],
       publicMinistry: [null],
-
+      nameOfOwner: [null], //nombre remitente
+      holderCharge: [null], //cargo remitente
+      phoneOfOwner: [null, Validators.pattern(PHONE_PATTERN)], //telefono remitente
+      emailOfOwner: [null, Validators.email], //email remitente
       court: [null],
       crime: [null],
       receiptRoute: [null],
@@ -131,8 +127,18 @@ export class RegistrationOfRequestsComponent
     });
   }
 
+  getRequest(id: any) {
+    this.requestService.getById(id).subscribe((data: any) => {
+      let request = data.data;
+      request.receptionDate = new Date().toISOString();
+      this.object = request as IRequest;
+
+      this.registRequestForm.patchValue(request);
+      this.getData(request);
+    });
+  }
+
   getData(request: any) {
-    debugger;
     const stateOfRepublicService = this.stateOfRepublicService.getById(
       request.keyStateOfRepublic
     );
@@ -158,7 +164,6 @@ export class RegistrationOfRequestsComponent
       authorityervice,
     ]).subscribe(
       ([_state, _transferent, _station, _delegation, _authority]) => {
-        debugger;
         let state = _state as any;
         let transferent = _transferent as any;
         let station = _station as any;

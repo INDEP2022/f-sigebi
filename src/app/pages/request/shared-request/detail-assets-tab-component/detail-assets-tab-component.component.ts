@@ -1,5 +1,6 @@
 import {
   Component,
+  inject,
   Input,
   OnChanges,
   OnInit,
@@ -12,7 +13,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { GenericService } from 'src/app/core/services/catalogs/generic.service';
+import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { SelectAddressComponent } from '../../transfer-request/tabs/records-of-request-components/records-of-request-child-tabs-components/select-address/select-address.component';
@@ -24,24 +28,28 @@ import { SelectAddressComponent } from '../../transfer-request/tabs/records-of-r
 })
 export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
   //usado para cargar los adatos de los bienes en el caso de cumplimientos de bienes y clasificacion de bienes
-  @Input() detailAssets: any;
+  @Input() detailAssets: ModelForm<any>;
   @Input() typeDoc: any;
   bsModalRef: BsModalRef;
   assetsForm: ModelForm<any>;
+
   selectSae = new DefaultSelect<any>();
   selectConservationState = new DefaultSelect<any>();
 
+  goodTypeName: string = '';
+  duplicity: boolean = false;
+
   //tipo de bien seleccionado
   otherAssets: boolean = false;
-  carsAssets: boolean = true;
-  boatAssets: boolean = true;
-  jewelerAssets: boolean = true;
-  aircraftAssets: boolean = true;
-  especialMachineryAssets: boolean = true;
+  carsAssets: boolean = false;
+  boatAssets: boolean = false;
+  jewelerAssets: boolean = false;
+  aircraftAssets: boolean = false;
+  especialMachineryAssets: boolean = false;
   mineralsAssets: boolean = false;
   immovablesAssets: boolean = false;
   manejeAssets: boolean = false; //diverso
-  foodAndDrink: boolean = true; //diverso
+  foodAndDrink: boolean = false; //diverso
 
   //selectores
   selectQuantityTransfer = new DefaultSelect<any>();
@@ -60,22 +68,59 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
   selectTypeAirplane = new DefaultSelect<any>();
   selectTypeUseAirCrafte = new DefaultSelect<any>();
 
+  typeRelevantSevice = inject(TypeRelevantService);
+  genericService = inject(GenericService);
+
   constructor(private fb: FormBuilder, private modalServise: BsModalService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.typeDoc === 'clarification') {
       console.log(changes['detailAssets'].currentValue);
     }
+
+    this.detailAssets.controls['goodTypeId'].valueChanges.subscribe(
+      (data: any) => {
+        console.log(this.detailAssets.getRawValue());
+        if (data) {
+          this.getTypeGood(this.detailAssets.controls['goodTypeId'].value);
+          this.displayTypeTapInformation(Number(data));
+        }
+      }
+    );
   }
 
   ngOnInit(): void {
-    this.initForm();
+    //this.initForm();
     console.log('tipo de bien');
     console.log(this.typeDoc);
+    this.getDestinyTransfer(new ListParams());
+    this.getPhysicalState(new ListParams());
+    this.getConcervationState(new ListParams());
+
     //console.log('detalle del objeto enviado');
     //console.log(this.detailAssets);
 
-    this.initInputs();
+    //this.initInputs();
+    this.detailAssets.controls['transferentDestiny'].valueChanges.subscribe(
+      (data: any) => {
+        if (data) {
+          let value = this.selectDestinyTransfer.data.filter(
+            x => x.keyId === data
+          );
+          this.detailAssets.controls['destiny'].setValue(value[0].description);
+        }
+      }
+    );
+
+    /*this.detailAssets.controls['duplicity'].valueChanges.subscribe(
+      (data: any) => {
+        if (data == true) {
+          this.detailAssets.controls['duplicity'].setValue('Y');
+        } else {
+          this.detailAssets.controls['duplicity'].setValue('N');
+        }
+      }
+    );*/
   }
 
   initForm() {
@@ -219,11 +264,33 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
 
   getQuantityTransfer(event: any) {}
 
-  getPhysicalState(event: any) {}
+  getPhysicalState(params: ListParams) {
+    params.text = 'Estado Fisico';
+    this.genericService.getAll(params).subscribe({
+      next: (data: any) => {
+        this.selectPhysicalState = new DefaultSelect(data.data, data.count);
+      },
+    });
+  }
 
-  getConcervationState(event: any) {}
+  getConcervationState(params: ListParams) {
+    params.text = 'Estado Conservacion';
+    this.genericService.getAll(params).subscribe({
+      next: (data: any) => {
+        this.selectConcervationState = new DefaultSelect(data.data, data.count);
+      },
+    });
+  }
 
-  getDestinyTransfer(event: any) {}
+  getDestinyTransfer(params: ListParams) {
+    params.text = 'Destino';
+    this.genericService.getAll(params).subscribe({
+      next: (data: any) => {
+        this.selectDestinyTransfer = new DefaultSelect(data.data, data.count);
+        this.detailAssets.controls['transferentDestiny'].setValue('1');
+      },
+    });
+  }
 
   getTansferUnitMeasure(event: any) {}
 
@@ -247,7 +314,15 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
 
   getTypeUseAirCrafte(event: any) {}
 
+  modifyResponse(event: any) {
+    console.log(event.currentTarget.checked);
+    let checked = event.currentTarget.checked;
+    let value = checked === true ? 'Y' : 'N';
+    this.detailAssets.controls['duplicity'].setValue(value);
+  }
+
   initInputs(): void {
+    //control de disable de pantalla
     if (this.typeDoc === 'verify-compliance') {
       this.assetsForm.disable();
     } else if (this.typeDoc === 'classify-assets') {
@@ -257,6 +332,7 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
       this.assetsForm.controls['destintSae'].enable();
     } else if (this.typeDoc === 'assets') {
       this.assetsForm.controls['address'].disable();
+
       /* this.assetsForm.controls['referenceVia2'].disable();
       this.assetsForm.controls['state'].disable();
       this.assetsForm.controls['referenceVia3'].disable();
@@ -296,6 +372,36 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
       //this.assetsForm.controls['address'].get('longitud').enable();
       //this.requestForm.get('receiUser').patchValue(res.user);
     });
+  }
+
+  getTypeGood(id: number) {
+    this.typeRelevantSevice.getById(id).subscribe({
+      next: (data: any) => {
+        console.log('typeGood:', data);
+        this.goodTypeName = data.data.description;
+      },
+    });
+  }
+
+  displayTypeTapInformation(typeRelevantId: number) {
+    /*otherAssets: boolean = false;
+    
+    boatAssets: boolean = false;
+    jewelerAssets: boolean = false;
+    aircraftAssets: boolean = false;
+    especialMachineryAssets: boolean = false;
+    mineralsAssets: boolean = false;
+    immovablesAssets: boolean = false;
+    manejeAssets: boolean = false; //diverso
+    foodAndDrink: boolean = false; //diverso*/
+    switch (typeRelevantId) {
+      case 2:
+        this.carsAssets = true;
+        break;
+
+      default:
+        break;
+    }
   }
 
   save(): void {

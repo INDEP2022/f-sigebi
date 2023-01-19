@@ -5,4 +5,5 @@ export class ListParams {
   [others: string]: string | number;
   page?: number = 1;
   take?: number = 10;
+  'filter.level'?: any = 0;
 }

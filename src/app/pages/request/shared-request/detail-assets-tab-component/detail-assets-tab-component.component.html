@@ -8,7 +8,7 @@
       </div>
     </div>
   </div>
-  <form [formGroup]="assetsForm" class="form-material">
+  <form [formGroup]="detailAssets" class="form-material">
     <tabset class="md-tabs">
       <tab id="tab1">
         <ng-template tabHeading>
@@ -27,7 +27,7 @@
                 mineralsAssets === true
               ">
               <form-field
-                [control]="assetsForm.get('noManagement')"
+                [control]="detailAssets.get('noManagement')"
                 label="No&#46; Gesti&oacute;n">
                 <input
                   type="text"
@@ -37,18 +37,20 @@
             </div>
             <div class="col-md-3">
               <form-field
-                [control]="assetsForm.get('typeAsset')"
+                [control]="detailAssets.get('goodTypeId')"
                 label="Tipo Bien">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="typeAsset" />
+                  [ngModelOptions]="{ standalone: true }"
+                  [(ngModel)]="goodTypeName"
+                  [readOnly]="true" />
               </form-field>
             </div>
           </div>
           <div class="row pt-4">
             <div class="col-md-3">
-              <form-field [control]="assetsForm.get('color')" label="Color">
+              <form-field [control]="detailAssets.get('color')" label="Color">
                 <input
                   type="text"
                   class="form-control"
@@ -57,21 +59,21 @@
             </div>
             <div class="col-md-5">
               <form-field
-                [control]="assetsForm.get('descripTransfeAsset')"
+                [control]="detailAssets.get('goodDescription')"
                 label="Descripci&oacute;n de bien Transferente">
                 <textarea
                   class="form-control"
-                  formControlName="descripTransfeAsset"></textarea>
+                  formControlName="goodDescription"></textarea>
               </form-field>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
               <form-field
-                [control]="assetsForm.get('transferQuantity')"
+                [control]="detailAssets.get('quantity')"
                 label="&#42;Cantidad de la Transferente">
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="transferQuantity" />
+                  formControlName="quantity" />
               </form-field>
             </div>
           </div>
@@ -82,37 +84,39 @@
                 <input
                   id="duplicity"
                   type="checkbox"
-                  formControlName="duplicity" />
+                  [ngModelOptions]="{ standalone: true }"
+                  [(ngModel)]="duplicity"
+                  (change)="modifyResponse($event)" />
               </form-check>
             </div>
             <div class="col-md-3">
               <form-field
-                [control]="assetsForm.get('capacityLts')"
+                [control]="detailAssets.get('capacity')"
                 label="Capacidad &#40;lts&#46;&#41;">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="capacityLts" />
+                  formControlName="capacity" />
               </form-field>
             </div>
             <div class="col-md-3">
               <form-field
-                [control]="assetsForm.get('volumem3')"
+                [control]="detailAssets.get('volume')"
                 label="Volumen m3">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="volumem3" />
+                  formControlName="volume" />
               </form-field>
             </div>
             <div class="col-md-3">
               <form-field
-                [control]="assetsForm.get('noExpedient')"
+                [control]="detailAssets.get('fileeNumber')"
                 label="No&#46; Exp&#46; de la transferente">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="noExpedient" />
+                  formControlName="fileeNumber" />
               </form-field>
             </div>
           </div>
@@ -120,37 +124,39 @@
           <div class="row pt-4">
             <div class="col-md-4">
               <form-field
-                [control]="assetsForm.get('noExpedient')"
+                [control]="detailAssets.get('useType')"
                 label="Tipo de Uso">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="noExpedient" />
+                  formControlName="useType" />
               </form-field>
             </div>
             <div class="col-md-4">
               <ngx-select
-                [form]="assetsForm"
-                control="physicalState"
+                [form]="detailAssets"
+                control="physicalStatus"
                 (fetchItems)="getPhysicalState($event)"
                 [data]="selectPhysicalState"
                 label="Estado F&iacute;sico"
-                value="id"
-                bindLabel="physicalState"></ngx-select>
+                [searchable]="false"
+                bindLabel="description"
+                value="keyId"></ngx-select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
               <ngx-select
-                [form]="assetsForm"
-                control="conservationState"
+                [form]="detailAssets"
+                control="stateConservation"
                 (fetchItems)="getConcervationState($event)"
                 [data]="selectConcervationState"
-                label="Estado de Concervaci&iacute;n"
-                value="id"
-                bindLabel="conservationState"></ngx-select>
+                label="Estado de Concervaci&oacute;n"
+                [searchable]="false"
+                bindLabel="description"
+                value="keyId"></ngx-select>
             </div>
             <div class="col-md-4">
               <form-field
-                [control]="assetsForm.get('origin')"
+                [control]="detailAssets.get('origin')"
                 label="Procedencia">
                 <input
                   type="text"
@@ -160,17 +166,20 @@
             </div>
             <div class="col-md-4">
               <form-field
-                [control]="assetsForm.get('LigieUnitMeasure')"
+                [control]="detailAssets.get('ligieUnit')"
                 label="Unidad de Medida Ligie">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="LigieUnitMeasure" />
+                  formControlName="ligieUnit" />
               </form-field>
             </div>
             <div class="col-md-2">
               <form-check label="Avalúo" for="aval&uacute;o">
-                <input id="avaluo" type="checkbox" formControlName="avaluo" />
+                <input
+                  id="avaluo"
+                  type="checkbox"
+                  formControlName="appraisal" />
               </form-check>
             </div>
           </div>
@@ -178,90 +187,84 @@
           <div class="row pt-4">
             <div class="col-md-4">
               <form-field
-                [control]="assetsForm.get('destinyLigie')"
+                [control]="detailAssets.get('destiny')"
                 label="Destino Ligie">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="destinyLigie" />
+                  formControlName="destiny"
+                  [readOnly]="true" />
               </form-field>
             </div>
             <div class="col-md-4">
               <ngx-select
-                [form]="assetsForm"
-                control="destinyTransfer"
+                [form]="detailAssets"
+                control="transferentDestiny"
                 (fetchItems)="getDestinyTransfer($event)"
                 [data]="selectDestinyTransfer"
                 label="&#42;Destino Transferente"
-                value="id"
-                bindLabel="destinyTransfer"></ngx-select>
+                [searchable]="false"
+                bindLabel="description"
+                value="keyId"></ngx-select>
             </div>
             <div
               class="col-md-3"
               *ngIf="otherAssets === true || manejeAssets === true">
-              <form-check label="Cumple Norma" for="meetNoraml">
+              <form-check label="Cumple Norma" for="compliesNorm">
                 <input
-                  id="meetNoraml"
+                  id="compliesNorm"
                   type="checkbox"
-                  formControlName="meetNoraml" />
+                  formControlName="compliesNorm" />
               </form-check>
             </div>
-            <div
-              class="col-md-4"
-              *ngIf="
-                carsAssets === true ||
-                boatAssets === true ||
-                jewelerAssets === true ||
-                aircraftAssets === true ||
-                especialMachineryAssets === true ||
-                mineralsAssets === true ||
-                immovablesAssets === true ||
-                foodAndDrink === true
-              ">
-              <form-field [control]="assetsForm.get('notes')" label="Notas">
+            <div class="col-md-3">
+              <form-field
+                [control]="detailAssets.get('notesTransferringEntity')"
+                label="Notas">
                 <textarea
                   class="form-control"
-                  formControlName="notes"></textarea>
+                  formControlName="notesTransferringEntity"></textarea>
               </form-field>
             </div>
           </div>
 
           <div class="row pt-4">
             <div class="col-md-4">
-              <!-- ver -->
               <ngx-select
-                [form]="assetsForm"
-                control="tansferUnitMeasure"
+                [form]="detailAssets"
+                control="unitMeasure"
                 (fetchItems)="getTansferUnitMeasure($event)"
                 [data]="selectTansferUnitMeasure"
                 label="&#42;Unid&#46; Medida Transferente"
                 value="id"
-                bindLabel="tansferUnitMeasure"></ngx-select>
+                bindLabel="unitMeasure"></ngx-select>
             </div>
             <div
               class="col-md-4"
               *ngIf="otherAssets === true || manejeAssets === true">
-              <form-field [control]="assetsForm.get('notes')" label="Notas">
+              <form-field
+                [control]="detailAssets.get('notesTransferringEntity')"
+                label="Notas">
                 <textarea
                   class="form-control"
-                  formControlName="notes"></textarea>
+                  formControlName="notesTransferringEntity"></textarea>
               </form-field>
             </div>
             <div class="col-md-4" *ngIf="typeDoc === 'classify-assets'">
               <ngx-select
-                [form]="assetsForm"
-                control="destintSae"
+                [form]="detailAssets"
+                control="saeDestiny"
                 (fetchItems)="getDestintSae($event)"
                 [data]="selectDestintSae"
                 label="Destino SEA"
                 value="id"
-                bindLabel="destintSae"></ngx-select>
+                bindLabel="saeDestiny"></ngx-select>
             </div>
           </div>
         </div>
       </tab>
       <!-- Domicilio del bien tab -->
-      <tab>
+      <!--  <tab>
         <ng-template tabHeading>
           <i class="bx bx-home"></i> Domicilio del Bien
         </ng-template>
@@ -464,13 +467,13 @@
             </div>
           </div>
         </div>
-      </tab>
+      </tab> -->
       <!-- Información del  vehiculo tab -->
       <tab *ngIf="carsAssets">
         <ng-template tabHeading>
           <i class="bx bxs-car"></i> Informaci&oacute;n de Veh&iacute;culo
         </ng-template>
-        <div formGroupName="vehicle" class="vehicleDateSheet">
+        <!--<div formGroupName="vehicle" class="vehicleDateSheet">
           <div class="row pt-5">
             <div class="col-md-4">
               <ngx-select
@@ -608,10 +611,10 @@
               </form-check>
             </div>
           </div>
-        </div>
+        </div>-->
       </tab>
       <!-- Información de Embarcación  -->
-      <tab *ngIf="boatAssets">
+      <!--  <tab *ngIf="boatAssets">
         <ng-template tabHeading>
           <i class="bx bx-anchor"></i> Informaci&oacute;n de Embarcaci&oacute;n
         </ng-template>
@@ -813,14 +816,14 @@
             </div>
           </div>
         </div>
-      </tab>
+      </tab> -->
       <!-- Informacion Joyeria -->
-      <tab *ngIf="jewelerAssets">
+      <!-- <tab *ngIf="jewelerAssets">
         <ng-template tabHeading>
           <i class="bx bx-disc"></i> Informaci&oacute;n de Joya
         </ng-template>
         <div formGroupName="jewel" class="jewelInformation">
-          <div class="row-pt-5">
+          <div class="row pt-4">
             <div class="col-md-4">
               <form-field [control]="assetsForm.get('jewel')" label="Kilataje">
                 <input
@@ -849,9 +852,9 @@
             </div>
           </div>
         </div>
-      </tab>
+      </tab> -->
       <!-- Informacion aereonaves -->
-      <tab *ngIf="aircraftAssets">
+      <!--  <tab *ngIf="aircraftAssets">
         <ng-template tabHeading>
           <i class="bx bx-flag"></i> Informaci&oacute;n de Aeronave
         </ng-template>
@@ -989,9 +992,9 @@
             </div>
           </div>
         </div>
-      </tab>
+      </tab> -->
       <!-- Informacion inmuebles -->
-      <tab *ngIf="immovablesAssets">
+      <!-- <tab *ngIf="immovablesAssets">
         <ng-template tabHeading>
           <i class="bx bx-building"></i> Bien Inmueble
         </ng-template>
@@ -1226,7 +1229,7 @@
             </div>
           </div>
         </div>
-      </tab>
+      </tab> -->
     </tabset>
   </form>
 </div>

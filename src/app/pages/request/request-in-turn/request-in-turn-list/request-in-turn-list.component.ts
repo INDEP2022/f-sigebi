@@ -10,7 +10,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
 import { IRequest } from '../../../../core/models/requests/request.model';
 import { AffairService } from '../../../../core/services/catalogs/affair.service';
-import { AuthorityService } from '../../../../core/services/catalogs/Authority.service';
+import { AuthorityService } from '../../../../core/services/catalogs/authority.service';
 import { RegionalDelegationService } from '../../../../core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from '../../../../core/services/catalogs/state-of-republic.service';
 import { StationService } from '../../../../core/services/catalogs/station.service';

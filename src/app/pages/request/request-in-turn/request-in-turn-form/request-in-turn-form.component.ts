@@ -15,7 +15,7 @@ import { IStateOfRepublic } from '../../../../core/models/catalogs/state-of-repu
 import { IStation } from '../../../../core/models/catalogs/station.model';
 import { ITransferente } from '../../../../core/models/catalogs/transferente.model';
 import { AffairService } from '../../../../core/services/catalogs/affair.service';
-import { AuthorityService } from '../../../../core/services/catalogs/Authority.service';
+import { AuthorityService } from '../../../../core/services/catalogs/authority.service';
 import { StateOfRepublicService } from '../../../../core/services/catalogs/state-of-republic.service';
 import { StationService } from '../../../../core/services/catalogs/station.service';
 import { TransferenteService } from '../../../../core/services/catalogs/transferente.service';
@@ -95,6 +95,7 @@ export class RequestInTurnFormComponent implements OnInit {
   }
 
   getStateOfRepublic(params?: ListParams) {
+    params.text = params.text == null ? '' : params.text;
     this.stateOfRepublic
       .getAll(params)
       .subscribe((data: IListResponse<IStateOfRepublic>) => {
@@ -103,6 +104,7 @@ export class RequestInTurnFormComponent implements OnInit {
   }
 
   getStation(params?: ListParams) {
+    params.text = params.text == null ? '' : params.text;
     this.stationService
       .getAll(params)
       .subscribe((data: IListResponse<IStation>) => {
@@ -111,6 +113,7 @@ export class RequestInTurnFormComponent implements OnInit {
   }
 
   getAuthority(params?: ListParams) {
+    params.text = params.text == null ? '' : params.text;
     this.authorityService
       .getAll(params)
       .subscribe((data: IListResponse<IAuthority>) => {
@@ -135,6 +138,7 @@ export class RequestInTurnFormComponent implements OnInit {
       let index = i.toString();
       params[`filters[${index}]`] = JSON.stringify(this.filters[i]);
     }
+    console.log(params);
 
     this.sendSearchForm.emit(params);
   }
@@ -161,10 +165,11 @@ export class RequestInTurnFormComponent implements OnInit {
     this.filters.push(porTurnarFiltro);
 
     if (this.searchForm.controls['dateRequest'].value != null) {
+      let dateStart = this.searchForm.controls['dateRequest'].value[0];
       let filtro = {
         property: 'fecha_solicitud',
         comparison: 'EQUAL',
-        value: this.searchForm.controls['dateRequest'].value,
+        value: new Date(dateStart).toISOString(),
       };
       this.filters.push(filtro);
     }
