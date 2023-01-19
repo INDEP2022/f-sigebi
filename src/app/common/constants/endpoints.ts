@@ -109,6 +109,7 @@ export enum ENDPOINT_LINKS {
   TypeServices = 'catalog/type-services',
   Warehouse = 'catalog/warehouse',
   ZipCode = 'catalog/zip-code', //
+  documents = 'documents/api/v1/documents-dictum-x-state-m/expedient',
   ZoneGeographic = 'catalog/zone-geographic',
   DocumentsForDictum = 'documents-for-dictum',
   DinamicTables = 'dynamiccatalog/api/v1/dinamic-tables',
