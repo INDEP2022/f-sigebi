@@ -1,5 +1,5 @@
 export interface IDocumentsForDictum {
-  id?: string;
+  id?: number;
   description: string;
   typeDictum: string;
   //numRegister: number;
