@@ -58,6 +58,7 @@ export class AuthInterceptor extends BasePage implements HttpInterceptor {
 
   async handleError(error: HttpErrorResponse) {
     const status = error.status;
+    console.log(error);
     const message = error?.error?.message ?? 'Unknown error';
     if (status === 0) {
       this.onLoadToast('error', 'Error', 'Unable to connect to server');
