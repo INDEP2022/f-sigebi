@@ -18,6 +18,9 @@ export const REGIONAL_DELEGATIONS_COLUMNS = {
     title: 'Zona geográfica',
     type: 'string',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value.description;
+    },
   },
   version: {
     title: 'Versión',
