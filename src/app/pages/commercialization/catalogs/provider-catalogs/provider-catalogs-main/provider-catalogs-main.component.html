@@ -9,10 +9,10 @@
           <form-field [control]="providerForm.get('id')">
             <ngx-select
               [form]="providerForm"
-              [data]="eventItems"
+              [data]="providerItems"
               label="Id Proveedor"
-              value="id"
-              bindLabel="id"
+              value="providerId"
+              bindLabel="providerId"
               (fetchItems)="getProviders($event)"
               control="id"
               (change)="getData($event)">
