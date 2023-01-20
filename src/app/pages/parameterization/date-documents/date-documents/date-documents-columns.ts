@@ -1,33 +1,38 @@
+import { IKey } from 'src/app/core/models/catalogs/date-documents.model';
+
 export const DATEDOCUMENTS_COLUMNS = {
-  exp: {
+  expedientNumber: {
     title: 'Exp.',
+    type: 'number',
     sort: false,
   },
-  goods: {
+  stateNumber: {
     title: 'Bien',
+    type: 'number',
     sort: false,
   },
-  typeDictates: {
+  typeDictum: {
     title: 'Tipo Dicta',
     sort: false,
   },
-  document: {
-    title: 'Tipo Dicta',
+  key: {
+    title: 'Documento',
+    valuePrepareFunction: (value: IKey) => {
+      return value.key + ' - ' + value.description;
+    },
+
     sort: false,
   },
-  receipt: {
-    title: 'Tipo Dicta',
+
+  dateReceipt: {
+    title: 'Recibo',
     sort: false,
   },
-  notification: {
-    title: 'Tipo Dicta',
-    sort: false,
-  },
-  user: {
+  userReceipt: {
     title: 'Usuario',
     sort: false,
   },
-  insertion: {
+  insertionDate: {
     title: 'Inserción',
     sort: false,
   },
