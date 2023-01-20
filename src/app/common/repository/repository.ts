@@ -115,6 +115,11 @@ export class Repository<T> implements IRepository<T> {
   getById2(route: string, id: number | string): Observable<T> {
     return this.httpClient.get<T>(`${environment.API_URL2}${route}/${id}`);
   }
+  getById3(route: string, id: number | string): Observable<IListResponse<T>> {
+    return this.httpClient.get<IListResponse<T>>(
+      `${environment.API_URL2}${route}/${id}`
+    );
+  }
 
   create2(route: string, formData: Object) {
     return this.httpClient.post<T>(`${environment.API_URL2}${route}`, formData);
