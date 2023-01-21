@@ -16,6 +16,11 @@ const user: any[] = [
 ];
 
 export const FLYER_SUBJECT_CAT_COLUMNS2 = {
+  code: {
+    title: 'Código',
+    sort: false,
+    filter: false,
+  },
   referralNoteType: {
     title: 'Tipo de volante',
     sort: false,
@@ -48,5 +53,10 @@ export const FLYER_SUBJECT_CAT_COLUMNS2 = {
         list: user,
       },
     },
+  },
+  idRegister: {
+    title: 'Num Registro',
+    sort: false,
+    filter: false,
   },
 };
