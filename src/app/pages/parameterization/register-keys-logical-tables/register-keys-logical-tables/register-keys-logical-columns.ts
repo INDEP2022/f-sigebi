@@ -1,34 +1,90 @@
 export const REGISTER_KEYS_LOGICAL_COLUMNS = {
-  name: {
-    title: 'Nombre',
+  id: {
+    title: 'ID',
     sort: false,
   },
-  description: {
+  dsKey1: {
     title: 'Descripción',
     sort: false,
   },
-  type1: {
-    title: 'Una clave',
-    sort: false,
-  },
-  type5: {
-    title: 'Cinco Clave',
-    sort: false,
-  },
-  cve1: {
-    title: 'Clave',
-    sort: false,
-  },
-  format1: {
+  swFormat1: {
     title: 'Formato',
     sort: false,
   },
-  minLong1: {
-    title: 'Longitud Mínima',
+  longMin1: {
+    title: 'Lonngitud mínima',
     sort: false,
   },
-  maxLong1: {
+  longMax1: {
     title: 'Longitud Máxima',
+    sort: false,
+  },
+  dsKey2: {
+    title: 'Descripción',
+    sort: false,
+  },
+  swFormat2: {
+    title: 'Formato',
+    sort: false,
+  },
+  longMin2: {
+    title: 'Lonngitud mínima',
+    sort: false,
+  },
+  longMax2: {
+    title: 'Longitud Máxima',
+    sort: false,
+  },
+  dsKey3: {
+    title: 'Descripción',
+    sort: false,
+  },
+  swFormat3: {
+    title: 'Formato',
+    sort: false,
+  },
+  longMin3: {
+    title: 'Lonngitud mínima',
+    sort: false,
+  },
+  longMax3: {
+    title: 'Longitud Máxima',
+    sort: false,
+  },
+  dsKey4: {
+    title: 'Descripción',
+    sort: false,
+  },
+  swFormat4: {
+    title: 'Formato',
+    sort: false,
+  },
+  longMin4: {
+    title: 'Lonngitud mínima',
+    sort: false,
+  },
+  longMax4: {
+    title: 'Longitud Máxima',
+    sort: false,
+  },
+  dsKey5: {
+    title: 'Descripción',
+    sort: false,
+  },
+  swFormat5: {
+    title: 'Formato',
+    sort: false,
+  },
+  longMin5: {
+    title: 'Lonngitud mínima',
+    sort: false,
+  },
+  longMax5: {
+    title: 'Longitud Máxima',
+    sort: false,
+  },
+  registerNumber: {
+    title: 'Número de registro',
     sort: false,
   },
 };

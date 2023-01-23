@@ -9,7 +9,7 @@ import { ITdescAtrib } from '../../models/ms-parametergood/tdescatrib-model';
 @Injectable({
   providedIn: 'root',
 })
-export class ParameterGoodService implements ICrudMethods<ITdescAtrib> {
+export class TdesAtribService implements ICrudMethods<ITdescAtrib> {
   private readonly route: string = ParameterGoodEndpoints.TDescAtrib;
   constructor(private goodParameterRepository: Repository<ITdescAtrib>) {}
 

@@ -10,7 +10,7 @@ import { ATT_REG_LOG_TAB_COLUMNS } from './attributes-reg-logical-tables-columns
 //models
 import { ITdescAtrib } from 'src/app/core/models/ms-parametergood/tdescatrib-model';
 //Services
-import { ParameterGoodService } from 'src/app/core/services/ms-parametergood/parametergood.service';
+import { TdesAtribService } from 'src/app/core/services/ms-parametergood/tdescatrib.service';
 
 @Component({
   selector: 'app-attributes-reg-logical-tables',
@@ -27,7 +27,7 @@ export class AttributesRegLogicalTablesComponent
 
   constructor(
     private modalService: BsModalService,
-    private parameterGoodService: ParameterGoodService
+    private parameterGoodService: TdesAtribService
   ) {
     super();
     this.settings = {

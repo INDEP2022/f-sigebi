@@ -6,7 +6,7 @@ import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ITdescAtrib } from 'src/app/core/models/ms-parametergood/tdescatrib-model';
 //Services
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { ParameterGoodService } from 'src/app/core/services/ms-parametergood/parametergood.service';
+import { TdesAtribService } from 'src/app/core/services/ms-parametergood/tdescatrib.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
@@ -26,7 +26,7 @@ export class AttributesRegLogicalTablesModalComponent
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
-    private parameterGoodService: ParameterGoodService
+    private tdesAtribService: TdesAtribService
   ) {
     super();
   }
@@ -78,7 +78,7 @@ export class AttributesRegLogicalTablesModalComponent
 
   create() {
     this.loading = true;
-    this.parameterGoodService.create(this.tdescAtribForm.value).subscribe({
+    this.tdesAtribService.create(this.tdescAtribForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -86,7 +86,7 @@ export class AttributesRegLogicalTablesModalComponent
 
   update() {
     this.loading = true;
-    this.parameterGoodService
+    this.tdesAtribService
       .update(this.tdescAtrib.idNmTable, this.tdescAtribForm.value)
       .subscribe({
         next: data => this.handleSuccess(),

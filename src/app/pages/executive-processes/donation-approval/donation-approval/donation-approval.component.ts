@@ -20,7 +20,6 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 })
 export class DonationApprovalComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
-  show = false;
 
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
@@ -99,7 +98,7 @@ export class DonationApprovalComponent extends BasePage implements OnInit {
           this.getGoodsByExpedient(response.id);
         } else {
           //TODO: CHECK MESSAGE
-          this.alert('info', 'No se encontrarón registros', '');
+          this.alert('info', 'No se encontraron registros', '');
         }
 
         this.loading = false;
