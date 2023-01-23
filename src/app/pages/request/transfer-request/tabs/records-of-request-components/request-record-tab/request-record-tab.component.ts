@@ -62,7 +62,7 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
 
   getAffair(id: number) {
     this.affairService.getById(id).subscribe((data: any) => {
-      this.affairName = data.data.description;
+      this.affairName = data.description;
     });
   }
 

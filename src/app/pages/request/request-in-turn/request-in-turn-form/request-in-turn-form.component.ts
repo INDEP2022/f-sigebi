@@ -131,15 +131,9 @@ export class RequestInTurnFormComponent implements OnInit {
 
   search(): void {
     this.filters = [];
-    this.getFormChanges();
-    let params: any = { page: 1, take: 20 };
-
-    for (let i = 0; i < this.filters.length; i++) {
-      let index = i.toString();
-      params[`filters[${index}]`] = JSON.stringify(this.filters[i]);
-    }
-    console.log(params);
-
+    const params = this.getFormChanges();
+    params.page = 1;
+    params.limit = 10;
     this.sendSearchForm.emit(params);
   }
 
@@ -148,124 +142,80 @@ export class RequestInTurnFormComponent implements OnInit {
   }
 
   getFormChanges() {
+    var params = new ListParams();
     //filtro de la delegacion regional
-    /*let reginalDelegationFiltro = {
-      property: 'id_delegacion_regional',
-      comparison: 'EQUAL',
-      value: 12,
-    };
-    this.filters.push(reginalDelegationFiltro);*/
+    //params['filter.regionalDelegationId'] = `$eq:${1}`;
 
     //filtro estado solicitudes por tunar
-    let porTurnarFiltro = {
-      property: 'estatus_solicitud',
-      comparison: 'EQUAL',
-      value: 'POR_TURNAR',
-    };
-    this.filters.push(porTurnarFiltro);
+    params['filter.requestStatus'] = '$eq:POR_TURNAR';
 
     if (this.searchForm.controls['dateRequest'].value != null) {
-      let dateStart = this.searchForm.controls['dateRequest'].value[0];
-      let filtro = {
-        property: 'fecha_solicitud',
-        comparison: 'EQUAL',
-        value: new Date(dateStart).toISOString(),
-      };
-      this.filters.push(filtro);
+      let date = this.searchForm.controls['dateRequest'].value;
+      let date1 = this.getDateFormat(date[0]);
+      let date2 = this.getDateFormat(date[1]);
+
+      params['filter.applicationDate'] = `$btw:${date1},${date2}`;
     }
     if (this.searchForm.controls['authority'].value != null) {
-      let filtro = {
-        property: 'id_autoridad',
-        comparison: 'EQUAL',
-        value: this.searchForm.controls['authority'].value,
-      };
-      this.filters.push(filtro);
+      const authority = this.searchForm.controls['authority'].value;
+      params['filter.authorityId'] = `$eq:${authority}`;
     }
     if (this.searchForm.controls['ascertainment'].value != null) {
-      let filtro = {
-        property: 'averiguacion_previa',
-        comparison: 'EQUAL',
-        value: this.searchForm.controls['ascertainment'].value,
-      };
-      this.filters.push(filtro);
+      const ascertainment = this.searchForm.controls['ascertainment'].value;
+      params['filter.previousInquiry'] = `$eq:${ascertainment}`;
     }
 
     if (this.searchForm.controls['stateOfRepublic'].value != null) {
-      let filtro = {
-        property: 'cve_estado',
-        comparison: 'EQUAL',
-        value: this.searchForm.controls['ascertainment'].value,
-      };
-      this.filters.push(filtro);
+      const stateOfRepublic = this.searchForm.controls['stateOfRepublic'].value;
+      params['filter.keyStateOfRepublic'] = `$eq:${stateOfRepublic}`;
     }
 
     if (this.searchForm.controls['contributor'].value != null) {
-      let filtro = {
-        property: 'contribuyente_indiciado',
-        comparison: 'EQUAL',
-        value: this.searchForm.controls['contributor'].value,
-      };
-      this.filters.push(filtro);
+      const contributor = this.searchForm.controls['contributor'].value;
+      params['filter.indicatedTaxpayer'] = `$eq:${contributor}`;
     }
 
     if (this.searchForm.controls['cause'].value != null) {
-      let filtro = {
-        property: 'causa_penal',
-        comparison: 'EQUAL',
-        value: this.searchForm.controls['cause'].value,
-      };
-      this.filters.push(filtro);
+      const cause = this.searchForm.controls['cause'].value;
+      params['filter.lawsuit'] = `$eq:${cause}`;
     }
 
     if (this.searchForm.controls['transfer'].value != null) {
-      let filtro = {
-        property: 'id_transferente',
-        comparison: 'EQUAL',
-        value: this.searchForm.controls['transfer'].value,
-      };
-      this.filters.push(filtro);
+      const transfer = this.searchForm.controls['transfer'].value;
+      params['filter.transferenceId'] = `$eq:${transfer}`;
     }
 
     if (this.searchForm.controls['dateJob'].value != null) {
-      let filtro = {
-        property: 'fecha_oficio',
-        comparison: 'EQUAL',
-        value: this.searchForm.controls['dateJob'].value,
-      };
-      this.filters.push(filtro);
+      const dateJob = this.searchForm.controls['dateJob'].value;
+      params['filter.paperDate'] = `$eq:${dateJob}`;
     }
     if (this.searchForm.controls['expedient'].value != null) {
-      let filtro = {
-        property: 'expediente_transferente',
-        comparison: 'EQUAL',
-        value: this.searchForm.controls['expedient'].value,
-      };
-      this.filters.push(filtro);
+      const expedient = this.searchForm.controls['expedient'].value;
+      params['filter.transferenceFile'] = `$eq:${expedient}`;
     }
 
     if (this.searchForm.controls['station'].value != null) {
-      let filtro = {
-        property: 'id_emisora',
-        comparison: 'EQUAL',
-        value: this.searchForm.controls['station'].value,
-      };
-      this.filters.push(filtro);
+      const station = this.searchForm.controls['station'].value;
+      params['filter.stationId'] = `$eq:${station}`;
     }
     if (this.searchForm.controls['acta'].value != null) {
-      let filtro = {
-        property: 'acta_circunstanciada',
-        comparison: 'EQUAL',
-        value: this.searchForm.controls['acta'].value,
-      };
-      this.filters.push(filtro);
+      const acta = this.searchForm.controls['acta'].value;
+      params['filter.circumstantialRecord'] = `$eq:${acta}`;
     }
     if (this.searchForm.controls['affair'].value != null) {
-      let filtro = {
-        property: 'asunto',
-        comparison: 'EQUAL',
-        value: this.searchForm.controls['affair'].value,
-      };
-      this.filters.push(filtro);
+      const affair = this.searchForm.controls['affair'].value;
+      params['filter.affair'] = `$eq:${affair}`;
     }
+
+    return params;
+  }
+
+  getDateFormat(date: string): string {
+    const newDate = new Date(date);
+    let year = newDate.getFullYear();
+    let month = newDate.getMonth() + 1;
+    let day = newDate.getDate();
+
+    return year + '-' + month + '-' + day;
   }
 }

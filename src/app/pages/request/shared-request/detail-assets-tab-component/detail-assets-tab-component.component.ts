@@ -12,11 +12,17 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IRequest } from 'src/app/core/models/requests/request.model';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
+import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
+import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
+import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { SelectAddressComponent } from '../../transfer-request/tabs/records-of-request-components/records-of-request-child-tabs-components/select-address/select-address.component';
@@ -31,7 +37,10 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
   @Input() detailAssets: ModelForm<any>;
   @Input() typeDoc: any;
   bsModalRef: BsModalRef;
-  assetsForm: ModelForm<any>;
+  request: IRequest;
+
+  domicileForm: ModelForm<any>;
+  assetsForm: ModelForm<any>; //borrar
 
   selectSae = new DefaultSelect<any>();
   selectConservationState = new DefaultSelect<any>();
@@ -60,7 +69,7 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
   selectDestintSae = new DefaultSelect<any>();
   selectState = new DefaultSelect<any>();
   selectMunicipe = new DefaultSelect<any>();
-  selectSuburb = new DefaultSelect<any>();
+  selectLocality = new DefaultSelect<any>();
   selectCP = new DefaultSelect<any>();
   selectBrand = new DefaultSelect<any>();
   selectSubBrand = new DefaultSelect<any>();
@@ -68,8 +77,13 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
   selectTypeAirplane = new DefaultSelect<any>();
   selectTypeUseAirCrafte = new DefaultSelect<any>();
 
+  router = inject(ActivatedRoute);
   typeRelevantSevice = inject(TypeRelevantService);
   genericService = inject(GenericService);
+  requestService = inject(RequestService);
+  stateOfRepublicService = inject(StateOfRepublicService);
+  municipeSeraService = inject(MunicipalityService);
+  localityService = inject(LocalityService);
 
   constructor(private fb: FormBuilder, private modalServise: BsModalService) {}
 
@@ -90,12 +104,15 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    //this.initForm();
+    this.initForm();
     console.log('tipo de bien');
     console.log(this.typeDoc);
     this.getDestinyTransfer(new ListParams());
     this.getPhysicalState(new ListParams());
     this.getConcervationState(new ListParams());
+
+    //obtener solicitud
+    this.getRequest();
 
     //console.log('detalle del objeto enviado');
     //console.log(this.detailAssets);
@@ -111,16 +128,6 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
         }
       }
     );
-
-    /*this.detailAssets.controls['duplicity'].valueChanges.subscribe(
-      (data: any) => {
-        if (data == true) {
-          this.detailAssets.controls['duplicity'].setValue('Y');
-        } else {
-          this.detailAssets.controls['duplicity'].setValue('N');
-        }
-      }
-    );*/
   }
 
   initForm() {
@@ -253,6 +260,15 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
       }),
     });
 
+    this.domicileForm = this.fb.group({
+      aliasWarehouse: ['DOMICILIO TRANSFERENTE'],
+      cveVia2: [null],
+      cveVia3: [null],
+      cveState: [null],
+      cveMunicipality: [null],
+      cveLocality: [null],
+    });
+
     //this.assetsForm.controls['typeAsset'].disable();
     //this.assetsForm.disable();
     //this.assetsForm.controls['typeAsset'].enable();
@@ -265,7 +281,7 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
   getQuantityTransfer(event: any) {}
 
   getPhysicalState(params: ListParams) {
-    params.text = 'Estado Fisico';
+    params['filter.name'] = '$eq:Estado Fisico';
     this.genericService.getAll(params).subscribe({
       next: (data: any) => {
         this.selectPhysicalState = new DefaultSelect(data.data, data.count);
@@ -274,7 +290,7 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
   }
 
   getConcervationState(params: ListParams) {
-    params.text = 'Estado Conservacion';
+    params['filter.name'] = '$eq:Estado Conservacion';
     this.genericService.getAll(params).subscribe({
       next: (data: any) => {
         this.selectConcervationState = new DefaultSelect(data.data, data.count);
@@ -283,7 +299,7 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
   }
 
   getDestinyTransfer(params: ListParams) {
-    params.text = 'Destino';
+    params['filter.name'] = '$eq:Destino';
     this.genericService.getAll(params).subscribe({
       next: (data: any) => {
         this.selectDestinyTransfer = new DefaultSelect(data.data, data.count);
@@ -298,9 +314,31 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
 
   getState(event: any) {}
 
-  getMunicipe(event: any) {}
+  getMunicipaly(params: ListParams, keyState?: number) {
+    params['stateKey'] = keyState;
+    params['limit'] = 20;
+    this.municipeSeraService.getAll(params).subscribe({
+      next: data => {
+        this.selectMunicipe = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
+  }
 
-  getSuburb(event: any) {}
+  getLocality(params: ListParams, keyState?: number) {
+    params.limit = 20;
+    params['stateKey'] = keyState;
+    this.localityService.getAll(params).subscribe({
+      next: data => {
+        this.selectLocality = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
+  }
 
   getCP(event: any) {}
 
@@ -352,6 +390,37 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
     }
   }
 
+  //obtener el estado de la republic por defecto
+  getStateOfRepublic(keyState: number) {
+    if (keyState != null) {
+      this.stateOfRepublicService.getById(keyState).subscribe({
+        next: data => {
+          this.domicileForm.controls['cveState'].setValue(data.descCondition);
+        },
+        error: error => {
+          console.log(error);
+        },
+      });
+    }
+  }
+
+  //obtener solicitud por el Id
+  getRequest() {
+    return new Promise((resolve, reject) => {
+      const id = this.router.snapshot.paramMap.get('id');
+      this.requestService.getById(id).subscribe({
+        next: data => {
+          resolve(data as IRequest);
+        },
+      });
+    }).then((data: any) => {
+      this.request = data.data;
+      this.getStateOfRepublic(this.request.keyStateOfRepublic);
+      this.getMunicipaly(new ListParams(), this.request.keyStateOfRepublic);
+      this.getLocality(new ListParams(), this.request.keyStateOfRepublic);
+    });
+  }
+
   openSelectAddressModal(): void {
     let config: ModalOptions = {
       initialState: {
@@ -378,7 +447,7 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
     this.typeRelevantSevice.getById(id).subscribe({
       next: (data: any) => {
         console.log('typeGood:', data);
-        this.goodTypeName = data.data.description;
+        this.goodTypeName = data.description;
       },
     });
   }

@@ -83,7 +83,7 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
   searchForm(params: any) {
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       params.page = data.inicio;
-      params.take = data.pageSize;
+      params.limit = data.pageSize;
       this.getRequest(params);
     });
   }
@@ -145,12 +145,12 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
               //let authority = _authority as any;
               let affair = _affair as any;
 
-              item['delegationName'] = delegation.data.description;
-              item['stateOfRepublicName'] = state.data.descCondition;
-              item['transferentName'] = transferent.data.nameTransferent;
-              item['stationName'] = station.data.stationName;
-              //item['authorityName'] = authority.data.authorityName;
-              item['affairName'] = affair.data.description;
+              item['delegationName'] = delegation.description;
+              item['stateOfRepublicName'] = state.descCondition;
+              item['transferentName'] = transferent.nameTransferent;
+              item['stationName'] = station.stationName;
+              //item['authorityName'] = authority.authorityName;
+              item['affairName'] = affair.description;
             },
             error => {
               this.loading = false;

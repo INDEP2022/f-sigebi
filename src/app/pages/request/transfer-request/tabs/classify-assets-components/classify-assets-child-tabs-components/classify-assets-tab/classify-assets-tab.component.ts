@@ -13,6 +13,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
+import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AdvancedSearchComponent } from '../advanced-search/advanced-search.component';
@@ -42,6 +43,7 @@ export class ClassifyAssetsTabComponent
 
   route = inject(ActivatedRoute);
   fractionService = inject(FractionService);
+  goodsQueryService = inject(GoodsQueryService);
 
   constructor(private fb: FormBuilder, private modalService: BsModalService) {
     super();
@@ -97,64 +99,68 @@ export class ClassifyAssetsTabComponent
   }
 
   getSection(params: ListParams) {
-    params['filter.level'] = 0;
+    params['filter.level'] = '$eq:' + 0;
     params.take = 50;
     this.fractionService.getAll(params).subscribe({
       next: data => {
         console.log('seccion', data);
-
         this.selectSection = data.data; //= new DefaultSelect(data.data, data.count);
       },
     });
   }
 
   getChapter(params: ListParams, id?: number) {
+    params['filter.parentId'] = '$eq:' + id.toString();
     params.take = 50;
-    this.fractionService.getByParentId(id).subscribe({
+    this.fractionService.getAll(params).subscribe({
       next: data => {
         console.log('capitulo', data);
-        this.selectChapter = new DefaultSelect(data.data, data.length);
+        this.selectChapter = new DefaultSelect(data.data, data.count);
       },
     });
   }
 
   getLevel1(params: ListParams, id?: number) {
+    params['filter.parentId'] = '$eq:' + id.toString();
     params.take = 50;
-    this.fractionService.getByParentId(id).subscribe({
+    this.fractionService.getAll(params).subscribe({
       next: data => {
         console.log('level1', data);
 
-        this.selectLevel1 = new DefaultSelect(data.data, data.length);
+        this.selectLevel1 = new DefaultSelect(data.data, data.count);
       },
     });
   }
 
   getLevel2(params: ListParams, id?: number) {
+    params['filter.parentId'] = '$eq:' + id.toString();
     params.take = 50;
-    this.fractionService.getByParentId(id).subscribe({
+    this.fractionService.getAll(params).subscribe({
       next: data => {
         console.log('level2', data);
-        this.selectLevel2 = new DefaultSelect(data.data, data.length);
+        this.selectLevel2 = new DefaultSelect(data.data, data.count);
       },
     });
   }
 
   getLevel3(params: ListParams, id?: number) {
+    params['filter.parentId'] = '$eq:' + id.toString();
     params.take = 50;
-    this.fractionService.getByParentId(id).subscribe({
+    this.fractionService.getAll(params).subscribe({
       next: data => {
         console.log('level3', data);
-        this.selectLevel3 = new DefaultSelect(data.data, data.length);
+        this.selectLevel3 = new DefaultSelect(data.data, data.count);
       },
     });
   }
 
   getLevel4(params: ListParams, id?: number) {
+    params['filter.parentId'] = '$eq:' + id.toString();
     params.take = 50;
-    this.fractionService.getByParentId(id).subscribe({
+    this.fractionService.getAll(params).subscribe({
       next: data => {
         console.log('level4', data);
-        this.selectLevel4 = new DefaultSelect(data.data, data.length);
+        this.selectLevel4 = new DefaultSelect(data.data, data.count);
       },
     });
   }
@@ -220,11 +226,18 @@ export class ClassifyAssetsTabComponent
     );
     this.classiGoodsForm.controls['ligieLevel3'].valueChanges.subscribe(
       (dataLevel3: any) => {
-        //this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
-        if (dataLevel3 != null) this.getLevel4(new ListParams(), dataLevel3);
-        console.log(this.getRelevantTypeId(this.selectLevel3.data, dataLevel3));
+        if (dataLevel3 != null) {
+          let fractionCode = this.selectLevel3.data.filter(
+            x => x.id === dataLevel3
+          )[0].fractionCode;
+          this.getUnidMeasure(fractionCode);
+          this.getLevel4(new ListParams(), dataLevel3);
+
+          this.getRelevantTypeId(this.selectLevel3.data, dataLevel3);
+        }
       }
     );
+
     this.classiGoodsForm.controls['ligieLevel4'].valueChanges.subscribe(
       (dataLevel4: any) => {
         console.log(this.getRelevantTypeId(this.selectLevel4.data, dataLevel4));
@@ -236,8 +249,23 @@ export class ClassifyAssetsTabComponent
     return arrayData.filter((x: any) => x.id == id)[0].relevantTypeId;
   }
 
-  haveEightCharacters(value: string) {
+  getUnidMeasure(value: string) {
     if (value.length === 8) {
+      const fractionCode = { fraction: value };
+      this.goodsQueryService
+        .getUnitLigie(fractionCode)
+        .subscribe((data: any) => {
+          this.goodsQueryService
+            .getLigieUnitDescription(data.ligieUnit)
+            .subscribe((data: any) => {
+              this.classiGoodsForm.controls['unitMeasure'].setValue(
+                data.description
+              );
+              this.classiGoodsForm.controls['ligieUnit'].setValue(
+                data.description
+              );
+            });
+        });
     }
   }
 }

@@ -170,11 +170,11 @@ export class RegistrationOfRequestsComponent
         let delegation = _delegation as any;
         let authority = _authority as any;
 
-        this.stateOfRepublicName = state.data.descCondition;
-        this.transferentName = transferent.data.nameTransferent;
-        this.stationName = station.data.stationName;
-        this.delegationName = delegation.data.description;
-        this.authorityName = authority.data.authorityName;
+        this.stateOfRepublicName = state.descCondition;
+        this.transferentName = transferent.nameTransferent;
+        this.stationName = station.stationName;
+        this.delegationName = delegation.description;
+        this.authorityName = authority.authorityName;
       },
       error => {
         console.log(error);

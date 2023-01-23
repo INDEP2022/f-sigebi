@@ -11,6 +11,7 @@ import { UsersSelectedToTurnComponent } from '../users-selected-to-turn/users-se
 //Provisional Data
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
 import { IStation } from 'src/app/core/models/catalogs/station.model';
+import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { ListParams } from '../../../../common/repository/interfaces/list-params';
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
 import { ITransferente } from '../../../../core/models/catalogs/transferente.model';
@@ -55,6 +56,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
   issues = new DefaultSelect<any>();
 
   regionalDelegationService = inject(RegionalDelegationService);
+  delegationStateService = inject(DelegationStateService);
+
   stateOfRepublicService = inject(StateOfRepublicService);
   stationService = inject(StationService);
   authorityService = inject(AuthorityService);
@@ -124,17 +127,32 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
   getRegionalDeleg(params?: ListParams) {
     this.regionalDelegationService.getById(11).subscribe((data: any) => {
-      this.requestForm.controls['regionalDelegationId'].setValue(data.data.id);
-      this.selectRegionalDeleg = new DefaultSelect([data.data], data.count);
+      this.requestForm.controls['regionalDelegationId'].setValue(data.id);
+      this.selectRegionalDeleg = new DefaultSelect([data], data.count);
 
-      this.getEntity(new ListParams(), data.data.keyState);
+      this.getEntity(new ListParams(), 11);
     });
   }
 
-  getEntity(params: ListParams, keyState?: string): void {
-    params.text = keyState;
-    this.stateOfRepublicService.getAll(params).subscribe((data: any) => {
-      this.selectEntity = new DefaultSelect(data.data, data.count);
+  getEntity(params: ListParams, id?: number | string): void {
+    params.page = 1;
+    params.limit = 10;
+    params['filter.regionalDelegation'] = `$eq:${id}`;
+    this.delegationStateService.getAll(params).subscribe({
+      next: data => {
+        const stateCode = data.data
+          .map((x: any) => {
+            if (x.stateCode != null) {
+              return x.stateCode;
+            }
+          })
+          .filter(x => x != undefined);
+
+        this.selectEntity = new DefaultSelect(stateCode, stateCode.length);
+      },
+      error: error => {
+        console.log(error);
+      },
     });
   }
 
@@ -195,7 +213,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    this.requestForm.get('requestStatus').patchValue('POR_TURNAR');
+    this.requestForm.get('requestStatus').patchValue('A_TURNAR');
     this.requestForm.controls['applicationDate'].setValue(
       new Date().toISOString().toString()
     );
@@ -204,7 +222,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     this.requestService.create(form).subscribe(
       (data: any) => {
         this.msgModal(
-          'Se guardo la solicitud con el Folio Nº '.concat(data.data.id),
+          'Se guardo la solicitud con el Folio Nº '.concat(data.id),
           'Solicitud Guardada',
           'success'
         );
@@ -237,7 +255,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       (data: any) => {
         this.msgModal(
           'Se turnar la solicitud con el Folio Nº '
-            .concat(data.data.id)
+            .concat(data.id)
             .concat(` al usuario ${this.userName}`),
           'Solicitud Creada',
           'success'
