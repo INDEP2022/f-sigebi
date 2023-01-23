@@ -10,11 +10,12 @@ import Swal from 'sweetalert2';
 import { UsersSelectedToTurnComponent } from '../users-selected-to-turn/users-selected-to-turn.component';
 //Provisional Data
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
+import { IStation } from 'src/app/core/models/catalogs/station.model';
+import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { ListParams } from '../../../../common/repository/interfaces/list-params';
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
-import { IStation } from '../../../../core/models/catalogs/station.model';
 import { ITransferente } from '../../../../core/models/catalogs/transferente.model';
-import { AuthorityService } from '../../../../core/services/catalogs/Authority.service';
+import { AuthorityService } from '../../../../core/services/catalogs/authority.service';
 import { RegionalDelegationService } from '../../../../core/services/catalogs/regional-delegation.service';
 import { StateOfRepublicService } from '../../../../core/services/catalogs/state-of-republic.service';
 import { StationService } from '../../../../core/services/catalogs/station.service';
@@ -55,6 +56,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
   issues = new DefaultSelect<any>();
 
   regionalDelegationService = inject(RegionalDelegationService);
+  delegationStateService = inject(DelegationStateService);
+
   stateOfRepublicService = inject(StateOfRepublicService);
   stationService = inject(StationService);
   authorityService = inject(AuthorityService);
@@ -79,15 +82,19 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
     this.requestForm.controls['transferenceId'].valueChanges.subscribe(
       (data: any) => {
-        console.log(data);
-        this.idsObject.idTransferer = data;
+        if (data != null) {
+          this.idsObject.idTransferer = data;
+          this.getStation(data);
+        }
       }
     );
 
     this.requestForm.controls['stationId'].valueChanges.subscribe(
       (data: any) => {
-        this.idsObject.idStation = data;
-        this.getAuthority(this.idsObject);
+        if (data != null) {
+          this.idsObject.idStation = data;
+          this.getAuthority(this.idsObject);
+        }
       }
     );
   }
@@ -120,24 +127,39 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
   getRegionalDeleg(params?: ListParams) {
     this.regionalDelegationService.getById(11).subscribe((data: any) => {
-      this.requestForm.controls['regionalDelegationId'].setValue(data.data.id);
-      this.selectRegionalDeleg = new DefaultSelect([data.data], data.count);
+      this.requestForm.controls['regionalDelegationId'].setValue(data.id);
+      this.selectRegionalDeleg = new DefaultSelect([data], data.count);
 
-      let params = new ListParams();
-      params.text = data.data.keyState;
-      this.getEntity(params);
+      this.getEntity(new ListParams(), 11);
     });
   }
 
-  getEntity(params: ListParams): void {
-    this.stateOfRepublicService.getAll(params).subscribe((data: any) => {
-      this.selectEntity = new DefaultSelect(data.data, data.count);
+  getEntity(params: ListParams, id?: number | string): void {
+    params.page = 1;
+    params.limit = 10;
+    params['filter.regionalDelegation'] = `$eq:${id}`;
+    this.delegationStateService.getAll(params).subscribe({
+      next: data => {
+        const stateCode = data.data
+          .map((x: any) => {
+            if (x.stateCode != null) {
+              return x.stateCode;
+            }
+          })
+          .filter(x => x != undefined);
+
+        this.selectEntity = new DefaultSelect(stateCode, stateCode.length);
+      },
+      error: error => {
+        console.log(error);
+      },
     });
   }
 
-  getStation(params?: ListParams) {
+  getStation(id: any) {
+    let idTranferent = { idTransferent: id };
     this.stationService
-      .getAll(params)
+      .getByColumn(idTranferent)
       .subscribe((data: IListResponse<IStation>) => {
         this.selectStation = new DefaultSelect(data.data, data.count);
       });
@@ -190,12 +212,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
     });
   }
 
-  close(): void {
-    this.location.back();
-  }
-
   confirm() {
-    this.requestForm.get('requestStatus').patchValue('POR_TURNAR');
+    this.requestForm.get('requestStatus').patchValue('A_TURNAR');
     this.requestForm.controls['applicationDate'].setValue(
       new Date().toISOString().toString()
     );
@@ -204,7 +222,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     this.requestService.create(form).subscribe(
       (data: any) => {
         this.msgModal(
-          'Se guardo la solicitud con el Folio Nº '.concat(data.data.id),
+          'Se guardo la solicitud con el Folio Nº '.concat(data.id),
           'Solicitud Guardada',
           'success'
         );
@@ -237,8 +255,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
       (data: any) => {
         this.msgModal(
           'Se turnar la solicitud con el Folio Nº '
-            .concat(data.data.id)
-            .concat(`al usuario ${this.userName}`),
+            .concat(data.id)
+            .concat(` al usuario ${this.userName}`),
           'Solicitud Creada',
           'success'
         );

@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { MsRequestRepository } from 'src/app/common/repository/repositories/ms-request-repository';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -13,14 +14,17 @@ import { IRequest } from '../../models/requests/request.model';
 export class RequestService implements ICrudMethods<IRequest> {
   private readonly route: string = ENDPOINT_LINKS.request;
 
+  private readonly requestExtRepository = inject(MsRequestRepository);
+
   constructor(private requestRepository: Repository<IRequest>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IRequest>> {
-    return this.requestRepository.getAllPaginated(this.route, params);
+    //return this.requestRepository.getAllPaginated(this.route, params);
+    return this.requestExtRepository.getAllPaginated(this.route, params);
   }
 
   getById(id: string | number): Observable<IRequest> {
-    return this.requestRepository.getById(this.route, id);
+    return this.requestExtRepository.getRequestById(this.route, id);
   }
 
   create(model: IRequest): Observable<IRequest> {
