@@ -1,8 +1,9 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ENDPOINT_LINKS } from 'src/app/common/constants/endpoints';
+import { GoodsQueryEndpoints } from 'src/app/common/constants/endpoints/ms-good-query-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { MsGoodQueryRepository } from 'src/app/common/repository/repositories/ms-good-query-repository';
 import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IZipCodeGoodQuery } from '../../models/catalogs/zip-code.model';
@@ -11,7 +12,11 @@ import { IZipCodeGoodQuery } from '../../models/catalogs/zip-code.model';
   providedIn: 'root',
 })
 export class GoodsQueryService {
-  private readonly route: string = ENDPOINT_LINKS.GoodsQuery;
+  private routeLigieUnitMeasure = GoodsQueryEndpoints.LigieUnitMeasure;
+  private zipCodeRoute = GoodsQueryEndpoints.ZipCode;
+
+  private goodQueryRepository = inject(MsGoodQueryRepository);
+
   constructor(private httpClient: HttpClient) {}
 
   getFractions(body: any) {
@@ -22,26 +27,22 @@ export class GoodsQueryService {
   }
 
   getLigieUnitDescription(unit: string) {
-    return this.httpClient.get(
-      `${environment.API_URL}goodsquery/api/v1/ligie-units-measure/getDescription/${unit}`
+    return this.goodQueryRepository.getDescriptionUnitLigie(
+      this.routeLigieUnitMeasure,
+      unit
+    );
+  }
+
+  getUnitLigie(params: Object): Observable<any> {
+    return this.goodQueryRepository.getUnitLigie(
+      this.routeLigieUnitMeasure,
+      params
     );
   }
 
   getZipCode(
     _params?: ListParams
   ): Observable<IListResponse<IZipCodeGoodQuery>> {
-    const params = _params ? this.makeParams(_params) : {};
-    return this.httpClient.get<IListResponse<IZipCodeGoodQuery>>(
-      `${environment.API_URL}goodsquery/api/v1/views/catCodesPostalView`,
-      { params }
-    );
-  }
-
-  private makeParams(params: ListParams): HttpParams {
-    let httpParams: HttpParams = new HttpParams();
-    Object.keys(params).forEach(key => {
-      httpParams = httpParams.append(key, (params as any)[key] ?? '');
-    });
-    return httpParams;
+    return this.goodQueryRepository.getAllPaginated(this.zipCodeRoute, _params);
   }
 }

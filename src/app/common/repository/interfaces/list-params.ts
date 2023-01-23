@@ -4,5 +4,6 @@ export class ListParams {
   pageSize?: number = 10;
   [others: string]: string | number;
   page?: number = 1;
+  limit?: number = 10;
   take?: number = 10;
 }

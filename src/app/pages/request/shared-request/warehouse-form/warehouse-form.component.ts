@@ -57,7 +57,6 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getZipCodeSelect(new ListParams());
   }
 
   //Verificar typeTercero//
@@ -113,6 +112,9 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
 
   //Revisar error //
   getStateSelect(params?: ListParams) {
+    params['limit'] = 10;
+    params['page'] = 1;
+    console.log('parametros', params);
     this.stateOfRepublicService.getAll(params).subscribe(data => {
       console.log('estados', data);
       this.states = new DefaultSelect(data.data, data.count);
@@ -124,10 +126,12 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
     this.getCitySelect(new ListParams());
     this.getMunicipalitiesSelect(new ListParams());
     this.getLocalitySelect(new ListParams());
+    this.getZipCodeSelect(new ListParams());
   }
 
   getCitySelect(params?: ListParams) {
     params['stateKey'] = this.stateKey;
+    params['limit'] = 10;
     this.cityService.getAll(params).subscribe(data => {
       this.cities = new DefaultSelect(data.data, data.count);
     });
@@ -149,9 +153,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   }
 
   getZipCodeSelect(params?: ListParams) {
-    console.log('parametros', params);
-    params['filter.keyState'] = 9;
-    params['limit'] = 15;
+    params['filter.keyState'] = this.stateKey;
     this.goodsQueryService.getZipCode(params).subscribe(data => {
       console.log('Codigos postales', data);
       this.zipCode = new DefaultSelect(data.data, data.count);

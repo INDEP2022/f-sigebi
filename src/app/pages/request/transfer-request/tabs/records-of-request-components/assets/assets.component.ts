@@ -29,7 +29,7 @@ var data = [
   styles: [],
 })
 export class AssetsComponent extends BasePage implements OnInit {
-  @Input() dataObject: string;
+  @Input() dataObject: any;
   bsModalRef: BsModalRef;
   params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: any[] = [];

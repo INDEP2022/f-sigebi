@@ -86,6 +86,14 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       delete request.affairName;
       delete request.dateApplication;
       delete request.datePaper;
+
+      //eliminar objetos
+      delete request.delegation;
+      delete request.transferent;
+      delete request.authority;
+      delete request.emisora;
+      delete request.state;
+      delete request.proceedings;
     }
   }
 
@@ -108,15 +116,27 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       request.modificationDate = new Date().toISOString();
 
       this.requestService.update(request.id, request as IRequest).subscribe(
-        (date: any) => {
-          console.log(date);
-          this.onLoadToast(
-            'success',
-            'Actualización',
-            `La actualización se realizo correctamente`
-          );
+        (data: any) => {
+          console.log(data);
+          if (data.statusCode != 200) {
+            this.message(
+              'error',
+              'Turnado',
+              'Ocurrio un error no se pudo turnar las solicitudes'
+            );
+          }
+
+          if (data.id != null) {
+            this.message(
+              'success',
+              'Turnado',
+              'Se turnaron las solicitudes correctamente'
+            );
+
+            this.loading = false;
+            this.modalRef.content.callback(true);
+          }
           this.loading = false;
-          this.modalRef.content.callback(true);
           this.close();
         },
         error => {
@@ -128,5 +148,9 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
 
   close() {
     this.modalRef.hide();
+  }
+
+  message(header: any, title: string, body: string) {
+    this.onLoadToast(header, title, body);
   }
 }
