@@ -5,6 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
+import { IDelegationState } from 'src/app/core/models/catalogs/delegation-state.model';
 import { IRegionalDelegation } from 'src/app/core/models/catalogs/regional-delegation.model';
 import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
 import { IStation } from 'src/app/core/models/catalogs/station.model';
@@ -12,8 +13,8 @@ import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { ITypeRelevant } from 'src/app/core/models/catalogs/type-relevant.model';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
+import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
-import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
@@ -29,6 +30,7 @@ import { ProgrammingRequestService } from '../../service/programming-request.ser
 import { EstateSearchFormComponent } from '../estate-search-form/estate-search-form.component';
 import { UserFormComponent } from '../user-form/user-form.component';
 import { userData } from './data-perfom-programming';
+
 @Component({
   selector: 'app-perform-programming-form',
   templateUrl: './perform-programming-form.component.html',
@@ -54,7 +56,7 @@ export class PerformProgrammingFormComponent
   performForm: FormGroup = new FormGroup({});
   estateForm: FormGroup = new FormGroup({});
   regionalsDelegations = new DefaultSelect<IRegionalDelegation>();
-  states = new DefaultSelect<IStateOfRepublic>();
+  states = new DefaultSelect<IDelegationState>();
   transferences = new DefaultSelect<ITransferente>();
   stations = new DefaultSelect<IStation>();
   authorities = new DefaultSelect<IAuthority>();
@@ -66,15 +68,17 @@ export class PerformProgrammingFormComponent
   showForm: boolean = false;
   showUbication: boolean = false;
   idTrans: number = 0;
-  idState: number = 0;
+  idState: string = '';
   idStation: number = 0;
+  regionalDelegationUser: IRegionalDelegation;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
     private programmingRequestService: ProgrammingRequestService,
     private stationService: StationService,
     private regionalDelegationService: RegionalDelegationService,
-    private stateService: StateOfRepublicService,
+    private stateService: DelegationStateService,
     private transferentService: TransferenteService,
     private typeRelevantService: TypeRelevantService,
     private warehouseService: WarehouseService,
@@ -165,10 +169,17 @@ export class PerformProgrammingFormComponent
   }
 
   newWarehouse() {
-    const newWarehouse = this.modalService.show(WarehouseFormComponent, {
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
+    const regDelData = this.regionalDelegationUser;
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      regDelData,
+      callback: (next: boolean) => {},
+    };
+
+    const constShowWarehouse = this.modalService.show(
+      WarehouseFormComponent,
+      config
+    );
   }
 
   estateSearch() {
@@ -188,51 +199,72 @@ export class PerformProgrammingFormComponent
     );
   }
 
-  // Corregir ruta cuando ya se cambie a /catalog //
   getRegionalDelegationSelect(params?: ListParams) {
-    if (params.text == null) params.text = '';
     this.regionalDelegationService.getAll(params).subscribe(data => {
       this.regionalsDelegations = new DefaultSelect(data.data, data.count);
     });
   }
 
   regionalDelegationSelect(item: IRegionalDelegation) {
-    console.log('delegación seleccionada', item);
+    this.regionalDelegationUser = item;
+    this.getStateSelect(new ListParams());
   }
 
-  // Corregir ruta cuando ya se cambie a /catalog //
   getStateSelect(params?: ListParams) {
+    params['filter.regionalDelegation'] = this.regionalDelegationUser.id;
     this.stateService.getAll(params).subscribe(data => {
-      this.states = new DefaultSelect(data.data, data.count);
-    });
+      const filterStates = data.data.filter(_states => {
+        return _states.stateCode;
+      });
 
-    this.states.data.find(item => {
-      console.log(item.id);
-      this.idState = item.id;
+      const states = filterStates.map(items => {
+        return items.stateCode;
+      });
+
+      this.states = new DefaultSelect(states, data.count);
     });
+  }
+
+  stateSelect(state: IStateOfRepublic) {
+    console.log('states', state);
+    this.idState = state.id;
+    this.getTransferentSelect(new ListParams());
   }
 
   getTransferentSelect(params?: ListParams) {
-    if (params.text == null) params.text = '';
-    this.transferentService.getAll(params).subscribe(data => {
-      this.transferences = new DefaultSelect(data.data, data.count);
+    this.transferentService.getByIdState(this.idState).subscribe(data => {
+      console.log('transferente por estado', data);
+      //this.transferences = new DefaultSelect(data.data, data.count);
     });
   }
 
   transferentSelect(transferent: ITransferente) {
+    console.log('transferente', transferent);
     this.idTrans = transferent.id;
     this.getStations(new ListParams());
   }
 
   getStations(params?: ListParams) {
-    const column = {
-      idTransferent: Number(this.idTrans),
-      keyState: Number(this.idState),
-    };
-    this.stationService.getByColumn(params, column).subscribe(data => {
-      console.log('emisoras', data);
-      this.stations = new DefaultSelect(data.data, data.count);
-    });
+    console.log('transferente', this.idTrans);
+    console.log('Estado', this.idState);
+    /*if (this.idState && this.idTrans) {
+      const column = {
+        idTransferent: Number(this.idTrans),
+        keyState: Number(this.idState),
+      };
+      //console.log('columnas', column);
+      this.stationService.getByColumn(params, column).subscribe(data => {
+        console.log('emisoras', data);
+        this.stations = new DefaultSelect(data.data, data.count);
+      });
+    } else {
+      this.loading = false;
+      this.onLoadToast(
+        'warning',
+        'Error',
+        'Para poder continuar necesitas tener un estado y una transferente seleccionada'
+      );
+    } */
   }
 
   stationSelect(item: IStation) {
@@ -245,18 +277,14 @@ export class PerformProgrammingFormComponent
       idTransferer: Number(this.idTrans),
       idStation: Number(this.idStation),
     };
-    console.log('se manda', columns);
 
     this.authorityService.postByColumns(params, columns).subscribe(data => {
-      console.log(data);
       this.authorities = new DefaultSelect(data.data, data.count);
     });
   }
 
   getTypeRelevantSelect(params: ListParams) {
-    if (params.text == null) params.text = '';
     this.typeRelevantService.getAll(params).subscribe(data => {
-      console.log('jj', params, data);
       this.typeRelevant = new DefaultSelect(data.data, data.count);
     });
   }

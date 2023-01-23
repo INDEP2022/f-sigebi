@@ -36,6 +36,7 @@
               value="id"
               bindLabel="descCondition"
               label="Selecciona un estado"
+              (change)="stateSelect($event)"
               (fetchItems)="getStateSelect($event)"></ngx-select>
           </form-field>
         </div>
@@ -91,9 +92,9 @@
               [form]="performForm"
               control="station"
               [data]="stations"
+              [loading]="loading"
               value="id"
               bindLabel="stationName"
-              (change)="stationSelect($event)"
               label="Selecciona emisora"
               (fetchItems)="getStations($event)"></ngx-select>
           </form-field>

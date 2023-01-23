@@ -130,7 +130,6 @@
             <input
               type="text"
               class="form-control"
-              value="OCCIDENTE"
               formControlName="regionalDelegation"
               readonly />
           </form-field>
@@ -192,30 +191,30 @@
         </div>
 
         <div class="col-md-6">
-          <form-field [control]="warehouseForm.get('colony')">
+          <form-field [control]="warehouseForm.get('locality')">
             <ngx-select
               [form]="warehouseForm"
-              control="colony"
-              [data]="colonies"
+              control="locality"
+              [data]="localities"
               value="id"
               bindLabel="nameLocation"
               label="Colonia"
-              (fetchItems)="getColonySelect($event)"></ngx-select>
+              (fetchItems)="getLocalitySelect($event)"></ngx-select>
           </form-field>
         </div>
       </div>
 
       <div class="row pt-4">
         <div class="col-md-6">
-          <form-field [control]="warehouseForm.get('cp')">
+          <form-field [control]="warehouseForm.get('zipCode')">
             <ngx-select
               [form]="warehouseForm"
-              control="cp"
-              [data]="cp"
+              control="zipCode"
+              [data]="zipCode"
               value="id"
-              bindLabel="id"
+              bindLabel="codePostal"
               label="C&oacute;digo postal"
-              (fetchItems)="getCpSelect($event)"></ngx-select>
+              (fetchItems)="getZipCodeSelect($event)"></ngx-select>
           </form-field>
         </div>
 
