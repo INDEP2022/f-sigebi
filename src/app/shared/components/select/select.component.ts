@@ -34,6 +34,7 @@ export class SelectComponent<T> implements OnInit {
   @Input() multiple: boolean = false;
   @Input() closeOnSelect: boolean = true;
   @Input() maxSelectedItems: number = 0;
+  @Input() searchable: boolean = true;
   @Output() fetchItems = new EventEmitter<ListParams>();
   @Output() change = new EventEmitter<any>();
   buffer: any[] = [];
@@ -66,7 +67,11 @@ export class SelectComponent<T> implements OnInit {
       this.page++;
       this.loading = true;
       this.concat = true;
-      const params = { inicio: this.page, text, pageSize: this.selectSize };
+      const params = {
+        inicio: this.page,
+        text: text ?? '',
+        pageSize: this.selectSize,
+      };
       this.fetchItems.emit(params);
     }
   }
@@ -81,7 +86,11 @@ export class SelectComponent<T> implements OnInit {
           this.buffer = [];
           this.loading = true;
           this.concat = false;
-          const params = { inicio: this.page, text, pageSize: this.selectSize };
+          const params = {
+            inicio: this.page,
+            text: text ?? '',
+            pageSize: this.selectSize,
+          };
           this.fetchItems.emit(params);
           return of([]);
         })

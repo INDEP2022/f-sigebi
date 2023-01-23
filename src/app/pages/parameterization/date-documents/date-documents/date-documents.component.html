@@ -7,7 +7,7 @@
       <div class="row margin-input">
         <div class="col-md-4">
           <form-field
-            label="Nombre"
+            label="Expediente"
             [control]="dateDocumentsForm.get('proceedings')">
             <input
               class="form-control"
@@ -16,7 +16,12 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <button class="btn btn-primary btn-sm active">Buscar</button>
+          <button
+            class="btn btn-primary btn-sm active"
+            (click)="search()"
+            [disabled]="!dateDocumentsForm.valid">
+            Buscar
+          </button>
         </div>
       </div>
     </form>
@@ -26,7 +31,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="data1">
+            [source]="dateDocuments">
           </ng2-smart-table>
         </div>
       </div>

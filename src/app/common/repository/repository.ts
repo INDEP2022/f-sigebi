@@ -14,7 +14,7 @@ export class Repository<T> implements IRepository<T> {
     route: string,
     _params?: ListParams
   ): Observable<IListResponse<T>> {
-    const params = this.makeParams(_params);
+    const params = _params ? this.makeParams(_params) : {};
     const fullRoute = this.buildRoute(route);
     return this.httpClient.get<IListResponse<T>>(`${fullRoute}`, { params });
   }
@@ -22,6 +22,14 @@ export class Repository<T> implements IRepository<T> {
   getById(route: string, id: number | string): Observable<T> {
     const fullRoute = this.buildRoute(route);
     return this.httpClient.get<T>(`${fullRoute}/${id}`);
+  }
+
+  getByColumn(route: string, column?: Object): Observable<IListResponse<T>> {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.post<IListResponse<T>>(
+      `${fullRoute}/columns`,
+      column
+    );
   }
 
   create(route: string, formData: Object) {
@@ -57,6 +65,19 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.delete(`${fullRoute}/${idsRoute}`);
   }
 
+  postByIds(route: string, formData: Object): Observable<T> {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.post<T>(`${fullRoute}/id`, formData);
+  }
+
+  postColumns(route: string, formData: Object): Observable<IListResponse<T>> {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.post<IListResponse<T>>(
+      `${fullRoute}/columns`,
+      formData
+    );
+  }
+
   private buildRoute(route: string) {
     const paths = route.split('/');
     paths.shift();
@@ -75,7 +96,7 @@ export class Repository<T> implements IRepository<T> {
   private makeParams(params: ListParams): HttpParams {
     let httpParams: HttpParams = new HttpParams();
     Object.keys(params).forEach(key => {
-      httpParams = httpParams.append(key, (params as any)[key]);
+      httpParams = httpParams.append(key, (params as any)[key] ?? '');
     });
     return httpParams;
   }
@@ -93,6 +114,11 @@ export class Repository<T> implements IRepository<T> {
 
   getById2(route: string, id: number | string): Observable<T> {
     return this.httpClient.get<T>(`${environment.API_URL2}${route}/${id}`);
+  }
+  getById3(route: string, id: number | string): Observable<IListResponse<T>> {
+    return this.httpClient.get<IListResponse<T>>(
+      `${environment.API_URL2}${route}/${id}`
+    );
   }
 
   create2(route: string, formData: Object) {

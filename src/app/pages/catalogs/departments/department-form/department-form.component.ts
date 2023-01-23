@@ -16,9 +16,9 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class DepartmentFormComponent extends BasePage implements OnInit {
   departmentForm: ModelForm<IDepartment>;
+  department: IDepartment;
   title: string = 'Departamento';
   edit: boolean = false;
-  deductive: IDepartment;
   delegations = new DefaultSelect();
   subdelegations = new DefaultSelect();
   constructor(
@@ -77,9 +77,9 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
       ],
       phaseEdo: [null, [Validators.required]],
     });
-    if (this.deductive != null) {
+    if (this.department != null) {
       this.edit = true;
-      this.departmentForm.patchValue(this.deductive);
+      this.departmentForm.patchValue(this.department);
     }
   }
 
@@ -116,7 +116,7 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.departmentService
-      .update(this.deductive.id, this.departmentForm.value)
+      .update(this.department.id, this.departmentForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
