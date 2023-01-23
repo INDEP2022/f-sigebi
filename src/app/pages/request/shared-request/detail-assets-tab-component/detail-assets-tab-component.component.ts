@@ -267,6 +267,12 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
       cveState: [null],
       cveMunicipality: [null],
       cveLocality: [null],
+      code: [null],
+      latitude: [null],
+      longitude: [null],
+      viaName: [null],
+      viaOrigin: [null],
+      numExt: [null],
     });
 
     //this.assetsForm.controls['typeAsset'].disable();
@@ -346,7 +352,9 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
 
   getSubBrand(event: any) {}
 
-  getTypeUseBoat(event: any) {}
+  getTypeUseBoat(event: any) {
+    //mis cambios
+  }
 
   getTypeAirplane(event: any) {}
 

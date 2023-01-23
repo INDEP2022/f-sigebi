@@ -359,124 +359,127 @@
             </div>
           </div>
 
-          <!--<div class="row pt-4">
-              <div class="col-md-4">
-                <ngx-select
-                  [form]="assetsForm.controls['address']"
-                  control="cp"
-                  (fetchItems)="getCP($event)"
-                  [data]="selectCP"
-                  label="C&#46;P&#46;"
-                  value="id"
-                  bindLabel="cp"></ngx-select>
-              </div>
-              <div class="col-md-4">
-                <form-field [control]="assetsForm.get('address')" label="Latitud">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="latitud" />
-                </form-field>
-              </div>
-              <div class="col-md-4">
-                <form-field
-                  [control]="assetsForm.get('address')"
-                  label="Longitud">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="longitud" />
-                </form-field>
-              </div>
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <ngx-select
+                [form]="domicileForm"
+                control="code"
+                (fetchItems)="getCP($event)"
+                [data]="selectCP"
+                label="C&#46;P&#46;"
+                value="id"
+                bindLabel="code"></ngx-select>
             </div>
-
-            <div class="row pt-4">
-              <div class="col-md-4">
-                <form-field
-                  [control]="assetsForm.get('address')"
-                  label="Nombre de la V&iacute;a">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="nameRoute" />
-                </form-field>
-              </div>
-              <div class="col-md-4">
-                <form-field
-                  [control]="assetsForm.get('address')"
-                  label="Num&#46; Ext&#46;">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="numExt" />
-                </form-field>
-              </div>
-              <div class="col-md-4">
-                <form-field
-                  [control]="assetsForm.get('address')"
-                  label="Origen de la V&iacute;a">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="originRoute" />
-                </form-field>
-              </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="domicileForm.get('latitude')"
+                label="Latitud">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="latitude" />
+              </form-field>
             </div>
-
-            <div class="row pt-4">
-              <div class="col-md-4">
-                <form-field
-                  [control]="assetsForm.get('address')"
-                  label="Num&#46; Int&#46;">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="numInt" />
-                </form-field>
-              </div>
-              <div class="col-md-4">
-                <form-field
-                  [control]="assetsForm.get('address')"
-                  label="Destino de la V&iacute;a">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="routeDestination" />
-                </form-field>
-              </div>
-              <div class="col-md-4">
-                <form-field
-                  [control]="assetsForm.get('address')"
-                  label="Referencia V&iacute;a 1">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="referenceVia1" />
-                </form-field>
-              </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="domicileForm.get('longitude')"
+                label="Longitud">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="longitude" />
+              </form-field>
             </div>
+          </div>
 
-            <div class="row pt-4">
-              <div class="col-md-4">
-                <form-field
-                  [control]="assetsForm.get('address')"
-                  label="Kil&oacute;metro de la V&iacute;a">
-                  <input
-                    type="number"
-                    class="form-control"
-                    formControlName="kilometerRoute" />
-                </form-field>
-              </div>
-              <div class="col-md-4">
-                <form-field
-                  [control]="assetsForm.get('address')"
-                  label="Descripci&oacute;n">
-                  <textarea
-                    class="form-control"
-                    formControlName="description"></textarea>
-                </form-field>
-              </div>
-            </div>-->
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="domicileForm.get('viaName')"
+                label="Nombre de la V&iacute;a">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="viaName" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="domicileForm.get('viaOrigin')"
+                label="Origen de la V&iacute;a">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="viaOrigin" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="domicileForm.get('numExt')"
+                label="Num&#46; Ext&#46;">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="numExt" />
+              </form-field>
+            </div>
+          </div>
+
+          <!-- <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('address')"
+                label="Num&#46; Int&#46;">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="numInt" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('address')"
+                label="Destino de la V&iacute;a">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="routeDestination" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('address')"
+                label="Referencia V&iacute;a 1">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="referenceVia1" />
+              </form-field>
+            </div>
+          </div>
+
+          <div class="row pt-4">
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('address')"
+                label="Kil&oacute;metro de la V&iacute;a">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="kilometerRoute" />
+              </form-field>
+            </div>
+            <div class="col-md-4">
+              <form-field
+                [control]="assetsForm.get('address')"
+                label="Descripci&oacute;n">
+                <textarea
+                  class="form-control"
+                  formControlName="description"></textarea>
+              </form-field>
+            </div>
+          </div>
+          -->
         </div>
       </form>
     </tab>
