@@ -1,10 +1,10 @@
 export const ADVANCED_SEARCH_COLUMNS = {
-  fraction: {
+  id: {
     title: 'No. Fracción',
     type: 'string',
     sort: false,
   },
-  doce: {
+  code: {
     title: 'Código',
     type: 'string',
     sort: false,
@@ -14,7 +14,7 @@ export const ADVANCED_SEARCH_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  Description: {
+  description: {
     title: 'Descripción',
     type: 'string',
     sort: false,

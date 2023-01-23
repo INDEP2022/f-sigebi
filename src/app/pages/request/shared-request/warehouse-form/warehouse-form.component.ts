@@ -3,10 +3,20 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ICity } from 'src/app/core/models/catalogs/city.model';
+import { ILocality } from 'src/app/core/models/catalogs/locality.model';
+import { IMunicipality } from 'src/app/core/models/catalogs/municipality.model';
+import { IRegionalDelegation } from 'src/app/core/models/catalogs/regional-delegation.model';
+import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
 import { ITypeWarehouse } from 'src/app/core/models/catalogs/type-warehouse.model';
+import { IZipCodeGoodQuery } from 'src/app/core/models/catalogs/zip-code.model';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
+import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
+import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { TypeWarehouseService } from 'src/app/core/services/catalogs/type-warehouse.service';
+import { ZipCodeService } from 'src/app/core/services/catalogs/zip-code.service';
+import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -17,24 +27,30 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   styles: [],
 })
 export class WarehouseFormComponent extends BasePage implements OnInit {
+  regDelData: IRegionalDelegation;
   warehouseForm: FormGroup = new FormGroup({});
   responsiblesUsers = new DefaultSelect();
   typeTercero = new DefaultSelect();
-  states = new DefaultSelect();
-  municipalities = new DefaultSelect();
-  cities = new DefaultSelect();
-  colonies = new DefaultSelect();
-  cp = new DefaultSelect();
-  street = new DefaultSelect();
+  states = new DefaultSelect<IStateOfRepublic>();
+  municipalities = new DefaultSelect<IMunicipality>();
+  cities = new DefaultSelect<ICity>();
+  localities = new DefaultSelect<ILocality>();
+  zipCode = new DefaultSelect<IZipCodeGoodQuery>();
+
   typeWarehouse = new DefaultSelect<ITypeWarehouse>();
+  stateKey: string = '';
 
   constructor(
     private modalService: BsModalService,
     private fb: FormBuilder,
     private router: Router,
-    private stateService: StateOfRepublicService,
+    private stateOfRepublicService: StateOfRepublicService,
+    private municipalityService: MunicipalityService,
     private typeWarehouseService: TypeWarehouseService,
-    private cityService: CityService
+    private cityService: CityService,
+    private localityService: LocalityService,
+    private zipCodeService: ZipCodeService,
+    private goodsQueryService: GoodsQueryService
   ) {
     super();
   }
@@ -42,6 +58,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
   }
+
   //Verificar typeTercero//
   prepareForm() {
     this.warehouseForm = this.fb.group({
@@ -49,13 +66,16 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
       responsibleUser: [null],
       numberRegister: [null],
       typeTercero: [null],
-      regionalDelegation: ['OCCIDENTE', [Validators.pattern(STRING_PATTERN)]],
+      regionalDelegation: [
+        this.regDelData.description,
+        [Validators.pattern(STRING_PATTERN)],
+      ],
       managedBy: [null, [Validators.pattern(STRING_PATTERN)]],
       state: [null],
       municipality: [null],
       city: [null],
-      colony: [null],
-      cp: [null],
+      locality: [null],
+      zipCode: [null],
       street: [null],
       numberOutside: [null],
       typeWarehouse: [null],
@@ -91,23 +111,54 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   getTypeTerceroSelect(typeTercero: ListParams) {}
 
   //Revisar error //
-  getStateSelect(params: ListParams) {
-    this.stateService.getAll(params).subscribe(data => {
-      console.log('Estado de la republica', data);
+  getStateSelect(params?: ListParams) {
+    params['limit'] = 10;
+    params['page'] = 1;
+    console.log('parametros', params);
+    this.stateOfRepublicService.getAll(params).subscribe(data => {
+      console.log('estados', data);
+      this.states = new DefaultSelect(data.data, data.count);
     });
   }
 
-  getMunicipalitySelect(municipally: ListParams) {}
+  stateSelect(item: IStateOfRepublic) {
+    this.stateKey = item.id;
+    this.getCitySelect(new ListParams());
+    this.getMunicipalitiesSelect(new ListParams());
+    this.getLocalitySelect(new ListParams());
+    this.getZipCodeSelect(new ListParams());
+  }
 
-  getCitySelect(params: ListParams) {
+  getCitySelect(params?: ListParams) {
+    params['stateKey'] = this.stateKey;
+    params['limit'] = 10;
     this.cityService.getAll(params).subscribe(data => {
-      console.log('Ciudad seleccionada', data);
+      this.cities = new DefaultSelect(data.data, data.count);
     });
   }
 
-  getColonySelect(colony: ListParams) {}
+  getMunicipalitiesSelect(params?: ListParams) {
+    params['stateKey'] = this.stateKey;
+    this.municipalityService.getAll(params).subscribe(data => {
+      this.municipalities = new DefaultSelect(data.data, data.count);
+    });
+  }
 
-  getCpSelect(cp: ListParams) {}
+  getLocalitySelect(params?: ListParams) {
+    /*params['stateKey'] = this.stateKey;
+    this.localityService.getAll(params).subscribe(data => {
+      console.log('Localidades', data);
+      this.localities = new DefaultSelect(data.data, data.count);
+    }); */
+  }
+
+  getZipCodeSelect(params?: ListParams) {
+    params['filter.keyState'] = this.stateKey;
+    this.goodsQueryService.getZipCode(params).subscribe(data => {
+      console.log('Codigos postales', data);
+      this.zipCode = new DefaultSelect(data.data, data.count);
+    });
+  }
 
   getTypeWarehouseSelect(params: ListParams) {
     this.typeWarehouseService.getAll(params).subscribe(data => {
