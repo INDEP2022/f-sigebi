@@ -1,6 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CUSTOMER_CATALOGS_COLUMNS } from './customer-catalogs-columns';
+//models
+import { IComerClients } from 'src/app/core/models/ms-customers/customers-model';
+//Services
+import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients-service';
 
 @Component({
   selector: 'app-customer-catalogs-table',
@@ -8,7 +14,11 @@ import { CUSTOMER_CATALOGS_COLUMNS } from './customer-catalogs-columns';
   styles: [],
 })
 export class CustomerCatalogsTableComponent extends BasePage implements OnInit {
-  constructor() {
+  comerClients: IComerClients[] = [];
+  totalItems: number = 0;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+
+  constructor(private comerClientsService: ComerClientsService) {
     super();
     this.settings = {
       ...this.settings,
@@ -17,59 +27,21 @@ export class CustomerCatalogsTableComponent extends BasePage implements OnInit {
     };
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getComerClients());
+  }
 
-  data = [
-    {
-      id_cliente: 1469,
-      nom_razon: 'RODOLFO SILVEYRA IBARRA',
-      rfc: 'SIIR480502JA1',
-      id_vendedor: 789,
-      calle: 'AVE FRANCISCO I MAD PTE 1701',
-      ciudad: 'LOS MOCHIS',
-      colonia: 'CUAUHTEMOC',
-      delegacion: 'LOS MOCHIS',
-      cp: '81249',
-      pais: 'MÉXICO',
-      fax: '',
-      telefono: '',
-      correoweb: 'osttic364@indep.gob.mx',
-      estado: 'SINALOA',
-      curp: '',
-    },
-    {
-      id_cliente: 1470,
-      nom_razon: 'ALCANTARA REYES MIGUEL ANGEL',
-      rfc: 'ALRM750802',
-      id_vendedor: 514,
-      calle: 'Cuautitlan #144 mz 213 lt.28 #144',
-      ciudad: 'ECATEPEC',
-      colonia: 'CD.AZTECA',
-      delegacion: 'LOS MOCHIS',
-      cp: '81249',
-      pais: 'MÉXICO',
-      fax: '',
-      telefono: '',
-      correoweb: 'osttic364@indep.gob.mx',
-      estado: 'SINALOA',
-      curp: '',
-    },
-    {
-      id_cliente: 846,
-      nom_razon: 'PEREZ TEXTLE JOSE AARON',
-      rfc: 'PETJ700101',
-      id_vendedor: '',
-      calle: 'Tenochtitlan #2',
-      ciudad: 'ZACATELCO',
-      colonia: 'SECCION CUARTA',
-      delegacion: 'ZACATELCO',
-      cp: '81249',
-      pais: 'MÉXICO',
-      fax: '',
-      telefono: '',
-      correoweb: 'osttic364@indep.gob.mx',
-      estado: 'SINALOA',
-      curp: '',
-    },
-  ];
+  getComerClients() {
+    this.loading = true;
+    this.comerClientsService.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        this.comerClients = response.data;
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
+  }
 }

@@ -7,7 +7,7 @@ export interface ICity {
   noDelegation: IDelegation | number;
   noSubDelegation: number;
   legendOffice: string;
-  numRegister?: number;
+  noRegister?: number;
 }
 
 export interface IState {

@@ -1,10 +1,10 @@
 export const CUSTOMER_CATALOGS_COLUMNS = {
-  id_cliente: {
+  id: {
     title: 'ID Cliente',
     width: '15px',
     sort: false,
   },
-  nom_razon: {
+  reasonName: {
     title: 'Nombre Razón',
     width: '15px',
     sort: false,
@@ -14,37 +14,37 @@ export const CUSTOMER_CATALOGS_COLUMNS = {
     width: '15px',
     sort: false,
   },
-  id_vendedor: {
+  sellerId: {
     title: 'ID Vendedor',
     width: '15px',
     sort: false,
   },
-  calle: {
+  street: {
     title: 'Calle',
     width: '15px',
     sort: false,
   },
-  ciudad: {
+  city: {
     title: 'Ciudad',
     width: '15px',
     sort: false,
   },
-  colonia: {
+  colony: {
     title: 'Colonia',
     width: '15px',
     sort: false,
   },
-  delegacion: {
+  delegation: {
     title: 'Delegación',
     width: '15px',
     sort: false,
   },
-  cp: {
+  zipCode: {
     title: 'CP',
     width: '15px',
     sort: false,
   },
-  pais: {
+  country: {
     title: 'País',
     width: '15px',
     sort: false,
@@ -54,17 +54,17 @@ export const CUSTOMER_CATALOGS_COLUMNS = {
     width: '15px',
     sort: false,
   },
-  telefono: {
+  phone: {
     title: 'Teléfono',
     width: '15px',
     sort: false,
   },
-  correoweb: {
+  mailWeb: {
     title: 'Email',
     width: '15px',
     sort: false,
   },
-  estado: {
+  state: {
     title: 'Estado',
     width: '15px',
     sort: false,

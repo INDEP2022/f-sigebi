@@ -8,7 +8,7 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 interface BaseResponse {
@@ -36,9 +36,9 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(
-      // map(response => {
-      //   return this.handleSuccess(response);
-      // }),
+      map(response => {
+        return this.handleSuccess(response);
+      }),
       catchError((error: HttpErrorResponse) => {
         this.handleError(error);
         return throwError(() => error);
@@ -46,7 +46,7 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
     );
   }
 
-  async handleError(error: HttpErrorResponse) {
+  handleError(error: HttpErrorResponse) {
     const status = error.status;
     const message = error?.error?.message ?? 'Unknown error';
     if (status === 0) {
@@ -71,14 +71,29 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
       return;
     }
 
-    this.onLoadToast('error', 'Error' + status, message);
+    // this.onLoadToast('error', 'Error' + status, message);
   }
 
   private handleSuccess(response: HttpEvent<any>) {
     if (response instanceof HttpResponse) {
       this.validateResponse(response);
-      const body = response.body?.data ?? response.body;
-      return response.clone({ body });
+      if (!response.body) {
+        const error = new HttpErrorResponse({
+          error: { message: 'data not found' },
+          headers: response.headers,
+          status: 404,
+          url: response.url,
+        });
+        throw error;
+      }
+      const { data, count } = response.body;
+      if ((data && count) || Array.isArray(data)) {
+        return response.clone({ body: { count, data } });
+      }
+      if (data) {
+        return response.clone({ body: data });
+      }
+      return response;
     }
     return response;
   }
