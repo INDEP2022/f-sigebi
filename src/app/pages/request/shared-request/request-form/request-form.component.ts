@@ -167,7 +167,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
   getAuthority(params: any) {
     this.authorityService
-      .postColumns(params)
+      .postByColumns(params)
       .subscribe((data: IListResponse<IAuthority>) => {
         this.selectAuthority = new DefaultSelect(data.data, data.count);
       });
