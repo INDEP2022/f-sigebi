@@ -4,6 +4,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ITPenalty } from 'src/app/core/models/ms-parametercomer/penalty-type.model';
 import { TPenaltyService } from '../../../../../core/services/ms-parametercomer/tpenalty.service';
 import { PenaltyTypesFormComponent } from '../penalty-types-form/penalty-types-form.component';
 import { PENALTY_TYPE_COLUMNS } from './penalty-types-columns';
@@ -104,14 +105,33 @@ export class PenaltyTypesListComponent extends BasePage implements OnInit {
     this.openModal({ penaltyType });
   }
 
-  delete(penaltyType: any) {
+  delete(penaltyType: ITPenalty) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
+        this.tpenaltyService.remove(penaltyType.id).subscribe({
+          next: data => {
+            this.onLoadToast(
+              'success',
+              'Tipo Penalización',
+              `Registro Eliminado Correctamente`
+            );
+            this.loading = false;
+            this.getData();
+          },
+          error: error => {
+            this.onLoadToast(
+              'error',
+              'Tipo Penalización',
+              `Error al conectar con el servidor`
+            );
+            this.loading = false;
+            console.log(error);
+          },
+        });
       }
     });
   }

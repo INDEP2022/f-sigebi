@@ -30,10 +30,10 @@ export class TPenaltyService {
   }
 
   update(id: string | number, model: ITPenalty): Observable<Object> {
-    return this.repository.update(this.route, id, model);
+    return this.repository.update(`${this.route}/id`, id, model);
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.repository.remove(this.route, id);
+    return this.repository.remove(`${this.route}/id`, id);
   }
 }

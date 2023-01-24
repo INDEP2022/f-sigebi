@@ -40,6 +40,7 @@ export class ParameterComerRepository<T> implements IParameterComerMethods<T> {
   }
 
   private buildRoute(route: string) {
+    return `${environment.API_URL}parametercomer/api/v1/${route}`;
     const paths = route.split('/');
     paths.shift();
     if (paths.length === 0) {
