@@ -11,11 +11,10 @@ import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic
 import { ITypeWarehouse } from 'src/app/core/models/catalogs/type-warehouse.model';
 import { IZipCodeGoodQuery } from 'src/app/core/models/catalogs/zip-code.model';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
+import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
-import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { TypeWarehouseService } from 'src/app/core/services/catalogs/type-warehouse.service';
-import { ZipCodeService } from 'src/app/core/services/catalogs/zip-code.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -44,19 +43,19 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
     private modalService: BsModalService,
     private fb: FormBuilder,
     private router: Router,
-    private stateOfRepublicService: StateOfRepublicService,
     private municipalityService: MunicipalityService,
     private typeWarehouseService: TypeWarehouseService,
     private cityService: CityService,
     private localityService: LocalityService,
-    private zipCodeService: ZipCodeService,
-    private goodsQueryService: GoodsQueryService
+    private goodsQueryService: GoodsQueryService,
+    private stateService: DelegationStateService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getStateSelect(new ListParams());
   }
 
   //Verificar typeTercero//
@@ -112,12 +111,17 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
 
   //Revisar error //
   getStateSelect(params?: ListParams) {
-    params['limit'] = 10;
-    params['page'] = 1;
-    console.log('parametros', params);
-    this.stateOfRepublicService.getAll(params).subscribe(data => {
-      console.log('estados', data);
-      this.states = new DefaultSelect(data.data, data.count);
+    params['filter.regionalDelegation'] = this.regDelData.id;
+    this.stateService.getAll(params).subscribe(data => {
+      const filterStates = data.data.filter(_states => {
+        return _states.stateCode;
+      });
+
+      const states = filterStates.map(items => {
+        return items.stateCode;
+      });
+
+      this.states = new DefaultSelect(states, data.count);
     });
   }
 
@@ -131,14 +135,16 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
 
   getCitySelect(params?: ListParams) {
     params['stateKey'] = this.stateKey;
-    params['limit'] = 10;
+    console.log('parametros ciudades', params);
     this.cityService.getAll(params).subscribe(data => {
+      console.log('ciudades', data);
       this.cities = new DefaultSelect(data.data, data.count);
     });
   }
 
   getMunicipalitiesSelect(params?: ListParams) {
     params['stateKey'] = this.stateKey;
+    console.log('params municipio', params);
     this.municipalityService.getAll(params).subscribe(data => {
       this.municipalities = new DefaultSelect(data.data, data.count);
     });
