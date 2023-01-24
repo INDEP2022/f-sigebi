@@ -1,13 +1,8 @@
-import {
-  Component,
-  inject,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IRequest } from '../../../../../../core/models/requests/request.model';
@@ -18,83 +13,70 @@ import { AffairService } from '../../../../../../core/services/catalogs/affair.s
   templateUrl: './request-record-tab.component.html',
   styles: [],
 })
-export class RequestRecordTabComponent
-  extends BasePage
-  implements OnInit, OnChanges
-{
+export class RequestRecordTabComponent extends BasePage implements OnInit {
   @Input() requestForm: ModelForm<IRequest>;
-  receptionForm: ModelForm<IRequest>;
-  bsValue = new Date();
+  bsReceptionValue = new Date();
+  bsPaperValue: any;
   selectTypeExpedient = new DefaultSelect<any>();
+  selectOriginInfo = new DefaultSelect<any>();
   affairName: string = '';
+  datePaper: any;
 
   affairService = inject(AffairService);
+  genericsService = inject(GenericService);
 
   constructor(public fb: FormBuilder) {
     super();
   }
 
   ngOnInit(): void {
-    this.getCurrentDate();
-    /*setTimeout(()=>{
-      this.requestForm.controls['receptionDate'].patchValue(this.bsValue);
-      this.requestForm.controls['paperDate'].patchValue('');
-      this.requestForm.controls['receiptRoute'].value;
-    },1000)*/
+    this.getOriginInfo(new ListParams());
+    this.getTypeExpedient(new ListParams());
 
-    this.requestForm.valueChanges.subscribe(val => {
+    this.requestForm.controls['affair'].valueChanges.subscribe(val => {
       if (this.requestForm.controls['id'].value != null) {
-        console.log(this.requestForm.getRawValue());
         this.getAffair(this.requestForm.controls['affair'].value);
+      }
+
+      if (this.requestForm.controls['paperDate'].value != null) {
+        let date = new Date(this.requestForm.controls['paperDate'].value);
+        this.bsPaperValue = date;
+        this.requestForm.controls['paperDate'].setValue(date.toISOString());
       }
     });
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (this.requestForm.controls['id'].value != null) {
-      debugger;
-    }
-  }
-
-  prepareForm(): void {
-    //console.log(this.dataObject);
-    let fecha = this.getCurrentDate();
-    this.receptionForm = this.fb.group({
-      applicationDate: [null],
-      paperNumber: [null],
-      regionalDelegationId: [null],
-      keyStateOfRepublic: [null],
-      transferenceId: [null],
-      stationId: [null],
-      authorityId: [null],
-      typeUser: [''],
-      receiUser: [''],
-      id: [null],
-      urgentPriority: [null],
-      originInfo: [null],
-      receptionDate: [null],
+  getTypeExpedient(params: ListParams) {
+    params.text = 'Tipo Expediente';
+    this.genericsService.getAll(params).subscribe((data: any) => {
+      this.selectTypeExpedient = new DefaultSelect(data.data, data.count);
     });
   }
 
-  getCurrentDate(): string {
-    var today = new Date();
-    var year = today.getFullYear();
-    var mes = today.getMonth() + 1;
-    var dia = today.getDate();
-    var fecha = dia + '/' + mes + '' + year;
-    return fecha;
+  getOriginInfo(params?: ListParams) {
+    params.text = 'Procedencia';
+    this.genericsService.getAll(params).subscribe((data: any) => {
+      this.selectOriginInfo = new DefaultSelect(data.data, data.count);
+    });
   }
-
-  getTypeExpedient(event: any) {}
 
   getAffair(id: number) {
     this.affairService.getById(id).subscribe((data: any) => {
-      this.affairName = data.data.description;
+      this.affairName = data.description;
     });
   }
 
   confirm() {
     this.loading = true;
+    let date = new Date(this.bsPaperValue);
+    this.requestForm.controls['paperDate'].setValue(date.toISOString());
     console.log(this.requestForm.getRawValue());
+
+    /*setTimeout(() => {
+      let localDate = new Date(
+        this.requestForm.controls['paperDate'].value
+      ).toLocaleDateString();
+      this.requestForm.controls['paperDate'].setValue(localDate);
+    }, 2000);*/
   }
 }

@@ -7,15 +7,18 @@
         </h5>
       </div>
       <div class="p-2 bd-highlight buttons">
-        <button class="btn btn-primary btn-sm active" (click)="confirm()">
+        <button
+          class="btn btn-primary btn-sm active"
+          [disabled]="requestForm.invalid"
+          (click)="confirm()">
           <i class="bx bx-save"></i> Guardar
         </button>
       </div>
     </div>
     <form [formGroup]="requestForm" class="form-material">
       <div class="row pt-4">
-        <div class="col-md-2">
-          <span style="line-height: 3">Prioridad</span>
+        <div class="col-md-1">
+          <span style="line-height: 2">Prioridad</span>
         </div>
         <div class="col-md-2">
           <form-field [control]="requestForm.get('urgentPriority')">
@@ -27,14 +30,16 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field
-            [control]="requestForm.get('originInfo')"
-            label="Procedencia Informaci&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="originInfo" />
-          </form-field>
+          <ngx-select
+            [form]="requestForm"
+            control="originInfo"
+            (fetchItems)="getOriginInfo($event)"
+            [data]="selectOriginInfo"
+            [searchable]="false"
+            label="Procedencia Informaci&oacute;n"
+            bindLabel="description"
+            value="description">
+          </ngx-select>
         </div>
       </div>
       <div class="row pt-4">
@@ -45,10 +50,10 @@
             <input
               type="text"
               class="form-control"
-              formControlName="receptionDate"
               #dp="bsDatepicker"
               bsDatepicker
-              [bsValue]="bsValue" />
+              [bsValue]="bsReceptionValue"
+              [disabled]="true" />
           </form-field>
         </div>
         <div class="col-md-2">
@@ -58,7 +63,7 @@
             <input
               type="text"
               class="form-control"
-              formControlName="paperDate"
+              [bsValue]="bsPaperValue"
               bsDatepicker />
           </form-field>
         </div>
@@ -68,9 +73,10 @@
             control="typeRecord"
             (fetchItems)="getTypeExpedient($event)"
             [data]="selectTypeExpedient"
+            [searchable]="false"
             label="Tipo Expediente"
-            bindLabel=""
-            value="id">
+            bindLabel="description"
+            value="description">
           </ngx-select>
         </div>
         <div class="col-md-3">
@@ -94,48 +100,48 @@
           </form-field>
         </div>-->
       </div>
-      <!--<div class="row pt-4">
+      <div class="row pt-4">
         <div class="col-md-3">
           <form-field
-            [control]="receptionForm.get('nameSender')"
+            [control]="requestForm.get('nameOfOwner')"
             label="Nombre del Remitente">
             <input
               type="text"
               class="form-control"
-              formControlName="nameSender" />
+              formControlName="nameOfOwner" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
-            [control]="receptionForm.get('roleSender')"
+            [control]="requestForm.get('holderCharge')"
             label="Cargo del Remitente">
             <input
               type="text"
               class="form-control"
-              formControlName="roleSender" />
+              formControlName="holderCharge" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
           <form-field
-            [control]="receptionForm.get('phoneSender')"
+            [control]="requestForm.get('phoneOfOwner')"
             label="Tel&eacute;fono del Remitente">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="phoneSender" />
+              formControlName="phoneOfOwner" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
-            [control]="receptionForm.get('emailSender')"
+            [control]="requestForm.get('emailOfOwner')"
             label="Email del Remitente">
             <input
               type="email"
               class="form-control"
-              formControlName="emailSender" />
+              formControlName="emailOfOwner" />
           </form-field>
         </div>
-      </div>-->
+      </div>
       <div class="row pt-4">
         <!--<div class="col-md-3">
           <form-field [control]="receptionForm.get('sender')" label="Remitente">
