@@ -1,8 +1,8 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDrawer } from 'src/app/core/models/catalogs/drawer.model';
 import { ISafe } from 'src/app/core/models/catalogs/safe.model';
 import { DrawerService } from 'src/app/core/services/catalogs/drawer.service';
@@ -38,13 +38,27 @@ export class DrawerFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.drawerForm = this.fb.group({
-      noDrawer: [null, [Validators.required, Validators.maxLength(3)]],
+      noDrawer: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(3),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
       noBobeda: [
         null,
         [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
       status: [null, [Validators.required, Validators.maxLength(2)]],
-      noRegistration: [null, [Validators.required, Validators.maxLength(10)]],
+      noRegistration: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(10),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
     });
 
     if (this.drawer != null) {

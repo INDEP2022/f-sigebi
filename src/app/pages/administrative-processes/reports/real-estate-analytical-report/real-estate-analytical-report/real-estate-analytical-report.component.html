@@ -1,0 +1,126 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Informe analítico de bienes inmuebles</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="row margin-input">
+          <h5 class="title">Resumen por Procedencia</h5>
+          <div class="col-md-6">
+            <div class="justify-content-center">
+              <button type="submit" class="btn btn-primary btn-sm active">
+                Analítico
+              </button>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="justify-content-center">
+              <button type="submit" class="btn btn-primary btn-sm active">
+                Detalle
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="row margin-input">
+          <h5 class="title">Resumen por Estatus</h5>
+          <div class="col-md-6">
+            <div class="justify-content-center">
+              <button type="submit" class="btn btn-primary btn-sm active">
+                Analítico
+              </button>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="justify-content-center">
+              <button type="submit" class="btn btn-primary btn-sm active">
+                Detalle
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="row margin-input">
+          <h5 class="title">Resumen por Estado</h5>
+          <div class="col-md-6">
+            <div class="justify-content-center">
+              <button type="submit" class="btn btn-primary btn-sm active">
+                Analítico
+              </button>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="justify-content-center">
+              <button type="submit" class="btn btn-primary btn-sm active">
+                Detalle
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pt-4">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <h5 class="title">Fecha Comercial</h5>
+          <form [formGroup]="businessCardForm" class="form-material">
+            <div class="row margin-input">
+              <div class="col-md-6">
+                <form-field
+                  [control]="businessCardForm.get('noGoods')"
+                  label="No Bien">
+                  <input
+                    type="number"
+                    class="form-control"
+                    formControlName="noGoods"
+                    min="1"
+                    pattern="^[0-9]+" />
+                </form-field>
+              </div>
+              <div class="col-md-6">
+                <div class="justify-content-center">
+                  <button type="submit" class="btn btn-primary btn-sm active">
+                    Buscar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="col-md-4">
+          <h5 class="title">Resumen por Regional</h5>
+          <div class="col-md-6">
+            <div class="justify-content-center">
+              <button type="submit" class="btn btn-primary btn-sm active">
+                Analítico
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="row margin-input">
+            <h5 class="title">Padrón General</h5>
+            <div class="col-md-6">
+              <div class="justify-content-center">
+                <button type="submit" class="btn btn-primary btn-sm active">
+                  Analítico
+                </button>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <button
+                type="submit"
+                class="btn btn-primary btn-sm active"
+                style="width: auto; height: auto; white-space: initial">
+                Vendidos, Donados y Cancelados
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-modal>

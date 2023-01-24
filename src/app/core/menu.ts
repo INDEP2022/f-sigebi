@@ -1,7 +1,25 @@
-import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception.routes';
-import { menuOptionsJuridicalProcesses } from '../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
-import { IMenuItem } from './interfaces/menu.interface';
+import { MENU_OPTIONS_JURIDICAL_PROCESSES } from '../common/constants/juridical-processes/juridical-processes-nombres-rutas-archivos';
+import { MENU_OPTIONS_REQUEST_MANAGE_RETURN } from '../common/constants/request/manage-return/menu-manage-return';
+import { MENU_OPTIONS_SECURITY } from '../common/constants/security/security-menu';
+import { ADMINISTRATIVE_PROCESSES_ROUTES } from '../common/routes/administrative-processes.routes';
 import { CATALOGS_ROUTES } from '../common/routes/catalogs.routes';
+import { COMMERCIALIZATION_ROUTES } from '../common/routes/commercialization.routes';
+import { DOCUMENTATION_COMPLEMENTARY } from '../common/routes/documentation-complementary';
+import { DOCUMENTS_RECEPTION_ROUTES } from '../common/routes/documents-reception.routes';
+import { EXECUTIVE_PROCESSES_ROUTES } from '../common/routes/executive-processes.routes';
+import { GENERAL_PROCESSES_ROUTES } from '../common/routes/general-processes.routes';
+import { MASTER_FILES } from '../common/routes/master-file.routes';
+import { PARAMETERIZATION_ROUTES } from '../common/routes/parameterization.routes';
+import { SCHEDULING_DELIVERIES } from '../common/routes/scheduling-deliveries.routes';
+import { APPRAISALS_ROUTES } from '../common/routes/siab-web/appraisals.routes';
+import { CLAIMS_CONTROL_ROUTES } from '../common/routes/siab-web/claims-control.routes';
+import { COMMERCIALIZATION_SW_ROUTES } from '../common/routes/siab-web/commercialization-sw.routes';
+import { CONSULTATION_ROUTES } from '../common/routes/siab-web/consultation.routes';
+import { INDICATORS_ROUTES } from '../common/routes/siab-web/indicators.routes';
+import { MAINTENANCE_ROUTES } from '../common/routes/siab-web/maintenance.routes';
+import { PARAMETRIZATION_ROUTES } from '../common/routes/siab-web/parametrization.routes';
+import { SAMI_ROUTES } from '../common/routes/siab-web/simi.routes';
+import { IMenuItem } from './interfaces/menu.interface';
 
 export const MENU: IMenuItem[] = [
   {
@@ -33,279 +51,71 @@ export const MENU: IMenuItem[] = [
   // * CATALOGOS
   ...CATALOGS_ROUTES,
   //Administración
+  ...ADMINISTRATIVE_PROCESSES_ROUTES,
+  ...MASTER_FILES,
   {
-    label: 'Procesos Administrativos',
+    label: 'Transferencia de Bienes',
     icon: 'bx-folder',
     subItems: [
       {
-        label: 'Numerario Físico',
-        link: '/pages/administrative-processes/numerary-physics',
-      },
-      {
-        label: 'Actas Conversión',
-        link: '/pages/administrative-processes/conversion-act',
-      },
-
-      {
-        label: 'Otras Monedas',
-        link: '/pages/administrative-processes/other-currencies',
-      },
-      {
-        label: 'Valores por Expediente',
-        link: '/pages/administrative-processes/values-per-file',
-      },
-      {
-        label: 'Movimientos Cuentas General',
-        link: '/pages/administrative-processes/general-account-movements',
-      },
-      {
-        label: 'Bienes conversión',
-        link: '/pages/administrative-processes/apply-lif',
-      },
-      {
-        label: 'Actas Conversión',
-        link: '/pages/administrative-processes/conversion-act',
-      },
-      {
-        label: 'Regulaciones',
-        link: '/pages/catalogs/regulatory',
-      },
-      {
-        label: 'Respuestas Repuve',
-        link: '/pages/catalogs/responseRepuve',
-      },
-      {
-        label: 'Administración Conversión',
-        link: '/pages/administrative-processes/conversion-management',
-      },
-      {
-        label: 'Derivación Bienes',
-        link: '/pages/administrative-processes/derivation-goods',
-      },
-      {
-        label: 'Ubicación de Bienes',
-        link: '/pages/administrative-processes/location-goods',
-      },
-      {
-        label: 'Consulta de Almacenes',
-        link: '/pages/administrative-processes/warehouse-inquiries',
-      },
-      {
-        label: 'Consulta de Bóvedas',
-        link: '/pages/administrative-processes/vault-consultation',
-      },
-      {
-        label: 'Registro de mensaje del Bien',
-        link: '/pages/administrative-processes/property-registration',
-      },
-      {
-        label: 'Solicitud de Avalúos',
-        link: '/pages/administrative-processes/appraisal-request',
-      },
-      {
-        label: 'Solicitud de cambio a numeración',
-        link: '/pages/administrative-processes/request-numbering-change',
-      },
-      {
-        label: 'Registro de Avalúos',
-        link: '/pages/administrative-processes/appraisal-registry',
-      },
-      {
-        label: 'Monitor de Avalúos',
-        link: '/pages/administrative-processes/appraisal-monitor',
-      },
-      {
-        label: 'Bienes sin Avalúos',
-        link: '/pages/administrative-processes/appraisal-goods',
-      },
-      {
-        label: 'Monitor de bienes incosteables',
-        link: '/pages/administrative-processes/monitor-unavoidable-assets',
-      },
-      {
-        label: 'Venta de Bienes',
-        link: '/pages/administrative-processes/sale-goods',
-      },
-      {
-        label: 'Reclasificación masiva de bienes',
-        link: '/pages/administrative-processes/massive-reclassification-goods',
-      },
-      {
-        label: 'Administracion Terceros',
-        icon: 'bx-folder',
+        label: 'Applicaciones',
         subItems: [
           {
-            label: 'Contratos',
-            link: '/pages/administrative-processes/contracts',
+            label: 'Solicitud de transferencia',
+            link: '/pages/request/list/new-transfer-request',
           },
           {
-            label: 'Costo unitario',
-            link: '/pages/administrative-processes/unit-cost',
+            label: 'Muestreo Bienes',
+            link: '/pages/request/sampling-assets',
           },
           {
-            label: 'Procesos para precios unitarios',
-            link: '/pages/administrative-processes/process',
+            label: 'Genera Consultas',
+            link: '/pages/request/generate-sampling-service-orders/generate-query',
           },
           {
-            label: 'Servicios para precios unitarios',
-            link: '/pages/administrative-processes/services-unit-prices',
-          },
-          {
-            label: 'Especificaciones para precios unitarios',
-            link: '/pages/administrative-processes/specs',
-          },
-          {
-            label: 'Turno y Tipo',
-            link: '/pages/administrative-processes/turn-type',
-          },
-          {
-            label: 'Unidades de medida',
-            link: '/pages/administrative-processes/measurement-units',
-          },
-          {
-            label: 'Variable costo',
-            link: '/pages/administrative-processes/variable-cost',
+            label: 'Solicitud de Documentación Complementaria',
+            link: '/pages/request/request-comp-doc',
           },
         ],
       },
+      // APP -- GESTIONAR DEVOLUCION -- Registro de Solicitud de Devolución
+      { ...MENU_OPTIONS_REQUEST_MANAGE_RETURN },
       {
-        label: 'Seguros y Vigilancia',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Mantenimiento de Pólizas',
-            link: '/pages/administrative-processes/policy-maintenance',
-          },
-          {
-            label: 'Pólizas de Seguro',
-            link: '/pages/administrative-processes/insurance-policy',
-          },
-          {
-            label: 'Altas de bienes en Pólizas',
-            link: '/pages/administrative-processes/registration-of-policy',
-          },
-          {
-            label: 'Baja de bienes en Pólizas',
-            link: '/pages/administrative-processes/loss-of-policy',
-          },
-        ],
-      },
-      {
-        label: 'Seguros y Vigilancia',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Reportes de Pólizas',
-            link: '/pages/administrative-processes/policies-report',
-          },
-          {
-            label: 'Mantenimiento a Pólizas',
-            link: '/pages/administrative-processes/policy-maintenance',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    label: 'Reportes',
-    icon: 'bx-folder',
-    subItems: [
-      {
-        label: 'Atención Bienes',
-        link: '/pages/administrative-processes/goods-tracking',
-      },
-      {
-        label: 'Gestión Bienes Gab-Soc',
-        link: '/pages/administrative-processes/goods-management',
-      },
-      {
-        label: 'Empresas',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Resumen Info Financiera',
-            link: '/pages/administrative-processes/summary-financial-info',
-          },
-        ],
-      },
-      {
-        label: 'Reportes',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Almacenes',
-            link: '/pages/administrative-processes/warehouse-reports',
-          },
-          {
-            label: 'Expedientes',
-            link: '/pages/administrative-processes/record-details',
-          },
-        ],
-      },
-      {
-        label: 'Coversión de Paquetes',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Conversión Masiva',
-            link: '/pages/administrative-processes/unit-conversion-packages',
-          },
-        ],
-      },
-      {
-        label: 'Interacción SIAB-SAMI',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Relación de Bienes',
-            link: '/pages/administrative-processes/siab-sami-interaction/',
-          },
-          {
-            label: 'Pago de Bienes',
-            link: '/pages/administrative-processes/siab-sami-interaction/payment-goods',
-          },
-          {
-            label: 'Avalúo de Bienes',
-            link: '/pages/administrative-processes/siab-sami-interaction/value-goods',
-          },
-        ],
-      },
-      /**
-       * ADMIN PROCESS-SEGUROS LEGASPI
-       **/
-      {
-        label: 'Servicios',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Registro de Pago de Servicios',
-            link: '/pages/administrative-processes/services/',
-          },
-          {
-            label: 'Solicitud de Pago de Servicios',
-            link: '/pages/administrative-processes/services/request',
-          },
-        ],
-      },
-      /**
-       * ADMIN PROCESS-SERVICES LEGASPI
-       **/
-    ],
-  },
-  {
-    label: 'Solicitudes',
-    icon: 'bx-folder',
-    subItems: [
-      {
-        label: 'Solicitudes a turno',
+        label: 'Turnado Masivo Solicitudes',
         link: '/pages/request/request-in-turn',
       },
       {
-        label: 'Solicitudes de transferencia',
-        link: '/pages/request/transfer-request',
+        label: 'Lista de Solicitudes',
+        link: '/pages/request/list',
+      },
+      {
+        label: 'Gestionar Bienes Similares',
+        subItems: [
+          {
+            label: 'Documentación Complementaria',
+            link: '/pages/request/manage-similar-goods/register-additional-documentation',
+          },
+        ],
+      },
+      {
+        label: 'Solicitud de Información de Destino',
+        subItems: [
+          {
+            label: 'Listado de Solicitudes',
+            link: '/pages/request/destination-information-request/list',
+          },
+        ],
       },
     ],
   },
+
+  //Documentación complementaria//
+  ...DOCUMENTATION_COMPLEMENTARY,
+
+  //Programar entregas//
+  ...SCHEDULING_DELIVERIES,
+
+  //Proceso Destino final
   {
     label: 'Proceso Destino final',
     icon: 'bx-share-alt',
@@ -346,252 +156,213 @@ export const MENU: IMenuItem[] = [
             label: 'Programación de Eventos',
             link: '/pages/final-destination-process/delivery-schedule/schedule-of-events',
           },
-        ]
+        ],
+      },
+      //Proceso de Donación
+      {
+        label: 'Proceso de Donación',
+        subItems: [
+          {
+            label: 'Exportación de Bienes para Donación',
+            link: '/pages/final-destination-process/donation-process/export-goods-donation',
+          },
+          {
+            label: 'Propuesta de Inventarios para Donación Web',
+            link: '/pages/final-destination-process/donation-process/web-donation-inventories',
+          },
+          {
+            label: 'Propuesta de Inventarios para Donación Directa',
+            link: '/pages/final-destination-process/donation-process/direct-donation-inventories',
+          },
+          {
+            label: 'Mantenimiento Comprometer para Donación',
+            link: '/pages/final-destination-process/donation-process/maintenance-commitment-donation',
+          },
+          {
+            label: 'Aprobación para Donación',
+            link: '/pages/final-destination-process/donation-process/approval-for-donation',
+          },
+          {
+            label: 'Solicitud y Autorización de Donación',
+            link: '/pages/final-destination-process/donation-process/donation-authorization-request',
+          },
+          {
+            label: 'Registro para Inventarios y Donación Directa',
+            link: '/pages/final-destination-process/donation-process/registration-inventories-donation',
+          },
+          {
+            label: 'Contratos de Donación',
+            link: '/pages/final-destination-process/donation-process/donation-contracts',
+          },
+          {
+            label: 'Contratos de Donación Directa Administrador',
+            link: '/pages/final-destination-process/donation-process/administrator-donation-contract',
+          },
+          //VISTAS A LAS QUE SE LES DEBE VERIFICAR SU RUTA
+          {
+            label: 'Parcialización Bienes en Donación',
+            link: '/pages/final-destination-process/donation-process/partialization-goods-donation',
+          },
+          {
+            label: 'Procesos de Donación',
+            link: '/pages/final-destination-process/donation-process/donation-processes',
+          },
+        ],
+      },
+      {
+        label: 'Actas Circunstanciadas de Suspensión/Cancelación',
+        link: '/pages/final-destination-process/circumstantial-acts-suspension-cancellation',
+      },
+      {
+        label: 'Actas Circunstanciadas de Cancelación de Ent por Robo',
+        link: '/pages/final-destination-process/acts-circumstantiated-cancellation-theft',
+      },
+      {
+        label: 'Constancias de Entrega',
+        link: '/pages/final-destination-process/proof-of-delivery',
+      },
+      {
+        label: 'Actas de Bienes Entregados para Estudio',
+        link: '/pages/final-destination-process/acts-goods-delivered',
+      },
+      {
+        label: 'Actas de Regularización por Inexistencia Física',
+        link: '/pages/final-destination-process/acts-regularization-non-existence',
+      },
+      {
+        label: 'Reporte de Actas de Devolución',
+        link: '/pages/final-destination-process/return-acts-report',
+      },
+      {
+        label: 'Fichas Técnicas',
+        link: '/pages/final-destination-process/technical-sheets',
+      },
+      {
+        label: 'Revisión de Fichas Técnicas',
+        link: '/pages/final-destination-process/review-technical-sheets',
+      },
+      //VISTAS A LAS QUE SE LES DEBE VERIFICAR SU RUTA O SI SON LLAMADAS DESDE OTRA VISTA
+      {
+        label: 'Comprobación de Requisitos Documentales por Donación',
+        link: '/pages/final-destination-process/check-donation-requirements',
+      },
+      {
+        label: 'Comprobación de Requisitos Documentales por Destrucción',
+        link: '/pages/final-destination-process/check-destruction-requirements',
+      },
+      {
+        label: 'Comprobación de Requisitos Documentales para Destino',
+        link: '/pages/final-destination-process/check-destination-requirements',
       },
     ],
   },
   ...DOCUMENTS_RECEPTION_ROUTES,
+  ...GENERAL_PROCESSES_ROUTES,
   //Procesos ejecutivos
-  {
-    label: 'Procesos Ejecutivos',
-    icon: 'bx-folder',
-    subItems: [
-      {
-        label: 'Reportes del Director Gral',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Total de documentos recibidos vs área destino',
-            link: '/pages/executive-processes/pe-rddg-drpad-m-totaldoc-received-destinationarea',
-          },
-          {
-            label: 'Reporte Documentación Recibida',
-            link: '/pages/executive-processes/pe-rddg-tddr-m-report-doc-received',
-          },
-          {
-            label: 'Reporte de bienes recibidos en administración',
-            link: '/pages/executive-processes/pe-rddg-brea-m-assets-received-admon',
-          },
-        ],
-      },
-      {
-        label: 'Acumulado Anual de Bienes',
-        link: '/pages/executive-processes/pe-aab-m-annual-accumulated-assets',
-      },
-      {
-        label: 'Acumulado Trimestral de Bienes',
-        link: '/pages/executive-processes/pe-atb-m-quarterly-accumulated-assets',
-      },
-      {
-        label: 'Control Mensual de Recepción Documental',
-        link: '/pages/executive-processes/pe-cmrd-m-cumulative-goods',
-      },
-      {
-        label: 'Control diario de recepción de expedientes',
-        link: '/pages/executive-processes/pe-rdde-m-daily-control-reception',
-      },
-      {
-        label: 'información Bienes',
-        link: '/pages/executive-processes/pe-ibs-d-a-m-report-registration-module',
-      },
-      {
-        label: 'Reporte de documentación recibida por autoridad emisora ',
-        link: '/pages/executive-processes/pe-drpae-m-doc-received-authority',
-      },
-      {
-        label: 'Gestión de Autorización de Destrucción',
-        link: '/pages/executive-processes/pe-gdadd-m-destruction-authorization-management',
-      },
-      {
-        label: 'Autorización de bienes para destrucción ',
-        link: '/pages/executive-processes/pe-ad-m-authorization-assets-destruction',
-      },
-      {
-        label: 'Aprobación de bienes para destino',
-        link: '/pages/executive-processes/pe-ad-m-approval-assets-destination',
-      },
-      {
-        label: 'Recepción recibida por área en el SERA ',
-        link: '/pages/executive-processes/pe-rddxdees-m-reception-area-sera',
-      },
-      {
-        label: 'Proceso de actualización masiva de valor avaluó',
-        link: '/pages/executive-processes/pe-amdvda-m-update-mss-value',
-      },
-      {
-        label: 'Aprobación donación',
-        link: '/pages/executive-processes/pe-ad-m-donation-approval',
-      },
-    ],
-  },
+  ...EXECUTIVE_PROCESSES_ROUTES,
   //Comercialización
+  ...COMMERCIALIZATION_ROUTES,
+  // PROCESOS JURIDICOS
+  ...MENU_OPTIONS_JURIDICAL_PROCESSES,
+  // SEGURIDAD
+  ...MENU_OPTIONS_SECURITY,
+  // Recepcion Fisica Judicial
   {
-    label: 'Comercialización',
+    label: 'Recepcion Fisica Judicial',
     icon: 'bx-folder',
     subItems: [
       {
-        label: 'Bienes Muebles',
-        icon: 'bx-folder',
-        subItems: [
-          {
-            label: 'Preparación del evento',
-            link: '/pages/commercialization/c-b-f-fmdvdb-m-event-preparation',
-          },
-          {
-            label: 'Bienes exentos de validación',
-            link: '/pages/commercialization/c-b-bedv-m-validation-exempted-goods',
-          },
-          {
-            label: 'Reclasificacón OI',
-            link: '/pages/commercialization/c-b-rdodi-m-reclass-recovery-orders',
-          },
-          {
-            label: 'Validación de Pagos',
-            link: '/pages/commercialization/c-b-vdp-m-payment-dispersion-validation',
-          },
-          {
-            label: 'Pagos Referenciados',
-            link: '/pages/commercialization/referenced-payment',
-          },
-          {
-            label: 'Pagos no Conciliados',
-            link: '/pages/commercialization/unreconciled-payment',
-          },
-          {
-            label: 'Dispersión de Pagos',
-            link: '/pages/commercialization/payment-dispersion-monitor',
-          },
-          {
-            label: 'Conversión a numerario',
-            link: '/pages/commercialization/numeraire-conversion-tabs',
-          },
-          {
-            label: 'Consulta de Avalúo',
-            link: '/pages/commercialization/c-b-a-cda-m-appraisal-consultation',
-          },
-          {
-            label: 'Registro de Avalúo',
-            link: '/pages/commercialization/c-b-a-rda-m-appraisal-registration',
-          },
-          {
-            label: 'Captura de Gastos',
-            link: '/pages/commercialization/c-b-ge-cdg-m-expense-capture',
-          },
-          {
-            label: 'Terceros comercializadores',
-            link: '/pages/commercialization/c-bm-ge-cdc-tc-m-third-party-marketers',
-          },
-          {
-            label: 'Consulta de bienes',
-            link: '/pages/commercialization/consultation-goods-commercial-process-tabs',
-          },
-          {
-            label: 'Calcular comisión',
-            link: '/pages/commercialization/c-bm-ge-cdc-clc-m-calculate-commission',
-          },
-          {
-            label: 'Folios y Series',
-            link: '/pages/commercialization/c-bm-f-syf-m-series-folios-control',
-          },
-          {
-            label: 'Causas y Refacturación',
-            link: '/pages/commercialization/c-bm-f-cdr-m-rebilling-causes',
-          },
-          {
-            label: 'Estatus de la facturación',
-            link: '/pages/commercialization/c-bm-f-edf-m-invoice-status',
-          },
-          {
-            label: 'Conceptos de Gasto',
-            link: '/pages/commercialization/expense-concepts',
-          },
-          {
-            label: 'Permisos a Eventos',
-            link: '/pages/commercialization/events',
-          },
-        ],
+        label: 'Complemento Aritculo',
+        link: '/pages/judicial-physical-reception/articles-complement',
       },
       {
-        label: 'Bienes Inmuebles',
-        icon: 'home-outline',
-        subItems: [
-          {
-            label: 'Bienes exentos de validación',
-            link: '/pages/commercialization/c-b-bedv-m-validation-exempted-goods',
-          },
-          {
-            label: 'Reclasificacón OI',
-            link: '/pages/commercialization/c-b-rdodi-m-reclass-recovery-orders',
-          },
-          {
-            label: 'Validación de Pagos',
-            link: '/pages/commercialization/c-b-vdp-m-payment-dispersion-validation',
-          },
-          {
-            label: 'Pagos Referenciados',
-            link: '/pages/commercialization/referenced-payment',
-          },
-          {
-            label: 'Pagos no Conciliados',
-            link: '/pages/commercialization/unreconciled-payment',
-          },
-          {
-            label: 'Dispersión de Pagos',
-            link: '/pages/commercialization/payment-dispersion-monitor',
-          },
-          {
-            label: 'Conversión a numerario',
-            link: '/pages/commercialization/numeraire-conversion-tabs',
-          },
-          {
-            label: 'Consulta de Avalúo',
-            link: '/pages/commercialization/c-b-a-cda-m-appraisal-consultation',
-          },
-          {
-            label: 'Registro de Avalúo',
-            link: '/pages/commercialization/c-b-a-rda-m-appraisal-registration',
-          },
-          {
-            label: 'Captura de Gastos',
-            link: '/pages/commercialization/c-b-ge-cdg-m-expense-capture',
-          },
-          {
-            label: 'Consulta de bienes',
-            link: '/pages/commercialization/consultation-goods-commercial-process-tabs',
-          },
-          {
-            label: 'Conceptos de Gasto',
-            link: '/pages/commercialization/expense-concepts',
-          },
-          {
-            label: 'Permisos a Eventos',
-            link: '/pages/commercialization/events',
-          },
-        ],
+        label: 'Recepcion de Decomisos',
+        link: '/pages/judicial-physical-reception/confiscated-reception',
+      },
+      {
+        label: 'Reporte de Actas',
+        link: '/pages/judicial-physical-reception/records-report',
+      },
+      {
+        label: 'Actas de Recepcion',
+        link: '/pages/judicial-physical-reception/confiscated-records',
+      },
+      {
+        label: 'Parcializa Bienes Generales 1',
+        link: '/pages/judicial-physical-reception/partializes-general-goods-1',
       },
 
       {
-        label: 'Activos Financieros',
-        icon: 'credit-card-outline',
-        subItems: [],
+        label: 'Parcializa Bienes Generales 2',
+        link: '/pages/judicial-physical-reception/partializes-general-goods-2',
       },
       {
-        label: 'Catálogos',
-        icon: 'folder',
-        subItems: [
-          {
-            label: 'Tipos de penalización',
-            link: '/pages/commercialization/catalogs/penalty-types',
-          },
-          {
-            label: 'Claves autorización envío ext. OIs',
-            link: '/pages/commercialization/catalogs/authorization-keys-ois',
-          },
-        ],
+        label: 'Parcializaciond de Bienes',
+        link: '/pages/judicial-physical-reception/partializes-goods',
+      },
+      {
+        label: 'Recepcion Suspencion/Cancelacion',
+        link: '/pages/judicial-physical-reception/cancellation-recepcion',
+      },
+      {
+        label: 'Devolucion x Cancelacion de Venta',
+        link: '/pages/judicial-physical-reception/cancellation-sale',
+      },
+      {
+        label: 'Mantenimiento de Programaciones',
+        link: '/pages/judicial-physical-reception/scheduled-maintenance-1',
+      },
+      {
+        label: 'Mantenimiento de Acta Entrega Recepcion',
+        link: '/pages/judicial-physical-reception/scheduled-maintenance-2',
+      },
+      {
+        label: 'Mantenimiento de Acatas',
+        link: '/pages/judicial-physical-reception/maintenance-records',
       },
     ],
   },
-  // PROCESOS JURIDICOS
-  menuOptionsJuridicalProcesses,
-  // PROCESOS JURIDICOS
+  {
+    label: 'Estudio de bienes',
+    icon: 'bx-share-alt',
+    subItems: [
+      {
+        label: 'Lista de Asignaciones',
+        link: '/pages/assets-for-study/assignment-list',
+      },
+      {
+        label: 'Generar Solicitud',
+        link: '/pages/assets-for-study/generate-request',
+      },
+
+      //David routes
+      {
+        label: 'Clasificar bienes programados',
+        link: '/pages/assets-for-study/clasify-programmed-goods',
+      },
+      {
+        label:
+          'Generar e imprimir constancia de bienes programados y no aceptados',
+        link: '/pages/assets-for-study/generate-document-of-programmed-goods',
+      },
+    ],
+  },
+
+  //Parametrización
+  ...PARAMETERIZATION_ROUTES,
+
+  {
+    label: 'Siab Web',
+    icon: 'bx-folder',
+    subItems: [
+      ...COMMERCIALIZATION_SW_ROUTES,
+      ...SAMI_ROUTES,
+      ...APPRAISALS_ROUTES,
+      ...INDICATORS_ROUTES,
+      ...PARAMETRIZATION_ROUTES,
+      ...CONSULTATION_ROUTES,
+      ...CLAIMS_CONTROL_ROUTES,
+      ...MAINTENANCE_ROUTES,
+    ],
+  },
 ];

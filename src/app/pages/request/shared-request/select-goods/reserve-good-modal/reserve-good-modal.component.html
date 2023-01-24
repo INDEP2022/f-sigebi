@@ -1,0 +1,63 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body>
+    <form
+      class="form-material pt-0 mt-n5"
+      [formGroup]="reserveForm"
+      *ngIf="good != undefined">
+      <div class="row mt-5">
+        <div class="col-md-6">
+          <p class="font-size-16 mt-2">
+            <strong class="font-size-13"
+              >Cantidad Disponible &#40;M2&#41;&#58;
+            </strong>
+          </p>
+        </div>
+        <div class="col-md-6">
+          <p class="font-size-16 mt-2">
+            {{ good.availableAmount }}
+          </p>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-6">
+          <p class="font-size-16 mt-2">
+            <strong class="font-size-13"
+              >Cantidad a Reservar &#40;M2&#41;&#58;
+            </strong>
+          </p>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="reserveForm.get('reserve')"
+            label="Cantidad a Reservar (M2)">
+            <input
+              type="number"
+              formControlName="reserve"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary active"
+          [disabled]="reserveForm.invalid"
+          (click)="confirm()">
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

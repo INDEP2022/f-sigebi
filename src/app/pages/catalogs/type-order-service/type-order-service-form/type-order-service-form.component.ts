@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ITypeOrderService } from 'src/app/core/models/catalogs/typeorderservices.model';
 import { TypeOrderServicesService } from 'src/app/core/services/catalogs/typeorderservices.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-type-order-service-form',
@@ -33,11 +37,19 @@ export class TypeOrderServiceFormComponent extends BasePage implements OnInit {
       id: [null],
       cve: [
         null,
-        Validators.compose([Validators.required, Validators.maxLength(50)]),
+        Validators.compose([
+          Validators.required,
+          Validators.maxLength(50),
+          Validators.pattern(KEYGENERATION_PATTERN),
+        ]),
       ],
       description: [
         null,
-        Validators.compose([Validators.required, Validators.maxLength(50)]),
+        Validators.compose([
+          Validators.required,
+          Validators.maxLength(50),
+          Validators.pattern(STRING_PATTERN),
+        ]),
       ],
     });
     if (this.typeOrderService != null) {

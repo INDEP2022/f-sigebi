@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ExpertsModule } from './experts/experts.module';
+
+import { AuthGuard } from '../../core/guards/auth.guard';
 
 const routes: Routes = [
   {
@@ -23,13 +24,13 @@ const routes: Routes = [
     data: { title: 'Sub Delegaciones' },
   },
   {
-    path: 'deductives',
+    path: 'create-deductives',
     loadChildren: async () =>
       (await import('./deductives/deductives.module')).DeductivesModule,
     data: { title: 'Deductivas' },
   },
   {
-    path: 'deductives-verification',
+    path: 'create-deductives-verification',
     loadChildren: async () =>
       (await import('./deductives-verification/deductives-verification.module'))
         .DeductivesVerificationModule,
@@ -137,12 +138,6 @@ const routes: Routes = [
       (await import('./legal-support/legal-support.module')).LegalSupportModule,
     data: { title: 'Soporte Legal' },
   },
-  {
-    path: 'label-okey',
-    loadChildren: async () =>
-      (await import('./label-okey/label-okey.module')).LabelOkeyModule,
-    data: { title: 'Etiquetas Bien' },
-  },
 
   {
     path: 'fractions',
@@ -157,33 +152,11 @@ const routes: Routes = [
       (await import('./drawers/drawers.module')).DrawersModule,
     data: { title: 'Gavetas' },
   },
-
-  {
-    path: 'management',
-    loadChildren: async () =>
-      (await import('./management/management.module')).ManagementModule,
-    data: { title: 'Gestión' },
-  },
-
-  {
-    path: 'save-values',
-    loadChildren: async () =>
-      (await import('./save-values/save-values.module')).SaveValuesModule,
-    data: { title: 'Gestión' },
-  },
-
   {
     path: 'identifier',
     loadChildren: async () =>
       (await import('./identifiers/identifiers.module')).IdentifiersModule,
     data: { title: 'Identificador' },
-  },
-
-  {
-    path: 'indicated',
-    loadChildren: async () =>
-      (await import('./indicated/indicated.module')).IndicatedModule,
-    data: { title: 'Indiciados' },
   },
   {
     path: 'doc-compensation-sat-xml',
@@ -208,18 +181,6 @@ const routes: Routes = [
     data: { title: 'Etiquetas Bien' },
   },
   {
-    path: 'fractions',
-    loadChildren: async () =>
-      (await import('./fractions/fractions.module')).FractionsModule,
-    data: { title: 'Fracciones' },
-  },
-  {
-    path: 'drawers',
-    loadChildren: async () =>
-      (await import('./drawers/drawers.module')).DrawersModule,
-    data: { title: 'Gavetas' },
-  },
-  {
     path: 'management',
     loadChildren: async () =>
       (await import('./management/management.module')).ManagementModule,
@@ -229,13 +190,7 @@ const routes: Routes = [
     path: 'save-values',
     loadChildren: async () =>
       (await import('./save-values/save-values.module')).SaveValuesModule,
-    data: { title: 'Gestión' },
-  },
-  {
-    path: 'identifier',
-    loadChildren: async () =>
-      (await import('./identifiers/identifiers.module')).IdentifiersModule,
-    data: { title: 'Identificador' },
+    data: { title: 'Valores Guardados' },
   },
   {
     path: 'indicated',
@@ -310,13 +265,6 @@ const routes: Routes = [
     data: { title: 'Institución Clasificación' },
   },
   {
-    path: 'payment-concept',
-    loadChildren: async () =>
-      (await import('./sub-delegations/sub-delegations.module'))
-        .SubDelegationsModule,
-    data: { title: 'Sub Delegaciones' },
-  },
-  {
     path: 'expert',
     loadChildren: async () =>
       (await import('./experts/experts.module')).ExpertsModule,
@@ -380,7 +328,8 @@ const routes: Routes = [
     path: 'minpub',
     loadChildren: async () =>
       (await import('./minpub/minpub.module')).MinpubModule,
-    data: { title: 'Minpub' },
+    data: { title: 'Minpub', screen: 'FCATCATMINPUBLICO' },
+    canActivate: [AuthGuard],
   },
   {
     path: 'photograph-media',
@@ -582,6 +531,13 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./penalty/penalty.module')).PenaltyModule,
     data: { title: 'Lista Penalizacion' },
+  },
+  {
+    path: 'payment-concept',
+    loadChildren: async () =>
+      (await import('./payment-concept/payment-concept.module'))
+        .PaymentConceptModule,
+    data: { title: 'Concepto de pagos' },
   },
 ];
 

@@ -1,7 +1,8 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IBatch } from '../../../../core/models/catalogs/batch.model';
 import { BatchService } from './../../../../core/services/catalogs/batch.service';
@@ -33,10 +34,19 @@ export class BatchFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.batchForm = this.fb.group({
-      numStore: [null, [Validators.required]],
-      numRegister: [null, [Validators.required]],
-      description: [null, [Validators.required]],
-      status: [null, [Validators.required, Validators.maxLength(1)]],
+      numStore: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      numRegister: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      status: [null, [Validators.required, Validators.minLength(1)]],
     });
     if (this.batch != null) {
       this.edit = true;

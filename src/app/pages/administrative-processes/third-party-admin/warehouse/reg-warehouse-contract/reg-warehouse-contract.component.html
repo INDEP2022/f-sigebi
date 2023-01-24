@@ -1,0 +1,60 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">ALTA DE ALMACENES POR CONTRATO</h5>
+  </div>
+
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mb-3 mt-3">
+        <!--Warehouse Types Component-->
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <app-warehouse-shared
+            [form]="form"
+            [showWarehouse]="false"></app-warehouse-shared>
+        </div>
+        <!--Warehouse Component-->
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <app-warehouse-shared
+            [form]="form"
+            [showWarehouseType]="false"></app-warehouse-shared>
+        </div>
+        <!--Contracts Component-->
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <app-contracts-shared [form]="form"></app-contracts-shared>
+        </div>
+      </div>
+    </form>
+    <div class="row justify-content-end mb-3 mt-3">
+      <div class="col-lg-2 col-md-2 col-sm-4 col-12 mb-3 mt-3">
+        <div class="mt-4">
+          <h5 class="font-size-14">
+            <i class="bx bx-calendar me-1 text-primary"></i>
+            Total de lugares
+          </h5>
+          <p class="text-muted mb-0">{{ positions }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="row justify-content-center mb-3 mt-3">
+      <div class="col-12 mb-3 mt-3">
+        <apx-chart
+          #chart
+          [series]="chartOptions.series"
+          [chart]="chartOptions.chart"
+          [xaxis]="chartOptions.xaxis"
+          [title]="chartOptions.title"
+          (click)="onClick()"></apx-chart>
+      </div>
+    </div>
+  </div>
+  <!--<div footer class="d-flex justify-content-end">
+    <div class="m-3">
+      <confirm-button
+        text="Imprimir"
+        [disabled]="form.invalid"
+        [loading]="loading"
+        (confirm)="confirm()">
+      </confirm-button>
+    </div>
+  </div>-->
+</app-card>

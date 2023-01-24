@@ -1,0 +1,18 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showCustomer">
+    <div class="col-md-12">
+      <form-field [control]="form.get(customerField)">
+        <ngx-select
+          (fetchItems)="getCustomers($event)"
+          [data]="customers"
+          [form]="form"
+          value="customerId"
+          bindLabel="customerName"
+          label="Clientes"
+          [control]="customerField"
+          (change)="onCustomersChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

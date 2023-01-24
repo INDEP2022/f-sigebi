@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IStation } from 'src/app/core/models/catalogs/station.model';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -31,7 +31,7 @@ export class StationFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.stationForm = this.fb.group({
       id: [null],
-      idTransferor: [null],
+      idTransferent: [null],
       idEntity: [null],
       stationName: [null, Validators.required],
       keyState: [null, Validators.required],

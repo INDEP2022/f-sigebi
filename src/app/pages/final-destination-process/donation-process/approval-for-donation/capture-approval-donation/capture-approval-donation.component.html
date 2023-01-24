@@ -1,0 +1,240 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Captura de Aprobaci&oacute;n para Donaci&oacute;n</h5>
+  </div>
+
+  <div body>
+    <form
+      class="form-material form-horizontal"
+      [formGroup]="regisForm"
+      (ngSubmit)="onSubmit()">
+      <div class="row mt-5">
+        <div class="col-md-5 border-right border-secondary" id="column">
+          <div class="row">
+            <div class="col-12">
+              <h5>Registro</h5>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 text-md-right">
+              <span class="badge rounded-pill badge-soft-success">
+                Estatus
+              </span>
+            </div>
+          </div>
+          <div class="row mt-5">
+            <div class="col-md-6">
+              <div class="mb-3 pl-4 pr-4">
+                <form-field [control]="regisForm.get('type')" label="Tipo">
+                  <select class="form-control" formControlName="type">
+                    <option>Tipo Evento</option>
+                  </select>
+                </form-field>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="mb-3 pl-4 pr-4">
+                <form-field
+                  [control]="regisForm.get('area')"
+                  label="&Aacute;rea">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="area" />
+                </form-field>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col-md-2">
+              <div class="mb-3 pl-4 pr-4">
+                <form-field [control]="regisForm.get('year')" label="Año">
+                  <input
+                    type="text"
+                    class="form-control"
+                    [bsConfig]="bsConfigToYear"
+                    #dp="bsDatepicker"
+                    formControlName="year"
+                    bsDatepicker
+                    [(bsValue)]="bsValueToYear" />
+                </form-field>
+              </div>
+            </div>
+            <div class="col-md-5">
+              <div class="mb-3 pl-4 pr-4">
+                <form-field [control]="regisForm.get('folio')" label="Folio">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="folio" />
+                </form-field>
+              </div>
+            </div>
+            <div class="col-md-5">
+              <div class="mb-3 pl-4 pr-4">
+                <form-field
+                  [control]="regisForm.get('captureDate')"
+                  label="Fecha Captura">
+                  <input
+                    type="text"
+                    class="form-control"
+                    bsDatepicker
+                    formControlName="captureDate" />
+                </form-field>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <div class="mb-3 pl-4 pr-4">
+                <form-field [control]="regisForm.get('keyEvent')">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="keyEvent"
+                    readonly />
+                </form-field>
+              </div>
+            </div>
+            <div class="col-md-6 text-md-right">
+              <button class="btn btn-primary btn-sm active">
+                Cerrar Evento
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-7">
+          <div class="row">
+            <div class="col-12">
+              <h5>Par&aacute;metros para Traer Informaci&oacute;n de SIAB</h5>
+            </div>
+          </div>
+          <div class="row mt-5">
+            <div class="col-md-6 text-md-right">
+              <button
+                class="btn btn-secondary btn-sm active"
+                (click)="
+                  openModal(
+                    'Consulta de Bienes',
+                    'check-goods',
+                    '¿Desea Continuar con el Proceso?'
+                  )
+                ">
+                Consulta Bienes
+              </button>
+            </div>
+            <div class="col-md-6 text-md-right">
+              <button class="btn btn-secondary btn-sm active">
+                Valida Bienes
+              </button>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-6 text-md-right">
+              <button class="btn btn-success btn-sm active">
+                Exp. a Excel
+              </button>
+            </div>
+            <div class="col-md-6 text-md-right">
+              <button class="btn btn-secondary btn-sm active">
+                Rastreador
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <app-divider></app-divider>
+
+      <div class="row mt-5">
+        <div class="col-md-3 text-center">
+          <div [ngStyle]="{ 'background-color': info[0].color }">
+            {{ info[0].title }}
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end mt-5">
+        <app-columns-select
+          [(settings)]="settings"
+          class="row justify-content-end">
+        </app-columns-select>
+      </div>
+
+      <div class="row mt-3 pt-2 scroll-table">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          class="col-md-12"
+          [settings]="settings"
+          [source]="data">
+        </ng2-smart-table>
+      </div>
+
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+
+      <div class="row mt-5">
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="d-flex align-items-center">
+                <div>
+                  <h5 class="font-size-14">Cantidad de Bienes:</h5>
+                </div>
+                <div class="ml-2">
+                  <span class="badge rounded-pill badge-soft-success">1</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="d-flex align-items-center">
+                <div>
+                  <h5 class="font-size-14">Cantidad de Bienes con Error:</h5>
+                </div>
+                <div class="ml-2">
+                  <span class="badge rounded-pill badge-soft-success">1</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <div class="d-flex align-items-center">
+                <div>
+                  <h5 class="font-size-14">Suma de Cantidades:</h5>
+                </div>
+                <div class="ml-2">
+                  <span class="badge rounded-pill badge-soft-success">1</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-6">
+              <button
+                class="btn btn-secondary btn-sm active"
+                (click)="
+                  openModal(
+                    'Visualizaci&oacute;n de Errores',
+                    'see-error',
+                    'Los Siguientes Bienes Contienen Errores:'
+                  )
+                ">
+                Ver Error
+              </button>
+            </div>
+            <div class="col-md-6">
+              <button class="btn btn-secondary btn-sm active">
+                Elimina Bienes
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

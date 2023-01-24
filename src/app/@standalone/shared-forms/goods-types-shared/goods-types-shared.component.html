@@ -1,69 +1,65 @@
-<ng-container>
-  <div class="row mb-3 pt-3" *ngIf="goodTypeShow">
-    <div class="col-md-12">
-      <form-field [control]="form.get(typeField)">
-        <ngx-select
-          (fetchItems)="getTypes($event)"
-          [data]="types"
-          [form]="form"
-          value="id"
-          label="Tipo de Bien"
-          bindLabel="nameGoodType"
-          [control]="typeField"
-          (change)="onTypesChange($event)">
-        </ngx-select>
-      </form-field>
-    </div>
-  </div>
+<div class="row">
+  <form-field
+    *ngIf="goodTypeShow"
+    [control]="form.get(typeField)"
+    [class]="rowClass">
+    <ngx-select
+      (fetchItems)="getTypes($event)"
+      [data]="types"
+      [form]="form"
+      value="id"
+      label="Tipo de Bien"
+      bindLabel="nameGoodType"
+      [control]="typeField"
+      (change)="onTypesChange($event)">
+    </ngx-select>
+  </form-field>
 
-  <div class="row mb-3 pt-3" *ngIf="subTypeShow">
-    <div class="col-md-12">
-      <form-field [control]="form.get(subtypeField)">
-        <ngx-select
-          (fetchItems)="getSubtypes($event)"
-          [data]="subtypes"
-          [form]="form"
-          value="id"
-          label="Subtipo"
-          bindLabel="description"
-          [control]="subtypeField"
-          (change)="onSubtypesChange($event)">
-        </ngx-select>
-      </form-field>
-    </div>
-  </div>
+  <form-field
+    *ngIf="subTypeShow"
+    [control]="form.get(subtypeField)"
+    [class]="rowClass">
+    <ngx-select
+      (fetchItems)="getSubtypes($event)"
+      [data]="subtypes"
+      [form]="form"
+      value="id"
+      label="Subtipo"
+      bindLabel="nameSubtypeGood"
+      [control]="subtypeField"
+      (change)="onSubtypesChange($event)">
+    </ngx-select>
+  </form-field>
 
-  <div class="row" *ngIf="ssubTypeShow">
-    <div class="col-md-12">
-      <form-field [control]="form.get(ssubtypeField)">
-        <ngx-select
-          (fetchItems)="getSsubtypes($event)"
-          [data]="ssubtypes"
-          [form]="form"
-          value="id"
-          label="Ssubtipo"
-          bindLabel="description"
-          [control]="ssubtypeField"
-          (change)="onSsubtypesChange($event)">
-        </ngx-select>
-      </form-field>
-    </div>
-  </div>
+  <form-field
+    *ngIf="ssubTypeShow"
+    [control]="form.get(ssubtypeField)"
+    [class]="rowClass">
+    <ngx-select
+      (fetchItems)="getSsubtypes($event)"
+      [data]="ssubtypes"
+      [form]="form"
+      value="id"
+      label="Ssubtipo"
+      bindLabel="description"
+      [control]="ssubtypeField"
+      (change)="onSsubtypesChange($event)">
+    </ngx-select>
+  </form-field>
 
-  <div class="row" *ngIf="sssubTypeShow">
-    <div class="col-md-12">
-      <form-field [control]="form.get(sssubtypeField)">
-        <ngx-select
-          (fetchItems)="getSssubtypes($event)"
-          [data]="sssubtypes"
-          [form]="form"
-          value="id"
-          label="Sssubtipo"
-          bindLabel="description"
-          [control]="sssubtypeField"
-          (change)="onSssubtypesChange($event)">
-        </ngx-select>
-      </form-field>
-    </div>
-  </div>
-</ng-container>
+  <form-field
+    *ngIf="sssubTypeShow"
+    [control]="form.get(sssubtypeField)"
+    [class]="rowClass">
+    <ngx-select
+      (fetchItems)="getSssubtypes($event)"
+      [data]="sssubtypes"
+      [form]="form"
+      value="id"
+      label="Sssubtipo"
+      bindLabel="description"
+      [control]="sssubtypeField"
+      (change)="onSssubtypesChange($event)">
+    </ngx-select>
+  </form-field>
+</div>

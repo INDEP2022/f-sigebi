@@ -1,0 +1,61 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">APLICAR ABANDONO</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="container-fluid form-material">
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field [control]="form.get('noBien')" label="No&#46; Bien">
+            <input class="form-control" formControlName="noBien" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field [control]="form.get('cantidad')" label="Cantidad">
+            <input class="form-control" formControlName="cantidad" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field [control]="form.get('unidad')" label="Unidad">
+            <input class="form-control" formControlName="unidad" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field [control]="form.get('estatus')" label="Estatus">
+            <input class="form-control" formControlName="estatus" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field
+            [control]="form.get('clasificacion')"
+            label="Clasificaci&oacute;n">
+            <input class="form-control" formControlName="clasificacion" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field [control]="form.get('destino')" label="Destino">
+            <input class="form-control" formControlName="destino" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field
+            [control]="form.get('descripcion')"
+            label="Descripci&oacute;n">
+            <input class="form-control" formControlName="descripcion" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
+          <div class="form-group">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm"
+              (click)="btnAplicaAbandono()">
+              Aplica Abandono
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

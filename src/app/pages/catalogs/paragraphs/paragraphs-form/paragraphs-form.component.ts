@@ -1,7 +1,7 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IParagraph } from './../../../../core/models/catalogs/paragraph.model';
 import { ParagraphService } from './../../../../core/services/catalogs/paragraph.service';
@@ -13,7 +13,7 @@ import { ParagraphService } from './../../../../core/services/catalogs/paragraph
 })
 export class ParagraphsFormComponent extends BasePage implements OnInit {
   paragraphForm: FormGroup = new FormGroup({});
-  title: string = 'Párrafo';
+  title: string = 'P&aacute;rrafo';
   edit: boolean = false;
   paragraph: IParagraph;
   items = new DefaultSelect<IParagraph>();

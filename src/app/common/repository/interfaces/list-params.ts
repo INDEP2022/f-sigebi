@@ -1,5 +1,9 @@
 export class ListParams {
-  inicio: number = 1;
-  text: string = '';
+  text?: string = '';
+  [others: string]: string | number;
+  page?: number = 1;
+  inicio?: number = 1;
+  limit?: number = 10;
   pageSize?: number = 10;
+  take?: number = 10;
 }

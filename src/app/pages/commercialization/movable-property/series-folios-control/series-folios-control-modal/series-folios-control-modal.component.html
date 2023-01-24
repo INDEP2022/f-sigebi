@@ -1,0 +1,140 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field [control]="form.get('id')" label="idInvoice">
+            <input type="text" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('coord')" label="Coordinación">
+            <input type="text" class="form-control" formControlName="coord" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('regional')" label="Regional">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="regional" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('serie')" label="Serie">
+            <input type="text" class="form-control" formControlName="serie" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-2">
+          <form-field [control]="form.get('foInicial')" label="Folio inicial">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="foInicial" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('foFinal')" label="Folio Final">
+            <input type="text" class="form-control" formControlName="foFinal" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('validez')" label="Validez">
+            <input type="text" class="form-control" formControlName="validez" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('tipo')" label="Tipo">
+            <input type="text" class="form-control" formControlName="tipo" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('estatus')" label="Estatus">
+            <input type="text" class="form-control" formControlName="estatus" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('totalFolios')"
+            label="Total de folios">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="totalFolios" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('folRegistrados')"
+            label="Folios disponibles">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="folRegistrados" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('folUtilizados')"
+            label="Folio utilizados">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="folUtilizados" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('fecUsuario')"
+            label="Usuarios registrados">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="fecUsuario" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('fecRegistro')"
+            label="Fecha registro">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="fecRegistro" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-5">
+          <form-field [control]="form.get('direccion')" label="Dirección">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="direccion" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          [loading]="loading"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

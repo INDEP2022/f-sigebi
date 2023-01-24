@@ -4,10 +4,11 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import Swal from 'sweetalert2';
 import { ISafe } from '../../../../core/models/catalogs/safe.model';
 import { SafeService } from '../../../../core/services/catalogs/safe.service';
-import { VAULT_COLUMNS } from './vault-columns';
 import { VaultDetailComponent } from '../vault-detail/vault-detail.component';
+import { VAULT_COLUMNS } from './vault-columns';
 
 @Component({
   selector: 'app-vault-list',
@@ -65,15 +66,22 @@ export class VaultListComponent extends BasePage implements OnInit {
     this.openModal({ edit: true, vault });
   }
 
-  delete(vault: ISafe) {
+  showDeleteAlert(vaults: ISafe) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
+        this.delete(vaults.idSafe);
+        Swal.fire('Borrado', '', 'success');
       }
+    });
+  }
+
+  delete(id: number) {
+    this.safeService.remove(id).subscribe({
+      next: () => this.getVaults(),
     });
   }
 }

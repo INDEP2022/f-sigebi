@@ -1,0 +1,23 @@
+<div class="row w-100">
+  <div class="col-sm-12 col-12 col-md-12 p-4">
+    <h6>INDICADORES DESEMPEÑO</h6>
+  </div>
+  <div class="col-sm-12 col-12 col-md-6 p-4">
+    <form [formGroup]="form" class="form-material">
+      <ngx-select
+        [data]="items"
+        bindLabel="tipoUsuarioName"
+        label="Tipo de Usuario"
+        value="id"
+        (fetchItems)="getFromSelect($event)"
+        [form]="form"
+        control="tipoUsuario"></ngx-select>
+    </form>
+  </div>
+  <div class="col-sm-12 col-12 col-md-12 p-2">
+    <ng2-smart-table
+      [attr.class]="'table-bordered'"
+      [settings]="tableSettings"
+      [source]="data"></ng2-smart-table>
+  </div>
+</div>

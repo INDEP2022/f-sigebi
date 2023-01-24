@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BasePage } from 'src/app/core/shared/base-page';
 
+import { NotaryFormComponent } from '../notary-form/notary-form.component';
 import { INotary } from './../../../../core/models/catalogs/notary.model';
 import { NotaryService } from './../../../../core/services/catalogs/notary.service';
 import { NOTARY_COLUMNS } from './notary-columns';
-import { NotaryFormComponent } from '../notary-form/notary-form.component';
 
 @Component({
   selector: 'app-notary-list',

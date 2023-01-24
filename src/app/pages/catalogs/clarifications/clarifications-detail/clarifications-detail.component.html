@@ -1,25 +1,22 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ status }} ACLARACIÓN</h5>
+    <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
+    <form class="form-material" [formGroup]="clarificationForm">
       <div class="row">
         <div class="col-md-4">
-          <form-field [control]="form.get('id')" label="Id">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="id"
-              min="1"
-              pattern="^[0-9]+" />
+          <form-field [control]="clarificationForm.get('id')" label="Id">
+            <input type="number" class="form-control" formControlName="id" />
           </form-field>
         </div>
       </div>
 
       <div class="row mt-4">
         <div class="col-md-12">
-          <form-field [control]="form.get('clarification')" label="Aclaración">
+          <form-field
+            [control]="clarificationForm.get('clarification')"
+            label="Aclaraci&oacute;n">
             <input
               type="text"
               class="form-control"
@@ -29,33 +26,30 @@
       </div>
       <div class="row mt-4">
         <div class="col-md-4">
-          <form-field [control]="form.get('type')" label="Tipo de Aclaración">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="type"
-              min="1"
-              pattern="^[0-9]+" />
+          <form-field
+            [control]="clarificationForm.get('type')"
+            label="Tipo de Aclaraci&oacute;n">
+            <input type="number" class="form-control" formControlName="type" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="form.get('active')" label="Activo">
+          <form-field
+            [control]="clarificationForm.get('active')"
+            label="Activo">
             <input
               type="number"
               class="form-control"
-              formControlName="active"
-              min="1"
-              pattern="^[0-9]+" />
+              formControlName="active" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="form.get('version')" label="Versión">
+          <form-field
+            [control]="clarificationForm.get('version')"
+            label="Versi&oacute;n">
             <input
               type="number"
               class="form-control"
-              formControlName="version"
-              min="1"
-              pattern="^[0-9]+" />
+              formControlName="version" />
           </form-field>
         </div>
       </div>
@@ -66,8 +60,8 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="!form.valid"
-          [loading]="loading"
+          [type]="'button'"
+          [disabled]="!clarificationForm.valid"
           (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">

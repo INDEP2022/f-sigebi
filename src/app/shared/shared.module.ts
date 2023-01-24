@@ -1,30 +1,33 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ColumnsSelectComponent } from './components/columns-select/columns-select.component';
-import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BsLocaleService } from 'ngx-bootstrap/datepicker';
-import { defineLocale } from 'ngx-bootstrap/chronos';
-import { esLocale } from 'ngx-bootstrap/locale';
-import { FormFieldComponent } from './components/form-field/form-field.component';
-import { SearchBarComponent } from './components/search-bar/search-bar.component';
-import { ConfirmButtonComponent } from './components/confirm-button/confirm-button.component';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { SelectComponent } from './components/select/select.component';
-import { SeeMoreComponent } from './components/see-more/see-more.component';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
+import { defineLocale } from 'ngx-bootstrap/chronos';
+import { BsDatepickerModule, BsLocaleService } from 'ngx-bootstrap/datepicker';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { esLocale } from 'ngx-bootstrap/locale';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { ModalComponent } from './components/modal/modal.component';
+import { NgScrollbarModule } from 'ngx-scrollbar';
 import { CardComponent } from './components/card/card.component';
-import { PaginationComponent } from './components/pagination/pagination.component';
-import { PaginateComponent } from './components/pagination/paginate.component';
-import { FormCheckComponent } from './components/form-check/form-check.component';
-import { FormRadioComponent } from './components/form-radio/form-radio.component';
 import { CheckboxColumnComponent } from './components/checkbox-column/checkbox-column.component';
-import { SearchBarSimpleComponent } from './components/search-bar-simple/search-bar-simple.component';
-import { DividerComponent } from './components/divider/divider.component';
 import { CheckboxElementComponent } from './components/checkbox-element-smarttable/checkbox-element';
+import { ColumnsSelectComponent } from './components/columns-select/columns-select.component';
+import { ConfirmButtonComponent } from './components/confirm-button/confirm-button.component';
+import { DividerComponent } from './components/divider/divider.component';
+import { FormCheckComponent } from './components/form-check/form-check.component';
+import { FormFieldComponent } from './components/form-field/form-field.component';
+import { FormRadioComponent } from './components/form-radio/form-radio.component';
+import { ModalComponent } from './components/modal/modal.component';
+import { PaginateComponent } from './components/pagination/paginate.component';
+import { PaginationComponent } from './components/pagination/pagination.component';
+import { SearchBarSimpleComponent } from './components/search-bar-simple/search-bar-simple.component';
+import { SearchBarComponent } from './components/search-bar/search-bar.component';
+import { SeeMoreComponent } from './components/see-more/see-more.component';
+import { SelectComponent } from './components/select/select.component';
+import { PermissionsDirective } from './directives/permissions.directive';
+/*Redux NgRX Global Vars Store*/
+import { GlobalVarsModule } from './global-vars/global-vars.module';
 
 @NgModule({
   declarations: [
@@ -44,6 +47,7 @@ import { CheckboxElementComponent } from './components/checkbox-element-smarttab
     SearchBarSimpleComponent,
     DividerComponent,
     CheckboxElementComponent,
+    PermissionsDirective,
   ],
   imports: [
     CommonModule,
@@ -54,6 +58,8 @@ import { CheckboxElementComponent } from './components/checkbox-element-smarttab
     PaginationModule,
     Ng2SmartTableModule,
     BsDatepickerModule.forRoot(),
+    NgScrollbarModule,
+    GlobalVarsModule,
   ],
   exports: [
     ColumnsSelectComponent,
@@ -78,6 +84,9 @@ import { CheckboxElementComponent } from './components/checkbox-element-smarttab
     CommonModule,
     CheckboxElementComponent,
     CheckboxColumnComponent,
+    NgScrollbarModule,
+    PermissionsDirective,
+    GlobalVarsModule,
   ],
 })
 export class SharedModule {

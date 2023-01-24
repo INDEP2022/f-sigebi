@@ -1,11 +1,31 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { RequestListComponent } from './request-list/request-list.component';
+import { RegistrationOfRequestsComponent } from './registration-of-requests/registration-of-requests.component';
 
 const routes: Routes = [
   {
-    path: '',
-    component: RequestListComponent,
+    path: 'registration-request/:id',
+    component: RegistrationOfRequestsComponent,
+  },
+  {
+    path: 'verify-compliance/:id',
+    component: RegistrationOfRequestsComponent,
+  },
+  {
+    path: 'classify-assets/:id',
+    component: RegistrationOfRequestsComponent,
+  },
+  {
+    path: 'validate-document/:id',
+    component: RegistrationOfRequestsComponent,
+  },
+  {
+    path: 'notify-clarification-inadmissibility/:id',
+    component: RegistrationOfRequestsComponent,
+  },
+  {
+    path: 'process-approval/:id',
+    component: RegistrationOfRequestsComponent,
   },
 ];
 

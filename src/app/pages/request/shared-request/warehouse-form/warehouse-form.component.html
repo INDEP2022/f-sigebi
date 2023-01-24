@@ -1,0 +1,292 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Alta almac&eacute;n</h5>
+  </div>
+  <div body>
+    <form [formGroup]="warehouseForm" class="form-material">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field
+            [control]="warehouseForm.get('numberRegister')"
+            label="No&#46; de registro">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberRegister" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="warehouseForm.get('responsibleUser')">
+            <ngx-select
+              [form]="warehouseForm"
+              control="responsibleUser"
+              [data]="responsiblesUsers"
+              value="id"
+              bindLabel="norm"
+              label="Usuario reponsable"
+              (fetchItems)="getResponsibleUserSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="warehouseForm.get('nameWarehouse')"
+            label="Nombre del almac&eacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nameWarehouse" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="warehouseForm.get('typeTercero')">
+            <ngx-select
+              [form]="warehouseForm"
+              control="typeTercero"
+              [data]="typeTercero"
+              value="id"
+              bindLabel="norm"
+              label="Tipo tercero"
+              (fetchItems)="getTypeTerceroSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="warehouseForm.get('numberManagement')"
+            label="N&uacute;mero de gesti&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberManagement" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-check label="Con localizador" for="label">
+            <input id="label" type="checkbox" formControlName="locator" />
+          </form-check>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="warehouseForm.get('contractNumber')"
+            label="N&uacute;mero de contrato">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="contractNumber" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="warehouseForm.get('siabWarehouse')"
+            label="Almac&eacute;n SIAB">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="siabWarehouse" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="warehouseForm.get('startOperation')"
+            label="Inicio operaciones">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="startOperation" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="warehouseForm.get('endOperation')"
+            label="Fin operaciones">
+            <input
+              bsDatepicker
+              class="form-control"
+              formControlName="endOperation" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="warehouseForm.get('regionalDelegation')"
+            label="Delegaci&oacute;n regional">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="regionalDelegation"
+              readonly />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="warehouseForm.get('managedBy')"
+            label="Administrado por">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="managedBy" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field [control]="warehouseForm.get('state')">
+            <ngx-select
+              [form]="warehouseForm"
+              control="state"
+              [data]="states"
+              value="id"
+              bindLabel="descCondition"
+              label="Estado"
+              (change)="stateSelect($event)"
+              (fetchItems)="getStateSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="warehouseForm.get('city')">
+            <ngx-select
+              [form]="warehouseForm"
+              control="city"
+              [data]="cities"
+              value="id"
+              bindLabel="nameCity"
+              label="Ciudad"
+              (fetchItems)="getCitySelect($event)"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field [control]="warehouseForm.get('municipality')">
+            <ngx-select
+              [form]="warehouseForm"
+              control="municipality"
+              [data]="municipalities"
+              value="id"
+              bindLabel="nameMunicipality"
+              label="Municipio"
+              (fetchItems)="getMunicipalitiesSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="warehouseForm.get('locality')">
+            <ngx-select
+              [form]="warehouseForm"
+              control="locality"
+              [data]="localities"
+              value="id"
+              bindLabel="nameLocation"
+              label="Colonia"
+              (fetchItems)="getLocalitySelect($event)"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field [control]="warehouseForm.get('zipCode')">
+            <ngx-select
+              [form]="warehouseForm"
+              control="zipCode"
+              [data]="zipCode"
+              value="id"
+              bindLabel="codePostal"
+              label="C&oacute;digo postal"
+              (fetchItems)="getZipCodeSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="warehouseForm.get('street')" label="Calle">
+            <input type="text" class="form-control" formControlName="street" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="warehouseForm.get('numberOutside')"
+            label="N&uacute;mero exterior">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="numberOutside" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="warehouseForm.get('latitude')" label="Latitud">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="latitude" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="warehouseForm.get('longitude')"
+            label="Longitud">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="longitude" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="warehouseForm.get('typeWarehouse')">
+            <ngx-select
+              [form]="warehouseForm"
+              control="typeWarehouse"
+              [data]="typeWarehouse"
+              value="id"
+              bindLabel="description"
+              label="Tipo de almac&eacute;n"
+              (fetchItems)="getTypeWarehouseSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!warehouseForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ILegalSupport } from 'src/app/core/models/catalogs/legal-suport.model';
 import { LegalSupportService } from 'src/app/core/services/catalogs/legal-suport.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from '../../../../core/shared/patterns';
 
 @Component({
   selector: 'app-legal-support-form',
@@ -31,7 +32,10 @@ export class LegalSupportFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.legalSupportForm = this.fb.group({
       id: [null, [Validators.required, Validators.maxLength(5)]],
-      support: [null, [Validators.required]],
+      support: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
     if (this.legalSupport != null) {
       this.edit = true;

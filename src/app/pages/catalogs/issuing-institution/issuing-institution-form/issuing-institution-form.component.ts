@@ -1,15 +1,14 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ICity } from 'src/app/core/models/catalogs/city.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IIssuingInstitution } from '../../../../core/models/catalogs/issuing-institution.model';
-import { IssuingInstitutionService } from './../../../../core/services/catalogs/issuing-institution.service';
-import { ICity } from 'src/app/core/models/catalogs/city.model';
-import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { ITransferente } from '../../../../core/models/catalogs/transferente.model';
-import { TransferenteService } from '../../../../core/services/catalogs/transferente.service';
+import { STRING_PATTERN } from '../../../../core/shared/patterns';
+import { IssuingInstitutionService } from './../../../../core/services/catalogs/issuing-institution.service';
 
 @Component({
   selector: 'app-issuing-institution-form',
@@ -42,11 +41,14 @@ export class IssuingInstitutionFormComponent
 
   private prepareForm(): void {
     this.issuingInstitutionForm = this.fb.group({
-      name: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       manager: [null, [Validators.required]],
-      street: [null, [Validators.required]],
-      calle: [null, [Validators.required]],
+      street: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      calle: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       numInside: [null, [Validators.required]],
       numExterior: [null, [Validators.required]],
       cologne: [null, [Validators.required]],

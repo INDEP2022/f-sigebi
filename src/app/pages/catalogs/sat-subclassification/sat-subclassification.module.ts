@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
-import { SatSubclassificationRoutingModule } from './sat-subclassification-routing.module';
-import { SatSubclassificationListComponent } from './sat-subclassification-list/sat-subclassification-list.component';
-import { SatSubclassificationFormComponent } from './sat-subclassification-form/sat-subclassification-form.component';
-import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { SatSubclassificationFormComponent } from './sat-subclassification-form/sat-subclassification-form.component';
+import { SatSubclassificationListComponent } from './sat-subclassification-list/sat-subclassification-list.component';
+import { SatSubclassificationRoutingModule } from './sat-subclassification-routing.module';
 
 @NgModule({
   declarations: [

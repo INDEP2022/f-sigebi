@@ -1,10 +1,11 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ILabelOKey } from 'src/app/core/models/catalogs/label-okey.model';
 import { LabelOkeyService } from 'src/app/core/services/catalogs/label-okey.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from '../../../../core/shared/patterns';
 
 @Component({
   selector: 'app-label-okey-form',
@@ -30,7 +31,14 @@ export class LabelOkeyFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.labelOkeyForm = this.fb.group({
-      description: [null, [Validators.required, Validators.maxLength(30)]],
+      description: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(30),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
     });
     if (this.labelOKey != null) {
       this.edit = true;

@@ -3,18 +3,17 @@
     <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
-    <form [formGroup]="zoneGeographicForm">
+    <form [formGroup]="zoneGeographicForm" class="form-material">
       <div class="row">
         <div class="col-md-6">
           <form-field
             [control]="zoneGeographicForm.get('descripcion')"
-            label="Descripción">
+            label="Descripci&oacute;n">
             <textarea
               class="form-control"
               type="text"
               rows="2"
-              formControlName="descripcion"
-              placeholder="Descripción"></textarea>
+              formControlName="descripcion"></textarea>
           </form-field>
         </div>
         <div class="col-md-6">
@@ -30,7 +29,7 @@
         <div class="col-md-6">
           <form-field
             [control]="zoneGeographicForm.get('version')"
-            label="Versión">
+            label="Versi&oacute;n">
             <input
               type="number"
               class="form-control"

@@ -2,12 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
 import { IZoneGeographic } from 'src/app/core/models/catalogs/zone-geographic.model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  DOUBLE_PATTERN,
+  NUMBERS_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -36,21 +41,33 @@ export class DelegationFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.delegationForm = this.fb.group({
-      id: [null, Validators.required],
+      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       description: [null, [Validators.required, Validators.maxLength(80)]],
       zoneContractCVE: [null, [Validators.required, Validators.maxLength(80)]],
       diffHours: [null, [Validators.required, Validators.maxLength(80)]],
       zoneVigilanceCVE: [null, [Validators.required, Validators.maxLength(80)]],
       noRegister: [null, [Validators.required, Validators.maxLength(80)]],
-      etapaEdo: [null, Validators.required],
-      cveState: [null, Validators.required],
-      addressOffice: [null, Validators.required],
-      regionalDelegate: [null, Validators.required],
+      etapaEdo: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      cveState: [null, [Validators.required]],
+      addressOffice: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      regionalDelegate: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       // cveZone: [null, Validators.required],
-      city: [null, Validators.required],
-      status: [null, Validators.required],
-      iva: [null, Validators.required],
-      idZoneGeographic: [null, [Validators.required]],
+      city: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      status: [null, [Validators.required]],
+      iva: [null, [Validators.required, Validators.pattern(DOUBLE_PATTERN)]],
+      idZoneGeographic: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
     });
     if (this.delegation != null) {
       this.fillForm();

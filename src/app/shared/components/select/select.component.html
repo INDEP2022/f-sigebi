@@ -7,6 +7,9 @@
       [items]="buffer"
       [bindLabel]="bindLabel"
       [hideSelected]="true"
+      [closeOnSelect]="closeOnSelect"
+      [maxSelectedItems]="maxSelectedItems"
+      [multiple]="multiple"
       [bindValue]="value"
       [minTermLength]="1"
       [loading]="loading"
@@ -16,7 +19,9 @@
       [virtualScroll]="true"
       [formControlName]="control"
       (scrollToEnd)="fetchMore(select.searchTerm)"
-      (change)="onChange($event)">
+      (change)="onChange($event)"
+      [searchable]="searchable"
+      [placeholder]="placeholder">
     </ng-select>
     <span class="form-bar"></span>
     <label class="float-label">{{ label }}</label>

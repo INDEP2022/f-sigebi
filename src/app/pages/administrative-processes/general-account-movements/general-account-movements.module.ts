@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
+import { ReactiveFormsModule } from '@angular/forms';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { SharedModule } from '../../../shared/shared.module';
 import { GeneralAccountMovementsRoutingModule } from './general-account-movements-routing.module';
 import { GeneralAccountMovementsComponent } from './general-account-movements/general-account-movements.component';
-import { ReactiveFormsModule } from '@angular/forms';
-import { SharedModule } from '../../../shared/shared.module';
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 @NgModule({
   declarations: [GeneralAccountMovementsComponent],

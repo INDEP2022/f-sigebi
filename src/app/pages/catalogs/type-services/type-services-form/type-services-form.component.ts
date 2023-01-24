@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ITypeService } from 'src/app/core/models/catalogs/typeservices.model';
 import { TypeServicesService } from 'src/app/core/services/catalogs/typeservices.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-type-services-form',
@@ -33,11 +34,19 @@ export class TypeServicesFormComponent extends BasePage implements OnInit {
       id: [null],
       type: [
         null,
-        Validators.compose([Validators.required, Validators.maxLength(200)]),
+        Validators.compose([
+          Validators.required,
+          Validators.maxLength(200),
+          Validators.pattern(STRING_PATTERN),
+        ]),
       ],
       concept: [
         null,
-        Validators.compose([Validators.required, Validators.maxLength(200)]),
+        Validators.compose([
+          Validators.required,
+          Validators.maxLength(200),
+          Validators.pattern(STRING_PATTERN),
+        ]),
       ],
       version: [null, Validators.compose([Validators.required])],
     });

@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ITypeSiniester } from 'src/app/core/models/catalogs/type-siniester.model';
 import { TypeSiniesterService } from 'src/app/core/services/catalogs/type-siniester.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-type-sinister-form',
@@ -31,8 +32,15 @@ export class TypeSinisterFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.typeSinisterForm = this.fb.group({
       id: [null, [Validators.required]],
-      description: [null, [Validators.required, Validators.maxLength(200)]],
-      flag: [null, [Validators.required]],
+      description: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(200),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
+      flag: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       noRegistre: [null, [Validators.required]],
     });
     if (this.typeSiniester != null) {

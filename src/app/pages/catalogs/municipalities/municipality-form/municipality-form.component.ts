@@ -1,5 +1,5 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -66,7 +66,7 @@ export class MunicipalityFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.municipalityService
-      .update(this.municipality.key, this.municipalityForm.value)
+      .update(this.municipality.codeMunicipalityId, this.municipalityForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

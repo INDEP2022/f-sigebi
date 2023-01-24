@@ -1,0 +1,69 @@
+<div class="row">
+  <div class="col-6">
+    <h5>Lineamientos</h5>
+  </div>
+  <div class="col-6">
+    <div class="d-flex flex-row-reverse">
+      <div>
+        <button
+          class="btn btn-sm btn-primary active me-2 font-size-13"
+          (click)="save()"
+          [disabled]="!edited || guidelinesForm.invalid">
+          <i class="bx bx-save me-1 float-icon"></i>
+          Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<form class="form-material mt-5" [formGroup]="guidelinesForm">
+  <div class="row">
+    <div class="col-md-4 col-lg-3">
+      <form-field
+        [control]="guidelinesForm.get('firstRevisionDate')"
+        label="Fecha Primera Revisi&oacute;n">
+        <input
+          type="text"
+          formControlName="firstRevisionDate"
+          class="form-control"
+          bsDatepicker
+          [maxDate]="maxDate" />
+      </form-field>
+    </div>
+    <div class="col-md-4 col-lg-3">
+      <form-field
+        [control]="guidelinesForm.get('secondRevisionDate')"
+        label="Fecha Segunda Revisi&oacute;n">
+        <input
+          type="text"
+          formControlName="secondRevisionDate"
+          class="form-control"
+          bsDatepicker
+          [maxDate]="maxDate" />
+      </form-field>
+    </div>
+    <div class="col-md-4">
+      <form-field
+        [control]="guidelinesForm.get('observations')"
+        label="Observaciones">
+        <textarea
+          rows="2"
+          formControlName="observations"
+          class="form-control"></textarea>
+      </form-field>
+    </div>
+  </div>
+</form>
+<ng-scrollbar [track]="'all'" [autoHeightDisabled]="false">
+  <div [class]="loading ? 'table-loading' : 'guidelines-table'">
+    <ng2-smart-table
+      id="guidelinesTable"
+      [attr.class]="'table-bordered'"
+      [settings]="guidelinesSettings"
+      [source]="guidelinesColumns"
+      (editConfirm)="editGuideline($event)">
+    </ng2-smart-table>
+    <div class="table-padding"></div>
+  </div>
+</ng-scrollbar>
+<app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>

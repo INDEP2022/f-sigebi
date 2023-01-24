@@ -9,6 +9,13 @@ const routes: Routes = [
     component: AdministrativeProcessesComponent,
     children: [
       {
+        path: 'administration-assets',
+        loadChildren: async () =>
+          (await import('./administration-assets/administration-assets.module'))
+            .AdministrationAssetsModule,
+        data: { title: 'Administracion Bienes' },
+      },
+      {
         path: 'numerary-operator',
         loadChildren: async () =>
           (await import('./numerary-operator/numerary-operator.module'))
@@ -53,20 +60,6 @@ const routes: Routes = [
         data: { title: 'Aplicar Lif' },
       },
       {
-        path: 'conversion-act',
-        loadChildren: async () =>
-          (await import('./conversion-act/conversion-act.module'))
-            .ConversionActModule,
-        data: { title: 'Actas de converision' },
-      },
-      {
-        path: 'conversion-act',
-        loadChildren: async () =>
-          (await import('./conversion-act/conversion-act.module'))
-            .ConversionActModule,
-        data: { title: 'Actas de converision' },
-      },
-      {
         path: 'conversion-management',
         loadChildren: async () =>
           (await import('./conversion-management/conversion-management.module'))
@@ -85,20 +78,10 @@ const routes: Routes = [
         loadChildren: async () =>
           (
             await import(
-              './resquest-numbering-change/pa-m-resquest-numbering-change.module'
+              './resquest-numbering-change/resquest-numbering-change.module'
             )
-          ).PaMResquestNumberingChangeModule,
+          ).ResquestNumberingChangeModule,
         data: { title: 'Solicitud de cambio a numeracion' },
-      },
-      {
-        path: 'massive-reclassification-goods',
-        loadChildren: async () =>
-          (
-            await import(
-              './massive-reclassification-goods/pa-m-massive-reclassification-goods.module'
-            )
-          ).PaMMassiveReclassificationGoodsModule,
-        data: { title: 'Reclasificación masiva de bienes' },
       },
       {
         path: 'change-destination-goods-indicators',
@@ -110,67 +93,159 @@ const routes: Routes = [
           ).PaMChangeDestinationGoodsIndicatorsModule,
         data: { title: 'Cambio de indicadores de destino de bienes' },
       },
+      {
+        path: 'massive-reclassification-goods',
+        loadChildren: async () =>
+          (
+            await import(
+              './massive-reclassification-goods/massive-reclassification-goods.module'
+            )
+          ).MassiveReclassificationGoodsModule,
+        data: { title: 'Reclasificación masiva de bienes' },
+      },
+      {
+        path: 'change-of-status',
+        loadChildren: async () =>
+          (await import('./change-of-status/change-of-status.module'))
+            .ChangeOfStatusModule,
+        data: { title: 'Cambio de estatus' },
+      },
+      {
+        path: 'massive-change-status',
+        loadChildren: async () =>
+          (await import('./massive-change-status/massive-change-status.module'))
+            .MassiveChangeStatusModule,
+        data: { title: 'Cambio masivo de estatus' },
+      },
+      {
+        path: 'change-status-sti',
+        loadChildren: async () =>
+          (await import('./change-of-status-sti/change-of-status-sti.module'))
+            .ChangeOfStatusStiModule,
+        data: { title: 'Cambio de estatus sti' },
+      },
+      {
+        path: 'payment-claim-process',
+        loadChildren: async () =>
+          (await import('./payment-claim-process/payment-claim-process.module'))
+            .PaymentClaimProcessModule,
+        data: { title: 'Proceso de reclamacion de pago' },
+      },
+      {
+        path: 'legal-regularization',
+        loadChildren: async () =>
+          (await import('./legal-regularization/legal-regularization.module'))
+            .LegalRegularizationModule,
+        data: { title: 'Regularizacion Juridica' },
+      },
       /**
-       * Seguros **Legaspi**
+       *Legaspi
        **/
       {
         path: 'summary-financial-info',
         loadChildren: () =>
-          import(
-            './companies/financial-info/pa-e-fi-m-financial-info.module'
-          ).then(m => m.PaEFiMFinancialInfoModule),
+          import('./companies/financial-info/financial-info.module').then(
+            m => m.FinancialInfoModule
+          ),
       },
       {
         path: 'warehouse-reports',
         loadChildren: () =>
-          import('./reports/warehouse/pa-r-wh-m-warehouse.module').then(
-            m => m.PaRWhMWarehouseModule
+          import('./reports/warehouse/warehouse.module').then(
+            m => m.WarehouseModule
           ),
       },
       {
         path: 'record-details',
         loadChildren: () =>
-          import('./reports/record/pa-r-r-m-record.module').then(
-            m => m.PaRRMRecordModule
+          import('./reports/record/record.module').then(m => m.RecordModule),
+      },
+      {
+        path: 'goods-type-crime-reports',
+        loadChildren: async () =>
+          (await import('./reports/goods-type-crime/goods-type-crime.module'))
+            .GoodsTypeCrimeModule,
+        data: { title: 'Reporte de Bienes por Tipo de Delito' },
+      },
+      {
+        path: 'return-confiscation-property',
+        loadChildren: () =>
+          import(
+            './reports/return-confiscation-property/return-confiscation-property.module'
+          ).then(m => m.ReturnConfiscationPropertyModule),
+      },
+      {
+        path: 'generate-excel-file',
+        loadChildren: () =>
+          import(
+            './reports/generate-excel-file/generate-excel-file.module'
+          ).then(m => m.GenerateExcelFileModule),
+      },
+      {
+        path: 'bills-good',
+        loadChildren: () =>
+          import('./reports/bills-good/bills-good.module').then(
+            m => m.BillsGoodModule
+          ),
+      },
+      {
+        path: 'inventory-report',
+        loadChildren: () =>
+          import('./inventory-report/inventory-report.module').then(
+            m => m.InventoryReportModule
           ),
       },
       {
         path: 'unit-conversion-packages',
         loadChildren: () =>
           import(
-            './unit-conversion-packages/pa-ucp-m-unit-conversion-packages.module'
-          ).then(m => m.PaUcpMUnitConversionPackagesModule),
+            './unit-conversion-packages/unit-conversion-packages.module'
+          ).then(m => m.UnitConversionPackagesModule),
       },
       {
         path: 'goods-tracking',
         loadChildren: () =>
-          import('./goods-tracking/pa-gt-m-goods-tracking.module').then(
-            m => m.PaGtMGoodsTrackingModule
+          import('./goods-tracking/goods-tracking.module').then(
+            m => m.GoodsTrackingModule
           ),
       },
       {
         path: 'goods-management',
         loadChildren: () =>
-          import('./goods-management/pa-gm-m-goods-management.module').then(
-            m => m.PaGmMGoodsManagementModule
+          import('./goods-management/goods-management.module').then(
+            m => m.GoodsManagementModule
           ),
       },
       {
         path: 'siab-sami-interaction',
         loadChildren: () =>
-          import(
-            './siab-sami-interaction/pa-ssi-m-siab-sami-interaction.module'
-          ).then(m => m.PaSsiMSiabSamiInteractionModule),
+          import('./siab-sami-interaction/siab-sami-interaction.module').then(
+            m => m.SiabSamiInteractionModule
+          ),
+      },
+      {
+        path: 'returns-confiscations',
+        loadChildren: async () =>
+          (await import('./returns-confiscations/returns-confications.module'))
+            .ReturnsConficationsModule,
+        data: { title: 'Devoluciones y Decomisos' },
+      },
+      {
+        path: 'reg-warehouse-contract',
+        loadChildren: async () =>
+          (await import('./third-party-admin/warehouse/warehouse.module'))
+            .WarehouseModule,
+        data: { title: 'Alta de Almacenes por Contrato' },
       },
       /**
-       * Seguros **Legaspi**
+       *Legaspi
        **/
       {
         path: 'location-goods',
         loadChildren: async () =>
           (
             await import(
-              './location-of-goods/location-goods-warehouses-storage/pa-lg-m-location-goods-warehouses-storage.module'
+              './location-of-goods/location-goods-warehouses-storage/location-goods-warehouses-storage.module'
             )
           ).PaLgMLocationGoodsWarehousesStorageModule,
         data: { title: 'Ubicacion de bienes' },
@@ -178,25 +253,21 @@ const routes: Routes = [
       {
         path: 'warehouse-inquiries',
         loadChildren: async () =>
-          (
-            await import(
-              './warehouse-inquiries/pa-m-warehouse-inquiries.module'
-            )
-          ).PaMWarehouseInquiriesModule,
+          (await import('./warehouse-inquiries/warehouse-inquiries.module'))
+            .WarehouseInquiriesModule,
         data: { title: 'Consulta Almacenes' },
       },
       {
         path: 'vault-consultation',
         loadChildren: async () =>
-          (await import('./vault-consultation/pa-m-vault-consultation.module'))
-            .PaMVaultConsultationModule,
+          (await import('./vault-consultation/vault-consultation.module'))
+            .VaultConsultationModule,
         data: { title: 'Consulta Bovedas' },
       },
       {
         path: 'property-registration',
         loadChildren: async () =>
-          (await import('./kitchenware/pa-m-kitchenware.module'))
-            .PaMKitchenwareModule,
+          (await import('./kitchenware/kitchenware.module')).KitchenwareModule,
         data: { title: 'Registro de mensaje del bien' },
       },
       {
@@ -249,8 +320,7 @@ const routes: Routes = [
       {
         path: 'services',
         loadChildren: async () =>
-          (await import('./services/pa-s-m-services.module'))
-            .PaSMServicesModule,
+          (await import('./services/services.module')).PaSMServicesModule,
         data: { title: 'Servicios' },
       },
       /**
@@ -321,6 +391,161 @@ const routes: Routes = [
           ).VariableCostModule,
         data: { title: 'Variable costo' },
       },
+
+      {
+        path: 'zones',
+        loadChildren: async () =>
+          (await import('./administration-third/zones/zones.module'))
+            .ZonesModule,
+        data: { title: 'Coordinacion por zonas' },
+      },
+      {
+        path: 'electronic-signature',
+        loadChildren: async () =>
+          (await import('./electronic-signature/electronic-signature.module'))
+            .ElectronicSignatureModule,
+        data: { title: 'Firma Electrónica' },
+      },
+      {
+        path: 'proceedings-conversion',
+        loadChildren: async () =>
+          (
+            await import(
+              './proceedings-conversion/proceedings-conversion.module'
+            )
+          ).ProceedingsConversionModule,
+        data: { title: 'Detalle de actas de conversión' },
+      },
+      {
+        path: 'procedural-history',
+        loadChildren: async () =>
+          (
+            await import(
+              './reports/procedural-history/procedural-history.module'
+            )
+          ).ProceduralHistoryModule,
+        data: { title: 'Histórico procesal' },
+      },
+      {
+        path: 'information-generation',
+        loadChildren: async () =>
+          (
+            await import(
+              './reports/information-generation/information-generation.module'
+            )
+          ).InformationGenerationModule,
+        data: { title: 'Generación de informacion para reporte coord' },
+      },
+      {
+        path: 'vaults',
+        loadChildren: async () =>
+          (await import('./reports/vaults/vaults.module')).VaultsModule,
+        data: { title: 'Bovedas y Gavetas' },
+      },
+      {
+        path: 'concentrate-goods-type',
+        loadChildren: async () =>
+          (
+            await import(
+              './reports/concentrate-goods-type/concentrate-goods-type.module'
+            )
+          ).ConcentrateGoodsTypeModule,
+        data: { title: 'Concentrado de bienes por expendiente' },
+      },
+      {
+        path: 'flat-file-for-good',
+        loadChildren: async () =>
+          (
+            await import(
+              './reports/flat-file-for-good/flat-file-for-good.module'
+            )
+          ).FlatFileForGoodModule,
+        data: { title: 'Generación de archivo plano' },
+      },
+      {
+        path: 'real-estate-analytical-report',
+        loadChildren: async () =>
+          (
+            await import(
+              './reports/real-estate-analytical-report/real-estate-analytical-report.module'
+            )
+          ).RealEstateAnalyticalReportModule,
+        data: { title: 'Analitico de bienes inmuebles' },
+      },
+      {
+        path: 'warehouses',
+        loadChildren: async () =>
+          (await import('./administration-third/warehouses/warehouses.module'))
+            .WarehousesModule,
+        data: { title: 'Bienes en almacén' },
+      },
+      {
+        path: 'storehouse',
+        loadChildren: async () =>
+          (await import('./administration-third/storehouse/storehouse.module'))
+            .StorehouseModule,
+        data: { title: 'Reportes de almacen' },
+      },
+      {
+        path: 'warehouse-type',
+        loadChildren: async () =>
+          (
+            await import(
+              './administration-third/warehouse-type/warehouse-type.module'
+            )
+          ).WarehouseTypeModule,
+        data: { title: 'Tipos de Almacén' },
+      },
+      {
+        path: 'control-service-orders',
+        loadChildren: async () =>
+          (
+            await import(
+              './administration-third/control-service-orders/control-service-orders.module'
+            )
+          ).ControlServiceOrdersModule,
+        data: { title: 'Control de las ordenes de servicio' },
+      },
+      {
+        path: 'service-orders-format',
+        loadChildren: async () =>
+          (
+            await import(
+              './administration-third/service-orders-format/service-orders-format.module'
+            )
+          ).ServiceOrdersFormatModule,
+        data: { title: 'Formato ordenes de servicio ' },
+      },
+      {
+        path: 'performance-indicator',
+        loadChildren: async () =>
+          (
+            await import(
+              './administration-third/performance-indicator/performance-indicator.module'
+            )
+          ).PerformanceIndicatorModule,
+        data: { title: 'Indicador de desempeño' },
+      },
+      {
+        path: 'implementation-report',
+        loadChildren: async () =>
+          (
+            await import(
+              './administration-third/implementation-report/implementation-report.module'
+            )
+          ).ImplementationReportModule,
+        data: { title: 'Reporte de implementacion' },
+      },
+      {
+        path: 'service-order-reports',
+        loadChildren: async () =>
+          (
+            await import(
+              './administration-third/service-order-reports/service-order-reports.module'
+            )
+          ).ServiceOrderReportsModule,
+        data: { title: 'Reportes de Ordenes de Servicio' },
+      },
       /**
        * Seguros David Lucas
        */
@@ -329,7 +554,71 @@ const routes: Routes = [
         loadChildren: async () =>
           (await import('./policies-report/policies-report.module'))
             .PoliciesReportModule,
-        data: { title: 'Reportes de Pólizas' },
+        data: { title: 'Reportes de Pólizas', screen: 'FREPORTBIENESSPOL' },
+      },
+      {
+        path: 'accumulated-monthly-assets',
+        loadChildren: async () =>
+          (
+            await import(
+              './accumulated-monthly-assets/accumulated-monthly-assets.module'
+            )
+          ).AccumulatedMonthlyAssetsModule,
+        data: { title: 'Acumulado de bienes mensual' },
+      },
+      {
+        path: 'insured-numerary-account',
+        loadChildren: async () =>
+          (
+            await import(
+              './insured-numerary-account/insured-numerary-account.module'
+            )
+          ).InsuredNumeraryAccountModule,
+        data: { title: 'Cuenta de numerario asegurado' },
+      },
+      {
+        path: 'performance-evaluation-report',
+        loadChildren: async () =>
+          (
+            await import(
+              './performance-evaluation-report/performance-evaluation-report.module'
+            )
+          ).PerformanceEvaluationReportModule,
+        data: { title: 'Reporte de evaluación de desempeño' },
+      },
+      /**Numerario Abner */
+      {
+        path: 'numerary',
+        loadChildren: async () =>
+          (await import('./numerary/numerary.module')).NumeraryModule,
+        data: { title: 'Numerario' },
+      },
+      {
+        path: 'indicators-per-good',
+        loadChildren: async () =>
+          (await import('./indicators-per-good/indicators-per-good.module'))
+            .IndicatorsPerGoodModule,
+        data: { title: 'Indicadores por Bien', screen: 'FACTADBINDICXBIEN' },
+      },
+      {
+        path: 'financial-information-report',
+        loadChildren: async () =>
+          (
+            await import(
+              './financial-information-report/financial-information-report.module'
+            )
+          ).FinancialInformationReportModule,
+        data: {
+          title: 'Reporte de información financiera',
+          screen: 'FCONADBINFORFINAN',
+        },
+      },
+      {
+        path: 'financial-information',
+        loadChildren: async () =>
+          (await import('./financial-information/financial-information.module'))
+            .FinancialInformationModule,
+        data: { title: 'Información financiera', screen: 'FACTADBINFORFINAN' },
       },
     ],
   },

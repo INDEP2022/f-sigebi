@@ -1,0 +1,38 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Informe del estado que guarda el activo fijo</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="inventorReportForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field [control]="inventorReportForm.get('good')" label="Bien">
+            <input type="text" class="form-control" formControlName="good" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="inventorReportForm.get('inventoryType')"
+            label="Tipo de inventario">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="inventoryType" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="inventorReportForm.get('date')" label="Fecha">
+            <input
+              type="text"
+              formControlName="date"
+              placeholder="Fecha"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <button class="btn btn-primary btn-sm active">Reporte</button>
+  </div>
+</app-card>

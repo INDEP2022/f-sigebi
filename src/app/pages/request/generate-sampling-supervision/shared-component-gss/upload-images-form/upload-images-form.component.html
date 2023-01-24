@@ -1,0 +1,171 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title pull-left">Cargar Expediente</h5>
+  </div>
+  <div body class="body">
+    <div class="row">
+      <h5 class="title">
+        <p>
+          <a
+            class="text-color"
+            (click)="showSearchForm = true"
+            *ngIf="!showSearchForm">
+            <i class="fa fa-angle-right" aria-hidden="true"></i> B&uacute;squeda
+            de Im&aacute;genes</a
+          >
+        </p>
+
+        <p>
+          <a
+            class="text-color"
+            (click)="showSearchForm = false"
+            *ngIf="showSearchForm">
+            <i class="fa fa-angle-down" aria-hidden="true"></i> B&uacute;squeda
+            de Im&aacute;genes</a
+          >
+        </p>
+      </h5>
+    </div>
+    <div *ngIf="showSearchForm">
+      <form [formGroup]="searchPhotoForm" class="form-material">
+        <div class="row">
+          <div class="col-md-4">
+            <form-field
+              [control]="searchPhotoForm.get('noManagement')"
+              label="No&#46; Gesti&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="noManagement" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="searchPhotoForm.get('noProgramming')"
+              label="No&#46; Programaci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="noProgramming" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="searchPhotoForm.get('noPhoto')"
+              label="No&#46; Fotograf&iacute;a">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="noPhoto" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field [control]="searchPhotoForm.get('author')" label="Autor">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="author" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="searchPhotoForm.get('titleImage')"
+              label="T&iacute;tulo Im&aacute;gen">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="titleImage" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="searchPhotoForm.get('folioProgramming')"
+              label="Folio Programaci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="folioProgramming" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field [control]="searchPhotoForm.get('text')" label="Texto">
+              <textarea class="form-control" formControlName="text"></textarea>
+            </form-field>
+          </div>
+        </div>
+      </form>
+      <div class="row pt-4">
+        <div class="d-flex justify-content-end">
+          <div class="m-3">
+            <button class="btn btn-primary btn-sm active">
+              <i class="bx bx-search-alt-2"></i> Buscar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-4">
+      <div class="d-flex">
+        <div class="mr-auto p-2">
+          <div class="form-material">
+            <search-bar [params]="params"></search-bar>
+          </div>
+        </div>
+        <div class="p-2">
+          <button
+            class="btn btn-success btn-sm ml-2"
+            type="button"
+            (click)="file.click()">
+            Adjuntar Im&aacute;gen
+          </button>
+          <input
+            type="file"
+            name="file"
+            #file
+            class="d-none"
+            accept="image/*"
+            multiple
+            (change)="addImage($event)" />
+        </div>
+        <div class="p-2" *ngIf="displayUploadPhoto">
+          <button class="btn btn-primary btn-sm active">Subir foto</button>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <!--<div style="overflow: scroll">-->
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng-scrollbar track="all" style="min-height: 200px; border: none">
+            <ng2-smart-table
+              #table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="paragraphs">
+            </ng2-smart-table>
+          </ng-scrollbar>
+        </div>
+        <!--</div>-->
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

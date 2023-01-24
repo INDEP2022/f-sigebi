@@ -1,0 +1,86 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Programar Recepci&oacute;n</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="d-flex justify-content-end pt-3">
+        <label class="title">Usuario&#58; {{ nameUser }}</label>
+      </div>
+    </div>
+    <form [formGroup]="scheduleForm" class="form-horizontal form-material">
+      <div class="form-group">
+        <label class="control-label col-sm-2">Tipo de usuario&#58;</label>
+
+        <div class="col-sm-6">
+          <form-radio label="T.E" class="radio-inline">
+            <input
+              type="radio"
+              formControlName="radio"
+              value="T.E"
+              (change)="selectTypeUser($event)" />
+          </form-radio>
+          <form-radio label="INDEP" class="radio-inline">
+            <input
+              type="radio"
+              formControlName="radio"
+              value="indep"
+              (change)="selectTypeUser($event)" />
+          </form-radio>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-2">Selecciona usuario&#58;</label>
+
+        <div class="col-sm-7">
+          <form-field [control]="scheduleForm.get('userId')">
+            <ngx-select
+              [form]="scheduleForm"
+              control="userId"
+              [data]="users"
+              value="id"
+              bindLabel="id"
+              (fetchItems)="getUserSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <button (click)="searchUser()" class="btn btn-primary btn-sm active">
+            Buscar usuario
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-2" for="pwd"
+          >Tipo de evento&#58;</label
+        >
+        <div class="col-sm-6">
+          <label class="control-label">Recepci&oacute;n F&iacute;sica</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-2" for="pwd">Fecha&#58;</label>
+        <div class="col-sm-6">
+          <label class="control-label">{{ date | date: 'dd/MM/yyyy' }}</label>
+        </div>
+      </div>
+    </form>
+
+    <div class="d-flex justify-content-center">
+      <div class="m-2">
+        <button
+          [routerLink]="[
+            '/pages/request/programming-request/perform-programming/1'
+          ]"
+          class="btn btn-primary btn-sm active">
+          Turnar
+        </button>
+      </div>
+      <div class="m-2">
+        <button class="btn btn-danger btn-sm active">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</app-card>

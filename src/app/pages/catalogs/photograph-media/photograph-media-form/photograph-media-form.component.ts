@@ -1,7 +1,8 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IPhotographMedia } from '../../../../core/models/catalogs/photograph-media.model';
 import { PhotographMediaService } from '../../../../core/services/catalogs/photograph-media.service';
@@ -33,7 +34,7 @@ export class PhotographMediaFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.photographMediaForm = this.fb.group({
-      route: [null, [Validators.required]],
+      route: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       status: [null, [Validators.required, Validators.maxLength(1)]],
     });
     if (this.photographMedia != null) {

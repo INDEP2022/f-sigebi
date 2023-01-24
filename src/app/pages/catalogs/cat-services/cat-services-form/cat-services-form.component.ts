@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IServiceCat } from 'src/app/core/models/catalogs/service-cat.model';
 import { ServiceCatService } from 'src/app/core/services/catalogs/service-cat.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -33,50 +33,47 @@ export class CatServicesFormComponent extends BasePage implements OnInit {
     this.catserviceForm = this.fb.group({
       code: [
         null,
-        Validators.compose([
+        [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
           Validators.maxLength(30),
           Validators.minLength(1),
-        ]),
+        ],
       ],
       description: [
         null,
-        Validators.compose([
+        [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
           Validators.maxLength(200),
           Validators.minLength(1),
-        ]),
+        ],
       ],
       unaffordabilityCriterion: [
         null,
-        Validators.compose([
+        [
           Validators.pattern(STRING_PATTERN),
-          Validators.maxLength(1),
+          Validators.maxLength(30),
           Validators.minLength(1),
-        ]),
+        ],
       ],
       subaccount: [
         null,
-        Validators.compose([
+        [
           Validators.required,
           Validators.pattern(STRING_PATTERN),
           Validators.maxLength(4),
           Validators.minLength(1),
-        ]),
+        ],
       ],
-      registryNumber: [
-        null,
-        Validators.compose([Validators.pattern(NUMBERS_PATTERN)]),
-      ],
+      registryNumber: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       cost: [
         null,
-        Validators.compose([
+        [
           Validators.pattern(STRING_PATTERN),
           Validators.maxLength(5),
           Validators.minLength(1),
-        ]),
+        ],
       ],
     });
     if (this.catservice != null) {

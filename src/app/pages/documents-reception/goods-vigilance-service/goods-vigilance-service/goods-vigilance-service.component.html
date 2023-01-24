@@ -1,0 +1,102 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Servicio de vigilancia para bienes</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <form-field
+          [control]="form.get('noBien')"
+          label="No&#46; Bien"
+          class="col-md-2">
+          <input class="form-control" type="number" formControlName="noBien" />
+        </form-field>
+        <form-field
+          [control]="form.get('statusBien')"
+          label="Descripci&oacute;n del Bien"
+          class="col-md-3">
+          <input
+            class="form-control"
+            type="text"
+            formControlName="statusBien" />
+        </form-field>
+
+        <form-field
+          class="col-md-7"
+          [control]="form.get('descripcionBien')"
+          label="Estatus del Bien">
+          <textarea
+            rows="2"
+            class="form-control"
+            formControlName="descripcionBien"></textarea>
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field
+          [control]="form.get('accion')"
+          label="Accion"
+          class="col-md-3">
+          <select class="form-control" formControlName="accion">
+            <option value="">Accion</option>
+          </select>
+        </form-field>
+
+        <form-field
+          [control]="form.get('aplica')"
+          label="Fecha Aplica"
+          class="col-md-3">
+          <input class="form-control" formControlName="aplica" bsDatepicker />
+        </form-field>
+
+        <form-field
+          [control]="form.get('captura')"
+          label="Fecha Captura"
+          class="col-md-3">
+          <input class="form-control" formControlName="captura" bsDatepicker />
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field
+          [control]="form.get('usuarioSolicita')"
+          label="Usuario Solicita"
+          class="col-md-4">
+          <input class="form-control" formControlName="usuarioSolicita" />
+        </form-field>
+
+        <form-field
+          [control]="form.get('usuarioCaptura')"
+          label="Usuario Captura"
+          class="col-md-4">
+          <input class="form-control" formControlName="usuarioCaptura" />
+        </form-field>
+
+        <form-field
+          [control]="form.get('usuarioAutoriza')"
+          label="Usuario Autoriza"
+          class="col-md-4">
+          <input class="form-control" formControlName="usuarioAutoriza" />
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field
+          [control]="form.get('justificacion')"
+          label="Justificaci&oacute;n">
+          <textarea
+            class="form-control"
+            formControlName="justificacion"
+            rows="3"></textarea>
+        </form-field>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <button class="btn btn-primary active">Guardar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

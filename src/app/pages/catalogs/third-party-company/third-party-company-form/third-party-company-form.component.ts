@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IThirdPartyCompany } from 'src/app/core/models/catalogs/third-party-company.model';
 import { ThirdPartyService } from 'src/app/core/services/catalogs/third-party-company.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-third-party-company-form',
@@ -31,8 +35,20 @@ export class ThirdPartyCompanyFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.thirdPartyCompanyForm = this.fb.group({
       id: [null],
-      keyCompany: [null, Validators.compose([Validators.required])],
-      description: [null, Validators.compose([Validators.required])],
+      keyCompany: [
+        null,
+        Validators.compose([
+          Validators.required,
+          Validators.pattern(KEYGENERATION_PATTERN),
+        ]),
+      ],
+      description: [
+        null,
+        Validators.compose([
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+        ]),
+      ],
       cveZoneContract: [null, Validators.compose([Validators.required])],
     });
     if (this.thirdPartyCompany != null) {

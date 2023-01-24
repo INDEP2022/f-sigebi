@@ -1,0 +1,124 @@
+<form [formGroup]="form" class="form-material">
+  <div class="row">
+    <form-field
+      [control]="form.get('de')"
+      label="Rango de fechas"
+      class="col-md-2">
+      <input
+        type="text"
+        class="form-control"
+        bsDatepicker
+        formControlName="de" />
+    </form-field>
+
+    <form-field [control]="form.get('a')" label="A" class="col-md-2">
+      <input
+        type="text"
+        class="form-control"
+        bsDatepicker
+        formControlName="a" />
+    </form-field>
+
+    <form-field
+      *ngIf="
+        !isReceptionAndDelivery && !isReceptionStrategies && !isConsolidated
+      "
+      [control]="form.get('fecha')"
+      label="Fecha Ingreso"
+      class="col-md-2">
+      <input
+        type="text"
+        class="form-control"
+        bsDatepicker
+        formControlName="fecha" />
+    </form-field>
+
+    <form-field
+      *ngIf="
+        (isReceptionAndDelivery || isReceptionStrategies) && !isConsolidated
+      "
+      [control]="form.get('tipoEvento')"
+      class="col-md-3"
+      label="Tipo Evento">
+      <select class="form-control" formControlName="tipoEvento">
+        <option *ngFor="let event of eventTypes" [value]="event">
+          {{ event }}
+        </option>
+      </select>
+    </form-field>
+
+    <form-field [control]="form.get('cordinador')" class="col">
+      <ngx-select
+        [form]="form"
+        control="cordinador"
+        label="Cordinador Regional"
+        [data]="select">
+      </ngx-select>
+    </form-field>
+  </div>
+  <div class="row pt-3" *ngIf="!isReceptionStrategies && !isConsolidated">
+    <form-field [control]="form.get('transferente')" class="col-md-4">
+      <ngx-select
+        [form]="form"
+        control="transferente"
+        label="Transferente"
+        [data]="select">
+      </ngx-select>
+    </form-field>
+    <form-field [control]="form.get('emisora')" class="col-md-4">
+      <ngx-select
+        [form]="form"
+        control="emisora"
+        label="Emisora"
+        [data]="select">
+      </ngx-select>
+    </form-field>
+    <form-field [control]="form.get('autoridad')" class="col-md-4">
+      <ngx-select
+        [form]="form"
+        control="autoridad"
+        label="Autoridad"
+        [data]="select">
+      </ngx-select>
+    </form-field>
+  </div>
+  <div class="row pt-3" *ngIf="!isReceptionAndDelivery">
+    <form-field [control]="form.get('usuario')" class="col-md-4">
+      <ngx-select
+        [form]="form"
+        control="usuario"
+        label="Usuario"
+        [data]="select">
+      </ngx-select>
+    </form-field>
+    <form-field
+      [control]="form.get('clave')"
+      class="col-md-4"
+      *ngIf="!isReceptionStrategies && !isConsolidated">
+      <ngx-select
+        [form]="form"
+        control="clave"
+        label="Clave Asunto"
+        [data]="select">
+      </ngx-select>
+    </form-field>
+
+    <form-field
+      [control]="form.get('tipoVolante')"
+      class="col-md-2"
+      label="Tipo Volante"
+      *ngIf="!isReceptionStrategies && !isConsolidated">
+      <select class="form-control" formControlName="tipoVolante">
+        <option *ngFor="let type of flyerTypes" [value]="type">
+          {{ type }}
+        </option>
+      </select>
+    </form-field>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <button class="btn active btn-info mr-2">Reporte</button>
+      <button class="btn active btn-primary">Consulta</button>
+    </div>
+  </div>
+</form>

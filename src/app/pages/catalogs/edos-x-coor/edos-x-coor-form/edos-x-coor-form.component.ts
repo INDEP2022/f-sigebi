@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IEdosXCoor } from 'src/app/core/models/catalogs/edos-x-coor.model';
 import { EdosXCoorService } from 'src/app/core/services/catalogs/edos-x-coor.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-edos-x-coor-form',
@@ -33,35 +34,35 @@ export class EdosXCoorFormComponent extends BasePage implements OnInit {
       id: [null],
       description: [
         null,
-        Validators.compose([
-          Validators.pattern(''),
+        [
           Validators.required,
+          Validators.pattern(STRING_PATTERN),
           Validators.maxLength(80),
-        ]),
+        ],
       ],
       noState: [
         null,
-        Validators.compose([
-          Validators.pattern(''),
+        [
           Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
           Validators.maxLength(60),
-        ]),
+        ],
       ],
       state: [
         null,
-        Validators.compose([
-          Validators.pattern(''),
+        [
           Validators.required,
+          Validators.pattern(STRING_PATTERN),
           Validators.maxLength(10),
-        ]),
+        ],
       ],
       stage: [
         null,
-        Validators.compose([
-          Validators.pattern(''),
+        [
           Validators.required,
+          Validators.pattern(STRING_PATTERN),
           Validators.maxLength(10),
-        ]),
+        ],
       ],
     });
     if (this.edosXCoor != null) {

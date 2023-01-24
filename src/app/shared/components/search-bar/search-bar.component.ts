@@ -1,11 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import {
   BehaviorSubject,
@@ -60,7 +53,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   emitEvent(text: string) {
     const params = this.params.getValue();
-    params.inicio = 1;
+    params.page = 1;
     this.params.next({ ...params, text });
   }
 

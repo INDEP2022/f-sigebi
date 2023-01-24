@@ -1,0 +1,80 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Concentrado de Bienes para contabilidad</h5>
+  </div>
+  <div body>
+    <form [formGroup]="descripcionOfTheMatterForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="descripcionOfTheMatterForm.get('delegation')"
+            label="Delegación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegation" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="descripcionOfTheMatterForm.get('subDelegation')"
+            label="Sub Delegación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="subDelegation" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="descripcionOfTheMatterForm.get('type')"
+            label="Tipo">
+            <input type="text" class="form-control" formControlName="type" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-4">
+          <form-field
+            [control]="descripcionOfTheMatterForm.get('subtype')"
+            label="Sub Tipo">
+            <input type="text" class="form-control" formControlName="subtype" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="descripcionOfTheMatterForm.get('dateDe')"
+            label="Fecha de Recepción dateAl">
+            <input
+              type="text"
+              formControlName="dateDe"
+              placeholder="Fecha De"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="descripcionOfTheMatterForm.get('dateAl')"
+            label="Fecha de Recepción Al">
+            <input
+              type="text"
+              formControlName="dateAl"
+              placeholder="Fecha Al"
+              class="form-control"
+              bsDatepicker />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="row mt-5">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="justify-content-center">
+          <button type="submit" class="btn btn-primary btn-sm active">
+            Reporte
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

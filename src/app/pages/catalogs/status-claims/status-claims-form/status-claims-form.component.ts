@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IStatusClaims } from 'src/app/core/models/catalogs/status-claims.model';
 import { StatusClaimsService } from 'src/app/core/services/catalogs/claim-status.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-status-claims-form',
@@ -37,6 +38,7 @@ export class StatusClaimsFormComponent extends BasePage implements OnInit {
           Validators.pattern(''),
           Validators.required,
           Validators.maxLength(80),
+          Validators.pattern(STRING_PATTERN),
         ]),
       ],
       flag: [
@@ -45,6 +47,7 @@ export class StatusClaimsFormComponent extends BasePage implements OnInit {
           Validators.pattern(''),
           Validators.required,
           Validators.maxLength(60),
+          Validators.pattern(STRING_PATTERN),
         ]),
       ],
     });

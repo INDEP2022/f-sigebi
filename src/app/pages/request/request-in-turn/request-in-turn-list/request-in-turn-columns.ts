@@ -1,102 +1,100 @@
-import { CheckboxColumnComponent } from 'src/app/shared/components/checkbox-column/checkbox-column.component';
-
 export const REQUEST_IN_TURN_COLUMNS = {
-  noRequest: {
+  id: {
     title: 'No. Solicitud',
-    type: 'string',
+    type: 'number',
     sort: false,
   },
-  dateRequest: {
+  dateApplication: {
     title: 'Fecha solicitud',
     type: 'string',
     sort: false,
   },
-  titularName: {
+  nameOfOwner: {
     title: 'Nombre titular',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
-  senderCharger: {
+  holderCharge: {
     title: 'Cargo del remitente',
     type: 'string',
     sort: false,
   },
-  noJob: {
+  paperNumber: {
     title: 'No. oficio',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
-  dateJob: {
+  datePaper: {
     title: 'Fecha de oficio',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
-  deleRegional: {
+  delegationName: {
     title: 'Delegacion regional',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
-  state: {
+  stateOfRepublicName: {
     title: 'Estado',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
-  transfer: {
+  transferentName: {
     title: 'Transferente',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
-  transmitter: {
+  stationName: {
     title: 'Emisora',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
-  authority: {
+  authorityName: {
     title: 'Autoridad',
-    type: 'number',
+    type: 'string',
     sort: false,
   },
-  expedient: {
+  transferenceFile: {
     title: 'Expediente transferente',
     type: 'number',
     sort: false,
   },
-  reception: {
+  receiptRoute: {
     title: 'Via recepción',
     type: 'string',
     sort: false,
   },
-  subject: {
+  affairName: {
     title: 'Asunto',
     type: 'string',
     sort: false,
   },
-  type: {
+  typeOfTransfer: {
     title: 'Tipo Transferencia',
     type: 'string',
     sort: false,
   },
-  appliStatus: {
+  requestStatus: {
     title: 'Estado solicitud',
     type: 'string',
     sort: false,
   },
-  contributor: {
-    title: 'Contribuyente indiciado',
+  indicatedTaxpayer: {
+    title: 'Contribuyente y/o Indiciado',
     type: 'string',
     sort: false,
   },
-  acta: {
+  circumstantialRecord: {
     title: 'Acta circunstanciada',
     type: 'string',
     sort: false,
   },
-  ascertainment: {
-    title: 'Averiguacion previa',
+  previousInquiry: {
+    title: 'Averiguación previa',
     type: 'string',
     sort: false,
   },
-  cause: {
+  tocaPenal: {
     title: 'Causa penal',
     type: 'string',
     sort: false,

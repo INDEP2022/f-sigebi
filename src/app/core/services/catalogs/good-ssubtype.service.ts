@@ -17,8 +17,11 @@ export class GoodSsubtypeService implements ICrudMethods<IGoodSsubType> {
     return this.goodSsubtypeRepository.getAllPaginated(this.route, params);
   }
 
-  getById(id: string | number): Observable<IGoodSsubType> {
-    return this.goodSsubtypeRepository.getById(this.route, id);
+  // getById(id: string | number): Observable<IGoodSsubType> {
+  //   return this.goodSsubtypeRepository.getById(this.route, id);
+  // }
+  getByIds(ids: Partial<IGoodSsubType>): Observable<IGoodSsubType> {
+    return this.goodSsubtypeRepository.getByIds(this.route, ids);
   }
 
   create(model: IGoodSsubType): Observable<IGoodSsubType> {

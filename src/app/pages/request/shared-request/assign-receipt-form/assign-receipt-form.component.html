@@ -1,0 +1,31 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Seleccionar recibo</h5>
+  </div>
+  <div body>
+    <div class="form-inline justify-content-end btn-toolbar">
+      <button (click)="createReceipt()" class="btn btn-primary btn-sm active">
+        Nuevo recibo
+      </button>
+    </div>
+    <ng2-smart-table
+      [attr.class]="'table-bordered'"
+      [settings]="settingsReceipt"
+      [source]="receipts">
+    </ng2-smart-table>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

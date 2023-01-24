@@ -1,0 +1,70 @@
+<div class="my-4">
+  <app-card [header]="false" class="p-10">
+    <div body>
+      <div
+        class="ms-n2 mb-2 pointer"
+        (click)="toggleInformation = !toggleInformation"
+        [attr.aria-expanded]="!toggleInformation"
+        aria-controls="collapseSearch">
+        <i
+          class="bx bx-chevron-down bx-md float-icon-md"
+          [ngClass]="{
+            'rotate-down': toggleInformation,
+            'rotate-up': !toggleInformation
+          }"></i>
+        <h6 class="d-inline">Fundamento Legal del Articulo 28 y 29</h6>
+      </div>
+      <div
+        class="row mt-5"
+        id="collapseSearch"
+        [isAnimated]="true"
+        [collapse]="!toggleInformation">
+        <div class="row mt-3">
+          <div
+            class="col-sm-12 col-12 col-md-12 p-4 m-5 alert alert-info text-left">
+            <ul>
+              <li>
+                La devoluci&oacute;n de bienes procede a petici&oacute;n de
+                entidad transferente o autoridad competente&#46;
+              </li>
+              <li>
+                Verificar&aacute; que el bien o los bienes fueron
+                transferidos&#46;
+              </li>
+              <li>
+                Comprobar&aacute; que la solicitud u orden de devoluci&oacute;n
+                es emitida por la entidad transferente o autoridad
+                competente&#44; especifica los bienes y a la persona a la que
+                tiene derecho la devoluci&oacute;n&#46;
+              </li>
+              <li>
+                Cerciorar&aacute; la situaci&oacute;n del bien o los bienes
+                &#40;en administraci&oacute;n&#44; venta o
+                destrucci&oacute;n&#41;&#46;
+              </li>
+              <li>Levantar&aacute; inventario de los bienes&#46;</li>
+              <li>
+                Revisar&aacute; que el bien o los bienes no hayan causado
+                abandono&#46;
+              </li>
+              <li>
+                El usuario que afect&uacute;a el an&aacute;lisis no
+                continuar&aacute; con la siguiente actividad si no se indica a
+                quién deben devolver los bienes de manera expresa&#46; En caso
+                de que no se indique solicitar&aacute; por escrito a la entidad
+                transferente o autoridad competente&#46;
+              </li>
+            </ul>
+          </div>
+          <div class="col-sm-12 col-12 col-md-12 p-2">
+            <ng2-smart-table
+              (userRowSelect)="userSelectRows($event)"
+              [attr.class]="'table-bordered'"
+              [settings]="tableSettings"
+              [source]="data"></ng2-smart-table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </app-card>
+</div>

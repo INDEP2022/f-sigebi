@@ -1,12 +1,13 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
 import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -34,16 +35,39 @@ export class GoodSubtypeFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.goodSubtypeForm = this.fb.group({
-      id: [null, [Validators.required]],
-      idTypeGood: [null, [Validators.required]],
-      nameSubtypeGood: [null, [Validators.required, Validators.maxLength(70)]],
+      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      idTypeGood: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      nameSubtypeGood: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(70),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       descriptionPhotography: [
         null,
-        [Validators.required, Validators.maxLength(500)],
+        [
+          Validators.required,
+          Validators.maxLength(500),
+          Validators.pattern(STRING_PATTERN),
+        ],
       ],
-      noPhotography: [null, [Validators.required]],
-      noRegister: [null, [Validators.required]],
-      version: [null, [Validators.required]],
+      noPhotography: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      noRegister: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      version: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
     });
     if (this.goodSubtype != null) {
       this.edit = true;

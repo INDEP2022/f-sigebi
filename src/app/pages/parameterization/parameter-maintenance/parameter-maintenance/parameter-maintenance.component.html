@@ -1,0 +1,19 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Mantenimiento de par&aacute;metros</h5>
+  </div>
+  <div body>
+    <app-parameter-form (formEmiter)="formEmiter($event)"></app-parameter-form>
+    <hr />
+    <app-parameter-form (formEmiter)="formEmiter($event)"></app-parameter-form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-success active" (click)="saved()">
+          Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

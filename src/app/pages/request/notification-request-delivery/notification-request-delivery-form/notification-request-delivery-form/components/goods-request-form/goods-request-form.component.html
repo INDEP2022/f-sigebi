@@ -1,0 +1,14 @@
+<div class="row">
+  <div class="justify-content-left btn-toolbar">
+    <app-columns-select [(settings)]="settings"></app-columns-select>
+    <button (click)="viewDocuments()" class="btn btn-primary active btn-sm">
+      <i class="fa fa-eye" aria-hidden="true"></i> Ver documentos
+    </button>
+  </div>
+  <ng2-smart-table
+    [attr.class]="'table-bordered'"
+    [settings]="settings"
+    [source]="goodsRequests">
+  </ng2-smart-table>
+  <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
+</div>

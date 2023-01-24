@@ -81,13 +81,13 @@
 <!-- Sidebar -->
 
 <div class="vertical-menu">
-  <ngx-simplebar class="h-100" #componentRef>
+  <ng-scrollbar class="h-100 scrollbar-menu" #componentRef>
     <div *ngIf="!isCondensed">
       <ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
     </div>
     <div *ngIf="isCondensed">
       <ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
     </div>
-  </ngx-simplebar>
+  </ng-scrollbar>
 </div>
 <!-- Left Sidebar End -->

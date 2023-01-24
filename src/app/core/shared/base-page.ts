@@ -1,4 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
+import { AES, enc } from 'crypto-js';
 import {
   BsDatepickerConfig,
   BsDatepickerViewMode,
@@ -51,11 +52,13 @@ interface TableSettings {
   pager: Object;
   hideSubHeader: boolean;
   mode: string;
+  add: Object;
   edit: Object;
   delete: Object;
   columns: Object;
   noDataMessage: string;
   selectedRowIndex?: number;
+  rowClassFunction?: any;
 }
 interface Action {
   columnTitle: string;
@@ -82,6 +85,7 @@ const TABLE_SETTINGS: TableSettings = {
   },
   hideSubHeader: true,
   mode: 'external',
+  add: {},
   edit: {
     editButtonContent: '<i class="fa fa-pencil-alt text-warning mx-2"></i>',
   },
@@ -91,6 +95,7 @@ const TABLE_SETTINGS: TableSettings = {
   },
   columns: {},
   noDataMessage: 'No se encontrarón registros',
+  rowClassFunction: (row: any) => {},
 };
 @Component({
   template: '',
@@ -101,6 +106,7 @@ export abstract class BasePage implements OnDestroy {
   minMode: BsDatepickerViewMode = 'day';
   bsConfig?: Partial<BsDatepickerConfig>;
   settings = { ...TABLE_SETTINGS };
+  private readonly key = 'Pru3b4Cr1pt0S1G3B1';
 
   constructor() {
     this.bsConfig = {
@@ -145,6 +151,20 @@ export abstract class BasePage implements OnDestroy {
     sweetalert.showConfirmButton = true;
     sweetalert.showCancelButton = true;
     return Swal.fire(sweetalert);
+  }
+
+  protected encodeData<T>(data: T) {
+    let value = '';
+    value = AES.encrypt(
+      JSON.stringify(data).trim(),
+      this.key.trim()
+    ).toString();
+    return value;
+  }
+
+  protected decodeData<T>(data: string): T {
+    const value = AES.decrypt(data.trim(), this.key.trim()).toString(enc.Utf8);
+    return JSON.parse(value);
   }
 
   ngOnDestroy(): void {

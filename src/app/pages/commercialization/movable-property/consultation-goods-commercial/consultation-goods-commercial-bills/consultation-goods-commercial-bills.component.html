@@ -1,0 +1,79 @@
+<form class="form-material" [formGroup]="form">
+  <div class="row pt-5">
+    <div class="col-md-2">
+      <form-field [control]="form.get('idSiab')">
+        <ngx-select
+          typeToSearchText="Escriba 3 o más caracteres"
+          label="No. Siab"
+          [form]="form"
+          control="idSiab">
+        </ngx-select>
+      </form-field>
+    </div>
+    <div class="col-md-2">
+      <form-field [control]="form.get('idben')" label="Beneficiario">
+        <input type="text" class="form-control" formControlName="idben" />
+      </form-field>
+    </div>
+    <div class="col-md-2">
+      <form-field [control]="form.get('idTrans')">
+        <ngx-select
+          typeToSearchText="Escriba 3 o más caracteres"
+          label="Transferente"
+          [form]="form"
+          control="idTrans">
+        </ngx-select>
+      </form-field>
+    </div>
+    <div class="col-md-2">
+      <form-field [control]="form.get('payReq')" label="Solicitud de pago">
+        <input type="text" class="form-control" formControlName="payReq" />
+      </form-field>
+    </div>
+    <div class="col-md-2">
+      <form-field [control]="form.get('invoice')" label="Factura">
+        <input type="text" class="form-control" formControlName="invoice" />
+      </form-field>
+    </div>
+    <div class="col-md-2">
+      <form-field [control]="form.get('invoicAmount')" label="Importe Factura">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="invoicAmount" />
+      </form-field>
+    </div>
+  </div>
+  <div class="row pt-5">
+    <div class="col-md-2">
+      <form-field
+        [control]="form.get('customerServiceSheet')"
+        label="Folio atención a clientes">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="customerServiceSheet" />
+      </form-field>
+    </div>
+    <div class="col-md-2">
+      <form-field [control]="form.get('concept')" label="Concepto">
+        <input type="text" class="form-control" formControlName="concept" />
+      </form-field>
+    </div>
+    <div class="col-md-2">
+      <form-field [control]="form.get('capture')" label="Captura">
+        <input type="text" class="form-control" formControlName="capture" />
+      </form-field>
+    </div>
+    <div class="col-md-2">
+      <form-field [control]="form.get('request')" label="Solicita">
+        <input type="text" class="form-control" formControlName="request" />
+      </form-field>
+    </div>
+    <div class="col-md-2">
+      <form-field [control]="form.get('authorizes')" label="Autorizó">
+        <input type="text" class="form-control" formControlName="authorizes" />
+      </form-field>
+    </div>
+  </div>
+</form>

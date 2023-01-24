@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDocCompensationSatXml } from 'src/app/core/models/catalogs/doc-compensation-sat-xml.model';
 import { DocCompensationSatXmlService } from 'src/app/core/services/catalogs/doc-compensation-sat-xml.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-doc-resarcimiento-sat-xml-form',
@@ -34,9 +35,15 @@ export class DocCompensationSatXmlFormComponent
 
   private prepareForm() {
     this.compensationForm = this.fb.group({
-      id: [null],
-      idOficioSat: [null, Validators.required],
-      typeDocSatXml: [null, Validators.required],
+      id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      idOficioSat: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      typeDocSatXml: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
 
     if (this.compensationSatXml != null) {

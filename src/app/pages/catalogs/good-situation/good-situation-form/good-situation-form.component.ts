@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IGoodSituation } from 'src/app/core/models/catalogs/good-situation.model';
 import { GoodSituationService } from 'src/app/core/services/catalogs/good-situation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-good-situation-form',
@@ -33,7 +33,14 @@ export class GoodSituationFormComponent extends BasePage implements OnInit {
   prepareForm() {
     this.goodSituationForm = this.fb.group({
       situation: [null],
-      descSituation: [null, [Validators.required, Validators.maxLength(300)]],
+      descSituation: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(300),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       status: [null, [Validators.required, Validators.maxLength(3)]],
     });
 

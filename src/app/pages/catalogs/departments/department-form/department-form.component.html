@@ -18,8 +18,8 @@
               control="numDelegation"
               [data]="delegations"
               value="id"
-              bindLabel="nameGoodType"
-              label="Delegación"
+              bindLabel="description"
+              label="Delegaci&oacute;n"
               (fetchItems)="getDelegations($event)"></ngx-select>
           </form-field>
         </div>
@@ -31,8 +31,8 @@
               control="numSubDelegation"
               [data]="subdelegations"
               value="id"
-              bindLabel="nameGoodType"
-              label="Subdelegación"
+              bindLabel="description"
+              label="Subdelegaci&oacute;n"
               (fetchItems)="getSubdelegations($event)"></ngx-select>
           </form-field>
         </div>
@@ -41,11 +41,8 @@
         <div class="col-md-12">
           <form-field
             [control]="departmentForm.get('dsarea')"
-            label="Descripción de area">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="dsarea" />
+            label="Descripci&oacute;n de &aacute;rea">
+            <input type="text" class="form-control" formControlName="dsarea" />
           </form-field>
         </div>
       </div>
@@ -53,9 +50,9 @@
         <div class="col-md-3">
           <form-field
             [control]="departmentForm.get('lastOffice')"
-            label="Último oficio">
+            label="&Uacute;ltimo oficio">
             <input
-              type="number"
+              type="text"
               class="form-control"
               formControlName="lastOffice" />
           </form-field>
@@ -80,12 +77,12 @@
 
         <div class="col-md-3">
           <form-field
-            [control]="departmentForm.get('depend')"
-            label="Dependencia">
+            [control]="departmentForm.get('depDelegation')"
+            label="Dependencia entre Delegaciones">
             <input
-              type="number"
+              type="text"
               class="form-control"
-              formControlName="depend" />
+              formControlName="depDelegation" />
           </form-field>
         </div>
       </div>
@@ -94,7 +91,7 @@
         <div class="col-md-6">
           <form-field
             [control]="departmentForm.get('depend')"
-            label="Departamento delegación">
+            label="Departamento delegaci&oacute;n">
             <input
               type="number"
               class="form-control"
@@ -102,11 +99,13 @@
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="departmentForm.get('depend')" label="Fase EDO">
+          <form-field
+            [control]="departmentForm.get('phaseEdo')"
+            label="Fase EDO">
             <input
               type="number"
               class="form-control"
-              formControlName="depend" />
+              formControlName="phaseEdo" />
           </form-field>
         </div>
       </div>
@@ -114,9 +113,9 @@
       <div class="row pt-5">
         <form-field
           [control]="departmentForm.get('description')"
-          label="Descripción">
+          label="Descripci&oacute;n">
           <input
-            type="number"
+            type="text"
             class="form-control"
             formControlName="description" />
         </form-field>
@@ -128,7 +127,7 @@
       <div class="m-3">
         <confirm-button
           [disabled]="departmentForm.invalid"
-          [loading]="loading"
+          [type]="'button'"
           (confirm)="confirm()">
         </confirm-button>
       </div>

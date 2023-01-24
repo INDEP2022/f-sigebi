@@ -1,5 +1,3 @@
-import { SeeMoreComponent } from 'src/app/shared/components/see-more/see-more.component';
-
 export const COLUMNS2 = {
   samiId: {
     title: 'ID.SAMI',

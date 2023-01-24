@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BasePage } from 'src/app/core/shared/base-page';
+import Swal from 'sweetalert2';
 import { IClarification } from '../../../../core/models/catalogs/clarification.model';
 import { ClarificationService } from '../../../../core/services/catalogs/clarification.service';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { BasePage } from 'src/app/core/shared/base-page';
-import { CLARIFICATION_COLUMNS } from './clarification-columns';
 import { ClarificationsDetailComponent } from '../clarifications-detail/clarifications-detail.component';
+import { CLARIFICATION_COLUMNS } from './clarification-columns';
 
 @Component({
   selector: 'app-clarifications-list',
@@ -46,34 +48,33 @@ export class ClarificationsListComponent extends BasePage implements OnInit {
     );
   }
 
-  add() {
-    this.openModal();
+  openForm(clarification?: IClarification) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      clarification,
+      callback: (next: boolean) => {
+        if (next) this.getClarifications();
+      },
+    };
+    this.modalService.show(ClarificationsDetailComponent, modalConfig);
   }
 
-  openModal(context?: Partial<ClarificationsDetailComponent>) {
-    const modalRef = this.modalService.show(ClarificationsDetailComponent, {
-      initialState: context,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getClarifications();
-    });
-  }
-
-  edit(clarification: IClarification) {
-    this.openModal({ edit: true, clarification });
-  }
-
-  delete(clarification: IClarification) {
+  showDeleteAlert(clarification: IClarification) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
+        this.delete(clarification.id);
+        Swal.fire('Borrado', '', 'success');
       }
+    });
+  }
+
+  delete(id: number) {
+    this.clarificationService.remove(id).subscribe({
+      next: () => this.getClarifications(),
     });
   }
 }

@@ -1,0 +1,231 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Nueva car&aacute;tula</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="associateFileForm" class="form-material">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field [control]="associateFileForm.get('user')">
+            <ngx-select
+              [form]="associateFileForm"
+              control="user"
+              [data]="users"
+              value="id"
+              bindLabel="id"
+              label="Usuario"
+              (fetchItems)="getUserSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Transferente&#58;</label>
+            <span> SAT &#45; comercio exterior </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field [control]="associateFileForm.get('unit')">
+            <ngx-select
+              [form]="associateFileForm"
+              control="unit"
+              [data]="units"
+              value="id"
+              bindLabel="id"
+              label="Unidad"
+              (fetchItems)="getUnitSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-5 text-right">ddcld&#58;</label>
+            <span> 4265 </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field [control]="associateFileForm.get('file')">
+            <ngx-select
+              [form]="associateFileForm"
+              control="file"
+              [data]="files"
+              value="id"
+              bindLabel="id"
+              label="Archivo"
+              (fetchItems)="getFileSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Codificaci&oacute;n&#58;</label>
+            <span> AND&#47;2C&#47;11 </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field [control]="associateFileForm.get('disposition')">
+            <ngx-select
+              [form]="associateFileForm"
+              control="disposition"
+              [data]="dispositions"
+              value="id"
+              bindLabel="id"
+              label="Disposici&oacute;n"
+              (fetchItems)="getDispositionSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Periodo de reserva&#58;</label>
+            <span> 0 </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field [control]="associateFileForm.get('functionary')">
+            <ngx-select
+              [form]="associateFileForm"
+              control="functionary"
+              [data]="functionarys"
+              value="id"
+              bindLabel="id"
+              label="Funcionario"
+              (fetchItems)="getFunctionarySelect($event)"></ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Clasificaci&oacute;n&#58;</label>
+            <span> Publico </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="associateFileForm.get('fileDate')"
+            label="Fecha expediente">
+            <input
+              class="form-control"
+              formControlName="startDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-5 text-right"
+              >Secci&oacute;n docuemental&#58;</label
+            >
+            <span> Interposicion de recursos administrativos </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="associateFileForm.get('reservationDate')"
+            label="Fecha de reserva">
+            <input
+              class="form-control"
+              formControlName="reservationDate"
+              bsDatepicker />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Serie docuemental&#58;</label>
+            <span> Interposicion de recursos administrativos</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field [control]="associateFileForm.get('fojas')" label="Fojas">
+            <input type="text" class="form-control" formControlName="fojas" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-5 text-right"
+              >Vigencia del archivo de tr&aacute;mite&#58;</label
+            >
+            <span> 1 </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field
+            [control]="associateFileForm.get('legajos')"
+            label="Legajos">
+            <input type="text" class="form-control" formControlName="legajos" />
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-5 text-right"
+              >Vigencia de archivo de concentraci&oacute;n&#58;</label
+            >
+            <span> 10 </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-6 text-right"
+              >Delegaci&oacute;n regional&#58;</label
+            >
+            <span> Metropolitana </span>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="form-group">
+            <label class="col-lg-5 text-right">Valores documentales&#58;</label>
+            <span> Legal </span>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!associateFileForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

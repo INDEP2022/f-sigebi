@@ -1,0 +1,45 @@
+<h6>Datos de la Orden de Pago</h6>
+<div class="row mt-5">
+  <div class="col-md-4">
+    <label class="label" for=""
+      >Unidad Administrativa&#58;
+      <span>{{ entryOrder.administrativeUnit }}</span></label
+    >
+  </div>
+  <div class="col-md-4">
+    <label class="label" for=""
+      >Fecha de Orden&#58; <span>{{ entryOrder.orderDate }}</span></label
+    >
+  </div>
+  <div class="col-md-4">
+    <label class="label" for=""
+      >Concepto&#58; <span>{{ entryOrder.concept }}</span></label
+    >
+  </div>
+</div>
+<div class="row mt-5">
+  <div class="col-md-4">
+    <label class="label" for=""
+      >Forma de Pago&#58; <span>{{ entryOrder.paymentMethod }}</span></label
+    >
+  </div>
+  <div class="col-md-4">
+    <label class="label" for=""
+      >Importe&#58; <span>{{ entryOrder.amount | number }}</span></label
+    >
+  </div>
+  <div class="col-md-4">
+    <label class="label" for=""
+      >N&uacute;mero de Referencia&#58;
+      <span>{{ entryOrder.referenceNo }}</span></label
+    >
+  </div>
+</div>
+<div class="row mt-5">
+  <div class="col-md-4">
+    <label class="label" for=""
+      >Instituci&oacute;n Bancaria&#58;
+      <span>{{ entryOrder.bank }}</span></label
+    >
+  </div>
+</div>

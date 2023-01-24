@@ -1,0 +1,75 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field [control]="form.get('id')" label="ID">
+            <input type="text" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-9">
+          <form-field [control]="form.get('descripcion')" label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descripcion" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field [control]="form.get('refCan')" label="Refactura/Cancela">
+            <ng-select
+              formControlName="refCan"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="Refactura">Refactura</ng-option>
+              <ng-option value="Cancela">Cancela</ng-option>
+              <ng-option value="Refac/Nolmg">Refac/Nolmg</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('aplica')" label="Aplica">
+            <ng-select
+              formControlName="aplica"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="Factura">Factura</ng-option>
+              <ng-option value="Devolución">Devoluci&oacute;n</ng-option>
+              <ng-option value="Ambas">Ambas</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('comentarios')" label="Comentarios">
+            <textarea
+              type="text"
+              class="form-control"
+              formControlName="comentarios"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (click)="close()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

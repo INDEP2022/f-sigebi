@@ -1,0 +1,192 @@
+<app-card [header]="true" [footer]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Proceso para rectificaci&oacute;n de facturas</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field label="No. Oficio" [control]="form.get('idOficio')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idOficio" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('ExpDate')" label="Fecha expedición">
+            <input
+              type="text"
+              placeholder=""
+              class="form-control"
+              bsDatepicker
+              formControlName="ExpDate"
+              [bsConfig]="{ isAnimated: true }" />
+          </form-field>
+        </div>
+        <div class="col-md-1">
+          <form-field label="Serie" [control]="form.get('serie')">
+            <input type="text" class="form-control" formControlName="serie" />
+          </form-field>
+        </div>
+        <div class="col-md-1">
+          <form-field
+            label="Folio de la factura"
+            [control]="form.get('invoiceFolio')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="invoiceFolio" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field label="Nombre" [control]="form.get('name')">
+            <input type="text" class="form-control" formControlName="name" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field label="Apellido Paterno" [control]="form.get('lastName')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="lastName" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            label="Apellido Materno"
+            [control]="form.get('motherlastName')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="motherlastName" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <app-user-shared
+            [form]="form"
+            [userField]="'agent'"
+            [label]="'Representante'"></app-user-shared>
+        </div>
+
+        <div class="col-md-2">
+          <button
+            type="button"
+            class="btn-sm btn-primary active"
+            (click)="openModal()">
+            Imagen nueva
+          </button>
+        </div>
+      </div>
+      <hr />
+      <div class="ch-content">
+        <h5 class="title">Datos de Atenci&oacute;n a clientes:</h5>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-2">
+          <form-field label="Folio" [control]="form.get('idInvoice')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idInvoice" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('time')" label="Fecha expedición">
+            <input
+              type="text"
+              placeholder=""
+              class="form-control"
+              bsDatepicker
+              formControlName="time"
+              [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY, h:mm:ss a' }" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            label="Introducción (Parrafo 1)"
+            [control]="form.get('paragraph1')">
+            <textarea
+              class="form-control"
+              formControlName="paragraph1"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field
+            label="Documentos Presentados (Parrafo 2)"
+            [control]="form.get('paragraph2')">
+            <textarea
+              class="form-control"
+              formControlName="paragraph2"></textarea>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field label="Parrafo 3" [control]="form.get('paragraph3')">
+            <textarea
+              class="form-control"
+              formControlName="paragraph3"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-12">
+          <form-field
+            label="Tabla con correciones (Parrafo 4)"
+            [control]="form.get('paragraph4')">
+            <textarea
+              class="form-control"
+              formControlName="paragraph4"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-12">
+          <form-field label="Parrafo 5" [control]="form.get('paragraph5')">
+            <textarea
+              class="form-control"
+              formControlName="paragraph5"></textarea>
+          </form-field>
+        </div>
+        <div class="row pt-5">
+          <div class="col-md-4">
+            <app-user-shared
+              [form]="form"
+              [userField]="'idCapture'"
+              [label]="'Elabora'"></app-user-shared>
+          </div>
+          <div class="col-md-4">
+            <app-user-shared
+              [form]="form"
+              [userField]="'idAuth'"
+              [label]="'Verifica'"></app-user-shared>
+          </div>
+          <div class="col-md-4">
+            <app-user-shared
+              [form]="form"
+              [userField]="'idSol'"
+              [label]="'Expide'"></app-user-shared>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="ch-content">
+      <h5 class="title"></h5>
+      <div class="col-md-5 buttons">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm active ml-3"
+          (click)="openPrevPdf()">
+          Reporte
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

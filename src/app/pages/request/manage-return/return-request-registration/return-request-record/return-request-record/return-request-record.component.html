@@ -1,0 +1,59 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">REGISTRO DE SOLICITUD DE DEVOLUCI&Oacute;N</h5>
+    <div class="form-group text-right" *ngIf="!mostrarListado">
+      <button
+        class="btn btn-danger btn-sm active m-3"
+        (click)="btnRegresarLista()">
+        Regresar al Listado
+      </button>
+    </div>
+  </div>
+
+  <div body *ngIf="mostrarListado">
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 p-2 alert alert-info">
+        <span>
+          SELECCIONA ALGUNO DE LOS REGISTROS DE LA TABLA PARA PROCEDER AL
+          APARTADO DE ACCIONES&#46;</span
+        >
+      </div>
+    </div>
+    <div class="row pt-1">
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng-scrollbar track="all" style="min-height: 200px; border: none">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="paragraphs"
+            (userRowSelect)="editRowTable($event)">
+          </ng2-smart-table>
+        </ng-scrollbar>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+  </div>
+  <div footer *ngIf="!mostrarListado">
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 p-2 alert alert-info">
+        <span>
+          SE PUEDE REGRESAR A LA VISTA DEL LISTADO DANDO CLIC EN &#34;REGRESAR
+          AL LISTADO&#34;&#46;</span
+        >
+      </div>
+    </div>
+  </div>
+</app-card>
+
+<ng-container *ngIf="!mostrarListado">
+  <app-complementary-request-information
+    [title]="title"
+    [idParam]="idNoRequest"
+    [registroDocumentacion]="true"
+    [seleccionarBienes]="true"
+    [buscarAsociarExpediente]="true"
+    (formValuesDataDocumentation)="dataRegistration($event)"
+    [nombrePantalla]="nombrePantalla"></app-complementary-request-information>
+</ng-container>

@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { RackService } from 'src/app/core/services/catalogs/rack.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { ListParams } from '../../../../common/repository/interfaces/list-params';
 import { IRack } from '../../../../core/models/catalogs/rack.model';
 import { DefaultSelect } from '../../../../shared/components/select/default-select';
-import { ListParams } from '../../../../common/repository/interfaces/list-params';
 
 @Component({
   selector: 'app-rack-form',
@@ -38,8 +39,11 @@ export class RackFormComponent extends BasePage implements OnInit {
       id: [null],
       idWarehouse: [null, [Validators.required]],
       idBatch: [null, [Validators.required]],
-      description: [null, [Validators.required]],
-      status: [null, [Validators.required]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      status: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       registerNumber: [null],
     });
     if (this.rack != null) {

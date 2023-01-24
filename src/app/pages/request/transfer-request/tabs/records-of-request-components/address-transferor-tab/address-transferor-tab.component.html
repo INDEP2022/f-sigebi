@@ -1,0 +1,216 @@
+<ng-template #myTemplate>
+  <div class="row">
+    <div class="d-flex">
+      <div class="mr-auto p-2">
+        <h5 class="title" style="font-weight: bold">
+          Domicilio de la transferencia
+        </h5>
+      </div>
+      <div *ngIf="isNewAddress === false">
+        <button class="btn btn-primary btn-sm active">
+          <i class="bx bx-save"></i> Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+  <div>
+    <form [formGroup]="addressForm" class="form-material">
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field
+            [control]="addressForm.get('aliasWarehouse')"
+            label="Alias Almac&eacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="aliasWarehouse" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="addressForm.get('referenceVia2')"
+            label="Referencia V&iacute;a 2">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="referenceVia2" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="addressForm.get('referenceVia3')"
+            label="Referencia V&iacute;a 3">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="referenceVia3" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <ngx-select
+            [form]="addressForm"
+            control="state"
+            (fetchItems)="getState($event)"
+            [data]="selectState"
+            label="Estado"
+            value="id"
+            bindLabel="state"></ngx-select>
+        </div>
+
+        <div class="col-md-4">
+          <ngx-select
+            [form]="addressForm"
+            control="municipe"
+            (fetchItems)="getMunicipe($event)"
+            [data]="selectMunicipe"
+            label="Municipio"
+            value="id"
+            bindLabel="municipe"></ngx-select>
+        </div>
+        <div class="col-md-4">
+          <ngx-select
+            [form]="addressForm"
+            control="suburb"
+            (fetchItems)="getSuburb($event)"
+            [data]="selectSuburb"
+            label="Colonia"
+            value="id"
+            bindLabel="suburb"></ngx-select>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <ngx-select
+            [form]="addressForm"
+            control="cp"
+            (fetchItems)="getCP($event)"
+            [data]="selectCP"
+            label="C&#46;P&#46;"
+            value="id"
+            bindLabel="cp"></ngx-select>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="addressForm.get('latitud')" label="Latitud">
+            <input type="text" class="form-control" formControlName="latitud" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="addressForm.get('longitud')" label="Longitud">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="longitud" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field
+            [control]="addressForm.get('nameRoute')"
+            label="Nombre de la V&iacute;a">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nameRoute" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="addressForm.get('numExt')"
+            label="Num&#46; Ext&#46;">
+            <input type="text" class="form-control" formControlName="numExt" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="addressForm.get('originRoute')"
+            label="Origin de la V&iacute;a">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="originRoute" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field
+            [control]="addressForm.get('numInt')"
+            label="Num&#46; Int&#46;">
+            <input type="text" class="form-control" formControlName="numInt" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="addressForm.get('routeDestination')"
+            label="Destino de la V&iacute;a">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="routeDestination" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="addressForm.get('referenceVia1')"
+            label="Referencia V&iacute;a 1">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="referenceVia1" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field
+            [control]="addressForm.get('kilometerRoute')"
+            label="Kil&oacute;metro de la V&iacute;a">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="kilometerRoute" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="addressForm.get('description')"
+            label="Descripci&oacute;n">
+            <textarea
+              class="form-control"
+              formControlName="description"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<app-modal *ngIf="isNewAddress">
+  <div body *ngTemplateOutlet="myTemplate"></div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button class="btn btn-primary btn-sm active" (click)="saveAddres()">
+          <i class="bx bx-save"></i> Guardar
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

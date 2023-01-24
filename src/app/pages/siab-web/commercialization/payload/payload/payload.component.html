@@ -1,0 +1,54 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Carga de pagos</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('event')"
+            label="Si desea consultar un evento en particular ingr&eacute;selo&#58;">
+            <input type="text" class="form-control" formControlName="event" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('bank')" label="Banco">
+            <input type="text" class="form-control" formControlName="bank" />
+          </form-field>
+        </div>
+        <div class="col-md-1">
+          <div class="justify-content-center">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              [disabled]="!form.valid">
+              Cargar pagos
+            </button>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="justify-content-center">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              [disabled]="!form.valid">
+              Guardar datos DB
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="ch-content" header>
+      <h5 class="title"></h5>
+      <div class="col-md-5 buttons">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
+    </div>
+  </div>
+</app-card>

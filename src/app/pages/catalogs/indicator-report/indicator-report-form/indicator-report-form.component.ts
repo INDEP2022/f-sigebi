@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { IIndicatorReport } from '../../../../core/models/catalogs/indicator-report.model';
-import { ModelForm } from '../../../../core/interfaces/ModelForm';
-import { DefaultSelect } from '../../../../shared/components/select/default-select';
-import { BsModalRef } from 'ngx-bootstrap/modal';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ProeficientService } from '../../../../core/services/catalogs/proficient.service';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ListParams } from '../../../../common/repository/interfaces/list-params';
+import { ModelForm } from '../../../../core/interfaces/model-form';
+import { IIndicatorReport } from '../../../../core/models/catalogs/indicator-report.model';
+import { ProeficientService } from '../../../../core/services/catalogs/proficient.service';
+import { STRING_PATTERN } from '../../../../core/shared/patterns';
+import { DefaultSelect } from '../../../../shared/components/select/default-select';
 
 @Component({
   selector: 'app-indicator-report-form',
@@ -34,7 +35,10 @@ export class IndicatorReportFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       id: [null],
-      tipo_servicio: [null, [Validators.required]],
+      tipo_servicio: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       rango_porcentaje_inicial: [null, [Validators.required]],
       rango_porcentaje_final: [null, [Validators.required]],
       pena_convencional: [null, [Validators.required]],

@@ -1,0 +1,69 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">REPORTE DE EXPEDIENTES SIN CONCILIAR</h5>
+  </div>
+  <div body>
+    <div class="row mt-3 mb-3">
+      <form action="" class="form-material" [formGroup]="form">
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field [control]="form.get('delegation')" label="Delegación">
+              <input formControlName="delegation" class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('subdelegation')"
+              label="Subdelegación">
+              <input formControlName="subdelegation" class="form-control" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field [control]="form.get('file')" label="Del expediente:">
+              <input formControlName="file" class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('fileTo')" label="Al:">
+              <input formControlName="fileTo" class="form-control" />
+            </form-field>
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="form.get('receptionDate')"
+              label="Fecha de recepción:">
+              <input
+                formControlName="receptionDate"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-6">
+            <form-field [control]="form.get('receptionDateTo')" label="Al:">
+              <input
+                formControlName="receptionDateTo"
+                class="form-control"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+      </form>
+
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <div>
+            <button type="button" class="btn btn-sm btn-primary active m-3">
+              IMPRIMIR
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 export interface Example {
   idConversion: number;
@@ -111,10 +110,19 @@ export class ConversionManagementComponent implements OnInit {
       date: [null, [Validators.required]],
       tipo: [null, [Validators.required]],
       noExpediente: [null, [Validators.required]],
-      actaConversion: [null, [Validators.required]],
-      desStatus: [null, [Validators.required]],
-      actaER: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      actaConversion: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      desStatus: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      actaER: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       //goods: this.fb.array([])
     });
   }

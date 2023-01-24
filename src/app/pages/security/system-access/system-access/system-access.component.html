@@ -1,0 +1,230 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">CALENDARIO DE CONTRASEÑAS</h5>
+  </div>
+
+  <div body>
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 p-2">
+        <div class="md-tabs">
+          <tabset>
+            <tab heading="PERMISOS" id="permisos">
+              <div class="row w-100">
+                <div class="col-sm-12 col-12 col-md-6 p-2">
+                  <div class="row w-100">
+                    <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+                      <span class="form-group">
+                        <span>USUARIOS</span>
+                        <p>usuario</p>
+                      </span>
+                      <div class="form-group">
+                        <button
+                          class="btn btn-primary btn-sm active m-2"
+                          (click)="btnAsignarFuncion()">
+                          Asignar Función
+                        </button>
+                        <button
+                          class="btn btn-primary btn-sm active m-2"
+                          (click)="btnCopiarFuncion()">
+                          Copiar Función
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 p-2">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="tableSettings"
+                    [source]="data"></ng2-smart-table>
+                </div>
+                <div class="col-sm-12 col-12 col-md-12 p-2 alert alert-info">
+                  <form
+                    [formGroup]="permisosEspecialesForm"
+                    class="container-fluid form-material">
+                    <div class="row w-100 pl-4">
+                      <label class="form-control-label"
+                        >Permisos Especiales</label
+                      >
+                      <div
+                        class="col-sm-12 col-12 col-md-6 col-lg-6 col-xl-3 p-2"
+                        *ngFor="let option of optionsEspeciales">
+                        <form-radio label="{{ option.label }}">
+                          <input
+                            type="radio"
+                            formControlName="permisosEspeciales"
+                            [value]="option.value" />
+                        </form-radio>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </tab>
+            <tab heading="NUEVA PANTALLA" id="nuevaPantalla">
+              <div class="row w-100">
+                <div class="col-sm-12 col-12 col-md-6 p-4">
+                  <form [formGroup]="nuevaPantallaForm" class="form-material">
+                    <div class="row w-100">
+                      <div class="col-sm-12 col-12 col-md-6 p-2">
+                        <form-field
+                          [control]="nuevaPantallaForm.get('pantalla')"
+                          label="Pantalla">
+                          <input
+                            type="text"
+                            class="form-control"
+                            formControlName="pantalla" />
+                        </form-field>
+                      </div>
+                      <div class="col-sm-12 col-12 col-md-6 p-2">
+                        <form-field
+                          [control]="nuevaPantallaForm.get('nombreMenu')"
+                          label="Nombre Menú">
+                          <input
+                            type="text"
+                            class="form-control"
+                            formControlName="nombreMenu" />
+                        </form-field>
+                      </div>
+                      <div class="col-sm-12 col-12 col-md-6 p-2">
+                        <form-check
+                          label="¿Se encuentra en el menù del sitema?"
+                          for="disponibleMenu">
+                          <input
+                            id="disponibleMenu"
+                            type="checkbox"
+                            formControlName="disponibleMenu" />
+                        </form-check>
+                      </div>
+                      <div class="col-sm-12 col-12 col-md-6 p-2">
+                        <form-field
+                          [control]="nuevaPantallaForm.get('descripcion')"
+                          label="Descripción">
+                          <textarea
+                            rows="2"
+                            class="form-control"
+                            formControlName="descripcion"></textarea>
+                        </form-field>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="col-sm-12 col-12 col-md-6 p-2 alert alert-info">
+                  <ng2-smart-table
+                    [attr.class]="'table-bordered'"
+                    [settings]="tableSettingsTablaDB"
+                    [source]="dataTablaDB"></ng2-smart-table>
+                </div>
+                <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+                  <div class="form-group">
+                    <button
+                      class="btn btn-primary btn-sm active m-2"
+                      (click)="btnEstatusDecoDevo()">
+                      Estatus Deco Devo
+                    </button>
+                    <button
+                      class="btn btn-primary btn-sm active m-2"
+                      (click)="btnRegeneraPermisos()">
+                      Regenera Permisos
+                    </button>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-12 col-md-12 pl-4 pr-0 mr-0">
+                  <form [formGroup]="reglasForm" class="form-material">
+                    <div class="row w-100">
+                      <div
+                        class="col-sm-12 col-12 col-md-5 p-2 alert alert-secondary">
+                        <form-field
+                          [control]="reglasForm.get('estatusInicial')"
+                          label="Estatus Inicial">
+                          <input
+                            type="text"
+                            class="form-control"
+                            formControlName="estatusInicial" />
+                        </form-field>
+                      </div>
+                      <div class="col-sm-12 col-12 col-md-2 p-2 text-center">
+                        <button
+                          class="btn btn-info btn-sm active p-3"
+                          type="button">
+                          <!-- Mover uno -->
+                          <i class="bx bxs-right-arrow-circle bx-md"></i>
+                        </button>
+                      </div>
+                      <div
+                        class="col-sm-12 col-12 col-md-5 p-2 alert alert-success">
+                        <form-field
+                          [control]="reglasForm.get('estatusFinal')"
+                          label="Estatus Final">
+                          <input
+                            type="text"
+                            class="form-control"
+                            formControlName="estatusFinal" />
+                        </form-field>
+                      </div>
+                      <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
+                        <strong>
+                          <span>Acciòn</span>
+                        </strong>
+                        <p>
+                          Estatus del Nuevo Bien(Numerario) que sustituye al
+                          anterior.
+                        </p>
+                      </div>
+                      <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
+                        <form-field
+                          [control]="reglasForm.get('usuario')"
+                          label="Usuario">
+                          <input
+                            type="text"
+                            class="form-control"
+                            formControlName="usuario" />
+                        </form-field>
+                      </div>
+                      <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
+                        <form-field
+                          [control]="reglasForm.get('pantalla')"
+                          label="Pantalla">
+                          <input
+                            type="text"
+                            class="form-control"
+                            formControlName="pantalla" />
+                        </form-field>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </tab>
+          </tabset>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>
+
+<app-card [header]="true" *ngIf="devolucionDecomiso">
+  <div class="ch-content" header>
+    <h5 class="title">Listado de Devolucion o Decomiso</h5>
+  </div>
+
+  <div body>
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 p-2">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="tableSettingsDevolucionDecomiso"
+          [source]="dataDevolucionDecomiso"></ng2-smart-table>
+      </div>
+      <div class="col-sm-12 col-12 col-md-12 p-2">
+        <div class="form-group">
+          <button
+            class="btn btn-primary btn-sm active m-2"
+            (click)="btnVerOtroLienzo()">
+            Ver Otro Lienzo
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IOriginCisi } from 'src/app/core/models/catalogs/origin-cisi.model';
 import { OiriginCisiService } from 'src/app/core/services/catalogs/origin-cisi.service';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { OriginFormComponent } from '../../origin/origin-form/origin-form.component';
-import { ORIGIN_CISI_COLUMNS } from './origin-cisi-columns';
 import { OrignCisiFormComponent } from '../orign-cisi-form/orign-cisi-form.component';
+import { ORIGIN_CISI_COLUMNS } from './origin-cisi-columns';
 
 @Component({
   selector: 'app-origin-cisi-list',

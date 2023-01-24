@@ -1,0 +1,63 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('idDeleg')"
+            label="No&#46; Delegaci&oacute;n">
+            <input type="text" class="form-control" formControlName="idDeleg" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('descriptionDeleg')"
+            label="Descripci&oacute;n Delegaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descriptionDeleg" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('idSubDeleg')"
+            label="No&#46; SubDelegaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idSubDeleg" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('descriptionSubDeleg')"
+            label="Descripci&oacute;n SubDelegaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descriptionSubDeleg" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="!form.valid"
+          (click)="close()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

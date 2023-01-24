@@ -2,12 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDelegationState } from 'src/app/core/models/catalogs/delegation-state.model';
 import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -36,11 +37,23 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.delegationStateForm = this.fb.group({
-      id: [null, Validators.required],
-      stateCode: [null, Validators.required],
-      keyState: [null, Validators.required],
-      status: [null, Validators.required],
-      version: [null, Validators.required],
+      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      stateCode: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      keyState: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      status: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      version: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
     });
     if (this.delegationSate) {
       this.fillForm();
@@ -64,7 +77,7 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
   }
 
   stateChange(state: IStateOfRepublic) {
-    this.delegationStateForm.controls.keyState.setValue(state.cveState);
+    this.delegationStateForm.controls.keyState.setValue(state.id);
   }
 
   close() {

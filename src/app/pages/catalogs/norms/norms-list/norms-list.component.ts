@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, takeUntil } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BasePage } from 'src/app/core/shared/base-page';
 
+import { NormsFormComponent } from '../norms-form/norms-form.component';
 import { INorm } from './../../../../core/models/catalogs/norm.model';
 import { NormService } from './../../../../core/services/catalogs/norm.service';
 import { NORMS_COLUMNS } from './norms-columns';
-import { NormsFormComponent } from '../norms-form/norms-form.component';
 
 @Component({
   selector: 'app-norms-list',

@@ -1,9 +1,10 @@
-import { Component, OnInit, EventEmitter, Output } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { INonDeliveryReason } from '../../../../core/models/catalogs/non-delivery-reason.model';
 import { NonDeliveryReasonService } from '../../../../core/services/catalogs/non-delivery-reason.service';
+import { STRING_PATTERN } from '../../../../core/shared/patterns';
 
 @Component({
   selector: 'app-non-delivery-reasons-form',
@@ -37,7 +38,7 @@ export class NonDeliveryReasonsFormComponent
       id: [null, [Validators.required]],
       reasonType: [null, [Validators.required]],
       eventType: [null, [Validators.required]],
-      reason: [null, [Validators.required]],
+      reason: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       userCreation: [null, [Validators.required]],
       userModification: [null, [Validators.required]],
       version: [null, [Validators.required]],

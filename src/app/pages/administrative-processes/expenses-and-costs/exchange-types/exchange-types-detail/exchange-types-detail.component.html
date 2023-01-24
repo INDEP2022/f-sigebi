@@ -1,0 +1,46 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">MONEDAS</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mt-4">
+        <div class="col-md-6" style="margin: 0 auto">
+          <form-field [control]="form.get('currency')">
+            <ngx-select
+              [form]="form"
+              [data]="monedas"
+              bindLabel="name"
+              label="Moneda"
+              value="id"
+              (fetchItems)="getCurrencies($event)"
+              control="currency"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center mt-4">
+      <div class="m-3">
+        <button type="button" class="btn btn-sm btn-primary active">
+          BUSCAR
+        </button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-sm btn-primary active">
+          ACEPTAR
+        </button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-sm btn-primary active"
+          (click)="close()">
+          CANCELAR
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

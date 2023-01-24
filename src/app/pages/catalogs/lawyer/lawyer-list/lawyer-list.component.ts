@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ILawyer } from 'src/app/core/models/catalogs/lawyer.model';
-import { LawyerService } from '../../../../core/services/catalogs/lawyer.service';
-import { BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { LAWYER_COLUMNS } from './lawyer-columns';
+import { LawyerService } from '../../../../core/services/catalogs/lawyer.service';
 import { LawyerDetailComponent } from '../lawyer-detail/lawyer-detail.component';
+import { LAWYER_COLUMNS } from './lawyer-columns';
 
 @Component({
   selector: 'app-lawyer-list',
@@ -65,15 +65,21 @@ export class LawyerListComponent extends BasePage implements OnInit {
     this.openModal({ edit: true, lawyer });
   }
 
-  delete(lawyer: ILawyer) {
+  showDeleteAlert(lawyer: ILawyer) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
+        this.delete(lawyer.id);
       }
+    });
+  }
+
+  delete(id: number) {
+    this.lawyerService.remove(id).subscribe({
+      next: () => this.getLawyers(),
     });
   }
 }

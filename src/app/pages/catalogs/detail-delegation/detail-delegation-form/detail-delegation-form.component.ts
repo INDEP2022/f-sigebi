@@ -1,10 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDetailDelegation } from 'src/app/core/models/catalogs/detail-delegation.model';
 import { DetailDelegationService } from 'src/app/core/services/catalogs/detail-delegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  EMAIL_PATTERN,
+  NUMBERS_PATTERN,
+  PHONE_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-detail-delegation-form',
@@ -30,26 +36,29 @@ export class DetailDelegationFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.detailDelegationForm = this.fb.group({
-      id: [null, Validators.required],
-      name: [
+      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      location: [
         null,
-        Validators.compose([
-          Validators.pattern(
-            '[a-zA-Z]((.|_|-)?[a-zA-ZáéíóúÁÉÍÓÚ\u0020]+){0,255}'
-          ),
-          Validators.required,
-        ]),
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      location: [null, Validators.required],
-      address: [null, Validators.required],
-      position: [null, Validators.required],
-      area: [null, Validators.required],
-      mail: [null, [Validators.email, Validators.required]],
-      description: [null],
-      numP1: [null, Validators.required],
-      numP2: [null, Validators.required],
-      numP3: [null, Validators.required],
-      numDelegation: [null, [Validators.required]],
+      address: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      position: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      area: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      mail: [null, [Validators.required, Validators.pattern(EMAIL_PATTERN)]],
+      numP1: [null, [Validators.required, Validators.pattern(PHONE_PATTERN)]],
+      numP2: [null, [Validators.required, Validators.pattern(PHONE_PATTERN)]],
+      numP3: [null, [Validators.required, Validators.pattern(PHONE_PATTERN)]],
+      numDelegation: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
     });
     if (this.detailDelegation != null) {
       this.edit = true;

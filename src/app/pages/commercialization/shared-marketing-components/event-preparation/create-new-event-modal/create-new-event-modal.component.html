@@ -1,0 +1,79 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">CREAR EVENTO</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field [control]="form.get('id_event')" label="No.">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="id_event" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('cve')" label="Clave">
+            <input type="text" class="form-control" formControlName="cve" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <app-event-type-shared
+            [form]="form"
+            [bindLabel]="'descripcion'"></app-event-type-shared>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('dateEvent')"
+            label="Fecha del Evento">
+            <input
+              type="text"
+              placeholder=""
+              class="form-control"
+              bsDatepicker
+              formControlName="dateEvent"
+              [bsConfig]="{ isAnimated: true }" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field [control]="form.get('place')" label="Lugar">
+            <input type="text" class="form-control" formControlName="place" />
+          </form-field>
+        </div>
+        <div class="col-md-5">
+          <form-field [control]="form.get('observ')" label="Observaciones">
+            <input type="text" class="form-control" formControlName="observ" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('dateClose')"
+            label="Fecha del cierre">
+            <input
+              type="text"
+              placeholder=""
+              class="form-control"
+              bsDatepicker
+              formControlName="dateClose"
+              [bsConfig]="{ isAnimated: true }" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button [disabled]="!form.valid"> </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

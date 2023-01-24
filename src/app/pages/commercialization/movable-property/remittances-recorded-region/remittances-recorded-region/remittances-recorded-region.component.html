@@ -1,0 +1,52 @@
+<app-card [header]="true" [footer]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Reporte de Remesas</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('rangeDate')"
+            label="Seleccione fecha inicial y final">
+            <input
+              class="form-control"
+              formControlName="rangeDate"
+              ngModel
+              bsDaterangepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD-MM-YYYY',
+                displayOneMonthRange: true
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('coordination')">
+            <ngx-select
+              [form]="form"
+              [data]="coordinationsItems"
+              label="Coordinación"
+              value="no_delegacion"
+              bindLabel="descripcion"
+              (fetchItems)="getCoordinations($event)"
+              (change)="selectCoordination($event)"
+              control="coordination">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <button
+            type="button"
+            class="btn btn-sm btn-primary active"
+            [disabled]="!form.valid"
+            (click)="openPrevPdf()">
+            Imprimir
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

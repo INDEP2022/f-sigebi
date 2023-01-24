@@ -1,12 +1,18 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormGroup, Validators, FormBuilder } from '@angular/forms';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { ILawyer } from '../../../../core/models/catalogs/lawyer.model';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { DelegationService } from '../../../../core/services/catalogs/delegation.service';
 import { OfficeService } from 'src/app/core/services/catalogs/office.service';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { ILawyer } from '../../../../core/models/catalogs/lawyer.model';
+import { DelegationService } from '../../../../core/services/catalogs/delegation.service';
 import { LawyerService } from '../../../../core/services/catalogs/lawyer.service';
+import {
+  NUMBERS_PATTERN,
+  PHONE_PATTERN,
+  RFCCURP_PATTERN,
+  STRING_PATTERN,
+} from '../../../../core/shared/patterns';
 
 @Component({
   selector: 'app-lawyer-detail',
@@ -46,7 +52,7 @@ export class LawyerDetailComponent implements OnInit {
       name: [
         '',
         Validators.compose([
-          Validators.pattern(''),
+          Validators.pattern(STRING_PATTERN),
           Validators.required,
           Validators.maxLength(80),
         ]),
@@ -54,7 +60,7 @@ export class LawyerDetailComponent implements OnInit {
       street: [
         null,
         Validators.compose([
-          Validators.pattern(''),
+          Validators.pattern(STRING_PATTERN),
           Validators.required,
           Validators.maxLength(60),
         ]),
@@ -62,7 +68,7 @@ export class LawyerDetailComponent implements OnInit {
       streetNumber: [
         null,
         Validators.compose([
-          Validators.pattern(''),
+          Validators.pattern(NUMBERS_PATTERN),
           Validators.required,
           Validators.maxLength(10),
         ]),
@@ -70,7 +76,7 @@ export class LawyerDetailComponent implements OnInit {
       apartmentNumber: [
         null,
         Validators.compose([
-          Validators.pattern(''),
+          Validators.pattern(NUMBERS_PATTERN),
           Validators.required,
           Validators.maxLength(10),
         ]),
@@ -98,7 +104,7 @@ export class LawyerDetailComponent implements OnInit {
       rfc: [
         null,
         Validators.compose([
-          Validators.pattern(''),
+          Validators.pattern(RFCCURP_PATTERN),
           Validators.required,
           Validators.maxLength(20),
         ]),
@@ -106,7 +112,7 @@ export class LawyerDetailComponent implements OnInit {
       phone: [
         null,
         Validators.compose([
-          Validators.pattern(''),
+          Validators.pattern(PHONE_PATTERN),
           Validators.required,
           Validators.maxLength(20),
         ]),

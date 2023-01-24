@@ -1,9 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { AuthModel } from '../../models/authentication/auth.model';
+import { RolesInfoModel } from '../../models/authentication/roles-info.model';
 import { TokenInfoModel } from '../../models/authentication/token-info.model';
 
 @Injectable({
@@ -15,6 +16,7 @@ export class AuthService {
   private readonly tokenUrl = environment.api_external_token;
   private readonly userInfo = environment.api_external_userInfo;
   private readonly userType = environment.api_external_typeUser;
+  private readonly userRoles = environment.api_external_rolesUser;
 
   constructor(
     private readonly http: HttpClient,
@@ -35,6 +37,11 @@ export class AuthService {
     return this.token ? true : false;
   }
 
+  accessToken() {
+    this.token = localStorage.getItem('token');
+    return this.token;
+  }
+
   decodeToken(): TokenInfoModel {
     const decodedToken: TokenInfoModel = this.jwtService.decodeToken(
       this.token
@@ -50,5 +57,29 @@ export class AuthService {
   isTokenExpired() {
     const isExpired = this.jwtService.isTokenExpired(this.token);
     return isExpired;
+  }
+
+  hasRoles() {
+    let roles = JSON.parse(localStorage.getItem('roles'));
+    return roles ? true : false;
+  }
+
+  accessRoles() {
+    let roles = JSON.parse(localStorage.getItem('roles'));
+    return roles;
+  }
+
+  getRoles(uid: string): Observable<RolesInfoModel> {
+    let appid = `sb-0001`;
+    let params = {
+      uid: uid,
+      appid: appid,
+    };
+    return this.http.get<RolesInfoModel>(this.userRoles, { params }).pipe(
+      map((data: any) => {
+        let roles = data.usuario[0].roles;
+        return roles;
+      })
+    );
   }
 }

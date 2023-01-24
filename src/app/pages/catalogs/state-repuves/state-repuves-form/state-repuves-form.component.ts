@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IStateRepuve } from 'src/app/core/models/catalogs/state-repuve.model';
 import { StateRepuveService } from 'src/app/core/services/catalogs/state-repuve.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-state-repuves-form',
@@ -31,8 +32,14 @@ export class StateRepuvesFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.stateRepuveForm = this.fb.group({
       cve: [null, [Validators.required]],
-      description: [null, [Validators.required]],
-      procedure: [null, [Validators.required]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      procedure: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
     if (this.stateRepuve != null) {
       this.edit = true;

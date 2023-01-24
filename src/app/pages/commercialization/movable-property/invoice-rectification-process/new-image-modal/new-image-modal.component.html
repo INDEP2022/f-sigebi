@@ -1,0 +1,110 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Datos para imagen</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('name')" label="Nombre">
+            <input type="text" class="form-control" formControlName="name" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Apellido Paterno" [control]="form.get('lastName')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="lastName" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Apellido Materno"
+            [control]="form.get('motherlastName')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="motherlastName" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <app-user-shared
+            [form]="form"
+            [userField]="'idAuth'"
+            [label]="'Autoriza'"></app-user-shared>
+        </div>
+        <div class="col-md-4 pt-3">
+          <form-field [control]="form.get('date')" label="Fecha expedición">
+            <input
+              type="text"
+              placeholder=""
+              class="form-control"
+              bsDatepicker
+              formControlName="date"
+              [bsConfig]="{ isAnimated: true }" />
+          </form-field>
+        </div>
+        <div class="col-md-4 pt-3">
+          <form-field label="Lote" [control]="form.get('allotment')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="allotment" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field label="Siab/Varios" [control]="form.get('siab')">
+            <input type="text" class="form-control" formControlName="siab" />
+          </form-field>
+        </div>
+        <div class="col-md-8">
+          <form-field label="Descripción" [control]="form.get('description')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field label="Total" [control]="form.get('total')">
+            <input type="text" class="form-control" formControlName="total" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="CVE Proceso/Mandato" [control]="form.get('cve')">
+            <input type="text" class="form-control" formControlName="cve" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="imagen Seg" [control]="form.get('image')">
+            <input type="text" class="form-control" formControlName="image" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary active"
+          (click)="openPrevImg()">
+          Generar imagen
+        </button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

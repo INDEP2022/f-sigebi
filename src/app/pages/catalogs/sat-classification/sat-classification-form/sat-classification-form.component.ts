@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ISatClassification } from 'src/app/core/models/catalogs/sat-classification.model';
 import { SatClassificationService } from 'src/app/core/services/catalogs/sat-classification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-sat-clasification-form',
@@ -31,11 +32,8 @@ export class SatClassificationFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.satClassificationForm = this.fb.group({
       id: [null],
-      nombre_clasificacion: [
-        null,
-        Validators.compose([Validators.pattern('')]),
-      ],
-      version: [null, Validators.compose([Validators.pattern('')])],
+      nombre_clasificacion: [null, [Validators.pattern(STRING_PATTERN)]],
+      version: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     if (this.satclassification != null) {
       this.edit = true;

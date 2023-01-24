@@ -1,9 +1,9 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
-import { SharedModule } from 'src/app/shared/shared.module';
 import { TabsModule } from 'ngx-bootstrap/tabs';
-import { CBGeCanMNumeraireConversionModule } from '../c-b-ge-can-m-numeraire-conversion/c-b-ge-can-m-numeraire-conversion.module';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { NumeraireConversionModule } from '../numeraire-conversion/numeraire-conversion.module';
 
 import { NumeraireConversionTabsRoutingModule } from './numeraire-conversion-tabs-routing.module';
 import { NumeraireConversionTabsComponent } from './numeraire-conversion-tabs/numeraire-conversion-tabs.component';
@@ -15,7 +15,7 @@ import { NumeraireConversionTabsComponent } from './numeraire-conversion-tabs/nu
     NumeraireConversionTabsRoutingModule,
     SharedModule,
     TabsModule,
-    CBGeCanMNumeraireConversionModule,
+    NumeraireConversionModule,
   ],
 })
 export class NumeraireConversionTabsModule {}

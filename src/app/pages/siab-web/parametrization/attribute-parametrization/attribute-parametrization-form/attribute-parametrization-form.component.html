@@ -1,0 +1,64 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Agregar Parametrización de Atributos</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <form-field [control]="form.get('tabla')" label="Tabla">
+          <input class="form-control" formControlName="tabla" />
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field
+          [control]="form.get('tipoconsulta')"
+          label="Tipo de consulta">
+          <input class="form-control" formControlName="tipoconsulta" />
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field
+          [control]="form.get('columna')"
+          label="Columna de información">
+          <input class="form-control" formControlName="columna" />
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field [control]="form.get('tipoproceso')" label="Tipo de proceso">
+          <input class="form-control" formControlName="tipoproceso" />
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field [control]="form.get('dsatributo')" label="DSA ATRIBUTO">
+          <input class="form-control" formControlName="dsatributo" />
+        </form-field>
+      </div>
+
+      <div class="row pt-4">
+        <form-field [control]="form.get('tipodato')" label="Tipo de dato">
+          <input class="form-control" formControlName="tipodato" />
+        </form-field>
+      </div>
+    </form>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

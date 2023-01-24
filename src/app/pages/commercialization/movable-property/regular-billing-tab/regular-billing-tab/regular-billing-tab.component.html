@@ -1,0 +1,31 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">CONTROL DE FACTURACI&Oacute;N</h5>
+    </div>
+  </div>
+  <div body>
+    <div class="md-tabs">
+      <tabset>
+        <tab heading="Facturas" id="tab1">
+          <app-regular-billing-invoice></app-regular-billing-invoice>
+        </tab>
+        <tab heading="Catálogos SAT">
+          <app-sat-catalogs></app-sat-catalogs>
+        </tab>
+        <tab heading="Errores y datos nulos">
+          <app-errors-null-data></app-errors-null-data>
+        </tab>
+        <tab heading="No liquidados / Tipo penalizados y devueltos">
+          <app-regular-billing-unsettled></app-regular-billing-unsettled>
+        </tab>
+        <tab heading="Inconsistencias">
+          <app-regular-billing-inconsistencies></app-regular-billing-inconsistencies>
+        </tab>
+        <tab heading="Generación de bienes">
+          <app-regular-billing-generation-assets></app-regular-billing-generation-assets>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</app-card>

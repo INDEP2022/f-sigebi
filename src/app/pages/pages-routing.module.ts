@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { async } from 'rxjs';
 
 const routes: Routes = [
   {
@@ -43,6 +42,11 @@ const routes: Routes = [
       ).AdministrativeProcessesModule,
   },
   {
+    path: 'master-file',
+    loadChildren: async () =>
+      (await import('./master-file/master-file.module')).MasterFileModule,
+  },
+  {
     path: 'home',
     loadChildren: async () =>
       (await import('./admin/home/home.module')).HomeModule,
@@ -65,18 +69,17 @@ const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path: 'juridicos',
+    path: 'juridical',
     loadChildren: async () =>
       (await import('./juridical-processes/juridical-processes.module'))
         .JuridicalProcessesModule,
     data: { title: 'Juridicos' },
   },
-  // {
-
-  //   path: 'legal-processes',
-  //   loadChildren: () => import('./legal-processes/legal-processes.module')
-  //     .then(m => m.LegalProcessesModule),
-  // },
+  {
+    path: 'security',
+    loadChildren: () =>
+      import('./security/security.module').then(m => m.SecurityModule),
+  },
   {
     path: 'executive-processes',
     loadChildren: async () =>
@@ -89,6 +92,50 @@ const routes: Routes = [
       (await import('./commercialization/commercialization.module'))
         .CommercializationModule,
   },
+  {
+    path: 'judicial-physical-reception',
+    loadChildren: async () =>
+      (
+        await import(
+          './judicial-physical-reception/judicial-physical-reception.module'
+        )
+      ).JudicialPhysicalReceptionModule,
+  },
+
+  {
+    path: 'general-processes',
+    loadChildren: async () =>
+      (await import('./general-processes/general-processes.module'))
+        .GeneralProcessesModule,
+  },
+
+  {
+    path: 'parameterization',
+    loadChildren: async () =>
+      (await import('./parameterization/parameterization.module'))
+        .ParameterizationModule,
+  },
+
+  {
+    path: 'siab-web',
+    loadChildren: async () =>
+      (await import('./siab-web/siab-web.module')).SiabWebModule,
+  },
+  {
+    path: 'assets-for-study',
+    loadChildren: async () =>
+      (await import('./assets-for-study/assets-for-study.module'))
+        .AssetsForStudyModule,
+    data: { title: 'Bienes para estudio' },
+  },
+  {
+    path: '404-not-found',
+    pathMatch: 'full',
+    loadChildren: async () =>
+      (await import('./errors/error-404/error-404.module')).Error404Module,
+    data: { title: 'Página no Encontrada' },
+  },
+  { path: '**', redirectTo: '404-not-found' },
 ];
 
 @NgModule({

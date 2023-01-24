@@ -1,0 +1,68 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('lote')" label="Lote">
+            <input type="text" class="form-control" formControlName="lote" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('descripcion')" label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descripcion" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('valorbase')" label="Valor Base">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="valorbase" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field [control]="form.get('idcliente')" label="Cliente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idcliente" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="form.get('rfc')" label="RFC">
+            <input type="text" class="form-control" formControlName="rfc" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <form-check label="Ver clientes" for="label2">
+          <input id="label2" type="checkbox" formControlName="check" />
+        </form-check>
+      </div>
+      <div class="row" *ngIf="check.value">
+        <app-customer-catalogs-table></app-customer-catalogs-table>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button (click)="close()" [disabled]="!form.valid">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

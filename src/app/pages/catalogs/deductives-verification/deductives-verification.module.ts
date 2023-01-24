@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
-import { DeductivesVerificationRoutingModule } from './deductives-verification-routing.module';
-import { DeductivesVerificationListComponent } from './deductives-verification-list/deductives-verification-list.component';
-import { DeductivesVerificationFormComponent } from './deductives-verification-form/deductives-verification-form.component';
-import { SharedModule } from 'src/app/shared/shared.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { DeductivesVerificationFormComponent } from './deductives-verification-form/deductives-verification-form.component';
+import { DeductivesVerificationListComponent } from './deductives-verification-list/deductives-verification-list.component';
+import { DeductivesVerificationRoutingModule } from './deductives-verification-routing.module';
 
 @NgModule({
   declarations: [

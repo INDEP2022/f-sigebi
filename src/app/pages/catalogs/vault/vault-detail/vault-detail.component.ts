@@ -1,11 +1,12 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { SafeService } from '../../../../core/services/catalogs/safe.service';
 
@@ -50,20 +51,32 @@ export class VaultDetailComponent implements OnInit {
       idSafe: ['', Validators.required],
       manager: [
         null,
-        Validators.compose([Validators.pattern(''), Validators.required]),
+        Validators.compose([
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ]),
       ],
       description: [
         null,
-        Validators.compose([Validators.pattern(''), Validators.required]),
+        Validators.compose([
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ]),
       ],
       ubication: [
         null,
-        Validators.compose([Validators.pattern(''), Validators.required]),
+        Validators.compose([
+          Validators.pattern(STRING_PATTERN),
+          Validators.required,
+        ]),
       ],
       registerNumber: [null, Validators.compose([Validators.pattern('')])],
       municipalityCode: [null, Validators.compose([Validators.pattern('')])],
       localityCode: [null, Validators.compose([Validators.pattern('')])],
-      stateCode: [null, Validators.compose([Validators.pattern('')])],
+      stateCode: [
+        null,
+        Validators.compose([Validators.pattern(STRING_PATTERN)]),
+      ],
       cityCode: [null, Validators.compose([Validators.pattern('')])],
     });
     if (this.edit) {
@@ -74,7 +87,7 @@ export class VaultDetailComponent implements OnInit {
       this.id.disable();
       //TODO: Revisar con backend que regrese el objeto de bodega completo para poder pintar la informacion en los select
       // this.states = new DefaultSelect([descState], 1);
-      // this.cities = new DefaultSelect([nameCity], 1);
+      this.cities = new DefaultSelect([nameCity], 1);
       // this.municipalities = new DefaultSelect([municipalityName], 1);
       // this.localities = new DefaultSelect([localityName], 1);
     }

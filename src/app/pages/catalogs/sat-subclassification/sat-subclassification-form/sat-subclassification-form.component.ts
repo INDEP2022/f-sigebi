@@ -2,12 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/ModelForm';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ISatClassification } from 'src/app/core/models/catalogs/sat-classification.model';
 import { ISatSubclassification } from 'src/app/core/models/catalogs/sat-subclassification.model';
 import { SatClassificationService } from 'src/app/core/services/catalogs/sat-classification.service';
 import { SATSubclassificationService } from 'src/app/core/services/catalogs/sat-subclassification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -41,7 +42,10 @@ export class SatSubclassificationFormComponent
     console.log(this.satSubclassification);
     this.satSubclassificationForm = this.fb.group({
       id: [null],
-      nameSubClasification: [null, [Validators.required]],
+      nameSubClasification: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       idClasification: [null, [Validators.required]],
     });
     if (this.satSubclassification != null) {

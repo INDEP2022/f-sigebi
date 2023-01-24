@@ -3,7 +3,7 @@
     <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form [formGroup]="penaltyForm">
+    <form [formGroup]="penaltyForm" class="form-material">
       <div class="row">
         <div class="col-md-6">
           <form-field
@@ -18,7 +18,7 @@
         <div class="col-md-6">
           <form-field
             [control]="penaltyForm.get('penaltyPercentage')"
-            label="Porcentaje penalizacion">
+            label="Porcentaje penalizaci&oacute;n">
             <input
               type="text"
               class="form-control"
@@ -28,7 +28,7 @@
         <div class="col-md-6">
           <form-field
             [control]="penaltyForm.get('equivalentDays')"
-            label="Dias equivalentes">
+            label="D&iacute;as equivalentes">
             <input
               type="text"
               class="form-control"
@@ -38,7 +38,7 @@
         <div class="col-md-6">
           <form-field
             [control]="penaltyForm.get('contractNumber')"
-            label="Numero de contrato">
+            label="N&uacute;mero de contrato">
             <input
               type="text"
               class="form-control"
@@ -46,7 +46,9 @@
           </form-field>
         </div>
         <div class="col-md-6">
-          <form-field [control]="penaltyForm.get('version')" label="Version">
+          <form-field
+            [control]="penaltyForm.get('version')"
+            label="Versi&oacute;n">
             <input type="text" class="form-control" formControlName="version" />
           </form-field>
         </div>

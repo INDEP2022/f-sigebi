@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import Swal from 'sweetalert2';
 import { ICity } from '../../../../core/models/catalogs/city.model';
 import { CityService } from '../../../../core/services/catalogs/city.service';
-import { CITY_COLUMNS } from './city-columns';
 import { CityDetailComponent } from '../city-detail/city-detail.component';
+import { CITY_COLUMNS } from './city-columns';
 
 @Component({
   selector: 'app-city-list',
@@ -15,7 +17,7 @@ import { CityDetailComponent } from '../city-detail/city-detail.component';
   styles: [],
 })
 export class CityListComponent extends BasePage implements OnInit {
-  cities: ICity[] = [];
+  city: ICity[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   constructor(
@@ -35,44 +37,43 @@ export class CityListComponent extends BasePage implements OnInit {
 
   getCities() {
     this.loading = true;
-    this.cityService.getAll(this.params.getValue()).subscribe(
-      response => {
-        this.cities = response.data;
+    this.cityService.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        this.city = response.data;
         this.totalItems = response.count;
         this.loading = false;
       },
-      error => (this.loading = false)
-    );
-  }
-
-  add() {
-    this.openModal();
-  }
-
-  openModal(context?: Partial<CityDetailComponent>) {
-    const modalRef = this.modalService.show(CityDetailComponent, {
-      initialState: context,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getCities();
+      error: error => (this.loading = false),
     });
   }
 
-  edit(city: ICity) {
-    this.openModal({ edit: true, city });
+  openForm(city?: ICity) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      city,
+      callback: (next: boolean) => {
+        if (next) this.getCities();
+      },
+    };
+    this.modalService.show(CityDetailComponent, modalConfig);
   }
 
-  delete(vault: ICity) {
+  showDeleteAlert(cities: ICity) {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
+        this.delete(cities.idCity);
+        Swal.fire('Borrado', '', 'success');
       }
+    });
+  }
+
+  delete(id: number) {
+    this.cityService.remove(id).subscribe({
+      next: () => this.getCities(),
     });
   }
 }
