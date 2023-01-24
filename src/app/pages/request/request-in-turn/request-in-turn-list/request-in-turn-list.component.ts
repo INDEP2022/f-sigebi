@@ -82,8 +82,8 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
 
   searchForm(params: any) {
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      params.page = data.inicio;
-      params.limit = data.pageSize;
+      params.page = data.page;
+      params.limit = data.limit;
       this.getRequest(params);
     });
   }
