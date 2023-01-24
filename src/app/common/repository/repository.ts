@@ -14,7 +14,7 @@ export class Repository<T> implements IRepository<T> {
     route: string,
     _params?: ListParams
   ): Observable<IListResponse<T>> {
-    const params = _params ? this.makeParams(_params) : {};
+    const params = this.makeParams(_params);
     const fullRoute = this.buildRoute(route);
     return this.httpClient.get<IListResponse<T>>(`${fullRoute}`, { params });
   }
@@ -96,7 +96,7 @@ export class Repository<T> implements IRepository<T> {
   private makeParams(params: ListParams): HttpParams {
     let httpParams: HttpParams = new HttpParams();
     Object.keys(params).forEach(key => {
-      httpParams = httpParams.append(key, (params as any)[key] ?? '');
+      httpParams = httpParams.append(key, (params as any)[key]);
     });
     return httpParams;
   }
@@ -156,5 +156,22 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.delete(
       `${environment.API_URL2}${route}/${idsRoute}`
     );
+  }
+  getByIdDelegationSubdelegation(
+    /* route: string, */
+    idDelegation: string | number,
+    idSubdelegation: string | number
+  ): Observable<IListResponse<T>> {
+    return this.httpClient.get<IListResponse<T>>(
+      `${environment.API_URL}catalog/api/v1/departament?limit=5&page=1&filter.numDelegation=${idDelegation}&filter.numSubDelegation=${idSubdelegation}`
+    );
+  }
+  removeByBody(route: string, obj: Object) {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.delete(`${fullRoute}`, obj);
+  }
+  update3(route: string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.put(`${fullRoute}`, formData);
   }
 }

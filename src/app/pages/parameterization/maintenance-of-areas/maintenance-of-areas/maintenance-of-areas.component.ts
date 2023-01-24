@@ -11,7 +11,7 @@ import { DepartamentService } from 'src/app/core/services/catalogs/departament.s
 import { SubdelegationService } from 'src/app/core/services/catalogs/subdelegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { MaintenanceOfAreasModalComponent } from '../maintenance-of-areas-modal/maintenance-of-areas-modal.component';
+import { DepartmentFormComponent } from '../department-form/department-form.component';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -43,7 +43,7 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
       ...this.settings,
       actions: {
         columnTitle: 'Acciones',
-        edit: true,
+        /* edit: true, */
         delete: true,
         position: 'right',
       },
@@ -67,74 +67,81 @@ export class MaintenanceOfAreasComponent extends BasePage implements OnInit {
       subdelegation: [null, [Validators.required]],
     });
   }
-  openForm(allotment?: any) {
-    this.openModal({ allotment });
-  }
-
-  openModal(context?: Partial<MaintenanceOfAreasModalComponent>) {
-    const modalRef = this.modalService.show(MaintenanceOfAreasModalComponent, {
-      initialState: { ...context },
+  openForm(department?: IDepartment) {
+    const modalConfig = {
+      initialState: {},
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      /* if (next) this.getDepartment(); */
-    });
+    };
+    modalConfig.initialState = {
+      department,
+      callback: (next: boolean) => {
+        if (next) this.getDepartment();
+      },
+    };
+    this.modalService.show(DepartmentFormComponent, modalConfig);
   }
 
-  getDepartment(idDelegation: number, idSubDelegation: number) {
+  getDepartment() {
     this.departments = [];
     this.loading = true;
-    this.departmentService.getAll(this.params.getValue()).subscribe({
-      next: response => {
-        this.totalItems = response.count;
-        this.loading = false;
-        this.departments = response.data.filter(
-          element =>
-            element.numDelegation === idDelegation ||
-            element.numSubDelegation === idSubDelegation
-        );
+    this.departmentService
+      .getByDelegationsSubdelegation(this.delegation.id, this.subDelegation.id)
+      .subscribe({
+        next: response => {
+          console.log(response);
+          this.departments = response.data;
+          this.totalItems = response.count;
+          this.loading = false;
+          this.getPagination();
+        },
+        error: error => (this.loading = false),
+      });
+  }
+
+  delete(departament: IDepartment) {
+    let obj = {
+      id: departament.id,
+      numDelegation: departament.numDelegation,
+      numSubDelegation: departament.numSubDelegation,
+      phaseEdo: departament.phaseEdo,
+    };
+    this.departmentService.removeByBody(obj).subscribe({
+      next: () => {
+        this.getDepartment();
+        this.alert('success', '', 'Borrado');
       },
-      error: error => (this.loading = false),
     });
   }
-
-  delete(id: number) {
-    this.departmentService.remove(id).subscribe({
-      /* next: () => this.getDepartment(), */
-    });
-  }
-
-  /*   getData() {
-    this.loading = true;
-    this.columns = this.data;
-    this.totalItems = this.data.length;
-    this.loading = false;
-  } */
 
   getPagination() {
     this.columns = this.departments;
     this.totalItems = this.columns.length;
   }
 
-  onDelegationsChange() {
-    //console.log('Este es el valor', this.form.get('delegation').value);
-    /* this.delegation = delegation;
+  onDelegationChange(delegation: any) {
+    this.delegation = delegation;
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getDepartment()); */
+      .subscribe(() => this.getDepartment());
   }
 
-  onSubDelegationChange() {
-    console.log('Este es el valor', this.form.get('subdelegation').value);
-    /* this.subDelegation = subDelegation; */
+  onSubDelegationChange(subdelegation: any) {
+    this.subDelegation = subdelegation;
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() =>
-        this.getDepartment(
-          this.form.get('delegation').value,
-          this.form.get('subdelegation').value
-        )
-      );
+      .subscribe(() => this.getDepartment());
+  }
+
+  showDeleteAlert(department: IDepartment) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete(department);
+      }
+    });
   }
 }
