@@ -4,6 +4,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { TPenaltyService } from '../../../../../core/services/ms-parametercomer/tpenalty.service';
 import { PenaltyTypesFormComponent } from '../penalty-types-form/penalty-types-form.component';
 import { PENALTY_TYPE_COLUMNS } from './penalty-types-columns';
 
@@ -52,7 +53,10 @@ export class PenaltyTypesListComponent extends BasePage implements OnInit {
     },
   ];
 
-  constructor(private modalService: BsModalService) {
+  constructor(
+    private modalService: BsModalService,
+    private tpenaltyService: TPenaltyService
+  ) {
     super();
     this.settings.columns = PENALTY_TYPE_COLUMNS;
     this.settings.actions.delete = true;
@@ -65,10 +69,24 @@ export class PenaltyTypesListComponent extends BasePage implements OnInit {
   }
 
   getData() {
+    // this.loading = true;
+    // this.columns = this.testData;
+    // this.totalItems = this.testData.length;
+    // this.loading = false;
+    console.log(this.params.getValue());
     this.loading = true;
-    this.columns = this.testData;
-    this.totalItems = this.testData.length;
-    this.loading = false;
+    this.tpenaltyService.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        this.columns = response.data;
+        this.totalItems = response.count;
+        this.loading = false;
+        console.log(response.data, this.columns);
+      },
+      error: error => {
+        this.loading = false;
+        console.log(error);
+      },
+    });
   }
 
   openModal(context?: Partial<PenaltyTypesFormComponent>) {
