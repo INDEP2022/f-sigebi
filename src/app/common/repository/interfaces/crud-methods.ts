@@ -7,7 +7,7 @@ export interface IRead<T> {
   getById3?(id: number | string): Observable<IListResponse<T>>;
   getAll?(params?: ListParams): Observable<IListResponse<T>>;
   getByIds?(ids: Partial<T>): Observable<T>;
-  postByIds?(model: T): Observable<T>;
+  postByIds?(model: T): Observable<IListResponse<T>>;
   postColumns?(model: T): Observable<IListResponse<T>>;
 }
 
