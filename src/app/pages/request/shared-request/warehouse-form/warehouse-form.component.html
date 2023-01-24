@@ -130,7 +130,6 @@
             <input
               type="text"
               class="form-control"
-              value="OCCIDENTE"
               formControlName="regionalDelegation"
               readonly />
           </form-field>
@@ -156,27 +155,13 @@
               control="state"
               [data]="states"
               value="id"
-              bindLabel="id"
+              bindLabel="descCondition"
               label="Estado"
+              (change)="stateSelect($event)"
               (fetchItems)="getStateSelect($event)"></ngx-select>
           </form-field>
         </div>
 
-        <div class="col-md-6">
-          <form-field [control]="warehouseForm.get('municipality')">
-            <ngx-select
-              [form]="warehouseForm"
-              control="municipality"
-              [data]="municipalities"
-              value="id"
-              bindLabel="norm"
-              label="Municipio"
-              (fetchItems)="getMunicipalitySelect($event)"></ngx-select>
-          </form-field>
-        </div>
-      </div>
-
-      <div class="row pt-4">
         <div class="col-md-6">
           <form-field [control]="warehouseForm.get('city')">
             <ngx-select
@@ -184,37 +169,52 @@
               control="city"
               [data]="cities"
               value="id"
-              bindLabel="id"
+              bindLabel="nameCity"
               label="Ciudad"
               (fetchItems)="getCitySelect($event)"></ngx-select>
-          </form-field>
-        </div>
-
-        <div class="col-md-6">
-          <form-field [control]="warehouseForm.get('colony')">
-            <ngx-select
-              [form]="warehouseForm"
-              control="colony"
-              [data]="colonies"
-              value="id"
-              bindLabel="norm"
-              label="Colonia"
-              (fetchItems)="getColonySelect($event)"></ngx-select>
           </form-field>
         </div>
       </div>
 
       <div class="row pt-4">
         <div class="col-md-6">
-          <form-field [control]="warehouseForm.get('cp')">
+          <form-field [control]="warehouseForm.get('municipality')">
             <ngx-select
               [form]="warehouseForm"
-              control="cp"
-              [data]="cp"
+              control="municipality"
+              [data]="municipalities"
               value="id"
-              bindLabel="id"
+              bindLabel="nameMunicipality"
+              label="Municipio"
+              (fetchItems)="getMunicipalitiesSelect($event)"></ngx-select>
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field [control]="warehouseForm.get('locality')">
+            <ngx-select
+              [form]="warehouseForm"
+              control="locality"
+              [data]="localities"
+              value="id"
+              bindLabel="nameLocation"
+              label="Colonia"
+              (fetchItems)="getLocalitySelect($event)"></ngx-select>
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-md-6">
+          <form-field [control]="warehouseForm.get('zipCode')">
+            <ngx-select
+              [form]="warehouseForm"
+              control="zipCode"
+              [data]="zipCode"
+              value="id"
+              bindLabel="codePostal"
               label="C&oacute;digo postal"
-              (fetchItems)="getCpSelect($event)"></ngx-select>
+              (fetchItems)="getZipCodeSelect($event)"></ngx-select>
           </form-field>
         </div>
 

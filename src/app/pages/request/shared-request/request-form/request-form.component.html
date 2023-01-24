@@ -16,6 +16,7 @@
         <confirm-button
           [loading]="loading"
           [btnSmall]="true"
+          [disabled]="requestForm.invalid"
           (confirm)="confirm()">
         </confirm-button>
       </div>
@@ -26,14 +27,6 @@
           [disabled]="requestForm.invalid"
           (click)="turnRequest()">
           Turnar
-        </button>
-      </div>
-      <div class="p-2">
-        <button
-          type="button"
-          class="btn btn-danger btn-sm active"
-          (click)="close()">
-          Cancelar
         </button>
       </div>
     </div>
@@ -107,6 +100,7 @@
                   (fetchItems)="getEntity($event)"
                   [data]="selectEntity"
                   bindLabel="descCondition"
+                  [searchable]="false"
                   label="*Entidad"
                   value="id"></ngx-select>
               </div>
@@ -129,6 +123,7 @@
                   (fetchItems)="getStation($event)"
                   [data]="selectStation"
                   bindLabel="stationName"
+                  [searchable]="false"
                   label="*Emisora"
                   value="id"></ngx-select>
               </div>
@@ -139,6 +134,7 @@
                   (fetchItems)="getAuthority($event)"
                   [data]="selectAuthority"
                   bindLabel="authorityName"
+                  [searchable]="false"
                   label="*Autoridad"
                   value="idAuthority"></ngx-select>
               </div>
