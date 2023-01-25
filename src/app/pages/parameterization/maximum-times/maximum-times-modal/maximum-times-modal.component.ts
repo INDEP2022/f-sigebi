@@ -3,26 +3,26 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { ICalendar } from 'src/app/core/models/catalogs/calendar-model';
-import { CalendarService } from 'src/app/core/services/catalogs/calendar.service';
+import { IMaximumTimes } from 'src/app/core/models/catalogs/maximum-times-model';
+import { MaximumTimesService } from 'src/app/core/services/catalogs/maximum-times.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
-  selector: 'app-non-working-days-modal',
-  templateUrl: './non-working-days-modal.component.html',
+  selector: 'app-maximum-times-modal',
+  templateUrl: './maximum-times-modal.component.html',
   styles: [],
 })
-export class NonWorkingDaysModalComponent extends BasePage implements OnInit {
-  nonWorkingDaysForm: ModelForm<ICalendar>;
-  calendar: ICalendar;
-  title: string = 'Días Inhábiles';
+export class MaximumTimesModalComponent extends BasePage implements OnInit {
+  maximumTimesForm: ModelForm<IMaximumTimes>;
+  maximumTimes: IMaximumTimes;
+  title: string = 'Tiempo Máximo Para Cierre Actas Devolución';
   edit: boolean = false;
   constructor(
     private fb: FormBuilder,
     private datePipe: DatePipe,
     private modalRef: BsModalRef,
-    private calendarService: CalendarService
+    private maximumTimesService: MaximumTimesService
   ) {
     super();
   }
@@ -31,23 +31,17 @@ export class NonWorkingDaysModalComponent extends BasePage implements OnInit {
     this.prepareForm();
   }
   private prepareForm() {
-    this.nonWorkingDaysForm = this.fb.group({
-      id: [null],
-      idDate: [null, [Validators.required]],
-      description: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+    this.maximumTimesForm = this.fb.group({
+      certificateType: [null, [Validators.required]],
+      tmpMax: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      activated: [null, [Validators.required]],
+      user: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      date: [null, [Validators.required]],
     });
-    if (this.calendar != null) {
+    if (this.maximumTimes != null) {
       console.log('editar');
       this.edit = true;
-      this.nonWorkingDaysForm.patchValue(this.calendar);
-      let date = new Date(this.calendar.id + 'T00:00:00-07:00');
-      console.log(date);
-      this.nonWorkingDaysForm.controls['idDate'].setValue(date);
-      console.log(this.nonWorkingDaysForm.controls['idDate'].value);
-      this.nonWorkingDaysForm.get('idDate').disable();
+      this.maximumTimesForm.patchValue(this.maximumTimes);
     }
   }
   close() {
@@ -60,22 +54,25 @@ export class NonWorkingDaysModalComponent extends BasePage implements OnInit {
     this.loading = true;
     let form = {
       id: this.datePipe.transform(
-        this.nonWorkingDaysForm.controls['idDate'].value,
+        this.maximumTimesForm.controls['idDate'].value,
         'yyyy-MM-dd'
       ),
-      idDate: this.nonWorkingDaysForm.controls['idDate'].value,
-      description: this.nonWorkingDaysForm.controls['description'].value,
+      idDate: this.maximumTimesForm.controls['idDate'].value,
+      description: this.maximumTimesForm.controls['description'].value,
     };
     console.log(form);
-    this.calendarService.create(form).subscribe({
+    this.maximumTimesService.create(this.maximumTimesForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
   }
   update() {
     this.loading = true;
-    this.calendarService
-      .update(this.calendar.id.toString(), this.nonWorkingDaysForm.value)
+    this.maximumTimesService
+      .update(
+        this.maximumTimes.certificateType.toString(),
+        this.maximumTimesForm.value
+      )
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

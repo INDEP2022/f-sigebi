@@ -1,7 +1,7 @@
 export interface IDateDocuments {
   expedientNumber: number;
   stateNumber: number;
-  key: IKey | null;
+  key: IKey | string;
   typeDictum: string;
   dateReceipt: Date;
   userReceipt: string;

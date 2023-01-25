@@ -120,6 +120,17 @@ export class Repository<T> implements IRepository<T> {
       `${environment.API_URL2}${route}/${id}`
     );
   }
+  getById4(
+    route: string,
+    id: number | string,
+    _params?: ListParams
+  ): Observable<IListResponse<T>> {
+    const params = _params ? this.makeParams(_params) : {};
+    return this.httpClient.get<IListResponse<T>>(
+      `${environment.API_URL2}${route}/${id}`,
+      { params }
+    );
+  }
 
   create2(route: string, formData: Object) {
     return this.httpClient.post<T>(`${environment.API_URL2}${route}`, formData);
@@ -131,7 +142,9 @@ export class Repository<T> implements IRepository<T> {
       formData
     );
   }
-
+  update3(route: string, formData: Object) {
+    return this.httpClient.put(`${environment.API_URL2}${route}`, formData);
+  }
   remove2(route: string, id: number | string) {
     return this.httpClient.delete(`${environment.API_URL2}${route}/${id}`);
   }

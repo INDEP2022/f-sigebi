@@ -7,11 +7,11 @@
       <div class="row">
         <div class="col-md-4">
           <form-field
-            [control]="nonWorkingDaysForm.get('day')"
+            [control]="nonWorkingDaysForm.get('idDate')"
             label="Fecha d&iacute;a Inh&aacute;biles">
             <input
               type="text"
-              formControlName="day"
+              formControlName="idDate"
               class="form-control"
               bsDatepicker />
           </form-field>
@@ -32,9 +32,9 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [type]="'button'"
           [disabled]="!nonWorkingDaysForm.valid"
-          (click)="close()">
+          [loading]="loading"
+          (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">
