@@ -11,12 +11,12 @@ import { ITables } from '../../models/catalogs/dinamic-tables.model';
 })
 export class DinamicTablesService implements ICrudMethods<ITables> {
   private readonly route: string = ENDPOINT_LINKS.DinamicTables;
+
   constructor(private dinamicTablesRepository: Repository<ITables>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<ITables>> {
     return this.dinamicTablesRepository.getAllPaginated2(this.route, params);
   }
-
   getById(id: string | number): Observable<ITables> {
     return this.dinamicTablesRepository.getById2(this.route, id);
   }
