@@ -35,6 +35,7 @@ export class BatterysService {
       formData
     );
   }
+
   /*getGoodsByRecordId(recordId: number) {
     return this.goodRepository.getAllPaginated(
       'good/good/getidReferenceGood/' + recordId

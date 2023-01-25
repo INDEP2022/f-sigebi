@@ -50,55 +50,55 @@
     <div class="row" *ngIf="form.get('responsible').value !== null">
       <div class="row">
         <div class="col-md-12">
+          <hr />
           <div class="ch-content">
             <h5 class="title">Bater&iacute;as</h5>
+            <div class="col-md-5 buttons">
+              <app-columns-select
+                [(settings)]="settingsBattery"></app-columns-select>
+            </div>
           </div>
-          <div class="table-responsive">
+          <div class="table-responsive pt-3">
             <ng2-smart-table
               [settings]="settingsBattery"
-              [source]="dataBattery"></ng2-smart-table>
-          </div>
-          <div class="row pt-3">
-            <div class="col-md-6">
-              <h5 class="font-size-14">Total&#58;</h5>
-              <p class="text-muted">&#35;</p>
-            </div>
+              [source]="dataBattery"
+              (edit)="openFormBattery($event.data)"></ng2-smart-table>
           </div>
         </div>
       </div>
       <div class="row">
         <div class="col-md-12">
+          <hr />
           <div class="ch-content">
             <h5 class="title">Estantes</h5>
+            <div class="col-md-5 buttons">
+              <app-columns-select
+                [(settings)]="settingsShelves"></app-columns-select>
+            </div>
           </div>
-          <div class="table-responsive">
+          <div class="table-responsive pt-3">
             <ng2-smart-table
               [settings]="settingsShelves"
-              [source]="dataShelves"></ng2-smart-table>
-          </div>
-          <div class="row pt-3">
-            <div class="col-md-6">
-              <h5 class="font-size-14">Total&#58;</h5>
-              <p class="text-muted">&#35;</p>
-            </div>
+              [source]="dataShelves"
+              (edit)="openFormShelves($event.data)"></ng2-smart-table>
           </div>
         </div>
       </div>
       <div class="row">
         <div class="col-md-12">
+          <hr />
           <div class="ch-content">
             <h5 class="title">Casilleros</h5>
+            <div class="col-md-5 buttons">
+              <app-columns-select
+                [(settings)]="settingsLockers"></app-columns-select>
+            </div>
           </div>
-          <div class="table-responsive">
+          <div class="table-responsive pt-3">
             <ng2-smart-table
               [settings]="settingsLockers"
-              [source]="dataLockers"></ng2-smart-table>
-          </div>
-          <div class="row pt-3">
-            <div class="col-md-6">
-              <h5 class="font-size-14">Total&#58;</h5>
-              <p class="text-muted">&#35;</p>
-            </div>
+              [source]="dataLockers"
+              (edit)="openFormLocker($event.data)"></ng2-smart-table>
           </div>
         </div>
       </div>

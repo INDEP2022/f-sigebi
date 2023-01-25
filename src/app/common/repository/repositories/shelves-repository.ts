@@ -28,6 +28,13 @@ export class ShelvesRepository<T> implements IShelvesMethods<T> {
     return this.httpClient.get<IListResponse<T>>(`${fullRoute}?text=${id}`);
   }
 
+  // update(route: string, id: number | string, formData: Object) {
+  //   const fullRoute = `${this.ms}/${route}`;
+  //   return this.httpClient.put(`${fullRoute}/${id}`, formData);
+  // }
+  //  update(route: string, formData: Object) { //FUNCIONA
+  //   return this.httpClient.put(`${this.ms}${route}`, formData);
+  // }
   update(route: string, id: number | string, formData: Object) {
     const fullRoute = `${this.ms}/${route}`;
     return this.httpClient.put(`${fullRoute}/${id}`, formData);

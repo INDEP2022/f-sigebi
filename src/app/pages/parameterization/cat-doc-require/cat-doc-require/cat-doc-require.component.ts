@@ -81,7 +81,7 @@ export class CatDocRequireComponent extends BasePage implements OnInit {
     });
   }
 
-  delete(id: number) {
+  delete(id: string) {
     this.documentsForDictumService.remove(id).subscribe({
       next: () => this.getDocumentsForDictum(),
     });

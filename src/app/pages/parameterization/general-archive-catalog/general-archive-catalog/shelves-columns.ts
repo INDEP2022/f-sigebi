@@ -1,16 +1,17 @@
 export const SHELVES_COLUMNS = {
-  id: {
-    title: 'ID',
+  key: {
+    title: 'Cve. Guardavalor',
     sort: false,
     filter: false,
+    width: '25px',
   },
   batteryNumber: {
     title: 'No. Bateria',
     sort: false,
     filter: false,
   },
-  key: {
-    title: 'Clave',
+  id: {
+    title: 'ID',
     sort: false,
     filter: false,
   },

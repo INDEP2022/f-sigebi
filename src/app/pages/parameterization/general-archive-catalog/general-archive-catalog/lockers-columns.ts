@@ -1,8 +1,9 @@
 export const LOCKERS_COLUMNS = {
   saveValueKey: {
-    title: 'Cve Guardavalor',
+    title: 'Cve. Guardavalor',
     sort: false,
     filter: false,
+    width: '25px',
   },
   numBattery: {
     title: 'No. Bateria',

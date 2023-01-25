@@ -26,9 +26,7 @@ export class GoodRepository<T> implements IGoodMethods<T> {
   ): Observable<IListResponse<T>> {
     const fullRoute = `${this.ms}/${route}`;
     const params = this.makeParams(_params);
-    return this.httpClient.get<IListResponse<T>>(`${fullRoute}/${id}`, {
-      params,
-    });
+    return this.httpClient.get<IListResponse<T>>(`${fullRoute}${id}`);
   }
 
   update(route: string, id: number | string, formData: Object) {

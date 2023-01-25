@@ -10,6 +10,7 @@ import { IShelves } from '../../models/catalogs/shelves.model';
 })
 export class ShelvessService {
   private readonly route = ShelvesEndpoints;
+  // private readonly route2 : string = ShelvesEndpoints.Post;
 
   constructor(private shelvesRepository: ShelvesRepository<IShelves>) {}
 
@@ -28,9 +29,14 @@ export class ShelvessService {
     );
   }
 
+  //  update(model: IShelves): Observable<Object> {
+  //     return this.shelvesRepository.update(this.route2, model);
+  //   }
+
   update(id: string | number, formData: IShelves): Observable<Object> {
-    return this.shelvesRepository.update(this.route.ShelvesByKey, id, formData);
+    return this.shelvesRepository.update(this.route.Put, id, formData);
   }
+
   /*getGoodsByRecordId(recordId: number) {
     return this.goodRepository.getAllPaginated(
       'good/good/getidReferenceGood/' + recordId
