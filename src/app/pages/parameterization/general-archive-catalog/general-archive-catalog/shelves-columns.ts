@@ -1,4 +1,4 @@
-export const SHELF_COLUMNS = {
+export const SHELVES_COLUMNS = {
   id: {
     title: 'ID',
     sort: false,
