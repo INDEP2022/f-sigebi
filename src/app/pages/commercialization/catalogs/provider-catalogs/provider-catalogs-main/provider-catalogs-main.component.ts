@@ -21,6 +21,7 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
   providerForm: FormGroup = new FormGroup({});
   providerItems = new DefaultSelect();
   params = new BehaviorSubject<ListParams>(new ListParams());
+  getParams: ListParams;
   totalItems: number = 0;
   providerColumns: any[] = [];
   providerSettings = {
@@ -142,9 +143,15 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getData());
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+      let params: ListParams = { page: 1, limit: 10 };
+      data.inicio = data.page;
+      data.pageSize = data.limit;
+      this.getParams = data;
+      // console.log(data);
+      // console.log(this.getParams);
+      this.getData();
+    });
     this.prepareForm();
     // this.getData();
     this.getProviders({ inicio: 1, text: '' });
@@ -192,7 +199,7 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
       });
     } else {
       this.loading = true;
-      this.providerService.getAll(this.params.getValue()).subscribe({
+      this.providerService.getAll(this.getParams).subscribe({
         next: response => {
           this.providerColumns = response.data;
           this.totalItems = response.count;

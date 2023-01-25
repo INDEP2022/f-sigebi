@@ -74,14 +74,15 @@ export class PenaltyTypesListComponent extends BasePage implements OnInit {
     // this.columns = this.testData;
     // this.totalItems = this.testData.length;
     // this.loading = false;
-    console.log(this.params.getValue());
+    // console.log(this.params.getValue());
+    //console.log(params);
     this.loading = true;
     this.tpenaltyService.getAll(this.params.getValue()).subscribe({
       next: response => {
         this.columns = response.data;
         this.totalItems = response.count;
         this.loading = false;
-        console.log(response.data, this.columns);
+        // console.log(response.data, this.columns);
       },
       error: error => {
         this.loading = false;
