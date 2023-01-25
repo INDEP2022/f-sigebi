@@ -1,6 +1,16 @@
 export const SHELF_COLUMNS = {
-  no: {
-    title: 'No.',
+  id: {
+    title: 'ID',
+    sort: false,
+    filter: false,
+  },
+  batteryNumber: {
+    title: 'No. Bateria',
+    sort: false,
+    filter: false,
+  },
+  key: {
+    title: 'Clave',
     sort: false,
     filter: false,
   },

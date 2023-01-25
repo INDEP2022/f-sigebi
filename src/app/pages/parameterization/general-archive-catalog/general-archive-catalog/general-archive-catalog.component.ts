@@ -1,11 +1,15 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { BATTERY_COLUMNS } from './battery-colums';
-import { LOCKERS_COLUMNS } from './lockers-columns';
 import { SHELF_COLUMNS } from './shelf-columns';
+//services
+import { SaveValueService } from 'src/app/core/services/catalogs/save-value.service';
+import { ShelvessService } from 'src/app/core/services/save-values/shelves.service';
+//models
+import { IShelves } from 'src/app/core/models/catalogs/shelves.model';
 
 @Component({
   selector: 'app-general-archive-catalog',
@@ -14,97 +18,47 @@ import { SHELF_COLUMNS } from './shelf-columns';
 })
 export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
+
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems: number = 0;
+
+  data: LocalDataSource = new LocalDataSource();
+
   show = false;
-  edit: boolean = false;
+
+  // settingsBattery;
+  // settingsShelves;
+  // settingsLockers;
+
   @Output() refresh = new EventEmitter<true>();
 
-  data1: LocalDataSource = new LocalDataSource();
-  data2: LocalDataSource = new LocalDataSource();
-  data3: LocalDataSource = new LocalDataSource();
+  // data1: LocalDataSource = new LocalDataSource();
+  // data2: LocalDataSource = new LocalDataSource();
+  // data3: LocalDataSource = new LocalDataSource();
 
-  settingsBattery = {
-    ...this.settings,
-    actions: {
-      columnTitle: 'Acciones',
-      edit: true,
-      delete: true,
-      position: 'right',
-    },
-    edit: {
-      ...this.settings.edit,
-      saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-      cancelButtonContent:
-        '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-      confirmSave: true,
-    },
-    add: {
-      addButtonContent: '<i class="fa fa-solid fa-plus mx-2"></i>',
-      createButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-      cancelButtonContent:
-        '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-      confirmCreate: true,
-    },
-    mode: 'inline',
-    hideSubHeader: false,
-  };
-
-  settingsLockers = {
-    ...this.settings,
-    actions: {
-      columnTitle: 'Acciones',
-      edit: true,
-      delete: true,
-      position: 'right',
-    },
-    edit: {
-      ...this.settings.edit,
-      saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-      cancelButtonContent:
-        '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-      confirmSave: true,
-    },
-    add: {
-      addButtonContent: '<i class="fa fa-solid fa-plus mx-2"></i>',
-      createButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-      cancelButtonContent:
-        '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-      confirmCreate: true,
-    },
-    mode: 'inline',
-    hideSubHeader: false,
-  };
-
-  settingsShelf = {
-    ...this.settings,
-    actions: {
-      columnTitle: 'Acciones',
-      edit: true,
-      delete: true,
-      position: 'right',
-    },
-    edit: {
-      ...this.settings.edit,
-      saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-      cancelButtonContent:
-        '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-      confirmSave: true,
-    },
-    add: {
-      addButtonContent: '<i class="fa fa-solid fa-plus mx-2"></i>',
-      createButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-      cancelButtonContent:
-        '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-      confirmCreate: true,
-    },
-    mode: 'inline',
-    hideSubHeader: false,
-  };
-
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private saveValueService: SaveValueService,
+    private shelvessService: ShelvessService
+  ) {
     super();
-    this.settingsBattery.columns = { ...BATTERY_COLUMNS };
-    this.settingsLockers.columns = { ...LOCKERS_COLUMNS };
-    this.settingsShelf.columns = { ...SHELF_COLUMNS };
+    // this.settingsBattery = {
+    //   ...this.settings,
+    //   columus: {...BATTERY_COLUMNS}
+    // }
+    this.settings = {
+      ...this.settings,
+      actions: {
+        add: false,
+        edit: true,
+        delete: false,
+      },
+      columns: { ...SHELF_COLUMNS },
+    };
+    // this.settingsLockers = {
+    //   ...this.settings,
+    //   columus: {...LOCKERS_COLUMNS}
+    // }
   }
 
   ngOnInit(): void {
@@ -113,60 +67,54 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      delegation: [null, [Validators.required]],
-      ubication: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      responsible: [null, [Validators.required]],
-      battery: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      generate: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      backstage: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      id: [null, [Validators.required]],
+      description: [null, []],
+      location: [null, []],
+      responsible: [null, []],
     });
   }
 
-  onSaveConfirm(event: any) {
-    event.confirm.resolve();
-    this.onLoadToast('success', 'Elemento Actualizado', '');
-  }
-
-  onAddConfirm(event: any) {
-    event.confirm.resolve();
-    this.onLoadToast('success', 'Elemento Creado', '');
-  }
-
-  onDeleteConfirm(event: any) {
-    event.confirm.resolve();
-    this.onLoadToast('success', 'Elemento Eliminado', '');
-  }
-
-  create() {
-    this.data1.getElements().then((data: any) => {
-      this.loading = true;
-      this.handleSuccess();
-    });
-  }
-
-  confirm() {
-    this.edit ? this.update() : this.create();
-  }
-
-  handleSuccess() {
-    this.loading = false;
-    this.refresh.emit(true);
-  }
-
-  update() {
+  //Traer Guardavalores por ID y rellenar en los inputs
+  getSaveValuesById(): void {
+    let _id = this.form.controls['id'].value;
     this.loading = true;
-    this.handleSuccess();
+    this.saveValueService.getById(_id).subscribe(
+      response => {
+        console.log(response);
+        if (response !== null) {
+          this.form.patchValue(response);
+          this.form.updateValueAndValidity();
+          this.getShelvesBySaveValues(response.id);
+        } else {
+          this.alert('info', 'No se encontraron registros', '');
+        }
+        this.loading = false;
+      },
+      error => (this.loading = false)
+    );
+  }
+
+  getShelvesBySaveValues(id: string | number): void {
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getShelves(id));
+  }
+
+  getShelves(id: string | number): void {
+    this.shelvessService
+      .getByCveSaveValues(id, this.params.getValue())
+      .subscribe(
+        response => {
+          //console.log(response);
+          let data = response.data.map((item: IShelves) => {
+            //console.log(item);
+            return item;
+          });
+          this.data.load(data);
+          this.totalItems = response.count;
+          this.loading = false;
+        },
+        error => (this.loading = false)
+      );
   }
 }
