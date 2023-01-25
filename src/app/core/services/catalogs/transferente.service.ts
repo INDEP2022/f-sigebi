@@ -21,6 +21,10 @@ export class TransferenteService implements ICrudMethods<ITransferente> {
     return this.transferenteRepository.getById(this.route, id);
   }
 
+  getByIdState(id: string | number): Observable<ITransferente> {
+    return this.transferenteRepository.getByIdState(this.route, id);
+  }
+
   create(model: ITransferente): Observable<ITransferente> {
     return this.transferenteRepository.create(this.route, model);
   }

@@ -23,7 +23,11 @@
     min-width: 33rem !important;
   }
 
-  indicatedTaxpayer {
+  .indicatedTaxpayer {
+    min-width: 20rem !important;
+  }
+
+  .stateOfRepublicName {
     min-width: 20rem !important;
   }
 }

@@ -129,4 +129,6 @@ export enum ENDPOINT_LINKS {
   request = 'request/request',
   //expedient
   Expedient = 'expedient',
+  //goodsQuery//
+  GoodsQuery = 'goodsquery',
 }
