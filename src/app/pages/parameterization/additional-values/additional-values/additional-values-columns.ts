@@ -1,10 +1,20 @@
 export const ADDITIONALVALUES_COLUMNS = {
-  desciption: {
+  name: {
+    title: 'Nombre',
+    sort: false,
+  },
+  description: {
     title: 'Descripción',
     sort: false,
   },
-  values: {
-    title: 'Valor',
+};
+export const TVALTABLA5_COLUMNS = {
+  otKey: {
+    title: 'Clave',
+    sort: false,
+  },
+  value: {
+    title: 'Atributo',
     sort: false,
   },
 };

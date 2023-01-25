@@ -1,10 +1,14 @@
-export const MAINTANANCEDOCUMENTVALIDATORS_COLUMNS = {
-  sequence: {
-    title: 'Secuensia',
+export const MAINTANANCE_DOCUMENT_VALIDATORS_COLUMNS = {
+  certificateType: {
+    title: 'Tipo de acta',
     sort: false,
   },
-  validation: {
-    title: 'Validación',
+  descVal: {
+    title: 'Descripcion',
+    sort: false,
+  },
+  registryNumber: {
+    title: 'Registro numero',
     sort: false,
   },
 };
