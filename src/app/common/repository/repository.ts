@@ -50,6 +50,7 @@ export class Repository<T> implements IRepository<T> {
 
   update(route: string, id: number | string, formData: Object) {
     const fullRoute = this.buildRoute(route);
+    console.log(fullRoute);
     return this.httpClient.put(`${fullRoute}/${id}`, formData);
   }
 
@@ -167,5 +168,15 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.delete(
       `${environment.API_URL2}${route}/${idsRoute}`
     );
+  }
+  update3(
+    route: string,
+    id: number | string,
+    id1: number | string,
+    formData: Object
+  ) {
+    const fullRoute = this.buildRoute(route);
+    console.log(fullRoute);
+    return this.httpClient.put(`${fullRoute}/${id}/${id1}`, formData);
   }
 }

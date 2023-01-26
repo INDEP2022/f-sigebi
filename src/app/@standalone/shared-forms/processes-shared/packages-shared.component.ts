@@ -7,48 +7,45 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //Services
-//import { GoodTypeService } from 'src/app/core/services/catalogs/good-status.service';
+//import { MeasurementUnitsService } from 'src/app/core/services/catalogs/measurement-units.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
-import { IGoodStatus } from 'src/app/core/models/catalogs/good-status.model';
-import { GoodService } from 'src/app/core/services/good/good.service';
-import { goodsStatuData } from './data';
+import { IPackage } from 'src/app/core/models/catalogs/package.model';
+import { packagesData } from './data';
 
 @Component({
-  selector: 'app-goods-status-shared',
+  selector: 'app-processes-shared',
   standalone: true,
   imports: [CommonModule, SharedModule],
-  templateUrl: './goods-status-shared.component.html',
+  templateUrl: './processes-shared.component.html',
   styles: [],
 })
-export class GoodsStatusSharedComponent extends BasePage implements OnInit {
+export class ProcessesSharedComponent extends BasePage implements OnInit {
   @Input() form: FormGroup;
-  @Input() goodStatusField: string = 'goodStatus';
+  @Input() packageField: string = 'processes';
+  @Input() label: string = 'Processes';
+  @Input() showPackages: boolean = true;
 
-  @Input() showGoodStatus: boolean = true;
+  processes = new DefaultSelect<IPackage>();
 
-  status = new DefaultSelect<IGoodStatus>();
-
-  get goodStatus() {
-    return this.form.get(this.goodStatusField);
+  get measurementUnit() {
+    return this.form.get(this.packageField);
   }
 
-  constructor(private service: GoodService) {
+  constructor(/*private service: WarehouseService*/) {
     super();
   }
 
   ngOnInit(): void {}
 
-  getGoodStatus(params: ListParams) {
-    //Provisional data
-    let data = goodsStatuData;
+  getProcesses(params: ListParams) {
+    //// mientras se hace la consulta
+    let data = packagesData;
     let count = data.length;
-    this.status = new DefaultSelect(data, count);
-    this.service.getStatusAll(/* params */).subscribe(
-      data => {
-        this.status = new DefaultSelect(data.data, data.count);
-      },
-      err => {
+    this.processes = new DefaultSelect(data, count);
+    /*this.service.getAll(params).subscribe(data => {
+        this.status = new DefaultSelect(data.data,data.count);
+      },err => {
         let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
@@ -56,12 +53,12 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
           error = err.message;
         }
         this.onLoadToast('error', 'Error', error);
-      },
-      () => {}
-    );
+
+      }, () => {}
+    );*/
   }
 
-  onGoodStatusChange(type: any) {
+  onPackagesChange(type: any) {
     //this.resetFields([this.subdelegation]);
     this.form.updateValueAndValidity();
   }
