@@ -10,40 +10,37 @@
           <div class="row">
             <form-field
               class="col-md-4"
-              [control]="documentsForm.get('noOficio')"
+              [control]="documentsForm.get('officeNum')"
               label="No&#46; Oficio">
               <input
                 class="form-control"
                 type="text"
-                formControlName="noOficio" />
+                formControlName="officeNum" />
             </form-field>
             <form-field
               class="col-md-8"
-              [control]="documentsForm.get('cveOficio')"
+              [control]="documentsForm.get('officeCve')"
               label="Cve Oficio">
               <input
                 class="form-control"
                 type="text"
-                formControlName="cveOficio" />
+                formControlName="officeCve" />
             </form-field>
           </div>
 
           <div class="row pt-4">
             <form-field
               class="col-md-6"
-              [control]="documentsForm.get('fecTurno')"
+              [control]="documentsForm.get('date')"
               label="Fec&#46; Turno">
-              <input
-                class="form-control"
-                formControlName="fecTurno"
-                bsDatepicker />
+              <input class="form-control" formControlName="date" bsDatepicker />
             </form-field>
 
             <form-field
               class="col-md-4 offset-md-2"
-              [control]="documentsForm.get('prioridad')"
+              [control]="documentsForm.get('priority')"
               label="Prioridad">
-              <select class="form-control" formControlName="prioridad">
+              <select class="form-control" formControlName="priority">
                 <option value="alta">Alta</option>
                 <option value="normal">Normal</option>
               </select>
@@ -52,89 +49,81 @@
 
           <div class="row pt-4">
             <form-field
-              class="col-md-10"
-              [control]="documentsForm.get('remitente')">
+              class="col-md-12"
+              [control]="documentsForm.get('sender')">
               <ngx-select
+                [searchOnInit]="true"
+                (change)="getSenders($event)"
+                (fetchItems)="getSenders($event)"
                 [form]="documentsForm"
-                control="remitente"
-                [data]="select"
+                control="sender"
+                value="user"
+                bindLabel="user"
+                [data]="senders"
                 label="Remitente"></ngx-select>
             </form-field>
           </div>
 
           <div class="row pt-4">
             <form-field
-              class="col-md-10"
-              [control]="documentsForm.get('destinatario')">
+              class="col-md-12"
+              [control]="documentsForm.get('receiver')">
               <ngx-select
+                (fetchItems)="getReceivers($event)"
+                (change)="getDepartmentTarget($event)"
                 [form]="documentsForm"
-                control="destinatario"
-                [data]="select"
+                value="user"
+                bindLabel="user"
+                control="receiver"
+                [data]="receivers"
                 label="Destinatario"></ngx-select>
             </form-field>
           </div>
 
           <div class="row pt-4">
-            <form-field class="col-md-10" [control]="documentsForm.get('cpp')">
+            <form-field class="col-md-12" [control]="documentsForm.get('cpp')">
               <ngx-select
+                (fetchItems)="getReceivers($event)"
+                (change)="getDepartmentTarget($event)"
+                [data]="receivers"
+                value="user"
+                bindLabel="user"
                 [form]="documentsForm"
                 control="cpp"
-                [data]="select"
-                label="C&#46;P&#46;P&#46;"></ngx-select>
-            </form-field>
-          </div>
-
-          <div class="row">
-            <form-field class="col-md-10" [control]="documentsForm.get('cpp')">
-              <ngx-select
-                [form]="documentsForm"
-                control="cpp"
-                [data]="select"
                 label="C&#46;P&#46;P&#46;"></ngx-select>
             </form-field>
           </div>
         </div>
         <div class="col-md-6">
           <div class="row">
-            <form-field
-              class="col-md-11"
-              [control]="documentsForm.get('descripcion')"
-              label="Descripci&oacute;n">
-              <textarea
-                formControlName="descripcion"
-                class="form-control"
-                rows="4">
-              </textarea>
-            </form-field>
-          </div>
-
-          <div class="row">
-            <div class="row pt-5">
-              <form-field [control]="documentsForm.get('cpp')">
+            <div class="row">
+              <form-field [control]="documentsForm.get('delegation')">
                 <ngx-select
                   [form]="documentsForm"
-                  control="destino"
+                  control="delegation"
                   [data]="select"
-                  label="Del Destino"></ngx-select>
+                  label="Delegación Destino"></ngx-select>
               </form-field>
             </div>
 
             <div class="row pt-4">
-              <form-field [control]="documentsForm.get('cpp')">
+              <form-field [control]="documentsForm.get('subdelegation')">
                 <ngx-select
                   [form]="documentsForm"
-                  control="subDestino"
+                  control="subdelegation"
                   [data]="select"
-                  label="Subdel Destino"></ngx-select>
+                  label="Subdelegación Destino"></ngx-select>
               </form-field>
             </div>
 
             <div class="row pt-4">
-              <form-field [control]="documentsForm.get('cpp')">
+              <form-field [control]="documentsForm.get('department')">
                 <ngx-select
                   [form]="documentsForm"
-                  control="area"
-                  [data]="select"
+                  control="department"
+                  value="id"
+                  bindLabel="dsarea"
+                  [data]="departments"
                   label="Area Destino"></ngx-select>
               </form-field>
             </div>
@@ -142,15 +131,24 @@
             <div class="row">
               <div class="col-md-8 d-flex">
                 <form-radio label="Texto areas">
-                  <input type="radio" formControlName="type" value="text" />
+                  <input
+                    type="radio"
+                    formControlName="messageType"
+                    value="area" />
                 </form-radio>
 
                 <form-radio label="Texto Direcci&oacute;n General">
-                  <input type="radio" formControlName="type" value="drigral" />
+                  <input
+                    type="radio"
+                    formControlName="messageType"
+                    value="direction" />
                 </form-radio>
               </div>
               <div class="col-md-4">
-                <button type="button" class="btn btn-info btn-sm">
+                <button
+                  type="button"
+                  class="btn btn-info btn-sm"
+                  (click)="getNotifications()">
                   Selcci&oacute;n de volantes
                 </button>
               </div>
@@ -159,12 +157,27 @@
         </div>
       </div>
 
+      <div class="row pt-3">
+        <form-field
+          class="col-md-12"
+          [control]="documentsForm.get('messageBody')"
+          label="Texto del mensaje">
+          <textarea formControlName="messageBody" class="form-control" rows="6">
+          </textarea>
+        </form-field>
+      </div>
+
       <div class="row">
         <ng2-smart-table
           [attr.class]="'table-bordered'"
           [settings]="settings"
-          [source]="data">
+          [source]="notifications">
         </ng2-smart-table>
+      </div>
+      <div class="row">
+        <app-pagination
+          [params]="notificationParams"
+          [totalItems]="totalNotifications"></app-pagination>
       </div>
 
       <div class="row pt-4">

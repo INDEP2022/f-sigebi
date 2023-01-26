@@ -1,8 +1,10 @@
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
 } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
@@ -15,7 +17,9 @@ import { FormGroup, Validators } from '@angular/forms';
 export class GoodFeaturesComponent implements OnInit, OnChanges {
   @Input() goodForm: FormGroup;
   @Input() goodFeatures: any[] = [];
+  @Input() loading: boolean = false;
   @Input() good: any = {};
+  @Output() onSave = new EventEmitter<void>();
   constructor() {}
 
   ngOnInit(): void {
@@ -23,7 +27,6 @@ export class GoodFeaturesComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log(changes);
     this.goodForm.reset();
     this.checkRequiredFields();
     this.goodForm.patchValue(this.good);
@@ -31,8 +34,8 @@ export class GoodFeaturesComponent implements OnInit, OnChanges {
 
   checkRequiredFields() {
     this.goodFeatures.forEach(feature => {
-      const field = this.goodForm.get(`val${feature.no_columna}`);
-      if (feature.requerido == 'S') {
+      const field = this.goodForm.get(`val${feature.columnNumber}`);
+      if (feature.requested == 'S') {
         field.addValidators(Validators.required);
       } else {
         field.removeValidators(Validators.required);
@@ -42,6 +45,6 @@ export class GoodFeaturesComponent implements OnInit, OnChanges {
   }
 
   save() {
-    console.log(this.goodForm.value);
+    this.onSave.emit();
   }
 }

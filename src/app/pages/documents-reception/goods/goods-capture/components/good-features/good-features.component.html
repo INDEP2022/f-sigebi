@@ -14,7 +14,9 @@
       </div>
       <div class="row">
         <div class="col-md-12">
-          <button class="btn btn-primary active" type="submit">Guardar</button>
+          <confirm-button
+            [loading]="loading"
+            (confirm)="save()"></confirm-button>
         </div>
       </div>
     </div>
