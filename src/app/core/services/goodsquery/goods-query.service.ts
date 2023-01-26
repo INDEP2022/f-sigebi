@@ -1,8 +1,12 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { GoodsQueryEndpoints } from 'src/app/common/constants/endpoints/ms-good-query-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { MsGoodQueryRepository } from 'src/app/common/repository/repositories/ms-good-query-repository';
 import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { IZipCodeGoodQuery } from '../../models/catalogs/zip-code.model';
 
 @Injectable({
   providedIn: 'root',
@@ -11,6 +15,11 @@ import { IListResponse } from '../../interfaces/list-response.interface';
  * @deprecated Cambiar a la nueva forma
  */
 export class GoodsQueryService {
+  private routeLigieUnitMeasure = GoodsQueryEndpoints.LigieUnitMeasure;
+  private zipCodeRoute = GoodsQueryEndpoints.ZipCode;
+
+  private goodQueryRepository = inject(MsGoodQueryRepository);
+
   constructor(private httpClient: HttpClient) {}
 
   getFractions(body: any) {
@@ -21,8 +30,9 @@ export class GoodsQueryService {
   }
 
   getLigieUnitDescription(unit: string) {
-    return this.httpClient.get(
-      `${environment.API_URL}goodsquery/api/v1/ligie-units-measure/getDescription/${unit}`
+    return this.goodQueryRepository.getDescriptionUnitLigie(
+      this.routeLigieUnitMeasure,
+      unit
     );
   }
 
@@ -44,5 +54,18 @@ export class GoodsQueryService {
       body,
       { params }
     );
+  }
+
+  getUnitLigie(params: Object): Observable<any> {
+    return this.goodQueryRepository.getUnitLigie(
+      this.routeLigieUnitMeasure,
+      params
+    );
+  }
+
+  getZipCode(
+    _params?: ListParams
+  ): Observable<IListResponse<IZipCodeGoodQuery>> {
+    return this.goodQueryRepository.getAllPaginated(this.zipCodeRoute, _params);
   }
 }

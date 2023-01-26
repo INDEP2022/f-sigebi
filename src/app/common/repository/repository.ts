@@ -14,7 +14,7 @@ export class Repository<T> implements IRepository<T> {
     route: string,
     _params?: ListParams
   ): Observable<IListResponse<T>> {
-    const params = _params ? this.makeParams(_params) : {};
+    const params = this.makeParams(_params);
     const fullRoute = this.buildRoute(route);
     return this.httpClient.get<IListResponse<T>>(`${fullRoute}`, { params });
   }
@@ -24,10 +24,21 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.get<T>(`${fullRoute}/${id}`);
   }
 
-  getByColumn(route: string, column?: Object): Observable<IListResponse<T>> {
+  getByIdState(route: string, id: number | string): Observable<T> {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.get<T>(
+      `${fullRoute}/get-entity-transferent-by-state/${id}`
+    );
+  }
+  postByColumns(
+    route: string,
+    _params?: ListParams,
+    column?: Object
+  ): Observable<IListResponse<T>> {
+    const params = this.makeParams(_params);
     const fullRoute = this.buildRoute(route);
     return this.httpClient.post<IListResponse<T>>(
-      `${fullRoute}/columns`,
+      `${fullRoute}/columns?${params}`,
       column
     );
   }
@@ -65,9 +76,9 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.delete(`${fullRoute}/${idsRoute}`);
   }
 
-  postByIds(route: string, formData: Object): Observable<T> {
+  postByIds(route: string, formData: Object): Observable<IListResponse<T>> {
     const fullRoute = this.buildRoute(route);
-    return this.httpClient.post<T>(`${fullRoute}/id`, formData);
+    return this.httpClient.post<IListResponse<T>>(`${fullRoute}/id`, formData);
   }
 
   postColumns(route: string, formData: Object): Observable<IListResponse<T>> {
@@ -96,7 +107,7 @@ export class Repository<T> implements IRepository<T> {
   private makeParams(params: ListParams): HttpParams {
     let httpParams: HttpParams = new HttpParams();
     Object.keys(params).forEach(key => {
-      httpParams = httpParams.append(key, (params as any)[key] ?? '');
+      httpParams = httpParams.append(key, (params as any)[key]);
     });
     return httpParams;
   }
@@ -115,6 +126,22 @@ export class Repository<T> implements IRepository<T> {
   getById2(route: string, id: number | string): Observable<T> {
     return this.httpClient.get<T>(`${environment.API_URL2}${route}/${id}`);
   }
+  getById3(route: string, id: number | string): Observable<IListResponse<T>> {
+    return this.httpClient.get<IListResponse<T>>(
+      `${environment.API_URL2}${route}/${id}`
+    );
+  }
+  getById4(
+    route: string,
+    id: number | string,
+    _params?: ListParams
+  ): Observable<IListResponse<T>> {
+    const params = _params ? this.makeParams(_params) : {};
+    return this.httpClient.get<IListResponse<T>>(
+      `${environment.API_URL2}${route}/${id}`,
+      { params }
+    );
+  }
 
   create2(route: string, formData: Object) {
     return this.httpClient.post<T>(`${environment.API_URL2}${route}`, formData);
@@ -126,7 +153,9 @@ export class Repository<T> implements IRepository<T> {
       formData
     );
   }
-
+  update3(route: string, formData: Object) {
+    return this.httpClient.put(`${environment.API_URL2}${route}`, formData);
+  }
   remove2(route: string, id: number | string) {
     return this.httpClient.delete(`${environment.API_URL2}${route}/${id}`);
   }
@@ -151,5 +180,23 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.delete(
       `${environment.API_URL2}${route}/${idsRoute}`
     );
+  }
+  getByIdDelegationSubdelegation(
+    /* route: string, */
+    idDelegation: string | number,
+    idSubdelegation: string | number
+  ): Observable<IListResponse<T>> {
+    return this.httpClient.get<IListResponse<T>>(
+      `${environment.API_URL}catalog/api/v1/departament?limit=5&page=1&filter.numDelegation=${idDelegation}&filter.numSubDelegation=${idSubdelegation}`
+    );
+  }
+  removeByBody(route: string, obj: Object) {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.delete(`${fullRoute}`, obj);
+  }
+
+  update4(route: string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.put(`${fullRoute}`, formData);
   }
 }

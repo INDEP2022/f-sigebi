@@ -1,4 +1,12 @@
 export interface IMunicipality {
+  idMunicipality?: string;
+  entity: string;
+  nameMunicipality: string;
+  userCreation: string;
+  creationDate: Date;
+  userModification: string;
+  modificationDate: Date;
+  version: number;
   // key?: string;
   // entity: string;
   // municipalityName: string;
@@ -7,7 +15,6 @@ export interface IMunicipality {
   // userModification: string;
   // modificationDate: Date;
   // version: number;
-
   codeMunicipalityId?: number;
   codEntfedId: string;
   description: string;

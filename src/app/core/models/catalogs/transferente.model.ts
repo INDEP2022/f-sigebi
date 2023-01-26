@@ -1,6 +1,6 @@
 export interface ITransferente {
   id?: number;
-  name?: string;
+  nameTransferent?: string;
   keyCode?: string;
   userCreation: string;
   creationDate?: Date;

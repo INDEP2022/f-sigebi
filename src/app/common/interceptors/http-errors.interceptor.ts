@@ -48,12 +48,16 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
 
   handleError(error: HttpErrorResponse) {
     const status = error.status;
-    const message = error?.error?.message ?? 'Unknown error';
+    const message = error?.error?.message[0] ?? 'Unknown error';
+
     if (status === 0) {
       this.onLoadToast('error', 'Error', 'Unable to connect to server');
       return;
     }
-
+    if (status === 400) {
+      this.onLoadToast('warning', 'advertencia', message);
+      return;
+    }
     if (status === 401) {
       localStorage.clear();
       sessionStorage.clear();

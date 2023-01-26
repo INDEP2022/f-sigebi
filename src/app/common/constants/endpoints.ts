@@ -5,6 +5,8 @@ export enum ENDPOINT_LINKS {
   Batch = 'catalog/batch',
   Battery = 'catalog/battery',
   City = 'catalog/city-sera',
+  calendar = 'catalog/calendar',
+  calendarId = 'catalog/api/v1/calendar',
   ClaimConclusion = 'catalog/claim-conclusion',
   ClaimStatus = 'catalog/claims-status',
   Clarification = 'catalog/clarification',
@@ -109,9 +111,14 @@ export enum ENDPOINT_LINKS {
   TypeServices = 'catalog/type-services',
   Warehouse = 'catalog/warehouse',
   ZipCode = 'catalog/zip-code', //
+  parametergood = 'parametergood/tmp-max-cierre-acta-dev',
+  parametergoodActa = 'parametergood/validadores-actas',
+  documents = 'documents/api/v1/documents-dictum-x-state-m',
   ZoneGeographic = 'catalog/zone-geographic',
   DocumentsForDictum = 'documents-for-dictum',
+  DocumentsForDictumType = 'documents/api/v1/documents-for-dictum',
   DinamicTables = 'dynamiccatalog/api/v1/dinamic-tables',
+  DinamicTablesName = 'dynamiccatalog/api/v1/dinamic-tables/get-tvaltable1-by-name',
   AffairType = 'affair-type',
   FinancialInformation = 'parameterfinantial/financial-information',
   FinancialIndicators = 'financial-indicators',
@@ -122,4 +129,6 @@ export enum ENDPOINT_LINKS {
   request = 'request/request',
   //expedient
   Expedient = 'expedient',
+  //goodsQuery//
+  GoodsQuery = 'goodsquery',
 }
