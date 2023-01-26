@@ -61,7 +61,7 @@ export class CatRelationshipOpinionComponent
 
   // ngOnInit(): void {
   //   this.prepareForm();
-  //   this.getAffair({ inicio: 1, text: '' });
+  //   this.getAffair({ page: 1, text: '' });
   //   this.getPagination();
   // }
 

@@ -9,12 +9,12 @@
               <div class="form-field-infix">
                 <select
                   class="select"
-                  (change)="pageSizeChange()"
-                  [formControl]="pageSize">
+                  (change)="limitChange()"
+                  [formControl]="limit">
                   <option
-                    *ngFor="let pageSize of pageSizeOptions"
-                    [value]="pageSize">
-                    {{ pageSize }}
+                    *ngFor="let limit of limitOptions"
+                    [value]="limit">
+                    {{ limit }}
                   </option>
                 </select>
                 <span class="form-field-label-wrapper"> </span>
@@ -27,8 +27,8 @@
         <div class="paginator-range-label">{{ getRangeLabel }}</div>
         <paginate
           [totalItems]="totalItems"
-          [itemsPerPage]="pageSize.value"
-          [currentPage]="params.getValue().inicio"
+          [itemsPerPage]="limit.value"
+          [currentPage]="params.getValue().page"
           (changePage)="pageChanged($event)"
           [maxSize]="5"></paginate>
       </div>

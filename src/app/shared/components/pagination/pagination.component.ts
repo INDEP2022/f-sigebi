@@ -14,30 +14,30 @@ export class PaginationComponent implements OnInit {
     new ListParams()
   );
   @Input() totalItems: number = 0;
-  pageSizeOptions: number[] = [10, 25, 50, 100];
-  pageSize: FormControl = new FormControl(10);
+  limitOptions: number[] = [10, 25, 50, 100];
+  limit: FormControl = new FormControl(10);
   constructor() {}
 
   ngOnInit(): void {}
   pageChanged(event: PageChangedEvent) {
     const params = this.params.getValue();
-    this.emitEvent({ ...params, inicio: event.page });
+    this.emitEvent({ ...params, page: event.page });
   }
 
   get getRangeLabel(): string {
-    if (this.totalItems == 0 || this.params.getValue().pageSize == 0) {
+    if (this.totalItems == 0 || this.params.getValue().limit == 0) {
       return `0 of ${this.totalItems}`;
     }
     this.totalItems = Math.max(this.totalItems, 0);
     const startIndex =
-      (this.params.getValue().inicio - 1) * this.params.getValue().pageSize;
+      (this.params.getValue().page - 1) * this.params.getValue().limit;
     const endIndex =
       startIndex < this.totalItems
         ? Math.min(
-            startIndex + this.params.getValue().pageSize,
+            startIndex + this.params.getValue().limit,
             this.totalItems
           )
-        : startIndex + this.params.getValue().pageSize;
+        : startIndex + this.params.getValue().limit;
     return `${startIndex + 1} - ${endIndex} de ${this.totalItems}`;
   }
 
@@ -45,8 +45,8 @@ export class PaginationComponent implements OnInit {
     this.params.next(params);
   }
 
-  pageSizeChange() {
+  limitChange() {
     const params = this.params.getValue();
-    this.emitEvent({ ...params, pageSize: Number(this.pageSize.value) });
+    this.emitEvent({ ...params, limit: Number(this.limit.value) });
   }
 }

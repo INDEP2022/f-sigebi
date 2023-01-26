@@ -65,8 +65,8 @@ export class AddLcModalComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getRfcs({ inicio: 1, text: '' });
-    this.getClients({ inicio: 1, text: '' });
+    this.getRfcs({ page: 1, text: '' });
+    this.getClients({ page: 1, text: '' });
   }
 
   private prepareForm(): void {

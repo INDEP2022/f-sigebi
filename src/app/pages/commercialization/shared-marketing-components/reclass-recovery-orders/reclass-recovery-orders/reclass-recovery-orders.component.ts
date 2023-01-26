@@ -29,7 +29,7 @@ export class ReclassRecoveryOrdersComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getOI({ inicio: 1, text: '' });
+    this.getOI({ page: 1, text: '' });
   }
   private prepareForm() {
     this.form = this.fb.group({

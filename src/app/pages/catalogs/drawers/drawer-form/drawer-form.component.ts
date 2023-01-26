@@ -68,7 +68,7 @@ export class DrawerFormComponent extends BasePage implements OnInit {
       this.boveda = new DefaultSelect([bobeda], 1);
       this.drawerForm.get('noDrawer').disable();
     } else {
-      this.getBovedaSelect({ inicio: 1, text: '' });
+      this.getBovedaSelect({ page: 1, text: '' });
     }
   }
 

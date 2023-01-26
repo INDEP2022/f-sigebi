@@ -50,7 +50,7 @@ const routes: Routes = [
     path: 'home',
     loadChildren: async () =>
       (await import('./admin/home/home.module')).HomeModule,
-    data: { title: 'Inicio' },
+    data: { title: 'page' },
   },
 
   {

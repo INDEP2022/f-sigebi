@@ -138,7 +138,7 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.getData();
-    this.getProviders({ inicio: 1, text: '' });
+    this.getProviders({ page: 1, text: '' });
   }
 
   private prepareForm(): void {

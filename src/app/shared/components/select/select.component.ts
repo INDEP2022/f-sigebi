@@ -66,7 +66,7 @@ export class SelectComponent<T> implements OnInit {
       this.page++;
       this.loading = true;
       this.concat = true;
-      const params = { inicio: this.page, text, pageSize: this.selectSize };
+      const params = { page: this.page, text, limit: this.selectSize };
       this.fetchItems.emit(params);
     }
   }
@@ -81,7 +81,7 @@ export class SelectComponent<T> implements OnInit {
           this.buffer = [];
           this.loading = true;
           this.concat = false;
-          const params = { inicio: this.page, text, pageSize: this.selectSize };
+          const params = { page: this.page, text, limit: this.selectSize };
           this.fetchItems.emit(params);
           return of([]);
         })
