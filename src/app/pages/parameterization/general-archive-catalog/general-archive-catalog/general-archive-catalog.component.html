@@ -56,6 +56,13 @@
             <div class="col-md-5 buttons">
               <app-columns-select
                 [(settings)]="settingsBattery"></app-columns-select>
+              <div>
+                <button
+                  (click)="openFormBattery()"
+                  class="btn btn-primary active btn-sm ml-3">
+                  Nuevo
+                </button>
+              </div>
             </div>
           </div>
           <div class="table-responsive pt-3">
@@ -74,6 +81,11 @@
             <div class="col-md-5 buttons">
               <app-columns-select
                 [(settings)]="settingsShelves"></app-columns-select>
+              <button
+                (click)="openFormShelves()"
+                class="btn btn-primary active btn-sm ml-3">
+                Nuevo
+              </button>
             </div>
           </div>
           <div class="table-responsive pt-3">
@@ -92,6 +104,11 @@
             <div class="col-md-5 buttons">
               <app-columns-select
                 [(settings)]="settingsLockers"></app-columns-select>
+              <button
+                (click)="openFormLocker()"
+                class="btn btn-primary active btn-sm ml-3">
+                Nuevo
+              </button>
             </div>
           </div>
           <div class="table-responsive pt-3">

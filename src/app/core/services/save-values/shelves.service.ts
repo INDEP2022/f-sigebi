@@ -10,6 +10,7 @@ import { IShelves } from '../../models/catalogs/shelves.model';
 })
 export class ShelvessService {
   private readonly route = ShelvesEndpoints;
+  private readonly route2: string = '';
   // private readonly route2 : string = ShelvesEndpoints.Post;
 
   constructor(private shelvesRepository: ShelvesRepository<IShelves>) {}
@@ -35,6 +36,10 @@ export class ShelvessService {
 
   update(id: string | number, formData: IShelves): Observable<Object> {
     return this.shelvesRepository.update(this.route.Put, id, formData);
+  }
+
+  create(model: IShelves): Observable<IShelves> {
+    return this.shelvesRepository.create(this.route2, model);
   }
 
   /*getGoodsByRecordId(recordId: number) {

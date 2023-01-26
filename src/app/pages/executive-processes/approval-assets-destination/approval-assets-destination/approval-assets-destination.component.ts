@@ -5,7 +5,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { ASSETS_DESTINATION_COLUMNS } from './approval-assets-destination-columns';
 //Models
 import { IGood } from 'src/app/core/models/ms-good/good';
@@ -71,10 +71,10 @@ export class ApprovalAssetsDestinationComponent
           Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
-      preliminaryInquiry: [null, Validators.pattern(STRING_PATTERN)],
-      criminalCase: [null, Validators.pattern(STRING_PATTERN)],
-      circumstantialRecord: [null, Validators.pattern(STRING_PATTERN)],
-      keyPenalty: [null, Validators.pattern(STRING_PATTERN)],
+      preliminaryInquiry: [{ value: null, disabled: true }],
+      criminalCase: [{ value: null, disabled: true }],
+      circumstantialRecord: [{ value: null, disabled: true }],
+      keyPenalty: [{ value: null, disabled: true }],
     });
   }
 

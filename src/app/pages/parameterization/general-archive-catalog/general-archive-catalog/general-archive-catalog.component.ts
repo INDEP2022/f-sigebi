@@ -118,7 +118,7 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
           this.getBatteryBySaveValues(response.id);
           this.getLockerBySaveValues(response.id);
         } else {
-          this.alert('info', 'No se encontraron registros', '');
+          this.alert('info', 'No se encontraron algunos registros', '');
         }
         this.loading = false;
       },

@@ -5,46 +5,39 @@
   <div body>
     <form class="form-material" [formGroup]="lockerForm">
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-3" *ngIf="edit == false">
           <form-field
             label="Cve Guardavalor"
             [control]="lockerForm.get('saveValueKey')">
             <input
               type="text"
               class="form-control"
-              formControlName="saveValueKey"
-              readonly />
+              formControlName="saveValueKey" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3" *ngIf="edit == false">
           <form-field
             label="No. Bateria"
             [control]="lockerForm.get('numBattery')">
             <input
               type="number"
               class="form-control"
-              formControlName="numBattery"
-              readonly />
+              formControlName="numBattery" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3" *ngIf="edit == false">
           <form-field
             label="No. Estante"
             [control]="lockerForm.get('numShelf')">
             <input
               type="number"
               class="form-control"
-              formControlName="numShelf"
-              readonly />
+              formControlName="numShelf" />
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3" *ngIf="edit == false">
           <form-field label="No. Casillero" [control]="lockerForm.get('id')">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="id"
-              readonly />
+            <input type="number" class="form-control" formControlName="id" />
           </form-field>
         </div>
       </div>

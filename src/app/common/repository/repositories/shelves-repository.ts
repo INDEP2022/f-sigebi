@@ -39,6 +39,11 @@ export class ShelvesRepository<T> implements IShelvesMethods<T> {
     const fullRoute = `${this.ms}/${route}`;
     return this.httpClient.put(`${fullRoute}/${id}`, formData);
   }
+
+  create(route: string, formData: Object) {
+    const fullRoute = `${this.ms}/${route}`;
+    return this.httpClient.post<T>(`${fullRoute}`, formData);
+  }
   /*create(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
     return this.httpClient.post<T>(`${fullRoute}`, formData);

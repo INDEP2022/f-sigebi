@@ -32,4 +32,8 @@ export class SaveValueService implements ICrudMethods<ISaveValue> {
   remove(id: string | number): Observable<Object> {
     return this.saveValueRepository.remove(this.route, id);
   }
+
+  getCveSaveValues(params: ListParams) {
+    return this.saveValueRepository.getAllPaginated(this.route, params);
+  }
 }

@@ -1,10 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IBattery } from 'src/app/core/models/catalogs/battery.model';
-import { BatterysService } from 'src/app/core/services/save-values/battery.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+//models
+import { IBattery } from 'src/app/core/models/catalogs/battery.model';
+import { ISaveValue } from 'src/app/core/models/catalogs/save-value.model';
+//service
+import { SaveValueService } from 'src/app/core/services/catalogs/save-value.service';
+import { BatterysService } from 'src/app/core/services/save-values/battery.service';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-battery-modal',
@@ -17,10 +23,15 @@ export class BatteryModalComponent extends BasePage implements OnInit {
   title: string = 'Baterias';
   edit: boolean = false;
 
+  id: ISaveValue;
+
+  cveSaveValues = new DefaultSelect();
+
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private batterysService: BatterysService
+    private batterysService: BatterysService,
+    private saveValueService: SaveValueService
   ) {
     super();
   }
@@ -29,17 +40,26 @@ export class BatteryModalComponent extends BasePage implements OnInit {
     this.prepareForm();
   }
 
+  getCveSaveValues(params: ListParams) {
+    this.saveValueService.getCveSaveValues(params).subscribe({
+      next: data =>
+        (this.cveSaveValues = new DefaultSelect(data.data, data.count)),
+    });
+  }
+
   private prepareForm() {
     this.batteryForm = this.fb.group({
-      storeCode: [{ value: this.battery.storeCode, disabled: true }],
+      storeCode: [null, []],
       idBattery: [null, [Validators.required]],
       description: [null, [Validators.required]],
       status: [null, [Validators.required]],
-      registerNumber: [{ value: null, disabled: true }],
+      registerNumber: [null, []],
     });
     if (this.battery != null) {
+      this.id = this.battery.storeCode as ISaveValue;
       this.edit = true;
       this.batteryForm.patchValue(this.battery);
+      this.batteryForm.controls['storeCode'].setValue(this.id.id);
     }
   }
 
@@ -48,7 +68,16 @@ export class BatteryModalComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    this.update();
+    this.edit ? this.update() : this.create();
+  }
+
+  create() {
+    this.loading = true;
+    console.log(this.batteryForm.value);
+    this.batterysService.create(this.batteryForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   update() {

@@ -5,42 +5,54 @@
   <div body>
     <form class="form-material" [formGroup]="shelvesForm">
       <div class="row">
-        <div class="col-md-3">
-          <form-field
-            label="Cve Guardavalor"
-            [control]="shelvesForm.get('key')">
-            <input
+        <div class="col-md-5" *ngIf="edit == false">
+          <form-field [control]="shelvesForm.get('key')">
+            <ngx-select
+              [form]="shelvesForm"
+              control="key"
+              [data]="cveSaveValues"
+              value="id"
+              bindLabel="description"
+              label="Cve GuardaValor"
+              (fetchItems)="getCveSaveValues($event)">
+            </ngx-select>
+            <!-- <input
               type="text"
               class="form-control"
-              formControlName="key"
-              readonly />
+              formControlName="key"/> -->
           </form-field>
         </div>
-        <div class="col-md-3">
-          <form-field
-            label="No. Bateria"
-            [control]="shelvesForm.get('batteryNumber')">
-            <input
+        <div class="col-md-4" *ngIf="edit == false">
+          <form-field [control]="shelvesForm.get('batteryNumber')">
+            <ngx-select
+              [form]="shelvesForm"
+              control="batteryNumber"
+              [data]="idBattery"
+              value="idBattery"
+              bindLabel="description"
+              label="Bateria"
+              (fetchItems)="getBatteryById($event)">
+            </ngx-select>
+
+            <!-- <input
               type="number"
               class="form-control"
-              formControlName="batteryNumber"
-              readonly />
+              formControlName="batteryNumber"/> -->
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3" *ngIf="edit == false">
           <form-field label="No. Estante" [control]="shelvesForm.get('id')">
             <input type="number" class="form-control" formControlName="id" />
           </form-field>
         </div>
-
-        <div class="col-md-3">
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-4">
           <form-field label="Status" [control]="shelvesForm.get('status')">
             <input type="text" class="form-control" formControlName="status" />
           </form-field>
         </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-6">
+        <div class="col-md-4">
           <form-field
             label="Descripción"
             [control]="shelvesForm.get('description')">
@@ -50,7 +62,7 @@
               formControlName="description" />
           </form-field>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
           <form-field
             label="No. Registro"
             [control]="shelvesForm.get('registerNumber')">

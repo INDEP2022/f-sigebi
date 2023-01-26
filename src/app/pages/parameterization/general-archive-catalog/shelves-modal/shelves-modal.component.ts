@@ -1,12 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //models
 import { IShelves } from 'src/app/core/models/catalogs/shelves.model';
 //Services
+import { SaveValueService } from 'src/app/core/services/catalogs/save-value.service';
+import { BatterysService } from 'src/app/core/services/save-values/battery.service';
 import { ShelvessService } from 'src/app/core/services/save-values/shelves.service';
 
 @Component({
@@ -21,16 +25,34 @@ export class ShelvesModalComponent extends BasePage implements OnInit {
   title: string = 'Estantes';
   edit: boolean = false;
 
+  cveSaveValues = new DefaultSelect();
+  idBattery = new DefaultSelect();
+
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private shelvessService: ShelvessService
+    private shelvessService: ShelvessService,
+    private saveValueService: SaveValueService,
+    private batterysService: BatterysService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
+  }
+
+  getCveSaveValues(params: ListParams) {
+    this.saveValueService.getCveSaveValues(params).subscribe({
+      next: data =>
+        (this.cveSaveValues = new DefaultSelect(data.data, data.count)),
+    });
+  }
+
+  getBatteryById(params: ListParams) {
+    this.batterysService.getBatteryById(params).subscribe({
+      next: data => (this.idBattery = new DefaultSelect(data.data, data.count)),
+    });
   }
 
   private prepareForm() {
@@ -62,7 +84,16 @@ export class ShelvesModalComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    this.update();
+    this.edit ? this.update() : this.create();
+  }
+
+  create() {
+    this.loading = true;
+    console.log(this.shelvesForm.value);
+    this.shelvessService.create(this.shelvesForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   update() {

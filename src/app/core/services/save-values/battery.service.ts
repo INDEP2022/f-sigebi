@@ -10,6 +10,7 @@ import { IBattery } from '../../models/catalogs/battery.model';
 })
 export class BatterysService {
   private readonly route = BatteryEndpoints;
+  private readonly route2: string = '';
 
   constructor(private batteryRepository: BatteryRepository<IBattery>) {}
 
@@ -34,6 +35,14 @@ export class BatterysService {
       id,
       formData
     );
+  }
+
+  create(model: IBattery): Observable<IBattery> {
+    return this.batteryRepository.create(this.route2, model);
+  }
+
+  getBatteryById(params: ListParams) {
+    return this.batteryRepository.getAllPaginated(this.route.Post, params);
   }
 
   /*getGoodsByRecordId(recordId: number) {
