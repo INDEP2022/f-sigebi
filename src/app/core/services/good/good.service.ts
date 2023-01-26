@@ -9,6 +9,9 @@ import { IGood } from '../../models/good/good.model';
 @Injectable({
   providedIn: 'root',
 })
+/**
+ * @deprecated Cambiar a la nueva forma
+ */
 export class GoodService implements ICrudMethods<IGood> {
   private readonly route: string = 'pendiente/parametros';
   constructor(private goodRepository: Repository<IGood>) {}
@@ -28,7 +31,7 @@ export class GoodService implements ICrudMethods<IGood> {
   }
 
   getGoodAtributesByClasifNum(clasifNum: number) {
-    const route = `good/good/searchAttributeClasifGood/${clasifNum}`;
+    const route = `good/status-good/getAttribGoodData/${clasifNum}`;
     const params = { inicio: 1, pageSize: 150 };
     return this.goodRepository.getAllPaginated(route, params);
   }
@@ -39,7 +42,7 @@ export class GoodService implements ICrudMethods<IGood> {
     model: IGood
   ): Observable<Object> {
     const route = 'good/good/updateGoodStatus';
-    return this.goodRepository.update3(route, idGood, idStatus, model);
+    return this.goodRepository.update5(route, idGood, idStatus, model);
   }
 
   getStatusAll() {
@@ -48,5 +51,22 @@ export class GoodService implements ICrudMethods<IGood> {
   getStatusByGood(idGood: string | number): Observable<any> {
     const route = 'good/good/getDescAndStatus';
     return this.goodRepository.getById(route, idGood);
+  }
+  getDataGoodByDeparture(departureNum: number | string) {
+    const route = 'good/good/dataGoodByDeparture';
+    return this.goodRepository.getById(route, departureNum);
+  }
+
+  getTempGood(body: any) {
+    const route = 'good/status-good/tmpGoodAllSelect';
+    return this.goodRepository.create(route, body) as any;
+  }
+
+  create(model: IGood): Observable<IGood> {
+    return this.goodRepository.create('good/good', model);
+  }
+
+  update(id: string | number, model: IGood): Observable<Object> {
+    return this.goodRepository.update('good/good', id, model);
   }
 }
