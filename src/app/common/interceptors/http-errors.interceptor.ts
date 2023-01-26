@@ -99,11 +99,11 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
   }
 
   private validateResponse(response: HttpResponse<BaseResponse>) {
-    const statusCode = Number(response.body?.data?.statusCode);
+    const statusCode = Number(response.body?.statusCode);
     if (!statusCode) return;
     if (statusCode >= 400) {
       const error = new HttpErrorResponse({
-        error: { message: response.body.data.message },
+        error: { message: response.body?.message[0] ?? '' },
         headers: response.headers,
         status: statusCode,
         url: response.url,

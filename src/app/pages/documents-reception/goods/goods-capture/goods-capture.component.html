@@ -20,6 +20,8 @@
 
         <div class="col" *ngIf="global.pIndicadorSat != null">
           <button
+            (click)="searchFraction()"
+            type="button"
             class="btn btn-secondary btn-sm active"
             [disabled]="!ligieButtonEnabled">
             Buscar Fracción
@@ -159,7 +161,9 @@
           <ngx-select
             [form]="assetsForm"
             control="destino"
-            [data]="select"
+            [data]="goodLabels"
+            value="id"
+            bindLabel="description"
             label="Identificador de Destino"></ngx-select>
         </form-field>
       </div>
@@ -185,21 +189,25 @@
         <form-field
           *ngIf="global.pIndicadorSat != null"
           class="col-md-4"
-          [control]="assetsForm.get('estadoConservacion')">
-          <ngx-select
-            [form]="assetsForm"
-            control="estadoConservacion"
-            [data]="select"
-            label="Estado de Conservación"></ngx-select>
+          [control]="assetsForm.get('estadoConservacion')"
+          label="Estado de Conservacion">
+          <ng-select
+            formControlName="estadoConservacion"
+            [searchable]="false"
+            class="form-control"
+            [clearable]="false">
+            <ng-option value="Bueno">Bueno</ng-option>
+            <ng-option value="Malo">Malo</ng-option>
+          </ng-select>
         </form-field>
 
         <div class="col">
-          <button
+          <!-- <button
             *ngIf="global.pIndicadorSat != null"
             class="btn btn-secondary btn-sm active"
             [disabled]="!regulationsButtonEnabled">
             Regulaciones Aplicadas
-          </button>
+          </button> -->
         </div>
       </div>
 
@@ -215,6 +223,8 @@
         <div class="row">
           <div class="col-md-12">
             <button
+              type="button"
+              (click)="getSiaviLink()"
               class="btn btn-info active btn-sm"
               [disabled]="!normsButtonEnabled"
               *ngIf="global.pIndicadorSat != null">
@@ -228,22 +238,24 @@
 
       <div class="row">
         <div class="col-md-12">
-          <good-features
-            [good]="good"
-            [goodForm]="goodForm"
-            [goodFeatures]="goodFeatures"></good-features>
           <button
             type="button"
             class="btn btn-info btn-sm"
             (click)="showObservations(modal)">
             Observaciones
           </button>
+          <good-features
+            [good]="good"
+            [goodForm]="goodForm"
+            [goodFeatures]="goodFeatures"
+            (onSave)="save()"
+            [loading]="loading"></good-features>
         </div>
       </div>
       <div class="row">
-        <form-check label="Almacen" for="warehouse">
+        <!-- <form-check label="Almacen" for="warehouse">
           <input id="warehouse" type="checkbox" formControlName="almacen" />
-        </form-check>
+        </form-check> -->
       </div>
       <hr />
       <div class="row pt-3" *ngIf="formControls.almacen.value">
@@ -289,7 +301,7 @@
 
         <div class="row pt-2">
           <div class="col-md-12 text-right">
-            <button class="btn btn-primary btn-sm ml-3 active" type="submit">
+            <button class="btn btn-primary btn-sm ml-3 active" type="button">
               Guardar
             </button>
           </div>
@@ -313,10 +325,7 @@
           <div footer>
             <div class="d-flex justify-content-center">
               <div class="m-3">
-                <button
-                  type="button"
-                  class="btn btn-primary active"
-                  (click)="hideObservations()">
+                <button type="button" class="btn btn-primary active">
                   Guardar
                 </button>
               </div>
