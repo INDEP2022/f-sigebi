@@ -1,5 +1,5 @@
 export interface ISaveValue {
-  cve?: string;
+  id?: string;
   description?: string;
   location?: string;
   responsible: string;

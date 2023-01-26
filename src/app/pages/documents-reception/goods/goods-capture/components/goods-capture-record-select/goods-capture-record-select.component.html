@@ -31,13 +31,7 @@
           *ngIf="isCompany"
           class="col-md-10"
           [control]="form.get('noBien')">
-          <ngx-select
-            [form]="form"
-            value="id"
-            bindLabel="id"
-            control="noBien"
-            [data]="select"
-            label="No. Bien de la Empresa"></ngx-select>
+          <input type="number" class="form-control" formControlName="noBien" />
         </form-field>
       </div>
     </form>

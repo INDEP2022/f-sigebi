@@ -1,17 +1,17 @@
 const SHIPPING_DOCUMENTS_COLUMNS = {
-  noVolante: {
+  wheelNumber: {
     title: 'No. Volante',
     sort: false,
   },
-  asunto: {
+  subject: {
     title: 'Asunto',
     sort: false,
   },
-  aver: {
+  preliminaryInquiry: {
     title: 'Averiguación Previa',
     sort: false,
   },
-  causa: {
+  criminalCase: {
     title: 'Causa Penal',
     sort: false,
   },

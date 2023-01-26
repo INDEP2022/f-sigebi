@@ -1,0 +1,92 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="shelvesForm">
+      <div class="row">
+        <div class="col-md-5" *ngIf="edit == false">
+          <form-field [control]="shelvesForm.get('key')">
+            <ngx-select
+              [form]="shelvesForm"
+              control="key"
+              [data]="cveSaveValues"
+              value="id"
+              bindLabel="id"
+              label="Cve GuardaValor"
+              (fetchItems)="getCveSaveValues($event)">
+            </ngx-select>
+            <!-- <input
+              type="text"
+              class="form-control"
+              formControlName="key"/> -->
+          </form-field>
+        </div>
+        <div class="col-md-4" *ngIf="edit == false">
+          <form-field [control]="shelvesForm.get('batteryNumber')">
+            <ngx-select
+              [form]="shelvesForm"
+              control="batteryNumber"
+              [data]="idBattery"
+              value="idBattery"
+              bindLabel="idBattery"
+              label="Bateria"
+              (fetchItems)="getBatteryById($event)">
+            </ngx-select>
+
+            <!-- <input
+              type="number"
+              class="form-control"
+              formControlName="batteryNumber"/> -->
+          </form-field>
+        </div>
+        <div class="col-md-3" *ngIf="edit == false">
+          <form-field label="No. Estante" [control]="shelvesForm.get('id')">
+            <input type="number" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field label="Status" [control]="shelvesForm.get('status')">
+            <input type="text" class="form-control" formControlName="status" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Descripción"
+            [control]="shelvesForm.get('description')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="No. Registro"
+            [control]="shelvesForm.get('registerNumber')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="registerNumber" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
