@@ -14,6 +14,9 @@ interface ISatCountOffie {
 @Injectable({
   providedIn: 'root',
 })
+/**
+ * @deprecated Cambiar a la nueva forma
+ */
 export class SatInterfaceService {
   constructor(private satInterfaceRepository: Repository<any>) {}
 
@@ -62,6 +65,27 @@ export class SatInterfaceService {
   getSatTransfer(body: any) {
     return this.satInterfaceRepository.create(
       'interfacesat/transfersat-v3/dynamicQuery',
+      body
+    );
+  }
+
+  getSatTinmBreak(body: any) {
+    return this.satInterfaceRepository.create(
+      'interfacesat/transfersat-v2/onlykey',
+      body
+    );
+  }
+
+  findAllExpJob(body: any) {
+    return this.satInterfaceRepository.create(
+      'interfacesat/transfersat-v3/allExpJob',
+      body
+    );
+  }
+
+  getSatTransExp(body: any) {
+    return this.satInterfaceRepository.create(
+      'interfacesat/transfersat-v3/satTransExpe',
       body
     );
   }

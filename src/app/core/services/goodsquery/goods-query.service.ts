@@ -11,6 +11,9 @@ import { IZipCodeGoodQuery } from '../../models/catalogs/zip-code.model';
 @Injectable({
   providedIn: 'root',
 })
+/**
+ * @deprecated Cambiar a la nueva forma
+ */
 export class GoodsQueryService {
   private routeLigieUnitMeasure = GoodsQueryEndpoints.LigieUnitMeasure;
   private zipCodeRoute = GoodsQueryEndpoints.ZipCode;
@@ -30,6 +33,26 @@ export class GoodsQueryService {
     return this.goodQueryRepository.getDescriptionUnitLigie(
       this.routeLigieUnitMeasure,
       unit
+    );
+  }
+
+  getFractionsByClasifNum(clasifNum: number) {
+    return this.httpClient.get(
+      `${environment.API_URL}goodsquery/api/v1/ligie-units-measure/getView/${clasifNum}`
+    );
+  }
+
+  getNoms(satUniqueKey: string) {
+    return this.httpClient.get(
+      `${environment.API_URL}goodsquery/api/v1/ligie-units-measure/getNoms/${satUniqueKey}`
+    );
+  }
+
+  getFractionsFilter(params: ListParams, body: any) {
+    return this.httpClient.post<IListResponse<any>>(
+      `${environment.API_URL}goodsquery/api/v1/ligie-units-measure/getFranctionFilter`,
+      body,
+      { params }
     );
   }
 

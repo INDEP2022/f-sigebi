@@ -1,0 +1,144 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Buscar Fracción</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row py-0 my-0 by-0">
+        <div class="col-md-7">
+          <ng-scrollbar style="max-height: 150px; height: 100px">
+            <ng-container formArrayName="filter">
+              <ng-container
+                *ngFor="let filterForm of filter.controls; let i = index">
+                <div [formGroupName]="i" class="row">
+                  <div class="col ml-1">
+                    <form-radio label="Y">
+                      <input
+                        type="radio"
+                        value="Y"
+                        formControlName="operator" />
+                    </form-radio>
+                  </div>
+                  <div class="col">
+                    <form-radio label="O">
+                      <input
+                        type="radio"
+                        value="O"
+                        formControlName="operator" />
+                    </form-radio>
+                  </div>
+                  <form-field
+                    class="col-md-7"
+                    [control]="filterForm.get('value')">
+                    <input
+                      (change)="getFractions()"
+                      class="form-control"
+                      type="text"
+                      formControlName="value" />
+                  </form-field>
+                  <div class="col">
+                    <i
+                      *ngIf="
+                        filter.length > 1 &&
+                        filterForm.get('value').value != null
+                      "
+                      (click)="removeFilter(i)"
+                      class="fa fa-trash text-danger mt-2"
+                      aria-hidden="true"></i>
+                  </div>
+                </div>
+              </ng-container>
+            </ng-container>
+          </ng-scrollbar>
+        </div>
+
+        <div class="col-md-5">
+          <div class="row pt-3">
+            <div class="col mr-1">
+              <confirm-button
+                [disabled]="!fractionSelected"
+                [btnSmall]="true"
+                text="Seleccionar"
+                [loading]="loading"
+                (confirm)="confirm()"></confirm-button>
+            </div>
+            <div class="col">
+              <button
+                type="button"
+                class="btn btn-danger active btn-sm"
+                (click)="close()">
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="row">
+      <div class="col-md-12">
+        <ng-scrollbar style="max-height: 150px; height: 100px">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Capítulo</th>
+                <th>Partida</th>
+                <th>Subpartida</th>
+                <th>Ssubpartida</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let fraction of fractions"
+                (click)="selectFraction(fraction)"
+                [ngClass]="{
+                  selected: fraction?.fraction == fractionSelected?.fraction
+                }">
+                <td>{{ fraction.chapter }}</td>
+                <td>{{ fraction.departure }}</td>
+                <td>{{ fraction.sDeparture }}</td>
+                <td>{{ fraction.ssDeparture }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </ng-scrollbar>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <p>
+          <b>Capítulo</b>
+        </p>
+        <p>
+          {{ fractionSelected?.chapterDesc ?? '' }}
+        </p>
+      </div>
+      <div class="col-md-6">
+        <p>
+          <b>Partida</b>
+        </p>
+        <p>
+          {{ fractionSelected?.departureDesc ?? '' }}
+        </p>
+      </div>
+      <div class="col-md-6">
+        <p>
+          <b>Subpartida</b>
+        </p>
+        <p>
+          {{ fractionSelected?.sDepartureDesc ?? '' }}
+        </p>
+      </div>
+      <div class="col-md-6">
+        <p>
+          <b>Ssubpartida</b>
+        </p>
+        <p>
+          {{ fractionSelected?.ssDepartureDesc ?? '' }}
+        </p>
+      </div>
+    </div>
+  </div>
+</app-modal>

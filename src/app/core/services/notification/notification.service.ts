@@ -5,14 +5,21 @@ import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
+
 @Injectable({
   providedIn: 'root',
 })
+/**
+ * @deprecated Cambiar a la nueva forma
+ */
 export class NotificationService implements ICrudMethods<AnyFn> {
   constructor(private notificationRepository: Repository<any>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<any>> {
-    return this.notificationRepository.getAllPaginated('', params);
+    return this.notificationRepository.getAllPaginated(
+      'notification/notification',
+      params
+    );
   }
 
   getMaxFlyer(expedientId: number | string) {
