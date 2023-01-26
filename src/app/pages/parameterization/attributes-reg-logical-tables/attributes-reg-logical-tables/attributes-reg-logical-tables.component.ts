@@ -1,10 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import Swal from 'sweetalert2';
 import { AttributesRegLogicalTablesModalComponent } from '../attributes-reg-logical-tables-modal/attributes-reg-logical-tables-modal.component';
 import { ATT_REG_LOG_TAB_COLUMNS } from './attributes-reg-logical-tables-columns';
+//models
+import { ITdescAtrib } from 'src/app/core/models/ms-parametergood/tdescatrib-model';
+//Services
+import { TdesAtribService } from 'src/app/core/services/ms-parametergood/tdescatrib.service';
 
 @Component({
   selector: 'app-attributes-reg-logical-tables',
@@ -15,18 +21,21 @@ export class AttributesRegLogicalTablesComponent
   extends BasePage
   implements OnInit
 {
-  columns: any[] = [];
+  tdescAtrib: ITdescAtrib[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  constructor(private modalService: BsModalService) {
+  constructor(
+    private modalService: BsModalService,
+    private parameterGoodService: TdesAtribService
+  ) {
     super();
     this.settings = {
       ...this.settings,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: false,
+        delete: true,
         position: 'right',
       },
       columns: { ...ATT_REG_LOG_TAB_COLUMNS },
@@ -34,71 +43,53 @@ export class AttributesRegLogicalTablesComponent
   }
 
   ngOnInit(): void {
-    this.getPagination();
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getRegisterAttribute());
   }
 
-  openModal(context?: Partial<AttributesRegLogicalTablesModalComponent>) {
-    const modalRef = this.modalService.show(
-      AttributesRegLogicalTablesModalComponent,
-      {
-        initialState: { ...context },
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      }
-    );
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getData();
+  getRegisterAttribute() {
+    this.loading = true;
+    this.parameterGoodService.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        this.tdescAtrib = response.data;
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
     });
   }
 
-  openForm(allotment?: any) {
-    this.openModal({ allotment });
+  openForm(tdescAtrib?: ITdescAtrib) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      tdescAtrib,
+      callback: (next: boolean) => {
+        if (next) this.getRegisterAttribute();
+      },
+    };
+    this.modalService.show(
+      AttributesRegLogicalTablesModalComponent,
+      modalConfig
+    );
   }
 
-  getData() {
-    this.loading = true;
-    this.columns = this.data;
-    this.totalItems = this.data.length;
-    this.loading = false;
+  showDeleteAlert(tdescAtrib: ITdescAtrib) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.delete(tdescAtrib.idNmTable);
+        Swal.fire('Borrado', '', 'success');
+      }
+    });
   }
 
-  getPagination() {
-    this.columns = this.data;
-    this.totalItems = this.columns.length;
+  delete(id: number) {
+    this.parameterGoodService.remove(id).subscribe({
+      next: () => this.getRegisterAttribute(),
+    });
   }
-
-  data = [
-    {
-      name: 'NOMBRE 01',
-      type: 'TIPO DE TABLA 01',
-      noAtt: 1,
-      description: 'DESCRIPCIÓN 01',
-      format: 'FORMATO 01',
-      maxLong: 10,
-    },
-    {
-      name: 'NOMBRE 02',
-      type: 'TIPO DE TABLA 02',
-      noAtt: 2,
-      description: 'DESCRIPCIÓN 02',
-      format: 'FORMATO 02',
-      maxLong: 20,
-    },
-    {
-      name: 'NOMBRE 03',
-      type: 'TIPO DE TABLA 03',
-      noAtt: 3,
-      description: 'DESCRIPCIÓN 03',
-      format: 'FORMATO 03',
-      maxLong: 30,
-    },
-    {
-      name: 'NOMBRE 04',
-      type: 'TIPO DE TABLA 04',
-      noAtt: 4,
-      description: 'DESCRIPCIÓN 04',
-      format: 'FORMATO 04',
-      maxLong: 40,
-    },
-  ];
 }

@@ -117,11 +117,12 @@ export class ReturnsConficationsListComponent
     this.loading = true;
     this.expedientService.getById(_id).subscribe(
       response => {
+        console.log(response);
         //TODO: Validate Response
         if (response !== null) {
           this.form.patchValue(response);
           this.form.updateValueAndValidity();
-          this.getGoodsByExpedient(response.idExpedient);
+          this.getGoodsByExpedient(response.id);
         } else {
           //TODO: CHECK MESSAGE
           this.alert('info', 'No se encontrarón registros', '');
@@ -138,6 +139,7 @@ export class ReturnsConficationsListComponent
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getGoods(id));
   }
+
   getGoods(id: string | number): void {
     this.goodService.getByExpedient(id, this.params.getValue()).subscribe(
       response => {
@@ -145,12 +147,14 @@ export class ReturnsConficationsListComponent
         let data = response.data.map((item: IGood) => {
           //console.log(item);
           item.promoter = item.userPromoterDecoDevo?.id;
+
           let dateDecoDev = item.scheduledDateDecoDev;
-          let dateTeso = item.tesofeDate;
-          item.scheduledDateDecoDev = this.datePipe.transform(
+          item.dateRenderDecoDev = this.datePipe.transform(
             dateDecoDev,
             'yyyy-MM-dd'
           );
+
+          let dateTeso = item.tesofeDate;
           item.tesofeDate = this.datePipe.transform(dateTeso, 'yyyy-MM-dd');
           return item;
         });
@@ -207,8 +211,9 @@ export class ReturnsConficationsListComponent
   }
 
   onSaveConfirm(event: any) {
-    //console.log(event);
+    console.log(event);
     event.confirm.resolve();
+    //this.goodService.update()
     /**
      * Call Service
      * **/
