@@ -89,16 +89,16 @@ export class RegisterKeysLogicalTablesModalComponent
   }
 
   confirm() {
-    this.edit ? this.update() : this.create();
+    this.update();
   }
 
-  create() {
-    this.loading = true;
-    this.tdescCveService.create(this.tdescCveForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-  }
+  // create() {
+  //   this.loading = true;
+  //   this.tdescCveService.create(this.tdescCveForm.value).subscribe({
+  //     next: data => this.handleSuccess(),
+  //     error: error => (this.loading = false),
+  //   });
+  // }
 
   update() {
     this.loading = true;

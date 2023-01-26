@@ -1,36 +1,44 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ParameterGoodEndpoints } from 'src/app/common/constants/endpoints/ms-parametergood-endpoints';
-import { ICrudMethods } from 'src/app/common/repository/interfaces/crud-methods';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { Repository } from 'src/app/common/repository/repository';
+import { ParametergoodRepository } from 'src/app/common/repository/repositories/parametergood-repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 
 import { ITdescCve } from '../../models/ms-parametergood/tdesccve-model';
 @Injectable({
   providedIn: 'root',
 })
-export class TdescCveService implements ICrudMethods<ITdescCve> {
-  private readonly route: string = ParameterGoodEndpoints.TDescCve;
-  constructor(private goodParameterRepository: Repository<ITdescCve>) {}
+export class TdescCveService {
+  private readonly route = ParameterGoodEndpoints;
+  constructor(
+    private parametergoodRepository: ParametergoodRepository<ITdescCve>
+  ) {}
 
   getAll(params?: ListParams): Observable<IListResponse<ITdescCve>> {
-    return this.goodParameterRepository.getAllPaginated(this.route, params);
+    return this.parametergoodRepository.getAll(this.route.TDescCve, params);
   }
 
-  getById(id: string | number): Observable<ITdescCve> {
-    return this.goodParameterRepository.getById(this.route, id);
-  }
-
-  create(model: ITdescCve): Observable<ITdescCve> {
-    return this.goodParameterRepository.create(this.route, model);
-  }
+  // create(model: ITdescCve): Observable<ITdescCve> {
+  //   return this.parametergoodRepository.create(this.route, model);
+  // }
 
   update(id: string | number, model: ITdescCve): Observable<Object> {
-    return this.goodParameterRepository.update(this.route, id, model);
+    return this.parametergoodRepository.update(this.route.TDescCve, id, model);
   }
 
-  remove(id: string | number): Observable<Object> {
-    return this.goodParameterRepository.remove(this.route, id);
+  // remove(id: string | number): Observable<Object> {
+  //   return this.parametergoodRepository.remove(this.route, id);
+  // }
+
+  getByLogicalTables(
+    id: string | number,
+    params?: ListParams
+  ): Observable<IListResponse<ITdescCve>> {
+    return this.parametergoodRepository.getByLogicalTables(
+      this.route.TDescCve,
+      id,
+      params
+    );
   }
 }

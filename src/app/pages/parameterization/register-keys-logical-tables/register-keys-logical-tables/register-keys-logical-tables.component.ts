@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { RegisterKeysLogicalTablesModalComponent } from '../register-keys-logical-tables-modal/register-keys-logical-tables-modal.component';
@@ -11,9 +12,8 @@ import { REGISTER_KEYS_LOGICAL_COLUMNS } from './register-keys-logical-columns';
 import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dynamic-tables.service';
 import { TdescCveService } from 'src/app/core/services/ms-parametergood/tdesccve.service';
 //Models
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ITdescCve } from 'src/app/core/models/ms-parametergood/tdesccve-model';
-import Swal from 'sweetalert2';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-register-keys-logical-tables',
@@ -56,32 +56,17 @@ export class RegisterKeysLogicalTablesComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getKeysLogicalTables());
-  }
-
-  //Método para llenar tabla
-  getKeysLogicalTables() {
-    this.loading = true;
-    this.tdescCveService.getAll(this.params.getValue()).subscribe({
-      next: response => {
-        this.tdescCve = response.data;
-        this.totalItems = response.count;
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
-    });
   }
 
   private prepareForm() {
     this.form = this.fb.group({
-      table: [null, [Validators.required]],
-      description: [null, []],
+      table: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      description: [{ value: null, disabled: true }],
+      tableType: [{ value: null, disabled: true }],
     });
   }
 
-  //Método para buscar tabla por ID
+  //Método para buscar y llenar inputs (Encabezado)
   getLogicalTablesByID(): void {
     let _id = this.form.controls['table'].value;
     this.loading = true;
@@ -90,7 +75,7 @@ export class RegisterKeysLogicalTablesComponent
         if (response !== null) {
           this.form.patchValue(response);
           this.form.updateValueAndValidity();
-          // this.getDescCveByTable(response.id);
+          this.getKeysByLogicalTables(response.table);
         } else {
           this.alert('info', 'No se encontraron los registros', '');
         }
@@ -100,43 +85,42 @@ export class RegisterKeysLogicalTablesComponent
     );
   }
 
-  //Método para generar tabla de claves mediante el id de la tabla lógica
-  getDescCveByTable() {}
+  //Método llenar tabla de Claves con id de Tables Logical
+  getKeysByLogicalTables(id: string | number): void {
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getKeys(id));
+  }
+
+  getKeys(id: string | number): void {
+    this.tdescCveService
+      .getByLogicalTables(id, this.params.getValue())
+      .subscribe(
+        response => {
+          //console.log(response);
+          let data = response.data.map((item: ITdescCve) => {
+            //console.log(item);
+            return item;
+          });
+          this.data.load(data);
+          this.totalItems = response.count;
+          this.loading = false;
+        },
+        error => (this.loading = false)
+      );
+  }
 
   openForm(tdescCve?: ITdescCve) {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       tdescCve,
-      callback: (next: boolean) => {
-        if (next) this.getKeysLogicalTables();
-      },
+      // callback: (next: boolean) => {
+      //   if (next) this.getKeysLogicalTables();
+      // },
     };
     this.modalService.show(
       RegisterKeysLogicalTablesModalComponent,
       modalConfig
     );
-  }
-
-  howDeleteAlert(tdescCve: ITdescCve) {
-    this.alertQuestion(
-      'warning',
-      'Eliminar',
-      '¿Desea eliminar este registro?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        this.delete(tdescCve.id);
-        Swal.fire('Borrado', '', 'success');
-      }
-    });
-  }
-
-  delete(id: number) {
-    this.tdescCveService.remove(id).subscribe({
-      next: () => this.getKeysLogicalTables(),
-    });
-  }
-
-  settingsChange($event: any): void {
-    this.settings = $event;
   }
 }
