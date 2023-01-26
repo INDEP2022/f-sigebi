@@ -30,6 +30,10 @@ export class ShelvessService {
     );
   }
 
+  getShelvesById(params: ListParams) {
+    return this.shelvesRepository.getAllPaginated(this.route.Post, params);
+  }
+
   //  update(model: IShelves): Observable<Object> {
   //     return this.shelvesRepository.update(this.route2, model);
   //   }

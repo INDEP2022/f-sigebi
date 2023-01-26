@@ -35,6 +35,11 @@ export class LockersService {
       formData
     );
   }
+
+  create(model: ILocker): Observable<ILocker> {
+    return this.lockerRepository.create(this.route.Post, model);
+  }
+
   /*getGoodsByRecordId(recordId: number) {
     return this.goodRepository.getAllPaginated(
       'good/good/getidReferenceGood/' + recordId

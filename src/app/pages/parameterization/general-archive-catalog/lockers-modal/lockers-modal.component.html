@@ -6,33 +6,52 @@
     <form class="form-material" [formGroup]="lockerForm">
       <div class="row">
         <div class="col-md-3" *ngIf="edit == false">
-          <form-field
-            label="Cve Guardavalor"
-            [control]="lockerForm.get('saveValueKey')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="saveValueKey" />
+          <form-field [control]="lockerForm.get('saveValueKey')">
+            <ngx-select
+              [form]="lockerForm"
+              control="saveValueKey"
+              [data]="cveSaveValues"
+              value="id"
+              bindLabel="id"
+              label="Cve GuardaValor"
+              (fetchItems)="getCveSaveValues($event)">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col-md-3" *ngIf="edit == false">
-          <form-field
-            label="No. Bateria"
-            [control]="lockerForm.get('numBattery')">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="numBattery" />
+          <form-field [control]="lockerForm.get('numBattery')">
+            <ngx-select
+              [form]="lockerForm"
+              control="numBattery"
+              [data]="idBattery"
+              value="idBattery"
+              bindLabel="idBattery"
+              label="Bateria"
+              (fetchItems)="getBatteryById($event)">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col-md-3" *ngIf="edit == false">
-          <form-field
-            label="No. Estante"
-            [control]="lockerForm.get('numShelf')">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="numShelf" />
+          <form-field [control]="lockerForm.get('numShelf')">
+            <div class="col-md-3" *ngIf="edit == false">
+              <form-field
+                label="No. Estante"
+                [control]="lockerForm.get('numShelf')">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="numShelf" />
+              </form-field>
+            </div>
+            <!-- <ngx-select 
+                [form]="lockerForm" 
+                control="numShelf" 
+                [data]="idBattery" 
+                value="id" 
+                bindLabel="id" 
+                label="Estante" 
+                (fetchItems)="getShelvesById($event)">
+              </ngx-select> -->
           </form-field>
         </div>
         <div class="col-md-3" *ngIf="edit == false">

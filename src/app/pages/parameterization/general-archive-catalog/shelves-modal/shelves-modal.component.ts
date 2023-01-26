@@ -76,6 +76,11 @@ export class ShelvesModalComponent extends BasePage implements OnInit {
     if (this.shelves != null) {
       this.edit = true;
       this.shelvesForm.patchValue(this.shelves);
+      // this.shelvesForm.valueChanges.pipe(
+      //   map(value => `${value.key}-${value.batteryNumber}`)
+      // ).subscribe(value => {
+      //   this.shelvesForm.controls['key'].setValue(value,)
+      // })
     }
   }
 
