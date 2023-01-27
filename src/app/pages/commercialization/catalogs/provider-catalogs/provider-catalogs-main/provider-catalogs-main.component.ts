@@ -142,11 +142,10 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getData());
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+      this.getData();
+    });
     this.prepareForm();
-    // this.getData();
     this.getProviders({ inicio: 1, text: '' });
   }
 
@@ -157,26 +156,12 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
   }
 
   getProviders(params: ListParams) {
-    // if (params.text == '') {
-    //   this.providerItems = new DefaultSelect(this.providerTestData, 5);
-    // } else {
-    //   const id = parseInt(params.text);
-    //   const item = [this.providerTestData.filter((i: any) => i.id == id)];
-    //   this.providerItems = new DefaultSelect(item[0], 1);
-    // }
     this.providerService.getAll(params).subscribe(data => {
       this.providerItems = new DefaultSelect(data.data, data.count);
     });
   }
 
   getData(id?: IComerProvider) {
-    // if (id) {
-    //   this.providerColumns = [this.providerTestData[0]];
-    //   this.totalItems = this.providerColumns.length;
-    // } else {
-    //   this.providerColumns = this.providerTestData;
-    //   this.totalItems = this.providerColumns.length;
-    // }
     if (id) {
       this.loading = true;
       this.providerService.getById(id.providerId).subscribe({
