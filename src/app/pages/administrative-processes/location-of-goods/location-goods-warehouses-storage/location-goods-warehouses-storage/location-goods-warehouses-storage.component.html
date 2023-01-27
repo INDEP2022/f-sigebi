@@ -1,9 +1,9 @@
-<form [formGroup]="form" class="form-material">
-  <app-card [header]="true">
-    <div class="ch-content" header>
-      <h5 class="title">Ubicacion de bienes en almacenes y bobedas</h5>
-    </div>
-    <div body>
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Ubicacion de bienes en almacenes y bobedas</h5>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
       <div class="row mt-5">
         <div class="col-md-9 col-sm-12 col-xs-12">
           <div class="row">
@@ -12,7 +12,8 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="good" />
+                  formControlName="good"
+                  (change)="loadGood()" />
               </form-field>
             </div>
             <div class="col-md-9 col-sm-12 col-xs-12">
@@ -41,19 +42,32 @@
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12">
           <form-radio label="Almacén">
-            <input type="radio" formControlName="radio" value="cat" />
+            <input
+              type="radio"
+              formControlName="radio"
+              value="cat"
+              (change)="onChangeType('almacen')" />
           </form-radio>
           <form-radio label="Bóveda">
-            <input type="radio" formControlName="radio" value="boveda" />
+            <input
+              type="radio"
+              formControlName="radio"
+              value="boveda"
+              (change)="onChangeType('boveda')" />
           </form-radio>
           <form-radio label="Nulo">
-            <input type="radio" formControlName="radio" [value]="null" />
+            <input
+              type="radio"
+              formControlName="radio"
+              [value]="null"
+              (change)="onChangeType('')" />
           </form-radio>
         </div>
       </div>
       <div class="row">
         <div class="col-md-6 col-sm-12 col-xs-12">
           <button
+            type="button"
             class="btn btn-success btn-sm active"
             (click)="massAssignment()">
             Asignación Masiva
@@ -65,18 +79,20 @@
           </button>
         </div>
       </div>
-    </div>
-  </app-card>
+    </form>
+  </div>
+</app-card>
 
-  <app-card [header]="true">
-    <div class="ch-content" header>
-      <h5 class="title">Almacén</h5>
-    </div>
-    <div body>
+<app-card [header]="true" *ngIf="typeLocation === 'almacen'">
+  <div class="ch-content" header>
+    <h5 class="title">Almacén</h5>
+  </div>
+  <div body>
+    <form [formGroup]="formWarehouse" class="form-material">
       <div class="row">
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
-            [control]="form.get('currentLocationWare')"
+            [control]="formWarehouse.get('currentLocationWare')"
             label="Ubicación Actual">
             <input
               type="text"
@@ -86,7 +102,7 @@
         </div>
         <div class="col-md-8 col-sm-12 col-xs-12">
           <form-field
-            [control]="form.get('currentDescriptionWare')"
+            [control]="formWarehouse.get('currentDescriptionWare')"
             label="Descripción">
             <input
               type="text"
@@ -98,7 +114,7 @@
       <div class="row mt-5">
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
-            [control]="form.get('currentLocationWare')"
+            [control]="formWarehouse.get('newLocationWare')"
             label="Nueva Ubicación">
             <input
               type="text"
@@ -108,7 +124,7 @@
         </div>
         <div class="col-md-8 col-sm-12 col-xs-12">
           <form-field
-            [control]="form.get('newDescriptionWare')"
+            [control]="formWarehouse.get('newDescriptionWare')"
             label="Descripción">
             <input
               type="text"
@@ -117,18 +133,20 @@
           </form-field>
         </div>
       </div>
-    </div>
-  </app-card>
+    </form>
+  </div>
+</app-card>
 
-  <app-card [header]="true">
-    <div class="ch-content" header>
-      <h5 class="title">Bóveda</h5>
-    </div>
-    <div body>
+<app-card [header]="true" *ngIf="typeLocation === 'boveda'">
+  <div class="ch-content" header>
+    <h5 class="title">Bóveda</h5>
+  </div>
+  <div body>
+    <form [formGroup]="formVault" class="form-material">
       <div class="row">
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
-            [control]="form.get('currentLocationVault')"
+            [control]="formVault.get('currentLocationVault')"
             label="Ubicación Actual">
             <input
               type="text"
@@ -138,7 +156,7 @@
         </div>
         <div class="col-md-8 col-sm-12 col-xs-12">
           <form-field
-            [control]="form.get('currentDescriptionVault')"
+            [control]="formVault.get('currentDescriptionVault')"
             label="Descripción">
             <input
               type="text"
@@ -150,7 +168,7 @@
       <div class="row mt-5">
         <div class="col-md-4 col-sm-12 col-xs-12">
           <form-field
-            [control]="form.get('currentLocationVault')"
+            [control]="formVault.get('currentLocationVault')"
             label="Nueva Ubicación">
             <input
               type="text"
@@ -160,7 +178,7 @@
         </div>
         <div class="col-md-8 col-sm-12 col-xs-12">
           <form-field
-            [control]="form.get('newDescriptionVault')"
+            [control]="formVault.get('newDescriptionVault')"
             label="Descripción">
             <input
               type="text"
@@ -169,6 +187,6 @@
           </form-field>
         </div>
       </div>
-    </div>
-  </app-card>
-</form>
+    </form>
+  </div>
+</app-card>

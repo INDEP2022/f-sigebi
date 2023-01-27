@@ -201,7 +201,7 @@ export class Repository<T> implements IRepository<T> {
     const fullRoute = this.buildRoute(route);
     return this.httpClient.put(`${fullRoute}`, formData);
   }
-    update5(
+  update5(
     route: string,
     id: number | string,
     id1: number | string,
@@ -210,4 +210,5 @@ export class Repository<T> implements IRepository<T> {
     const fullRoute = this.buildRoute(route);
     console.log(fullRoute);
     return this.httpClient.put(`${fullRoute}/${id}/${id1}`, formData);
+  }
 }
