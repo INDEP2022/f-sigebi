@@ -37,13 +37,22 @@ export class SatSubjectsRegisterService {
    */
 
   /**
+   * Obtener el listado de Estatus del proceso de acuerdo a los criterios de búsqueda
+   * @param params Parametos de busqueda de tipo @ListParams
+   * @returns
+   */
+  getStatusBySearch(params: ListParams) {
+    return this.procedureManagementRepository.getManagamentProcessSatArea(
+      params
+    );
+  }
+
+  /**
    * Obtener el resultado de la busqueda para el listado de gestion tramite SAT
    * @param params Parametos de busqueda de tipo @ListParams
    * @returns
    */
   getGestionTramiteSatBySearch(params: ListParams) {
-    console.log(params);
-
     return this.procedureManagementRepository.getManagamentProcessSat(params);
   }
 

@@ -30,11 +30,40 @@
           <input class="form-control" formControlName="issue" />
         </form-field>
 
-        <form-field
+        <!-- <form-field
           [control]="satForm.get('processStatus')"
-          label="Estatus"
+          label="Selecciona el Estatus"
           class="col-md-3">
-          <input class="form-control" formControlName="processStatus" />
+          <select class="form-control" formControlName="processStatus">
+            <option [value]="null">Seleccione un valor</option>
+            <option [value]="'OPI'">
+              (OPI) -- OFICIALIA DE PARTES INGRESADO
+            </option>
+            <option [value]="'OPP'">
+              (OPP) -- OFICIALIA DE PARTES PROCESO
+            </option>
+            <option [value]="'OPS'">(OPS) -- OFICIALIA DE PARTES SALIDA</option>
+            <option [value]="'DJI'">
+              (DJI) -- DICTAMINACIÓN JURIDICA INGRESADO
+            </option>
+            <option [value]="'DJP'">
+              (DJP) -- DICTAMINACIÓN JURIDICA PROCESO
+            </option>
+            <option [value]="'DJS'">
+              (DJS) -- DICTAMINACIÓN JURIDICA SALIDA
+            </option>
+          </select>
+        </form-field> -->
+        <form-field [control]="satForm.get('processStatus')" class="col-md-3">
+          <ngx-select
+            (fetchItems)="getStatusProcess($event)"
+            value="id"
+            bindLabel="description"
+            [form]="satForm"
+            control="processStatus"
+            [data]="processStatus"
+            label="Estatus del Proceso">
+          </ngx-select>
         </form-field>
       </div>
       <div class="row pt-4">
@@ -84,7 +113,8 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="mailboxSettings"
-              [source]="listGestionSat"></ng2-smart-table>
+              [source]="listGestionSat"
+              (userRowSelect)="selectRow($event.data)"></ng2-smart-table>
           </div>
         </div>
       </div>
@@ -146,8 +176,6 @@
         </div>
       </div>
       <hr class="row" />
-      CARGANDO
-      {{ loadingSatTransferencia }}
       <div class="row" style="max-height: 600px; overflow-y: scroll">
         <div class="col-md-12">
           <div

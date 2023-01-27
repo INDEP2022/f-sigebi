@@ -11,10 +11,15 @@ export class ProcedureManagementService {
   constructor(private procedureManagementRepository: Repository<any>) {}
 
   getManagamentProcessSat(body: ListParams) {
-    console.log(body);
-
     return this.procedureManagementRepository.getAllPaginated(
       this.baseURL + 'views/management-process-sat',
+      body
+    );
+  }
+
+  getManagamentProcessSatArea(body: ListParams) {
+    return this.procedureManagementRepository.getAllPaginated(
+      this.baseURL + 'management-area',
       body
     );
   }

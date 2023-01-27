@@ -73,8 +73,6 @@ export class SatInterfaceService {
    * @returns
    */
   getVSatTransferencia(body: ListParams) {
-    console.log(body);
-
     return this.satInterfaceRepository.getAllPaginated(
       'interfacesat/transfersat-v3/VSatTransferencia',
       body
