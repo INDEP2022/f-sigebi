@@ -30,6 +30,9 @@ export class GoodService {
     );
   }
 
+  update(id: string | number, formData: IGood): Observable<Object> {
+    return this.goodRepository.update(this.route.Good, id, formData);
+  }
   /*getGoodsByRecordId(recordId: number) {
     return this.goodRepository.getAllPaginated(
       'good/good/getidReferenceGood/' + recordId

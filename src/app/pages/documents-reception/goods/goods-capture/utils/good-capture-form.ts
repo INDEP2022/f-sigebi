@@ -1,187 +1,306 @@
 import { FormControl, Validators } from '@angular/forms';
 import { onlyNumbers } from 'src/app/common/validations/numeric.validators';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 export const GOOD_CAPTURE_FORM = {
   noPartida: new FormControl<string>(null, [
-    Validators.required,
     Validators.minLength(8),
     Validators.maxLength(8),
     onlyNumbers(),
   ]),
-  valorAvaluo: new FormControl('', [Validators.required]),
-  capitulo: new FormControl('', [Validators.required]),
-  partida: new FormControl('', [Validators.required]),
-  subpartida: new FormControl('', [Validators.required]),
-  ssubpartida: new FormControl('', [Validators.required]),
+  valorAvaluo: new FormControl<number>(null),
+  capitulo: new FormControl(''),
+  partida: new FormControl(''),
+  subpartida: new FormControl(''),
+  ssubpartida: new FormControl(''),
   noClasifBien: new FormControl<number>(null, [Validators.required]),
   type: new FormControl<string | number>(null, [Validators.required]),
   subtype: new FormControl<string | number>('', [Validators.required]),
   ssubtype: new FormControl<string | number>('', [Validators.required]),
   sssubtype: new FormControl<string | number>('', [Validators.required]),
-  unidadLigie: new FormControl('', [Validators.required]),
-  unidadMedida: new FormControl(null, [
-    Validators.required,
-    Validators.pattern(STRING_PATTERN),
-  ]),
+  unidadLigie: new FormControl({ value: null, disabled: true }),
+  unidadMedida: new FormControl(null, [Validators.required]),
   cantidad: new FormControl<number>(null, [
     Validators.required,
     Validators.min(1),
   ]),
   destino: new FormControl(null, [Validators.required]),
-  estadoConservacion: new FormControl(null, [Validators.required]),
-  noBien: new FormControl({ value: null, disabled: true }, [
-    Validators.required,
-  ]),
-  valRef: new FormControl(null, [
-    Validators.required,
-    Validators.pattern(STRING_PATTERN),
-  ]),
-  identifica: new FormControl(null, [
-    Validators.required,
-    Validators.pattern(STRING_PATTERN),
-  ]),
-  descripcion: new FormControl(null, [
-    Validators.required,
-    Validators.pattern(STRING_PATTERN),
-  ]),
-  fichaNumerario: new FormControl(null, [Validators.required]),
-  captura: new FormControl('', [Validators.required]),
-  cambioValor: new FormControl('', [Validators.required]),
-  requery: new FormControl(null, [Validators.required]),
-  satTipoExpediente: new FormControl(null, [Validators.required]),
-  satIndicator: new FormControl(null, [Validators.required]),
-  validFrac: new FormControl(null, [Validators.required]),
-  almacen: new FormControl(false, [Validators.required]),
-  entFed: new FormControl(null, [Validators.required]),
-  municipio: new FormControl(null, [Validators.required]),
-  ciudad: new FormControl(null, [Validators.required]),
-  localidad: new FormControl(null, [Validators.required]),
+  estadoConservacion: new FormControl(null),
+  noBien: new FormControl({ value: null, disabled: true }),
+  valRef: new FormControl(null),
+  identifica: new FormControl(null, [Validators.required]),
+  descripcion: new FormControl(null, [Validators.required]),
+  fichaNumerario: new FormControl(null),
+  captura: new FormControl(''),
+  cambioValor: new FormControl(''),
+  requery: new FormControl(null),
+  satTipoExpediente: new FormControl(null),
+  satIndicator: new FormControl(null),
+  validFrac: new FormControl(null),
+  almacen: new FormControl(false),
+  entFed: new FormControl(null),
+  municipio: new FormControl(null),
+  ciudad: new FormControl(null),
+  localidad: new FormControl(null),
   flyerNumber: new FormControl<string | number>(null),
-  observaciones: new FormControl<string | number>(null),
+  observaciones: new FormControl<string>(''),
   esEmpresa: new FormControl<boolean>(null),
   noExpediente: new FormControl<number>(null),
 };
 
 export const GOOD_FORM = {
-  val1: new FormControl<string | number>(null),
-  val2: new FormControl<string | number>(null),
-  val3: new FormControl<string | number>(null),
-  val4: new FormControl<string | number>(null),
-  val5: new FormControl<string | number>(null),
-  val6: new FormControl<string | number>(null),
-  val7: new FormControl<string | number>(null),
-  val8: new FormControl<string | number>(null),
-  val9: new FormControl<string | number>(null),
-  val10: new FormControl<string | number>(null),
-  val11: new FormControl<string | number>(null),
-  val12: new FormControl<string | number>(null),
-  val13: new FormControl<string | number>(null),
-  val14: new FormControl<string | number>(null),
-  val15: new FormControl<string | number>(null),
-  val16: new FormControl<string | number>(null),
-  val17: new FormControl<string | number>(null),
-  val18: new FormControl<string | number>(null),
-  val19: new FormControl<string | number>(null),
-  val20: new FormControl<string | number>(null),
-  val21: new FormControl<string | number>(null),
-  val22: new FormControl<string | number>(null),
-  val23: new FormControl<string | number>(null),
-  val24: new FormControl<string | number>(null),
-  val25: new FormControl<string | number>(null),
-  val26: new FormControl<string | number>(null),
-  val27: new FormControl<string | number>(null),
-  val28: new FormControl<string | number>(null),
-  val29: new FormControl<string | number>(null),
-  val30: new FormControl<string | number>(null),
-  val31: new FormControl<string | number>(null),
-  val32: new FormControl<string | number>(null),
-  val33: new FormControl<string | number>(null),
-  val34: new FormControl<string | number>(null),
-  val35: new FormControl<string | number>(null),
-  val36: new FormControl<string | number>(null),
-  val37: new FormControl<string | number>(null),
-  val38: new FormControl<string | number>(null),
-  val39: new FormControl<string | number>(null),
-  val40: new FormControl<string | number>(null),
-  val41: new FormControl<string | number>(null),
-  val42: new FormControl<string | number>(null),
-  val43: new FormControl<string | number>(null),
-  val44: new FormControl<string | number>(null),
-  val45: new FormControl<string | number>(null),
-  val46: new FormControl<string | number>(null),
-  val47: new FormControl<string | number>(null),
-  val48: new FormControl<string | number>(null),
-  val49: new FormControl<string | number>(null),
-  val50: new FormControl<string | number>(null),
-  val51: new FormControl<string | number>(null),
-  val52: new FormControl<string | number>(null),
-  val53: new FormControl<string | number>(null),
-  val54: new FormControl<string | number>(null),
-  val55: new FormControl<string | number>(null),
-  val56: new FormControl<string | number>(null),
-  val57: new FormControl<string | number>(null),
-  val58: new FormControl<string | number>(null),
-  val59: new FormControl<string | number>(null),
-  val60: new FormControl<string | number>(null),
-  val61: new FormControl<string | number>(null),
-  val62: new FormControl<string | number>(null),
-  val63: new FormControl<string | number>(null),
-  val64: new FormControl<string | number>(null),
-  val65: new FormControl<string | number>(null),
-  val66: new FormControl<string | number>(null),
-  val67: new FormControl<string | number>(null),
-  val68: new FormControl<string | number>(null),
-  val69: new FormControl<string | number>(null),
-  val70: new FormControl<string | number>(null),
-  val71: new FormControl<string | number>(null),
-  val72: new FormControl<string | number>(null),
-  val73: new FormControl<string | number>(null),
-  val74: new FormControl<string | number>(null),
-  val75: new FormControl<string | number>(null),
-  val76: new FormControl<string | number>(null),
-  val77: new FormControl<string | number>(null),
-  val78: new FormControl<string | number>(null),
-  val79: new FormControl<string | number>(null),
-  val80: new FormControl<string | number>(null),
-  val81: new FormControl<string | number>(null),
-  val82: new FormControl<string | number>(null),
-  val83: new FormControl<string | number>(null),
-  val84: new FormControl<string | number>(null),
-  val85: new FormControl<string | number>(null),
-  val86: new FormControl<string | number>(null),
-  val87: new FormControl<string | number>(null),
-  val88: new FormControl<string | number>(null),
-  val89: new FormControl<string | number>(null),
-  val90: new FormControl<string | number>(null),
-  val91: new FormControl<string | number>(null),
-  val92: new FormControl<string | number>(null),
-  val93: new FormControl<string | number>(null),
-  val94: new FormControl<string | number>(null),
-  val95: new FormControl<string | number>(null),
-  val96: new FormControl<string | number>(null),
-  val97: new FormControl<string | number>(null),
-  val98: new FormControl<string | number>(null),
-  val99: new FormControl<string | number>(null),
-  val100: new FormControl<string | number>(null),
-  val101: new FormControl<string | number>(null),
-  val102: new FormControl<string | number>(null),
-  val103: new FormControl<string | number>(null),
-  val104: new FormControl<string | number>(null),
-  val105: new FormControl<string | number>(null),
-  val106: new FormControl<string | number>(null),
-  val107: new FormControl<string | number>(null),
-  val108: new FormControl<string | number>(null),
-  val109: new FormControl<string | number>(null),
-  val110: new FormControl<string | number>(null),
-  val111: new FormControl<string | number>(null),
-  val112: new FormControl<string | number>(null),
-  val113: new FormControl<string | number>(null),
-  val114: new FormControl<string | number>(null),
-  val115: new FormControl<string | number>(null),
-  val116: new FormControl<string | number>(null),
-  val117: new FormControl<string | number>(null),
-  val118: new FormControl<string | number>(null),
-  val119: new FormControl<string | number>(null),
-  val120: new FormControl<string | number>(null),
+  val1: new FormControl(null),
+  val2: new FormControl(null),
+  val3: new FormControl(null),
+  val4: new FormControl(null),
+  val5: new FormControl(null),
+  val6: new FormControl(null),
+  val7: new FormControl(null),
+  val8: new FormControl(null),
+  val9: new FormControl(null),
+  val10: new FormControl(null),
+  val11: new FormControl(null),
+  val12: new FormControl(null),
+  val13: new FormControl(null),
+  val14: new FormControl(null),
+  val15: new FormControl(null),
+  val16: new FormControl(null),
+  val17: new FormControl(null),
+  val18: new FormControl(null),
+  val19: new FormControl(null),
+  val20: new FormControl(null),
+  val21: new FormControl(null),
+  val22: new FormControl(null),
+  val23: new FormControl(null),
+  val24: new FormControl(null),
+  val25: new FormControl(null),
+  val26: new FormControl(null),
+  val27: new FormControl(null),
+  val28: new FormControl(null),
+  val29: new FormControl(null),
+  val30: new FormControl(null),
+  val31: new FormControl(null),
+  val32: new FormControl(null),
+  val33: new FormControl(null),
+  val34: new FormControl(null),
+  val35: new FormControl(null),
+  val36: new FormControl(null),
+  val37: new FormControl(null),
+  val38: new FormControl(null),
+  val39: new FormControl(null),
+  val40: new FormControl(null),
+  val41: new FormControl(null),
+  val42: new FormControl(null),
+  val43: new FormControl(null),
+  val44: new FormControl(null),
+  val45: new FormControl(null),
+  val46: new FormControl(null),
+  val47: new FormControl(null),
+  val48: new FormControl(null),
+  val49: new FormControl(null),
+  val50: new FormControl(null),
+  val51: new FormControl(null),
+  val52: new FormControl(null),
+  val53: new FormControl(null),
+  val54: new FormControl(null),
+  val55: new FormControl(null),
+  val56: new FormControl(null),
+  val57: new FormControl(null),
+  val58: new FormControl(null),
+  val59: new FormControl(null),
+  val60: new FormControl(null),
+  val61: new FormControl(null),
+  val62: new FormControl(null),
+  val63: new FormControl(null),
+  val64: new FormControl(null),
+  val65: new FormControl(null),
+  val66: new FormControl(null),
+  val67: new FormControl(null),
+  val68: new FormControl(null),
+  val69: new FormControl(null),
+  val70: new FormControl(null),
+  val71: new FormControl(null),
+  val72: new FormControl(null),
+  val73: new FormControl(null),
+  val74: new FormControl(null),
+  val75: new FormControl(null),
+  val76: new FormControl(null),
+  val77: new FormControl(null),
+  val78: new FormControl(null),
+  val79: new FormControl(null),
+  val80: new FormControl(null),
+  val81: new FormControl(null),
+  val82: new FormControl(null),
+  val83: new FormControl(null),
+  val84: new FormControl(null),
+  val85: new FormControl(null),
+  val86: new FormControl(null),
+  val87: new FormControl(null),
+  val88: new FormControl(null),
+  val89: new FormControl(null),
+  val90: new FormControl(null),
+  val91: new FormControl(null),
+  val92: new FormControl(null),
+  val93: new FormControl(null),
+  val94: new FormControl(null),
+  val95: new FormControl(null),
+  val96: new FormControl(null),
+  val97: new FormControl(null),
+  val98: new FormControl(null),
+  val99: new FormControl(null),
+  val100: new FormControl(null),
+  val101: new FormControl(null),
+  val102: new FormControl(null),
+  val103: new FormControl(null),
+  val104: new FormControl(null),
+  val105: new FormControl(null),
+  val106: new FormControl(null),
+  val107: new FormControl(null),
+  val108: new FormControl(null),
+  val109: new FormControl(null),
+  val110: new FormControl(null),
+  val111: new FormControl(null),
+  val112: new FormControl(null),
+  val113: new FormControl(null),
+  val114: new FormControl(null),
+  val115: new FormControl(null),
+  val116: new FormControl(null),
+  val117: new FormControl(null),
+  val118: new FormControl(null),
+  val119: new FormControl(null),
+  val120: new FormControl(null),
 };
+
+export const GOOD_TO_SAVE: Partial<{
+  goodClassNumber: string;
+  description: string;
+  quantity: string;
+  observations: string;
+  identifier: string;
+  labelNumber: string;
+  unit: string;
+  referenceValue: string;
+  satDepartureNumber: string;
+  vaultNumber: string;
+  stateConservation: string;
+  fileNumber: string;
+  val1: string;
+  val2: string;
+  val3: string;
+  val4: string;
+  val5: string;
+  val6?: any;
+  val7: string;
+  val8: string;
+  val9: string;
+  val10: string;
+  val11: string;
+  val12?: any;
+  val13?: any;
+  val14: string;
+  val15: string;
+  val16: string;
+  val17: string;
+  val18?: any;
+  val19?: any;
+  val20?: any;
+  val21?: any;
+  val22?: any;
+  val23?: any;
+  val24?: any;
+  val25?: any;
+  val26?: any;
+  val27?: any;
+  val28?: any;
+  val29?: any;
+  val30?: any;
+  val31?: any;
+  val32?: any;
+  val33?: any;
+  val34?: any;
+  val35?: any;
+  val36?: any;
+  val37?: any;
+  val38?: any;
+  val39?: any;
+  val40?: any;
+  val41?: any;
+  val42?: any;
+  val43?: any;
+  val44?: any;
+  val45?: any;
+  val46?: any;
+  val47?: any;
+  val48?: any;
+  val49?: any;
+  val50?: any;
+  val51?: any;
+  val52?: any;
+  val53?: any;
+  val54?: any;
+  val55?: any;
+  val56?: any;
+  val57?: any;
+  val58?: any;
+  val59?: any;
+  val60?: any;
+  val61?: any;
+  val62?: any;
+  val63?: any;
+  val64?: any;
+  val65?: any;
+  val66?: any;
+  val67?: any;
+  val68?: any;
+  val69?: any;
+  val70?: any;
+  val71?: any;
+  val72?: any;
+  val73?: any;
+  val74?: any;
+  val75?: any;
+  val76?: any;
+  val77?: any;
+  val78?: any;
+  val79?: any;
+  val80?: any;
+  val81?: any;
+  val82?: any;
+  val83?: any;
+  val84?: any;
+  val85?: any;
+  val86?: any;
+  val87?: any;
+  val88?: any;
+  val89?: any;
+  val90?: any;
+  val91?: any;
+  val92?: any;
+  val93?: any;
+  val94?: any;
+  val95?: any;
+  val96?: any;
+  val97?: any;
+  val98?: any;
+  val99?: any;
+  val100?: any;
+  val101?: any;
+  val102?: any;
+  val103?: any;
+  val104?: any;
+  val105?: any;
+  val106?: any;
+  val107?: any;
+  val108?: any;
+  val109?: any;
+  val110?: any;
+  val111?: any;
+  val112?: any;
+  val113?: any;
+  val114?: any;
+  val115?: any;
+  val116?: any;
+  val117?: any;
+  val118?: any;
+  val119?: any;
+  val120?: any;
+}> = {};

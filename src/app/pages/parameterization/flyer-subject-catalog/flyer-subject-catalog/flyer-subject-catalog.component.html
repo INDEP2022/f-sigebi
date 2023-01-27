@@ -13,15 +13,39 @@
       <app-pagination [params]="params" [totalItems]="totalItems">
       </app-pagination>
     </div> -->
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-1">
+          <form-field [control]="form.get('id')" label="ID Asunto">
+            <input type="number" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('description')" label="Descripción">
+            <input
+              type="string"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <button
+            type="button"
+            class="btn btn-sm btn-primary active"
+            (click)="getAffairById()">
+            Buscar
+          </button>
+        </div>
+      </div>
+    </form>
+
     <div class="col-md-12">
       <div class="table-responsive">
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
-            [settings]="settings2"
-            [source]="affairType"
-            (deleteConfirm)="onDeleteConfirm($event)"
-            (createConfirm)="onAddConfirm($event)"
-            (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
+            [settings]="settings"
+            [source]="data"
+            (userRowSelect)="selectRow($event.data)"></ng2-smart-table>
         </div>
       </div>
       <app-pagination [params]="params" [totalItems]="totalItems">

@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IPerson } from 'src/app/core/models/catalogs/person.model';
 import { PersonService } from 'src/app/core/services/catalogs/person.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import Swal from 'sweetalert2';
 import { PersonFormComponent } from '../person-form/person-form.component';
 import { PERSON_COLUMNS } from './person-columns';
 
@@ -15,13 +16,13 @@ import { PERSON_COLUMNS } from './person-columns';
   styles: [],
 })
 export class PersonListComponent extends BasePage implements OnInit {
-  persons: IPerson[] = [];
+  person: IPerson[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(
     private personService: PersonService,
-    private BsModalService: BsModalService
+    private modalService: BsModalService
   ) {
     super();
     this.settings.columns = PERSON_COLUMNS;
@@ -31,14 +32,14 @@ export class PersonListComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getExample());
+      .subscribe(() => this.getPersons());
   }
 
-  getExample() {
+  getPersons() {
     this.loading = true;
     this.personService.getAll(this.params.getValue()).subscribe({
       next: response => {
-        this.persons = response.data;
+        this.person = response.data;
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -47,28 +48,32 @@ export class PersonListComponent extends BasePage implements OnInit {
   }
 
   openForm(person?: IPerson) {
-    let config: ModalOptions = {
-      initialState: {
-        person,
-        callback: (next: boolean) => {
-          if (next) this.getExample();
-        },
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      person,
+      callback: (next: boolean) => {
+        if (next) this.getPersons();
       },
-      class: 'modal-md modal-dialog-centered',
-      ignoreBackdropClick: true,
     };
-    this.BsModalService.show(PersonFormComponent, config);
+    this.modalService.show(PersonFormComponent, modalConfig);
   }
 
-  delete(person?: IPerson) {
+  showDeleteAlert(person: IPerson) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //this.personService.remove(person.id);
+        this.delete(person.id);
+        Swal.fire('Borrado', '', 'success');
       }
+    });
+  }
+
+  delete(id: number) {
+    this.personService.remove(id).subscribe({
+      next: () => this.getPersons(),
     });
   }
 }
