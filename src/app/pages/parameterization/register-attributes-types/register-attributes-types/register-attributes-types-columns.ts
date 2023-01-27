@@ -1,38 +1,50 @@
 export const REGISTER_ATT_TYPES_COLUMNS = {
-  cve: {
-    title: 'Clave',
+  classifGoodNumber: {
+    title: 'No. Clasificación Bien',
     sort: false,
   },
-  attributes: {
-    title: 'Atributos',
+  columnNumber: {
+    title: 'No. Columna',
+    sort: false,
+  },
+  attribute: {
+    title: 'Atributo',
     sort: false,
   },
   description: {
     title: 'Descripción',
     sort: false,
   },
-  typeDate: {
+  required: {
+    title: 'Requerido',
+    sort: false,
+  },
+  dataType: {
     title: 'Tipo de dato',
     sort: false,
   },
-  longMax: {
-    title: 'Long Máxima',
+  length: {
+    title: 'Largo',
     sort: false,
   },
   update: {
-    title: 'A',
+    title: 'Actualización',
     sort: false,
   },
-  unique: {
-    title: 'U',
+  accessKey: {
+    title: 'Clave acceso',
     sort: false,
   },
-  requerid: {
-    title: 'R',
-    sort: false,
-  },
-  tableSupport: {
+  tableCd: {
     title: 'Tabla de soporte',
+    sort: false,
+  },
+  typeAct: {
+    title: 'Tipo de Acta',
+    sort: false,
+  },
+  registrationNumber: {
+    title: 'No. Registro',
     sort: false,
   },
 };
