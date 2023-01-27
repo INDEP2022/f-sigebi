@@ -8,117 +8,117 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-2">
-          <app-delegation-shared [form]="form" [showSubdelegation]="false">
-          </app-delegation-shared>
+          <form-field [control]="form.get('id')" label="CVE Guardavalor">
+            <input type="text" class="form-control" formControlName="id" />
+          </form-field>
         </div>
-        <div class="col-md-4 mt-3">
-          <form-field
-            [control]="form.get('ubication')"
-            label="Ubicaci&oacute;n">
+        <div class="col-md-3">
+          <form-field [control]="form.get('description')" label="Descripción">
             <input
               type="text"
               class="form-control"
-              formControlName="ubication" />
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field [control]="form.get('location')" label="Ubicaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="location" />
           </form-field>
         </div>
         <div class="col-md-2">
-          <app-user-shared
-            [form]="form"
-            [userField]="'responsible'"
-            [label]="'Responsable'"></app-user-shared>
-        </div>
-        <div class="col-md-1 mt-3">
-          <form-field [control]="form.get('battery')" label="Bater&iacute;a">
-            <input type="text" class="form-control" formControlName="battery" />
-          </form-field>
-        </div>
-        <div class="col-md-1 mt-3">
-          <form-field [control]="form.get('generate')" label="Generar">
+          <form-field [control]="form.get('responsible')" label="Responsable">
             <input
               type="text"
               class="form-control"
-              formControlName="generate" />
+              formControlName="responsible" />
           </form-field>
         </div>
-        <div class="col-md-2 mt-3">
-          <form-field
-            [control]="form.get('backstage')"
-            label="Entre pa&ntilde;os con">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="backstage" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row mt-5 d-flex justify-content-center">
-        <div class="col-md-3">
+        <div class="col-md-2">
           <button
             class="btn btn-sm btn-secondary btn-block active"
-            (click)="show = !show">
+            [disabled]="!form.valid"
+            (click)="getSaveValuesById()">
             Generar Bater&iacute;as
           </button>
         </div>
       </div>
-      <div class="row" *ngIf="show">
-        <div class="col-md-4">
+    </form>
+
+    <div class="row" *ngIf="form.get('responsible').value !== null">
+      <div class="row">
+        <div class="col-md-12">
+          <hr />
           <div class="ch-content">
             <h5 class="title">Bater&iacute;as</h5>
+            <div class="col-md-5 buttons">
+              <app-columns-select
+                [(settings)]="settingsBattery"></app-columns-select>
+              <div>
+                <button
+                  (click)="openFormBattery()"
+                  class="btn btn-primary active btn-sm ml-3">
+                  Nuevo
+                </button>
+              </div>
+            </div>
           </div>
-          <div class="table-responsive">
+          <div class="table-responsive pt-3">
             <ng2-smart-table
               [settings]="settingsBattery"
-              [source]="data1"
-              (deleteConfirm)="onDeleteConfirm($event)"
-              (createConfirm)="onAddConfirm($event)"
-              (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
-          </div>
-          <div class="row pt-3">
-            <div class="col-md-6">
-              <h5 class="font-size-14">Total&#58;</h5>
-              <p class="text-muted">&#35;</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="ch-content">
-            <h5 class="title">Estantes</h5>
-          </div>
-          <div class="table-responsive">
-            <ng2-smart-table
-              [settings]="settingsLockers"
-              [source]="data2"
-              (deleteConfirm)="onDeleteConfirm($event)"
-              (createConfirm)="onAddConfirm($event)"
-              (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
-          </div>
-          <div class="row pt-3">
-            <div class="col-md-6">
-              <h5 class="font-size-14">Total&#58;</h5>
-              <p class="text-muted">&#35;</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="ch-content">
-            <h5 class="title">Casilleros</h5>
-          </div>
-          <div class="table-responsive">
-            <ng2-smart-table
-              [settings]="settingsShelf"
-              [source]="data3"
-              (deleteConfirm)="onDeleteConfirm($event)"
-              (createConfirm)="onAddConfirm($event)"
-              (editConfirm)="onSaveConfirm($event)"></ng2-smart-table>
-          </div>
-          <div class="row pt-3">
-            <div class="col-md-6">
-              <h5 class="font-size-14">Total&#58;</h5>
-              <p class="text-muted">&#35;</p>
-            </div>
+              [source]="dataBattery"
+              (edit)="openFormBattery($event.data)"></ng2-smart-table>
           </div>
         </div>
       </div>
-    </form>
+      <div class="row">
+        <div class="col-md-12">
+          <hr />
+          <div class="ch-content">
+            <h5 class="title">Estantes</h5>
+            <div class="col-md-5 buttons">
+              <app-columns-select
+                [(settings)]="settingsShelves"></app-columns-select>
+              <button
+                (click)="openFormShelves()"
+                class="btn btn-primary active btn-sm ml-3">
+                Nuevo
+              </button>
+            </div>
+          </div>
+          <div class="table-responsive pt-3">
+            <ng2-smart-table
+              [settings]="settingsShelves"
+              [source]="dataShelves"
+              (edit)="openFormShelves($event.data)"></ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <hr />
+          <div class="ch-content">
+            <h5 class="title">Casilleros</h5>
+            <div class="col-md-5 buttons">
+              <app-columns-select
+                [(settings)]="settingsLockers"></app-columns-select>
+              <button
+                (click)="openFormLocker()"
+                class="btn btn-primary active btn-sm ml-3">
+                Nuevo
+              </button>
+            </div>
+          </div>
+          <div class="table-responsive pt-3">
+            <ng2-smart-table
+              [settings]="settingsLockers"
+              [source]="dataLockers"
+              (edit)="openFormLocker($event.data)"></ng2-smart-table>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </app-card>

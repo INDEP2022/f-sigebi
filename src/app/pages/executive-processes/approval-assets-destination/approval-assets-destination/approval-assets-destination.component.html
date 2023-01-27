@@ -18,7 +18,7 @@
               maxlength="10" />
           </form-field>
         </div>
-        <div class="col-md-2" *ngIf="form.get('criminalCase').value !== null">
+        <div class="col-md-2">
           <form-field
             [control]="form.get('preliminaryInquiry')"
             label="Averiguaci&oacute;n Previa">
@@ -28,7 +28,7 @@
               formControlName="preliminaryInquiry" />
           </form-field>
         </div>
-        <div class="col-md-2" *ngIf="form.get('criminalCase').value !== null">
+        <div class="col-md-2">
           <form-field [control]="form.get('criminalCase')" label="Causa Penal">
             <input
               type="text"
@@ -36,7 +36,7 @@
               formControlName="criminalCase" />
           </form-field>
         </div>
-        <div class="col-md-2" *ngIf="form.get('criminalCase').value !== null">
+        <div class="col-md-2">
           <form-field
             [control]="form.get('circumstantialRecord')"
             label="Acta Circunstanciada">
@@ -46,7 +46,7 @@
               formControlName="circumstantialRecord" />
           </form-field>
         </div>
-        <div class="col-md-2" *ngIf="form.get('criminalCase').value !== null">
+        <div class="col-md-2">
           <form-field [control]="form.get('keyPenalty')" label="Toca penal">
             <input
               type="text"
@@ -56,8 +56,8 @@
         </div>
         <div class="col-md-2">
           <button
-            type="button"
             class="btn btn-sm btn-primary active"
+            [disabled]="!form.valid"
             (click)="getExpedientById()">
             Buscar
           </button>
