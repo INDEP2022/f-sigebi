@@ -18,14 +18,14 @@ export interface IComerProvider {
   preponderantAct: string;
   cp: string;
   contractNo: string;
-  esclient: string;
+  esCustomer?: string;
   bank: string;
   branch: string;
   checkingCta: string;
   key: string;
-  userCreation: string;
-  formPayment: string;
+  userCreation?: string;
+  formPayment?: string;
   webMail: string;
-  customerId: number;
-  references: string;
+  customerId?: number;
+  references?: string;
 }
