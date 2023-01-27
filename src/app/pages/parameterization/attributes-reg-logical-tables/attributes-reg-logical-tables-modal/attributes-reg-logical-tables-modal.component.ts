@@ -72,27 +72,27 @@ export class AttributesRegLogicalTablesModalComponent
     this.modalRef.hide();
   }
 
-  confirm() {
-    this.edit ? this.update() : this.create();
-  }
+  // confirm() {
+  //   this.update() ;
+  // }
 
-  create() {
-    this.loading = true;
-    this.tdesAtribService.create(this.tdescAtribForm.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-  }
+  // create() {
+  //   this.loading = true;
+  //   this.tdesAtribService.create(this.tdescAtribForm.value).subscribe({
+  //     next: data => this.handleSuccess(),
+  //     error: error => (this.loading = false),
+  //   });
+  // }
 
-  update() {
-    this.loading = true;
-    this.tdesAtribService
-      .update(this.tdescAtrib.idNmTable, this.tdescAtribForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
-  }
+  // update() {
+  //   this.loading = true;
+  //   this.tdesAtribService
+  //     .update(this.tdescAtrib.idNmTable, this.tdescAtribForm.value)
+  //     .subscribe({
+  //       next: data => this.handleSuccess(),
+  //       error: error => (this.loading = false),
+  //     });
+  // }
 
   handleSuccess() {
     const message: string = this.edit ? 'Actualizada' : 'Guardada';
