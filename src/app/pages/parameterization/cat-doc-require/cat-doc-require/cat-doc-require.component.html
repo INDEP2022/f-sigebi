@@ -24,6 +24,7 @@
         <div class="table-responsive">
           <div [class]="loading ? 'table-loading' : ''">
             <ng2-smart-table
+              [attr.class]="'table-bordered'"
               [settings]="settings"
               [source]="documentsForDictum"
               (edit)="openForm($event.data)"

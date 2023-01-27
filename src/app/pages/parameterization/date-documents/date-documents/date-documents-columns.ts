@@ -23,9 +23,12 @@ export const DATEDOCUMENTS_COLUMNS = {
 
     sort: false,
   },
-
   dateReceipt: {
-    title: 'Recibo',
+    title: 'Recibido',
+    sort: false,
+  },
+  notificationDate: {
+    title: 'Notificación',
     sort: false,
   },
   userReceipt: {

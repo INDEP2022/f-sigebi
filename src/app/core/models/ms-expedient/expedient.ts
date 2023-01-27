@@ -1,5 +1,5 @@
 export interface IExpedient {
-  idExpedient: string | number;
+  id: string | number;
   identifies: string;
   noCourt: string | number;
   preliminaryInquiry: string;
