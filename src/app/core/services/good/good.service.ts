@@ -20,7 +20,7 @@ export class GoodService implements ICrudMethods<IGood> {
     return this.goodRepository.getAllPaginated('good/good', params);
   }
 
-  getById(id: string | number): Observable<IGood> {
+  getById(id: string | number): Observable<any> {
     return this.goodRepository.getById('good/good', id);
   }
 
