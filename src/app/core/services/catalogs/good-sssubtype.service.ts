@@ -31,6 +31,12 @@ export class GoodSssubtypeService implements ICrudMethods<IGoodSssubtype> {
   update(id: string | number, model: IGoodSssubtype): Observable<Object> {
     return this.goodSssubtypeRepository.update(this.route, id, model);
   }
+  updateByIds(
+    ids: Partial<IGoodSssubtype>,
+    model: IGoodSssubtype
+  ): Observable<Object> {
+    return this.goodSssubtypeRepository.updateByIds(this.route, ids, model);
+  }
 
   remove(id: string | number): Observable<Object> {
     return this.goodSssubtypeRepository.remove(this.route, id);
