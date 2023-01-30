@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { ICountResponse } from '../../models/operations/count-response.model';
 
@@ -65,6 +66,18 @@ export class SatInterfaceService {
   getSatTransfer(body: any) {
     return this.satInterfaceRepository.create(
       'interfacesat/transfersat-v3/dynamicQuery',
+      body
+    );
+  }
+
+  /**
+   * Se obtiene el listado de una busqueda para gestion de tramite SAT
+   * @param body Params de tipo @ListParams
+   * @returns
+   */
+  getVSatTransferencia(body: ListParams) {
+    return this.satInterfaceRepository.getAllPaginated(
+      'interfacesat/transfersat-v3/VSatTransferencia',
       body
     );
   }
