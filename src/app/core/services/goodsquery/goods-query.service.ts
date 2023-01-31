@@ -8,7 +8,7 @@ import { MsGoodQueryRepository } from 'src/app/common/repository/repositories/ms
 import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IZipCodeGoodQuery } from '../../models/catalogs/zip-code.model';
-import { IAttribClassifGoods } from '../../models/ms-goods-query/goods-query-model';
+import { IAttribClassifGoods } from '../../models/ms-goods-query/attributes-classification-good';
 
 @Injectable({
   providedIn: 'root',

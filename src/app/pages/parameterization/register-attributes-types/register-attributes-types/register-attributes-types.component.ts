@@ -5,10 +5,12 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { REGISTER_ATT_TYPES_COLUMNS } from './register-attributes-types-columns';
 //models
@@ -16,15 +18,14 @@ import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.mode
 import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
 import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { IGoodsSubtype } from 'src/app/core/models/catalogs/goods-subtype.model';
-import { IAttribClassifGoods } from 'src/app/core/models/ms-goods-query/goods-query-model';
+import { IAttribClassifGoods } from 'src/app/core/models/ms-goods-query/attributes-classification-good';
 //Services
-import { LocalDataSource } from 'ng2-smart-table';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtype.service';
 import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
+import { RegisterAttributesTypesModalComponent } from '../register-attributes-types-modal/register-attributes-types-modal.component';
 
 @Component({
   selector: 'app-register-attributes-types',
@@ -105,10 +106,14 @@ export class RegisterAttributesTypesComponent
       subtype: [null, [Validators.required]],
       ssubtype: [null, [Validators.required]],
       sssubtype: [null, [Validators.required]],
-      attrib: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      attrib: [
+        { value: null, disabled: true },
+        Validators.pattern(NUMBERS_PATTERN),
+      ],
     });
   }
 
+  //Métodos para autocompletar los tipos
   getTypes(params: ListParams) {
     this.service.search(params).subscribe(
       data => {
@@ -210,6 +215,7 @@ export class RegisterAttributesTypesComponent
     console.log(goodSssubtypeChange);
     this.goodSssubType = goodSssubtypeChange;
     this.form.controls['attrib'].setValue(goodSssubtypeChange.numClasifGoods);
+    this.form.controls['id'].setValue(goodSssubtypeChange.id);
     this.sssubtypes = new DefaultSelect();
   }
 
@@ -220,24 +226,14 @@ export class RegisterAttributesTypesComponent
     this.form.updateValueAndValidity();
   }
 
-  //
-  getIdSssubType(): void {
+  // Métodos para llenar tabla con registros con el No. Atributo bien
+  getSssubtypeById(): void {
     let _id = this.form.controls['attrib'].value;
     this.loading = true;
-    this.goodSssubtypeService.getByIds(_id).subscribe(
-      response => {
-        console.log(response);
-        if (response !== null) {
-          this.form.patchValue(response);
-          this.form.updateValueAndValidity();
-          this.getAttribClassifGoodbySss(response.id);
-        } else {
-          this.alert('info', 'No se encontraron algunos registros', '');
-        }
-        this.loading = false;
-      },
-      error => (this.loading = false)
-    );
+    if (_id !== null) {
+      console.log('con datos');
+      this.getAttribClassifGoodbySss(_id);
+    }
   }
 
   getAttribClassifGoodbySss(id: string | number): void {
@@ -260,5 +256,17 @@ export class RegisterAttributesTypesComponent
       },
       error => (this.loading = false)
     );
+  }
+
+  openForm(attribClassifGood?: IAttribClassifGoods) {
+    let config: ModalOptions = {
+      initialState: {
+        attribClassifGood,
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(RegisterAttributesTypesModalComponent, config);
   }
 }
