@@ -50,6 +50,7 @@ export class RegisterKeysLogicalTablesComponent
         delete: false,
         position: 'right',
       },
+
       columns: { ...REGISTER_KEYS_LOGICAL_COLUMNS },
     };
   }
