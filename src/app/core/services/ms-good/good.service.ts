@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { GoodRepository } from 'src/app/common/repository/repositories/ms-good-repository';
+import { HttpService } from 'src/app/common/services/http.service';
 import { GoodEndpoints } from '../../../common/constants/endpoints/ms-good-endpoints';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IGood } from '../../models/ms-good/good';
@@ -10,10 +11,12 @@ import { IGood } from '../../models/ms-good/good';
 @Injectable({
   providedIn: 'root',
 })
-export class GoodService {
+export class GoodService extends HttpService {
   private readonly route = GoodEndpoints;
 
-  constructor(private goodRepository: GoodRepository<IGood>) {}
+  constructor(private goodRepository: GoodRepository<IGood>) {
+    super();
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<IGood>> {
     return this.goodRepository.getAll(this.route.Good, params);
