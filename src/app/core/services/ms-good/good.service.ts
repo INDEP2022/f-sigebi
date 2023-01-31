@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { GoodRepository } from 'src/app/common/repository/repositories/ms-good-repository';
 import { HttpService } from 'src/app/common/services/http.service';
 import { GoodEndpoints } from '../../../common/constants/endpoints/ms-good-endpoints';
 import { IListResponse } from '../../interfaces/list-response.interface';
@@ -12,42 +10,42 @@ import { IGood } from '../../models/ms-good/good';
   providedIn: 'root',
 })
 export class GoodService extends HttpService {
-  private readonly route = GoodEndpoints;
-
-  constructor(private goodRepository: GoodRepository<IGood>) {
+  constructor() {
     super();
+    this.microservice = GoodEndpoints.Good;
   }
 
   getAll(params?: ListParams): Observable<IListResponse<IGood>> {
-    return this.goodRepository.getAll(this.route.Good, params);
+    return this.get<IListResponse<IGood>>(GoodEndpoints.Good, params);
+  }
+
+  getById(id: string | number) {
+    const route = `${GoodEndpoints.Good}/${id}`;
+    return this.get(route);
+  }
+
+  create(good: IGood) {
+    return this.post(GoodEndpoints.Good, good);
+  }
+
+  update(id: string | number, good: IGood) {
+    const route = `${GoodEndpoints.Good}/${id}`;
+    return this.put(route, good);
+  }
+
+  remove(id: string | number) {
+    const route = `${GoodEndpoints.Good}/${id}`;
+    return this.delete(route);
   }
 
   getByExpedient(
-    id: string | number,
+    expedient: number | string,
     params?: ListParams
   ): Observable<IListResponse<IGood>> {
-    return this.goodRepository.getByExpedient(
-      this.route.SearchByExpedient,
-      id,
-      params
-    );
+    if (params) {
+      params['expedient'] = expedient;
+    }
+    const route = GoodEndpoints.SearchByExpedient;
+    return this.get<IListResponse<IGood>>(route, params);
   }
-
-  update(id: string | number, formData: IGood): Observable<Object> {
-    return this.goodRepository.update(this.route.Good, id, formData);
-  }
-
-  create(model: IGood): Observable<IGood> {
-    return this.goodRepository.create(this.route.Good, model);
-  }
-
-  remove(id: string | number): Observable<Object> {
-    return this.goodRepository.remove(this.route.Good, id);
-  }
-
-  /*getGoodsByRecordId(recordId: number) {
-    return this.goodRepository.getAllPaginated(
-      'good/good/getidReferenceGood/' + recordId
-    );
-  }*/
 }

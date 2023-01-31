@@ -16,7 +16,9 @@ export class PaginationComponent implements OnInit {
   @Input() params: BehaviorSubject<ListParams> = new BehaviorSubject(
     new ListParams()
   );
-  @Input() filterParams: BehaviorSubject<FilterParams>;
+  @Input() filterParams: BehaviorSubject<FilterParams> = new BehaviorSubject(
+    new FilterParams()
+  );
   @Input() totalItems: number = 0;
   pageSizeOptions: number[] = [10, 25, 50, 100];
   limit: FormControl = new FormControl(10);
