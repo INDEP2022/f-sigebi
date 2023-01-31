@@ -3,6 +3,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { CostCatalogService } from '../cost-catalog.service';
 import { ModalCostCatalogComponent } from '../modal-cost-catalog/modal-cost-catalog.component';
 import { COLUMNS } from './columns';
 
@@ -34,7 +35,10 @@ export class CostCatalogComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  constructor(private modalService: BsModalService) {
+  constructor(
+    private modalService: BsModalService,
+    private catalogService: CostCatalogService
+  ) {
     super();
     this.settings.columns = COLUMNS;
     this.settings.actions.delete = true;
@@ -42,6 +46,15 @@ export class CostCatalogComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.getPagination();
+    this.getCostCatalog();
+  }
+
+  getCostCatalog() {
+    this.catalogService.getCostCatalog().subscribe({
+      next: (resp: any) => {
+        console.log(resp);
+      },
+    });
   }
 
   openModal(context?: Partial<ModalCostCatalogComponent>) {
