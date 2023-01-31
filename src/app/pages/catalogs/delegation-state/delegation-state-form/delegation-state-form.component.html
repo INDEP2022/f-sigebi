@@ -6,12 +6,36 @@
     <form [formGroup]="delegationStateForm" class="form-material">
       <div class="row">
         <div class="col-md-4">
-          <form-field [control]="delegationStateForm.get('id')" label="ID">
-            <input type="number" class="form-control" formControlName="id" />
+          <form-field
+            [control]="delegationStateForm.get('regionalDelegation')"
+            label="ID">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="regionalDelegation" />
           </form-field>
         </div>
-
-        <div class="col-md-8">
+        <div class="col-md-4">
+          <form-field
+            [control]="delegationStateForm.get('stateCode')"
+            label="Código de Estado">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="stateCode" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="delegationStateForm.get('keyState')"
+            label="keyState">
+            <input
+              type="string"
+              class="form-control"
+              formControlName="keyState" />
+          </form-field>
+        </div>
+        <!-- <div class="col-md-8">
           <form-field [control]="delegationStateForm.get('stateCode')">
             <ngx-select
               [form]="delegationStateForm"
@@ -23,7 +47,7 @@
               (fetchItems)="getStates($event)"
               (change)="stateChange($event)"></ngx-select>
           </form-field>
-        </div>
+        </div> -->
       </div>
       <div class="row pt-5">
         <div class="col-md-3">
@@ -31,7 +55,7 @@
             [control]="delegationStateForm.get('version')"
             label="Versi&oacute;n">
             <input
-              type="number"
+              type="string"
               class="form-control"
               formControlName="version" />
           </form-field>
@@ -42,7 +66,7 @@
             [control]="delegationStateForm.get('status')"
             label="Status">
             <input
-              type="number"
+              type="string"
               class="form-control"
               formControlName="status" />
           </form-field>

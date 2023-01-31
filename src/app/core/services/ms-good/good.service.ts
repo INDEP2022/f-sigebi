@@ -33,6 +33,18 @@ export class GoodService extends HttpService {
     );
   }
 
+  update(id: string | number, formData: IGood): Observable<Object> {
+    return this.goodRepository.update(this.route.Good, id, formData);
+  }
+
+  create(model: IGood): Observable<IGood> {
+    return this.goodRepository.create(this.route.Good, model);
+  }
+
+  remove(id: string | number): Observable<Object> {
+    return this.goodRepository.remove(this.route.Good, id);
+  }
+
   /*getGoodsByRecordId(recordId: number) {
     return this.goodRepository.getAllPaginated(
       'good/good/getidReferenceGood/' + recordId

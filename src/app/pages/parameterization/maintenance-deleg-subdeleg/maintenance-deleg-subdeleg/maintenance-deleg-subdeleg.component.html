@@ -1,24 +1,55 @@
 <app-card [header]="true">
   <div header>
     <div class="ch-content">
-      <h5 class="title">Mantenimiento a Delegaciones y SubDelegaciones</h5>
-      <div class="col-md-5 buttons">
-        <div>
-          <button
-            class="btn btn-primary active btn-sm ml-3"
-            (click)="openForm()">
-            Nuevo
-          </button>
-        </div>
-      </div>
+      <h5 class="title">Mantenimiento a Delegaciones y Subddelegaciones</h5>
     </div>
   </div>
   <div body>
-    <div class="table-responsive">
-      <ng2-smart-table
-        [settings]="settings"
-        [source]="data"
-        (edit)="openForm($event.data)"></ng2-smart-table>
+    <div class="row">
+      <div class="form-material col-md-5">
+        <search-bar [params]="params"></search-bar>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div [class]="loading ? 'table-loading' : ''">
+          <div class="table-responsive">
+            <ng2-smart-table
+              [settings]="settings"
+              [source]="delegationList"
+              (userRowSelect)="rowsSelected($event)"></ng2-smart-table>
+          </div>
+          <app-pagination
+            [params]="params"
+            [totalItems]="totalItems"></app-pagination>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="ch-content" header>
+          <h5 class="title"></h5>
+          <div class="col-md-5 buttons">
+            <app-columns-select [(settings)]="settings2"></app-columns-select>
+            <div>
+              <button
+                (click)="openForm()"
+                class="btn btn-primary active btn-sm ml-3">
+                Nuevo
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="pt-3" [class]="loading ? 'table-loading' : ''">
+          <div class="table-responsive">
+            <ng2-smart-table
+              [settings]="settings2"
+              [source]="subDelegationList"
+              (edit)="openForm($event.data)"></ng2-smart-table>
+          </div>
+          <app-pagination
+            [params]="params2"
+            [totalItems]="totalItems2"></app-pagination>
+        </div>
+      </div>
     </div>
   </div>
 </app-card>

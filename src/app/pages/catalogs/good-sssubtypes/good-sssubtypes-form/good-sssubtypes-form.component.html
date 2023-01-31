@@ -21,7 +21,8 @@
             [data]="types"
             label="Tipo"
             bindLabel="nameGoodType"
-            value="id">
+            value="id"
+            (change)="getSubtypes($event)">
           </ngx-select>
         </div>
         <div class="col-md-12">
