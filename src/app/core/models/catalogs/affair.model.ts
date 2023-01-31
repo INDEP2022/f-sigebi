@@ -10,16 +10,16 @@ export interface IAffair {
   // modificationDate: Date | null;
   // idRegister: number | null;
   id: number;
-  description: string | null;
-  referralNoteType: string | null;
-  creationUser: string | null;
-  creationDate: Date | null;
-  editionUser: string | null;
-  modificationDate: Date | null;
-  versionUser: string | null;
-  status: string | null;
-  registerNumber: string | null;
-  version: string | null;
-  processDetonate: null;
-  clv: string | null;
+  description: string;
+  referralNoteType: string;
+  versionUser: string;
+  version: number;
+  processDetonate: string;
+  clv: string;
+  status: number;
+  registerNumber?: number;
+  creationUser?: string;
+  creationDate?: Date;
+  editionUser?: string;
+  modificationDate?: Date;
 }

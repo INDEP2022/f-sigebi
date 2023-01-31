@@ -19,20 +19,32 @@ export class AffairTypeService {
     return this.affairTypeRepository.getAll(this.route.Code, params);
   }
 
-  getByAffairId(
+  getAffairTypeById(
     code: string | number,
     params?: ListParams
   ): Observable<IListResponse<IAffairType>> {
-    return this.affairTypeRepository.getByAffairId(
+    return this.affairTypeRepository.getAffairTypeById(
       this.route.Code,
       code,
       params
     );
   }
 
-  update(code: string | number, formData: IAffairType): Observable<Object> {
-    return this.affairTypeRepository.update(this.route.Code, code, formData);
+  create(model: IAffairType): Observable<IAffairType> {
+    return this.affairTypeRepository.create(this.route.Create, model);
   }
+
+  update(
+    code: string | number,
+    referralNoteType: string | number,
+    model: IAffairType
+  ): Observable<Object> {
+    return this.affairTypeRepository.update(code, referralNoteType, model);
+  }
+
+  // remove(id: string | number): Observable<Object> {
+  //   return this.affairTypeRepository.remove(this.route, id);
+  // }
   /*getGoodsByRecordId(recordId: number) {
     return this.goodRepository.getAllPaginated(
       'good/good/getidReferenceGood/' + recordId

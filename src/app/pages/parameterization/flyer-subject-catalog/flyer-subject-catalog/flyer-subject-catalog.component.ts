@@ -1,15 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { FLYER_SUBJECT_CAT_COLUMNS2 } from './flyer-subject-catalog-column2';
+import { AFFAIR_COLUMNS } from './affair-column';
+import { AFFAIR_TYPE_COLUMNS } from './affair-type-column';
 //models
 import { IAffairType } from 'src/app/core/models/catalogs/affair-type-model';
+import { IAffair } from 'src/app/core/models/catalogs/affair.model';
 //service
-import { LocalDataSource } from 'ng2-smart-table';
 import { AffairTypeService } from 'src/app/core/services/affair/affair-type.service';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
+import { FlyerSubjectCatalogModelComponent } from '../flyer-subject-catalog-model/flyer-subject-catalog-model.component';
 
 @Component({
   selector: 'app-flyer-subject-catalog',
@@ -17,94 +21,106 @@ import { AffairService } from 'src/app/core/services/catalogs/affair.service';
   styles: [],
 })
 export class FlyerSubjectCatalogComponent extends BasePage implements OnInit {
-  form: FormGroup = new FormGroup({});
-  show = false;
+  affairList: IAffair[] = [];
+  affairTypeList: IAffairType[] = [];
+  affairs: IAffair;
 
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems2: number = 0;
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
 
   data: LocalDataSource = new LocalDataSource();
 
   rowSelected: boolean = false;
   selectedRow: any = null;
 
+  settings2;
+
   constructor(
     private affairTypeService: AffairTypeService,
     private affairService: AffairService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private modalService: BsModalService
   ) {
     super();
     this.settings = {
       ...this.settings,
       actions: false,
-      columns: { ...FLYER_SUBJECT_CAT_COLUMNS2 },
+      columns: { ...AFFAIR_COLUMNS },
+    };
+
+    this.settings2 = {
+      ...this.settings,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: false,
+        position: 'right',
+      },
+      columns: { ...AFFAIR_TYPE_COLUMNS },
     };
   }
 
   ngOnInit(): void {
-    this.prepareForm();
-    // this.params
-    //   .pipe(takeUntil(this.$unSubscribe))
-    //   .subscribe(() => this.getIaffairTypebyAffair());
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getAffairAll());
   }
 
-  private prepareForm() {
-    this.form = this.fb.group({
-      id: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+  getAffairAll() {
+    this.loading = true;
+
+    this.affairService.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        console.log(response);
+        this.affairList = response.data;
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+        console.log(error);
+      },
     });
   }
 
-  //traer asunto por id
-  getAffairById(): void {
-    let _id = this.form.controls['id'].value;
-    this.loading = true;
-    this.affairService.getById(_id).subscribe(
-      response => {
-        //TODO: Validate Response
-        if (response !== null) {
-          this.form.patchValue(response);
-          this.form.updateValueAndValidity();
-          this.getAffairTypeByAffair(response.id);
-          // this.getGoodsByExpedient(response.id);
-        } else {
-          //TODO: CHECK MESSAGE
-          this.alert('info', 'No se encontrarón registros', '');
-        }
-
-        this.loading = false;
-      },
-      error => (this.loading = false)
-    );
-  }
-
-  getAffairTypeByAffair(code: string | number): void {
-    this.params
+  rowsSelected(event: any) {
+    this.totalItems2 = 0;
+    this.affairTypeList = [];
+    this.affairs = event.data;
+    this.params2
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getAffairType(code));
+      .subscribe(() => this.getAffairType(this.affairs));
   }
 
-  getAffairType(code: string | number): void {
+  getAffairType(affair: IAffair) {
+    this.loading = true;
     this.affairTypeService
-      .getByAffairId(code, this.params.getValue())
-      .subscribe(
-        response => {
-          let data = response.data.map((item: IAffairType) => {});
-          this.data.load(data);
-          this.totalItems = response.count;
+      .getAffairTypeById(affair.id, this.params2.getValue())
+      .subscribe({
+        next: response => {
+          console.log(response);
+          this.affairTypeList = response.data;
+          this.totalItems2 = response.count;
           this.loading = false;
         },
-        error => (this.loading = false)
-      );
+        error: error => (this.loading = false),
+      });
   }
 
-  settingsChange($event: any): void {
-    this.settings = $event;
-  }
-
-  selectRow(row: any) {
-    console.log(row);
-    this.selectedRow = row;
-    this.rowSelected = true;
+  openForm(affairType?: IAffairType) {
+    console.log(affairType);
+    let affair = this.affairs;
+    let config: ModalOptions = {
+      initialState: {
+        affairType,
+        affair,
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(FlyerSubjectCatalogModelComponent, config);
   }
 }
