@@ -229,8 +229,8 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         link: '/pages/administrative-processes/request-numbering-change',
       },
       {
-        label: 'Cambio de Estatus',
-        link: '/pages/administrative-processes/change-of-status',
+        label: 'Cambio de indicadores de destino de bienes',
+        link: '/pages/administrative-processes/change-destination-goods-indicators',
       },
 
       {

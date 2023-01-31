@@ -30,6 +30,17 @@ export class GoodService {
     );
   }
 
+  getByWarehouse(
+    body: Object,
+    params?: ListParams
+  ): Observable<IListResponse<IGood>> {
+    return this.goodRepository.getByWarehouse(
+      'good/getGoodByWarehouse',
+      body,
+      params
+    );
+  }
+
   /*getGoodsByRecordId(recordId: number) {
     return this.goodRepository.getAllPaginated(
       'good/good/getidReferenceGood/' + recordId

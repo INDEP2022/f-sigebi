@@ -52,4 +52,18 @@ export class GoodRepository<T> implements IGoodMethods<T> {
     });
     return httpParams;
   }
+
+  getByWarehouse?(
+    route: string,
+    body: Object,
+    _params?: ListParams
+  ): Observable<IListResponse<T>> {
+    const fullRoute = `${environment.API_URL}good/api/v1/${route}`;
+    const params = this.makeParams(_params);
+    console.log(`${fullRoute}?${params}`);
+    return this.httpClient.post<IListResponse<T>>(
+      `${fullRoute}?${params}`,
+      body
+    );
+  }
 }

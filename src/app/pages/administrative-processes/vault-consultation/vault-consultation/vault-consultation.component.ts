@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ISafe } from 'src/app/core/models/catalogs/safe.model';
+import { SafeService } from 'src/app/core/services/catalogs/safe.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ModalListGoodsComponent } from '../modal-list-goods/modal-list-goods.component';
 
@@ -32,58 +34,19 @@ export interface ExapleGoods {
 export class VaultConsultationComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  vaults: ISafe[] = [];
   //Data Table
 
-  data: ExampleVault[] = [
-    {
-      number: 1,
-      description: 'Descripción 1',
-      location: 'Ubicacion 1',
-      responsible: 'Responsable 1',
-      entity: 'Entidad 1',
-      municipality: 'Municipio 1',
-      city: 'Ciudad 1',
-      locality: 'Localidad 1',
-      goods: [
-        {
-          numberGood: 1,
-          description: 'Descripción 1',
-          quantity: 1000,
-          dossier: 'Expediente 1',
-        },
-        {
-          numberGood: 2,
-          description: 'Descripción 2',
-          quantity: 2000,
-          dossier: 'Expediente 2',
-        },
-        {
-          numberGood: 3,
-          description: 'Descripción 3',
-          quantity: 3000,
-          dossier: 'Expediente 3',
-        },
-      ],
-    },
-    {
-      number: 2,
-      description: 'Descripción 2',
-      location: 'Ubicacion 2',
-      responsible: 'Responsable 2',
-      entity: 'Entidad 2',
-      municipality: 'Municipio 2',
-      city: 'Ciudad 2',
-      locality: 'Localidad 2',
-    },
-  ];
-
-  constructor(private modalService: BsModalService) {
+  constructor(
+    private modalService: BsModalService,
+    private safeService: SafeService
+  ) {
     super();
     this.settings = {
       ...this.settings,
       actions: false,
       columns: {
-        number: {
+        idSafe: {
           title: 'No',
           width: '10%',
           sort: false,
@@ -93,12 +56,12 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
           width: '20%',
           sort: false,
         },
-        location: {
+        ubication: {
           title: 'Ubicacion',
           width: '10%',
           sort: false,
         },
-        responsible: {
+        manager: {
           title: 'Responsable',
           width: '10%',
           sort: false,
@@ -108,17 +71,17 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
           width: '10%',
           sort: false,
         },
-        municipality: {
+        municipalityCode: {
           title: 'Municipio',
           width: '10%',
           sort: false,
         },
-        city: {
+        cityCode: {
           title: 'Ciudad',
           width: '10%',
           sort: false,
         },
-        locality: {
+        localityCode: {
           title: 'Localidad',
           width: '10%',
           sort: false,
@@ -127,10 +90,27 @@ export class VaultConsultationComponent extends BasePage implements OnInit {
     };
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getVaults());
+  }
+
+  getVaults() {
+    this.loading = true;
+    this.safeService.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        console.log(response);
+        this.vaults = response.data;
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
+  }
 
   select(event: any) {
-    event.data.goods
+    event.data
       ? this.openModal(event.data.goods)
       : this.alert('info', 'Ooop...', 'Esta Bóveda no contiene Bines');
   }
