@@ -1,4 +1,3 @@
-import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -17,6 +16,7 @@ import { BehaviorSubject, takeUntil } from 'rxjs';
 // Services
 import compareDesc from 'date-fns/compareDesc';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { FormFieldsToParamsService } from 'src/app/common/services/form-fields-to-params.service';
 import { SatSubjectsRegisterService } from '../service/sat-subjects-register.service';
 import { ISatSubjectsRegisterGestionSat } from './utils/interfaces/sat-subjects-register.gestion-sat.interface';
 import { ISatSubjectsRegisterSatTransferencia } from './utils/interfaces/sat-subjects-register.sat-transferencia.interface';
@@ -59,7 +59,7 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private satSubjectsRegisterService: SatSubjectsRegisterService,
     private excelService: ExcelService,
-    private datePipe: DatePipe
+    private formFieldstoParamsService: FormFieldsToParamsService
   ) {
     super();
   }
@@ -160,75 +160,10 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
   }
 
   /**
-   * Revisar el objeto que se pasa como parametro y se retorna el mismo objeto con los campos vacios si es que son null o undefined
-   * @param object Objeto del formulario
-   * @param params Se pasa el objeto donde se encuentran los parametros de la paginación
-   * @param validParams Listado de parametros en string a utilizar en la paginación
-   * @param pref Prefijo a utilizar en el filtro. Por ejemplo 'filter'
-   * @param nameDateBtw Nombre de el campo para el filtro de rango de fechas
-   * @returns
-   */
-  validarCampos(
-    object: any,
-    params: ListParams,
-    validParams: any[],
-    pref: string,
-    nameDateBtw?: string
-  ) {
-    let clearObj: ListParams = {};
-    for (const key in params) {
-      if (Object.prototype.hasOwnProperty.call(params, key)) {
-        const param = params[key];
-        if (param) {
-          if (validParams.includes(key)) {
-            // Guardar los parametros que se envian de la paginación
-            clearObj[key] = param;
-          }
-        }
-      }
-    }
-    let from: Date;
-    let to: Date;
-    for (const key in object) {
-      if (Object.prototype.hasOwnProperty.call(object, key)) {
-        var element = object[key];
-        // Guardar la fecha de inicio
-        if (key == 'from') {
-          from = element;
-        }
-        // Guardar la fecha máxima
-        if (key == 'to') {
-          if (element) {
-            to = element;
-          } else {
-            element = new Date();
-            to = element;
-          }
-        }
-        if (element) {
-          if (from && to) {
-            // Validar rangos de fechas
-            let fromParse = this.datePipe.transform(from, 'yyyy-MM-dd');
-            let toParse = this.datePipe.transform(to, 'yyyy-MM-dd');
-            clearObj[pref + '.' + nameDateBtw] = `$btw:${fromParse},${toParse}`;
-            from = null;
-            to = null;
-          }
-          if (key != 'from' && key != 'to') {
-            // Agregar campos a filtrar
-            clearObj[pref + '.' + key] = `$eq:${encodeURI(element)}`;
-          }
-        }
-      }
-    }
-    return clearObj;
-  }
-
-  /**
    * Obtener el listado de Gestion de Tramites
    */
   getGestionTramiteSat() {
-    let filtrados = this.validarCampos(
+    let filtrados = this.formFieldstoParamsService.validFieldsFormToParams(
       this.satForm.value,
       this.paramsGestionSat.value,
       this.filtroPaginado,
@@ -266,12 +201,13 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
    * Obtener el listado de la vista SAT Transferencia
    */
   async getSatTransferencia() {
-    let filtrados = await this.validarCampos(
-      this.satTransferForm.value,
-      this.paramsSatTransferencia.value,
-      this.filtroPaginado,
-      'filter'
-    );
+    let filtrados =
+      await this.formFieldstoParamsService.validFieldsFormToParams(
+        this.satTransferForm.value,
+        this.paramsSatTransferencia.value,
+        this.filtroPaginado,
+        'filter'
+      );
     this.satTransferForm.get('job').reset();
     this.satSubjectsRegisterService
       .getSatTransferenciaBySearch(filtrados)
