@@ -2,21 +2,35 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IAttribClassifGoods } from 'src/app/core/models/ms-goods-query/attributes-classification-good';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+//models
+import { IAttribClassifGoods } from 'src/app/core/models/ms-goods-query/attributes-classification-good';
+//services
+import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+
 @Component({
   selector: 'app-register-attributes-types-modal',
   templateUrl: './register-attributes-types-modal.component.html',
   styles: [],
 })
-export class RegisterAttributesTypesModalComponent implements OnInit {
+export class RegisterAttributesTypesModalComponent
+  extends BasePage
+  implements OnInit
+{
   title: string = 'Alta de atributos por tipo de bien';
   edit: boolean = false;
 
   attribClassifGoodForm: ModelForm<IAttribClassifGoods>;
   attribClassifGood: IAttribClassifGoods;
 
-  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {}
+  constructor(
+    private fb: FormBuilder,
+    private modalRef: BsModalRef,
+    private goodsQueryService: GoodsQueryService
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -72,15 +86,12 @@ export class RegisterAttributesTypesModalComponent implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      tableCd: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      tableCd: [null, [Validators.pattern(STRING_PATTERN)]],
       registrationNumber: [
         null,
         [
           Validators.required,
-          Validators.maxLength(8),
+          Validators.maxLength(12),
           Validators.minLength(1),
           Validators.pattern(NUMBERS_PATTERN),
         ],
@@ -88,7 +99,6 @@ export class RegisterAttributesTypesModalComponent implements OnInit {
       typeAct: [
         null,
         [
-          Validators.required,
           Validators.maxLength(8),
           Validators.minLength(1),
           Validators.pattern(NUMBERS_PATTERN),
@@ -102,6 +112,34 @@ export class RegisterAttributesTypesModalComponent implements OnInit {
   }
 
   close() {
+    this.modalRef.hide();
+  }
+
+  confirm() {
+    this.edit ? this.update() : this.create();
+  }
+
+  create() {
+    this.loading = true;
+    this.goodsQueryService.create(this.attribClassifGoodForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
+  }
+
+  update() {
+    this.loading = true;
+    this.goodsQueryService.update(this.attribClassifGoodForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
+  }
+
+  handleSuccess() {
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.loading = false;
+    this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
 }
