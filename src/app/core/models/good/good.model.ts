@@ -407,3 +407,33 @@ export interface NoExpediente {
   authorityNumber: string;
   insertionDatehc?: any;
 }
+
+//Bien Domiciliario
+export interface IDomicilies {
+  id?: number | null;
+  statusKey?: number | null;
+  municipalityKey?: string;
+  localityKey?: string;
+  exteriorNumber?: string;
+  interiorNumber?: string;
+  code?: string;
+  wayref1Key?: string;
+  wayref2Key?: string;
+  wayref3Key?: string;
+  description?: string;
+  latitude?: string;
+  length?: string;
+  wayName?: string;
+  wayOrigin?: string;
+  wayDestiny?: string;
+  wayChaining?: string;
+  userCreation?: string;
+  creationDate?: string;
+  userModification?: string;
+  modificationDate?: string;
+  settlementKey?: string;
+  versionid?: number | null;
+  requestIdid?: number | null;
+  warehouseAlias?: string;
+  regionalDelegationIdid?: number | null;
+}

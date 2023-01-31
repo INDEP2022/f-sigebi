@@ -148,7 +148,9 @@
             </tab>
             <tab heading="{{ tab2 }}">
               <!-- Registro de Solicitudes o bines -->
-              <app-assets *ngIf="requestRegistration"></app-assets>
+              <app-assets
+                *ngIf="requestRegistration"
+                [requestObject]="requestData"></app-assets>
               <!-- fin -->
               <!-- cumplimiento de verificacion -->
               <app-verify-compliance-tab
@@ -179,9 +181,8 @@
             <tab heading="{{ tab3 }}">
               <!-- Registro de Solicitud o bien  y Aprovacion de la solicitud-->
               <app-address-transferor-tab
-                *ngIf="
-                  requestRegistration || approvalProcess
-                "></app-address-transferor-tab>
+                *ngIf="requestRegistration || approvalProcess"
+                [requestObject]="requestData"></app-address-transferor-tab>
               <!-- fin -->
               <!-- cumplimiento de verificacion y clasificacion de bienes -->
               <app-expedients-tabs

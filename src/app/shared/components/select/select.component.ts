@@ -38,6 +38,7 @@ export class SelectComponent<T> implements OnInit {
   @Input() searchable: boolean = true;
   @Output() fetchItems = new EventEmitter<ListParams>();
   @Output() change = new EventEmitter<any>();
+  @Input() readonly: boolean = false;
   buffer: any[] = [];
   input$ = new Subject<string>();
   page: number = 1;

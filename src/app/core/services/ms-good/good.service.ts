@@ -12,8 +12,13 @@ import { IGood } from '../../models/ms-good/good';
 })
 export class GoodService {
   private readonly route = GoodEndpoints;
+  private readonly routeGood: string = GoodEndpoints.Good;
 
   constructor(private goodRepository: GoodRepository<IGood>) {}
+
+  create(formData: Object): Observable<IGood> {
+    return this.goodRepository.create(this.routeGood, formData);
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<IGood>> {
     return this.goodRepository.getAll(this.route.Good, params);

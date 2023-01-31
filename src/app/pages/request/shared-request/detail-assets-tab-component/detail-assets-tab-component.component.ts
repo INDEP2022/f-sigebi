@@ -16,12 +16,14 @@ import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IDomicile } from 'src/app/core/models/catalogs/domicile';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
+import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -34,12 +36,16 @@ import { SelectAddressComponent } from '../../transfer-request/tabs/records-of-r
 })
 export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
   //usado para cargar los adatos de los bienes en el caso de cumplimientos de bienes y clasificacion de bienes
-  @Input() detailAssets: ModelForm<any>;
+  @Input() requestObject: any;
+  @Input() detailAssets: ModelForm<any>; // bienes
   @Input() typeDoc: any;
+  @Input() isSave: boolean = false;
   bsModalRef: BsModalRef;
   request: IRequest;
+  stateOfRepublicName: string = '';
+  municipalityId: number = null;
 
-  domicileForm: ModelForm<any>;
+  domicileForm: ModelForm<IDomicile>;
   assetsForm: ModelForm<any>; //borrar
 
   selectSae = new DefaultSelect<any>();
@@ -47,10 +53,12 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
 
   goodTypeName: string = '';
   duplicity: boolean = false;
+  armor: boolean = false;
+  destinyLigie: string = '';
 
   //tipo de bien seleccionado
   otherAssets: boolean = false;
-  carsAssets: boolean = false;
+  carsAssets: boolean = true;
   boatAssets: boolean = false;
   jewelerAssets: boolean = false;
   aircraftAssets: boolean = false;
@@ -84,6 +92,9 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
   stateOfRepublicService = inject(StateOfRepublicService);
   municipeSeraService = inject(MunicipalityService);
   localityService = inject(LocalityService);
+  goodsQueryService = inject(GoodsQueryService);
+
+  isDisabled: boolean = true;
 
   constructor(private fb: FormBuilder, private modalServise: BsModalService) {}
 
@@ -94,13 +105,16 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
 
     this.detailAssets.controls['goodTypeId'].valueChanges.subscribe(
       (data: any) => {
-        console.log(this.detailAssets.getRawValue());
         if (data) {
           this.getTypeGood(this.detailAssets.controls['goodTypeId'].value);
           this.displayTypeTapInformation(Number(data));
         }
       }
     );
+
+    if (this.isSave === true) {
+      this.save();
+    }
   }
 
   ngOnInit(): void {
@@ -110,24 +124,24 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
     this.getDestinyTransfer(new ListParams());
     this.getPhysicalState(new ListParams());
     this.getConcervationState(new ListParams());
+    this.getReactiveFormCall();
 
-    //obtener solicitud
-    this.getRequest();
+    if (this.requestObject != undefined) {
+      this.domicileForm.controls['requestId'].setValue(this.requestObject.id);
+      this.domicileForm.controls['regionalDelegationId'].setValue(
+        this.requestObject.regionalDelegationId
+      );
+      this.getStateOfRepublic(this.requestObject.keyStateOfRepublic);
+      this.getMunicipaly(
+        new ListParams(),
+        this.requestObject.keyStateOfRepublic
+      );
+    }
 
     //console.log('detalle del objeto enviado');
     //console.log(this.detailAssets);
 
     //this.initInputs();
-    this.detailAssets.controls['transferentDestiny'].valueChanges.subscribe(
-      (data: any) => {
-        if (data) {
-          let value = this.selectDestinyTransfer.data.filter(
-            x => x.keyId === data
-          );
-          this.detailAssets.controls['destiny'].setValue(value[0].description);
-        }
-      }
-    );
   }
 
   initForm() {
@@ -261,20 +275,27 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
     });
 
     this.domicileForm = this.fb.group({
-      aliasWarehouse: ['DOMICILIO TRANSFERENTE'],
-      cveVia2: [null],
-      cveVia3: [null],
-      cveState: [null],
-      cveMunicipality: [null],
-      cveLocality: [null],
-      code: [null],
-      latitude: [null],
-      longitude: [null],
-      viaName: [null],
-      viaOrigin: [null],
-      numExt: [null],
+      id: [null],
+      warehouseAlias: ['DOMICILIO TRANSFERENTE'],
+      wayref2Key: [null],
+      wayref3Key: [null],
+      statusKey: [null],
+      municipalityKey: [null],
+      localityKey: [null],
+      code: [''],
+      latitude: [''],
+      length: [''], //por cambiar
+      wayName: [''],
+      wayOrigin: [''],
+      exteriorNumber: [''],
+      interiorNumber: [''],
+      wayDestiny: [''],
+      wayref1Key: [null],
+      wayChaining: [''],
+      description: [''],
+      regionalDelegationId: [null],
+      requestId: [null],
     });
-
     //this.assetsForm.controls['typeAsset'].disable();
     //this.assetsForm.disable();
     //this.assetsForm.controls['typeAsset'].enable();
@@ -333,9 +354,10 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
     });
   }
 
-  getLocality(params: ListParams, keyState?: number) {
+  getLocality(params: ListParams, municipalityId?: number, stateKey?: number) {
     params.limit = 20;
-    params['stateKey'] = keyState;
+    params['municipalityId'] = municipalityId;
+    params['stateKey'] = stateKey;
     this.localityService.getAll(params).subscribe({
       next: data => {
         this.selectLocality = new DefaultSelect(data.data, data.count);
@@ -346,7 +368,19 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
     });
   }
 
-  getCP(event: any) {}
+  getCP(params: ListParams, keyTownship?: number, keyState?: number) {
+    params.limit = 20;
+    params['filter.keyTownship'] = `$eq:${keyTownship}`;
+    params['filter.keyState'] = `$eq:${keyState}`;
+    this.goodsQueryService.getZipCode(params).subscribe({
+      next: data => {
+        this.selectCP = new DefaultSelect(data.data, data.count);
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
+  }
 
   getBrand(event: any) {}
 
@@ -361,10 +395,17 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
   getTypeUseAirCrafte(event: any) {}
 
   modifyResponse(event: any) {
-    console.log(event.currentTarget.checked);
     let checked = event.currentTarget.checked;
     let value = checked === true ? 'Y' : 'N';
     this.detailAssets.controls['duplicity'].setValue(value);
+  }
+
+  handleArmor(event: any) {
+    if (event.currentTarget.checked) {
+      let checked = event.currentTarget.checked;
+      let value = checked === true ? 'Y' : 'N';
+      this.detailAssets.controls['armor'].setValue(value);
+    }
   }
 
   initInputs(): void {
@@ -403,7 +444,7 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
     if (keyState != null) {
       this.stateOfRepublicService.getById(keyState).subscribe({
         next: data => {
-          this.domicileForm.controls['cveState'].setValue(data.descCondition);
+          this.domicileForm.controls['statusKey'].setValue(data.descCondition);
         },
         error: error => {
           console.log(error);
@@ -412,27 +453,10 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
     }
   }
 
-  //obtener solicitud por el Id
-  getRequest() {
-    return new Promise((resolve, reject) => {
-      const id = this.router.snapshot.paramMap.get('id');
-      this.requestService.getById(id).subscribe({
-        next: data => {
-          resolve(data as IRequest);
-        },
-      });
-    }).then((data: any) => {
-      this.request = data.data;
-      this.getStateOfRepublic(this.request.keyStateOfRepublic);
-      this.getMunicipaly(new ListParams(), this.request.keyStateOfRepublic);
-      this.getLocality(new ListParams(), this.request.keyStateOfRepublic);
-    });
-  }
-
   openSelectAddressModal(): void {
     let config: ModalOptions = {
       initialState: {
-        address: '',
+        request: this.requestObject,
         callback: (next: boolean) => {
           //if (next) this.getExample();
         },
@@ -444,17 +468,25 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
 
     this.bsModalRef.content.event.subscribe((res: any) => {
       //cargarlos en el formulario
-      console.log(res);
-      this.assetsForm.controls['address'].enable();
-      //this.assetsForm.controls['address'].get('longitud').enable();
-      //this.requestForm.get('receiUser').patchValue(res.user);
+      this.stateOfRepublicName = res.stateOfRepublicName;
+
+      delete res.stateOfRepublicName;
+      this.domicileForm.patchValue(res);
+      this.domicileForm.controls['municipalityKey'].setValue(
+        res.municipalityKey
+      );
+      this.domicileForm.controls['localityKey'].setValue(res.localityKey);
+      this.domicileForm.controls['code'].setValue(res.code);
+
+      //this.assetsForm.controls['address'].enable();
+
+      this.isDisabled = false;
     });
   }
 
   getTypeGood(id: number) {
     this.typeRelevantSevice.getById(id).subscribe({
       next: (data: any) => {
-        console.log('typeGood:', data);
         this.goodTypeName = data.description;
       },
     });
@@ -462,27 +494,74 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
 
   displayTypeTapInformation(typeRelevantId: number) {
     /*otherAssets: boolean = false;
-    
-    boatAssets: boolean = false;
-    jewelerAssets: boolean = false;
-    aircraftAssets: boolean = false;
+
     especialMachineryAssets: boolean = false;
     mineralsAssets: boolean = false;
-    immovablesAssets: boolean = false;
+
     manejeAssets: boolean = false; //diverso
     foodAndDrink: boolean = false; //diverso*/
     switch (typeRelevantId) {
+      case 1:
+        this.immovablesAssets = true;
+        break;
       case 2:
         this.carsAssets = true;
         break;
-
+      case 3:
+        this.boatAssets = true;
+        break;
+      case 4:
+        this.aircraftAssets = true;
+        break;
+      case 5:
+        this.jewelerAssets = true;
+        break;
       default:
         break;
     }
   }
 
   save(): void {
-    console.log('guardar los atributos de bien');
-    console.log(this.assetsForm);
+    console.log('Good: ', this.detailAssets.getRawValue());
+    console.log('Domicilie: ', this.domicileForm.getRawValue());
+    this.isSave = false;
+  }
+
+  getReactiveFormCall() {
+    this.detailAssets.controls['transferentDestiny'].valueChanges.subscribe(
+      (data: any) => {
+        if (data) {
+          let value = this.selectDestinyTransfer.data.filter(
+            x => x.keyId === data
+          );
+          this.destinyLigie = value[0].description;
+          this.detailAssets.controls['destiny'].setValue(data);
+        }
+      }
+    );
+
+    this.domicileForm.controls['municipalityKey'].valueChanges.subscribe(
+      (data: any) => {
+        if (data) {
+          this.municipalityId = data;
+          this.getLocality(
+            new ListParams(),
+            data,
+            this.requestObject.keyStateOfRepublic
+          );
+        }
+      }
+    );
+    this.domicileForm.controls['localityKey'].valueChanges.subscribe(
+      (data: any) => {
+        if (data) {
+          this.getCP(
+            new ListParams(),
+            this.municipalityId,
+            this.requestObject.keyStateOfRepublic
+          );
+        }
+      }
+    );
   }
 }
