@@ -32,7 +32,7 @@
         <confirm-button
           [type]="'button'"
           [disabled]="!form.valid"
-          (click)="close()"></confirm-button>
+          (click)="edit ? PutClaim() : postClaim()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
