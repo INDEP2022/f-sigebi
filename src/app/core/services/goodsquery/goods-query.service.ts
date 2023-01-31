@@ -85,4 +85,22 @@ export class GoodsQueryService {
       params
     );
   }
+
+  create(model: IAttribClassifGoods): Observable<IAttribClassifGoods> {
+    return this.attribClassifGoodMethodsRepository.create(
+      this.attribClassifGoodRoute,
+      model
+    );
+  }
+
+  update(model: IAttribClassifGoods): Observable<Object> {
+    return this.attribClassifGoodMethodsRepository.update(
+      this.attribClassifGoodRoute,
+      model
+    );
+  }
+
+  // remove(id: string | number): Observable<Object> {
+  //   return this.attribClassifGoodMethodsRepository.remove(this.attribClassifGoodRoute, id);
+  // }
 }

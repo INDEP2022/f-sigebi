@@ -41,6 +41,8 @@ export class RegisterAttributesTypesComponent
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
+  show: boolean = false;
+
   dataAttribClassifGood: LocalDataSource = new LocalDataSource();
 
   goodSssubType: IGoodSssubtype;

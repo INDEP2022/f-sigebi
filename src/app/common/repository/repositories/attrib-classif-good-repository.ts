@@ -58,9 +58,9 @@ export class AttribClassifGoodMethodsRepository<T>
   //  update(route: string, formData: Object) { //FUNCIONA
   //   return this.httpClient.put(`${this.ms}${route}`, formData);
   // }
-  update(route: string, id: number | string, formData: Object) {
+  update(route: string, formData: Object) {
     const fullRoute = `${this.ms}/${route}`;
-    return this.httpClient.put(`${fullRoute}/${id}`, formData);
+    return this.httpClient.put(`${fullRoute}`, formData);
   }
 
   create(route: string, formData: Object) {
