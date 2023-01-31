@@ -120,7 +120,6 @@ export class BrandsSubBrandsListComponent extends BasePage implements OnInit {
     this.dataBrands = [];
     this.brandService.getBrands().subscribe({
       next: (brands: any) => {
-        console.log(brands);
         if (brands) {
           brands.data.forEach((item: any) => {
             this.dataBrands.push({
@@ -132,8 +131,6 @@ export class BrandsSubBrandsListComponent extends BasePage implements OnInit {
 
           this.brandService.getSubBrands().subscribe({
             next: (brandSub: any) => {
-              console.log(brandSub);
-
               brandSub.data.forEach((item: any) => {
                 this.dataBrands.forEach(data => {
                   if (item.idBrand.id === data.brand) {
@@ -144,7 +141,6 @@ export class BrandsSubBrandsListComponent extends BasePage implements OnInit {
                   }
                 });
               });
-              console.log(this.dataBrands);
               this.data.load(this.dataBrands);
             },
           });
