@@ -86,6 +86,8 @@ export class ClassifyAssetsTabComponent
   initForm() {
     const requestId = Number(this.route.snapshot.paramMap.get('id'));
     this.classiGoodsForm = this.fb.group({
+      id: [null],
+      goodId: [null],
       ligieSection: [null],
       ligieChapter: [null],
       ligieLevel1: [null],
@@ -345,11 +347,13 @@ export class ClassifyAssetsTabComponent
     this.isSave = true;
     const goods = this.classiGoodsForm.getRawValue();
     console.log(goods);
-
+    //var action = goods.goodId === null? this.goodService.create(good);
     /**/
   }
 
   createGood(good: any) {
+    var action = this.goodService.create(good);
+
     this.goodService.create(good).subscribe({
       next: (data: any) => {
         if (data.statusCode != null) {
@@ -373,6 +377,8 @@ export class ClassifyAssetsTabComponent
       },
     });
   }
+
+  updateGood(good: any) {}
 
   getReactiveFormActions() {
     this.classiGoodsForm.controls['ligieSection'].valueChanges.subscribe(
@@ -453,11 +459,13 @@ export class ClassifyAssetsTabComponent
 
     this.classiGoodsForm.controls['ligieLevel4'].valueChanges.subscribe(
       (dataLevel4: any) => {
-        const relevantTypeId = this.getRelevantTypeId(
-          this.selectLevel4.data,
-          dataLevel4
-        );
-        this.setRelevantTypeId(relevantTypeId);
+        if (dataLevel4 !== null) {
+          const relevantTypeId = this.getRelevantTypeId(
+            this.selectLevel4.data,
+            dataLevel4
+          );
+          this.setRelevantTypeId(relevantTypeId);
+        }
       }
     );
   }
