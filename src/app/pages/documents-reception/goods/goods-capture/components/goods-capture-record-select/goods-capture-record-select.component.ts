@@ -59,7 +59,7 @@ export class GoodsCaptureRecordSelectComponent
   }
 
   handleError(error: HttpErrorResponse) {
-    if (error.status === 404) {
+    if (error.status <= 404) {
       this.onLoadToast('error', 'Error', EXPEDIENT_NOT_FOUND);
     }
   }
