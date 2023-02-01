@@ -5,6 +5,7 @@ import { ICrudMethods } from 'src/app/common/repository/interfaces/crud-methods'
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Repository } from 'src/app/common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { ITables } from '../../models/catalogs/dinamic-tables.model';
 import { ITvalTable5 } from '../../models/catalogs/tval-Table5.model';
 
 @Injectable({
@@ -13,8 +14,21 @@ import { ITvalTable5 } from '../../models/catalogs/tval-Table5.model';
 export class TvalTable5Service implements ICrudMethods<ITvalTable5> {
   private readonly route: string = ENDPOINT_LINKS.DinamicTablesName;
   private readonly route1: string = ENDPOINT_LINKS.DinamicTables;
-  constructor(private Tvaltablas1Repository: Repository<ITvalTable5>) {}
+  constructor(
+    private Tvaltablas1Repository: Repository<ITvalTable5>,
+    private TvaltablasRepository: Repository<ITables>
+  ) {}
 
+  getById2(
+    id: string | number,
+    params?: ListParams
+  ): Observable<IListResponse<ITables>> {
+    return this.TvaltablasRepository.getById4(
+      `${this.route1}/type-table`,
+      id,
+      params
+    );
+  }
   getById4(
     id: string | number,
     params?: ListParams
