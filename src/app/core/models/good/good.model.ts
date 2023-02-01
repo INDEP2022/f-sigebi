@@ -104,6 +104,7 @@ export interface IGood {
   worthReference?: any;
   fecRegInsertHc?: any;
   processExtDom: string;
+  extDomProcess?: string;
   idRequest?: any;
   idTypeGood?: any;
   idSubtypeGood?: any;
