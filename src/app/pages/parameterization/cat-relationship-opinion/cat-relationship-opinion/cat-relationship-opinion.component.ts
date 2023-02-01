@@ -1,12 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { AFFAIR_COLUMNS } from './relationship-opinion-columns';
 //models
+import { IAffairType } from 'src/app/core/models/catalogs/affair-type-model';
 import { IAffair } from 'src/app/core/models/catalogs/affair.model';
 //Services
+import { LocalDataSource } from 'ng2-smart-table';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { AffairTypeService } from 'src/app/core/services/affair/affair-type.service';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 
 @Component({
@@ -18,16 +22,17 @@ export class CatRelationshipOpinionComponent
   extends BasePage
   implements OnInit
 {
-  form: FormGroup = new FormGroup({});
+  affairForm: ModelForm<IAffair>;
+  data: LocalDataSource = new LocalDataSource();
+
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-  // selectedAffair: any = null;
-  // affairItems = new DefaultSelect();
 
-  affair: IAffair[] = [];
-  // @Output() refresh = new EventEmitter<true>();
-
-  constructor(private fb: FormBuilder, private affairService: AffairService) {
+  constructor(
+    private fb: FormBuilder,
+    private affairService: AffairService,
+    private affairTypeService: AffairTypeService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -42,148 +47,55 @@ export class CatRelationshipOpinionComponent
   }
 
   ngOnInit(): void {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getAffair());
+    this.prepareForm();
   }
 
-  getAffair() {
-    this.loading = true;
-    this.affairService.getAll(this.params.getValue()).subscribe({
-      next: response => {
-        this.affair = response.data;
-        this.totalItems = response.count;
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
+  private prepareForm() {
+    this.affairForm = this.fb.group({
+      id: [null, [Validators.required]],
+      description: [{ value: null, disabled: true }],
     });
   }
 
-  // ngOnInit(): void {
-  //   this.prepareForm();
-  //   this.getAffair({ inicio: 1, text: '' });
-  //   this.getPagination();
-  // }
+  getAffairById(): void {
+    let _id = this.affairForm.controls['id'].value;
+    this.loading = true;
+    this.affairService.getById(_id).subscribe(
+      response => {
+        //TODO: Validate Response
+        if (response !== null) {
+          this.affairForm.patchValue(response);
+          this.affairForm.updateValueAndValidity();
+          this.getTypesByAffairId(response.id);
+        } else {
+          //TODO: CHECK MESSAGE
+          this.alert('info', 'No se encontraron registros', '');
+        }
 
-  // private prepareForm() {
-  //   this.form = this.fb.group({
-  //     idAffair: [null, [Validators.required]],
-  //     good: [null, [Validators.required]],
-  //   });
-  // }
+        this.loading = false;
+      },
+      error => (this.loading = false)
+    );
+  }
 
-  // getPagination() {
-  //   this.columns = this.data2;
-  //   this.totalItems = this.columns.length;
-  // }
+  getTypesByAffairId(id: string | number): void {
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getAffairTypes(id));
+  }
 
-  // data: any[] = [
-  //   {
-  //     id: 'PUESTA A DISPOSICIÓN',
-  //     type: 'Tipo de volante 01',
-  //     good: true,
-  //     user: true,
-  //   },
-  //   {
-  //     id: 'DEVOLUCIÓN DE BIENES ASEGURADOS',
-  //     type: 'Tipo de volante 02',
-  //     good: true,
-  //     user: true,
-  //   },
-  //   {
-  //     id: 'AMPARO CONTRA EL SAE',
-  //     type: 'Tipo de volante 03',
-  //     good: true,
-  //     user: true,
-  //   },
-  // ];
-
-  // data2 = [
-  //   {
-  //     idD: 10,
-  //     name: 'DICTAMEN 01',
-  //     d: false,
-  //     b: true,
-  //     u: true,
-  //     i: true,
-  //     e: false,
-  //   },
-  //   {
-  //     idD: 20,
-  //     name: 'DICTAMEN 02',
-  //     d: true,
-  //     b: true,
-  //     u: false,
-  //     i: true,
-  //     e: false,
-  //   },
-  //   {
-  //     idD: 30,
-  //     name: 'DICTAMEN 03',
-  //     d: false,
-  //     b: false,
-  //     u: true,
-  //     i: true,
-  //     e: false,
-  //   },
-  //   {
-  //     idD: 40,
-  //     name: 'DICTAMEN 04',
-  //     d: false,
-  //     b: true,
-  //     u: false,
-  //     i: true,
-  //     e: true,
-  //   },
-  // ];
-
-  // getAffair(params: ListParams) {
-  //   if (params.text == '') {
-  //     this.affairItems = new DefaultSelect(this.data, 3);
-  //   } else {
-  //     const id = parseInt(params.text);
-  //     const item = [this.data.filter((i: any) => i.id == id)];
-  //     this.affairItems = new DefaultSelect(item[0], 1);
-  //   }
-  // }
-
-  // selectAffair(event: any) {
-  //   this.selectedAffair = event;
-  // }
-
-  // onSaveConfirm(event: any) {
-  //   event.confirm.resolve();
-  //   this.onLoadToast('success', 'Elemento Actualizado', '');
-  // }
-
-  // onAddConfirm(event: any) {
-  //   event.confirm.resolve();
-  //   this.onLoadToast('success', 'Elemento Creado', '');
-  // }
-
-  // onDeleteConfirm(event: any) {
-  //   event.confirm.resolve();
-  //   this.onLoadToast('success', 'Elemento Eliminado', '');
-  // }
-
-  // create() {
-  //   this.data1.getElements().then((data: any) => {
-  //     this.loading = true;
-  //     this.handleSuccess();
-  //   });
-  // }
-
-  // confirm() {
-  //   this.edit ? this.update() : this.create();
-  // }
-
-  // handleSuccess() {
-  //   this.loading = false;
-  //   this.refresh.emit(true);
-  // }
-
-  // update() {
-  //   this.loading = true;
-  //   this.handleSuccess();
-  // }
+  getAffairTypes(id: string | number): void {
+    this.affairTypeService.getByAffair(id, this.params.getValue()).subscribe(
+      response => {
+        //console.log(response);
+        let data = response.data.map((item: IAffairType) => {
+          return item;
+        });
+        this.data.load(data);
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error => (this.loading = false)
+    );
+  }
 }

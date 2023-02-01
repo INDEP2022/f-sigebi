@@ -11,12 +11,12 @@ export interface IAffair {
   // idRegister: number | null;
   id: number;
   description: string;
-  referralNoteType: string;
-  versionUser: string;
-  version: number;
-  processDetonate: string;
-  clv: string;
-  status: number;
+  referralNoteType?: string;
+  versionUser?: string;
+  version?: number;
+  processDetonate?: string;
+  clv?: string;
+  status?: number;
   registerNumber?: number;
   creationUser?: string;
   creationDate?: Date;

@@ -3,17 +3,19 @@ import { Observable } from 'rxjs';
 import { AffairTypeEndpoints } from 'src/app/common/constants/endpoints/affair-type-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AffairTypeRepository } from 'src/app/common/repository/repositories/affair-type-repository';
+import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IAffairType } from '../../models/catalogs/affair-type-model';
 @Injectable({
   providedIn: 'root',
 })
-export class AffairTypeService {
+export class AffairTypeService extends HttpService {
   private readonly route = AffairTypeEndpoints;
 
-  constructor(
-    private affairTypeRepository: AffairTypeRepository<IAffairType>
-  ) {}
+  constructor(private affairTypeRepository: AffairTypeRepository<IAffairType>) {
+    super();
+    this.microservice = AffairTypeEndpoints.Catalog;
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<IAffairType>> {
     return this.affairTypeRepository.getAll(this.route.Code, params);
@@ -42,12 +44,23 @@ export class AffairTypeService {
     return this.affairTypeRepository.update(code, referralNoteType, model);
   }
 
-  // remove(id: string | number): Observable<Object> {
-  //   return this.affairTypeRepository.remove(this.route, id);
+  // getByAffair(id: number | string, params?: ListParams): Observable<IListResponse<IAffairType>> {
+  //   if (params) {
+  //     params['id'] = id;
+  //   }
+  //   const ms = AffairTypeEndpoints.AffairType
+  //   const filter = AffairTypeEndpoints.byAffairId;
+  //   return this.get<IListResponse<IAffairType>>(ms, filter);
   // }
-  /*getGoodsByRecordId(recordId: number) {
-    return this.goodRepository.getAllPaginated(
-      'good/good/getidReferenceGood/' + recordId
-    );
-  }*/
+
+  getByAffair(
+    id: number | string,
+    params?: ListParams
+  ): Observable<IListResponse<IAffairType>> {
+    if (params) {
+      params['id'] = id;
+    }
+    const route = AffairTypeEndpoints.byAffairId;
+    return this.get<IListResponse<IAffairType>>(route, params);
+  }
 }
