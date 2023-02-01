@@ -33,6 +33,7 @@
               [form]="performForm"
               control="state"
               [data]="states"
+              [loading]="loading"
               value="id"
               bindLabel="descCondition"
               label="Selecciona un estado"
@@ -74,20 +75,36 @@
 
       <div class="row pt-4">
         <div class="col-md-4">
-          <form-field [control]="performForm.get('transferent')">
+          <form-field
+            [control]="performForm.get('transferent')"
+            *ngIf="showSelectTransferent">
             <ngx-select
               [form]="performForm"
               control="transferent"
               [data]="transferences"
               value="id"
-              bindLabel="nameTransferent"
+              bindLabel="nametransferent"
               label="Selecciona transferente"
               (change)="transferentSelect($event)"
               (fetchItems)="getTransferentSelect($event)"></ngx-select>
           </form-field>
+          <form-field
+            [control]="performForm.get('transferent')"
+            *ngIf="!showSelectTransferent">
+            <ngx-select
+              [searchable]="showSelectTransferent"
+              [form]="performForm"
+              control="transferent"
+              [data]="transferences"
+              value="id"
+              bindLabel="nametransferent"
+              label="Selecciona transferente"></ngx-select>
+          </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="performForm.get('station')">
+          <form-field
+            [control]="performForm.get('station')"
+            *ngIf="showSelectStation">
             <ngx-select
               [form]="performForm"
               control="station"
@@ -96,11 +113,28 @@
               value="id"
               bindLabel="stationName"
               label="Selecciona emisora"
+              (change)="stationSelect($event)"
               (fetchItems)="getStations($event)"></ngx-select>
+          </form-field>
+
+          <form-field
+            [control]="performForm.get('station')"
+            *ngIf="!showSelectStation">
+            <ngx-select
+              [searchable]="showSelectStation"
+              [form]="performForm"
+              control="station"
+              [data]="stations"
+              [loading]="loading"
+              value="id"
+              bindLabel="stationName"
+              label="Selecciona emisora"></ngx-select>
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="performForm.get('authority')">
+          <form-field
+            [control]="performForm.get('authority')"
+            *ngIf="showSelectAuthority">
             <ngx-select
               [form]="performForm"
               control="authority"
@@ -109,6 +143,18 @@
               bindLabel="authorityName"
               label="Selecciona una autoridad"
               (fetchItems)="getAuthoritiesSelect($event)"></ngx-select>
+          </form-field>
+          <form-field
+            [control]="performForm.get('authority')"
+            *ngIf="!showSelectAuthority">
+            <ngx-select
+              [searchable]="showSelectAuthority"
+              [form]="performForm"
+              control="authority"
+              [data]="authorities"
+              value="idAuthority"
+              bindLabel="authorityName"
+              label="Selecciona una autoridad"></ngx-select>
           </form-field>
         </div>
       </div>
