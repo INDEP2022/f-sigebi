@@ -46,7 +46,7 @@ export class ValuesComponent extends BasePage implements OnInit {
   getValuesAll() {
     this.loading = true;
 
-    this.valuesService.getAll(this.params.getValue()).subscribe({
+    this.tvalTableService.getById2(1, this.params.getValue()).subscribe({
       next: response => {
         console.log(response);
         this.valuesList = response.data;

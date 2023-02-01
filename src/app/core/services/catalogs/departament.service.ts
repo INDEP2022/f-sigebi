@@ -71,6 +71,6 @@ export class DepartamentService implements ICrudMethods<IDepartment> {
   }
 
   update2(model: IDepartment): Observable<Object> {
-    return this.departamentRepository.update3(this.route, model);
+    return this.departamentRepository.update4(this.route, model);
   }
 }
