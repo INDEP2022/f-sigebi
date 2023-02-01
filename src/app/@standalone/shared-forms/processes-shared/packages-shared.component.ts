@@ -11,7 +11,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { BasePage } from 'src/app/core/shared/base-page';
 //Models
 import { IPackage } from 'src/app/core/models/catalogs/package.model';
-import { packagesData } from './data';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 
 @Component({
   selector: 'app-processes-shared',
@@ -25,6 +25,8 @@ export class ProcessesSharedComponent extends BasePage implements OnInit {
   @Input() packageField: string = 'processes';
   @Input() label: string = 'Processes';
   @Input() showPackages: boolean = true;
+  @Input() idGood: string | number = '';
+  @Input() process: string = '';
 
   processes = new DefaultSelect<IPackage>();
 
@@ -32,40 +34,44 @@ export class ProcessesSharedComponent extends BasePage implements OnInit {
     return this.form.get(this.packageField);
   }
 
-  constructor(/*private service: WarehouseService*/) {
+  constructor(private readonly historyGoodService: HistoryGoodService) {
     super();
   }
 
   ngOnInit(): void {}
 
   getProcesses(params: ListParams) {
-    //// mientras se hace la consulta
-    let data = packagesData;
-    let count = data.length;
-    this.processes = new DefaultSelect(data, count);
-    /*this.service.getAll(params).subscribe(data => {
-        this.status = new DefaultSelect(data.data,data.count);
-      },err => {
-        let error = '';
-        if (err.status === 0) {
-          error = 'Revise su conexión de Internet.';
-        } else {
-          error = err.message;
-        }
-        this.onLoadToast('error', 'Error', error);
-
-      }, () => {}
-    );*/
+    this.historyGoodService
+      .getByGoodAndProcess(
+        `filter.propertyNum=$eq:${this.idGood}&filter.extDomProcess=$not:${this.process}`
+      )
+      .subscribe({
+        next: response => {
+          this.processes = new DefaultSelect(
+            this.distinct(response.data, 'extDomProcess'),
+            response.count
+          );
+        },
+        error: error => {
+          this.loading = false;
+        },
+      });
   }
 
+  distinct(data: any[], indice: string) {
+    let uniques: any[] = []; //temporal
+    return data.filter(item => {
+      return uniques.indexOf(item[indice]) < 0
+        ? uniques.push(item[indice])
+        : false;
+    });
+  }
   onPackagesChange(type: any) {
-    //this.resetFields([this.subdelegation]);
     this.form.updateValueAndValidity();
   }
 
   resetFields(fields: AbstractControl[]) {
     fields.forEach(field => {
-      //field.setValue(null);
       field = null;
     });
     this.form.updateValueAndValidity();

@@ -12,7 +12,6 @@ import { BasePage } from 'src/app/core/shared/base-page';
 //Models
 import { IGoodStatus } from 'src/app/core/models/catalogs/good-status.model';
 import { GoodService } from 'src/app/core/services/good/good.service';
-import { goodsStatuData } from './data';
 
 @Component({
   selector: 'app-goods-status-shared',
@@ -41,14 +40,12 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
 
   getGoodStatus(params: ListParams) {
     //Provisional data
-    let data = goodsStatuData;
-    let count = data.length;
-    this.status = new DefaultSelect(data, count);
-    this.service.getStatusAll(/* params */).subscribe(
-      data => {
+    this.service.getStatusAll(params).subscribe({
+      next: data => {
+        console.log(data);
         this.status = new DefaultSelect(data.data, data.count);
       },
-      err => {
+      error: err => {
         let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
@@ -57,18 +54,15 @@ export class GoodsStatusSharedComponent extends BasePage implements OnInit {
         }
         this.onLoadToast('error', 'Error', error);
       },
-      () => {}
-    );
+    });
   }
 
   onGoodStatusChange(type: any) {
-    //this.resetFields([this.subdelegation]);
     this.form.updateValueAndValidity();
   }
 
   resetFields(fields: AbstractControl[]) {
     fields.forEach(field => {
-      //field.setValue(null);
       field = null;
     });
     this.form.updateValueAndValidity();

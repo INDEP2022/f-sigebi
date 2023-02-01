@@ -2,10 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IHistoryGood } from 'src/app/core/models/administrative-processes/history-good.model';
 import { IStatusCode } from 'src/app/core/models/catalogs/status-code.model';
 import { IGood } from 'src/app/core/models/good/good.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
+import { HistoryGoodService } from 'src/app/core/services/ms-history-good/history-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -25,6 +27,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
   columnsUser: any = COLUMNS_USER;
   params = new BehaviorSubject<ListParams>(new ListParams());
   statusSelect: IStatusCode;
+  endProcess: boolean = false;
   //Criterio por clasificación de bienes
   get numberGood() {
     return this.form.get('numberGood');
@@ -52,8 +55,8 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
   get dateStatus() {
     return this.formNew.get('dateStatus');
   }
-  get processes() {
-    return this.formNew.get('processes');
+  get extDomProcess() {
+    return this.formNew.get('extDomProcess');
   }
   get issuingUser() {
     return this.formNew.get('issuingUser');
@@ -65,7 +68,8 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private readonly goodServices: GoodService,
-    private token: AuthService
+    private token: AuthService,
+    private readonly historyGoodService: HistoryGoodService
   ) {
     super();
   }
@@ -115,7 +119,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       dateStatus: [null, [Validators.required]],
-      processes: [
+      extDomProcess: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
@@ -137,6 +141,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
         this.loading = false;
         this.formNew.enable();
         this.dateStatus.disable();
+        this.endProcess = true;
       },
     });
   }
@@ -163,18 +168,24 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
 
   accept() {
     //5457740
-    this.good.status = this.goodStatus.value;
-    this.good.observation = this.description.value;
-    this.good.extDomProcess = this.processes.value;
-    this.good.usrApprovedUtilization = this.issuingUser.value;
-    this.good.userAuthorizesChangeNumera =
-      this.token.decodeToken().preferred_username;
+    console.log('Antes -------->', this.good);
+    this.good.status =
+      this.goodStatus.value === null ? this.good.status : this.goodStatus.value;
+    this.good.observations = this.description.value;
+    this.good.extDomProcess =
+      this.extDomProcess.value === null
+        ? this.good.extDomProcess
+        : this.extDomProcess.value;
+    // this.good.usrApprovedUtilization = this.issuingUser.value;
+    this.good.userModification = this.token.decodeToken().preferred_username;
     console.log(this.good);
+
     this.goodServices
-      .updateStatusGood(this.numberGood.value, this.goodStatus.value, this.good)
+      .updateStatusGood(this.numberGood.value, this.good)
       .subscribe({
         next: response => {
           console.log(response);
+          this.postHistoryGood();
           this.form.reset();
           this.formNew.reset();
           this.dateStatus.setValue(new Date());
@@ -186,5 +197,26 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
         },
         error: error => (this.loading = false),
       });
+    this.endProcess = false;
+  }
+  postHistoryGood() {
+    const historyGood: IHistoryGood = {
+      propertyNum: this.numberGood.value,
+      status: this.goodStatus.value,
+      changeDate: new Date(),
+      userChange: this.token.decodeToken().preferred_username,
+      statusChangeProgram: 'CAMMUEESTATUS',
+      reasonForChange: this.description.value,
+      registryNum: null,
+      extDomProcess: 'ENPROCESO',
+    };
+    console.log('Desde historicos', historyGood);
+
+    this.historyGoodService.create(historyGood).subscribe({
+      next: response => {},
+      error: error => {
+        this.loading = false;
+      },
+    });
   }
 }
