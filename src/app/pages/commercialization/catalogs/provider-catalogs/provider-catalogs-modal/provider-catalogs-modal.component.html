@@ -19,9 +19,12 @@
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
           <form-field
-            [control]="providerForm.get('name')"
+            [control]="providerForm.get('nameReason')"
             label="Nombre o Razón Social">
-            <input type="text" class="form-control" formControlName="name" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nameReason" />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
@@ -32,13 +35,8 @@
       </div>
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
-          <form-field
-            [control]="providerForm.get('neighborhood')"
-            label="Colonia">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="neighborhood" />
+          <form-field [control]="providerForm.get('colony')" label="Colonia">
+            <input type="text" class="form-control" formControlName="colony" />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
@@ -54,7 +52,7 @@
       </div>
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
-          <form-field [control]="providerForm.get('state')">
+          <form-field [control]="providerForm.get('stateDesc')">
             <ngx-select
               [form]="providerForm"
               [data]="stateItems"
@@ -62,12 +60,12 @@
               value="description"
               bindLabel="description"
               (fetchItems)="getStates($event)"
-              control="state">
+              control="stateDesc">
             </ngx-select>
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
-          <form-field [control]="providerForm.get('city')">
+          <form-field [control]="providerForm.get('cityDesc')">
             <ngx-select
               [form]="providerForm"
               [data]="cityItems"
@@ -75,14 +73,14 @@
               value="description"
               bindLabel="description"
               (fetchItems)="getCities($event)"
-              control="city">
+              control="cityDesc">
             </ngx-select>
           </form-field>
         </div>
       </div>
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
-          <form-field [control]="providerForm.get('country')">
+          <form-field [control]="providerForm.get('clkCountry')">
             <ngx-select
               [form]="providerForm"
               [data]="countryItems"
@@ -90,7 +88,7 @@
               value="description"
               bindLabel="description"
               (fetchItems)="getCountries($event)"
-              control="country">
+              control="clkCountry">
             </ngx-select>
           </form-field>
         </div>
@@ -114,14 +112,18 @@
       </div>
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
-          <form-field [control]="providerForm.get('email')" label="Correo Web">
-            <input type="text" class="form-control" formControlName="email" />
+          <form-field
+            [control]="providerForm.get('webMail')"
+            label="Correo Web">
+            <input type="text" class="form-control" formControlName="webMail" />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
-          <form-field [control]="providerForm.get('type')" label="Tipo Persona">
+          <form-field
+            [control]="providerForm.get('typePerson')"
+            label="Tipo Persona">
             <ng-select
-              formControlName="type"
+              formControlName="typePerson"
               [searchable]="false"
               class="form-control"
               [clearable]="false">
@@ -135,22 +137,51 @@
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
           <form-field
-            [control]="providerForm.get('activity')"
+            [control]="providerForm.get('preponderantAct')"
             label="Actividad Preponderante">
             <input
               type="text"
               class="form-control"
-              formControlName="activity" />
+              formControlName="preponderantAct" />
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
           <form-field
-            [control]="providerForm.get('contractNumber')"
+            [control]="providerForm.get('contractNo')"
             label="N° Contrato">
             <input
               type="text"
               class="form-control"
-              formControlName="contractNumber" />
+              formControlName="contractNo" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="providerForm.get('bank')" label="Banco">
+            <input type="text" class="form-control" formControlName="bank" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="providerForm.get('branch')" label="Sucursal">
+            <input type="text" class="form-control" formControlName="branch" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12 col-md-6">
+          <form-field
+            [control]="providerForm.get('checkingCta')"
+            label="Sucursal">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="checkingCta" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <form-field [control]="providerForm.get('key')" label="Clabe">
+            <input type="text" class="form-control" formControlName="key" />
           </form-field>
         </div>
       </div>

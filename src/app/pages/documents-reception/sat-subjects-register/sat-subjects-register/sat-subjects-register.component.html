@@ -30,30 +30,6 @@
           <input class="form-control" formControlName="issue" />
         </form-field>
 
-        <!-- <form-field
-          [control]="satForm.get('processStatus')"
-          label="Selecciona el Estatus"
-          class="col-md-3">
-          <select class="form-control" formControlName="processStatus">
-            <option [value]="null">Seleccione un valor</option>
-            <option [value]="'OPI'">
-              (OPI) -- OFICIALIA DE PARTES INGRESADO
-            </option>
-            <option [value]="'OPP'">
-              (OPP) -- OFICIALIA DE PARTES PROCESO
-            </option>
-            <option [value]="'OPS'">(OPS) -- OFICIALIA DE PARTES SALIDA</option>
-            <option [value]="'DJI'">
-              (DJI) -- DICTAMINACIÓN JURIDICA INGRESADO
-            </option>
-            <option [value]="'DJP'">
-              (DJP) -- DICTAMINACIÓN JURIDICA PROCESO
-            </option>
-            <option [value]="'DJS'">
-              (DJS) -- DICTAMINACIÓN JURIDICA SALIDA
-            </option>
-          </select>
-        </form-field> -->
         <form-field [control]="satForm.get('processStatus')" class="col-md-3">
           <ngx-select
             (fetchItems)="getStatusProcess($event)"
@@ -97,12 +73,23 @@
       </div>
       <div class="row pb-4">
         <div class="col-md-12">
+          <div class="alert alert-info">
+            {{
+              INFO_DOWNLOAD('Exportar Tabla', 'Exportar Todos los Registros')
+            }}
+          </div>
           <button type="submit" class="btn btn-info btn-sm">Consultar</button>
           <button
             type="button"
             class="ml-2 btn btn-success btn-sm"
+            [disabled]="true">
+            Exportar Todos los Registros<i class="fa fa-file-excel ml-1"></i>
+          </button>
+          <button
+            type="button"
+            class="ml-2 btn btn-success btn-sm"
             (click)="exportXlsx('gestion', listGestionSat)">
-            Exportar <i class="fa fa-file-excel ml-1"></i>
+            Exportar Tabla<i class="fa fa-file-excel ml-1"></i>
           </button>
         </div>
       </div>
@@ -166,12 +153,23 @@
       </div>
       <div class="row pb-4">
         <div class="col-md-12">
+          <div class="alert alert-info">
+            {{
+              INFO_DOWNLOAD('Exportar Tabla', 'Exportar Todos los Registros')
+            }}
+          </div>
           <button type="submit" class="btn btn-info btn-sm">Consultar</button>
           <button
             type="button"
             class="ml-2 btn btn-success btn-sm"
+            [disabled]="true">
+            Exportar Todos los Registros<i class="fa fa-file-excel ml-1"></i>
+          </button>
+          <button
+            type="button"
+            class="ml-2 btn btn-success btn-sm"
             (click)="exportXlsx('transferencia', listSatTransferencia)">
-            Exportar <i class="fa fa-file-excel ml-1"></i>
+            Exportar Tabla<i class="fa fa-file-excel ml-1"></i>
           </button>
         </div>
       </div>

@@ -22,7 +22,8 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
   providerItems = new DefaultSelect();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-  providerColumns: any[] = [];
+  selectedProvider: IComerProvider | null = null;
+  providerColumns: IComerProvider[] = [];
   providerSettings = {
     ...TABLE_SETTINGS,
     actions: {
@@ -152,6 +153,10 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.providerForm = this.fb.group({
       id: [null],
+      bank: [null],
+      branch: [null],
+      checkingCta: [null],
+      key: [null],
     });
   }
 
@@ -189,6 +194,12 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
         },
       });
     }
+  }
+
+  selectProvider(provider: IComerProvider) {
+    console.log(provider);
+    this.providerForm.patchValue(provider);
+    this.selectedProvider = provider;
   }
 
   openFormProvider(provider?: any) {
