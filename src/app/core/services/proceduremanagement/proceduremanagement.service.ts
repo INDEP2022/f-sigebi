@@ -17,6 +17,13 @@ export class ProcedureManagementService {
     );
   }
 
+  getManagamentProcessPgr(body: ListParams) {
+    return this.procedureManagementRepository.getAllPaginated(
+      this.baseURL + 'views/management-process-pgr',
+      body
+    );
+  }
+
   getManagamentProcessSatArea(body: ListParams) {
     return this.procedureManagementRepository.getAllPaginated(
       this.baseURL + 'management-area',

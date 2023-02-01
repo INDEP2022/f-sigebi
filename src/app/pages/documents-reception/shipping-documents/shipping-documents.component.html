@@ -1,13 +1,25 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Envio de oficios</h5>
+    <h5 class="title col-md-5">Envio de oficios</h5>
+    <div class="buttons d-flex justify-content-end">
+      <div class="mx-5" *ngIf="officeNumber">
+        <p>
+          No. Oficio: <b>{{ officeNumber }}</b>
+        </p>
+      </div>
+      <div class="mx-5" *ngIf="officeKey">
+        <p>
+          CVE Oficio: <b>{{ officeKey }}</b>
+        </p>
+      </div>
+    </div>
   </div>
 
   <div body>
     <form [formGroup]="documentsForm" class="form-material" (submit)="save()">
       <div class="row">
         <div class="col-md-6">
-          <div class="row">
+          <!-- <div class="row">
             <form-field
               class="col-md-4"
               [control]="documentsForm.get('officeNum')"
@@ -26,9 +38,9 @@
                 type="text"
                 formControlName="officeCve" />
             </form-field>
-          </div>
+          </div> -->
 
-          <div class="row pt-4">
+          <div class="row">
             <form-field
               class="col-md-6"
               [control]="documentsForm.get('date')"
@@ -41,8 +53,8 @@
               [control]="documentsForm.get('priority')"
               label="Prioridad">
               <select class="form-control" formControlName="priority">
-                <option value="alta">Alta</option>
-                <option value="normal">Normal</option>
+                <option value="A">Alta</option>
+                <option value="N">Normal</option>
               </select>
             </form-field>
           </div>
@@ -57,8 +69,8 @@
                 (fetchItems)="getSenders($event)"
                 [form]="documentsForm"
                 control="sender"
-                value="user"
-                bindLabel="user"
+                value="user.id"
+                bindLabel="user.name"
                 [data]="senders"
                 label="Remitente"></ngx-select>
             </form-field>
@@ -69,11 +81,12 @@
               class="col-md-12"
               [control]="documentsForm.get('receiver')">
               <ngx-select
+                [searchOnInit]="true"
                 (fetchItems)="getReceivers($event)"
                 (change)="getDepartmentTarget($event)"
                 [form]="documentsForm"
-                value="user"
-                bindLabel="user"
+                value="user.id"
+                bindLabel="user.name"
                 control="receiver"
                 [data]="receivers"
                 label="Destinatario"></ngx-select>
@@ -83,11 +96,12 @@
           <div class="row pt-4">
             <form-field class="col-md-12" [control]="documentsForm.get('cpp')">
               <ngx-select
+                [searchOnInit]="true"
                 (fetchItems)="getReceivers($event)"
                 (change)="getDepartmentTarget($event)"
                 [data]="receivers"
-                value="user"
-                bindLabel="user"
+                value="user.id"
+                bindLabel="user.name"
                 [form]="documentsForm"
                 control="cpp"
                 label="C&#46;P&#46;P&#46;"></ngx-select>
@@ -100,8 +114,10 @@
               <form-field [control]="documentsForm.get('delegation')">
                 <ngx-select
                   [form]="documentsForm"
+                  value="id"
+                  bindLabel="description"
                   control="delegation"
-                  [data]="select"
+                  [data]="delegations"
                   label="Delegación Destino"></ngx-select>
               </form-field>
             </div>
@@ -111,7 +127,9 @@
                 <ngx-select
                   [form]="documentsForm"
                   control="subdelegation"
-                  [data]="select"
+                  value="id"
+                  bindLabel="description"
+                  [data]="subdelegations"
                   label="Subdelegación Destino"></ngx-select>
               </form-field>
             </div>
@@ -122,13 +140,13 @@
                   [form]="documentsForm"
                   control="department"
                   value="id"
-                  bindLabel="dsarea"
+                  bindLabel="description"
                   [data]="departments"
                   label="Area Destino"></ngx-select>
               </form-field>
             </div>
 
-            <div class="row">
+            <div class="row" *ngIf="!queryMode">
               <div class="col-md-8 d-flex">
                 <form-radio label="Texto areas">
                   <input
@@ -149,7 +167,7 @@
                   type="button"
                   class="btn btn-info btn-sm"
                   (click)="getNotifications()">
-                  Selcci&oacute;n de volantes
+                  Selccionar Volantes
                 </button>
               </div>
             </div>
@@ -176,15 +194,18 @@
       </div>
       <div class="row">
         <app-pagination
-          [params]="notificationParams"
+          [filterParams]="params"
           [totalItems]="totalNotifications"></app-pagination>
       </div>
 
       <div class="row pt-4">
         <div class="col-md-12 text-right">
-          <button type="submit" class="btn btn-primary btn-sm active">
-            Guardar
-          </button>
+          <confirm-button
+            [loading]="loading"
+            [text]="queryMode ? 'Imprimir' : 'Guardar'"
+            [loadingText]="
+              queryMode ? 'Imprimiendo...' : 'Guardando...'
+            "></confirm-button>
         </div>
       </div>
     </form>

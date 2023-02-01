@@ -3,24 +3,41 @@
     <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
+    <form class="form-material" [formGroup]="attribClassifGoodForm">
       <div class="row">
-        <div class="col-md-2">
-          <form-field [control]="form.get('cve')" label="Clave">
-            <input type="text" class="form-control" formControlName="cve" />
+        <div class="col-md-3" *ngIf="edit == false">
+          <form-field
+            [control]="attribClassifGoodForm.get('classifGoodNumber')"
+            label="No. Clasificacion bien">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="classifGoodNumber" />
           </form-field>
         </div>
-        <div class="col-md-5">
-          <form-field [control]="form.get('attributes')" label="Atributos">
+        <div class="col-md-3" *ngIf="edit == false">
+          <form-field
+            [control]="attribClassifGoodForm.get('columnNumber')"
+            label="No. Columna">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="columnNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="attribClassifGoodForm.get('attribute')"
+            label="Atributos">
             <input
               type="text"
               class="form-control"
-              formControlName="attributes" />
+              formControlName="attribute" />
           </form-field>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-3">
           <form-field
-            [control]="form.get('description')"
+            [control]="attribClassifGoodForm.get('description')"
             label="Descripci&oacute;n">
             <input
               type="text"
@@ -30,60 +47,102 @@
         </div>
       </div>
       <div class="row pt-5">
-        <div class="col-md-8">
-          <div class="row">
-            <div class="col-md-4">
-              <form-field
-                [control]="form.get('longMax')"
-                label="Long M&aacute;xima">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="longMax" />
-              </form-field>
-            </div>
-            <div class="col-md-8">
-              <form-field [control]="form.get('typeDate')" label="Tipo de dato">
-                <ng-select
-                  formControlName="typeDate"
-                  [searchable]="false"
-                  class="form-control"
-                  [clearable]="false">
-                  <ng-option value="1">Alfanum&eacute;rico</ng-option>
-                  <ng-option value="2">Num&eacute;rico</ng-option>
-                  <ng-option value="3">Flotante</ng-option>
-                  <ng-option value="4">Fecha</ng-option>
-                </ng-select>
-              </form-field>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="row pt-5">
-              <div class="col-md-12">
-                <form-field
-                  [control]="form.get('tableSupport')"
-                  label="Tabla de soporte">
-                  <input
-                    type="text"
-                    class="form-control"
-                    formControlName="tableSupport" />
-                </form-field>
-              </div>
-            </div>
-          </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="attribClassifGoodForm.get('required')"
+            label="¿Requerdio?">
+            <ng-select
+              formControlName="required"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="S">Si</ng-option>
+              <ng-option value="N">No</ng-option>
+            </ng-select>
+          </form-field>
         </div>
-
-        <div class="col-md-4">
-          <form-check label="A &#45; Campo actualizable" for="label1">
-            <input id="label1" type="checkbox" formControlName="update" />
-          </form-check>
-          <form-check label="U &#45; Campo &uacute;nico" for="label2">
-            <input id="label2" type="checkbox" formControlName="unique" />
-          </form-check>
-          <form-check label="R &#45; Campo requerido" for="label3">
-            <input id="label3" type="checkbox" formControlName="requerid" />
-          </form-check>
+        <div class="col-md-3">
+          <form-field
+            [control]="attribClassifGoodForm.get('dataType')"
+            label="tipo de dato">
+            <ng-select
+              formControlName="dataType"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="1">Alfanum&eacute;rico</ng-option>
+              <ng-option value="2">Num&eacute;rico</ng-option>
+              <ng-option value="3">Flotante</ng-option>
+              <ng-option value="4">Fecha</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="attribClassifGoodForm.get('length')"
+            label="Longitud">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="length" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="attribClassifGoodForm.get('update')"
+            label="¿Actualiza?">
+            <ng-select
+              formControlName="update"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="S">Si</ng-option>
+              <ng-option value="N">No</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            [control]="attribClassifGoodForm.get('accessKey')"
+            label="¿LLave de acceso?">
+            <ng-select
+              formControlName="accessKey"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="S">Si</ng-option>
+              <ng-option value="N">No</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="attribClassifGoodForm.get('tableCd')"
+            label="cdTabla">
+            <input type="text" class="form-control" formControlName="tableCd" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="attribClassifGoodForm.get('typeAct')"
+            label="Tipo de acta">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="typeAct" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="attribClassifGoodForm.get('registrationNumber')"
+            label="No. Registro">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="registrationNumber" />
+          </form-field>
         </div>
       </div>
     </form>
@@ -93,8 +152,8 @@
       <div class="m-3">
         <confirm-button
           [type]="'button'"
-          [disabled]="!form.valid"
-          (click)="close()"></confirm-button>
+          [disabled]="attribClassifGoodForm.invalid"
+          (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

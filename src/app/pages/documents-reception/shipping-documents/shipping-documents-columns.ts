@@ -3,9 +3,10 @@ const SHIPPING_DOCUMENTS_COLUMNS = {
     title: 'No. Volante',
     sort: false,
   },
-  subject: {
+  affair: {
     title: 'Asunto',
     sort: false,
+    valuePrepareFunction: (affair: any) => affair?.description,
   },
   preliminaryInquiry: {
     title: 'Averiguación Previa',
@@ -15,9 +16,10 @@ const SHIPPING_DOCUMENTS_COLUMNS = {
     title: 'Causa Penal',
     sort: false,
   },
-  department: {
+  departament: {
     title: 'Departamento',
     sort: false,
+    valuePrepareFunction: (departament: any) => departament?.description,
   },
 };
 
