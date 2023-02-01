@@ -11,6 +11,7 @@ import { COLUMNS, COLUMNS2 } from './columns';
 import { BrandsSubBrandsFormComponent } from '../brands-sub-brands-form/brands-sub-brands-form.component';
 //Provisional Data
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { BrandsSubBrandsService } from '../brands-sub-brands.service';
 import { DATA } from './data';
 
 @Component({
@@ -37,7 +38,11 @@ export class BrandsSubBrandsListComponent extends BasePage implements OnInit {
   rowBrand: string = null;
   selectedRow: any = null;
 
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private brandService: BrandsSubBrandsService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -58,8 +63,8 @@ export class BrandsSubBrandsListComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.data.load(this.dataBrands);
     this.prepareForm();
+    this.searchParams();
   }
 
   private prepareForm(): void {
@@ -72,6 +77,78 @@ export class BrandsSubBrandsListComponent extends BasePage implements OnInit {
     });
   }
 
+  searchParams() {
+    this.params.subscribe({
+      next: resp => {
+        this.dataBrands = [];
+        if (resp.text !== '') {
+          this.brandService.getBrandsForId(resp.text).subscribe({
+            next: (searchBrand: any) => {
+              if (searchBrand) {
+                this.dataBrands.push({
+                  brand: searchBrand.id,
+                  description: searchBrand.brandDescription,
+                  subbrands: [],
+                });
+
+                this.brandService.getSubBrands().subscribe({
+                  next: (brandSub: any) => {
+                    brandSub.data.forEach((item: any) => {
+                      this.dataBrands.forEach(data => {
+                        if (item.idBrand.id === data.brand) {
+                          data.subbrands.push({
+                            subBrand: item.idSubBrand,
+                            description: item.subBrandDescription || '-',
+                          });
+                        }
+                      });
+                    });
+                    this.data.load(this.dataBrands);
+                  },
+                });
+              }
+            },
+          });
+        } else {
+          this.getComerBrands();
+        }
+      },
+    });
+  }
+
+  getComerBrands() {
+    this.dataBrands = [];
+    this.brandService.getBrands().subscribe({
+      next: (brands: any) => {
+        if (brands) {
+          brands.data.forEach((item: any) => {
+            this.dataBrands.push({
+              brand: item.id,
+              description: item.brandDescription,
+              subbrands: [],
+            });
+          });
+
+          this.brandService.getSubBrands().subscribe({
+            next: (brandSub: any) => {
+              brandSub.data.forEach((item: any) => {
+                this.dataBrands.forEach(data => {
+                  if (item.idBrand.id === data.brand) {
+                    data.subbrands.push({
+                      subBrand: item.idSubBrand,
+                      description: item.subBrandDescription || '-',
+                    });
+                  }
+                });
+              });
+              this.data.load(this.dataBrands);
+            },
+          });
+        }
+      },
+    });
+  }
+
   openModal(context?: Partial<BrandsSubBrandsFormComponent>) {
     const modalRef = this.modalService.show(BrandsSubBrandsFormComponent, {
       initialState: context,
@@ -79,7 +156,9 @@ export class BrandsSubBrandsListComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.refresh.subscribe(next => {
-      if (next) console.log(next); //this.getCities();
+      if (next) {
+        this.getComerBrands();
+      } //this.getCities();
     });
   }
 
@@ -91,7 +170,7 @@ export class BrandsSubBrandsListComponent extends BasePage implements OnInit {
     this.openModal({ edit: true, brand });
   }
 
-  delete(brand: any) {
+  deleteBrand(brand: any) {
     this.alertQuestion(
       'warning',
       'Eliminar',
@@ -99,6 +178,9 @@ export class BrandsSubBrandsListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
+        // (delete)="deleteBrand($event.data)" (html)
+        //este es el subcribe para eliminar
+        // this.brandService.deleteBrandsForId(brand.brand)
       }
     });
   }

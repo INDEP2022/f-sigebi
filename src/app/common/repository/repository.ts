@@ -157,7 +157,10 @@ export class Repository<T> implements IRepository<T> {
     );
   }
   update3(route: string, formData: Object) {
-    return this.httpClient.put(`${environment.API_URL2}${route}`, formData);
+    return this.httpClient.put(
+      `${environment.API_URL2}catalog/api/v1/${route}`,
+      formData
+    );
   }
   remove2(route: string, id: number | string) {
     return this.httpClient.delete(`${environment.API_URL2}${route}/${id}`);

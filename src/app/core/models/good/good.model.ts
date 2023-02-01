@@ -6,6 +6,9 @@ export interface IGood {
   noInventoey?: any;
   idGood: string;
   description: string;
+  complianceLeaveDate?: string;
+  quantity?: number;
+  goodStatus?: string;
   cant: string;
   dateEntry: string;
   dateExit?: any;
