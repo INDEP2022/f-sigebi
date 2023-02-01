@@ -24,25 +24,6 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.get<T>(`${fullRoute}/${id}`);
   }
 
-  getByIdState(route: string, id: number | string): Observable<T> {
-    const fullRoute = this.buildRoute(route);
-    return this.httpClient.get<T>(
-      `${fullRoute}/get-entity-transferent-by-state/${id}`
-    );
-  }
-  postByColumns(
-    route: string,
-    _params?: ListParams,
-    column?: Object
-  ): Observable<IListResponse<T>> {
-    const params = this.makeParams(_params);
-    const fullRoute = this.buildRoute(route);
-    return this.httpClient.post<IListResponse<T>>(
-      `${fullRoute}/columns?${params}`,
-      column
-    );
-  }
-
   create(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
     return this.httpClient.post<T>(`${fullRoute}`, formData);

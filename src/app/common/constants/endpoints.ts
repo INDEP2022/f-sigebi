@@ -11,7 +11,7 @@ export enum ENDPOINT_LINKS {
   ClaimStatus = 'catalog/claims-status',
   Clarification = 'catalog/clarification',
   Court = 'catalog/court',
-  Customer = 'catalog/', // ? Checar si se implementa este catalogo
+  Customer = 'catalog/',
   DeductiveVerification = 'catalog/deductive-verification',
   Deductive = 'catalog/deductive',
   DelegationState = 'catalog/delegation-state',
@@ -88,7 +88,7 @@ export enum ENDPOINT_LINKS {
   Settlement = 'catalog/settlement',
   Shelves = 'catalog/shelves',
   SIABClasification = 'catalog/siab-clasification',
-  Sinister = 'catalog/', // ? Checar si se implementa este catalogo
+  Sinister = 'catalog/',
   SiseProcess = 'catalog/sise-process',
   Stage = 'catalog/stage',
   StateOfRepublic = 'catalog/state-of-republic',
@@ -97,7 +97,7 @@ export enum ENDPOINT_LINKS {
   StatusProcess = 'catalog/status-process',
   StatusTransfer = 'catalog/status-transfer',
   Storehouse = 'catalog/storehouse',
-  Subcategory = 'catalog/', // ? Checar si se implementa este catalogo
+  Subcategory = 'catalog/',
   Subdelegation = 'catalog/subdelegation',
   ThirdParty = 'catalog/third-party-company',
   Transferente = 'catalog/transferent',
@@ -110,7 +110,7 @@ export enum ENDPOINT_LINKS {
   TypeOrderServices = 'catalog/type-order-service',
   TypeServices = 'catalog/type-services',
   Warehouse = 'catalog/warehouse',
-  ZipCode = 'catalog/zip-code', //
+  ZipCode = 'catalog/zip-code',
   parametergood = 'parametergood/tmp-max-cierre-acta-dev',
   parametergoodActa = 'parametergood/validadores-actas',
   documents = 'documents/api/v1/documents-dictum-x-state-m',
@@ -131,4 +131,5 @@ export enum ENDPOINT_LINKS {
   Expedient = 'expedient',
   //goodsQuery//
   GoodsQuery = 'goodsquery',
+  ProgrammingGood = 'ProgrammingGood',
 }
