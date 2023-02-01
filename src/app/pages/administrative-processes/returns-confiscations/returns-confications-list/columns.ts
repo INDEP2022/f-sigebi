@@ -17,7 +17,7 @@ export const COLUMNS = {
     sort: false,
     editable: false,
   },
-  scheduledDateDecoDev: {
+  dateRenderDecoDev: {
     title: 'Fecha Decomiso',
     editor: {
       type: 'custom',

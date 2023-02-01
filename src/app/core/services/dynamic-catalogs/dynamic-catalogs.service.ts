@@ -2,9 +2,13 @@ import { Injectable } from '@angular/core';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Repository } from 'src/app/common/repository/repository';
 import { IExpedient } from '../../models/expedient/expedient.model';
+
 @Injectable({
   providedIn: 'root',
 })
+/**
+ * @deprecated Cambiar a la nueva forma
+ */
 export class DynamicCatalogService {
   private readonly route: string = 'dynamiccatalog/dinamic-tables';
   constructor(private expedientRepository: Repository<IExpedient>) {}

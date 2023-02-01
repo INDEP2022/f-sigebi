@@ -7,10 +7,12 @@ import { IExpedientMethods } from '../interfaces/ms-expedient-methods';
 
 @Injectable({ providedIn: 'root' })
 export class ExpedientRepository<T> implements IExpedientMethods<T> {
+  ms: string = `${environment.API_URL}expedient/api/v1`;
+
   constructor(public readonly httpClient: HttpClient) {}
 
   getById(route: string, _id?: number | string): Observable<T> {
-    const fullRoute = `${environment.API_URL}expedient/api/v1/${route}`;
+    const fullRoute = `${this.ms}/${route}`;
     return this.httpClient.get<T>(`${fullRoute}/${_id}`);
   }
 

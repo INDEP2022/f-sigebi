@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { FormBuilder } from '@angular/forms';
+import { GoodService } from 'src/app/core/services/good/good.service';
+import { GOODS_FORM_VIGILANCE_FORM } from '../utils/goods-vigilance-form';
 
 @Component({
   selector: 'app-goods-vigilance-service',
@@ -8,43 +9,19 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
   styles: [],
 })
 export class GoodsVigilanceServiceComponent implements OnInit {
-  form: FormGroup;
-  constructor(private fb: FormBuilder) {}
+  form = this.fb.group(new GOODS_FORM_VIGILANCE_FORM());
+  constructor(private fb: FormBuilder, private goodService: GoodService) {}
 
-  ngOnInit(): void {
-    this.prepareForm();
-  }
+  ngOnInit(): void {}
 
-  prepareForm() {
-    this.form = this.fb.group({
-      noBien: [null, [Validators.required]],
-      descripcionBien: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      statusBien: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      accion: [null, [Validators.required]],
-      aplica: [null, [Validators.required]],
-      captura: [null, [Validators.required]],
-      usuarioSolicita: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      usuarioCaptura: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      usuarioAutoriza: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      justificacion: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+  getGoodById() {
+    const goodId = this.form.controls.goodNum.value;
+    if (!goodId) {
+      return;
+    }
+    this.goodService.getById(goodId).subscribe({
+      next: good => console.log(good),
+      error: error => console.log(error),
     });
   }
 }

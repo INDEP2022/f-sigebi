@@ -22,7 +22,8 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
   providerItems = new DefaultSelect();
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-  providerColumns: any[] = [];
+  selectedProvider: IComerProvider | null = null;
+  providerColumns: IComerProvider[] = [];
   providerSettings = {
     ...TABLE_SETTINGS,
     actions: {
@@ -142,41 +143,30 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getData());
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+      this.getData();
+    });
     this.prepareForm();
-    // this.getData();
     this.getProviders({ inicio: 1, text: '' });
   }
 
   private prepareForm(): void {
     this.providerForm = this.fb.group({
       id: [null],
+      bank: [null],
+      branch: [null],
+      checkingCta: [null],
+      key: [null],
     });
   }
 
   getProviders(params: ListParams) {
-    // if (params.text == '') {
-    //   this.providerItems = new DefaultSelect(this.providerTestData, 5);
-    // } else {
-    //   const id = parseInt(params.text);
-    //   const item = [this.providerTestData.filter((i: any) => i.id == id)];
-    //   this.providerItems = new DefaultSelect(item[0], 1);
-    // }
     this.providerService.getAll(params).subscribe(data => {
       this.providerItems = new DefaultSelect(data.data, data.count);
     });
   }
 
   getData(id?: IComerProvider) {
-    // if (id) {
-    //   this.providerColumns = [this.providerTestData[0]];
-    //   this.totalItems = this.providerColumns.length;
-    // } else {
-    //   this.providerColumns = this.providerTestData;
-    //   this.totalItems = this.providerColumns.length;
-    // }
     if (id) {
       this.loading = true;
       this.providerService.getById(id.providerId).subscribe({
@@ -204,6 +194,12 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
         },
       });
     }
+  }
+
+  selectProvider(provider: IComerProvider) {
+    console.log(provider);
+    this.providerForm.patchValue(provider);
+    this.selectedProvider = provider;
   }
 
   openFormProvider(provider?: any) {

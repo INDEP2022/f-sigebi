@@ -1,0 +1,100 @@
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { BasePage } from 'src/app/core/shared/base-page';
+//models
+import { IBattery } from 'src/app/core/models/catalogs/battery.model';
+import { ISaveValue } from 'src/app/core/models/catalogs/save-value.model';
+//service
+import { SaveValueService } from 'src/app/core/services/catalogs/save-value.service';
+import { BatterysService } from 'src/app/core/services/save-values/battery.service';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+
+@Component({
+  selector: 'app-battery-modal',
+  templateUrl: './battery-modal.component.html',
+  styles: [],
+})
+export class BatteryModalComponent extends BasePage implements OnInit {
+  batteryForm: ModelForm<IBattery>;
+  battery: IBattery;
+  title: string = 'Baterias';
+  edit: boolean = false;
+
+  id: ISaveValue;
+
+  cveSaveValues = new DefaultSelect();
+
+  constructor(
+    private modalRef: BsModalRef,
+    private fb: FormBuilder,
+    private batterysService: BatterysService,
+    private saveValueService: SaveValueService
+  ) {
+    super();
+  }
+
+  ngOnInit(): void {
+    this.prepareForm();
+  }
+
+  getCveSaveValues(params: ListParams) {
+    this.saveValueService.getCveSaveValues(params).subscribe({
+      next: data =>
+        (this.cveSaveValues = new DefaultSelect(data.data, data.count)),
+    });
+  }
+
+  private prepareForm() {
+    this.batteryForm = this.fb.group({
+      storeCode: [null, []],
+      idBattery: [null, [Validators.required]],
+      description: [null, [Validators.required]],
+      status: [null, [Validators.required]],
+      registerNumber: [null, []],
+    });
+    if (this.battery != null) {
+      this.id = this.battery.storeCode as ISaveValue;
+      this.edit = true;
+      this.batteryForm.patchValue(this.battery);
+      this.batteryForm.controls['storeCode'].setValue(this.id.id);
+    }
+  }
+
+  close() {
+    this.modalRef.hide();
+  }
+
+  confirm() {
+    this.edit ? this.update() : this.create();
+  }
+
+  create() {
+    this.loading = true;
+    console.log(this.batteryForm.value);
+    this.batterysService.create(this.batteryForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
+  }
+
+  update() {
+    this.loading = true;
+    this.batterysService
+      .update(this.battery.idBattery, this.batteryForm.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+  }
+
+  handleSuccess() {
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.loading = false;
+    this.modalRef.content.callback(true);
+    this.modalRef.hide();
+  }
+}

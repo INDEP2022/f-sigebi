@@ -6,6 +6,9 @@ export interface IGood {
   noInventoey?: any;
   idGood: string;
   description: string;
+  complianceLeaveDate?: string;
+  quantity?: number;
+  goodStatus?: string;
   cant: string;
   dateEntry: string;
   dateExit?: any;
@@ -101,6 +104,7 @@ export interface IGood {
   worthReference?: any;
   fecRegInsertHc?: any;
   processExtDom: string;
+  extDomProcess?: string;
   idRequest?: any;
   idTypeGood?: any;
   idSubtypeGood?: any;

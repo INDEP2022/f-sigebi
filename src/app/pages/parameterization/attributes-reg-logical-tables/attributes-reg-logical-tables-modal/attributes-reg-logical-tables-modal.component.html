@@ -3,43 +3,62 @@
     <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
+    <form class="form-material" [formGroup]="tdescAtribForm">
       <div class="row">
         <div class="col-md-4">
-          <form-field [control]="form.get('name')" label="Nombre">
-            <input type="text" class="form-control" formControlName="name" />
+          <form-field
+            [control]="tdescAtribForm.get('keyAtrib')"
+            label="No. Atributo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="keyAtrib" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="form.get('type')" label="Tipo de tabla">
-            <input type="text" class="form-control" formControlName="type" />
+          <form-field
+            [control]="tdescAtribForm.get('idNmTable')"
+            label="Tipo de tabla">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idNmTable" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="form.get('noAtt')" label="No&#46; Atributo">
-            <input type="text" class="form-control" formControlName="noAtt" />
+          <form-field
+            [control]="tdescAtribForm.get('swFormat')"
+            label="Formato">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="swFormat" />
           </form-field>
         </div>
       </div>
       <div class="row pt-5">
         <div class="col-md-4">
           <form-field
-            [control]="form.get('description')"
+            [control]="tdescAtribForm.get('descriptionAtrib')"
             label="Descripci&oacute;n">
             <input
               type="text"
               class="form-control"
-              formControlName="description" />
+              formControlName="descriptionAtrib" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="form.get('format')" label="Formato">
-            <input type="text" class="form-control" formControlName="format" />
+          <form-field
+            [control]="tdescAtribForm.get('longMax')"
+            label="Longitud Máxima">
+            <input type="text" class="form-control" formControlName="longMax" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="form.get('maxLong')" label="maxLong">
-            <input type="text" class="form-control" formControlName="maxLong" />
+          <form-field
+            [control]="tdescAtribForm.get('longMin')"
+            label="Longitud Mínima">
+            <input type="text" class="form-control" formControlName="longMin" />
           </form-field>
         </div>
       </div>
@@ -50,8 +69,7 @@
       <div class="m-3">
         <confirm-button
           [type]="'button'"
-          [disabled]="!form.valid"
-          (click)="close()"></confirm-button>
+          [disabled]="!tdescAtribForm.valid"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

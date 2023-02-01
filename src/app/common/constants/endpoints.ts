@@ -39,6 +39,7 @@ export enum ENDPOINT_LINKS {
   Grantee = 'catalog/grantees',
   HalfImage = 'catalog/half-image',
   Holiday = 'catalog/holiday',
+  HistoryGood = 'historygood/historicalStatusGood',
   Identifier = 'catalog/identifier',
   IfaiSerie = 'catalog/series',
   IndicatorDeadline = 'catalog/indicator-deadlines',

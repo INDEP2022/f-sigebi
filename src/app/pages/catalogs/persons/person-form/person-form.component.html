@@ -3,11 +3,19 @@
     <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
+    <form class="form-material" [formGroup]="personForm">
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-3">
+          <form-field [control]="personForm.get('id')" label="ID">
+            <input type="text" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-3">
           <form-field
-            [control]="form.get('personNumber')"
+            [control]="personForm.get('personNumber')"
             label="N&uacute;mero Persona">
             <input
               type="text"
@@ -15,29 +23,35 @@
               formControlName="personNumber" />
           </form-field>
         </div>
-        <div class="col-md-12">
-          <form-field [control]="form.get('name')" label="Nombre Completo">
+        <div class="col-md-9">
+          <form-field
+            [control]="personForm.get('name')"
+            label="Nombre Completo">
             <input type="text" class="form-control" formControlName="name" />
           </form-field>
         </div>
-        <div class="col-md-12">
-          <form-field [control]="form.get('street')" label="Direcci&oacute;n">
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field
+            [control]="personForm.get('street')"
+            label="Direcci&oacute;n">
             <input type="text" class="form-control" formControlName="street" />
           </form-field>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-3">
           <form-field
-            [control]="form.get('streetNumber')"
-            label="Numero Direcci&oacute;n">
+            [control]="personForm.get('streetNumber')"
+            label="N&uacute;mero Direcci&oacute;n">
             <input
               type="text"
               class="form-control"
               formControlName="streetNumber" />
           </form-field>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-3">
           <form-field
-            [control]="form.get('apartmentNumber')"
+            [control]="personForm.get('apartmentNumber')"
             label="N&uacute;mero Apartamento">
             <input
               type="text"
@@ -45,14 +59,16 @@
               formControlName="apartmentNumber" />
           </form-field>
         </div>
-        <div class="col-md-12">
-          <form-field [control]="form.get('suburb')" label="Colonia">
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field [control]="personForm.get('suburb')" label="Colonia">
             <input type="text" class="form-control" formControlName="suburb" />
           </form-field>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-3">
           <form-field
-            [control]="form.get('delegation')"
+            [control]="personForm.get('delegation')"
             label="Delegci&oacute;n Municipal">
             <input
               type="text"
@@ -60,39 +76,47 @@
               formControlName="delegation" />
           </form-field>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-3">
           <form-field
-            [control]="form.get('zipCode')"
+            [control]="personForm.get('zipCode')"
             label="C&oacute;digo Postal">
             <input type="text" class="form-control" formControlName="zipCode" />
           </form-field>
         </div>
-        <div class="col-md-12">
-          <form-field [control]="form.get('rfc')" label="RFC">
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field [control]="personForm.get('rfc')" label="RFC">
             <input type="text" class="form-control" formControlName="rfc" />
           </form-field>
         </div>
-        <div class="col-md-12">
-          <form-field [control]="form.get('curp')" label="CURP">
+        <div class="col-md-4">
+          <form-field [control]="personForm.get('curp')" label="CURP">
             <input type="text" class="form-control" formControlName="curp" />
           </form-field>
         </div>
-        <div class="col-md-12">
-          <form-field [control]="form.get('phone')" label="Tel&eacute;fono">
+        <div class="col-md-4">
+          <form-field
+            [control]="personForm.get('phone')"
+            label="Tel&eacute;fono">
             <input type="tel" class="form-control" formControlName="phone" />
           </form-field>
         </div>
-        <div class="col-md-12">
-          <form-field [control]="form.get('typePerson')" label="Tipo Persona">
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field
+            [control]="personForm.get('typePerson')"
+            label="Tipo Persona">
             <input
               type="text"
               class="form-control"
               formControlName="typePerson" />
           </form-field>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-3">
           <form-field
-            [control]="form.get('typeResponsible')"
+            [control]="personForm.get('typeResponsible')"
             label="Tipo Responsabilidad">
             <input
               type="text"
@@ -100,14 +124,16 @@
               formControlName="typeResponsible" />
           </form-field>
         </div>
-        <div class="col-md-12">
-          <form-field [control]="form.get('manager')" label="Gerente">
+        <div class="col-md-6">
+          <form-field [control]="personForm.get('manager')" label="Gerente">
             <input type="text" class="form-control" formControlName="manager" />
           </form-field>
         </div>
-        <div class="col-md-12">
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
           <form-field
-            [control]="form.get('numberDeep')"
+            [control]="personForm.get('numberDeep')"
             label="N&uacute;mero Deep">
             <input
               type="tel"
@@ -115,9 +141,9 @@
               formControlName="numberDeep" />
           </form-field>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-9">
           <form-field
-            [control]="form.get('profesion')"
+            [control]="personForm.get('profesion')"
             label="Profesi&oacute;n">
             <input
               type="text"
@@ -125,33 +151,43 @@
               formControlName="profesion" />
           </form-field>
         </div>
-        <div class="col-md-12">
-          <form-field [control]="form.get('curriculum')" label="Curriculum">
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field
+            [control]="personForm.get('curriculum')"
+            label="Curriculum">
             <input
               type="text"
               class="form-control"
               formControlName="curriculum" />
           </form-field>
         </div>
-        <div class="col-md-12">
-          <form-field [control]="form.get('keyEntFed')" label="keyEntFed">
+        <div class="col-md-3">
+          <form-field
+            [control]="personForm.get('keyEntFed')"
+            label="Entidad Federativa">
             <input
               type="text"
               class="form-control"
               formControlName="keyEntFed" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('keyOperation')" label="keyOperation">
+        <div class="col-md-3">
+          <form-field
+            [control]="personForm.get('keyOperation')"
+            label="Operaci&oacute;n">
             <input
               type="tel"
               class="form-control"
               formControlName="keyOperation" />
           </form-field>
         </div>
-        <div class="col-md-4">
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-8">
           <form-field
-            [control]="form.get('observations')"
+            [control]="personForm.get('observations')"
             label="Observaciones">
             <input
               type="text"
@@ -160,13 +196,15 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="form.get('profile')" label="Perfil">
+          <form-field [control]="personForm.get('profile')" label="Perfil">
             <input type="text" class="form-control" formControlName="profile" />
           </form-field>
         </div>
+      </div>
+      <div class="row pt-5">
         <div class="col-md-4">
           <form-field
-            [control]="form.get('precedentSecodam')"
+            [control]="personForm.get('precedentSecodam')"
             label="Antecedentes SECODAm">
             <input
               type="text"
@@ -176,7 +214,7 @@
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="form.get('precedentPgr')"
+            [control]="personForm.get('precedentPgr')"
             label="Antecedentes PGR">
             <input
               type="text"
@@ -186,7 +224,7 @@
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="form.get('precedentPff')"
+            [control]="personForm.get('precedentPff')"
             label="Antecedentes PTFF">
             <input
               type="text"
@@ -194,9 +232,11 @@
               formControlName="precedentPff" />
           </form-field>
         </div>
+      </div>
+      <div class="row pt-5">
         <div class="col-md-4">
           <form-field
-            [control]="form.get('precedentSera')"
+            [control]="personForm.get('precedentSera')"
             label="Antecedentes Sera">
             <input
               type="text"
@@ -206,17 +246,17 @@
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="form.get('precedent0ther')"
+            [control]="personForm.get('precedent0ther')"
             label="Otros Antecedentes">
             <input
               type="text"
               class="form-control"
-              formControlName="precedentPgr" />
+              formControlName="precedent0ther" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
-            [control]="form.get('registryNumber')"
+            [control]="personForm.get('registryNumber')"
             label="N&uacute;mero Registro">
             <input
               type="number"
@@ -224,23 +264,19 @@
               formControlName="registryNumber" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('email')" label="email">
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field [control]="personForm.get('email')" label="email">
             <input type="email" class="form-control" formControlName="email" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('blackList')" label="blackList">
+        <div class="col-md-6">
+          <form-field
+            [control]="personForm.get('blackList')"
+            label="Lista Negra">
             <input
-              type="email"
-              class="form-control"
-              formControlName="blackList" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field [control]="form.get('blackList')" label="blackList">
-            <input
-              type="email"
+              type="test"
               class="form-control"
               formControlName="blackList" />
           </form-field>
@@ -252,8 +288,8 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="form.invalid"
-          [loading]="loading"
+          [disabled]="!personForm.valid"
+          [type]="'button'"
           (confirm)="confirm()">
         </confirm-button>
       </div>
