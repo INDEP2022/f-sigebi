@@ -292,11 +292,11 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
     this.loading = true;
     return this.jobsService.create(this.jobForm.value).pipe(
       // TODO: Descomentar y checar funcionalidad ticket - 254
-      // switchMap((response: any) => {
-      //   const copies = this.buildOfficeCopies(response.id);
-      //   const obs = copies.map(copy => this.createTradeCopy(copy.value));
-      //   return forkJoin(obs).pipe(map(() => response));
-      // }),
+      switchMap((response: any) => {
+        const copies = this.buildOfficeCopies(response.id);
+        const obs = copies.map(copy => this.createTradeCopy(copy.value));
+        return forkJoin(obs).pipe(map(() => response));
+      }),
       switchMap((response: any) =>
         forkJoin(
           this.selectedNotifications.map(noti =>
