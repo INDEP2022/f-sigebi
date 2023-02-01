@@ -31,6 +31,18 @@ export class AffairTypeRepository<T> implements IAffairTypeMethods<T> {
     });
   }
 
+  getAffairTypebyAffair?(
+    route: string,
+    id: number | string,
+    _params?: ListParams
+  ): Observable<IListResponse<T>> {
+    const fullRoute = `${this.ms}/${route}`;
+    const params = this.makeParams(_params);
+    return this.httpClient.get<IListResponse<T>>(
+      `${fullRoute}?limit=10&page=1&filter.code=${id}`
+    );
+  }
+
   update(
     code: string | number,
     referralNoteType: string | number,

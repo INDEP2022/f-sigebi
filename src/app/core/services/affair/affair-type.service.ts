@@ -44,23 +44,10 @@ export class AffairTypeService extends HttpService {
     return this.affairTypeRepository.update(code, referralNoteType, model);
   }
 
-  // getByAffair(id: number | string, params?: ListParams): Observable<IListResponse<IAffairType>> {
-  //   if (params) {
-  //     params['id'] = id;
-  //   }
-  //   const ms = AffairTypeEndpoints.AffairType
-  //   const filter = AffairTypeEndpoints.byAffairId;
-  //   return this.get<IListResponse<IAffairType>>(ms, filter);
-  // }
-
   getByAffair(
     id: number | string,
     params?: ListParams
   ): Observable<IListResponse<IAffairType>> {
-    if (params) {
-      params['id'] = id;
-    }
-    const route = AffairTypeEndpoints.byAffairId;
-    return this.get<IListResponse<IAffairType>>(route, params);
+    return this.affairTypeRepository.getAffairTypebyAffair('', id, params);
   }
 }
