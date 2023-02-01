@@ -5,7 +5,6 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   EMAIL_PATTERN,
-  NUMBERS_PATTERN,
   PHONE_PATTERN,
   RFCCURP_PATTERN,
   STRING_PATTERN,
@@ -124,31 +123,36 @@ export class ProviderCatalogsModalComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.providerForm = this.fb.group({
-      rfc: [null, Validators.pattern(RFCCURP_PATTERN)],
+      providerId: [null],
+      rfc: [null, [Validators.required, Validators.pattern(RFCCURP_PATTERN)]],
       curp: [null, [Validators.required, Validators.pattern(RFCCURP_PATTERN)]],
-      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      street: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      neighborhood: [
+      nameReason: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
+      street: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      colony: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       delegation: [null, Validators.pattern(STRING_PATTERN)],
-      state: [null],
-      city: [null],
-      country: [null],
+      stateDesc: [null, Validators.required],
+      cityDesc: [null, Validators.required],
+      clkCountry: [null, Validators.required],
       cp: [null, Validators.pattern(STRING_PATTERN)],
       phone: [null, Validators.pattern(PHONE_PATTERN)],
-      fax: [null],
-      email: [null, Validators.pattern(EMAIL_PATTERN)],
-      type: [null],
-      activity: [null, Validators.pattern(STRING_PATTERN)],
-      contractNumber: [null, Validators.pattern(NUMBERS_PATTERN)],
+      fax: [null, Validators.pattern(STRING_PATTERN)],
+      webMail: [null, Validators.pattern(EMAIL_PATTERN)],
+      typePerson: [null, Validators.pattern(STRING_PATTERN)],
+      preponderantAct: [null, Validators.pattern(STRING_PATTERN)],
+      contractNo: [null, Validators.pattern(STRING_PATTERN)],
+      bank: [null, Validators.pattern(STRING_PATTERN)],
+      branch: [null, Validators.pattern(STRING_PATTERN)],
+      checkingCta: [null, Validators.pattern(STRING_PATTERN)],
+      key: [null, Validators.pattern(STRING_PATTERN)],
     });
     if (this.provider !== undefined) {
       this.edit = true;
       this.providerForm.patchValue(this.provider);
     } else {
-      this.providerForm.controls['country'].setValue('MÉXICO');
+      this.providerForm.controls['clkCountry'].setValue('MÉXICO');
     }
   }
 
