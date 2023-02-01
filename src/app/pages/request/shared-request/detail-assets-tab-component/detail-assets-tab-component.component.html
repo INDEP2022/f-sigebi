@@ -28,12 +28,13 @@
                 mineralsAssets === true
               ">
               <form-field
-                [control]="detailAssets.get('noManagement')"
+                [control]="detailAssets.get('goodId')"
                 label="No&#46; Gesti&oacute;n">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="noManagement" />
+                  formControlName="goodId"
+                  [readOnly]="true" />
               </form-field>
             </div>
             <div class="col-md-3">

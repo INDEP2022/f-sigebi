@@ -5,9 +5,13 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Repository } from 'src/app/common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IGoodParameter } from '../../models/good-parameters/good-parameter.model';
+
 @Injectable({
   providedIn: 'root',
 })
+/**
+ * @deprecated Cambiar a la nueva forma
+ */
 export class GoodParameterService implements ICrudMethods<IGoodParameter> {
   private readonly route: string = 'parametergood/parameters';
   constructor(private goodParameterRepository: Repository<IGoodParameter>) {}

@@ -95,7 +95,6 @@ export class ClassifyAssetsTabComponent
       ligieLevel3: [null],
       ligieLevel4: [null],
       requestId: [requestId],
-      noManagement: [null], // preguntar no gestion
       goodTypeId: [null],
       color: [null],
       goodDescription: [null],
@@ -347,14 +346,11 @@ export class ClassifyAssetsTabComponent
     this.isSave = true;
     const goods = this.classiGoodsForm.getRawValue();
     console.log(goods);
-    //var action = goods.goodId === null? this.goodService.create(good);
-    /**/
-  }
-
-  createGood(good: any) {
-    var action = this.goodService.create(good);
-
-    this.goodService.create(good).subscribe({
+    var goodAction =
+      goods.goodId === null
+        ? this.goodService.create(goods)
+        : this.goodService.update(goods.id, goods);
+    goodAction.subscribe({
       next: (data: any) => {
         if (data.statusCode != null) {
           this.message(
@@ -377,8 +373,6 @@ export class ClassifyAssetsTabComponent
       },
     });
   }
-
-  updateGood(good: any) {}
 
   getReactiveFormActions() {
     this.classiGoodsForm.controls['ligieSection'].valueChanges.subscribe(

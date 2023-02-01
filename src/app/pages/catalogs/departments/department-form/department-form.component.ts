@@ -56,7 +56,7 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
       ],
       lastOffice: [
         null,
-        [Validators.maxLength(10), Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(10), Validators.pattern(NUMBERS_PATTERN)],
       ],
       numRegister: [
         null,
@@ -66,7 +66,10 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
         null,
         [Validators.maxLength(2), Validators.pattern(NUMBERS_PATTERN)],
       ],
-      depend: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      depend: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
       depDelegation: [
         null,
         [

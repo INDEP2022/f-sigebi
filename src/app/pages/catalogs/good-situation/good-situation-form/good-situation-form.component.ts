@@ -16,7 +16,7 @@ export class GoodSituationFormComponent extends BasePage implements OnInit {
   goodSituation: IGoodSituation;
   edit: boolean = false;
   goodSituationForm: ModelForm<IGoodSituation>;
-  title = 'Situacion Bien';
+  title = 'Situación Bien';
 
   constructor(
     private modalRef: BsModalRef,
@@ -32,7 +32,7 @@ export class GoodSituationFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.goodSituationForm = this.fb.group({
-      situation: [null],
+      situation: [null, [Validators.required]],
       descSituation: [
         null,
         [

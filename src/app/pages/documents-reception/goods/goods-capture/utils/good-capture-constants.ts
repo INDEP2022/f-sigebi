@@ -32,6 +32,23 @@ const SSSUBTYPE_NOT_FOUND_FIELDS = [
   'cantidad',
 ];
 
+const SAT_DISABLED_FIELDS = [
+  'noClasifBien',
+  'capitulo',
+  'partida',
+  'subpartida',
+  'ssubpartida',
+  'type',
+  'subtype',
+  'ssubtype',
+  'sssubtype',
+  'destino',
+  'descripcion',
+  'unidadLigie',
+  'unidadMedida',
+  'cantidad',
+];
+const CONSERVATION_STATUSES = [{ status: 'Bueno' }, { status: 'Malo' }];
 const NATIONAL_CURRENCY_CLASIF_NUM = 1424;
 const AMERICAN_DOLLARS_CLASIF_NUM = 1426;
 const EURO_CLASIF_NUM = 1590;
@@ -41,6 +58,7 @@ const CASH_CODES = [
   EURO_CLASIF_NUM,
 ];
 const COMPENSATION_GOOD_CLASIF_NUMBER = 1575;
+const SIAVI_PARAMETER = 'SSF3_RESULT_NOMS';
 export {
   CVE_PARAMETER,
   FLYERS_REGISTRATION_CODE,
@@ -50,4 +68,7 @@ export {
   SSSUBTYPE_NOT_FOUND_FIELDS,
   COMPENSATION_GOOD_CLASIF_NUMBER,
   CASH_CODES,
+  SAT_DISABLED_FIELDS,
+  CONSERVATION_STATUSES,
+  SIAVI_PARAMETER,
 };

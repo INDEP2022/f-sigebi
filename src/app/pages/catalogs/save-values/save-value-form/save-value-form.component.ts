@@ -30,7 +30,7 @@ export class SaveValueFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.saveValueForm = this.fb.group({
-      cve: [null, [Validators.required]],
+      id: [null, [Validators.required]],
       description: [null, [Validators.required]],
       location: [null, [Validators.required]],
       responsible: [null, [Validators.required]],
@@ -40,7 +40,7 @@ export class SaveValueFormComponent extends BasePage implements OnInit {
     if (this.saveValue != null) {
       this.edit = true;
       this.saveValueForm.patchValue(this.saveValue);
-      this.saveValueForm.get('cve').disable();
+      this.saveValueForm.get('id').disable();
     }
   }
 
@@ -58,7 +58,7 @@ export class SaveValueFormComponent extends BasePage implements OnInit {
 
   update() {
     this.saveValueService
-      .update(this.saveValue.cve, this.saveValueForm.value)
+      .update(this.saveValue.id, this.saveValueForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

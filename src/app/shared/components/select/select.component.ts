@@ -36,6 +36,7 @@ export class SelectComponent<T> implements OnInit {
   @Input() closeOnSelect: boolean = true;
   @Input() maxSelectedItems: number = 0;
   @Input() searchable: boolean = true;
+  @Input() searchOnInit: boolean = false;
   @Output() fetchItems = new EventEmitter<ListParams>();
   @Output() change = new EventEmitter<any>();
   @Input() readonly: boolean = false;
@@ -48,6 +49,10 @@ export class SelectComponent<T> implements OnInit {
   constructor() {}
 
   ngOnInit() {
+    if (this.searchOnInit) {
+      const params = new ListParams();
+      this.fetchItems.emit(params);
+    }
     this.onSearch();
   }
 
@@ -69,9 +74,9 @@ export class SelectComponent<T> implements OnInit {
       this.loading = true;
       this.concat = true;
       const params = {
-        inicio: this.page,
+        page: this.page,
         text: text ?? '',
-        pageSize: this.selectSize,
+        limit: this.selectSize,
       };
       this.fetchItems.emit(params);
     }
@@ -88,9 +93,9 @@ export class SelectComponent<T> implements OnInit {
           this.loading = true;
           this.concat = false;
           const params = {
-            inicio: this.page,
+            page: this.page,
             text: text ?? '',
-            pageSize: this.selectSize,
+            limit: this.selectSize,
           };
           this.fetchItems.emit(params);
           return of([]);

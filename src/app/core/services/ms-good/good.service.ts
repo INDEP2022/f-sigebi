@@ -21,7 +21,7 @@ export class GoodService {
   }
 
   getAll(params?: ListParams): Observable<IListResponse<IGood>> {
-    return this.goodRepository.getAll(this.route.Good, params);
+    return this.goodRepository.getAll(this.routeGood, params);
   }
 
   getByExpedient(
@@ -33,6 +33,14 @@ export class GoodService {
       id,
       params
     );
+  }
+
+  update(id: string | number, formData: IGood): Observable<Object> {
+    return this.goodRepository.update(this.routeGood, id, formData);
+  }
+
+  remove(id: string | number): Observable<Object> {
+    return this.goodRepository.remove(this.routeGood, id);
   }
 
   /*getGoodsByRecordId(recordId: number) {

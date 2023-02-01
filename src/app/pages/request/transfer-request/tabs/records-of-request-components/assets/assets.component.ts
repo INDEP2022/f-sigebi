@@ -40,6 +40,7 @@ export class AssetsComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: any[] = [];
   createNewAsset: boolean = false;
+  btnCreate: string = 'Crear Nuevo';
   //typeDoc: string = '';
 
   constructor(
@@ -70,33 +71,42 @@ export class AssetsComponent extends BasePage implements OnInit {
   }
 
   getData(params: ListParams) {
+    this.loading = true;
     const requestId = Number(this.route.snapshot.paramMap.get('id'));
     params['filter.requestId'] = `$eq:${requestId}`;
     this.goodService.getAll(params).subscribe({
       next: async (data: any) => {
         if (data !== null) {
-          //obtener tipo bien
-          const goodType = await this.getGoodType(data.data[0].goodTypeId);
-          data.data[0]['goodTypeName'] = goodType;
-          //obtener el estado fisico
-          const physicalStatus = await this.getPhysicalStatus(
-            data.data[0].physicalStatus
-          );
-          data.data[0]['physicalStatusName'] = physicalStatus;
-          //obtener el estado de concervacion
-          const stateConservation = await this.getStateConservation(
-            data.data[0].stateConservation
-          );
-          data.data[0]['stateConservationName'] = stateConservation;
-          //obtener el destino de la transferencia
-          const transferentDestiny = await this.getTransferDestiny(
-            data.data[0].transferentDestiny
-          );
-          data.data[0]['transferentDestinyName'] = transferentDestiny;
-          data.data[0]['destinyLigieName'] = transferentDestiny;
+          const result = data.data.map(async (item: any) => {
+            //obtener tipo bien
+            const goodType = await this.getGoodType(item.goodTypeId);
+            item['goodTypeName'] = goodType;
 
-          this.paragraphs = data.data;
-          console.log(this.paragraphs);
+            //obtener el estado fisico
+            const physicalStatus = await this.getPhysicalStatus(
+              item.physicalStatus
+            );
+            item['physicalStatusName'] = physicalStatus;
+
+            //obtener el estado de concervacion
+            const stateConservation = await this.getStateConservation(
+              item.stateConservation
+            );
+            item['stateConservationName'] = stateConservation;
+
+            //obtener el destino de la transferencia
+            const transferentDestiny = await this.getTransferDestiny(
+              item.transferentDestiny
+            );
+            item['transferentDestinyName'] = transferentDestiny;
+            item['destinyLigieName'] = transferentDestiny;
+          });
+
+          Promise.all(result).then(x => {
+            console.log(x);
+            console.log(data);
+            this.paragraphs = data.data;
+          });
         } else {
           this.paragraphs = defaultData;
         }
@@ -179,20 +189,23 @@ export class AssetsComponent extends BasePage implements OnInit {
   newAsset(): void {
     if (this.createNewAsset === false) {
       this.createNewAsset = true;
+      this.btnCreate = 'Cerrar Nuevo';
       window.scroll(0, 600);
     } else {
       this.createNewAsset = false;
+      this.btnCreate = 'Crear Nuevo';
     }
   }
 
   selectRows(event: any) {
-    console.log(event);
     if (event.isSelected === true) {
       this.goodObject = event.data;
       this.createNewAsset = true;
+      this.btnCreate = 'Cerrar Nuevo';
     } else {
       this.goodObject = null;
       this.createNewAsset = false;
+      this.btnCreate = 'Crear Nuevo';
     }
   }
 
