@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 import {
   SAT_PAPERWORK_MAILBOX_COLUMNS,
@@ -18,6 +17,7 @@ import compareDesc from 'date-fns/compareDesc';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { FormFieldsToParamsService } from 'src/app/common/services/form-fields-to-params.service';
 import { SatSubjectsRegisterService } from '../service/sat-subjects-register.service';
+// Interfaces
 import { ISatSubjectsRegisterGestionSat } from './utils/interfaces/sat-subjects-register.gestion-sat.interface';
 import { ISatSubjectsRegisterSatTransferencia } from './utils/interfaces/sat-subjects-register.sat-transferencia.interface';
 import {
@@ -25,6 +25,8 @@ import {
   ERROR_FORM,
   ERROR_FORM_FECHA,
   ERROR_INTERNET,
+  INFO_DOWNLOAD,
+  NOT_FOUND_MESSAGE,
 } from './utils/sat-subjects-register.messages';
 
 @Component({
@@ -38,7 +40,7 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
   // Gestion SAT
   mailboxSettings = {
     ...this.settings,
-    columns: SAT_PAPERWORK_MAILBOX_COLUMNS,
+    columns: { ...SAT_PAPERWORK_MAILBOX_COLUMNS },
   };
   satForm: FormGroup;
   listGestionSat: ISatSubjectsRegisterGestionSat[] = [];
@@ -46,7 +48,10 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
   loadingGestionSat: boolean = false;
   totalGestionSat: number = 0;
   // Sat Transferencia
-  transfersSettings = { ...this.settings, columns: SAT_TRANSFER_COLUMNS };
+  transfersSettings = {
+    ...this.settings,
+    columns: { ...SAT_TRANSFER_COLUMNS },
+  };
   satTransferForm: FormGroup;
   listSatTransferencia: ISatSubjectsRegisterSatTransferencia[] = [];
   paramsSatTransferencia = new BehaviorSubject<ListParams>(new ListParams());
@@ -54,6 +59,7 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
   totalSatTransferencia: number = 0;
   // Filtro de paginado
   filtroPaginado: string[] = ['page', 'limit'];
+  INFO_DOWNLOAD = INFO_DOWNLOAD;
 
   constructor(
     private fb: FormBuilder,
@@ -110,8 +116,8 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
       to: [null],
       issue: [null],
       delegationNumber: [null],
-      officeNumber: [null, Validators.pattern(STRING_PATTERN)],
-      processStatus: [null, Validators.pattern(STRING_PATTERN)],
+      officeNumber: [null],
+      processStatus: [null],
     });
 
     this.satTransferForm = this.fb.group({
@@ -174,8 +180,16 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
       .getGestionTramiteSatBySearch(filtrados)
       .subscribe({
         next: data => {
-          this.listGestionSat = data.data;
-          this.totalGestionSat = data.count;
+          if (data.count > 0) {
+            this.listGestionSat = data.data;
+            this.totalGestionSat = data.count;
+          } else {
+            this.onLoadToast(
+              'warning',
+              '',
+              NOT_FOUND_MESSAGE('Gestión Trámites')
+            );
+          }
           this.loadingGestionSat = false;
         },
         error: error => {
@@ -213,9 +227,15 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
       .getSatTransferenciaBySearch(filtrados)
       .subscribe({
         next: data => {
-          if (data.data) {
+          if (data.count > 0) {
             this.listSatTransferencia = data.data;
             this.totalSatTransferencia = data.count;
+          } else {
+            this.onLoadToast(
+              'warning',
+              '',
+              NOT_FOUND_MESSAGE('Transferenci SAT')
+            );
           }
           this.loadingSatTransferencia = false;
         },
@@ -321,8 +341,8 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
     this.excelService.export(data, {
       filename:
         opcion == 'gestion'
-          ? `GestionSat_${new Date().getTime()}`
-          : `SatTransferencia_${new Date().getTime()}`,
+          ? `GestionSat__Listado_Tramites_SAT${new Date().getTime()}`
+          : `SatTransferencia_Listado_Cves_SAT${new Date().getTime()}`,
     });
   }
 
