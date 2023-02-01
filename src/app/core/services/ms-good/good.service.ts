@@ -5,6 +5,7 @@ import { HttpService } from 'src/app/common/services/http.service';
 import { GoodEndpoints } from '../../../common/constants/endpoints/ms-good-endpoints';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IGood } from '../../models/ms-good/good';
+import { IGoodDesc } from '../../models/ms-good/good-and-desc.model';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +22,7 @@ export class GoodService extends HttpService {
 
   getById(id: string | number) {
     const route = `${GoodEndpoints.Good}/${id}`;
-    return this.get(route);
+    return this.get<IListResponse<IGood>>(route);
   }
 
   create(good: IGood) {
@@ -47,5 +48,10 @@ export class GoodService extends HttpService {
     }
     const route = GoodEndpoints.SearchByExpedient;
     return this.get<IListResponse<IGood>>(route, params);
+  }
+
+  getGoodAndDesc(goodId: number | string) {
+    const route = `${GoodEndpoints.GoodAndDesc}/${goodId}`;
+    return this.get<IGoodDesc>(route);
   }
 }

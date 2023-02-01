@@ -26,11 +26,14 @@ export class Repository<T> implements IRepository<T> {
 
   create(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
+    console.log(fullRoute);
+
     return this.httpClient.post<T>(`${fullRoute}`, formData);
   }
 
   update(route: string, id: number | string, formData: Object) {
     const fullRoute = this.buildRoute(route);
+    console.log(`${fullRoute}/${id}`);
     return this.httpClient.put(`${fullRoute}/${id}`, formData);
   }
 
@@ -165,6 +168,7 @@ export class Repository<T> implements IRepository<T> {
       `${environment.API_URL2}${route}/${idsRoute}`
     );
   }
+
   getByIdDelegationSubdelegation(
     /* route: string, */
     idDelegation: string | number,
@@ -178,9 +182,18 @@ export class Repository<T> implements IRepository<T> {
     const fullRoute = this.buildRoute(route);
     return this.httpClient.delete(`${fullRoute}`, obj);
   }
-
   update4(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
-    return this.httpClient.put(`${fullRoute}`, formData);
+    return this.httpClient.put(`${fullRoute}${route}`, formData);
+  }
+  update5(
+    route: string,
+    id: number | string,
+    id1: number | string,
+    formData: Object
+  ) {
+    const fullRoute = this.buildRoute(route);
+    console.log(fullRoute);
+    return this.httpClient.put(`${fullRoute}/${id}/${id1}`, formData);
   }
 }

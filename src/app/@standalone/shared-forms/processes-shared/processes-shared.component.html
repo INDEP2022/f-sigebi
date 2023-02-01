@@ -1,0 +1,18 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showPackages">
+    <div class="col-md-12">
+      <form-field [control]="form.get(packageField)">
+        <ngx-select
+          (fetchItems)="getProcesses($event)"
+          [data]="processes"
+          [form]="form"
+          value="extDomProcess"
+          bindLabel="extDomProcess"
+          [label]="label"
+          [control]="packageField"
+          (change)="onPackagesChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

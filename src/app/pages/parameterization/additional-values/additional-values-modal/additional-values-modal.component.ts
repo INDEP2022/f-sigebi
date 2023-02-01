@@ -23,6 +23,7 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
   value: ITables;
   values = new DefaultSelect<ITables>();
   edit: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -44,13 +45,13 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
     this.tvalTableForm = this.fb.group({
       id: [null],
       table: [null],
-      otKey1: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      otKey2: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      otKey3: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      otKey4: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      otKey5: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      fromDate: [null, [Validators.required]],
-      toDate: [null, [Validators.required]],
+      otKey1: [null, [Validators.pattern(STRING_PATTERN)]],
+      otKey2: [null, [Validators.pattern(STRING_PATTERN)]],
+      otKey3: [null, [Validators.pattern(STRING_PATTERN)]],
+      otKey4: [null, [Validators.pattern(STRING_PATTERN)]],
+      otKey5: [null, [Validators.pattern(STRING_PATTERN)]],
+      fromDate: [null],
+      toDate: [null],
       otValue01: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -59,104 +60,36 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      otValue03: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue04: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue05: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue06: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue07: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue08: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue09: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue10: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue11: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue12: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue13: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue14: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue15: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue16: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue17: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue18: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue19: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue20: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue21: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue22: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue23: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue24: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue25: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      otValue03: [null, [Validators.pattern(STRING_PATTERN)]],
+      otValue04: [null, [Validators.pattern(STRING_PATTERN)]],
+      otValue05: [null, [Validators.pattern(STRING_PATTERN)]],
+      otValue06: [null, [Validators.pattern(STRING_PATTERN)]],
+      otValue07: [null, [Validators.pattern(STRING_PATTERN)]],
+      otValue08: [null, [Validators.pattern(STRING_PATTERN)]],
+      otValue09: [null, [Validators.pattern(STRING_PATTERN)]],
+      otValue10: [null, [Validators.pattern(STRING_PATTERN)]],
+      otValue11: [null, [Validators.pattern(STRING_PATTERN)]],
+      otValue12: [null, [Validators.pattern(STRING_PATTERN)]],
+      otValue13: [null, [Validators.pattern(STRING_PATTERN)]],
+      otValue14: [null, [Validators.pattern(STRING_PATTERN)]],
+      otValue15: [null, [Validators.pattern(STRING_PATTERN)]],
+      otValue16: [null, [Validators.pattern(STRING_PATTERN)]],
+      otValue17: [null, [Validators.pattern(STRING_PATTERN)]],
+      otValue18: [null, [Validators.pattern(STRING_PATTERN)]],
+      otValue19: [null, [Validators.pattern(STRING_PATTERN)]],
+      otValue20: [null, [Validators.pattern(STRING_PATTERN)]],
+      otValue21: [null, [Validators.pattern(STRING_PATTERN)]],
+      otValue22: [null, [Validators.pattern(STRING_PATTERN)]],
+      otValue23: [null, [Validators.pattern(STRING_PATTERN)]],
+      otValue24: [null, [Validators.pattern(STRING_PATTERN)]],
+      otValue25: [null, [Validators.pattern(STRING_PATTERN)]],
       numRegister: [null],
     });
     if (this.tvalTable != null) {
       this.edit = true;
       this.tvalTableForm.patchValue(this.tvalTable);
       this.additionalValuesForm.controls['name'].setValue(this.value.name);
+      this.tvalTableForm.controls['table'].setValue(this.value.table);
       this.additionalValuesForm.controls['description'].setValue(
         this.value.description
       );
