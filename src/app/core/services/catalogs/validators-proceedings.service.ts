@@ -32,10 +32,7 @@ export class ValidatorsProceedingsService
     return this.maximumTimesRepository.create(this.route, model);
   }
 
-  update(
-    id: string | number,
-    model: IValidatorsProceedings
-  ): Observable<Object> {
-    return this.maximumTimesRepository.update(this.route, id, model);
+  update4(model: IValidatorsProceedings): Observable<Object> {
+    return this.maximumTimesRepository.update4(this.route, model);
   }
 }

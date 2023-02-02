@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
@@ -77,17 +76,19 @@ export class RecordUpdateComponent extends BasePage implements OnInit {
       justificacion: [null, Validators.pattern(STRING_PATTERN)],
     });
   }
-  publicMinistries() {
-    const modalConfig = {
-      ...MODAL_CONFIG,
-      class: 'modal-dialog-centered',
+
+  publicMinistries(data?: any) {
+    let config: ModalOptions = {
       initialState: {
-        // TODO: Deberia recibir todos los datos para que el formulario sea llenado
-        callback: (next: string | number) => {
-          // TODO: LLenar el formulario
+        data,
+        callback: (next: boolean) => {
+          if (next) {
+          }
         },
       },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
     };
-    this.modalService.show(PublicMinistriesComponent, modalConfig);
+    this.modalService.show(PublicMinistriesComponent, config);
   }
 }
