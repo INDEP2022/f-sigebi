@@ -25,11 +25,20 @@
                 type="text"
                 class="form-control"
                 formControlName="warehouseAlias"
-                [readOnly]="true" />
+                [readOnly]="isreadOnly" />
             </form-field>
           </div>
           <div class="col-md-4">
-            <form-field
+            <ngx-select
+              [form]="domicileForm"
+              control="statusKey"
+              (fetchItems)="getStateOfRepublic($event)"
+              [data]="selectState"
+              label="Estado"
+              bindLabel="descCondition"
+              value="id"
+              [readonly]="isreadOnly"></ngx-select>
+            <!-- <form-field
               [control]="domicileForm.get('statusKey')"
               label="Estado">
               <input
@@ -37,8 +46,8 @@
                 class="form-control"
                 [ngModelOptions]="{ standalone: true }"
                 [(ngModel)]="stateOfRepublicName"
-                [readOnly]="true" />
-            </form-field>
+                [readOnly]="isreadOnly" />
+            </form-field> -->
           </div>
 
           <div class="col-md-4">

@@ -23,8 +23,10 @@ import { LocalityService } from 'src/app/core/services/catalogs/locality.service
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
+import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { SelectAddressComponent } from '../../transfer-request/tabs/records-of-request-components/records-of-request-child-tabs-components/select-address/select-address.component';
@@ -34,7 +36,10 @@ import { SelectAddressComponent } from '../../transfer-request/tabs/records-of-r
   templateUrl: './detail-assets-tab-component.component.html',
   styleUrls: ['./detail-assets-tab-component.component.scss'],
 })
-export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
+export class DetailAssetsTabComponentComponent
+  extends BasePage
+  implements OnInit, OnChanges
+{
   //usado para cargar los adatos de los bienes en el caso de cumplimientos de bienes y clasificacion de bienes
   @Input() requestObject: any;
   @Input() detailAssets: ModelForm<any>; // bienes
@@ -55,11 +60,12 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
   duplicity: boolean = false;
   armor: boolean = false;
   destinyLigie: string = '';
+  addressId: number = null;
 
   //tipo de bien seleccionado
   otherAssets: boolean = false;
-  carsAssets: boolean = true;
-  boatAssets: boolean = false;
+  carsAssets: boolean = false;
+  boatAssets: boolean = true;
   jewelerAssets: boolean = false;
   aircraftAssets: boolean = false;
   especialMachineryAssets: boolean = false;
@@ -93,10 +99,13 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
   municipeSeraService = inject(MunicipalityService);
   localityService = inject(LocalityService);
   goodsQueryService = inject(GoodsQueryService);
+  goodDomicilie = inject(GoodDomiciliesService);
 
   isDisabled: boolean = true;
 
-  constructor(private fb: FormBuilder, private modalServise: BsModalService) {}
+  constructor(private fb: FormBuilder, private modalServise: BsModalService) {
+    super();
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.typeDoc === 'clarification') {
@@ -126,12 +135,18 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
     this.getConcervationState(new ListParams());
     this.getReactiveFormCall();
 
-    if (this.requestObject != undefined) {
+    if (
+      this.requestObject != undefined &&
+      this.detailAssets.controls['addressId'].value === null
+    ) {
       this.domicileForm.controls['requestId'].setValue(this.requestObject.id);
       this.domicileForm.controls['regionalDelegationId'].setValue(
         this.requestObject.regionalDelegationId
       );
-      this.getStateOfRepublic(this.requestObject.keyStateOfRepublic);
+      this.getStateOfRepublic(
+        new ListParams(),
+        this.requestObject.keyStateOfRepublic
+      );
       this.getMunicipaly(
         new ListParams(),
         this.requestObject.keyStateOfRepublic
@@ -299,6 +314,11 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
     //this.assetsForm.controls['typeAsset'].disable();
     //this.assetsForm.disable();
     //this.assetsForm.controls['typeAsset'].enable();
+
+    if (this.detailAssets.controls['addressId'].value) {
+      this.addressId = this.detailAssets.controls['addressId'].value;
+      this.getGoodDomicilie(this.addressId);
+    }
   }
 
   getSae(event: any) {}
@@ -440,11 +460,12 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
   }
 
   //obtener el estado de la republic por defecto
-  getStateOfRepublic(keyState: number) {
+  getStateOfRepublic(params: ListParams, keyState?: number) {
     if (keyState != null) {
       this.stateOfRepublicService.getById(keyState).subscribe({
         next: data => {
-          this.domicileForm.controls['statusKey'].setValue(data.descCondition);
+          this.selectState = new DefaultSelect([data]);
+          this.domicileForm.controls['statusKey'].setValue(data.id);
         },
         error: error => {
           console.log(error);
@@ -471,15 +492,19 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
       this.stateOfRepublicName = res.stateOfRepublicName;
 
       delete res.stateOfRepublicName;
+
+      this.detailAssets.controls['addressId'].setValue(res.id);
+      this.getStateOfRepublic(new ListParams(), res.statusKey);
+      //this.domicileForm.controls['statusKey'].setValue(res.statusKey);
       this.domicileForm.patchValue(res);
+
       this.domicileForm.controls['municipalityKey'].setValue(
         res.municipalityKey
       );
-      this.domicileForm.controls['localityKey'].setValue(res.localityKey);
-      this.domicileForm.controls['code'].setValue(res.code);
+      ///this.domicileForm.controls['localityKey'].setValue(res.localityKey);
+      //this.domicileForm.controls['code'].setValue(res.code);
 
-      //this.assetsForm.controls['address'].enable();
-
+      //habilita los campos
       this.isDisabled = false;
     });
   }
@@ -522,9 +547,36 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
   }
 
   save(): void {
-    console.log('Good: ', this.detailAssets.getRawValue());
-    console.log('Domicilie: ', this.domicileForm.getRawValue());
-    this.isSave = false;
+    const domicilie = this.domicileForm.getRawValue();
+    this.isSave = true;
+    this.goodDomicilie.update(domicilie.id, domicilie).subscribe({
+      next: (data: any) => {
+        if (data.statusCode != null) {
+          this.message(
+            'error',
+            'Error',
+            `El registro de domicilio no se pudo actualizar!\n. ${data.message}`
+          );
+        }
+
+        if (data.id != null) {
+          this.message('success', 'Actualizado', `Se actualizo el domicilio!`);
+        }
+        this.isSave = false;
+      },
+    });
+  }
+
+  getGoodDomicilie(addressId: number) {
+    this.goodDomicilie.getById(addressId).subscribe({
+      next: (resp: any) => {
+        console.log(resp);
+        var value = resp.data;
+        this.getStateOfRepublic(new ListParams(), value.statusKey);
+        //this.domicileForm.controls['statusKey'].setValue(value.statusKey);
+        this.domicileForm.patchValue(value);
+      },
+    });
   }
 
   getReactiveFormCall() {
@@ -540,15 +592,22 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
       }
     );
 
+    this.domicileForm.controls['statusKey'].valueChanges.subscribe(data => {
+      if (data !== null) {
+        this.getMunicipaly(new ListParams(), data);
+      }
+    });
+
     this.domicileForm.controls['municipalityKey'].valueChanges.subscribe(
       (data: any) => {
         if (data) {
+          var stateKey =
+            this.request !== undefined
+              ? this.request.keyStateOfRepublic
+              : this.domicileForm.controls['statusKey'].value;
+
           this.municipalityId = data;
-          this.getLocality(
-            new ListParams(),
-            data,
-            this.requestObject.keyStateOfRepublic
-          );
+          this.getLocality(new ListParams(), data, stateKey);
         }
       }
     );
@@ -563,5 +622,11 @@ export class DetailAssetsTabComponentComponent implements OnInit, OnChanges {
         }
       }
     );
+  }
+
+  message(header: any, title: string, body: string) {
+    setTimeout(() => {
+      this.onLoadToast(header, title, body);
+    }, 2000);
   }
 }

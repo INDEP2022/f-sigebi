@@ -6,7 +6,6 @@ import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IDomicilies } from '../../models/good/good.model';
-import { IRequest } from '../../models/requests/request.model';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +24,7 @@ export class GoodDomiciliesService implements ICrudMethods<IDomicilies> {
     return this.domiciliesRepository.getById(this.route, id);
   }
 
-  create(model: IRequest): Observable<IDomicilies> {
+  create(model: IDomicilies): Observable<IDomicilies> {
     return this.domiciliesRepository.create(this.route, model);
   }
 

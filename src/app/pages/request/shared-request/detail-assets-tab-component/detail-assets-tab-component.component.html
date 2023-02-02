@@ -305,7 +305,16 @@
               </form-field>
             </div>
             <div class="col-md-4">
-              <form-field
+              <ngx-select
+                [form]="domicileForm"
+                control="statusKey"
+                (fetchItems)="getStateOfRepublic($event)"
+                [data]="selectState"
+                bindLabel="descCondition"
+                label="Estado"
+                value="id"
+                [readonly]="true"></ngx-select>
+              <!-- <form-field
                 [control]="domicileForm.get('statusKey')"
                 label="Estado">
                 <input
@@ -314,7 +323,7 @@
                   [ngModelOptions]="{ standalone: true }"
                   [(ngModel)]="stateOfRepublicName"
                   [readOnly]="true" />
-              </form-field>
+              </form-field> -->
             </div>
 
             <div class="col-md-4">
@@ -654,52 +663,52 @@
       </form>
     </tab>
     <!-- Información de Embarcación  -->
-    <!--  <tab *ngIf="boatAssets">
-        <ng-template tabHeading>
-          <i class="bx bx-anchor"></i> Informaci&oacute;n de Embarcaci&oacute;n
-        </ng-template>
-        <div formGroupName="boat" class="boatInformation">
-          <div class="row pt-5">
-            <div class="col-md-3">
-              <form-check label="Blindaje" for="boatArmored">
-                <input
-                  id="boatArmored"
-                  type="checkbox"
-                  formControlName="boatArmored" />
-              </form-check>
-            </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="assetsForm.get('boat')"
-                label="&#42;Estado Operativo">
-                <input
-                  type="text"
-                  class="form-control"
-                  formControlName="operativeStatus" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="assetsForm.get('boat')"
-                label="&#42;Num&#46; Motor">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="engineNumBoat" />
-              </form-field>
-            </div>
-            <div class="col-md-3">
-              <form-field
-                [control]="assetsForm.get('boat')"
-                label="&#42;Num&#46; Motores">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="numEngines" />
-              </form-field>
-            </div>
+    <tab *ngIf="boatAssets">
+      <ng-template tabHeading>
+        <i class="bx bx-anchor"></i> Informaci&oacute;n de Embarcaci&oacute;n
+      </ng-template>
+      <div class="boatInformation">
+        <!--  <div class="row pt-5">
+          <div class="col-md-3">
+            <form-check label="Blindaje" for="boatArmored">
+              <input
+                id="boatArmored"
+                type="checkbox"
+                formControlName="boatArmored" />
+            </form-check>
           </div>
-          <div class="row pt-4">
+          <div class="col-md-3">
+            <form-field
+              [control]="assetsForm.get('boat')"
+              label="&#42;Estado Operativo">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="operativeStatus" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="assetsForm.get('boat')"
+              label="&#42;Num&#46; Motor">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="engineNumBoat" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="assetsForm.get('boat')"
+              label="&#42;Num&#46; Motores">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="numEngines" />
+            </form-field>
+          </div>
+        </div> -->
+        <!--<div class="row pt-4">
             <div class="col-md-4">
               <form-field
                 [control]="assetsForm.get('boat')"
@@ -854,9 +863,9 @@
                   formControlName="boats" />
               </form-field>
             </div>
-          </div>
-        </div>
-      </tab> -->
+          </div>-->
+      </div>
+    </tab>
     <!-- Informacion Joyeria -->
     <!-- <tab *ngIf="jewelerAssets">
         <ng-template tabHeading>

@@ -103,8 +103,6 @@ export class AssetsComponent extends BasePage implements OnInit {
           });
 
           Promise.all(result).then(x => {
-            console.log(x);
-            console.log(data);
             this.paragraphs = data.data;
           });
         } else {

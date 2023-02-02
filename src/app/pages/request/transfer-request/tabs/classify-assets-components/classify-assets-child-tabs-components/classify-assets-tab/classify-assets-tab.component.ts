@@ -129,6 +129,7 @@ export class ClassifyAssetsTabComponent
       cabin: [null],
       fitCircular: [null],
       theftReport: [null],
+      addressId: [null],
     });
 
     if (this.goodObject != null) {
@@ -345,11 +346,12 @@ export class ClassifyAssetsTabComponent
   saveRequest(): void {
     this.isSave = true;
     const goods = this.classiGoodsForm.getRawValue();
-    console.log(goods);
+    console.log('bienes: ', goods);
     var goodAction =
       goods.goodId === null
         ? this.goodService.create(goods)
         : this.goodService.update(goods.id, goods);
+
     goodAction.subscribe({
       next: (data: any) => {
         if (data.statusCode != null) {

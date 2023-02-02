@@ -200,14 +200,23 @@ export class SelectAddressComponent extends BasePage implements OnInit {
     let config: ModalOptions = {
       initialState: {
         isNewAddress: true,
+        requestId: this.request.id,
+        regDelegationId: this.request.regionalDelegationId,
         callback: (next: boolean) => {
-          //if (next) this.getExample();
+          if (next) {
+            debugger;
+            this.getData(new ListParams());
+          }
         },
       },
       class: 'modalSizeXL modal-dialog-centered',
       ignoreBackdropClick: true,
     };
     this.modalService.show(AddressTransferorTabComponent, config);
+
+    /*this.modelRef.content.event.subscribe((res: any) => {
+      console.log(res);
+    });*/
   }
 
   selectRow(event: any): void {
