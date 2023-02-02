@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { ITables } from 'src/app/core/models/catalogs/dinamic-tables.model';
+import { ITablesType } from 'src/app/core/models/catalogs/dinamic-tables.model';
 import { ITvaltable1 } from 'src/app/core/models/catalogs/tvaltable-model';
 import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -16,7 +16,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 export class ValuesModalComponent extends BasePage implements OnInit {
   valuesForm: ModelForm<ITvaltable1>;
   tvalTable: ITvaltable1;
-  value: ITables;
+  value: ITablesType;
   title: string = 'Valores';
   edit: boolean = false;
   constructor(
@@ -55,9 +55,9 @@ export class ValuesModalComponent extends BasePage implements OnInit {
   }
   create() {
     this.loading = true;
-    this.valuesForm.controls['table'].setValue(this.value.table);
+    this.valuesForm.controls['table'].setValue(this.value.nmtabla);
     this.tvalTableService
-      .create2(this.value.tableType, this.valuesForm.value)
+      .create2(this.value.ottipotb, this.valuesForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),
@@ -72,7 +72,7 @@ export class ValuesModalComponent extends BasePage implements OnInit {
       numRegister: this.valuesForm.controls['numRegister'].value,
       abbreviation: this.valuesForm.controls['abbreviation'].value,
     };
-    this.tvalTableService.update(this.value.tableType, form).subscribe({
+    this.tvalTableService.update(this.value.ottipotb, form).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
