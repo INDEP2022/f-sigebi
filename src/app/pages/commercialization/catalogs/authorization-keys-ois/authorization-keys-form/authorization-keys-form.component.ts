@@ -2,6 +2,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { IComerEvent } from '../../../../../core/models/ms-event/event.model';
 import { EventSelectionModalComponent } from '../../components/event-selection-modal/event-selection-modal.component';
 
 @Component({
@@ -29,8 +30,7 @@ export class CCCaeeoCAuthorizationKeysFormComponent
   extends BasePage
   implements OnInit
 {
-  // tipo any hasta que existan modelos o interfaces de la respuesta del backend
-  event: any = null;
+  event: IComerEvent | null = null;
   authKey: string = '';
 
   constructor(private modalService: BsModalService) {
@@ -45,7 +45,7 @@ export class CCCaeeoCAuthorizationKeysFormComponent
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     });
-    modalRef.content.refresh.subscribe((next: any) => {
+    modalRef.content.refresh.subscribe((next: IComerEvent) => {
       if (next) {
         console.log(next);
         this.event = next;
@@ -54,15 +54,15 @@ export class CCCaeeoCAuthorizationKeysFormComponent
     });
   }
 
-  fillEvent() {
-    this.authKey = '';
-    this.event = {
-      id: 1,
-      event: 'DECBM 01/07',
-      description:
-        'SI ESTOY ENTRANDO 3 1 M T PRUEBA PRUEBA PRUEBA PRUEBA PRUEBA PRUEBA',
-    };
-  }
+  // fillEvent() {
+  //   this.authKey = '';
+  //   this.event = {
+  //     id: 1,
+  //     event: 'DECBM 01/07',
+  //     description:
+  //       'SI ESTOY ENTRANDO 3 1 M T PRUEBA PRUEBA PRUEBA PRUEBA PRUEBA PRUEBA',
+  //   };
+  // }
 
   generateKey() {
     console.log('Key generated');

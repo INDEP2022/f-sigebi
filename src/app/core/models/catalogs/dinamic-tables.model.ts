@@ -6,6 +6,14 @@ export interface ITables {
   tableType: number;
   //numRegister: number;
 }
+export interface ITablesType {
+  nmtabla: number;
+  cdtabla: string;
+  dstabla: string;
+  ottipoac: string;
+  ottipotb: number;
+  no_registro: number;
+}
 
 // export interface ITdescatrib {
 //   idNmTable: number; //nmtabla

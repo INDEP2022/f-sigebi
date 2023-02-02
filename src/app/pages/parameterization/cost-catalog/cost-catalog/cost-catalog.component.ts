@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -14,6 +15,7 @@ import { COLUMNS } from './columns';
 })
 export class CostCatalogComponent extends BasePage implements OnInit {
   columns: any[] = [];
+  dataTable: LocalDataSource = new LocalDataSource();
   data: any[] = [
     {
       keyServices: 'NUMERO 1',
@@ -46,13 +48,55 @@ export class CostCatalogComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.getPagination();
-    this.getCostCatalog();
+    this.searchParams();
+  }
+
+  searchParams() {
+    this.params.subscribe({
+      next: resp => {
+        this.data = [];
+        if (resp.text !== '') {
+          this.catalogService.getCostCatalogForSearch(resp.text).subscribe({
+            next: (searchModel: any) => {
+              if (searchModel) {
+                this.data.push({
+                  keyServices: searchModel.code,
+                  descriptionServices: searchModel.description,
+                  typeExpenditure: searchModel.subaccount,
+                  unaffordable:
+                    searchModel.unaffordabilityCriterion === 'N' ? false : true,
+                  cost: searchModel.cost !== 'GASTO' ? true : false,
+                  expenditure: searchModel.cost === 'GASTO' ? true : false,
+                });
+              }
+              this.dataTable.load(this.data);
+            },
+          });
+        } else {
+          this.getCostCatalog();
+        }
+      },
+    });
   }
 
   getCostCatalog() {
+    this.data = [];
     this.catalogService.getCostCatalog().subscribe({
       next: (resp: any) => {
-        console.log(resp);
+        if (resp.data) {
+          resp.data.forEach((item: any) => {
+            this.data.push({
+              keyServices: item.code,
+              descriptionServices: item.description,
+              typeExpenditure: item.subaccount,
+              unaffordable:
+                item.unaffordabilityCriterion === 'N' ? false : true,
+              cost: item.cost !== 'GASTO' ? true : false,
+              expenditure: item.cost === 'GASTO' ? true : false,
+            });
+          });
+        }
+        this.dataTable.load(this.data);
       },
     });
   }
@@ -64,7 +108,7 @@ export class CostCatalogComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.refresh.subscribe(next => {
-      if (next) this.getData();
+      if (next) this.getCostCatalog();
     });
   }
 
@@ -72,12 +116,12 @@ export class CostCatalogComponent extends BasePage implements OnInit {
     this.openModal({ allotment });
   }
 
-  getData() {
-    this.loading = true;
-    this.columns = this.data;
-    this.totalItems = this.data.length;
-    this.loading = false;
-  }
+  // getData() {
+  //   this.loading = true;
+  //   this.columns = this.data;
+  //   this.totalItems = this.data.length;
+  //   this.loading = false;
+  // }
 
   getPagination() {
     this.columns = this.data;
@@ -103,7 +147,14 @@ export class CostCatalogComponent extends BasePage implements OnInit {
       '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        this.onLoadToast('success', 'Eliminado correctamente', '');
+        this.catalogService.deleteCostCatalog(drawer.keyServices).subscribe({
+          next: (resp: any) => {
+            if (resp) {
+              this.onLoadToast('success', 'Eliminado correctamente', '');
+              this.getCostCatalog();
+            }
+          },
+        });
       }
       /*let { noDrawer, noBobeda } = drawer;
           const idBobeda = (noBobeda as ISafe).idSafe;

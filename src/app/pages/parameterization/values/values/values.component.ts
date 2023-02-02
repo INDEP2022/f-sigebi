@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ITables } from 'src/app/core/models/catalogs/dinamic-tables.model';
+import { ITablesType } from 'src/app/core/models/catalogs/dinamic-tables.model';
 import { ITvaltable1 } from 'src/app/core/models/catalogs/tvaltable-model';
 import { DinamicTablesService } from 'src/app/core/services/catalogs/dinamic-tables.service';
 import { TvalTable1Service } from 'src/app/core/services/catalogs/tval-table1.service';
@@ -16,9 +16,9 @@ import { TTABLAS_COLUMNS, TVALTABLA1_COLUMNS } from './values-columns';
   styles: [],
 })
 export class ValuesComponent extends BasePage implements OnInit {
-  valuesList: ITables[] = [];
+  valuesList: ITablesType[] = [];
   tvalTableList: ITvaltable1[] = [];
-  values: ITables;
+  values: ITablesType;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
@@ -46,7 +46,7 @@ export class ValuesComponent extends BasePage implements OnInit {
   getValuesAll() {
     this.loading = true;
 
-    this.valuesService.getAll(this.params.getValue()).subscribe({
+    this.valuesService.getById5(1, this.params.getValue()).subscribe({
       next: response => {
         console.log(response);
         this.valuesList = response.data;
@@ -67,10 +67,10 @@ export class ValuesComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.gettvalTable(this.values));
   }
-  gettvalTable(values: ITables) {
+  gettvalTable(values: ITablesType) {
     this.loading = true;
     this.tvalTableService
-      .getById4(values.name, this.params2.getValue())
+      .getById4(values.cdtabla, this.params2.getValue())
       .subscribe({
         next: response => {
           console.log(response);
