@@ -1,0 +1,95 @@
+<div>
+  <div class="row">
+    <h5>Lista de bienes para estudiar</h5>
+  </div>
+  <div class="row pt-4">
+    <div class="d-flex justify-content-end">
+      <div class="p-2" *ngIf="typeComponent === 'prepare-request'">
+        <button
+          class="btn btn-secondary btn-sm active"
+          (click)="generateReport()">
+          Generar Reporte
+        </button>
+      </div>
+      <div class="p-2" *ngIf="typeComponent === 'prepare-request'">
+        <button class="btn btn-danger btn-sm active" (click)="delete()">
+          Eliminar
+        </button>
+      </div>
+      <div class="p-2" *ngIf="typeComponent === 'save-answer'">
+        <button class="btn btn-primary btn-sm active" (click)="response()">
+          Respaldo Documental
+        </button>
+      </div>
+      <div class="p-2" *ngIf="typeComponent === 'schedule-delivery'">
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="scheduleDelivery()">
+          Programar entrega
+        </button>
+      </div>
+      <div class="p-2" *ngIf="typeComponent === 'dictate-assets'">
+        <button
+          class="btn btn-primary btn-sm active"
+          (click)="generateAuthorization()">
+          Generar Autorización
+        </button>
+      </div>
+      <div class="p-2">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
+    </div>
+  </div>
+  <div class="row pt-4">
+    <div class="col-md-12">
+      <ng-scrollbar track="all" style="min-height: 200px; border: none">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="paragraphs"
+            (userRowSelect)="assetsSelected($event)">
+          </ng2-smart-table>
+        </div>
+      </ng-scrollbar>
+    </div>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
+  </div>
+</div>
+
+<div *ngIf="paragraphs2['data'].length != 0">
+  <div class="row">
+    <h5>Lista de bienes eliminados</h5>
+  </div>
+  <div class="row pt-4">
+    <div class="d-flex justify-content-end">
+      <div class="p-2">
+        <button class="btn btn-secondary btn-sm active" (click)="retrieve()">
+          Recuperar
+        </button>
+      </div>
+      <div class="p-2">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
+    </div>
+  </div>
+  <div class="row pt-4">
+    <div class="col-md-12">
+      <ng-scrollbar track="all" style="min-height: 200px; border: none">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings2"
+            [source]="paragraphs2"
+            (userRowSelect)="selectedAssestsDeleted($event)">
+          </ng2-smart-table>
+        </div>
+      </ng-scrollbar>
+    </div>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
+  </div>
+</div>

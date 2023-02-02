@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
 import { TABLE_SETTINGS } from '../../../../../common/constants/table-settings';
 import { ListParams } from '../../../../../common/repository/interfaces/list-params';
@@ -9,8 +10,8 @@ import { ExcelService } from '../../../../../common/services/excel.service';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { BasePage } from '../../../../../core/shared/base-page';
 import { JSON_TO_CSV } from '../../../../admin/home/constants/json-to-csv';
-import { UploadExpedientFormComponent } from '../upload-expedient-form/upload-expedient-form.component';
-import { UploadImagesFormComponent } from '../upload-images-form/upload-images-form.component';
+import { UploadExpedientFormComponent } from '../../shared-component-gss/upload-expedient-form/upload-expedient-form.component';
+import { UploadImagesFormComponent } from '../../shared-component-gss/upload-images-form/upload-images-form.component';
 import { LIST_ASSETS_COLUMN } from './columns/list-assets-columns';
 import { LIST_ASSETS_COPIES_COLUMN } from './columns/list-assets-copies';
 import { LIST_WAREHOUSE_COLUMN } from './columns/list-warehouse-columns';
@@ -118,8 +119,8 @@ export class SamplingAssetsFormComponent extends BasePage implements OnInit {
     this.searchForm = this.fb.group({
       noWarehouse: [null],
       postalCode: [null],
-      nameWarehouse: [null],
-      address: [null],
+      nameWarehouse: [null, [Validators.pattern(STRING_PATTERN)]],
+      address: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

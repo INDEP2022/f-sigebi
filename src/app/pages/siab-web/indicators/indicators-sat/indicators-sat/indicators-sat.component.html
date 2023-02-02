@@ -1,0 +1,118 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Indicadores SAT</h5>
+    </div>
+  </div>
+  <div body>
+    <form [formGroup]="indicatorSatForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field
+            [control]="indicatorSatForm.get('indicator')"
+            label="Seleccionar Indicador">
+            <select class="form-control" formControlName="indicator">
+              <option [value]="null">Sin enlazar</option>
+              <option [value]="1">1</option>
+              <option [value]="2">2</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="indicatorSatForm.get('regional')"
+            label="Seleccionar regional">
+            <select class="form-control" formControlName="regional">
+              <option [value]="null">Sin enlazar</option>
+              <option [value]="1">1</option>
+              <option [value]="2">2</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="indicatorSatForm.get('year')"
+            label="Seleccionar Año">
+            <select class="form-control" formControlName="year">
+              <option [value]="null">Sin enlazar</option>
+              <option [value]="1">2022</option>
+              <option [value]="2">2021</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="indicatorSatForm.get('month')"
+            label="Seleccionar Mes">
+            <select class="form-control" formControlName="month">
+              <option [value]="null">Sin enlazar</option>
+              <option [value]="1">ENERO</option>
+              <option [value]="2">FEBRERO</option>
+            </select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field
+            [control]="indicatorSatForm.get('a')"
+            label="Seleccionar a">
+            <select class="form-control" formControlName="a">
+              <option [value]="null">Sin enlazar</option>
+              <option [value]="1">1</option>
+              <option [value]="2">2</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="indicatorSatForm.get('goodGuy')"
+            label="Seleccionar Tipo Bien">
+            <select class="form-control" formControlName="goodGuy">
+              <option [value]="null">Sin enlazar</option>
+              <option [value]="1">1</option>
+              <option [value]="2">2</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-radio label="Por Año">
+            <input type="radio" formControlName="byYear" value="byYear" />
+          </form-radio>
+        </div>
+        <div class="col-md-2">
+          <form-radio label="Rango de Meses">
+            <input
+              type="radio"
+              formControlName="monthRange"
+              value="monthRange" />
+          </form-radio>
+        </div>
+      </div>
+    </form>
+    <div class="row margin-input">
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary active">Consultar</button>
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-success active">
+          Exportar a Excel
+        </button>
+      </div>
+    </div>
+    <div class="row margin-input">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data1">
+          </ng2-smart-table>
+        </div>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+  </div>
+</app-card>

@@ -1,0 +1,113 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Monitoreo Estatus Lote</h5>
+    </div>
+  </div>
+  <div body>
+    <div class="ch-content">
+      <h5 class="title">Filtros de b&uacute;squeda</h5>
+    </div>
+    <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="row pt-3">
+        <div class="col-md-2">
+          <form-field [control]="form.get('typeGood')" label="Tipo Bien">
+            <ng-select
+              formControlName="typeGood"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="M">Bienes Muebles</ng-option>
+              <ng-option value="I">Bienes Inmuebles</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('event')" label="Evento">
+            <input type="text" class="form-control" formControlName="event" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('transferee')" label="Transferente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="transferee" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('allotment')" label="Lote">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="allotment" />
+          </form-field>
+        </div>
+        <div class="col-md-1">
+          <div class="justify-content-center">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              [disabled]="!form.valid"
+              (click)="show = !show">
+              Consultar
+            </button>
+          </div>
+        </div>
+        <div class="col-md-1">
+          <div class="justify-content-center">
+            <button
+              type="submit"
+              class="btn btn-secondary btn-sm active"
+              [disabled]="!form.valid">
+              Limpiar filtros
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="ch-content">
+      <h5 class="title">B&uacute;squeda de bienes por&#58;</h5>
+    </div>
+    <form class="form-material" [formGroup]="form2">
+      <div class="row">
+        <div class="col-md-2">
+          <form-radio label="Por bien">
+            <input type="radio" formControlName="radio" value="1" />
+          </form-radio>
+        </div>
+        <div class="col-md-2">
+          <form-radio label="Con archivo de texto">
+            <input type="radio" formControlName="radio" value="2" />
+          </form-radio>
+        </div>
+        <div class="col-md-3">
+          <input type="file" (change)="chargeFile($event.target)" />
+        </div>
+        <div class="col-md-1">
+          <div class="justify-content-center">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              [disabled]="!form2.valid"
+              (click)="show2 = !show2">
+              Consultar
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="table-responsive mt-5 mb-5">
+      <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
+    </div>
+    <div class="ch-content" header>
+      <h5 class="title"></h5>
+      <div class="col-md-5 buttons">
+        <app-columns-select [(settings)]="settings2"></app-columns-select>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <ng2-smart-table [settings]="settings2" [source]="data"></ng2-smart-table>
+    </div>
+  </div>
+</app-card>

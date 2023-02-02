@@ -1,0 +1,116 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <div class="d-flex">
+      <div class="mr-auto p-2">
+        <h5 class="title">Muestreo Ordenes de Servicio&#58; {{ title }}</h5>
+      </div>
+      <div class="p-2">
+        <button class="btn btn-primary btn-sm active" (click)="turnSampling()">
+          <i class="bx bxs-right-arrow-square"></i> Turnar muestreo
+        </button>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="d-flex justify-content-end">
+        <div class="p-2">
+          <button
+            class="btn btn-secondary btn-sm active"
+            (click)="openAnnexK()">
+            <i class="bx bx-square-rounded"></i> Anexo K
+          </button>
+        </div>
+        <div class="p-2">
+          <button class="btn btn-primary btn-sm active">
+            <i class="bx bx-save"></i> Guardar
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="detail">
+      <app-card [header]="false">
+        <div body>
+          <div class="row">
+            <div class="col-md-12">
+              <h5 class="title">
+                <p>
+                  <a
+                    class="text-color"
+                    (click)="showSamplingDetail = true"
+                    *ngIf="!showSamplingDetail">
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    Detalles del Muestreo</a
+                  >
+                </p>
+
+                <p>
+                  <a
+                    class="text-color"
+                    (click)="showSamplingDetail = false"
+                    *ngIf="showSamplingDetail">
+                    <i class="fa fa-angle-down" aria-hidden="true"></i> Detalles
+                    del Muestreo</a
+                  >
+                </p>
+              </h5>
+            </div>
+          </div>
+          <div class="row pt-4" *ngIf="showSamplingDetail">
+            <app-sampling-detail-review-results
+              [data]="samplingDetailData"></app-sampling-detail-review-results>
+          </div>
+        </div>
+      </app-card>
+    </div>
+    <div id="assets">
+      <div class="row pt-6">
+        <h5>Filtro de &Oacute;rdenes de Bienes</h5>
+      </div>
+      <div class="row pt-2">
+        <div class="col-md-12">
+          <h6 class="title">
+            <p>
+              <a
+                class="text-color"
+                (click)="showFilterAssets = true"
+                *ngIf="!showFilterAssets">
+                <i class="fa fa-angle-right" aria-hidden="true"></i> Captura de
+                datos</a
+              >
+            </p>
+
+            <p>
+              <a
+                class="text-color"
+                (click)="showFilterAssets = false"
+                *ngIf="showFilterAssets">
+                <i class="fa fa-angle-down" aria-hidden="true"></i> Captura de
+                datos</a
+              >
+            </p>
+          </h6>
+        </div>
+      </div>
+      <div class="row" *ngIf="showFilterAssets" style="padding-left: 1rem">
+        <app-service-orders-filter
+          (searchEvent)="searchEvent($event)"></app-service-orders-filter>
+      </div>
+    </div>
+    <div class="tabs">
+      <tabset class="md-tabs">
+        <tab heading="Ordenes Servicio" id="tab1">
+          <app-list-service-orders
+            [searchForm]="searchForm"></app-list-service-orders>
+        </tab>
+        <tab heading="Verificaciones">
+          <app-create-deductives
+            [typeComponent]="'revition-results'"></app-create-deductives>
+        </tab>
+        <tab heading="Datos Anexo">
+          <app-annex-data [dataAnnex]="dataAnnex"></app-annex-data>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</app-card>

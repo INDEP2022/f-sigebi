@@ -1,0 +1,113 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body class="body">
+    <div *ngIf="typeInfo === 'detail'" class="see-detail">
+      <form [formGroup]="infoForm" class="form-material">
+        <div class="row pt-1">
+          <div class="col-md-6">
+            <label style="word-spacing: -0.1em" for=""
+              >Tipo de Documento&#58;
+              <span>{{ infoForm.get('docType').value }}</span>
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label for=""
+              >Autor&#58; <span>{{ infoForm.get('author').value }}</span></label
+            >
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label for="">
+              No&#46; Solicitud&#58;
+              <span>{{ infoForm.get('noReq').value }}</span>
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label for="">
+              No&#46; Bien&#58; <span>{{ infoForm.get('noGood').value }}</span>
+            </label>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label for="">
+              Delegaci&oacute;n Regional&#58;
+              <span>{{ infoForm.get('regDelega').value }}</span>
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label for="">
+              Estado&#58; <span>{{ infoForm.get('state').value }}</span>
+            </label>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label for="">
+              Transferente&#58; <span>{{ infoForm.get('transfe').value }}</span>
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label for="">
+              Tipo Transferente&#58;
+              <span>{{ infoForm.get('typeTransfer').value }}</span>
+            </label>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label for="">
+              Remitente&#58; <span>{{ infoForm.get('sender').value }}</span>
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label for="">
+              Cargo Remitente&#58;
+              <span>{{ infoForm.get('roleSender').value }}</span>
+            </label>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label for="">
+              Responsable&#58;
+              <span>{{ infoForm.get('responsible').value }}</span>
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label for="">
+              Fecha Creaci&oacute;n&#58;
+              <span>{{ infoForm.get('date').value }}</span>
+            </label>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <label for="">
+              No&#46; Oficina&#58;
+              <span>{{ infoForm.get('noOfi').value }}</span>
+            </label>
+          </div>
+          <div class="col-md-6">
+            <label for="">
+              Comentarios&#58;
+              <span>{{ infoForm.get('observations').value }}</span>
+            </label>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

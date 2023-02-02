@@ -1,0 +1,133 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Carga de Aval&uacute;os</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="ch-content">
+        <h5 class="title">Evento</h5>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-2">
+          <form-field [control]="form.get('noEvent')" label="No&#64; Evento">
+            <input type="text" class="form-control" formControlName="noEvent" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('cveProcess')" label="cve Proceso">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cveProcess" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('eventDate')"
+            label="Fecha Recepci&oacute;n">
+            <input
+              type="text"
+              placeholder=""
+              class="form-control"
+              bsDatepicker
+              formControlName="eventDate"
+              [bsConfig]="{ isAnimated: true }" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('observations')"
+            label="Observaciones">
+            <textarea
+              type="text"
+              class="form-control"
+              formControlName="observations"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-2">
+          <form-field [control]="form.get('appliDate')" label="Fecha Solicitud">
+            <input
+              type="text"
+              placeholder=""
+              class="form-control"
+              bsDatepicker
+              formControlName="appliDate"
+              [bsConfig]="{ isAnimated: true }" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('type')" label="Tipo">
+            <input type="text" class="form-control" formControlName="type" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('status')" label="Estatus">
+            <input type="text" class="form-control" formControlName="status" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('reference')" label="Referencia">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="reference" />
+          </form-field>
+        </div>
+        <div class="col-md-1">
+          <div class="justify-content-center">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              [disabled]="!form.valid">
+              Buscar
+            </button>
+          </div>
+        </div>
+        <div class="col-md-1">
+          <div class="justify-content-center">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              [disabled]="!form.valid">
+              Consultar
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div class="ch-content mt-5" header>
+      <h5 class="title">Aval&uacute;os</h5>
+      <div class="col-md-5 buttons">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
+    </div>
+
+    <div class="ch-content mt-5" header>
+      <h5 class="title">Bienes</h5>
+      <div class="col-md-5 buttons">
+        <app-columns-select [(settings)]="settings2"></app-columns-select>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <ng2-smart-table [settings]="settings2" [source]="data"></ng2-smart-table>
+    </div>
+
+    <div class="ch-content mt-5" header>
+      <h5 class="title">Detalles Aval&uacute;os</h5>
+      <div class="col-md-5 buttons">
+        <app-columns-select [(settings)]="settings3"></app-columns-select>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <ng2-smart-table [settings]="settings3" [source]="data"></ng2-smart-table>
+    </div>
+  </div>
+</app-card>

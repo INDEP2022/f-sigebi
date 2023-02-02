@@ -4,7 +4,7 @@
       class="text-color"
       (click)="showSearchForm = true"
       *ngIf="!showSearchForm">
-      <i class="fa fa-angle-right" aria-hidden="true"></i> Búsqueda
+      <i class="fa fa-angle-right" aria-hidden="true"></i> B&uacute;squeda
       documentos</a
     >
   </p>
@@ -14,7 +14,8 @@
       class="text-color"
       (click)="showSearchForm = false"
       *ngIf="showSearchForm">
-      <i class="fa fa-angle-down" aria-hidden="true"></i> Búsqueda documentos</a
+      <i class="fa fa-angle-down" aria-hidden="true"></i> B&uacute;squeda
+      documentos</a
     >
   </p>
 </h5>
@@ -44,7 +45,7 @@
       <div class="col-md-4">
         <form-field
           [control]="searchFileForm.get('titleDocument')"
-          label="Titulo del docuemnto">
+          label="T&iacute;tulo del documento">
           <input
             type="text"
             class="form-control"
@@ -54,7 +55,7 @@
       <div class="col-md-4">
         <form-field
           [control]="searchFileForm.get('siabNumber')"
-          label="No°. siab">
+          label="No&#46; siab">
           <input
             type="text"
             class="form-control"
@@ -105,7 +106,7 @@
       <div class="col-md-4">
         <form-field
           [control]="searchFileForm.get('documentNumber')"
-          label="No°. documento">
+          label="No&#46; documento">
           <input
             type="text"
             class="form-control"
@@ -120,7 +121,7 @@
             [data]="regionalsDelegations"
             value="id"
             bindLabel="id"
-            label="Delegación regional"
+            label="Delegaci&oacute;n regional"
             (fetchItems)="getRegionalDelegationSelect($event)">
           </ngx-select>
         </form-field>
@@ -141,7 +142,7 @@
       <div class="col-md-4">
         <form-field
           [control]="searchFileForm.get('expedientNumber')"
-          label="No°. expediente">
+          label="No&#46; expediente">
           <input
             type="text"
             class="form-control"
@@ -164,7 +165,7 @@
       <div class="col-md-4">
         <form-field
           [control]="searchFileForm.get('officeNumber')"
-          label="No°. oficio">
+          label="No&#46; oficio">
           <input
             type="text"
             class="form-control"
@@ -177,7 +178,7 @@
       <div class="col-md-4">
         <form-field
           [control]="searchFileForm.get('requestNumber')"
-          label="No°. solicitud">
+          label="No&#46; solicitud">
           <input
             type="text"
             class="form-control"
@@ -210,7 +211,7 @@
       <div class="col-md-4">
         <form-field
           [control]="searchFileForm.get('goodNumber')"
-          label="No°. bien">
+          label="No&#46; bien">
           <input
             type="text"
             class="form-control"

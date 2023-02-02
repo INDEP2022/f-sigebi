@@ -1,0 +1,31 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">SEGUIMENTO A JUICIOS</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field [control]="form.get('noBien')" label="No&#46; Bien">
+            <input class="form-control" formControlName="noBien" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field [control]="form.get('juicio')" label="Juicio">
+            <input class="form-control" formControlName="juicio" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 p-2">
+        <ng2-smart-table
+          [attr.class]="'my-table table-bordered'"
+          [settings]="tableSettings"
+          [source]="dataTable">
+        </ng2-smart-table>
+      </div>
+    </div>
+  </div>
+</app-card>

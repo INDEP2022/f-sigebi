@@ -1,0 +1,24 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Historial de reasignaci&oacute;n de turno</h5>
+  </div>
+  <div body>
+    <div class="row pt-0">
+      <div class="col-md-12">
+        <ng2-smart-table
+          [settings]="settings"
+          [attr.class]="'table-bordered'"></ng2-smart-table>
+      </div>
+    </div>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

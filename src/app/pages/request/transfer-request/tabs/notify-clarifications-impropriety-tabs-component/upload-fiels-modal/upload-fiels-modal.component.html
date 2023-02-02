@@ -7,11 +7,7 @@
       <div class="row">
         <div class="col-md-6">
           <form-field [control]="fileForm.get('name')" label="Nombre">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="name"
-              placeholder="" />
+            <input type="text" class="form-control" formControlName="name" />
           </form-field>
         </div>
         <div class="col-md-6">
@@ -19,19 +15,26 @@
             <input
               type="text"
               class="form-control"
-              formControlName="position"
-              placeholder="" />
+              formControlName="position" />
           </form-field>
         </div>
       </div>
       <div class="row pt-4">
         <div class="col-md-6">
-          <form-field [control]="fileForm.get('password')" label="Contraseña">
+          <form-field
+            [control]="fileForm.get('password')"
+            label="Contrase&ntilde;a">
             <input
               type="password"
               class="form-control"
-              formControlName="password"
-              placeholder="" />
+              formControlName="password" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4" *ngIf="!isRFCHided">
+        <div class="col-md-6">
+          <form-field [control]="fileForm.get('rfc')" label="RFC">
+            <input type="password" class="form-control" formControlName="rfc" />
           </form-field>
         </div>
       </div>
@@ -71,14 +74,23 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
+        <button
+          class="btn btn-primary btn-sm active"
+          [disabled]="fileForm.invalid"
+          (click)="confirm()">
+          Guardar
+        </button>
+        <!--<confirm-button
           [disabled]="fileForm.invalid"
           [loading]="loading"
           (confirm)="confirm()">
-        </confirm-button>
+        </confirm-button>-->
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
+        <button
+          type="button"
+          class="btn btn-danger btn-sm active"
+          (click)="close()">
           Cancelar
         </button>
       </div>

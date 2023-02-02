@@ -4,7 +4,8 @@
       class="text-color"
       (click)="showSearchForm = true"
       *ngIf="!showSearchForm">
-      <i class="fa fa-angle-right" aria-hidden="true"></i> Búsqueda bienes</a
+      <i class="fa fa-angle-right" aria-hidden="true"></i> B&uacute;squeda
+      bienes</a
     >
   </p>
 
@@ -13,7 +14,8 @@
       class="text-color"
       (click)="showSearchForm = false"
       *ngIf="showSearchForm">
-      <i class="fa fa-angle-down" aria-hidden="true"></i> Búsqueda bienes</a
+      <i class="fa fa-angle-down" aria-hidden="true"></i> B&uacute;squeda
+      bienes</a
     >
   </p>
 </h5>
@@ -23,7 +25,7 @@
       <div class="col-md-6">
         <form-field
           [control]="searchFileForm.get('gestionNumber')"
-          label="Número de gestión">
+          label="N&uacute;mero de gesti&oacute;n">
           <input
             type="text"
             class="form-control"
@@ -50,7 +52,7 @@
       <div class="col-md-6">
         <form-field
           [control]="searchFileForm.get('requestNumber')"
-          label="Número de solicitud">
+          label="N&uacute;mero de solicitud">
           <input
             type="text"
             class="form-control"
@@ -61,7 +63,7 @@
       <div class="col-md-6">
         <form-field
           [control]="searchFileForm.get('descriptionGoodTransferent')"
-          label="Descripción de bien transferente">
+          label="Descripci&oacute;n de bien transferente">
           <input
             type="text"
             class="form-control"

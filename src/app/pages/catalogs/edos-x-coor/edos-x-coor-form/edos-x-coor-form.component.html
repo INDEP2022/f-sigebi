@@ -3,7 +3,7 @@
     <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form [formGroup]="edosXCoorForm">
+    <form [formGroup]="edosXCoorForm" class="form-material">
       <div class="row">
         <div class="col-md-4">
           <form-field [control]="edosXCoorForm.get('id')" label="Id">
@@ -13,7 +13,7 @@
         <div class="col-md-8">
           <form-field
             [control]="edosXCoorForm.get('description')"
-            label="Descripción">
+            label="Descripci&oacute;n">
             <textarea
               class="form-control"
               type="text"

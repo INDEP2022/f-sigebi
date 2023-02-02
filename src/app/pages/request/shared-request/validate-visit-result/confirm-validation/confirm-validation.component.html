@@ -1,0 +1,54 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Confirmar Validaci&oacute;n</h5>
+  </div>
+  <div body>
+    <h5 class="title">
+      &#191;Est&aacute; seguro de validar la respuesta del contribuyente&#63;
+      Una vez que acepte no es posible deshacer la acci&oacute;n&#46;
+    </h5>
+    <form [formGroup]="form" class="form-material">
+      <div class="row pt-5">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('contributingResult')"
+            label="Identificación">
+            <select class="form-control" formControlName="contributingResult">
+              <option [value]="'accept'">ACEPTADO</option>
+              <option [value]="'pAccept'">ACEPTADO PROVISIONALMENTE</option>
+              <option [value]="'refused'">RECHAZADO</option>
+              <option [value]="'withoutAssistance'">NO ASISTIO</option>
+              <option [value]="'reschedule'">REPROGRAMAR</option>
+            </select>
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('observations')"
+            label="Observaciones Visita Ocular">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="observations"
+              placeholder="" />
+          </form-field>
+        </div>
+        <div class="row mt-3">
+          <div class="col-md-6 text-center">
+            <button
+              class="btn btn sm active btn-primary"
+              [disabled]="form.invalid"
+              (click)="accept()">
+              Aceptar
+            </button>
+          </div>
+          <div class="col-md-6 text-center">
+            <button class="btn btn sm active btn-secondary" (click)="close()">
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

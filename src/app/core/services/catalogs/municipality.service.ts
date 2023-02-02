@@ -17,6 +17,10 @@ export class MunicipalityService implements ICrudMethods<IMunicipality> {
     return this.municipalityRepository.getAllPaginated(this.route, params);
   }
 
+  postByIds(columns: Object): Observable<IListResponse<IMunicipality>> {
+    return this.municipalityRepository.postByIds(this.route, columns);
+  }
+
   getById(id: string | number): Observable<IMunicipality> {
     return this.municipalityRepository.getById(this.route, id);
   }

@@ -1,0 +1,75 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Pagos facturaci&oacute;n</h5>
+    </div>
+  </div>
+  <div body>
+    <div class="ch-content">
+      <h5 class="title">B&uacute;squeda de pagos</h5>
+    </div>
+    <form class="form-material" [formGroup]="form">
+      <div class="row pt-3">
+        <div class="col-md-2">
+          <form-field [control]="form.get('serie')" label="Serie">
+            <input type="text" class="form-control" formControlName="serie" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('invoice')" label="Folio">
+            <input type="text" class="form-control" formControlName="invoice" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('event')" label="Evento">
+            <input type="text" class="form-control" formControlName="event" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('allotment')" label="Lote">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="allotment" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <div class="justify-content-center">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              [disabled]="!form.valid">
+              Buscar
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="ch-content" header>
+      <h5 class="title">Detalle de facturas</h5>
+      <div class="col-md-5 buttons">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <ng2-smart-table
+        [settings]="settings"
+        [source]="data1"
+        (userRowSelect)="selectRow($event.data)"></ng2-smart-table>
+    </div>
+    <div class="row pt-3" *ngIf="rowSelected">
+      <div class="ch-content" header>
+        <h5 class="title">Detalle de Pagos</h5>
+        <div class="col-md-5 buttons">
+          <app-columns-select [(settings)]="settings2"></app-columns-select>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <ng2-smart-table
+          [settings]="settings2"
+          [source]="data2"
+          (edit)="openForm($event.data)"></ng2-smart-table>
+      </div>
+    </div>
+  </div>
+</app-card>

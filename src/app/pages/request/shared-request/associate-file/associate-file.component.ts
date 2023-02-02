@@ -101,7 +101,7 @@ export class AssociateFileComponent extends BasePage implements OnInit {
       c = Object.assign({ associate: '' }, c);
     });
     this.fileColumns = columns;
-    this.totalItems - this.fileColumns.length;
+    this.totalItems = this.fileColumns.length;
     console.log(this.fileColumns);
   }
 

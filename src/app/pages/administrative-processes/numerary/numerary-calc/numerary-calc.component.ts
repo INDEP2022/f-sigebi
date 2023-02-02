@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import {
   GOODS_COLUMNS,
   REQUESTS_COLUMNS,
@@ -51,12 +52,18 @@ export class NumeraryCalcComponent extends BasePage implements OnInit {
       idProcess: [null, Validators.required],
       date: [null, Validators.required],
 
-      concept: [null, Validators.required],
+      concept: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       devolution: [null, Validators.required],
       decomiso: [null, Validators.required],
       abandono: [null, Validators.required],
       totalInterests: [null, Validators.required],
-      currency: [null, Validators.required],
+      currency: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       bankComision: [null, Validators.required],
       totalImport: [null, Validators.required],
     });

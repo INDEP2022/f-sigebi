@@ -1,0 +1,66 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Indicador de Entrega y Recepci&oacute;n</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <capture-filter [isReceptionAndDelivery]="true"></capture-filter>
+    </div>
+    <div class="row pt-3">
+      <div class="col-md-12 d-flex justify-content-between">
+        <span class="text-success">
+          <i class="fa fa-check" aria-hidden="true"></i> Total Cumplidos&#58;
+          <b>123</b>
+        </span>
+        <span class="text-danger"
+          ><i class="fa fa-ban" aria-hidden="true"></i> Total No Cumplidos&#58;
+          <b>123</b></span
+        >
+        <span class="text-info"
+          ><i class="fa fa-percent" aria-hidden="true"></i> Cumplidos&#58;
+          <b>90&#37;</b></span
+        >
+        <p class="">
+          <i class="fa fa-ban" aria-hidden="true"></i> Expedientes en Actas Sin
+          Bienes&#58; <b>123</b>
+        </p>
+      </div>
+    </div>
+
+    <div class="row pt-3">
+      <div class="col-md-12 d-flex justify-content-between">
+        <div>
+          <p class="">
+            <i class="fa fa-check" aria-hidden="true"></i> Registros
+            programados&#58;
+            <b>123</b>
+          </p>
+          <p class="">
+            <i class="fa fa-ban" aria-hidden="true"></i> Registros en Actas&#58;
+            <b>123</b>
+          </p>
+        </div>
+
+        <div>
+          <p class="">
+            <i class="fa fa-ban" aria-hidden="true"></i> Expedientes
+            Programados&#58; <b>123</b>
+          </p>
+
+          <p class="">
+            <i class="fa fa-ban" aria-hidden="true"></i> Expedientes en
+            Actas&#58;
+            <b>123</b>
+          </p>
+        </div>
+
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
+    </div>
+    <div class="row pt-3 table-content">
+      <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
+
+      <app-pagination></app-pagination>
+    </div>
+  </div>
+</app-card>

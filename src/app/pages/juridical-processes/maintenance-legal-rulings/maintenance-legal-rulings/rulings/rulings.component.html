@@ -1,0 +1,161 @@
+<form [formGroup]="form" class="form-material">
+  <div class="row w-100">
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field
+        [control]="form.get('noDictaminacion')"
+        label="No&#46; Dictaminaci&oacute;n">
+        <input class="form-control" formControlName="noDictaminacion" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field [control]="form.get('noVolante')" label="No&#46; Volante">
+        <input class="form-control" formControlName="noVolante" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field
+        [control]="form.get('noExpediente')"
+        label="No&#46; Expediente">
+        <input class="form-control" formControlName="noExpediente" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field
+        [control]="form.get('noDelegacion')"
+        label="No&#46; Delegación">
+        <input class="form-control" formControlName="noDelegacion" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field [control]="form.get('tipo')" label="Tipo">
+        <input class="form-control" formControlName="tipo" placeholder="Tipo" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field
+        [control]="form.get('estatusDictaminacion')"
+        label="Estatus Dictaminaci&oacute;n">
+        <input class="form-control" formControlName="estatusDictaminacion" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-2">
+      <form-field
+        [control]="form.get('claveDictaminacion')"
+        label="Clave Dictaminaci&oacute;n">
+        <input class="form-control" formControlName="claveDictaminacion" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-2">
+      <form-field [control]="form.get('folioUniversal')" label="folioUniversal">
+        <input class="form-control" formControlName="folioUniversal" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field
+        [control]="form.get('usuarioDictamina')"
+        label="Usuario Dictamina">
+        <input class="form-control" formControlName="usuarioDictamina" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field
+        [control]="form.get('areaDictamina')"
+        label="&Aacute;rea Dictamina">
+        <input class="form-control" formControlName="areaDictamina" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field [control]="form.get('delito')" label="Delito">
+        <input class="form-control" formControlName="delito" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-12 p-2">
+      <form-field [control]="form.get('observaciones')" label="Observaciones">
+        <textarea
+          class="form-control"
+          formControlName="observaciones"></textarea>
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-12 p-2">
+      <h6>FECHAS</h6>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-2">
+      <form-field
+        [control]="form.get('fechaInstructora')"
+        label="Fecha Instructora">
+        <input
+          class="form-control"
+          formControlName="fechaInstructora"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-2">
+      <form-field
+        [control]="form.get('fechaDictaminacion')"
+        label="Fecha Dictaminaci&oacute;n">
+        <input
+          class="form-control"
+          formControlName="fechaDictaminacion"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-2">
+      <form-field
+        [control]="form.get('fechaAseguramiento')"
+        label="Fecha Aseguramiento">
+        <input
+          class="form-control"
+          formControlName="fechaAseguramiento"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-2">
+      <form-field
+        [control]="form.get('fechaResolucion')"
+        label="Fecha Resoluci&oacute;n">
+        <input
+          class="form-control"
+          formControlName="fechaResolucion"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-2">
+      <form-field
+        [control]="form.get('fechaNotificaResolucion')"
+        label="Fecha Notifica Resoluci&oacute;n">
+        <input
+          class="form-control"
+          formControlName="fechaNotificaResolucion"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-2">
+      <form-field [control]="form.get('fechaIngreso')" label="Fecha Ingreso">
+        <input
+          class="form-control"
+          formControlName="fechaIngreso"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-2">
+      <form-field
+        [control]="form.get('fechaDictaminacionHC')"
+        label="Fecha Dictaminaci&oacute;n HC">
+        <input
+          class="form-control"
+          formControlName="fechaDictaminacionHC"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-2">
+      <form-field
+        [control]="form.get('fechaIngresoHC')"
+        label="Fecha Ingreso HC">
+        <input
+          class="form-control"
+          formControlName="fechaIngresoHC"
+          bsDatepicker />
+      </form-field>
+    </div>
+  </div>
+</form>

@@ -6,59 +6,50 @@
     <form class="form-material" [formGroup]="ifaiSerieForm">
       <div class="row">
         <div class="col-md-6">
-          <form-field [control]="ifaiSerieForm.get('code')" label="Código">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="code"
-              placeholder="Código de serie ej. 1123" />
+          <form-field
+            [control]="ifaiSerieForm.get('code')"
+            label="C&oacute;digo">
+            <input type="text" class="form-control" formControlName="code" />
           </form-field>
         </div>
 
         <div class="col-md-6">
           <form-field
             [control]="ifaiSerieForm.get('typeProcedure')"
-            label="Tipo de trámite">
+            label="Tipo de tr&aacute;mite">
             <input
               type="string"
               class="form-control"
-              formControlName="typeProcedure"
-              placeholder="Tipo de trámite" />
+              formControlName="typeProcedure" />
           </form-field>
         </div>
 
         <div class="col-md-12">
           <form-field
             [control]="ifaiSerieForm.get('description')"
-            label="Descripción">
+            label="Descripci&oacute;n">
             <textarea
               type="text"
               class="form-control"
-              formControlName="description"
-              placeholder="Descripción">
+              formControlName="description">
             </textarea>
           </form-field>
         </div>
 
         <div class="ol-md-6">
           <form-field [control]="ifaiSerieForm.get('status')" label="Estado">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="status"
-              placeholder="Estado" />
+            <input type="text" class="form-control" formControlName="status" />
           </form-field>
         </div>
 
         <div class="col-md-6">
           <form-field
             [control]="ifaiSerieForm.get('registryNumber')"
-            label="No. registro">
+            label="No&#46; registro">
             <input
               type="number"
               class="form-control"
-              formControlName="registryNumber"
-              placeholder="No. de registro" />
+              formControlName="registryNumber" />
           </form-field>
         </div>
       </div>

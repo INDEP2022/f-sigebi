@@ -1,0 +1,69 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      Seguimiento de Revisi&oacute;n de Fichas T&eacute;cnicas
+    </h5>
+  </div>
+  <div body>
+    <div class="row">
+      <form [formGroup]="form" class="form-material">
+        <form-field
+          [control]="form.get('month')"
+          label="A&ntilde;o&#47;Mes"
+          class="col-md-2">
+          <input
+            class="form-control"
+            formControlName="month"
+            bsDatepicker
+            [bsConfig]="{
+              minMode: 'month',
+              adaptivePosition: true,
+              dateInputFormat: 'MM YYYY'
+            }" />
+        </form-field>
+
+        <form-field [control]="form.get('usuario')" class="col-md-4">
+          <ngx-select
+            [form]="form"
+            control="usuario"
+            label="Usuario"
+            [data]="select">
+          </ngx-select>
+        </form-field>
+
+        <form-field [control]="form.get('coord')" class="col-md-4">
+          <ngx-select
+            [form]="form"
+            control="coord"
+            label="Coord&#46; Regional"
+            [data]="select">
+          </ngx-select>
+        </form-field>
+      </form>
+    </div>
+    <div class="row pt-3">
+      <div class="col-md-12 d-flex justify-content-around">
+        <div>
+          <button class="btn btn-info btn-sm active">
+            Refrescar Informaci&oacute;n
+          </button>
+        </div>
+
+        <div>
+          <button class="btn btn-warning btn-sm active">Calendario</button>
+        </div>
+
+        <div>
+          <button class="btn btn-primary btn-sm active">
+            Revisi&oacute;n de Fichas
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-3 table-content">
+      <ng2-smart-table [settings]="settings" [source]="data"></ng2-smart-table>
+
+      <app-pagination></app-pagination>
+    </div>
+  </div>
+</app-card>

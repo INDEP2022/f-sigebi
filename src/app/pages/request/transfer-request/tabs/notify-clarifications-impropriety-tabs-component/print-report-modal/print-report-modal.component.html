@@ -21,14 +21,14 @@
           </div>
         </div>
       </div>
-      <div class="row">mostrar reporte!</div>
+      <div class="row">mostrar reporte</div>
     </div>
 
     <!-- Listado de firmas electronicas -->
     <div *ngIf="listSigns">
       <div class="row">
         <div class="d-flex">
-          <h5 class="mr-auto p-2">Lista de Firmas Electronicas</h5>
+          <h5 class="mr-auto p-2">Lista de Firmas Electr&oacute;nicas</h5>
           <div class="p-2">
             <button class="btn btn-success btn-sm" (click)="sendSign()">
               <i class="bx bxs-right-arrow-square"></i>Enviar a Firmar
@@ -46,17 +46,19 @@
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-12">
-          <ng-scrollbar track="all" style="min-height: 150px; border: none">
-            <div [class]="loading ? 'table-loading' : ''">
-              <ng2-smart-table
-                [attr.class]="'table-bordered'"
-                [settings]="settings"
-                [source]="paragraphs">
-              </ng2-smart-table>
-            </div>
-          </ng-scrollbar>
+      <div id="noncompliance">
+        <div class="row">
+          <div class="col-md-12">
+            <ng-scrollbar track="all" style="min-height: 150px; border: none">
+              <div [class]="loading ? 'table-loading' : ''">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settings"
+                  [source]="paragraphs">
+                </ng2-smart-table>
+              </div>
+            </ng-scrollbar>
+          </div>
         </div>
       </div>
     </div>

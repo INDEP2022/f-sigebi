@@ -1,0 +1,281 @@
+<div class="row" *ngIf="nombrePantalla == 'register-documentation'">
+  <div class="col-md-8">
+    <h5 class="title">
+      Correo&#40;s&#41; Electr&oacute;nico&#40;s&#41; Notificaci&oacute;n
+    </h5>
+  </div>
+  <div class="col-md-4 text-center">
+    <button class="btn btn-primary btn-sm active m-2">
+      <i class="bx bxs-x-circle mr-1"></i>Cancelar
+    </button>
+    <button (click)="onSubmit()" class="btn btn-primary btn-sm active m-2">
+      <i class="bx bxs-right-arrow-square mr-1"></i>Guardar
+    </button>
+    <!-- <div class="row justify-content-end">
+      <div class="col-md-3 text-center text-md-right">
+        <button
+          class="btn btn-primary btn-sm active d-flex align-items-center justify-content-center">
+          <i class="bx bxs-x-circle mr-1"></i>Cancelar
+        </button>
+      </div>
+      <div class="col-md-3 text-center text-md-right">
+        <button
+          class="btn btn-primary btn-sm active d-flex align-items-center justify-content-center">
+          <i class="bx bxs-right-arrow-square mr-1"></i>Guardar
+        </button>
+      </div>
+    </div> -->
+  </div>
+</div>
+
+<app-divider></app-divider>
+
+<h5 class="title">Datos de la Solicitud</h5>
+
+<div class="pt-5">
+  <form class="form-material form-horizontal" [formGroup]="form">
+    <div *ngIf="form.contains('orderingAuthority')" class="row mt-5">
+      <div *ngIf="form.contains('orderingAuthority')" class="col-md-3">
+        <div class="mb-3 pl-4 pr-4">
+          <form-field
+            [control]="form.get('orderingAuthority')"
+            label="Autoridad Ordenante">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="orderingAuthority" />
+          </form-field>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-5">
+      <div class="col-md-2">
+        <div class="mb-3 pl-4 pr-4">
+          <form-check label="Prioridad" for="label">
+            <input id="label" type="checkbox" formControlName="priority" />
+          </form-check>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="mb-3 pl-4 pr-4">
+          <form-field
+            [control]="form.get('typeProceedings')"
+            label="Tipo Expediente">
+            <select class="form-control" formControlName="typeProceedings">
+              <option [value]="null">Seleccione un valor</option>
+              <option [value]="1">1</option>
+              <option [value]="2">2</option>
+            </select>
+          </form-field>
+        </div>
+      </div>
+      <ng-container
+        *ngIf="nombrePantalla == 'register-documentation'; else elseBlock3">
+        <div class="col-md-3">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field
+              [control]="form.get('receptionDate')"
+              label="Fecha Recepci&oacute;n">
+              <input
+                type="text"
+                class="form-control"
+                bsDatepicker
+                formControlName="receptionDate" />
+            </form-field>
+          </div>
+        </div>
+      </ng-container>
+      <ng-template #elseBlock3>
+        <div class="col-md-3">
+          <div class="mb-3 pl-4 pr-4">
+            <form-field [control]="form.get('crime')" label="Delito">
+              <input type="text" class="form-control" formControlName="crime" />
+            </form-field>
+          </div>
+        </div>
+      </ng-template>
+      <div class="col-md-4">
+        <div class="mb-3 pl-4 pr-4">
+          <form-field
+            [control]="form.get('proceedingsTransf')"
+            label="Expediente Tranferente&#47;PAMA">
+            <input
+              type="text"
+              class="form-control"
+              bsDatepicker
+              formControlName="proceedingsTransf" />
+          </form-field>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-4">
+      <div class="col-md-3">
+        <div class="mb-3 pl-4 pr-4">
+          <form-field [control]="form.get('issue')" label="Asunto">
+            <input type="text" class="form-control" formControlName="issue" />
+          </form-field>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="mb-3 pl-4 pr-4">
+          <form-field
+            [control]="form.get('senderName')"
+            label="Nombre del Remitente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="senderName" />
+          </form-field>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="mb-3 pl-4 pr-4">
+          <form-field
+            [control]="form.get('senderCharge')"
+            label="Cargo del Remitente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="senderCharge" />
+          </form-field>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="mb-3 pl-4 pr-4">
+          <form-field
+            [control]="form.get('senderPhone')"
+            label="Tel&eacute;fono del Remitente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="senderPhone" />
+          </form-field>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-md-3">
+        <div class="mb-3 pl-4 pr-4">
+          <form-field
+            [control]="form.get('senderEmail')"
+            label="Email del Remitente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="senderEmail" />
+          </form-field>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="mb-3 pl-4 pr-4">
+          <form-field
+            [control]="form.get('taxpayer')"
+            label="Contribuyente y&#47;o Indiciado">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="taxpayer" />
+          </form-field>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="mb-3 pl-4 pr-4">
+          <form-field
+            [control]="form.get('sourceInfo')"
+            label="Procedencia Informaci&oacute;n">
+            <select class="form-control" formControlName="sourceInfo">
+              <option [value]="null">Seleccione un valor</option>
+              <option [value]="1">1</option>
+              <option [value]="2">2</option>
+            </select>
+          </form-field>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="mb-3 pl-4 pr-4">
+          <form-field [control]="form.get('officeNumb')" label="No&#46; Oficio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="officeNumb" />
+          </form-field>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-md-3">
+        <div class="mb-3 pl-4 pr-4">
+          <form-field
+            [control]="form.get('officeDate')"
+            label="Fecha de Oficio">
+            <input
+              type="text"
+              class="form-control"
+              bsDatepicker
+              formControlName="officeDate" />
+          </form-field>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="mb-3 pl-4 pr-4">
+          <form-field
+            [control]="form.get('viaRecept')"
+            label="V&iacute;a de Recepci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="viaRecept" />
+          </form-field>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="mb-3 pl-4 pr-4">
+          <form-field
+            [control]="form.get('typeTransf')"
+            label="Tipo Tranferencia">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="typeTransf" />
+          </form-field>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="mb-3 pl-4 pr-4">
+          <form-field [control]="form.get('judgmentType')" label="Tipo Juicio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="judgmentType" />
+          </form-field>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-4 align-items-center">
+      <div class="col-md-6">
+        <div class="mb-3 pl-4 pr-4">
+          <form-field [control]="form.get('judgment')" label="Juicio">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="judgment" />
+          </form-field>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="mb-3 pl-4 pr-4">
+          <form-field
+            [control]="form.get('observations')"
+            label="Observaciones">
+            <textarea
+              class="form-control"
+              formControlName="observations"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

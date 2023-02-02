@@ -8,7 +8,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-request-detail-tab',
   templateUrl: './request-detail-tab.component.html',
-  styleUrls: ['./request-detail-tab.scss'],
+  styleUrls: ['./request-detail-tab.component.scss'],
 })
 export class RequestDetailTabComponent extends BasePage implements OnInit {
   @Input() typeDoc = '';

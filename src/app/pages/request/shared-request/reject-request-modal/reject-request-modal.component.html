@@ -1,0 +1,42 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material mt-n3 pt-0" [formGroup]="rejectForm">
+      <div class="row">
+        <p>{{ message }}</p>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12">
+          <form-field
+            [control]="rejectForm.get('comment')"
+            label="Comentario de Rechazo">
+            <textarea
+              rows="2"
+              class="form-control"
+              formControlName="comment"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary active"
+          [disabled]="!rejectForm.valid"
+          (click)="confirm()">
+          Aceptar
+        </button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

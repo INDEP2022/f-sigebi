@@ -1,18 +1,16 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Búsqueda Avanzada</h5>
+    <h5 class="modal-title">B&uacute;squeda Avanzada</h5>
   </div>
   <div body class="body">
     <div>
       <form [formGroup]="searchForm" class="form-material">
         <div class="row pt-2">
           <div class="col-md-2">
-            <form-field [control]="searchForm.get('code')" label="Código">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="code"
-                placeholder="" />
+            <form-field
+              [control]="searchForm.get('code')"
+              label="C&oacute;digo">
+              <input type="text" class="form-control" formControlName="code" />
             </form-field>
           </div>
 
@@ -23,18 +21,18 @@
               (fetchItems)="getTypeRelevant($event)"
               [data]="selectTypeRelevant"
               label="Tipo Relevante"
-              value="typeRelevant"></ngx-select>
+              bindLabel="description"
+              value="id"></ngx-select>
           </div>
 
           <div class="col-md-5">
             <form-field
               [control]="searchForm.get('description')"
-              label="Descripción">
+              label="Descripci&oacute;n">
               <input
                 type="text"
                 class="form-control"
-                formControlName="description"
-                placeholder="" />
+                formControlName="description" />
             </form-field>
           </div>
         </div>
@@ -76,6 +74,9 @@
           </ng2-smart-table>
         </div>
       </ng-scrollbar>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
     </div>
   </div>
   <div footer>

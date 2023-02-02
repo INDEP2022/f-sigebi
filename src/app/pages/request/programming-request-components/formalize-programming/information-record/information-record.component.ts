@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { EMAIL_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-information-record',
@@ -27,53 +28,53 @@ export class InformationRecordComponent extends BasePage implements OnInit {
 
   prepareDevileryForm() {
     this.deliveryForm = this.fb.group({
-      name: [null],
+      name: [null, [Validators.pattern(STRING_PATTERN)]],
       electronicSignature: [null],
-      charge: [null],
-      resistance: [null],
+      charge: [null, [Validators.pattern(STRING_PATTERN)]],
+      resistance: [null, [Validators.pattern(STRING_PATTERN)]],
       identification: [null],
       noIdentification: [null],
-      issuedBy: [null],
-      email: [null],
+      issuedBy: [null, [Validators.pattern(STRING_PATTERN)]],
+      email: [null, [Validators.pattern(EMAIL_PATTERN)]],
     });
   }
 
   prepareReceiveForm() {
     this.receiveForm = this.fb.group({
-      name: [null],
+      name: [null, [Validators.pattern(STRING_PATTERN)]],
       electronicSignature: [null],
-      charge: [null],
-      resistance: [null],
+      charge: [null, [Validators.pattern(STRING_PATTERN)]],
+      resistance: [null, [Validators.pattern(STRING_PATTERN)]],
       identification: [null],
       noIdentification: [null],
-      issuedBy: [null],
-      email: [null],
+      issuedBy: [null, [Validators.pattern(STRING_PATTERN)]],
+      email: [null, [Validators.pattern(EMAIL_PATTERN)]],
     });
   }
 
   prepareWitnessOneForm() {
     this.witnessOneForm = this.fb.group({
-      name: [null],
+      name: [null, [Validators.pattern(STRING_PATTERN)]],
       electronicSignature: [null],
-      charge: [null],
-      resistance: [null],
+      charge: [null, [Validators.pattern(STRING_PATTERN)]],
+      resistance: [null, [Validators.pattern(STRING_PATTERN)]],
       identification: [null],
       noIdentification: [null],
-      issuedBy: [null],
-      email: [null],
+      issuedBy: [null, [Validators.pattern(STRING_PATTERN)]],
+      email: [null, [Validators.pattern(EMAIL_PATTERN)]],
     });
   }
 
   prepareWitnessTwoForm() {
     this.witnessTwoForm = this.fb.group({
-      name: [null],
+      name: [null, [Validators.pattern(STRING_PATTERN)]],
       electronicSignature: [null],
-      charge: [null],
-      resistance: [null],
+      charge: [null, [Validators.pattern(STRING_PATTERN)]],
+      resistance: [null, [Validators.pattern(STRING_PATTERN)]],
       identification: [null],
       noIdentification: [null],
-      issuedBy: [null],
-      email: [null],
+      issuedBy: [null, [Validators.pattern(STRING_PATTERN)]],
+      email: [null, [Validators.pattern(EMAIL_PATTERN)]],
     });
   }
   confirm() {}

@@ -1,7 +1,7 @@
 <app-modal>
   <div header>
     <h5 class="modal-title">
-      {{ edit ? 'Editar fracción' : 'Nueva fracción' }}
+      {{ edit ? 'Editar fracci&oacute;n' : 'Nueva fracci&oacute;n' }}
     </h5>
   </div>
   <div body>
@@ -22,7 +22,7 @@
       <div class="col-md-12">
         <form-field
           [control]="fractionForm.get('description')"
-          label="Descripción">
+          label="Descripci&oacute;n">
           <textarea
             type="text"
             class="form-control"
@@ -51,7 +51,7 @@
             [data]="clasifications"
             value="id"
             bindLabel="sssubtypeDescription"
-            label="Clasificación"
+            label="Clasificaci&oacute;n"
             (fetchItems)="getClasificationSelect($event)"></ngx-select>
         </form-field>
       </div>
@@ -63,7 +63,9 @@
       </div>
 
       <div class="col-md-4">
-        <form-field [control]="fractionForm.get('version')" label="Versión">
+        <form-field
+          [control]="fractionForm.get('version')"
+          label="Versi&oacute;n">
           <input type="text" class="form-control" formControlName="version" />
         </form-field>
       </div>
@@ -123,7 +125,7 @@
       <div class="col-md-4">
         <form-field
           [control]="fractionForm.get('fractionCode')"
-          label="Codigo Fracción">
+          label="Codigo Fracci&oacute;n">
           <input
             type="text"
             class="form-control"

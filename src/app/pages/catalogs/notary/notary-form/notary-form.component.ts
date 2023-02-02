@@ -3,6 +3,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import {
+  EMAIL_PATTERN,
+  PHONE_PATTERN,
+  STRING_PATTERN,
+} from '../../../../core/shared/patterns';
 import { INotary } from './../../../../core/models/catalogs/notary.model';
 import { NotaryService } from './../../../../core/services/catalogs/notary.service';
 
@@ -34,13 +39,26 @@ export class NotaryFormComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.notaryForm = this.fb.group({
       id: [null, [Validators.required]],
-      name: [null, [Validators.required]],
+      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       valid: [null, [Validators.required]],
       notaryNumber: [null, [Validators.required]],
-      ubication: [null, [Validators.required]],
-      domicile: [null, [Validators.required]],
-      phone: [null, [Validators.required, Validators.maxLength(3)]],
-      email: [null, [Validators.required]],
+      ubication: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      domicile: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      phone: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(3),
+          Validators.pattern(PHONE_PATTERN),
+        ],
+      ],
+      email: [null, [Validators.required, Validators.pattern(EMAIL_PATTERN)]],
       registryNumber: [null, [Validators.required]],
     });
     if (this.notary != null) {

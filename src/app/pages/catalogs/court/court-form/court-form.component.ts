@@ -2,6 +2,11 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  NUMBERS_PATTERN,
+  PHONE_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ICourt } from '../../../../core/models/catalogs/court.model';
 import { CourtService } from './../../../../core/services/catalogs/court.service';
@@ -33,17 +38,51 @@ export class CourtFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.courtForm = this.fb.group({
-      description: [null, [Validators.required]],
-      manager: [null, [Validators.required]],
-      numRegister: [null, [Validators.required]],
-      numPhone: [null, [Validators.required]],
-      cologne: [null, [Validators.required]],
-      street: [null, [Validators.required]],
-      numInterior: [null, [Validators.required, Validators.maxLength(3)]],
-      numExterior: [null, [Validators.required]],
-      delegationMun: [null, [Validators.required]],
-      zipCode: [null, [Validators.required]],
-      circuitCVE: [null, [Validators.required]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      manager: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      numRegister: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      numPhone: [
+        null,
+        [Validators.required, Validators.pattern(PHONE_PATTERN)],
+      ],
+      cologne: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      street: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      numInterior: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(3),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      numExterior: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      delegationMun: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      zipCode: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      circuitCVE: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
     if (this.court != null) {
       this.edit = true;

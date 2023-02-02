@@ -13,9 +13,12 @@
 
         <div class="col-md-6 offset-md-4">
           <form-field
-            [control]="detailDelegationForm.get('name')"
-            label="Delegación">
-            <input type="number" class="form-control" formControlName="name" />
+            [control]="detailDelegationForm.get('numDelegation')"
+            label="Delegaci&oacute;n">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="numDelegation" />
           </form-field>
         </div>
       </div>
@@ -25,13 +28,13 @@
           <form-field
             [control]="detailDelegationForm.get('name')"
             label="Nombre">
-            <input type="number" class="form-control" formControlName="name" />
+            <input type="string" class="form-control" formControlName="name" />
           </form-field>
         </div>
         <div class="col-md-6">
           <form-field
             [control]="detailDelegationForm.get('location')"
-            label="Ubicación">
+            label="Ubicaci&oacute;n">
             <input
               type="text"
               class="form-control"
@@ -44,7 +47,7 @@
         <div class="col-md-6">
           <form-field
             [control]="detailDelegationForm.get('address')"
-            label="Dirección">
+            label="Direcci&oacute;n">
             <input type="text" class="form-control" formControlName="address" />
           </form-field>
         </div>
@@ -63,7 +66,9 @@
 
       <div class="row pt-5">
         <div class="col-md-6">
-          <form-field [control]="detailDelegationForm.get('area')" label="Área">
+          <form-field
+            [control]="detailDelegationForm.get('area')"
+            label="&Aacute;rea">
             <input type="text" class="form-control" formControlName="area" />
           </form-field>
         </div>
@@ -81,7 +86,7 @@
         <div class="col-md-4">
           <form-field
             [control]="detailDelegationForm.get('numP1')"
-            label="Teléfono 1">
+            label="Tel&eacute;fono 1">
             <input type="tel" class="form-control" formControlName="numP1" />
           </form-field>
         </div>
@@ -89,7 +94,7 @@
         <div class="col-md-4">
           <form-field
             [control]="detailDelegationForm.get('numP2')"
-            label="Teléfono 2">
+            label="Tel&eacute;fono 2">
             <input type="tel" class="form-control" formControlName="numP2" />
           </form-field>
         </div>
@@ -97,7 +102,7 @@
         <div class="col-md-4">
           <form-field
             [control]="detailDelegationForm.get('numP3')"
-            label="Teléfono 3">
+            label="Tel&eacute;fono 3">
             <input type="tel" class="form-control" formControlName="numP3" />
           </form-field>
         </div>

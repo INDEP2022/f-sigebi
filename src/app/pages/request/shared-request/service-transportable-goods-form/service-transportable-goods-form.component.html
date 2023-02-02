@@ -1,0 +1,176 @@
+<div class="row pt-3">
+  <div class="md-tabs">
+    <tabset>
+      <tab heading="{{ title }}">
+        <div class="btn-toolbar">
+          <button
+            *ngIf="
+              (showForm && op == 1) ||
+              (!showForm && op == 4) ||
+              (!showForm && op == 9) ||
+              (!showForm && op == 10 && rejected) ||
+              (!showForm && op == 13) ||
+              (!showForm && op == 14)
+            "
+            (click)="newService()"
+            class="btn btn-primary btn-sm active">
+            <i class="fa fa-plus-circle" aria-hidden="true"></i> Nuevo servico
+          </button>
+          <button
+            *ngIf="
+              (showButtonServiceManual && showForm && op == 1) ||
+              (!showForm && op == 4) ||
+              (!showForm && op == 9) ||
+              (showButtonServiceManual && showForm && op == 10) ||
+              (!showForm && op == 13) ||
+              (showButtonServiceManual && !showForm && op == 14)
+            "
+            (click)="newServiceManual()"
+            class="btn btn-info btn-sm active">
+            <i class="fa fa-plus-circle" aria-hidden="true"></i> Nuevo servico
+            manual
+          </button>
+          <button
+            *ngIf="
+              (showForm && op == 1) ||
+              (!showForm && op == 4) ||
+              (!showForm && op == 9) ||
+              (!showForm && op == 10 && rejected) ||
+              (!showForm && op == 13) ||
+              (!showForm && op == 14)
+            "
+            (click)="deleteService()"
+            class="btn btn-danger btn-sm active">
+            <i class="fa fa-trash" aria-hidden="true"></i> Eliminar servicio
+          </button>
+          <button class="btn btn-primary btn-sm active">Detach</button>
+
+          <label *ngIf="op == 5" class="col-sm-3 text-right"
+            >Resultado evaluaci&oacute;n&#58;</label
+          >
+          <input
+            *ngIf="op == 5"
+            type="text"
+            class="form-control"
+            style="width: 97px; height: 24px" />&nbsp;
+          <input
+            *ngIf="op == 5"
+            type="text"
+            class="form-control"
+            style="width: 97px; height: 24px" />
+        </div>
+        <div>
+          <div class="table-responsive text-nowrap">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th scope="col" class="align-middle">
+                    <input
+                      type="checkbox"
+                      class="form-control ng-pristine ng-valid ng-touched"
+                      ng-reflect-model="true"
+                      value="second_checkbox" />
+                  </th>
+                  <th>Descripción</th>
+                  <th>Unidad de medida de servicio</th>
+                  <th>Clasificación servicio</th>
+                  <th>Comentarios de servicio</th>
+                  <th>Duración (Horas)</th>
+                  <th>No. de recursos</th>
+                  <th *ngIf="op == 4 || op == 5 || op == 14">
+                    Recursos reales
+                  </th>
+                  <th>Precio unitario</th>
+                  <th>Total</th>
+                  <th *ngIf="op == 4 || op == 5 || op == 14">
+                    Descripción de diferencia
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td scope="row" class="align-middle">
+                    <input
+                      type="checkbox"
+                      id="cbox2"
+                      class="form-control ng-pristine ng-valid ng-touched"
+                      ng-reflect-model="true"
+                      value="second_checkbox" />
+                  </td>
+
+                  <td scope="row" class="align-middle">Maniobras</td>
+                  <td scope="row" class="align-middle">Servicio (8 Horas)</td>
+                  <td scope="row" class="align-middle">Equipo y maniobra</td>
+                  <td scope="row" class="align-middle">
+                    <input
+                      *ngIf="op == 1 || op == 2 || op == 10 || op == 14"
+                      type="text"
+                      class="form-control" />
+                    <input
+                      *ngIf="op != 3 && op != 4 && op != 5 && op != 6"
+                      type="text"
+                      class="form-control"
+                      readonly />
+                  </td>
+
+                  <td scope="row" class="align-middle">
+                    <p *ngIf="op == 3 || op == 4 || op == 5 || op == 6">8</p>
+                    <input
+                      type="number"
+                      *ngIf="op != 3 && op != 4 && op != 5 && op != 6"
+                      class="form-control" />
+                  </td>
+                  <td scope="row" class="align-middle">
+                    <p *ngIf="op == 3 || op == 4 || op == 5 || op == 6">8</p>
+                    <input
+                      *ngIf="op != 3 && op != 4 && op != 5 && op != 6"
+                      type="text"
+                      class="form-control" />
+                  </td>
+                  <td
+                    *ngIf="op == 4 || op == 5 || op == 14"
+                    scope="row"
+                    class="align-middle">
+                    <p *ngIf="op == 5">8</p>
+                    <input
+                      type="text"
+                      class="form-control"
+                      *ngIf="op == 4 || op == 14" />
+                  </td>
+                  <td scope="row" class="align-middle"><b>$743.82</b></td>
+                  <td scope="row" class="align-middle"><b>$743.82</b></td>
+                  <td
+                    *ngIf="op == 4 || op == 5 || op == 14"
+                    scope="row"
+                    class="align-middle">
+                    <p *ngIf="op == 5">Mala</p>
+                    <input
+                      type="text"
+                      class="form-control"
+                      *ngIf="op == 4 || op == 14" />
+                  </td>
+                </tr>
+                <tr>
+                  <td scope="row" class="align-middle"></td>
+                  <td scope="row" class="align-middle"></td>
+                  <td scope="row" class="align-middle"></td>
+                  <td scope="row" class="align-middle"></td>
+                  <td scope="row" class="align-middle"></td>
+                  <td scope="row" class="align-middle"></td>
+                  <td scope="row" class="align-middle"></td>
+                  <td
+                    *ngIf="op == 4 || op == 5 || op == 14"
+                    scope="row"
+                    class="align-middle"></td>
+                  <td scope="row" class="align-middle"></td>
+                  <td scope="row" class="align-middle"><b>$743.82</b></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </tab>
+    </tabset>
+  </div>
+</div>

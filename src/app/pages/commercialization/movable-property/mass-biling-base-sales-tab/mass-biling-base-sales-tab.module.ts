@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { SharedModule } from 'src/app/shared/shared.module';
 
-import { CBmFFmdvdbMMassBillBaseSalesModule } from '../c-bm-f-fmdvdb-m-mass-bill-base-sales/c-bm-f-fmdvdb-m-mass-bill-base-sales.module';
+import { MassBillBaseSalesModule } from '../mass-bill-base-sales/mass-bill-base-sales.module';
 
 import { MassBilingBaseSalesTabRoutingModule } from './mass-biling-base-sales-tab-routing.module';
 import { MassBilingBaseSalesTabComponent } from './mass-biling-base-sales-tab/mass-biling-base-sales-tab.component';
@@ -15,7 +15,7 @@ import { MassBilingBaseSalesTabComponent } from './mass-biling-base-sales-tab/ma
     MassBilingBaseSalesTabRoutingModule,
     TabsModule,
     SharedModule,
-    CBmFFmdvdbMMassBillBaseSalesModule,
+    MassBillBaseSalesModule,
   ],
 })
 export class MassBilingBaseSalesTabModule {}

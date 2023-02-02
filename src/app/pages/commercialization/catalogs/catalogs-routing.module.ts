@@ -5,111 +5,112 @@ const routes: Routes = [
   {
     path: 'penalty-types',
     loadChildren: async () =>
-      (await import('./c-c-m-penalty-types/c-c-m-penalty-types.module'))
-        .CCMPenaltyTypesModule,
-    data: { title: 'Tipos de Penalización' },
+      (await import('./penalty-types/penalty-types.module')).PenaltyTypesModule,
+    data: { title: 'Tipos de Penalización', screen: 'FCOMERTIPOPENALIZA' },
   },
   {
     path: 'authorization-keys-ois',
     loadChildren: async () =>
-      (
-        await import(
-          './c-c-m-authorization-keys-ois/c-c-m-authorization-keys-ois.module'
-        )
-      ).CCMAuthorizationKeysOisModule,
-    data: { title: 'Claves de Autorización Envío Ext. OIs' },
+      (await import('./authorization-keys-ois/authorization-keys-ois.module'))
+        .CCMAuthorizationKeysOisModule,
+    data: {
+      title: 'Claves de Autorización Envío Ext. OIs',
+      screen: 'FCOMERCVEAUTOI',
+    },
   },
   {
     path: 'capture-lines',
     loadChildren: async () =>
-      (await import('./c-c-m-capture-lines/c-c-m-capture-lines.module'))
-        .CCMCaptureLinesModule,
-    data: { title: 'Líneas de Captura' },
+      (await import('./capture-lines/capture-lines.module')).CaptureLinesModule,
+    data: { title: 'Líneas de Captura', screen: 'FCOMER065' },
   },
   {
     path: 'customers',
     loadChildren: async () =>
-      (await import('./customers/c-c-c-m-customers.module'))
-        .CCCMCustomersModule,
+      (await import('./customers/customers.module')).CustomersModule,
     data: { title: 'Clientes' },
   },
   {
     path: 'providers',
     loadChildren: async () =>
-      (await import('./c-c-m-provider-catalogs/c-c-m-provider-catalogs.module'))
-        .CCMProviderCatalogsModule,
-    data: { title: 'Proveedores' },
+      (await import('./provider-catalogs/provider-catalogs.module'))
+        .ProviderCatalogsModule,
+    data: { title: 'Proveedores', screen: 'FCOMER082' },
   },
   {
     path: 'customers-penalties',
     loadChildren: async () =>
-      (
-        await import(
-          './customers-penalties/c-c-cp-m-customers-penalties.module'
-        )
-      ).CCCpMCustomersPenaltiesModule,
+      (await import('./customers-penalties/customers-penalties.module'))
+        .CustomersPenaltiesModule,
     data: { title: 'Penalización de Clientes' },
   },
   {
     path: 'event-types',
     loadChildren: async () =>
-      (await import('./event-types/c-c-et-m-event-types.module'))
-        .CCEtMEventTypesModule,
+      (await import('./event-types/event-types.module')).EventTypesModule,
     data: { title: 'Tipos de Eventos' },
   },
   {
     path: 'sale-status',
     loadChildren: async () =>
-      (await import('./sale-status/c-c-ss-m-sale-status.module'))
-        .CCSsMSaleStatusModule,
+      (await import('./sale-status/sale-status.module')).SaleStatusModule,
     data: { title: 'Estatus de Venta' },
   },
   {
     path: 'goods-available-sale-status',
     loadChildren: async () =>
-      (
-        await import(
-          './goods-available-sale/c-c-gas-m-goods-available-sale.module'
-        )
-      ).CCGasMGoodsAvailableSaleModule,
+      (await import('./goods-available-sale/goods-available-sale.module'))
+        .GoodsAvailableSaleModule,
     data: { title: 'Est. Bienes Disponibles para Comercializar' },
   },
   {
     path: 'bank-movements-types',
     loadChildren: async () =>
-      (
-        await import(
-          './bank-movements-types/c-c-bmt-m-bank-movements-types.module'
-        )
-      ).CCBmtMBankMovementsTypesModule,
+      (await import('./bank-movements-types/bank-movements-types.module'))
+        .BankMovementsTypesModule,
     data: { title: 'Tipos Movimiento Banco' },
   },
   {
     path: 'parameters',
     loadChildren: async () =>
-      (await import('./parameters/c-c-p-m-parameters.module'))
-        .CCPMParametersModule,
+      (await import('./parameters/parameters.module')).ParametersModule,
     data: { title: 'Parámetros Comercialización' },
   },
   {
     path: 'users-event-types',
     loadChildren: async () =>
-      (await import('./users-event-types/c-c-uet-m-users-event-types.module'))
-        .CCUetMUsersEventTypesModule,
+      (await import('./users-event-types/users-event-types.module'))
+        .UsersEventTypesModule,
     data: { title: 'Usuarios por Tipo de Evento' },
   },
   {
     path: 'brands-sub-brands',
     loadChildren: async () =>
-      (await import('./brands-sub-brands/c-c-bsb-m-brands-sub-brands.module'))
-        .CCBsbMBrandsSubBrandsModule,
+      (await import('./brands-sub-brands/brands-sub-brands.module'))
+        .BrandsSubBrandsModule,
     data: { title: 'Marcas y Sub Marcas' },
   },
   {
     path: 'models',
     loadChildren: async () =>
-      (await import('./models/c-c-m-m-models.module')).CCMMModelsModule,
+      (await import('./models/models.module')).ModelsModule,
     data: { title: 'Modelos' },
+  },
+  {
+    path: 'event-process',
+    loadChildren: async () =>
+      (await import('./event-process/event-process.module')).EventProcessModule,
+    data: { title: 'Eventos por Proceso' },
+  },
+  {
+    path: 'registration-of-interest',
+    loadChildren: async () =>
+      (
+        await import(
+          './registration-of-interest/registration-of-interest.module'
+        )
+      ).RegistrationOfInterestModule,
+    data: { title: 'Registro de Intereses' },
   },
 ];
 

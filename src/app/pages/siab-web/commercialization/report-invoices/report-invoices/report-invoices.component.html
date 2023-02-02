@@ -1,0 +1,102 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Facturas emitidas por Delegaci&oacute;n Regional</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field [control]="form.get('rangeDate')" label="Rango de fechas">
+            <input
+              class="form-control"
+              formControlName="rangeDate"
+              placeholder=""
+              ngModel
+              bsDaterangepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'DD-MM-YYYY',
+                displayOneMonthRange: true
+              }" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('typeCFDI')" label="Tipo de CFDI">
+            <ng-select
+              formControlName="typeCFDI"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="Y">Ingreso</ng-option>
+              <ng-option value="N">Egreso</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('statusInvoice')"
+            label="Estatus de factura">
+            <ng-select
+              formControlName="statusInvoice"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="Y">CFDI</ng-option>
+              <ng-option value="N">IMP</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('goods')" label="Bienes">
+            <ng-select
+              formControlName="goods"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="M">Muebles</ng-option>
+              <ng-option value="I">Inmuebles</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+        <div class="col-md-1">
+          <div class="justify-content-center">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              [disabled]="!form.valid"
+              (click)="show = !show">
+              Consultar
+            </button>
+          </div>
+        </div>
+        <div class="col-md-1">
+          <div class="justify-content-center">
+            <button
+              type="submit"
+              class="btn btn-secondary btn-sm active"
+              [disabled]="!form.valid">
+              Limpiar filtros
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="row pt-5" *ngIf="show">
+      <div class="ch-content" header>
+        <h5 class="title">Detalle de facturas</h5>
+        <div class="col-md-5 buttons">
+          <button type="button" class="btn btn-success btn-sm active" disabled>
+            Descargar
+          </button>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="data"></ng2-smart-table>
+      </div>
+    </div>
+  </div>
+</app-card>

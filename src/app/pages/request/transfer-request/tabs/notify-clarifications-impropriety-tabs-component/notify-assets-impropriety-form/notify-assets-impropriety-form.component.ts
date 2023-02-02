@@ -1,8 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  EMAIL_PATTERN,
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { PrintReportModalComponent } from '../print-report-modal/print-report-modal.component';
 
 @Component({
@@ -41,37 +46,37 @@ export class NotifyAssetsImproprietyFormComponent
 
   initForm2(): void {
     this.clarificationForm = this.fb.group({
-      receiver: [null],
-      senderCharge: [null],
-      receiverCharge: [null],
+      receiver: [null, [Validators.pattern(STRING_PATTERN)]],
+      senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
+      receiverCharge: [null, [Validators.pattern(STRING_PATTERN)]],
       //keyClarification: [null],
       //idTransmitter: [null],
-      clarification: [null],
-      consistent: [null],
+      clarification: [null, [Validators.pattern(STRING_PATTERN)]],
+      consistent: [null, [Validators.pattern(STRING_PATTERN)]],
       //finalParagraph: [null],
       //initialParagraph: [null],
-      observations: [null],
-      captureUserArea: [null],
-      emailNotifiSat: [null],
-      nameSender: [null],
+      observations: [null, [Validators.pattern(STRING_PATTERN)]],
+      captureUserArea: [null, [Validators.pattern(STRING_PATTERN)]],
+      emailNotifiSat: [null, [Validators.pattern(EMAIL_PATTERN)]],
+      nameSender: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
   initForm1(): void {
     this.clarificationForm = this.fb.group({
-      receiver: [null],
-      senderCharge: [null],
-      receiverCharge: [null],
-      keyClarification: [null],
+      receiver: [null, [Validators.pattern(STRING_PATTERN)]],
+      senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
+      receiverCharge: [null, [Validators.pattern(STRING_PATTERN)]],
+      keyClarification: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       idTransmitter: [null],
-      clarification: [null],
-      consistent: [null],
-      finalParagraph: [null],
-      initialParagraph: [null],
-      observations: [null],
-      captureUserArea: [null],
-      emailNotifiSat: [null],
-      nameSender: [null],
+      clarification: [null, [Validators.pattern(STRING_PATTERN)]],
+      consistent: [null, [Validators.pattern(STRING_PATTERN)]],
+      finalParagraph: [null, [Validators.pattern(STRING_PATTERN)]],
+      initialParagraph: [null, [Validators.pattern(STRING_PATTERN)]],
+      observations: [null, [Validators.pattern(STRING_PATTERN)]],
+      captureUserArea: [null, [Validators.pattern(STRING_PATTERN)]],
+      emailNotifiSat: [null, [Validators.pattern(EMAIL_PATTERN)]],
+      nameSender: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
@@ -82,7 +87,8 @@ export class NotifyAssetsImproprietyFormComponent
     } else {
       let config: ModalOptions = {
         initialState: {
-          sign: '',
+          data: '',
+          typeReport: 'noncompliance',
           callback: (next: boolean) => {
             //if (next){ this.getData();}
           },

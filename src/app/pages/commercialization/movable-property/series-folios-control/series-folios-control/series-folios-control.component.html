@@ -1,0 +1,52 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">CONTROL DE SERIES Y FOLIOS</h5>
+      <div class="row justify-content-end pt-3 mr-3">
+        <app-columns-select [(settings)]="settings"></app-columns-select>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-4">
+          <h5 class="font-size-14 d-inline">Seleccione Coordinaci&oacute;n</h5>
+          <ngx-select
+            [form]="form"
+            [data]="coordItems"
+            value="id"
+            bindLabel="name"
+            (fetchItems)="getCoord($event)"
+            (change)="selectCoord($event)"
+            control="id">
+          </ngx-select>
+        </div>
+      </div>
+    </form>
+    <div *ngIf="selectedCoord != null">
+      <div class="row pt-5">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="data"
+          (edit)="openForm($event.data)"></ng2-smart-table>
+      </div>
+      <div class="row pt-5">
+        <div class="ch-title">
+          <h5 class="title">Tipo de eventos por serie</h5>
+        </div>
+        <ng2-smart-table
+          [settings]="settings1"
+          [source]="data1"></ng2-smart-table>
+      </div>
+      <div class="row pt-5">
+        <div class="ch-title">
+          <h5 class="title">Folios apartados</h5>
+        </div>
+        <ng2-smart-table
+          [settings]="settings2"
+          [source]="data2"></ng2-smart-table>
+      </div>
+    </div>
+  </div>
+</app-card>

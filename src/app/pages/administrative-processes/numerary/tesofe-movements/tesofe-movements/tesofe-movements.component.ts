@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { TESOFE_MOVEMENTS_COLUMNS } from './tesofe-movements-columns';
 
 @Component({
@@ -30,10 +31,16 @@ export class TesofeMovementsComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      bank: [null, Validators.required],
-      account: [null, Validators.required],
+      bank: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      account: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
 
-      currency: [null, Validators.required],
+      currency: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 }

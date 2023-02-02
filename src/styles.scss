@@ -1,4 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
+@import 'simple-keyboard/build/css/index.css';
 * {
   font-size: 14px;
 }
@@ -396,4 +397,13 @@ ng-scrollbar.table-scrollbar {
     display: table-cell;
     padding: 0 6px;
   }
+}
+
+.bs-datepicker .bs-timepicker-in-datepicker-container {
+  max-width: 280px !important;
+}
+
+.disabled {
+  pointer-events: none !important;
+  opacity: 0.7 !important;
 }

@@ -1,0 +1,308 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">b&uacute;squeda y procesamiento de pagos</h5>
+  </div>
+  <div body>
+    <div class="row">
+      <form class="form-material mb-0" [formGroup]="searchForm">
+        <div class="row">
+          <div class="col-sm-6 col-md-3">
+            <form-field [control]="searchForm.get('event')">
+              <ngx-select
+                [form]="searchForm"
+                [data]="eventItems"
+                label="Evento"
+                value="id"
+                bindLabel="id"
+                (fetchItems)="getEvents($event)"
+                control="event">
+              </ngx-select>
+            </form-field>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <form-field [control]="searchForm.get('batch')" label="Lote">
+              <input
+                type="number"
+                formControlName="batch"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <form-field [control]="searchForm.get('bank')">
+              <ngx-select
+                [form]="searchForm"
+                [data]="bankItems"
+                label="Banco"
+                value="id"
+                bindLabel="description"
+                (fetchItems)="getBanks($event)"
+                control="bank">
+              </ngx-select>
+            </form-field>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <form-field [control]="searchForm.get('amount')" label="Monto">
+              <input
+                type="number"
+                formControlName="amount"
+                class="form-control" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row mt-5">
+          <div class="col-sm-6 col-md-3">
+            <form-field
+              [control]="searchForm.get('reference')"
+              label="Referencia">
+              <input
+                type="text"
+                formControlName="reference"
+                class="form-control" />
+            </form-field>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <form-field
+              [control]="searchForm.get('validity')"
+              label="Válido Sistema">
+              <ng-select
+                formControlName="validity"
+                [searchable]="false"
+                class="form-control"
+                [clearable]="false">
+                <ng-option value="1">NULO</ng-option>
+                <ng-option value="2">B</ng-option>
+              </ng-select>
+            </form-field>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <form-field
+              [control]="searchForm.get('searchType')"
+              label="Tipo de Búsqueda">
+              <ng-select
+                formControlName="searchType"
+                [searchable]="false"
+                class="form-control"
+                [clearable]="false">
+                <ng-option value="0">Normales</ng-option>
+                <ng-option value="1">Duplicados</ng-option>
+                <ng-option value="2">No Referenciados</ng-option>
+                <ng-option value="3">Efectivo</ng-option>
+                <ng-option value="4">Inconsistencia</ng-option>
+                <ng-option value="5">Carga de Archivo CSV</ng-option>
+              </ng-select>
+            </form-field>
+          </div>
+          <div class="col-sm-6 col-md-3">
+            <form-field [control]="searchForm.get('system')" label="Sistema">
+              <ng-select
+                formControlName="system"
+                [searchable]="false"
+                class="form-control"
+                [clearable]="false">
+                <ng-option value="1">SIAB</ng-option>
+                <ng-option value="2">SIRSAE</ng-option>
+              </ng-select>
+            </form-field>
+          </div>
+        </div>
+        <div class="row mt-5 d-flex justify-content-center">
+          <div class="col-sm-6 col-md-4">
+            <button
+              class="btn btn-sm btn-block btn-primary active font-size-14 font-size-lg-16"
+              (click)="search()"
+              [disabled]="!searchForm.valid">
+              Ejecutar
+            </button>
+          </div>
+          <div class="col-sm-6 col-md-4">
+            <button
+              class="btn btn-sm btn-block btn-danger active font-size-14 font-size-lg-16"
+              (click)="cleanSearch()"
+              [disabled]="paymentColumns.length == 0">
+              Eliminar B&uacute;squeda
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="row mt-5">
+      <div class="col-sm-12 col-md-6">
+        <div class="form-material">
+          <search-bar [params]="params"></search-bar>
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-12">
+        <div class="d-flex flex-row-reverse my-3">
+          <div class="">
+            <app-columns-select
+              [(settings)]="paymentSettings"></app-columns-select>
+          </div>
+          <div>
+            <button
+              class="btn btn-sm btn-danger active me-2 font-size-14"
+              (click)="loadCSV.click()">
+              <i class="bx bx-save text-light float-icon"></i>
+              Carga de Archivos CSV<input
+                #loadCSV
+                hidden
+                type="file"
+                accept=".csv"
+                (change)="getCsv($event)" />
+            </button>
+          </div>
+          <div>
+            <div
+              class="btn-group d-block me-2"
+              dropdown
+              [isDisabled]="selectedRows.length == 0">
+              <button
+                #actionsBtn
+                dropdownToggle
+                type="button"
+                class="btn btn-sm btn-primary btn-block active me-2 font-size-14 dropdown-toggle"
+                aria-controls="dropdown-actions">
+                <i class="bx bx-file text-light float-icon"></i>
+                Acci&oacute;n <span class="caret"></span>
+              </button>
+              <ul
+                id="dropdown-actions"
+                *dropdownMenu
+                class="dropdown-menu"
+                role="menu"
+                aria-labelledby="processBtn">
+                <li role="menuitem">
+                  <a
+                    class="dropdown-item bg-primary text-light"
+                    (click)="actions('CANCELAR')"
+                    >Cancelar</a
+                  >
+                </li>
+                <li role="menuitem">
+                  <a
+                    class="dropdown-item bg-primary text-light"
+                    (click)="actions('ACTUALIZAR')"
+                    >Actualizar</a
+                  >
+                </li>
+                <li role="menuitem">
+                  <a
+                    class="dropdown-item bg-primary text-light"
+                    (click)="actions('REGISTRAR')"
+                    >Registrar</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div>
+            <div
+              class="btn-group d-block me-2"
+              dropdown
+              [isDisabled]="selectedRows.length == 0">
+              <button
+                #processBtn
+                dropdownToggle
+                type="button"
+                class="btn btn-sm btn-info btn-block active me-2 font-size-14 dropdown-toggle"
+                aria-controls="dropdown-batch">
+                <i class="bx bx-file text-light float-icon"></i>
+                Cambio de Proceso <span class="caret"></span>
+              </button>
+              <ul
+                id="dropdown-batch"
+                *dropdownMenu
+                class="dropdown-menu"
+                role="menu"
+                aria-labelledby="processBtn">
+                <li role="menuitem">
+                  <a
+                    class="dropdown-item bg-info text-light"
+                    (click)="changeProcess('NORMALES')"
+                    >Normales</a
+                  >
+                </li>
+                <li role="menuitem">
+                  <a
+                    class="dropdown-item bg-info text-light"
+                    (click)="changeProcess('DUPLICADOS')"
+                    >Duplicados</a
+                  >
+                </li>
+                <li role="menuitem">
+                  <a
+                    class="dropdown-item bg-info text-light"
+                    (click)="changeProcess('NO REFERENCIADOS')"
+                    >No Referenciados</a
+                  >
+                </li>
+                <li role="menuitem">
+                  <a
+                    class="dropdown-item bg-info text-light"
+                    (click)="changeProcess('EFECTIVO')"
+                    >Efectivo</a
+                  >
+                </li>
+                <li role="menuitem">
+                  <a
+                    class="dropdown-item bg-info text-light"
+                    (click)="changeProcess('INCONSISTENCIA')"
+                    >Inconsistencia</a
+                  >
+                </li>
+                <li role="menuitem">
+                  <a
+                    class="dropdown-item bg-info text-light"
+                    (click)="changeProcess('CARGA DE ARCHIVO CSV')"
+                    >Carga de Archivo CSV</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div>
+            <button
+              class="btn btn-sm btn-secondary active me-2 font-size-14"
+              (click)="loadBatch.click()">
+              <i class="bx bx-save text-light float-icon"></i>
+              Cambiar Lotes<input
+                #loadBatch
+                hidden
+                type="file"
+                accept=".csv"
+                (change)="getCsv($event)" />
+            </button>
+          </div>
+          <div>
+            <button
+              class="btn btn-sm btn-success active me-2 font-size-14"
+              (click)="openForm()"
+              [disabled]="paymentColumns.length == 0">
+              <i class="bx bx-plus text-light float-icon"></i>
+              Agregar Registro
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <ng-scrollbar
+        [track]="'horizontal'"
+        [autoHeightDisabled]="false"
+        class="table-scrollbar">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            id="consultation-table"
+            [attr.class]="'table-bordered'"
+            [settings]="paymentSettings"
+            [source]="paymentColumns"
+            (edit)="openForm($event.data)"
+            (userRowSelect)="selectRows($event.selected)">
+          </ng2-smart-table>
+        </div>
+        <div class="table-padding"></div>
+      </ng-scrollbar>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+  </div>
+</app-card>

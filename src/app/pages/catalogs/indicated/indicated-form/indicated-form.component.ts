@@ -5,6 +5,10 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IIndiciados } from 'src/app/core/models/catalogs/indiciados.model';
 import { IndiciadosService } from 'src/app/core/services/catalogs/indiciados.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  RFCCURP_PATTERN,
+  STRING_PATTERN,
+} from '../../../../core/shared/patterns';
 
 @Component({
   selector: 'app-indicated-form',
@@ -30,9 +34,9 @@ export class IndicatedFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.indicatedForm = this.fb.group({
-      name: [null, [Validators.required]],
+      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       noRegistration: [null, [Validators.required]],
-      curp: [null, [Validators.required]],
+      curp: [null, [Validators.required, Validators.pattern(RFCCURP_PATTERN)]],
       consecutive: [null, [Validators.required]],
     });
 

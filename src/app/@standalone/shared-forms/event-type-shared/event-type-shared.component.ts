@@ -33,7 +33,18 @@ export class EventTypeSharedComponent extends BasePage implements OnInit {
     super();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    let eventType = this.form.controls[this.eventField].value;
+    if (eventType !== null && this.form.contains('eventDescription')) {
+      let description = this.form.controls['eventDescription'].value;
+      this.events = new DefaultSelect([
+        {
+          id_tpevento: eventType,
+          descripcion: description,
+        },
+      ]);
+    }
+  }
 
   getEvents(params: ListParams) {
     //Provisional data
