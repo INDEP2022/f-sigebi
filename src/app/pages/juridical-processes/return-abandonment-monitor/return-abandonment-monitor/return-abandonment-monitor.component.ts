@@ -2,10 +2,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { NotificationService } from '../../../../core/services/ms-notification/notification.service';
 
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
@@ -27,11 +30,14 @@ export class ReturnAbandonmentMonitorComponent
   public idBien: string = '';
   public form: FormGroup;
   good: IGood;
+  notifications: any[] = [];
+  params = new BehaviorSubject<ListParams>(new ListParams());
 
   constructor(
     private fb: FormBuilder,
     private activateRoute: ActivatedRoute,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private notificationService: NotificationService
   ) {
     super();
   }
@@ -82,7 +88,18 @@ export class ReturnAbandonmentMonitorComponent
     });
   }
 
+  getNotification(): void {
+    this.notificationService.getAll(this.params.getValue()).subscribe(
+      response => {
+        this.notifications = response.data;
+        console.log(this.notifications);
+        this.loading = false;
+      },
+      error => (this.loading = false)
+    );
+  }
+
   public btnRatificacion() {
-    console.log('btnRatificacion');
+    this.getNotification();
   }
 }
