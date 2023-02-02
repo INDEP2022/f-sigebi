@@ -15,7 +15,10 @@ export class DinamicTablesService implements ICrudMethods<ITables> {
   constructor(private dinamicTablesRepository: Repository<ITables>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<ITables>> {
-    return this.dinamicTablesRepository.getAllPaginated(this.route, params);
+    return this.dinamicTablesRepository.getAllPaginated(
+      'dinamic-tables',
+      params
+    );
   }
   getById(id: string | number): Observable<ITables> {
     return this.dinamicTablesRepository.getById(this.route, id);
