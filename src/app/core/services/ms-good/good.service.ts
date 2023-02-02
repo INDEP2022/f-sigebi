@@ -54,4 +54,14 @@ export class GoodService extends HttpService {
     const route = `${GoodEndpoints.GoodAndDesc}/${goodId}`;
     return this.get<IGoodDesc>(route);
   }
+
+  getByWarehouse(
+    body: Object,
+    params?: ListParams
+  ): Observable<IListResponse<IGood>> {
+    const route = `${GoodEndpoints.Good}/getGoodByWarehouse`;
+    console.log(route);
+
+    return this.post<IListResponse<IGood>>(route, body);
+  }
 }
