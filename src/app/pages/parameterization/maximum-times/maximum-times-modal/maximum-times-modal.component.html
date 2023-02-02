@@ -10,8 +10,10 @@
             [control]="maximumTimesForm.get('certificateType')"
             label="Tipo&#58;">
             <select class="form-control" formControlName="certificateType">
-              <option [value]="null">Seleccione un tipo</option>
-              <option value="Enero">Tipo de acta</option>
+              <option [value]="0">Seleccione un tipo acta</option>
+              <option *ngFor="let item of typeItem" [value]="item.value">
+                {{ item.label }}
+              </option>
             </select>
           </form-field>
         </div>
@@ -27,25 +29,6 @@
           <form-check label="Activar" for="activated">
             <input id="activated" type="checkbox" formControlName="activated" />
           </form-check>
-        </div>
-      </div>
-      <div class="row margin-input">
-        <div class="col-md-4">
-          <form-field label="Usuario" [control]="maximumTimesForm.get('user')">
-            <input class="form-control" formControlName="user" type="text" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="maximumTimesForm.get('date')"
-            label="Fecha captura">
-            <input
-              type="text"
-              formControlName="date"
-              placeholder="Fecha captura"
-              class="form-control"
-              bsDatepicker />
-          </form-field>
         </div>
       </div>
     </form>
