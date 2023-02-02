@@ -1,14 +1,14 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { ITables } from 'src/app/core/models/catalogs/dinamic-tables.model';
+import { ITablesType } from 'src/app/core/models/catalogs/dinamic-tables.model';
 import { ITvalTable5 } from 'src/app/core/models/catalogs/tval-Table5.model';
 import { DinamicTablesService } from 'src/app/core/services/catalogs/dinamic-tables.service';
 import { TvalTable5Service } from 'src/app/core/services/catalogs/tval-table5.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 @Component({
   selector: 'app-additional-values-modal',
@@ -20,15 +20,16 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
   additionalValuesForm: FormGroup;
   tvalTableForm: ModelForm<ITvalTable5>;
   tvalTable: ITvalTable5;
-  value: ITables;
-  values = new DefaultSelect<ITables>();
+  value: ITablesType;
+  values = new DefaultSelect<ITablesType>();
   edit: boolean = false;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
     private modalRef: BsModalRef,
     private valuesService: DinamicTablesService,
-    private tvalTableService: TvalTable5Service
+    private tvalTableService: TvalTable5Service,
+    private datePipe: DatePipe
   ) {
     super();
   }
@@ -38,128 +39,63 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
   }
   private prepareForm() {
     this.additionalValuesForm = this.fb.group({
-      name: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      cdtabla: [null, [Validators.required]],
+      dstabla: [null, [Validators.required]],
     });
     this.tvalTableForm = this.fb.group({
       id: [null],
       table: [null],
-      otKey1: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      otKey2: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      otKey3: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      otKey4: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      otKey5: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      fromDate: [null, [Validators.required]],
-      toDate: [null, [Validators.required]],
-      otValue01: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue02: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue03: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue04: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue05: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue06: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue07: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue08: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue09: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue10: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue11: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue12: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue13: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue14: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue15: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue16: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue17: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue18: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue19: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue20: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue21: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue22: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue23: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue24: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      otValue25: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      otKey1: [null, [Validators.required]],
+      otKey2: [null],
+      otKey3: [null],
+      otKey4: [null],
+      otKey5: [null],
+      fromDate: [null],
+      toDate: [null],
+      otValue01: [null, [Validators.required]],
+      otValue02: [null],
+      otValue03: [null],
+      otValue04: [null],
+      otValue05: [null],
+      otValue06: [null],
+      otValue07: [null],
+      otValue08: [null],
+      otValue09: [null],
+      otValue10: [null],
+      otValue11: [null],
+      otValue12: [null],
+      otValue13: [null],
+      otValue14: [null],
+      otValue15: [null],
+      otValue16: [null],
+      otValue17: [null],
+      otValue18: [null],
+      otValue19: [null],
+      otValue20: [null],
+      otValue21: [null],
+      otValue22: [null],
+      otValue23: [null],
+      otValue24: [null],
+      otValue25: [null],
       numRegister: [null],
     });
     if (this.tvalTable != null) {
       this.edit = true;
       this.tvalTableForm.patchValue(this.tvalTable);
-      this.additionalValuesForm.controls['name'].setValue(this.value.name);
-      this.additionalValuesForm.controls['description'].setValue(
-        this.value.description
+      this.additionalValuesForm.controls['cdtabla'].setValue(
+        this.value.cdtabla
       );
+      this.additionalValuesForm.controls['dstabla'].setValue(
+        this.value.dstabla
+      );
+      if (this.tvalTable.fromDate) {
+        let datefrom = new Date(this.tvalTable.fromDate);
+        this.tvalTableForm.controls['fromDate'].setValue(datefrom);
+      }
+      if (this.tvalTable.toDate) {
+        let date = new Date(this.tvalTable.toDate);
+        this.tvalTableForm.controls['toDate'].setValue(date);
+      }
     }
   }
   getAditionalValues(params: ListParams) {
@@ -180,11 +116,11 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
       () => {}
     );
   }
-  onAditionalValuesChange(aditionalValues: ITables) {
+  onAditionalValuesChange(aditionalValues: ITablesType) {
     console.log(aditionalValues);
     this.value = aditionalValues;
-    this.additionalValuesForm.controls['description'].setValue(
-      aditionalValues.description
+    this.additionalValuesForm.controls['dstabla'].setValue(
+      aditionalValues.dstabla
     );
     this.values = new DefaultSelect();
   }
@@ -196,24 +132,76 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
   }
   create() {
     this.loading = true;
+    if (this.tvalTableForm.controls['fromDate'].value) {
+      this.tvalTableForm.controls['fromDate'].setValue(
+        this.datePipe.transform(
+          this.tvalTableForm.controls['fromDate'].value,
+          'yyyy-MM-dd'
+        )
+      );
+    }
+    if (this.tvalTableForm.controls['toDate'].value) {
+      this.tvalTableForm.controls['toDate'].setValue(
+        this.datePipe.transform(
+          this.tvalTableForm.controls['toDate'].value,
+          'yyyy-MM-dd'
+        )
+      );
+    }
     this.tvalTableService
-      .create2(this.value.tableType, this.tvalTableForm.value)
+      .create2(this.value.ottipotb, this.tvalTableForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        error: error => {
+          this.loading = false;
+          if (this.tvalTable.fromDate) {
+            let datefrom = new Date(this.tvalTable.fromDate);
+            this.tvalTableForm.controls['fromDate'].setValue(datefrom);
+          }
+          if (this.tvalTable.toDate) {
+            let date = new Date(this.tvalTable.toDate);
+            this.tvalTableForm.controls['toDate'].setValue(date);
+          }
+        },
       });
   }
   update() {
     this.loading = true;
+    if (this.tvalTableForm.controls['fromDate'].value) {
+      this.tvalTableForm.controls['fromDate'].setValue(
+        this.datePipe.transform(
+          this.tvalTableForm.controls['fromDate'].value,
+          'yyyy-MM-dd'
+        )
+      );
+    }
+    if (this.tvalTableForm.controls['toDate'].value) {
+      this.tvalTableForm.controls['toDate'].setValue(
+        this.datePipe.transform(
+          this.tvalTableForm.controls['toDate'].value,
+          'yyyy-MM-dd'
+        )
+      );
+    }
     this.tvalTableService
       .update2(
         this.tvalTableForm.controls['id'].value,
-        this.value.tableType,
+        this.value.ottipotb,
         this.tvalTableForm.value
       )
       .subscribe({
         next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
+        error: error => {
+          this.loading = false;
+          if (this.tvalTable.fromDate) {
+            let datefrom = new Date(this.tvalTable.fromDate);
+            this.tvalTableForm.controls['fromDate'].setValue(datefrom);
+          }
+          if (this.tvalTable.toDate) {
+            let date = new Date(this.tvalTable.toDate);
+            this.tvalTableForm.controls['toDate'].setValue(date);
+          }
+        },
       });
   }
   handleSuccess() {

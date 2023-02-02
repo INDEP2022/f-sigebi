@@ -4,7 +4,7 @@ import { FormBuilder } from '@angular/forms';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ITables } from 'src/app/core/models/catalogs/dinamic-tables.model';
+import { ITablesType } from 'src/app/core/models/catalogs/dinamic-tables.model';
 import { ITvalTable5 } from 'src/app/core/models/catalogs/tval-Table5.model';
 import { DinamicTablesService } from 'src/app/core/services/catalogs/dinamic-tables.service';
 import { TvalTable5Service } from 'src/app/core/services/catalogs/tval-table5.service';
@@ -21,9 +21,9 @@ import {
   styles: [],
 })
 export class AdditionalValuesComponent extends BasePage implements OnInit {
-  valuesList: ITables[] = [];
+  valuesList: ITablesType[] = [];
   tvalTableList: ITvalTable5[] = [];
-  values: ITables;
+  values: ITablesType;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   params2 = new BehaviorSubject<ListParams>(new ListParams());
@@ -51,7 +51,7 @@ export class AdditionalValuesComponent extends BasePage implements OnInit {
   getValuesAll() {
     this.loading = true;
 
-    this.valuesService.getAll(this.params.getValue()).subscribe({
+    this.valuesService.getById5(5, this.params.getValue()).subscribe({
       next: response => {
         console.log(response);
         this.valuesList = response.data;
@@ -72,10 +72,10 @@ export class AdditionalValuesComponent extends BasePage implements OnInit {
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.gettvalTable(this.values));
   }
-  gettvalTable(values: ITables) {
+  gettvalTable(values: ITablesType) {
     this.loading = true;
     this.tvalTableService
-      .getById4(values.name, this.params2.getValue())
+      .getById4(values.nmtabla, this.params2.getValue())
       .subscribe({
         next: response => {
           console.log(response);
