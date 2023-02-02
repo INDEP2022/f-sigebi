@@ -26,8 +26,10 @@ import { WarehouseFormComponent } from '../../../shared-request/warehouse-form/w
 import { ESTATE_COLUMNS } from '../../acept-programming/columns/estate-columns';
 import { USER_COLUMNS } from '../../acept-programming/columns/users-columns';
 import { SearchUserFormComponent } from '../../schedule-reception/search-user-form/search-user-form.component';
+import { ProgrammingGoodService } from '../../service/programming-good.service';
 import { ProgrammingRequestService } from '../../service/programming-request.service';
 import { EstateSearchFormComponent } from '../estate-search-form/estate-search-form.component';
+import { IEstateSearch } from '../estate-search-form/estate-search.interface';
 import { UserFormComponent } from '../user-form/user-form.component';
 import { userData } from './data-perfom-programming';
 
@@ -70,12 +72,16 @@ export class PerformProgrammingFormComponent
   idTrans: number = 0;
   idState: string = '';
   idStation: number = 0;
+  showSelectTransferent: boolean = false;
+  showSelectStation: boolean = false;
+  showSelectAuthority: boolean = false;
   regionalDelegationUser: IRegionalDelegation;
 
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
     private programmingRequestService: ProgrammingRequestService,
+    private programmingGoodService: ProgrammingGoodService,
     private stationService: StationService,
     private regionalDelegationService: RegionalDelegationService,
     private stateService: DelegationStateService,
@@ -96,6 +102,8 @@ export class PerformProgrammingFormComponent
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getRegionalDelegationSelect(new ListParams());
+    this.getTypeRelevantSelect(new ListParams());
   }
 
   prepareForm() {
@@ -187,8 +195,9 @@ export class PerformProgrammingFormComponent
 
     config.initialState = {
       userData,
-      callback: (data: any) => {
-        if (data) {
+      callback: (dataSearch: IEstateSearch) => {
+        if (dataSearch) {
+          this.getProgGoods(new ListParams(), dataSearch);
         }
       },
     };
@@ -199,10 +208,26 @@ export class PerformProgrammingFormComponent
     );
   }
 
-  getRegionalDelegationSelect(params?: ListParams) {
-    this.regionalDelegationService.getAll(params).subscribe(data => {
-      this.regionalsDelegations = new DefaultSelect(data.data, data.count);
+  getProgGoods(params?: ListParams, dataSearch?: IEstateSearch) {
+    params['filter.regionalDelegationNumber'] = this.regionalDelegationUser.id;
+    if (dataSearch.state) params['filter.stateKey'] = dataSearch.state;
+    console.log('Parametros', params);
+    return this.programmingGoodService.getAll(params).subscribe(data => {
+      this.estatesList = data.data;
+      console.log('bienes a programar', data);
     });
+  }
+
+  getRegionalDelegationSelect(params?: ListParams) {
+    if (params.text) {
+      this.regionalDelegationService.search(params).subscribe(data => {
+        this.regionalsDelegations = new DefaultSelect(data.data, data.count);
+      });
+    } else {
+      this.regionalDelegationService.getAll(params).subscribe(data => {
+        this.regionalsDelegations = new DefaultSelect(data.data, data.count);
+      });
+    }
   }
 
   regionalDelegationSelect(item: IRegionalDelegation) {
@@ -226,45 +251,39 @@ export class PerformProgrammingFormComponent
   }
 
   stateSelect(state: IStateOfRepublic) {
-    console.log('states', state);
     this.idState = state.id;
     this.getTransferentSelect(new ListParams());
+    if (this.idTrans) this.getStations(new ListParams());
   }
 
   getTransferentSelect(params?: ListParams) {
-    this.transferentService.getByIdState(this.idState).subscribe(data => {
-      console.log('transferente por estado', data);
-      //this.transferences = new DefaultSelect(data.data, data.count);
-    });
+    if (this.idState) {
+      this.showSelectTransferent = true;
+      const type = 'TE';
+      const state = Number(this.idState);
+      this.transferentService
+        .getByTypeUserIdState(params, state, type)
+        .subscribe(data => {
+          console.log('Transferente', data);
+          this.transferences = new DefaultSelect(data.data, data.count);
+        });
+    }
   }
 
   transferentSelect(transferent: ITransferente) {
-    console.log('transferente', transferent);
     this.idTrans = transferent.id;
     this.getStations(new ListParams());
   }
 
   getStations(params?: ListParams) {
-    console.log('transferente', this.idTrans);
-    console.log('Estado', this.idState);
-    /*if (this.idState && this.idTrans) {
-      const column = {
-        idTransferent: Number(this.idTrans),
-        keyState: Number(this.idState),
-      };
-      //console.log('columnas', column);
-      this.stationService.getByColumn(params, column).subscribe(data => {
-        console.log('emisoras', data);
+    if (this.idTrans && this.idState) {
+      this.showSelectStation = true;
+      params['filter.idTransferent'] = this.idTrans;
+      params['filter.keyState'] = this.idState;
+      this.stationService.getAll(params).subscribe(data => {
         this.stations = new DefaultSelect(data.data, data.count);
       });
-    } else {
-      this.loading = false;
-      this.onLoadToast(
-        'warning',
-        'Error',
-        'Para poder continuar necesitas tener un estado y una transferente seleccionada'
-      );
-    } */
+    }
   }
 
   stationSelect(item: IStation) {
@@ -273,14 +292,18 @@ export class PerformProgrammingFormComponent
   }
 
   getAuthoritiesSelect(params?: ListParams) {
-    const columns = {
-      idTransferer: Number(this.idTrans),
-      idStation: Number(this.idStation),
-    };
+    if (this.idTrans && this.idStation) {
+      const columns = {
+        idTransferer: this.idTrans,
+        idStation: this.idStation,
+      };
 
-    this.authorityService.postByColumns(params, columns).subscribe(data => {
-      this.authorities = new DefaultSelect(data.data, data.count);
-    });
+      this.authorityService.postByColumns(params, columns).subscribe(data => {
+        console.log('Autoridades', data);
+        this.authorities = new DefaultSelect(data.data, data.count);
+        this.showSelectAuthority = true;
+      });
+    }
   }
 
   getTypeRelevantSelect(params: ListParams) {

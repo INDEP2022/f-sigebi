@@ -30,7 +30,8 @@
         <form-field
           *ngIf="isCompany"
           class="col-md-10"
-          [control]="form.get('noBien')">
+          [control]="form.get('noBien')"
+          label="No. Bien Empresa">
           <input type="number" class="form-control" formControlName="noBien" />
         </form-field>
       </div>

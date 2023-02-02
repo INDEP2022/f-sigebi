@@ -19,6 +19,7 @@ import { IGoodSsubType } from 'src/app/core/models/catalogs/good-ssubtype.model'
 import { IGoodSubType } from 'src/app/core/models/catalogs/good-subtype.model';
 import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { ITypesByClasification } from 'src/app/core/models/catalogs/types-by-clasification';
+import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { GoodsCaptureService, IRecord } from '../service/goods-capture.service';
@@ -116,12 +117,14 @@ export class GoodsCaptureMain extends BasePage {
   satCveUnique: string;
   good: any;
   unitsMeasures = new DefaultSelect();
+  companyGood: number;
   constructor(
     public fb: FormBuilder,
     public modalService: BsModalService,
     public goodsCaptureService: GoodsCaptureService,
     private activatedRoute: ActivatedRoute,
-    public router: Router
+    public router: Router,
+    public menageService: MenageService
   ) {
     super();
     const paramsMap = this.activatedRoute.snapshot.queryParamMap;
@@ -683,6 +686,7 @@ export class GoodsCaptureMain extends BasePage {
       tap(goodTypes => {
         this.fillGoodTypes(goodTypes);
         this.getUnitsByClasifNum(clasifNum);
+        this.getGoodFeaturesByClasif(clasifNum);
       }),
       catchError(error => {
         if (error.status <= 404) {

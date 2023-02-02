@@ -9,11 +9,11 @@ export const ADDITIONALVALUES_COLUMNS = {
   },
 };
 export const TVALTABLA5_COLUMNS = {
-  otKey: {
+  otKey1: {
     title: 'Clave',
     sort: false,
   },
-  value: {
+  otValue01: {
     title: 'Atributo',
     sort: false,
   },

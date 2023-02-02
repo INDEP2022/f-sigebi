@@ -15,21 +15,21 @@ export class DinamicTablesService implements ICrudMethods<ITables> {
   constructor(private dinamicTablesRepository: Repository<ITables>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<ITables>> {
-    return this.dinamicTablesRepository.getAllPaginated2(this.route, params);
+    return this.dinamicTablesRepository.getAllPaginated(this.route, params);
   }
   getById(id: string | number): Observable<ITables> {
-    return this.dinamicTablesRepository.getById2(this.route, id);
+    return this.dinamicTablesRepository.getById(this.route, id);
   }
 
   create(model: ITables): Observable<ITables> {
-    return this.dinamicTablesRepository.create2(this.route, model);
+    return this.dinamicTablesRepository.create(this.route, model);
   }
 
   update(id: string | number, model: ITables): Observable<Object> {
-    return this.dinamicTablesRepository.update2(this.route, id, model);
+    return this.dinamicTablesRepository.update(this.route, id, model);
   }
 
   remove(id: string | number): Observable<Object> {
-    return this.dinamicTablesRepository.remove2(this.route, id);
+    return this.dinamicTablesRepository.remove(this.route, id);
   }
 }

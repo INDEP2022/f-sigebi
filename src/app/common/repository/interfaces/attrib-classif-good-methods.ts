@@ -5,6 +5,11 @@ import { ListParams } from './list-params';
 export interface IRead<T> {
   getAll?(route: string, params?: ListParams): Observable<IListResponse<T>>;
   getById?(route: string, id: number | string): Observable<T>;
+  getBySssubType?(
+    route: string,
+    id: number | string,
+    params?: ListParams
+  ): Observable<IListResponse<T>>;
 }
 
 export interface IWrite<T> {
@@ -13,4 +18,4 @@ export interface IWrite<T> {
   remove?(route: string, id: number | string): Observable<Object>;
 }
 
-export interface IProviderMethods<T> extends IWrite<T>, IRead<T> {}
+export interface IAttribClassifGoodMethods<T> extends IWrite<T>, IRead<T> {}

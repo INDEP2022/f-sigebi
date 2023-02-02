@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { switchMap } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { GoodsCaptureService, IRecord } from '../service/goods-capture.service';
 import { SearchFractionComponent } from './components/search-fraction/search-fraction.component';
 import { GoodsCaptureMain } from './goods-capture-main';
@@ -28,9 +29,17 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
     modalService: BsModalService,
     goodsCaptureService: GoodsCaptureService,
     activatedRoute: ActivatedRoute,
-    router: Router
+    router: Router,
+    menageService: MenageService
   ) {
-    super(fb, modalService, goodsCaptureService, activatedRoute, router);
+    super(
+      fb,
+      modalService,
+      goodsCaptureService,
+      activatedRoute,
+      router,
+      menageService
+    );
   }
 
   ngOnInit(): void {
@@ -98,6 +107,7 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
           isCompany: boolean,
           goodCompany?: number
         ) => {
+          console.log({ expedient, isCompany, goodCompany });
           this.afterSelectExpedient(expedient, isCompany, goodCompany);
         },
       },
@@ -110,6 +120,7 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
     isCompany: boolean,
     companyGood?: number
   ) {
+    this.companyGood = companyGood ?? null;
     const companyCtrl = this.assetsForm.controls.esEmpresa;
     const expedientNum = this.assetsForm.controls.noExpediente;
     this.global.gNoExpediente = expedient.id;
@@ -215,15 +226,31 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
     }
   }
 
+  handleSuccesSave(good: any) {
+    this.onLoadToast('success', '', 'Datos del bien guardados correctamente');
+    if (this.formControls.esEmpresa.value) {
+      this.createMenage(good);
+    }
+  }
+
+  createMenage(good: any) {
+    const menage = {
+      noGood: this.companyGood,
+      noGoodMenaje: good.id,
+    };
+    this.menageService.create(menage).subscribe({
+      next: res => console.log(res),
+      error: error => {
+        this.showError('Error al crear el menaje del bien');
+      },
+    });
+  }
+
   createGood() {
     this.loading = true;
     this.goodsCaptureService.createGood(this.goodToSave).subscribe({
-      next: response => {
-        this.onLoadToast(
-          'success',
-          '',
-          'Datos del bien guardados correctamente'
-        );
+      next: good => {
+        this.handleSuccesSave(good);
         this.loading = false;
       },
       error: error => {

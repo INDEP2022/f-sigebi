@@ -51,7 +51,7 @@ export class AdditionalValuesComponent extends BasePage implements OnInit {
   getValuesAll() {
     this.loading = true;
 
-    this.valuesService.getAll(this.params.getValue()).subscribe({
+    this.tvalTableService.getById2(5, this.params.getValue()).subscribe({
       next: response => {
         console.log(response);
         this.valuesList = response.data;
@@ -75,7 +75,7 @@ export class AdditionalValuesComponent extends BasePage implements OnInit {
   gettvalTable(values: ITables) {
     this.loading = true;
     this.tvalTableService
-      .getById4(values.name, this.params2.getValue())
+      .getById4(values.table, this.params2.getValue())
       .subscribe({
         next: response => {
           console.log(response);
@@ -93,7 +93,13 @@ export class AdditionalValuesComponent extends BasePage implements OnInit {
       initialState: {
         tvalTable,
         value,
-        callback: (next: boolean) => {},
+        callback: (next: boolean) => {
+          if (next) {
+            this.totalItems2 = 0;
+            this.tvalTableList = [];
+            this.getValuesAll();
+          }
+        },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
