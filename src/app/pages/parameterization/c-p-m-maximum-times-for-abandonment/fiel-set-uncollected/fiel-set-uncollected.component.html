@@ -1,0 +1,8 @@
+<div class="table-responsive">
+  <ng2-smart-table
+    [settings]="settings"
+    [source]="data"
+    (edit)="openForm($event.data)"
+    (delete)="delete($event.data)"></ng2-smart-table>
+</div>
+<app-pagination [params]="params" [totalItems]="totalItems"> </app-pagination>
