@@ -1,6 +1,6 @@
 import { HttpEventType } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -13,6 +13,7 @@ import {
   FILE_UPLOAD_STATUSES,
 } from 'src/app/utils/file-upload/interfaces/file-event';
 import { AppState } from './../../../app.reducers';
+import { IFormGroup } from './../../../core/interfaces/model-form';
 import { EXCEL_TO_JSON_COLUMNS } from './constants/excel-to-json-columns';
 import { JSON_TO_CSV } from './constants/json-to-csv';
 import { ExampleModalComponent } from './example-modal.component';
@@ -29,6 +30,21 @@ interface IExcelToJson {
   column3: string;
 }
 
+interface IPerson {
+  name: string;
+  age: number;
+}
+
+interface IUser {
+  username: string;
+  person: IPerson;
+  roles: IRole[];
+}
+
+interface IRole {
+  role: string;
+}
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -38,6 +54,8 @@ export class HomeComponent extends BasePage implements OnInit {
   counter: number = 0;
   data: IExcelToJson[] = [];
   formExample: FormGroup;
+  userExample: IFormGroup<IUser>;
+  user: IUser;
   jsonToCsv = JSON_TO_CSV;
   pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
   imagenurl =
@@ -128,6 +146,40 @@ export class HomeComponent extends BasePage implements OnInit {
       radio: ['dog'],
       check: [false],
     });
+    this.userExample = this.fb.group({
+      person: this.personForm,
+      roles: this.fb.array([this.roleForm]),
+      username: [''],
+    });
+  }
+
+  get personForm(): IFormGroup<IPerson> {
+    return this.fb.group({
+      name: [null],
+      age: [null],
+    });
+  }
+
+  get roleForm(): IFormGroup<IRole> {
+    return this.fb.group({
+      role: [null],
+    });
+  }
+
+  get roles(): FormArray {
+    return this.userExample.get('roles') as FormArray;
+  }
+
+  addRole() {
+    this.roles.push(this.roleForm);
+  }
+
+  removeRole(index: number) {
+    this.roles.removeAt(index);
+  }
+
+  saveRole() {
+    this.user = this.userExample.getRawValue();
   }
 
   openModal() {
