@@ -18,6 +18,7 @@ export class MaximumTimesModalComponent extends BasePage implements OnInit {
   maximumTimes: IMaximumTimes;
   title: string = 'Tiempo Máximo Para Cierre Actas Devolución';
   edit: boolean = false;
+  typeItem: any[];
   constructor(
     private fb: FormBuilder,
     private datePipe: DatePipe,
@@ -29,19 +30,35 @@ export class MaximumTimesModalComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    this.typeItem = [
+      { label: 'DEV', value: 'DEV' },
+      { label: 'DON', value: 'DON' },
+      { label: 'DES', value: 'DES' },
+      { label: 'ABN', value: 'ABN' },
+      { label: 'RESAR', value: 'RESAR' },
+      { label: 'REC/DEC', value: 'RECDEC' },
+      { label: 'CAN/SUS', value: 'CANSUS' },
+      { label: 'PD3', value: 'PD3' },
+    ];
   }
   private prepareForm() {
     this.maximumTimesForm = this.fb.group({
       certificateType: [null, [Validators.required]],
       tmpMax: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      activated: [null, [Validators.required]],
-      user: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      date: [null, [Validators.required]],
+      activated: [null],
+      user: [null],
+      date: [null],
     });
     if (this.maximumTimes != null) {
       console.log('editar');
       this.edit = true;
       this.maximumTimesForm.patchValue(this.maximumTimes);
+      this.maximumTimesForm.controls['activated'].setValue(
+        this.maximumTimes.activated == 'N' ? false : true
+      );
+    } else {
+      this.maximumTimesForm.controls['certificateType'].setValue('0');
+      this.maximumTimesForm.controls['date'].setValue(new Date());
     }
   }
   close() {
@@ -52,15 +69,10 @@ export class MaximumTimesModalComponent extends BasePage implements OnInit {
   }
   create() {
     this.loading = true;
-    let form = {
-      id: this.datePipe.transform(
-        this.maximumTimesForm.controls['idDate'].value,
-        'yyyy-MM-dd'
-      ),
-      idDate: this.maximumTimesForm.controls['idDate'].value,
-      description: this.maximumTimesForm.controls['description'].value,
-    };
-    console.log(form);
+    this.maximumTimesForm.controls['activated'].setValue(
+      this.maximumTimesForm.controls['activated'].value == 'true' ? 'S' : 'N'
+    );
+    console.log(this.maximumTimesForm.value);
     this.maximumTimesService.create(this.maximumTimesForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
@@ -68,6 +80,9 @@ export class MaximumTimesModalComponent extends BasePage implements OnInit {
   }
   update() {
     this.loading = true;
+    this.maximumTimesForm.controls['activated'].setValue(
+      this.maximumTimesForm.controls['activated'].value == 'true' ? 'S' : 'N'
+    );
     this.maximumTimesService
       .update(
         this.maximumTimes.certificateType.toString(),

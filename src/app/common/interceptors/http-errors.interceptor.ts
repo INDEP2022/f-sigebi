@@ -58,6 +58,10 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
       this.onLoadToast('warning', 'advertencia', message);
       return;
     }
+    if (status === 500) {
+      this.onLoadToast('warning', 'advertencia', message);
+      return;
+    }
     if (status === 401) {
       localStorage.clear();
       sessionStorage.clear();

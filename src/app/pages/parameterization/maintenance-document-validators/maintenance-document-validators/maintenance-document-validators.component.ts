@@ -31,6 +31,12 @@ export class MaintenanceDocumentValidatorsComponent
     super();
     this.settings = {
       ...this.settings,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: false,
+        position: 'right',
+      },
       columns: MAINTANANCE_DOCUMENT_VALIDATORS_COLUMNS,
     };
   }
