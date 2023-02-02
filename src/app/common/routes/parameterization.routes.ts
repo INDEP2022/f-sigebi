@@ -130,6 +130,10 @@ export const PARAMETERIZATION_ROUTES = [
         link: '/pages/parameterization/indicia-registration',
       },
       {
+        label: 'Tiempos Maximos para abandono',
+        link: '/pages/parameterization/maximum-times-for-abandonment',
+      },
+      {
         label: 'Catálogo de tipos de documentos',
         link: '/pages/parameterization/catalog-of-document-types',
       },

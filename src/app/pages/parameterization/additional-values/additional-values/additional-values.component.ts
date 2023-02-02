@@ -93,7 +93,13 @@ export class AdditionalValuesComponent extends BasePage implements OnInit {
       initialState: {
         tvalTable,
         value,
-        callback: (next: boolean) => {},
+        callback: (next: boolean) => {
+          if (next) {
+            this.totalItems2 = 0;
+            this.tvalTableList = [];
+            this.getValuesAll();
+          }
+        },
       },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,

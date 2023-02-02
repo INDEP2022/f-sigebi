@@ -10,7 +10,6 @@ import Swal from 'sweetalert2';
 import { UsersSelectedToTurnComponent } from '../users-selected-to-turn/users-selected-to-turn.component';
 //Provisional Data
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
-import { IStation } from 'src/app/core/models/catalogs/station.model';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { ListParams } from '../../../../common/repository/interfaces/list-params';
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
@@ -157,12 +156,12 @@ export class RequestFormComponent extends BasePage implements OnInit {
   }
 
   getStation(id: any) {
-    let idTranferent = { idTransferent: id };
+    /*let idTranferent = { idTransferent: id };
     this.stationService
-      .getByColumn(idTranferent)
+      .postByColumns(idTranferent)
       .subscribe((data: IListResponse<IStation>) => {
         this.selectStation = new DefaultSelect(data.data, data.count);
-      });
+      }); */
   }
 
   getAuthority(params: any) {

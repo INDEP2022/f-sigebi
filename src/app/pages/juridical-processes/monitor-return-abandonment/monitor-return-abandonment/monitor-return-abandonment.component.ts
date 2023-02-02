@@ -32,6 +32,7 @@ export class MonitorReturnAbandonmentComponent
   totalItems: number = 0;
   goods: IGood[] = [];
   id: string | number;
+  //historygood
 
   params = new BehaviorSubject<ListParams>(new ListParams());
 

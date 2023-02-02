@@ -23,6 +23,7 @@ export class AdditionalValuesModalComponent extends BasePage implements OnInit {
   value: ITablesType;
   values = new DefaultSelect<ITablesType>();
   edit: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
