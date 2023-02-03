@@ -1,19 +1,19 @@
 export const ADDITIONALVALUES_COLUMNS = {
-  name: {
+  cdtabla: {
     title: 'Nombre',
     sort: false,
   },
-  description: {
+  dstabla: {
     title: 'Descripción',
     sort: false,
   },
 };
 export const TVALTABLA5_COLUMNS = {
-  otKey: {
+  otKey1: {
     title: 'Clave',
     sort: false,
   },
-  value: {
+  otValue01: {
     title: 'Atributo',
     sort: false,
   },

@@ -1,9 +1,9 @@
 export const TTABLAS_COLUMNS = {
-  name: {
+  cdtabla: {
     title: 'Nombre',
     sort: false,
   },
-  description: {
+  dstabla: {
     title: 'Descripción',
     sort: false,
   },

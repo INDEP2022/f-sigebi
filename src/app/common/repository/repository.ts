@@ -24,25 +24,6 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.get<T>(`${fullRoute}/${id}`);
   }
 
-  getByIdState(route: string, id: number | string): Observable<T> {
-    const fullRoute = this.buildRoute(route);
-    return this.httpClient.get<T>(
-      `${fullRoute}/get-entity-transferent-by-state/${id}`
-    );
-  }
-  postByColumns(
-    route: string,
-    _params?: ListParams,
-    column?: Object
-  ): Observable<IListResponse<T>> {
-    const params = this.makeParams(_params);
-    const fullRoute = this.buildRoute(route);
-    return this.httpClient.post<IListResponse<T>>(
-      `${fullRoute}/columns?${params}`,
-      column
-    );
-  }
-
   create(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
     console.log(fullRoute);
@@ -203,10 +184,9 @@ export class Repository<T> implements IRepository<T> {
     const fullRoute = this.buildRoute(route);
     return this.httpClient.delete(`${fullRoute}`, obj);
   }
-
   update4(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
-    return this.httpClient.put(`${fullRoute}`, formData);
+    return this.httpClient.put(`${fullRoute}${route}`, formData);
   }
   update5(
     route: string,

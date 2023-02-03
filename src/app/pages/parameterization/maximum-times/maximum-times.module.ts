@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { UsersSharedComponent } from 'src/app/@standalone/shared-forms/user-shared/user-shared.component';
 
 import { SharedModule } from 'src/app/shared/shared.module';
 import { MaximumTimesModalComponent } from './maximum-times-modal/maximum-times-modal.component';
@@ -13,6 +14,7 @@ import { MaximumTimesComponent } from './maximum-times/maximum-times.component';
     CommonModule,
     MaximumTimesRoutingModule,
     SharedModule,
+    UsersSharedComponent,
     ModalModule.forChild(),
   ],
 })

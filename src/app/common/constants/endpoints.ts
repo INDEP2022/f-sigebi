@@ -1,6 +1,7 @@
 export enum ENDPOINT_LINKS {
   Affair = 'catalog/affair',
   Authority = 'catalog/authority',
+  appraiser = 'catalog/valuadores',
   Bank = 'catalog/bank',
   Batch = 'catalog/batch',
   Battery = 'catalog/battery',
@@ -114,12 +115,15 @@ export enum ENDPOINT_LINKS {
   ZipCode = 'catalog/zip-code', //
   parametergood = 'parametergood/tmp-max-cierre-acta-dev',
   parametergoodActa = 'parametergood/validadores-actas',
+  parametergoodCat = 'parametergood/cat-motivosrev',
   documents = 'documents/api/v1/documents-dictum-x-state-m',
   ZoneGeographic = 'catalog/zone-geographic',
   DocumentsForDictum = 'documents-for-dictum',
   DocumentsForDictumType = 'documents/api/v1/documents-for-dictum',
-  DinamicTables = 'dynamiccatalog/api/v1/dinamic-tables',
+  DinamicTables = 'dynamiccatalog/dinamic-tables',
+  DinamicTablesType = 'dynamiccatalog/api/v1/dinamic-tables/get-tables-by-type-of-tdesccve',
   DinamicTablesName = 'dynamiccatalog/api/v1/dinamic-tables/get-tvaltable1-by-name',
+  DinamicTablesTable = 'dynamiccatalog/api/v1/dinamic-tables/get-tvaltable5-by-table',
   AffairType = 'affair-type',
   FinancialInformation = 'parameterfinantial/financial-information',
   FinancialIndicators = 'financial-indicators',
@@ -132,4 +136,5 @@ export enum ENDPOINT_LINKS {
   Expedient = 'expedient',
   //goodsQuery//
   GoodsQuery = 'goodsquery',
+  ProgrammingGood = 'ProgrammingGood',
 }

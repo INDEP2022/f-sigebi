@@ -25,7 +25,17 @@ export class MaximumTimesComponent extends BasePage implements OnInit {
     private maximumTimesService: MaximumTimesService
   ) {
     super();
-    this.settings.columns = MAXIMUM_TIMES_COLUMNS;
+    this.settings = {
+      ...this.settings,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: false,
+        position: 'right',
+      },
+      columns: MAXIMUM_TIMES_COLUMNS,
+    };
+    // this.settings.columns = MAXIMUM_TIMES_COLUMNS;
   }
 
   ngOnInit(): void {
@@ -52,7 +62,11 @@ export class MaximumTimesComponent extends BasePage implements OnInit {
       initialState: {
         maximumTimes,
         callback: (next: boolean) => {
-          if (next) this.getMaximumTimeAll();
+          if (next) {
+            this.params
+              .pipe(takeUntil(this.$unSubscribe))
+              .subscribe(() => this.getMaximumTimeAll());
+          }
         },
       },
       class: 'modal-lg modal-dialog-centered',
