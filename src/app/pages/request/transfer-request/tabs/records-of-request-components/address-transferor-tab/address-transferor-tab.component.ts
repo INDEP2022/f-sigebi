@@ -207,7 +207,6 @@ export class AddressTransferorTabComponent
     this.domicileForm.controls['userCreation'].setValue(username);
 
     const domicile = this.domicileForm.getRawValue();
-    console.log(domicile);
 
     this.goodDomicileService.create(domicile).subscribe(
       (data: any) => {

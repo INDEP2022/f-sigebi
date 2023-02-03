@@ -61,7 +61,7 @@ export class ClassifyAssetsTabComponent
   ngOnInit(): void {
     console.log(this.typeDoc);
     this.initForm();
-    if (this.goodObject === null) {
+    if (!this.goodObject) {
       this.getSection(new ListParams());
     }
     this.getReactiveFormActions();
@@ -118,11 +118,11 @@ export class ClassifyAssetsTabComponent
       saeDestiny: [null],
       brand: [null],
       subBrand: [null],
-      armor: [null], // ver con que guarda
+      armor: [null],
       model: [null],
       doorsNumber: [null],
       axesNumber: [null],
-      engineNumber: [null],
+      engineNumber: [null], //numero motor
       tuition: [null],
       serie: [null],
       chassis: [null],
@@ -130,6 +130,21 @@ export class ClassifyAssetsTabComponent
       fitCircular: [null],
       theftReport: [null],
       addressId: [null],
+      operationalState: [null],
+      manufacturingYear: [null],
+      enginesNumber: [null], // numero de motores
+      flag: [null],
+      openwork: [null],
+      sleeve: [null],
+      length: [null],
+      shipName: [null],
+      publicRegistry: [null], //registro public
+      ships: [null],
+      dgacRegistry: [null], //registro direccion gral de aereonautica civil
+      airplaneType: [null],
+      caratage: [null], //kilatage
+      material: [null],
+      weight: [null],
     });
 
     if (this.goodObject != null) {
@@ -144,7 +159,7 @@ export class ClassifyAssetsTabComponent
     } else {
       params['filter.id'] = '$eq:' + id.toString();
     }
-    params.take = 50;
+    params.limit = 50;
     this.fractionService.getAll(params).subscribe({
       next: data => {
         this.selectSection = data.data; //= new DefaultSelect(data.data, data.count);
@@ -169,7 +184,7 @@ export class ClassifyAssetsTabComponent
     } else {
       params['filter.id'] = '$eq:' + id.toString();
     }
-    params.take = 50;
+    params.limit = 50;
     this.fractionService.getAll(params).subscribe({
       next: data => {
         this.selectChapter = new DefaultSelect(data.data, data.count);
@@ -181,7 +196,7 @@ export class ClassifyAssetsTabComponent
           this.getSection(new ListParams(), data.data[0].parentId);
         }
 
-        if (this.goodObject !== null) {
+        if (this.goodObject) {
           this.classiGoodsForm.controls['ligieChapter'].setValue(
             this.good.ligieChapter
           );
@@ -196,7 +211,7 @@ export class ClassifyAssetsTabComponent
     } else {
       params['filter.id'] = '$eq:' + id.toString();
     }
-    params.take = 50;
+    params.limit = 50;
     this.fractionService.getAll(params).subscribe({
       next: data => {
         this.selectLevel1 = new DefaultSelect(data.data, data.count);
@@ -208,7 +223,7 @@ export class ClassifyAssetsTabComponent
           this.getChapter(new ListParams(), data.data[0].parentId);
         }
 
-        if (this.goodObject !== null) {
+        if (this.goodObject) {
           this.classiGoodsForm.controls['ligieLevel1'].setValue(
             this.good.ligieLevel1
           );
@@ -223,7 +238,7 @@ export class ClassifyAssetsTabComponent
     } else {
       params['filter.id'] = '$eq:' + id.toString();
     }
-    params.take = 50;
+    params.limit = 50;
     this.fractionService.getAll(params).subscribe({
       next: data => {
         this.selectLevel2 = new DefaultSelect(data.data, data.count);
@@ -235,7 +250,7 @@ export class ClassifyAssetsTabComponent
           this.getLevel1(new ListParams(), data.data[0].parentId);
         }
 
-        if (this.goodObject !== null) {
+        if (this.goodObject) {
           this.classiGoodsForm.controls['ligieLevel2'].setValue(
             this.good.ligieLevel2
           );
@@ -250,7 +265,7 @@ export class ClassifyAssetsTabComponent
     } else {
       params['filter.id'] = '$eq:' + id.toString();
     }
-    params.take = 50;
+    params.limit = 50;
     this.fractionService.getAll(params).subscribe({
       next: data => {
         this.selectLevel3 = new DefaultSelect(data.data, data.count);
@@ -262,7 +277,7 @@ export class ClassifyAssetsTabComponent
           this.getLevel2(new ListParams(), data.data[0].parentId);
         }
 
-        if (this.goodObject !== null) {
+        if (this.goodObject) {
           this.classiGoodsForm.controls['ligieLevel3'].setValue(
             this.good.ligieLevel3
           );
@@ -277,7 +292,7 @@ export class ClassifyAssetsTabComponent
     } else {
       params['filter.id'] = '$eq:' + id.toString();
     }
-    params.take = 50;
+    params.limit = 50;
     this.fractionService.getAll(params).subscribe({
       next: (data: any) => {
         this.selectLevel4 = new DefaultSelect(data.data, data.count);
@@ -289,7 +304,7 @@ export class ClassifyAssetsTabComponent
           this.getLevel3(new ListParams(), data.data[0].parentId);
         }
 
-        if (this.goodObject !== null) {
+        if (this.goodObject) {
           this.classiGoodsForm.controls['ligieLevel4'].setValue(
             this.good.ligieLevel4
           );
@@ -347,7 +362,7 @@ export class ClassifyAssetsTabComponent
     this.isSave = true;
     const goods = this.classiGoodsForm.getRawValue();
     console.log('bienes: ', goods);
-    var goodAction =
+    /*var goodAction =
       goods.goodId === null
         ? this.goodService.create(goods)
         : this.goodService.update(goods.id, goods);
@@ -373,13 +388,13 @@ export class ClassifyAssetsTabComponent
       complete: () => {
         this.isSave = false;
       },
-    });
+    });*/
   }
 
   getReactiveFormActions() {
     this.classiGoodsForm.controls['ligieSection'].valueChanges.subscribe(
       (data: any) => {
-        // this.classiGoodsForm.controls['ligieChapter'].setValue('');
+        this.classiGoodsForm.controls['ligieChapter'].setValue(null);
         if (data != null) {
           if (this.advSearch === false) {
             this.getChapter(new ListParams(), data);
@@ -389,8 +404,13 @@ export class ClassifyAssetsTabComponent
     );
     this.classiGoodsForm.controls['ligieChapter'].valueChanges.subscribe(
       (dataChapter: any) => {
-        //this.classiGoodsForm.controls['ligieLevel1'].setValue('');
+        this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
         if (dataChapter != null) {
+          let fractionCode = this.selectChapter.data.filter(
+            x => x.id === dataChapter
+          )[0].fractionCode;
+          this.getUnidMeasure(fractionCode);
+
           this.classiGoodsForm.controls['goodTypeId'].setValue(
             this.getRelevantTypeId(this.selectChapter.data, dataChapter)
           );
@@ -402,8 +422,13 @@ export class ClassifyAssetsTabComponent
     );
     this.classiGoodsForm.controls['ligieLevel1'].valueChanges.subscribe(
       (dataLevel1: any) => {
-        //this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
+        this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
         if (dataLevel1 != null) {
+          let fractionCode = this.selectLevel1.data.filter(
+            x => x.id === dataLevel1
+          )[0].fractionCode;
+          this.getUnidMeasure(fractionCode);
+
           this.classiGoodsForm.controls['goodTypeId'].setValue(
             this.getRelevantTypeId(this.selectLevel1.data, dataLevel1)
           );
@@ -415,9 +440,13 @@ export class ClassifyAssetsTabComponent
     );
     this.classiGoodsForm.controls['ligieLevel2'].valueChanges.subscribe(
       (dataLevel2: any) => {
-        //this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
+        this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
         if (dataLevel2 != null) {
           //console.log(this.getRelevantTypeId(this.selectLevel2.data, dataLevel2));
+          let fractionCode = this.selectLevel2.data.filter(
+            x => x.id === dataLevel2
+          )[0].fractionCode;
+          this.getUnidMeasure(fractionCode);
 
           const relativeTypeId = this.getRelevantTypeId(
             this.selectLevel2.data,
@@ -433,6 +462,7 @@ export class ClassifyAssetsTabComponent
     );
     this.classiGoodsForm.controls['ligieLevel3'].valueChanges.subscribe(
       (dataLevel3: any) => {
+        this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
         if (dataLevel3 != null) {
           let fractionCode = this.selectLevel3.data.filter(
             x => x.id === dataLevel3

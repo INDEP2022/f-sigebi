@@ -17,6 +17,7 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDomicile } from 'src/app/core/models/catalogs/domicile';
+import { IGoodDomicilies } from 'src/app/core/models/good/good.model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
@@ -50,6 +51,7 @@ export class DetailAssetsTabComponentComponent
   stateOfRepublicName: string = '';
   municipalityId: number = null;
 
+  goodDomicilieForm: ModelForm<IGoodDomicilies>;
   domicileForm: ModelForm<IDomicile>;
   assetsForm: ModelForm<any>; //borrar
 
@@ -61,11 +63,12 @@ export class DetailAssetsTabComponentComponent
   armor: boolean = false;
   destinyLigie: string = '';
   addressId: number = null;
+  bsEvaluoDate: any;
 
   //tipo de bien seleccionado
   otherAssets: boolean = false;
   carsAssets: boolean = false;
-  boatAssets: boolean = true;
+  boatAssets: boolean = false;
   jewelerAssets: boolean = false;
   aircraftAssets: boolean = false;
   especialMachineryAssets: boolean = false;
@@ -135,6 +138,7 @@ export class DetailAssetsTabComponentComponent
     this.getConcervationState(new ListParams());
     this.getReactiveFormCall();
 
+    this.getGoodDomicilieTab();
     if (
       this.requestObject != undefined &&
       this.detailAssets.controls['addressId'].value === null
@@ -311,6 +315,7 @@ export class DetailAssetsTabComponentComponent
       regionalDelegationId: [null],
       requestId: [null],
     });
+
     //this.assetsForm.controls['typeAsset'].disable();
     //this.assetsForm.disable();
     //this.assetsForm.controls['typeAsset'].enable();
@@ -321,6 +326,32 @@ export class DetailAssetsTabComponentComponent
     }
   }
 
+  getGoodDomicilieTab() {
+    this.goodDomicilieForm = this.fb.group({
+      id: [null],
+      description: [null],
+      status: [null],
+      propertyType: [null],
+      mtsTerrain: [null],
+      mtsConsTerrain: [null],
+      publicWrite: [null],
+      regPubProperty: [null],
+      valorAvaluo: [null],
+      dateAvaluo: [null],
+      certLibAssessment: [null],
+      saveCustody: [null],
+      watchReq: [null],
+      watchLevel: [null],
+      mtsOfiBodega: [null],
+      rooms: [null],
+      bathroom: [null],
+      kitchen: [null],
+      diningRoom: [null],
+      room: [null],
+      studyRoom: [null],
+      parkSpace: [null],
+    });
+  }
   getSae(event: any) {}
 
   getConservationState(event: any): void {}
@@ -517,6 +548,10 @@ export class DetailAssetsTabComponentComponent
     });
   }
 
+  changeDateEvaluoEvent(event: any) {
+    console.log(event);
+  }
+
   displayTypeTapInformation(typeRelevantId: number) {
     /*otherAssets: boolean = false;
 
@@ -527,6 +562,7 @@ export class DetailAssetsTabComponentComponent
     foodAndDrink: boolean = false; //diverso*/
     switch (typeRelevantId) {
       case 1:
+        this.getGoodDomicilieTab();
         this.immovablesAssets = true;
         break;
       case 2:
@@ -542,13 +578,20 @@ export class DetailAssetsTabComponentComponent
         this.jewelerAssets = true;
         break;
       default:
+        this.immovablesAssets = false;
+        this.carsAssets = false;
+        this.boatAssets = false;
+        this.aircraftAssets = false;
+        this.jewelerAssets = false;
         break;
     }
   }
 
   save(): void {
+    const goodDomicilie = this.goodDomicilieForm.getRawValue();
     const domicilie = this.domicileForm.getRawValue();
-    this.isSave = true;
+
+    /*this.isSave = true;
     this.goodDomicilie.update(domicilie.id, domicilie).subscribe({
       next: (data: any) => {
         if (data.statusCode != null) {
@@ -564,7 +607,7 @@ export class DetailAssetsTabComponentComponent
         }
         this.isSave = false;
       },
-    });
+    });*/
   }
 
   getGoodDomicilie(addressId: number) {

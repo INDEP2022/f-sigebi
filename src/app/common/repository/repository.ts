@@ -60,19 +60,6 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.delete(`${fullRoute}/${idsRoute}`);
   }
 
-  postByIds(route: string, formData: Object): Observable<any> {
-    const fullRoute = this.buildRoute(route);
-    return this.httpClient.post<any>(`${fullRoute}/id`, formData);
-  }
-
-  postColumns(route: string, formData: Object): Observable<IListResponse<T>> {
-    const fullRoute = this.buildRoute(route);
-    return this.httpClient.post<IListResponse<T>>(
-      `${fullRoute}/columns`,
-      formData
-    );
-  }
-
   private buildRoute(route: string) {
     const paths = route.split('/');
     paths.shift();
