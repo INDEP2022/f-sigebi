@@ -52,7 +52,7 @@ export class MaximumTimesModalComponent extends BasePage implements OnInit {
       certificateType: [null, [Validators.required]],
       tmpMax: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       activated: [null],
-      user: [null],
+      user: [null, [Validators.required]],
       date: [null],
     });
     if (this.maximumTimes != null) {
@@ -66,7 +66,6 @@ export class MaximumTimesModalComponent extends BasePage implements OnInit {
     } else {
       this.maximumTimesForm.controls['certificateType'].setValue('0');
       this.maximumTimesForm.controls['date'].setValue(new Date());
-      // this.maximumTimesForm.controls['user'].setValue(this.authService.decodeToken().preferred_username);
     }
   }
   close() {
