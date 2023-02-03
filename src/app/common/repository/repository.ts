@@ -53,6 +53,8 @@ export class Repository<T> implements IRepository<T> {
   update(route: string, id: number | string, formData: Object) {
     const fullRoute = this.buildRoute(route);
     console.log(`${fullRoute}/${id}`);
+    console.log(formData);
+
     return this.httpClient.put(`${fullRoute}/${id}`, formData);
   }
 
