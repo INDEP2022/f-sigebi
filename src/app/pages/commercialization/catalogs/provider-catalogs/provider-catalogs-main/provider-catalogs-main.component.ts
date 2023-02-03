@@ -152,7 +152,7 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.providerForm = this.fb.group({
-      id: [null],
+      providerId: [null],
       bank: [null],
       branch: [null],
       checkingCta: [null],
@@ -197,13 +197,12 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
   }
 
   selectProvider(provider: IComerProvider) {
-    console.log(provider);
     this.providerForm.patchValue(provider);
     this.selectedProvider = provider;
   }
 
-  openFormProvider(provider?: any) {
-    this.openModalProvider({ provider });
+  openFormProvider(provider?: IComerProvider) {
+    this.openModalProvider({ provider, edit: true });
   }
 
   openModalProvider(context?: Partial<ProviderCatalogsModalComponent>) {
@@ -225,5 +224,37 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
     modalRef.content.onSelect.subscribe((data: boolean) => {
       if (data) console.log(data);
     });
+  }
+
+  delete(provider: IComerProvider): void {
+    this.loading = true;
+    this.providerService.remove(provider.providerId).subscribe({
+      next: data => {
+        this.loading = false;
+        this.showSuccess();
+        this.getData();
+      },
+      error: error => {
+        this.loading = false;
+        this.showError(error);
+      },
+    });
+  }
+
+  showSuccess() {
+    this.onLoadToast(
+      'success',
+      'Proveedor',
+      `Registro Eliminado Correctamente`
+    );
+  }
+
+  showError(error?: any) {
+    this.onLoadToast(
+      'error',
+      `Error al eliminar datos`,
+      'Hubo un problema al conectarse con el servior'
+    );
+    error ? console.log(error) : null;
   }
 }
