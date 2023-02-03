@@ -3,7 +3,10 @@ import { Observable } from 'rxjs';
 import { DynamicCatalogEndpoint } from 'src/app/common/constants/endpoints/ms-dynamiccatalog-endpoint';
 import { IDynamicCatalogMethods } from 'src/app/common/repository/interfaces/ms-dynamiccatalog-methods';
 import { DynamicCatalogRepository } from 'src/app/common/repository/repositories/ms-dynamiccatalog-repository';
-import { ITables } from '../../models/catalogs/dinamic-tables.model';
+import {
+  ITables,
+  ITablesData,
+} from '../../models/catalogs/dinamic-tables.model';
 @Injectable({
   providedIn: 'root',
 })
@@ -16,6 +19,11 @@ export class DynamicTablesService implements IDynamicCatalogMethods<ITables> {
   getById(id: string | number): Observable<ITables> {
     return this.dynamicCatalogRepository.getById(this.route, id);
   }
+
+  getByIdData(id: string | number): Observable<ITablesData> {
+    return this.dynamicCatalogRepository.getByIdData(this.route, id);
+  }
+
   //   getAll(params?: ListParams): Observable<IListResponse<ITables>> {
   //     return this.dynamicCatalogRepository.getAllPaginated(this.route, params);
   //   }

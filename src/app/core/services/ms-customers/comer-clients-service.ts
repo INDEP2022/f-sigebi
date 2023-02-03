@@ -8,7 +8,10 @@ import { IComerClients } from '../../models/ms-customers/customers-model';
 @Injectable({
   providedIn: 'root',
 })
-export class ComerClientsService {
+/**
+ * @deprecated actualizado a la nueva implementacion de servicios
+ */
+export class ComerClientsService1 {
   private readonly route: string = CustomersEndpoints.ComerClients;
   constructor(
     private customersRepository: CustomersRepository<IComerClients>

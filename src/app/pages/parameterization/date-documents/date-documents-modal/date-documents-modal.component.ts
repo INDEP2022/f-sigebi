@@ -143,6 +143,18 @@ export class DateDocumentsModalComponent extends BasePage implements OnInit {
   }
   update() {
     this.loading = true;
+    this.dateDocumentsModalForm.controls['insertionDate'].setValue(
+      this.datePipe.transform(
+        this.dateDocumentsModalForm.controls['insertionDate'].value,
+        'yyyy-MM-dd'
+      )
+    );
+    this.dateDocumentsModalForm.controls['notificationDate'].setValue(
+      this.datePipe.transform(
+        this.dateDocumentsModalForm.controls['notificationDate'].value,
+        'yyyy-MM-dd'
+      )
+    );
     this.dateDocumentsService
       .update3(this.dateDocumentsModalForm.value)
       .subscribe({

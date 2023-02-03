@@ -12,7 +12,7 @@ import { ITvalTable5 } from '../../models/catalogs/tval-Table5.model';
   providedIn: 'root',
 })
 export class TvalTable5Service implements ICrudMethods<ITvalTable5> {
-  private readonly route: string = ENDPOINT_LINKS.DinamicTablesName;
+  private readonly route: string = ENDPOINT_LINKS.DinamicTablesTable;
   private readonly route1: string = ENDPOINT_LINKS.DinamicTables;
   constructor(
     private Tvaltablas1Repository: Repository<ITvalTable5>,

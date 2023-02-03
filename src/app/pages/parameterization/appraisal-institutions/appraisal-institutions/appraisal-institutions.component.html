@@ -4,9 +4,7 @@
     <div class="col-md-5 buttons">
       <app-columns-select [(settings)]="settings"></app-columns-select>
       <div>
-        <button
-          class="btn btn-primary active btn-sm ml-3"
-          (click)="openValues('')">
+        <button class="btn btn-primary active btn-sm ml-3" (click)="openForm()">
           Nuevo
         </button>
       </div>
@@ -19,7 +17,8 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="data1">
+            [source]="appraisersList"
+            (edit)="openForm($event.data)">
           </ng2-smart-table>
         </div>
       </div>
