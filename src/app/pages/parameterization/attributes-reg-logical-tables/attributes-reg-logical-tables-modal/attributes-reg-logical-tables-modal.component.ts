@@ -61,6 +61,10 @@ export class AttributesRegLogicalTablesModalComponent
         null,
         [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
+      registerNumber: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
     });
     if (this.tdescAtrib != null) {
       this.edit = true;
@@ -72,30 +76,28 @@ export class AttributesRegLogicalTablesModalComponent
     this.modalRef.hide();
   }
 
-  // confirm() {
-  //   this.update() ;
-  // }
+  confirm() {
+    this.edit ? this.update() : this.create();
+  }
 
-  // create() {
-  //   this.loading = true;
-  //   this.tdesAtribService.create(this.tdescAtribForm.value).subscribe({
-  //     next: data => this.handleSuccess(),
-  //     error: error => (this.loading = false),
-  //   });
-  // }
+  create() {
+    this.loading = true;
+    this.tdesAtribService.create(this.tdescAtribForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
+  }
 
-  // update() {
-  //   this.loading = true;
-  //   this.tdesAtribService
-  //     .update(this.tdescAtrib.idNmTable, this.tdescAtribForm.value)
-  //     .subscribe({
-  //       next: data => this.handleSuccess(),
-  //       error: error => (this.loading = false),
-  //     });
-  // }
+  update() {
+    this.loading = true;
+    this.tdesAtribService.update(this.tdescAtribForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
+  }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
