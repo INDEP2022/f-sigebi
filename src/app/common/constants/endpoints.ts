@@ -116,6 +116,7 @@ export enum ENDPOINT_LINKS {
   ZipCode = 'catalog/zip-code', //
   parametergood = 'parametergood/tmp-max-cierre-acta-dev',
   parametergoodActa = 'parametergood/validadores-actas',
+  parametergoodCat = 'parametergood/cat-motivosrev',
   documents = 'documents/api/v1/documents-dictum-x-state-m',
   ZoneGeographic = 'catalog/zone-geographic',
   DocumentsForDictum = 'documents-for-dictum',
@@ -136,4 +137,5 @@ export enum ENDPOINT_LINKS {
   Expedient = 'expedient',
   //goodsQuery//
   GoodsQuery = 'goodsquery',
+  ProgrammingGood = 'ProgrammingGood',
 }

@@ -3,7 +3,11 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IMaximumTimes } from 'src/app/core/models/catalogs/maximum-times-model';
+import {
+  IMaximumTimes,
+  IUsers,
+} from 'src/app/core/models/catalogs/maximum-times-model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { MaximumTimesService } from 'src/app/core/services/catalogs/maximum-times.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -18,10 +22,12 @@ export class MaximumTimesModalComponent extends BasePage implements OnInit {
   maximumTimes: IMaximumTimes;
   title: string = 'Tiempo Máximo Para Cierre Actas Devolución';
   edit: boolean = false;
+  user: IUsers;
   typeItem: any[];
   constructor(
     private fb: FormBuilder,
     private datePipe: DatePipe,
+    private authService: AuthService,
     private modalRef: BsModalRef,
     private maximumTimesService: MaximumTimesService
   ) {
@@ -46,12 +52,13 @@ export class MaximumTimesModalComponent extends BasePage implements OnInit {
       certificateType: [null, [Validators.required]],
       tmpMax: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       activated: [null],
-      user: [null],
+      user: [null, [Validators.required]],
       date: [null],
     });
     if (this.maximumTimes != null) {
       console.log('editar');
       this.edit = true;
+      this.user = this.maximumTimes.user as IUsers;
       this.maximumTimesForm.patchValue(this.maximumTimes);
       this.maximumTimesForm.controls['activated'].setValue(
         this.maximumTimes.activated == 'N' ? false : true
@@ -83,6 +90,7 @@ export class MaximumTimesModalComponent extends BasePage implements OnInit {
     this.maximumTimesForm.controls['activated'].setValue(
       this.maximumTimesForm.controls['activated'].value == 'true' ? 'S' : 'N'
     );
+    console.log(this.maximumTimesForm.value);
     this.maximumTimesService
       .update(
         this.maximumTimes.certificateType.toString(),
