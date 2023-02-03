@@ -11,12 +11,12 @@ export interface IComerProvider {
   stateDesc: string;
   delegation?: string;
   fax?: string;
-  commission: number;
+  commission?: number;
   phone?: string;
   curp: string;
   typePerson?: string;
   preponderantAct?: string;
-  cp?: string;
+  cp?: string | number;
   contractNo?: string;
   esCustomer?: string;
   bank?: string;
