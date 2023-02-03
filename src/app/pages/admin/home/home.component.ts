@@ -32,7 +32,7 @@ interface IExcelToJson {
 
 interface IPerson {
   name: string;
-  age: number;
+  birthdate: Date | any;
 }
 
 interface IUser {
@@ -156,7 +156,7 @@ export class HomeComponent extends BasePage implements OnInit {
   get personForm(): IFormGroup<IPerson> {
     return this.fb.group({
       name: [null],
-      age: [null],
+      birthdate: [new Date()],
     });
   }
 

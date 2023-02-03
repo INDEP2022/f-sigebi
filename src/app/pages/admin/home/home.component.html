@@ -22,6 +22,15 @@
             label="Input Nombre Persona">
             <input type="text" class="form-control" formControlName="name" />
           </form-field>
+          <form-field
+            [control]="personForm.get('birthdate')"
+            label="Input Fecha Persona">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="birthdate"
+              bsDatepicker />
+          </form-field>
         </ng-container>
         <div>
           <button class="btn btn-primary" (click)="addRole()">
