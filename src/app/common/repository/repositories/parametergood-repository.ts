@@ -32,19 +32,12 @@ export class ParametergoodRepository<T> implements IParametergoodMethods<T> {
     const fullRoute = `${this.ms}/${route}`;
     return this.httpClient.put(`${fullRoute}/${id}`, formData);
   }
-  /*create(route: string, formData: Object) {
-    const fullRoute = this.buildRoute(route);
-    return this.httpClient.post<T>(`${fullRoute}`, formData);
+
+  getById(route: string, _id?: number | string): Observable<T> {
+    const fullRoute = `${this.ms}/${route}`;
+    return this.httpClient.get<T>(`${fullRoute}/${_id}`);
   }
 
-  
-
-  remove(route: string, id: number | string) {
-    const fullRoute = this.buildRoute(route);
-    return this.httpClient.delete(`${fullRoute}/${id}`);
-  }
-
-*/
   private makeParams(params: ListParams): HttpParams {
     let httpParams: HttpParams = new HttpParams();
     Object.keys(params).forEach(key => {

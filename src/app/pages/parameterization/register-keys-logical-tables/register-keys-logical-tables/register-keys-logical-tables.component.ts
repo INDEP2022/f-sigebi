@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
@@ -24,20 +23,16 @@ export class RegisterKeysLogicalTablesComponent
   extends BasePage
   implements OnInit
 {
-  tdescCve: ITdescCve[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  tdescCve: ITdescCve[] = [];
 
   form: FormGroup = new FormGroup({});
-
-  data: LocalDataSource = new LocalDataSource();
-
-  rowSelected: boolean = false;
-  selectedRow: any = null;
 
   constructor(
     private modalService: BsModalService,
     private fb: FormBuilder,
+    private fb2: FormBuilder,
     private dynamicTablesService: DynamicTablesService,
     private tdescCveService: TdescCveService
   ) {
@@ -66,7 +61,6 @@ export class RegisterKeysLogicalTablesComponent
       tableType: [{ value: null, disabled: true }],
     });
   }
-
   //Método para buscar y llenar inputs (Encabezado)
   getLogicalTablesByID(): void {
     let _id = this.form.controls['table'].value;
@@ -76,7 +70,7 @@ export class RegisterKeysLogicalTablesComponent
         if (response !== null) {
           this.form.patchValue(response);
           this.form.updateValueAndValidity();
-          this.getKeysByLogicalTables(response.table);
+          this.getKeysByLogicalTables();
         } else {
           this.alert('info', 'No se encontraron los registros', '');
         }
@@ -86,29 +80,22 @@ export class RegisterKeysLogicalTablesComponent
     );
   }
 
-  //Método llenar tabla de Claves con id de Tables Logical
-  getKeysByLogicalTables(id: string | number): void {
+  getKeysByLogicalTables(): void {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getKeys(id));
+      .subscribe(() => this.getKeys());
   }
 
-  getKeys(id: string | number): void {
-    this.tdescCveService
-      .getByLogicalTables(id, this.params.getValue())
-      .subscribe(
-        response => {
-          //console.log(response);
-          let data = response.data.map((item: ITdescCve) => {
-            //console.log(item);
-            return item;
-          });
-          this.data.load(data);
-          this.totalItems = response.count;
-          this.loading = false;
-        },
-        error => (this.loading = false)
-      );
+  getKeys() {
+    this.loading = true;
+    this.tdescCveService.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        this.tdescCve = response.data;
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
   }
 
   openForm(tdescCve?: ITdescCve) {

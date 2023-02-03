@@ -1,8 +1,10 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ParameterGoodEndpoints } from 'src/app/common/constants/endpoints/ms-parametergood-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ParametergoodRepository } from 'src/app/common/repository/repositories/parametergood-repository';
+import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
 
 import { ITdescCve } from '../../models/ms-parametergood/tdesccve-model';
@@ -12,24 +14,17 @@ import { ITdescCve } from '../../models/ms-parametergood/tdesccve-model';
 export class TdescCveService {
   private readonly route = ParameterGoodEndpoints;
   constructor(
-    private parametergoodRepository: ParametergoodRepository<ITdescCve>
+    private parametergoodRepository: ParametergoodRepository<ITdescCve>,
+    private htpp: HttpClient
   ) {}
 
   getAll(params?: ListParams): Observable<IListResponse<ITdescCve>> {
     return this.parametergoodRepository.getAll(this.route.TDescCve, params);
   }
 
-  // create(model: ITdescCve): Observable<ITdescCve> {
-  //   return this.parametergoodRepository.create(this.route, model);
-  // }
-
   update(id: string | number, model: ITdescCve): Observable<Object> {
     return this.parametergoodRepository.update(this.route.TDescCve, id, model);
   }
-
-  // remove(id: string | number): Observable<Object> {
-  //   return this.parametergoodRepository.remove(this.route, id);
-  // }
 
   getByLogicalTables(
     id: string | number,
@@ -40,5 +35,14 @@ export class TdescCveService {
       id,
       params
     );
+  }
+
+  getById(id: string | number): Observable<ITdescCve> {
+    return this.parametergoodRepository.getById(this.route.TDescCve, id);
+  }
+
+  getById2(id: string | number) {
+    const url = `${environment.API_URL}parametergood/api/v1/tdesccve/${id}`;
+    return this.htpp.get(url);
   }
 }

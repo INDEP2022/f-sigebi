@@ -83,8 +83,8 @@ const routes: Routes = [
       (await import('./bank-concepts/bank-concepts.module')).BankConceptsModule,
     data: { title: 'Conceptos bancarios', screen: 'FCATCATCONCEPBANC' },
   },
-  {
-    //YA EXISTE EN CATALOGS
+  //YA EXISTE EN CATALOGS
+  /*{
     path: 'cat-depository-payment',
     loadChildren: async () =>
       (await import('./cat-depository-payment/cat-depository-payment.module'))
@@ -93,7 +93,7 @@ const routes: Routes = [
       title: 'Catalogo de conceptos de pagos depositarias',
       screen: 'FCATCATCONCEPPAGO',
     },
-  },
+  },*/
   {
     path: 'maintenance-deleg-subdeleg',
     loadChildren: async () =>
@@ -107,8 +107,8 @@ const routes: Routes = [
       screen: 'FCATCATDELYSUBDEL',
     },
   },
-  {
-    //YA EXISTE EN CATALOGS
+  //YA EXISTE EN CATALOGS
+  /*{
     path: 'mnce-adm-depository-auditor',
     loadChildren: async () =>
       (
@@ -120,7 +120,7 @@ const routes: Routes = [
       title: 'Mantto. a administrador, depositario e interventor',
       screen: 'FCATCATDEPOINTEAD',
     },
-  },
+  },*/
   {
     path: 'attributes-reg-logical-tables',
     loadChildren: async () =>

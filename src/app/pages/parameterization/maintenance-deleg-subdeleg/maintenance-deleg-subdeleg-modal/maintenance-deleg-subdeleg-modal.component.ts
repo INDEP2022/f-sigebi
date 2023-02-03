@@ -79,14 +79,14 @@ export class MaintenanceDelegSubdelegModalComponent
   }
 
   getDelegations(params: ListParams) {
-    this.delegationService.getDelegations(params).subscribe({
+    this.delegationService.getAll(params).subscribe({
       next: data =>
         (this.delegations = new DefaultSelect(data.data, data.count)),
     });
   }
 
   getPhaseEdo(params: ListParams) {
-    this.delegationService.getDelegations(params).subscribe({
+    this.delegationService.getAll(params).subscribe({
       next: data => (this.phaseEdos = new DefaultSelect(data.data, data.count)),
     });
   }
