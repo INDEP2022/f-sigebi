@@ -54,6 +54,7 @@ export class NotificationRepository<T> implements INotificationMethods<T> {
 
   create(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
+    console.log(fullRoute);
     return this.httpClient.post<T>(`${fullRoute}`, formData);
   }
 
