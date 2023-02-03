@@ -18,7 +18,7 @@ import { IRAsuntDic } from 'src/app/core/models/catalogs/r-asunt-dic.model';
 //Services
 import { AffairTypeService } from 'src/app/core/services/affair/affair-type.service';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
-import { CustomerCatalogsTableComponent } from 'src/app/pages/commercialization/shared-marketing-components/event-preparation/customer-catalogs-table/customer-catalogs-table.component';
+import { OpinionsListComponent } from 'src/app/pages/catalogs/opinions/opinions-list/opinions-list.component';
 
 @Component({
   selector: 'app-cat-relationship-opinion',
@@ -155,7 +155,7 @@ export class CatRelationshipOpinionComponent
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
     };
-    this.modalService.show(CustomerCatalogsTableComponent, config);
+    this.modalService.show(OpinionsListComponent, config);
   }
 
   data2 = [
