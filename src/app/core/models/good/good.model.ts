@@ -10,6 +10,7 @@ export interface IGood {
   quantity?: number;
   goodStatus?: string;
   cant: string;
+  notifyDate?: string | Date;
   dateEntry: string;
   dateExit?: any;
   dateVencim?: any;
