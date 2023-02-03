@@ -1,3 +1,5 @@
+import { IUsers } from 'src/app/core/models/catalogs/maximum-times-model';
+
 export const MAXIMUM_TIMES_COLUMNS = {
   certificateType: {
     title: 'Tipo de acta',
@@ -17,6 +19,9 @@ export const MAXIMUM_TIMES_COLUMNS = {
   },
   user: {
     title: 'Usuario',
+    valuePrepareFunction: (value: IUsers) => {
+      return value != null ? value.name : '-';
+    },
     sort: false,
   },
 };

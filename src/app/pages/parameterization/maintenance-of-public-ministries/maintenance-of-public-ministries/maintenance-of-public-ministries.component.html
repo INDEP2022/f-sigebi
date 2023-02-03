@@ -5,17 +5,14 @@
   <div body>
     <form [formGroup]="form" class="form-material">
       <div class="row">
-        <div class="col-md-2 col-sm-12 col-xs-12">
+        <div class="col-md-6 col-sm-12 col-xs-12">
           <form-field
-            [control]="form.get('pubMinistry')"
-            label="Ministerio P&uacute;blico">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="pubMinistry" />
+            [control]="form.get('manager')"
+            label="Responsable Ministerio P&uacute;blico">
+            <input type="text" class="form-control" formControlName="manager" />
           </form-field>
         </div>
-        <div class="col-md-5 col-sm-12 col-xs-12">
+        <div class="col-md-6 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('description')"
             label="Descripci&oacute;n">
@@ -23,13 +20,6 @@
               type="text"
               class="form-control"
               formControlName="description" />
-          </form-field>
-        </div>
-        <div class="col-md-5 col-sm-12 col-xs-12">
-          <form-field
-            [control]="form.get('manager')"
-            label="Responsable Ministerio P&uacute;blico">
-            <input type="text" class="form-control" formControlName="manager" />
           </form-field>
         </div>
       </div>
@@ -93,26 +83,46 @@
       <hr />
       <div class="row mt-5">
         <div class="col-md-3 col-sm-12 col-xs-12">
-          <app-cities-shared [form]="form"></app-cities-shared>
+          <app-cities-shared
+            [form]="form"
+            (state)="updateEntity($event)"></app-cities-shared>
         </div>
         <div class="col-md-3 col-sm-12 col-xs-12 mt-3">
           <form-field [control]="form.get('entity')" label="Entidad Federativa">
             <input type="text" class="form-control" formControlName="entity" />
           </form-field>
         </div>
-        <!-- <div class="col-md-3 col-sm-12 col-xs-12">
-          <app-delegation-shared [form]="form" [showSubdelegation]="false"></app-delegation-shared>
+        <div class="col-md-3 col-sm-12 col-xs-12 mt-3">
+          <form-field
+            label="Delegaci&oacute;n"
+            [control]="form.get('delegation')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegation" />
+          </form-field>
         </div>
-        <div class="col-md-3 col-sm-12 col-xs-12">
-          <app-delegation-shared [form]="form" [showDelegation]="false"></app-delegation-shared>
-        </div> -->
+        <div class="col-md-3 col-sm-12 col-xs-12 mt-3">
+          <form-field
+            label="Sub Delegaci&oacute;n"
+            [control]="form.get('subDelegation')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="subDelegation" />
+          </form-field>
+        </div>
       </div>
     </form>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <button type="button" class="btn btn-success active" (click)="saved()">
+        <button
+          type="button"
+          class="btn btn-success active"
+          (click)="saved()"
+          [disabled]="!form.valid">
           Guardar
         </button>
       </div>
