@@ -23,7 +23,9 @@
       <div class="row">
         <div class="col-sm-12 col-md-6">
           <div class="form-material">
-            <search-bar [params]="params"></search-bar>
+            <search-bar
+              [filterParams]="filterParams"
+              [filterField]="searchFilter"></search-bar>
           </div>
         </div>
         <div class="col-sm-12 col-md-6">
@@ -118,7 +120,7 @@
         </div>
         <div class="table-padding"></div>
       </ng-scrollbar>
-      <app-pagination [params]="params" [totalItems]="totalItems">
+      <app-pagination [filterParams]="filterParams" [totalItems]="totalItems">
       </app-pagination>
     </form>
   </div>

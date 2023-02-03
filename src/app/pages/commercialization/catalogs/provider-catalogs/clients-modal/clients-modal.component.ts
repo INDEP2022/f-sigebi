@@ -6,8 +6,10 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IComerClients } from 'src/app/core/models/ms-customers/customers-model';
 import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { FilterParams } from '../../../../../common/repository/interfaces/list-params';
 import { PROVIDER_CATALOGS_CLIENT_COLUMNS } from '../provider-catalogs-main/provider-catalogs-columns';
 import { ProviderCatalogsModalComponent } from '../provider-catalogs-modal/provider-catalogs-modal.component';
+import { SearchBarFilter } from './../../../../../common/repository/interfaces/search-bar-filters';
 
 @Component({
   selector: 'app-clients-modal',
@@ -17,6 +19,8 @@ import { ProviderCatalogsModalComponent } from '../provider-catalogs-modal/provi
 export class ClientsModalComponent extends BasePage implements OnInit {
   title: string = 'Clientes';
   params = new BehaviorSubject<ListParams>(new ListParams());
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
+  searchFilter: SearchBarFilter;
   @Output() onSelect = new EventEmitter<any>();
   selectedRow: IComerClients | null = null;
   totalItems: number = 0;
@@ -56,10 +60,11 @@ export class ClientsModalComponent extends BasePage implements OnInit {
   ) {
     super();
     this.clientSettings.columns = PROVIDER_CATALOGS_CLIENT_COLUMNS;
+    this.searchFilter = { field: 'reasonName' };
   }
 
   ngOnInit(): void {
-    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+    this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       this.getData();
     });
     this.getData();
@@ -67,17 +72,19 @@ export class ClientsModalComponent extends BasePage implements OnInit {
 
   getData(): void {
     this.loading = true;
-    this.clientsService.getAll(this.params.getValue()).subscribe({
-      next: response => {
-        this.clientColumns = response.data;
-        this.totalItems = response.count;
-        this.loading = false;
-      },
-      error: error => {
-        this.loading = false;
-        console.log(error);
-      },
-    });
+    this.clientsService
+      .getAllWithFilters(this.filterParams.getValue().getParams())
+      .subscribe({
+        next: response => {
+          this.clientColumns = response.data;
+          this.totalItems = response.count;
+          this.loading = false;
+        },
+        error: error => {
+          this.loading = false;
+          console.log(error);
+        },
+      });
   }
 
   select(row: IComerClients[]): void {
@@ -111,12 +118,10 @@ export class ClientsModalComponent extends BasePage implements OnInit {
         customerId: this.selectedRow.id,
       },
     });
-    // this.handleSuccess();
   }
 
   handleSuccess(): void {
     this.loading = true;
-    // Llamar servicio para agregar control
     this.loading = false;
     this.onSelect.emit(this.selectedRow);
     this.modalRef.hide();
@@ -129,7 +134,7 @@ export class ClientsModalComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.onConfirm.subscribe(data => {
-      if (data) this.getData();
+      if (data) this.modalRef.hide();
     });
   }
 }
