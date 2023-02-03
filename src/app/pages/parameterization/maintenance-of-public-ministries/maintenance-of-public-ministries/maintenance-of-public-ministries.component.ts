@@ -6,7 +6,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { Minpub } from 'src/app/core/models/parameterization/parametrization.model';
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
+import { SubdelegationService } from 'src/app/core/services/catalogs/subdelegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 @Component({
@@ -23,7 +25,9 @@ export class MaintenanceOfPublicMinistriesComponent
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly maintenceService: MinPubService
+    private readonly maintenceService: MinPubService,
+    private readonly serviceDeleg: DelegationService,
+    private readonly serviceSubDeleg: SubdelegationService
   ) {
     super();
   }
@@ -34,7 +38,6 @@ export class MaintenanceOfPublicMinistriesComponent
 
   private buildForm() {
     this.form = this.fb.group({
-      pubMinistry: [null, [Validators.required]],
       description: [
         null,
         [
@@ -52,15 +55,24 @@ export class MaintenanceOfPublicMinistriesComponent
       zipCode: [null, Validators.required],
       phone: [null, Validators.required],
       city: [null, [Validators.required]],
-      // delegation: [null, [Validators.required]],
-      // subdelegation: [null, [Validators.required]],
-      entity: [null, Validators.required],
+      entity: [null],
+      delegation: [null],
+      subDelegation: [null],
     });
+
+    this.form.get('entity').disable();
+    this.form.get('delegation').disable();
+    this.form.get('subDelegation').disable();
   }
-  saved() {
+
+  public saved() {
     if (!this.form.contains('idClave')) {
       this.form.addControl(
         'idClave',
+        new FormControl(this.form.controls['city'].value)
+      );
+      this.form.addControl(
+        'cityNumber',
         new FormControl(this.form.controls['city'].value)
       );
     }
@@ -85,5 +97,25 @@ export class MaintenanceOfPublicMinistriesComponent
           ),
       });
     }
+  }
+
+  public updateEntity(data: any) {
+    this.form.get('entity').patchValue(data.state.descCondition);
+    this.getDelegation(data.noDelegation);
+    this.getSubDelegation(data.noSubDelegation);
+  }
+
+  private getDelegation(delegation: number) {
+    this.serviceDeleg.getById(delegation).subscribe({
+      next: data => this.form.get('delegation').patchValue(data.description),
+      error: () => {},
+    });
+  }
+
+  private getSubDelegation(subDelegation: number) {
+    this.serviceSubDeleg.getById(subDelegation).subscribe({
+      next: data => this.form.get('subDelegation').patchValue(data.description),
+      error: () => {},
+    });
   }
 }
