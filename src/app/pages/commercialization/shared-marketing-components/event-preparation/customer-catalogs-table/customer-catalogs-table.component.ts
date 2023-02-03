@@ -6,7 +6,7 @@ import { CUSTOMER_CATALOGS_COLUMNS } from './customer-catalogs-columns';
 //models
 import { IComerClients } from 'src/app/core/models/ms-customers/customers-model';
 //Services
-import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients-service';
+import { ComerClientsService } from 'src/app/core/services/ms-customers/comer-clients.service';
 
 @Component({
   selector: 'app-customer-catalogs-table',
