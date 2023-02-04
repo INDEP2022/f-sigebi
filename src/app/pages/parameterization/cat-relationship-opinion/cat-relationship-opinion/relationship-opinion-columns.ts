@@ -37,6 +37,9 @@ export const DICTA_COLUMNS = {
   dictum: {
     title: 'Dictámen',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value.id;
+    },
   },
   flyerType: {
     title: 'Tipo volante',

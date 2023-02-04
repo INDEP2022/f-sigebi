@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, map, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -11,6 +11,8 @@ import { REGISTER_KEYS_LOGICAL_COLUMNS } from './register-keys-logical-columns';
 import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dynamic-tables.service';
 import { TdescCveService } from 'src/app/core/services/ms-parametergood/tdesccve.service';
 //Models
+import { LocalDataSource } from 'ng2-smart-table';
+import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { ITdescCve } from 'src/app/core/models/ms-parametergood/tdesccve-model';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 
@@ -26,6 +28,8 @@ export class RegisterKeysLogicalTablesComponent
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   tdescCve: ITdescCve[] = [];
+
+  data2: LocalDataSource = new LocalDataSource();
 
   form: FormGroup = new FormGroup({});
 
@@ -70,7 +74,7 @@ export class RegisterKeysLogicalTablesComponent
         if (response !== null) {
           this.form.patchValue(response);
           this.form.updateValueAndValidity();
-          this.getKeysByLogicalTables();
+          this.getKeysByLogicalTables(_id);
         } else {
           this.alert('info', 'No se encontraron los registros', '');
         }
@@ -80,24 +84,30 @@ export class RegisterKeysLogicalTablesComponent
     );
   }
 
-  getKeysByLogicalTables(): void {
+  getKeysByLogicalTables(id: string | number): void {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getKeys());
+      .subscribe(() => this.getKeys(id));
   }
 
-  getKeys() {
+  getKeys(id: string | number): void {
     this.loading = true;
-    this.tdescCveService.getAll(this.params.getValue()).subscribe({
-      next: response => {
+    this.tdescCveService
+      .getById(id)
+      .pipe(
+        map((data2: any) => {
+          let list: IListResponse<ITdescCve> = {} as IListResponse<ITdescCve>;
+          const array2: ITdescCve[] = [{ ...data2.data }];
+          list.data = array2;
+          list.count = 10;
+          return list;
+        })
+      )
+      .subscribe(response => {
         this.tdescCve = response.data;
-        this.totalItems = response.count;
-        this.loading = false;
-      },
-      error: error => (this.loading = false),
-    });
+        console.log(response);
+      });
   }
-
   openForm(tdescCve?: ITdescCve) {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {

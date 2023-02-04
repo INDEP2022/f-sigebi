@@ -15,6 +15,7 @@ export class RAsuntDicService
   implements ICrudMethods<IRAsuntDic>
 {
   private readonly route: string = ENDPOINT_LINKS.RAsuntDic;
+  private readonly route2: string = 'r-asunt-dic';
   constructor(private rAsuntDicRepository: Repository<IRAsuntDic>) {
     super();
     this.microservice = 'catalog';
@@ -42,5 +43,10 @@ export class RAsuntDicService
 
   getByIds(model: IRAsuntDic) {
     return this.post('r-asunt-dic/find-one-by-ids', model);
+  }
+
+  getByCode(code: string | number): Observable<IListResponse<IRAsuntDic>> {
+    const route2 = `${this.route2}?filter.code=$eq:${code}`;
+    return this.get<IListResponse<IRAsuntDic>>(route2);
   }
 }

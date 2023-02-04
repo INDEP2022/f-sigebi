@@ -5,15 +5,25 @@
   <div body>
     <form class="form-material" [formGroup]="tdescAtribForm">
       <div class="row">
-        <div class="col-md-4">
-          <form-field
+        <div class="col-md-4" *ngIf="edit !== true">
+          <ngx-select
+            [searchOnInit]="true"
+            [form]="tdescAtribForm"
+            control="idNmTable"
+            [data]="tables"
+            value="table"
+            bindLabel="table"
+            label="ID Tabla"
+            (fetchItems)="getTables($event)">
+          </ngx-select>
+          <!-- <form-field
             [control]="tdescAtribForm.get('idNmTable')"
             label="ID Tabla">
             <input
               type="number"
               class="form-control"
               formControlName="idNmTable" />
-          </form-field>
+          </form-field> -->
         </div>
         <div class="col-md-4">
           <form-field

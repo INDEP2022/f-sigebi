@@ -35,9 +35,10 @@ export class CatRelationshipOpinionComponent
   data2: LocalDataSource = new LocalDataSource();
   form: FormGroup = new FormGroup({});
 
-  affairTypeList: IAffairType[] = [];
+  affairTypesList: IAffairType[] = [];
+  rAsuntDicList: IRAsuntDic[] = [];
   affairTypes: IAffairType;
-  rAsuntDic: IRAsuntDic;
+
   id: IAffair;
 
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -84,11 +85,11 @@ export class CatRelationshipOpinionComponent
       id: [null, [Validators.required]],
       description: [{ value: null, disabled: true }],
     });
-    this.form = this.fb.group({
-      code: [null, [Validators.required]],
-      dictum: [null, [Validators.required]],
-      flyerType: [null, [Validators.required]],
-    });
+    // this.form = this.fb.group({
+    //   code: [null, [Validators.required]],
+    //   dictum: [null, [Validators.required]],
+    //   flyerType: [null, [Validators.required]],
+    // });
   }
 
   //Llenar inputs con id de affair
@@ -118,6 +119,9 @@ export class CatRelationshipOpinionComponent
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getAffairTypes(id));
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getRAsuntDic());
   }
 
   getAffairTypes(id: string | number): void {
@@ -136,52 +140,19 @@ export class CatRelationshipOpinionComponent
   }
 
   //Traer datos de r asunt tipo al seleccionar fila de la tabla tipo de asunto
-  /*rowsSelected(event: any) {
-    this.totalItems2 = 0;
-    this.affairTypeList = [];
-    this.affairs = event.data;
-    this.params2
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getAffairType(this.affairs));
-  }*/
-
-  sendIdsRAsuntDic(): void {
-    let _code = this.form.controls['code'].value;
-    let _dictum = this.form.controls['dictum'].value;
-    let _flyerType = this.form.controls['flyerType'].value;
-    this.loading = true;
-    if (_code !== null) {
-      console.log(_code);
-      console.log(_dictum);
-      console.log(_flyerType);
-      this.getRAsuntDicByIds();
-    }
-  }
-
-  getRAsuntDicByIds(): void {
-    this.params2
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getRAsuntDic());
-  }
 
   getRAsuntDic() {
+    let _id = this.affairForm.controls['id'].value;
     this.loading = true;
-    this.RAsuntDicService.getByIds(this.form.value).subscribe({
-      next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
-    });
-    this.RAsuntDicService.getByIds(this.form.value).subscribe(
-      response => {
-        //console.log(response);
-        let data2 = response.data.map((item: IRAsuntDic) => {
-          return item;
-        });
-        this.data.load(data2);
+    this.RAsuntDicService.getByCode(_id).subscribe({
+      next: response => {
+        console.log(response);
+        this.rAsuntDicList = response.data;
         this.totalItems2 = response.count;
         this.loading = false;
       },
-      error => (this.loading = false)
-    );
+      error: error => (this.loading = false),
+    });
   }
 
   handleSuccess() {

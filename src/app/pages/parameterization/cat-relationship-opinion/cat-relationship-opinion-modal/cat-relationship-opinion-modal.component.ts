@@ -2,7 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+//Models
+import { IDictamen } from 'src/app/core/models/catalogs/dictamen.model';
 import { IRAsuntDic } from 'src/app/core/models/catalogs/r-asunt-dic.model';
+//Services
 
 @Component({
   selector: 'app-cat-relationship-opinion-modal',
@@ -15,6 +18,8 @@ export class CatRelationshipOpinionModalComponent implements OnInit {
 
   title: string = 'Dictamen';
   edit: boolean = false;
+
+  id: IDictamen;
 
   constructor(private modalRef: BsModalRef, private fb: FormBuilder) {}
 
@@ -34,8 +39,10 @@ export class CatRelationshipOpinionModalComponent implements OnInit {
       e: [null, [Validators.required]],
     });
     if (this.rAsuntDic != null) {
+      this.id = this.rAsuntDic.dictum as unknown as IDictamen;
       this.edit = true;
       this.rAsuntDicForm.patchValue(this.rAsuntDic);
+      this.rAsuntDicForm.controls['dictum'].setValue(this.id.id);
     }
   }
 

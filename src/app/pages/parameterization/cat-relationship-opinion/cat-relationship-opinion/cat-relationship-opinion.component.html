@@ -58,38 +58,6 @@
         </div>
       </div>
     </div>
-
-    <form class="form-material pt-5" [formGroup]="form">
-      <div class="row pt-5">
-        <div class="col-md-2">
-          <form-field label="ID" [control]="form.get('code')">
-            <input type="text" class="form-control" formControlName="code" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field label="Dictamen" [control]="form.get('dictum')">
-            <input type="text" class="form-control" formControlName="dictum" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field label="Tipo volante" [control]="form.get('flyerType')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="flyerType" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <button
-            class="btn btn-sm btn-primary active"
-            [disabled]="!form.valid"
-            (click)="sendIdsRAsuntDic()">
-            Buscar
-          </button>
-        </div>
-      </div>
-    </form>
-
     <div class="row">
       <div class="ch-content">
         <h5 class="title">Dictamen</h5>
@@ -108,7 +76,7 @@
             <ng2-smart-table
               [attr.class]="'table-bordered'"
               [settings]="settings2"
-              [source]="data2"
+              [source]="rAsuntDicList"
               (edit)="openForm($event.data)">
             </ng2-smart-table>
           </div>
