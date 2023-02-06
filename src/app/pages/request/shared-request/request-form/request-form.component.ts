@@ -196,7 +196,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
   }
 
   openModalSelectUser() {
-    console.log(this.requestForm.value);
     let config: ModalOptions = {
       initialState: {
         request: this.requestForm.value,

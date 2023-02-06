@@ -132,7 +132,7 @@ export enum ENDPOINT_LINKS {
   BankConcepts = 'concept-movis-bank',
   NumeraryCategories = 'numerary-categories',
   //request
-  request = 'request/request',
+  request = 'request',
   //expedient
   Expedient = 'expedient',
   //goodsQuery//

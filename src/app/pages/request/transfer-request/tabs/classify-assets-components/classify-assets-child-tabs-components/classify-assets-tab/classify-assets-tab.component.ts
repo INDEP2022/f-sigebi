@@ -15,6 +15,7 @@ import { FractionService } from 'src/app/core/services/catalogs/fraction.service
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { RequestHelperService } from 'src/app/pages/request/request-helper-services/request-helper.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { AdvancedSearchComponent } from '../advanced-search/advanced-search.component';
 
@@ -31,6 +32,7 @@ export class ClassifyAssetsTabComponent
   @Input() assetsId: any = '';
   @Input() typeDoc: string = '';
   @Input() goodObject: ModelForm<any> = null;
+  @Input() idDomicilie: number = null;
   classiGoodsForm: ModelForm<IGood>;
   private bsModalRef: BsModalRef;
   private advSearch: boolean = false;
@@ -53,7 +55,8 @@ export class ClassifyAssetsTabComponent
     private goodsQueryService: GoodsQueryService,
     private fractionService: FractionService,
     private goodService: GoodService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private requestHelperService: RequestHelperService
   ) {
     super();
   }
@@ -72,6 +75,11 @@ export class ClassifyAssetsTabComponent
       if (changes['assetsId'].currentValue != '') {
         //cargar la clasificacion de bienes segun el id que se envio
       }
+    }
+
+    if (changes['idDomicilie'].currentValue) {
+      const id = changes['idDomicilie'].currentValue;
+      this.classiGoodsForm.controls['addressId'].setValue(id);
     }
 
     this.good = changes['goodObject'].currentValue;
@@ -163,7 +171,7 @@ export class ClassifyAssetsTabComponent
     this.fractionService.getAll(params).subscribe({
       next: data => {
         this.selectSection = data.data; //= new DefaultSelect(data.data, data.count);
-
+        console.log(this.selectSection);
         if (this.advSearch === true) {
           this.classiGoodsForm.controls['ligieSection'].setValue(
             data.data[0].id
@@ -359,10 +367,10 @@ export class ClassifyAssetsTabComponent
   }
 
   saveRequest(): void {
-    this.isSave = true;
+    //this.isSave = true;
     const goods = this.classiGoodsForm.getRawValue();
     console.log('bienes: ', goods);
-    /*var goodAction =
+    var goodAction =
       goods.goodId === null
         ? this.goodService.create(goods)
         : this.goodService.update(goods.id, goods);
@@ -383,12 +391,15 @@ export class ClassifyAssetsTabComponent
             'Guardado',
             `El registro se guardo exitosamente!`
           );
+          this.classiGoodsForm.controls['id'].setValue(data.id);
+
+          this.refreshTable(true);
         }
       },
       complete: () => {
-        this.isSave = false;
+        //this.isSave = false;
       },
-    });*/
+    });
   }
 
   getReactiveFormActions() {
@@ -535,5 +546,9 @@ export class ClassifyAssetsTabComponent
 
   message(header: any, title: string, body: string) {
     this.onLoadToast(header, title, body);
+  }
+
+  refreshTable(refresh: boolean) {
+    this.requestHelperService.isComponentSaving(refresh);
   }
 }

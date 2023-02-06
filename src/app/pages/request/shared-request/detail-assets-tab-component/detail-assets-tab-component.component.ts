@@ -19,6 +19,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDomicile } from 'src/app/core/models/catalogs/domicile';
 import { IGoodDomicilies } from 'src/app/core/models/good/good.model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { LocalityService } from 'src/app/core/services/catalogs/locality.service';
 import { MunicipalityService } from 'src/app/core/services/catalogs/municipality.service';
@@ -26,10 +27,12 @@ import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { SelectAddressComponent } from '../../transfer-request/tabs/records-of-request-components/records-of-request-child-tabs-components/select-address/select-address.component';
 
 @Component({
@@ -42,7 +45,7 @@ export class DetailAssetsTabComponentComponent
   implements OnInit, OnChanges
 {
   //usado para cargar los adatos de los bienes en el caso de cumplimientos de bienes y clasificacion de bienes
-  @Input() requestObject: any;
+  @Input() requestObject: any; //solicitud
   @Input() detailAssets: ModelForm<any>; // bienes
   @Input() typeDoc: any;
   @Input() isSave: boolean = false;
@@ -51,8 +54,8 @@ export class DetailAssetsTabComponentComponent
   stateOfRepublicName: string = '';
   municipalityId: number = null;
 
-  goodDomicilieForm: ModelForm<IGoodDomicilies>;
-  domicileForm: ModelForm<IDomicile>;
+  goodDomicilieForm: ModelForm<IGoodDomicilies>; // bien del domicilio
+  domicileForm: ModelForm<IDomicile>; //domicilio del bien tranferente
   assetsForm: ModelForm<any>; //borrar
 
   selectSae = new DefaultSelect<any>();
@@ -103,6 +106,9 @@ export class DetailAssetsTabComponentComponent
   localityService = inject(LocalityService);
   goodsQueryService = inject(GoodsQueryService);
   goodDomicilie = inject(GoodDomiciliesService);
+  goodEstateService = inject(RealStateService);
+  requestHelperService = inject(RequestHelperService);
+  authService = inject(AuthService);
 
   isDisabled: boolean = true;
 
@@ -137,8 +143,9 @@ export class DetailAssetsTabComponentComponent
     this.getPhysicalState(new ListParams());
     this.getConcervationState(new ListParams());
     this.getReactiveFormCall();
+    this.isSavingData();
 
-    this.getGoodDomicilieTab();
+    //.getGoodDomicilieTab();
     if (
       this.requestObject != undefined &&
       this.detailAssets.controls['addressId'].value === null
@@ -326,30 +333,35 @@ export class DetailAssetsTabComponentComponent
     }
   }
 
-  getGoodDomicilieTab() {
+  getGoodEstateTab() {
     this.goodDomicilieForm = this.fb.group({
       id: [null],
       description: [null],
       status: [null],
       propertyType: [null],
-      mtsTerrain: [null],
-      mtsConsTerrain: [null],
-      publicWrite: [null],
-      regPubProperty: [null],
-      valorAvaluo: [null],
-      dateAvaluo: [null],
-      certLibAssessment: [null],
-      saveCustody: [null],
-      watchReq: [null],
-      watchLevel: [null],
-      mtsOfiBodega: [null],
-      rooms: [null],
+      surfaceMts: [0, Validators.required],
+      consSurfaceMts: [0, Validators.required],
+      publicDeed: [null],
+      pubRegProperty: [null],
+      appraisalValue: [0, Validators.required],
+      appraisalDate: [null],
+      certLibLien: [null],
+      guardCustody: [null],
+      vigilanceRequired: [null],
+      vigilanceLevel: [null],
+      mtsOfiWarehouse: [null],
+      bedrooms: [null],
       bathroom: [null],
       kitchen: [null],
       diningRoom: [null],
-      room: [null],
-      studyRoom: [null],
-      parkSpace: [null],
+      livingRoom: [null],
+      study: [null],
+      espPark: [null],
+      userCreation: [null],
+      creationDate: [null],
+      addressId: [null],
+      userModification: [null],
+      modificationDate: [null],
     });
   }
   getSae(event: any) {}
@@ -470,23 +482,6 @@ export class DetailAssetsTabComponentComponent
       this.assetsForm.controls['destintSae'].enable();
     } else if (this.typeDoc === 'assets') {
       this.assetsForm.controls['address'].disable();
-
-      /* this.assetsForm.controls['referenceVia2'].disable();
-      this.assetsForm.controls['state'].disable();
-      this.assetsForm.controls['referenceVia3'].disable();
-      this.assetsForm.controls['municipe'].disable();
-      this.assetsForm.controls['cp'].disable();
-      this.assetsForm.controls['longitud'].disable();
-      this.assetsForm.controls['latitud'].disable();
-      this.assetsForm.controls['nameRoute'].disable();
-      this.assetsForm.controls['numExt'].disable();
-      this.assetsForm.controls['originRoute'].disable();
-      this.assetsForm.controls['numInt'].disable();
-      this.assetsForm.controls['routeDestination'].disable();
-      this.assetsForm.controls['referenceVia1'].disable();
-      this.assetsForm.controls['kilometerRoute'].disable();
-      this.assetsForm.controls['description'].disable();
-      this.assetsForm.controls['suburb'].disable(); */
     }
   }
 
@@ -549,7 +544,15 @@ export class DetailAssetsTabComponentComponent
   }
 
   changeDateEvaluoEvent(event: any) {
-    console.log(event);
+    this.bsEvaluoDate =
+      this.bsEvaluoDate !== undefined ? this.bsEvaluoDate : event;
+
+    if (this.bsEvaluoDate) {
+      let date = new Date(this.bsEvaluoDate);
+      this.goodDomicilieForm.controls['appraisalDate'].setValue(
+        date.toISOString()
+      );
+    }
   }
 
   displayTypeTapInformation(typeRelevantId: number) {
@@ -562,7 +565,8 @@ export class DetailAssetsTabComponentComponent
     foodAndDrink: boolean = false; //diverso*/
     switch (typeRelevantId) {
       case 1:
-        this.getGoodDomicilieTab();
+        this.getGoodEstateTab();
+        this.getGoodEstate();
         this.immovablesAssets = true;
         break;
       case 2:
@@ -587,33 +591,105 @@ export class DetailAssetsTabComponentComponent
     }
   }
 
-  save(): void {
-    const goodDomicilie = this.goodDomicilieForm.getRawValue();
+  async save(): Promise<void> {
     const domicilie = this.domicileForm.getRawValue();
+    this.isSave = true;
 
-    /*this.isSave = true;
-    this.goodDomicilie.update(domicilie.id, domicilie).subscribe({
-      next: (data: any) => {
-        if (data.statusCode != null) {
-          this.message(
-            'error',
-            'Error',
-            `El registro de domicilio no se pudo actualizar!\n. ${data.message}`
-          );
-        }
+    if (domicilie.id !== null) {
+      await this.saveDomicilieGood(domicilie);
+    }
 
-        if (data.id != null) {
-          this.message('success', 'Actualizado', `Se actualizo el domicilio!`);
-        }
-        this.isSave = false;
-      },
-    });*/
+    //Se guardar el bien inmueble
+    if (this.immovablesAssets === true) {
+      if (this.domicileForm.controls['id'].value === null) {
+        this.message('info', 'Error', `Se requiere el domicilio del bien`);
+      } else {
+        await this.saveGoodDomicilie();
+      }
+    }
+
+    this.isSave = false;
+  }
+
+  saveDomicilieGood(domicilie: IDomicile) {
+    return new Promise((resolve, reject) => {
+      this.goodDomicilie.update(domicilie.id, domicilie).subscribe({
+        next: (data: any) => {
+          if (data.statusCode != null) {
+            this.message(
+              'error',
+              'Error',
+              `El registro de domicilio del bien no se pudo actualizar!\n. ${data.message}`
+            );
+            reject('No se puedo actualizar el registro del domicilio del bien');
+          }
+
+          if (data.id != null) {
+            this.message(
+              'success',
+              'Actualizado',
+              `Se actualizo el domicilio!`
+            );
+            this.domicileForm.controls['id'].setValue(data.id);
+            resolve('Se actualizo el registro del domicilio del bien');
+          }
+        },
+      });
+    });
+  }
+
+  saveGoodDomicilie() {
+    return new Promise((resolve, reject) => {
+      this.goodDomicilieForm.controls['addressId'].setValue(
+        this.domicileForm.controls['id'].value
+      );
+      this.goodDomicilieForm.controls['creationDate'].setValue(
+        new Date().toISOString()
+      );
+      this.goodDomicilieForm.controls['modificationDate'].setValue(
+        new Date().toISOString()
+      );
+      const username = this.authService.decodeToken().preferred_username;
+      this.goodDomicilieForm.controls['userCreation'].setValue(username);
+      this.goodDomicilieForm.controls['userModification'].setValue(username);
+
+      var domicilie = this.goodDomicilieForm.getRawValue();
+      var action = null;
+      if (domicilie.id === null) {
+        domicilie.id = this.detailAssets.controls['id'].value;
+        action = this.goodEstateService.create(domicilie as IGoodDomicilies);
+      } else {
+        action = this.goodEstateService.update(domicilie.id, domicilie);
+      }
+
+      action.subscribe({
+        next: data => {
+          if (data.statusCode != null) {
+            this.message(
+              'error',
+              'Error',
+              `El registro del bien del domicilio guardar!\n. ${data.message}`
+            );
+            reject('El registro del bien del domicilio guardar!');
+          }
+
+          if (data.id != null) {
+            this.message(
+              'success',
+              'Actualizado',
+              `Se guardo correctamente el bien del domicilio!`
+            );
+
+            resolve('Se guardo correctamente el bien del domicilio!');
+          }
+        },
+      });
+    });
   }
 
   getGoodDomicilie(addressId: number) {
     this.goodDomicilie.getById(addressId).subscribe({
       next: (resp: any) => {
-        console.log(resp);
         var value = resp.data;
         this.getStateOfRepublic(new ListParams(), value.statusKey);
         //this.domicileForm.controls['statusKey'].setValue(value.statusKey);
@@ -667,9 +743,31 @@ export class DetailAssetsTabComponentComponent
     );
   }
 
+  getGoodEstate() {
+    if (this.detailAssets.controls['id'].value !== null) {
+      const id = this.detailAssets.controls['id'].value;
+      this.goodEstateService.getById(id).subscribe({
+        next: resp => {
+          console.log(resp);
+          this.goodDomicilieForm.patchValue(resp.data);
+        },
+      });
+    }
+  }
+
   message(header: any, title: string, body: string) {
     setTimeout(() => {
       this.onLoadToast(header, title, body);
     }, 2000);
+  }
+
+  isSavingData() {
+    this.requestHelperService.currentRefresh.subscribe({
+      next: data => {
+        if (data) {
+          this.save();
+        }
+      },
+    });
   }
 }

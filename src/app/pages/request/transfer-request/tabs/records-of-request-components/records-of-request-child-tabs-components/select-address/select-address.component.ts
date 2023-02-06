@@ -220,7 +220,6 @@ export class SelectAddressComponent extends BasePage implements OnInit {
   }
 
   selectRow(event: any): void {
-    console.log(event);
     this.rowSelected = event.data;
   }
 
@@ -228,8 +227,6 @@ export class SelectAddressComponent extends BasePage implements OnInit {
     //delete this.rowSelected.stateOfRepublicName;
     delete this.rowSelected.municipalityName;
     delete this.rowSelected.localityName;
-
-    console.log(this.rowSelected);
 
     this.event.emit(this.rowSelected as IDomicile);
     this.close();

@@ -1,41 +1,40 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { MsRequestRepository } from 'src/app/common/repository/repositories/ms-request-repository';
-import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
-import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
+import { ENDPOINT_LINKS } from 'src/app/common/constants/endpoints';
+import { HttpService } from 'src/app/common/services/http.service';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
-import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IRequest } from '../../models/requests/request.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class RequestService implements ICrudMethods<IRequest> {
-  private readonly route: string = ENDPOINT_LINKS.request;
-
-  private readonly requestExtRepository = inject(MsRequestRepository);
-
-  constructor(private requestRepository: Repository<IRequest>) {}
+export class RequestService extends HttpService {
+  constructor() {
+    super();
+    this.microservice = ENDPOINT_LINKS.request;
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<IRequest>> {
-    //return this.requestRepository.getAllPaginated(this.route+'find-all', params);
-    return this.requestExtRepository.getAllPaginated(this.route, params);
+    return this.get<IListResponse<IRequest>>(ENDPOINT_LINKS.request, params);
   }
 
-  getById(id: string | number): Observable<IRequest> {
-    return this.requestExtRepository.getRequestById(this.route, id);
+  getById(id: string | number) {
+    const route = `${ENDPOINT_LINKS.request}/${id}`;
+    return this.get<IListResponse<IRequest>>(route);
   }
 
-  create(model: IRequest): Observable<IRequest> {
-    return this.requestRepository.create(this.route, model);
+  create(request: IRequest) {
+    return this.post(ENDPOINT_LINKS.request, request);
   }
 
-  update(id: string | number, model: IRequest): Observable<Object> {
-    return this.requestRepository.update(this.route, id, model);
+  update(id: string | number, request: IRequest) {
+    const route = `${ENDPOINT_LINKS.request}/${id}`;
+    return this.put(route, request);
   }
 
-  remove(id: string | number): Observable<Object> {
-    return this.requestRepository.remove(this.route, id);
+  remove(id: string | number) {
+    const route = `${ENDPOINT_LINKS.request}/${id}`;
+    return this.delete(route);
   }
 }

@@ -17,16 +17,7 @@
       <form [formGroup]="detailAssets" class="form-material">
         <div class="infoAsset">
           <div class="row">
-            <div
-              class="col-md-2"
-              *ngIf="
-                typeDoc === 'classify-assets' ||
-                typeDoc === 'verify-compliance' ||
-                carsAssets === true ||
-                boatAssets === true ||
-                especialMachineryAssets === true ||
-                mineralsAssets === true
-              ">
+            <div class="col-md-2" *ngIf="detailAssets.get('goodId').value">
               <form-field
                 [control]="detailAssets.get('goodId')"
                 label="No&#46; Gesti&oacute;n">
@@ -1082,61 +1073,61 @@
             </div>
             <div class="col-md-2">
               <form-field
-                [control]="goodDomicilieForm.get('mtsTerrain')"
+                [control]="goodDomicilieForm.get('surfaceMts')"
                 label="Mts&#46; de Terreno">
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="mtsTerrain" />
+                  formControlName="surfaceMts" />
               </form-field>
             </div>
           </div>
           <div class="row pt-4">
             <div class="col-md-2">
               <form-field
-                [control]="goodDomicilieForm.get('mtsConsTerrain')"
+                [control]="goodDomicilieForm.get('consSurfaceMts')"
                 label="Mts&#46; Construidos de Terreno">
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="mtsConsTerrain" />
+                  formControlName="consSurfaceMts" />
               </form-field>
             </div>
             <div class="col-md-3">
               <form-field
-                [control]="goodDomicilieForm.get('publicWrite')"
+                [control]="goodDomicilieForm.get('publicDeed')"
                 label="Escritura p&uacute;blica">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="publicWrite" />
+                  formControlName="publicDeed" />
               </form-field>
             </div>
             <div class="col-md-3">
               <form-field
-                [control]="goodDomicilieForm.get('regPubProperty')"
+                [control]="goodDomicilieForm.get('pubRegProperty')"
                 label="Registro Público de Propiedad">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="regPubProperty" />
+                  formControlName="pubRegProperty" />
               </form-field>
             </div>
             <div class="col-md-3">
               <form-field
-                [control]="goodDomicilieForm.get('valorAvaluo')"
+                [control]="goodDomicilieForm.get('appraisalValue')"
                 label="Valor Aval&uacute;o">
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="valorAvaluo" />
+                  formControlName="appraisalValue" />
               </form-field>
             </div>
           </div>
           <div class="row pt-4">
             <div class="col-md-2">
               <form-field
-                [control]="goodDomicilieForm.get('dateAvaluo')"
+                [control]="goodDomicilieForm.get('appraisalDate')"
                 label="Fecha de evaluo">
                 <input
                   type="text"
@@ -1149,64 +1140,64 @@
             </div>
             <div class="col-md-3">
               <form-field
-                [control]="goodDomicilieForm.get('certLibAssessment')"
+                [control]="goodDomicilieForm.get('certLibLien')"
                 label="Certificado de Liberaci&oacute;n de Gravamen">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="certLibAssessment" />
+                  formControlName="certLibLien" />
               </form-field>
             </div>
             <div class="col-md-3">
               <form-field
-                [control]="goodDomicilieForm.get('saveCustody')"
+                [control]="goodDomicilieForm.get('guardCustody')"
                 label="Guarda Custodia">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="saveCustody" />
+                  formControlName="guardCustody" />
               </form-field>
             </div>
             <div class="col-md-3">
               <form-field
-                [control]="goodDomicilieForm.get('watchReq')"
+                [control]="goodDomicilieForm.get('vigilanceRequired')"
                 label="Requiere Vigilancia">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="watchReq" />
+                  formControlName="vigilanceRequired" />
               </form-field>
             </div>
           </div>
           <div class="row pt-4">
             <div class="col-md-3">
               <form-field
-                [control]="goodDomicilieForm.get('watchLevel')"
+                [control]="goodDomicilieForm.get('vigilanceLevel')"
                 label="Nivel de Vigilancia">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="watchLevel" />
+                  formControlName="vigilanceLevel" />
               </form-field>
             </div>
             <div class="col-md-3">
               <form-field
-                [control]="goodDomicilieForm.get('mtsOfiBodega')"
+                [control]="goodDomicilieForm.get('mtsOfiWarehouse')"
                 label="Metros de Bodega">
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="mtsOfiBodega" />
+                  formControlName="mtsOfiWarehouse" />
               </form-field>
             </div>
             <div class="col-md-3">
               <form-field
-                [control]="goodDomicilieForm.get('rooms')"
+                [control]="goodDomicilieForm.get('bedrooms')"
                 label="Habitaciones">
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="rooms" />
+                  formControlName="bedrooms" />
               </form-field>
             </div>
             <div class="col-md-3">
@@ -1244,22 +1235,22 @@
             </div>
             <div class="col-md-3">
               <form-field
-                [control]="goodDomicilieForm.get('room')"
+                [control]="goodDomicilieForm.get('livingRoom')"
                 label="Sala">
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="room" />
+                  formControlName="livingRoom" />
               </form-field>
             </div>
             <div class="col-md-3">
               <form-field
-                [control]="goodDomicilieForm.get('studyRoom')"
+                [control]="goodDomicilieForm.get('study')"
                 label="Estudio">
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="studyRoom" />
+                  formControlName="study" />
               </form-field>
             </div>
           </div>
@@ -1267,12 +1258,12 @@
           <div class="row pt-4">
             <div class="col-md-2">
               <form-field
-                [control]="goodDomicilieForm.get('parkSpace')"
+                [control]="goodDomicilieForm.get('espPark')"
                 label="Espacio de Estacionamiento">
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="parkSpace" />
+                  formControlName="espPark" />
               </form-field>
             </div>
           </div>

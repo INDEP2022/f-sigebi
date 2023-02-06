@@ -9,6 +9,7 @@ import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { RequestHelperService } from 'src/app/pages/request/request-helper-services/request-helper.service';
 import { MenajeComponent } from '../records-of-request-child-tabs-components/menaje/menaje.component';
 import { SelectAddressComponent } from '../records-of-request-child-tabs-components/select-address/select-address.component';
 import { ASSETS_COLUMNS } from './assests-columns';
@@ -34,13 +35,14 @@ var defaultData = [
   styleUrls: ['./assets.component.scss'],
 })
 export class AssetsComponent extends BasePage implements OnInit {
-  @Input() requestObject: any;
-  goodObject: ModelForm<any>;
+  @Input() requestObject: any; //solicitudes
+  goodObject: ModelForm<any>; //bienes
   bsModalRef: BsModalRef;
   params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: any[] = [];
   createNewAsset: boolean = false;
   btnCreate: string = 'Crear Nuevo';
+  idDomicilie: number = null;
   //typeDoc: string = '';
 
   constructor(
@@ -48,7 +50,8 @@ export class AssetsComponent extends BasePage implements OnInit {
     private modalServise: BsModalService,
     private goodService: GoodService,
     private typeRelevantSevice: TypeRelevantService,
-    private genericService: GenericService
+    private genericService: GenericService,
+    private requestHelperService: RequestHelperService
   ) {
     super();
   }
@@ -62,6 +65,13 @@ export class AssetsComponent extends BasePage implements OnInit {
     };
     //this.settings.actions.delete = true;
     // this.settings.actions.position = 'left';
+
+    //oye los camibios de detail-assets-tab para refrescar la tabla
+    this.refreshTable();
+    this.paginatedData();
+  }
+
+  paginatedData() {
     var newParam = new ListParams();
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       newParam.page = data.inicio;
@@ -210,6 +220,7 @@ export class AssetsComponent extends BasePage implements OnInit {
   openSelectAddressModal() {
     let config: ModalOptions = {
       initialState: {
+        request: this.requestObject,
         address: '',
         onlyOrigin: true,
         callback: (next: boolean) => {
@@ -223,7 +234,7 @@ export class AssetsComponent extends BasePage implements OnInit {
 
     this.bsModalRef.content.event.subscribe((res: any) => {
       //cargarlos en el formulario
-      console.log(res);
+      this.idDomicilie = res.id;
 
       //this.assetsForm.controls['address'].get('longitud').enable();
       //this.requestForm.get('receiUser').patchValue(res.user);
@@ -245,9 +256,25 @@ export class AssetsComponent extends BasePage implements OnInit {
 
     this.bsModalRef.content.event.subscribe((res: any) => {
       //ver si es necesario recivir los datos desde menaje
+      this.idDomicilie = res.id;
       console.log(res);
     });
   }
 
   save() {}
+
+  refreshTable() {
+    this.requestHelperService.currentRefresh.subscribe({
+      next: data => {
+        if (data) {
+          setTimeout(() => {
+            this.goodObject = null;
+            this.createNewAsset = false;
+            this.btnCreate = 'Crear Nuevo';
+            this.paginatedData();
+          }, 1000);
+        }
+      },
+    });
+  }
 }
