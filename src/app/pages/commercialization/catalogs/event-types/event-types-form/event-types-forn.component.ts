@@ -2,8 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { NUMBERS_PATTERN } from '../../../../../../../../front-sigebi-develop/src/app/@components/constants';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { IComerTpEvent } from '../../../../../core/models/ms-event/event-type.model';
 import { ComerTpEventosService } from '../../../../../core/services/ms-event/comer-tpeventos.service';
 
