@@ -1,21 +1,21 @@
 export const COLUMNS = {
-  id_tpevento: {
+  id: {
     title: 'Id',
     sort: false,
   },
-  descripcion: {
+  description: {
     title: 'Descripción',
     sort: false,
   },
-  desc_recibo: {
+  descReceipt: {
     title: 'Descripción Reportes',
     sort: false,
   },
-  id_tipo_disp: {
+  typeDispId: {
     title: 'Tipo de Disperción',
     sort: false,
   },
-  id_tipo_fallo: {
+  typeFailedpId: {
     title: 'Tipo de Fallo',
     sort: false,
   },

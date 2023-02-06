@@ -237,17 +237,25 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
   }
 
   delete(provider: IComerProvider): void {
-    this.loading = true;
-    this.providerService.remove(provider.providerId).subscribe({
-      next: data => {
-        this.loading = false;
-        this.showSuccess();
-        this.getData();
-      },
-      error: error => {
-        this.loading = false;
-        this.showError(error);
-      },
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.loading = true;
+        this.providerService.remove(provider.providerId).subscribe({
+          next: data => {
+            this.loading = false;
+            this.showSuccess();
+            this.getData();
+          },
+          error: error => {
+            this.loading = false;
+            this.showError();
+          },
+        });
+      }
     });
   }
 
