@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 //models
 import { ITdescAtrib } from 'src/app/core/models/ms-parametergood/tdescatrib-model';
 //Services
-import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dynamic-tables.service';
 import { TdesAtribService } from 'src/app/core/services/ms-parametergood/tdescatrib.service';
-import { BasePage } from 'src/app/core/shared/base-page';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
   selector: 'app-attributes-reg-logical-tables-modal',
@@ -23,10 +26,13 @@ export class AttributesRegLogicalTablesModalComponent
   title: string = 'Registro de atributos para tablas lógicas';
   edit: boolean = false;
 
+  tables = new DefaultSelect();
+
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
-    private tdesAtribService: TdesAtribService
+    private tdesAtribService: TdesAtribService,
+    private dynamicTablesService: DynamicTablesService
   ) {
     super();
   }
@@ -61,6 +67,10 @@ export class AttributesRegLogicalTablesModalComponent
         null,
         [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
       ],
+      registerNumber: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
     });
     if (this.tdescAtrib != null) {
       this.edit = true;
@@ -72,33 +82,38 @@ export class AttributesRegLogicalTablesModalComponent
     this.modalRef.hide();
   }
 
-  // confirm() {
-  //   this.update() ;
-  // }
+  confirm() {
+    this.edit ? this.update() : this.create();
+  }
 
-  // create() {
-  //   this.loading = true;
-  //   this.tdesAtribService.create(this.tdescAtribForm.value).subscribe({
-  //     next: data => this.handleSuccess(),
-  //     error: error => (this.loading = false),
-  //   });
-  // }
+  create() {
+    this.loading = true;
+    this.tdesAtribService.create(this.tdescAtribForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
+  }
 
-  // update() {
-  //   this.loading = true;
-  //   this.tdesAtribService
-  //     .update(this.tdescAtrib.idNmTable, this.tdescAtribForm.value)
-  //     .subscribe({
-  //       next: data => this.handleSuccess(),
-  //       error: error => (this.loading = false),
-  //     });
-  // }
+  update() {
+    this.loading = true;
+    this.tdesAtribService.update(this.tdescAtribForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
+  }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);
     this.modalRef.hide();
+  }
+
+  //Método para select dinámico y escoger id disponibles de tablas
+  getTables(params: ListParams) {
+    this.dynamicTablesService.getAll(params).subscribe({
+      next: data => (this.tables = new DefaultSelect(data.data, data.count)),
+    });
   }
 }

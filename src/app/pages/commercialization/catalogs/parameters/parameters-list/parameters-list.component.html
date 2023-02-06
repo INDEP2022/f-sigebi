@@ -39,7 +39,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="data"
+            [source]="parametersD"
             (edit)="openForm($event.data)"
             (delete)="delete($event.data)"
             (userRowSelect)="selectRow($event.data)">

@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ParameterModService } from 'src/app/core/services/ms-parametercomer/parameter.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
@@ -18,7 +19,11 @@ export class ParametersFormComponent extends BasePage implements OnInit {
 
   @Output() refresh = new EventEmitter<true>();
 
-  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
+  constructor(
+    private fb: FormBuilder,
+    private modalRef: BsModalRef,
+    private parameterModService: ParameterModService
+  ) {
     super();
   }
 
@@ -28,7 +33,7 @@ export class ParametersFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      parameter: [
+      idParam: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
@@ -36,9 +41,12 @@ export class ParametersFormComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      value: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      direction: [null, [Validators.required]],
-      eventType: [null, [Validators.required]],
+      idValue: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      idDirection: [null, [Validators.required]],
+      eventTypeId: [null, [Validators.required]],
       eventDescription: [null],
     });
 
@@ -60,10 +68,10 @@ export class ParametersFormComponent extends BasePage implements OnInit {
   create() {
     this.loading = true;
     this.handleSuccess();
-    /*this.bankService.create(this.form.value).subscribe(
+    this.parameterModService.create(this.form.value).subscribe(
       data => this.handleSuccess(),
       error => (this.loading = false)
-    );*/
+    );
   }
 
   handleSuccess() {
@@ -75,9 +83,11 @@ export class ParametersFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.handleSuccess();
-    /*this.bankService.update(this.bank.bankCode, this.form.value).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
-    );*/
+    this.parameterModService
+      .update(this.parameter.idParam, this.form.value)
+      .subscribe(
+        data => this.handleSuccess(),
+        error => (this.loading = false)
+      );
   }
 }

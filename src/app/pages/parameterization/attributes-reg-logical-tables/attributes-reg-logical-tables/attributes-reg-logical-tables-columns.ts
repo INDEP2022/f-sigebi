@@ -1,12 +1,13 @@
 export const ATT_REG_LOG_TAB_COLUMNS = {
-  keyAtrib: {
-    title: 'Tipo de tabla',
+  idNmTable: {
+    title: 'No. Tabla',
     sort: false,
   },
-  idNmTable: {
+  keyAtrib: {
     title: 'No. Atributo',
     sort: false,
   },
+
   descriptionAtrib: {
     title: 'Descripción',
     sort: false,

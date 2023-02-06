@@ -7,10 +7,10 @@ export interface IComerClients {
   city: string;
   colony: string;
   delegation: string;
-  zipCode: number;
+  zipCode: number | string;
   country: string;
   fax: string;
-  phone: number;
+  phone: string;
   mailWeb: string;
   state: string;
   curp: string;
