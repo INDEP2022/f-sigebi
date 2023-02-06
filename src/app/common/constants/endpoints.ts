@@ -67,7 +67,7 @@ export enum ENDPOINT_LINKS {
   OriginCisi = 'catalog/origin-cisi',
   Origin = 'catalog/origin',
   Paragraph = 'catalog/cat-paragraphs',
-  PaymentConcept = 'catalog/payments-concept',
+  PaymentConcept = 'payments-concept',
   Penalty = 'catalog/penalty',
   Person = 'catalog/person',
   Proeficient = 'catalog/proficient',

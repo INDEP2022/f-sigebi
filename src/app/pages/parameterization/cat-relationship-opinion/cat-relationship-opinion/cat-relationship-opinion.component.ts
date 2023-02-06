@@ -1,13 +1,25 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { AFFAIR_COLUMNS } from './relationship-opinion-columns';
+import { OpinionsListComponent } from 'src/app/pages/catalogs/opinions/opinions-list/opinions-list.component';
+import { CatRelationshipOpinionModalComponent } from '../cat-relationship-opinion-modal/cat-relationship-opinion-modal.component';
+import {
+  AFFAIR_TYPE_COLUMNS,
+  DICTA_COLUMNS,
+} from './relationship-opinion-columns';
 //models
+import { IAffairType } from 'src/app/core/models/catalogs/affair-type-model';
 import { IAffair } from 'src/app/core/models/catalogs/affair.model';
+import { IRAsuntDic } from 'src/app/core/models/catalogs/r-asunt-dic.model';
 //Services
+import { AffairTypeService } from 'src/app/core/services/affair/affair-type.service';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
+import { RAsuntDicService } from 'src/app/core/services/catalogs/r-asunt-dic.service';
 
 @Component({
   selector: 'app-cat-relationship-opinion',
@@ -18,172 +30,160 @@ export class CatRelationshipOpinionComponent
   extends BasePage
   implements OnInit
 {
+  affairForm: ModelForm<IAffair>;
+  data: LocalDataSource = new LocalDataSource();
+  data2: LocalDataSource = new LocalDataSource();
   form: FormGroup = new FormGroup({});
+
+  affairTypesList: IAffairType[] = [];
+  rAsuntDicList: IRAsuntDic[] = [];
+  affairTypes: IAffairType;
+
+  id: IAffair;
+
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-  // selectedAffair: any = null;
-  // affairItems = new DefaultSelect();
 
-  affair: IAffair[] = [];
-  // @Output() refresh = new EventEmitter<true>();
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems2: number = 0;
 
-  constructor(private fb: FormBuilder, private affairService: AffairService) {
+  settings2;
+
+  dataRAsuntDic: LocalDataSource = new LocalDataSource();
+
+  constructor(
+    private fb: FormBuilder,
+    private affairService: AffairService,
+    private affairTypeService: AffairTypeService,
+    private modalService: BsModalService,
+    private RAsuntDicService: RAsuntDicService
+  ) {
     super();
     this.settings = {
+      ...this.settings,
+      actions: false,
+      columns: { ...AFFAIR_TYPE_COLUMNS },
+    };
+    this.settings2 = {
       ...this.settings,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: true,
+        delete: false,
         position: 'right',
       },
-      columns: { ...AFFAIR_COLUMNS },
+      columns: { ...DICTA_COLUMNS },
     };
   }
 
   ngOnInit(): void {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getAffair());
+    this.prepareForm();
   }
 
-  getAffair() {
+  private prepareForm() {
+    this.affairForm = this.fb.group({
+      id: [null, [Validators.required]],
+      description: [{ value: null, disabled: true }],
+    });
+    // this.form = this.fb.group({
+    //   code: [null, [Validators.required]],
+    //   dictum: [null, [Validators.required]],
+    //   flyerType: [null, [Validators.required]],
+    // });
+  }
+
+  //Llenar inputs con id de affair
+  getAffairById(): void {
+    let _id = this.affairForm.controls['id'].value;
     this.loading = true;
-    this.affairService.getAll(this.params.getValue()).subscribe({
-      next: response => {
-        this.affair = response.data;
+    this.affairService.getById(_id).subscribe(
+      response => {
+        //TODO: Validate Response
+        if (response !== null) {
+          this.affairForm.patchValue(response);
+          this.affairForm.updateValueAndValidity();
+          this.getTypesByAffairId(response.id);
+        } else {
+          //TODO: CHECK MESSAGE
+          this.alert('info', 'No se encontraron registros', '');
+        }
+
+        this.loading = false;
+      },
+      error => (this.loading = false)
+    );
+  }
+
+  //Traer datos a la tabla tipo de asuntos con id de asunto
+  getTypesByAffairId(id: string | number): void {
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getAffairTypes(id));
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getRAsuntDic());
+  }
+
+  getAffairTypes(id: string | number): void {
+    this.affairTypeService.getByAffair(id, this.params.getValue()).subscribe(
+      response => {
+        //console.log(response);
+        let data = response.data.map((item: IAffairType) => {
+          return item;
+        });
+        this.data.load(data);
         this.totalItems = response.count;
+        this.loading = false;
+      },
+      error => (this.loading = false)
+    );
+  }
+
+  //Traer datos de r asunt tipo al seleccionar fila de la tabla tipo de asunto
+
+  getRAsuntDic() {
+    let _id = this.affairForm.controls['id'].value;
+    this.loading = true;
+    this.RAsuntDicService.getByCode(_id).subscribe({
+      next: response => {
+        console.log(response);
+        this.rAsuntDicList = response.data;
+        this.totalItems2 = response.count;
         this.loading = false;
       },
       error: error => (this.loading = false),
     });
   }
 
-  // ngOnInit(): void {
-  //   this.prepareForm();
-  //   this.getAffair({ inicio: 1, text: '' });
-  //   this.getPagination();
-  // }
+  handleSuccess() {
+    const message: string = 'encontrado';
+    this.onLoadToast('success', this.form.value, `${message} Correctamente`);
+    this.loading = false;
+  }
 
-  // private prepareForm() {
-  //   this.form = this.fb.group({
-  //     idAffair: [null, [Validators.required]],
-  //     good: [null, [Validators.required]],
-  //   });
-  // }
+  openForm(rAsuntDic?: IRAsuntDic) {
+    console.log(rAsuntDic);
+    let affairType = this.affairTypes;
+    let config: ModalOptions = {
+      initialState: {
+        rAsuntDic,
+        affairType,
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(CatRelationshipOpinionModalComponent, config);
+  }
 
-  // getPagination() {
-  //   this.columns = this.data2;
-  //   this.totalItems = this.columns.length;
-  // }
-
-  // data: any[] = [
-  //   {
-  //     id: 'PUESTA A DISPOSICIÓN',
-  //     type: 'Tipo de volante 01',
-  //     good: true,
-  //     user: true,
-  //   },
-  //   {
-  //     id: 'DEVOLUCIÓN DE BIENES ASEGURADOS',
-  //     type: 'Tipo de volante 02',
-  //     good: true,
-  //     user: true,
-  //   },
-  //   {
-  //     id: 'AMPARO CONTRA EL SAE',
-  //     type: 'Tipo de volante 03',
-  //     good: true,
-  //     user: true,
-  //   },
-  // ];
-
-  // data2 = [
-  //   {
-  //     idD: 10,
-  //     name: 'DICTAMEN 01',
-  //     d: false,
-  //     b: true,
-  //     u: true,
-  //     i: true,
-  //     e: false,
-  //   },
-  //   {
-  //     idD: 20,
-  //     name: 'DICTAMEN 02',
-  //     d: true,
-  //     b: true,
-  //     u: false,
-  //     i: true,
-  //     e: false,
-  //   },
-  //   {
-  //     idD: 30,
-  //     name: 'DICTAMEN 03',
-  //     d: false,
-  //     b: false,
-  //     u: true,
-  //     i: true,
-  //     e: false,
-  //   },
-  //   {
-  //     idD: 40,
-  //     name: 'DICTAMEN 04',
-  //     d: false,
-  //     b: true,
-  //     u: false,
-  //     i: true,
-  //     e: true,
-  //   },
-  // ];
-
-  // getAffair(params: ListParams) {
-  //   if (params.text == '') {
-  //     this.affairItems = new DefaultSelect(this.data, 3);
-  //   } else {
-  //     const id = parseInt(params.text);
-  //     const item = [this.data.filter((i: any) => i.id == id)];
-  //     this.affairItems = new DefaultSelect(item[0], 1);
-  //   }
-  // }
-
-  // selectAffair(event: any) {
-  //   this.selectedAffair = event;
-  // }
-
-  // onSaveConfirm(event: any) {
-  //   event.confirm.resolve();
-  //   this.onLoadToast('success', 'Elemento Actualizado', '');
-  // }
-
-  // onAddConfirm(event: any) {
-  //   event.confirm.resolve();
-  //   this.onLoadToast('success', 'Elemento Creado', '');
-  // }
-
-  // onDeleteConfirm(event: any) {
-  //   event.confirm.resolve();
-  //   this.onLoadToast('success', 'Elemento Eliminado', '');
-  // }
-
-  // create() {
-  //   this.data1.getElements().then((data: any) => {
-  //     this.loading = true;
-  //     this.handleSuccess();
-  //   });
-  // }
-
-  // confirm() {
-  //   this.edit ? this.update() : this.create();
-  // }
-
-  // handleSuccess() {
-  //   this.loading = false;
-  //   this.refresh.emit(true);
-  // }
-
-  // update() {
-  //   this.loading = true;
-  //   this.handleSuccess();
-  // }
+  openDictum() {
+    let config: ModalOptions = {
+      initialState: {
+        callback: (next: boolean) => {},
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(OpinionsListComponent, config);
+  }
 }

@@ -10,6 +10,7 @@
         <div class="col-md-3">
           <form-field [control]="form.get('type')">
             <ngx-select
+              [searchOnInit]="true"
               (fetchItems)="getTypes($event)"
               [data]="types"
               [form]="form"
@@ -24,6 +25,7 @@
         <div class="col-md-3">
           <form-field [control]="form.get('subtype')">
             <ngx-select
+              [searchOnInit]="true"
               (fetchItems)="getSubtypes($event)"
               [data]="subtypes"
               [form]="form"
@@ -38,6 +40,7 @@
         <div class="col-md-3">
           <form-field [control]="form.get('ssubtype')">
             <ngx-select
+              [searchOnInit]="true"
               (fetchItems)="getSsubtypes($event)"
               [data]="ssubtypes"
               [form]="form"
@@ -52,6 +55,7 @@
         <div class="col-md-3">
           <form-field [control]="form.get('sssubtype')">
             <ngx-select
+              [searchOnInit]="true"
               (fetchItems)="getSssubtypes($event)"
               [data]="sssubtypes"
               [form]="form"
