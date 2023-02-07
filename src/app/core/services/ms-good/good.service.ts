@@ -22,7 +22,7 @@ export class GoodService extends HttpService {
 
   getById(id: string | number) {
     const route = `${GoodEndpoints.Good}/${id}`;
-    return this.get<IListResponse<IGood>>(route);
+    return this.get<IGood>(route);
   }
 
   create(good: IGood) {
@@ -71,5 +71,9 @@ export class GoodService extends HttpService {
   ): Observable<IListResponse<IGood>> {
     const route = `${GoodEndpoints.Good}?filter.fileNumber=$eq:${expedient}&filter.status=$eq:${status}`;
     return this.get<IListResponse<IGood>>(route, params);
+  }
+  getStatusByGood(idGood: string | number): Observable<any> {
+    const route = `${GoodEndpoints.StatusAndDesc}/${idGood}`;
+    return this.get<any>(route);
   }
 }

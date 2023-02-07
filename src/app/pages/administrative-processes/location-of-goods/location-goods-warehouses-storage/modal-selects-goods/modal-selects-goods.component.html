@@ -1,56 +1,91 @@
-<app-card [header]="true">
-  <div class="ch-content" header>
-    <h5 class="title">Selección multiple de Bienes</h5>
+<app-modal>
+  <div header class="d-flex justify-content-between">
+    <div><h5 class="modal-title">SELECCIÓN MULTIPLE DE BIENES</h5></div>
   </div>
   <div body>
     <div class="row">
-      <div class="col-md-10 col-sm-12 col-xs-12">
+      <div class="col-md-12 col-sm-12 col-xs-12">
         <ng2-smart-table
           [attr.class]="'table-bordered'"
           [settings]="settings"
-          [source]="data">
+          [source]="goods">
         </ng2-smart-table>
         <app-pagination [params]="params" [totalItems]="totalItems">
         </app-pagination>
       </div>
-      <div class="col-md-2 col-sm-12 col-xs-12">
-        <div class="row">
-          <div class="col-md-full col-sm-12 col-xs-12 mt-3">
-            <button class="btn btn-success btn-sm active">Aceptar</button>
-          </div>
-          <div class="col-md-full col-sm-12 col-xs-12 mt-3">
-            <button class="btn btn-primary btn-sm active">Cancelar</button>
-          </div>
-          <div class="col-md-full col-sm-12 col-xs-12 mt-3">
-            <button class="btn btn-success btn-sm active">+</button>
-          </div>
-          <div class="col-md-full col-sm-12 col-xs-12 mt-3">
-            <button class="btn btn-danger btn-sm active">-</button>
-          </div>
-        </div>
+    </div>
+    <div class="row" *ngIf="goodsNotChange.length > 0">
+      <p>
+        Los bienes N° <strong>{{ goodsNotChange }}</strong> no pueden estar en
+        un almacen
+      </p>
+    </div>
+    <div class="row">
+      <div class="col-md-3 col-sm-12 col-xs-12 mt-3">
+        <button class="btn btn-success btn-sm active">Aceptar</button>
+      </div>
+      <div class="col-md-3 col-sm-12 col-xs-12 mt-3">
+        <button class="btn btn-primary btn-sm active">Cancelar</button>
+      </div>
+      <div class="col-md-1 col-sm-12 col-xs-12 mt-3">
+        <button class="btn btn-success btn-sm active">+</button>
+      </div>
+      <div class="col-md-1 col-sm-12 col-xs-12 mt-3">
+        <button class="btn btn-danger btn-sm active">-</button>
       </div>
     </div>
     <hr />
     <div class="row">
       <div class="col-md-4 col-sm-12 col-xs-12 mt-3">
-        <form-radio label="Almacén">
-          <input type="radio" value="cat" />
-        </form-radio>
-        <form-radio label="Bóveda">
-          <input type="radio" value="boveda" />
-        </form-radio>
-        <form-radio label="Nulo">
-          <input type="radio" [value]="null" />
-        </form-radio>
+        <form [formGroup]="form" class="form-material">
+          <form-radio label="Almacén">
+            <input type="radio" formControlName="radio" value="A" />
+          </form-radio>
+          <form-radio label="Bóveda">
+            <input type="radio" formControlName="radio" value="B" />
+          </form-radio>
+          <form-radio label="Nulo">
+            <input type="radio" formControlName="radio" [value]="null" />
+          </form-radio>
+        </form>
       </div>
-      <div class="col-md-4 col-sm-12 col-xs-12 mt-5">
-        <button class="btn btn-info btn-sm active">Asignar Ubicación</button>
-      </div>
-      <div class="col-md-4 col-sm-12 col-xs-12 mt-5">
-        <button class="btn btn-primary btn-sm active" (click)="returnModal()">
-          Regresar
-        </button>
+      <div class="col-md-8 col-sm-12 col-xs-12">
+        <form
+          [formGroup]="form"
+          class="form-material"
+          *ngIf="radio.value != null">
+          <div class="row" *ngIf="radio.value === 'A'">
+            <app-warehouse-shared
+              [form]="form"
+              [showWarehouseType]="false"></app-warehouse-shared>
+          </div>
+          <div class="row" *ngIf="radio.value === 'B'">
+            <app-safe-shared [form]="form"></app-safe-shared>
+          </div>
+        </form>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button
+                class="btn btn-info btn-sm active"
+                (click)="asigLocation()">
+                Asignar Ubicación
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button
+                class="btn btn-primary btn-sm active"
+                (click)="returnModal()">
+                Regresar
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</app-card>
+</app-modal>

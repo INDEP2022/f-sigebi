@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Ubicacion de bienes en almacenes y bobedas</h5>
+    <h5 class="title">Ubicacion de bienes en almacenes y bóvedas</h5>
   </div>
   <div body>
     <form [formGroup]="form" class="form-material">
@@ -45,15 +45,15 @@
             <input
               type="radio"
               formControlName="radio"
-              value="cat"
-              (change)="onChangeType('almacen')" />
+              value="A"
+              (change)="onChangeType('A')" />
           </form-radio>
           <form-radio label="Bóveda">
             <input
               type="radio"
               formControlName="radio"
-              value="boveda"
-              (change)="onChangeType('boveda')" />
+              value="B"
+              (change)="onChangeType('B')" />
           </form-radio>
           <form-radio label="Nulo">
             <input
@@ -66,24 +66,35 @@
       </div>
       <div class="row">
         <div class="col-md-6 col-sm-12 col-xs-12">
-          <button
-            type="button"
-            class="btn btn-success btn-sm active"
-            (click)="massAssignment()">
-            Asignación Masiva
-          </button>
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button
+                type="button"
+                class="btn btn-success active"
+                (click)="massAssignment()">
+                Asignación Masiva
+              </button>
+            </div>
+          </div>
         </div>
         <div class="col-md-6 col-sm-12 col-xs-12">
-          <button class="btn btn-info btn-sm active" (click)="checkLocations()">
-            Consultar Ubicaciones
-          </button>
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button
+                class="btn btn-info active"
+                [disabled]="true"
+                (click)="checkLocations()">
+                Consultar Ubicaciones
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </form>
   </div>
 </app-card>
-
-<app-card [header]="true" *ngIf="typeLocation === 'almacen'">
+<!-- radio.value === null -->
+<app-card [header]="true" *ngIf="radio.value === 'A'">
   <div class="ch-content" header>
     <h5 class="title">Almacén</h5>
   </div>
@@ -112,32 +123,24 @@
         </div>
       </div>
       <div class="row mt-5">
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field
-            [control]="formWarehouse.get('newLocationWare')"
-            label="Nueva Ubicación">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="newLocationWare" />
-          </form-field>
-        </div>
-        <div class="col-md-8 col-sm-12 col-xs-12">
-          <form-field
-            [control]="formWarehouse.get('newDescriptionWare')"
-            label="Descripción">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="newDescriptionWare" />
-          </form-field>
-        </div>
+        <app-warehouse-shared
+          [form]="formWarehouse"
+          [showWarehouseType]="false"></app-warehouse-shared>
       </div>
     </form>
+    <div class="row">
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <button class="btn btn-primary active" (click)="changeLocation()">
+            Cambiar
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </app-card>
 
-<app-card [header]="true" *ngIf="typeLocation === 'boveda'">
+<app-card [header]="true" *ngIf="radio.value === 'B'">
   <div class="ch-content" header>
     <h5 class="title">Bóveda</h5>
   </div>
@@ -166,27 +169,24 @@
         </div>
       </div>
       <div class="row mt-5">
-        <div class="col-md-4 col-sm-12 col-xs-12">
-          <form-field
-            [control]="formVault.get('currentLocationVault')"
-            label="Nueva Ubicación">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="newLocationVault" />
-          </form-field>
-        </div>
-        <div class="col-md-8 col-sm-12 col-xs-12">
-          <form-field
-            [control]="formVault.get('newDescriptionVault')"
-            label="Descripción">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="newDescriptionVault" />
-          </form-field>
-        </div>
+        <app-safe-shared [form]="formVault"></app-safe-shared>
       </div>
     </form>
+    <div class="row">
+      <div class="d-flex justify-content-center">
+        <div class="m-3">
+          <button class="btn btn-primary active" (click)="changeLocation()">
+            Cambiar
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </app-card>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
