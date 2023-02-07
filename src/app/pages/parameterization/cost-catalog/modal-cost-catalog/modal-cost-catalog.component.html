@@ -10,6 +10,7 @@
             <input
               type="text"
               class="form-control"
+              [class.disabled]="edit"
               formControlName="keyServices" />
           </form-field>
           <!-- <app-goods-status-shared [form]="form"></app-goods-status-shared> -->
@@ -29,12 +30,12 @@
         <div class="col-md-6 mt-3">
           <form-field
             [control]="form.get('typeExpenditure')"
-            label="Tipo de GAsto">
+            label="Tipo de Gasto">
             <select class="form-control" formControlName="typeExpenditure">
               <option [value]="null">Seleccione un valor</option>
-              <option [value]="'GASTO 1'">GASTO 1</option>
-              <option [value]="'GASTO 2'">GASTO 2</option>
-              <option [value]="'GASTO 3'">GASTO 3</option>
+              <option [value]="'01'">01</option>
+              <option [value]="'02'">02</option>
+              <option [value]="'03'">03</option>
             </select>
           </form-field>
         </div>
@@ -60,10 +61,7 @@
         <div class="col-md-6 mt-3">
           <div class="d-flex justify-content-center">
             <form-radio label="Gasto">
-              <input
-                type="radio"
-                formControlName="expenditure"
-                value="expenditure" />
+              <input type="radio" formControlName="cost" value="expenditure" />
             </form-radio>
           </div>
         </div>
@@ -76,7 +74,7 @@
         <confirm-button
           [type]="'button'"
           [disabled]="!form.valid"
-          (click)="close()"></confirm-button>
+          (click)="edit ? putCatalog() : postCatalog()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

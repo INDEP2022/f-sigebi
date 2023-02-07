@@ -38,7 +38,7 @@
             [searchable]="false"
             label="Procedencia Informaci&oacute;n"
             bindLabel="description"
-            value="description">
+            value="keyId">
           </ngx-select>
         </div>
       </div>
@@ -64,7 +64,9 @@
               type="text"
               class="form-control"
               [bsValue]="bsPaperValue"
-              bsDatepicker />
+              #dp="bsDatepicker"
+              bsDatepicker
+              (bsValueChange)="changeDateEvent($event)" />
           </form-field>
         </div>
         <div class="col-md-4">

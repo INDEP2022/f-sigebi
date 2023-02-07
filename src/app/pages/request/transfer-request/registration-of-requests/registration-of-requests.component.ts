@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
@@ -31,7 +31,7 @@ export class RegistrationOfRequestsComponent
   title: string = 'Registro de solicitud con folio: ';
   parameter: any;
   object: any = '';
-  request: any = {};
+  requestData: any;
   btnTitle: string = '';
   btnSaveTitle: string = '';
   saveClarifiObject: boolean = false;
@@ -58,14 +58,6 @@ export class RegistrationOfRequestsComponent
   //aprovacion del proceso
   approvalProcess: boolean = false;
 
-  location = inject(Location);
-  requestService = inject(RequestService);
-  stateOfRepublicService = inject(StateOfRepublicService);
-  transferentService = inject(TransferenteService);
-  stationService = inject(StationService);
-  delegationService = inject(RegionalDelegationService);
-  authorityService = inject(AuthorityService);
-
   stateOfRepublicName: string = '';
   transferentName: string = '';
   stationName: string = '';
@@ -77,7 +69,14 @@ export class RegistrationOfRequestsComponent
     public modalRef: BsModalRef,
     public modalService: BsModalService,
     public route: ActivatedRoute,
-    public router: Router
+    public router: Router,
+    private location: Location,
+    private requestService: RequestService,
+    private stateOfRepublicService: StateOfRepublicService,
+    private transferentService: TransferenteService,
+    private stationService: StationService,
+    private delegationService: RegionalDelegationService,
+    private authorityService: AuthorityService
   ) {
     super();
   }
@@ -101,10 +100,8 @@ export class RegistrationOfRequestsComponent
       transferenceId: [null],
       stationId: [null],
       authorityId: [null],
-      typeUser: [''],
-      receiUser: [''],
-      //noExpedient: [null],
-      //typeExpedient: [null],
+      //typeUser: [''],
+      //receiUser: [''],
       id: [null],
       urgentPriority: [null],
       originInfo: [null],
@@ -132,6 +129,7 @@ export class RegistrationOfRequestsComponent
       let request = data.data;
       request.receptionDate = new Date().toISOString();
       this.object = request as IRequest;
+      this.requestData = request as IRequest;
 
       this.registRequestForm.patchValue(request);
       this.getData(request);
@@ -268,7 +266,6 @@ export class RegistrationOfRequestsComponent
   }
 
   signDictum() {
-    //habrir modal generar dictamen
     this.openModal(GenerateDictumComponent, '', 'approval-request');
   }
 

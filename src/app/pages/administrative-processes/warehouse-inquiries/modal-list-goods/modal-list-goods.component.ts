@@ -65,7 +65,6 @@ export class ModalListGoodsComponent extends BasePage implements OnInit {
   }
   getGoodByWarehouses(body: Object): void {
     console.log(body);
-
     this.goodServices.getByWarehouse(body, this.params.getValue()).subscribe({
       next: response => {
         console.log(response);

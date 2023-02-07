@@ -2,7 +2,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { catchError, tap, throwError } from 'rxjs';
+import { catchError, map, tap, throwError } from 'rxjs';
+import { IGoodDesc } from 'src/app/core/models/ms-good/good-and-desc.model';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { GoodsCaptureService } from '../../../service/goods-capture.service';
@@ -32,7 +34,8 @@ export class GoodsCaptureRecordSelectComponent
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
-    private goodsCaptureService: GoodsCaptureService
+    private goodsCaptureService: GoodsCaptureService,
+    private goodService: GoodService
   ) {
     super();
   }
@@ -59,7 +62,7 @@ export class GoodsCaptureRecordSelectComponent
   }
 
   handleError(error: HttpErrorResponse) {
-    if (error.status === 404) {
+    if (error.status <= 404) {
       this.onLoadToast('error', 'Error', EXPEDIENT_NOT_FOUND);
     }
   }
@@ -69,7 +72,14 @@ export class GoodsCaptureRecordSelectComponent
     if (!this.form.valid) {
       return;
     }
-    this.searchRecord();
+    if (this.form.controls.esEmpresa.value == true) {
+      this.getCompanyGood().subscribe({
+        next: () => this.searchRecord(),
+        error: error => this.handleGoodComanyError(error),
+      });
+    } else {
+      this.searchRecord();
+    }
   }
 
   close() {
@@ -77,8 +87,9 @@ export class GoodsCaptureRecordSelectComponent
   }
 
   getExpedientById(id: number) {
-    const isCompay = this.form.controls.esEmpresa;
-    const companyGood = this.form.controls.noBien;
+    const { esEmpresa, noBien } = this.form.controls;
+    const isCompay = esEmpresa.value;
+    const companyGood = noBien.value;
     return this.goodsCaptureService.findExpedient(id).pipe(
       tap(expedient => {
         this.loading = false;
@@ -91,5 +102,26 @@ export class GoodsCaptureRecordSelectComponent
         return throwError(() => error);
       })
     );
+  }
+
+  getCompanyGood() {
+    const goodId = this.form.controls.noBien.value;
+    return this.goodService
+      .getGoodAndDesc(goodId)
+      .pipe(map(goodDesc => this.isCompanyGood(goodDesc)));
+  }
+
+  isCompanyGood(goodDesc: IGoodDesc) {
+    const lowerDesc = goodDesc.goodType_desc_subtipo.toLowerCase();
+    if (!lowerDesc.includes('empresa')) {
+      throw new HttpErrorResponse({ status: 404 });
+    }
+    return goodDesc;
+  }
+
+  handleGoodComanyError(error: HttpErrorResponse) {
+    if (error.status == 404) {
+      this.onLoadToast('error', 'Error', 'El bien no es de tipo empresa');
+    }
   }
 }

@@ -54,4 +54,27 @@ export class DepartamentService implements ICrudMethods<IDepartment> {
       params
     );
   }
+
+  getByDelegationsSubdelegation(
+    /* params: ListParams, */
+    idDelegation: string | number,
+    idSubdelegation: string | number
+  ): Observable<IListResponse<IDepartment>> {
+    return this.departamentRepository.getByIdDelegationSubdelegation(
+      idDelegation,
+      idSubdelegation
+    );
+  }
+
+  removeByBody(obj: Object): Observable<Object> {
+    return this.departamentRepository.removeByBody(this.route, obj);
+  }
+
+  update2(model: IDepartment): Observable<Object> {
+    return this.departamentRepository.update3('departament', model);
+  }
+
+  getByDelIds(model: Partial<IDepartment>): Observable<IDepartment> {
+    return this.departamentRepository.create(this.route + '/id', model);
+  }
 }

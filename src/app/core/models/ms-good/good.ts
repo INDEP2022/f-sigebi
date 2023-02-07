@@ -108,7 +108,7 @@ export interface IGood {
   goodStatus?: string;
   idGoodProperty?: number;
   requestFolio?: string;
-  type?: string;
+  type?: string | number;
   admissionDate?: Date;
   locationId?: number;
   uniqueKey?: string;
@@ -341,6 +341,8 @@ export interface IGood {
   estatus?: Estatus;
   no_expediente?: NoExpediente;
   promoter?: string;
+  dateRenderDecoDev?: Date | string;
+  //TODO: Implement Promoter Interface
   //TODO?: Implement Promoter Interface
   userPromoterDecoDevo?: any;
 }

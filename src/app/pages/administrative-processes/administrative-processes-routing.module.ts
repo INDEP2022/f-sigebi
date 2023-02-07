@@ -108,7 +108,7 @@ const routes: Routes = [
         loadChildren: async () =>
           (await import('./change-of-status/change-of-status.module'))
             .ChangeOfStatusModule,
-        data: { title: 'Cambio de estatus' },
+        data: { title: 'Cambio de estatus ', screen: 'CAMMUEESTATUS' },
       },
       {
         path: 'massive-change-status',

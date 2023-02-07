@@ -1,0 +1,6 @@
+<div class="table-responsive" *ngIf="content?.data">
+  <ng2-smart-table
+    [settings]="settings"
+    [source]="content.data"
+    (edit)="openForm($event.data)"></ng2-smart-table>
+</div>

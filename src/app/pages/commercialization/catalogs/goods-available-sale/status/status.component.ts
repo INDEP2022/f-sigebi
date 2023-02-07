@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { LocalDataSource } from 'ng2-smart-table';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
 //Provisional Data
@@ -13,7 +13,7 @@ import { data } from './data';
   styles: [],
 })
 export class StatusComponent extends BasePage implements OnInit {
-  data: LocalDataSource = new LocalDataSource();
+  comercializationGoods: any[] = [];
   goodsAFSD = data;
 
   totalItems: number = 0;
@@ -25,7 +25,7 @@ export class StatusComponent extends BasePage implements OnInit {
   //Columns
   columns = COLUMNS;
 
-  constructor() {
+  constructor(private goodService: GoodService) {
     super();
     this.settings = {
       ...this.settings,
@@ -37,7 +37,8 @@ export class StatusComponent extends BasePage implements OnInit {
       },
       edit: {
         ...this.settings.edit,
-        saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
+        saveButtonContent:
+          '<i class="bx bxs-save me-1 text-success mx-2" ></i>',
         cancelButtonContent:
           '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
         confirmSave: true,
@@ -57,22 +58,33 @@ export class StatusComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.data.load(this.goodsAFSD);
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getStatusGood());
+  }
+
+  getStatusGood() {
+    this.loading = true;
+    this.goodService.getAll(this.params.getValue()).subscribe(
+      response => {
+        console.log(response);
+        this.comercializationGoods = response.data;
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error => (this.loading = false)
+    );
   }
 
   onSaveConfirm(event: any) {
     event.confirm.resolve();
-    /**
-     * CALL SERVICE
-     * */
+    this.goodService.update(event.data.id, event.newData).subscribe();
     this.onLoadToast('success', 'Elemento Actualizado', '');
   }
 
   onAddConfirm(event: any) {
     event.confirm.resolve();
-    /**
-     * CALL SERVICE
-     * */
+    this.goodService.create(event.newData).subscribe();
     this.onLoadToast('success', 'Elemento Creado', '');
   }
 
@@ -84,9 +96,8 @@ export class StatusComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         event.confirm.resolve();
-        /**
-         * CALL SERVICE
-         * */
+        this.goodService.remove(event.data.id).subscribe();
+
         this.onLoadToast('success', 'Elemento Eliminado', '');
       }
     });

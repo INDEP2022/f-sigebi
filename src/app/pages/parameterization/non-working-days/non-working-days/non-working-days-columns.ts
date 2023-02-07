@@ -1,5 +1,5 @@
 export const NONWORKINGDAYS_COLUMNS = {
-  day: {
+  id: {
     title: 'Día',
     sort: false,
   },

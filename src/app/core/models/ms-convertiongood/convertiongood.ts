@@ -1,0 +1,41 @@
+import { IExpedient } from './expedient.model';
+
+export interface IConvertiongood {
+  id?: string | number;
+  fileNumber?: IExpedient | number;
+  goodFatherNumber: string | number;
+  pageDocto?: string;
+  fCreate: Date;
+  fConversions?: Date;
+  hourConv?: string;
+  fInvitation?: string;
+  hourInv?: string;
+  fNotification?: Date;
+  respConv?: string;
+  respCharge?: string;
+  witnessOic?: string;
+  tOicCharge?: string;
+  witness2?: string;
+  witness3?: string;
+  minutesErNumber?: string;
+  cveActaConv?: string;
+  pageEscConv?: string;
+  statusConv?: string;
+  noRegister?: string | number;
+  addressedTo?: string;
+  address?: string;
+  atte?: string;
+  ccp1?: string;
+  chargeCcp1?: string;
+  ccp2?: string;
+  chargeCcp2?: string;
+  ccp3?: string;
+  chargeCcp3?: string;
+  ccp4?: string;
+  chargeCcp4?: string;
+  ccp5?: string;
+  chargeCcp5?: string;
+  fecActaEr: Date;
+  typeConv: string;
+  pwAccess: string;
+}

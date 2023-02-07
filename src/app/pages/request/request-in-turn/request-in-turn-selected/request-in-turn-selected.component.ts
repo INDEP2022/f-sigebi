@@ -107,7 +107,6 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       return;
     }
     this.loading = true;
-    console.log(this.requestToTurn);
     for (let i = 0; i < this.requestToTurn.length; i++) {
       let request = this.requestToTurn[i];
       request.requestStatus = 'A_TURNAR';

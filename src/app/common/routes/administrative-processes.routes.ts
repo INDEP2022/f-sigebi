@@ -232,7 +232,10 @@ export const ADMINISTRATIVE_PROCESSES_ROUTES = [
         label: 'Cambio de indicadores de destino de bienes',
         link: '/pages/administrative-processes/change-destination-goods-indicators',
       },
-
+      {
+        label: 'Cambio de indicadores de destino de bienes',
+        link: '/pages/administrative-processes/change-destination-goods-indicators',
+      },
       {
         label: 'Reclasificación masiva de bienes',
         link: '/pages/administrative-processes/massive-reclassification-goods',

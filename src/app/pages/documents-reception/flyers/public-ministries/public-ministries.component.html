@@ -3,48 +3,26 @@
     <h5 class="modal-title">Ministerios p&uacute;blicos</h5>
   </div>
   <div body>
-    <form [formGroup]="publicMinistriesForm" class="form-material">
-      <div class="row mt-4">
-        <div class="col-md-4">
-          <form-field
-            label="No.Ciudad"
-            [control]="publicMinistriesForm.get('noCity')">
-            <input
-              class="form-control"
-              formControlName="noCity"
-              type="number" />
-          </form-field>
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="valuesList"
+            (userRowSelect)="rowsSelected($event)">
+          </ng2-smart-table>
         </div>
-        <div class="col-md-4">
-          <form-field
-            label="No.Minpub"
-            [control]="publicMinistriesForm.get('noMinpub')">
-            <input
-              class="form-control"
-              formControlName="noMinpub"
-              type="number" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="publicMinistriesForm.get('description')"
-            label="Descripcion">
-            <textarea
-              type="text"
-              formControlName="description"
-              rows="2"
-              class="form-control"></textarea>
-          </form-field>
-        </div>
+        <app-pagination
+          [params]="params"
+          [totalItems]="totalItems"></app-pagination>
       </div>
-    </form>
+    </div>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button
-          text="Aceptar"
-          [disabled]="!publicMinistriesForm.valid"></confirm-button>
+        <confirm-button text="Aceptar" (click)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

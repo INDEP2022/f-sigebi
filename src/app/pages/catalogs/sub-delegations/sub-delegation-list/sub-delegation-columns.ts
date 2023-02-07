@@ -9,12 +9,15 @@ export const SUB_DELEGATION_COLUMS = {
     type: 'string',
     sort: false,
   },
-  numDelegation: {
+  delegationNumber: {
     title: 'No Registro',
     type: 'number',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value.id;
+    },
   },
-  numDailyCono: {
+  dailyConNumber: {
     title: 'Nro C. diario',
     type: 'number',
     sort: false,
@@ -29,7 +32,7 @@ export const SUB_DELEGATION_COLUMS = {
     type: 'number',
     sort: false,
   },
-  numRegister: {
+  registerNumber: {
     title: 'Registro',
     type: 'number',
     sort: false,

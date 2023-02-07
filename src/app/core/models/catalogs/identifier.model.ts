@@ -1,5 +1,5 @@
 export interface IIdentifier {
-  code?: string;
+  id?: string;
   description?: string;
   keyview?: string;
   noRegistration: number;
