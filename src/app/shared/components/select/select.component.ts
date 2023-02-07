@@ -92,15 +92,11 @@ export class SelectComponent<T> implements OnInit {
           this.buffer = [];
           this.loading = true;
           this.concat = false;
-<<<<<<< HEAD
-          const params = { page: this.page, text, limit: this.selectSize };
-=======
           const params = {
             page: this.page,
             text: text ?? '',
             limit: this.selectSize,
           };
->>>>>>> b16c24a8af7292780266f115de3a6c28b583c041
           this.fetchItems.emit(params);
           return of([]);
         })
