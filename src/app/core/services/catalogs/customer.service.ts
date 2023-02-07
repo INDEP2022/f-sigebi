@@ -58,8 +58,14 @@ export class CustomerService extends HttpService {
     return this.customerRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: ICustomer): Observable<Object> {
-    return this.customerRepository.update(this.route, id, model);
+  updateCustomers(id: string | number, customer: ICustomer) {
+    const route = `${this.endpointClients}/${id}`;
+    return this.put(route, customer);
+  }
+
+  updateRepresentatives(id: string | number, representative: IRepresentative) {
+    const route = `${this.endpointRepresentative}/${id}`;
+    return this.put(route, representative);
   }
 
   remove(id: string | number): Observable<Object> {
