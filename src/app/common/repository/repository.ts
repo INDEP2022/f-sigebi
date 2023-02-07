@@ -26,11 +26,16 @@ export class Repository<T> implements IRepository<T> {
 
   create(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
+    console.log(fullRoute);
+
     return this.httpClient.post<T>(`${fullRoute}`, formData);
   }
 
   update(route: string, id: number | string, formData: Object) {
     const fullRoute = this.buildRoute(route);
+    console.log(`${fullRoute}/${id}`);
+    console.log(formData);
+
     return this.httpClient.put(`${fullRoute}/${id}`, formData);
   }
 
@@ -94,6 +99,22 @@ export class Repository<T> implements IRepository<T> {
   getById2(route: string, id: number | string): Observable<T> {
     return this.httpClient.get<T>(`${environment.API_URL2}${route}/${id}`);
   }
+  getById3(route: string, id: number | string): Observable<IListResponse<T>> {
+    return this.httpClient.get<IListResponse<T>>(
+      `${environment.API_URL2}${route}/${id}`
+    );
+  }
+  getById4(
+    route: string,
+    id: number | string,
+    _params?: ListParams
+  ): Observable<IListResponse<T>> {
+    const params = _params ? this.makeParams(_params) : {};
+    return this.httpClient.get<IListResponse<T>>(
+      `${environment.API_URL2}${route}/${id}`,
+      { params }
+    );
+  }
 
   create2(route: string, formData: Object) {
     return this.httpClient.post<T>(`${environment.API_URL2}${route}`, formData);
@@ -105,7 +126,12 @@ export class Repository<T> implements IRepository<T> {
       formData
     );
   }
-
+  update3(route: string, formData: Object) {
+    return this.httpClient.put(
+      `${environment.API_URL2}catalog/api/v1/${route}`,
+      formData
+    );
+  }
   remove2(route: string, id: number | string) {
     return this.httpClient.delete(`${environment.API_URL2}${route}/${id}`);
   }
@@ -130,5 +156,33 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.delete(
       `${environment.API_URL2}${route}/${idsRoute}`
     );
+  }
+
+  getByIdDelegationSubdelegation(
+    /* route: string, */
+    idDelegation: string | number,
+    idSubdelegation: string | number
+  ): Observable<IListResponse<T>> {
+    return this.httpClient.get<IListResponse<T>>(
+      `${environment.API_URL}catalog/api/v1/departament?limit=5&page=1&filter.numDelegation=${idDelegation}&filter.numSubDelegation=${idSubdelegation}`
+    );
+  }
+  removeByBody(route: string, obj: Object) {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.delete(`${fullRoute}`, obj);
+  }
+  update4(route: string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.put(`${fullRoute}${route}`, formData);
+  }
+  update5(
+    route: string,
+    id: number | string,
+    id1: number | string,
+    formData: Object
+  ) {
+    const fullRoute = this.buildRoute(route);
+    console.log(fullRoute);
+    return this.httpClient.put(`${fullRoute}/${id}/${id1}`, formData);
   }
 }

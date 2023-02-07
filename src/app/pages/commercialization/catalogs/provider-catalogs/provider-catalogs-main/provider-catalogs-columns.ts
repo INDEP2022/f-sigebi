@@ -1,5 +1,5 @@
 export const PROVIDER_CATALOGS_PROVIDER_COLUMNS = {
-  id: {
+  providerId: {
     title: 'id',
     type: 'string',
     sort: false,
@@ -15,7 +15,7 @@ export const PROVIDER_CATALOGS_PROVIDER_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  name: {
+  nameReason: {
     title: 'Nombre o Razón Social',
     type: 'string',
     sort: false,
@@ -25,7 +25,7 @@ export const PROVIDER_CATALOGS_PROVIDER_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  neighborhood: {
+  colony: {
     title: 'Colonia',
     type: 'string',
     sort: false,
@@ -35,17 +35,17 @@ export const PROVIDER_CATALOGS_PROVIDER_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  state: {
+  stateDesc: {
     title: 'Estado',
     type: 'string',
     sort: false,
   },
-  city: {
+  cityDesc: {
     title: 'Ciudad',
     type: 'string',
     sort: false,
   },
-  country: {
+  clkCountry: {
     title: 'País',
     type: 'string',
     sort: false,
@@ -65,22 +65,22 @@ export const PROVIDER_CATALOGS_PROVIDER_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  email: {
+  webMail: {
     title: 'Correo Web',
     type: 'string',
     sort: false,
   },
-  type: {
+  typePerson: {
     title: 'Tipo Persona',
     type: 'string',
     sort: false,
   },
-  activity: {
+  preponderantAct: {
     title: 'Actividad Preponderante',
     type: 'string',
     sort: false,
   },
-  contractNumber: {
+  contractNo: {
     title: 'N° Contrato',
     type: 'string',
     sort: false,
@@ -88,7 +88,7 @@ export const PROVIDER_CATALOGS_PROVIDER_COLUMNS = {
 };
 
 export const PROVIDER_CATALOGS_CLIENT_COLUMNS = {
-  name: {
+  reasonName: {
     title: 'Nombre o Razón',
     type: 'string',
     sort: false,

@@ -21,7 +21,8 @@
               (fetchItems)="getTypeRelevant($event)"
               [data]="selectTypeRelevant"
               label="Tipo Relevante"
-              value="typeRelevant"></ngx-select>
+              bindLabel="description"
+              value="id"></ngx-select>
           </div>
 
           <div class="col-md-5">
@@ -73,6 +74,9 @@
           </ng2-smart-table>
         </div>
       </ng-scrollbar>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
     </div>
   </div>
   <div footer>

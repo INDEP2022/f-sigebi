@@ -4,11 +4,6 @@ export const REGIONAL_DELEGATIONS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  regionalDelegate: {
-    title: 'Delegación',
-    type: 'string',
-    sort: false,
-  },
   description: {
     title: 'Descripción',
     type: 'string',
@@ -19,13 +14,21 @@ export const REGIONAL_DELEGATIONS_COLUMNS = {
     type: 'number',
     sort: false,
   },
-  idEntity: {
-    title: 'Entidad',
-    type: 'string',
-    sort: false,
-  },
   idGeographicZona: {
     title: 'Zona geográfica',
+    type: 'string',
+    sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value.description;
+    },
+  },
+  version: {
+    title: 'Versión',
+    type: 'number',
+    sort: false,
+  },
+  regionalDelegate: {
+    title: 'Delegación',
     type: 'string',
     sort: false,
   },
@@ -34,23 +37,28 @@ export const REGIONAL_DELEGATIONS_COLUMNS = {
     type: 'string',
     sort: false,
   },
+  status: {
+    title: 'Estado',
+    type: 'string',
+    sort: false,
+  },
   keyZone: {
-    title: 'Zona',
+    title: 'Clave Zona Delegacional',
     type: 'string',
     sort: false,
   },
-  version: {
-    title: 'Versión',
-    type: 'number',
-    sort: false,
-  },
-  creationUser: {
-    title: 'Creado por',
+  iva: {
+    title: 'IVA',
     type: 'string',
     sort: false,
   },
-  editionUser: {
-    title: 'Modificado por',
+  city: {
+    title: 'Ciudad',
+    type: 'string',
+    sort: false,
+  },
+  keyState: {
+    title: 'Clave de Estado de la Zona',
     type: 'string',
     sort: false,
   },

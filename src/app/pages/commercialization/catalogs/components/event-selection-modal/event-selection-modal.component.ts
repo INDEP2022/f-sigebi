@@ -4,6 +4,8 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ComerEventosService } from '../../../../../core/services/ms-event/comer-eventos.service';
+import { IComerEvent } from './../../../../../core/models/ms-event/event.model';
 import { EVENT_COLUMNS } from './event-selection-columns';
 
 @Component({
@@ -12,14 +14,13 @@ import { EVENT_COLUMNS } from './event-selection-columns';
   styles: [],
 })
 export class EventSelectionModalComponent extends BasePage implements OnInit {
-  // tipo any hasta que existan modelos o interfaces de la respuesta del backend
   rowSelected: boolean = false;
-  selectedRow: any = null;
-  columns: any[] = [];
+  selectedRow: IComerEvent = null;
+  columns: IComerEvent[] = [];
   totalItems: number = 0;
-  title: string = 'Tipo Penalización';
+  title: string = 'Seleccionar Evento';
   params = new BehaviorSubject<ListParams>(new ListParams());
-  @Output() refresh = new EventEmitter<true>();
+  @Output() refresh = new EventEmitter<any>();
   table: HTMLElement;
 
   testData = [
@@ -50,7 +51,10 @@ export class EventSelectionModalComponent extends BasePage implements OnInit {
     },
   ];
 
-  constructor(private modalRef: BsModalRef) {
+  constructor(
+    private modalRef: BsModalRef,
+    private eventsService: ComerEventosService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -66,18 +70,29 @@ export class EventSelectionModalComponent extends BasePage implements OnInit {
       .subscribe(() => this.getData());
   }
 
-  getData() {
+  getData(): void {
     this.loading = true;
-    this.columns = this.testData;
-    this.totalItems = this.testData.length;
-    this.loading = false;
+    // this.columns = this.testData;
+    // this.totalItems = this.testData.length;
+    // this.loading = false;
+    this.eventsService.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        this.columns = response.data;
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => {
+        this.loading = false;
+        console.log(error);
+      },
+    });
   }
 
   close() {
     this.modalRef.hide();
   }
 
-  selectRow(row: any) {
+  selectRow(row: IComerEvent) {
     console.log(row);
     this.selectedRow = row;
     this.rowSelected = true;

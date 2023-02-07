@@ -1,11 +1,29 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+//Models
 import { BATTERY_COLUMNS } from './battery-colums';
 import { LOCKERS_COLUMNS } from './lockers-columns';
-import { SHELF_COLUMNS } from './shelf-columns';
+import { SHELVES_COLUMNS } from './shelves-columns';
+//services
+import { SaveValueService } from 'src/app/core/services/catalogs/save-value.service';
+import { BatterysService } from 'src/app/core/services/save-values/battery.service';
+import { LockersService } from 'src/app/core/services/save-values/locker.service';
+import { ShelvessService } from 'src/app/core/services/save-values/shelves.service';
+//models
+import { IBattery } from 'src/app/core/models/catalogs/battery.model';
+import { ILocker } from 'src/app/core/models/catalogs/locker.model';
+import { IShelves } from 'src/app/core/models/catalogs/shelves.model';
+
+//Component modal
+import { BatteryModalComponent } from '../battery-modal/battery-modal.component';
+import { LockersModalComponent } from '../lockers-modal/lockers-modal.component';
+import { ShelvesModalComponent } from '../shelves-modal/shelves-modal.component';
 
 @Component({
   selector: 'app-general-archive-catalog',
@@ -14,97 +32,66 @@ import { SHELF_COLUMNS } from './shelf-columns';
 })
 export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
   form: FormGroup = new FormGroup({});
-  show = false;
-  edit: boolean = false;
-  @Output() refresh = new EventEmitter<true>();
+  battery: IBattery[] = [];
 
-  data1: LocalDataSource = new LocalDataSource();
-  data2: LocalDataSource = new LocalDataSource();
-  data3: LocalDataSource = new LocalDataSource();
+  params1 = new BehaviorSubject<ListParams>(new ListParams());
+  params2 = new BehaviorSubject<ListParams>(new ListParams());
+  params3 = new BehaviorSubject<ListParams>(new ListParams());
 
-  settingsBattery = {
-    ...this.settings,
-    actions: {
-      columnTitle: 'Acciones',
-      edit: true,
-      delete: true,
-      position: 'right',
-    },
-    edit: {
-      ...this.settings.edit,
-      saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-      cancelButtonContent:
-        '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-      confirmSave: true,
-    },
-    add: {
-      addButtonContent: '<i class="fa fa-solid fa-plus mx-2"></i>',
-      createButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-      cancelButtonContent:
-        '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-      confirmCreate: true,
-    },
-    mode: 'inline',
-    hideSubHeader: false,
-  };
+  totalItems1: number = 0;
+  totalItems2: number = 0;
+  totalItems3: number = 0;
 
-  settingsLockers = {
-    ...this.settings,
-    actions: {
-      columnTitle: 'Acciones',
-      edit: true,
-      delete: true,
-      position: 'right',
-    },
-    edit: {
-      ...this.settings.edit,
-      saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-      cancelButtonContent:
-        '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-      confirmSave: true,
-    },
-    add: {
-      addButtonContent: '<i class="fa fa-solid fa-plus mx-2"></i>',
-      createButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-      cancelButtonContent:
-        '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-      confirmCreate: true,
-    },
-    mode: 'inline',
-    hideSubHeader: false,
-  };
+  dataShelves: LocalDataSource = new LocalDataSource();
+  dataBattery: LocalDataSource = new LocalDataSource();
+  dataLockers: LocalDataSource = new LocalDataSource();
 
-  settingsShelf = {
-    ...this.settings,
-    actions: {
-      columnTitle: 'Acciones',
-      edit: true,
-      delete: true,
-      position: 'right',
-    },
-    edit: {
-      ...this.settings.edit,
-      saveButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-      cancelButtonContent:
-        '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-      confirmSave: true,
-    },
-    add: {
-      addButtonContent: '<i class="fa fa-solid fa-plus mx-2"></i>',
-      createButtonContent: '<i class="bx bxs-save me-1 text-success mx-2"></i>',
-      cancelButtonContent:
-        '<i class="bx bxs-x-square me-1 text-danger mx-2"></i>',
-      confirmCreate: true,
-    },
-    mode: 'inline',
-    hideSubHeader: false,
-  };
+  settingsBattery;
+  settingsShelves;
+  settingsLockers;
 
-  constructor(private fb: FormBuilder) {
+  shelvesList: IShelves[] = [];
+  lockers: ILocker;
+
+  constructor(
+    private fb: FormBuilder,
+    private saveValueService: SaveValueService,
+    private shelvessService: ShelvessService,
+    private batterysService: BatterysService,
+    private lockersService: LockersService,
+    private modalService: BsModalService
+  ) {
     super();
-    this.settingsBattery.columns = { ...BATTERY_COLUMNS };
-    this.settingsLockers.columns = { ...LOCKERS_COLUMNS };
-    this.settingsShelf.columns = { ...SHELF_COLUMNS };
+    this.settingsBattery = {
+      ...this.settings,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: false,
+        position: 'right',
+      },
+      columns: { ...BATTERY_COLUMNS },
+    };
+    this.settingsShelves = {
+      ...this.settings,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: false,
+        position: 'right',
+      },
+      columns: { ...SHELVES_COLUMNS },
+    };
+    this.settingsLockers = {
+      ...this.settings,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: false,
+        position: 'right',
+      },
+      columns: { ...LOCKERS_COLUMNS },
+    };
   }
 
   ngOnInit(): void {
@@ -113,60 +100,172 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      delegation: [null, [Validators.required]],
-      ubication: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      responsible: [null, [Validators.required]],
-      battery: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      generate: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      backstage: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      id: [null, [Validators.required]],
+      description: [{ value: null, disabled: true }],
+      location: [{ value: null, disabled: true }],
+      responsible: [{ value: null, disabled: true }],
     });
   }
 
-  onSaveConfirm(event: any) {
-    event.confirm.resolve();
-    this.onLoadToast('success', 'Elemento Actualizado', '');
-  }
-
-  onAddConfirm(event: any) {
-    event.confirm.resolve();
-    this.onLoadToast('success', 'Elemento Creado', '');
-  }
-
-  onDeleteConfirm(event: any) {
-    event.confirm.resolve();
-    this.onLoadToast('success', 'Elemento Eliminado', '');
-  }
-
-  create() {
-    this.data1.getElements().then((data: any) => {
-      this.loading = true;
-      this.handleSuccess();
-    });
-  }
-
-  confirm() {
-    this.edit ? this.update() : this.create();
-  }
-
-  handleSuccess() {
-    this.loading = false;
-    this.refresh.emit(true);
-  }
-
-  update() {
+  //Traer Guardavalores por ID y rellenar en los inputs
+  getSaveValuesById(): void {
+    let _id = this.form.controls['id'].value;
     this.loading = true;
-    this.handleSuccess();
+    this.saveValueService.getById(_id).subscribe(
+      response => {
+        console.log(response);
+        if (response !== null) {
+          this.form.patchValue(response);
+          this.form.updateValueAndValidity();
+          // this.getShelvesBySaveValues(response.id);
+          this.getBatteryBySaveValues(response.id);
+          this.getLockerBySaveValues(response.id);
+        } else {
+          this.alert('info', 'No se encontraron algunos registros', '');
+        }
+        this.loading = false;
+      },
+      error => (this.loading = false)
+    );
+  }
+
+  //Métodos para llenar tabla de Bateria/Battery con ID de Guardavalor/SaveValues
+  getBatteryBySaveValues(id: string | number): void {
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getBattery(id));
+  }
+
+  getBattery(id: string | number): void {
+    this.batterysService
+      .getByCveSaveValues(id, this.params2.getValue())
+      .subscribe(
+        response => {
+          //console.log(response);
+          let data = response.data.map((item: IBattery) => {
+            //console.log(item);
+            return item;
+          });
+          this.dataBattery.load(data);
+          this.totalItems2 = response.count;
+          this.loading = false;
+        },
+        error => (this.loading = false)
+      );
+  }
+
+  openFormBattery(battery?: IBattery) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      battery,
+      // callback: (next: boolean) => {
+      //   if (next) this.getBattery(battery.idBattery);
+      // },
+    };
+    this.modalService.show(BatteryModalComponent, modalConfig);
+  }
+
+  //Métodos para llenar tabla de Casilleros/Locker con ID de Guardavalor/SaveValues
+  getLockerBySaveValues(id: string | number): void {
+    this.params3
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getLocker(id));
+  }
+
+  getLocker(id: string | number): void {
+    this.lockersService
+      .getByCveSaveValues(id, this.params3.getValue())
+      .subscribe(
+        response => {
+          //console.log(response);
+          let data = response.data.map((item: ILocker) => {
+            //console.log(item);
+            return item;
+          });
+          this.dataLockers.load(data);
+          this.totalItems3 = response.count;
+          this.loading = false;
+        },
+        error => (this.loading = false)
+      );
+  }
+
+  openFormLocker(locker?: ILocker) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      locker,
+      // callback: (next: boolean) => {
+      //   if (next) this.getBattery(battery.idBattery);
+      // },
+    };
+    this.modalService.show(LockersModalComponent, modalConfig);
+  }
+
+  rowsSelected(event: any) {
+    this.totalItems1 = 0;
+    this.shelvesList = [];
+    this.lockers = event.data;
+    this.params2
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getShelves(this.lockers));
+  }
+
+  getShelves(lockers: ILocker) {
+    this.loading = true;
+    console.log(lockers.saveValueKey);
+    console.log(lockers.numBattery);
+    console.log(lockers.numShelf);
+    this.shelvessService
+      .getShelvesByIds(
+        this.lockers.saveValueKey,
+        lockers.numBattery,
+        lockers.numShelf
+      )
+      .subscribe({
+        next: response => {
+          console.log(response);
+          this.shelvesList = response.data;
+          this.totalItems2 = response.count;
+          this.loading = false;
+        },
+        error: error => (this.loading = false),
+      });
+    console.log(this.shelvesList);
+  }
+
+  //Métodos para llenar tabla de Estantes/Shelves con ID de Guardavalor/SaveValues
+  /*getShelvesBySaveValues(id: string | number): void {
+    this.params1
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getShelves(id));
+  }
+
+  getShelves(id: string | number): void {
+    this.shelvessService
+      .getByCveSaveValues(id, this.params1.getValue())
+      .subscribe(
+        response => {
+          //console.log(response);
+          let data = response.data.map((item: IShelves) => {
+            //console.log(item);
+            return item;
+          });
+          this.dataShelves.load(data);
+          this.totalItems1 = response.count;
+          this.loading = false;
+        },
+        error => (this.loading = false)
+      );
+  } */
+
+  openFormShelves(shelves?: IShelves) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      shelves,
+      // callback: (next: boolean) => {
+      //   if (next) this.getBattery(battery.idBattery);
+      // },
+    };
+    this.modalService.show(ShelvesModalComponent, modalConfig);
   }
 }

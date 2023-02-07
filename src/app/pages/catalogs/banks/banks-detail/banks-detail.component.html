@@ -2,7 +2,6 @@
   <div header>
     <h5 class="modal-title">{{ status }} ABOGADO</h5>
   </div>
-  y
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
@@ -41,7 +40,7 @@
         </div>
       </div>
       <div class="row mt-4">
-        <div class="col-md-6">
+        <div class="col-md-4">
           <form-field [control]="form.get('dateType')" label="Tipo">
             <input
               type="text"
@@ -49,11 +48,19 @@
               formControlName="dateType" />
           </form-field>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
           <form-field
             [control]="form.get('code')"
             label="C&oacute;digo de Banco">
             <input type="number" class="form-control" formControlName="code" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('idProvider')" label="ID Proveedor">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="idProvider" />
           </form-field>
         </div>
       </div>

@@ -1,26 +1,30 @@
 export const COLUMNS = {
-  code: {
-    title: 'Código',
+  id: {
+    title: 'Id',
     sort: false,
   },
-  descripcion: {
-    title: 'Descripción',
+  accountKey: {
+    title: 'Llave de Cuenta',
     sort: false,
   },
-  type: {
-    title: 'Tipo',
+  accountType: {
+    title: 'Tipo de cuenta',
     sort: false,
   },
-  decline: {
-    title: 'Rechazar',
+  coinKey: {
+    title: 'Id de moneda',
     sort: false,
   },
-  affects: {
-    title: 'Afecta A',
+  branchOffice: {
+    title: 'Oficina',
     sort: false,
   },
-  satPaymentDescription: {
-    title: 'Descripción Tipo de Pago SAT',
+  bankKey: {
+    title: 'Clave del Banco',
+    sort: false,
+  },
+  registryNumber: {
+    title: 'Numero de registro',
     sort: false,
   },
 };

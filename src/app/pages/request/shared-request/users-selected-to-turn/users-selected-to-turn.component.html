@@ -13,6 +13,7 @@
         <div [class]="loading ? 'table-loading' : ''">
           <ng2-smart-table
             [attr.class]="'table-bordered'"
+            (rowSelect)="selectedRow($event)"
             [settings]="settings"
             [source]="paragraphs">
           </ng2-smart-table>

@@ -22,9 +22,14 @@ export class GoodSubtypeService implements ICrudMethods<IGoodSubType> {
     return this.goodSubtypeRepository.getAllPaginated(this.route, params);
   }
 
-  getById(id: string | number): Observable<IGoodSubType> {
-    return this.goodSubtypeRepository.getById(this.route, id);
+  getByIds(ids: Partial<IGoodSubType>): Observable<IGoodSubType> {
+    return this.goodSubtypeRepository.getByIds(this.route, ids);
   }
+  // getByIds(ids: string | number): Observable<IGoodSubType> {
+  //   return this.goodSubtypeRepository
+  //     .getById(this.route, id)
+  //     .pipe(map((response: any) => convertArrayResponse(response)));
+  // }
 
   create(model: IGoodSubType): Observable<IGoodSubType> {
     return this.goodSubtypeRepository.create(this.route, model);

@@ -4,8 +4,15 @@ import { ListParams } from './list-params';
 
 export interface IRead<T> {
   getById?(id: number | string): Observable<T>;
+  getById3?(id: number | string): Observable<IListResponse<T>>;
+  getById4?(
+    id: number | string,
+    params?: ListParams
+  ): Observable<IListResponse<T>>;
   getAll?(params?: ListParams): Observable<IListResponse<T>>;
   getByIds?(ids: Partial<T>): Observable<T>;
+  postByIds?(model: T): Observable<IListResponse<T>>;
+  postColumns?(model: T): Observable<IListResponse<T>>;
 }
 
 export interface IWrite<T> {

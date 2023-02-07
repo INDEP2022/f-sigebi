@@ -20,7 +20,9 @@
       [formControlName]="control"
       (scrollToEnd)="fetchMore(select.searchTerm)"
       (change)="onChange($event)"
-      [placeholder]="placeholder">
+      [searchable]="searchable"
+      [placeholder]="placeholder"
+      [readonly]="readonly">
     </ng-select>
     <span class="form-bar"></span>
     <label class="float-label">{{ label }}</label>

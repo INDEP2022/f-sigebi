@@ -1,5 +1,5 @@
 export const ASSETS_DESTINATION_COLUMNS = {
-  noBien: {
+  id: {
     title: 'No. Bien',
     type: 'string',
     sort: false,
@@ -9,7 +9,7 @@ export const ASSETS_DESTINATION_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  ubiExact: {
+  ubicationType: {
     title: 'Ubicación Exacta',
     type: 'string',
     sort: false,
@@ -19,20 +19,22 @@ export const ASSETS_DESTINATION_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  noOficio: {
+  goodReferenceNumber: {
+    //Propiedad por verificar
     title: 'No. de Autorización',
     type: 'string',
     sort: false,
   },
-  fecha: {
+  physicalReceptionDate: {
+    //Propiedad por verificar
     title: 'Fecha',
     type: 'string',
     sort: false,
   },
-  availability: {
-    title: 'Disponibilidad',
-    type: 'boolean',
-    sort: false,
-    hide: true,
-  },
+  // availability: {
+  //   title: 'Disponibilidad',
+  //   type: 'boolean',
+  //   sort: false,
+  //   hide: true,
+  // },
 };

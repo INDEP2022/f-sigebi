@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -10,7 +11,8 @@ import { COLUMNS } from './columns';
 //Components
 import { BankMovementsFormComponent } from '../bank-movements-form/bank-movements-form.component';
 //Provisional Data
-import { data, dataBA } from './data';
+import { BankMovementType } from 'src/app/core/services/ms-bank-movement/bank-movement.service';
+import { data } from './data';
 
 @Component({
   selector: 'app-bank-movements-types',
@@ -19,7 +21,7 @@ import { data, dataBA } from './data';
 })
 export class BankMovementsTypesComponent extends BasePage implements OnInit {
   //PROVISIONAL Bank Account DATA
-  bankAccounts: any[] = dataBA;
+  bankAccounts: any[] = [];
 
   form: FormGroup = new FormGroup({});
 
@@ -35,7 +37,11 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
   //Columns
   columns = COLUMNS;
 
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private bankMovementType: BankMovementType
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -50,7 +56,9 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.data.load(this.banksMovD);
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getStatusBankMovements());
     this.prepareForm();
   }
 
@@ -58,6 +66,19 @@ export class BankMovementsTypesComponent extends BasePage implements OnInit {
     this.form = this.fb.group({
       bank: [null, [Validators.required]],
     });
+  }
+
+  public getStatusBankMovements() {
+    this.loading = true;
+    this.bankMovementType.getAll(this.params.getValue()).subscribe(
+      response => {
+        console.log(response);
+        this.bankAccounts = response.data;
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error => (this.loading = false)
+    );
   }
 
   openModal(context?: Partial<BankMovementsFormComponent>) {

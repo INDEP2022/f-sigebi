@@ -56,7 +56,7 @@ export const CATALOGS_ROUTES = [
         link: '/pages/catalogs/clarifications',
       },
       {
-        label: 'Bodegas',
+        label: 'Almacenes',
         link: '/pages/catalogs/warehouses',
       },
       {
@@ -120,7 +120,7 @@ export const CATALOGS_ROUTES = [
         link: '/pages/catalogs/expert',
       },
       {
-        label: 'Personas',
+        label: 'Mantto. a administrador, depositario e interventor',
         link: '/pages/catalogs/person',
       },
       {

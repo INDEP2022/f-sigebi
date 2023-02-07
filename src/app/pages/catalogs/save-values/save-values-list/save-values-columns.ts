@@ -1,5 +1,5 @@
 export const SAVE_VALUES_COLUMNS = {
-  cve: {
+  id: {
     title: 'Clave',
     type: 'string',
     sort: false,

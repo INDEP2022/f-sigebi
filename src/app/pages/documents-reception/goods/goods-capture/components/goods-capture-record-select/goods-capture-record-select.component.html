@@ -18,7 +18,11 @@
 
       <div class="row pt-3">
         <form-check label="¿Es Empresa?" for="isCompany">
-          <input type="checkbox" formControlName="esEmpresa" id="isCompany" />
+          <input
+            type="checkbox"
+            formControlName="esEmpresa"
+            id="isCompany"
+            (change)="isCompanyChange()" />
         </form-check>
       </div>
 
@@ -26,14 +30,9 @@
         <form-field
           *ngIf="isCompany"
           class="col-md-10"
-          [control]="form.get('noBien')">
-          <ngx-select
-            [form]="form"
-            value="id"
-            bindLabel="id"
-            control="noBien"
-            [data]="select"
-            label="No. Bien de la Empresa"></ngx-select>
+          [control]="form.get('noBien')"
+          label="No. Bien Empresa">
+          <input type="number" class="form-control" formControlName="noBien" />
         </form-field>
       </div>
     </form>

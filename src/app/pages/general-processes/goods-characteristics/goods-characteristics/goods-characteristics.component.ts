@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IGood } from 'src/app/core/models/good/good.model';
+import { GoodService } from 'src/app/core/services/good/good.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -8,7 +13,10 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
   templateUrl: './goods-characteristics.component.html',
   styles: [],
 })
-export class GoodsCharacteristicsComponent implements OnInit {
+export class GoodsCharacteristicsComponent extends BasePage implements OnInit {
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  goods: IGood[] = [];
+
   form = this.fb.group({
     type: [null, [Validators.required]],
     subtype: [null, [Validators.required]],
@@ -40,7 +48,23 @@ export class GoodsCharacteristicsComponent implements OnInit {
     avaluo: [null, [Validators.required]],
   });
   select = new DefaultSelect();
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private goodService: GoodService) {
+    super();
+  }
 
-  ngOnInit(): void {}
+  getGoods(): void {
+    this.goodService.getAll(this.params.getValue()).subscribe(
+      response => {
+        this.goods = response.data;
+        console.log(this.goods);
+        this.loading = false;
+      },
+      error => (this.loading = false)
+    );
+  }
+
+  ngOnInit(): void {
+    this.getGoods();
+    console.log(this.goods);
+  }
 }

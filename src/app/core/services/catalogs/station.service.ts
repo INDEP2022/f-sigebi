@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
@@ -11,7 +12,10 @@ import { IStation } from '../../models/catalogs/station.model';
 })
 export class StationService implements ICrudMethods<IStation> {
   private readonly route: string = ENDPOINT_LINKS.Station;
-  constructor(private stationRepository: Repository<IStation>) {}
+  constructor(
+    private stationRepository: Repository<IStation>,
+    private readonly httpClient: HttpClient
+  ) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IStation>> {
     return this.stationRepository.getAllPaginated(this.route, params);

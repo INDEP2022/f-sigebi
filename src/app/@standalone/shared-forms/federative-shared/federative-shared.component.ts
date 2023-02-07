@@ -3,10 +3,10 @@ import { Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IFederative } from 'src/app/core/models/administrative-processes/siab-sami-interaction/federative.model';
+import { EntFedService } from 'src/app/core/services/catalogs/entfed.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { federativeData } from './data';
 
 @Component({
   selector: 'app-federative-shared',
@@ -23,20 +23,21 @@ export class FederativeSharedComponent extends BasePage implements OnInit {
 
   federative = new DefaultSelect<IFederative>();
 
-  constructor(/*private service: WarehouseService*/) {
+  constructor(private service: EntFedService) {
     super();
+  }
+
+  get Federative() {
+    return this.form.get(this.federativeField);
   }
 
   ngOnInit(): void {}
 
   getFederative(params: ListParams) {
-    //Provisional data
-    let data = federativeData;
-    let count = data.length;
-    this.federative = new DefaultSelect(data, count);
-    /*this.service.getAll(params).subscribe(data => {
-        this.status = new DefaultSelect(data.data,data.count);
-      },err => {
+    this.service.getAll(params).subscribe({
+      next: data =>
+        (this.federative = new DefaultSelect(data.data, data.count)),
+      error: err => {
         let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
@@ -44,12 +45,12 @@ export class FederativeSharedComponent extends BasePage implements OnInit {
           error = err.message;
         }
         this.onLoadToast('error', 'Error', error);
-
-      }, () => {}
-    );*/
+      },
+    });
   }
   onFederativeChange(type: any) {
-    this.form.updateValueAndValidity();
+    this.federative = new DefaultSelect();
+    // this.form.updateValueAndValidity();
   }
 
   resetFields(fields: AbstractControl[]) {

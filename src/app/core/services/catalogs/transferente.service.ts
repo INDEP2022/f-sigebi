@@ -21,6 +21,20 @@ export class TransferenteService implements ICrudMethods<ITransferente> {
     return this.transferenteRepository.getById(this.route, id);
   }
 
+  getByTypeUserIdState(
+    params: ListParams,
+    state: number,
+    type: string
+  ): Observable<IListResponse<ITransferente>> {
+    const route = `catalog/transferent/get-entity-transferent-by-user/${type}/state/${state}`;
+    return this.transferenteRepository.getAllPaginated(route, params);
+  }
+
+  getByIdState(id: string | number): Observable<ITransferente> {
+    const route = `catalog/transferent/get-entity-transferent-by-state/${id}`;
+    return this.transferenteRepository.getById(route, id);
+  }
+
   create(model: ITransferente): Observable<ITransferente> {
     return this.transferenteRepository.create(this.route, model);
   }
