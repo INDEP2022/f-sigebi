@@ -1,0 +1,17 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Expediente</h5>
+  </div>
+  <div body>
+    <app-expedients-tabs
+      [generalDocs]="true"
+      [displayName]="'validateEyeVisitResult'"></app-expedients-tabs>
+    <div class="row mt-3 justify-content-center">
+      <div class="col-md-2">
+        <button class="btn btn-sm btn-primary active" (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

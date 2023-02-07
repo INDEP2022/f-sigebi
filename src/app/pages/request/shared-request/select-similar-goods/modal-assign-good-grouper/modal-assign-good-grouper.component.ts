@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-modal-assign-good-grouper',
@@ -15,7 +16,10 @@ export class ModalAssignGoodGrouperComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = this.fb.group({
-      nameGoodGrouper: ['', [Validators.required]],
+      nameGoodGrouper: [
+        '',
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 

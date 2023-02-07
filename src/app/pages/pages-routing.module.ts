@@ -69,14 +69,14 @@ const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path: 'juridicos',
+    path: 'juridical',
     loadChildren: async () =>
       (await import('./juridical-processes/juridical-processes.module'))
         .JuridicalProcessesModule,
     data: { title: 'Juridicos' },
   },
   {
-    path: 'seguridad',
+    path: 'security',
     loadChildren: () =>
       import('./security/security.module').then(m => m.SecurityModule),
   },
@@ -110,35 +110,12 @@ const routes: Routes = [
   },
 
   {
-    path: 'documentation-complementary',
-    loadChildren: async () =>
-      (
-        await import(
-          './documentation-complementary/documentation-complementary.module'
-        )
-      ).DocumentationComplementaryModule,
-  },
-  {
-    path: 'scheduling-deliveries',
-    loadChildren: async () =>
-      (await import('./scheduling-deliveries/scheduling-deliveries.module'))
-        .SchedulingDeliveriesModule,
-  },
-  {
     path: 'parameterization',
     loadChildren: async () =>
       (await import('./parameterization/parameterization.module'))
         .ParameterizationModule,
   },
-  {
-    path: 'execute-return-deliveries',
-    loadChildren: async () =>
-      (
-        await import(
-          './execute-return-deliveries/execute-return-deliveries.module'
-        )
-      ).ExecuteReturnDeliveriesModule,
-  },
+
   {
     path: 'siab-web',
     loadChildren: async () =>
@@ -151,6 +128,14 @@ const routes: Routes = [
         .AssetsForStudyModule,
     data: { title: 'Bienes para estudio' },
   },
+  {
+    path: '404-not-found',
+    pathMatch: 'full',
+    loadChildren: async () =>
+      (await import('./errors/error-404/error-404.module')).Error404Module,
+    data: { title: 'Página no Encontrada' },
+  },
+  { path: '**', redirectTo: '404-not-found' },
 ];
 
 @NgModule({

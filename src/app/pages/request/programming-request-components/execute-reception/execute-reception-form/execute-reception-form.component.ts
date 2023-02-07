@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
-import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { AssignReceiptFormComponent } from '../../../shared-request/assign-receipt-form/assign-receipt-form.component';
 import { GenerateReceiptFormComponent } from '../../../shared-request/generate-receipt-form/generate-receipt-form.component';
 import { PhotographyFormComponent } from '../../../shared-request/photography-form/photography-form.component';
@@ -15,59 +16,48 @@ import { DocumentsListComponent } from '../documents-list/documents-list.compone
 import { ReschedulingFormComponent } from '../rescheduling-form/rescheduling-form.component';
 import { RECEIPT_COLUMNS } from './columns/minute-columns';
 import { TRANSPORTABLE_GOODS } from './columns/transportable-goods-columns';
+import { receipts, tranGoods } from './execute-reception-data';
 
 @Component({
   selector: 'app-execute-reception-form',
   templateUrl: './execute-reception-form.component.html',
   styleUrls: ['./execute-reception.scss'],
 })
-export class ExecuteReceptionFormComponent implements OnInit {
+export class ExecuteReceptionFormComponent extends BasePage implements OnInit {
   isDropup = true;
-  settings = { ...TABLE_SETTINGS, actions: false };
   executeForm: FormGroup = new FormGroup({});
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
 
   settingsTranGoods = {
-    ...TABLE_SETTINGS,
+    ...this.settings,
     actions: false,
     selectMode: 'multi',
+    columns: TRANSPORTABLE_GOODS,
   };
-  settingsReceipt = { ...TABLE_SETTINGS };
+
+  settingsReceipt = {
+    ...this.settings,
+    actions: {
+      columnTitle: 'Generar recibo',
+      position: 'right',
+      delete: false,
+    },
+    columns: RECEIPT_COLUMNS,
+    edit: {
+      editButtonContent: '<i class="fa fa-file text-primary mx-2"></i>',
+    },
+  };
 
   userData: IUser[] = [];
   //Cambiar a modelos//
-  tranGoods: any[] = [];
-  receipts: any;
+  tranGoods = tranGoods;
+  receipts = receipts;
 
   search: FormControl = new FormControl({});
   constructor(private modalService: BsModalService, private fb: FormBuilder) {
-    this.receipts = [
-      {
-        noMinute: 1,
-        receipt: 1,
-        statusReceipt: 'Abierto',
-        transerAmount: 3453345,
-      },
-    ];
-
-    this.tranGoods = [
-      {
-        gestionNumber: 3424,
-        uniqueKey: 42,
-        record: 'Expediente',
-        description: 'Descripción',
-        descriptionSae: 'Sae descripción',
-      },
-    ];
-
-    this.settings.columns = USER_COLUMNS;
-    this.settingsTranGoods.columns = TRANSPORTABLE_GOODS;
-    this.settingsReceipt.columns = RECEIPT_COLUMNS;
-    this.settingsReceipt.actions.columnTitle = 'Generar recibo';
-    this.settingsReceipt.actions.delete = true;
-    this.settingsReceipt.edit.editButtonContent =
-      '<i class="fa fa-file text-primary mx-2"></i>';
+    super();
+    this.settings = { ...this.settings, actions: false, columns: USER_COLUMNS };
   }
 
   ngOnInit(): void {
@@ -86,38 +76,83 @@ export class ExecuteReceptionFormComponent implements OnInit {
   }
 
   uploadDocuments() {
-    const uploadDocumentos = this.modalService.show(DocumentsListComponent, {
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+
+    config.initialState = {
+      callback: (data: any) => {
+        if (data) {
+        }
+      },
+    };
+
+    const uploadDocuments = this.modalService.show(
+      DocumentsListComponent,
+      config
+    );
   }
 
   uploadPicture() {
-    const uploadPictures = this.modalService.show(PhotographyFormComponent, {
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+
+    config.initialState = {
+      callback: (data: any) => {
+        if (data) {
+        }
+      },
+    };
+
+    const uploadPictures = this.modalService.show(
+      PhotographyFormComponent,
+      config
+    );
   }
 
   createReceipt() {
-    const createReceipt = this.modalService.show(GenerateReceiptFormComponent, {
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+
+    config.initialState = {
+      callback: (data: any) => {
+        if (data) {
+        }
+      },
+    };
+
+    const createReceipt = this.modalService.show(
+      GenerateReceiptFormComponent,
+      config
+    );
   }
 
   assignReceipt() {
-    const assignReceipt = this.modalService.show(AssignReceiptFormComponent, {
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+
+    config.initialState = {
+      callback: (data: any) => {
+        if (data) {
+        }
+      },
+    };
+
+    const assignReceipt = this.modalService.show(
+      AssignReceiptFormComponent,
+      config
+    );
   }
 
   rescheduling() {
-    const rescheduling = this.modalService.show(ReschedulingFormComponent, {
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+
+    config.initialState = {
+      callback: (data: any) => {
+        if (data) {
+        }
+      },
+    };
+
+    const rescheduling = this.modalService.show(
+      ReschedulingFormComponent,
+      config
+    );
   }
 
   showEstate() {

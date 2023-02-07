@@ -1,0 +1,197 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Oficio</h5>
+  </div>
+
+  <div body>
+    <div class="row">
+      <div class="col-md-12 md-tabs">
+        <form [formGroup]="form" class="form-material">
+          <div class="row">
+            <form-field
+              [control]="form.get('volante')"
+              label="Volante"
+              class="col-md-3">
+              <input class="form-control" formControlName="volante" />
+            </form-field>
+            <form-field
+              [control]="form.get('exp')"
+              label="Exp"
+              class="col-md-3">
+              <input class="form-control" formControlName="exp" />
+            </form-field>
+            <form-field
+              [control]="form.get('remitente')"
+              label="Remitente"
+              class="col-md-6">
+              <input class="form-control" formControlName="remitente" />
+            </form-field>
+          </div>
+          <div class="row pt-3">
+            <form-field
+              [control]="form.get('remitente1')"
+              label="Remitente"
+              class="col-md-6">
+              <input class="form-control" formControlName="remitente1" />
+            </form-field>
+          </div>
+          <div class="row pt-3">
+            <form-field
+              [control]="form.get('texto1')"
+              label="Texto 1"
+              class="col-md-6">
+              <textarea
+                rows="5"
+                class="form-control"
+                formControlName="texto1"></textarea>
+            </form-field>
+            <form-field
+              [control]="form.get('texto2')"
+              label="Texto 2"
+              class="col-md-6">
+              <textarea
+                rows="5"
+                class="form-control"
+                formControlName="texto2"></textarea>
+            </form-field>
+          </div>
+          <hr />
+          <div class="row pt-4">
+            <div class="col-md-5 p-3 m-3 border border-secondary">
+              <small>Solicitud de Documento</small>
+              <div class="row pt-5">
+                <form-field
+                  [control]="form.get('cve')"
+                  label="CVE"
+                  class="col-md-4">
+                  <input class="form-control" formControlName="cve" />
+                </form-field>
+                <form-field
+                  [control]="form.get('ofgest')"
+                  label="Of Gest"
+                  class="col-md-4 offset-md-4">
+                  <input class="form-control" formControlName="ofgest" />
+                </form-field>
+              </div>
+              <div class="row pt-3">
+                <form-field [control]="form.get('documento')" label="Documento">
+                  <input class="form-control" formControlName="documento" />
+                </form-field>
+              </div>
+              <div class="row pt-3">
+                <div class="col-md-12 text-rigth">
+                  <button class="btn btn-secondary btn-sm active">
+                    Limpia Documento
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <button class="btn btn-primary active">
+                Dictamen &#62;&#62;&#62;
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</app-card>
+
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Dictaminaci&oacute;n</h5>
+  </div>
+
+  <div body>
+    <div class="row">
+      <div class="col-md-12 md-tabs">
+        <form [formGroup]="form" class="form-material">
+          <div class="row">
+            <form-field
+              [control]="form.get('expediente')"
+              label="Expediente"
+              class="col-md-3">
+              <input class="form-control" formControlName="expediente" />
+            </form-field>
+            <form-field
+              [control]="form.get('dicta')"
+              label="Dicta"
+              class="col-md-3">
+              <input class="form-control" formControlName="dicta" />
+            </form-field>
+            <form-field
+              [control]="form.get('volante1')"
+              label="Volante"
+              class="col-md-3">
+              <input class="form-control" formControlName="volante1" />
+            </form-field>
+            <form-field
+              [control]="form.get('dictaminacion')"
+              label="Dictaminaci&oacute;n"
+              class="col-md-3">
+              <input class="form-control" formControlName="dictaminacion" />
+            </form-field>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <button class="btn btn-primary active">
+                Oficio&#62;&#62;&#62;
+              </button>
+            </div>
+          </div>
+          <hr />
+          <h5>Dictamen</h5>
+          <div class="row pt-5">
+            <form-field
+              [control]="form.get('noofdicta')"
+              label="No Of Dicta"
+              class="col-md-2">
+              <input class="form-control" formControlName="noofdicta" />
+            </form-field>
+            <form-field
+              [control]="form.get('remitente2')"
+              label="Remitente"
+              class="col-md-5">
+              <input class="form-control" formControlName="remitente2" />
+            </form-field>
+            <form-field
+              [control]="form.get('destinatario')"
+              label="Destinatario"
+              class="col-md-5">
+              <input class="form-control" formControlName="destinatario" />
+            </form-field>
+          </div>
+          <div class="row pt-3">
+            <form-field
+              [control]="form.get('texto3')"
+              label="Texto 1"
+              class="col-md-6">
+              <textarea
+                rows="5"
+                class="form-control"
+                formControlName="texto3"></textarea>
+            </form-field>
+            <form-field
+              [control]="form.get('texto4')"
+              label="Texto 2"
+              class="col-md-6">
+              <textarea
+                rows="5"
+                class="form-control"
+                formControlName="texto4"></textarea>
+            </form-field>
+          </div>
+          <div class="row pt-3">
+            <form-field [control]="form.get('texto5')" label="Texto 3">
+              <textarea
+                rows="5"
+                class="form-control"
+                formControlName="texto5"></textarea>
+            </form-field>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</app-card>

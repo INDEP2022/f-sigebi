@@ -1,0 +1,41 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">DESAHOGO &#45; Quitar Desahogo</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="container-fluid form-material">
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field [control]="form.get('noVolante')" label="No&#46; Volante">
+            <input class="form-control" formControlName="noVolante" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="form.get('noExpediente')"
+            label="No&#46; Expediente">
+            <input class="form-control" formControlName="noExpediente" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field
+            [control]="form.get('cveDictamen')"
+            label="Clave Dictamen">
+            <input class="form-control" formControlName="cveDictamen" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2 text-center">
+          <div class="form-group">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm"
+              (click)="btnBorrarDesahogo()">
+              Borrar Desahogo
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { PHOTOGRAPHY_COLUMNS } from './photography-columns';
 
 @Component({
@@ -49,10 +50,10 @@ export class PhotographyFormComponent extends BasePage implements OnInit {
       managementNumber: [5296016],
       noProgrammation: [null],
       noImage: [null],
-      author: [null],
-      titleImage: [null],
+      author: [null, [Validators.pattern(STRING_PATTERN)]],
+      titleImage: [null, [Validators.pattern(STRING_PATTERN)]],
       noPhotography: [null],
-      text: [null],
+      text: [null, [Validators.pattern(STRING_PATTERN)]],
       programmingFolio: [null],
     });
   }

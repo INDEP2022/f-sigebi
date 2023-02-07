@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-create-classificate-vehicle-form',
@@ -27,9 +28,9 @@ export class CreateClassificateVehicleFormComponent
   prepareForm() {
     this.form = this.fb.group({
       typeVehicle: [null],
-      sale: [null],
-      donation: [null],
-      destruction: [null],
+      sale: [null, [Validators.pattern(STRING_PATTERN)]],
+      donation: [null, [Validators.pattern(STRING_PATTERN)]],
+      destruction: [null, [Validators.pattern(STRING_PATTERN)]],
     });
 
     if (this.item != null) {

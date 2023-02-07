@@ -25,6 +25,9 @@ import { SearchBarSimpleComponent } from './components/search-bar-simple/search-
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
 import { SeeMoreComponent } from './components/see-more/see-more.component';
 import { SelectComponent } from './components/select/select.component';
+import { PermissionsDirective } from './directives/permissions.directive';
+/*Redux NgRX Global Vars Store*/
+import { GlobalVarsModule } from './global-vars/global-vars.module';
 
 @NgModule({
   declarations: [
@@ -44,6 +47,7 @@ import { SelectComponent } from './components/select/select.component';
     SearchBarSimpleComponent,
     DividerComponent,
     CheckboxElementComponent,
+    PermissionsDirective,
   ],
   imports: [
     CommonModule,
@@ -55,6 +59,7 @@ import { SelectComponent } from './components/select/select.component';
     Ng2SmartTableModule,
     BsDatepickerModule.forRoot(),
     NgScrollbarModule,
+    GlobalVarsModule,
   ],
   exports: [
     ColumnsSelectComponent,
@@ -80,6 +85,8 @@ import { SelectComponent } from './components/select/select.component';
     CheckboxElementComponent,
     CheckboxColumnComponent,
     NgScrollbarModule,
+    PermissionsDirective,
+    GlobalVarsModule,
   ],
 })
 export class SharedModule {

@@ -4,7 +4,7 @@
   </div>
   <div body>
     <div class="row" *ngIf="showForm">
-      <h5 class="title">Busqueda de documentos</h5>
+      <h5 class="title">B&uacute;squeda de documentos</h5>
       <form [formGroup]="documentForm" class="form-material">
         <div class="row pt-4">
           <form-field [control]="documentForm.get('text')" label="Texto">
@@ -29,7 +29,7 @@
           <div class="col-md-4">
             <form-field
               [control]="documentForm.get('titleDocument')"
-              label="Titulo del documento">
+              label="T&iacute;tulo del documento">
               <input
                 type="text"
                 class="form-control"
@@ -37,7 +37,9 @@
             </form-field>
           </div>
           <div class="col-md-4">
-            <form-field [control]="documentForm.get('noSiab')" label="No° SIAB">
+            <form-field
+              [control]="documentForm.get('noSiab')"
+              label="No&#46; SIAB">
               <input
                 type="text"
                 class="form-control"
@@ -93,7 +95,7 @@
           <div class="col-md-4">
             <form-field
               [control]="documentForm.get('noGestion')"
-              label="No° gestión">
+              label="No&#46; gestión">
               <input
                 type="text"
                 class="form-control"

@@ -6,5 +6,5 @@ export interface IResponse {
   text: string | null;
   startValue: number | null;
   endValue: number | null;
-  registerNumber: number | null;
+  //registerNumber: number | null;
 }

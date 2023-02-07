@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Aprobación para Donación</h5>
+    <h5 class="title">Captura de Aprobaci&oacute;n para Donaci&oacute;n</h5>
   </div>
 
   <div body>
@@ -35,7 +35,9 @@
 
             <div class="col-md-6">
               <div class="mb-3 pl-4 pr-4">
-                <form-field [control]="regisForm.get('area')" label="Área">
+                <form-field
+                  [control]="regisForm.get('area')"
+                  label="&Aacute;rea">
                   <input
                     type="text"
                     class="form-control"
@@ -106,7 +108,7 @@
         <div class="col-md-7">
           <div class="row">
             <div class="col-12">
-              <h5>Parámetros para Traer Información de SIAB</h5>
+              <h5>Par&aacute;metros para Traer Informaci&oacute;n de SIAB</h5>
             </div>
           </div>
           <div class="row mt-5">
@@ -217,7 +219,7 @@
                 class="btn btn-secondary btn-sm active"
                 (click)="
                   openModal(
-                    'Visualización de Errores',
+                    'Visualizaci&oacute;n de Errores',
                     'see-error',
                     'Los Siguientes Bienes Contienen Errores:'
                   )

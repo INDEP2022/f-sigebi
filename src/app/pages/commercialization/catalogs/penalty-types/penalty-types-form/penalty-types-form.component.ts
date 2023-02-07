@@ -1,7 +1,10 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ITPenalty } from 'src/app/core/models/ms-parametercomer/penalty-type.model';
+import { TPenaltyService } from 'src/app/core/services/ms-parametercomer/tpenalty.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-penalty-types-form',
@@ -13,10 +16,14 @@ export class PenaltyTypesFormComponent extends BasePage implements OnInit {
   penaltyTypeForm: FormGroup = new FormGroup({});
   title: string = 'Tipo Penalización';
   edit: boolean = false;
-  penaltyType: any;
+  penaltyType: ITPenalty;
   @Output() refresh = new EventEmitter<true>();
 
-  constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
+  constructor(
+    private modalRef: BsModalRef,
+    private fb: FormBuilder,
+    private tpenaltyService: TPenaltyService
+  ) {
     super();
   }
 
@@ -26,9 +33,12 @@ export class PenaltyTypesFormComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.penaltyTypeForm = this.fb.group({
-      id: [null, [Validators.required]],
-      description: [null, [Validators.required]],
-      days: [null, [Validators.required]],
+      id: [null],
+      descPenalty: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      daysPenalty: [null, [Validators.required]],
       process: [null, [Validators.required, Validators.maxLength(1)]],
     });
     if (this.penaltyType != null) {
@@ -48,12 +58,39 @@ export class PenaltyTypesFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.handleSuccess();
+    // this.handleSuccess();
+    console.log(this.penaltyTypeForm.value);
+    this.tpenaltyService.create(this.penaltyTypeForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => {
+        this.onLoadToast(
+          'error',
+          this.title,
+          `Error al conectar con el servidor`
+        );
+        this.loading = false;
+        console.log(error);
+      },
+    });
   }
 
   update() {
     this.loading = true;
-    this.handleSuccess();
+    // this.handleSuccess();
+    this.tpenaltyService
+      .update(this.penaltyType.id, this.penaltyTypeForm.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => {
+          this.onLoadToast(
+            'error',
+            this.title,
+            `Error al conectar con el servidor`
+          );
+          this.loading = false;
+          console.log(error);
+        },
+      });
   }
 
   handleSuccess() {

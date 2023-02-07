@@ -1,0 +1,52 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">CAT&Aacute;LOGO DE TIPOS DE INVENTARIO</h5>
+      <div class="col-md-5 buttons">
+        <div>
+          <button
+            class="btn btn-primary active btn-sm ml-3"
+            (click)="openForm()">
+            Nuevo
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row mb-5">
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('inventoryType')"
+            label="Tipo Inventario">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="inventoryType" />
+          </form-field>
+        </div>
+        <div class="col-md-8">
+          <form-field
+            [control]="form.get('description')"
+            label="Descrici&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+
+    <div class="table-responsive">
+      <ng2-smart-table
+        [settings]="settings"
+        [source]="data"
+        (edit)="openForm($event.data)"
+        (delete)="delete($event.data)"></ng2-smart-table>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+  </div>
+</app-card>

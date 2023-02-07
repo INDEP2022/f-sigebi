@@ -2,187 +2,204 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
-  //Henry
+  //Henryy
   {
-    path: 'c-p-m-cat-financial-information-attributes',
+    path: 'cat-financial-information-attributes',
     loadChildren: async () =>
       (
         await import(
-          './c-p-m-cat-financial-information-attributes/c-p-m-cat-financial-information-attributes.module'
+          './cat-financial-information-attributes/cat-financial-information-attributes.module'
         )
-      ).CPMCatFinancialInformationAttributesModule,
-    data: { title: 'Catálogo de atributos de información financiera' },
+      ).CatFinancialInformationAttributesModule,
+    data: {
+      title: 'Catálogo de atributos de información financiera',
+      screen: 'FCATADBATRIBINFIN',
+    },
   },
   {
-    path: 'c-p-m-cat-financial-indicators',
+    //YA EXISTE EN CATALOGS
+    path: 'cat-financial-indicators',
     loadChildren: async () =>
       (
         await import(
-          './c-p-m-cat-financial-indicators/c-p-m-cat-financial-indicators.module'
+          './cat-financial-indicators/cat-financial-indicators.module'
         )
-      ).CPMCatFinancialIndicatorsModule,
-    data: { title: 'Catálogo de indicadores financieros' },
+      ).CatFinancialIndicatorsModule,
+    data: {
+      title: 'Catálogo de indicadores financieros',
+      screen: 'FCATADBINDICFINAN',
+    },
   },
   {
-    path: 'c-p-m-question-catalog',
+    path: 'question-catalog',
     loadChildren: async () =>
-      (await import('./c-p-m-question-catalog/c-p-m-question-catalog.module'))
-        .CPMQuestionCatalogModule,
-    data: { title: 'Catálogo de preguntas' },
+      (await import('./question-catalog/question-catalog.module'))
+        .QuestionCatalogModule,
+    data: { title: 'Catálogo de preguntas', screen: 'FCATADBINFOREMPRE' },
   },
   {
-    path: 'c-p-m-logical-tables-register',
+    path: 'logical-tables-register',
+    loadChildren: async () =>
+      (await import('./logical-tables-register/logical-tables-register.module'))
+        .LogicalTablesRegisterModule,
+    data: { title: 'Catálogo de tablas lógicas', screen: 'FCATCATALTATABLAS' },
+  },
+  {
+    path: 'flyer-subject-catalog',
+    loadChildren: async () =>
+      (await import('./flyer-subject-catalog/flyer-subject-catalog.module'))
+        .FlyerSubjectCatalogModule,
+    data: {
+      title: 'Catálogo de asuntos para volantes',
+      screen: 'FCATCATASUNTOS',
+    },
+  },
+  {
+    path: 'register-attributes-types',
     loadChildren: async () =>
       (
         await import(
-          './c-p-m-logical-tables-register/c-p-m-logical-tables-register.module'
+          './register-attributes-types/register-attributes-types.module'
         )
-      ).CPMLogicalTablesRegisterModule,
-    data: { title: 'Catálogo de tablas lógicas' },
+      ).RegisterAttributesTypesModule,
+    data: {
+      title: 'Alta de atributos por tipo de bien',
+      screen: 'FCATCATATRIBXBIEN',
+    },
   },
   {
-    path: 'c-p-m-flyer-subject-catalog',
+    path: 'cat-effective-numeraire',
+    loadChildren: async () =>
+      (await import('./cat-effective-numeraire/cat-effective-numeraire.module'))
+        .CatEffectiveNumeraireModule,
+    data: {
+      title: 'Categoria para numerario efectivo',
+      screen: 'FCATCATCATEGONUME',
+    },
+  },
+  {
+    path: 'bank-concepts',
+    loadChildren: async () =>
+      (await import('./bank-concepts/bank-concepts.module')).BankConceptsModule,
+    data: { title: 'Conceptos bancarios', screen: 'FCATCATCONCEPBANC' },
+  },
+  {
+    //YA EXISTE EN CATALOGS
+    path: 'cat-depository-payment',
+    loadChildren: async () =>
+      (await import('./cat-depository-payment/cat-depository-payment.module'))
+        .CatDepositoryPaymentModule,
+    data: {
+      title: 'Catalogo de conceptos de pagos depositarias',
+      screen: 'FCATCATCONCEPPAGO',
+    },
+  },
+  {
+    path: 'maintenance-deleg-subdeleg',
     loadChildren: async () =>
       (
         await import(
-          './c-p-m-flyer-subject-catalog/c-p-m-flyer-subject-catalog.module'
+          './maintenance-deleg-subdeleg/maintenance-deleg-subdeleg.module'
         )
-      ).CPMFlyerSubjectCatalogModule,
-    data: { title: 'Catálogo de asuntos para volantes' },
+      ).MaintenanceDelegSubdelegModule,
+    data: {
+      title: 'Mant. a delegaciones y subdelegaciones',
+      screen: 'FCATCATDELYSUBDEL',
+    },
   },
   {
-    path: 'c-p-m-register-attributes-types',
+    //YA EXISTE EN CATALOGS
+    path: 'mnce-adm-depository-auditor',
     loadChildren: async () =>
       (
         await import(
-          './c-p-m-register-attributes-types/c-p-m-register-attributes-types.module'
+          './mnce-adm-depository-auditor/mnce-adm-depository-auditor.module'
         )
-      ).CPMRegisterAttributesTypesModule,
-    data: { title: 'Alta de atributos por tipo de bien' },
+      ).MnceAdmDepositoryAuditorModule,
+    data: {
+      title: 'Mantto. a administrador, depositario e interventor',
+      screen: 'FCATCATDEPOINTEAD',
+    },
   },
   {
-    path: 'c-p-m-cat-effective-numeraire',
+    path: 'attributes-reg-logical-tables',
     loadChildren: async () =>
       (
         await import(
-          './c-p-m-cat-effective-numeraire/c-p-m-cat-effective-numeraire.module'
+          './attributes-reg-logical-tables/attributes-reg-logical-tables.module'
         )
-      ).CPMCatEffectiveNumeraireModule,
-    data: { title: 'Categoria para numerario efectivo' },
+      ).ttributesRegLogicalTablesModule,
+    data: {
+      title: 'Registro de atributos para tablas lógicas',
+      screen: 'FCATCATDESCATRIBU',
+    },
   },
   {
-    path: 'c-p-m-bank-concepts',
-    loadChildren: async () =>
-      (await import('./c-p-m-bank-concepts/c-p-m-bank-concepts.module'))
-        .CPMBankConceptsModule,
-    data: { title: 'Conceptos bancarios' },
-  },
-  {
-    path: 'c-p-m-cat-depository-payment',
+    path: 'register-keys-logical-tables',
     loadChildren: async () =>
       (
         await import(
-          './c-p-m-cat-depository-payment/c-p-m-cat-depository-payment.module'
+          './register-keys-logical-tables/register-keys-logical-tables.module'
         )
-      ).CPMCatDepositoryPaymentModule,
-    data: { title: 'Catalogo de conceptos de pagos depositarias' },
+      ).RegisterKeysLogicalTablesModule,
+    data: {
+      title: 'Registro de claves para tablas logicas',
+      screen: 'FCATCATDESCCLAVES',
+    },
   },
   {
-    path: 'c-p-m-maintenance-deleg-subdeleg',
+    path: 'cat-doc-require',
+    loadChildren: async () =>
+      (await import('./cat-doc-require/cat-doc-require.module'))
+        .CatDocRequireModule,
+    data: {
+      title: 'Catálogo de requisitos documentales',
+      screen: 'FCATCATDOCUMDICTA',
+    },
+  },
+  {
+    path: 'general-archive-catalog',
+    loadChildren: async () =>
+      (await import('./general-archive-catalog/general-archive-catalog.module'))
+        .GeneralArchiveCatalogModule,
+    data: { title: 'Catálogo de Archivo General', screen: 'FCATCATGUARDAVALO' },
+  },
+  {
+    path: 'cat-identifier-uni-dbs',
+    loadChildren: async () =>
+      (await import('./cat-identifier-uni-dbs/cat-identifier-uni-dbs.module'))
+        .CatIdentifierUniDbsModule,
+    data: {
+      title: 'Catálogo de identificador para la unificacion de las dbs',
+      screen: 'FCATCATIDENTIFICADOR',
+    },
+  },
+  {
+    path: 'cat-relationship-opinion',
     loadChildren: async () =>
       (
         await import(
-          './c-p-m-maintenance-deleg-subdeleg/c-p-m-maintenance-deleg-subdeleg.module'
+          './cat-relationship-opinion/cat-relationship-opinion.module'
         )
-      ).CPMMaintenanceDelegSubdelegModule,
-    data: { title: 'Mant. a delegaciones y subdelegaciones' },
-  },
-  {
-    path: 'c-p-m-mnce-adm-depository-auditor',
-    loadChildren: async () =>
-      (
-        await import(
-          './c-p-m-mnce-adm-depository-auditor/c-p-m-mnce-adm-depository-auditor.module'
-        )
-      ).CPMMnceAdmDepositoryAuditorModule,
-    data: { title: 'Mantto. a administrador, depositario e interventor' },
-  },
-  {
-    path: 'c-p-m-attributes-reg-logical-tables',
-    loadChildren: async () =>
-      (
-        await import(
-          './c-p-m-attributes-reg-logical-tables/c-p-m-attributes-reg-logical-tables.module'
-        )
-      ).CPMAttributesRegLogicalTablesModule,
-    data: { title: 'Registro de atributos para tablas lógicas' },
-  },
-  {
-    path: 'c-p-m-register-keys-logical-tables',
-    loadChildren: async () =>
-      (
-        await import(
-          './c-p-m-register-keys-logical-tables/c-p-m-register-keys-logical-tables.module'
-        )
-      ).CPMRegisterKeysLogicalTablesModule,
-    data: { title: 'Registro de claves para tablas logicas' },
-  },
-  {
-    path: 'c-p-m-cat-doc-require',
-    loadChildren: async () =>
-      (await import('./c-p-m-cat-doc-require/c-p-m-cat-doc-require.module'))
-        .CPMCatDocRequireModule,
-    data: { title: 'Catálogo de requisitos documentales' },
-  },
-  {
-    path: 'c-p-m-general-archive-catalog',
-    loadChildren: async () =>
-      (
-        await import(
-          './c-p-m-general-archive-catalog/c-p-m-general-archive-catalog.module'
-        )
-      ).CPMGeneralArchiveCatalogModule,
-    data: { title: 'Catálogo de Archivo General' },
-  },
-  {
-    path: 'c-p-m-cat-identifier-uni-dbs',
-    loadChildren: async () =>
-      (
-        await import(
-          './c-p-m-cat-identifier-uni-dbs/c-p-m-cat-identifier-uni-dbs.module'
-        )
-      ).CPMCatIdentifierUniDbsModule,
-    data: { title: 'Catálogo de identificador para la unificacion de las dbs' },
-  },
-  {
-    path: 'c-p-m-cat-relationship-opinion',
-    loadChildren: async () =>
-      (
-        await import(
-          './c-p-m-cat-relationship-opinion/c-p-m-cat-relationship-opinion.module'
-        )
-      ).CPMCatRelationshipOpinionModule,
-    data: { title: 'Catálogo de relación y de asunto dictamen' },
+      ).CatRelationshipOpinionModule,
+    data: {
+      title: 'Catálogo de relación y de asunto dictamen',
+      screen: 'FCATADBRELASDIC',
+    },
   },
   //Alexander
   {
     path: 'maintenance-of-areas',
     loadChildren: async () =>
-      (
-        await import(
-          './c-p-m-maintenance-of-areas/c-p-m-maintenance-of-areas.module'
-        )
-      ).CPMMaintenanceOfAreasModule,
+      (await import('./maintenance-of-areas/maintenance-of-areas.module'))
+        .MaintenanceOfAreasModule,
     data: { title: 'Catálogo de Mantenimiento de Areas' },
   },
   {
     path: 'profile-maintenance',
     loadChildren: async () =>
-      (
-        await import(
-          './c-p-m-profile-maintenance/c-p-m-profile-maintenance.module'
-        )
-      ).CPMProfileMaintenanceModule,
+      (await import('./profile-maintenance/profile-maintenance.module'))
+        .ProfileMaintenanceModule,
     data: { title: 'Mantenimiento a perfiles' },
   },
   {
@@ -190,26 +207,22 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './c-p-m-maintenance-of-public-ministries/c-p-m-maintenance-of-public-ministries.module'
+          './maintenance-of-public-ministries/maintenance-of-public-ministries.module'
         )
-      ).CPMMaintenanceOfPublicMinistriesModule,
+      ).MaintenanceOfPublicMinistriesModule,
     data: { title: 'Mantenimiento a ministerios publicos' },
   },
   {
     path: 'wareahouse-catalog',
     loadChildren: async () =>
-      (
-        await import(
-          './c-p-m-wareahouse-catalog/c-p-m-wareahouse-catalog.module'
-        )
-      ).CPMWareahouseCatalogModule,
+      (await import('./wareahouse-catalog/wareahouse-catalog.module'))
+        .WareahouseCatalogModule,
     data: { title: 'Mantenimiento a ministerios publicos' },
   },
   {
     path: 'banks-catalog',
     loadChildren: async () =>
-      (await import('./c-p-m-banks-catalog/c-p-m-banks-catalog.module'))
-        .CPMBanksCatalogModule,
+      (await import('./banks-catalog/banks-catalog.module')).BanksCatalogModule,
     data: { title: 'Catálogo de Bancos' },
   },
   {
@@ -217,16 +230,16 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './c-p-m-filters-of-goods-for-donation/c-p-m-filters-of-goods-for-donation.module'
+          './filters-of-goods-for-donation/filters-of-goods-for-donation.module'
         )
-      ).CPMFiltersOfGoodsForDonationModule,
+      ).FiltersOfGoodsForDonationModule,
     data: { title: 'Filtros de bienes para donación' },
   },
   {
     path: 'court-maintenance',
     loadChildren: async () =>
-      (await import('./c-p-m-court-maintenance/c-p-m-court-maintenance.module'))
-        .CPMCourtMaintenanceModule,
+      (await import('./court-maintenance/court-maintenance.module'))
+        .CourtMaintenanceModule,
     data: { title: 'Mantenimiento a juzgados' },
   },
   {
@@ -234,9 +247,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './c-p-m-maintenance-individuals-and-companies/c-p-m-maintenance-individuals-and-companies.module'
+          './maintenance-individuals-and-companies/maintenance-individuals-and-companies.module'
         )
-      ).CPMMaintenanceIndividualsAndCompaniesModule,
+      ).MaintenanceIndividualsAndCompaniesModule,
     data: {
       title: 'Mantenimiento de personas fisicas y morales',
     },
@@ -244,8 +257,7 @@ const routes: Routes = [
   {
     path: 'cost-catalog',
     loadChildren: async () =>
-      (await import('./c-p-m-cost-catalog/c-p-m-cost-catalog.module'))
-        .CPMCostCatalogModule,
+      (await import('./cost-catalog/cost-catalog.module')).CostCatalogModule,
     data: {
       title: 'Catálogo de Costos',
     },
@@ -253,11 +265,8 @@ const routes: Routes = [
   {
     path: 'types-of-claims-catalog',
     loadChildren: async () =>
-      (
-        await import(
-          './c-p-m-types-of-claims-catalog/c-p-m-types-of-claims-catalog.module'
-        )
-      ).CPMTypesOfClaimsCatalogModule,
+      (await import('./types-of-claims-catalog/types-of-claims-catalog.module'))
+        .TypesOfClaimsCatalogModule,
     data: {
       title: 'Catálogo de tipos de siniestro',
     },
@@ -265,11 +274,8 @@ const routes: Routes = [
   {
     path: 'indicia-registration',
     loadChildren: async () =>
-      (
-        await import(
-          './c-p-m-indicia-registration/c-p-m-indicia-registration.module'
-        )
-      ).CPMIndiciaRegistrationModule,
+      (await import('./indicia-registration/indicia-registration.module'))
+        .IndiciaRegistrationModule,
     data: {
       title: 'Registro de Indiciados',
     },
@@ -277,8 +283,7 @@ const routes: Routes = [
   {
     path: 'rate-catalog',
     loadChildren: async () =>
-      (await import('./c-p-m-rate-catalog/c-p-m-rate-catalog.module'))
-        .CPMRateCatalogModule,
+      (await import('./rate-catalog/rate-catalog.module')).RateCatalogModule,
     data: {
       title: 'Catálogo de tasas',
     },
@@ -288,9 +293,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './c-p-m-numerary-parameterization/c-p-m-numerary-parameterization.module'
+          './numerary-parameterization/numerary-parameterization.module'
         )
-      ).CPMNumeraryParameterizationModule,
+      ).NumeraryParameterizationModule,
     data: {
       title: 'Parametrización de numerario',
     },
@@ -298,13 +303,22 @@ const routes: Routes = [
   {
     path: 'parameter-maintenance',
     loadChildren: async () =>
-      (
-        await import(
-          './c-p-m-parameter-maintenance/c-p-m-parameter-maintenance.module'
-        )
-      ).CPMParameterMaintenanceModule,
+      (await import('./parameter-maintenance/parameter-maintenance.module'))
+        .ParameterMaintenanceModule,
     data: {
       title: 'Mantenimiento de Parametros',
+    },
+  },
+  {
+    path: 'maximum-times-for-abandonment',
+    loadChildren: async () =>
+      (
+        await import(
+          './c-p-m-maximum-times-for-abandonment/c-p-m-maximum-times-for-abandonment.module'
+        )
+      ).CPMMaximumTimesForAbandonmentModule,
+    data: {
+      title: 'Tiempos Maximos para abandono',
     },
   },
   {
@@ -312,9 +326,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './c-p-m-catalog-of-document-types/c-p-m-catalog-of-document-types.module'
+          './catalog-of-document-types/catalog-of-document-types.module'
         )
-      ).CPMCatalogOfDocumentTypesModule,
+      ).CatalogOfDocumentTypesModule,
     data: {
       title: 'Catálogo de tipos de documentos',
     },
@@ -324,9 +338,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './c-p-m-catalog-of-inventory-types/c-p-m-catalog-of-inventory-types.module'
+          './catalog-of-inventory-types/catalog-of-inventory-types.module'
         )
-      ).CPMCatalogOfInventoryTypesModule,
+      ).CatalogOfInventoryTypesModule,
     data: {
       title: 'Catálogo de tipos de inventario',
     },
@@ -335,38 +349,35 @@ const routes: Routes = [
   {
     path: 'values',
     loadChildren: async () =>
-      (await import('./c-p-m-values/c-p-m-values.module')).CPMValuesModule,
+      (await import('./values/values.module')).ValuesModule,
     data: { title: 'Valores' },
   },
   {
     path: 'additional-values',
     loadChildren: async () =>
-      (await import('./c-p-m-additional-values/c-p-m-additional-values.module'))
-        .CPMAdditionalValuesModule,
+      (await import('./additional-values/additional-values.module'))
+        .AdditionalValuesModule,
     data: { title: 'Valores Adicionales' },
   },
   {
     path: 'appraisal-institutions',
     loadChildren: async () =>
-      (
-        await import(
-          './c-p-m-appraisal-institutions/c-p-m-appraisal-institutions.module'
-        )
-      ).CPMAppraisalInstitutionsModule,
+      (await import('./appraisal-institutions/appraisal-institutions.module'))
+        .AppraisalInstitutionsModule,
     data: { title: 'Instituciones Valuadoras' },
   },
   {
     path: 'non-working-days',
     loadChildren: async () =>
-      (await import('./c-p-m-non-working-days/c-p-m-non-working-days.module'))
-        .CPMNonWorkingDaysModule,
+      (await import('./non-working-days/non-working-days.module'))
+        .NonWorkingDaysModule,
     data: { title: 'Días Inhábiles' },
   },
   {
     path: 'date-documents',
     loadChildren: async () =>
-      (await import('./c-p-m-date-documents/c-p-m-date-documents.module'))
-        .CPMDateDocumentsModule,
+      (await import('./date-documents/date-documents.module'))
+        .DateDocumentsModule,
     data: { title: 'Fechas para Documentos' },
   },
   {
@@ -374,9 +385,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './c-p-m-indicators-of-performance/c-p-m-indicators-of-performance.module'
+          './indicators-of-performance/indicators-of-performance.module'
         )
-      ).CPMIndicatorsOfPerformanceModule,
+      ).IndicatorsOfPerformanceModule,
     data: { title: 'Indicadores de Desempeño' },
   },
   {
@@ -384,16 +395,15 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './c-p-m-maintenance-document-validators/c-p-m-maintenance-document-validators.module'
+          './maintenance-document-validators/maintenance-document-validators.module'
         )
-      ).CPMMaintenanceDocumentValidatorsModule,
+      ).MaintenanceDocumentValidatorsModule,
     data: { title: 'Mantenimiento a validadores de actas' },
   },
   {
     path: 'maximum-times',
     loadChildren: async () =>
-      (await import('./c-p-m-maximum-times/c-p-m-maximum-times.module'))
-        .CPMMaximumTimesModule,
+      (await import('./maximum-times/maximum-times.module')).MaximumTimesModule,
     data: { title: 'Tiempo Máximo Para Cierre Actas Devolución' },
   },
 ];

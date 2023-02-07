@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -46,8 +47,8 @@ export class EventPermissionControlComponent
   private prepareForm(): void {
     this.form = this.fb.group({
       event: [null, [Validators.required]],
-      user: [null, [Validators.required]],
-      area: [null, [Validators.required]],
+      user: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      area: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
   }
 

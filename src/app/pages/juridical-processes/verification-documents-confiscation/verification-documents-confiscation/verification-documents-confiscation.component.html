@@ -1,0 +1,304 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">COMPROBACI&Oacute;N DE DOCUMENTOS PARA DECOMISO</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="expedientesForm" class="container-fluid form-material">
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-12 p-2">
+          <h6>Expedientes</h6>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="expedientesForm.get('noExpediente')"
+            label="No&#46; Expediente">
+            <input class="form-control" formControlName="noExpediente" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="expedientesForm.get('fechaDictamina')"
+            label="Fecha Dictamina">
+            <input
+              class="form-control"
+              formControlName="fechaDictamina"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="expedientesForm.get('fechaMinisterial')"
+            label="Fecha Ministerial">
+            <input
+              class="form-control"
+              formControlName="fechaMinisterial"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="expedientesForm.get('fechaDecomisoDictaminacion')"
+            label="Fecha Decomiso Dictaminaci&oacute;n">
+            <input
+              class="form-control"
+              formControlName="fechaDecomisoDictaminacion" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field
+            [control]="expedientesForm.get('actaMinisterial')"
+            label="Acta Ministerial">
+            <input class="form-control" formControlName="actaMinisterial" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-check label="Articulo Validado" for="articuloValidado">
+            <input
+              id="articuloValidado"
+              type="checkbox"
+              formControlName="articuloValidado" />
+          </form-check>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field
+            [control]="expedientesForm.get('causaPenal')"
+            label="Causa Penal">
+            <input class="form-control" formControlName="causaPenal" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field
+            [control]="expedientesForm.get('averiguacionPrevia')"
+            label="Averiguaci&oacute;n Previa">
+            <input class="form-control" formControlName="averiguacionPrevia" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <form [formGroup]="bienesForm" class="container-fluid form-material">
+      <div class="row w-100">
+        <hr class="row" />
+        <div class="col-sm-12 col-12 col-md-12 p-2">
+          <h6>Bienes</h6>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="bienesForm.get('noExpediente')"
+            label="No&#46; Expediente">
+            <input class="form-control" formControlName="noExpediente" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field [control]="bienesForm.get('noBien')" label="No&#46; Bien">
+            <input class="form-control" formControlName="noBien" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="bienesForm.get('fechaDictaminacion')"
+            label="Fecha Dictaminaci&oacute;n">
+            <input
+              class="form-control"
+              formControlName="fechaDictaminacion"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field [control]="bienesForm.get('estatus')" label="Estatus">
+            <input class="form-control" formControlName="estatus" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="bienesForm.get('estatusDescripcion')"
+            label="Estatus Descripci&oacute;n">
+            <input class="form-control" formControlName="estatusDescripcion" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="bienesForm.get('descripcion')"
+            label="Descripci&oacute;n">
+            <input class="form-control" formControlName="descripcion" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="bienesForm.get('situacionBien')"
+            label="Situaci&oacute;n Bien">
+            <input class="form-control" formControlName="situacionBien" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field [control]="bienesForm.get('proceso')" label="Proceso">
+            <input class="form-control" formControlName="proceso" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="bienesForm.get('autoridadOrdenaDictamen')"
+            label="Autoridad Ordena Dictamen">
+            <input
+              class="form-control"
+              formControlName="autoridadOrdenaDictamen" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="bienesForm.get('aprobarDictamen')"
+            label="Aprobar Dictamen">
+            <input class="form-control" formControlName="aprobarDictamen" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-check label="Disponible" for="disponible">
+            <input
+              id="disponible"
+              type="checkbox"
+              formControlName="disponible" />
+          </form-check>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="bienesForm.get('noRegistro')"
+            label="No&#46; Registro">
+            <input class="form-control" formControlName="noRegistro" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2">
+          <form-field
+            [control]="bienesForm.get('observaciones')"
+            label="Observaciones">
+            <textarea
+              rows="6"
+              class="form-control"
+              formControlName="observaciones"></textarea>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+          <button
+            class="btn btn-primary btn-sm active m-3 text-wrap"
+            (click)="btnAprobar()">
+            Aprobar
+          </button>
+          <button
+            class="btn btn-danger btn-sm active m-3 text-wrap"
+            (click)="btnRechazar()">
+            Rechazar
+          </button>
+          <button
+            class="btn btn-info btn-sm active m-3 text-wrap"
+            (click)="btnParcializar()">
+            Parcializar
+          </button>
+        </div>
+      </div>
+    </form>
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 p-3 ml-2">
+        <hr class="row" />
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="settingsDocumentos"
+          [source]="dataDocumentos"></ng2-smart-table>
+      </div>
+      <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+        <button
+          class="btn btn-primary btn-sm active m-3 text-wrap"
+          (click)="btnHistorial()">
+          Historial
+        </button>
+        <button
+          class="btn btn-danger btn-sm active m-3 text-wrap"
+          (click)="btnProceso()">
+          Proceso
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>
+
+<div
+  class="row w-100"
+  *ngIf="listadoDocumentos == true || tablaDocumentos == true">
+  <div class="col-sm-12 col-12 col-md-6 p-2" *ngIf="listadoDocumentos == true">
+    <app-card [header]="true">
+      <div class="ch-content" header>
+        <h5 class="title">Reporte Documentos</h5>
+      </div>
+
+      <div body>
+        <div class="row w-100">
+          <div class="col-sm-12 col-12 col-md-12 p-2">
+            <P
+              >Para generar requisitos documentales con detalle de todos los
+              expedientes y bienes&#44; el n&uacute;mero de expediente y el
+              n&uacute;mero de bienes deben ser nulos&#46;</P
+            >
+          </div>
+          <form
+            [formGroup]="reporteHistorialForm"
+            class="container-fluid form-material">
+            <div class="col-sm-12 col-12 col-md-6 p-2">
+              <form-field
+                [control]="reporteHistorialForm.get('noExpediente')"
+                label="No&#46; Expediente">
+                <input class="form-control" formControlName="noExpediente" />
+              </form-field>
+            </div>
+            <div class="col-sm-12 col-12 col-md-6 p-2">
+              <form-field
+                [control]="reporteHistorialForm.get('noBien')"
+                label="No&#46; Bien">
+                <input class="form-control" formControlName="noBien" />
+              </form-field>
+            </div>
+          </form>
+          <div class="col-sm-12 col-12 col-md-12 text-center p-2">
+            <div class="form-group">
+              <button
+                class="btn btn-primary btn-sm active m-3"
+                (click)="btnGenerarReporte()">
+                Generar Reporte
+              </button>
+              <button
+                class="btn btn-danger btn-sm active m-3"
+                (click)="btnSalir()">
+                Cerrar Ventana
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </app-card>
+  </div>
+  <div class="col-sm-12 col-12 col-md-6 p-2" *ngIf="tablaDocumentos == true">
+    <app-card [header]="true">
+      <div class="ch-content" header>
+        <h5 class="title">Selecci&oacute;n de Documentos</h5>
+      </div>
+
+      <div body>
+        <div class="row w-100">
+          <div class="col-sm-12 col-12 col-md-12 p-3 ml-2">
+            <hr class="row" />
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settingsTablaDocumentos"
+              [source]="dataTablaDocumentos"></ng2-smart-table>
+          </div>
+          <div class="col-sm-12 col-12 col-md-12 text-center p-2">
+            <div class="form-group">
+              <button
+                class="btn btn-danger btn-sm active m-3"
+                (click)="btnSalirTabla()">
+                Cerrar Ventana
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </app-card>
+  </div>
+</div>

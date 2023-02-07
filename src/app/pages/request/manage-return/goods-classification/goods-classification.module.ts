@@ -8,13 +8,13 @@ import { NgModule } from '@angular/core';
 /** SERVICE IMPORTS */
 
 /** ROUTING MODULE */
-import { GDCBGoodsClassificationRoutingModule } from './goods-classification-routing.module';
+import { GoodsClassificationRoutingModule } from './goods-classification-routing.module';
 
 /** COMPONENTS IMPORTS */
 
 @NgModule({
   declarations: [],
-  imports: [CommonModule, GDCBGoodsClassificationRoutingModule],
+  imports: [CommonModule, GoodsClassificationRoutingModule],
   providers: [],
 })
-export class GDCBGoodsClassificationModule {}
+export class GoodsClassificationModule {}

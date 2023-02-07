@@ -3,7 +3,15 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  EMAIL_PATTERN,
+  PHONE_PATTERN,
+  RFCCURP_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { IComerProvider } from '../../../../../core/models/ms-provider/provider-model';
+import { ComerProvidersService } from '../../../../../core/services/ms-provider/comer-providers.service';
 
 @Component({
   selector: 'app-provider-catalogs-modal',
@@ -12,7 +20,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class ProviderCatalogsModalComponent extends BasePage implements OnInit {
   title: string = 'Proveedor';
-  provider: any;
+  provider: IComerProvider;
   edit: boolean = false;
   cityItems = new DefaultSelect();
   stateItems = new DefaultSelect();
@@ -104,7 +112,11 @@ export class ProviderCatalogsModalComponent extends BasePage implements OnInit {
     },
   ];
 
-  constructor(private modalRef: BsModalRef, private fb: FormBuilder) {
+  constructor(
+    private modalRef: BsModalRef,
+    private fb: FormBuilder,
+    private providerService: ComerProvidersService
+  ) {
     super();
   }
 
@@ -117,28 +129,35 @@ export class ProviderCatalogsModalComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.providerForm = this.fb.group({
-      rfc: [null],
-      curp: [null, [Validators.required]],
-      name: [null, [Validators.required]],
-      street: [null, [Validators.required]],
-      neighborhood: [null, [Validators.required]],
-      delegation: [null],
-      state: [null],
-      city: [null],
-      country: [null],
-      cp: [null],
-      phone: [null],
-      fax: [null],
-      email: [null],
-      type: [null],
-      activity: [null],
-      contractNumber: [null],
+      providerId: [null],
+      rfc: [null, [Validators.required, Validators.pattern(RFCCURP_PATTERN)]],
+      curp: [null, [Validators.required, Validators.pattern(RFCCURP_PATTERN)]],
+      nameReason: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      street: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      colony: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      delegation: [null, Validators.pattern(STRING_PATTERN)],
+      stateDesc: [null, Validators.required],
+      cityDesc: [null, Validators.required],
+      clkCountry: [null, Validators.required],
+      clkmun: [null, Validators.required],
+      clkedo: [null, Validators.required],
+      cp: [null, Validators.pattern(STRING_PATTERN)],
+      phone: [null, Validators.pattern(PHONE_PATTERN)],
+      fax: [null, Validators.pattern(STRING_PATTERN)],
+      webMail: [null, Validators.pattern(EMAIL_PATTERN)],
+      typePerson: [null, Validators.pattern(STRING_PATTERN)],
+      preponderantAct: [null, Validators.pattern(STRING_PATTERN)],
+      contractNo: [null, Validators.pattern(STRING_PATTERN)],
     });
-    if (this.provider !== undefined) {
-      this.edit = true;
-      this.providerForm.patchValue(this.provider);
+    this.providerForm.patchValue(this.provider);
+    console.log(this.providerForm.value);
+    if (!this.edit) {
+      // this.edit = true;
+      this.providerForm.controls['clkCountry'].setValue('MÉXICO');
     } else {
-      this.providerForm.controls['country'].setValue('MÉXICO');
     }
   }
 
@@ -147,15 +166,49 @@ export class ProviderCatalogsModalComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    this.handleSuccess();
+    this.edit ? this.update() : this.create();
   }
 
   handleSuccess() {
-    this.loading = true;
-    // Llamar servicio para agregar control
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
-    this.onConfirm.emit(this.providerForm.value);
+    this.onConfirm.emit(true);
     this.modalRef.hide();
+  }
+
+  create(): void {
+    this.loading = true;
+    this.providerService.create(this.providerForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => {
+        this.showError(error);
+      },
+    });
+  }
+
+  update(): void {
+    this.loading = true;
+    this.providerService
+      .update(this.provider.providerId, this.providerForm.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => {
+          this.showError(error);
+          this.loading = false;
+        },
+      });
+  }
+
+  showError(error?: any) {
+    let action: string;
+    this.edit ? (action = 'agregar') : 'editar';
+    this.onLoadToast(
+      'error',
+      `Error al ${action} datos`,
+      'Hubo un problema al conectarse con el servior'
+    );
+    error ? console.log(error) : null;
   }
 
   getCities(params: ListParams) {

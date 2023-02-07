@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IManagement } from 'src/app/core/models/catalogs/management.model';
 import { ManagementService } from 'src/app/core/services/catalogs/management.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from '../../../../core/shared/patterns';
 
 @Component({
   selector: 'app-management-form',
@@ -30,7 +31,14 @@ export class ManagementFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.managementForm = this.fb.group({
-      description: [null, [Validators.required, Validators.maxLength(30)]],
+      description: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(30),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
       idTramite: [null, [Validators.required, Validators.maxLength(2)]],
     });
 

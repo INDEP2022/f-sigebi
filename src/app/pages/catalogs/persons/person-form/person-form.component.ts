@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IPerson } from 'src/app/core/models/catalogs/person.model';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import {
+  KEYGENERATION_PATTERN,
+  PHONE_PATTERN,
+  RFCCURP_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { ModelForm } from '../../../../core/interfaces/model-form';
 import { PersonService } from '../../../../core/services/catalogs/person.service';
 
@@ -14,11 +18,11 @@ import { PersonService } from '../../../../core/services/catalogs/person.service
   styles: [],
 })
 export class PersonFormComponent extends BasePage implements OnInit {
-  form: ModelForm<IPerson>;
-  title: string = 'Persona';
-  edit: boolean = false;
+  personForm: ModelForm<IPerson>;
   person: IPerson;
-  persons = new DefaultSelect<IPerson>();
+  title: string = 'Mantto. a administrador, depositario e interventor';
+  edit: boolean = false;
+
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
@@ -32,49 +36,95 @@ export class PersonFormComponent extends BasePage implements OnInit {
   }
 
   private prepareForm() {
-    this.form = this.fb.group({
+    this.personForm = this.fb.group({
       id: [null],
       personNumber: [null, [Validators.required]],
-      name: [null, [Validators.required]],
-      street: [null, [Validators.required]],
+      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      street: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       streetNumber: [null, [Validators.required]],
       apartmentNumber: [null, [Validators.required]],
-      suburb: [null, [Validators.required]],
-      delegation: [null, [Validators.required]],
+      suburb: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      delegation: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       zipCode: [null, [Validators.required]],
-      rfc: [null, [Validators.required]],
-      curp: [null, [Validators.required]],
-      phone: [null, [Validators.required]],
-      typePerson: [null, [Validators.required]],
-      typeResponsible: [null, [Validators.required]],
-      manager: [null, [Validators.required]],
-      numberDeep: [null, [Validators.required]],
-      profesion: [null, [Validators.required]],
-      curriculum: [null, [Validators.required]],
-      keyEntFed: [null, [Validators.required]],
-      keyOperation: [null, [Validators.required]],
-      observations: [null, [Validators.required]],
-      profile: [null, [Validators.required]],
-      precedentSecodam: [null, [Validators.required]],
-      precedentPgr: [null, [Validators.required]],
-      precedentPff: [null, [Validators.required]],
-      precedentSera: [null, [Validators.required]],
-      precedent0ther: [null, [Validators.required]],
+      rfc: [null, [Validators.required, Validators.pattern(RFCCURP_PATTERN)]],
+      curp: [null, [Validators.required, Validators.pattern(RFCCURP_PATTERN)]],
+      phone: [null, [Validators.required, Validators.pattern(PHONE_PATTERN)]],
+      typePerson: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      typeResponsible: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      manager: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      numberDeep: [
+        null,
+        [Validators.required, Validators.pattern(PHONE_PATTERN)],
+      ],
+      profesion: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      curriculum: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      keyEntFed: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      keyOperation: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      observations: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      profile: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      precedentSecodam: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      precedentPgr: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      precedentPff: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      precedentSera: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      precedent0ther: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       registryNumber: [null, [Validators.required]],
-      email: [null, [Validators.required], [Validators.email]],
-      blackList: [null, [Validators.required]],
+      email: [null, [Validators.required, Validators.email]],
+      blackList: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
     if (this.person != null) {
       this.edit = true;
-      this.form.patchValue(this.person);
+      this.personForm.patchValue(this.person);
     }
   }
 
-  getData(params: ListParams) {
-    this.personService.getAll(params).subscribe(data => {
-      this.persons = new DefaultSelect(data.data, data.count);
-    });
-  }
   close() {
     this.modalRef.hide();
   }
@@ -85,7 +135,7 @@ export class PersonFormComponent extends BasePage implements OnInit {
 
   create() {
     this.loading = true;
-    this.personService.create(this.form.getRawValue()).subscribe({
+    this.personService.create(this.personForm.value).subscribe({
       next: data => this.handleSuccess(),
       error: error => (this.loading = false),
     });
@@ -93,16 +143,14 @@ export class PersonFormComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.personService
-      .update(this.person.id, this.form.getRawValue())
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.personService.update(this.person.id, this.personForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   handleSuccess() {
-    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
     this.onLoadToast('success', this.title, `${message} Correctamente`);
     this.loading = false;
     this.modalRef.content.callback(true);

@@ -41,7 +41,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.search.valueChanges
       .pipe(
         distinctUntilChanged(),
-        debounceTime(400),
+        debounceTime(1000),
         takeUntil(this.ngUnsubscribe),
         switchMap((term: string) => {
           this.emitEvent(term);
@@ -53,7 +53,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   emitEvent(text: string) {
     const params = this.params.getValue();
-    params.inicio = 1;
+    params.page = 1;
     this.params.next({ ...params, text });
   }
 

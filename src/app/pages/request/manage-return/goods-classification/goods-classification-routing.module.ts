@@ -12,13 +12,10 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   // Clasificación Bienes
   {
-    path: 'clasificacion-bienes',
+    path: 'goods-classification',
     loadChildren: async () =>
-      (
-        await import(
-          './goods-classification/gd-cb-m-goods-classification.module'
-        )
-      ).GDCBGoodsClassificationModule,
+      (await import('./goods-classification/goods-classification.module'))
+        .GoodsClassificationModule,
     data: { title: 'Clasificación Bienes' },
   },
   // Clasificación Bienes
@@ -27,4 +24,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class GDCBGoodsClassificationRoutingModule {}
+export class GoodsClassificationRoutingModule {}

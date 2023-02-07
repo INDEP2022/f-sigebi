@@ -1,0 +1,144 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Paricializaci&oacute;n de Bienes Generales 2</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('noBien')" label="No&#46; Bien">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="noBien" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <form-field
+            [control]="form.get('descripcion')"
+            label="Descripci&oacute;n">
+            <textarea
+              rows="5"
+              class="form-control"
+              formControlName="descripcion"></textarea>
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('cantidad')" label="Cantidad">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="cantidad" />
+          </form-field>
+        </div>
+
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('avaluo')"
+            label="Valor Aval&uacute;o">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="avaluo" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('estatus')" label="Estatus">
+            <ngx-select
+              control="estatus"
+              [form]="form"
+              [data]="itemsSelect"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="form.get('expediente')"
+            label="No&#46; Expediente">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="expediente" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <form-field [control]="form.get('clasificador')" label="Clasificador">
+            <ngx-select
+              control="clasificador"
+              [form]="form"
+              [data]="itemsSelect"></ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="form.get('moneda')" label="Moneda">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="moneda" />
+          </form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-3">
+          <form-field [control]="form.get('importe')" label="Importe">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="importe" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field [control]="form.get('veces')" label="Veces a Parcializar">
+            <input type="number" class="form-control" formControlName="veces" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field [control]="form.get('cantidad2')" label="Cantidad">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="cantidad2" />
+          </form-field>
+        </div>
+
+        <div class="col-md-3">
+          <form-field [control]="form.get('saldo')" label="Saldo">
+            <input type="number" class="form-control" formControlName="saldo" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="d-flex justify-content-center">
+          <div class="col-md-6">
+            <div class="row">
+              <div class="form-group">
+                <button class="mx-1" size="small">Parcializa</button>
+                <button class="mx-1" size="small">Limpia Bloque</button>
+                <button class="mx-1 my-1" size="small">Verifica Suma</button>
+                <button class="mx-1 my-1" size="small">Aplica</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row pt-2 scroll-table">
+        <ng2-smart-table
+          class="col-md-12"
+          [settings]="settings"
+          [source]="data"></ng2-smart-table>
+      </div>
+    </form>
+  </div>
+</app-card>

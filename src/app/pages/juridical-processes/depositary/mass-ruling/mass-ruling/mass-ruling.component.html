@@ -1,0 +1,202 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">DICTAMINACI&Oacute;N MASIVA</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field [control]="form.get('noOficio')" label="No&#46; Oficio">
+            <input class="form-control" formControlName="noOficio" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field [control]="form.get('noVolante')" label="No&#46; Volante">
+            <input class="form-control" formControlName="noVolante" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="form.get('noExpediente')"
+            label="No&#46; Expediente">
+            <input class="form-control" formControlName="noExpediente" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="form.get('tipoDictaminacion')"
+            label="Tipo Dictaminaci&oacute;n">
+            <input class="form-control" formControlName="tipoDictaminacion" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field [control]="form.get('fecha')" label="Fecha">
+            <input class="form-control" formControlName="fecha" bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field [control]="form.get('estatus')" label="Estatus">
+            <input class="form-control" formControlName="estatus" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="form.get('claveOficioArmada')"
+            label="Clave Oficio Armada">
+            <input class="form-control" formControlName="claveOficioArmada" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="form.get('usuarioDictamina')"
+            label="Usuario Dictamina">
+            <input class="form-control" formControlName="usuarioDictamina" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="form.get('fechaInstructora')"
+            label="Fecha Instructora">
+            <input
+              class="form-control"
+              formControlName="fechaInstructora"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2 pl-4">
+          <form-check label="Eliminar" for="eliminar">
+            <input id="eliminar" type="checkbox" formControlName="eliminar" />
+          </form-check>
+        </div>
+        <div
+          class="col-sm-12 col-12 col-md-4 col-lg-4 col-xl-2 p-2 text-center">
+          <div class="form-group ml-2 mr-2">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm text-wrap"
+              (click)="btnBienesDictamen()">
+              Bienes del Dictamen
+            </button>
+          </div>
+        </div>
+        <div
+          class="col-sm-12 col-12 col-md-4 col-lg-4 col-xl-2 p-2 text-center">
+          <div class="form-group ml-2 mr-2">
+            <button
+              type="button"
+              class="btn btn-primary active btn-sm text-wrap"
+              (click)="btnDictamenes()">
+              Dict&aacute;menes
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-3 p-2">
+        <form [formGroup]="formCargaMasiva" class="form-material">
+          <form-field
+            [control]="formCargaMasiva.get('identificadorCargaMasiva')"
+            label="Identificador Carga Masiva">
+            <input
+              class="form-control"
+              formControlName="identificadorCargaMasiva" />
+          </form-field>
+        </form>
+      </div>
+      <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+        <h6>Cargar de Archivos</h6>
+      </div>
+      <div class="col-sm-12 col-12 col-md-3 pl-2 p-1 text-center">
+        <div class="form-group m-1 ml-2 mr-2">
+          <button
+            type="button"
+            (click)="btnCargarIdentificador()"
+            class="btn btn-primary active btn-sm text-wrap">
+            Cargar de Identificador
+          </button>
+        </div>
+      </div>
+      <div class="col-sm-12 col-12 col-md-3 pl-2 p-1 text-center">
+        <div class="form-group m-1 ml-2 mr-2">
+          <button
+            type="button"
+            (click)="btnExpedientesCsv()"
+            class="btn btn-primary active btn-sm text-wrap">
+            Carga Expedientes csv
+          </button>
+        </div>
+      </div>
+      <div class="col-sm-12 col-12 col-md-3 pl-2 p-1 text-center">
+        <div class="form-group m-1 ml-2 mr-2">
+          <button
+            type="button"
+            (click)="btnExpedientesXls()"
+            class="btn btn-primary active btn-sm text-wrap">
+            Carga Expedientes xls
+          </button>
+        </div>
+      </div>
+      <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+        <h6>Imprimir Archivos y Crear Dict&aacute;menes</h6>
+      </div>
+      <div class="col-sm-12 col-12 col-md-3 pl-2 p-1 text-center">
+        <div class="form-group m-1 ml-2 mr-2">
+          <button
+            type="button"
+            (click)="btnCrearDictamenes()"
+            class="btn btn-primary active btn-sm text-wrap">
+            Crear Dict&aacute;menes
+          </button>
+        </div>
+      </div>
+      <div class="col-sm-12 col-12 col-md-3 pl-2 p-1 text-center">
+        <div class="form-group m-1 ml-2 mr-2">
+          <button
+            type="button"
+            (click)="btnImprimeOficio()"
+            class="btn btn-primary active btn-sm text-wrap">
+            Imprime Oficio
+          </button>
+        </div>
+      </div>
+      <div class="col-sm-12 col-12 col-md-3 pl-2 p-1 text-center">
+        <div class="form-group m-1 ml-2 mr-2">
+          <button
+            type="button"
+            (click)="btnImprimeRelacionBienes()"
+            class="btn btn-primary active btn-sm text-wrap">
+            Imprime Relaci&oacute;n Bienes
+          </button>
+        </div>
+      </div>
+      <div class="col-sm-12 col-12 col-md-3 pl-2 p-1 text-center">
+        <div class="form-group m-1 ml-2 mr-2">
+          <button
+            type="button"
+            (click)="btnImprimeRelacionExpediente()"
+            class="btn btn-primary active btn-sm text-wrap">
+            Imprime Relaci&oacute;n Expediente
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- TABLAS  -->
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="tableSettings"
+          [source]="dataTable"></ng2-smart-table>
+      </div>
+      <div class="col-sm-12 col-12 col-md-6 col-lg-6 p-2">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="tableSettings1"
+          [source]="dataTable1"></ng2-smart-table>
+      </div>
+    </div>
+    <!-- TABLAS  -->
+  </div>
+</app-card>

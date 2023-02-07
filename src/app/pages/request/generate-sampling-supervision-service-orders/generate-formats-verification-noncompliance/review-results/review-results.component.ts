@@ -21,7 +21,7 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
   dataAnnex: any;
 
   //en el caso de que sera una aprovacion de resultados se pone true
-  isApprovalResult: boolean = true;
+  isApprovalResult: boolean = false;
   input = '<input type="text" (keyup)="keyFunc($event)">';
   constructor(private modalService: BsModalService) {
     super();
@@ -30,6 +30,7 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
   ngOnInit(): void {}
 
   turnSampling() {
+    //verificar anexo k desde donde se llama si es aprobacion de resultados o generacion de formato
     if (this.isApprovalResult === false) {
       let title = 'Confirmación turnado';
       let message =
@@ -48,7 +49,7 @@ export class ReviewResultsComponent extends BasePage implements OnInit {
   }
 
   openAnnexK(): void {
-    //verificar anexo k desde donde se llama
+    //verificar anexo k desde donde se llama si es aprobacion de resultados o generacion de formato
     this.openModal(AnnexKFormComponent, '', 'annex-k-review-results');
   }
 

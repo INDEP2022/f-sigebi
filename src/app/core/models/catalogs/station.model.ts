@@ -1,6 +1,6 @@
 export interface IStation {
   id: number | null;
-  idTransferor: number;
+  idTransferent: number;
   idEntity: string | null;
   stationName: string | null;
   creationUser?: string;

@@ -3,6 +3,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { CENTRAL_ACCOUNT_COLUMNS } from './central-offices-columns';
 
 @Component({
@@ -39,14 +43,26 @@ export class CentralOfficesTransferenceComponent
       dateDevolution: [null, Validators.required],
 
       currencyType: [null, Validators.required],
-      delegation: [null, Validators.required],
+      delegation: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       check: [null, Validators.required],
       depositDate: [null, Validators.required],
 
       cveAccount: [null, Validators.required],
-      accountType: [null, Validators.required],
-      cveBank: [null, Validators.required],
-      cveCurrency: [null, Validators.required],
+      accountType: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      cveBank: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
+      cveCurrency: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
     });
   }
 }

@@ -36,13 +36,13 @@ export class DeliverySchedulingServiceListComponent
       case 'captureOrderService':
         this.router.navigate([
           'pages/request/delivery-service-order/capture-service-order',
-          event.data.number,
+          event.data.numberTask,
         ]);
         break;
       case 'validateOrderService':
         this.router.navigate([
           'pages/request/delivery-service-order/validate-service-order',
-          event.data.number,
+          event.data.numberTask,
         ]);
         break;
       case 'AprobateOrderService':

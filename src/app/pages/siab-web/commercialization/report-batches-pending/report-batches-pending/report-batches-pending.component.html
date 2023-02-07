@@ -1,0 +1,67 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Lotes pendientes de pagos</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field [control]="form.get('event')" label="Evento">
+            <input type="text" class="form-control" formControlName="event" />
+          </form-field>
+        </div>
+        <div class="col-md-1">
+          <div class="justify-content-center">
+            <button
+              type="submit"
+              class="btn btn-primary btn-sm active"
+              [disabled]="!form.valid"
+              (click)="show = !show">
+              Consultar
+            </button>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="justify-content-center">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              [disabled]="!form.valid">
+              Descargar
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="row pt-5">
+      <div class="ch-content" header>
+        <h5 class="title">
+          L&iacute;neas de Captura del cliente para el lote p&uacute;blico
+        </h5>
+        <div class="col-md-5 buttons">
+          <app-columns-select [(settings)]="settings"></app-columns-select>
+        </div>
+      </div>
+      <div class="table-responsive mt-3">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="data"></ng2-smart-table>
+      </div>
+    </div>
+    <div class="row pt-5">
+      <div class="ch-content" header>
+        <h5 class="title">L&iacute;neas de captura de clientes</h5>
+        <div class="col-md-5 buttons">
+          <app-columns-select [(settings)]="settings2"></app-columns-select>
+        </div>
+      </div>
+      <div class="table-responsive mt-3">
+        <ng2-smart-table
+          [settings]="settings2"
+          [source]="data"></ng2-smart-table>
+      </div>
+    </div>
+  </div>
+</app-card>

@@ -10,7 +10,8 @@ import { REQUEST_LIST_COLUMNS } from './request-list-columns';
 
 var usuario: IRequestList[] = [
   {
-    title: 'Registro de solicitud (Captura de Solicitud) con folio 45009',
+    id: 43437,
+    title: 'Registro de solicitud (Captura de Solicitud) con folio 43437',
     noRequest: 45009,
     numTask: 260301,
     noInstance: 820169,
@@ -42,6 +43,33 @@ var usuario: IRequestList[] = [
     noInstance: 820170,
     created: 'tester_nsbxt',
     process: 'ProgramarVisitaOcular',
+  },
+  {
+    title:
+      'BIENES SIMILARES: Notificar a Transferente, No. Solicitud 1851, Contribuyente: LETICIA GARCÍA, PAMA: 235324SDA',
+    noRequest: 1851,
+    numTask: 260302,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'NotificacionTransferente',
+  },
+  {
+    title:
+      'BIENES SIMILARES: Validar Resultado Visita Ocular, No. Solicitud: 1851, Contribuyente: LETICIA GARCÍA, PAMA: 235324SDA',
+    noRequest: 45011,
+    numTask: 260302,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'ValidarResultadoVisitaOcular',
+  },
+  {
+    title:
+      'BIENES SIMILARES: Elaborar Oficio de Respuesta, No. Solicitud: 1851, Contribuyente: LETICIA GARCÍA, PAMA: 235324SDA',
+    noRequest: 45011,
+    numTask: 260302,
+    noInstance: 820170,
+    created: 'tester_nsbxt',
+    process: 'ElaborarOficio',
   },
   {
     title:
@@ -150,8 +178,45 @@ var usuario: IRequestList[] = [
     created: 'tester_nsbxt',
     process: 'DC_Decomiso',
   },
+  {
+    title:
+      'ABANDONO: Registro de Documentación Complementaria, No. Solicitud: 1831',
+    noRequest: 1831,
+    numTask: 211945,
+    noInstance: 430132,
+    created: 'tester_nsbxt',
+    process: 'DC_Abandono',
+  },
+  {
+    title:
+      'EXTINCIÓN DE DOMINIO: Registro de Documentación Complementaria, No. Solicitud: 1835',
+    noRequest: 1835,
+    numTask: 211955,
+    noInstance: 430143,
+    created: 'tester_nsbxt',
+    process: 'DC_Extincion',
+  },
+  {
+    title:
+      'AMPARO: Registro de Documentación Complementaria, No. Solicitud: 1835',
+    noRequest: 1836,
+    numTask: 211955,
+    noInstance: 430143,
+    created: 'tester_nsbxt',
+    process: 'AP_Amparo',
+  },
+  {
+    title:
+      'Notificación al contribuyente (Resarcimiento en especie), No solicitud 1899, contribuyente: Leticia Garcia, PAMA: 235324SDA',
+    noRequest: 1899,
+    numTask: 211956,
+    noInstance: 430144,
+    created: 'tester_nsbxt',
+    process: 'Notification_Taxpayer',
+  },
 ];
 
+//AP_Amparo
 @Component({
   selector: 'app-request-list',
   templateUrl: './request-list.component.html',
@@ -166,13 +231,6 @@ export class RequestListComponent extends BasePage implements OnInit {
     super();
     this.settings = { ...TABLE_SETTINGS, actions: false, selectMode: '' };
     this.settings.columns = REQUEST_LIST_COLUMNS;
-    /* this.settings.actions = {
-      columnTitle: 'Acciones',
-      position: 'right',
-      add: false,
-      edit: false,
-      delete: false,
-    }; */
   }
 
   ngOnInit(): void {
@@ -188,6 +246,7 @@ export class RequestListComponent extends BasePage implements OnInit {
   }
 
   editRequest(event: any) {
+    const request = event.data;
     switch (event.data.process) {
       case 'SolicitudProgramacion':
         // en el caso de que sea una solicitud de programacion
@@ -218,6 +277,30 @@ export class RequestListComponent extends BasePage implements OnInit {
           'pages/request/manage-similar-goods/schedule-eye-visits/',
           event.data.noRequest,
           2,
+        ]);
+        break;
+      case 'ValidarResultadoVisitaOcular':
+        // en el caso de que el proceso seleccionado sea Programar Visita Ocular
+        this.router.navigate([
+          'pages/request/manage-similar-goods/receive-validation-of-eye-visit-result/',
+          event.data.noRequest,
+          3,
+        ]);
+        break;
+      case 'NotificacionTransferente':
+        // en el caso de que el proceso seleccionado sea Bienes Similares
+        this.router.navigate([
+          'pages/request/manage-similar-goods/transf-notification',
+          event.data.noRequest,
+          4,
+        ]);
+        break;
+      case 'ElaborarOficio':
+        // en el caso de que el proceso seleccionado sea Bienes Similares
+        this.router.navigate([
+          'pages/request/manage-similar-goods/prepare-response-office',
+          event.data.noRequest,
+          5,
         ]);
         break;
       // ---------------------- SOLICITUDES DE BIENES SIMILARES
@@ -268,7 +351,7 @@ export class RequestListComponent extends BasePage implements OnInit {
         // en el caso de que sea una solicitud de programacion de resarcimiento economico
         this.router.navigate([
           'pages/request/transfer-request/registration-request',
-          1,
+          event.data.id,
         ]);
         break;
 
@@ -312,6 +395,22 @@ export class RequestListComponent extends BasePage implements OnInit {
         ]);
         break;
 
+      case 'DC_Abandono':
+        // en el caso de que sea el proceso de registrar solicitud de abandono
+        this.router.navigate([
+          'pages/request/register-documentation/single/abandonment',
+          event.data.noRequest,
+        ]);
+        break;
+
+      case 'DC_Extincion':
+        // en el caso de que sea el proceso de registrar solicitud de extincion
+        this.router.navigate([
+          'pages/request/register-documentation/single/extinction',
+          event.data.noRequest,
+        ]);
+        break;
+
       case 'OrdenServicioEntrega':
         this.router.navigate([
           'pages/request/delivery-service-order/service-delivery-request-capture',
@@ -324,6 +423,19 @@ export class RequestListComponent extends BasePage implements OnInit {
           'pages/request/delivery-service-order/service-delivery-request-capture',
           event.data.noRequest,
         ]);
+        break;
+
+      case 'AP_Amparo':
+        // en el caso de que sea el proceso de registrar solicitud de Amparo
+        this.router.navigate([
+          'pages/request/register-documentation-amparo/single/forfeiture',
+          event.data.noRequest,
+        ]);
+        break;
+
+      case 'Notification_Taxpayer':
+        //En el caso que sea recibir la notificación del contibuyente resarcimiento (especie)
+        this.router.navigate(['pages/request/notification-request-delivery/']);
         break;
       default:
         break;

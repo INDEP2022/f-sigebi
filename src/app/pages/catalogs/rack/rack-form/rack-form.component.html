@@ -6,12 +6,13 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-12">
-          <form-field [control]="form.get('idWarehouse')" label="Id Deposito">
+          <form-field
+            [control]="form.get('idWarehouse')"
+            label="Id Dep&oacute;sito">
             <input
               type="number"
               class="form-control"
-              formControlName="idWarehouse"
-              placeholder="ejemplo" />
+              formControlName="idWarehouse" />
           </form-field>
         </div>
         <div class="col-md-12">
@@ -19,37 +20,32 @@
             <input
               type="number"
               class="form-control"
-              formControlName="idBatch"
-              placeholder="ejemplo" />
+              formControlName="idBatch" />
           </form-field>
         </div>
         <div class="col-md-12">
-          <form-field [control]="form.get('description')" label="Descripcion">
+          <form-field
+            [control]="form.get('description')"
+            label="Descripci&oacute;n">
             <input
               type="text"
               class="form-control"
-              formControlName="description"
-              placeholder="ejemplo" />
+              formControlName="description" />
           </form-field>
         </div>
         <div class="col-md-12">
           <form-field [control]="form.get('status')" label="Estado">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="status"
-              placeholder="ejemplo" />
+            <input type="text" class="form-control" formControlName="status" />
           </form-field>
         </div>
         <div class="col-md-12">
           <form-field
             [control]="form.get('registerNumber')"
-            label="Numero Registro">
+            label="N&uacute;mero Registro">
             <input
               type="text"
               class="form-control"
-              formControlName="registerNumber"
-              placeholder="ejemplo" />
+              formControlName="registerNumber" />
           </form-field>
         </div>
 
@@ -61,7 +57,7 @@
             [data]="warehouse"
             bindLabel="description"
             value="idWarehouse"
-            label="Almacen">
+            label="Almac&eacute;n">
           </ngx-select>
         </div>
       </div>

@@ -6,6 +6,7 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { PaymentSearchModalComponent } from '../payment-search-modal/payment-search-modal.component';
 import { PAYMENT_COLUMNS } from './payment-search-columns';
@@ -150,7 +151,10 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       batch: [null, [Validators.required]],
       bank: [null, [Validators.required]],
       amount: [null, [Validators.required]],
-      reference: [null, [Validators.required]],
+      reference: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       validity: [null, [Validators.required]],
       searchType: [null, [Validators.required]],
       system: [null, [Validators.required]],

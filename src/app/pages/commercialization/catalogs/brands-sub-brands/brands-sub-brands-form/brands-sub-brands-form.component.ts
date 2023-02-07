@@ -7,6 +7,8 @@ import { BehaviorSubject } from 'rxjs';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { BrandsSubBrandsService } from '../brands-sub-brands.service';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -31,7 +33,8 @@ export class BrandsSubBrandsFormComponent extends BasePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private brandServices: BrandsSubBrandsService
   ) {
     super();
     this.settings = {
@@ -73,8 +76,11 @@ export class BrandsSubBrandsFormComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      brand: [null, [Validators.required]],
-      description: [null, [Validators.required]],
+      brand: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
 
     if (this.edit) {
@@ -87,13 +93,35 @@ export class BrandsSubBrandsFormComponent extends BasePage implements OnInit {
   }
 
   onSaveConfirm(event: any) {
-    event.confirm.resolve();
-    this.onLoadToast('success', 'Elemento Actualizado', '');
+    const body = {
+      idBrand: this.form.get('brand').value,
+      idSubBrand: event.newData.subBrand,
+      subBrandDescription: event.newData.description,
+    };
+    this.brandServices.putSubBrands(body).subscribe({
+      next: (respSubBrand: any) => {
+        if (respSubBrand) {
+          event.confirm.resolve();
+          this.onLoadToast('success', 'Elemento Actualizado', '');
+        }
+      },
+    });
   }
 
   onAddConfirm(event: any) {
-    event.confirm.resolve();
-    this.onLoadToast('success', 'Elemento Creado', '');
+    const body = {
+      idBrand: this.form.get('brand').value,
+      idSubBrand: event.newData.subBrand,
+      subBrandDescription: event.newData.description,
+    };
+    this.brandServices.postSubBrands(body).subscribe({
+      next: (respSubBrand: any) => {
+        if (respSubBrand) {
+          event.confirm.resolve();
+          this.onLoadToast('success', 'Elemento Creado', '');
+        }
+      },
+    });
   }
 
   onDeleteConfirm(event: any) {
@@ -113,7 +141,7 @@ export class BrandsSubBrandsFormComponent extends BasePage implements OnInit {
     this.data.getElements().then((data: any) => {
       //console.log(data)
       this.loading = true;
-      this.handleSuccess();
+      this.createBrand();
     });
     /*this.bankService.create(this.form.value).subscribe(
       data => this.handleSuccess(),
@@ -127,9 +155,38 @@ export class BrandsSubBrandsFormComponent extends BasePage implements OnInit {
     this.modalRef.hide();
   }
 
+  updateBrand() {
+    const body = {
+      id: this.form.get('brand').value,
+      brandDescription: this.form.get('description').value,
+    };
+    this.brandServices.PutBrand(body.id, body).subscribe({
+      next: (resp: any) => {
+        if (resp.statusCode === 200) {
+          return this.handleSuccess();
+        }
+      },
+    });
+  }
+
+  createBrand() {
+    const body = {
+      id: this.form.get('brand').value,
+      brandDescription: this.form.get('description').value,
+    };
+    this.brandServices.postBrands(body).subscribe({
+      next: (resp: any) => {
+        if (resp) {
+          return this.handleSuccess();
+        }
+      },
+    });
+  }
+
   update() {
     this.loading = true;
-    this.handleSuccess();
+    this.updateBrand();
+
     /*this.bankService.update(this.bank.bankCode, this.form.value).subscribe(
       data => this.handleSuccess(),
       error => (this.loading = false)

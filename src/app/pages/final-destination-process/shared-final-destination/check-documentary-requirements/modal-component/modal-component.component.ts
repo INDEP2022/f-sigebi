@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { COLUMNS } from './columns';
 
 @Component({
@@ -31,13 +32,22 @@ export class ModalComponentComponent extends BasePage implements OnInit {
 
   initForm() {
     this.form = this.fb.group({
-      proceedings: [null, [Validators.required]],
+      proceedings: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       good: [null, [Validators.required]],
-      goodDescrip: [null, [Validators.required]],
+      goodDescrip: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
 
     this.form2 = this.fb.group({
-      authority: [null, [Validators.required]],
+      authority: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 

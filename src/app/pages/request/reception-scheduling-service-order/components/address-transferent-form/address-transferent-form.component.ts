@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-address-transferent-form',
@@ -26,8 +27,8 @@ export class AddressTransferentFormComponent implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      location: [null],
-      address: [null],
+      location: [null, [Validators.pattern(STRING_PATTERN)]],
+      address: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 }

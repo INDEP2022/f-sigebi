@@ -11,14 +11,12 @@ import { AssetsFilterComponent } from './assets-filter/assets-filter.component';
 import { AssetsListComponent } from './assets-list/assets-list.component';
 import { SearchAssetsForStudyRoutingModule } from './search-assets-for-study-routing.module';
 import { SearchAssetsComponent } from './search-assets/search-assets.component';
-import { TextInputComponent } from './text-input/text-input.component';
 
 @NgModule({
   declarations: [
     SearchAssetsComponent,
     AssetsFilterComponent,
     AssetsListComponent,
-    TextInputComponent,
   ],
   imports: [
     CommonModule,
@@ -32,5 +30,6 @@ import { TextInputComponent } from './text-input/text-input.component';
     TabsModule,
     AfsSharedComponentsModule,
   ],
+  exports: [AssetsListComponent],
 })
 export class SearchAssetsForStudyModule {}

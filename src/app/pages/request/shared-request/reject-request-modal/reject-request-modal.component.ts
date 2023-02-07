@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-reject-request-modal',
@@ -26,7 +27,10 @@ export class RejectRequestModalComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.rejectForm = this.fb.group({
-      comment: [null, [Validators.required]],
+      comment: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 

@@ -5,6 +5,11 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import {
+  EMAIL_PATTERN,
+  PHONE_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-register-complementary-documentation',
@@ -32,20 +37,50 @@ export class RegisterComplementaryDocumentationComponent implements OnInit {
       typeProceedings: [null, [Validators.required]],
       receptionDate: [null, [Validators.required]],
       proceedingsTransf: [null, [Validators.required]],
-      issue: [null, [Validators.required]],
-      senderName: [null, [Validators.required]],
-      senderCharge: [null, [Validators.required]],
-      senderPhone: [null, Validators.required],
-      senderEmail: [null, Validators.required],
-      taxpayer: [null, Validators.required],
+      issue: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      senderName: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      senderCharge: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      senderPhone: [
+        null,
+        Validators.required,
+        Validators.pattern(PHONE_PATTERN),
+      ],
+      senderEmail: [
+        null,
+        Validators.required,
+        Validators.pattern(EMAIL_PATTERN),
+      ],
+      taxpayer: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
       sourceInfo: [null, Validators.required],
       officeNumb: [null, Validators.required],
       officeDate: [null, [Validators.required]],
-      viaRecept: [null, Validators.required],
-      typeTransf: [null, Validators.required],
-      judgmentType: [null, Validators.required],
-      judgment: [null, Validators.required],
-      observations: [null, Validators.required],
+      viaRecept: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
+      typeTransf: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
+      judgmentType: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
+      judgment: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
+      observations: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
     });
     if (
       (this.nombrePantalla == 'return-request-record' ||
@@ -57,7 +92,7 @@ export class RegisterComplementaryDocumentationComponent implements OnInit {
         new FormControl('', [Validators.required])
       );
     }
-    if (this.nombrePantalla == 'scheduling-eye-visits') {
+    if (this.nombrePantalla != 'register-documentation') {
       this.form.addControl('crime', new FormControl('', [Validators.required]));
       this.form.removeControl('recepcionDate');
     }

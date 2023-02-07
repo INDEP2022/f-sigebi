@@ -13,13 +13,10 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   // Aprobar Solicitud de Devolución
   {
-    path: 'aprobar-solicitud-bienes',
+    path: 'approve-return-request',
     loadChildren: async () =>
-      (
-        await import(
-          './approve-return-request/gd-asd-m-approve-return-request.module'
-        )
-      ).GDASDApproveReturnRequestModule,
+      (await import('./approve-return-request/approve-return-request.module'))
+        .ApproveReturnRequestModule,
     data: { title: 'Aprobar Solicitud de Devolución' },
   },
   // Aprobar Solicitud de Devolución
@@ -28,4 +25,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class GDApproveReturnRequestRoutingModule {}
+export class ApproveReturnRequestRoutingModule {}

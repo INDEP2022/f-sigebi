@@ -1,7 +1,8 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { RFCCURP_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-change-rfc-modal',
@@ -23,8 +24,8 @@ export class ChangeRfcModalComponent extends BasePage implements OnInit {
 
   private prepareForm(): void {
     this.rfcForm = this.fb.group({
-      rfc: [''],
-      name: [''],
+      rfc: ['', Validators.pattern(RFCCURP_PATTERN)],
+      name: ['', Validators.pattern(STRING_PATTERN)],
     });
   }
 

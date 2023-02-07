@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -74,12 +75,15 @@ export class AddLcModalComponent extends BasePage implements OnInit {
       clientId: [null, [Validators.required]],
       batch: [null, [Validators.required]],
       amount: [null, [Validators.required]],
-      palette: [null, [Validators.required]],
+      palette: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       checkNumber: [null, [Validators.required]],
       checkBank: [null, [Validators.required]],
       validityDate: [null, [Validators.required]],
-      gsaeRef: [null],
-      gbankRef: [null],
+      gsaeRef: [null, Validators.pattern(STRING_PATTERN)],
+      gbankRef: [null, Validators.pattern(STRING_PATTERN)],
       status: [null],
       registerDate: [null],
       type: [null, [Validators.required]],

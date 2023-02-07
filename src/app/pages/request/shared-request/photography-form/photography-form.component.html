@@ -1,20 +1,20 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">Fotografias</h5>
+    <h5 class="modal-title">Fotograf&iacute;as</h5>
   </div>
   <div body style="margin-top: -30px">
     <h5 class="title">
       <p>
         <a class="text-color" (click)="showForm = true" *ngIf="!showForm">
-          <i class="fa fa-angle-right" aria-hidden="true"></i> Búsqueda de
-          imagénes</a
+          <i class="fa fa-angle-right" aria-hidden="true"></i> B&uacute;squeda
+          de imag&eacute;nes</a
         >
       </p>
 
       <p>
         <a class="text-color" (click)="showForm = false" *ngIf="showForm">
-          <i class="fa fa-angle-down" aria-hidden="true"></i> Búsqueda de
-          imagénes</a
+          <i class="fa fa-angle-down" aria-hidden="true"></i> B&uacute;squeda de
+          imag&eacute;nes</a
         >
       </p>
     </h5>
@@ -24,7 +24,7 @@
           <div class="col-md-6">
             <form-field
               [control]="photographyForm.get('managementNumber')"
-              label="Número de gestión">
+              label="N&uacute;mero de gesti&oacute;n">
               <input
                 type="text"
                 class="form-control"
@@ -36,7 +36,7 @@
           <div class="col-md-6">
             <form-field
               [control]="photographyForm.get('noProgrammation')"
-              label="Número de programación">
+              label="N&uacute;mero de programaci&oacute;n">
               <input
                 type="text"
                 class="form-control"
@@ -49,7 +49,7 @@
           <div class="col-md-6">
             <form-field
               [control]="photographyForm.get('noImage')"
-              label="Número de imagen">
+              label="N&uacute;mero de imagen">
               <input
                 type="text"
                 class="form-control"
@@ -71,7 +71,7 @@
           <div class="col-md-6">
             <form-field
               [control]="photographyForm.get('titleImage')"
-              label="Titulo imagen">
+              label="T&iacute;tulo imagen">
               <input
                 type="text"
                 class="form-control"
@@ -90,7 +90,7 @@
           <div class="col-md-6">
             <form-field
               [control]="photographyForm.get('programmingFolio')"
-              label="Folio de programación">
+              label="Folio de programaci&oacute;n">
               <input
                 type="text"
                 class="form-control"
@@ -126,7 +126,7 @@
         class="inputfile inputfile-3" />
 
       <button type="button" class="btn btn-info btn-sm active">
-        <i class="fa fa-search"></i> Búscar
+        <i class="fa fa-search"></i> Buscar
       </button>
       &nbsp;
     </div>

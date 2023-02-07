@@ -5,5 +5,14 @@
       <app-columns-select [(settings)]="settings"></app-columns-select>
     </div>
   </div>
-  <ng2-smart-table [settings]="settings" [source]="data"> </ng2-smart-table>
+  <div class="row">
+    <div class="table-responsive">
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="comerClients"></ng2-smart-table>
+      </div>
+    </div>
+  </div>
+  <app-pagination [params]="params" [totalItems]="totalItems"> </app-pagination>
 </div>

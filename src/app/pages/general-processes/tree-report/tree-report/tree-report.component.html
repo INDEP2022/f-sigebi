@@ -1,0 +1,43 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Reporte de &aacute;rbol de nivel</h5>
+  </div>
+
+  <div body>
+    <div class="row">
+      <div class="col-md-12 md-tabs">
+        <tabset>
+          <tab heading="Origen de Datos (Tabla)" id="tab1">
+            <form [formGroup]="form" class="form-material">
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="row">
+                    <form-field
+                      [control]="form.get('origen')"
+                      label="Origen de Datos &#40;Tabla&#41;">
+                      <input class="form-control" formControlName="origen" />
+                    </form-field>
+                  </div>
+                  <div class="row pt-3">
+                    <form-field [control]="form.get('ayuda')" label="Ayuda">
+                      <textarea
+                        class="form-control"
+                        formControlName="ayuda"></textarea>
+                    </form-field>
+                  </div>
+                </div>
+                <div class="col-md-8">
+                  <ng2-smart-table
+                    [settings]="settings"
+                    [source]="dataSource"></ng2-smart-table>
+                </div>
+              </div>
+            </form>
+          </tab>
+          <tab heading="Condiciones &#47; Filtros"></tab>
+          <tab heading="Columnas &#47; Expresiones"></tab>
+        </tabset>
+      </div>
+    </div>
+  </div>
+</app-card>

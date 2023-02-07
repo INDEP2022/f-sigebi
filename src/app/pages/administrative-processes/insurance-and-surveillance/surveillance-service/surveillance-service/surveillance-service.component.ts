@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { SURVEILLANCE_SERVICE_COLUMNS } from './surveillance-service-columns';
 
@@ -37,7 +38,7 @@ export class SurveillanceServiceComponent extends BasePage implements OnInit {
       period: [null, Validators.required],
       from: [null, Validators.required],
       to: [null, Validators.required],
-      total: [null, Validators.required],
+      total: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
       processTwo: [null, Validators.required],
       fromTwo: [null, Validators.required],
       toTwo: [null, Validators.required],

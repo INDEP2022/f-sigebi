@@ -8,6 +8,7 @@ import { IDocCompensation } from 'src/app/core/models/catalogs/doc-compensation.
 import { IDocCompesationSat } from 'src/app/core/models/catalogs/doc-compesation-sat.model';
 import { DocCompensationService } from 'src/app/core/services/catalogs/doc-compensation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -36,16 +37,32 @@ export class DocCompensationFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.docCompensationForm = this.fb.group({
-      id: [null],
-      satTypeJob: [null, [Validators.required]],
-      idTypeDocSat: [null, Validators.required],
-      idTypeDocSatXml: [null, Validators.required],
-      typeDocSae: [null, [Validators.required]],
-      type: [null, [Validators.required]],
+      id: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      satTypeJob: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      idTypeDocSat: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      idTypeDocSatXml: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      typeDocSae: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      type: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
     });
     if (this.docCompensation != null) {
-      this.fillForm();
+      this.edit = true;
+      this.docCompensationForm.patchValue(this.docCompensation);
     }
+    // if (this.docCompensation != null) {
+    //   this.fillForm();
+    // }
   }
 
   fillForm() {

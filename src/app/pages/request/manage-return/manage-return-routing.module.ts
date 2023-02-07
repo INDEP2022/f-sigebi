@@ -13,31 +13,31 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   // registro de solicitud de devolucion
   {
-    path: 'registro-solicitud-devolucion',
+    path: 'return-request-registration',
     loadChildren: async () =>
       (
         await import(
           './return-request-registration/return-request-registration.module'
         )
-      ).GDReturnRequestRegistrationModule,
+      ).ReturnRequestRegistrationModule,
     data: { title: 'Registro de Solicitud de Devolución' },
   },
   // registro de solicitud de devolucion
   // Clasificación de Bienes
   {
-    path: 'clasificacion-bienes',
+    path: 'goods-classification',
     loadChildren: async () =>
       (await import('./goods-classification/goods-classification.module'))
-        .GDCBGoodsClassificationModule,
+        .GoodsClassificationModule,
     data: { title: 'Clasificación de Bienes' },
   },
   // Clasificación de Bienes
   // Aprobar Solicitud de Devolución
   {
-    path: 'aprobar-solicitud-bienes',
+    path: 'approve-return-request',
     loadChildren: async () =>
       (await import('./approve-return-request/approve-return-request.module'))
-        .GDApproveReturnRequestModule,
+        .ApproveReturnRequestModule,
     data: { title: 'Aprobar Solicitud de Devolución' },
   },
   // Aprobar Solicitud de Devolución

@@ -8,13 +8,13 @@ import { NgModule } from '@angular/core';
 /** SERVICE IMPORTS */
 
 /** ROUTING MODULE */
-import { GDApproveReturnRequestRoutingModule } from './approve-return-request-routing.module';
+import { ApproveReturnRequestRoutingModule } from './approve-return-request-routing.module';
 
 /** COMPONENTS IMPORTS */
 
 @NgModule({
   declarations: [],
-  imports: [CommonModule, GDApproveReturnRequestRoutingModule],
+  imports: [CommonModule, ApproveReturnRequestRoutingModule],
   providers: [],
 })
-export class GDApproveReturnRequestModule {}
+export class ApproveReturnRequestModule {}

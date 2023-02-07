@@ -3,72 +3,13 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'schedule-reception',
+    path: 'programming-request',
     loadChildren: async () =>
       (
         await import(
-          './programming-request-components/schedule-reception/schedule-reception.module'
+          './programming-request-components/programming-request.module'
         )
-      ).ScheduleReceptionModule,
-    data: { title: 'Programar Recepción' },
-  },
-
-  {
-    path: 'perform-programming/:id',
-    loadChildren: async () =>
-      (
-        await import(
-          './programming-request-components/perform-programming/perform-programming.module'
-        )
-      ).PerformProgrammingModule,
-    data: { title: 'Programar Recepción' },
-  },
-
-  {
-    path: 'acept-programming',
-    loadChildren: async () =>
-      (
-        await import(
-          './programming-request-components/acept-programming/acept-programming.module'
-        )
-      ).AceptProgrammingModule,
-  },
-
-  {
-    path: 'execute-reception',
-    loadChildren: async () =>
-      (
-        await import(
-          './programming-request-components/execute-reception/execute-reception.module'
-        )
-      ).ExecuteReceptionModule,
-  },
-  {
-    path: 'validate-destiny',
-    loadChildren: async () =>
-      (
-        await import(
-          './programming-request-components/validate-destiny/validate-destiny.module'
-        )
-      ).ValidateDestinyModule,
-  },
-  {
-    path: 'formalize-programming',
-    loadChildren: async () =>
-      (
-        await import(
-          './programming-request-components/formalize-programming/formalize-programming.module'
-        )
-      ).FormalizeProgrammingModule,
-  },
-  {
-    path: 'schedule-notify',
-    loadChildren: async () =>
-      (
-        await import(
-          './programming-request-components/schedule-notify/schedule-notify.module'
-        )
-      ).ScheduleNotifyModule,
+      ).ProgrammingRequestModule,
   },
   {
     path: 'request-in-turn',
@@ -190,7 +131,7 @@ const routes: Routes = [
   },
   // gestionar devolucion
   {
-    path: 'gestionar-devolucion',
+    path: 'manage-return',
     loadChildren: async () =>
       (await import('./manage-return/manage-return.module')).ManageReturnModule,
     data: { title: 'Registro de Solicitud de Devolución' },
@@ -249,6 +190,40 @@ const routes: Routes = [
         )
       ).DestinationInformationRequestModule,
     data: { title: 'Solicitud de Información de Destino' },
+  },
+  // Registrar Documentación Complementaria Amparos
+  {
+    path: 'register-documentation-amparo',
+    loadChildren: async () =>
+      (await import('./req-comp-doc-amp/req-comp-doc-amp.module'))
+        .ReqCompDocAmpModule,
+    data: { title: 'Registro de Documentación Complementaria de Amparos' },
+  },
+
+  {
+    path: 'execute-return-deliveries',
+    loadChildren: async () =>
+      (
+        await import(
+          './execute-return-deliveries/execute-return-deliveries.module'
+        )
+      ).ExecuteReturnDeliveriesModule,
+  },
+
+  {
+    path: 'scheduling-deliveries',
+    loadChildren: async () =>
+      (await import('./scheduling-deliveries/scheduling-deliveries.module'))
+        .SchedulingDeliveriesModule,
+  },
+  {
+    path: 'notification-request-delivery',
+    loadChildren: async () =>
+      (
+        await import(
+          './notification-request-delivery/notification-request-delivery.module'
+        )
+      ).NotificationRequestDeliveryModule,
   },
 ];
 

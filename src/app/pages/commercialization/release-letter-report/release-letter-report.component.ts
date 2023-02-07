@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-release-letter-report',
@@ -34,17 +35,32 @@ export class ReleaseLetterReportComponent implements OnInit {
     this.form = this.fb.group({
       evento: [null, [Validators.required]],
       lote: [null, [Validators.required]],
-      oficio: [null, [Validators.required]],
-      diridoA: [null, [Validators.required]],
-      puesto: [null, [Validators.required]],
-      parrafo1: [null, [Validators.required]],
-      adjudicatorio: [null, [Validators.required]],
+      oficio: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      diridoA: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      puesto: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      parrafo1: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      adjudicatorio: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       factura: [null, [Validators.required]],
       fechaFactura: [null, [Validators.required]],
-      parrafo2: [null, [Validators.required]],
-      firmante: [null, [Validators.required]],
-      ccp1: [null, [Validators.required]],
-      ccp2: [null, [Validators.required]],
+      parrafo2: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      firmante: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      ccp1: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      ccp2: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
   }
 }

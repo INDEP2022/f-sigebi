@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { EMAIL_CONFIG_COLUMNS } from './mail-configuration-columns';
 
 @Component({
@@ -32,9 +33,9 @@ export class MaintenanceMailConfigurationComponent
   prepareForm() {
     this.form = this.fb.group({
       identifier: [null, Validators.required],
-      asunto: [null, Validators.required],
-      body: [null, Validators.required],
-      status: [null, Validators.required],
+      asunto: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
+      body: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
+      status: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
     });
   }
 

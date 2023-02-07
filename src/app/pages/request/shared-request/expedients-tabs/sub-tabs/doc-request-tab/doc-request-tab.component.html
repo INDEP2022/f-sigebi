@@ -11,7 +11,7 @@
             (click)="showSearchForm = true"
             *ngIf="!showSearchForm">
             <i class="fa fa-angle-right" aria-hidden="true"></i>
-            <strong>Búsqueda de Documento de {{ title }}</strong></a
+            <strong>B&uacute;squeda de Documento de {{ title }}</strong></a
           >
         </p>
 
@@ -21,7 +21,7 @@
             (click)="showSearchForm = false"
             *ngIf="showSearchForm">
             <i class="fa fa-angle-down" aria-hidden="true"></i>
-            <strong>Búsqueda de Documento de {{ title }}</strong></a
+            <strong>B&uacute;squeda de Documento de {{ title }}</strong></a
           >
         </p>
       </div>
@@ -37,8 +37,7 @@
                   type="text"
                   row
                   pt-5s="2"
-                  formControlName="text"
-                  placeholder=""></textarea>
+                  formControlName="text"></textarea>
               </form-field>
             </div>
             <div class="col-md-6">
@@ -65,7 +64,7 @@
                 control="regDelega"
                 (fetchItems)="getRegDelegation($event)"
                 [data]="selectRegDelegation"
-                label="Delegación Regional"
+                label="Delegaci&oacute;n Regional"
                 value="regDelega">
               </ngx-select>
             </div>
@@ -94,23 +93,21 @@
             <div class="col-md-3">
               <form-field
                 [control]="docRequestForm.get('docTitle')"
-                label="Título del Documento">
+                label="T&iacute;tulo del Documento">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="docTitle"
-                  placeholder="" />
+                  formControlName="docTitle" />
               </form-field>
             </div>
             <div class="col-md-3">
               <form-field
                 [control]="docRequestForm.get('typeTrasf')"
-                label="Título de Transferencia">
+                label="T&iacute;tulo de Transferencia">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="typeTrasf"
-                  placeholder="" />
+                  formControlName="typeTrasf" />
               </form-field>
             </div>
             <div class="col-md-3">
@@ -120,8 +117,7 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="contributor"
-                  placeholder="" />
+                  formControlName="contributor" />
               </form-field>
             </div>
             <div class="col-md-3">
@@ -131,8 +127,7 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="author"
-                  placeholder="" />
+                  formControlName="author" />
               </form-field>
             </div>
           </div>
@@ -144,19 +139,17 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="sender"
-                  placeholder="" />
+                  formControlName="sender" />
               </form-field>
             </div>
             <div class="col-md-3">
               <form-field
                 [control]="docRequestForm.get('noOfice')"
-                label="No. Oficina">
+                label="No&#46; Oficina">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="noOfice"
-                  placeholder="" />
+                  formControlName="noOfice" />
               </form-field>
             </div>
             <div class="col-md-3">
@@ -166,21 +159,19 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="senderCharge"
-                  placeholder="" />
+                  formControlName="senderCharge" />
               </form-field>
             </div>
             <div class="col-md-3">
               <form-field
                 [control]="docRequestForm.get('comment')"
-                label="Descripción">
+                label="Descripci&oacute;n">
                 <textarea
                   class="form-control"
                   type="text"
                   row
                   pt-5s="2"
-                  formControlName="comment"
-                  placeholder=""></textarea>
+                  formControlName="comment"></textarea>
               </form-field>
             </div>
           </div>
@@ -190,12 +181,11 @@
               *ngIf="typeDoc === 'good' || typeDoc === 'request-assets'">
               <form-field
                 [control]="docRequestForm.get('noRequest')"
-                label="No. Bien">
+                label="No&#46; Bien">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="noRequest"
-                  placeholder="" />
+                  formControlName="noRequest" />
               </form-field>
             </div>
 
@@ -206,23 +196,21 @@
               ">
               <form-field
                 [control]="docRequestForm.get('noRequest')"
-                label="No. Solicitud">
+                label="No&#46; Solicitud">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="noRequest"
-                  placeholder="" />
+                  formControlName="noRequest" />
               </form-field>
             </div>
             <div class="col-md-3" *ngIf="typeDoc === 'doc-expedient'">
               <form-field
                 [control]="docRequestForm.get('noRequest')"
-                label="No. Expediente">
+                label="No&#46; Expediente">
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="noRequest"
-                  placeholder="" />
+                  formControlName="noRequest" />
               </form-field>
             </div>
             <div class="col-md-3">
@@ -232,8 +220,7 @@
                 <input
                   type="text"
                   class="form-control"
-                  formControlName="responsible"
-                  placeholder="" />
+                  formControlName="responsible" />
               </form-field>
             </div>
           </div>

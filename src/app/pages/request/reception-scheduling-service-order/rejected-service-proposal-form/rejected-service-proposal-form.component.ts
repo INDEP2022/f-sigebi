@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ElectronicSignatureListComponent } from '../../shared-request/electronic-signature-list/electronic-signature-list.component';
 import { ShowProgrammingComponent } from '../../shared-request/show-programming/show-programming.component';
 import { ShowSignatureProgrammingComponent } from '../../shared-request/show-signature-programming/show-signature-programming.component';
@@ -36,9 +37,9 @@ export class RejectedServiceProposalFormComponent
 
   prepareForm() {
     this.commentsForm = this.fb.group({
-      observations: ['Ninguna'],
-      note: ['Ninguna nota'],
-      justification: ['Validar procesos'],
+      observations: ['Ninguna', [Validators.pattern(STRING_PATTERN)]],
+      note: ['Ninguna nota', [Validators.pattern(STRING_PATTERN)]],
+      justification: ['Validar procesos', [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

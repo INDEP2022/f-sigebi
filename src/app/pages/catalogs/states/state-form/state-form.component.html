@@ -6,29 +6,28 @@
     <form [formGroup]="stateForm" class="form-material">
       <div class="row">
         <div class="col-md-3">
-          <form-field [control]="stateForm.get('cveState')" label="CVE Estado">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="cveState" />
+          <form-field [control]="stateForm.get('id')" label="CVE Estado">
+            <input type="number" class="form-control" formControlName="id" />
           </form-field>
         </div>
 
         <div class="col-md-3">
-          <form-field [control]="stateForm.get('codeState')" label="Código">
+          <form-field
+            [control]="stateForm.get('codeCondition')"
+            label="C&oacute;digo">
             <input
               type="text"
               class="form-control"
-              formControlName="codeState" />
+              formControlName="codeCondition" />
           </form-field>
         </div>
 
         <div class="col-md-6">
-          <form-field [control]="stateForm.get('descState')" label="Nombre">
+          <form-field [control]="stateForm.get('descCondition')" label="Nombre">
             <input
               type="text"
               class="form-control"
-              formControlName="descState" />
+              formControlName="descCondition" />
           </form-field>
         </div>
       </div>
@@ -36,28 +35,30 @@
       <div class="row pt-5">
         <div class="col-md-4">
           <form-field
-            [control]="stateForm.get('timeZonaStd')"
+            [control]="stateForm.get('zoneHourlyStd')"
             label="Zona Horaria">
             <input
               type="text"
               class="form-control"
-              formControlName="timeZonaStd" />
+              formControlName="zoneHourlyStd" />
           </form-field>
         </div>
 
         <div class="col-md-4">
           <form-field
-            [control]="stateForm.get('timeZonaView')"
-            label="Versión de la Zona Horaria">
+            [control]="stateForm.get('zoneHourlyVer')"
+            label="Versi&oacute;n de la Zona Horaria">
             <input
               type="text"
               class="form-control"
-              formControlName="timeZonaView" />
+              formControlName="zoneHourlyVer" />
           </form-field>
         </div>
 
         <div class="col-md-4">
-          <form-field [control]="stateForm.get('version')" label="Versión">
+          <form-field
+            [control]="stateForm.get('version')"
+            label="Versi&oacute;n">
             <input
               type="number"
               class="form-control"

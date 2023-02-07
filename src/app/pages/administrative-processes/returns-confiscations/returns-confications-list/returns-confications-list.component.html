@@ -1,0 +1,190 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">DEVOLUCIONES Y DECOMISOS</h5>
+  </div>
+  <div body>
+    <form class="form-material mb-3 mt-3" [formGroup]="form">
+      <div class="row mb-3 mt-3">
+        <div class="col-xs-12 col-12 col-md-4 mb-3 mt-3">
+          <form-field label="Expediente" [control]="form.get('idExpedient')">
+            <input class="form-control" formControlName="idExpedient" />
+          </form-field>
+        </div>
+        <div
+          class="col-xs-12 col-12 col-md-4 mb-3 mt-3"
+          *ngIf="form.get('criminalCase').value !== null">
+          <form-field
+            label="Averiguación Previa"
+            [control]="form.get('preliminaryInquiry')">
+            <input class="form-control" formControlName="preliminaryInquiry" />
+          </form-field>
+        </div>
+        <div
+          class="col-xs-12 col-12 col-md-4 mb-3 mt-3"
+          *ngIf="form.get('criminalCase').value !== null">
+          <form-field label="Causa Penal" [control]="form.get('criminalCase')">
+            <input class="form-control" formControlName="criminalCase" />
+          </form-field>
+        </div>
+        <div
+          class="col-6 d-flex justify-content-right mb-3 mt-3 align-items-center">
+          <button
+            class="btn btn-primary active btn-sm w-50"
+            (click)="getExpedientById()">
+            Buscar
+          </button>
+        </div>
+        <!--Records Shared Component-->
+        <!--<div class="col-md-6 mb-3 mt-3">
+          <app-records-shared [form]="form"></app-records-shared>
+        </div>-->
+        <!--<div class="col-xs-12 col-12 col-md-3 mb-3 mt-3">
+          <div class="row mb-3 mt-3">
+            <div class="col-md-12">
+              <form-field
+                label="Averiguación Previa"
+                [control]="form.get('preliminaryInquiry')">
+                <input
+                  class="form-control"
+                  formControlName="preliminaryInquiry" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-12 col-12 col-md-3 mb-3 mt-3">
+          <div class="row mb-3 mt-3">
+            <div class="col-md-12">
+              <form-field label="Importe" [control]="form.get('criminalCase')">
+                <input class="form-control" formControlName="criminalCase" />
+              </form-field>
+            </div>
+          </div>
+        </div>-->
+      </div>
+    </form>
+    <div
+      class="row mb-3 mt-3 justify-content-end"
+      *ngIf="form.get('criminalCase').value !== null">
+      <!--Actions-->
+      <div class="col-lg-6 col-md-6 col-sm-12 col-12 offset-md-2">
+        <label for="">Aplicar Fecha y Promovente</label>
+        <form class="form-material mb-3 mt-3" [formGroup]="formMA">
+          <div class="row mb-3 mt-3">
+            <div
+              class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3 align-self-center">
+              <form-field
+                label="Fecha Decomiso"
+                [control]="formMA.get('dateConfiscation')">
+                <input
+                  class="form-control"
+                  formControlName="dateConfiscation"
+                  bsDatepicker />
+              </form-field>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12 col-12 mb-3 mt-3">
+              <app-user-shared
+                [form]="formMA"
+                [userField]="'promoter'"
+                [label]="'Promovente'"></app-user-shared>
+            </div>
+            <div
+              class="col d-flex justify-content-center mb-3 mt-3 align-items-center">
+              <button
+                class="btn btn-primary active btn-sm w-50"
+                (click)="massiveApplication()">
+                Aplicar
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!--COLUMNS-->
+    <div class="d-flex justify-content-between mr-1">
+      <!--Info Good-->
+      <div class="col-lg-4 col-md-4 col-sm-12 col-12">
+        <label for="">Estatus Bien</label>
+        <div class="row mb-3 mt-3">
+          <div class="col-lg-6 col-md-6 col-sm-12 col-12 align-content-end">
+            <div class="mt-4">
+              <h5 class="font-size-14 text-success">
+                <i class="bx bxs-circle me-1 text-success"></i>
+                Disponible
+              </h5>
+            </div>
+          </div>
+          <div class="col-lg-6 col-md-6 col-sm-12 col-12 align-content-end">
+            <div class="mt-4">
+              <h5 class="font-size-14 text-danger">
+                <i class="bx bxs-circle me-1 text-danger"></i>
+                No disponible
+              </h5>
+            </div>
+          </div>
+        </div>
+        <div class="row mb-3 mt-3" *ngIf="rowSelected">
+          <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+            <div class="mt-4">
+              <h5 class="font-size-14">Estatus</h5>
+              <p class="text-muted mb-0">
+                {{ selectedRow?.estatus.descriptionStatus }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="align-self-end">
+        <app-columns-select
+          (settingsChange)="settingsChange($event)"
+          [settings]="settings">
+        </app-columns-select>
+      </div>
+    </div>
+    <!--TABLE-->
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="data"
+            (editConfirm)="onSaveConfirm($event)"
+            (userRowSelect)="selectRow($event.data)">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+    <!--Status Good-->
+    <label for="">Estatus Bien</label>
+    <div class="row mb-3 mt-3">
+      <div class="col-lg-2 col-md-2 col-sm-12 col-12 align-content-end">
+        <div class="mt-4">
+          <h5 class="font-size-14 text-success">
+            <i class="bx bxs-circle me-1 text-success"></i>
+            Disponible
+          </h5>
+        </div>
+      </div>
+      <div class="col-lg-2 col-md-2 col-sm-12 col-12 align-content-end">
+        <div class="mt-4">
+          <h5 class="font-size-14 text-danger">
+            <i class="bx bxs-circle me-1 text-danger"></i>
+            No disponible
+          </h5>
+        </div>
+      </div>
+    </div>
+    <div class="row mb-3 mt-3" *ngIf="rowSelected">
+      <div class="col-lg-3 col-md-6 col-sm-12 col-12">
+        <div class="mt-4">
+          <h5 class="font-size-14">Estatus</h5>
+          <p class="text-muted mb-0">
+            {{ selectedRow?.estatus.descriptionStatus }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

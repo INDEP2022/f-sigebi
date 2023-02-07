@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import {
   GOODSONPALLET_COLUMNS,
   GOODSPOSITION_COLUMNS,
@@ -53,16 +54,28 @@ export class WarehousesComponent extends BasePage implements OnInit {
       keyCode: [null, Validators.required],
       file: [null, Validators.required],
       dateElaboration: [null, Validators.required],
-      statusRecord: [null, Validators.required],
+      statusRecord: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
       physicalReceiptDate: [null, Validators.required],
       dateClosure: [null, Validators.required],
-      transference: [null, Validators.required],
+      transference: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
     });
     this.warehouseContractForm = this.fb.group({
-      storehouse: [null, Validators.required],
-      contract: [null, Validators.required],
+      storehouse: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
+      contract: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
       tStorehouse: [null, Validators.required],
-      total: [null, Validators.required],
+      total: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
       secc1: [null, Validators.required],
       secc2: [null, Validators.required],
       secc3: [null, Validators.required],
@@ -73,7 +86,11 @@ export class WarehousesComponent extends BasePage implements OnInit {
       space: [null, Validators.required],
       section: [null, Validators.required],
       storage: [null, Validators.required],
-      container: [null, Validators.required],
+      container: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
     });
   }
 }

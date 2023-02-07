@@ -6,17 +6,19 @@
     <form [formGroup]="dataForm" class="form-material">
       <div class="row pt-4">
         <div class="col-md-4">
-          <form-field [control]="dataForm.get('concept')" label="*Concepto">
+          <form-field [control]="dataForm.get('concept')" label="&#42;Concepto">
             <input type="text" class="form-control" formControlName="concept" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="dataForm.get('wayPay')" label="*Forma de pago">
+          <form-field
+            [control]="dataForm.get('wayPay')"
+            label="&#42;Forma de pago">
             <input type="text" class="form-control" formControlName="wayPay" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="dataForm.get('import')" label="*Importe">
+          <form-field [control]="dataForm.get('import')" label="&#42;Importe">
             <input
               type="number"
               class="form-control"
@@ -26,7 +28,9 @@
       </div>
       <div class="row pt-4">
         <div class="col-md-4">
-          <form-field [control]="dataForm.get('reference')" label="*Referencia">
+          <form-field
+            [control]="dataForm.get('reference')"
+            label="&#42;Referencia">
             <input
               type="number"
               class="form-control"
@@ -34,7 +38,9 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="dataForm.get('reference')" label="*Referencia">
+          <form-field
+            [control]="dataForm.get('reference')"
+            label="&#42;Referencia">
             <input
               type="number"
               class="form-control"
@@ -44,7 +50,7 @@
         <div class="col-md-4">
           <form-field
             [control]="dataForm.get('specializedThird')"
-            label="*Tercero especializado">
+            label="&#42;Tercero especializado">
             <input
               type="text"
               class="form-control"
@@ -56,7 +62,7 @@
         <div class="col-md-4">
           <form-field
             [control]="dataForm.get('bank')"
-            label="*Institución bancaria">
+            label="&#42;Institución bancaria">
             <input type="text" class="form-control" formControlName="bank" />
           </form-field>
         </div>

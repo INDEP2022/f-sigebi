@@ -4,6 +4,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { maxDate } from 'src/app/common/validations/date.validators';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-traded-goods',
@@ -34,8 +35,14 @@ export class TradedGoodsComponent implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      delegation: [null, [Validators.required]],
-      subDelegation: [null, [Validators.required]],
+      delegation: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      subDelegation: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       typeEvent: [null, [Validators.required]],
       rangeDate: [null, [Validators.required, maxDate(new Date())]],
     });

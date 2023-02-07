@@ -9,18 +9,14 @@ import { SharedModule } from 'src/app/shared/shared.module';
 /** SERVICE IMPORTS */
 
 /** ROUTING MODULE */
-import { GDRSDRegisterDocumentReturnRoutingModule } from './register-document-return-routing.module';
+import { RegisterDocumentReturnRoutingModule } from './register-document-return-routing.module';
 
 /** COMPONENTS IMPORTS */
-import { GDRSDRegisterDocumentReturnComponent } from './register-document-return/gd-rsd-c-register-document-return.component';
+import { RegisterDocumentReturnComponent } from './register-document-return/register-document-return.component';
 
 @NgModule({
-  declarations: [GDRSDRegisterDocumentReturnComponent],
-  imports: [
-    CommonModule,
-    GDRSDRegisterDocumentReturnRoutingModule,
-    SharedModule,
-  ],
+  declarations: [RegisterDocumentReturnComponent],
+  imports: [CommonModule, RegisterDocumentReturnRoutingModule, SharedModule],
   providers: [],
 })
-export class GDRSDRegisterDocumentReturnModule {}
+export class RegisterDocumentReturnModule {}

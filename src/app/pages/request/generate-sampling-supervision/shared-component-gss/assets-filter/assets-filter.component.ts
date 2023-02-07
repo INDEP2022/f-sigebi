@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 
 @Component({
@@ -21,7 +22,7 @@ export class AssetsFilterComponent implements OnInit {
     this.filterForm = this.fb.group({
       noManagement: [null],
       noInventory: [null],
-      descriptionAsset: [null],
+      descriptionAsset: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
