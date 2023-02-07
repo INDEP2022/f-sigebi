@@ -4,6 +4,7 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ExcelService } from 'src/app/common/services/excel.service';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
@@ -13,15 +14,16 @@ import { RequestHelperService } from 'src/app/pages/request/request-helper-servi
 import { MenajeComponent } from '../records-of-request-child-tabs-components/menaje/menaje.component';
 import { SelectAddressComponent } from '../records-of-request-child-tabs-components/select-address/select-address.component';
 import { ASSETS_COLUMNS } from './assests-columns';
+import { ExcelFormat } from './AssetExcelFormat';
 
 var defaultData = [
   {
-    id: 1,
-    noManagement: '1546645',
-    descripTransfeAsset: 'descripcion',
-    typeAsset: 'VEHICULO',
-    physicalState: 'BUENO',
-    conservationState: 'BUENO',
+    id: 0,
+    noManagement: '',
+    descripTransfeAsset: '',
+    typeAsset: '',
+    physicalState: '',
+    conservationState: '',
     tansferUnitMeasure: '',
     transferAmount: '',
     destinyLigie: '',
@@ -43,6 +45,7 @@ export class AssetsComponent extends BasePage implements OnInit {
   createNewAsset: boolean = false;
   btnCreate: string = 'Crear Nuevo';
   idDomicilie: number = null;
+  data: ExcelFormat[] = [];
   //typeDoc: string = '';
 
   constructor(
@@ -51,7 +54,8 @@ export class AssetsComponent extends BasePage implements OnInit {
     private goodService: GoodService,
     private typeRelevantSevice: TypeRelevantService,
     private genericService: GenericService,
-    private requestHelperService: RequestHelperService
+    private requestHelperService: RequestHelperService,
+    private excelService: ExcelService
   ) {
     super();
   }
@@ -82,6 +86,7 @@ export class AssetsComponent extends BasePage implements OnInit {
 
   getData(params: ListParams) {
     this.loading = true;
+    this.paragraphs = [];
     const requestId = Number(this.route.snapshot.paramMap.get('id'));
     params['filter.requestId'] = `$eq:${requestId}`;
     this.goodService.getAll(params).subscribe({
@@ -191,7 +196,21 @@ export class AssetsComponent extends BasePage implements OnInit {
   }
 
   onFileChange(event: any) {
-    console.log(event);
+    const files = (event.target as HTMLInputElement).files;
+    if (files.length != 1) throw 'No files selected, or more than of allowed';
+    const fileReader = new FileReader();
+    fileReader.readAsBinaryString(files[0]);
+    fileReader.onload = () => this.readExcel(fileReader.result);
+  }
+
+  readExcel(binaryExcel: string | ArrayBuffer) {
+    try {
+      this.data = this.excelService.getData<ExcelFormat>(binaryExcel);
+      debugger;
+      console.log(this.data);
+    } catch (error) {
+      this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
+    }
   }
 
   newAsset(): void {
@@ -272,7 +291,7 @@ export class AssetsComponent extends BasePage implements OnInit {
             this.createNewAsset = false;
             this.btnCreate = 'Crear Nuevo';
             this.paginatedData();
-          }, 1000);
+          }, 600);
         }
       },
     });

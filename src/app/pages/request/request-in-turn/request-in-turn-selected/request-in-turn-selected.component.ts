@@ -88,7 +88,7 @@ export class RequestInTurnSelectedComponent extends BasePage implements OnInit {
       delete request.datePaper;
 
       //eliminar objetos
-      delete request.delegation;
+      /*delete request.delegation;*/
       delete request.transferent;
       delete request.authority;
       delete request.emisora;
