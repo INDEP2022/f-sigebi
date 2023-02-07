@@ -3,39 +3,51 @@ import { Observable } from 'rxjs';
 import { AffairTypeEndpoints } from 'src/app/common/constants/endpoints/affair-type-endpoint';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AffairTypeRepository } from 'src/app/common/repository/repositories/affair-type-repository';
+import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IAffairType } from '../../models/catalogs/affair-type-model';
 @Injectable({
   providedIn: 'root',
 })
-export class AffairTypeService {
+export class AffairTypeService extends HttpService {
   private readonly route = AffairTypeEndpoints;
 
-  constructor(
-    private affairTypeRepository: AffairTypeRepository<IAffairType>
-  ) {}
+  constructor(private affairTypeRepository: AffairTypeRepository<IAffairType>) {
+    super();
+    this.microservice = AffairTypeEndpoints.Catalog;
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<IAffairType>> {
     return this.affairTypeRepository.getAll(this.route.Code, params);
   }
 
-  getByAffairId(
+  getAffairTypeById(
     code: string | number,
     params?: ListParams
   ): Observable<IListResponse<IAffairType>> {
-    return this.affairTypeRepository.getByAffairId(
+    return this.affairTypeRepository.getAffairTypeById(
       this.route.Code,
       code,
       params
     );
   }
 
-  update(code: string | number, formData: IAffairType): Observable<Object> {
-    return this.affairTypeRepository.update(this.route.Code, code, formData);
+  create(model: IAffairType): Observable<IAffairType> {
+    return this.affairTypeRepository.create(this.route.Create, model);
   }
-  /*getGoodsByRecordId(recordId: number) {
-    return this.goodRepository.getAllPaginated(
-      'good/good/getidReferenceGood/' + recordId
-    );
-  }*/
+
+  update(
+    code: string | number,
+    referralNoteType: string | number,
+    model: IAffairType
+  ): Observable<Object> {
+    return this.affairTypeRepository.update(code, referralNoteType, model);
+  }
+
+  getByAffair(
+    id: number | string,
+    params?: ListParams
+  ): Observable<IListResponse<IAffairType>> {
+    return this.affairTypeRepository.getAffairTypebyAffair('', id, params);
+  }
 }

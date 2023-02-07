@@ -20,6 +20,10 @@ export class ComerClientsService extends HttpService {
     return this.get<IListResponse<IComerClients>>(this.endpoint, params);
   }
 
+  getAllWithFilters(params?: string): Observable<IListResponse<IComerClients>> {
+    return this.get<IListResponse<IComerClients>>(this.endpoint, params);
+  }
+
   getById(id: string | number) {
     const route = `${this.endpoint}/${id}`;
     return this.get(route);

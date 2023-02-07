@@ -17,9 +17,9 @@ export class DelegationRepository<T> implements IDelegationMethods<T> {
   ): Observable<IListResponse<T>> {
     const params = this.makeParams(_params);
     const fullRoute = this.buildRoute(route);
-    return this.httpClient.get<IListResponse<T>>(
-      `${fullRoute}?limit=100&page=1`
-    );
+    const paginated: string =
+      '?text=&page=1&inicio=1&limit=10&pageSize=10&take=10';
+    return this.httpClient.get<IListResponse<T>>(`${fullRoute}${paginated}`);
   }
 
   getAll(route: string, _params?: ListParams): Observable<IListResponse<T>> {

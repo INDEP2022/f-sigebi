@@ -9,6 +9,8 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //models
 import { IShelves } from 'src/app/core/models/catalogs/shelves.model';
 //Services
+import { IBattery } from 'src/app/core/models/catalogs/battery.model';
+import { ISaveValue } from 'src/app/core/models/catalogs/save-value.model';
 import { SaveValueService } from 'src/app/core/services/catalogs/save-value.service';
 import { BatterysService } from 'src/app/core/services/save-values/battery.service';
 import { ShelvessService } from 'src/app/core/services/save-values/shelves.service';
@@ -26,7 +28,10 @@ export class ShelvesModalComponent extends BasePage implements OnInit {
   edit: boolean = false;
 
   cveSaveValues = new DefaultSelect();
-  idBattery = new DefaultSelect();
+  idBatteryD = new DefaultSelect();
+
+  id: ISaveValue;
+  idBattery: IBattery;
 
   constructor(
     private modalRef: BsModalRef,
@@ -51,7 +56,8 @@ export class ShelvesModalComponent extends BasePage implements OnInit {
 
   getBatteryById(params: ListParams) {
     this.batterysService.getBatteryById(params).subscribe({
-      next: data => (this.idBattery = new DefaultSelect(data.data, data.count)),
+      next: data =>
+        (this.idBatteryD = new DefaultSelect(data.data, data.count)),
     });
   }
 
@@ -75,12 +81,13 @@ export class ShelvesModalComponent extends BasePage implements OnInit {
     });
     if (this.shelves != null) {
       this.edit = true;
+      this.id = this.shelves.key as unknown as ISaveValue;
+      this.idBattery = this.shelves.batteryNumber as unknown as IBattery;
       this.shelvesForm.patchValue(this.shelves);
-      // this.shelvesForm.valueChanges.pipe(
-      //   map(value => `${value.key}-${value.batteryNumber}`)
-      // ).subscribe(value => {
-      //   this.shelvesForm.controls['key'].setValue(value,)
-      // })
+      this.shelvesForm.controls['key'].setValue(this.id.id);
+      this.shelvesForm.controls['batteryNumber'].setValue(
+        this.idBattery.idBattery
+      );
     }
   }
 

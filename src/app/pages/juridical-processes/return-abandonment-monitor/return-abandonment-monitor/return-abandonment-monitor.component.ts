@@ -32,6 +32,7 @@ export class ReturnAbandonmentMonitorComponent
   good: IGood;
   notifications: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
+  notificationPropertyResponse: any;
 
   constructor(
     private fb: FormBuilder,
@@ -100,6 +101,50 @@ export class ReturnAbandonmentMonitorComponent
   }
 
   public btnRatificacion() {
-    this.getNotification();
+    //this.getNotification();
+    this.ratificacion();
+    //console.log(this.notificationPropertyResponse);
+  }
+
+  private ratificacion() {
+    let notificationPropertyRequest = {
+      numberProperty: this.good.id,
+      notificationDate: '2002-04-09T00:00:00.000Z',
+    };
+    //console.log(notificationPropertyRequest);
+
+    this.notificationService
+      .createNotificationxPropertyFilter(notificationPropertyRequest)
+      .subscribe({
+        next: response => {
+          console.log(response);
+          this.GetNotificationxPropertyFilter(response.data);
+        },
+        error: err => {
+          //error
+        },
+      });
+  }
+
+  private GetNotificationxPropertyFilter(data: any) {
+    console.log(data[0]);
+    this.notificationService
+      .updateupdateNotification(
+        data[0].numberProperty,
+        data[0].notificationDate,
+        data[0]
+      )
+      .subscribe({
+        next: response => {
+          this.onLoadToast(
+            'success',
+            'Ratificado',
+            'Se ratifico correctamente'
+          );
+        },
+        error: err => {
+          this.onLoadToast('error', 'Ratificado', 'Error al  ratificar');
+        },
+      });
   }
 }
