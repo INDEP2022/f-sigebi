@@ -140,9 +140,14 @@ export class CustomersListComponent extends BasePage implements OnInit {
     );
   }
 
-  openFormRepresentative() {
+  openFormRepresentative(representative?: IRepresentative) {
     const modalConfig = MODAL_CONFIG;
-
+    modalConfig.initialState = {
+      representative,
+      callback: (next: boolean) => {
+        if (next) this.getRepresentative();
+      },
+    };
     this.modalService.show(RepresentativesModalComponent, modalConfig);
   }
 }
