@@ -21,7 +21,8 @@
       (scrollToEnd)="fetchMore(select.searchTerm)"
       (change)="onChange($event)"
       [searchable]="searchable"
-      [placeholder]="placeholder">
+      [placeholder]="placeholder"
+      [readonly]="readonly">
     </ng-select>
     <span class="form-bar"></span>
     <label class="float-label">{{ label }}</label>

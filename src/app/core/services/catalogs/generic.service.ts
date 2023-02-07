@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { CatGeneticsRepository } from 'src/app/common/repository/repositories/cat-generics-repository';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -11,7 +12,10 @@ import { IGeneric } from '../../models/catalogs/generic.model';
 })
 export class GenericService implements ICrudMethods<IGeneric> {
   private readonly route: string = ENDPOINT_LINKS.Generic;
-  constructor(private genericRepository: Repository<IGeneric>) {}
+  constructor(
+    private genericRepository: Repository<IGeneric>,
+    private catGenericRepository: CatGeneticsRepository
+  ) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IGeneric>> {
     return this.genericRepository.getAllPaginated(this.route, params);
@@ -31,5 +35,9 @@ export class GenericService implements ICrudMethods<IGeneric> {
 
   remove(id: string | number): Observable<Object> {
     return this.genericRepository.remove(this.route, id);
+  }
+
+  getBySearch(params: ListParams): Observable<IListResponse<IGeneric>> {
+    return this.catGenericRepository.getGenericBySearch(this.route, params);
   }
 }

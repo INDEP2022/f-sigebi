@@ -1,8 +1,9 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
+import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IRequest } from '../../../../../../core/models/requests/request.model';
@@ -22,10 +23,12 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
   affairName: string = '';
   datePaper: any;
 
-  affairService = inject(AffairService);
-  genericsService = inject(GenericService);
-
-  constructor(public fb: FormBuilder) {
+  constructor(
+    public fb: FormBuilder,
+    private affairService: AffairService,
+    private genericsService: GenericService,
+    private requestService: RequestService
+  ) {
     super();
   }
 
@@ -47,14 +50,16 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
   }
 
   getTypeExpedient(params: ListParams) {
-    params.text = 'Tipo Expediente';
+    params['filter.name'] = '$eq:Tipo Expediente';
+    params.limit = 20;
     this.genericsService.getAll(params).subscribe((data: any) => {
       this.selectTypeExpedient = new DefaultSelect(data.data, data.count);
     });
   }
 
   getOriginInfo(params?: ListParams) {
-    params.text = 'Procedencia';
+    params['filter.name'] = '$eq:Procedencia';
+    params.limit = 20;
     this.genericsService.getAll(params).subscribe((data: any) => {
       this.selectOriginInfo = new DefaultSelect(data.data, data.count);
     });
@@ -66,17 +71,43 @@ export class RequestRecordTabComponent extends BasePage implements OnInit {
     });
   }
 
+  changeDateEvent(event: Date) {
+    this.bsPaperValue =
+      this.bsPaperValue !== undefined ? this.bsPaperValue : event;
+
+    if (this.bsPaperValue != undefined) {
+      let date = new Date(this.bsPaperValue);
+      this.requestForm.controls['paperDate'].setValue(date.toISOString());
+    }
+  }
+
   confirm() {
     this.loading = true;
-    let date = new Date(this.bsPaperValue);
-    this.requestForm.controls['paperDate'].setValue(date.toISOString());
     console.log(this.requestForm.getRawValue());
 
-    /*setTimeout(() => {
-      let localDate = new Date(
-        this.requestForm.controls['paperDate'].value
-      ).toLocaleDateString();
-      this.requestForm.controls['paperDate'].setValue(localDate);
-    }, 2000);*/
+    const request = this.requestForm.getRawValue() as IRequest;
+    this.requestService.update(request.id, request).subscribe({
+      next: (resp: any) => {
+        if (resp.id != null) {
+          this.message(
+            'success',
+            'Guardado',
+            'Se guardo la solicitud correctamente'
+          );
+        }
+        if (resp.statusCode != null) {
+          this.message('error', 'Error', 'No se guardo la solicitud!');
+        }
+
+        this.loading = false;
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
+  }
+
+  message(header: any, title: string, body: string) {
+    this.onLoadToast(header, title, body);
   }
 }

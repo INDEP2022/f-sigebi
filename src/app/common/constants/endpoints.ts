@@ -23,6 +23,7 @@ export enum ENDPOINT_LINKS {
   DocCompensationSatXML = 'catalog/doc-resarcimientos-sat-xml',
   DocCompensation = 'catalog/doc-resarcimientos',
   DocCompensationSAT = 'catalog/doc-resarcimientos-sat',
+  Domicile = 'catalog/domicile',
   Drawer = 'catalog/drawer',
   EdosXCoor = 'catalog/edos-x-coor',
   EntFed = 'catalog/entfed',
@@ -132,7 +133,7 @@ export enum ENDPOINT_LINKS {
   BankConcepts = 'concept-movis-bank',
   NumeraryCategories = 'numerary-categories',
   //request
-  request = 'request/request',
+  request = 'request',
   //expedient
   Expedient = 'expedient',
   //goodsQuery//
