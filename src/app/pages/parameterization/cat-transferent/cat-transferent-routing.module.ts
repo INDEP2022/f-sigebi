@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CPCtCCatalogOfTransferorsComponent } from './c-p-ct-c-catalog-of-transferors/c-p-ct-c-catalog-of-transferors.component';
+import { CatTransferentComponent } from './cat-transferent/cat-transferent.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: CPCtCCatalogOfTransferorsComponent,
+    component: CatTransferentComponent,
   },
 ];
 
@@ -13,4 +13,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class CPMCatalogOfTransferorsRoutingModule {}
+export class CatTransferentRoutingModule {}
