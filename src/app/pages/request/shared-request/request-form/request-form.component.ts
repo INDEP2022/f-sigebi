@@ -9,9 +9,13 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import Swal from 'sweetalert2';
 import { UsersSelectedToTurnComponent } from '../users-selected-to-turn/users-selected-to-turn.component';
 //Provisional Data
+import { BehaviorSubject } from 'rxjs';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
-import { ListParams } from '../../../../common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from '../../../../common/repository/interfaces/list-params';
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
 import { ITransferente } from '../../../../core/models/catalogs/transferente.model';
 import { AuthorityService } from '../../../../core/services/catalogs/authority.service';
@@ -30,6 +34,7 @@ import { issuesData } from './data';
 export class RequestFormComponent extends BasePage implements OnInit {
   @Input() op: number; // op con valor 1 = Recepción Manual, op con valor 2 = Documentación Complementaria
   @Input() edit: boolean = false;
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
   showSearchForm: boolean = true;
   bsValue = new Date();
   requestForm: ModelForm<any>;
@@ -82,7 +87,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     this.requestForm.controls['transferenceId'].valueChanges.subscribe(
       (data: any) => {
         if (data != null) {
-          this.idsObject.idTransferer = data;
+          this.idsObject.idTransferer = Number(data);
           this.getStation(data);
         }
       }
@@ -91,8 +96,8 @@ export class RequestFormComponent extends BasePage implements OnInit {
     this.requestForm.controls['stationId'].valueChanges.subscribe(
       (data: any) => {
         if (data != null) {
-          this.idsObject.idStation = data;
-          this.getAuthority(this.idsObject);
+          this.idsObject.idStation = Number(data);
+          this.getAuthority(new ListParams(), this.idsObject);
         }
       }
     );
@@ -156,17 +161,18 @@ export class RequestFormComponent extends BasePage implements OnInit {
   }
 
   getStation(id: any) {
-    /*let idTranferent = { idTransferent: id };
-    this.stationService
-      .postByColumns(idTranferent)
-      .subscribe((data: IListResponse<IStation>) => {
-        this.selectStation = new DefaultSelect(data.data, data.count);
-      }); */
+    const params = new ListParams();
+    params['filter.idTransferent'] = `$eq:${id}`;
+    params.limit = 30;
+    this.stationService.getAll(params).subscribe((data: IListResponse<any>) => {
+      this.selectStation = new DefaultSelect(data.data, data.count);
+    });
   }
 
-  getAuthority(params: any) {
+  getAuthority(params: ListParams, paramsObject?: any) {
+    params.limit = 30;
     this.authorityService
-      .postByColumns(params)
+      .postByColumns(params, paramsObject)
       .subscribe((data: IListResponse<IAuthority>) => {
         this.selectAuthority = new DefaultSelect(data.data, data.count);
       });
@@ -190,7 +196,6 @@ export class RequestFormComponent extends BasePage implements OnInit {
   }
 
   openModalSelectUser() {
-    console.log(this.requestForm.value);
     let config: ModalOptions = {
       initialState: {
         request: this.requestForm.value,

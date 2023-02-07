@@ -18,6 +18,13 @@ export class ParametergoodRepository<T> implements IParametergoodMethods<T> {
     return this.httpClient.get<IListResponse<T>>(`${fullRoute}`, { params });
   }
 
+  create(route: string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+    console.log(fullRoute);
+
+    return this.httpClient.post<T>(`${fullRoute}`, formData);
+  }
+
   getByLogicalTables?(
     route: string,
     id: number | string,
@@ -32,24 +39,27 @@ export class ParametergoodRepository<T> implements IParametergoodMethods<T> {
     const fullRoute = `${this.ms}/${route}`;
     return this.httpClient.put(`${fullRoute}/${id}`, formData);
   }
-  /*create(route: string, formData: Object) {
-    const fullRoute = this.buildRoute(route);
-    return this.httpClient.post<T>(`${fullRoute}`, formData);
+
+  getById(route: string, _id?: number | string): Observable<T> {
+    const fullRoute = `${this.ms}/${route}`;
+    return this.httpClient.get<T>(`${fullRoute}/${_id}`);
   }
 
-  
-
-  remove(route: string, id: number | string) {
-    const fullRoute = this.buildRoute(route);
-    return this.httpClient.delete(`${fullRoute}/${id}`);
-  }
-
-*/
   private makeParams(params: ListParams): HttpParams {
     let httpParams: HttpParams = new HttpParams();
     Object.keys(params).forEach(key => {
       httpParams = httpParams.append(key, (params as any)[key]);
     });
     return httpParams;
+  }
+
+  private buildRoute(route: string) {
+    const paths = route.split('/');
+    paths.shift();
+    if (paths.length === 0) {
+      return `${environment.API_URL}catalog/api/v1/${route}`;
+    }
+    const ms = route.split('/')[0];
+    return `${environment.API_URL}${ms}/api/v1/${paths.join('/')}`;
   }
 }

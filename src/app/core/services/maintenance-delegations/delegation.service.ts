@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { MaintenanceDelegationEndpoints } from 'src/app/common/constants/endpoints/maintenance-delegation-endpoint';
-import { DelegationRepository } from 'src/app/common/repository/repositories/delegation-repository';
+import { ENDPOINT_LINKS } from 'src/app/common/constants/endpoints';
+import { Repository } from 'src/app/common/repository/repository';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IDelegation } from '../../models/catalogs/delegation.model';
@@ -9,22 +9,10 @@ import { IDelegation } from '../../models/catalogs/delegation.model';
   providedIn: 'root',
 })
 export class DelegationService {
-  private readonly route = MaintenanceDelegationEndpoints;
-  constructor(
-    private delegationRepository: DelegationRepository<IDelegation>
-  ) {}
+  private readonly route: string = ENDPOINT_LINKS.Delegation;
+  constructor(private delegationRepository2: Repository<IDelegation>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IDelegation>> {
-    return this.delegationRepository.getAllPaginated(
-      this.route.Delegation,
-      params
-    );
-  }
-
-  getDelegations(params: ListParams) {
-    return this.delegationRepository.getAllPaginated(
-      this.route.Delegation,
-      params
-    );
+    return this.delegationRepository2.getAllPaginated(this.route, params);
   }
 }

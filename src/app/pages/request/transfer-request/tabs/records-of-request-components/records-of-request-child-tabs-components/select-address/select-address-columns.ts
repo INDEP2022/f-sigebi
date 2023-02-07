@@ -1,35 +1,40 @@
 export const SELECT_ADDRESS_COLUMN = {
-  aliaWarehouse: {
+  id: {
+    title: 'Bien',
+    type: 'string',
+    sort: false,
+  },
+  warehouseAlias: {
     title: 'Alias Almacen',
     type: 'string',
     sort: false,
   },
-  status: {
+  stateOfRepublicName: {
     title: 'Estado',
     type: 'string',
     sort: false,
   },
-  municipe: {
+  municipalityName: {
     title: 'Municipio',
     type: 'string',
     sort: false,
   },
-  suburb: {
+  localityName: {
     title: 'Colonia',
     type: 'string',
     sort: false,
   },
-  cp: {
+  code: {
     title: 'C.P.',
     type: 'string',
     sort: false,
   },
-  numExt: {
+  exteriorNumber: {
     title: 'Num. Ext',
     type: 'string',
     sort: false,
   },
-  numInt: {
+  interiorNumber: {
     title: 'Num. Int.',
     type: 'string',
     sort: false,

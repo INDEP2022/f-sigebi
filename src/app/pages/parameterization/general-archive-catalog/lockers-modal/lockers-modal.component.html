@@ -33,25 +33,15 @@
         </div>
         <div class="col-md-3" *ngIf="edit == false">
           <form-field [control]="lockerForm.get('numShelf')">
-            <div class="col-md-3" *ngIf="edit == false">
-              <form-field
-                label="No. Estante"
-                [control]="lockerForm.get('numShelf')">
-                <input
-                  type="number"
-                  class="form-control"
-                  formControlName="numShelf" />
-              </form-field>
-            </div>
-            <!-- <ngx-select 
-                [form]="lockerForm" 
-                control="numShelf" 
-                [data]="idBattery" 
-                value="id" 
-                bindLabel="id" 
-                label="Estante" 
-                (fetchItems)="getShelvesById($event)">
-              </ngx-select> -->
+            <ngx-select
+              [form]="lockerForm"
+              control="numShelf"
+              [data]="idShelve"
+              value="id"
+              bindLabel="id"
+              label="Estante"
+              (fetchItems)="getShelvesById($event)">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col-md-3" *ngIf="edit == false">

@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
@@ -15,9 +15,12 @@ import { PUBLIC_MINISTRIES_COLUMNS } from './public-ministries-columns';
   styles: [],
 })
 export class PublicMinistriesComponent extends BasePage implements OnInit {
+  @Output() refresh = new EventEmitter<true>();
   valuesList: IMinpub[] = [];
+  selectedRow: any = null;
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
+  rowSelected: boolean = false;
   callback?: (next: string | number) => void;
   constructor(
     private fb: FormBuilder,
@@ -49,7 +52,16 @@ export class PublicMinistriesComponent extends BasePage implements OnInit {
       error: error => (this.loading = false),
     });
   }
-
+  rowsSelected(event: any) {
+    this.selectedRow = event.data;
+    this.rowSelected = true;
+  }
+  confirm() {
+    if (!this.rowSelected) return;
+    console.log(this.selectedRow);
+    this.refresh.emit(this.selectedRow);
+    this.modalRef.hide();
+  }
   close() {
     this.modalRef.hide();
   }

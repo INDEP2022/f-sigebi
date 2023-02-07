@@ -34,6 +34,8 @@ export class Repository<T> implements IRepository<T> {
   update(route: string, id: number | string, formData: Object) {
     const fullRoute = this.buildRoute(route);
     console.log(`${fullRoute}/${id}`);
+    console.log(formData);
+
     return this.httpClient.put(`${fullRoute}/${id}`, formData);
   }
 
@@ -58,19 +60,6 @@ export class Repository<T> implements IRepository<T> {
     const fullRoute = this.buildRoute(route);
     const idsRoute: string = this.makeIdsRoute(ids);
     return this.httpClient.delete(`${fullRoute}/${idsRoute}`);
-  }
-
-  postByIds(route: string, formData: Object): Observable<IListResponse<T>> {
-    const fullRoute = this.buildRoute(route);
-    return this.httpClient.post<IListResponse<T>>(`${fullRoute}/id`, formData);
-  }
-
-  postColumns(route: string, formData: Object): Observable<IListResponse<T>> {
-    const fullRoute = this.buildRoute(route);
-    return this.httpClient.post<IListResponse<T>>(
-      `${fullRoute}/columns`,
-      formData
-    );
   }
 
   private buildRoute(route: string) {
