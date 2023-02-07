@@ -67,7 +67,7 @@ export class ClientsModalComponent extends BasePage implements OnInit {
     this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
       this.getData();
     });
-    this.getData();
+    // this.getData();
   }
 
   getData(): void {
@@ -89,7 +89,6 @@ export class ClientsModalComponent extends BasePage implements OnInit {
 
   select(row: IComerClients[]): void {
     this.selectedRow = row[0];
-    console.log(this.selectedRow);
   }
 
   close(): void {

@@ -23,6 +23,7 @@ export enum ENDPOINT_LINKS {
   DocCompensationSatXML = 'catalog/doc-resarcimientos-sat-xml',
   DocCompensation = 'catalog/doc-resarcimientos',
   DocCompensationSAT = 'catalog/doc-resarcimientos-sat',
+  Domicile = 'catalog/domicile',
   Drawer = 'catalog/drawer',
   EdosXCoor = 'catalog/edos-x-coor',
   EntFed = 'catalog/entfed',
@@ -67,7 +68,7 @@ export enum ENDPOINT_LINKS {
   OriginCisi = 'catalog/origin-cisi',
   Origin = 'catalog/origin',
   Paragraph = 'catalog/cat-paragraphs',
-  PaymentConcept = 'catalog/payments-concept',
+  PaymentConcept = 'payments-concept',
   Penalty = 'catalog/penalty',
   Person = 'catalog/person',
   Proeficient = 'catalog/proficient',
@@ -116,6 +117,7 @@ export enum ENDPOINT_LINKS {
   parametergood = 'parametergood/tmp-max-cierre-acta-dev',
   parametergoodActa = 'parametergood/validadores-actas',
   parametergoodCat = 'parametergood/cat-motivosrev',
+  parameterComer = 'parametercomer/api/v1/bank-accounts',
   documents = 'documents/api/v1/documents-dictum-x-state-m',
   ZoneGeographic = 'catalog/zone-geographic',
   DocumentsForDictum = 'documents-for-dictum',
@@ -133,7 +135,7 @@ export enum ENDPOINT_LINKS {
   tevents = 'event/comer-tevents',
   usuxtpevents = 'event/comer-usuxtpevents',
   //request
-  request = 'request/request',
+  request = 'request',
   //expedient
   Expedient = 'expedient',
   //goodsQuery//

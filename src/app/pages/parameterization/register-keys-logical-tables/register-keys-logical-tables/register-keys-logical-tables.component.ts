@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject, map, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -12,6 +11,8 @@ import { REGISTER_KEYS_LOGICAL_COLUMNS } from './register-keys-logical-columns';
 import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dynamic-tables.service';
 import { TdescCveService } from 'src/app/core/services/ms-parametergood/tdesccve.service';
 //Models
+import { LocalDataSource } from 'ng2-smart-table';
+import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { ITdescCve } from 'src/app/core/models/ms-parametergood/tdesccve-model';
 import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 
@@ -24,20 +25,18 @@ export class RegisterKeysLogicalTablesComponent
   extends BasePage
   implements OnInit
 {
-  tdescCve: ITdescCve[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  tdescCve: ITdescCve[] = [];
+
+  data2: LocalDataSource = new LocalDataSource();
 
   form: FormGroup = new FormGroup({});
-
-  data: LocalDataSource = new LocalDataSource();
-
-  rowSelected: boolean = false;
-  selectedRow: any = null;
 
   constructor(
     private modalService: BsModalService,
     private fb: FormBuilder,
+    private fb2: FormBuilder,
     private dynamicTablesService: DynamicTablesService,
     private tdescCveService: TdescCveService
   ) {
@@ -50,6 +49,7 @@ export class RegisterKeysLogicalTablesComponent
         delete: false,
         position: 'right',
       },
+
       columns: { ...REGISTER_KEYS_LOGICAL_COLUMNS },
     };
   }
@@ -65,7 +65,6 @@ export class RegisterKeysLogicalTablesComponent
       tableType: [{ value: null, disabled: true }],
     });
   }
-
   //Método para buscar y llenar inputs (Encabezado)
   getLogicalTablesByID(): void {
     let _id = this.form.controls['table'].value;
@@ -75,7 +74,7 @@ export class RegisterKeysLogicalTablesComponent
         if (response !== null) {
           this.form.patchValue(response);
           this.form.updateValueAndValidity();
-          this.getKeysByLogicalTables(response.table);
+          this.getKeysByLogicalTables(_id);
         } else {
           this.alert('info', 'No se encontraron los registros', '');
         }
@@ -85,7 +84,6 @@ export class RegisterKeysLogicalTablesComponent
     );
   }
 
-  //Método llenar tabla de Claves con id de Tables Logical
   getKeysByLogicalTables(id: string | number): void {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
@@ -93,23 +91,23 @@ export class RegisterKeysLogicalTablesComponent
   }
 
   getKeys(id: string | number): void {
+    this.loading = true;
     this.tdescCveService
-      .getByLogicalTables(id, this.params.getValue())
-      .subscribe(
-        response => {
-          //console.log(response);
-          let data = response.data.map((item: ITdescCve) => {
-            //console.log(item);
-            return item;
-          });
-          this.data.load(data);
-          this.totalItems = response.count;
-          this.loading = false;
-        },
-        error => (this.loading = false)
-      );
+      .getById(id)
+      .pipe(
+        map((data2: any) => {
+          let list: IListResponse<ITdescCve> = {} as IListResponse<ITdescCve>;
+          const array2: ITdescCve[] = [{ ...data2.data }];
+          list.data = array2;
+          list.count = 10;
+          return list;
+        })
+      )
+      .subscribe(response => {
+        this.tdescCve = response.data;
+        console.log(response);
+      });
   }
-
   openForm(tdescCve?: ITdescCve) {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {

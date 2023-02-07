@@ -1,5 +1,5 @@
-export const FLYER_SUBJECT_CAT_COLUMNS = {
-  code: {
+export const AFFAIR_COLUMNS = {
+  id: {
     title: 'Código',
     sort: false,
     filter: false,
