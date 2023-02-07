@@ -10,5 +10,5 @@ export interface IWarehouse {
   localityCode: number | null;
   indActive: string | null;
   type: string | null;
-  responsibleDelegation: number | null;
+  responsibleDelegation: number | string | null;
 }

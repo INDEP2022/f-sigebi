@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { SafeService } from 'src/app/core/services/catalogs/safe.service';
@@ -26,6 +27,10 @@ export class LocationGoodsWarehousesStorageComponent
   formVault: FormGroup;
   typeLocation: string = '';
   good: IGood;
+  disableConsultLocation: boolean = false;
+  warehouseDisable: boolean = true;
+  vaultDisable: boolean = true;
+  nullDisable: boolean = true;
   get numberGood() {
     return this.form.get('good');
   }
@@ -71,6 +76,8 @@ export class LocationGoodsWarehousesStorageComponent
   }
 
   ngOnInit(): void {
+    /////////// validar los persmisos del usuario
+    console.log(this.token.decodeToken());
     this.buildForm();
     this.buildFormWare();
     this.buildFormVault();
@@ -143,9 +150,13 @@ export class LocationGoodsWarehousesStorageComponent
 
   loadGood() {
     this.loading = true;
+    this.warehouseDisable = true;
+    this.vaultDisable = true;
     this.goodServices.getById(this.numberGood.value).subscribe({
       next: response => {
+        console.log(response);
         this.good = response;
+        this.validRadio(this.good);
         this.loadDescriptionStatus(this.good);
         this.loadDescriptionWarehouse(this.good.storeNumber);
         this.loadDescriptionVault(this.good.vaultNumber);
@@ -189,6 +200,7 @@ export class LocationGoodsWarehousesStorageComponent
   loadDescriptionWarehouse(id: string | number) {
     this.warehouseService.getById(id).subscribe({
       next: response => {
+        this.validLocationsConsult(response);
         this.currentDescriptionWare.setValue(response.description);
       },
       error: err => {
@@ -256,6 +268,7 @@ export class LocationGoodsWarehousesStorageComponent
       } else {
         this.good.storeNumber = this.warehouse.value;
         this.good.ubicationType = 'A';
+        this.good.dateIn = new Date();
       }
     } else {
       if (Number(this.good.type) === 5 && Number(this.good.subTypeId) === 16) {
@@ -265,8 +278,18 @@ export class LocationGoodsWarehousesStorageComponent
       } else {
         this.good.vaultNumber = this.safe.value;
         this.good.ubicationType = 'B';
+        this.good.dateIn = new Date();
       }
     }
     return false;
+  }
+  validLocationsConsult(warehouse: IWarehouse) {
+    if (warehouse.manager === this.token.decodeToken().preferred_username) {
+      this.disableConsultLocation = true;
+    }
+  }
+  validRadio(good: IGood) {
+    good.storeNumber === null ? (this.warehouseDisable = false) : '';
+    good.vaultNumber === null ? (this.vaultDisable = false) : '';
   }
 }

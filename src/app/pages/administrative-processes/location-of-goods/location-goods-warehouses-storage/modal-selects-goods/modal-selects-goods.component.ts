@@ -6,9 +6,8 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
-let goodCheck: any[] = [];
+/* let goodCheck: any[] = []; */
 
 @Component({
   selector: 'app-modal-selects-goods',
@@ -68,7 +67,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
         title: 'Boveda',
         sort: false,
       },
-      check: {
+      /*       check: {
         title: '',
         type: 'custom',
         renderComponent: CheckboxElementComponent,
@@ -84,9 +83,10 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
           });
         },
         sort: true,
-      },
+      }, */
     };
-    this.settings.actions = true;
+    this.settings.actions.delete = true;
+    this.settings.actions.edit = false;
   }
 
   ngOnInit(): void {
@@ -97,7 +97,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
   }
 
   returnModal() {
-    goodCheck = [];
+    /*  goodCheck = []; */
     this.bsModalRef.hide();
   }
   private buildForm() {
@@ -110,18 +110,17 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
   asigLocation() {
     if (this.validar()) return;
     try {
-      console.log('Checkeados', goodCheck);
-      goodCheck.forEach(item => {
+      this.goods.forEach(good => {
         let valid: boolean = true;
-        const good: IGood = item.row;
+        /* const good: IGood = item.row; */
         if (this.radio.value === 'A') {
           if (Number(good.type) === 5 && Number(good.subTypeId) === 16) {
             this.goodsNotChange.push(Number(good.id));
-            this.goodsNotChange.length;
             valid = false;
           } else {
             good.storeNumber = this.warehouse.value;
             good.ubicationType = 'A';
+            good.dateIn = new Date();
           }
         } else if (this.radio.value === 'B') {
           if (Number(good.type) === 5 && Number(good.subTypeId) === 16) {
@@ -131,6 +130,7 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
           } else {
             good.vaultNumber = this.safe.value;
             good.ubicationType = 'B';
+            good.dateIn = new Date();
           }
         }
         if (valid) {
@@ -168,6 +168,10 @@ export class ModalSelectsGoodsComponent extends BasePage implements OnInit {
     return false;
   }
 
+  deleteGood(good: IGood) {
+    console.log(good);
+    this.goods = this.goods.filter(item => item.id != good.id);
+  }
   /////////// Temporal
   getGood() {
     this.goodServices.getAll(this.params.getValue()).subscribe({

@@ -8,7 +8,8 @@
         <ng2-smart-table
           [attr.class]="'table-bordered'"
           [settings]="settings"
-          [source]="goods">
+          [source]="goods"
+          (delete)="deleteGood($event.data)">
         </ng2-smart-table>
         <app-pagination [params]="params" [totalItems]="totalItems">
         </app-pagination>
@@ -21,17 +22,25 @@
       </p>
     </div>
     <div class="row">
-      <div class="col-md-3 col-sm-12 col-xs-12 mt-3">
-        <button class="btn btn-success btn-sm active">Aceptar</button>
-      </div>
-      <div class="col-md-3 col-sm-12 col-xs-12 mt-3">
-        <button class="btn btn-primary btn-sm active">Cancelar</button>
-      </div>
-      <div class="col-md-1 col-sm-12 col-xs-12 mt-3">
-        <button class="btn btn-success btn-sm active">+</button>
-      </div>
-      <div class="col-md-1 col-sm-12 col-xs-12 mt-3">
-        <button class="btn btn-danger btn-sm active">-</button>
+      <!--       <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button
+              class="btn btn-primary btn-sm active"
+              (click)="returnModal()">
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div> -->
+      <div class="col-md-12 col-sm-12 col-xs-12 mt-3">
+        <div class="d-flex justify-content-center">
+          <div class="m-3">
+            <button class="btn btn-success btn-sm active">
+              Rastreador de bienes
+            </button>
+          </div>
+        </div>
       </div>
     </div>
     <hr />
