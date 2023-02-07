@@ -13,7 +13,7 @@ export class GoodRepository<T> implements IGoodMethods<T> {
   constructor(public readonly httpClient: HttpClient) {}
 
   getAll(route: string, _params?: ListParams): Observable<IListResponse<T>> {
-    const fullRoute = `${this.ms}/${route}`;
+    const fullRoute = this.buildRoute(route); //`${environment.API_URL}/good/api/v1/${route}`;
     const params = this.makeParams(_params);
 
     return this.httpClient.get<IListResponse<T>>(`${fullRoute}`, { params });
@@ -30,7 +30,7 @@ export class GoodRepository<T> implements IGoodMethods<T> {
   }
 
   update(route: string, id: number | string, formData: Object) {
-    const fullRoute = `${this.ms}/${route}`;
+    const fullRoute = this.buildRoute(route); //`${this.ms}/${route}`;
     return this.httpClient.put(`${fullRoute}/${id}`, formData);
   }
 

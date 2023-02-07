@@ -5,7 +5,7 @@
   <div body>
     <form class="form-material" [formGroup]="batteryForm">
       <div class="row">
-        <div class="col-md-5" *ngIf="edit == false">
+        <div class="col-md-5 pt-5" *ngIf="edit == false">
           <form-field [control]="batteryForm.get('storeCode')">
             <ngx-select
               [form]="batteryForm"
@@ -17,17 +17,8 @@
               (fetchItems)="getCveSaveValues($event)">
             </ngx-select>
           </form-field>
-
-          <!-- <form-field
-            label="CVE Guardavalor"
-            [control]="batteryForm.get('storeCode')">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="storeCode"/>
-          </form-field> -->
         </div>
-        <div class="col-md-2" *ngIf="edit == false">
+        <div class="col-md-2 pt-5" *ngIf="edit == false">
           <form-field
             label="No. Bateria"
             [control]="batteryForm.get('idBattery')">
@@ -37,7 +28,7 @@
               formControlName="idBattery" />
           </form-field>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-5 pt-5">
           <form-field
             label="Descripción"
             [control]="batteryForm.get('description')">
@@ -47,14 +38,12 @@
               formControlName="description" />
           </form-field>
         </div>
-      </div>
-      <div class="row pt-5">
-        <div class="col-md-3">
+        <div class="col-md-3 pt-5">
           <form-field label="Status" [control]="batteryForm.get('status')">
             <input type="text" class="form-control" formControlName="status" />
           </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2 pt-5">
           <form-field
             label="No. Registro"
             [control]="batteryForm.get('registerNumber')">
@@ -65,6 +54,7 @@
           </form-field>
         </div>
       </div>
+      <div class="row pt-5"></div>
     </form>
   </div>
   <div footer>

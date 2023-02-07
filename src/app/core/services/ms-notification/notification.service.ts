@@ -36,6 +36,13 @@ export class NotificationService {
     );
   }
 
+  createNotificationxPropertyFilter(model: any): Observable<any> {
+    return this.notificationRepository.create(
+      this.route.NotificationxPropertyFilter,
+      model
+    );
+  }
+
   updateupdateNotification(
     numberProperty: number | string,
     notificationDate: Date | string,

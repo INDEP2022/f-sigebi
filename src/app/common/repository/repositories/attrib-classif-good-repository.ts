@@ -47,7 +47,7 @@ export class AttribClassifGoodMethodsRepository<T>
     const fullRoute = `${this.ms}/${route}`;
     const params = this.makeParams(_params);
     return this.httpClient.get<IListResponse<T>>(
-      `${fullRoute}?limit=10&page=1&filter.classifGoodNumber=${id}`
+      `${fullRoute}?${params}&filter.classifGoodNumber=${id}`
     );
   }
 

@@ -36,18 +36,18 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Conceptos bancarios',
         link: '/pages/parameterization/bank-concepts',
       },
-      {
+      /*{ REPETIDO EN CATALOGOS
         label: 'Catalogo de conceptos de pagos depositarias',
         link: '/pages/parameterization/cat-depository-payment',
-      },
+      },*/
       {
         label: 'Mant. a delegaciones y subdelegaciones',
         link: '/pages/parameterization/maintenance-deleg-subdeleg',
       },
-      {
+      /*{ REPETIDO EN CATALOGOS
         label: 'Mantto. a administrador, depositario e interventor',
         link: '/pages/parameterization/mnce-adm-depository-auditor',
-      },
+      },*/
       {
         label: 'Registro de atributos para tablas lógicas',
         link: '/pages/parameterization/attributes-reg-logical-tables',

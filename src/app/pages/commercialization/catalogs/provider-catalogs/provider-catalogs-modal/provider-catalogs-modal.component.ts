@@ -183,6 +183,7 @@ export class ProviderCatalogsModalComponent extends BasePage implements OnInit {
       next: data => this.handleSuccess(),
       error: error => {
         this.showError(error);
+        this.loading = false;
       },
     });
   }
