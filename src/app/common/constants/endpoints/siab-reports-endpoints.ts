@@ -1,0 +1,5 @@
+export enum SiabReportEndpoints {
+  SIAB = `SIAB`,
+  RINDICA = `SIAB/RINDICA_0001`,
+  RCONCOGVOLANTESRE = `SIAB/RCONCOGVOLANTESRE`,
+}

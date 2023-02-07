@@ -1,4 +1,4 @@
-<app-card [header]="true">
+<app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">Impresi&oacute;n de Volantes</h5>
   </div>
@@ -53,7 +53,7 @@
         </div>
 
         <div class="col-md-4">
-          <div class="row pt-3">
+          <!--<div class="row pt-3">
             <form-field [control]="flyersForm.get('area')">
               <ngx-select
                 [form]="flyersForm"
@@ -61,26 +61,50 @@
                 label="&Aacute;rea de destino"
                 [data]="select"></ngx-select>
             </form-field>
-          </div>
-
+          </div>-->
+          <app-departments-shared [form]="flyersForm" label="Área Destino">
+          </app-departments-shared>
           <div class="row pt-3">
             <form-field
               [control]="flyersForm.get('type')"
               label="Tipo de Asunto">
               <select class="form-control" formControlName="type">
-                <option value="Administrativo">Administrativo</option>
-                <option value="Procesal">Procesal</option>
+                <option value="A">Administrativo</option>
+                <option value="P">Procesal</option>
               </select>
             </form-field>
           </div>
         </div>
       </div>
-
-      <div class="row pt-3">
-        <div class="col-md-12">
-          <button type="submit" class="btn btn-primary active">Imprimir</button>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="row pt-3">
+            <form-field
+              [control]="flyersForm.get('P_IDENTIFICADOR')"
+              label="Identificador">
+              <input
+                class="form-control"
+                type="number"
+                formControlName="P_IDENTIFICADOR" />
+            </form-field>
+          </div>
         </div>
       </div>
     </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          text="Imprimir"
+          [disabled]="flyersForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active">Limpiar</button>
+      </div>
+    </div>
   </div>
 </app-card>
