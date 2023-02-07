@@ -15,6 +15,7 @@ import { AuthInterceptor } from './common/interceptors/auth.interceptor';
 import { HttpErrorsInterceptor } from './common/interceptors/http-errors.interceptor';
 import { ContentComponent } from './layouts/content/content.component';
 import { FullModule } from './layouts/full/full.module';
+import { MailModule } from './pages/parameterization/mail/mail.module';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -44,6 +45,7 @@ export function tokenGetter() {
     AppRoutingModule,
     HttpClientModule,
     DateFnsModule.forRoot(),
+    MailModule,
   ],
   providers: [
     {
