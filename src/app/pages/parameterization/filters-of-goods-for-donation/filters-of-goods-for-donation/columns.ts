@@ -1,17 +1,17 @@
 export const COLUMNS = {
-  goodStatus: {
+  statusId: {
     title: 'Estatus Bien',
     sort: false,
   },
-  descriptionStatus: {
+  statusDesc: {
     title: 'Descripción Estatus',
     sort: false,
   },
-  targetIndicator: {
+  tagId: {
     title: 'Indicador Destino',
     sort: false,
   },
-  targetIndicatorDesc: {
+  tagDesc: {
     title: 'Descripción Indicador',
     sort: false,
   },
