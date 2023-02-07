@@ -132,6 +132,8 @@ export enum ENDPOINT_LINKS {
   AttributesFinancialInfo = 'attributes-financial-information',
   BankConcepts = 'concept-movis-bank',
   NumeraryCategories = 'numerary-categories',
+  tevents = 'event/comer-tevents',
+  usuxtpevents = 'event/comer-usuxtpevents',
   //request
   request = 'request',
   //expedient

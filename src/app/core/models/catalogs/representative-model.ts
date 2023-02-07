@@ -1,0 +1,32 @@
+export interface IRepresentative {
+  id: number;
+  reasonName: string;
+  paternalSurname: string;
+  maternalSurname: string;
+  dateBorn: string;
+  rfc: string;
+  curp: string;
+  personType: string;
+  identificationType: number;
+  autEmiIndentify: string;
+  identificationNumber: string;
+  escrowNumber: string;
+  nationalityKey: string;
+  countryOriginKey: string;
+  street: string;
+  outsideNumber: string;
+  insisdeNumber: string;
+  city: string;
+  suburb: string;
+  delegation: string;
+  zipCode: string;
+  state: string;
+  homeCountryKey: string;
+  fax: string;
+  countryPhoneKey: string;
+  phone: string;
+  mailWeb: string;
+  ecoActivityKey: string;
+  repAssociatedId: string;
+  registerNumber?: number;
+}

@@ -27,11 +27,7 @@ export class ShelvessService extends HttpService {
     id: string | number,
     params?: ListParams
   ): Observable<IListResponse<IShelves>> {
-    return this.shelvesRepository.getByCveSaveValues(
-      this.route.ShelvesByKey,
-      id,
-      params
-    );
+    return this.shelvesRepository.getByCveSaveValues(this.route2, id, params);
   }
 
   getShelvesByIds(
