@@ -1,13 +1,13 @@
 export const COLUMNS = {
-  user: {
+  username: {
     title: 'Usuario',
     sort: false,
   },
-  userName: {
+  usernameRegistration: {
     title: 'Nombre',
     sort: false,
   },
-  date: {
+  registrationDate: {
     title: 'Fecha',
     sort: false,
   },

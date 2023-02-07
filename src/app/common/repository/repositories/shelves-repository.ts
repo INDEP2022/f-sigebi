@@ -44,7 +44,9 @@ export class ShelvesRepository<T> implements IShelvesMethods<T> {
   ): Observable<IListResponse<T>> {
     const fullRoute = `${this.ms}/${route}`;
     const params = this.makeParams(_params);
-    return this.httpClient.get<IListResponse<T>>(`${fullRoute}?text=${id}`);
+    return this.httpClient.get<IListResponse<T>>(
+      `${fullRoute}?limit=10&page=1&filter.key=${id}`
+    );
   }
 
   // update(route: string, id: number | string, formData: Object) {

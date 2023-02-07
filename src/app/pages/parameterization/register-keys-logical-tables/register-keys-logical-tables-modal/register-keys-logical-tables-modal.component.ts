@@ -25,14 +25,6 @@ export class RegisterKeysLogicalTablesModalComponent
   title: string = 'Registro de claves para tablas logicas';
   edit: boolean = false;
 
-  get type1() {
-    return this.tdescCveForm.get('type1');
-  }
-
-  get type5() {
-    return this.tdescCveForm.get('type5');
-  }
-
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -48,9 +40,6 @@ export class RegisterKeysLogicalTablesModalComponent
   private prepareForom() {
     this.tdescCveForm = this.fb.group({
       id: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-
-      type1: [{ value: true, disabled: true }],
-      type5: [null, [Validators.required]],
 
       dsKey1: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       swFormat1: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -89,16 +78,16 @@ export class RegisterKeysLogicalTablesModalComponent
   }
 
   confirm() {
-    this.update();
+    this.edit ? this.update() : this.create();
   }
 
-  // create() {
-  //   this.loading = true;
-  //   this.tdescCveService.create(this.tdescCveForm.value).subscribe({
-  //     next: data => this.handleSuccess(),
-  //     error: error => (this.loading = false),
-  //   });
-  // }
+  create() {
+    this.loading = true;
+    this.tdescCveService.create(this.tdescCveForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
+  }
 
   update() {
     this.loading = true;

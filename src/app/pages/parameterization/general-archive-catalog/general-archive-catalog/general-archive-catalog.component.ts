@@ -50,6 +50,9 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
   settingsShelves;
   settingsLockers;
 
+  shelvesList: IShelves[] = [];
+  lockers: ILocker;
+
   constructor(
     private fb: FormBuilder,
     private saveValueService: SaveValueService,
@@ -126,52 +129,16 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
     );
   }
 
-  //Métodos para llenar tabla de Estantes/Shelves con ID de Guardavalor/SaveValues
-  getShelvesBySaveValues(id: string | number): void {
-    this.params1
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getShelves(id));
-  }
-
-  getShelves(id: string | number): void {
-    this.shelvessService
-      .getByCveSaveValues(id, this.params1.getValue())
-      .subscribe(
-        response => {
-          //console.log(response);
-          let data = response.data.map((item: IShelves) => {
-            //console.log(item);
-            return item;
-          });
-          this.dataShelves.load(data);
-          this.totalItems1 = response.count;
-          this.loading = false;
-        },
-        error => (this.loading = false)
-      );
-  }
-
-  openFormShelves(shelves?: IShelves) {
-    const modalConfig = MODAL_CONFIG;
-    modalConfig.initialState = {
-      shelves,
-      // callback: (next: boolean) => {
-      //   if (next) this.getBattery(battery.idBattery);
-      // },
-    };
-    this.modalService.show(ShelvesModalComponent, modalConfig);
-  }
-
   //Métodos para llenar tabla de Bateria/Battery con ID de Guardavalor/SaveValues
   getBatteryBySaveValues(id: string | number): void {
-    this.params2
+    this.params1
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getBattery(id));
   }
 
   getBattery(id: string | number): void {
     this.batterysService
-      .getByCveSaveValues(id, this.params2.getValue())
+      .getByCveSaveValues(id, this.params1.getValue())
       .subscribe(
         response => {
           //console.log(response);
@@ -180,7 +147,7 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
             return item;
           });
           this.dataBattery.load(data);
-          this.totalItems2 = response.count;
+          this.totalItems1 = response.count;
           this.loading = false;
         },
         error => (this.loading = false)
@@ -198,16 +165,52 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
     this.modalService.show(BatteryModalComponent, modalConfig);
   }
 
+  //Métodos para llenar tabla de Estantes/Shelves con ID de Guardavalor/SaveValues
+  getShelvesBySaveValues(id: string | number): void {
+    this.params3
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getShelves(id));
+  }
+
+  getShelves(id: string | number): void {
+    this.shelvessService
+      .getByCveSaveValues(id, this.params3.getValue())
+      .subscribe(
+        response => {
+          //console.log(response);
+          let data = response.data.map((item: IShelves) => {
+            //console.log(item);
+            return item;
+          });
+          this.dataShelves.load(data);
+          this.totalItems3 = response.count;
+          this.loading = false;
+        },
+        error => (this.loading = false)
+      );
+  }
+
+  openFormShelves(shelves?: IShelves) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      shelves,
+      // callback: (next: boolean) => {
+      //   if (next) this.getBattery(battery.idBattery);
+      // },
+    };
+    this.modalService.show(ShelvesModalComponent, modalConfig);
+  }
+
   //Métodos para llenar tabla de Casilleros/Locker con ID de Guardavalor/SaveValues
   getLockerBySaveValues(id: string | number): void {
-    this.params3
+    this.params2
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getLocker(id));
   }
 
   getLocker(id: string | number): void {
     this.lockersService
-      .getByCveSaveValues(id, this.params3.getValue())
+      .getByCveSaveValues(id, this.params2.getValue())
       .subscribe(
         response => {
           //console.log(response);
@@ -216,7 +219,7 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
             return item;
           });
           this.dataLockers.load(data);
-          this.totalItems3 = response.count;
+          this.totalItems2 = response.count;
           this.loading = false;
         },
         error => (this.loading = false)

@@ -1,8 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { ManifestFormComponent } from '../components/manifest-form/manifest-form.component';
+import { countTotalsGet } from '../countTotal';
 
 @Component({
   selector: 'app-fiel-set-uncollected',
@@ -13,6 +17,20 @@ export class FielSetUncollectedComponent extends BasePage implements OnInit {
   columns: any[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
+  data: IListResponse<IGoodType>;
+
+  @Input() set content(data: IListResponse<IGoodType>) {
+    if (!data.data) return;
+    data.data = countTotalsGet(data.data);
+    this.data = data;
+  }
+  get content(): IListResponse<IGoodType> {
+    return this.data;
+  }
+
+  @Output() public loadData: EventEmitter<boolean> = new EventEmitter<boolean>(
+    false
+  );
 
   constructor(private modalService: BsModalService) {
     super();
@@ -21,23 +39,23 @@ export class FielSetUncollectedComponent extends BasePage implements OnInit {
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: true,
+        delete: false,
         position: 'right',
       },
       columns: {
-        currency: {
+        maxLimitTime1: {
           title: 'Resolución',
           sort: false,
         },
-        year: {
+        maxLimitTime2: {
           title: 'Plazo',
           sort: false,
         },
-        month: {
+        maxLimitTime3: {
           title: 'Declaración',
           sort: false,
         },
-        rate: {
+        total2: {
           title: 'Totales',
           sort: false,
         },
@@ -45,65 +63,19 @@ export class FielSetUncollectedComponent extends BasePage implements OnInit {
     };
   }
 
-  ngOnInit(): void {
-    this.getPagination();
-  }
+  ngOnInit(): void {}
 
-  /*   openModal(context?: Partial<ModalRatesCatalogComponent>) {
-    const modalRef = this.modalService.show(ModalRatesCatalogComponent, {
-      initialState: { ...context },
+  openForm(goodType?: IGoodType) {
+    let config: ModalOptions = {
+      initialState: {
+        goodType,
+        callback: (next: boolean) => {
+          if (next) this.loadData.next(true);
+        },
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) {
-        this.getData();
-        this.onLoadToast('success', 'Guardado Correctamente', '');
-      }
-    });
-  } */
-
-  openForm(allotment?: any) {
-    // this.openModal({ allotment });
-  }
-
-  getData() {
-    this.loading = true;
-    this.columns = this.data;
-    this.totalItems = this.data.length;
-    this.loading = false;
-  }
-
-  getPagination() {
-    this.columns = this.data;
-    this.totalItems = this.columns.length;
-  }
-
-  data = [
-    {
-      currency: 'Dolar',
-      year: '2022',
-      month: 'Enero',
-      rate: '20 %',
-    },
-    {
-      currency: 'Peso Mexicano',
-      year: '2022',
-      month: 'Febrero',
-      rate: '30 %',
-    },
-  ];
-
-  delete(event: any) {
-    this.alertQuestion(
-      'warning',
-      'Eliminar',
-      'Desea eliminar este registro?'
-    ).then(question => {
-      if (question.isConfirmed) {
-        //Ejecutar el servicio
-        this.onLoadToast('success', 'Eliminado correctamente', '');
-      }
-    });
+    };
+    this.modalService.show(ManifestFormComponent, config);
   }
 }
