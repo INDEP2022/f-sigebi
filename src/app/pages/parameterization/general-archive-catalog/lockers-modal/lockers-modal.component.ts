@@ -29,6 +29,7 @@ export class LockersModalComponent extends BasePage implements OnInit {
 
   cveSaveValues = new DefaultSelect();
   idBattery = new DefaultSelect();
+  idShelve = new DefaultSelect();
 
   constructor(
     private modalRef: BsModalRef,
@@ -91,7 +92,7 @@ export class LockersModalComponent extends BasePage implements OnInit {
 
   getShelvesById(params: ListParams) {
     this.shelvessService.getShelvesById(params).subscribe({
-      next: data => (this.idBattery = new DefaultSelect(data.data, data.count)),
+      next: data => (this.idShelve = new DefaultSelect(data.data, data.count)),
     });
   }
 

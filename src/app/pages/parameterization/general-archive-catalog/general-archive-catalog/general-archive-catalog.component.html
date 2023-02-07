@@ -77,6 +77,29 @@
         <div class="col-md-12">
           <hr />
           <div class="ch-content">
+            <h5 class="title">Estantes</h5>
+            <div class="col-md-5 buttons">
+              <app-columns-select
+                [(settings)]="settingsShelves"></app-columns-select>
+              <button
+                (click)="openFormShelves()"
+                class="btn btn-primary active btn-sm ml-3">
+                Nuevo
+              </button>
+            </div>
+          </div>
+          <div class="table-responsive pt-3">
+            <ng2-smart-table
+              [settings]="settingsShelves"
+              [source]="dataShelves"
+              (edit)="openFormShelves($event.data)"></ng2-smart-table>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <hr />
+          <div class="ch-content">
             <h5 class="title">Casilleros</h5>
             <div class="col-md-5 buttons">
               <app-columns-select
@@ -92,31 +115,7 @@
             <ng2-smart-table
               [settings]="settingsLockers"
               [source]="dataLockers"
-              (edit)="openFormLocker($event.data)"
-              (userRowSelect)="rowsSelected($event)"></ng2-smart-table>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <hr />
-          <div class="ch-content">
-            <h5 class="title">Estantes</h5>
-            <div class="col-md-5 buttons">
-              <app-columns-select
-                [(settings)]="settingsShelves"></app-columns-select>
-              <button
-                (click)="openFormShelves()"
-                class="btn btn-primary active btn-sm ml-3">
-                Nuevo
-              </button>
-            </div>
-          </div>
-          <div class="table-responsive pt-3">
-            <ng2-smart-table
-              [settings]="settingsShelves"
-              [source]="shelvesList"
-              (edit)="openFormShelves($event.data)"></ng2-smart-table>
+              (edit)="openFormLocker($event.data)"></ng2-smart-table>
           </div>
         </div>
       </div>
