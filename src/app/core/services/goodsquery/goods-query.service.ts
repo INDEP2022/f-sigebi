@@ -20,7 +20,7 @@ export class GoodsQueryService {
   private routeLigieUnitMeasure = GoodsQueryEndpoints.LigieUnitMeasure;
   private zipCodeRoute = GoodsQueryEndpoints.ZipCode;
   private attribClassifGoodRoute = GoodsQueryEndpoints.AttribClassifBood;
-
+  private goodsQueryRoute = GoodsQueryEndpoints.ProgrammingGood;
   private goodQueryRepository = inject(MsGoodQueryRepository);
   private attribClassifGoodMethodsRepository = inject(
     AttribClassifGoodMethodsRepository
@@ -59,6 +59,13 @@ export class GoodsQueryService {
       `${environment.API_URL}goodsquery/api/v1/ligie-units-measure/getFranctionFilter`,
       body,
       { params }
+    );
+  }
+
+  getGoodsProgramming(params: ListParams): Observable<IListResponse<any>> {
+    return this.goodQueryRepository.getAllPaginated(
+      this.goodsQueryRoute,
+      params
     );
   }
 
