@@ -76,6 +76,10 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Catálogo de Transferentes',
         link: '/pages/parameterization/cat-transferent',
       },
+      {
+        label: 'Matt. Correos',
+        link: '/pages/parameterization/mail',
+      },
       //Alexander
       {
         label: 'Catálogo de Mantenimiento de Areas',
