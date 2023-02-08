@@ -6,6 +6,10 @@
   window["env"].API_BACKEND_URL2 = "${ENV_API_BACKEND_URL}";
   window["env"].URL_PREFIX = "${ENV_URL_PREFIX}";
 
+  window["env"].API_REPORTS = "${ENV_API_REPORTS}";
+  window["env"].API_REPORTS_USR = "${ENV_API_REPORTS_USR";
+  window["env"].API_REPORTS_PSW = "${ENV_API_REPORTS_PSW";
+  
   window["env"].api_external_token = "${ENV_api_external_token}";
   window["env"].api_external_userInfo = "${ENV_api_external_userInfo}";
   window["env"].api_external_typeUser = "${ENV_api_external_typeUser}";
