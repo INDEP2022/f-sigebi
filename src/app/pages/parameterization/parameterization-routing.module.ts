@@ -187,6 +187,17 @@ const routes: Routes = [
       screen: 'FCATADBRELASDIC',
     },
   },
+  {
+    path: 'cat-transferent',
+    loadChildren: async () =>
+      (await import('./cat-transferent/cat-transferent.module'))
+        .CatTransferentModule,
+    data: {
+      title: 'Catálogo de Transferentes',
+      screen: 'FCATCATTRANSFERENTE',
+    },
+  },
+
   //Alexander
   {
     path: 'maintenance-of-areas',

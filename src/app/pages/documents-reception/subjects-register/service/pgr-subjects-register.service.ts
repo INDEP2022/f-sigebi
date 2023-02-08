@@ -5,8 +5,8 @@ import { HttpClient } from '@angular/common/http';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 //services
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { InterfacefgrService } from 'src/app/core/services/ms-interfacefgr/ms-interfacefgr.service';
 import { ProcedureManagementService } from 'src/app/core/services/proceduremanagement/proceduremanagement.service';
-import { SatInterfaceService } from 'src/app/core/services/sat-interface/sat-interface.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +14,7 @@ import { SatInterfaceService } from 'src/app/core/services/sat-interface/sat-int
 export class PgrSubjectsRegisterService {
   constructor(
     private httClient: HttpClient,
-    private satInterfaceService: SatInterfaceService,
+    private interfacefgrService: InterfacefgrService,
     private delegationService: DelegationService,
     private procedureManagementRepository: ProcedureManagementService
   ) {}
@@ -42,9 +42,7 @@ export class PgrSubjectsRegisterService {
    * @returns
    */
   getStatusBySearch(params: ListParams) {
-    return this.procedureManagementRepository.getManagamentProcessSatArea(
-      params
-    );
+    return this.procedureManagementRepository.getManagamentArea(params);
   }
 
   /**
@@ -66,6 +64,6 @@ export class PgrSubjectsRegisterService {
    * @returns
    */
   getPgrTransferenciaBySearch(params: ListParams) {
-    return this.satInterfaceService.getVSatTransferencia(params);
+    return this.interfacefgrService.getPgrTransfer(params);
   }
 }

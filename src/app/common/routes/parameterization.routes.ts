@@ -72,6 +72,10 @@ export const PARAMETERIZATION_ROUTES = [
         label: 'Catálogo de relación y de asunto dictamen',
         link: '/pages/parameterization/cat-relationship-opinion',
       },
+      {
+        label: 'Catálogo de Transferentes',
+        link: '/pages/parameterization/cat-transferent',
+      },
       //Alexander
       {
         label: 'Catálogo de Mantenimiento de Areas',

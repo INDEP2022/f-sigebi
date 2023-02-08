@@ -17,11 +17,11 @@
     <div class="table-responsive">
       <ng2-smart-table
         [settings]="settings"
-        [source]="data"
+        [source]="data.data"
         (edit)="openForm($event.data)"
-        (delete)="delete($event.data)"></ng2-smart-table>
+        (delete)="deleteDonation($event.data.statusId)"></ng2-smart-table>
     </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
+    <app-pagination [params]="params" [totalItems]="data.count">
     </app-pagination>
   </div>
 </app-card>
