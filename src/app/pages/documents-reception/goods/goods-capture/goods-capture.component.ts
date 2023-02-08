@@ -227,7 +227,8 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
   }
 
   handleSuccesSave(good: any) {
-    this.onLoadToast('success', '', 'Datos del bien guardados correctamente');
+    // this.onLoadToast('success', '', 'Datos del bien guardados correctamente');
+    this.alert('success', 'Registro guardado', 'Datos guardados correctamente');
     if (this.formControls.esEmpresa.value) {
       this.createMenage(good);
     }
@@ -237,6 +238,7 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
     const menage = {
       noGood: this.companyGood,
       noGoodMenaje: good.id,
+      roRegister: 1,
     };
     this.menageService.create(menage).subscribe({
       next: res => console.log(res),
