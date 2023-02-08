@@ -128,18 +128,18 @@ export class PrintFlyersComponent extends BasePage implements OnInit {
           this.openPrevPdf(pdfurl);
         },
       });
-    // this.openPrevPdf(pdfurl);
     // this.loading = false;
     //this.openPrevPdf(pdfurl)
     // open the window
     //let newWin = window.open(pdfurl,"test.pdf");
 
-    /*this.siabService.getReport('RINDICA_0001',form).
-    subscribe((report:IReport)=>{
-
-      console.log(report)
-      //TODO: VIEW FILE
-    },error=>(this.loading = false));*/
+    // this.siabService.getReport(SiabReportEndpoints.RINDICA, form).subscribe(
+    //   (report: IReport) => {
+    //     console.log(report);
+    //     //TODO: VIEW FILE
+    //   },
+    //   error => (this.loading = false)
+    // );
     /*setTimeout(st => {
       this.loading = false;
     }, 5000);*/

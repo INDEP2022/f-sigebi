@@ -139,7 +139,7 @@ const routes: Routes = [
         .GoodsForecastModule,
   },
   {
-    path: 'records-validation',
+    path: 'records-validation/:proceedingsNumb/:proceedingsCve',
     data: { screen: 'FVERIFACTA', title: 'Validación de Actas' },
     loadChildren: async () =>
       (await import('./records-validation/records-validation.module'))
