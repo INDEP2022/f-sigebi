@@ -19,9 +19,12 @@ export class SiabService {
     //this.microservice = SiabReportEndpoints.SIAB
   }
 
-  getReport(reportName: string, params?: any): Observable<IReport> {
+  getReport(
+    reportName: SiabReportEndpoints,
+    params?: any
+  ): Observable<IReport> {
     console.log(params);
-    const route = `${this.url}${SiabReportEndpoints.SIAB}/${reportName}.pdf`;
+    const route = `${this.url}${reportName}.pdf`;
     return this.httpClient.get<IReport>(`${route}`, { params });
   }
 }
