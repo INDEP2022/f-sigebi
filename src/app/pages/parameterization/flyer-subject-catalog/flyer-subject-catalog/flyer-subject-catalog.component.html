@@ -6,6 +6,11 @@
   </div>
   <div body>
     <div class="row">
+      <div class="form-material col-md-5">
+        <search-bar [params]="params"></search-bar>
+      </div>
+    </div>
+    <div class="row">
       <div class="col-md-6">
         <div [class]="loading ? 'table-loading' : ''">
           <div class="table-responsive">
