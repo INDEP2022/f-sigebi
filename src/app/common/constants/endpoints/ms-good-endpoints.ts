@@ -3,4 +3,5 @@ export enum GoodEndpoints {
   Domicilies = `good/domicilies`,
   SearchByExpedient = `good/expedient/search`,
   GoodAndDesc = `good/getGoodAndDesc`,
+  StatusAndDesc = `good/getDescAndStatus`,
 }

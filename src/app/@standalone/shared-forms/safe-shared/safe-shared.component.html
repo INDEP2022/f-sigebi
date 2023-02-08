@@ -1,0 +1,19 @@
+<ng-container>
+  <!--Warehouse By Type-->
+  <div class="row mb-3 mt-3">
+    <div class="col-md-12">
+      <form-field [control]="form.get(safeField)">
+        <ngx-select
+          (fetchItems)="getSafes($event)"
+          [data]="safes"
+          [form]="form"
+          value="idSafe"
+          bindLabel="description"
+          label="Bovéda"
+          [control]="safeField"
+          (change)="onSafeChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>
