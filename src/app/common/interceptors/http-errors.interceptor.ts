@@ -95,7 +95,7 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
         throw error;
       }
       const { data, count } = response.body;
-      if ((data && count) || Array.isArray(data)) {
+      if (data && count && Array.isArray(data)) {
         return response.clone({ body: { count, data } });
       }
       if (data) {
