@@ -54,4 +54,22 @@ export class GoodService extends HttpService {
     const route = `${GoodEndpoints.GoodAndDesc}/${goodId}`;
     return this.get<IGoodDesc>(route);
   }
+
+  getByWarehouse(
+    body: Object,
+    params?: ListParams
+  ): Observable<IListResponse<IGood>> {
+    const route = `${GoodEndpoints.Good}/getGoodByWarehouse`;
+    console.log(route);
+
+    return this.post<IListResponse<IGood>>(route, body);
+  }
+  getByExpedientAndStatus(
+    expedient: string | number,
+    status: string,
+    params?: ListParams
+  ): Observable<IListResponse<IGood>> {
+    const route = `${GoodEndpoints.Good}?filter.fileNumber=$eq:${expedient}&filter.status=$eq:${status}`;
+    return this.get<IListResponse<IGood>>(route, params);
+  }
 }

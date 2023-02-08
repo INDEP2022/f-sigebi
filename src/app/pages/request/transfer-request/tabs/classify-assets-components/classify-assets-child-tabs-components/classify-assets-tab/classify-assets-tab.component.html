@@ -124,7 +124,9 @@
     <div class="row pt-4" *ngIf="typeDoc === 'assets'">
       <hr style="color: black" />
       <app-detail-assets-tab-component
+        [requestObject]="requestObject"
         [detailAssets]="classiGoodsForm"
+        [isSave]="isSave"
         [typeDoc]="typeDoc"></app-detail-assets-tab-component>
       <!-- <tabset class="md-tabs">
         <tab id="tab1">

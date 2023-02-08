@@ -1,5 +1,5 @@
 export interface IComerProvider {
-  providerId: number;
+  providerId?: number;
   nameReason: string;
   rfc: string;
   street: string;
@@ -9,23 +9,23 @@ export interface IComerProvider {
   cityDesc: string;
   clkCountry: number;
   stateDesc: string;
-  delegation: string;
-  fax: string;
-  commission: number;
-  phone: string;
+  delegation?: string;
+  fax?: string;
+  commission?: number;
+  phone?: string;
   curp: string;
-  typePerson: string;
-  preponderantAct: string;
-  cp: string;
-  contractNo: string;
+  typePerson?: string;
+  preponderantAct?: string;
+  cp?: string | number;
+  contractNo?: string;
   esCustomer?: string;
-  bank: string;
-  branch: string;
-  checkingCta: string;
-  key: string;
+  bank?: string;
+  branch?: string;
+  checkingCta?: string;
+  key?: string;
   userCreation?: string;
   formPayment?: string;
-  webMail: string;
+  webMail?: string;
   customerId?: number;
   references?: string;
 }

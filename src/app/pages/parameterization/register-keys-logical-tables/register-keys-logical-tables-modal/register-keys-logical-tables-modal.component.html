@@ -10,17 +10,6 @@
             <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
-
-        <div class="col-md-3">
-          <form-check label="Una Clave" for="label">
-            <input id="label1" type="checkbox" formControlName="type1" />
-          </form-check>
-        </div>
-        <div class="col-md-3">
-          <form-check label="Cinco Clave" for="label2">
-            <input id="label2" type="checkbox" formControlName="type5" />
-          </form-check>
-        </div>
       </div>
       <div class="row pt-5">
         <div class="col-md-3">
@@ -58,7 +47,7 @@
         </div>
       </div>
 
-      <div *ngIf="type5.value">
+      <div>
         <hr />
         <span>Campos para Clave 2</span>
         <div class="row pt-4">
@@ -245,7 +234,7 @@
         <confirm-button
           [type]="'button'"
           [disabled]="!tdescCveForm.valid"
-          (click)="close()"></confirm-button>
+          (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

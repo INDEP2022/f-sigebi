@@ -38,7 +38,11 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
 
   typeWarehouse = new DefaultSelect<ITypeWarehouse>();
   stateKey: string = '';
-
+  municipalityId: string = '';
+  localityId: string = '';
+  show_city_municipality: boolean = false;
+  showLocality: boolean = false;
+  showZipCode: boolean = false;
   constructor(
     private modalService: BsModalService,
     private fb: FormBuilder,
@@ -129,41 +133,59 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
     this.stateKey = item.id;
     this.getCitySelect(new ListParams());
     this.getMunicipalitiesSelect(new ListParams());
-    this.getLocalitySelect(new ListParams());
-    this.getZipCodeSelect(new ListParams());
   }
 
   getCitySelect(params?: ListParams) {
-    params['stateKey'] = this.stateKey;
-    console.log('parametros ciudades', params);
-    this.cityService.getAll(params).subscribe(data => {
-      console.log('ciudades', data);
-      this.cities = new DefaultSelect(data.data, data.count);
-    });
+    if (this.stateKey) {
+      this.show_city_municipality = true;
+      params['stateKey'] = this.stateKey;
+      this.cityService.getAll(params).subscribe(data => {
+        this.cities = new DefaultSelect(data.data, data.count);
+      });
+    }
   }
 
   getMunicipalitiesSelect(params?: ListParams) {
-    params['stateKey'] = this.stateKey;
-    console.log('params municipio', params);
-    this.municipalityService.getAll(params).subscribe(data => {
-      this.municipalities = new DefaultSelect(data.data, data.count);
-    });
+    if (this.stateKey) {
+      this.show_city_municipality = true;
+      params['stateKey'] = this.stateKey;
+      this.municipalityService.getAll(params).subscribe(data => {
+        this.municipalities = new DefaultSelect(data.data, data.count);
+      });
+    }
+  }
+
+  municipalitySelect(item: IMunicipality) {
+    this.municipalityId = item.idMunicipality;
+    this.getLocalitySelect(new ListParams());
   }
 
   getLocalitySelect(params?: ListParams) {
-    /*params['stateKey'] = this.stateKey;
-    this.localityService.getAll(params).subscribe(data => {
-      console.log('Localidades', data);
-      this.localities = new DefaultSelect(data.data, data.count);
-    }); */
+    if (this.stateKey && this.municipalityId) {
+      this.showLocality = true;
+      params['stateKey'] = this.stateKey;
+      params['municipalityId'] = this.municipalityId;
+      this.localityService.getAll(params).subscribe(data => {
+        this.localities = new DefaultSelect(data.data, data.count);
+      });
+    }
+  }
+
+  localitySelect(item: ILocality) {
+    this.localityId = item.id;
+    this.getZipCodeSelect(new ListParams());
   }
 
   getZipCodeSelect(params?: ListParams) {
-    params['filter.keyState'] = this.stateKey;
-    this.goodsQueryService.getZipCode(params).subscribe(data => {
-      console.log('Codigos postales', data);
-      this.zipCode = new DefaultSelect(data.data, data.count);
-    });
+    if (this.stateKey && this.municipalityId && this.localityId) {
+      this.showZipCode = true;
+      params['filter.keyState'] = this.stateKey;
+      params['filter.keyTownship'] = this.municipalityId;
+      params['filter.keySettlement'] = this.localityId;
+      this.goodsQueryService.getZipCode(params).subscribe(data => {
+        this.zipCode = new DefaultSelect(data.data, data.count);
+      });
+    }
   }
 
   getTypeWarehouseSelect(params: ListParams) {

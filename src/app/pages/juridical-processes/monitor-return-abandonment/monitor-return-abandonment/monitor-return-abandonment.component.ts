@@ -10,6 +10,7 @@ import { IGood } from 'src/app/core/models/good/good.model';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { MONITOR_RETUR_ABANDONMENT } from './monitor-return-abandonment-columns';
+
 /** LIBRERÍAS EXTERNAS IMPORTS */
 
 /** SERVICE IMPORTS */
@@ -32,6 +33,8 @@ export class MonitorReturnAbandonmentComponent
   totalItems: number = 0;
   goods: IGood[] = [];
   id: string | number;
+  dateNoti: string | Date;
+  //historygood
 
   params = new BehaviorSubject<ListParams>(new ListParams());
 
@@ -68,17 +71,19 @@ export class MonitorReturnAbandonmentComponent
   }
 
   public btnDeclaracion() {
-    if (this.id != undefined) {
+    if (this.id != undefined && this.dateNoti != undefined) {
       const route = `pages/juridical/return-abandonment-monitor/${this.id}`;
       this.route.navigate([route]);
     } else {
-      this.alert('info', 'Seleccione un registro', '');
+      this.alert('info', 'Este bien no se puede ratificar', '');
     }
   }
 
   public goodSelect(good: IGood) {
     console.log(good);
     this.id = good.id;
+    this.dateNoti = good.notifyDate;
+
     this.statusgood.setValue(good.status);
   }
 

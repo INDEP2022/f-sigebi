@@ -1,5 +1,7 @@
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -12,7 +14,10 @@ import { IAuthority } from '../../models/catalogs/authority.model';
 })
 export class AuthorityService implements ICrudMethods<IAuthority> {
   private readonly route: string = ENDPOINT_LINKS.Authority;
-  constructor(private authorityRepository: Repository<IAuthority>) {}
+  constructor(
+    private authorityRepository: Repository<IAuthority>,
+    private readonly httpClient: HttpClient
+  ) {}
 
   getAll(params?: ListParams): Observable<IListResponse<IAuthority>> {
     return this.authorityRepository.getAllPaginated(this.route, params);
@@ -35,13 +40,31 @@ export class AuthorityService implements ICrudMethods<IAuthority> {
   }
 
   postByIds(model: Object): Observable<IListResponse<IAuthority>> {
-    return this.authorityRepository.postByIds(this.route, model);
+    const route = 'catalog/api/v1/authority/id';
+    return this.httpClient.post<IListResponse<IAuthority>>(
+      `${environment.API_URL}${route}`,
+      model
+    );
   }
 
   postByColumns(
-    params?: ListParams,
+    _params?: ListParams,
     model?: Object
   ): Observable<IListResponse<IAuthority>> {
-    return this.authorityRepository.postByColumns(this.route, params, model);
+    const route = `catalog/api/v1/authority/columns`;
+    const params = this.makeParams(_params);
+
+    return this.httpClient.post<IListResponse<IAuthority>>(
+      `${environment.API_URL}${route}?${params}`,
+      model
+    );
+  }
+
+  private makeParams(params: ListParams): HttpParams {
+    let httpParams: HttpParams = new HttpParams();
+    Object.keys(params).forEach(key => {
+      httpParams = httpParams.append(key, (params as any)[key]);
+    });
+    return httpParams;
   }
 }

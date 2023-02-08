@@ -24,32 +24,18 @@ export class Repository<T> implements IRepository<T> {
     return this.httpClient.get<T>(`${fullRoute}/${id}`);
   }
 
-  getByIdState(route: string, id: number | string): Observable<T> {
-    const fullRoute = this.buildRoute(route);
-    return this.httpClient.get<T>(
-      `${fullRoute}/get-entity-transferent-by-state/${id}`
-    );
-  }
-  postByColumns(
-    route: string,
-    _params?: ListParams,
-    column?: Object
-  ): Observable<IListResponse<T>> {
-    const params = this.makeParams(_params);
-    const fullRoute = this.buildRoute(route);
-    return this.httpClient.post<IListResponse<T>>(
-      `${fullRoute}/columns?${params}`,
-      column
-    );
-  }
-
   create(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
+    console.log(fullRoute);
+
     return this.httpClient.post<T>(`${fullRoute}`, formData);
   }
 
   update(route: string, id: number | string, formData: Object) {
     const fullRoute = this.buildRoute(route);
+    console.log(`${fullRoute}/${id}`);
+    console.log(formData);
+
     return this.httpClient.put(`${fullRoute}/${id}`, formData);
   }
 
@@ -74,19 +60,6 @@ export class Repository<T> implements IRepository<T> {
     const fullRoute = this.buildRoute(route);
     const idsRoute: string = this.makeIdsRoute(ids);
     return this.httpClient.delete(`${fullRoute}/${idsRoute}`);
-  }
-
-  postByIds(route: string, formData: Object): Observable<IListResponse<T>> {
-    const fullRoute = this.buildRoute(route);
-    return this.httpClient.post<IListResponse<T>>(`${fullRoute}/id`, formData);
-  }
-
-  postColumns(route: string, formData: Object): Observable<IListResponse<T>> {
-    const fullRoute = this.buildRoute(route);
-    return this.httpClient.post<IListResponse<T>>(
-      `${fullRoute}/columns`,
-      formData
-    );
   }
 
   private buildRoute(route: string) {
@@ -184,6 +157,7 @@ export class Repository<T> implements IRepository<T> {
       `${environment.API_URL2}${route}/${idsRoute}`
     );
   }
+
   getByIdDelegationSubdelegation(
     /* route: string, */
     idDelegation: string | number,
@@ -197,9 +171,18 @@ export class Repository<T> implements IRepository<T> {
     const fullRoute = this.buildRoute(route);
     return this.httpClient.delete(`${fullRoute}`, obj);
   }
-
   update4(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
-    return this.httpClient.put(`${fullRoute}`, formData);
+    return this.httpClient.put(`${fullRoute}${route}`, formData);
+  }
+  update5(
+    route: string,
+    id: number | string,
+    id1: number | string,
+    formData: Object
+  ) {
+    const fullRoute = this.buildRoute(route);
+    console.log(fullRoute);
+    return this.httpClient.put(`${fullRoute}/${id}/${id1}`, formData);
   }
 }

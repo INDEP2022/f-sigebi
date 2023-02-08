@@ -4,7 +4,11 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
   selector: 'app-checkbox-element',
   template: `
     <div class="row justify-content-center">
-      <input [checked]="checked" (change)="onToggle($event)" type="checkbox" />
+      <input
+        [checked]="checked"
+        (change)="onToggle($event)"
+        disabled
+        type="checkbox" />
     </div>
   `,
   styles: [],

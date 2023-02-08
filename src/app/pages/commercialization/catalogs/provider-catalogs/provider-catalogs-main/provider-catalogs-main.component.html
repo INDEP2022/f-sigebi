@@ -4,7 +4,7 @@
   </div>
   <div body>
     <form class="form-material mb-0" [formGroup]="providerForm">
-      <div class="row mt-3 ps-4">
+      <!-- <div class="row mt-3 ps-4">
         <div class="col-sm-6 col-md-3">
           <form-field [control]="providerForm.get('id')">
             <ngx-select
@@ -19,36 +19,91 @@
             </ngx-select>
           </form-field>
         </div>
-      </div>
-      <div class="row mt-5">
+      </div> -->
+      <div class="row">
         <div class="col-sm-12 col-md-6">
           <div class="form-material">
-            <search-bar [params]="params"></search-bar>
+            <search-bar
+              [filterParams]="filterParams"
+              [filterField]="searchFilter"></search-bar>
           </div>
         </div>
-        <div class="col-sm-12 col-md-12">
+        <div class="col-sm-12 col-md-6">
           <div class="d-flex flex-row-reverse my-3">
             <div class="">
               <app-columns-select
                 [(settings)]="providerSettings"></app-columns-select>
             </div>
-            <div>
+            <!-- <div>
               <button
-                class="btn btn-sm btn-success active me-2 font-size-14"
+                class="btn btn-sm btn-primary active me-2 font-size-14"
                 (click)="openFormProvider()"
                 [disabled]="">
                 Agregar Registro
               </button>
-            </div>
+            </div> -->
             <div>
               <button
-                class="btn btn-sm btn-secondary active me-2 font-size-14"
+                class="btn btn-sm btn-primary active me-2 font-size-14"
                 (click)="openClientsModal()"
                 [disabled]="">
                 Clientes
               </button>
             </div>
           </div>
+        </div>
+      </div>
+      <div class="row mt-4">
+        <div class="col-sm-6 col-md-4">
+          <form-field
+            [control]="providerForm.get('providerId')"
+            label="Id Proveedor">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="providerId"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-sm-6 col-md-4">
+          <form-field [control]="providerForm.get('bank')" label="Banco">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="bank"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-sm-6 col-md-4">
+          <form-field [control]="providerForm.get('branch')" label="Sucursal">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="branch"
+              readonly />
+          </form-field>
+        </div>
+      </div>
+      <div class="row my-3">
+        <div class="col-sm-6 col-md-4">
+          <form-field
+            [control]="providerForm.get('checkingCta')"
+            label="No. Cuenta">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="checkingCta"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-sm-6 col-md-4">
+          <form-field [control]="providerForm.get('key')" label="Clabe">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="key"
+              readonly />
+          </form-field>
         </div>
       </div>
       <ng-scrollbar [track]="'horizontal'" [autoHeightDisabled]="false">
@@ -58,12 +113,14 @@
             [attr.class]="'table-bordered'"
             [settings]="providerSettings"
             [source]="providerColumns"
-            (edit)="openFormProvider($event.data)">
+            (userRowSelect)="selectProvider($event.data)"
+            (edit)="openFormProvider($event.data)"
+            (delete)="delete($event.data)">
           </ng2-smart-table>
         </div>
         <div class="table-padding"></div>
       </ng-scrollbar>
-      <app-pagination [params]="params" [totalItems]="totalItems">
+      <app-pagination [filterParams]="filterParams" [totalItems]="totalItems">
       </app-pagination>
     </form>
   </div>

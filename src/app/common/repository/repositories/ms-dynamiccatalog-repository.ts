@@ -9,10 +9,17 @@ import { IDynamicCatalogMethods } from '../interfaces/ms-dynamiccatalog-methods'
 export class DynamicCatalogRepository<T> implements IDynamicCatalogMethods<T> {
   ms: string = `${environment.API_URL}dynamiccatalog/api/v1`;
 
+  s: string = `${environment.API_URL}api/v1`;
+
   constructor(public readonly httpClient: HttpClient) {}
 
   getById(route: string, _id?: number | string): Observable<T> {
     const fullRoute = `${this.ms}/${route}`;
+    return this.httpClient.get<T>(`${fullRoute}/${_id}`);
+  }
+
+  getByIdData(route: string, _id?: number | string): Observable<T> {
+    const fullRoute = `${this.s}/${route}`;
     return this.httpClient.get<T>(`${fullRoute}/${_id}`);
   }
 

@@ -50,9 +50,9 @@ export class AttributesRegLogicalTablesComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getRegisterAttribute());
+    // this.params
+    //   .pipe(takeUntil(this.$unSubscribe))
+    //   .subscribe(() => this.getRegisterAttribute());
   }
 
   private prepareForm() {
@@ -72,7 +72,7 @@ export class AttributesRegLogicalTablesComponent
         if (response !== null) {
           this.form.patchValue(response);
           this.form.updateValueAndValidity();
-          // this.getKeysByLogicalTables(response.table);
+          this.getKeysByLogicalTables(_id);
         } else {
           this.alert('info', 'No se encontraron los registros', '');
         }
@@ -82,9 +82,14 @@ export class AttributesRegLogicalTablesComponent
     );
   }
 
-  getRegisterAttribute() {
-    this.loading = true;
-    this.parameterGoodService.getAll(this.params.getValue()).subscribe({
+  getKeysByLogicalTables(id: string | number): void {
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getRegisterAttribute(id));
+  }
+
+  getRegisterAttribute(id: string | number): void {
+    this.parameterGoodService.getById(id).subscribe({
       next: response => {
         this.tdescAtrib = response.data;
         this.totalItems = response.count;
@@ -98,9 +103,6 @@ export class AttributesRegLogicalTablesComponent
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       tdescAtrib,
-      callback: (next: boolean) => {
-        if (next) this.getRegisterAttribute();
-      },
     };
     this.modalService.show(
       AttributesRegLogicalTablesModalComponent,
