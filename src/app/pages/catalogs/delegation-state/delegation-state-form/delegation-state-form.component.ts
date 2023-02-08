@@ -8,6 +8,7 @@ import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -36,11 +37,23 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.delegationStateForm = this.fb.group({
-      id: [null, Validators.required],
-      stateCode: [null, Validators.required],
-      keyState: [null, Validators.required],
-      status: [null, Validators.required],
-      version: [null, Validators.required],
+      regionalDelegation: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      stateCode: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      keyState: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      status: [null, [Validators.pattern(STRING_PATTERN)]],
+      version: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
     });
     if (this.delegationSate) {
       this.fillForm();
@@ -64,7 +77,7 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
   }
 
   stateChange(state: IStateOfRepublic) {
-    this.delegationStateForm.controls.keyState.setValue(state.cveState);
+    this.delegationStateForm.controls.keyState.setValue(state.id);
   }
 
   close() {
@@ -88,7 +101,10 @@ export class DelegationStateFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.delegationStateService
-      .update(this.delegationSate.id, this.delegationStateForm.value)
+      .update(
+        this.delegationSate.regionalDelegation,
+        this.delegationStateForm.value
+      )
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

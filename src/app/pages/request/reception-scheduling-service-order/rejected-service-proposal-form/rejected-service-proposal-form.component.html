@@ -1,0 +1,324 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      Solicitud orden de servicio &#40;validaci&oacute;n de servicios&#41; con
+      folio&#58; METROPOLITANA&#45;SAT&#45;1340&#46;OS
+    </h5>
+  </div>
+
+  <div body style="margin-top: -30px">
+    <div class="justify-content-end btn-toolbar">
+      <button (click)="generateReport()" class="btn btn-pink btn-sm active">
+        <i class="fa fa-file-pdf" aria-hidden="true"></i> Generar reporte de
+        orden de servicio
+      </button>
+      <button
+        (click)="approbateOrderService()"
+        *ngIf="aprobateService"
+        class="btn btn-primary btn-sm active">
+        <i class="fa fa-check" aria-hidden="true"></i> Aprobar
+      </button>
+      <button (click)="saveService()" class="btn btn-primary btn-sm active">
+        <i class="fa fa-save" aria-hidden="true"></i> Guardar
+      </button>
+    </div>
+    <app-detail-service-order></app-detail-service-order>
+
+    <app-address-transferent-form></app-address-transferent-form>
+
+    <app-tranportable-goods-form></app-tranportable-goods-form>
+
+    <div class="row pt-4">
+      <h5 class="title">
+        <p>
+          <a
+            class="text-color"
+            (click)="showOrderservice = true"
+            *ngIf="!showOrderservice">
+            <i class="fa fa-angle-right" aria-hidden="true"></i> Orden de
+            servicio</a
+          >
+        </p>
+
+        <p>
+          <a
+            class="text-color"
+            (click)="showOrderservice = false"
+            *ngIf="showOrderservice">
+            <i class="fa fa-angle-down" aria-hidden="true"></i> Orden de
+            servicio</a
+          >
+        </p>
+      </h5>
+      <div
+        *ngIf="!rejectedJustification"
+        class="justify-content-end btn-toolbar">
+        <button
+          (click)="validateJustification()"
+          class="btn btn-primary btn-sm active btn-toolbar">
+          <i class="fa fa-minus-circle" aria-hidden="true"></i> Rechazar
+          justificaci&oacute;n
+        </button>
+      </div>
+      <form
+        [formGroup]="formService"
+        class="form-horizontal"
+        style="margin: 0 auto"
+        *ngIf="showOrderservice">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="col-lg-6 text-right">Folio orden servicio&#58;</label>
+            <span> Metropolitana-SAT-1340-OS</span>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-6 text-right"
+              >Folio reporte implementación&#58;</label
+            >
+            <span> Metropolitana-SAT-1333-RI </span>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-6 text-right">Fecha de turnano&#58;</label>
+            <span> 25-nov-2022 </span>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <label class="col-lg-6 text-right">Usuario turnado&#58;</label>
+            <span> Usuario</span>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-6 text-right">No&#46; contrato&#58;</label>
+            <span> 124 </span>
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-6 text-right">Tranporte zona&#58;</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="tranportZone"
+              readonly
+              style="width: 97px; height: 24px" />
+          </div>
+
+          <div class="form-group">
+            <label class="col-lg-6 text-right">Folio TLP&#58;</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="folioTlp"
+              readonly
+              style="width: 97px; height: 24px" />
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="form-group">
+            <form-check label="Visita ocular" for="label">
+              <input
+                id="label"
+                type="checkbox"
+                formControlName="visit"
+                readonly />
+            </form-check>
+          </div>
+
+          <div class="form-group">
+            <label>Razones de no realizaci&oacute;n&#58;</label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="razonsNoRealization"
+              style="width: 290px; height: 27px"
+              readonly />
+          </div>
+
+          <div class="form-group">
+            <form-check label="Consolidado con contenedores" for="label2">
+              <input
+                id="label2"
+                type="checkbox"
+                formControlName="consolidate"
+                readonly />
+            </form-check>
+          </div>
+
+          <div class="font-size-45">
+            <label class="col-lg-8 text-right"><b>Total&#58;</b></label>
+            <span> <b>$2,973.11</b></span>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <app-classificate-vehicle-form></app-classificate-vehicle-form>
+
+    <app-address-origin-form></app-address-origin-form>
+
+    <div class="pt-3">
+      <h5 class="title">
+        <p>
+          <a
+            class="text-color"
+            (click)="showComments = true"
+            *ngIf="!showComments">
+            <i class="fa fa-angle-right" aria-hidden="true"></i> Comentarios</a
+          >
+        </p>
+
+        <p>
+          <a
+            class="text-color"
+            (click)="showComments = false"
+            *ngIf="showComments">
+            <i class="fa fa-angle-down" aria-hidden="true"></i> Comentarios</a
+          >
+        </p>
+      </h5>
+
+      <div class="row pt-3" *ngIf="showComments">
+        <div class="col-md-12">
+          <form [formGroup]="commentsForm" class="form-material">
+            <div class="pt-3">
+              <form-field
+                [control]="commentsForm.get('observations')"
+                label="Observaciones">
+                <textarea
+                  class="form-control"
+                  formControlName="observations"
+                  readonly></textarea>
+              </form-field>
+            </div>
+            <div class="pt-3">
+              <form-field [control]="commentsForm.get('note')" label="Notas">
+                <textarea
+                  class="form-control"
+                  formControlName="note"
+                  readonly></textarea>
+              </form-field>
+            </div>
+            <div class="pt-3">
+              <form-field
+                [control]="commentsForm.get('justification')"
+                label="Justificaci&oacute;n">
+                <textarea
+                  class="form-control"
+                  formControlName="justification"
+                  readonly></textarea>
+              </form-field>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-responsive text-nowrap">
+      <div class="btn-toolbar">
+        <button (click)="newService()" class="btn btn-primary btn-sm active">
+          <i class="fa fa-plus-circle" aria-hidden="true"></i> Nuevo servico
+        </button>
+
+        <button (click)="deleteService()" class="btn btn-danger btn-sm active">
+          <i class="fa fa-trash" aria-hidden="true"></i> Eliminar servicio
+        </button>
+        <button class="btn btn-primary btn-sm active">Detach</button>
+      </div>
+
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th scope="col" class="align-middle">
+              <input
+                type="checkbox"
+                class="form-control ng-pristine ng-valid ng-touched"
+                ng-reflect-model="true"
+                value="second_checkbox" />
+            </th>
+            <th>Descripción</th>
+            <th>Unidad de medida de servicio</th>
+            <th>Clasificación de servicio</th>
+            <th>Comentarios de servicio</th>
+            <th>Duración (Horas)</th>
+            <th>No. de recursos</th>
+
+            <th>Precio unitario</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr>
+            <td scope="row" class="align-middle">
+              <input
+                type="checkbox"
+                id="cbox2"
+                class="form-control ng-pristine ng-valid ng-touched"
+                ng-reflect-model="true"
+                value="second_checkbox" />
+            </td>
+
+            <td scope="row" class="align-middle">
+              Maniobras (Un maniobrista por hora)
+            </td>
+            <td scope="row" class="align-middle">Servicio (Hora)</td>
+            <td scope="row" class="align-middle">Manual</td>
+            <td scope="row" class="align-middle">Personal</td>
+            <td scope="row" class="align-middle">
+              <input type="text" class="form-control" />
+            </td>
+            <td scope="row" class="align-middle">
+              <input type="text" class="form-control" />
+            </td>
+            <td scope="row" class="align-middle">
+              <b>$217.51</b>
+            </td>
+            <td scope="row" class="align-middle"><b>$217.51</b></td>
+          </tr>
+          <tr>
+            <td scope="row" class="align-middle">
+              <input
+                type="checkbox"
+                id="cbox2"
+                class="form-control ng-pristine ng-valid ng-touched"
+                ng-reflect-model="true"
+                value="second_checkbox" />
+            </td>
+
+            <td scope="row" class="align-middle">
+              Maniobras (Un maniobrista por hora)
+            </td>
+            <td scope="row" class="align-middle">Servicio (Hora)</td>
+            <td scope="row" class="align-middle">Manual</td>
+            <td scope="row" class="align-middle">Personal</td>
+            <td scope="row" class="align-middle">
+              <input type="text" class="form-control" />
+            </td>
+            <td scope="row" class="align-middle">
+              <input type="text" class="form-control" />
+            </td>
+            <td scope="row" class="align-middle">
+              <b>$217.51</b>
+            </td>
+            <td scope="row" class="align-middle"><b>$217.51</b></td>
+          </tr>
+          <tr>
+            <td scope="row" class="align-middle"></td>
+
+            <td scope="row" class="align-middle"></td>
+            <td scope="row" class="align-middle"></td>
+            <td scope="row" class="align-middle"></td>
+            <td scope="row" class="align-middle"></td>
+            <td scope="row" class="align-middle"></td>
+            <td scope="row" class="align-middle"></td>
+            <td scope="row" class="align-middle"></td>
+            <td scope="row" class="align-middle"><b> Subtotal: $217.51</b></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</app-card>

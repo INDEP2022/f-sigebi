@@ -1,0 +1,274 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Muestreo Bienes</h5>
+  </div>
+  <div body>
+    <div class="row pt-4">
+      <div class="d-flex">
+        <div class="mr-auto p-2">
+          <h5>Muestreo Bienes&#58; Genera Consulta</h5>
+        </div>
+        <div class="p-2">
+          <button class="btn btn-primary btn-sm active" (click)="turnForm()">
+            <i class="bx bx-arrow-from-left"></i> Turnar Muestreo
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-4">
+      <form [formGroup]="dateForm" class="form-material">
+        <div class="row pt-4">
+          <div class="col-md-3">
+            <form-field
+              [control]="dateForm.get('initialDate')"
+              label="*Periodo Inicial">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="initialDate"
+                bsDatepicker />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="dateForm.get('finalDate')"
+              label="*Periodo Final">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="finalDate"
+                bsDatepicker />
+            </form-field>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="row pt-6">
+      <h5 class="title">
+        <p>
+          <a
+            class="text-color"
+            (click)="showSearchForm = true"
+            *ngIf="!showSearchForm">
+            <i class="fa fa-angle-right" aria-hidden="true"></i> B&uacute;squeda
+            expedientes</a
+          >
+        </p>
+
+        <p>
+          <a
+            class="text-color"
+            (click)="showSearchForm = false"
+            *ngIf="showSearchForm">
+            <i class="fa fa-angle-down" aria-hidden="true"></i> B&uacute;squeda
+            expedientes</a
+          >
+        </p>
+      </h5>
+    </div>
+    <div *ngIf="showSearchForm">
+      <form [formGroup]="searchForm" class="form-material">
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="searchForm.get('noWarehouse')"
+              label="No&#46; Almacén">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="noWarehouse" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="searchForm.get('postalCode')"
+              label="C&oacute;digo Postal">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="postalCode" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="searchForm.get('nameWarehouse')"
+              label="Nombre del Almac&eacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="nameWarehouse" />
+            </form-field>
+          </div>
+        </div>
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <form-field
+              [control]="searchForm.get('address')"
+              label="Direcci&oacute;n">
+              <textarea
+                class="form-control"
+                formControlName="address"></textarea>
+            </form-field>
+          </div>
+        </div>
+      </form>
+      <div class="row pt-2">
+        <div class="d-flex justify-content-end">
+          <div class="m-3">
+            <button class="btn btn-primary btn-sm active">Buscar</button>
+          </div>
+          <div class="m-3">
+            <button class="btn btn-danger btn-sm active">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" style="margin-top: 2%" *ngIf="displaySearchAssetsBtn">
+      <div class="d-flex justify-content-end">
+        <div class="m-3">
+          <button class="btn btn-primary btn-sm active">
+            <i class="bx bx-search-alt-2"></i> B&uacute;squeda Bienes
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-3">
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settings"
+        [source]="paragraphs"
+        (rowSelect)="selectWarehouse($event)">
+      </ng2-smart-table>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+    </div>
+    <div class="row pt-4">
+      <div class="d-flex justify-content-end">
+        <div class="m-3">
+          <button class="btn btn-primary btn-sm active" (click)="addAssets()">
+            <i class="bx bx-plus-circle"></i> Agregar
+          </button>
+        </div>
+        <div class="m-3">
+          <button class="btn btn-danger btn-sm active">
+            <i class="bx bx-minus-circle"></i> Separar
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="row pt-4">
+      <ng2-smart-table
+        [attr.class]="'table-bordered'"
+        [settings]="settings2"
+        [source]="paragraphs2"
+        (userRowSelect)="selectAssts($event)">
+      </ng2-smart-table>
+      <app-pagination
+        [params]="params2"
+        [totalItems]="totalItems2"></app-pagination>
+    </div>
+    <div>
+      <tabset class="md-tabs">
+        <tab heading="Bienes" id="tab1">
+          <div class="row pt-2">
+            <div class="d-flex justify-content-end">
+              <div class="m-3">
+                <div class="btn-group" dropdown placement="bottom right">
+                  <button
+                    id="button-alignment"
+                    dropdownToggle
+                    type="button"
+                    class="btn btn-info btn-sm active dropdown-toggle"
+                    aria-controls="dropdown-alignment">
+                    Acciones <span class="caret"></span>
+                  </button>
+                  <ul
+                    id="dropdown-alignment"
+                    *dropdownMenu
+                    class="dropdown-menu dropdown-menu-right"
+                    role="menu"
+                    aria-labelledby="button-alignment">
+                    <li role="menuitem">
+                      <a class="dropdown-item" (click)="uploadExpedient()"
+                        ><i class="bx bx-detail"></i> Expediente</a
+                      >
+                    </li>
+                    <li role="menuitem">
+                      <a class="dropdown-item" (click)="uploadImages()"
+                        ><i class="bx bx-images"></i> Fotograf&iacute;a</a
+                      >
+                    </li>
+                    <li role="menuitem">
+                      <a class="dropdown-item" (click)="exportCsv()"
+                        ><i class="bx bx-download"></i> Descarga Archivo</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row pt-4">
+            <div class="d-flex justify-content-end">
+              <div class="m-3">
+                <button class="btn btn-danger btn-sm active">
+                  <i class="bx bx-minus-circle"></i> Eliminar
+                </button>
+              </div>
+              <div class="m-3">
+                <button class="btn btn-success btn-sm active">
+                  <i class="bx bx-check-circle"></i> Cumple
+                </button>
+              </div>
+              <div class="m-3">
+                <button class="btn btn-danger btn-sm active">
+                  <i class="bx bx-x-circle"></i> No cumple
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="row pt-1">
+            <div [class]="loading ? 'table-loading' : ''">
+              <ng-scrollbar track="all" style="min-height: 200px; border: none">
+                <ng2-smart-table
+                  [attr.class]="'table-bordered'"
+                  [settings]="settings3"
+                  [source]="paragraphs3"
+                  (userRowSelect)="selectAsstsCopy($event)">
+                </ng2-smart-table>
+              </ng-scrollbar>
+            </div>
+            <app-pagination
+              [params]="params3"
+              [totalItems]="totalItems3"></app-pagination>
+          </div>
+        </tab>
+        <tab heading="Deductivas">
+          <div class="row pt-2">
+            <table class="table table-bordered">
+              <thead>
+                <tr style="text-align: center">
+                  <th scope="col">Descripci&oacute;n deductiva</th>
+                  <th scope="col">Observaciones</th>
+                  <th scope="col">Seleccion</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Desguardo de expediente 25&#37;</td>
+                  <td>
+                    <input type="text" name="" id="observation" />
+                  </td>
+                  <td style="text-align: center">
+                    <input type="checkbox" name="" id="" />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </tab>
+      </tabset>
+    </div>
+  </div>
+</app-card>

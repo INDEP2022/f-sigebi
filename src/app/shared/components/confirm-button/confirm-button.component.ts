@@ -5,7 +5,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
   template: `
     <button
       type="submit"
-      class="btn btn-primary active"
+      [className]="changeClass()"
       (click)="onConfirm()"
       [disabled]="disabled || loading">
       {{ loading ? loadingText : text }}
@@ -28,13 +28,23 @@ export class ConfirmButtonComponent implements OnInit {
   @Input() text: string = 'Guardar';
   @Input() loadingText: string = 'Guardando';
   @Input() disabled: boolean = false;
+  @Input() btnSmall?: boolean = false;
   @Input() type: 'button' | 'submit' = 'submit';
   @Output() confirm = new EventEmitter<void>();
+
   constructor() {}
 
   ngOnInit(): void {}
 
   onConfirm() {
     this.confirm.emit();
+  }
+
+  changeClass() {
+    if (this.btnSmall) {
+      return 'btn btn-primary btn-sm active';
+    } else {
+      return 'btn btn-primary active';
+    }
   }
 }

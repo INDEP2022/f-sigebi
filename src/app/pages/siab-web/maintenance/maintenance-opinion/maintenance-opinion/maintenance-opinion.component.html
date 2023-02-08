@@ -1,0 +1,45 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Mantenimiento dictamen</h5>
+    </div>
+  </div>
+  <div body>
+    <form [formGroup]="maintenanceForm" class="form-material">
+      <div class="row margin-input">
+        <div class="col-md-3">
+          <form-field
+            label="Expediente"
+            [control]="maintenanceForm.get('proceedings')">
+            <input
+              class="form-control"
+              formControlName="proceedings"
+              type="text" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            label="No.Oficio"
+            [control]="maintenanceForm.get('noJob')">
+            <input class="form-control" formControlName="noJob" type="number" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+    <div class="row margin-input">
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary active">
+          Buscar Oficio
+        </button>
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary active">Buscar</button>
+      </div>
+      <div class="col-md-2">
+        <button type="button" class="btn btn-primary active">
+          Otra consulta
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>

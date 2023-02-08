@@ -6,6 +6,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -15,9 +16,9 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 })
 export class DepartmentFormComponent extends BasePage implements OnInit {
   departmentForm: ModelForm<IDepartment>;
+  department: IDepartment;
   title: string = 'Departamento';
   edit: boolean = false;
-  deductive: IDepartment;
   delegations = new DefaultSelect();
   subdelegations = new DefaultSelect();
   constructor(
@@ -34,21 +35,54 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.departmentForm = this.fb.group({
-      id: [null, Validators.required],
+      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       numDelegation: [null, [Validators.required]],
       numSubDelegation: [null, [Validators.required]],
-      dsarea: [null, [Validators.required, Validators.maxLength(30)]],
-      description: [null, [Validators.required, Validators.maxLength(200)]],
-      lastOffice: [null, Validators.maxLength(10)],
-      numRegister: [null, Validators.required],
-      level: [null, Validators.maxLength(2)],
-      depend: [null, Validators.required],
-      depDelegation: [null, [Validators.required, Validators.maxLength(4)]],
-      phaseEdo: [null, Validators.required],
+      dsarea: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(30),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
+      description: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(200),
+          Validators.pattern(STRING_PATTERN),
+        ],
+      ],
+      lastOffice: [
+        null,
+        [Validators.maxLength(10), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      numRegister: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      level: [
+        null,
+        [Validators.maxLength(2), Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      depend: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      depDelegation: [
+        null,
+        [
+          Validators.required,
+          Validators.maxLength(4),
+          Validators.pattern(NUMBERS_PATTERN),
+        ],
+      ],
+      phaseEdo: [null, [Validators.required]],
     });
-    if (this.deductive != null) {
+    if (this.department != null) {
       this.edit = true;
-      this.departmentForm.patchValue(this.deductive);
+      this.departmentForm.patchValue(this.department);
     }
   }
 
@@ -85,7 +119,7 @@ export class DepartmentFormComponent extends BasePage implements OnInit {
   update() {
     this.loading = true;
     this.departmentService
-      .update(this.deductive.id, this.departmentForm.value)
+      .update(this.department.id, this.departmentForm.value)
       .subscribe({
         next: data => this.handleSuccess(),
         error: error => (this.loading = false),

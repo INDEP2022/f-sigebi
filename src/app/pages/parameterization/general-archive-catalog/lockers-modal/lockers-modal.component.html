@@ -1,0 +1,96 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="lockerForm">
+      <div class="row">
+        <div class="col-md-3" *ngIf="edit == false">
+          <form-field [control]="lockerForm.get('saveValueKey')">
+            <ngx-select
+              [form]="lockerForm"
+              control="saveValueKey"
+              [data]="cveSaveValues"
+              value="id"
+              bindLabel="id"
+              label="Cve GuardaValor"
+              (fetchItems)="getCveSaveValues($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-3" *ngIf="edit == false">
+          <form-field [control]="lockerForm.get('numBattery')">
+            <ngx-select
+              [form]="lockerForm"
+              control="numBattery"
+              [data]="idBattery"
+              value="idBattery"
+              bindLabel="idBattery"
+              label="Bateria"
+              (fetchItems)="getBatteryById($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-3" *ngIf="edit == false">
+          <form-field [control]="lockerForm.get('numShelf')">
+            <ngx-select
+              [form]="lockerForm"
+              control="numShelf"
+              [data]="idShelve"
+              value="id"
+              bindLabel="id"
+              label="Estante"
+              (fetchItems)="getShelvesById($event)">
+            </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-3" *ngIf="edit == false">
+          <form-field label="No. Casillero" [control]="lockerForm.get('id')">
+            <input type="number" class="form-control" formControlName="id" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field
+            label="Descripción"
+            [control]="lockerForm.get('description')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Estado" [control]="lockerForm.get('status')">
+            <input type="text" class="form-control" formControlName="status" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="No. Registro"
+            [control]="lockerForm.get('numRegister')">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="numRegister" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

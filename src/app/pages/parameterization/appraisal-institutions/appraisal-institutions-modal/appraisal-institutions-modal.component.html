@@ -1,0 +1,139 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form [formGroup]="appraisersForm" class="form-material">
+      <div class="row">
+        <div class="col-md-6">
+          <form-field
+            [control]="appraisersForm.get('description')"
+            label="Apellido Paterno&#44; Materno y Nombre">
+            <input
+              type="text"
+              formControlName="description"
+              placeholder="Apellido Paterno&#44; Materno y Nombre"
+              class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-6">
+          <form-field [control]="appraisersForm.get('street')" label="Calle">
+            <input type="text" formControlName="street" class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field
+            [control]="appraisersForm.get('noExterior')"
+            label="No&#46; Exterior">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="noExterior" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="appraisersForm.get('noInterior')"
+            label="No&#46; Interior">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="noInterior" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="appraisersForm.get('codepostal')"
+            label="C&oacute;digo postal">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="codepostal" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field [control]="appraisersForm.get('colony')" label="Colonia">
+            <input type="text" formControlName="colony" class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="appraisersForm.get('deleg')"
+            label="Delegaci&oacute;n Municipio">
+            <input type="text" formControlName="deleg" class="form-control" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="appraisersForm.get('cveEntfed')"
+            label="Entidad Federativa">
+            <input
+              type="text"
+              formControlName="cveEntfed"
+              class="form-control" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field [control]="appraisersForm.get('rfc')" label="RFC">
+            <input type="text" class="form-control" formControlName="rfc" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field [control]="appraisersForm.get('curp')" label="CURP">
+            <input type="text" class="form-control" formControlName="curp" />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            [control]="appraisersForm.get('tel')"
+            label="Tel&eacute;fono">
+            <input type="text" class="form-control" formControlName="tel" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-4">
+        <div class="col-md-4">
+          <form-field
+            [control]="appraisersForm.get('represent')"
+            label="Representante">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="represent" />
+          </form-field>
+        </div>
+        <div class="col-md-8">
+          <form-field
+            [control]="appraisersForm.get('observations')"
+            label="Observaciones">
+            <textarea
+              class="form-control"
+              formControlName="observations"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [type]="'button'"
+          [disabled]="!appraisersForm.valid"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

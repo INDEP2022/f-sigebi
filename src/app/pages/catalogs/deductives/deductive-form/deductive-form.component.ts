@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IDeductive } from 'src/app/core/models/catalogs/deductive.model';
 import { DeductiveService } from 'src/app/core/services/catalogs/deductive.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { DOUBLE_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-deductive-form',
@@ -30,12 +31,31 @@ export class DeductiveFormComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.deductiveForm = this.fb.group({
-      serviceType: [null, Validators.required],
-      weightedDeduction: [null, Validators.required],
-      startingRankPercentage: [null, Validators.required],
-      finalRankPercentage: [null, Validators.required],
-      contractNumber: [null, Validators.required],
-      version: [null, [Validators.required]],
+      id: [null],
+      serviceType: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      weightedDeduction: [
+        null,
+        [Validators.required, Validators.pattern(DOUBLE_PATTERN)],
+      ],
+      startingRankPercentage: [
+        null,
+        [Validators.required, Validators.pattern(DOUBLE_PATTERN)],
+      ],
+      finalRankPercentage: [
+        null,
+        [Validators.required, Validators.pattern(DOUBLE_PATTERN)],
+      ],
+      contractNumber: [
+        null,
+        [Validators.required, Validators.pattern(DOUBLE_PATTERN)],
+      ],
+      version: [
+        null,
+        [Validators.required, Validators.pattern(DOUBLE_PATTERN)],
+      ],
       status: [null, [Validators.required]],
     });
     if (this.deductive != null) {

@@ -31,7 +31,7 @@ export class StationFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.stationForm = this.fb.group({
       id: [null],
-      idTransferor: [null],
+      idTransferent: [null],
       idEntity: [null],
       stationName: [null, Validators.required],
       keyState: [null, Validators.required],

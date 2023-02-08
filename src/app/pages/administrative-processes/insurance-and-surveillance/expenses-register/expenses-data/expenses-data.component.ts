@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -26,12 +27,20 @@ export class ExpensesDataComponent implements OnInit {
       beneficiario: [null, Validators.required],
       importe: [null, Validators.required],
       retention: [null, Validators.required],
-      concept: [null, Validators.required],
+      concept: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
       institutionalActivity: [null, Validators.required],
       expenseConcept: [null, Validators.required],
       costCenter: [null, Validators.required],
-      userRequest: [null, Validators.required],
-      userAuthorize: [null, Validators.required],
+      userRequest: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
+      userAuthorize: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
     });
   }
 

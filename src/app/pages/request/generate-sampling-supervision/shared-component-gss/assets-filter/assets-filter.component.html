@@ -1,0 +1,50 @@
+<div>
+  <form [formGroup]="filterForm" class="form-material">
+    <div class="row pt-4">
+      <div class="col-md-3">
+        <form-field
+          [control]="filterForm.get('noManagement')"
+          label="No&#46; Gesti&oacute;n">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="noManagement" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="filterForm.get('noInventory')"
+          label="No&#46; Inventario">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="noInventory" />
+        </form-field>
+      </div>
+      <div class="col-md-4">
+        <form-field
+          [control]="filterForm.get('descriptionAsset')"
+          label="Descripci&oacute;n Bien">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="descriptionAsset" />
+        </form-field>
+      </div>
+    </div>
+  </form>
+  <div class="row pt-4">
+    <div class="d-flex justify-content-end">
+      <div class="m-3">
+        <button class="btn btn-primary btn-sm active" (click)="search()">
+          <i class="bx bx-search-alt-2"></i> Buscar
+        </button>
+      </div>
+      <div class="m-3">
+        <button class="btn btn-danger btn-sm active" (click)="reset()">
+          <i class="bx bx-trash"></i> Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

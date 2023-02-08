@@ -5,11 +5,11 @@ export const CATALOGS_ROUTES = [
     subItems: [
       {
         label: 'Deductivas',
-        link: '/pages/catalogs/deductives',
+        link: '/pages/catalogs/create-deductives',
       },
       {
         label: 'Deductivas Verificacion',
-        link: '/pages/catalogs/deductives-verification',
+        link: '/pages/catalogs/create-deductives-verification',
       },
       {
         label: 'Delegaciones Estado',
@@ -56,7 +56,7 @@ export const CATALOGS_ROUTES = [
         link: '/pages/catalogs/clarifications',
       },
       {
-        label: 'Bodegas',
+        label: 'Almacenes',
         link: '/pages/catalogs/warehouses',
       },
       {
@@ -120,7 +120,7 @@ export const CATALOGS_ROUTES = [
         link: '/pages/catalogs/expert',
       },
       {
-        label: 'Personas',
+        label: 'Mantto. a administrador, depositario e interventor',
         link: '/pages/catalogs/person',
       },
       {
@@ -238,6 +238,102 @@ export const CATALOGS_ROUTES = [
       {
         label: 'Párrafos',
         link: '/pages/catalogs/paragraphs',
+      },
+      {
+        label: 'Tipo Docto',
+        link: '/pages/catalogs/type-docto',
+      },
+      {
+        label: 'Tipo Almacen',
+        link: '/pages/catalogs/type-wharehouse',
+      },
+      {
+        label: 'Tipo Orden de Servicio',
+        link: '/pages/catalogs/type-order-service',
+      },
+      {
+        label: 'Tipo Relevante',
+        link: '/pages/catalogs/type-relevant',
+      },
+      {
+        label: 'Tipo Servicios',
+        link: '/pages/catalogs/type-services',
+      },
+      {
+        label: 'Zona geografica',
+        link: '/pages/catalogs/zone-geographic',
+      },
+      {
+        label: 'Servicios',
+        link: '/pages/catalogs/services',
+      },
+      {
+        label: 'Conclusión de siniestros',
+        link: '/pages/catalogs/claim-conclusion',
+      },
+      {
+        label: 'Documentos resarcimiento sat',
+        link: '/pages/catalogs/doc-compensation-sat',
+      },
+      {
+        label: 'Documentos Resarcimiento Sat XML',
+        link: '/pages/catalogs/doc-compensation-sat-xml',
+      },
+      {
+        label: 'Gavetas',
+        link: '/pages/catalogs/drawers',
+      },
+      {
+        label: 'Fracciones',
+        link: '/pages/catalogs/fractions',
+      },
+      {
+        label: 'Situacion Bien',
+        link: '/pages/catalogs/good-situation',
+      },
+      {
+        label: 'Donatorios',
+        link: '/pages/catalogs/grantees',
+      },
+      {
+        label: 'Identificador',
+        link: '/pages/catalogs/identifier',
+      },
+      {
+        label: 'Series Ifai',
+        link: '/pages/catalogs/ifai-series',
+      },
+      {
+        label: 'Indiciados',
+        link: '/pages/catalogs/indicated',
+      },
+      {
+        label: 'Soporte Legal',
+        link: '/pages/catalogs/legal-support',
+      },
+      {
+        label: 'Gestión',
+        link: '/pages/catalogs/management',
+      },
+      {
+        label: 'Sat Clasificacion',
+        link: '/pages/catalogs/sat-clasification',
+      },
+      {
+        label: 'Sat Subclasificacion',
+        link: '/pages/catalogs/sat-subclasification',
+      },
+      {
+        label: 'Valores Guardados',
+        link: '/pages/catalogs/save-values',
+      },
+      {
+        label: 'Código estado',
+        link: '/pages/catalogs/status-code',
+      },
+      {
+        label: 'Tipo Siniestro',
+        link: '/pages/catalogs/type-sinister',
       },
     ],
   },

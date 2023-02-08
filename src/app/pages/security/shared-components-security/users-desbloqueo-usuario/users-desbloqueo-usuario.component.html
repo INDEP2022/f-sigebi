@@ -1,0 +1,43 @@
+<form [formGroup]="form" class="form-material">
+  <div class="row w-100">
+    <div class="col-sm-12 col-12 col-md-12 p-2">
+      <h6>DESBLOQUEO DE USUARIOS</h6>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field
+        [control]="form.get('fechaUltimoCambioPassword')"
+        label="Fecha Ultimo Cambio Contraseña">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="fechaUltimoCambioPassword"
+          bsDatepicker />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-4 p-2">
+      <form-field
+        [control]="form.get('accountStatus')"
+        label="Estatus de la Cuenta">
+        <input
+          type="text"
+          class="form-control"
+          formControlName="accountStatus" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-6 p-2">
+      <form-field [control]="form.get('observaciones')" label="Observaciones">
+        <textarea
+          class="form-control"
+          formControlName="observaciones"></textarea>
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-12 text-center p-2">
+      <button
+        type="submit"
+        class="btn btn-primary btn-sm active m-2"
+        (click)="btnDesbloquearUsuario()">
+        Desbloquear Usuario
+      </button>
+    </div>
+  </div>
+</form>

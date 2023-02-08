@@ -1,0 +1,39 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Respuesta de solicitud</h5>
+  </div>
+  <div body>
+    <form [formGroup]="responseForm" class="form-material">
+      <form-field
+        [control]="responseForm.get('idWarehouse')"
+        label="Id almac&eacute;n">
+        <input type="text" class="form-control" formControlName="idWarehouse" />
+      </form-field>
+      <div class="row pt-4">
+        <form-field
+          [control]="responseForm.get('observation')"
+          label="Observaci&oacute;n">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="observation" />
+        </form-field>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!responseForm.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

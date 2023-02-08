@@ -1,0 +1,24 @@
+<h5 class="title">Asociar expediente</h5>
+<div class="md-tabls">
+  <tabset>
+    <tab heading="Documentos generales">
+      <app-general-documents-form [searchFileForm]="searchFileForm">
+      </app-general-documents-form>
+    </tab>
+
+    <tab heading="Documentos de solicitud">
+      <app-request-document-form [searchFileForm]="searchFileForm">
+      </app-request-document-form>
+    </tab>
+
+    <tab heading="Documentos de bienes">
+      <app-estate-document-form
+        [searchFileForm]="searchFileForm"></app-estate-document-form>
+    </tab>
+
+    <tab heading="B&uacute;squeda de documentos">
+      <app-search-document-form
+        [searchFileForm]="searchFileForm"></app-search-document-form>
+    </tab>
+  </tabset>
+</div>

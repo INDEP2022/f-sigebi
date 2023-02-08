@@ -65,15 +65,21 @@ export class LawyerListComponent extends BasePage implements OnInit {
     this.openModal({ edit: true, lawyer });
   }
 
-  delete(lawyer: ILawyer) {
+  showDeleteAlert(lawyer: ILawyer) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
+        this.delete(lawyer.id);
       }
+    });
+  }
+
+  delete(id: number) {
+    this.lawyerService.remove(id).subscribe({
+      next: () => this.getLawyers(),
     });
   }
 }

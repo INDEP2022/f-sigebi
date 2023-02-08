@@ -9,3 +9,12 @@ export interface IZipCode {
   editionUser: string;
   modificationDate: Date;
 }
+
+export interface IZipCodeGoodQuery {
+  codePostal: string;
+  codeState: string;
+  keyState: number;
+  keyTownship: number;
+  nameSettlement: string;
+  keySettlement: number;
+}

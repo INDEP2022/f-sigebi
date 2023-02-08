@@ -3,6 +3,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import {
+  KEYGENERATION_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from '../../../../../shared/components/select/default-select';
 import {
   MOVEMENTS_MOVEMENTS_COLUMNS,
@@ -55,17 +59,45 @@ export class MovementsMovementsComponent extends BasePage implements OnInit {
       finishDate: [null, Validators.required],
       applicationDate: [null, Validators.required],
       modsus: [null, Validators.required],
-      requestArea: [null, Validators.required],
-      resquest: [null, Validators.required],
+      requestArea: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
+      resquest: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
       timeReception: [null, Validators.required],
-      cveProrrateo: [null, Validators.required],
-      areaEntrega: [null, Validators.required],
-      entrega: [null, Validators.required],
-      entregaMotiv: [null, Validators.required],
-      zone: [null, Validators.required],
-      authorize: [null, Validators.required],
-      solicitanteFirm: [null, Validators.required],
-      observations: [null, Validators.required],
+      cveProrrateo: [
+        null,
+        Validators.required,
+        Validators.pattern(KEYGENERATION_PATTERN),
+      ],
+      areaEntrega: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
+      entrega: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
+      entregaMotiv: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
+      zone: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
+      authorize: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
+      solicitanteFirm: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
+      observations: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
       consult: [null, Validators.required],
 
       movement: [null, Validators.required],

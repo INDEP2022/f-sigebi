@@ -1,0 +1,333 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Cancelaci&oacute;n Recepci&oacute;n</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="row">
+            <div class="col-md-9">
+              <form-field [control]="form.get('expediente')" label="Expediente">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="expediente" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="row">
+            <div class="col-md-9">
+              <form-field
+                [control]="form.get('averPrev')"
+                label="Averiguaci&oacute;n Previa">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="averPrev" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr class="row" />
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col">
+              <form-field [control]="form.get('acta')" label="Acta 1">
+                <ngx-select
+                  control="acta"
+                  [form]="form"
+                  [data]="itemsSelect"></ngx-select>
+              </form-field>
+            </div>
+            <div class="col">
+              <form-field [control]="form.get('autoridad')" label="Autoridad">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="autoridad" />
+              </form-field>
+            </div>
+            <div class="col">
+              <form-field [control]="form.get('ident')" label="Ident">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="ident" />
+              </form-field>
+            </div>
+            <div class="col">
+              <div class="col">
+                <form-field [control]="form.get('recibe')" label="Recibe">
+                  <input
+                    type="text"
+                    class="form-control"
+                    formControlName="recibe" />
+                </form-field>
+              </div>
+            </div>
+            <div class="col">
+              <form-field [control]="form.get('admin')" label="Admin">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="admin" />
+              </form-field>
+            </div>
+            <div class="col">
+              <form-field [control]="form.get('folio')" label="Folio">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="folio" />
+              </form-field>
+            </div>
+            <div class="col">
+              <form-field [control]="form.get('year')" label="A&ntilde;o">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="year" />
+              </form-field>
+            </div>
+            <div class="col">
+              <form-field [control]="form.get('mes')" label="Mes">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="mes" />
+              </form-field>
+            </div>
+            <div class="col">
+              <form-field [control]="form.get('status')" label="Status">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="status" />
+              </form-field>
+            </div>
+            <div class="col">
+              <form-field [control]="form.get('nombre')" label="Nombre">
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="nombre" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="row" />
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-3">
+              <form-field [control]="form.get('acta2')" label="Acta 2">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="acta2" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="form.get('fecElab')"
+                label="Fecha Elaboraci&oacute;n">
+                <input
+                  bsDatepicker
+                  class="form-control"
+                  formControlName="fecElab" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="form.get('fecCierreActa')"
+                label="Fecha Cierre Acta">
+                <input
+                  bsDatepicker
+                  class="form-control"
+                  formControlName="fecCierreActa" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="form.get('fecCaptura')"
+                label="Fecha  Captura">
+                <input
+                  bsDatepicker
+                  class="form-control"
+                  formControlName="fecCaptura" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr class="row" />
+      <div class="row">
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('direccion')"
+            label="Direcci&oacute;n">
+            <textarea
+              rows="3"
+              class="form-control"
+              formControlName="direccion"></textarea>
+          </form-field>
+        </div>
+
+        <div class="col-md-6">
+          <form-field
+            [control]="form.get('observaciones')"
+            label="Observaciones">
+            <textarea
+              rows="3"
+              class="form-control"
+              formControlName="observaciones"></textarea>
+          </form-field>
+        </div>
+      </div>
+
+      <hr class="row" />
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col">
+              <label for="">Autoridad Cancela&#47;Suspende</label>
+            </div>
+            <div class="col">
+              <form-field
+                [control]="form.get('folioEscaneo')"
+                label="Folio de Escaneo">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="folioEscaneo" />
+              </form-field>
+            </div>
+            <div class="col">
+              <form-field
+                [control]="form.get('elabora')"
+                label="Elabora C&#47;S">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="elabora" />
+              </form-field>
+            </div>
+            <div class="col">
+              <form-field
+                [control]="form.get('testigo')"
+                label="Testigo de la Contrataci&oacute;n">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="testigo" />
+              </form-field>
+            </div>
+            <div class="col">
+              <button type="button" size="small">Replicar Folio</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="row" />
+      <div class="row">
+        <div class="d-flex justify-content-center">
+          <button type="button" class="my-1 mx-2" size="small">
+            Cerrar Acta
+          </button>
+          <button type="button" class="my-1 mx-2" size="small">
+            Envia PGR
+          </button>
+          <a [routerLink]="['partialization']" class="my-1 mx-2" size="small"
+            >Parcializaci&oacute;n</a
+          >
+          <button type="button" class="my-1 mx-2" size="small">
+            Eliminar Acta
+          </button>
+          <button type="button" class="my-1 mx-2" size="small">
+            Carga Masiva
+          </button>
+        </div>
+      </div>
+
+      <div class="row pt-2 scroll-table">
+        <ng2-smart-table
+          class="col-md-12"
+          [settings]="settings1"
+          [source]="data"></ng2-smart-table>
+      </div>
+
+      <hr class="row" />
+      <div class="row">
+        <div class="d-flex justify-content-center">
+          <form-field
+            class="col-md-3"
+            [control]="form.get('estatusPrueba')"
+            label="Status ">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="estatusPrueba" />
+          </form-field>
+
+          <p class="pt-4">
+            <span class="text-success mr-5"
+              ><i class="fa fa-square"></i> Disponibles</span
+            >
+            <span class="text-danger"
+              ><i class="fa fa-square"></i> No disponibles</span
+            >
+          </p>
+        </div>
+      </div>
+
+      <div class="row pt-2">
+        <div class="col-md-12 text-center">
+          <button type="button" class="mx-2 btn btn-secondary btn-sm active">
+            <i class="fa fa-angle-up"></i>
+          </button>
+          <button type="button" class="mx-2 btn btn-secondary btn-sm active">
+            <i class="fa fa-angle-down"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="row pt-2 scroll-table">
+        <ng2-smart-table
+          class="col-md-12"
+          [settings]="settings2"
+          [source]="data2"></ng2-smart-table>
+      </div>
+      <hr class="row" />
+      <div class="d-flex justify-content-center">
+        <form-field
+          class="col-md-3"
+          [control]="form.get('etiqueta')"
+          label="Etiqueta ">
+          <input type="text" class="form-control" formControlName="etiqueta" />
+        </form-field>
+      </div>
+
+      <hr class="row" />
+      <div class="row">
+        <div class="col-md-6">
+          <a
+            [routerLink]="['flat-file']"
+            type="button"
+            size="small"
+            class="mx-2 my-1">
+            Exportar Datos
+          </a>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

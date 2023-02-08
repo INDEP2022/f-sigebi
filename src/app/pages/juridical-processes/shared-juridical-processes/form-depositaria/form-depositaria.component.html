@@ -1,0 +1,117 @@
+<!-- form Conciliacion de pagos recibidos -->
+<form [formGroup]="form" class="container-fluid form-material">
+  <div class="row w-100">
+    <div class="col-sm-12 col-12 col-md-12 p-2">
+      <span class="subtitle">
+        Ejecutar la conciliacion de pagos recibidos
+      </span>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field [control]="form.get('noBien')" label="No&#46; Bien">
+        <input class="form-control" formControlName="noBien" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-4 p-2">
+      <div class="form-group">
+        <input class="form-control" placeholder="Detalle No&#46; Bien" />
+        <label class="label w-100">Detalle No&#46; Bien</label>
+      </div>
+    </div>
+    <div class="col-sm-12 col-12 col-md-4 p-2">
+      <form-field [control]="form.get('nombramiento')" label="Nombramiento">
+        <input class="form-control" formControlName="nombramiento" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field [control]="form.get('fecha')" label="Fecha">
+        <input class="form-control" formControlName="fecha" bsDatapicker />
+      </form-field>
+    </div>
+    <div
+      *ngIf="nombrePantalla == 'concil-pag'"
+      class="col-sm-12 col-12 col-md-6 p-2 text-center">
+      <button class="btn btn-primary btn-sm active m-2" (click)="btnEjecutar()">
+        Ejecutar Dispersi&oacute;n de Pagos
+      </button>
+    </div>
+    <div class="col-sm-12 col-12 col-md-6 p-5 text-center alert alert-danger">
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-12 p-2">
+          <form-field
+            [control]="form.get('fechaEliminarDispersion')"
+            label="Fecha Eliminar Dispersi&oacute;n">
+            <input
+              class="form-control"
+              formControlName="fechaEliminarDispersion"
+              bsDatapicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2">
+          <button
+            class="btn btn-primary btn-sm active m-2"
+            (click)="btnDeshacer()">
+            Deshacer Dispersi&oacute;n de Pagos
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+<!-- form Conciliacion de pagos recibidos -->
+
+<!-- form Conciliacion de pagos recibidos -->
+<form [formGroup]="formDepositario" class="container-fluid form-material">
+  <div class="row w-100">
+    <div class="col-sm-12 col-12 col-md-12 p-2">
+      <span class="subtitle"> Depositario </span>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field
+        [control]="formDepositario.get('idDepositario')"
+        label="Id Depositario">
+        <input class="form-control" formControlName="idDepositario" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-4 p-2">
+      <form-field
+        [control]="formDepositario.get('depositario')"
+        label="Depositario">
+        <input class="form-control" formControlName="depositario" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field
+        [control]="formDepositario.get('fechaEjecucion')"
+        label="Fecha Ejecuci&oacute;n">
+        <!-- <label class="label w-100">Fecha Ejecución</label> -->
+        <input class="form-control" formControlName="fechaEjecucion" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-2 p-2">
+      <form-field [control]="formDepositario.get('procesar')" label="Procesar">
+        <select class="form-control" formControlName="procesar">
+          <option [value]="null">Seleccione un valor</option>
+          <option [value]="'SI'">SI</option>
+          <option [value]="'NO'">NO</option>
+        </select>
+      </form-field>
+    </div>
+    <div
+      *ngIf="nombrePantalla == 'concil-pag'"
+      class="col-sm-12 col-12 col-md-12 p-2 text-center">
+      <div class="form-group">
+        <button
+          class="btn btn-primary btn-sm active text-wrap m-2"
+          (click)="btnRecargaDepositario()">
+          Recarga Depositario
+        </button>
+        <button
+          class="btn btn-primary btn-sm active text-wrap m-2"
+          (click)="btnValidacionPagos()">
+          Validaci&oacute;n de Pagos
+        </button>
+      </div>
+    </div>
+  </div>
+</form>
+<!-- form Conciliacion de pagos recibidos -->

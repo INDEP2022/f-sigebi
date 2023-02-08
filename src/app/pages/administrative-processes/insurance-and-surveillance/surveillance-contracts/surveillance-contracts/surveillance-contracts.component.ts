@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-surveillance-contracts',
@@ -19,11 +20,15 @@ export class SurveillanceContractsComponent implements OnInit {
       noContract: [null, Validators.required],
       startDate: [null, Validators.required],
       finishedDate: [null, Validators.required],
-      provider: [null, Validators.required],
+      provider: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
       amountMin: [null, Validators.required],
       amountMax: [null, Validators.required],
       licitacion: [null, Validators.required],
-      observations: [null, Validators.required],
+      observations: [
+        null,
+        Validators.required,
+        Validators.pattern(STRING_PATTERN),
+      ],
     });
   }
 

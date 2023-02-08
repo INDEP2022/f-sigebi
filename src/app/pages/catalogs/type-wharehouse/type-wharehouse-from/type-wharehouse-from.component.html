@@ -3,24 +3,23 @@
     <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nueva' }} {{ title }}</h5>
   </div>
   <div body>
-    <form [formGroup]="typeWarehouseForm">
+    <form [formGroup]="typeWarehouseForm" class="form-material">
       <div class="row">
         <div class="col-md-12">
           <form-field
             [control]="typeWarehouseForm.get('description')"
-            label="Descripción">
+            label="Descripci&oacute;n">
             <textarea
               class="form-control"
               type="text"
               rows="2"
-              formControlName="description"
-              placeholder="Descripción"></textarea>
+              formControlName="description"></textarea>
           </form-field>
         </div>
         <div class="col-md-12">
           <form-field
             [control]="typeWarehouseForm.get('version')"
-            label="Versión">
+            label="Versi&oacute;n">
             <input
               type="number"
               class="form-control"

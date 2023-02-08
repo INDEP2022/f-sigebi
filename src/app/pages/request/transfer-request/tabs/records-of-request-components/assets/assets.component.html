@@ -1,0 +1,77 @@
+<div class="row">
+  <div class="row">
+    <div class="col-md-12">
+      <h5 class="title"><strong>Bienes</strong></h5>
+    </div>
+  </div>
+  <div class="row pt-4">
+    <div class="d-flex justify-content-end">
+      <div class="" style="margin-left: 1%">
+        <button
+          class="btn btn-success btn-sm ml-2"
+          type="button"
+          (click)="file.click()">
+          <i class="bx bx-import"></i> Importar archivo Excel &#47; CSV
+        </button>
+        <input
+          type="file"
+          name="file"
+          #file
+          class="d-none"
+          accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+          (change)="onFileChange($event)" />
+      </div>
+      <div class="" style="margin-left: 1%">
+        <button class="btn btn-secondary btn-sm active" (click)="newAsset()">
+          {{ btnCreate }}
+        </button>
+      </div>
+      <div class="" style="margin-left: 1%">
+        <button
+          class="btn btn-info btn-sm active"
+          (click)="openSelectAddressModal()">
+          <i class="bx bx-home"></i> Seleccionar Domicilio
+        </button>
+      </div>
+      <div class="" style="margin-left: 1%">
+        <button class="btn btn-info btn-sm active" (click)="menajeModal()">
+          Menaje
+        </button>
+      </div>
+      <div class="" style="margin-left: 1%">
+        <button class="btn btn-primary btn-sm active" (click)="save()">
+          Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+  <!--  <div class="row pt-4">
+    <div class="form-material col-md-5">
+      <search-bar [params]="params"></search-bar>
+    </div>
+  </div> -->
+  <div class="row pt-4">
+    <div class="col-md-12">
+      <ng-scrollbar track="all" style="min-height: 200px; border: none">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="paragraphs"
+            (userRowSelect)="selectRows($event)"
+            ><!-- (rowSelect)="editRequest($event)" (edit)="openForm($event.data)" -->
+          </ng2-smart-table>
+        </div>
+      </ng-scrollbar>
+    </div>
+  </div>
+  <div class="row pt-4">
+    <div *ngIf="createNewAsset == true">
+      <app-classify-assets-tab
+        [typeDoc]="'assets'"
+        [requestObject]="requestObject"
+        [goodObject]="goodObject"
+        [idDomicilie]="idDomicilie"></app-classify-assets-tab>
+    </div>
+  </div>
+</div>

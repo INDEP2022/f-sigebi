@@ -7,6 +7,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IDocCompensation } from 'src/app/core/models/catalogs/doc-compensation.model';
 import { DocCompensationService } from 'src/app/core/services/catalogs/doc-compensation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import Swal from 'sweetalert2';
 import { DocCompensationFormComponent } from '../doc-compensation-form/doc-compensation-form.component';
 import { DOC_COMPENSATION_COLUMNNS } from './doc-compensation-columns';
 
@@ -32,10 +33,10 @@ export class DocCompensationListComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.params
       .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getDeductives());
+      .subscribe(() => this.getDocCompensation());
   }
 
-  getDeductives() {
+  getDocCompensation() {
     this.loading = true;
     this.docCompensationService.getAll(this.params.getValue()).subscribe({
       next: response => {
@@ -52,7 +53,7 @@ export class DocCompensationListComponent extends BasePage implements OnInit {
     modalConfig.initialState = {
       docCompensation,
       callback: (next: boolean) => {
-        if (next) this.getDeductives();
+        if (next) this.getDocCompensation();
       },
     };
     this.modalService.show(DocCompensationFormComponent, modalConfig);
@@ -66,13 +67,14 @@ export class DocCompensationListComponent extends BasePage implements OnInit {
     ).then(question => {
       if (question.isConfirmed) {
         this.delete(docCompensation.id);
+        Swal.fire('Borrado', '', 'success');
       }
     });
   }
 
   delete(id: number) {
     this.docCompensationService.remove(id).subscribe({
-      next: () => this.getDeductives(),
+      next: () => this.getDocCompensation(),
     });
   }
 }

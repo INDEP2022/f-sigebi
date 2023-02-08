@@ -1,0 +1,92 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">control de municipios</h5>
+  </div>
+  <div body>
+    <div class="ms-3 mb-2">
+      <h6 class="d-inline">Solicitantes</h6>
+    </div>
+    <hr class="mw-98 mt-0" />
+    <div class="row mt-3">
+      <div class="col-sm-12 col-md-6 col-lg-6">
+        <div class="form-material">
+          <search-bar [params]="applicantParams"></search-bar>
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-6 col-lg-6">
+        <div class="d-flex flex-row-reverse">
+          <div class="">
+            <app-columns-select
+              [(settings)]="applicantSettings"></app-columns-select>
+          </div>
+          <div class="me-2">
+            <button
+              class="btn btn-sm btn-success active font-size-13"
+              (click)="openFormApplicant()">
+              Agregar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ng-scrollbar [track]="'horizontal'" [autoHeightDisabled]="false">
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          id="applicantTable"
+          [settings]="applicantSettings"
+          [source]="applicantColumns"
+          (edit)="openFormApplicant($event.data)"
+          (delete)="askDelete($event.data, 'APPLICANT')"
+          (userRowSelect)="selectApplicant($event.data)">
+        </ng2-smart-table>
+        <div class="table-padding"></div>
+      </div>
+    </ng-scrollbar>
+    <app-pagination
+      [params]="applicantParams"
+      [totalItems]="applicantTotalItems">
+    </app-pagination>
+    <div class="ms-3 mb-2">
+      <h6 class="d-inline">Bienes Asignados</h6>
+    </div>
+    <hr class="mw-98 mt-0" />
+    <div class="row mt-3">
+      <div class="col-sm-12 col-md-6 col-lg-6">
+        <div class="form-material">
+          <search-bar [params]="assignedGoodParams"></search-bar>
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-6 col-lg-6">
+        <div class="d-flex flex-row-reverse">
+          <div class="">
+            <app-columns-select
+              [(settings)]="assignedGoodSettings"></app-columns-select>
+          </div>
+          <div class="me-2">
+            <button
+              class="btn btn-sm btn-success active font-size-13"
+              (click)="openFormAssignedGood()">
+              Agregar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ng-scrollbar [track]="'horizontal'" [autoHeightDisabled]="false">
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          id="assignedGoodTable"
+          [settings]="assignedGoodSettings"
+          [source]="assignedGoodColumns"
+          (edit)="openFormAssignedGood($event.data)"
+          (delete)="askDelete($event.data, 'GOOD')">
+        </ng2-smart-table>
+        <div class="table-padding"></div>
+      </div>
+    </ng-scrollbar>
+    <app-pagination
+      [params]="assignedGoodParams"
+      [totalItems]="assignedGoodTotalItems">
+    </app-pagination>
+  </div>
+</app-card>

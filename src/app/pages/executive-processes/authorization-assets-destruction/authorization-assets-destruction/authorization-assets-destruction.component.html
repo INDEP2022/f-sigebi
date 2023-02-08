@@ -1,0 +1,252 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">
+        OFICIOS DE AUTORIZACI&Oacute;N DE DESTRUCCI&Oacute;N
+      </h5>
+    </div>
+  </div>
+
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field [control]="form.get('idExp')" label="No expediente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idExp"
+              minlength="1"
+              maxlength="10" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('preInquiry')"
+            label="Averiguaci&oacute;n Previa">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="preInquiry" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('criminalCase')" label="Causa Penal">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="criminalCase" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('circumstAct')"
+            label="Acta Circunstanciada">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="circumstAct" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('touchPenalty')" label="Toca penal">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="touchPenalty" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button
+                type="button"
+                class="btn btn-sm btn-primary active"
+                [disabled]="!form.valid"
+                (click)="show = !show">
+                {{ show ? 'Agregar otros' : 'Agregar bienes' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>
+
+<app-card *ngIf="show">
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row pt-5">
+        <div class="col-md-1">
+          <form-field [control]="form.get('noAuth')" label="No. Bien">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="noAuth"
+              minlength="1"
+              maxlength="10" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('authNotice')"
+            label="Oficio de autorizaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="authNotice" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('fromDate')" label="Fecha">
+            <input
+              type="text"
+              class="form-control"
+              bsDatepicker
+              formControlName="fromDate"
+              [bsConfig]="bsConfig" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <button
+            type="button"
+            class="btn btn-sm btn-primary active"
+            [disabled]="!form.valid">
+            Abrir
+          </button>
+        </div>
+      </div>
+
+      <div class="ch-content">
+        <h5 class="title">&nbsp;</h5>
+        <div class="row justify-content-end mr-1">
+          <div class="col-12">
+            <app-columns-select
+              [(settings)]="settings"
+              class="row justify-content-end">
+            </app-columns-select>
+          </div>
+        </div>
+      </div>
+      <div class="row pt-3 scroll-table table-responsive">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="data"></ng2-smart-table>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+      <div class="row">
+        <div class="col-md-2">
+          <button
+            type="button"
+            class="btn btn-success btn-sm active"
+            (click)="fileExcel.click()">
+            Abrir archivo Excel o CSV
+          </button>
+          <input
+            type="file"
+            (change)="ReadExcel($event)"
+            name="fileExcel"
+            #fileExcel
+            class="d-none"
+            accept=".xlsx, .xls, .csv, application/vnd.ms-excel" />
+        </div>
+        <div class="col-md-5">
+          <p>
+            Seleccionar archivo de la ruta:
+            src\app\pages\executive-processes\filesTest
+          </p>
+        </div>
+      </div>
+
+      <div class="row">
+        <p class="d-flex justify-content-center">
+          <span class="text-success mr-5"
+            ><i class="fa fa-square"></i> Disponibles</span
+          >
+          <span class="text-danger"
+            ><i class="fa fa-square"></i> No disponibles</span
+          >
+        </p>
+      </div>
+
+      <div class="form-group row pt-5">
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('scanFolio')"
+            label="Folio de escaneo">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="scanFolio" />
+          </form-field>
+        </div>
+        <div class="col-sm-1">
+          <button
+            type="submit"
+            class="btn-sm btn-info active"
+            (click)="msjRequest()">
+            Solicitud
+          </button>
+        </div>
+
+        <div class="col-sm-1">
+          <button
+            type="submit"
+            class="btn-sm btn-info active"
+            (click)="msjScan()">
+            Escanear
+          </button>
+        </div>
+
+        <div class="col-sm-1">
+          <button
+            type="submit"
+            class="btn-sm btn-info active"
+            (click)="openPrevImg()">
+            Ver IMG
+          </button>
+        </div>
+
+        <div class="col-md-3">
+          <form-field
+            [control]="form.get('cancelSheet')"
+            label="Folio de Cancelaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cancelSheet" />
+          </form-field>
+        </div>
+
+        <div class="col-sm-1">
+          <button
+            type="submit"
+            class="btn-sm btn-info active"
+            (click)="msjRequest()">
+            Solicitud
+          </button>
+        </div>
+
+        <div class="col-sm-1">
+          <button
+            type="submit"
+            class="btn-sm btn-info active"
+            (click)="msjScan()">
+            Escanear
+          </button>
+        </div>
+
+        <div class="col-sm-1">
+          <button
+            type="submit"
+            class="btn-sm btn-info active"
+            (click)="openPrevImg()">
+            Ver IMG
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

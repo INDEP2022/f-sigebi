@@ -1,0 +1,25 @@
+<app-card [header]="true" t>
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">CONSULTA DE AVAL&Uacute;OS MUEBLES</h5>
+      <div class="justify-content-end pt-3 mr-3">
+        <app-columns-select
+          [(settings)]="settings"
+          class="row justify-content-end">
+        </app-columns-select>
+      </div>
+    </div>
+  </div>
+  <div body>
+    <div class="row">
+      <div class="form-material col-md-5">
+        <search-bar [params]="params"></search-bar>
+      </div>
+      <ng2-smart-table
+        class="mt-3"
+        [settings]="settings"
+        [source]="data"
+        (edit)="exportAsXLSX()"></ng2-smart-table>
+    </div>
+  </div>
+</app-card>

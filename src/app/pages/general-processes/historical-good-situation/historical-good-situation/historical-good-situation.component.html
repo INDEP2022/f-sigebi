@@ -1,0 +1,26 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Hist&oacute;rica situaci&oacute;n del bien</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-4">
+          <app-goods-types-shared
+            [form]="form"
+            [subTypeShow]="false"
+            [ssubTypeShow]="false"
+            [sssubTypeShow]="false"></app-goods-types-shared>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <ng2-smart-table
+            [settings]="settings"
+            [source]="data"></ng2-smart-table>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

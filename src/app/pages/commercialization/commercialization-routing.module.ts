@@ -4,44 +4,44 @@ import { CommercializationComponent } from './commercialization.component';
 
 const routes: Routes = [
   {
-    path: 'c-b-f-fmdvdb-m-event-preparation',
+    path: 'event-preparation',
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/c-b-f-fmdvdb-m-event-preparation/c-b-f-fmdvdb-m-event-preparation.module'
+          './shared-marketing-components/event-preparation/event-preparation.module'
         )
-      ).CBFFmdvdbMEventPreparationModule,
-    data: { title: 'Preparación del evento' },
+      ).EventPreparationModule,
+    data: { title: 'Preparación del evento', screen: 'FCOMEREVENTOS' },
   },
   {
-    path: 'c-b-vdp-m-payment-dispersion-validation',
+    path: 'payment-dispersion-validation',
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/c-b-vdp-m-payment-dispersion-validation/c-b-vdp-m-payment-dispersion-validation.module'
+          './shared-marketing-components/payment-dispersion-validation/payment-dispersion-validation.module'
         )
-      ).CBVdpMPaymentDispersionValidationModule,
-    data: { title: 'Validación de bienes' },
+      ).PaymentDispersionValidationModule,
+    data: { title: 'Validación de bienes', screen: 'FCOMER0115' },
   },
   {
-    path: 'c-b-bedv-m-validation-exempted-goods',
+    path: 'validation-exempted-goods',
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/c-b-bedv-m-validation-exempted-goods/c-b-bedv-m-validation-exempted-goods.module'
+          './shared-marketing-components/validation-exempted-goods/validation-exempted-goods.module'
         )
-      ).CBBedvMValidationExemptedGoodsModule,
-    data: { title: 'Bienes exentos de validación' },
+      ).ValidationExemptedGoodsModule,
+    data: { title: 'Bienes exentos de validación', screen: 'FCOMERBIENEX' },
   },
   {
-    path: 'c-b-rdodi-m-reclass-recovery-orders',
+    path: 'reclass-recovery-orders',
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/c-b-rdodi-m-reclass-recovery-orders/c-b-rdodi-m-reclass-recovery-orders.module'
+          './shared-marketing-components/reclass-recovery-orders/reclass-recovery-orders.module'
         )
-      ).CBRdodiMReclassRecoveryOrdersModule,
-    data: { title: 'Reclasificación OI' },
+      ).ReclassRecoveryOrdersModule,
+    data: { title: 'Reclasificación OI', screen: 'FCOMER085' },
   },
   {
     path: 'numeraire-conversion-tabs',
@@ -51,37 +51,37 @@ const routes: Routes = [
           './shared-marketing-components/numeraire-conversion-tabs/numeraire-conversion-tabs.module'
         )
       ).NumeraireConversionTabsModule,
-    data: { title: 'Conversión a numerario' },
+    data: { title: 'Conversión a numerario', screen: 'FCOMER087' },
   },
   {
-    path: 'c-b-a-cda-m-appraisal-consultation',
+    path: 'appraisal-consultation',
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/c-b-a-cda-m-appraisal-consultation/c-b-a-cda-m-appraisal-consultation.module'
+          './shared-marketing-components/appraisal-consultation/appraisal-consultation.module'
         )
-      ).CBACdaMAppraisalConsultationModule,
-    data: { title: 'Consulta de Avalúo' },
+      ).AppraisalConsultationModule,
+    data: { title: 'Consulta de Avalúo', screen: 'FCOMERCONSAVALUO' },
   },
   {
-    path: 'c-b-a-rda-m-appraisal-registration',
+    path: 'appraisal-registration',
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/c-b-a-rda-m-appraisal-registration/c-b-a-rda-m-appraisal-registration.module'
+          './shared-marketing-components/appraisal-registration/appraisal-registration.module'
         )
-      ).CBARdaMAppraisalRegistrationModule,
-    data: { title: 'Registro de Avalúos' },
+      ).AppraisalRegistrationModule,
+    data: { title: 'Registro de Avalúos', screen: 'FCOMERREGAVALUO' },
   },
   {
-    path: 'c-b-ge-cdg-m-expense-capture',
+    path: 'expense-capture',
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/c-b-ge-cdg-m-expense-capture/c-b-ge-cdg-m-expense-capture.module'
+          './shared-marketing-components/expense-capture/expense-capture.module'
         )
-      ).CBGeCdgMExpenseCaptureModule,
-    data: { title: 'Captura de gastos' },
+      ).ExpenseCaptureModule,
+    data: { title: 'Captura de gastos', screen: 'FCOMER084' },
   },
   {
     path: 'catalogs',
@@ -89,14 +89,14 @@ const routes: Routes = [
       (await import('./catalogs/catalogs.module')).CatalogsModule,
   },
   {
-    path: 'c-bm-ge-cdc-tc-m-third-party-marketers',
+    path: 'third-party-marketers',
     loadChildren: async () =>
       (
         await import(
-          './movable-property/c-bm-ge-cdc-tc-m-third-party-marketers/c-bm-ge-cdc-tc-m-third-party-marketers.module'
+          './movable-property/third-party-marketers/third-party-marketers.module'
         )
-      ).CBmGeCdcTcMThirdPartyMarketersModule,
-    data: { title: 'Terceros comercializadores' },
+      ).ThirdPartyMarketersModule,
+    data: { title: 'Terceros comercializadores', screen: 'FCOMER063' },
   },
   {
     path: 'consultation-goods-commercial-process-tabs',
@@ -109,53 +109,50 @@ const routes: Routes = [
     data: { title: 'Consulta de bienes' },
   },
   {
-    path: 'c-bm-ge-cdc-clc-m-calculate-commission',
+    path: 'calculate-commission',
     loadChildren: async () =>
       (
         await import(
-          './movable-property/c-bm-ge-cdc-clc-m-calculate-commission/c-bm-ge-cdc-clc-m-calculate-commission.module'
+          './movable-property/calculate-commission/calculate-commission.module'
         )
-      ).CBmGeCdcClcMCalculateCommissionModule,
-    data: { title: 'Calcular comisión' },
+      ).CalculateCommissionModule,
+    data: { title: 'Calcular comisión', screen: 'FCOMER064' },
   },
   {
-    path: 'c-bm-f-syf-m-series-folios-control',
+    path: 'series-folios-control',
     loadChildren: async () =>
       (
         await import(
-          './movable-property/c-bm-f-syf-m-series-folios-control/c-bm-f-syf-m-series-folios-control.module'
+          './movable-property/series-folios-control/series-folios-control.module'
         )
-      ).CBmFSyfMSeriesFoliosControlModule,
-    data: { title: 'Folios y series' },
+      ).SeriesFoliosControlModule,
+    data: { title: 'Folios y series', screen: 'FCOMER093' },
   },
   {
-    path: 'c-bm-f-cdr-m-rebilling-causes',
+    path: 'rebilling-causes',
     loadChildren: async () =>
       (
         await import(
-          './movable-property/c-bm-f-cdr-m-rebilling-causes/c-bm-f-cdr-m-rebilling-causes.module'
+          './movable-property/rebilling-causes/rebilling-causes.module'
         )
-      ).CBmFCdrMRebillingCausesModule,
-    data: { title: 'Causas de Refacturación' },
+      ).RebillingCausesModule,
+    data: { title: 'Causas de Refacturación', screen: 'FCOMER091' },
   },
   {
-    path: 'c-bm-f-edf-m-invoice-status',
+    path: 'invoice-status',
     loadChildren: async () =>
-      (
-        await import(
-          './movable-property/c-bm-f-edf-m-invoice-status/c-bm-f-edf-m-invoice-status.module'
-        )
-      ).CBmFEdfMInvoiceStatusModule,
-    data: { title: 'Estatus de la facturación' },
+      (await import('./movable-property/invoice-status/invoice-status.module'))
+        .InvoiceStatusModule,
+    data: { title: 'Estatus de la facturación', screen: 'FCOMER072' },
   },
   {
     path: 'expense-concepts',
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/expense-concepts/c-b-ec-m-expense-concepts.module'
+          './shared-marketing-components/expense-concepts/expense-concepts.module'
         )
-      ).CBEcMPaymentsConceptsModule,
+      ).ExpenseConceptsModule,
     data: { title: 'Conceptos de Gasto' },
   },
   {
@@ -163,9 +160,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/referenced-payment/c-b-rp-m-referenced-payment.module'
+          './shared-marketing-components/referenced-payment/referenced-payment.module'
         )
-      ).CBRpMReferencedPaymentModule,
+      ).ReferencedPaymentModule,
     data: { title: 'Pagos Referenciados' },
   },
   {
@@ -173,9 +170,9 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/unreconciled-payment/c-b-up-m-unreconciled-payment.module'
+          './shared-marketing-components/unreconciled-payment/unreconciled-payment.module'
         )
-      ).CBUpMUnreconciledPaymentModule,
+      ).UnreconciledPaymentModule,
     data: { title: 'Pagos no Conciliados' },
   },
   {
@@ -183,19 +180,16 @@ const routes: Routes = [
     loadChildren: async () =>
       (
         await import(
-          './shared-marketing-components/payment-dispersion-monitor/c-b-pdm-m-payment-dispersion-monitor.module'
+          './shared-marketing-components/payment-dispersion-monitor/payment-dispersion-monitor.module'
         )
-      ).CBPdmMPaymentDispersionMonitorModule,
+      ).PaymentDispersionMonitorModule,
     data: { title: 'Dispersión de Pagos' },
   },
   {
     path: 'events',
     loadChildren: async () =>
-      (
-        await import(
-          './shared-marketing-components/events/c-b-e-m-events.module'
-        )
-      ).CBEMEventsModule,
+      (await import('./shared-marketing-components/events/events.module'))
+        .EventsModule,
     data: { title: 'Permisos a Eventos' },
   },
   {
@@ -203,27 +197,24 @@ const routes: Routes = [
     loadChildren: async () =>
       (await import('./numeraire-exchange/numeraire-exchange.module'))
         .NumeraireExchangeModule,
-    data: { title: 'Cambio a Numerario' },
+    data: { title: 'Cambio a Numerario', screen: 'FACTADBCAMBIONUME' },
   },
   {
     path: 'sirsae-payment-consultation',
     loadChildren: async () =>
       (
         await import(
-          './c-m-sirsae-payment-consultation/c-m-sirsae-payment-consultation.module'
+          './sirsae-payment-consultation/sirsae-payment-consultation.module'
         )
-      ).CMSirsaePaymentConsultationModule,
-    data: { title: 'Consulta de Pagos Sirsae' },
+      ).SirsaePaymentConsultationModule,
+    data: { title: 'Consulta de Pagos Sirsae', screen: 'FCOM_CONSPAGSIRSAE' },
   },
   {
     path: 'lcs-massive-conversion',
     loadChildren: async () =>
-      (
-        await import(
-          './c-m-lcs-massive-conversion/c-m-lcs-massive-conversion.module'
-        )
-      ).CMLcsMassiveConversionModule,
-    data: { title: 'Conversión Masiva de LCs' },
+      (await import('./massive-conversion/massive-conversion.module'))
+        .MassiveConversionModule,
+    data: { title: 'Conversión Masiva de LCs', screen: 'FCOMERGENLCMASIV' },
   },
   {
     path: 'mass-biling-base-sales-tab',
@@ -233,21 +224,24 @@ const routes: Routes = [
           './movable-property/mass-biling-base-sales-tab/mass-biling-base-sales-tab.module'
         )
       ).MassBilingBaseSalesTabModule,
-    data: { title: 'Facturación masiva de VTA. de bases ' },
+    data: {
+      title: 'Facturación masiva de VTA. de bases',
+      screen: 'FCOMER_VTA_BASES',
+    },
   },
   {
     path: 'batch-parameters',
     loadChildren: async () =>
-      (await import('./c-m-batch-parameters/c-m-batch-parameters.module'))
+      (await import('./batch-parameters/batch-parameters.module'))
         .CMBatchParametersModule,
-    data: { title: 'Parámetros por Lote' },
+    data: { title: 'Parámetros por Lote', screen: 'FCOMERPARAMLOTE' },
   },
   {
     path: 'related-events',
     loadChildren: async () =>
-      (await import('./c-m-related-events/c-m-related-events.module'))
-        .CMRelatedEventsModule,
-    data: { title: 'Eventos Relacionados' },
+      (await import('./related-events/related-events.module'))
+        .RelatedEventsModule,
+    data: { title: 'Eventos Relacionados', screen: 'FCOMEREVEREL' },
   },
   {
     path: 'regular-billing-tab',
@@ -257,92 +251,273 @@ const routes: Routes = [
           './movable-property/regular-billing-tab/regular-billing-tab.module'
         )
       ).RegularBillingTabModule,
-    data: { title: 'Facturación normal' },
+    data: { title: 'Facturación normal', screen: 'FCOMER086' },
   },
   {
     path: 'payment-search',
     loadChildren: async () =>
-      (await import('./c-m-payment-search/c-m-payment-search.module'))
-        .CMPaymentSearchModule,
-    data: { title: 'Búsqueda y Procesamiento de Pagos' },
+      (await import('./payment-search/payment-search.module'))
+        .PaymentSearchModule,
+    data: {
+      title: 'Búsqueda y Procesamiento de Pagos',
+      screen: 'FCOMER_PAGOS',
+    },
   },
   {
     path: 'electronic-signatures',
     loadChildren: async () =>
-      (
-        await import(
-          './c-m-electronic-signatures/c-m-electronic-signatures.module'
-        )
-      ).CMElectronicSignaturesModule,
-    data: { title: 'Gestión de Firmas Electrónicas' },
+      (await import('./electronic-signatures/electronic-signatures.module'))
+        .ElectronicSignaturesModule,
+    data: {
+      title: 'Gestión de Firmas Electrónicas',
+      screen: 'FCOMER_CTLFIRMAS_ELEC',
+    },
   },
   {
-    path: 'c-bm-f-fr-cr-m-rectification-fields',
+    path: 'rectification-fields',
     loadChildren: async () =>
       (
         await import(
-          './movable-property/c-bm-f-fr-cr-m-rectification-fields/c-bm-f-fr-cr-m-rectification-fields.module'
+          './movable-property/rectification-fields/rectification-fields.module'
         )
-      ).CBmFFrCrMRectificationFieldsModule,
-    data: { title: 'Campos rectificación' },
+      ).RectificationFieldsModule,
+    data: { title: 'Campos rectificación', screen: 'FCOMER070' },
   },
   {
-    path: 'c-bm-f-fr-prdf-m-invoice-rectification-process',
+    path: 'invoice-rectification-process',
     loadChildren: async () =>
       (
         await import(
-          './movable-property/c-bm-f-fr-prdf-m-invoice-rectification-process/c-bm-f-fr-prdf-m-invoice-rectification-process.module'
+          './movable-property/invoice-rectification-process/invoice-rectification-process.module'
         )
-      ).CBmFFrPrdfMInvoiceRectificationProcessModule,
-    data: { title: 'Formato de rectificación' },
+      ).InvoiceRectificationProcessModule,
+    data: { title: 'Formato de rectificación', screen: 'FCOMER097' },
   },
   {
-    path: 'c-bm-vm-m-cp-page-setup',
+    path: 'page-setup',
+    loadChildren: async () =>
+      (await import('./movable-property/page-setup/page-setup.module'))
+        .PageSetupModule,
+    data: { title: 'Configuración de Página', screen: 'FCOMER090' },
+  },
+  {
+    path: 'entity-classification',
     loadChildren: async () =>
       (
         await import(
-          './movable-property/c-bm-vm-m-cp-page-setup/c-bm-vm-m-cp-page-setup.module'
+          './movable-property/entity-classification/entity-classification.module'
         )
-      ).CBmVmMCpPageSetupModule,
-    data: { title: 'Configuración de Página' },
-  },
-  {
-    path: 'c-bm-vm-cde-m-entity-classification',
-    loadChildren: async () =>
-      (
-        await import(
-          './movable-property/c-bm-vm-cde-m-entity-classification/c-bm-vm-cde-m-entity-classification.module'
-        )
-      ).CBmVmCdeMEntityClassificationModule,
-    data: { title: 'Catálogo de Entidades' },
+      ).EntityClassificationModule,
+    data: { title: 'Catálogo de Entidades', screen: 'FCOMER088' },
   },
   {
     path: 'payment-refund',
     loadChildren: async () =>
-      (await import('./c-m-payment-refund/c-m-payment-refund.module'))
-        .CMPaymentRefundModule,
-    data: { title: 'Devolución de Pagos' },
+      (await import('./payment-refund/payment-refund.module'))
+        .PaymentRefundModule,
+    data: { title: 'Devolución de Pagos', screen: 'FCOMERCTLDPAG' },
   },
   {
     path: 'mandate-income-reports',
     loadChildren: async () =>
-      (await import('./shared-marketing-components/mandate-income-reports/c-b-mir-m-mandate-income-reports.module'))
-        .CBMirMMandateIncomeReportsModule,
+      (
+        await import(
+          './shared-marketing-components/mandate-income-reports/mandate-income-reports.module'
+        )
+      ).MandateIncomeReportsModule,
     data: { title: 'Reporte de Ing. por Mandato' },
   },
   {
-    path: 'c-bm-r-rrpr-m-remittances-recorded-region',
+    path: 'remittances-recorded-region',
     loadChildren: async () =>
-      (await import('./movable-property/c-bm-r-rrpr-m-remittances-recorded-region/c-bm-r-rrpr-m-remittances-recorded-region.module'))
-        .CBmRRrprMRemittancesRecordedRegionModule,
-    data: { title: 'Remesas registradas por regional' },
+      (
+        await import(
+          './movable-property/remittances-recorded-region/remittances-recorded-region.module'
+        )
+      ).RemittancesRecordedRegionModule,
+    data: {
+      title: 'Remesas registradas por regional',
+      screen: 'RCOMERREMESA1',
+    },
   },
   {
-    path: 'c-bm-r-exdlr-m-remittance-exportation',
+    path: 'remittance-exportation',
     loadChildren: async () =>
-      (await import('./movable-property/c-bm-r-exdlr-m-remittance-exportation/c-bm-r-exdlr-m-remittance-exportation.module'))
-        .CBmRExdlrMRemittanceExportationModule,
-    data: { title: 'Exportación de las Remesas' },
+      (
+        await import(
+          './movable-property/remittance-exportation/remittance-exportation.module'
+        )
+      ).RemittanceExportationModule,
+    data: { title: 'Exportación de las Remesas', screen: 'RCOMERREMESA2' },
+  },
+  {
+    path: 'electronic-signature-auxiliary-catalogs',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/signature-auxiliary-catalogs/signature-auxiliary-catalogs.module'
+        )
+      ).SignatureAuxiliaryCatalogsModule,
+    data: {
+      title: 'Catálogos Auxiliares para Firmas Electrónicas',
+      screen: 'FCOMER_CAT_FELEC',
+    },
+  },
+  {
+    path: 'direct-sale-requests-capture/municipality-control',
+    loadChildren: async () =>
+      (
+        await import(
+          './direct-sale-requests-capture/municipality-control/municipality-control.module'
+        )
+      ).MunicipalityControlModule,
+    data: { title: 'Control de Municipios', screen: 'FCOMER089' },
+  },
+  {
+    path: 'billing',
+    loadChildren: async () =>
+      (await import('./penalty-billing/penalty-billing.module'))
+        .CFpMPenaltyBillingModule,
+    data: { title: 'Facturación', screen: 'FCOMER089' },
+  },
+  {
+    path: 'sirsae-movement-sending',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/sirsae-movement-sending/sirsae-movement-sending.module'
+        )
+      ).SirsaeMovementSendingModule,
+    data: { title: 'Envío de Movimientos a SIRSAE', screen: 'FCOMER112' },
+  },
+  {
+    path: 'conciliation-execution',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/conciliation-execution/conciliation-execution.module'
+        )
+      ).ConciliationExecutionModule,
+    data: { title: 'Ejecución de la Conciliación', screen: 'FCOMER612' },
+  },
+  {
+    path: 'tax-validation-calculation',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/tax-calculation-validation/tax-validation-calculation.module'
+        )
+      ).TaxValidationCalculationModule,
+    data: { title: 'Validación de Cálculo I.V.A' },
+  },
+  {
+    path: 'partiality-direct-adjudication',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/partiality-direct-adjudication/partiality-direct-adjudication.module'
+        )
+      ).PartialityDirectAdjudicationModule,
+    data: {
+      title: 'Adjudicaciones Directas en Parcialidades',
+      screen: 'FCOMERAMORTIZACIONES',
+    },
+  },
+  {
+    path: 'marketing-records',
+    loadChildren: async () =>
+      (
+        await import(
+          './shared-marketing-components/marketing-records/marketing-records.module'
+        )
+      ).MarketingRecordsModule,
+    data: { title: 'Oficios de Comercialización' },
+  },
+  {
+    path: 'good-delivery',
+    loadChildren: async () =>
+      (await import('./good-delivery/good-delivery.module')).GoodDeliveryModule,
+    data: { title: 'Entrega de Bienes', screen: 'FCOMERCAMESTBIEN' },
+  },
+  {
+    path: 'release-letter-report',
+    loadChildren: async () =>
+      (await import('./release-letter-report/release-letter-report.module'))
+        .ReleaseLetterReportModule,
+    data: { title: 'Reporte de Cartas de Liberacion' },
+  },
+  {
+    path: 'responsibility-letters-report',
+    loadChildren: async () =>
+      (
+        await import(
+          './responsibility-letters-report/responsibility-letters-report.module'
+        )
+      ).ResponsibilityLettersReportModule,
+    data: { title: 'Reporte de Cartas de Responsabilidad' },
+  },
+  {
+    path: 'layouts-configuration',
+    loadChildren: async () =>
+      (await import('./layouts-configuration/layouts-configuration.module'))
+        .LayoutsConfigurationModule,
+    data: { title: 'Configuracion de Layouts' },
+  },
+  {
+    path: 'property-adjudication-notification-report',
+    loadChildren: async () =>
+      (
+        await import(
+          './property-adjudication-notification-report/property-adjudication-notification-report.module'
+        )
+      ).PropertyAdjudicationNotificationReportModule,
+    data: { title: 'Reporte de Notificacion de Adjudicacion Inmuebles' },
+  },
+  //Henry2
+  {
+    path: 'publication-photographs',
+    loadChildren: async () =>
+      (await import('./publication-photographs/publication-photographs.module'))
+        .PublicationPhotographsModule,
+    data: { title: 'Publicación de fotografía', screen: 'FCOMERPUBLICFOTOS' },
+  },
+  {
+    path: 'payment-receipts-report',
+    loadChildren: async () =>
+      (await import('./payment-receipts-report/payment-receipts-report.module'))
+        .PaymentReceiptsReportModule,
+    data: { title: 'Reporte de pagos recibidos', screen: 'FCOMERRECIBOS' },
+  },
+  {
+    path: 'disposal-record-report',
+    loadChildren: async () =>
+      (await import('./disposal-record-report/disposal-record-report.module'))
+        .DisposalRecordReportModule,
+    data: {
+      title: 'Reporte de actas de enajenación',
+      screen: 'FGERDESACTAENAJEN',
+    },
+  },
+  {
+    path: 'traded-goods',
+    loadChildren: async () =>
+      (await import('./traded-goods/traded-goods.module'))
+        .CBcMTradedGoodsModule,
+    data: { title: 'Bienes comercializados', screen: 'FGERDESBIECOMERCI' },
+  },
+  {
+    path: 'goods-tenders',
+    loadChildren: async () =>
+      (await import('./goods-tenders/goods-tenders.module'))
+        .CLbMGoodsTendersModule,
+    data: { title: 'Licitación de bienes', screen: 'FGERDESLICITXBIEN' },
+  },
+  {
+    path: 'commercial-file',
+    loadChildren: async () =>
+      (await import('./commercial-file/commercial-file.module'))
+        .CommercialFileModule,
+    data: { title: 'Ficha comercial', screen: 'FINFFICHACOMERCIAL' },
   },
 ];
 

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { SURVEILLANCE_CONCEPTS_COLUMNS } from './surveillance-concepts-columns';
 
 @Component({
@@ -29,7 +30,7 @@ export class SurveillanceConceptsComponent extends BasePage implements OnInit {
   prepareForm() {
     this.form = this.fb.group({
       noContract: [null, Validators.required],
-      provider: [null, Validators.required],
+      provider: [null, Validators.required, Validators.pattern(STRING_PATTERN)],
       licitation: [null, Validators.required],
     });
   }

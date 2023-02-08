@@ -16,14 +16,17 @@ const routes: Routes = [
               './catalogue-expenses-concepts/catalogue-expenses-concepts.module'
             )
           ).CatalogueExpensesConceptsModule,
-        data: { title: 'Catalogo de conceptos de gasto' },
+        data: {
+          title: 'Catalogo de conceptos de gasto',
+          screen: 'FACTADBCONCEPTOGASTO',
+        },
       },
       {
         path: 'exchange-types',
         loadChildren: async () =>
           (await import('./exchange-types/exchange-types.module'))
             .ExchangeTypesModule,
-        data: { title: 'Tipos de Cambio' },
+        data: { title: 'Tipos de Cambio', screen: 'FACTADBTIPOCAMBIO' },
       },
       {
         path: 'costs-procedures',
@@ -40,7 +43,10 @@ const routes: Routes = [
               './../insurance-and-surveillance/costs-applied-goods/costs-applied-goods.module'
             )
           ).CostsAppliedGoodsModule,
-        data: { title: 'Gastos aplicados a Bienes' },
+        data: {
+          title: 'Gastos aplicados a Bienes',
+          screen: 'FGERADBREPOCOSTOS',
+        },
       },
       {
         path: 'costs-resume',
@@ -60,7 +66,7 @@ const routes: Routes = [
               './../insurance-and-surveillance/expenses-format/expenses-format.module'
             )
           ).ExpensesFormatModule,
-        data: { title: 'Visitas a inmuebles' },
+        data: { title: 'Visitas a inmuebles', screen: 'FCONADBMONSEGUROS' },
       },
       {
         path: 'expenses-register',
@@ -70,7 +76,7 @@ const routes: Routes = [
               './../insurance-and-surveillance/expenses-register/expenses-register.module'
             )
           ).ExpensesRegisterModule,
-        data: { title: 'Registro de Gasto' },
+        data: { title: 'Registro de Gasto', screen: 'FACTADBEJERGASTO' },
       },
       {
         path: 'expenses-concepts',
@@ -78,6 +84,26 @@ const routes: Routes = [
           (await import('./expenses-concepts/expenses-concepts.module'))
             .ExpensesConceptsModule,
         data: { title: 'Conceptos de Gasto' },
+      },
+      {
+        path: 'applicants-criteria',
+        loadChildren: async () =>
+          (await import('./applicants-criteria/applicants-criteria.module'))
+            .ApplicantsCriteriaModule,
+        data: {
+          title: 'Criterios de aplicación',
+          screen: 'RCRITERIOAPLIGASTO ',
+        },
+      },
+      {
+        path: 'costs-clasification',
+        loadChildren: async () =>
+          (await import('./costs-clasification/costs-clasification.module'))
+            .CostsClasificationModule,
+        data: {
+          title: 'Clasificación de Costos',
+          screen: 'CLASIFICACIÓN_COSTOS',
+        },
       },
     ],
   },

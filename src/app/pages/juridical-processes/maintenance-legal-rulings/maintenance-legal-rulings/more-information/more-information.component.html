@@ -1,0 +1,33 @@
+<form [formGroup]="form" class="form-material">
+  <div class="row w-100">
+    <div class="col-sm-12 col-12 col-md-3 p-2">
+      <form-field
+        [control]="form.get('noDictaminacion')"
+        label="No&#46; Dictaminaci&oacute;n">
+        <input class="form-control" formControlName="noDictaminacion" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-3 p-2">
+      <form-field
+        [control]="form.get('tipoDictaminacion')"
+        label="Tipo Dictaminaci&oacute;n">
+        <input class="form-control" formControlName="tipoDictaminacion" />
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-6 p-2">
+      <form-field [control]="form.get('texto1')" label="texto 1">
+        <textarea class="form-control" formControlName="texto1"></textarea>
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-6 p-2">
+      <form-field [control]="form.get('texto2')" label="texto 2">
+        <textarea class="form-control" formControlName="texto2"></textarea>
+      </form-field>
+    </div>
+    <div class="col-sm-12 col-12 col-md-6 p-2">
+      <form-field [control]="form.get('texto3')" label="texto 3">
+        <textarea class="form-control" formControlName="texto3"></textarea>
+      </form-field>
+    </div>
+  </div>
+</form>

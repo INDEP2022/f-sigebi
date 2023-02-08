@@ -1,0 +1,61 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">RESOLUCI&Oacute;N DE RECURSOS DE REVISI&Oacute;N</h5>
+  </div>
+
+  <div body>
+    <div class="row w-100">
+      <div class="col-sm-12 col-12 col-md-12 p-2">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          [settings]="tableSettings"
+          [source]="dataTable"></ng2-smart-table>
+      </div>
+    </div>
+  </div>
+  <div footer>
+    <div class="row">
+      <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+        <div class="form-group">
+          <button
+            *ngIf="showResolucion == false"
+            type="button"
+            class="btn btn-primary btn-sm active p-2"
+            (click)="btnResolucion()">
+            Resoluci&oacute;n
+          </button>
+          <button
+            *ngIf="showResolucion == true"
+            type="button"
+            class="btn btn-info btn-sm active p-2"
+            (click)="btnCloseResolucion()">
+            Regresar y Guardar cambios
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>
+
+<app-card [header]="true" *ngIf="showResolucion == true">
+  <div class="ch-content" header>
+    <h5 class="title">RESOLUCI&Oacute;N</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-12 p-2">
+          <form-field
+            [control]="form.get('resolucion')"
+            label="Resoluci&oacute;n">
+            <textarea
+              class="form-control"
+              rows="6"
+              formControlName="resolucion"></textarea>
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

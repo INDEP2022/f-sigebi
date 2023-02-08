@@ -1,0 +1,67 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      Documentaci&oacute;n solicitada para dictaminaci&oacute;n
+    </h5>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('delegationNumber')"
+            label="Delegaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="delegationNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('param1')" label="">
+            <input type="text" class="form-control" formControlName="param1" />
+          </form-field>
+        </div>
+        <div class="col-md-2 col-sm-12 col-xs-12">
+          <form-field
+            [control]="form.get('subdelegationNumber')"
+            label="Subdelegaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="subdelegationNumber" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('param2')" label="">
+            <input type="text" class="form-control" formControlName="param2" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('file')" label="Del Expediente">
+            <input type="text" class="form-control" formControlName="file" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field [control]="form.get('at')" label="Al">
+            <input type="text" class="form-control" formControlName="at" />
+          </form-field>
+        </div>
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button
+                type="button"
+                class="btn btn-primary btn-sm active"
+                (click)="print()">
+                Imprimir
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

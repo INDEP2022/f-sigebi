@@ -1,0 +1,128 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Respuesta &#47; cancelaci&oacute;n valuaci&oacute;n</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-1">
+          <form-field [control]="form.get('event')" label="Evento">
+            <input type="text" class="form-control" formControlName="event" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('folios')"
+            label="Folios de oficio de Aval&oacute;o">
+            <input type="text" class="form-control" formControlName="folios" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-radio label="Oficio de respuesta">
+            <input type="radio" formControlName="radio" value="cat" />
+          </form-radio>
+        </div>
+        <div class="col-md-2">
+          <form-radio label="Oficio de cancelaci&oacute;n">
+            <input type="radio" formControlName="radio" value="dog" />
+          </form-radio>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('folio')" label="Folio">
+            <input type="text" class="form-control" formControlName="folio" />
+          </form-field>
+        </div>
+        <div class="col-md-1">
+          <form-field [control]="form.get('cve')" label="Clave">
+            <input type="text" class="form-control" formControlName="cve" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('city')" label="Ciudad">
+            <input type="text" class="form-control" formControlName="city" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('receptionDate')"
+            label="Fecha Recepci&oacute;n">
+            <input
+              type="text"
+              placeholder=""
+              class="form-control"
+              bsDatepicker
+              formControlName="receptionDate"
+              [bsConfig]="{ isAnimated: true }" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('elaborationDate')"
+            label="Fecha Elaboraci&oacute;n">
+            <input
+              type="text"
+              placeholder=""
+              class="form-control"
+              bsDatepicker
+              formControlName="elaborationDate"
+              [bsConfig]="{ isAnimated: true }" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-6 alert alert-info">
+          <div class="col-md-4">
+            <form-field [control]="form.get('sender')" label="Remitente">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="sender" />
+            </form-field>
+          </div>
+          <div class="col-md-8">
+            <form-field [control]="form.get('senderTxt')" label="Texto Mensaje">
+              <textarea
+                class="form-control"
+                type="text"
+                formControlName="senderTxt"></textarea>
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-6 alert alert-info">
+          <div class="col-md-4">
+            <form-field [control]="form.get('addressee')" label="Destinatario">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="addressee" />
+            </form-field>
+          </div>
+          <div class="col-md-8">
+            <form-field
+              [control]="form.get('addresseeTxt')"
+              label="Texto Mensaje">
+              <textarea
+                class="form-control"
+                type="text"
+                formControlName="addresseeTxt"></textarea>
+            </form-field>
+          </div>
+        </div>
+      </div>
+      <div class="ch-content">
+        <h5 class="title">Bienes</h5>
+      </div>
+      <div class="table-responsive">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="data"></ng2-smart-table>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </form>
+  </div>
+</app-card>

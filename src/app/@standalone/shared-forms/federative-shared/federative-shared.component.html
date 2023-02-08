@@ -1,0 +1,18 @@
+<ng-container>
+  <div class="row mb-3 mt-3" *ngIf="showFederative">
+    <div class="col-md-12">
+      <form-field [control]="form.get(federativeField)">
+        <ngx-select
+          (fetchItems)="getFederative($event)"
+          [data]="federative"
+          [form]="form"
+          value="id"
+          bindLabel="otWorth"
+          label="Entidad Federativa"
+          [control]="federativeField"
+          (change)="onFederativeChange($event)">
+        </ngx-select>
+      </form-field>
+    </div>
+  </div>
+</ng-container>

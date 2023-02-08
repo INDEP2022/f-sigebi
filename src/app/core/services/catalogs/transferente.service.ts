@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpService } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
-import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
@@ -9,27 +9,47 @@ import { ITransferente } from '../../models/catalogs/transferente.model';
 @Injectable({
   providedIn: 'root',
 })
-export class TransferenteService implements ICrudMethods<ITransferente> {
+export class TransferenteService extends HttpService {
   private readonly route: string = ENDPOINT_LINKS.Transferente;
-  constructor(private transferenteRepository: Repository<ITransferente>) {}
+  private readonly endpoint: string = 'transferent';
+  constructor(private transferenteRepository: Repository<ITransferente>) {
+    super();
+    this.microservice = 'catalog';
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<ITransferente>> {
-    return this.transferenteRepository.getAllPaginated(this.route, params);
+    return this.transferenteRepository.getAllPaginated(this.endpoint, params);
   }
 
   getById(id: string | number): Observable<ITransferente> {
     return this.transferenteRepository.getById(this.route, id);
   }
 
-  create(model: ITransferente): Observable<ITransferente> {
-    return this.transferenteRepository.create(this.route, model);
+  getByTypeUserIdState(
+    params: ListParams,
+    state: number,
+    type: string
+  ): Observable<IListResponse<ITransferente>> {
+    const route = `catalog/transferent/get-entity-transferent-by-user/${type}/state/${state}`;
+    return this.transferenteRepository.getAllPaginated(route, params);
   }
 
-  update(id: string | number, model: ITransferente): Observable<Object> {
-    return this.transferenteRepository.update(this.route, id, model);
+  getByIdState(id: string | number): Observable<ITransferente> {
+    const route = `catalog/transferent/get-entity-transferent-by-state/${id}`;
+    return this.transferenteRepository.getById(route, id);
   }
 
-  remove(id: string | number): Observable<Object> {
-    return this.transferenteRepository.remove(this.route, id);
+  create(transferente: ITransferente) {
+    return this.post(this.endpoint, transferente);
+  }
+
+  update(id: string | number, transferente: ITransferente) {
+    const route = `${this.endpoint}/${id}`;
+    return this.put(route, transferente);
+  }
+
+  remove(id: string | number) {
+    const route = `${this.endpoint}/${id}`;
+    return this.delete(route);
   }
 }

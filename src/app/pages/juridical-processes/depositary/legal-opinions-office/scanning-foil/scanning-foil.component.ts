@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { KEYGENERATION_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-scanning-foil',
@@ -28,7 +29,10 @@ export class ScanningFoilComponent implements OnInit {
 
   private buildForm() {
     this.form = this.fb.group({
-      scanningFoli: [null, [Validators.required]],
+      scanningFoli: [
+        null,
+        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
+      ],
     });
   }
 }

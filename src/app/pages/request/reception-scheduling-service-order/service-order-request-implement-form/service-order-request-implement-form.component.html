@@ -1,0 +1,163 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      Reporte de implementaci&oacute;n &#40;Programaci&oacute;n de
+      recepci&oacute;n&#58; METROPOLITANA&#45;SAT&#45;516&#45;OS&#41; para la
+      orden de servicio con folio&#58; METROPOLITANA&#45;SAT&#45;1340&#45;OS
+    </h5>
+  </div>
+
+  <div body style="margin-top: -30px">
+    <div class="justify-content-end btn-toolbar">
+      <button (click)="sendService()" class="btn btn-info btn-sm active">
+        <i class="fa fa-check" aria-hidden="true"></i> enviar
+      </button>
+      <button (click)="saveService()" class="btn btn-primary btn-sm active">
+        <i class="fa fa-save" aria-hidden="true"></i> Guardar
+      </button>
+    </div>
+    <app-detail-service-order></app-detail-service-order>
+
+    <app-address-transferent-form></app-address-transferent-form>
+
+    <app-tranportable-goods-form></app-tranportable-goods-form>
+
+    <app-order-service-form></app-order-service-form>
+
+    <app-classificate-vehicle-form></app-classificate-vehicle-form>
+
+    <app-address-origin-form></app-address-origin-form>
+
+    <app-comments-form></app-comments-form>
+
+    <div class="row pt-4">
+      <div class="md-tabs">
+        <tabset>
+          <tab heading="Servicio para bienes transportables">
+            <section>
+              <div class="table-responsive text-nowrap">
+                <div class="btn-toolbar">
+                  <button
+                    (click)="newService()"
+                    class="btn btn-primary btn-sm active">
+                    <i class="fa fa-plus-circle" aria-hidden="true"></i> Nuevo
+                    servico
+                  </button>
+                  <button
+                    *ngIf="showButtonServiceManual"
+                    (click)="newServiceManual()"
+                    class="btn btn-info btn-sm active">
+                    <i class="fa fa-plus-circle" aria-hidden="true"></i> Nuevo
+                    servico manual
+                  </button>
+                  <button
+                    (click)="deleteService()"
+                    class="btn btn-danger btn-sm active">
+                    <i class="fa fa-trash" aria-hidden="true"></i> Eliminar
+                    servicio
+                  </button>
+                  <button class="btn btn-primary btn-sm active">Detach</button>
+                </div>
+
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th scope="col" class="align-middle">
+                        <input
+                          type="checkbox"
+                          class="form-control ng-pristine ng-valid ng-touched"
+                          ng-reflect-model="true"
+                          value="second_checkbox" />
+                      </th>
+                      <th>Descripción</th>
+                      <th>Unidad de medida de servicio</th>
+                      <th>Clasificación de servicio</th>
+                      <th>Comentarios de servicio</th>
+                      <th>Duración (Horas)</th>
+                      <th>No. de recursos</th>
+                      <th>Recursos reales</th>
+                      <th>Precio unitario</th>
+                      <th>Total</th>
+                      <th>Descripción de diferencia</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td scope="row" class="align-middle">
+                        <input
+                          type="checkbox"
+                          id="cbox2"
+                          class="form-control ng-pristine ng-valid ng-touched"
+                          ng-reflect-model="true"
+                          value="second_checkbox" />
+                      </td>
+
+                      <td scope="row" class="align-middle">
+                        Maniobras (Un maniobrista por hora)
+                      </td>
+                      <td scope="row" class="align-middle">Servicio (Hora)</td>
+                      <td scope="row" class="align-middle">Manual</td>
+                      <td scope="row" class="align-middle">Personal</td>
+                      <td scope="row" class="align-middle">8</td>
+                      <td scope="row" class="align-middle">2</td>
+                      <td scope="row" class="align-middle">
+                        <input type="text" class="form-control" />
+                      </td>
+                      <td scope="row" class="align-middle"><b>$217.51</b></td>
+                      <td scope="row" class="align-middle"><b>$500.00</b></td>
+                      <td scope="row" class="align-middle">
+                        <input type="text" class="form-control" />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td scope="row" class="align-middle">
+                        <input
+                          type="checkbox"
+                          id="cbox2"
+                          class="form-control ng-pristine ng-valid ng-touched"
+                          ng-reflect-model="true"
+                          value="second_checkbox" />
+                      </td>
+
+                      <td scope="row" class="align-middle">
+                        Maniobras (Un maniobrista por hora)
+                      </td>
+                      <td scope="row" class="align-middle">Servicio (Hora)</td>
+                      <td scope="row" class="align-middle">Manual</td>
+                      <td scope="row" class="align-middle">Personal</td>
+                      <td scope="row" class="align-middle">8</td>
+                      <td scope="row" class="align-middle">2</td>
+                      <td scope="row" class="align-middle">
+                        <input type="text" class="form-control" />
+                      </td>
+                      <td scope="row" class="align-middle"><b>$217.51</b></td>
+                      <td scope="row" class="align-middle"><b>$500.00</b></td>
+                      <td scope="row" class="align-middle">
+                        <input type="text" class="form-control" />
+                      </td>
+                    </tr>
+                    <tr>
+                      <td scope="row" class="align-middle"></td>
+
+                      <td scope="row" class="align-middle"></td>
+                      <td scope="row" class="align-middle"></td>
+                      <td scope="row" class="align-middle"></td>
+                      <td scope="row" class="align-middle"></td>
+                      <td scope="row" class="align-middle"></td>
+                      <td scope="row" class="align-middle"></td>
+                      <td scope="row" class="align-middle"></td>
+                      <td scope="row" class="align-middle"></td>
+                      <td scope="row" class="align-middle"><b>$1000.00</b></td>
+                      <td scope="row" class="align-middle"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </tab>
+        </tabset>
+      </div>
+    </div>
+  </div>
+</app-card>

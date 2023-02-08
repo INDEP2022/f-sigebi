@@ -1,0 +1,45 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body>
+    <div class="ch-content">
+      <h5 class="title"></h5>
+      <div class="col-md-5 buttons">
+        <div>
+          <button
+            class="btn btn-success active btn-sm ml-3"
+            (click)="exportclientsBlackList()">
+            Exportar a Excel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <div class="col-md-12">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="customers">
+          </ng2-smart-table>
+        </div>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <!-- <div class="m-3">
+                <confirm-button [type]="'button'" (click)="close()"></confirm-button>
+            </div> -->
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -15,33 +15,37 @@ import { MENU } from 'src/app/core/menu';
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
-  styles: [],
+  styles: [
+    `
+      .scrollbar-menu {
+        --scrollbar-thumb-color: #10312b;
+        --scrollbar-thumb-hover-color: var(--scrollbar-thumb-color);
+      }
+    `,
+  ],
 })
 export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
   @ViewChild('componentRef') scrollRef: any;
   @Input() isCondensed = false;
   private menu: any;
-  private data: any;
-
   public menuItems: IMenuItem[] = [];
 
   @ViewChild('sideMenu') sideMenu: ElementRef;
 
-  constructor(private router: Router) {
-    this.router.events.forEach((event: any) => {
+  constructor(private router: Router) {}
+
+  ngOnInit() {
+    this.initialize();
+  }
+
+  ngAfterViewInit() {
+    this.router.events.forEach(event => {
       if (event instanceof NavigationEnd) {
         this._activateMenuDropdown();
         this._scrollElement();
       }
     });
-  }
-
-  ngOnInit() {
-    this.initialize();
     this._scrollElement();
-  }
-
-  ngAfterViewInit() {
     this.menu = new MetisMenu(this.sideMenu.nativeElement);
     this._activateMenuDropdown();
   }
@@ -65,10 +69,12 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
         const currentPosition: any =
           document.getElementsByClassName('mm-active')[0];
         let position = currentPosition.offsetTop;
-        if (position > 500)
-          if (this.scrollRef.SimpleBar !== null)
-            this.scrollRef.SimpleBar.getScrollElement().scrollTop =
-              position + 300;
+        if (position > 500) {
+          this.scrollRef.scrollTo({ top: position + 300, duration: 0 });
+        }
+        // if (this.scrollRef.SimpleBar !== null)
+        //   this.scrollRef.SimpleBar.getScrollElement().scrollTop =
+        //     position + 300;
       }
     }, 300);
   }

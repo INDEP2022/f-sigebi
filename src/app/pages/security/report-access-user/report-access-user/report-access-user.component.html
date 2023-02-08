@@ -1,0 +1,30 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">REPORTES DE ACCESOS POR USUARIOS</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="reporteUsuarioForm" class="form-material">
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-4 p-4">
+          <ngx-select
+            [data]="items"
+            bindLabel="usuarioName"
+            label="Usuario"
+            value="id"
+            (fetchItems)="getFromSelect($event)"
+            [form]="reporteUsuarioForm"
+            control="usuario"></ngx-select>
+        </div>
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <button
+            type="submit"
+            class="btn btn-primary btn-sm active m-2"
+            (click)="btnEjecutarReporte()">
+            Ejecutar Reporte
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

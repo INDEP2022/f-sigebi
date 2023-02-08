@@ -1,12 +1,12 @@
 <app-modal>
   <div header>
-    <h5 class="modal-title">{{ status }} CONCEPTO DE PAGO</h5>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
+    <form class="form-material" [formGroup]="paymentConceptForm">
       <div class="row">
         <div class="col-md-4">
-          <form-field [control]="form.get('id')" label="Id">
+          <form-field [control]="paymentConceptForm.get('id')" label="Id">
             <input
               type="number"
               class="form-control"
@@ -18,8 +18,8 @@
 
         <div class="col-md-4">
           <form-field
-            [control]="form.get('numRegister')"
-            label="Número de Registro">
+            [control]="paymentConceptForm.get('numRegister')"
+            label="N&uacute;mero de Registro">
             <input
               type="number"
               class="form-control"
@@ -31,7 +31,9 @@
       </div>
       <div class="row mt-4">
         <div class="col-md-12">
-          <form-field [control]="form.get('description')" label="Descripción">
+          <form-field
+            [control]="paymentConceptForm.get('description')"
+            label="Descripci&oacute;n">
             <input
               type="text"
               class="form-control"
@@ -46,7 +48,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [disabled]="!form.valid"
+          [disabled]="!paymentConceptForm.valid"
           [loading]="loading"
           (confirm)="confirm()"></confirm-button>
       </div>

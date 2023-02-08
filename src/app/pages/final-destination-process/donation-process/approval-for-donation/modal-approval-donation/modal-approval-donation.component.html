@@ -1,0 +1,65 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">{{ title }}</h5>
+  </div>
+
+  <div body>
+    <div class="row">
+      <div class="col-12 text-center">
+        <h5>
+          {{ subTitle }}
+        </h5>
+      </div>
+    </div>
+
+    <div *ngIf="op === 'select-area'">
+      <div class="row">
+        <div class="col-12">
+          <div class="form-material col-md-5">
+            <search-bar></search-bar>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-3 pt-2 scroll-table">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          class="col-md-12"
+          [settings]="settings"
+          [source]="data">
+        </ng2-smart-table>
+      </div>
+      <div class="row mt-5">
+        <div class="col-12 text-center">
+          <button type="button" class="btn btn-primary active">Aceptar</button>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="op === 'see-error'">
+      <div class="row mt-3 pt-2 scroll-table">
+        <ng2-smart-table
+          [attr.class]="'table-bordered'"
+          class="col-md-12"
+          [settings]="settings"
+          [source]="data">
+        </ng2-smart-table>
+      </div>
+      <div class="row mt-5">
+        <div class="col-12 text-center">
+          <button type="button" class="btn btn-primary active">Salir</button>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="op === 'check-goods'">
+      <div class="row mt-5">
+        <div class="col-md-6 text-center">
+          <button type="button" class="btn btn-primary active">Si</button>
+        </div>
+        <div class="col-md-6 text-center">
+          <button type="button" class="btn btn-primary active">No</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>

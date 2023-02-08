@@ -1,0 +1,93 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">
+      FORMULARIO &#45; MONITOR DE ABANDONO POR DEVOLUCI&Oacute;N
+    </h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row w-100">
+        <div class="col-sm-12 col-12 col-md-4 p-2">
+          <form-field [control]="form.get('noBien')" label="No&#46; Bien">
+            <input class="form-control" formControlName="noBien" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field [control]="form.get('estatus')" label="Estatus">
+            <input class="form-control" formControlName="estatus" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field [control]="form.get('goodEstatus')" label="Estatus Bien">
+            <input class="form-control" formControlName="goodEstatus" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-3 p-2">
+          <form-field [control]="form.get('quantity')" label="Cantidad">
+            <input class="form-control" formControlName="quantity" />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="form.get('fechaNotificacion')"
+            label="Fecha Notificaci&oacute;n">
+            <input
+              class="form-control"
+              formControlName="fechaNotificacion"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="form.get('fechaNotificacion2')"
+            label="Fecha Notificaci&oacute;n 2">
+            <input
+              class="form-control"
+              formControlName="fechaNotificacion2"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="form.get('fechaTerminoPeriodo')"
+            label="Fecha Termino Periodo">
+            <input
+              class="form-control"
+              formControlName="fechaTerminoPeriodo"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-2 p-2">
+          <form-field
+            [control]="form.get('fechaTerminoPeriodo2')"
+            label="Fecha Termino Periodo 2">
+            <input
+              class="form-control"
+              formControlName="fechaTerminoPeriodo2"
+              bsDatepicker />
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-6 p-2">
+          <form-field
+            [control]="form.get('declaracionAbandonoSERA')"
+            label="Declaraci&oacute;n Abandonos SERA">
+            <textarea
+              class="form-control"
+              formControlName="declaracionAbandonoSERA"></textarea>
+          </form-field>
+        </div>
+        <div class="col-sm-12 col-12 col-md-12 p-2 text-center">
+          <div class="form-group">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              (click)="btnRatificacion()">
+              Ratificaci&oacute;n
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

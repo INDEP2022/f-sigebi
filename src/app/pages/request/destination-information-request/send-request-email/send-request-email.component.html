@@ -1,0 +1,81 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="sendForm">
+      <div class="row mt-3">
+        <div class="col-sm-12">
+          <form-field
+            [control]="sendForm.get('saleEmail')"
+            label="Lista de Correos para Venta">
+            <input
+              type="email"
+              class="form-control"
+              formControlName="saleEmail"
+              (keydown)="addEmail($event, 'sale')" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="d-flex flex-wrap">
+          <span
+            *ngFor="let email of saleEmails"
+            class="badge rounded-pill text-bg-light me-2 my-2"
+            >{{ email }}
+            <span
+              (click)="removeEmail(email, 'sale')"
+              class="text-danger pointer"
+              >X</span
+            ></span
+          >
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-sm-12">
+          <form-field
+            [control]="sendForm.get('donationEmail')"
+            label="Lista de Correos para Donaci&oacute;n">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="donationEmail"
+              (keydown)="addEmail($event, 'donation')" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="d-flex flex-wrap">
+          <span
+            *ngFor="let email of donationEmails"
+            class="badge rounded-pill text-bg-light me-2 my-2"
+            >{{ email }}
+            <span
+              (click)="removeEmail(email, 'donation')"
+              class="text-danger pointer"
+              >X</span
+            ></span
+          >
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-primary active"
+          (click)="confirm()"
+          [disabled]="saleEmails.length == 0 && donationEmails.length == 0">
+          Enviar Correo de Solicitud
+        </button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

@@ -1,0 +1,35 @@
+<div>
+  <div class="row pt-4">
+    <div class="d-flex justify-content-end">
+      <div class="p-2">
+        <button
+          class="btn btn-secondary btn-sm active"
+          (click)="searchExpedients()">
+          <i class="bx bx-search-alt-2"></i> B&uacute;scando Expediente
+        </button>
+      </div>
+      <div class="p-2">
+        <button class="btn btn-secondary btn-sm active">
+          <i class="bx bx-download"></i> Descargar Archivo
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="row pt-4">
+    <div class="col-md-12">
+      <ng-scrollbar track="all" style="min-height: 170px; border: none">
+        <div [class]="loading ? 'table-loading' : ''">
+          <ng2-smart-table
+            (userRowSelect)="rowsSelected($event)"
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="paragraphs">
+          </ng2-smart-table>
+        </div>
+      </ng-scrollbar>
+    </div>
+    <app-pagination
+      [params]="params"
+      [totalItems]="totalItems"></app-pagination>
+  </div>
+</div>

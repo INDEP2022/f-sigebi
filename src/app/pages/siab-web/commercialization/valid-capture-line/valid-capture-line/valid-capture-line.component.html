@@ -1,0 +1,78 @@
+<app-card [header]="true">
+  <div header>
+    <div class="ch-content">
+      <h5 class="title">Validar l&iacute;nea de captura</h5>
+    </div>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-2">
+          <form-field [control]="form.get('typeEvent')" label="Tipo de Evento">
+            <ng-select
+              formControlName="typeEvent"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="Electrónica">Electr&oacute;nica</ng-option>
+              <ng-option value="Presencial">Presencial</ng-option>
+            </ng-select>
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="mb-3 ch-content">
+          <h5 class="title">Consultar L&iacute;nea de captura</h5>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('idEvent')" label="ID Evento">
+            <input type="text" class="form-control" formControlName="idEvent" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field
+            [control]="form.get('allotment')"
+            label="Lote p&uacute;blico">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="allotment" />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('idClient')" label="ID Cliente">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="idClient" />
+          </form-field>
+        </div>
+        <div class="col-md-1">
+          <div class="justify-content-center">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              [disabled]="!form.valid">
+              Buscar
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="row">
+      <div class="mb-3 ch-content" header>
+        <h5 class="title"></h5>
+        <div class="col-md-4 buttons">
+          <app-columns-select [(settings)]="settings"></app-columns-select>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <ng2-smart-table
+          [settings]="settings"
+          [source]="data"></ng2-smart-table>
+      </div>
+      <app-pagination [params]="params" [totalItems]="totalItems">
+      </app-pagination>
+    </div>
+  </div>
+</app-card>

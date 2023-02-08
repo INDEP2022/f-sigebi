@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -16,13 +17,18 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
   edit: boolean = false;
   selectTypeClarification = new DefaultSelect<any>();
   selectClarification = new DefaultSelect<any>();
-  docClarification: any = {};
+  docClarification: any[];
 
   constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
     super();
   }
 
   ngOnInit(): void {
+    //si tipo de aclaracion es Aclaracion se muestra este input
+    this.edit = true;
+
+    //verificar si se puede seleccionar muchas aclaraciones para editar y si es a si, que pasa
+    // si son diferentes tipos de aplaracioens
     console.log(this.docClarification);
 
     this.initForm();
@@ -32,19 +38,19 @@ export class ClarificationFormTabComponent extends BasePage implements OnInit {
     this.clarificationForm = this.fb.group({
       typeClarification: [null],
       clarification: [null],
-      reason: [null],
+      reason: [null, [Validators.pattern(STRING_PATTERN)]],
     });
 
     if (this.docClarification != undefined) {
       this.edit = true;
       //bloquear tipo de claracion cuando se edite
 
-      this.clarificationForm.patchValue({
+      /* this.clarificationForm.patchValue({
         ...this.clarificationForm,
         typeClarification: this.docClarification.typeClarification,
         reason: this.docClarification.reason,
       });
-      this.clarificationForm.controls['typeClarification'].disable();
+      this.clarificationForm.controls['typeClarification'].disable(); */
     }
   }
 

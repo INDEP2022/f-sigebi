@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { DocumentFormComponent } from '../document-form/document-form.component';
-import { DocumentShowComponent } from '../document-show/document-show.component';
+import { DocumentFormComponent } from '../../../shared-request/document-form/document-form.component';
+import { DocumentShowComponent } from '../../../shared-request/document-show/document-show.component';
 import { DOCUMENTS_LIST_COLUMNS } from './documents-list-columns';
 
 @Component({
@@ -14,7 +15,7 @@ import { DOCUMENTS_LIST_COLUMNS } from './documents-list-columns';
   styles: [],
 })
 export class DocumentsListComponent extends BasePage implements OnInit {
-  documentsData: any;
+  documentsData: any[] = [];
   showForm: boolean = false;
   documentForm: FormGroup = new FormGroup({});
   typeDocuments = new DefaultSelect();
@@ -24,10 +25,11 @@ export class DocumentsListComponent extends BasePage implements OnInit {
     private modalRef: BsModalRef
   ) {
     super();
-    this.settings.columns = DOCUMENTS_LIST_COLUMNS;
     this.settings.actions.delete = true;
+
     this.settings = {
       ...this.settings,
+      columns: DOCUMENTS_LIST_COLUMNS,
       edit: { editButtonContent: '<i class="fa fa fa-file"></i>' },
       delete: {
         deleteButtonContent: '<i class="fa fa-eye text-info mx-2"></i>',
@@ -52,17 +54,17 @@ export class DocumentsListComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.documentForm = this.fb.group({
-      text: [null],
+      text: [null, [Validators.pattern(STRING_PATTERN)]],
       typeDocument: [null],
-      titleDocument: [null],
+      titleDocument: [null, [Validators.pattern(STRING_PATTERN)]],
       noSiab: [null],
-      responsible: [null],
-      author: [null],
-      typeTransference: [null],
-      taxpayer: [null],
+      responsible: [null, [Validators.pattern(STRING_PATTERN)]],
+      author: [null, [Validators.pattern(STRING_PATTERN)]],
+      typeTransference: [null, [Validators.pattern(STRING_PATTERN)]],
+      taxpayer: [null, [Validators.pattern(STRING_PATTERN)]],
       noGestion: [5296016],
-      senderCharge: [null],
-      comments: [null],
+      senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
+      comments: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

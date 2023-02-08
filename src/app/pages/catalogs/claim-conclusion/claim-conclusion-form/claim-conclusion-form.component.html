@@ -3,12 +3,12 @@
     <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form [formGroup]="ClaimConclusionForm">
+    <form [formGroup]="ClaimConclusionForm" class="form-material">
       <div class="row">
         <div class="col-md-4">
           <form-field
             [control]="ClaimConclusionForm.get('id')"
-            label="Id Conclusión siniestro">
+            label="Id Conclusi&oacute;n siniestro">
             <input type="number" class="form-control" formControlName="id" />
           </form-field>
         </div>
@@ -22,7 +22,7 @@
         <div class="col-md-12">
           <form-field
             [control]="ClaimConclusionForm.get('description')"
-            label="Descripción">
+            label="Descripci&oacute;n">
             <textarea
               class="form-control"
               type="text"

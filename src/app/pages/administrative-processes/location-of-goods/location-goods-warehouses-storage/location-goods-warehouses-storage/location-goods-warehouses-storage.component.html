@@ -1,0 +1,192 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Ubicacion de bienes en almacenes y bobedas</h5>
+  </div>
+  <div body>
+    <form [formGroup]="form" class="form-material">
+      <div class="row mt-5">
+        <div class="col-md-9 col-sm-12 col-xs-12">
+          <div class="row">
+            <div class="col-md-3 col-sm-12 col-xs-12">
+              <form-field [control]="form.get('good')" label="Bien">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="good"
+                  (change)="loadGood()" />
+              </form-field>
+            </div>
+            <div class="col-md-9 col-sm-12 col-xs-12">
+              <form-field
+                [control]="form.get('description')"
+                label="Descripción">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="description" />
+              </form-field>
+            </div>
+          </div>
+          <div class="row mt-5">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <form-field
+                [control]="form.get('statusGoods')"
+                label="Estátus del bien">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="statusGoods" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-12 col-xs-12">
+          <form-radio label="Almacén">
+            <input
+              type="radio"
+              formControlName="radio"
+              value="cat"
+              (change)="onChangeType('almacen')" />
+          </form-radio>
+          <form-radio label="Bóveda">
+            <input
+              type="radio"
+              formControlName="radio"
+              value="boveda"
+              (change)="onChangeType('boveda')" />
+          </form-radio>
+          <form-radio label="Nulo">
+            <input
+              type="radio"
+              formControlName="radio"
+              [value]="null"
+              (change)="onChangeType('')" />
+          </form-radio>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <button
+            type="button"
+            class="btn btn-success btn-sm active"
+            (click)="massAssignment()">
+            Asignación Masiva
+          </button>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <button class="btn btn-info btn-sm active" (click)="checkLocations()">
+            Consultar Ubicaciones
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>
+
+<app-card [header]="true" *ngIf="typeLocation === 'almacen'">
+  <div class="ch-content" header>
+    <h5 class="title">Almacén</h5>
+  </div>
+  <div body>
+    <form [formGroup]="formWarehouse" class="form-material">
+      <div class="row">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formWarehouse.get('currentLocationWare')"
+            label="Ubicación Actual">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="currentLocationWare" />
+          </form-field>
+        </div>
+        <div class="col-md-8 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formWarehouse.get('currentDescriptionWare')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="currentDescriptionWare" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formWarehouse.get('newLocationWare')"
+            label="Nueva Ubicación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="newLocationWare" />
+          </form-field>
+        </div>
+        <div class="col-md-8 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formWarehouse.get('newDescriptionWare')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="newDescriptionWare" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>
+
+<app-card [header]="true" *ngIf="typeLocation === 'boveda'">
+  <div class="ch-content" header>
+    <h5 class="title">Bóveda</h5>
+  </div>
+  <div body>
+    <form [formGroup]="formVault" class="form-material">
+      <div class="row">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formVault.get('currentLocationVault')"
+            label="Ubicación Actual">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="currentLocationVault" />
+          </form-field>
+        </div>
+        <div class="col-md-8 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formVault.get('currentDescriptionVault')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="currentDescriptionVault" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <div class="col-md-4 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formVault.get('currentLocationVault')"
+            label="Nueva Ubicación">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="newLocationVault" />
+          </form-field>
+        </div>
+        <div class="col-md-8 col-sm-12 col-xs-12">
+          <form-field
+            [control]="formVault.get('newDescriptionVault')"
+            label="Descripción">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="newDescriptionVault" />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+</app-card>

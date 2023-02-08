@@ -1,0 +1,16 @@
+progressbar {
+  width: 150px;
+}
+
+.filename,
+.filetype {
+  width: 150px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.dropzone-container {
+  max-height: 300px;
+  overflow-y: auto;
+}

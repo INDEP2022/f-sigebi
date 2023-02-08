@@ -1,0 +1,165 @@
+<app-card [header]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Cierre de Actas de decomiso y devoluci&oacute;n</h5>
+  </div>
+
+  <div body>
+    <div class="row justify-content-center">
+      <div class="col-12 col-sm-12 col-md-6">
+        <search-bar-simple
+          (eventEmit)="search($event)"
+          [label]="''"
+          [placeholder]="'N&uacute;mero de expediente'">
+        </search-bar-simple>
+      </div>
+    </div>
+    <div *ngIf="flag">
+      <div class="row pr-4 pl-4">
+        <div class="col-md-6 text-left">
+          <span
+            class=""
+            [ngClass]="{
+              'text-black': statusAct === 'ABIERTA',
+              'txt-primary': statusAct === 'CERRADA'
+            }">
+            {{ statusAct }}
+          </span>
+        </div>
+        <div class="col-md-6" *ngIf="statusAct === 'ABIERTA'">
+          <div class="row justify-content-end">
+            <div class="col-auto">
+              <button class="btn btn-primary btn-sm active" (click)="update()">
+                Actualizar
+              </button>
+            </div>
+            <div class="col-auto">
+              <button class="btn btn-primary btn-sm active">Cerrar</button>
+            </div>
+            <div class="col-auto">
+              <button
+                class="btn btn-primary btn-sm active"
+                [routerLink]="[
+                  '/pages/documents-reception/records-validation',
+                  proceedingsNumb,
+                  proceedingsCve
+                ]">
+                Validadores de Acta
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <form [formGroup]="form" class="form-material">
+        <div class="row mt-5">
+          <div class="col-md-6">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('previewFind')"
+                label="Averiguaci&oacute;n Previa">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="previewFind"
+                  readonly />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('penaltyCause')"
+                label="Causa Penal">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="penaltyCause"
+                  readonly />
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-5">
+          <div class="col-md-4">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('proceedingsCve')"
+                label="Acta/Oficio">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="proceedingsCve" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('elaborationDate')"
+                label="Fecha Elaboraci&oacute;n">
+                <input
+                  type="text"
+                  class="form-control"
+                  bsDatepicker
+                  formControlName="elaborationDate"
+                  readonly />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('authorityOrder')"
+                label="Autoridad / Juez que Ordena">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="authorityOrder" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-md-6">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('proceedingsType')"
+                label="Tipo de &Aacute;cta">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="proceedingsType" />
+              </form-field>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field [control]="form.get('universalFolio')" label="Folio">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="universalFolio" />
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-12">
+            <div class="mb-3 pl-4 pr-4">
+              <form-field
+                [control]="form.get('observations')"
+                label="Observaciones">
+                <textarea class="form-control" formControlName="observations">
+                </textarea>
+              </form-field>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-5">
+          <ng2-smart-table
+            [settings]="settings"
+            [source]="dataTable"></ng2-smart-table>
+        </div>
+      </form>
+    </div>
+  </div>
+</app-card>
