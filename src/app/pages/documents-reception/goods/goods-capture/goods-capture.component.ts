@@ -237,6 +237,7 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
     const menage = {
       noGood: this.companyGood,
       noGoodMenaje: good.id,
+      roRegister: 1,
     };
     this.menageService.create(menage).subscribe({
       next: res => console.log(res),
