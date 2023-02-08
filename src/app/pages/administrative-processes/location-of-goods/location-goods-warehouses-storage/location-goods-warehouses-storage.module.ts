@@ -12,15 +12,15 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 
 ///Components
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
+import { SafeSharedComponent } from 'src/app/@standalone/shared-forms/safe-shared/safe-shared.component';
+import { WarehouseSharedComponent } from 'src/app/@standalone/shared-forms/warehouse-shared/warehouse-shared.component';
 import { PaLgMLocationGoodsWarehousesStorageRoutingModule } from './location-goods-warehouses-storage-routing.module';
 import { LocationGoodsWarehousesStorageComponent } from './location-goods-warehouses-storage/location-goods-warehouses-storage.component';
 import { ModalSelectsGoodsComponent } from './modal-selects-goods/modal-selects-goods.component';
-import { TrackerGoodsComponent } from './tracker-goods/tracker-goods.component';
 
 @NgModule({
   declarations: [
     LocationGoodsWarehousesStorageComponent,
-    TrackerGoodsComponent,
     ModalSelectsGoodsComponent,
   ],
   imports: [
@@ -36,6 +36,8 @@ import { TrackerGoodsComponent } from './tracker-goods/tracker-goods.component';
     TabsModule,
     ModalModule.forChild(),
     GoodsTypesSharedComponent,
+    WarehouseSharedComponent,
+    SafeSharedComponent,
   ],
 })
 export class PaLgMLocationGoodsWarehousesStorageModule {}

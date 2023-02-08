@@ -10,9 +10,9 @@ export class SHIPPING_DOCUMENTS_FORM {
     Validators.required,
     Validators.pattern(STRING_PATTERN),
   ]);
-  delegation = new FormControl<number>(null, [Validators.required]);
-  subdelegation = new FormControl<number>(null, [Validators.required]);
-  department = new FormControl<number>(null, [Validators.required]);
+  delegation = new FormControl<number>(null);
+  subdelegation = new FormControl<number>(null);
+  department = new FormControl<number>(null);
   sender = new FormControl<string>(null, [Validators.required]);
   receiver = new FormControl<string>(null, [Validators.required]);
   cpp = new FormControl<number>(null);
