@@ -2,12 +2,17 @@
  * Type window Object()
  */
 declare const window: any;
+console.log(window);
 export const environment = {
   production: true,
   API_URL: window.env.API_BACKEND_URL,
+  API_URL2: window.env.API_BACKEND_URL2,
+  URL_PREFIX: window.env.URL_PREFIX,
+
   api_external_token: window.env.api_external_token,
   api_external_userInfo: window.env.api_external_userInfo,
   api_external_typeUser: window.env.api_external_typeUser,
+  api_external_rolesUser: window.env.api_external_rolesUser,
 };
 /*export const environment = {
   production: true,
