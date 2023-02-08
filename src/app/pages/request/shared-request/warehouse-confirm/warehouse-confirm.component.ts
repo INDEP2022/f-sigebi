@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-warehouse-confirm',
@@ -26,7 +27,10 @@ export class WarehouseConfirmComponent extends BasePage implements OnInit {
   prepareForm() {
     this.responseForm = this.fb.group({
       idWarehouse: [null, [Validators.required]],
-      observation: [null, [Validators.required]],
+      observation: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 

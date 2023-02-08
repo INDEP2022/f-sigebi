@@ -1,7 +1,7 @@
 <app-card [header]="true">
   <div header>
     <div class="ch-content">
-      <h5 class="title">CATÁLOGO DE TIPOS DE SINIESTRO</h5>
+      <h5 class="title">CAT&Aacute;LOGO DE TIPOS DE SINIESTRO</h5>
       <div class="col-md-5 buttons">
         <div>
           <button
@@ -17,7 +17,7 @@
     <div class="table-responsive">
       <ng2-smart-table
         [settings]="settings"
-        [source]="data"
+        [source]="dataTable"
         (edit)="openForm($event.data)"
         (delete)="delete($event.data)"></ng2-smart-table>
     </div>

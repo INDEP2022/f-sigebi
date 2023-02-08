@@ -3,7 +3,7 @@
     <h5 class="modal-title">{{ edit ? 'Actualizar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form [formGroup]="statusProcessForm">
+    <form [formGroup]="statusProcessForm" class="form-material">
       <div class="row">
         <div class="col-md-6">
           <form-field
@@ -22,13 +22,12 @@
         <div class="col-md-12">
           <form-field
             [control]="statusProcessForm.get('description')"
-            label="Descripción">
+            label="Descripci&oacute;n">
             <textarea
               class="form-control"
               type="text"
               rows="2"
-              formControlName="description"
-              placeholder="Descripción"></textarea>
+              formControlName="description"></textarea>
           </form-field>
         </div>
       </div>

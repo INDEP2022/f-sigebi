@@ -12,7 +12,7 @@
               control="typeClarification"
               (fetchItems)="getTypeClarification($event)"
               [data]="selectTypeClarification"
-              label="* Tipo Aclaración"
+              label="Tipo Aclaraci&oacute;n"
               value="id"
               bindLabel="typeClarification"></ngx-select>
           </div>
@@ -24,7 +24,7 @@
               control="clarification"
               (fetchItems)="getClarification($event)"
               [data]="selectClarification"
-              label="Aclaracion"
+              label="Aclaraci&oacute;n"
               value="id"
               bindLabel="clarification"></ngx-select>
           </div>
@@ -33,7 +33,7 @@
           <div class="col-md-12">
             <form-field
               [control]="clarificationForm.get('reason')"
-              label="Razon">
+              label="Raz&oacute;n">
               <textarea
                 class="form-control"
                 formControlName="reason"

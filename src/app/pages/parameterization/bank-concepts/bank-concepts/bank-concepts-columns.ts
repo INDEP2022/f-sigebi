@@ -1,5 +1,5 @@
 export const BANK_CONCEPTS_COLUMNS = {
-  concept: {
+  key: {
     title: 'Concepto',
     sort: false,
   },

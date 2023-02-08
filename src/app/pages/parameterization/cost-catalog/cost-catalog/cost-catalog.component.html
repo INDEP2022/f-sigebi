@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Catalogo de Costos</h5>
+    <h5 class="title">Cat&aacute;logo de Costos</h5>
     <div class="col-md-5 buttons">
       <div>
         <button (click)="openForm()" class="btn btn-primary active btn-sm ml-3">
@@ -22,7 +22,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="data"
+            [source]="dataTable"
             (edit)="openForm($event.data)"
             (delete)="delete($event.data)">
           </ng2-smart-table>

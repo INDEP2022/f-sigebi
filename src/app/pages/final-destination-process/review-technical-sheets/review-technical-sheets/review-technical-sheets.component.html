@@ -1,11 +1,11 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Revisión de Fichas Técnicas</h5>
+    <h5 class="title">Revisi&oacute;n de Fichas T&eacute;cnicas</h5>
   </div>
 
   <div body>
     <div class="row">
-      <h5>Parámetros</h5>
+      <h5>Par&aacute;metros</h5>
     </div>
     <div class="mt-5">
       <form class="form-material" [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -53,7 +53,9 @@
         <div class="row mt-4 align-items-center">
           <div class="col-12 col-md-3">
             <div class="mb-3 pl-4 pr-4">
-              <form-field [control]="form.get('initAct')" label="Acta Inicial">
+              <form-field
+                [control]="form.get('initAct')"
+                label="&Aacute;cta Inicial">
                 <input
                   type="text"
                   class="form-control"
@@ -65,7 +67,9 @@
           </div>
           <div class="col-12 col-md-3">
             <div class="mb-3 pl-4 pr-4">
-              <form-field [control]="form.get('endAct')" label="Acta Final">
+              <form-field
+                [control]="form.get('endAct')"
+                label="&Aacute;cta Final">
                 <input
                   type="text"
                   class="form-control"
@@ -79,7 +83,7 @@
             <div class="mb-3 pl-4 pr-4">
               <form-field
                 [control]="form.get('userUploadAct')"
-                label="Usuario Carga Acta">
+                label="Usuario Carga &Aacute;cta">
                 <input
                   type="text"
                   class="form-control"
@@ -91,7 +95,7 @@
             <div class="mb-3 pl-4 pr-4">
               <form-field
                 [control]="form.get('regCoordination')"
-                label="Coordinación Regional">
+                label="Coordinaci&oacute;n Regional">
                 <input
                   type="text"
                   class="form-control"

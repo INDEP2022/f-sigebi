@@ -4,13 +4,13 @@
   </div>
   <div body>
     <form [formGroup]="estateForm" class="form-material">
-      <form-field [control]="estateForm.get('akaWarehouse')">
+      <form-field [control]="estateForm.get('warehouse')">
         <ngx-select
           [form]="estateForm"
-          control="akaWarehouse"
+          control="warehouse"
           [data]="akaWarehouse"
-          value="id"
-          bindLabel="norm"
+          value="idWarehouse"
+          bindLabel="description"
           label="Alias Almacén"
           (fetchItems)="getAkaWarehouseSelect($event)"></ngx-select>
       </form-field>
@@ -22,8 +22,9 @@
             control="state"
             [data]="states"
             value="id"
-            bindLabel="norm"
+            bindLabel="descCondition"
             label="Estado"
+            (change)="stateSelect($event)"
             (fetchItems)="getStateSelect($event)"></ngx-select>
         </form-field>
       </div>
@@ -35,27 +36,30 @@
             control="municipality"
             [data]="municipalities"
             value="id"
-            bindLabel="norm"
+            bindLabel="nameMunicipality"
             label="Municipio"
+            (change)="municipalitySelect($event)"
             (fetchItems)="getMunicipalitySelect($event)"></ngx-select>
         </form-field>
       </div>
 
       <div class="row pt-4">
-        <form-field [control]="estateForm.get('colony')">
+        <form-field [control]="estateForm.get('locality')">
           <ngx-select
             [form]="estateForm"
-            control="colony"
-            [data]="colonies"
+            control="locality"
+            [data]="localities"
             value="id"
-            bindLabel="norm"
-            label="Colonia"
-            (fetchItems)="getColonySelect($event)"></ngx-select>
+            bindLabel="nameLocation"
+            label="Localidad"
+            (fetchItems)="getLocalitySelect($event)"></ngx-select>
         </form-field>
       </div>
 
       <div class="row pt-4">
-        <form-field [control]="estateForm.get('cp')" label="Código postal">
+        <form-field
+          [control]="estateForm.get('cp')"
+          label="C&oacute;digo postal">
           <input type="text" class="form-control" formControlName="cp" />
         </form-field>
       </div>

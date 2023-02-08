@@ -3,203 +3,226 @@
     <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
+    <form class="form-material" [formGroup]="tdescCveForm">
       <div class="row">
         <div class="col-md-3">
-          <form-field [control]="form.get('name')" label="Nombre">
-            <input type="text" class="form-control" formControlName="name" />
+          <form-field [control]="tdescCveForm.get('id')" label="ID">
+            <input type="text" class="form-control" formControlName="id" />
           </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="form.get('description')" label="Descripción">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="description" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-check label="Una Clave" for="label1">
-            <input id="label1" type="checkbox" formControlName="type1" />
-          </form-check>
-        </div>
-        <div class="col-md-3">
-          <form-check label="Cinco Clave" for="label2">
-            <input id="label2" type="checkbox" formControlName="type5" />
-          </form-check>
         </div>
       </div>
       <div class="row pt-5">
         <div class="col-md-3">
-          <form-field [control]="form.get('cve1')" label="Clave 1">
-            <input type="text" class="form-control" formControlName="cve1" />
+          <form-field [control]="tdescCveForm.get('dsKey1')" label="Clave">
+            <input type="text" class="form-control" formControlName="dsKey1" />
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field [control]="form.get('format1')" label="Formato 1">
-            <input type="text" class="form-control" formControlName="format1" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="form.get('minLong1')" label="Longitud Min. 1">
+          <form-field [control]="tdescCveForm.get('swFormat1')" label="Formato">
             <input
               type="text"
               class="form-control"
-              formControlName="minLong1" />
+              formControlName="swFormat1" />
           </form-field>
         </div>
         <div class="col-md-3">
-          <form-field [control]="form.get('maxLong1')" label="Longitud Max. 1">
+          <form-field
+            [control]="tdescCveForm.get('longMin1')"
+            label="Longitud Min&#46;">
             <input
               type="text"
               class="form-control"
-              formControlName="maxLong1" />
+              formControlName="longMin1" />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field
+            [control]="tdescCveForm.get('longMax1')"
+            label="Longitud Max&#46;">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="longMax1" />
           </form-field>
         </div>
       </div>
 
-      <div *ngIf="type5.value">
-        <div class="row pt-5">
+      <div>
+        <hr />
+        <span>Campos para Clave 2</span>
+        <div class="row pt-4">
           <div class="col-md-3">
-            <form-field [control]="form.get('cve2')" label="Clave 2">
-              <input type="text" class="form-control" formControlName="cve2" />
-            </form-field>
-          </div>
-          <div class="col-md-3">
-            <form-field [control]="form.get('format2')" label="Formato 2">
+            <form-field [control]="tdescCveForm.get('dsKey2')" label="Clave">
               <input
                 type="text"
                 class="form-control"
-                formControlName="format2" />
-            </form-field>
-          </div>
-          <div class="col-md-3">
-            <form-field
-              [control]="form.get('minLong2')"
-              label="Longitud Min. 2">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="minLong2" />
+                formControlName="dsKey2" />
             </form-field>
           </div>
           <div class="col-md-3">
             <form-field
-              [control]="form.get('maxLong2')"
-              label="Longitud Max. 2">
+              [control]="tdescCveForm.get('swFormat2')"
+              label="Formato">
               <input
                 type="text"
                 class="form-control"
-                formControlName="maxLong2" />
+                formControlName="swFormat2" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="tdescCveForm.get('longMin2')"
+              label="Longitud Min&#46;">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="longMin2" />
+            </form-field>
+          </div>
+          <div class="col-md-3">
+            <form-field
+              [control]="tdescCveForm.get('longMax2')"
+              label="Longitud Max&#46;">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="longMax2" />
             </form-field>
           </div>
         </div>
 
         <div class="row pt-5">
-          <div class="col-md-3">
-            <form-field [control]="form.get('cve3')" label="Clave 3">
-              <input type="text" class="form-control" formControlName="cve3" />
-            </form-field>
-          </div>
-          <div class="col-md-3">
-            <form-field [control]="form.get('format3')" label="Formato 3">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="format3" />
-            </form-field>
-          </div>
-          <div class="col-md-3">
-            <form-field
-              [control]="form.get('minLong3')"
-              label="Longitud Min. 3">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="minLong3" />
-            </form-field>
-          </div>
-          <div class="col-md-3">
-            <form-field
-              [control]="form.get('maxLong3')"
-              label="Longitud Max. 3">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="maxLong3" />
-            </form-field>
-          </div>
-        </div>
-
-        <div class="row pt-5">
-          <div class="col-md-3">
-            <form-field [control]="form.get('cve4')" label="Clave 4">
-              <input type="text" class="form-control" formControlName="cve4" />
-            </form-field>
-          </div>
-          <div class="col-md-3">
-            <form-field [control]="form.get('format4')" label="Formato 4">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="format4" />
-            </form-field>
-          </div>
-          <div class="col-md-3">
-            <form-field
-              [control]="form.get('minLong4')"
-              label="Longitud Min. 4">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="minLong4" />
-            </form-field>
-          </div>
-          <div class="col-md-3">
-            <form-field
-              [control]="form.get('maxLong4')"
-              label="Longitud Max. 4">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="maxLong4" />
-            </form-field>
+          <hr />
+          <span>Campos para Clave 3</span>
+          <div class="row pt-4">
+            <div class="col-md-3">
+              <form-field [control]="tdescCveForm.get('dsKey3')" label="Clave">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="dsKey3" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="tdescCveForm.get('swFormat3')"
+                label="Formato">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="swFormat3" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="tdescCveForm.get('longMin3')"
+                label="Longitud Min&#46;">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="longMin3" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="tdescCveForm.get('longMax3')"
+                label="Longitud Max&#46;">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="longMax3" />
+              </form-field>
+            </div>
           </div>
         </div>
 
         <div class="row pt-5">
-          <div class="col-md-3">
-            <form-field [control]="form.get('cve5')" label="Clave 5">
-              <input type="text" class="form-control" formControlName="cve5" />
-            </form-field>
+          <hr />
+          <span>Campos para Clave 4</span>
+          <div class="row pt-4">
+            <div class="col-md-3">
+              <form-field [control]="tdescCveForm.get('dsKey4')" label="Clave">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="dsKey4" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="tdescCveForm.get('swFormat4')"
+                label="Formato">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="swFormat4" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="tdescCveForm.get('longMin4')"
+                label="Longitud Min&#46;">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="longMin4" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="tdescCveForm.get('longMax4')"
+                label="Longitud Max&#46;">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="longMax4" />
+              </form-field>
+            </div>
           </div>
-          <div class="col-md-3">
-            <form-field [control]="form.get('format5')" label="Formato 5">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="format5" />
-            </form-field>
-          </div>
-          <div class="col-md-3">
-            <form-field
-              [control]="form.get('minLong5')"
-              label="Longitud Min. 5">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="minLong5" />
-            </form-field>
-          </div>
-          <div class="col-md-3">
-            <form-field
-              [control]="form.get('maxLong5')"
-              label="Longitud Max. 5">
-              <input
-                type="text"
-                class="form-control"
-                formControlName="maxLong5" />
-            </form-field>
+        </div>
+
+        <div class="row pt-5">
+          <hr />
+          <span>Campos para Clave 5</span>
+          <div class="row pt-4">
+            <div class="col-md-3">
+              <form-field [control]="tdescCveForm.get('dsKey5')" label="Clave">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="dsKey5" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="tdescCveForm.get('swFormat5')"
+                label="Formato">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="swFormat5" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="tdescCveForm.get('longMin5')"
+                label="Longitud Min&#46;">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="longMin5" />
+              </form-field>
+            </div>
+            <div class="col-md-3">
+              <form-field
+                [control]="tdescCveForm.get('longMax5')"
+                label="Longitud Max&#46;">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="longMax5" />
+              </form-field>
+            </div>
           </div>
         </div>
       </div>
@@ -210,8 +233,8 @@
       <div class="m-3">
         <confirm-button
           [type]="'button'"
-          [disabled]="!form.valid"
-          (click)="close()"></confirm-button>
+          [disabled]="!tdescCveForm.valid"
+          (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

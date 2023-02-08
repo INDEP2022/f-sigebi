@@ -6,6 +6,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IProficient } from 'src/app/core/models/catalogs/proficient.model';
 import { ProeficientService } from 'src/app/core/services/catalogs/proficient.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -34,9 +35,15 @@ export class ExpertFormComponent extends BasePage implements OnInit {
   private prepareForm() {
     this.form = this.fb.group({
       id: [null],
-      name: [null, [Validators.required]],
-      position: [null, [Validators.required]],
-      registryNumber: [null, [Validators.required]],
+      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      position: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
+      registryNumber: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
     });
     if (this.proficient != null) {
       this.edit = true;

@@ -1,6 +1,6 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">PARÁMETROS COMERCIALIZACIÓN</h5>
+    <h5 class="title">PAR&Aacute;METROS COMERCIALIZACI&Oacute;N</h5>
     <div>
       <button (click)="add()" class="btn btn-primary active btn-sm ml-3">
         Nuevo
@@ -21,7 +21,7 @@
         *ngIf="rowSelected">
         <div class="row mb-3 mt-3 justify-content-end">
           <div class="col-lg-6 col-md-6 col-sm-6 col-12">
-            <label for="">Parámetro</label>
+            <label for="">Par&aacute;metro</label>
             <div class="mt-4">
               <h5 class="font-size-14 text-muted">
                 <i class="bx bxs-circle me-1 text-muted"></i>
@@ -39,7 +39,7 @@
           <ng2-smart-table
             [attr.class]="'table-bordered'"
             [settings]="settings"
-            [source]="data"
+            [source]="parametersD"
             (edit)="openForm($event.data)"
             (delete)="delete($event.data)"
             (userRowSelect)="selectRow($event.data)">
@@ -52,7 +52,7 @@
     <!--PARAMETER-->
     <div class="row mb-3 mt-3 justify-content-start" *ngIf="rowSelected">
       <div class="col-lg-6 col-md-6 col-sm-6 col-12">
-        <label for="">Parámetro</label>
+        <label for="">Par&aacutemetro</label>
         <div class="mt-4">
           <h5 class="font-size-14 text-muted">
             <i class="bx bxs-circle me-1 text-muted"></i>

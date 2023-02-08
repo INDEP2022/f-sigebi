@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { PrintReportModalComponent } from '../../../transfer-request/tabs/notify-clarifications-impropriety-tabs-component/print-report-modal/print-report-modal.component';
 
@@ -25,8 +26,8 @@ export class AnnexJAssetsClassificationComponent implements OnInit {
 
   initForm(): void {
     this.signForm = this.fb.group({
-      name: [null],
-      inCharge: [null],
+      name: [null, [Validators.pattern(STRING_PATTERN)]],
+      inCharge: [null, [Validators.pattern(STRING_PATTERN)]],
       tipeSign: [null],
     });
   }

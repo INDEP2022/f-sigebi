@@ -38,6 +38,7 @@ export class GoodTypesListComponent extends BasePage implements OnInit {
     this.loading = true;
     this.goodTypesService.getAll(this.params.getValue()).subscribe({
       next: response => {
+        console.log(response);
         this.paragraphs = response.data;
         this.totalItems = response.count;
         this.loading = false;

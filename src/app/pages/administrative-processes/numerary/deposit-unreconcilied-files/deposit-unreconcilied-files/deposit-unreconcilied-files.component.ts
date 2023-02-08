@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-deposit-unreconcilied-files',
@@ -16,14 +17,20 @@ export class DepositUnreconciliedFilesComponent implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      bank: [null, Validators.required],
+      bank: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
 
-      currency: [null, Validators.required],
+      currency: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
 
       date: [null, Validators.required],
       dateTo: [null, Validators.required],
 
-      searchImport: [null, Validators.required],
+      searchImport: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 }

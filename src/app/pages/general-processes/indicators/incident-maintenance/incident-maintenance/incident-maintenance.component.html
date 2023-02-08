@@ -1,11 +1,11 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Ejecución de Mantenimientos a Incidentes</h5>
+    <h5 class="title">Ejecuci&oacute;n de Mantenimientos a Incidentes</h5>
   </div>
 
   <div body>
     <div class="row">
-      <h5>SOLUCIÓN</h5>
+      <h5>SOLUCI&Oacute;N</h5>
     </div>
     <form [formGroup]="form" class="form-material">
       <div class="row pt-5">
@@ -28,14 +28,14 @@
         <form-field
           [control]="form.get('ticket')"
           class="col-md-2"
-          label="No. Ticket">
+          label="No&#46; Ticket">
           <input type="number" class="form-control" formControlName="ticket" />
         </form-field>
 
         <form-field
           [control]="form.get('oficio')"
           class="col-md-3"
-          label="No. Oficio">
+          label="No&#46; Oficio">
           <input type="text" class="form-control" formControlName="oficio" />
         </form-field>
       </div>
@@ -48,7 +48,7 @@
       <div class="row pt-5">
         <form-field
           [control]="form.get('solicitud')"
-          label="DESCRIPCIÓN DETALLADA DE LA SOLICITUD">
+          label="DESCRIPCI&Oacute;N DETALLADA DE LA SOLICITUD">
           <textarea
             formControlName="solicitud"
             rows="10"
@@ -59,7 +59,7 @@
       <div class="row pt-5">
         <form-field
           [control]="form.get('solucion')"
-          label="DESCRIPCIÓN DE LA SOLUCIÓN">
+          label="DESCRIPCI&Oacute;N DE LA SOLUCI&Oacute;N">
           <textarea
             formControlName="solucion"
             rows="10"

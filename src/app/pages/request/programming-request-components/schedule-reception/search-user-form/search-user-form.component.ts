@@ -14,6 +14,7 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
   usersData: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
+  typeUser: string = '';
 
   constructor(private modalRef: BsModalRef) {
     super();
@@ -21,6 +22,10 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {}
+
+  getUsers() {
+    console.log('Tipo de usuario', this.typeUser);
+  }
 
   confirm() {}
 

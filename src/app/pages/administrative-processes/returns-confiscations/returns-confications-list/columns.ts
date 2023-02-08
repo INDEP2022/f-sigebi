@@ -2,7 +2,7 @@ import { DatePickerComponent } from 'src/app/shared/render-components/date-picke
 import { SelectUserComponent } from 'src/app/shared/render-components/select-user/select-user.component';
 
 export const COLUMNS = {
-  goodId: {
+  id: {
     title: 'Bien',
     sort: false,
     editable: false,
@@ -12,12 +12,12 @@ export const COLUMNS = {
     sort: false,
     editable: false,
   },
-  domain: {
+  extDomProcess: {
     title: 'Ext. Dominio',
     sort: false,
     editable: false,
   },
-  dateConfiscation: {
+  dateRenderDecoDev: {
     title: 'Fecha Decomiso',
     editor: {
       type: 'custom',
@@ -25,7 +25,7 @@ export const COLUMNS = {
     },
     sort: false,
   },
-  promoter: {
+  promoterUserDecoDevo: {
     title: 'Promovente',
     sort: false,
     width: '20%',
@@ -39,22 +39,22 @@ export const COLUMNS = {
     sort: false,
     editable: false,
   },
-  amount: {
+  appraisedValue: {
     title: 'Importe',
     sort: false,
     editable: false,
   },
-  dateTesofe: {
+  tesofeDate: {
     title: 'Fecha Tesofe',
     sort: false,
     editable: false,
   },
-  confRet: {
+  /*confRet: {
     title: 'Dev/Conf',
     sort: false,
     editable: false,
-  },
-  folioTesofe: {
+  },*/
+  tesofeFolio: {
     title: 'Folio Tesofe',
     sort: false,
     editable: false,

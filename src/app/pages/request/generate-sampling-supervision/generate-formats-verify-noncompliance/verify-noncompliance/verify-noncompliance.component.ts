@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { Observable } from 'rxjs';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { AppState } from '../../../../../app.reducers';
 import { ModelForm } from '../../../../../core/interfaces/model-form';
 import { BasePage } from '../../../../../core/shared/base-page';
@@ -47,7 +48,7 @@ export class VerifyNoncomplianceComponent extends BasePage implements OnInit {
     this.filterForm = this.fb.group({
       noManagement: [null],
       noInventory: [null],
-      descriptionAsset: [null],
+      descriptionAsset: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

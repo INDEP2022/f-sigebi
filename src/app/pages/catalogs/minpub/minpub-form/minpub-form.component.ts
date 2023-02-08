@@ -7,6 +7,10 @@ import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { ListParams } from '../../../../common/repository/interfaces/list-params';
+import {
+  PHONE_PATTERN,
+  STRING_PATTERN,
+} from '../../../../core/shared/patterns';
 
 @Component({
   selector: 'app-minpub-form',
@@ -36,23 +40,35 @@ export class MinpubFormComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.minpubForm = this.fb.group({
       id: [null, [Validators.required]],
-      descripcion: [null, [Validators.required]],
-      responsable: [null, [Validators.required]],
+      descripcion: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      responsable: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       no_ciudad: [null, [Validators.required]],
-      calle: [null, [Validators.required]],
+      calle: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       no_interior: [null, [Validators.required]],
       no_exterior: [null, [Validators.required]],
-      colonia: [null, [Validators.required]],
+      colonia: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       codigo_postal: [null, [Validators.required]],
       deleg_munic: [null, [Validators.required]],
-      telefono: [null, [Validators.required]],
+      telefono: [
+        null,
+        [Validators.required, Validators.pattern(PHONE_PATTERN)],
+      ],
       no_registro: [null, [Validators.required]],
     });
     if (this.minpub != null) {
       this.edit = true;
-      let city: ICity = this.minpub.no_ciudad as ICity;
+      let city: ICity = this.minpub.idCity as ICity;
       this.minpubForm.patchValue({ ...this.minpub, no_ciudad: city?.idCity });
-      this.minpub.no_ciudad
+      this.minpub.idCity
         ? (this.items = new DefaultSelect([city], 1))
         : this.getFromSelect({ inicio: 1, text: '' });
     } else {

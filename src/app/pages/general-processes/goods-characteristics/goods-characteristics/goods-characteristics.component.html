@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Características del bien</h5>
+    <h5 class="title">Caracter&Iacute;sticas del bien</h5>
   </div>
 
   <div body>
@@ -8,7 +8,7 @@
       <div class="col-md-12 md-tabs">
         <form [formGroup]="form" class="form-material">
           <tabset>
-            <tab heading="Datos de Búsqueda">
+            <tab heading="Datos de B&uacute;squeda">
               <div class="row">
                 <div class="col-md-4">
                   <app-goods-types-shared
@@ -21,7 +21,7 @@
                         [form]="form"
                         control="noBien"
                         [data]="select"
-                        label="No. Bien"></ngx-select>
+                        label="No&#46; Bien"></ngx-select>
                     </form-field>
                   </div>
                   <div class="row pt-4">
@@ -51,7 +51,7 @@
                   <div class="row">
                     <form-field
                       [control]="form.get('descripcion')"
-                      label="Descripción">
+                      label="Descripci&oacute;n">
                       <textarea
                         formControlName="descripcion"
                         class="form-control"></textarea>
@@ -79,7 +79,7 @@
                     <form-field
                       class="col-md-4"
                       [control]="form.get('valRef')"
-                      label="Val. Referencia">
+                      label="Val&#46; Referencia">
                       <input
                         type="text"
                         formControlName="valRef"
@@ -95,7 +95,7 @@
               <div class="row">
                 <form-field
                   [control]="form.get('fechaAval')"
-                  label="Fecha Avalúo Vigencia"
+                  label="Fecha Aval&uacute;o Vigencia"
                   class="col-md-3">
                   <input
                     type="text"
@@ -106,7 +106,7 @@
 
                 <form-field
                   [control]="form.get('valorAval')"
-                  label="Valor Avalúo"
+                  label="Valor Aval&uacute;o"
                   class="col-md-3">
                   <input
                     type="text"
@@ -146,7 +146,7 @@
                 </form-field>
 
                 <div class="col-md-4">
-                  <small>¿Con Avalúo?</small>
+                  <small>¿Con Aval&uacute;o?</small>
                   <div class="d-flex">
                     <form-radio label="Si">
                       <input type="radio" formControlName="avaluo" value="1" />

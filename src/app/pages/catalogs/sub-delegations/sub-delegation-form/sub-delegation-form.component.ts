@@ -7,6 +7,7 @@ import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { SubdelegationService } from 'src/app/core/services/catalogs/subdelegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 @Component({
@@ -36,8 +37,14 @@ export class SubDelegationFormComponent extends BasePage implements OnInit {
   private prepareForm(): void {
     this.subdelegationForm = this.fb.group({
       id: [null],
-      description: [null, Validators.required],
-      phaseEdo: [null, Validators.required],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      phaseEdo: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       numDelegation: [null, [Validators.min(1)]],
       numDailyCon: [null, [Validators.required]],
       numRegister: [null, [Validators.min(1)]],

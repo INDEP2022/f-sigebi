@@ -6,6 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { DelegationService } from '../../../../core/services/catalogs/delegation.service';
 
@@ -46,7 +47,7 @@ export class NumeraryPhysicsComponent implements OnInit {
       delegation: ['', Validators.required],
       startedDate: ['', Validators.required],
       finishedDate: ['', Validators.required],
-      type: ['', Validators.required],
+      type: ['', [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
   }
 

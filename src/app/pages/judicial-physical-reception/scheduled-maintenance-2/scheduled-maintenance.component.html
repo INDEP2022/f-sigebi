@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Mantenimiento de Acta Entrega Recepcion</h5>
+    <h5 class="title">Mantenimiento de Acta Entrega Recepci&oacute;n</h5>
   </div>
   <div body>
     <form class="form-material" [formGroup]="form">
@@ -12,8 +12,7 @@
             <input
               bsDatepicker
               class="form-control"
-              formControlName="fechaCaptura"
-              placeholder="Fecha Captura" />
+              formControlName="fechaCaptura" />
           </form-field>
         </div>
 
@@ -27,12 +26,8 @@
         </div>
 
         <div class="col">
-          <form-field [control]="form.get('acta')" label="No. Acta">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="acta"
-              placeholder="No. Acta" />
+          <form-field [control]="form.get('acta')" label="No&#46; Acta">
+            <input type="number" class="form-control" formControlName="acta" />
           </form-field>
         </div>
       </div>
@@ -60,58 +55,37 @@
             <input
               type="text"
               class="form-control"
-              formControlName="transferente"
-              placeholder="Transferente" />
+              formControlName="transferente" />
           </form-field>
         </div>
 
         <div class="col">
-          <form-field [control]="form.get('area')" label="Area">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="area"
-              placeholder="Area" />
+          <form-field [control]="form.get('area')" label="&Aacute;rea">
+            <input type="text" class="form-control" formControlName="area" />
           </form-field>
         </div>
 
         <div class="col">
           <form-field [control]="form.get('usuario')" label="Usuario">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="usuario"
-              placeholder="Usuario" />
+            <input type="text" class="form-control" formControlName="usuario" />
           </form-field>
         </div>
 
         <div class="col">
           <form-field [control]="form.get('folio')" label="Folio">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="folio"
-              placeholder="Folio" />
+            <input type="text" class="form-control" formControlName="folio" />
           </form-field>
         </div>
 
         <div class="col">
-          <form-field [control]="form.get('year')" label="Año">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="year"
-              placeholder="Año" />
+          <form-field [control]="form.get('year')" label="A&ntilde;o">
+            <input type="number" class="form-control" formControlName="year" />
           </form-field>
         </div>
 
         <div class="col">
           <form-field [control]="form.get('month')" label="Mes">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="month"
-              placeholder="Mes" />
+            <input type="number" class="form-control" formControlName="month" />
           </form-field>
         </div>
       </div>
@@ -121,14 +95,13 @@
             <input
               type="number"
               class="form-control"
-              formControlName="claveActa"
-              placeholder="Clave Acta" />
+              formControlName="claveActa" />
           </form-field>
         </div>
 
         <div class="col-md-6">
           <button type="button" class="my-1 mx-2" size="small">
-            Abrir/Cerrar Acta
+            Abrir&#47;Cerrar Acta
           </button>
           <button type="button" class="my-1 mx-2" size="small">
             Exportar Excel
@@ -164,8 +137,7 @@
             <input
               type="number"
               class="form-control"
-              formControlName="cantidadRegistros"
-              placeholder="Cantidad Registros" />
+              formControlName="cantidadRegistros" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -175,8 +147,7 @@
             <input
               type="number"
               class="form-control"
-              formControlName="cantidadBienes"
-              placeholder="Cantidad Bienes" />
+              formControlName="cantidadBienes" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -186,19 +157,17 @@
             <input
               type="number"
               class="form-control"
-              formControlName="cantidadExpedientes"
-              placeholder="Cantidad Expedientes" />
+              formControlName="cantidadExpedientes" />
           </form-field>
         </div>
         <div class="col-md-3">
           <form-field
             [control]="form.get('cantidadDictamenes')"
-            label="Cantidad Dictamenes">
+            label="Cantidad Dict&aacute;menes">
             <input
               type="number"
               class="form-control"
-              formControlName="cantidadDictamenes"
-              placeholder="Cantidad Dictamenes" />
+              formControlName="cantidadDictamenes" />
           </form-field>
         </div>
       </div>

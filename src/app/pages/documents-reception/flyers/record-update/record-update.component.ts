@@ -2,12 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
 } from 'src/app/core/shared/patterns';
+import { EventSelectionModalComponent } from 'src/app/pages/commercialization/catalogs/components/event-selection-modal/event-selection-modal.component';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { PublicMinistriesComponent } from '../public-ministries/public-ministries.component';
 
@@ -27,7 +28,7 @@ export class RecordUpdateComponent extends BasePage implements OnInit {
   public readonly flyerId: number = null;
   flyerForm: FormGroup;
   subjects = new DefaultSelect();
-
+  event: IMinpub = null;
   constructor(
     private fb: FormBuilder,
     private activateRoute: ActivatedRoute,
@@ -77,17 +78,18 @@ export class RecordUpdateComponent extends BasePage implements OnInit {
       justificacion: [null, Validators.pattern(STRING_PATTERN)],
     });
   }
-  publicMinistries() {
-    const modalConfig = {
-      ...MODAL_CONFIG,
-      class: 'modal-dialog-centered',
-      initialState: {
-        // TODO: Deberia recibir todos los datos para que el formulario sea llenado
-        callback: (next: string | number) => {
-          // TODO: LLenar el formulario
-        },
-      },
-    };
-    this.modalService.show(PublicMinistriesComponent, modalConfig);
+  publicMinistries(context?: Partial<EventSelectionModalComponent>) {
+    const modalRef = this.modalService.show(PublicMinistriesComponent, {
+      initialState: { ...context },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.refresh.subscribe((next: any) => {
+      if (next) {
+        console.log(next);
+        this.event = next;
+        this.flyerForm.controls['minPub'].setValue(this.event.description);
+      }
+    });
   }
 }

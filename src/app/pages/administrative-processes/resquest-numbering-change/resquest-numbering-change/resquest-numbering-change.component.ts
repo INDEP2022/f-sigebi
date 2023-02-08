@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 export interface Example {
   number: number;
@@ -277,13 +278,28 @@ export class ResquestNumberingChangeComponent
     this.formaplicationData = this.fb.group({
       dateRequest: [null, [Validators.required]],
       numberRequest: [null, [Validators.required]],
-      usrRequest: [null, [Validators.required]],
-      nameRequest: [null, [Validators.required]],
-      charge: [null, [Validators.required]],
+      usrRequest: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      nameRequest: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      charge: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       proposedProcedure: [null, [Validators.required]],
-      usrAuthorized: [null, [Validators.required]],
-      nameAuthorized: [null, [Validators.required]],
-      causeAuthorized: [null, [Validators.required]],
+      usrAuthorized: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      nameAuthorized: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      causeAuthorized: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       dateAutorized: [null, [Validators.required]],
     });
   }

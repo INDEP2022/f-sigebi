@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-register-appointment-tab',
@@ -26,7 +27,7 @@ export class RegisterAppointmentTabComponent
   prepareForm() {
     this.appointmentForm = this.fb.group({
       datetime: [null, [Validators.required]],
-      place: [null, [Validators.required]],
+      place: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
   }
 

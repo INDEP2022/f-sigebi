@@ -1,117 +1,306 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Captura de bienes y sus características</h5>
+    <h5 class="title">Captura de bienes y sus caracter&iacute;sticas</h5>
   </div>
 
-  <div body>
+  <div body #form>
     <form [formGroup]="assetsForm" (submit)="save()" class="form-material">
       <div class="row">
-        <div class="col-md-6">
-          <div class="row">
-            <form-field
-              class="col-md-6"
-              [control]="assetsForm.get('noClasifBien')"
-              label="No. Clasificación Bien">
-              <input
-                class="form-control"
-                type="text"
-                formControlName="noClasifBien" />
+        <form-field
+          *ngIf="global.pIndicadorSat != null"
+          class="col-md-3"
+          [control]="assetsForm.get('noPartida')"
+          label="Fracción Arancelaria">
+          <input
+            class="form-control"
+            type="text"
+            formControlName="noPartida"
+            (change)="fractionChange()" />
+        </form-field>
+
+        <div class="col" *ngIf="global.pIndicadorSat != null">
+          <button
+            (click)="searchFraction()"
+            type="button"
+            class="btn btn-secondary btn-sm active"
+            [disabled]="!ligieButtonEnabled">
+            Buscar Fracción
+          </button>
+        </div>
+
+        <!-- <form-field
+          class="col-md-3"
+          [control]="assetsForm.get('valorAvaluo')"
+          label="Valor Avalúo">
+          <input
+            class="form-control"
+            type="text"
+            formControlName="valorAvaluo" />
+        </form-field> -->
+
+        <form-field
+          class="col-md-3"
+          [control]="assetsForm.get('noClasifBien')"
+          label="No&#46; Clasificaci&oacute;n Bien">
+          <input
+            #goodClasifNumField
+            class="form-control"
+            type="number"
+            formControlName="noClasifBien"
+            (change)="goodClasifNumberChange()" />
+        </form-field>
+      </div>
+      <div class="row pt-3">
+        <div class="col-md-6" *ngIf="global.pIndicadorSat != null">
+          <div class="row pt-3">
+            <form-field [control]="assetsForm.get('capitulo')">
+              <ngx-select
+                [form]="assetsForm"
+                control="capitulo"
+                [data]="chapters"
+                value="chapter"
+                bindLabel="chapterDesc"
+                label="Capítulo"></ngx-select>
             </form-field>
           </div>
-
+          <div class="row pt-3">
+            <form-field [control]="assetsForm.get('partida')">
+              <ngx-select
+                [form]="assetsForm"
+                control="partida"
+                [data]="departures"
+                value="departure"
+                bindLabel="departureDesc"
+                label="Partida"></ngx-select>
+            </form-field>
+          </div>
+          <div class="row pt-3">
+            <form-field [control]="assetsForm.get('subpartida')">
+              <ngx-select
+                [form]="assetsForm"
+                control="subpartida"
+                [data]="sdepartures"
+                value="sDeparture"
+                bindLabel="sDepartureDesc"
+                label="Subpartida"></ngx-select>
+            </form-field>
+          </div>
+          <div class="row pt-3">
+            <form-field [control]="assetsForm.get('ssubpartida')">
+              <ngx-select
+                [form]="assetsForm"
+                control="ssubpartida"
+                [data]="ssdepartures"
+                value="ssDeparture"
+                bindLabel="ssDepartureDesc"
+                label="Ssubpartida"></ngx-select>
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-6">
           <app-goods-types-shared
             [form]="assetsForm"
             typeField="type"
             subtypeField="subtype"
             ssubtypeField="ssubtype"
-            sssubtypeField="sssubtype"></app-goods-types-shared>
+            sssubtypeField="sssubtype"
+            [types]="types"
+            [subtypes]="subtypes"
+            [ssubtypes]="ssubtypes"
+            [sssubtypes]="sssubtypes"
+            (goodTypeChange)="isGoodTypeValid()"
+            (goodSubtypeChange)="goodSubtypeChange()"
+            (goodSsubtypeChange)="goodSsubtypeChange()"
+            (goodSssubtypeChange)="
+              goodSssubtypeChange($event)
+            "></app-goods-types-shared>
         </div>
-        <div class="col-md-6">
-          <div class="row">
-            <form-field
-              class="col-md-3"
-              [control]="assetsForm.get('unidadMedida')"
-              label="Unidad de medida">
-              <input
-                class="form-control"
-                type="text"
-                formControlName="unidadMedida" />
-            </form-field>
-            <form-field
-              class="col-md-3"
-              [control]="assetsForm.get('cantidad')"
-              label="Cantidad">
-              <input
-                class="form-control"
-                type="text"
-                formControlName="cantidad" />
-            </form-field>
+      </div>
+      <hr />
+      <div class="row pt-4">
+        <form-field
+          *ngIf="global.pIndicadorSat != null"
+          class="col-md-2"
+          [control]="assetsForm.get('unidadLigie')"
+          label="Unidad LIGIE">
+          <input
+            class="form-control"
+            type="text"
+            formControlName="unidadLigie" />
+        </form-field>
+        <form-field class="col-md-2" [control]="assetsForm.get('unidadMedida')">
+          <ngx-select
+            (fetchItems)="getMeasureUnits($event)"
+            [data]="unitsMeasures"
+            [form]="assetsForm"
+            value="unit"
+            label="Unidad de Medida"
+            bindLabel="unit"
+            control="unidadMedida">
+          </ngx-select>
+        </form-field>
+        <form-field
+          class="col-md-2"
+          [control]="assetsForm.get('cantidad')"
+          label="Cantidad">
+          <input
+            class="form-control"
+            type="text"
+            formControlName="cantidad"
+            (change)="amountChange()" />
+        </form-field>
 
-            <form-field class="col-md-6" [control]="assetsForm.get('destino')">
-              <ngx-select
-                [form]="assetsForm"
-                control="destino"
-                [data]="select"
-                label="Identificador de Destino"></ngx-select>
-            </form-field>
-          </div>
+        <form-field
+          class="col-md-2"
+          [control]="assetsForm.get('noBien')"
+          label="No. Bien">
+          <input class="form-control" type="text" formControlName="noBien" />
+        </form-field>
 
-          <div class="row pt-4">
-            <form-field
-              class="col-md-4"
-              [control]="assetsForm.get('noBien')"
-              label="No. Bien">
-              <input
-                class="form-control"
-                type="number"
-                formControlName="noBien" />
-            </form-field>
+        <form-field class="col-md-4" [control]="assetsForm.get('destino')">
+          <ngx-select
+            [form]="assetsForm"
+            control="destino"
+            [data]="goodLabels"
+            value="id"
+            bindLabel="description"
+            label="Identificador de Destino"></ngx-select>
+        </form-field>
+      </div>
 
-            <form-field
-              class="col-md-4"
-              [control]="assetsForm.get('valRef')"
-              label="Val. Ref.">
-              <input
-                class="form-control"
-                type="number"
-                formControlName="valRef" />
-            </form-field>
+      <div class="row pt-4">
+        <form-field
+          class="col-md-2"
+          [control]="assetsForm.get('valRef')"
+          label="Valor de Referencia">
+          <input class="form-control" type="number" formControlName="valRef" />
+        </form-field>
 
-            <form-field
-              class="col-md-4"
-              [control]="assetsForm.get('identifica')"
-              label="Identifica">
-              <input
-                class="form-control"
-                type="text"
-                formControlName="identifica" />
-            </form-field>
-          </div>
+        <form-field
+          class="col-md-2"
+          [control]="assetsForm.get('identifica')"
+          label="Identifica">
+          <input
+            class="form-control"
+            type="text"
+            formControlName="identifica" />
+        </form-field>
 
-          <div class="row pt-4">
-            <form-field
-              [control]="assetsForm.get('descripcion')"
-              label="Descripción">
-              <textarea
-                rows="3"
-                class="form-control"
-                formControlName="descripcion"></textarea>
-            </form-field>
+        <form-field
+          *ngIf="global.pIndicadorSat != null"
+          class="col-md-4"
+          [control]="assetsForm.get('estadoConservacion')"
+          label="Estado de Conservacion">
+          <ng-select
+            formControlName="estadoConservacion"
+            [searchable]="false"
+            class="form-control"
+            [clearable]="false">
+            <ng-option value="Bueno">Bueno</ng-option>
+            <ng-option value="Malo">Malo</ng-option>
+          </ng-select>
+        </form-field>
+
+        <div class="col">
+          <!-- <button
+            *ngIf="global.pIndicadorSat != null"
+            class="btn btn-secondary btn-sm active"
+            [disabled]="!regulationsButtonEnabled">
+            Regulaciones Aplicadas
+          </button> -->
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <form-field
+          [control]="assetsForm.get('descripcion')"
+          label="Descripci&oacute;n">
+          <textarea
+            rows="3"
+            class="form-control"
+            formControlName="descripcion"></textarea>
+        </form-field>
+        <div class="row">
+          <div class="col-md-12">
+            <button
+              type="button"
+              (click)="getSiaviLink()"
+              class="btn btn-info active btn-sm"
+              [disabled]="!normsButtonEnabled"
+              *ngIf="global.pIndicadorSat != null">
+              Consultar Normatividad en SIAVI
+            </button>
           </div>
         </div>
       </div>
 
-      <div class="row pt-2">
-        <div class="col-md-12 text-right">
+      <div class="row"></div>
+
+      <div class="row">
+        <div class="col-md-12">
           <button
             type="button"
             class="btn btn-info btn-sm"
             (click)="showObservations(modal)">
             Observaciones
           </button>
-          <button class="btn btn-primary btn-sm ml-3 active" type="submit">
-            Guardar
-          </button>
+          <good-features
+            [good]="good"
+            [goodForm]="goodForm"
+            [goodFeatures]="goodFeatures"
+            (onSave)="save()"
+            [loading]="loading"></good-features>
+        </div>
+      </div>
+      <div class="row"></div>
+      <hr />
+      <div class="row pt-3" *ngIf="formControls.almacen.value">
+        <state-locality
+          [form]="assetsForm"
+          stateField="entFed"
+          municipalityField="municipio"
+          cityField="ciudad"
+          localityField="localidad"></state-locality>
+      </div>
+      <div class="row pt-3" *ngIf="formControls.almacen.value">
+        <form-field class="col-md-3" [control]="assetsForm.get('entFed')">
+          <ngx-select
+            [form]="assetsForm"
+            control="entFed"
+            [data]="select"
+            label="Entidad Federativa"></ngx-select>
+        </form-field>
+
+        <form-field class="col-md-3" [control]="assetsForm.get('municipio')">
+          <ngx-select
+            [form]="assetsForm"
+            control="municipio"
+            [data]="select"
+            label="Municipio"></ngx-select>
+        </form-field>
+
+        <form-field class="col-md-3" [control]="assetsForm.get('ciudad')">
+          <ngx-select
+            [form]="assetsForm"
+            control="ciudad"
+            [data]="select"
+            label="Ciudad"></ngx-select>
+        </form-field>
+
+        <form-field class="col-md-3" [control]="assetsForm.get('localidad')">
+          <ngx-select
+            [form]="assetsForm"
+            control="localidad"
+            [data]="select"
+            label="Localidad"></ngx-select>
+        </form-field>
+
+        <div class="row pt-2">
+          <div class="col-md-12 text-right">
+            <button class="btn btn-primary btn-sm ml-3 active" type="button">
+              Guardar
+            </button>
+          </div>
         </div>
       </div>
 
@@ -122,7 +311,10 @@
           </div>
           <div body>
             <div class="row">
-              <textarea class="form-control" rows="5"></textarea>
+              <textarea
+                class="form-control"
+                formControlName="observaciones"
+                rows="5"></textarea>
             </div>
           </div>
 

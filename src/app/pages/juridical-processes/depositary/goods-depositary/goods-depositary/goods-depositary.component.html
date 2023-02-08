@@ -11,7 +11,7 @@
           <ngx-select
             [data]="items"
             bindLabel="delegacionName"
-            label="Delegación"
+            label="Delegaci&oacute;n"
             value="id"
             (fetchItems)="getFromSelect($event)"
             [form]="form"
@@ -21,7 +21,7 @@
           <ngx-select
             [data]="items"
             bindLabel="subdelegacionName"
-            label="SubDelegación"
+            label="SubDelegaci&oacute;n"
             value="id"
             (fetchItems)="getFromSelect($event)"
             [form]="form"
@@ -31,7 +31,7 @@
           <ngx-select
             [data]="items"
             bindLabel="depositariaName"
-            label="Depositaría"
+            label="Depositar&iacute;a"
             value="id"
             (fetchItems)="getFromSelect($event)"
             [form]="form"
@@ -72,14 +72,14 @@
             <select class="form-control" formControlName="tipo">
               <option [value]="null">Seleccione un valor</option>
               <option [value]="'Administrador'">Administrador</option>
-              <option [value]="'Depositaria'">Depositaria</option>
+              <option [value]="'Depositaria'">Depositar&iacute;a</option>
               <option [value]="'Interventor'">Interventor</option>
               <option [value]="'Todos'">Todos</option>
             </select>
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-3 p-3 text-center">
-          <form-check label="Fecha Remoción" for="fechaRemocion">
+          <form-check label="Fecha Remoci&oacute;n" for="fechaRemocion">
             <input
               id="fechaRemocion"
               type="checkbox"

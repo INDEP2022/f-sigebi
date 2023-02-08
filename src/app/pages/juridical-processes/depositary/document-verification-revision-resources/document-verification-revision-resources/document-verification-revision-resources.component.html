@@ -9,24 +9,24 @@
     <form [formGroup]="form" class="form-material">
       <div class="row w-100">
         <div class="col-sm-12 col-12 col-md-12 p-2">
-          <h6>Información de Expediente</h6>
+          <h6>Informaci&oacute;n de Expediente</h6>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
             [control]="form.get('noExpediente')"
-            label="No. Expediente">
+            label="No&#46; Expediente">
             <input class="form-control" formControlName="noExpediente" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('noAmparo')" label="No. Amparo">
+          <form-field [control]="form.get('noAmparo')" label="No&#46; Amparo">
             <input class="form-control" formControlName="noAmparo" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
             [control]="form.get('fechaPresentacionRecursoRevision')"
-            label="Fecha Presentación Recurso Revisión">
+            label="Fecha Presentaci&oacute;n Recurso Revisi&oacute;n">
             <input
               class="form-control"
               formControlName="fechaPresentacionRecursoRevision"
@@ -36,7 +36,7 @@
         <div class="col-sm-12 col-12 col-md-3 p-2">
           <form-field
             [control]="form.get('averiguacionPrevia')"
-            label="Averiguación Previa">
+            label="Averiguaci&oacute;n Previa">
             <input class="form-control" formControlName="averiguacionPrevia" />
           </form-field>
         </div>
@@ -46,24 +46,24 @@
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-12 p-2">
-          <h6>Información de Bienes</h6>
+          <h6>Informaci&oacute;n de Bienes</h6>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
-          <form-field [control]="form.get('noBien')" label="No. Bien">
+          <form-field [control]="form.get('noBien')" label="No&#46; Bien">
             <input class="form-control" formControlName="noBien" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field
             [control]="form.get('descripcion')"
-            label="No. Bien Descripción">
+            label="No&#46; Bien Descripción">
             <input class="form-control" formControlName="descripcion" />
           </form-field>
         </div>
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
             [control]="form.get('fechaAcuerdoInicial')"
-            label="Fecha Notificación">
+            label="Fecha Notificaci&oacute;n">
             <input
               class="form-control"
               formControlName="fechaAcuerdoInicial"
@@ -78,7 +78,7 @@
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
             [control]="form.get('fechaNotificacion')"
-            label="Fecha Notificación">
+            label="Fecha Notificaci&oacute;n">
             <input
               class="form-control"
               formControlName="fechaNotificacion"
@@ -88,7 +88,7 @@
         <div class="col-sm-12 col-12 col-md-2 p-2">
           <form-field
             [control]="form.get('statusDictaminacion')"
-            label="Estatus Dictaminación">
+            label="Estatus Dictaminaci&oacute;n">
             <input class="form-control" formControlName="statusDictaminacion" />
           </form-field>
         </div>
@@ -105,7 +105,7 @@
         <div class="col-sm-12 col-12 col-md-4 p-2">
           <form-field
             [control]="form.get('motivoRecursoRevision')"
-            label="Motivo Recurso Revisión">
+            label="Motivo Recurso Revisi&oacute;n">
             <textarea
               rows="3"
               class="form-control"
@@ -203,8 +203,8 @@
         <div class="alert alert-info">
           <p>
             PARA GENERAR REQUISITOS DOCUMENTALES CON DETALLE DE TODOS LOS
-            EXPEDIENTES Y BIENES, EL NÚMERO DE EXPEDIENTE Y EL NÚMERO DE BIEN
-            DEBEN SER NULOS.
+            EXPEDIENTES Y BIENES, EL NÚMERO DE EXPEDIENTE Y EL N&Uacute;MERO DE
+            BIEN DEBEN SER NULOS&#46;
           </p>
           <br />
           <form [formGroup]="formInforme" class="form-material">
@@ -212,12 +212,12 @@
               <div class="col-sm-12 col-12 col-md-6 p-2">
                 <form-field
                   [control]="form.get('noExpediente')"
-                  label="No. Expediente">
+                  label="No&#46; Expediente">
                   <input class="form-control" formControlName="noExpediente" />
                 </form-field>
               </div>
               <div class="col-sm-12 col-12 col-md-6 p-2">
-                <form-field [control]="form.get('noBien')" label="No. Bien">
+                <form-field [control]="form.get('noBien')" label="No&#46; Bien">
                   <input class="form-control" formControlName="noBien" />
                 </form-field>
               </div>

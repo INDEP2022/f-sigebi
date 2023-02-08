@@ -1,11 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { SearchFilter } from '../../../../../common/repository/interfaces/list-params';
+import { SearchBarFilter } from '../../../../../common/repository/interfaces/search-bar-filters';
+import { IComerProvider } from '../../../../../core/models/ms-provider/provider-model';
+import { ComerProvidersService } from '../../../../../core/services/ms-provider/comer-providers.service';
 import { ClientsModalComponent } from '../clients-modal/clients-modal.component';
 import { ProviderCatalogsModalComponent } from '../provider-catalogs-modal/provider-catalogs-modal.component';
 import { PROVIDER_CATALOGS_PROVIDER_COLUMNS } from './provider-catalogs-columns';
@@ -17,10 +24,13 @@ import { PROVIDER_CATALOGS_PROVIDER_COLUMNS } from './provider-catalogs-columns'
 })
 export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
   providerForm: FormGroup = new FormGroup({});
-  eventItems = new DefaultSelect();
+  providerItems = new DefaultSelect();
   params = new BehaviorSubject<ListParams>(new ListParams());
+  filterParams = new BehaviorSubject<FilterParams>(new FilterParams());
+  searchFilter: SearchBarFilter;
   totalItems: number = 0;
-  providerColumns: any[] = [];
+  selectedProvider: IComerProvider | null = null;
+  providerColumns: IComerProvider[] = [];
   providerSettings = {
     ...TABLE_SETTINGS,
     actions: {
@@ -130,45 +140,79 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
     },
   ];
 
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private providerService: ComerProvidersService
+  ) {
     super();
     this.providerSettings.columns = PROVIDER_CATALOGS_PROVIDER_COLUMNS;
+    this.searchFilter = { field: 'nameReason', operator: SearchFilter.IN };
   }
 
   ngOnInit(): void {
+    this.filterParams.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+      this.getData();
+    });
     this.prepareForm();
-    this.getData();
     this.getProviders({ inicio: 1, text: '' });
   }
 
   private prepareForm(): void {
     this.providerForm = this.fb.group({
-      id: [null],
+      providerId: [null],
+      bank: [null],
+      branch: [null],
+      checkingCta: [null],
+      key: [null],
     });
   }
 
   getProviders(params: ListParams) {
-    if (params.text == '') {
-      this.eventItems = new DefaultSelect(this.providerTestData, 5);
-    } else {
-      const id = parseInt(params.text);
-      const item = [this.providerTestData.filter((i: any) => i.id == id)];
-      this.eventItems = new DefaultSelect(item[0], 1);
-    }
+    this.providerService.getAll(params).subscribe(data => {
+      this.providerItems = new DefaultSelect(data.data, data.count);
+    });
   }
 
-  getData(id?: any) {
+  getData(id?: IComerProvider) {
     if (id) {
-      this.providerColumns = [this.providerTestData[0]];
-      this.totalItems = this.providerColumns.length;
+      this.loading = true;
+      this.providerService.getById(id.providerId).subscribe({
+        next: response => {
+          this.providerColumns = [response];
+          this.totalItems = 1;
+          this.loading = false;
+        },
+        error: error => {
+          this.loading = false;
+          console.log(error);
+        },
+      });
     } else {
-      this.providerColumns = this.providerTestData;
-      this.totalItems = this.providerColumns.length;
+      this.loading = true;
+      this.providerService
+        .getAllWithFilters(this.filterParams.getValue().getParams())
+        .subscribe({
+          next: response => {
+            this.providerColumns = response.data;
+            this.totalItems = response.count;
+            this.loading = false;
+          },
+          error: error => {
+            this.loading = false;
+            console.log(error);
+          },
+        });
     }
   }
 
-  openFormProvider(provider?: any) {
-    this.openModalProvider({ provider });
+  selectProvider(provider: IComerProvider) {
+    this.providerForm.patchValue(provider);
+    this.selectedProvider = provider;
+  }
+
+  openFormProvider(provider?: IComerProvider) {
+    this.openModalProvider({ provider, edit: true });
   }
 
   openModalProvider(context?: Partial<ProviderCatalogsModalComponent>) {
@@ -190,5 +234,45 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
     modalRef.content.onSelect.subscribe((data: boolean) => {
       if (data) console.log(data);
     });
+  }
+
+  delete(provider: IComerProvider): void {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      'Desea eliminar este registro?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.loading = true;
+        this.providerService.remove(provider.providerId).subscribe({
+          next: data => {
+            this.loading = false;
+            this.showSuccess();
+            this.getData();
+          },
+          error: error => {
+            this.loading = false;
+            this.showError();
+          },
+        });
+      }
+    });
+  }
+
+  showSuccess() {
+    this.onLoadToast(
+      'success',
+      'Proveedor',
+      `Registro Eliminado Correctamente`
+    );
+  }
+
+  showError(error?: any) {
+    this.onLoadToast(
+      'error',
+      `Error al eliminar datos`,
+      'Hubo un problema al conectarse con el servior'
+    );
+    error ? console.log(error) : null;
   }
 }

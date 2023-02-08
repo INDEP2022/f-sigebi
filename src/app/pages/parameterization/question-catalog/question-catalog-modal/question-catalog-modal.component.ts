@@ -1,8 +1,13 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
+//models
+import { IQuestion } from 'src/app/core/models/catalogs/question.model';
+//services
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { QuestionService } from 'src/app/core/services/catalogs/question.service';
 
 @Component({
   selector: 'app-question-catalog-modal',
@@ -10,13 +15,16 @@ import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
   styles: [],
 })
 export class QuestionCatalogModalComponent extends BasePage implements OnInit {
-  form: FormGroup = new FormGroup({});
-  allotment: any;
+  questionForm: ModelForm<IQuestion>;
+  questionI: IQuestion;
   title: string = 'Catálogo de preguntas';
   edit: boolean = false;
-  @Output() refresh = new EventEmitter<true>();
 
-  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {
+  constructor(
+    private fb: FormBuilder,
+    private modalRef: BsModalRef,
+    private questionService: QuestionService
+  ) {
     super();
   }
 
@@ -25,8 +33,8 @@ export class QuestionCatalogModalComponent extends BasePage implements OnInit {
   }
 
   private prepareForm() {
-    this.form = this.fb.group({
-      noQuestion: [
+    this.questionForm = this.fb.group({
+      id: [
         null,
         [
           Validators.required,
@@ -35,31 +43,56 @@ export class QuestionCatalogModalComponent extends BasePage implements OnInit {
           Validators.pattern(NUMBERS_PATTERN),
         ],
       ],
-      textQuestion: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      maxScore: [null, [Validators.required]],
-      typeQuestion: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      noResponse: [null, [Validators.required]],
-      initValue: [null, [Validators.required]],
-      resValue: [null, [Validators.required]],
-      resText: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      text: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      maximumScore: [null, [Validators.required]],
+      type: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      // noResponse: [null, [Validators.required]],
+      // initValue: [null, [Validators.required]],
+      // resValue: [null, [Validators.required]],
+      // resText: [
+      //   null,
+      //   [Validators.required, Validators.pattern(STRING_PATTERN)],
+      // ],
     });
-    if (this.allotment != null) {
+    if (this.questionI != null) {
       this.edit = true;
-      console.log(this.allotment);
-      this.form.patchValue(this.allotment);
+      // console.log(this.questionI);
+      this.questionForm.patchValue(this.questionI);
     }
+  }
+
+  confirm() {
+    this.edit ? this.update() : this.create();
   }
 
   close() {
     this.modalRef.hide();
+  }
+
+  create() {
+    this.loading = true;
+    this.questionService.create(this.questionForm.value).subscribe(
+      data => this.handleSuccess(),
+      error => (this.loading = false)
+    );
+  }
+
+  handleSuccess() {
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.loading = false;
+    this.modalRef.content.callback(true);
+    this.modalRef.hide();
+  }
+
+  update() {
+    this.loading = true;
+
+    this.questionService
+      .update(this.questionI.id, this.questionForm.value)
+      .subscribe(
+        data => this.handleSuccess(),
+        error => (this.loading = false)
+      );
   }
 }

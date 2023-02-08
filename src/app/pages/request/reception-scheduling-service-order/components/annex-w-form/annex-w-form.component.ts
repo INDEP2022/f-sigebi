@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ElectronicSignatureListComponent } from '../../../shared-request/electronic-signature-list/electronic-signature-list.component';
 import { ShowProgrammingComponent } from '../../../shared-request/show-programming/show-programming.component';
 import { ShowSignatureProgrammingComponent } from '../../../shared-request/show-signature-programming/show-signature-programming.component';
@@ -39,17 +40,17 @@ export class AnnexWFormComponent extends BasePage implements OnInit {
   prepareForm() {
     this.form = this.fb.group({
       presentationDate: [null],
-      presentationPlace: [null],
-      testerName: [null],
-      renderingProcess: [null],
-      descriptionService: [null],
-      regionalRepresent: [null],
+      presentationPlace: [null, [Validators.pattern(STRING_PATTERN)]],
+      testerName: [null, [Validators.pattern(STRING_PATTERN)]],
+      renderingProcess: [null, [Validators.pattern(STRING_PATTERN)]],
+      descriptionService: [null, [Validators.pattern(STRING_PATTERN)]],
+      regionalRepresent: [null, [Validators.pattern(STRING_PATTERN)]],
       dateRepresentRep: [null],
       dateNotification: [null],
       dateElaboration: [null],
-      descriptionCumpliment: [null],
-      nameSignerSae: [null],
-      chargeSae: [null],
+      descriptionCumpliment: [null, [Validators.pattern(STRING_PATTERN)]],
+      nameSignerSae: [null, [Validators.pattern(STRING_PATTERN)]],
+      chargeSae: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 

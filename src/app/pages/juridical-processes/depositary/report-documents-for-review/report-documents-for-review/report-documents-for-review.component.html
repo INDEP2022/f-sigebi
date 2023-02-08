@@ -1,6 +1,8 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">Documentación solicitada para dictaminación</h5>
+    <h5 class="title">
+      Documentaci&oacute;n solicitada para dictaminaci&oacute;n
+    </h5>
   </div>
   <div body>
     <form [formGroup]="form" class="form-material">
@@ -8,7 +10,7 @@
         <div class="col-md-2 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('delegationNumber')"
-            label="Delegación">
+            label="Delegaci&oacute;n">
             <input
               type="text"
               class="form-control"
@@ -23,7 +25,7 @@
         <div class="col-md-2 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('subdelegationNumber')"
-            label="Subdelegación">
+            label="Subdelegaci&oacute;n">
             <input
               type="text"
               class="form-control"

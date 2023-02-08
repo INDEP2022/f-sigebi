@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Impresión de Actas de Entrega Recepción</h5>
+    <h5 class="title">Impresi&oacute;n de Actas de Entrega Recepci&oacute;n</h5>
   </div>
 
   <div body>
@@ -8,7 +8,7 @@
       <div class="row">
         <div class="col-md-6">
           <div class="row">
-            <form-radio label="Acta Entrega Recepción">
+            <form-radio label="Acta Entrega Recepci&oacute;n">
               <input
                 type="radio"
                 [formControl]="type"
@@ -26,7 +26,7 @@
             <div class="col-md-9">
               <form-field
                 [control]="form.get('delegacionRecibe')"
-                label="Delegación Recibe">
+                label="Delegaci&oacute;n Recibe">
                 <ngx-select
                   control="delegacionRecibe"
                   [form]="form"
@@ -39,7 +39,7 @@
             <div class="col-md-9">
               <form-field
                 [control]="form.get('delegacionAdministra')"
-                label="Delegación Administrativa">
+                label="Delegaci&oacute;n Administrativa">
                 <ngx-select
                   control="delegacionAdministra"
                   [form]="form"
@@ -95,8 +95,7 @@
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="desde"
-                  placeholder="desde" />
+                  formControlName="desde" />
               </form-field>
             </div>
 
@@ -105,8 +104,7 @@
                 <input
                   type="number"
                   class="form-control"
-                  formControlName="hasta"
-                  placeholder="hasta" />
+                  formControlName="hasta" />
               </form-field>
             </div>
           </div>
@@ -115,24 +113,22 @@
             <div class="col-md-6">
               <form-field
                 [control]="form.get('fechaDesde')"
-                label="Fecha Elaboracion desde">
+                label="Fecha Elaboraci&oacute;n desde">
                 <input
                   bsDatepicker
                   class="form-control"
-                  formControlName="fechaDesde"
-                  placeholder="Fecha elaboracion desde" />
+                  formControlName="fechaDesde" />
               </form-field>
             </div>
 
             <div class="col-md-6">
               <form-field
                 [control]="form.get('fechaHasta')"
-                label="Fecha Elaboracion Hasta">
+                label="Fecha Elaboraci&oacute;n Hasta">
                 <input
                   bsDatepicker
                   class="form-control"
-                  formControlName="fechaHasta"
-                  placeholder="Fecha elaboracion hasta" />
+                  formControlName="fechaHasta" />
               </form-field>
             </div>
           </div>

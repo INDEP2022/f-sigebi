@@ -1,74 +1,72 @@
-import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
+export const AFFAIR_TYPE_COLUMNS = {
+  code: {
+    title: 'Código',
+    sort: false,
+    filter: false,
+    valuePrepareFunction: (value: any) => {
+      return value.id;
+    },
+  },
+  referralNoteType: {
+    title: 'Tipo de volante',
+    sort: false,
+    filter: false,
+  },
+  relationPropertyKey: {
+    title: 'Relación con bien',
+    sort: false,
+    filter: false,
+  },
+  versionUser: {
+    title: 'Permiso Usuario',
+    sort: false,
+    filter: false,
+  },
+  idRegister: {
+    title: 'Num Registro',
+    sort: false,
+    filter: false,
+  },
+};
 
-export const REL_OPINION_COLUMNS = {
-  idD: {
-    title: 'No. Dictamen',
+export const DICTA_COLUMNS = {
+  code: {
+    title: 'Código',
     sort: false,
-    filter: false,
   },
-  name: {
-    title: 'Dictamen',
+  dictum: {
+    title: 'Dictámen',
     sort: false,
-    filter: false,
-  },
-  d: {
-    title: 'D',
-    sort: false,
-    filter: false,
-    type: 'custom',
-    renderComponent: CheckboxElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
-      });
+    valuePrepareFunction: (value: any) => {
+      return value.id;
     },
   },
-  b: {
-    title: 'B',
+  flyerType: {
+    title: 'Tipo volante',
     sort: false,
-    filter: false,
-    type: 'custom',
-    renderComponent: CheckboxElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
-      });
-    },
   },
-  u: {
-    title: 'U',
+  doc: {
+    title: 'Doc',
     sort: false,
-    filter: false,
-    type: 'custom',
-    renderComponent: CheckboxElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
-      });
-    },
+  },
+  property: {
+    title: 'Bien',
+    sort: false,
+  },
+  g_of: {
+    title: 'g_of',
+    sort: false,
   },
   i: {
-    title: 'I',
+    title: 'i',
     sort: false,
-    filter: false,
-    type: 'custom',
-    renderComponent: CheckboxElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
-      });
-    },
   },
   e: {
-    title: 'E',
+    title: 'e',
     sort: false,
-    filter: false,
-    type: 'custom',
-    renderComponent: CheckboxElementComponent,
-    onComponentInitFunction(instance: any) {
-      instance.toggle.subscribe((data: any) => {
-        data.row.to = data.toggle;
-      });
-    },
+  },
+  registryNumber: {
+    title: 'No. Registro',
+    sort: false,
   },
 };

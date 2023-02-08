@@ -18,7 +18,7 @@ const routes: Routes = [
 
   // PROCESO DE DISPERCION DE PAGOS
   {
-    path: 'procesos-dispercion-pagos',
+    path: 'payment-dispersion-process',
     loadChildren: async () =>
       (
         await import(

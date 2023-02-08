@@ -1,7 +1,7 @@
 <app-card [header]="true">
   <div header>
     <div class="ch-content">
-      <h5 class="title">APROBACIÓN DE BIENES PARA DESTINO</h5>
+      <h5 class="title">APROBACI&Oacute;N DE BIENES PARA DESTINO</h5>
     </div>
   </div>
 
@@ -9,23 +9,23 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-2">
-          <form-field [control]="form.get('idExp')" label="No expediente">
+          <form-field [control]="form.get('idExpedient')" label="No expediente">
             <input
               type="text"
               class="form-control"
-              formControlName="idExp"
+              formControlName="idExpedient"
               minlength="1"
               maxlength="10" />
           </form-field>
         </div>
         <div class="col-md-2">
           <form-field
-            [control]="form.get('preInquiry')"
-            label="Averiguación Previa">
+            [control]="form.get('preliminaryInquiry')"
+            label="Averiguaci&oacute;n Previa">
             <input
               type="text"
               class="form-control"
-              formControlName="preInquiry" />
+              formControlName="preliminaryInquiry" />
           </form-field>
         </div>
         <div class="col-md-2">
@@ -38,35 +38,34 @@
         </div>
         <div class="col-md-2">
           <form-field
-            [control]="form.get('circumstAct')"
+            [control]="form.get('circumstantialRecord')"
             label="Acta Circunstanciada">
             <input
               type="text"
               class="form-control"
-              formControlName="circumstAct" />
+              formControlName="circumstantialRecord" />
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field [control]="form.get('touchPenalty')" label="Toca penal">
+          <form-field [control]="form.get('keyPenalty')" label="Toca penal">
             <input
               type="text"
               class="form-control"
-              formControlName="touchPenalty" />
+              formControlName="keyPenalty" />
           </form-field>
         </div>
         <div class="col-md-2">
           <button
-            type="button"
             class="btn btn-sm btn-primary active"
             [disabled]="!form.valid"
-            (click)="show = !show">
-            {{ show ? 'Buscar otro' : 'Buscar' }}
+            (click)="getExpedientById()">
+            Buscar
           </button>
         </div>
       </div>
     </form>
 
-    <div *ngIf="show">
+    <div *ngIf="form.get('criminalCase').value !== null">
       <div class="ch-content">
         <h5 class="title">&nbsp;</h5>
         <div class="row justify-content-end mr-1">
@@ -78,13 +77,30 @@
           </div>
         </div>
       </div>
-      <div class="row pt-3 scroll-table table-responsive">
-        <ng2-smart-table
-          [settings]="settings"
-          [source]="data"></ng2-smart-table>
+      <div class="row pt-4">
+        <div class="col-md-12">
+          <div [class]="loading ? 'table-loading' : ''">
+            <ng2-smart-table
+              [attr.class]="'table-bordered'"
+              [settings]="settings"
+              [source]="data"
+              (userRowSelect)="selectRow($event.data)">
+            </ng2-smart-table>
+          </div>
+        </div>
       </div>
       <app-pagination [params]="params" [totalItems]="totalItems">
       </app-pagination>
+      <div class="row" *ngIf="rowSelected">
+        <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+          <div class="mt-4">
+            <h5 class="font-size-14">Estatus</h5>
+            <p class="text-muted mb-0">
+              {{ selectedRow?.estatus.descriptionStatus }}
+            </p>
+          </div>
+        </div>
+      </div>
       <div class="row pt-5">
         <p class="d-flex justify-content-center">
           <span class="text-success mr-5"

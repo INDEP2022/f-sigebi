@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 export interface Example {
   numberFile: number;
@@ -134,8 +135,14 @@ export class PropertyRegistrationComponent extends BasePage implements OnInit {
   private buildForm() {
     this.form = this.fb.group({
       numberFile: [null, [Validators.required]],
-      causePenal: [null, [Validators.required]],
-      preliminaryInquiry: [null, [Validators.required]],
+      causePenal: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      preliminaryInquiry: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
   }
 

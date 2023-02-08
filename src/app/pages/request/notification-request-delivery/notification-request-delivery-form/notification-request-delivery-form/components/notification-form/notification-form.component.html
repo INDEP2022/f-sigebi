@@ -1,0 +1,45 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Reporte</h5>
+  </div>
+
+  <div body style="margin-top: -30px">
+    <div class="row">
+      <div class="col-md-7">
+        <form [formGroup]="form" class="form-material">
+          <form-field [control]="form.get('nameFormat')">
+            <ngx-select
+              [form]="form"
+              control="nameFormat"
+              [data]="formats"
+              label="Nombre del formato"></ngx-select>
+          </form-field>
+        </form>
+      </div>
+      <div class="col-md-4">
+        <button class="btn btn-primary active btn-sm">Aplicar formato</button>
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <div class="justify-content-left btn-toolbar">
+        <button (click)="viewNotification()" class="btn btn-info active btn-sm">
+          Vista previa
+        </button>
+        <button (click)="signOffice()" class="btn btn-success active btn-sm">
+          Firmar reporte
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

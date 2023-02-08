@@ -17,6 +17,7 @@ import { COMMERCIALIZATION_SW_ROUTES } from '../common/routes/siab-web/commercia
 import { CONSULTATION_ROUTES } from '../common/routes/siab-web/consultation.routes';
 import { INDICATORS_ROUTES } from '../common/routes/siab-web/indicators.routes';
 import { MAINTENANCE_ROUTES } from '../common/routes/siab-web/maintenance.routes';
+import { PARAMETRIZATION_ROUTES } from '../common/routes/siab-web/parametrization.routes';
 import { SAMI_ROUTES } from '../common/routes/siab-web/simi.routes';
 import { IMenuItem } from './interfaces/menu.interface';
 
@@ -80,7 +81,7 @@ export const MENU: IMenuItem[] = [
       // APP -- GESTIONAR DEVOLUCION -- Registro de Solicitud de Devolución
       { ...MENU_OPTIONS_REQUEST_MANAGE_RETURN },
       {
-        label: 'Solicitudes a turno',
+        label: 'Turnado Masivo Solicitudes',
         link: '/pages/request/request-in-turn',
       },
       {
@@ -186,7 +187,7 @@ export const MENU: IMenuItem[] = [
             link: '/pages/final-destination-process/donation-process/donation-authorization-request',
           },
           {
-            label: 'Registro de Inventarios para Donación Directa',
+            label: 'Registro para Inventarios y Donación Directa',
             link: '/pages/final-destination-process/donation-process/registration-inventories-donation',
           },
           {
@@ -358,6 +359,7 @@ export const MENU: IMenuItem[] = [
       ...SAMI_ROUTES,
       ...APPRAISALS_ROUTES,
       ...INDICATORS_ROUTES,
+      ...PARAMETRIZATION_ROUTES,
       ...CONSULTATION_ROUTES,
       ...CLAIMS_CONTROL_ROUTES,
       ...MAINTENANCE_ROUTES,

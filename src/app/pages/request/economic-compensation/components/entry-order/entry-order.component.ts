@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-entry-order',
@@ -22,10 +23,19 @@ export class EntryOrderComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.entryOrderForm = this.fb.group({
-      administrativeUnit: [null, [Validators.required]],
+      administrativeUnit: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       orderDate: [null, [Validators.required]],
-      concept: [null, [Validators.required]],
-      paymentMethod: [null, [Validators.required]],
+      concept: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      paymentMethod: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       amount: [null, [Validators.required]],
       referenceNo: [null, [Validators.required]],
       bank: [null, [Validators.required]],

@@ -21,9 +21,12 @@ export class ComplementaryRequestInformationComponent
   @Input() registroDocumentacion: boolean = true;
   @Input() buscarAsociarExpediente: boolean = true;
   @Input() seleccionarBienes: boolean = true;
+  @Input() validarResultadoVisitas: boolean = false;
+  @Input() resultadoVisitas: boolean = false;
   @Input() verificarCumplimientoBienes: boolean = false;
   @Input() expediente: boolean = true;
   @Input() tabRegisterDocumentation: string = 'Registro de Documentación';
+  signedReport: boolean = false;
   public typeDoc: string = '';
 
   /** OUTPUT VARIABLES */
@@ -38,6 +41,13 @@ export class ComplementaryRequestInformationComponent
     'Bienes Similares: Registro de Documentación Complementaria, No. Solicitud: requestNumb',
     'Bienes Similares: Programar Visita Ocular, No. Solicitud requestNumb, Contribuyente: taxPayer, PAMA: pama',
     'Bienes Similares: Validar Resultado Visita Ocular, No. Solicitud requestNumb, Contribuyente: taxPayer, PAMA: pama',
+    'Bienes Similares: Notificar a Transferente, No. Solicitud requestNumb, Contribuyente: taxPayer, PAMA: pama',
+    'Bienes Similares: ELaborar Oficio de Respuesta, No. Solicitud requestNumb, Contribuyente: taxPayer, PAMA: pama',
+  ];
+  titleReport: string = '';
+  titleReportArray = [
+    'Reporte de Notificaci\u00f3n',
+    'Reporte Resultado Visita Ocular',
   ];
 
   constructor(
@@ -49,9 +59,16 @@ export class ComplementaryRequestInformationComponent
   }
 
   ngOnInit(): void {
+    this.selectTitleReport();
     this.getPathParameter();
     this.prepareForm();
     this.requestSelected(1);
+  }
+
+  selectTitleReport() {
+    if (this.nombrePantalla === 'transf-notification')
+      this.titleReport = this.titleReportArray[0];
+    else this.titleReport = this.titleReportArray[1];
   }
 
   getPathParameter() {
@@ -127,13 +144,30 @@ export class ComplementaryRequestInformationComponent
   }
 
   generateReport(context?: Partial<CreateReportComponent>): void {
-    const modalRef = this.modalService.show(CreateReportComponent, {
-      initialState: context,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) console.log(next); //this.getCities();
+    if (!this.signedReport) {
+      const modalRef = this.modalService.show(CreateReportComponent, {
+        initialState: context,
+        class: 'modal-lg modal-dialog-centered',
+        ignoreBackdropClick: true,
+      });
+      modalRef.content.refresh.subscribe(next => {
+        if (next) console.log(next); //this.getCities();
+      });
+    } else {
+      this.finishRequest();
+    }
+  }
+
+  finishRequest() {
+    this.alertQuestion(
+      'question',
+      `¿Desea Finalizar la solicitud con Folio: `,
+      '',
+      'Finalizar'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.onLoadToast('success', 'Solicitud Finalizada', '');
+      }
     });
   }
 }

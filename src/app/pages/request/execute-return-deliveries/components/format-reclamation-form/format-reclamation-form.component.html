@@ -1,0 +1,42 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Formato de reclamaci&oacute;n</h5>
+  </div>
+  <div body style="margin-top: -30px">
+    <form [formGroup]="form" class="form-material">
+      <div>
+        <form-field [control]="form.get('responsible')" label="Responsable">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="responsible" />
+        </form-field>
+      </div>
+      <div class="pt-3">
+        <form-field [control]="form.get('charge')" label="Cargo">
+          <input type="text" class="form-control" formControlName="charge" />
+        </form-field>
+      </div>
+      <div class="pt-3">
+        <form-check label="Firma electrónica" for="label">
+          <input id="label" type="checkbox" formControlName="check" />
+        </form-check>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [disabled]="!form.valid"
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

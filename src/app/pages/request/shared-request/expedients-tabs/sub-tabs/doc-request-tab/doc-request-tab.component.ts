@@ -8,7 +8,7 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
@@ -16,6 +16,7 @@ import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IRequest } from 'src/app/core/models/catalogs/request.model';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { NewDocumentComponent } from '../new-document/new-document.component';
 import { DOC_REQUEST_TAB_COLUMNS } from './doc-request-tab-columns';
@@ -43,6 +44,7 @@ export class DocRequestTabComponent
   @ViewChild('myTemplate', { static: true, read: ViewContainerRef })
   container: ViewContainerRef;
   @Input() typeDoc = '';
+  @Input() displayName: string = '';
   title: string = '';
   showSearchForm: boolean = false;
   selectDocType = new DefaultSelect<any>();
@@ -142,18 +144,18 @@ export class DocRequestTabComponent
   prepareForm(): void {
     this.docRequestForm = this.fb.group({
       id: [null],
-      text: [null],
+      text: [null, [Validators.pattern(STRING_PATTERN)]],
       docType: [null],
-      docTitle: [null],
-      typeTrasf: [null],
-      contributor: [null],
-      author: [null],
-      sender: [null],
+      docTitle: [null, [Validators.pattern(STRING_PATTERN)]],
+      typeTrasf: [null, [Validators.pattern(STRING_PATTERN)]],
+      contributor: [null, [Validators.pattern(STRING_PATTERN)]],
+      author: [null, [Validators.pattern(STRING_PATTERN)]],
+      sender: [null, [Validators.pattern(STRING_PATTERN)]],
       noOfice: [null],
-      senderCharge: [null],
-      comment: [null],
+      senderCharge: [null, [Validators.pattern(STRING_PATTERN)]],
+      comment: [null, [Validators.pattern(STRING_PATTERN)]],
       noRequest: [{ value: 157, disabled: true }],
-      responsible: [null],
+      responsible: [null, [Validators.pattern(STRING_PATTERN)]],
 
       /* Solicitud Transferencia */
       regDelega: [null],
@@ -226,10 +228,14 @@ export class DocRequestTabComponent
   getTransfe(event: any) {}
 
   setTypeColumn() {
-    if (this.typeDoc === 'request-assets') {
-      this.columns.noReq.title = 'No. Bien';
+    if (this.displayName === 'validateEyeVisitResult') {
+      this.columns.noReq.title = 'No. Expediente';
     } else {
-      this.columns.noReq.title = 'No. Solicitud';
+      if (this.typeDoc === 'request-assets') {
+        this.columns.noReq.title = 'No. Bien';
+      } else {
+        this.columns.noReq.title = 'No. Solicitud';
+      }
     }
   }
 

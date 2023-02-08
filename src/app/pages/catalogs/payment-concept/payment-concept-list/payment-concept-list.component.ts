@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { PaymentConceptService } from 'src/app/core/services/catalogs/payment-concept.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import Swal from 'sweetalert2';
 import { IPaymentConcept } from '../../../../core/models/catalogs/payment-concept.model';
 import { PaymentConceptDetailComponent } from '../payment-concept-detail/payment-concept-detail.component';
 import { PAYMENT_CONCEPT_COLUMNS } from './payment-concept-columns';
@@ -15,7 +17,7 @@ import { PAYMENT_CONCEPT_COLUMNS } from './payment-concept-columns';
   styles: [],
 })
 export class PaymentConceptListComponent extends BasePage implements OnInit {
-  payments: IPaymentConcept[] = [];
+  paymentconcept: IPaymentConcept[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   constructor(
@@ -23,8 +25,16 @@ export class PaymentConceptListComponent extends BasePage implements OnInit {
     private modalService: BsModalService
   ) {
     super();
-    this.settings.columns = PAYMENT_CONCEPT_COLUMNS;
-    this.settings.actions.delete = true;
+    this.settings = {
+      ...this.settings,
+      actions: {
+        columnTitle: 'Acciones',
+        edit: true,
+        delete: true,
+        position: 'right',
+      },
+      columns: { ...PAYMENT_CONCEPT_COLUMNS },
+    };
   }
 
   ngOnInit(): void {
@@ -37,7 +47,7 @@ export class PaymentConceptListComponent extends BasePage implements OnInit {
     this.loading = true;
     this.paymentService.getAll(this.params.getValue()).subscribe(
       response => {
-        this.payments = response.data;
+        this.paymentconcept = response.data;
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -45,34 +55,33 @@ export class PaymentConceptListComponent extends BasePage implements OnInit {
     );
   }
 
-  add() {
-    this.openModal();
+  openForm(paymentconcept?: IPaymentConcept) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      paymentconcept,
+      callback: (next: boolean) => {
+        if (next) this.getPaymentConcepts();
+      },
+    };
+    this.modalService.show(PaymentConceptDetailComponent, modalConfig);
   }
 
-  openModal(context?: Partial<PaymentConceptDetailComponent>) {
-    const modalRef = this.modalService.show(PaymentConceptDetailComponent, {
-      initialState: context,
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) this.getPaymentConcepts();
-    });
-  }
-
-  edit(payment: IPaymentConcept) {
-    this.openModal({ edit: true, payment });
-  }
-
-  delete(payment: IPaymentConcept) {
+  showDeleteAlert(paymentconcept?: IPaymentConcept) {
     this.alertQuestion(
       'warning',
       'Eliminar',
-      'Desea eliminar este registro?'
+      '¿Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
+        this.delete(paymentconcept.id);
+        Swal.fire('Borrado', '', 'success');
       }
+    });
+  }
+
+  delete(id: number) {
+    this.paymentService.remove(id).subscribe({
+      next: () => this.getPaymentConcepts(),
     });
   }
 }

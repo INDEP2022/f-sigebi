@@ -4,24 +4,35 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IState } from 'src/app/core/models/catalogs/city.model';
+import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
+import { IDelegationState } from 'src/app/core/models/catalogs/delegation-state.model';
 import { IRegionalDelegation } from 'src/app/core/models/catalogs/regional-delegation.model';
-import { IUser } from 'src/app/core/models/catalogs/user.model';
+import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic.model';
+import { IStation } from 'src/app/core/models/catalogs/station.model';
+import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
+import { ITypeRelevant } from 'src/app/core/models/catalogs/type-relevant.model';
+import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
+import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
+import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
+import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
+import { StationService } from 'src/app/core/services/catalogs/station.service';
+import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
+import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { EMAIL_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { WarehouseFormComponent } from '../../../shared-request/warehouse-form/warehouse-form.component';
 import { ESTATE_COLUMNS } from '../../acept-programming/columns/estate-columns';
 import { USER_COLUMNS } from '../../acept-programming/columns/users-columns';
+import { SearchUserFormComponent } from '../../schedule-reception/search-user-form/search-user-form.component';
+import { ProgrammingGoodService } from '../../service/programming-good.service';
+import { ProgrammingRequestService } from '../../service/programming-request.service';
 import { EstateSearchFormComponent } from '../estate-search-form/estate-search-form.component';
+import { IEstateSearch } from '../estate-search-form/estate-search.interface';
 import { UserFormComponent } from '../user-form/user-form.component';
 import { userData } from './data-perfom-programming';
-import {
-  AuthorityOptions,
-  stationsOptions,
-  transferentOptions,
-  typeRelevantOptions,
-  typeWarehouseOptions,
-} from './perfom-programming-options';
+
 @Component({
   selector: 'app-perform-programming-form',
   templateUrl: './perform-programming-form.component.html',
@@ -42,36 +53,70 @@ export class PerformProgrammingFormComponent
     columns: USER_COLUMNS,
   };
   estates: any[] = [];
+  estatesList: any[] = [];
   usersData = userData;
   performForm: FormGroup = new FormGroup({});
-  users = new DefaultSelect<IUser>();
+  estateForm: FormGroup = new FormGroup({});
   regionalsDelegations = new DefaultSelect<IRegionalDelegation>();
-  states = new DefaultSelect<IState>();
-  transferences = new DefaultSelect(transferentOptions);
-  stations = new DefaultSelect(stationsOptions);
-  authority = new DefaultSelect(AuthorityOptions);
-  typeRelevant = new DefaultSelect(typeRelevantOptions);
-  warehouse = new DefaultSelect(typeWarehouseOptions);
-  warehouseAddress: string = '';
+  states = new DefaultSelect<IDelegationState>();
+  transferences = new DefaultSelect<ITransferente>();
+  stations = new DefaultSelect<IStation>();
+  authorities = new DefaultSelect<IAuthority>();
+  typeRelevant = new DefaultSelect<ITypeRelevant>();
+  warehouse = new DefaultSelect<IWarehouse>();
+  warehouseUbication: string = '';
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   showForm: boolean = false;
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  showUbication: boolean = false;
+  idTrans: number = 0;
+  idState: string = '';
+  idStation: number = 0;
+  showSelectTransferent: boolean = false;
+  showSelectStation: boolean = false;
+  showSelectAuthority: boolean = false;
+  regionalDelegationUser: IRegionalDelegation;
+
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private programmingRequestService: ProgrammingRequestService,
+    private programmingGoodService: ProgrammingGoodService,
+    private stationService: StationService,
+    private regionalDelegationService: RegionalDelegationService,
+    private stateService: DelegationStateService,
+    private transferentService: TransferenteService,
+    private typeRelevantService: TypeRelevantService,
+    private warehouseService: WarehouseService,
+    private authorityService: AuthorityService
+  ) {
     super();
+
+    this.settings = {
+      ...this.settings,
+      actions: false,
+      selectMode: 'multi',
+      columns: ESTATE_COLUMNS,
+    };
   }
 
   ngOnInit(): void {
     this.prepareForm();
+    this.getRegionalDelegationSelect(new ListParams());
+    this.getTypeRelevantSelect(new ListParams());
   }
 
   prepareForm() {
     this.performForm = this.fb.group({
-      email: [null, [Validators.required]],
-      address: [null, [Validators.required]],
-      city: [null],
+      email: [null, [Validators.required, Validators.pattern(EMAIL_PATTERN)]],
+      address: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      city: [null, [Validators.pattern(STRING_PATTERN)]],
       startDate: [null],
       endDate: [null],
-      observation: [null],
+      observation: [null, [Validators.pattern(STRING_PATTERN)]],
       regionalDelegation: [null],
       state: [null],
       transferent: [null],
@@ -83,15 +128,25 @@ export class PerformProgrammingFormComponent
     });
   }
 
-  typeSchedule(type: any) {
-    if (type.id == 1) {
+  searchEstate() {
+    this.estateForm = this.fb.group({
+      akaWarehouse: [null],
+      state: [null],
+      municipality: [null],
+      colony: [null],
+      cp: [null],
+    });
+  }
+
+  typeSchedule(type: ITypeRelevant) {
+    if (type.id != null) {
       this.showForm = true;
     }
   }
 
-  showWarehouse(warehouse: any) {
-    console.log(warehouse.address);
-    this.warehouseAddress = warehouse.address;
+  showWarehouse(warehouse: IWarehouse) {
+    this.warehouseUbication = warehouse.ubication;
+    this.showUbication = true;
   }
 
   openForm(userData?: any) {
@@ -108,11 +163,31 @@ export class PerformProgrammingFormComponent
     const rejectionComment = this.modalService.show(UserFormComponent, config);
   }
 
+  listUsers() {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+
+    config.initialState = {
+      callback: (data: any) => {
+        if (data) {
+        }
+      },
+    };
+
+    const searchUser = this.modalService.show(SearchUserFormComponent, config);
+  }
+
   newWarehouse() {
-    const newWarehouse = this.modalService.show(WarehouseFormComponent, {
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
+    const regDelData = this.regionalDelegationUser;
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      regDelData,
+      callback: (next: boolean) => {},
+    };
+
+    const constShowWarehouse = this.modalService.show(
+      WarehouseFormComponent,
+      config
+    );
   }
 
   estateSearch() {
@@ -120,8 +195,9 @@ export class PerformProgrammingFormComponent
 
     config.initialState = {
       userData,
-      callback: (data: any) => {
-        if (data) {
+      callback: (dataSearch: IEstateSearch) => {
+        if (dataSearch) {
+          this.getProgGoods(new ListParams(), dataSearch);
         }
       },
     };
@@ -132,21 +208,115 @@ export class PerformProgrammingFormComponent
     );
   }
 
-  getUsersSelect(user: ListParams) {}
+  getProgGoods(params?: ListParams, dataSearch?: IEstateSearch) {
+    params['filter.regionalDelegationNumber'] = this.regionalDelegationUser.id;
+    if (dataSearch.state) params['filter.stateKey'] = dataSearch.state;
+    console.log('Parametros', params);
+    return this.programmingGoodService.getAll(params).subscribe(data => {
+      this.estatesList = data.data;
+      console.log('bienes a programar', data);
+    });
+  }
 
-  getRegionalDelegationSelect(regionalDelegation: ListParams) {}
+  getRegionalDelegationSelect(params?: ListParams) {
+    if (params.text) {
+      this.regionalDelegationService.search(params).subscribe(data => {
+        this.regionalsDelegations = new DefaultSelect(data.data, data.count);
+      });
+    } else {
+      this.regionalDelegationService.getAll(params).subscribe(data => {
+        this.regionalsDelegations = new DefaultSelect(data.data, data.count);
+      });
+    }
+  }
 
-  getStateSelect(state: ListParams) {}
+  regionalDelegationSelect(item: IRegionalDelegation) {
+    this.regionalDelegationUser = item;
+    this.getStateSelect(new ListParams());
+  }
 
-  getTransferenceSelect(transference: ListParams) {}
+  getStateSelect(params?: ListParams) {
+    params['filter.regionalDelegation'] = this.regionalDelegationUser.id;
+    this.stateService.getAll(params).subscribe(data => {
+      const filterStates = data.data.filter(_states => {
+        return _states.stateCode;
+      });
 
-  getStationSelect(station: ListParams) {}
+      const states = filterStates.map(items => {
+        return items.stateCode;
+      });
 
-  getAuthoritySelect(authority: ListParams) {}
+      this.states = new DefaultSelect(states, data.count);
+    });
+  }
 
-  getTypeRelevantSelect(typeRelevant: ListParams) {}
+  stateSelect(state: IStateOfRepublic) {
+    this.idState = state.id;
+    this.getTransferentSelect(new ListParams());
+    if (this.idTrans) this.getStations(new ListParams());
+  }
 
-  getWarehouseSelect(warehouse: ListParams) {}
+  getTransferentSelect(params?: ListParams) {
+    if (this.idState) {
+      this.showSelectTransferent = true;
+      const type = 'TE';
+      const state = Number(this.idState);
+      this.transferentService
+        .getByTypeUserIdState(params, state, type)
+        .subscribe(data => {
+          console.log('Transferente', data);
+          this.transferences = new DefaultSelect(data.data, data.count);
+        });
+    }
+  }
+
+  transferentSelect(transferent: ITransferente) {
+    this.idTrans = transferent.id;
+    this.getStations(new ListParams());
+  }
+
+  getStations(params?: ListParams) {
+    if (this.idTrans && this.idState) {
+      this.showSelectStation = true;
+      params['filter.idTransferent'] = this.idTrans;
+      params['filter.keyState'] = this.idState;
+      this.stationService.getAll(params).subscribe(data => {
+        this.stations = new DefaultSelect(data.data, data.count);
+      });
+    }
+  }
+
+  stationSelect(item: IStation) {
+    this.idStation = item.id;
+    this.getAuthoritiesSelect(new ListParams());
+  }
+
+  getAuthoritiesSelect(params?: ListParams) {
+    if (this.idTrans && this.idStation) {
+      const columns = {
+        idTransferer: this.idTrans,
+        idStation: this.idStation,
+      };
+
+      this.authorityService.postByColumns(params, columns).subscribe(data => {
+        console.log('Autoridades', data);
+        this.authorities = new DefaultSelect(data.data, data.count);
+        this.showSelectAuthority = true;
+      });
+    }
+  }
+
+  getTypeRelevantSelect(params: ListParams) {
+    this.typeRelevantService.getAll(params).subscribe(data => {
+      this.typeRelevant = new DefaultSelect(data.data, data.count);
+    });
+  }
+
+  getWarehouseSelect(params: ListParams) {
+    this.warehouseService.getAll(params).subscribe(data => {
+      this.warehouse = new DefaultSelect(data.data, data.count);
+    });
+  }
 
   confirm() {}
 

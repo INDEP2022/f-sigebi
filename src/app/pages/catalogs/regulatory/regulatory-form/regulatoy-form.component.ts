@@ -4,6 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRegulatory } from 'src/app/core/models/catalogs/regulatory.model';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModelForm } from '../../../../core/interfaces/model-form';
 import { RegulatoryService } from '../../../../core/services/catalogs/regulatory.service';
 import { DefaultSelect } from '../../../../shared/components/select/default-select';
@@ -36,12 +37,27 @@ export class RegulatoyFormComponent extends BasePage implements OnInit {
       id: [null],
       id_fraccion: [null, [Validators.required]],
       numero: [null, [Validators.required]],
-      descripcion: [null, [Validators.required]],
-      validar_ef: [null, [Validators.required]],
-      validar_ec: [null, [Validators.required]],
-      usuario_creacion: [null, [Validators.required]],
+      descripcion: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      validar_ef: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      validar_ec: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      usuario_creacion: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       fecha_creacion: [null, [Validators.required]],
-      usuario_modificacion: [null, [Validators.required]],
+      usuario_modificacion: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       fecha_modificacion: [null, [Validators.required]],
       version: [null, [Validators.required]],
     });

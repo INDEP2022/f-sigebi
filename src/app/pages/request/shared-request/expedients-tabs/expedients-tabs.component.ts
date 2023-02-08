@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-expedients-tabs',
@@ -7,7 +7,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ExpedientsTabsComponent implements OnInit {
   public typeDoc: string = '';
-
+  @Input() displayName: string = '';
+  @Input() docRequest: boolean = true;
+  @Input() goodsDocs: boolean = true;
+  @Input() generalDocs: boolean = true;
+  @Input() docExp: boolean = false;
   constructor() {}
 
   ngOnInit(): void {

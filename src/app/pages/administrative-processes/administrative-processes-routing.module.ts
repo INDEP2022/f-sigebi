@@ -98,7 +98,7 @@ const routes: Routes = [
         loadChildren: async () =>
           (await import('./change-of-status/change-of-status.module'))
             .ChangeOfStatusModule,
-        data: { title: 'Cambio de estatus' },
+        data: { title: 'Cambio de estatus ', screen: 'CAMMUEESTATUS' },
       },
       {
         path: 'massive-change-status',
@@ -544,7 +544,7 @@ const routes: Routes = [
         loadChildren: async () =>
           (await import('./policies-report/policies-report.module'))
             .PoliciesReportModule,
-        data: { title: 'Reportes de Pólizas' },
+        data: { title: 'Reportes de Pólizas', screen: 'FREPORTBIENESSPOL' },
       },
       {
         path: 'accumulated-monthly-assets',
@@ -588,7 +588,7 @@ const routes: Routes = [
         loadChildren: async () =>
           (await import('./indicators-per-good/indicators-per-good.module'))
             .IndicatorsPerGoodModule,
-        data: { title: 'Indicadores por Bien' },
+        data: { title: 'Indicadores por Bien', screen: 'FACTADBINDICXBIEN' },
       },
       {
         path: 'financial-information-report',
@@ -598,14 +598,17 @@ const routes: Routes = [
               './financial-information-report/financial-information-report.module'
             )
           ).FinancialInformationReportModule,
-        data: { title: 'Reporte de información financiera' },
+        data: {
+          title: 'Reporte de información financiera',
+          screen: 'FCONADBINFORFINAN',
+        },
       },
       {
         path: 'financial-information',
         loadChildren: async () =>
           (await import('./financial-information/financial-information.module'))
             .FinancialInformationModule,
-        data: { title: 'Información financiera' },
+        data: { title: 'Información financiera', screen: 'FACTADBINFORFINAN' },
       },
     ],
   },

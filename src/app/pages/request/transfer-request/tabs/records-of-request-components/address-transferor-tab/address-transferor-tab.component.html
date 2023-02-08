@@ -3,186 +3,214 @@
     <div class="d-flex">
       <div class="mr-auto p-2">
         <h5 class="title" style="font-weight: bold">
-          Domicillio de la transferencia
+          Domicilio de la transferencia
         </h5>
       </div>
       <div *ngIf="isNewAddress === false">
-        <button class="btn btn-primary btn-sm active">
+        <button class="btn btn-primary btn-sm active" (click)="saveAddres()">
           <i class="bx bx-save"></i> Guardar
         </button>
       </div>
     </div>
   </div>
   <div>
-    <form [formGroup]="addressForm" class="form-material">
-      <div class="row pt-5">
-        <div class="col-md-4">
-          <form-field
-            [control]="addressForm.get('aliasWarehouse')"
-            label="Alias Almacen">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="aliasWarehouse" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="addressForm.get('referenceVia2')"
-            label="Referencia Via 2">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="referenceVia2" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="addressForm.get('referenceVia3')"
-            label="Referencia Via 3">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="referenceVia3" />
-          </form-field>
-        </div>
-      </div>
+    <form [formGroup]="domicileForm" class="form-material">
+      <div class="addressGood">
+        <div class="row pt-5">
+          <div class="col-md-4">
+            <form-field
+              [control]="domicileForm.get('warehouseAlias')"
+              label="Alias Almac&eacute;n">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="warehouseAlias"
+                [readOnly]="isreadOnly" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <ngx-select
+              [form]="domicileForm"
+              control="statusKey"
+              (fetchItems)="getStateOfRepublic($event)"
+              [data]="selectState"
+              label="Estado"
+              bindLabel="descCondition"
+              value="id"
+              [readonly]="isreadOnly"></ngx-select>
+            <!-- <form-field
+              [control]="domicileForm.get('statusKey')"
+              label="Estado">
+              <input
+                type="text"
+                class="form-control"
+                [ngModelOptions]="{ standalone: true }"
+                [(ngModel)]="stateOfRepublicName"
+                [readOnly]="isreadOnly" />
+            </form-field> -->
+          </div>
 
-      <div class="row pt-4">
-        <div class="col-md-4">
-          <ngx-select
-            [form]="addressForm"
-            control="state"
-            (fetchItems)="getState($event)"
-            [data]="selectState"
-            label="Estado"
-            value="id"
-            bindLabel="state"></ngx-select>
+          <div class="col-md-4">
+            <ngx-select
+              [form]="domicileForm"
+              control="municipalityKey"
+              (fetchItems)="getMunicipaly($event)"
+              [data]="selectMunicipe"
+              label="Municipio"
+              bindLabel="nameMunicipality"
+              value="idMunicipality"></ngx-select>
+          </div>
         </div>
 
-        <div class="col-md-4">
-          <ngx-select
-            [form]="addressForm"
-            control="municipe"
-            (fetchItems)="getMunicipe($event)"
-            [data]="selectMunicipe"
-            label="Municipe"
-            value="id"
-            bindLabel="municipe"></ngx-select>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <ngx-select
+              [form]="domicileForm"
+              control="localityKey"
+              (fetchItems)="getLocality($event)"
+              [data]="selectLocality"
+              label="Colonia"
+              bindLabel="nameLocation"
+              value="id"></ngx-select>
+          </div>
+          <div class="col-md-4">
+            <ngx-select
+              [form]="domicileForm"
+              control="code"
+              (fetchItems)="getCP($event)"
+              [data]="selectCP"
+              label="C&#46;P&#46;"
+              value="codePostal"
+              bindLabel="codePostal"></ngx-select>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="domicileForm.get('latitude')"
+              label="Latitud">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="latitude" />
+            </form-field>
+          </div>
         </div>
-        <div class="col-md-4">
-          <ngx-select
-            [form]="addressForm"
-            control="suburb"
-            (fetchItems)="getSuburb($event)"
-            [data]="selectSuburb"
-            label="Colonia"
-            value="id"
-            bindLabel="suburb"></ngx-select>
-        </div>
-      </div>
 
-      <div class="row pt-4">
-        <div class="col-md-4">
-          <ngx-select
-            [form]="addressForm"
-            control="cp"
-            (fetchItems)="getCP($event)"
-            [data]="selectCP"
-            label="C.P."
-            value="id"
-            bindLabel="cp"></ngx-select>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field [control]="domicileForm.get('length')" label="Longitud">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="length" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="domicileForm.get('wayName')"
+              label="Nombre de la V&iacute;a">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="wayName" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="domicileForm.get('wayOrigin')"
+              label="Origen de la V&iacute;a">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="wayOrigin" />
+            </form-field>
+          </div>
         </div>
-        <div class="col-md-4">
-          <form-field [control]="addressForm.get('latitud')" label="Latitud">
-            <input type="text" class="form-control" formControlName="latitud" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field [control]="addressForm.get('longitud')" label="Longitud">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="longitud" />
-          </form-field>
-        </div>
-      </div>
 
-      <div class="row pt-4">
-        <div class="col-md-4">
-          <form-field
-            [control]="addressForm.get('nameRoute')"
-            label="Nombre de la Via">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="nameRoute" />
-          </form-field>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="domicileForm.get('wayref1Key')"
+              label="Referencia V&iacute;a 1">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="wayref1Key" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="domicileForm.get('wayref2Key')"
+              label="Referencia Via 2">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="wayref2Key" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="domicileForm.get('wayref3Key')"
+              label="Referencia Via 3">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="wayref3Key" />
+            </form-field>
+          </div>
         </div>
-        <div class="col-md-4">
-          <form-field [control]="addressForm.get('numExt')" label="Num. Ext.">
-            <input type="text" class="form-control" formControlName="numExt" />
-          </form-field>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="domicileForm.get('exteriorNumber')"
+              label="Num&#46; Ext&#46;">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="exteriorNumber" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="domicileForm.get('interiorNumber')"
+              label="Num&#46; Int&#46;">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="interiorNumber" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="domicileForm.get('wayDestiny')"
+              label="Destino de la V&iacute;a">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="wayDestiny" />
+            </form-field>
+          </div>
         </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="addressForm.get('originRoute')"
-            label="Origin de la Via">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="originRoute" />
-          </form-field>
-        </div>
-      </div>
 
-      <div class="row pt-4">
-        <div class="col-md-4">
-          <form-field [control]="addressForm.get('numInt')" label="Num. Int.">
-            <input type="text" class="form-control" formControlName="numInt" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="addressForm.get('routeDestination')"
-            label="Destino de la Via">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="routeDestination" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="addressForm.get('referenceVia1')"
-            label="Referencia Via 1">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="referenceVia1" />
-          </form-field>
-        </div>
-      </div>
-
-      <div class="row pt-4">
-        <div class="col-md-4">
-          <form-field
-            [control]="addressForm.get('kilometerRoute')"
-            label="Kiloometro de la Via">
-            <input
-              type="number"
-              class="form-control"
-              formControlName="kilometerRoute" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="addressForm.get('description')"
-            label="Descripción">
-            <textarea
-              class="form-control"
-              formControlName="description"></textarea>
-          </form-field>
+        <div class="row pt-4">
+          <div class="col-md-4">
+            <form-field
+              [control]="domicileForm.get('wayChaining')"
+              label="Kil&oacute;metro de la V&iacute;a">
+              <input
+                type="number"
+                class="form-control"
+                formControlName="wayChaining" />
+            </form-field>
+          </div>
+          <div class="col-md-4">
+            <form-field
+              [control]="domicileForm.get('description')"
+              label="Descripci&oacute;n">
+              <textarea
+                class="form-control"
+                formControlName="description"></textarea>
+            </form-field>
+          </div>
         </div>
       </div>
     </form>

@@ -32,12 +32,15 @@ export class SelectComponent<T> implements OnInit {
   @Input() placeholder: string = '';
   @Input() data = new DefaultSelect<T>();
   @Input() multiple: boolean = false;
+  @Input() loading: boolean = false;
   @Input() closeOnSelect: boolean = true;
   @Input() maxSelectedItems: number = 0;
+  @Input() searchable: boolean = true;
+  @Input() searchOnInit: boolean = false;
   @Output() fetchItems = new EventEmitter<ListParams>();
   @Output() change = new EventEmitter<any>();
+  @Input() readonly: boolean = false;
   buffer: any[] = [];
-  loading = false;
   input$ = new Subject<string>();
   page: number = 1;
   totalItems: number = 0;
@@ -46,6 +49,10 @@ export class SelectComponent<T> implements OnInit {
   constructor() {}
 
   ngOnInit() {
+    if (this.searchOnInit) {
+      const params = new ListParams();
+      this.fetchItems.emit(params);
+    }
     this.onSearch();
   }
 
@@ -66,7 +73,11 @@ export class SelectComponent<T> implements OnInit {
       this.page++;
       this.loading = true;
       this.concat = true;
-      const params = { inicio: this.page, text, pageSize: this.selectSize };
+      const params = {
+        page: this.page,
+        text: text ?? '',
+        limit: this.selectSize,
+      };
       this.fetchItems.emit(params);
     }
   }
@@ -81,7 +92,11 @@ export class SelectComponent<T> implements OnInit {
           this.buffer = [];
           this.loading = true;
           this.concat = false;
-          const params = { inicio: this.page, text, pageSize: this.selectSize };
+          const params = {
+            page: this.page,
+            text: text ?? '',
+            limit: this.selectSize,
+          };
           this.fetchItems.emit(params);
           return of([]);
         })

@@ -1,7 +1,9 @@
 <app-card [header]="true">
   <div class="ch-content justify-content-between" header>
     <div class="">
-      <h5 class="title">{{ title }}, No. Solicitud: {{ requestId }}</h5>
+      <h5 class="title">
+        {{ title }}&#44; No&#46; Solicitud&#58; {{ requestId }}
+      </h5>
     </div>
     <div class="" *ngIf="step == 'register-response-minute'">
       <div class="d-flex flex-wrap mt-2" *ngIf="screenWidth >= 1600">
@@ -174,7 +176,7 @@
     <app-request-information [request]="requestInfo"></app-request-information>
     <div class="md-tabs">
       <tabset>
-        <tab heading="Registro de Documentación" id="documentationTab">
+        <tab heading="Registro de Documentaci&oacute;n" id="documentationTab">
           <app-register-documentation-view
             [requestId]="requestId"></app-register-documentation-view>
         </tab>

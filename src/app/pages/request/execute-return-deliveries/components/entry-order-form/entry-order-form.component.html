@@ -1,0 +1,103 @@
+<app-modal>
+  <div header>
+    <h5 class="modal-title">Orden de ingreso</h5>
+  </div>
+  <div body style="margin-top: -30px">
+    <form [formGroup]="form" class="form-material">
+      <div class="row">
+        <div class="col-md-6">
+          <div>
+            <form-field
+              [control]="form.get('bankingInstitution')"
+              label="Institución bancaria">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="bankingInstitution" />
+            </form-field>
+          </div>
+
+          <div class="pt-3">
+            <form-field [control]="form.get('concept')" label="Concepto">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="concept" />
+            </form-field>
+          </div>
+
+          <div class="pt-3">
+            <form-field [control]="form.get('wayToPay')" label="Forma de pago">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="wayToPay" />
+            </form-field>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div>
+            <form-field [control]="form.get('import')" label="Importe">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="import" />
+            </form-field>
+          </div>
+
+          <div class="pt-3">
+            <form-field
+              [control]="form.get('referenceNumber')"
+              label="N&uacute;mero de referenc&iacute;a">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="referenceNumber" />
+            </form-field>
+          </div>
+
+          <div class="pt-3">
+            <form-field
+              [control]="form.get('specialized')"
+              label="Tercer especializado">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="specialized" />
+            </form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-3">
+        <form-field
+          [control]="form.get('unitAdministrative')"
+          label="&Uacute;nidad administrativa">
+          <select class="form-control" formControlName="unitAdministrative">
+            <option [value]="null">Seleccione un valor</option>
+            <option [value]="'UnitAdministrativeOne'">
+              &Uacute;nidad administativa 1
+            </option>
+            <option [value]="'UnitAdministrativeTwo'">
+              &Uacute;nidad administrativa 2
+            </option>
+          </select>
+        </form-field>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          [loading]="loading"
+          (confirm)="confirm()"></confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
