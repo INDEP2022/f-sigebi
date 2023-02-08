@@ -1,6 +1,12 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormGroup } from '@angular/forms';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
+import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { GoodTrackerForm } from '../../utils/goods-tracker-form';
 
 @Component({
   selector: 'clasification-filter',
@@ -9,27 +15,20 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class ClasificationFilterComponent implements OnInit {
   @Output() onSubmit = new EventEmitter<any>();
-  form = this.fb.group({
-    fraccion: new FormControl(null, [Validators.required]),
-    numeroClasificacion: new FormControl(null, [Validators.required]),
-    clasificacionAlterna: new FormControl(null, [
-      Validators.required,
-      Validators.pattern(STRING_PATTERN),
-    ]),
-    sssubtipoDescripcion: new FormControl(null, [
-      Validators.required,
-      Validators.pattern(STRING_PATTERN),
-    ]),
-    type: new FormControl(null, [Validators.required]),
-    subtype: new FormControl(null, [Validators.required]),
-    ssubtype: new FormControl(null, [Validators.required]),
-    sssubtype: new FormControl(null, [Validators.required]),
-  });
-  constructor(private fb: FormBuilder) {}
+  @Input() form: FormGroup<GoodTrackerForm>;
+  @Input() params: FilterParams;
+  types = new DefaultSelect();
+  constructor(private goodTypesService: GoodTypeService) {}
 
   ngOnInit(): void {}
 
   search() {
     this.onSubmit.emit(this.form.value);
+  }
+
+  getTypes(params: ListParams) {
+    this.goodTypesService.getAll(params).subscribe(response => {
+      this.types = new DefaultSelect(response.data, response.count);
+    });
   }
 }
