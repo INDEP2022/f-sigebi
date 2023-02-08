@@ -1,10 +1,18 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { SelectFractionComponent } from 'src/app/@standalone/modals/select-fraction/select-fraction.component';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
+import { ITypesByClasification } from 'src/app/core/models/catalogs/types-by-clasification';
+import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
+import { GoodSsubtypeService } from 'src/app/core/services/catalogs/good-ssubtype.service';
+import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.service';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
+import { TypesByClasificationService } from 'src/app/core/services/catalogs/types-by-clasification.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { GoodTrackerForm } from '../../utils/goods-tracker-form';
 
@@ -18,7 +26,21 @@ export class ClasificationFilterComponent implements OnInit {
   @Input() form: FormGroup<GoodTrackerForm>;
   @Input() params: FilterParams;
   types = new DefaultSelect();
-  constructor(private goodTypesService: GoodTypeService) {}
+  subtypes = new DefaultSelect();
+  ssubtypes = new DefaultSelect();
+  sssubtypes = new DefaultSelect();
+
+  get formControls() {
+    return this.form.controls;
+  }
+  constructor(
+    private goodTypesService: GoodTypeService,
+    private goodSubtypeService: GoodSubtypeService,
+    private goodSsubtypeService: GoodSsubtypeService,
+    private goodSssubtypeService: GoodSssubtypeService,
+    private modalService: BsModalService,
+    private typesByClasificationService: TypesByClasificationService
+  ) {}
 
   ngOnInit(): void {}
 
@@ -30,5 +52,69 @@ export class ClasificationFilterComponent implements OnInit {
     this.goodTypesService.getAll(params).subscribe(response => {
       this.types = new DefaultSelect(response.data, response.count);
     });
+  }
+
+  getSubtypes(params?: ListParams) {
+    const types = this.form.controls.types.value;
+    this.goodSubtypeService.getByManyIds({ types }, params).subscribe({
+      next: response =>
+        (this.subtypes = new DefaultSelect(response.data, response.count)),
+    });
+  }
+
+  getSsubtypes(params?: ListParams) {
+    const types = this.form.controls.types.value;
+    const subtypes = this.form.controls.subtypes.value;
+    this.goodSsubtypeService
+      .getByManyIds({ types, subtypes }, params)
+      .subscribe({
+        next: response =>
+          (this.ssubtypes = new DefaultSelect(response.data, response.count)),
+      });
+  }
+
+  getSssubtypes(params?: ListParams) {
+    const types = this.form.controls.types.value;
+    const subtypes = this.form.controls.subtypes.value;
+    const ssubtypes = this.form.controls.ssubtypes.value;
+    this.goodSssubtypeService
+      .getByManyIds({ types, subtypes, ssubtypes }, params)
+      .subscribe({
+        next: response =>
+          (this.sssubtypes = new DefaultSelect(response.data, response.count)),
+      });
+  }
+
+  selectFraction() {
+    const modalConfig = {
+      ...MODAL_CONFIG,
+      class: 'modal-dialog-centered modal-lg',
+    };
+    modalConfig.initialState = {
+      callback: (fraction: any) => {
+        this.formControls.satDepartureNum.setValue(fraction.fraction);
+        this.getTypesByClasif(fraction.clasifGoodNumber);
+      },
+    };
+    this.modalService.show(SelectFractionComponent, modalConfig);
+  }
+
+  getTypesByClasif(clasifNum: number | string) {
+    this.typesByClasificationService.getById(clasifNum).subscribe({
+      next: res => this.fillTypesByClasif(res),
+    });
+  }
+
+  fillTypesByClasif(types: ITypesByClasification) {
+    const { sssubtype } = types;
+    const sssubtypes = [
+      { id: sssubtype.id, description: sssubtype.description },
+    ];
+    this.sssubtypes = new DefaultSelect(sssubtypes, 1);
+    this.formControls.sssubtypes.setValue([`${sssubtype.id}`]);
+  }
+
+  fractionChange() {
+    console.log('fraction change');
   }
 }
