@@ -9,6 +9,8 @@ export const environment = {
   URL_PREFIX: 'api/v1/',
   API_REPORTS:
     'http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/',
+  API_REPORTS_USR: 'sigebiadmon',
+  API_REPORTS_PSW: '87654321',
   api_external_token:
     'http://52.142.23.169/realms/indep/protocol/openid-connect/token',
   api_external_userInfo:
