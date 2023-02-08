@@ -1,1 +1,157 @@
-<p>mail-modal works!</p>
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Detalles' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-3">
+          <form-field label="Usuario" [control]="form.get('usuario')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="usuario"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="Nombre" [control]="form.get('nombre')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="nombre"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="RFC" [control]="form.get('rfc')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="rfc"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="CURP" [control]="form.get('curp')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="curp"
+              readonly />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field label="Calle" [control]="form.get('calle')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="calle"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field label="No. Int" [control]="form.get('no_interior')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="no_interior"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="Colonia" [control]="form.get('colonia')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="colonia"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field label="C.P." [control]="form.get('codigo_postal')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="codigo_postal"
+              readonly />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-2">
+          <form-field label="telefono" [control]="form.get('telefono')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="telefono"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field label="profesion" [control]="form.get('profesion')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="profesion"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field label="cve_cargo" [control]="form.get('cve_cargo')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="cve_cargo"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-4">
+          <form-field
+            label="Fecha ingreso x 1ra vez"
+            [control]="form.get('fec_ingreso_primera_vez')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="fec_ingreso_primera_vez"
+              readonly />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-3">
+          <form-field label="Delegación" [control]="form.get('descripcion')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="descripcion"
+              readonly />
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="No. Registro" [control]="form.get('no_registro')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="no_registro"
+              readonly />
+          </form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <!-- <div class="m-3">
+                <confirm-button [type]="'button'" ></confirm-button>
+            </div> -->
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>

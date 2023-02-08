@@ -19,14 +19,21 @@ export class UsersService {
 
   getAllSegUsers(params: ListParams) {
     return this.httpClient.get<IListResponse<any>>(
-      `${environment.API_URL}/users/api/v1/seg-users`,
+      `${environment.API_URL}users/api/v1/seg-users`,
       { params }
     );
   }
 
   getAllSegXAreas(params: ListParams) {
     return this.httpClient.get<IListResponse<any>>(
-      `${environment.API_URL}/users/api/v1/seg-access-x-areas`,
+      `${environment.API_URL}users/api/v1/seg-access-x-areas`,
+      { params }
+    );
+  }
+
+  getAllSegXAreasFind(params: ListParams) {
+    return this.httpClient.get<IListResponse<any>>(
+      `${environment.API_URL}users/api/v1/seg-access-x-areas/find-all-registers-users-access-by-areas-and-delegatons`,
       { params }
     );
   }
