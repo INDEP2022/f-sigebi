@@ -13,6 +13,10 @@ export const environment = {
   API_URL2: window.env.API_BACKEND_URL2,
   URL_PREFIX: window.env.URL_PREFIX,
 
+  API_REPORTS: window.env.API_REPORTS,
+  API_REPORTS_USR: window.env.API_REPORTS,
+  API_REPORTS_PSW: window.env.API_REPORTS_PSW,
+
   api_external_token: window.env.api_external_token,
   api_external_userInfo: window.env.api_external_userInfo,
   api_external_typeUser: window.env.api_external_typeUser,
