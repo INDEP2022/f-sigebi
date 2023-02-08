@@ -44,10 +44,10 @@ Thumbs.db
 
 # Docker Files
 Dockerfile
-dockerignore
-.dockerignore
-nginx.conf
-nginx.dockerfile
-sigebi-app-configmap.yaml
-sigebi-deployment.yaml
-sigebi-service.yaml
+#dockerignore
+#.dockerignore
+#nginx.conf
+#nginx.dockerfile
+#sigebi-app-configmap.yaml
+#sigebi-deployment.yaml
+#sigebi-service.yaml

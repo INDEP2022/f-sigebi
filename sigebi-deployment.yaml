@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sigebi-app
+  namespace: ns-sb-0001-sigebi
+spec:
+  selector:
+    matchLabels:
+      app: sigebi-app
+  template:
+    metadata:
+      labels:
+        app: sigebi-app
+    spec:
+      containers:
+      - name: sigebi-app
+        imagePullPolicy: Always
+        image: legaspirlr/sigebi-app:test1.0.2 #alebrhine/sigebi-app:v1.5
+        envFrom:
+            - configMapRef:
+                name: app-sigebi-configmap
+        lifecycle:
+              postStart:
+                exec:
+                  command: ["/bin/sh", "-c", "envsubst < /usr/share/nginx/html/assets/env.template.js > /usr/share/nginx/html/assets/env.js"]
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "128m"
+        ports:
+          - containerPort: 80
