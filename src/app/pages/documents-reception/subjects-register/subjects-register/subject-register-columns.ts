@@ -47,32 +47,32 @@ const PGR_PAPERWORK_MAILBOX_COLUMNS = {
 };
 
 const PGR_TRANSFERS_COLUMNS = {
-  noBien: {
+  pgrGoodNumber: {
     title: 'PGR No. Bien',
     type: 'number',
     sort: false,
   },
-  description: {
+  office: {
     title: 'PGR Oficio',
     type: 'string',
     sort: false,
   },
-  cantidad: {
+  aveprev: {
     title: 'Aver. Previa',
     type: 'string',
     sort: false,
   },
-  ident: {
+  saeGoodNumber: {
     title: 'SAE No. Bien',
     type: 'string',
     sort: false,
   },
-  est: {
+  description: {
     title: 'SAE Descripción',
     type: 'string',
     sort: false,
   },
-  proceso: {
+  estatus: {
     title: 'SAE Estatus',
     type: 'string',
     sort: false,
