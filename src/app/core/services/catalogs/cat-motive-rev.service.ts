@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ENDPOINT_LINKS } from 'src/app/common/constants/endpoints';
 import { ICrudMethods } from 'src/app/common/repository/interfaces/crud-methods';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { Repository } from 'src/app/common/repository/repository';
@@ -11,7 +10,7 @@ import { ICatMotiveRev } from '../../models/catalogs/cat-motive-rev';
   providedIn: 'root',
 })
 export class CatMotiveRevService implements ICrudMethods<ICatMotiveRev> {
-  private readonly route: string = ENDPOINT_LINKS.parametergoodCat;
+  private readonly route: string = ''; //ENDPOINT_LINKS.parametergoodCat;
   constructor(private catMotiveRevRepository: Repository<ICatMotiveRev>) {}
 
   getAll(params?: ListParams): Observable<IListResponse<ICatMotiveRev>> {

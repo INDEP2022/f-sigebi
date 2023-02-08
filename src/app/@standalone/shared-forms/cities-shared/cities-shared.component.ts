@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
 //Rxjs
@@ -25,6 +25,7 @@ export class CitiesSharedComponent extends BasePage implements OnInit {
   @Input() cityField: string = 'city';
 
   @Input() showCity: boolean = true;
+  @Output('state') state: EventEmitter<Object> = new EventEmitter<Object>();
 
   params = new BehaviorSubject<ListParams>(new ListParams());
   cities = new DefaultSelect<ICity>();
@@ -40,11 +41,9 @@ export class CitiesSharedComponent extends BasePage implements OnInit {
   ngOnInit(): void {}
 
   getCities(params: ListParams) {
-    this.service.getAll(params).subscribe(
-      data => {
-        this.cities = new DefaultSelect(data.data, data.count);
-      },
-      err => {
+    this.service.getAll(params).subscribe({
+      next: data => (this.cities = new DefaultSelect(data.data, data.count)),
+      error: err => {
         let error = '';
         if (err.status === 0) {
           error = 'Revise su conexión de Internet.';
@@ -53,13 +52,22 @@ export class CitiesSharedComponent extends BasePage implements OnInit {
         }
         this.onLoadToast('error', 'Error', error);
       },
-      () => {}
-    );
+    });
   }
 
   onCitiesChange(subdelegation: any) {
     //this.resetFields([this.City]);
     this.cities = new DefaultSelect();
+
+    if (subdelegation.state) {
+      const { noDelegation, noSubDelegation, state } = subdelegation;
+      let infoForms = {
+        noDelegation,
+        noSubDelegation,
+        state,
+      };
+      this.state.next(infoForms);
+    }
   }
 
   resetFields(fields: AbstractControl[]) {

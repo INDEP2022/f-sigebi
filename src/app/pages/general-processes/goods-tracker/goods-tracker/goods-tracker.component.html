@@ -1,6 +1,8 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">RASTREADOR POR BIENES Y NOTIFICACIONES</h5>
+    <div class="col-md-5">
+      <h5 class="title">RASTREADOR POR BIENES Y NOTIFICACIONES</h5>
+    </div>
     <div class="buttons d-flex">
       <form-check for="irregular-goods" label="Bienes Irregulares">
         <input type="checkbox" name="" id="irregular-goods" />
@@ -17,55 +19,94 @@
   </div>
 
   <div body>
-    <form [formGroup]="form">
-      <div class="row">
-        <div class="col-md-12">
-          <span class="label text-secondary">Buscar por&#58;</span>
-        </div>
+    <div class="row">
+      <div class="col-md-12">
+        <accordion [isAnimated]="true">
+          <accordion-group [isOpen]="true">
+            <div accordion-heading class="d-flex justify-content-between">
+              <div>
+                <h5>
+                  <i class="fa fa-filter" aria-hidden="true"></i>
+                  Clasificación de Bienes (Tipo, Subtipo, Ssubtipo, Sssubtipo)
+                </h5>
+              </div>
+              <div></div>
+            </div>
+            <clasification-filter
+              [form]="form"
+              [params]="params"
+              (onSubmit)="searchGoods($event)"></clasification-filter>
+          </accordion-group>
+          <accordion-group>
+            <div accordion-heading class="d-flex justify-content-between">
+              <div>
+                <h5>
+                  <i class="fa fa-filter" aria-hidden="true"></i>
+                  Datos del Bien
+                </h5>
+              </div>
+              <div></div>
+            </div>
+            <data-filter
+              [form]="form"
+              [params]="params"
+              (onSubmit)="searchGoods($event)"></data-filter>
+          </accordion-group>
+          <accordion-group>
+            <div accordion-heading class="d-flex justify-content-between">
+              <div>
+                <h5>
+                  <i class="fa fa-filter" aria-hidden="true"></i>
+                  Expediente Notificación y Dictamen
+                </h5>
+              </div>
+              <div></div>
+            </div>
+            <record-notification-filter
+              (onSubmit)="searchGoods($event)"></record-notification-filter>
+          </accordion-group>
+          <accordion-group>
+            <div accordion-heading class="d-flex justify-content-between">
+              <div>
+                <h5>
+                  <i class="fa fa-filter" aria-hidden="true"></i>
+                  Actas de Recepción y Actas o Procesos de Destino
+                </h5>
+              </div>
+              <div></div>
+            </div>
+            <certificates-filter
+              (onSubmit)="searchGoods($event)"></certificates-filter>
+          </accordion-group>
+          <accordion-group>
+            <div accordion-heading class="d-flex justify-content-between">
+              <div>
+                <h5>
+                  <i class="fa fa-filter" aria-hidden="true"></i>
+                  Catálogo de Transferente | Emisora | Autoridad
+                </h5>
+              </div>
+              <div></div>
+            </div>
+            <transfer-autority-filter
+              (onSubmit)="searchGoods($event)"></transfer-autority-filter>
+          </accordion-group>
+          <accordion-group>
+            <div accordion-heading class="d-flex justify-content-between">
+              <div>
+                <h5>
+                  <i class="fa fa-filter" aria-hidden="true"></i>
+                  Ubicación del Bien
+                </h5>
+              </div>
+              <div></div>
+            </div>
+            <location-filter (onSubmit)="searchGoods($event)"></location-filter>
+          </accordion-group>
+        </accordion>
       </div>
-      <div class="row pt-3">
-        <div class="col-md-12">
-          <form-radio
-            class="col-md-6"
-            *ngFor="let criteria of filterCriterias"
-            [label]="criteria.label">
-            <input
-              type="radio"
-              formControlName="criterio"
-              [value]="criteria.value" />
-          </form-radio>
-        </div>
-      </div>
-    </form>
+    </div>
   </div>
 </app-card>
-<div #scrollFilter></div>
-<app-card [header]="true" *ngIf="criteriaControl.value">
-  <div class="ch-content" header>
-    <h5 class="title">Filtro&#58; {{ getFilterName() }}</h5>
-  </div>
-
-  <div body>
-    <clasification-filter
-      *ngIf="criteriaControl.value == criteriasEnum.GOOD_CLASIFICATION"
-      (onSubmit)="searchGoods($event)"></clasification-filter>
-    <data-filter
-      *ngIf="criteriaControl.value == criteriasEnum.GOOD_DATA"
-      (onSubmit)="searchGoods($event)"></data-filter>
-    <record-notification-filter
-      *ngIf="criteriaControl.value == criteriasEnum.GOOD_RECORD_NOTIFICATION"
-      (onSubmit)="searchGoods($event)"></record-notification-filter>
-    <certificates-filter
-      *ngIf="criteriaControl.value == criteriasEnum.GOOD_RECEPTION_CERTIFICATE"
-      (onSubmit)="searchGoods($event)"></certificates-filter>
-    <transfer-autority-filter
-      *ngIf="criteriaControl.value == criteriasEnum.GOOD_TRANSFER"
-      (onSubmit)="searchGoods($event)"></transfer-autority-filter>
-    <location-filter
-      *ngIf="criteriaControl.value == criteriasEnum.GOOD_LOCATION"
-      (onSubmit)="searchGoods($event)"></location-filter>
-  </div>
-</app-card>
-<div #tableItems></div>
 
 <goods-table *ngIf="showTable"></goods-table>

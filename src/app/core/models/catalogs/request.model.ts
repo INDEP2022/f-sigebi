@@ -19,7 +19,7 @@ export interface IRequest {
   priority?: boolean;
   infoProvenance?: string;
   receptDate?: string;
-  officeDate?: Date;
+  officeDate?: any;
   //typeExpedient?: string;
   indiciado?: string;
   nameSender?: string;

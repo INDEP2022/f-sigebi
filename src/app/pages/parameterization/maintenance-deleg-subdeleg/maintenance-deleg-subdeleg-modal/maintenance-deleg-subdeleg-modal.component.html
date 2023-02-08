@@ -8,6 +8,7 @@
         <div class="col-md-5" *ngIf="edit == false">
           <form-field [control]="subDelegationForm.get('delegationNumber')">
             <ngx-select
+              [searchOnInit]="true"
               [form]="subDelegationForm"
               control="delegationNumber"
               [data]="delegations"

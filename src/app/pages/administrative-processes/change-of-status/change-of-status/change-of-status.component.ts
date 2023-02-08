@@ -135,7 +135,6 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
     this.loading = true;
     this.goodServices.getById(this.numberGood.value).subscribe({
       next: response => {
-        console.log(response);
         this.good = response.data;
         this.loadDescriptionStatus(this.good);
         this.loading = false;
@@ -151,7 +150,6 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
     this.currentStatus.setValue(good.status);
     this.descriptionStatus.setValue(status.status_descripcion);
     this.processesGood.setValue(good.extDomProcess);
-    console.log(good.extDomProcess);
   }
 
   loadDescriptionStatus(good: IGood) {
@@ -168,7 +166,6 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
 
   accept() {
     //5457740
-    console.log('Antes -------->', this.good);
     this.good.status =
       this.goodStatus.value === null ? this.good.status : this.goodStatus.value;
     this.good.observations = this.description.value;
@@ -178,8 +175,6 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
         : this.extDomProcess.value;
     // this.good.usrApprovedUtilization = this.issuingUser.value;
     this.good.userModification = this.token.decodeToken().preferred_username;
-    console.log(this.good);
-
     this.goodServices
       .updateStatusGood(this.numberGood.value, this.good)
       .subscribe({
@@ -208,9 +203,11 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
       statusChangeProgram: 'CAMMUEESTATUS',
       reasonForChange: this.description.value,
       registryNum: null,
-      extDomProcess: 'ENPROCESO',
+      extDomProcess:
+        this.extDomProcess.value === null
+          ? this.good.extDomProcess
+          : this.extDomProcess.value,
     };
-    console.log('Desde historicos', historyGood);
 
     this.historyGoodService.create(historyGood).subscribe({
       next: response => {},

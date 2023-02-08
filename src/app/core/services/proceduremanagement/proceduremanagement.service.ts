@@ -1,33 +1,56 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { ProcedureManagementEndPoints } from 'src/app/common/constants/endpoints/ms-proceduremanagement-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { Repository } from '../../../common/repository/repository';
+import { HttpService } from 'src/app/common/services/http.service';
+import { IListResponse } from '../../interfaces/list-response.interface';
+import {
+  IManagamentProcessPgr,
+  IManagamentProcessSat,
+  IManagementArea,
+  IProceduremanagement,
+} from '../../models/ms-proceduremanagement/ms-proceduremanagement.interface';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ProcedureManagementService {
-  private baseURL: string = 'proceduremanagement/';
+export class ProcedureManagementService extends HttpService {
+  constructor() {
+    super();
+    this.microservice = ProcedureManagementEndPoints.ProcedureManagement;
+  }
 
-  constructor(private procedureManagementRepository: Repository<any>) {}
-
-  getManagamentProcessSat(body: ListParams) {
-    return this.procedureManagementRepository.getAllPaginated(
-      this.baseURL + 'views/management-process-sat',
-      body
+  getAll(params?: ListParams): Observable<IListResponse<IProceduremanagement>> {
+    return this.get<IListResponse<IProceduremanagement>>(
+      ProcedureManagementEndPoints.ProcedureManagement,
+      params
     );
   }
 
-  getManagamentProcessPgr(body: ListParams) {
-    return this.procedureManagementRepository.getAllPaginated(
-      this.baseURL + 'views/management-process-pgr',
-      body
+  getManagamentProcessSat(
+    params?: ListParams
+  ): Observable<IListResponse<IManagamentProcessSat>> {
+    return this.get<IListResponse<IManagamentProcessSat>>(
+      ProcedureManagementEndPoints.ManagamentProcessSat,
+      params
     );
   }
 
-  getManagamentProcessSatArea(body: ListParams) {
-    return this.procedureManagementRepository.getAllPaginated(
-      this.baseURL + 'management-area',
-      body
+  getManagamentProcessPgr(
+    params?: ListParams
+  ): Observable<IListResponse<IManagamentProcessPgr>> {
+    return this.get<IListResponse<IManagamentProcessPgr>>(
+      ProcedureManagementEndPoints.ManagamentProcessPgr,
+      params
+    );
+  }
+
+  getManagamentArea(
+    params?: ListParams
+  ): Observable<IListResponse<IManagementArea>> {
+    return this.get<IListResponse<IManagementArea>>(
+      ProcedureManagementEndPoints.ManagamentArea,
+      params
     );
   }
 }

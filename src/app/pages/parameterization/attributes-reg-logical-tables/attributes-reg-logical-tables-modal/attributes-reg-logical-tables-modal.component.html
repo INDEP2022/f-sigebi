@@ -5,38 +5,36 @@
   <div body>
     <form class="form-material" [formGroup]="tdescAtribForm">
       <div class="row">
+        <div class="col-md-4" *ngIf="edit !== true">
+          <ngx-select
+            [searchOnInit]="true"
+            [form]="tdescAtribForm"
+            control="idNmTable"
+            [data]="tables"
+            value="table"
+            bindLabel="table"
+            label="ID Tabla"
+            (fetchItems)="getTables($event)">
+          </ngx-select>
+          <!-- <form-field
+            [control]="tdescAtribForm.get('idNmTable')"
+            label="ID Tabla">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="idNmTable" />
+          </form-field> -->
+        </div>
         <div class="col-md-4">
           <form-field
             [control]="tdescAtribForm.get('keyAtrib')"
             label="No. Atributo">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="keyAtrib" />
           </form-field>
         </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="tdescAtribForm.get('idNmTable')"
-            label="Tipo de tabla">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="idNmTable" />
-          </form-field>
-        </div>
-        <div class="col-md-4">
-          <form-field
-            [control]="tdescAtribForm.get('swFormat')"
-            label="Formato">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="swFormat" />
-          </form-field>
-        </div>
-      </div>
-      <div class="row pt-5">
         <div class="col-md-4">
           <form-field
             [control]="tdescAtribForm.get('descriptionAtrib')"
@@ -47,18 +45,48 @@
               formControlName="descriptionAtrib" />
           </form-field>
         </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field
+            [control]="tdescAtribForm.get('swFormat')"
+            label="Formato">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="swFormat" />
+          </form-field>
+        </div>
         <div class="col-md-4">
           <form-field
             [control]="tdescAtribForm.get('longMax')"
             label="Longitud Máxima">
-            <input type="text" class="form-control" formControlName="longMax" />
+            <input
+              type="number"
+              class="form-control"
+              formControlName="longMax" />
           </form-field>
         </div>
         <div class="col-md-4">
           <form-field
             [control]="tdescAtribForm.get('longMin')"
             label="Longitud Mínima">
-            <input type="text" class="form-control" formControlName="longMin" />
+            <input
+              type="number"
+              class="form-control"
+              formControlName="longMin" />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5">
+        <div class="col-md-4">
+          <form-field
+            [control]="tdescAtribForm.get('registerNumber')"
+            label="No. Registro">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="registerNumber" />
           </form-field>
         </div>
       </div>
@@ -69,7 +97,8 @@
       <div class="m-3">
         <confirm-button
           [type]="'button'"
-          [disabled]="!tdescAtribForm.valid"></confirm-button>
+          [disabled]="!tdescAtribForm.valid"
+          (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">

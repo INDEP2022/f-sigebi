@@ -23,7 +23,9 @@
       <div class="row">
         <div class="col-sm-12 col-md-6">
           <div class="form-material">
-            <search-bar [params]="params"></search-bar>
+            <search-bar
+              [filterParams]="filterParams"
+              [filterField]="searchFilter"></search-bar>
           </div>
         </div>
         <div class="col-sm-12 col-md-6">
@@ -32,14 +34,14 @@
               <app-columns-select
                 [(settings)]="providerSettings"></app-columns-select>
             </div>
-            <div>
+            <!-- <div>
               <button
                 class="btn btn-sm btn-primary active me-2 font-size-14"
                 (click)="openFormProvider()"
                 [disabled]="">
                 Agregar Registro
               </button>
-            </div>
+            </div> -->
             <div>
               <button
                 class="btn btn-sm btn-primary active me-2 font-size-14"
@@ -53,18 +55,32 @@
       </div>
       <div class="row mt-4">
         <div class="col-sm-6 col-md-4">
-          <form-field [control]="providerForm.get('id')" label="Id Proveedor">
-            <input type="number" class="form-control" formControlName="id" />
+          <form-field
+            [control]="providerForm.get('providerId')"
+            label="Id Proveedor">
+            <input
+              type="number"
+              class="form-control"
+              formControlName="providerId"
+              readonly />
           </form-field>
         </div>
         <div class="col-sm-6 col-md-4">
           <form-field [control]="providerForm.get('bank')" label="Banco">
-            <input type="text" class="form-control" formControlName="bank" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="bank"
+              readonly />
           </form-field>
         </div>
         <div class="col-sm-6 col-md-4">
           <form-field [control]="providerForm.get('branch')" label="Sucursal">
-            <input type="text" class="form-control" formControlName="branch" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="branch"
+              readonly />
           </form-field>
         </div>
       </div>
@@ -76,12 +92,17 @@
             <input
               type="text"
               class="form-control"
-              formControlName="checkingCta" />
+              formControlName="checkingCta"
+              readonly />
           </form-field>
         </div>
         <div class="col-sm-6 col-md-4">
           <form-field [control]="providerForm.get('key')" label="Clabe">
-            <input type="text" class="form-control" formControlName="key" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="key"
+              readonly />
           </form-field>
         </div>
       </div>
@@ -92,12 +113,14 @@
             [attr.class]="'table-bordered'"
             [settings]="providerSettings"
             [source]="providerColumns"
-            (edit)="openFormProvider($event.data)">
+            (userRowSelect)="selectProvider($event.data)"
+            (edit)="openFormProvider($event.data)"
+            (delete)="delete($event.data)">
           </ng2-smart-table>
         </div>
         <div class="table-padding"></div>
       </ng-scrollbar>
-      <app-pagination [params]="params" [totalItems]="totalItems">
+      <app-pagination [filterParams]="filterParams" [totalItems]="totalItems">
       </app-pagination>
     </form>
   </div>

@@ -34,11 +34,12 @@ export class SelectComponent<T> implements OnInit {
   @Input() multiple: boolean = false;
   @Input() loading: boolean = false;
   @Input() closeOnSelect: boolean = true;
-  @Input() maxSelectedItems: number = 0;
+  @Input() maxSelectedItems: number;
   @Input() searchable: boolean = true;
   @Input() searchOnInit: boolean = false;
   @Output() fetchItems = new EventEmitter<ListParams>();
   @Output() change = new EventEmitter<any>();
+  @Input() readonly: boolean = false;
   buffer: any[] = [];
   input$ = new Subject<string>();
   page: number = 1;
@@ -104,5 +105,10 @@ export class SelectComponent<T> implements OnInit {
   }
   onChange(event: any) {
     this.change.emit(event);
+  }
+
+  getLabel(item: any) {
+    const key = this.bindLabel;
+    return item[key] ?? '';
   }
 }

@@ -1,7 +1,10 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IPaymentConcept } from 'src/app/core/models/catalogs/payment-concept.model';
 import { PaymentConceptService } from 'src/app/core/services/catalogs/payment-concept.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from '../../../../core/shared/patterns';
 
 @Component({
@@ -9,31 +12,27 @@ import { STRING_PATTERN } from '../../../../core/shared/patterns';
   templateUrl: './payment-concept-detail.component.html',
   styles: [],
 })
-export class PaymentConceptDetailComponent implements OnInit {
-  loading: boolean = false;
-  status: string = 'Nuevo';
+export class PaymentConceptDetailComponent extends BasePage implements OnInit {
+  paymentConceptForm: ModelForm<IPaymentConcept>;
+  paymentconcept: IPaymentConcept;
+
+  title: string = 'Catalogo concepto de pagos';
   edit: boolean = false;
-  form: FormGroup = new FormGroup({});
-  payment: any;
-
-  public get id() {
-    return this.form.get('id');
-  }
-
-  @Output() refresh = new EventEmitter<true>();
 
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
     private paymentService: PaymentConceptService
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
   }
 
   prepareForm() {
-    this.form = this.fb.group({
+    this.paymentConceptForm = this.fb.group({
       id: [null, Validators.required],
       description: [
         null,
@@ -52,41 +51,44 @@ export class PaymentConceptDetailComponent implements OnInit {
         ]),
       ],
     });
-    if (this.edit) {
-      this.status = 'Actualizar';
-      this.id.disable();
-      this.form.patchValue(this.payment);
+    if (this.paymentconcept != null) {
+      this.edit = true;
+      console.log(this.paymentconcept);
+      this.paymentConceptForm.patchValue(this.paymentconcept);
     }
-  }
-
-  confirm() {
-    this.edit ? this.update() : this.create();
   }
 
   close() {
     this.modalRef.hide();
   }
 
-  create() {
-    this.loading = true;
-    this.paymentService.create(this.form.value).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
-    );
+  confirm() {
+    this.edit ? this.update() : this.create();
   }
 
-  handleSuccess() {
-    this.loading = false;
-    this.refresh.emit(true);
-    this.modalRef.hide();
+  create() {
+    this.loading = true;
+    this.paymentService.create(this.paymentConceptForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   update() {
     this.loading = true;
+    this.paymentService
+      .update(this.paymentconcept.id, this.paymentConceptForm.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+  }
 
-    this.paymentService.update(this.payment.id, this.form.value).subscribe(
-      data => this.handleSuccess(),
-      error => (this.loading = false)
-    );
+  handleSuccess() {
+    const message: string = this.edit ? 'Actualizada' : 'Guardada';
+    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.loading = false;
+    this.modalRef.content.callback(true);
+    this.modalRef.hide();
   }
 }
