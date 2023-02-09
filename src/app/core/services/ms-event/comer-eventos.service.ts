@@ -19,23 +19,34 @@ export class ComerEventosService extends HttpService {
   getAll(params?: ListParams): Observable<IListResponse<IComerEvent>> {
     return this.get<IListResponse<IComerEvent>>(this.endpoint, params);
   }
+  getAllTypeEvent(params?: ListParams): Observable<IListResponse<IComerEvent>> {
+    return this.get<IListResponse<IComerEvent>>(
+      EventEndpoints.ComerTEvents,
+      params
+    );
+  }
 
   getById(id: string | number) {
     const route = `${this.endpoint}/${id}`;
     return this.get(route);
   }
 
-  create(tpenalty: IComerEvent) {
-    return this.post(this.endpoint, tpenalty);
+  create(comerEvent: IComerEvent) {
+    return this.post(this.endpoint, comerEvent);
   }
 
-  update(id: string | number, tpenalty: IComerEvent) {
+  update(id: string | number, comerEvent: IComerEvent) {
     const route = `${this.endpoint}/${id}`;
-    return this.put(route, tpenalty);
+    return this.put(route, comerEvent);
   }
 
   remove(id: string | number) {
     const route = `${this.endpoint}/${id}`;
     return this.delete(route);
+  }
+
+  getEventsByType(id: string | number, params?: ListParams) {
+    const route = `${EventEndpoints.ComerEvents}?filter.address=${id}`;
+    return this.get(route, params);
   }
 }

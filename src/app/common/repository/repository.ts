@@ -26,15 +26,15 @@ export class Repository<T> implements IRepository<T> {
 
   create(route: string, formData: Object) {
     const fullRoute = this.buildRoute(route);
-    console.log(fullRoute);
+    // console.log(fullRoute);
 
     return this.httpClient.post<T>(`${fullRoute}`, formData);
   }
 
   update(route: string, id: number | string, formData: Object) {
     const fullRoute = this.buildRoute(route);
-    console.log(`${fullRoute}/${id}`);
-    console.log(formData);
+    // console.log(`${fullRoute}/${id}`);
+    // console.log(formData);
 
     return this.httpClient.put(`${fullRoute}/${id}`, formData);
   }
@@ -182,7 +182,7 @@ export class Repository<T> implements IRepository<T> {
     formData: Object
   ) {
     const fullRoute = this.buildRoute(route);
-    console.log(fullRoute);
+    // console.log(fullRoute);
     return this.httpClient.put(`${fullRoute}/${id}/${id1}`, formData);
   }
 }

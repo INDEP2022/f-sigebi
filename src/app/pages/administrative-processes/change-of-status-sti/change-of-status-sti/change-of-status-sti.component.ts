@@ -139,14 +139,14 @@ export class ChangeOfStatusStiComponent extends BasePage implements OnInit {
         this.params.getValue()
       )
       .subscribe({
-        next: response => {
-          if (response.data.length == 0) {
+        next: (response: any) => {
+          console.log(response);
+          if (response.length == 0) {
             this.onLoadToast('error', 'ERROR', 'No hay bienes con status STI');
             this.goods = [];
             this.loading = false;
             return;
           }
-          console.log(response);
           this.goods = response.data;
           this.totalItems = response.count;
           this.loading = false;

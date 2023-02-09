@@ -73,4 +73,8 @@ export class GoodService implements ICrudMethods<IGood> {
     const route = `?filter.fileNumber=$eq:${expedient}&filter.status=$eq:${status}`;
     return this.goodRepository.getAllPaginated(`good/good${route}`, params);
   }
+
+  getByStatus(idStatus: string) {
+    return this.goodRepository.getById('good/status-good/', idStatus);
+  }
 }

@@ -29,7 +29,14 @@
           class="col-md-3">
           <input class="form-control" formControlName="issue" />
         </form-field>
-
+        <form-field
+          [control]="pgrForm.get('officeNumber')"
+          label="PGR Oficio"
+          class="col-md-3">
+          <input class="form-control" formControlName="officeNumber" />
+        </form-field>
+      </div>
+      <div class="row pt-4">
         <form-field [control]="pgrForm.get('processStatus')" class="col-md-3">
           <ngx-select
             (fetchItems)="getStatusProcess($event)"
@@ -41,17 +48,17 @@
             label="Estatus del Proceso">
           </ngx-select>
         </form-field>
-      </div>
-      <div class="row pt-4">
-        <form-field
-          [control]="pgrForm.get('officeNumber')"
-          label="PGR Oficio"
-          class="col-md-4">
-          <input class="form-control" formControlName="officeNumber" />
-        </form-field>
+        <div class="col-md-3" *ngIf="pgrForm.get('processStatus').value">
+          <button
+            type="button"
+            class="ml-2 btn btn-danger active btn-sm"
+            (click)="resetStatusProcess()">
+            Limpiar Estatus<i class="fa fa-trash ml-1"></i>
+          </button>
+        </div>
         <form-field
           [control]="pgrForm.get('delegationNumber')"
-          class="col-md-4">
+          class="col-md-3">
           <ngx-select
             (fetchItems)="getCoordinador($event)"
             value="noRegister"
@@ -62,7 +69,7 @@
             label="Cord&#46; Regional">
           </ngx-select>
         </form-field>
-        <div class="col-md-4" *ngIf="pgrForm.get('delegationNumber').value">
+        <div class="col-md-3" *ngIf="pgrForm.get('delegationNumber').value">
           <button
             type="button"
             class="ml-2 btn btn-danger active btn-sm"
@@ -124,7 +131,7 @@
 
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Trasnferencias PGR</h5>
+    <h5 class="title">Transferencias PGR</h5>
   </div>
 
   <div body>
