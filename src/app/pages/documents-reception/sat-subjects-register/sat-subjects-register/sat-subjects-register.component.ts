@@ -114,14 +114,14 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
     this.satForm = this.fb.group({
       from: [null],
       to: [null],
-      issue: [null],
+      issue: [null, [Validators.maxLength(30)]],
       delegationNumber: [null],
       officeNumber: [null, [Validators.maxLength(30)]],
       processStatus: [null],
     });
 
     this.satTransferForm = this.fb.group({
-      satOnlyKey: [null, [Validators.maxLength(30)]],
+      satOnlyKey: [null, [Validators.maxLength(25)]],
       satProceedings: [null, [Validators.maxLength(150)]],
       satHouseGuide: [null, [Validators.maxLength(60)]],
       satMasterGuide: [null, [Validators.maxLength(50)]],
@@ -155,11 +155,11 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
     }
   }
 
-  consultarSatTransferForm() {
+  consultarSatTransferForm(resetValues: boolean = false) {
     if (this.satTransferForm.valid) {
       this.loadingSatTransferencia = true;
       this.setEmptySatTransferencia();
-      this.getSatTransferencia();
+      this.getSatTransferencia(resetValues);
     } else {
       this.onLoadToast('error', 'Error', ERROR_FORM);
     }
@@ -214,7 +214,7 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
   /**
    * Obtener el listado de la vista SAT Transferencia
    */
-  async getSatTransferencia() {
+  async getSatTransferencia(resetValues: boolean = false) {
     let filtrados =
       await this.formFieldstoParamsService.validFieldsFormToParams(
         this.satTransferForm.value,
@@ -222,7 +222,10 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
         this.filtroPaginado,
         'filter'
       );
-    this.satTransferForm.get('job').reset();
+    if (resetValues == true) {
+      this.satTransferForm.get('job').reset();
+      this.satTransferForm.updateValueAndValidity();
+    }
     this.satSubjectsRegisterService
       .getSatTransferenciaBySearch(filtrados)
       .subscribe({
@@ -351,7 +354,7 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
     this.satTransferForm.get('job').setValue(row.officeNumber);
     this.satTransferForm.updateValueAndValidity();
     setTimeout(() => {
-      this.consultarSatTransferForm();
+      this.consultarSatTransferForm(true);
     }, 100);
   }
 }

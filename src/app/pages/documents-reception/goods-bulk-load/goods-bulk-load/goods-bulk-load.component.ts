@@ -34,6 +34,7 @@ import {
   FORM_ACTION_TYPE_NULL,
   FORM_ACTION_TYPE_WITH_CHECK_ERROR,
   FORM_IDENTIFICATOR_NULL,
+  FORM_INMUEBLES_MUEBLES_CHECK,
   NOT_LOAD_FILE,
   VALIDATION_END_MESSAGE,
   VALIDATION_PROCESS_MESSAGE,
@@ -94,7 +95,6 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   save() {
     this.DeclarationsSatSaeMassive = undefined;
     setTimeout(() => {
-      this.startVariables();
       console.log(this.DeclarationsSatSaeMassive);
       this.assetsForm.markAllAsTouched();
       this.reviewConditions();
@@ -203,7 +203,11 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
    * @returns Si la validacion es correcta
    */
   validIdCarga() {
-    if (this.assetsForm.get('idCarga').value) {
+    this.assetsForm.get('idCarga').addValidators(Validators.required);
+    this.assetsForm.get('idCarga').updateValueAndValidity();
+    if (this.assetsForm.get('idCarga').valid) {
+      this.assetsForm.get('idCarga').clearValidators();
+      this.assetsForm.get('idCarga').updateValueAndValidity();
       return true;
     } else {
       this.onLoadToast('warning', FORM_IDENTIFICATOR_NULL, 'Error');
@@ -232,7 +236,22 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         );
         return false;
       } else {
-        return true;
+        if (
+          this.assetsForm.get('cars').value &&
+          this.assetsForm.get('inmuebles').value
+        ) {
+          this.onLoadToast(
+            'warning',
+            FORM_INMUEBLES_MUEBLES_CHECK(
+              this.assetsForm.get('cars').value,
+              this.assetsForm.get('inmuebles').value
+            ),
+            'Error'
+          );
+          return false;
+        } else {
+          return true;
+        }
       }
     } else {
       this.onLoadToast('warning', FORM_ACTION_TYPE_NULL, 'Error');
@@ -259,6 +278,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   validatorSatMassive() {
     console.log('SAT VALID');
     if (this.validIdCarga() && this.validActionType()) {
+      this.startVariables();
       let proceso = 0;
       if (
         GOODS_BULK_LOAD_ACTIONS.sat[0].value ==
