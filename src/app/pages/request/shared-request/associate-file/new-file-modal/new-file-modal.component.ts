@@ -149,10 +149,10 @@ export class NewFileModalComponent extends BasePage implements OnInit {
 
   getSelectItems() {
     // Inicializar items de selects con buscador
-    this.getUsers({ inicio: 1, text: '' });
-    this.getUnits({ inicio: 1, text: '' });
-    this.getFiles({ inicio: 1, text: '' });
-    this.getOfficials({ inicio: 1, text: '' });
+    this.getUsers({ page: 1, text: '' });
+    this.getUnits({ page: 1, text: '' });
+    this.getFiles({ page: 1, text: '' });
+    this.getOfficials({ page: 1, text: '' });
     // Llamar servicio para llenar el select de Autoridad
     this.dispositions = this.dispositionTestData;
   }

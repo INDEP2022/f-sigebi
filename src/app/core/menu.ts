@@ -142,7 +142,7 @@ export const MENU: IMenuItem[] = [
     isTitle: true,
   },
   {
-    label: 'Inicio',
+    label: 'page',
     icon: 'bx-home-circle',
     link: '/pages/home',
   },*/

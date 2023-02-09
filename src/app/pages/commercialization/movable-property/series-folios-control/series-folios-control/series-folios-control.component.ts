@@ -55,7 +55,7 @@ export class SeriesFoliosControlComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getCoord({ inicio: 1, text: '' });
+    this.getCoord({ page: 1, text: '' });
   }
 
   private prepareForm() {

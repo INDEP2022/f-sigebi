@@ -382,9 +382,9 @@ export class MassiveConversionMainComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getEvents({ inicio: 1, text: '' });
-    this.getBatches({ inicio: 1, text: '' });
-    this.getOperations({ inicio: 1, text: '' });
+    this.getEvents({ page: 1, text: '' });
+    this.getBatches({ page: 1, text: '' });
+    this.getOperations({ page: 1, text: '' });
     this.rfcSettings.columns = this.modifyColumns(this.rfcSettings.columns);
     this.clientIdSettings.columns = this.modifyColumns(
       this.clientIdSettings.columns

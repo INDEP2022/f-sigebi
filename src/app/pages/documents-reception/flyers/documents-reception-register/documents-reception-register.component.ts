@@ -46,7 +46,7 @@ export class DocumentsReceptionRegisterComponent
   }
 
   ngOnInit(): void {
-    // ! descomentar esta linea para mostrar el modal al inicio
+    // ! descomentar esta linea para mostrar el modal al page
     // this.selectFlyer();
     this.onFormChanges();
   }
