@@ -1,5 +1,6 @@
 import { FormControl, Validators } from '@angular/forms';
 import { onlyNumbers } from 'src/app/common/validations/numeric.validators';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 export const GOOD_CAPTURE_FORM = {
   noPartida: new FormControl<string>(null, [
@@ -28,7 +29,10 @@ export const GOOD_CAPTURE_FORM = {
   noBien: new FormControl({ value: null, disabled: true }),
   valRef: new FormControl(null),
   identifica: new FormControl(null, [Validators.required]),
-  descripcion: new FormControl(null, [Validators.required]),
+  descripcion: new FormControl(null, [
+    Validators.required,
+    Validators.pattern(STRING_PATTERN),
+  ]),
   fichaNumerario: new FormControl(null),
   captura: new FormControl(''),
   cambioValor: new FormControl(''),
@@ -42,7 +46,10 @@ export const GOOD_CAPTURE_FORM = {
   ciudad: new FormControl(null),
   localidad: new FormControl(null),
   flyerNumber: new FormControl<string | number>(null),
-  observaciones: new FormControl<string>(''),
+  observaciones: new FormControl<string>(
+    null,
+    Validators.pattern(STRING_PATTERN)
+  ),
   esEmpresa: new FormControl<boolean>(null),
   noExpediente: new FormControl<number>(null),
 };
