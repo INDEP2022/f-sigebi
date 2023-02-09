@@ -17,6 +17,7 @@ import { FormControl } from '@angular/forms';
       </div>
       <div>
         <button
+          [disabled]="!getValue()"
           type="submit"
           (click)="searchTerm()"
           class="btn btn-primary btn-sm active ml-1">
@@ -44,6 +45,11 @@ export class SearchBarSimpleComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {}
+
+  getValue() {
+    if (this.term == '') return false;
+    return true;
+  }
 
   searchTerm() {
     this.eventEmit.emit(this.term);
