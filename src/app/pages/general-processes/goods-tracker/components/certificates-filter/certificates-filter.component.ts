@@ -1,6 +1,6 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { GoodTrackerForm } from '../../utils/goods-tracker-form';
 
 @Component({
   selector: 'certificates-filter',
@@ -9,17 +9,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class CertificatesFilterComponent implements OnInit {
   @Output() onSubmit = new EventEmitter<any>();
-  form = this.fb.group({
-    fechaFrom: [null, [Validators.required]],
-    fechaTo: [null, [Validators.required]],
-    acta: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-    estatus: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-    cambioFrom: [null, [Validators.required]],
-    cambioTo: [null, [Validators.required]],
-    noEvento: [null, [Validators.required]],
-    enProceso: [null, [Validators.required]],
-    proceso: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-  });
+  @Input() form: FormGroup<GoodTrackerForm>;
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {}

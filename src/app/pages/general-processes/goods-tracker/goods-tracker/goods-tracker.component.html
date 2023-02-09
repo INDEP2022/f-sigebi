@@ -63,6 +63,7 @@
               <div></div>
             </div>
             <record-notification-filter
+              [form]="form"
               (onSubmit)="searchGoods($event)"></record-notification-filter>
           </accordion-group>
           <accordion-group>
@@ -76,6 +77,7 @@
               <div></div>
             </div>
             <certificates-filter
+              [form]="form"
               (onSubmit)="searchGoods($event)"></certificates-filter>
           </accordion-group>
           <accordion-group>
@@ -89,6 +91,7 @@
               <div></div>
             </div>
             <transfer-autority-filter
+              [form]="form"
               (onSubmit)="searchGoods($event)"></transfer-autority-filter>
           </accordion-group>
           <accordion-group>
@@ -101,7 +104,9 @@
               </div>
               <div></div>
             </div>
-            <location-filter (onSubmit)="searchGoods($event)"></location-filter>
+            <location-filter
+              [form]="form"
+              (onSubmit)="searchGoods($event)"></location-filter>
           </accordion-group>
         </accordion>
       </div>
