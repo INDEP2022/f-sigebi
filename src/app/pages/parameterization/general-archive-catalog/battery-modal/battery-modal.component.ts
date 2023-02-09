@@ -24,6 +24,7 @@ export class BatteryModalComponent extends BasePage implements OnInit {
   edit: boolean = false;
 
   id: ISaveValue;
+  cve: ISaveValue;
 
   cveSaveValues = new DefaultSelect();
 
@@ -63,6 +64,10 @@ export class BatteryModalComponent extends BasePage implements OnInit {
       this.edit = true;
       this.batteryForm.patchValue(this.battery);
       this.batteryForm.controls['storeCode'].setValue(this.id.id);
+    } else {
+      this.edit = false;
+      console.log(this.cve);
+      this.batteryForm.controls['storeCode'].setValue(this.cve.id);
     }
   }
 

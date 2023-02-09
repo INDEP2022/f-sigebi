@@ -155,9 +155,11 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
   }
 
   openFormBattery(battery?: IBattery) {
+    const cve = { ...this.form.value };
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       battery,
+      cve,
       callback: (next: boolean) => {
         if (next) this.getSaveValuesById();
       },
