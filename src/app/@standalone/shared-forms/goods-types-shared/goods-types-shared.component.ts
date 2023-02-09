@@ -163,7 +163,6 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
 
   onSssubtypesChange(sssubtype: any) {
     if (!this.type.value || !this.subtype.value || !this.ssubtype.value) {
-      console.log(sssubtype);
       this.types = new DefaultSelect([sssubtype.numType], 1);
       this.subtypes = new DefaultSelect([sssubtype.numSubType], 1);
       this.ssubtypes = new DefaultSelect([sssubtype.numSsubType], 1);
@@ -171,7 +170,6 @@ export class GoodsTypesSharedComponent extends BasePage implements OnInit {
       this.subtype.setValue(sssubtype.numSubType.id);
       this.ssubtype.setValue(sssubtype.numSsubType.id);
     }
-
     this.goodSssubtypeChange.emit(sssubtype);
   }
 

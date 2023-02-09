@@ -27,6 +27,7 @@
         <div class="col-md-7">
           <div class="row">
             <div class="col-md-7">
+              <label>Opciones de Carga</label>
               <div>
                 <form-radio
                   *ngFor="let action of actions"
@@ -41,10 +42,7 @@
             <div class="col-md-5">
               <div class="row">
                 <form-check label="Son automoviles" for="cars">
-                  <input
-                    id="cars"
-                    type="checkbox"
-                    formControlName="assetType" />
+                  <input id="cars" type="checkbox" formControlName="cars" />
                 </form-check>
               </div>
               <div class="row">
@@ -52,7 +50,7 @@
                   <input
                     id="property"
                     type="checkbox"
-                    formControlName="assetType" />
+                    formControlName="inmuebles" />
                 </form-check>
               </div>
               <hr class="row" />
@@ -111,7 +109,93 @@
 
     <hr class="row" />
 
-    <div class="row" style="max-height: 600px; overflow-y: scroll">
+    <div class="row mt-3 mb-3" *ngIf="DeclarationsSatSaeMassive">
+      <div class="col-md-12">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            Proceso actual:
+            <div class="badge badge-pill bg-primary text-wrap">
+              {{ DeclarationsSatSaeMassive.common_general.proceso }}
+            </div>
+          </li>
+          <li class="list-group-item">
+            Estatus del Proceso Actual:
+            <div class="badge badge-pill bg-info text-wrap">
+              {{ DeclarationsSatSaeMassive.message_progress }}
+            </div>
+          </li>
+          <div class="list-group-item">
+            <div
+              class="progress"
+              role="progressbar"
+              aria-label="Example with label"
+              [attr.aria-valuenow]="
+                (DeclarationsSatSaeMassive.common_general.total / 100) *
+                  DeclarationsSatSaeMassive.common_general.count +
+                1
+              "
+              aria-valuemin="0"
+              aria-valuemax="100">
+              <div
+                class="progress-bar"
+                [style.width]="
+                  (DeclarationsSatSaeMassive.common_general.total / 100) *
+                    DeclarationsSatSaeMassive.common_general.count +
+                  1 +
+                  '%'
+                ">
+                {{
+                  (DeclarationsSatSaeMassive.common_general.total / 100) *
+                    DeclarationsSatSaeMassive.common_general.count +
+                    1
+                }}%
+              </div>
+            </div>
+          </div>
+          <li class="list-group-item">
+            Registro actual en proceso:
+            <div class="badge badge-pill bg-info text-wrap">
+              {{ DeclarationsSatSaeMassive.common_general.count + 1 }}
+            </div>
+          </li>
+          <li class="list-group-item">
+            Total de Registros:
+            <div class="badge badge-pill bg-success text-wrap">
+              {{ DeclarationsSatSaeMassive.common_general.total }}
+            </div>
+          </li>
+          <li class="list-group-item">
+            Total de Registros con Errores:
+            <div class="badge badge-pill bg-danger text-wrap">
+              {{ DeclarationsSatSaeMassive.common_general.total_errores }}
+            </div>
+          </li>
+          <div
+            class="list-group-item"
+            *ngIf="
+              listError.length > 0 &&
+              DeclarationsSatSaeMassive.common_general.total_errores > 0 &&
+              DeclarationsSatSaeMassive.common_general.valid == false
+            ">
+            El archivo que se genera al dar clic en "Exportar Errores
+            Encontrados en el Proceso" contiene los campos donde se encontraron
+            errores durante el proceso de validación. Se muestran los errores
+            puntuales en la última columna del contenido del excel.
+            <button
+              type="button"
+              class="ml-2 mr-2 mt-4 btn btn-success btn-sm"
+              (click)="exportXlsx(listError)">
+              Exportar Errores Encontrados en el Proceso<i
+                class="fa fa-file-excel ml-1"></i>
+            </button>
+          </div>
+        </ul>
+      </div>
+    </div>
+
+    <hr *ngIf="tableSource.length > 0" class="row" />
+    <h4 *ngIf="tableSource.length > 0">Registros del Excel/CSV seleccionado</h4>
+    <div class="row mt-3" style="max-height: 600px; overflow-y: scroll">
       <div class="col-md-12">
         <ng2-smart-table [source]="tableSource" [settings]="settings">
         </ng2-smart-table>

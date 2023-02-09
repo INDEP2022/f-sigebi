@@ -58,7 +58,7 @@ export class SatSubclassificationFormComponent
       });
       this.classifications = new DefaultSelect([satClassification], 1);
     } else {
-      this.getClassifications({ inicio: 1, text: '' });
+      this.getClassifications({ page: 1, text: '' });
     }
   }
   getClassifications(params: ListParams) {

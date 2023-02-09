@@ -4,24 +4,28 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { ExcelService } from 'src/app/common/services/excel.service';
+import { IDomicilies } from 'src/app/core/models/good/good.model';
+import { IGood } from 'src/app/core/models/ms-good/good';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { RequestHelperService } from 'src/app/pages/request/request-helper-services/request-helper.service';
 import { MenajeComponent } from '../records-of-request-child-tabs-components/menaje/menaje.component';
 import { SelectAddressComponent } from '../records-of-request-child-tabs-components/select-address/select-address.component';
 import { ASSETS_COLUMNS } from './assests-columns';
+import { ExcelFormat } from './AssetExcelFormat';
 
 var defaultData = [
   {
-    id: 1,
-    noManagement: '1546645',
-    descripTransfeAsset: 'descripcion',
-    typeAsset: 'VEHICULO',
-    physicalState: 'BUENO',
-    conservationState: 'BUENO',
+    id: 0,
+    noManagement: '',
+    descripTransfeAsset: '',
+    typeAsset: '',
+    physicalState: '',
+    conservationState: '',
     tansferUnitMeasure: '',
     transferAmount: '',
     destinyLigie: '',
@@ -36,13 +40,19 @@ var defaultData = [
 })
 export class AssetsComponent extends BasePage implements OnInit {
   @Input() requestObject: any; //solicitudes
-  goodObject: ModelForm<any>; //bienes
+  goodObject: any; //bienes
+  listgoodObjects: IGood[] = [];
+  principalSave: boolean = false;
   bsModalRef: BsModalRef;
   params = new BehaviorSubject<ListParams>(new ListParams());
   paragraphs: any[] = [];
   createNewAsset: boolean = false;
   btnCreate: string = 'Crear Nuevo';
-  idDomicilie: number = null;
+  domicilieObject: IDomicilies = null;
+  data: ExcelFormat[] = [];
+  menajeSelected: any;
+  isSaveDomicilie: boolean = false;
+  isSaveMenaje: boolean = false;
   //typeDoc: string = '';
 
   constructor(
@@ -51,7 +61,9 @@ export class AssetsComponent extends BasePage implements OnInit {
     private goodService: GoodService,
     private typeRelevantSevice: TypeRelevantService,
     private genericService: GenericService,
-    private requestHelperService: RequestHelperService
+    private requestHelperService: RequestHelperService,
+    private excelService: ExcelService,
+    private menageSerice: MenageService
   ) {
     super();
   }
@@ -82,6 +94,7 @@ export class AssetsComponent extends BasePage implements OnInit {
 
   getData(params: ListParams) {
     this.loading = true;
+    this.paragraphs = [];
     const requestId = Number(this.route.snapshot.paramMap.get('id'));
     params['filter.requestId'] = `$eq:${requestId}`;
     this.goodService.getAll(params).subscribe({
@@ -114,13 +127,12 @@ export class AssetsComponent extends BasePage implements OnInit {
 
           Promise.all(result).then(x => {
             this.paragraphs = data.data;
+            this.loading = false;
           });
         } else {
           this.paragraphs = defaultData;
+          this.loading = false;
         }
-      },
-      complete: () => {
-        this.loading = false;
       },
     });
   }
@@ -191,7 +203,21 @@ export class AssetsComponent extends BasePage implements OnInit {
   }
 
   onFileChange(event: any) {
-    console.log(event);
+    const files = (event.target as HTMLInputElement).files;
+    if (files.length != 1) throw 'No files selected, or more than of allowed';
+    const fileReader = new FileReader();
+    fileReader.readAsBinaryString(files[0]);
+    fileReader.onload = () => this.readExcel(fileReader.result);
+  }
+
+  readExcel(binaryExcel: string | ArrayBuffer) {
+    try {
+      this.data = this.excelService.getData<ExcelFormat>(binaryExcel);
+      debugger;
+      console.log(this.data);
+    } catch (error) {
+      this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
+    }
   }
 
   newAsset(): void {
@@ -206,12 +232,20 @@ export class AssetsComponent extends BasePage implements OnInit {
   }
 
   selectRows(event: any) {
-    if (event.isSelected === true) {
-      this.goodObject = event.data;
-      this.createNewAsset = true;
-      this.btnCreate = 'Cerrar Nuevo';
+    console.log(event);
+    this.listgoodObjects = event.selected;
+    if (this.listgoodObjects.length <= 1) {
+      if (event.isSelected === true) {
+        this.goodObject = this.listgoodObjects[0];
+        this.createNewAsset = true;
+        this.btnCreate = 'Cerrar Nuevo';
+      } else {
+        this.goodObject = null;
+        this.createNewAsset = false;
+        this.btnCreate = 'Crear Nuevo';
+      }
     } else {
-      this.goodObject = null;
+      this.goodObject = this.listgoodObjects;
       this.createNewAsset = false;
       this.btnCreate = 'Crear Nuevo';
     }
@@ -234,8 +268,15 @@ export class AssetsComponent extends BasePage implements OnInit {
 
     this.bsModalRef.content.event.subscribe((res: any) => {
       //cargarlos en el formulario
-      this.idDomicilie = res.id;
+      //this.domicilieObject = res as IDomicilies;
 
+      if (res) {
+        for (let i = 0; i < this.listgoodObjects.length; i++) {
+          const element = this.listgoodObjects[i];
+          element.addressId = res.id;
+        }
+        this.isSaveDomicilie = true;
+      }
       //this.assetsForm.controls['address'].get('longitud').enable();
       //this.requestForm.get('receiUser').patchValue(res.user);
     });
@@ -245,6 +286,7 @@ export class AssetsComponent extends BasePage implements OnInit {
     let config: ModalOptions = {
       initialState: {
         data: '',
+        requestId: this.requestObject.id,
         callback: (next: boolean) => {
           //if (next) this.getExample();
         },
@@ -256,25 +298,101 @@ export class AssetsComponent extends BasePage implements OnInit {
 
     this.bsModalRef.content.event.subscribe((res: any) => {
       //ver si es necesario recivir los datos desde menaje
-      this.idDomicilie = res.id;
-      console.log(res);
+      if (res) {
+        this.menajeSelected = res;
+        this.isSaveMenaje = true;
+      }
     });
   }
 
-  save() {}
+  async save() {
+    if (this.listgoodObjects.length > 0) {
+      if (this.isSaveDomicilie === true) {
+        await this.saveDomicilie();
+      }
+      if (this.isSaveMenaje === true) {
+        await this.saveMenaje();
+      }
+    } else {
+      this.message('error', 'Error', `Seleccione al menos un bien`);
+    }
+  }
+
+  saveDomicilie() {
+    new Promise((resolve, reject) => {
+      for (let i = 0; i < this.listgoodObjects.length; i++) {
+        const element = this.listgoodObjects[i];
+        this.goodService.update(element.id, element).subscribe({
+          next: resp => {
+            if (resp.statusCode != null) {
+              this.message(
+                'error',
+                'Error',
+                `El registro del bien del domicilio guardar!\n. ${resp.message}`
+              );
+              reject('El registro del bien del domicilio guardar!');
+            }
+
+            if (resp.id != null) {
+              this.message(
+                'success',
+                'Actualizado',
+                `Se guardo correctamente el bien del domicilio!`
+              );
+
+              resolve('Se guardo correctamente el bien del domicilio!');
+            }
+          },
+        });
+      }
+    });
+  }
+
+  saveMenaje() {
+    debugger;
+    new Promise((resolve, reject) => {
+      for (let i = 0; i < this.menajeSelected.length; i++) {
+        const element = this.menajeSelected[i];
+        this.menageSerice.create(element).subscribe({
+          next: data => {
+            if (data.statusCode != null) {
+              this.message(
+                'error',
+                'Error',
+                `El menaje no se pudo guardar!\n. ${data.message}`
+              );
+              reject('El registro del bien del domicilio no se guardo!');
+            }
+
+            if (data.id != null) {
+              this.message('success', 'Actualizado', `Se guardo el menaje`);
+              resolve('Se guardo correctamente el menaje!');
+            }
+          },
+        });
+      }
+    });
+  }
+
+  delete() {}
 
   refreshTable() {
     this.requestHelperService.currentRefresh.subscribe({
       next: data => {
         if (data) {
+          this.saveMenaje();
           setTimeout(() => {
             this.goodObject = null;
             this.createNewAsset = false;
             this.btnCreate = 'Crear Nuevo';
             this.paginatedData();
-          }, 1000);
+          }, 600);
         }
       },
     });
+  }
+
+  message(header: any, title: string, body: string) {
+    this.onLoadToast(header, title, body);
   }
 }

@@ -52,7 +52,10 @@ export class BatteryModalComponent extends BasePage implements OnInit {
       storeCode: [null, []],
       idBattery: [null, [Validators.required]],
       description: [null, [Validators.required]],
-      status: [null, [Validators.required]],
+      status: [
+        null,
+        [Validators.required, Validators.maxLength(1), Validators.minLength(1)],
+      ],
       registerNumber: [null, []],
     });
     if (this.battery != null) {

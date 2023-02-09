@@ -52,6 +52,11 @@ export class PaginationComponent implements OnInit {
     this.params.next(params);
   }
 
+  limitChange() {
+    const params = this.params.getValue();
+    this.emitEvent({ ...params, limit: Number(this.limit.value) });
+  }
+
   pageSizeChange() {
     const params = this.params.getValue();
     this.emitEvent({ ...params, limit: Number(this.limit.value) });

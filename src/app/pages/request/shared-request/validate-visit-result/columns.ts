@@ -39,7 +39,7 @@ export const COLUMNS = {
     sort: false,
   },
   dateInitTime: {
-    title: 'Fecha Hora Inicio',
+    title: 'Fecha Hora page',
     type: 'string',
     sort: false,
   },

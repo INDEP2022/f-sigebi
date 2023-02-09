@@ -144,9 +144,9 @@ export class SearchInventoryGoodsComponent extends BasePage implements OnInit {
 
   getSelectItems() {
     // Inicializar items de selects con buscador
-    this.getDelegations({ inicio: 1, text: '' });
-    this.getStates({ inicio: 1, text: '' });
-    this.getEmitters({ inicio: 1, text: '' });
+    this.getDelegations({ page: 1, text: '' });
+    this.getStates({ page: 1, text: '' });
+    this.getEmitters({ page: 1, text: '' });
     // Llamar servicio para llenar el select de Autoridad
     this.authorities = this.authorityTestData;
     this.goodTypes = this.goodTypeTestData;

@@ -77,8 +77,8 @@ export class ApplicantsModalComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getMunicipalities({ inicio: 1, text: '' });
-    this.getStates({ inicio: 1, text: '' });
+    this.getMunicipalities({ page: 1, text: '' });
+    this.getStates({ page: 1, text: '' });
   }
 
   private prepareForm(): void {

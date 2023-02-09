@@ -1,10 +1,10 @@
-import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { GoodsQueryEndpoints } from 'src/app/common/constants/endpoints/ms-good-query-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AttribClassifGoodMethodsRepository } from 'src/app/common/repository/repositories/attrib-classif-good-repository';
 import { MsGoodQueryRepository } from 'src/app/common/repository/repositories/ms-good-query-repository';
+import { HttpService } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IZipCodeGoodQuery } from '../../models/catalogs/zip-code.model';
@@ -16,17 +16,21 @@ import { IAttribClassifGoods } from '../../models/ms-goods-query/attributes-clas
 /**
  * @deprecated Cambiar a la nueva forma
  */
-export class GoodsQueryService {
+export class GoodsQueryService extends HttpService {
   private routeLigieUnitMeasure = GoodsQueryEndpoints.LigieUnitMeasure;
   private zipCodeRoute = GoodsQueryEndpoints.ZipCode;
   private attribClassifGoodRoute = GoodsQueryEndpoints.AttribClassifBood;
   private goodsQueryRoute = GoodsQueryEndpoints.ProgrammingGood;
+  private atributeClassificationGood: GoodsQueryEndpoints.AtributeClassificationGood;
   private goodQueryRepository = inject(MsGoodQueryRepository);
   private attribClassifGoodMethodsRepository = inject(
     AttribClassifGoodMethodsRepository
   );
 
-  constructor(private httpClient: HttpClient) {}
+  constructor() {
+    super();
+    this.microservice = 'goodsquery';
+  }
 
   getFractions(body: any) {
     return this.httpClient.post(
@@ -93,6 +97,12 @@ export class GoodsQueryService {
     );
   }
 
+  getAllFilter(
+    params?: string
+  ): Observable<IListResponse<IAttribClassifGoods>> {
+    return this.get(`${this.attribClassifGoodRoute}?${params}`);
+  }
+
   create(model: IAttribClassifGoods): Observable<IAttribClassifGoods> {
     return this.attribClassifGoodMethodsRepository.create(
       this.attribClassifGoodRoute,
@@ -110,4 +120,17 @@ export class GoodsQueryService {
   // remove(id: string | number): Observable<Object> {
   //   return this.attribClassifGoodMethodsRepository.remove(this.attribClassifGoodRoute, id);
   // }
+
+  getClasifXUnitByClasifNum(clasifNum: number) {
+    return this.httpClient.get(
+      `${environment.API_URL}goodsquery/api/v1/ligie-units-measure/getClasifXUnit/${clasifNum}`
+    );
+  }
+
+  getAtributeClassificationGood(params: ListParams) {
+    return this.goodQueryRepository.getAllPaginated(
+      this.atributeClassificationGood,
+      params
+    );
+  }
 }

@@ -49,7 +49,12 @@
             <input
               type="text"
               class="form-control"
-              formControlName="dateCreation" />
+              formControlName="dateCreation"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -69,7 +74,12 @@
             <input
               type="text"
               class="form-control"
-              formControlName="dateUpdate" />
+              formControlName="dateUpdate"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -106,7 +116,12 @@
             <input
               type="text"
               class="form-control"
-              formControlName="dateBegOperation" />
+              formControlName="dateBegOperation"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -116,7 +131,12 @@
             <input
               type="text"
               class="form-control"
-              formControlName="dateFinalOperation" />
+              formControlName="dateFinalOperation"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
           </form-field>
         </div>
       </div>
@@ -165,7 +185,12 @@
             <input
               type="text"
               class="form-control"
-              formControlName="dateFormalization" />
+              formControlName="dateFormalization"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
           </form-field>
         </div>
         <div class="col-md-2">
@@ -190,7 +215,12 @@
             <input
               type="text"
               class="form-control"
-              formControlName="dateAmeding" />
+              formControlName="dateAmeding"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
           </form-field>
         </div>
       </div>

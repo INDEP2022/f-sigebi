@@ -20,6 +20,10 @@ export class GoodService extends HttpService {
     return this.get<IListResponse<IGood>>(GoodEndpoints.Good, params);
   }
 
+  getAllFilter(params?: string): Observable<IListResponse<IGood>> {
+    return this.get<IListResponse<IGood>>(`${GoodEndpoints.Good}?${params}`);
+  }
+
   getById(id: string | number) {
     const route = `${GoodEndpoints.Good}/${id}`;
     return this.get<IGood>(route);
