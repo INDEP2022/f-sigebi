@@ -60,3 +60,84 @@ export interface previewData {
   val49?: string; // '';
   val50?: string; // '';
 }
+
+/**
+ * SAT_SAE
+ */
+// PROCESO 1 ---- CARINSBIENES
+export interface SatSaeInsertGoods {
+  expediente: string;
+  descripcion: string;
+  cantidad: number;
+  unidad: string;
+  status: string;
+  identificador: string;
+  clasif: number;
+}
+// PROCESO 2 ----- CARINSMENAJE
+export interface SatSaeInsertMenaje {
+  cantidad: number;
+  clasif: number;
+  descripcion: string;
+  expediente: number;
+  identificador: string;
+  nobienmenaje: number;
+  status: string;
+  unidad: string;
+}
+// PROCESO 3 ---- CARINSNOTIF_INMUEBLES
+export interface SatSaeNotificacionInmuebles {
+  areadestino: number;
+  asunto: number;
+  calle: string;
+  cantidad: number;
+  ciudad: number;
+  clasif: number;
+  colonia: string;
+  contribuyente: number;
+  descbien: string;
+  descripcion: string;
+  destinatario: string;
+  entfed: number;
+  estado: string;
+  exptrans: string;
+  fecoficio: number;
+  gestiondestino: string;
+  identificador: string;
+  municipio: string;
+  nooficio: string;
+  remitente: string;
+  solicitante: number;
+  status: string;
+  tipovolante: string;
+  transferente: number;
+  unidad: string;
+  viarecepcion: number;
+}
+// PROCESO 4 ---- CARINSNOTIF_MUEBLES
+export interface SatSaeNotificacionMuebles {
+  areadestino: number;
+  asunto: number;
+  cantidad: number;
+  ciudad: number;
+  clasif: number;
+  contribuyente: number;
+  descbien: string;
+  descripcion: string;
+  destinatario: string;
+  entfed: number;
+  exptrans: string;
+  fecoficio: number;
+  gestiondestino: string;
+  identificador: string;
+  marca: string;
+  nooficio: string;
+  remitente: string;
+  serie: string;
+  solicitante: number;
+  status: string;
+  tipovolante: string;
+  transferente: number;
+  unidad: string;
+  viarecepcion: number;
+}

@@ -1,20 +1,18 @@
 <form [formGroup]="searchTabForm" class="form-material">
   <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-6">
       <app-goods-types-shared
         [form]="searchTabForm"
         typeField="tipo"
         subtypeField="subtipo"
         ssubtypeField="ssubtipo"
-        sssubtypeField="sssubtipo"></app-goods-types-shared>
+        sssubtypeField="sssubtipo"
+        (goodSssubtypeChange)="getGoods($event)"></app-goods-types-shared>
       <div class="form-group row">
-        <form-field [control]="searchTabForm.get('noBien')" label="No. Bien">
-          <input
-            class="form-control"
-            type="text"
-            name="noBien"
-            formControlName="noBien" />
-        </form-field>
+        <goods-filter-shared
+          [form]="searchTabForm"
+          goodField="noBien"
+          [classifGood]="classifGood"></goods-filter-shared>
       </div>
       <div class="form-group row">
         <form-field [control]="searchTabForm.get('estatus')" label="Estatus">
@@ -48,7 +46,7 @@
         </div>
       </div>
     </div>
-    <div class="col-md-4"></div>
+    <div class="col-md-6"></div>
   </div>
   <div>
     <app-columns-select [(settings)]="settings"></app-columns-select>

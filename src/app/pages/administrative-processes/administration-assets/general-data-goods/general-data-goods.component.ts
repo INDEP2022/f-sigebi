@@ -1,5 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModelForm } from './../../../../core/interfaces/model-form';
 
@@ -8,65 +18,69 @@ import { ModelForm } from './../../../../core/interfaces/model-form';
   templateUrl: './general-data-goods.component.html',
   styles: [],
 })
-export class GeneralDataGoodsComponent implements OnInit {
+export class GeneralDataGoodsComponent implements OnInit, OnChanges {
+  @Input() goodId: number;
   generalDataForm: ModelForm<any>;
-  list: any[] = [
-    {
-      atributo: 'CALLE',
-      valor: 'AV. DE LAS TORRES ESQ. INDUSTRIALES NAYARITAS S/N',
-    },
-    {
-      atributo: 'COLONIA',
-      valor: 'CIUDAD INDUSTRIAL',
-    },
-    {
-      atributo: 'DELEGACION O MUNICIPIO',
-      valor: 'TEPIC',
-    },
-    {
-      atributo: 'ENTIDAD FEDERATIVA',
-      valor: 'NAYARIT',
-    },
-    {
-      atributo: 'SUPERFICIE DEL TERRENO',
-      valor: '',
-    },
-    {
-      atributo: 'SUPERFICIE CONSTRUIDA',
-      valor: '',
-    },
-    {
-      atributo: 'TIPO DE INMUEBLE',
-      valor: '',
-    },
-    {
-      atributo: 'CARACTERISTICAS DEL INMUEBLE',
-      valor: '',
-    },
-    {
-      atributo: 'VALOR DE REGISTRO CONTABLE',
-      valor: '63173',
-    },
-    {
-      atributo: 'FOLIO DE ESCRITURA',
-      valor: '0',
-    },
-    {
-      atributo: 'ESTADO FISICO MENAJE',
-      valor: '4359,22',
-    },
-    {
-      atributo: 'IMPORTE TOTAL DEL MENAJE',
-      valor: '',
-    },
-  ];
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
+  list: { atributo: string; valor: string }[] = [];
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private readonly goodService: GoodService,
+    private readonly goodQueryService: GoodsQueryService
+  ) {}
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes) {
+      this.getGood();
+    }
+  }
 
   ngOnInit(): void {
     this.prepareForm();
   }
-
+  private getGood() {
+    this.goodService.getById(this.goodId).subscribe({
+      next: (val: any) => {
+        this.generalDataForm.get('cantidad').patchValue(val.data.quantitySae);
+        this.generalDataForm.get('fechaFe').patchValue(val.data.judicialDate);
+        this.generalDataForm
+          .get('observacion')
+          .patchValue(val.data.observations);
+        this.generalDataForm
+          .get('descripcion')
+          .patchValue(val.data.description);
+        let data: any = {};
+        for (let i = 1; i <= 120; i++) {
+          data[`val${i}`] = '';
+        }
+        for (const i in val.data) {
+          for (const j in data) {
+            if (j == i) {
+              data[j] = val.data[i];
+            }
+          }
+        }
+        let dataParam = this.params.getValue();
+        dataParam.limit = 120;
+        dataParam.addFilter('classifGoodNumber', val.data.goodClassNumber);
+        this.goodQueryService.getAllFilter(dataParam.getParams()).subscribe({
+          next: val => {
+            let ordered = val.data.sort(
+              (a, b) => a.columnNumber - b.columnNumber
+            );
+            ordered.forEach((order, index) => {
+              if (order) {
+                this.list.push({
+                  atributo: order.attribute,
+                  valor: data[`val${index + 1}`],
+                });
+              }
+            });
+          },
+        });
+      },
+    });
+  }
   private prepareForm() {
     this.generalDataForm = this.fb.group({
       descripcion: [
@@ -74,7 +88,7 @@ export class GeneralDataGoodsComponent implements OnInit {
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       cantidad: [null, [Validators.required]],
-      fechaFe: [new Date(), [Validators.required]],
+      fechaFe: [null, [Validators.required]],
       observacion: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],

@@ -1,5 +1,5 @@
 export const COLUMNS = {
-  status: {
+  id: {
     title: 'Estatus',
     sort: false,
     filter: false,
