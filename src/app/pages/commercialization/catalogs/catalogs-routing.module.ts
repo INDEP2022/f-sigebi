@@ -100,7 +100,7 @@ const routes: Routes = [
     path: 'event-process',
     loadChildren: async () =>
       (await import('./event-process/event-process.module')).EventProcessModule,
-    data: { title: 'Eventos por Proceso' },
+    data: { title: 'Eventos por Proceso', screen: 'FCOMEREVENTPOPROCESO' },
   },
   {
     path: 'registration-of-interest',

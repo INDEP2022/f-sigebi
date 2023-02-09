@@ -1,6 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
+import { LabelOkeyService } from 'src/app/core/services/catalogs/label-okey.service';
+import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
   GoodTrackerForm,
   GOOD_PHOTOS_OPTIOS,
@@ -18,11 +24,31 @@ export class DataFilterComponent implements OnInit {
   targetIdentifiers = TARGET_IDENTIFIERS;
   @Input() form: FormGroup<GoodTrackerForm>;
   @Input() params: FilterParams;
-  constructor(private fb: FormBuilder) {}
+  labels = new DefaultSelect();
+  goodStatuses = new DefaultSelect();
+  constructor(
+    private fb: FormBuilder,
+    private goodLabelService: LabelOkeyService,
+    private statusGoodService: StatusGoodService
+  ) {}
 
   ngOnInit(): void {}
 
   search() {
     this.onSubmit.emit(this.form.value);
+  }
+
+  getGoodLabels(params: ListParams) {
+    this.goodLabelService.getAll(params).subscribe({
+      next: response =>
+        (this.labels = new DefaultSelect(response.data, response.count)),
+    });
+  }
+
+  getGoodStatuses(params: ListParams) {
+    params.limit = 100;
+    this.statusGoodService.getAll(params).subscribe({
+      next: res => (this.goodStatuses = new DefaultSelect(res.data, res.count)),
+    });
   }
 }

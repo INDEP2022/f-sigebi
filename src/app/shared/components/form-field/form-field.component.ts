@@ -34,7 +34,7 @@ export class FormFieldComponent implements OnInit {
   @Input() control: AbstractControl;
   @Input() label: string = null;
   @Input() labelClass: string = '';
-  @Input() showRequiredMark: boolean = false;
+  @Input() showRequiredMark: boolean = true;
   constructor(private validationService: ValidationService) {}
   ngOnInit(): void {}
 

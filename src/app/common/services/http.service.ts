@@ -19,14 +19,13 @@ export type _Params = string | HttpParams | ListParams | ObjectParams;
 export class HttpService {
   private readonly url = environment.API_URL;
   private readonly prefix = environment.URL_PREFIX;
-  private httpClient = inject(HttpClient);
+  protected httpClient = inject(HttpClient);
   protected microservice: string;
   constructor() {}
 
   protected get<T = any>(route: string, _params?: _Params) {
     const params = this.getParams(_params);
     const url = this.buildRoute(route);
-    console.log(url);
     return this.httpClient.get<T>(`${url}`, { params });
   }
 

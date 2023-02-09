@@ -9,7 +9,6 @@ import {
 } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { SearchFilter } from '../../../../../common/repository/interfaces/list-params';
 import { SearchBarFilter } from '../../../../../common/repository/interfaces/search-bar-filters';
 import { IComerProvider } from '../../../../../core/models/ms-provider/provider-model';
 import { ComerProvidersService } from '../../../../../core/services/ms-provider/comer-providers.service';
@@ -147,7 +146,7 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
   ) {
     super();
     this.providerSettings.columns = PROVIDER_CATALOGS_PROVIDER_COLUMNS;
-    this.searchFilter = { field: 'nameReason', operator: SearchFilter.IN };
+    this.searchFilter = { field: 'nameReason' };
   }
 
   ngOnInit(): void {
