@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
@@ -53,8 +53,32 @@ export class PerformProgrammingFormComponent
     },
     columns: USER_COLUMNS,
   };
+
+  settingsTransportableGoods = {
+    ...this.settings,
+    actions: false,
+    columns: ESTATE_COLUMNS,
+  };
+
+  settingGuardGoods = {
+    ...this.settings,
+    actions: false,
+    columns: ESTATE_COLUMNS,
+  };
+
+  settingWarehouseGoods = {
+    ...this.settings,
+    actions: false,
+    columns: ESTATE_COLUMNS,
+  };
+
   estates: any[] = [];
   estatesList: any[] = [];
+  goodSelect: any[] = [];
+  goodsTranportables: any[] = [];
+  goodsGuards: any[] = [];
+  goodsWarehouse: any[] = [];
+
   usersData = userData;
   regionalDelegationUser: IRegionalDelegation;
   performForm: FormGroup = new FormGroup({});
@@ -67,10 +91,12 @@ export class PerformProgrammingFormComponent
   typeRelevant = new DefaultSelect<ITypeRelevant>();
   warehouse = new DefaultSelect<IWarehouse>();
   warehouseUbication: string = '';
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  tranportableItems: number = 0;
+  headingTransportable: string = `Transportables(0)`;
+  headingGuard: string = `Resguardo(0)`;
+  headingWarehouse: string = `Almacén SAT(0)`;
   idAuthority: string = '';
   idState: string = '';
-  totalItems: number = 0;
   idTrans: number = 0;
   idStation: number = 0;
   idTypeRelevant: number = 0;
@@ -80,6 +106,16 @@ export class PerformProgrammingFormComponent
   showSelectStation: boolean = false;
   showSelectAuthority: boolean = false;
   showWarehouseInfo: boolean = false;
+  loadingGoods: boolean = false;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems: number = 0;
+  paramsTransportableGoods = new BehaviorSubject<ListParams>(new ListParams());
+  totalItemsTransportableGoods: number = 0;
+  paramsGuardGoods = new BehaviorSubject<ListParams>(new ListParams());
+  totalItemsGuardGoods: number = 0;
+  paramsWarehouseGoods = new BehaviorSubject<ListParams>(new ListParams());
+  totalItemsWarehouseGoods: number = 0;
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -202,7 +238,7 @@ export class PerformProgrammingFormComponent
       userData,
       callback: (dataSearch: IEstateSearch) => {
         if (dataSearch) {
-          this.getProgGoods(new ListParams(), dataSearch);
+          this.initializeParamsTrans();
         }
       },
     };
@@ -246,6 +282,7 @@ export class PerformProgrammingFormComponent
   }
 
   stateSelect(state: IStateOfRepublic) {
+    console.log('item', state);
     this.idState = state.id;
     this.getTransferentSelect(new ListParams());
     this.getWarehouseSelect(new ListParams());
@@ -326,19 +363,56 @@ export class PerformProgrammingFormComponent
     }
   }
 
-  getProgGoods(params?: ListParams, dataSearch?: IEstateSearch) {
-    params['filter.regionalDelegationNumber'] = this.regionalDelegationUser.id;
-    if (dataSearch.state) params['filter.stateKey'] = dataSearch.state;
-    console.log('transferente', this.idTrans);
-    console.log('emisora', this.idStation);
-    console.log('autoridad', this.idAuthority);
-    console.log('tipo relevante', this.idTypeRelevant);
-    return this.goodsQueryService
-      .getGoodsProgramming(params)
-      .subscribe(data => {
-        console.log('data bienes', data);
-        this.estatesList = data.data;
+  initializeParamsTrans() {
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getProgGoods());
+  }
+
+  getProgGoods() {
+    this.loadingGoods = true;
+    this.goodsQueryService
+      .getGoodsProgramming(this.params.getValue())
+      .subscribe({
+        next: response => {
+          this.estatesList = response.data;
+          this.totalItems = response.count;
+          this.loadingGoods = false;
+        },
+        error: error => (this.loadingGoods = false),
       });
+  }
+
+  goodsSelect(selected: any) {
+    this.goodSelect = selected;
+    console.log('data', this.goodSelect);
+  }
+
+  sendTransportable() {
+    if (this.goodSelect.length == 0) {
+      this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
+    } else {
+      this.headingTransportable = `Tranportables(${this.goodSelect.length})`;
+      this.goodsTranportables = this.goodSelect;
+    }
+  }
+
+  sendGuard() {
+    if (this.goodSelect.length == 0) {
+      this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
+    } else {
+      this.headingGuard = `Resguardo(${this.goodSelect.length})`;
+      this.goodsGuards = this.goodSelect;
+    }
+  }
+
+  sendWarehouse() {
+    if (this.goodSelect.length == 0) {
+      this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
+    } else {
+      this.headingWarehouse = `Almacén SAT(${this.goodSelect.length})`;
+      this.goodsWarehouse = this.goodSelect;
+    }
   }
 
   confirm() {}

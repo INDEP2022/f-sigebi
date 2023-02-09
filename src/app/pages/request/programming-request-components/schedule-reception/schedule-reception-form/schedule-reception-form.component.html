@@ -20,7 +20,7 @@
               value="T.E"
               (change)="selectTypeUser($event)" />
           </form-radio>
-          <form-radio label="INDEP" class="radio-inline">
+          <form-radio label="SAE" class="radio-inline">
             <input
               type="radio"
               formControlName="radio"
@@ -40,7 +40,7 @@
               control="userId"
               [data]="users"
               value="id"
-              bindLabel="id"
+              bindLabel="user"
               (fetchItems)="getUserSelect($event)"></ngx-select>
           </form-field>
         </div>

@@ -1,7 +1,7 @@
 export const userData = [
   {
-    user: 'Prueba',
-    email: 'prueba12@correo.com',
-    chargeUser: 'Prueba',
+    user: 'Rodrigo Arias',
+    email: 'rodrigo@correo.com',
+    chargeUser: 'Administrador',
   },
 ];
