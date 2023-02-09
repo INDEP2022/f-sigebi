@@ -85,7 +85,14 @@ export class RegisterKeysLogicalTablesModalComponent
     this.loading = true;
     this.tdescCveService.create(this.tdescCveForm.value).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => (
+        (this.loading = false),
+        this.onLoadToast(
+          'warning',
+          this.title,
+          `${error.error.message} Correctamente`
+        )
+      ),
     });
   }
 
