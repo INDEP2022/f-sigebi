@@ -17,6 +17,11 @@ export class WarehouseService implements ICrudMethods<IWarehouse> {
     return this.warehouseRepository.getAllPaginated(this.route, params);
   }
 
+  search(params?: ListParams): Observable<IListResponse<IWarehouse>> {
+    const route = `${this.route}/search`;
+    return this.warehouseRepository.getAllPaginated(route, params);
+  }
+
   getById(id: string | number): Observable<IWarehouse> {
     return this.warehouseRepository.getById(this.route, id);
   }

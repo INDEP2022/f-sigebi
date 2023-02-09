@@ -60,6 +60,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.getStateSelect(new ListParams());
+    this.getTypeWarehouseSelect(new ListParams());
   }
 
   //Verificar typeTercero//
