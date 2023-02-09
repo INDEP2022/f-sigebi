@@ -9,9 +9,7 @@
         formControlName="goodNum"
         [items]="[]"
         [addTag]="true"
-        [multiple]="true"
-        [selectOnTab]="true"
-        [isOpen]="false">
+        [multiple]="true">
       </ng-select>
       <!-- <input type="text" formControlName="goodNum" class="form-control" /> -->
     </form-field>
@@ -28,13 +26,14 @@
       [control]="form.get('process')"
       class="col-md-3"
       label="Proceso">
-      <select class="form-control" formControlName="process">
-        <option value="ABANDONO">ABANDONO</option>
-        <option value="ASEGURADO">ASEGURADO</option>
-        <option value="DECOMISO">DECOMISO</option>
-        <option value="EXT_DON">EXT_DOM</option>
-        <option value="TRANSFERENTE">TRANSFERENTE</option>
-      </select>
+      <ng-select
+        class="form-control"
+        formControlName="process"
+        value="value"
+        bindLabel="value"
+        [items]="processes"
+        [multiple]="true">
+      </ng-select>
     </form-field>
 
     <form-field
@@ -54,9 +53,6 @@
         id="inventoryList"
         class="form-control" />
     </form-check> -->
-  </div>
-
-  <div class="row pt-3">
     <form-field [control]="form.get('targetIdentifier')" class="col-md-3">
       <ngx-select
         [form]="form"
@@ -68,10 +64,13 @@
         (fetchItems)="getGoodLabels($event)"
         label="Identificador de Destino"></ngx-select>
     </form-field>
+  </div>
 
-    <form-field [control]="form.get('status')" class="col-md-4">
+  <div class="row pt-5">
+    <form-field [control]="form.get('status')" class="col-md-5">
       <ngx-select
         [form]="form"
+        [multiple]="true"
         [searchOnInit]="true"
         control="status"
         [data]="goodStatuses"
@@ -83,7 +82,7 @@
 
     <form-field
       [control]="form.get('withPhoto')"
-      class="col-md-3"
+      class="col-md-2"
       label="Fotos de Bienes">
       <select formControlName="withPhoto" class="form-control">
         <option
@@ -96,15 +95,20 @@
 
     <form-field
       [control]="form.get('menageFather')"
-      class="col-md-2"
+      class="col-md-3"
       label="Bien Padre Menaje">
-      <input
-        type="number"
+      <ng-select
+        class="form-control"
         formControlName="menageFather"
-        class="form-control" />
+        [items]="[]"
+        [addTag]="true"
+        [multiple]="true"
+        [selectOnTab]="true"
+        [isOpen]="false">
+      </ng-select>
     </form-field>
   </div>
-  <div class="row pt-3">
+  <div class="row pt-5">
     <form-field
       [control]="form.get('valueFrom')"
       class="col-md-3"
@@ -135,7 +139,7 @@
     </form-field>
   </div>
 
-  <div class="row pt-3">
+  <div class="row pt-5">
     <form-field
       [control]="form.get('description')"
       class="col-md-4"
@@ -159,7 +163,7 @@
     </form-check> -->
   </div>
 
-  <div class="row pt-3">
+  <div class="row pt-5">
     <form-field
       [control]="form.get('movableIventory')"
       class="col-md-3"
