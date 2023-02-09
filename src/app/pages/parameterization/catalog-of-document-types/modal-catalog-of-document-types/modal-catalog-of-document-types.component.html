@@ -6,13 +6,8 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-4">
-          <form-field
-            [control]="form.get('typesDocuments')"
-            label="Tipo Documento">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="typesDocuments" />
+          <form-field [control]="form.get('id')" label="Tipo Documento">
+            <input type="text" class="form-control" formControlName="id" />
           </form-field>
         </div>
         <div class="col-md-8">
