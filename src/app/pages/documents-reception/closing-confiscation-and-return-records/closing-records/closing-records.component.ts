@@ -1,14 +1,17 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { map, switchMap } from 'rxjs';
+import { catchError, EMPTY, map, of, switchMap } from 'rxjs';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IDetailProceedingsDevolution } from 'src/app/core/models/ms-proceedings/detail-proceedings-devolution.model';
 import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { DetailProceedingsDevolutionService } from 'src/app/core/services/ms-proceedings/detail-proceedings-devolution';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings/proceedings.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { IParameters } from './../../../../core/models/ms-parametergood/parameters.model';
 import { IUpdateProceedings } from './../../../../core/models/ms-proceedings/update-proceedings.model';
 import { CLOSING_RECORDS_COLUMNS } from './closing-records-columns';
 
@@ -26,12 +29,14 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
   dataTable: any[] = [];
   proceedingsNumb: number;
   proceedingsCve: string;
+  di_clasif_numerario: number;
   private route: Router;
 
   constructor(
     private fb: FormBuilder,
     private proceedingsService: ProceedingsService,
-    private detailProceedingsDevolutionService: DetailProceedingsDevolutionService
+    private detailProceedingsDevolutionService: DetailProceedingsDevolutionService,
+    private parametersService: ParametersService
   ) {
     super();
     this.settings = {
@@ -42,7 +47,20 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getParamCve();
     this.prepareForm();
+  }
+
+  getParamCve() {
+    this.parametersService.getById('CLASINUMER').subscribe({
+      next: (data: IListResponse<IParameters>) => {
+        console.log(data);
+        // this.di_clasif_numerario = data.initialValue;
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
   }
 
   search(fileNumber: string) {
@@ -54,10 +72,24 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
     this.proceedingsService
       .getActByFileNumber(fileNumber)
       .pipe(
+        catchError(err => {
+          this.handleError(
+            err,
+            'No se han encontrado registros para este expediente'
+          );
+          return EMPTY;
+        }),
         switchMap((proceedings: IListResponse<IProceedings>) =>
           this.detailProceedingsDevolutionService
             .getDetailProceedingsDevolutionByExpedient(fileNumber)
             .pipe(
+              catchError(err => {
+                this.handleError(
+                  err,
+                  'No existen bienes asociados a este número de expediente'
+                );
+                return of(err);
+              }),
               map((goods: any) => ({
                 proceedings,
                 goods,
@@ -67,12 +99,19 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
       )
       .subscribe({
         next: data => {
+          console.log(data);
           this.prepareData(data);
         },
         error: error => {
           console.log(error);
         },
       });
+  }
+
+  handleError(error: HttpErrorResponse, msg: string) {
+    if (error.status <= 404) {
+      this.onLoadToast('info', 'Información', msg);
+    }
   }
 
   prepareData(data: {
@@ -94,14 +133,16 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
       universalFolio: this.dataResp.universalFolio,
       observations: this.dataResp.observations,
     };
-    for (let good of data.goods.data) {
-      let data: any = {
-        goodsId: good.good[0].goodsID,
-        description: good.good[0].description,
-        quantity: good.good[0].quantity,
-        amountReturned: good.amountReturned,
-      };
-      goodsData.push(data);
+    if (!data.goods.hasOwnProperty('error')) {
+      for (let good of data.goods.data) {
+        let data: any = {
+          goodsId: good.good[0].goodsID,
+          description: good.good[0].description,
+          quantity: good.good[0].quantity,
+          amountReturned: good.amountReturned,
+        };
+        goodsData.push(data);
+      }
     }
     this.form.patchValue(dataForm);
     this.dataTable = goodsData;
