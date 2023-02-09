@@ -41,28 +41,24 @@ export class GeneralDataGoodsComponent implements OnInit, OnChanges {
   private getGood() {
     this.goodService.getById(this.goodId).subscribe({
       next: (val: any) => {
-        this.generalDataForm.get('cantidad').patchValue(val.data.quantitySae);
-        this.generalDataForm.get('fechaFe').patchValue(val.data.judicialDate);
-        this.generalDataForm
-          .get('observacion')
-          .patchValue(val.data.observations);
-        this.generalDataForm
-          .get('descripcion')
-          .patchValue(val.data.description);
+        this.generalDataForm.get('cantidad').patchValue(val.quantitySae);
+        this.generalDataForm.get('fechaFe').patchValue(val.judicialDate);
+        this.generalDataForm.get('observacion').patchValue(val.observations);
+        this.generalDataForm.get('descripcion').patchValue(val.description);
         let data: any = {};
         for (let i = 1; i <= 120; i++) {
           data[`val${i}`] = '';
         }
-        for (const i in val.data) {
+        for (const i in val) {
           for (const j in data) {
             if (j == i) {
-              data[j] = val.data[i];
+              data[j] = val[i];
             }
           }
         }
         let dataParam = this.params.getValue();
         dataParam.limit = 120;
-        dataParam.addFilter('classifGoodNumber', val.data.goodClassNumber);
+        dataParam.addFilter('classifGoodNumber', val.goodClassNumber);
         this.goodQueryService.getAllFilter(dataParam.getParams()).subscribe({
           next: val => {
             let ordered = val.data.sort(
