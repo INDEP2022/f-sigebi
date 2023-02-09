@@ -1,1 +1,14 @@
-<p>depositary-report works!</p>
+<form class="form-material" [formGroup]="depositaryDataForm">
+  <div class="row">
+    <div class="col-12">
+      <form-field
+        [control]="depositaryDataForm.get('reportDate')"
+        label="Fecha Informe">
+        <input type="text" class="form-control" formControlName="reportDate" />
+      </form-field>
+    </div>
+    <div class="col">
+      <label>Informe</label>
+    </div>
+  </div>
+</form>

@@ -88,7 +88,7 @@ export class AppointmentsComponent
       honorarios: ['', [Validators.pattern(STRING_PATTERN)]],
       iva: '',
       noNombramiento: '',
-      fechaInicio: '',
+      fechapage: '',
 
       anexo: ['', [Validators.pattern(STRING_PATTERN)]],
       observaciones: ['', [Validators.pattern(STRING_PATTERN)]],

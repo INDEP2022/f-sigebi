@@ -139,7 +139,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
         data => {
           this.cordinators = new DefaultSelect(
             data.data.map(i => {
-              i.description = '#' + i.noRegister + ' -- ' + i.description;
+              i.description = '#' + i.id + ' -- ' + i.description;
               return i;
             }),
             data.count
@@ -150,7 +150,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'error',
             'Error',
-            err.status === 0 ? ERROR_INTERNET : err.message
+            err.status === 0 ? ERROR_INTERNET : err.error.message
           );
           subscription.unsubscribe();
         },
@@ -185,7 +185,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'error',
             'Error',
-            err.status === 0 ? ERROR_INTERNET : err.message
+            err.status === 0 ? ERROR_INTERNET : err.error.message
           );
           subscription.unsubscribe();
         },
@@ -269,7 +269,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
             this.onLoadToast(
               'warning',
               '',
-              NOT_FOUND_MESSAGE('Gestión Trámites')
+              NOT_FOUND_MESSAGE('Gestión Trámites PGR')
             );
           }
           this.loadingGestionPgr = false;
@@ -305,7 +305,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
             this.onLoadToast(
               'warning',
               '',
-              NOT_FOUND_MESSAGE('Transferenci SAT')
+              NOT_FOUND_MESSAGE('Transferencias PGR')
             );
           }
           this.loadingPgrTransferencia = false;
@@ -325,7 +325,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
     this.onLoadToast(
       'error',
       'Error',
-      err.status === 0 ? ERROR_INTERNET : err.message
+      err.status === 0 ? ERROR_INTERNET : err.error.message
     );
   }
 

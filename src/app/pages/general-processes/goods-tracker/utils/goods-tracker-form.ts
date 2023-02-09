@@ -57,10 +57,10 @@ export class GoodTrackerForm {
   satDepartureNum = new FormControl<string>(null);
   clasifNum = new FormControl<string>(null);
   alternativeClasifNum = new FormControl<string>(null);
-  types = new FormControl<any>(null);
-  subtypes = new FormControl<string>(null);
-  ssubtypes = new FormControl<string>(null);
-  sssubtypes = new FormControl<string>(null);
+  types = new FormControl<string[]>(null);
+  subtypes = new FormControl<string[]>(null);
+  ssubtypes = new FormControl<string[]>(null);
+  sssubtypes = new FormControl<string[]>(null);
   goodNum = new FormControl<string>(null);
   process = new FormControl<string>(null);
   samiInventory = new FormControl<string>(null);

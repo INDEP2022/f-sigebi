@@ -23,7 +23,7 @@
             label="No. Bateria"
             [control]="batteryForm.get('idBattery')">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="idBattery" />
           </form-field>
@@ -40,7 +40,12 @@
         </div>
         <div class="col-md-3 pt-5">
           <form-field label="Status" [control]="batteryForm.get('status')">
-            <input type="text" class="form-control" formControlName="status" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="status"
+              maxlength="1"
+              minlength="1" />
           </form-field>
         </div>
         <div class="col-md-2 pt-5">
@@ -48,7 +53,7 @@
             label="No. Registro"
             [control]="batteryForm.get('registerNumber')">
             <input
-              type="text"
+              type="number"
               class="form-control"
               formControlName="registerNumber" />
           </form-field>

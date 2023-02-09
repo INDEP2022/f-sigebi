@@ -74,13 +74,13 @@ const routes: Routes = [
       (await import('./goods-bulk-load/goods-bulk-load.module'))
         .GoodsBulkLoadModule,
   },
-  {
-    path: 'sat-sae-goods-load',
-    data: { screen: 'FMASINSBIENES_SATSAE', title: 'Carga de Bienes SAT SAE' },
-    loadChildren: async () =>
-      (await import('./sat-sae-goods-load/sat-sae-goods-load.module'))
-        .SatSaeGoodsLoadModule,
-  },
+  // { #### NO SE MIGRA ####
+  //   path: 'sat-sae-goods-load',
+  //   data: { screen: 'FMASINSBIENES_SATSAE', title: 'Carga de Bienes SAT SAE' },
+  //   loadChildren: async () =>
+  //     (await import('./sat-sae-goods-load/sat-sae-goods-load.module'))
+  //       .SatSaeGoodsLoadModule,
+  // },
   {
     path: 'sat-subjects-register',
     data: {

@@ -41,7 +41,7 @@ export class NumeraireConversionAuctionsComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getEvents({ inicio: 1, text: '' });
+    this.getEvents({ page: 1, text: '' });
   }
 
   private prepareForm() {
