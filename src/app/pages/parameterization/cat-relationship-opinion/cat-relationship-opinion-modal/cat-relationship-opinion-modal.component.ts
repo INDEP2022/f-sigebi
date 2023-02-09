@@ -5,6 +5,7 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 //Models
 import { IDictamen } from 'src/app/core/models/catalogs/dictamen.model';
 import { IRAsuntDic } from 'src/app/core/models/catalogs/r-asunt-dic.model';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 //Services
 
 @Component({
@@ -29,8 +30,11 @@ export class CatRelationshipOpinionModalComponent implements OnInit {
 
   private prepareForm() {
     this.rAsuntDicForm = this.fb.group({
-      code: [null, [Validators.required]],
-      dictum: [null, [Validators.required]],
+      code: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      dictum: [
+        null,
+        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+      ],
       flyerType: [null, [Validators.required]],
       doc: [null, [Validators.required]],
       property: [null, [Validators.required]],
