@@ -33,6 +33,7 @@ export class GoodFeaturesComponent implements OnInit, OnChanges {
   }
 
   checkRequiredFields() {
+    // console.log(this.goodFeatures);
     this.goodFeatures.forEach(feature => {
       const field = this.goodForm.get(`val${feature.columnNumber}`);
       if (feature.requested == 'S') {

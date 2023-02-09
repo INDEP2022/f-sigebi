@@ -1,51 +1,51 @@
 import { FormControl, Validators } from '@angular/forms';
 import { onlyNumbers } from 'src/app/common/validations/numeric.validators';
 
-export const GOOD_CAPTURE_FORM = {
-  noPartida: new FormControl<string>(null, [
+export class GOOD_CAPTURE_FORM {
+  noPartida = new FormControl<string>(null, [
     Validators.minLength(8),
     Validators.maxLength(8),
     onlyNumbers(),
-  ]),
-  valorAvaluo: new FormControl<number>(null),
-  capitulo: new FormControl(''),
-  partida: new FormControl(''),
-  subpartida: new FormControl(''),
-  ssubpartida: new FormControl(''),
-  noClasifBien: new FormControl<number>(null, [Validators.required]),
-  type: new FormControl<string | number>(null, [Validators.required]),
-  subtype: new FormControl<string | number>('', [Validators.required]),
-  ssubtype: new FormControl<string | number>('', [Validators.required]),
-  sssubtype: new FormControl<string | number>('', [Validators.required]),
-  unidadLigie: new FormControl({ value: null, disabled: true }),
-  unidadMedida: new FormControl(null, [Validators.required]),
-  cantidad: new FormControl<number>(null, [
+  ]);
+  valorAvaluo = new FormControl<number>(null);
+  capitulo = new FormControl('');
+  partida = new FormControl('');
+  subpartida = new FormControl('');
+  ssubpartida = new FormControl('');
+  noClasifBien = new FormControl<number>(null, [Validators.required]);
+  type = new FormControl<string | number>(null, [Validators.required]);
+  subtype = new FormControl<string | number>('', [Validators.required]);
+  ssubtype = new FormControl<string | number>('', [Validators.required]);
+  sssubtype = new FormControl<string | number>('', [Validators.required]);
+  unidadLigie = new FormControl({ value: null, disabled: true });
+  unidadMedida = new FormControl(null, [Validators.required]);
+  cantidad = new FormControl<number>(null, [
     Validators.required,
     Validators.min(1),
-  ]),
-  destino: new FormControl(null, [Validators.required]),
-  estadoConservacion: new FormControl(null),
-  noBien: new FormControl({ value: null, disabled: true }),
-  valRef: new FormControl(null),
-  identifica: new FormControl(null, [Validators.required]),
-  descripcion: new FormControl(null, [Validators.required]),
-  fichaNumerario: new FormControl(null),
-  captura: new FormControl(''),
-  cambioValor: new FormControl(''),
-  requery: new FormControl(null),
-  satTipoExpediente: new FormControl(null),
-  satIndicator: new FormControl(null),
-  validFrac: new FormControl(null),
-  almacen: new FormControl(false),
-  entFed: new FormControl(null),
-  municipio: new FormControl(null),
-  ciudad: new FormControl(null),
-  localidad: new FormControl(null),
-  flyerNumber: new FormControl<string | number>(null),
-  observaciones: new FormControl<string>(''),
-  esEmpresa: new FormControl<boolean>(null),
-  noExpediente: new FormControl<number>(null),
-};
+  ]);
+  destino = new FormControl(null, [Validators.required]);
+  estadoConservacion = new FormControl(null);
+  noBien = new FormControl({ value: null, disabled: true });
+  valRef = new FormControl(null);
+  identifica = new FormControl(null, [Validators.required]);
+  descripcion = new FormControl(null, [Validators.required]);
+  fichaNumerario = new FormControl(null);
+  captura = new FormControl('');
+  cambioValor = new FormControl('');
+  requery = new FormControl(null);
+  satTipoExpediente = new FormControl(null);
+  satIndicator = new FormControl(null);
+  validFrac = new FormControl(null);
+  almacen = new FormControl(false);
+  entFed = new FormControl(null);
+  municipio = new FormControl(null);
+  ciudad = new FormControl(null);
+  localidad = new FormControl(null);
+  flyerNumber = new FormControl<string | number>(null);
+  observaciones = new FormControl<string>('');
+  esEmpresa = new FormControl<boolean>(null);
+  noExpediente = new FormControl<number>(null);
+}
 
 export const GOOD_FORM = {
   val1: new FormControl(null),

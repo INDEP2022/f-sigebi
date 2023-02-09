@@ -111,7 +111,7 @@ export class GoodsCaptureMain extends BasePage {
   vCount: number;
   vPartida: number;
   vExp: number;
-  assetsForm = this.fb.group(GOOD_CAPTURE_FORM);
+  assetsForm = this.fb.group(new GOOD_CAPTURE_FORM());
   goodForm = this.fb.group(GOOD_FORM);
   type: number;
   satCveUnique: string;
@@ -663,7 +663,10 @@ export class GoodsCaptureMain extends BasePage {
 
   getGoodFeaturesByClasif(clasifNum: number) {
     return this.goodsCaptureService.getGoodFeatures(clasifNum).pipe(
-      tap(response => (this.goodFeatures = response.data)),
+      tap(response => {
+        console.log(response);
+        this.goodFeatures = response.data;
+      }),
       catchError(error => {
         this.showError(
           'No existen atributos para el clasificador Seleccionado'
@@ -701,13 +704,14 @@ export class GoodsCaptureMain extends BasePage {
     return this.goodsCaptureService
       .getMaxPaperWorkByExpedient(expedient.id)
       .pipe(
-        map((response: any) => Number(response.data.max) ?? 0),
+        tap(res => console.log(res)),
         catchError(error => {
           if (error.status <= 404) {
             return of(1);
           }
           return of(2);
-        })
+        }),
+        map((response: any) => Number(response.max) ?? 0)
       );
   }
 
@@ -735,6 +739,12 @@ export class GoodsCaptureMain extends BasePage {
 
   getUnitsByClasifNum(clasifNum: number, params?: ListParams) {
     return this.goodsCaptureService.getUnitsByClasifNum(clasifNum, params).pipe(
+      catchError(error => {
+        if (error.status <= 404) {
+          this.showError('No hay unidades de medida para este clasificador');
+        }
+        return throwError(() => error);
+      }),
       tap((response: any) => {
         this.unitsMeasures = new DefaultSelect(
           response.data,
@@ -824,6 +834,10 @@ export class GoodsCaptureMain extends BasePage {
 
   getFractionsByClasifNum(clasifNum: number) {
     return this.goodsCaptureService.getFractionByClasifNum(clasifNum).pipe(
+      catchError(error => {
+        this.showError('No existe el clasificador');
+        return throwError(() => error);
+      }),
       switchMap((response: any) => {
         return this.getAndFillFractions(response);
       })
