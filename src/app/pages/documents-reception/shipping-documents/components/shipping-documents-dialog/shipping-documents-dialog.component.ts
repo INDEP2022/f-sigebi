@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
+import { Router } from '@angular/router';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { map, switchMap } from 'rxjs';
 import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
@@ -27,7 +28,8 @@ export class ShippingDocumentsDialogComponent
     private modalRef: BsModalRef,
     private jobsService: JobsService,
     private copiesByTradeService: CopiesByTradeService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private router: Router
   ) {
     super();
   }
@@ -67,5 +69,10 @@ export class ShippingDocumentsDialogComponent
     if (error.status == 404) {
       this.onLoadToast('error', 'Error', 'No existe el envio');
     }
+  }
+
+  cancel() {
+    this.modalRef.hide();
+    this.router.navigate(['/pages/home']);
   }
 }

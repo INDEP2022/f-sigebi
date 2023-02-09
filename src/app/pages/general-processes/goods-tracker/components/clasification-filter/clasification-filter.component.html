@@ -6,9 +6,16 @@
       class="col-md-2">
       <input
         type="number"
+        (change)="fractionChange()"
         formControlName="satDepartureNum"
         class="form-control" />
     </form-field>
+
+    <div class="col-1 mx-0 px-0">
+      <button class="btn btn-small" (click)="selectFraction()">
+        <i class="fa fa-search text-pink" aria-hidden="true"></i>
+      </button>
+    </div>
 
     <form-field
       [control]="form.get('clasifNum')"
@@ -29,7 +36,7 @@
   </div>
 
   <div class="row pt-3">
-    <form-field [control]="form.get('types')" class="col-md-4">
+    <form-field [control]="form.get('types')" class="col-md-3">
       <ngx-select
         [form]="form"
         [searchOnInit]="true"
@@ -40,7 +47,49 @@
         [data]="types"
         value="id"
         bindLabel="nameGoodType"
-        (fetchItems)="getTypes($event)"></ngx-select>
+        (fetchItems)="getTypes($event)"
+        (change)="getSubtypes()"></ngx-select>
+    </form-field>
+
+    <form-field [control]="form.get('subtypes')" class="col-md-3">
+      <ngx-select
+        [form]="form"
+        [multiple]="true"
+        [closeOnSelect]="false"
+        control="subtypes"
+        label="Subtipo"
+        [data]="subtypes"
+        value="id"
+        bindLabel="nameSubtypeGood"
+        (fetchItems)="getSubtypes($event)"
+        (change)="getSsubtypes()"></ngx-select>
+    </form-field>
+
+    <form-field [control]="form.get('ssubtypes')" class="col-md-3">
+      <ngx-select
+        [form]="form"
+        [multiple]="true"
+        [closeOnSelect]="false"
+        control="ssubtypes"
+        label="Ssubtipo"
+        [data]="ssubtypes"
+        value="id"
+        bindLabel="description"
+        (fetchItems)="getSsubtypes($event)"
+        (change)="getSssubtypes()"></ngx-select>
+    </form-field>
+
+    <form-field [control]="form.get('sssubtypes')" class="col-md-3">
+      <ngx-select
+        [form]="form"
+        [multiple]="true"
+        [closeOnSelect]="false"
+        control="sssubtypes"
+        label="Sssubtipo"
+        [data]="sssubtypes"
+        value="id"
+        bindLabel="description"
+        (fetchItems)="getSssubtypes($event)"></ngx-select>
     </form-field>
   </div>
 

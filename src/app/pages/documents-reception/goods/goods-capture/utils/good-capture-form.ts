@@ -1,5 +1,6 @@
 import { FormControl, Validators } from '@angular/forms';
 import { onlyNumbers } from 'src/app/common/validations/numeric.validators';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 export class GOOD_CAPTURE_FORM {
   noPartida = new FormControl<string>(null, [
@@ -28,7 +29,10 @@ export class GOOD_CAPTURE_FORM {
   noBien = new FormControl({ value: null, disabled: true });
   valRef = new FormControl(null);
   identifica = new FormControl(null, [Validators.required]);
-  descripcion = new FormControl(null, [Validators.required]);
+  descripcion = new FormControl(null, [
+    Validators.required,
+    Validators.pattern(STRING_PATTERN),
+  ]);
   fichaNumerario = new FormControl(null);
   captura = new FormControl('');
   cambioValor = new FormControl('');
@@ -42,135 +46,138 @@ export class GOOD_CAPTURE_FORM {
   ciudad = new FormControl(null);
   localidad = new FormControl(null);
   flyerNumber = new FormControl<string | number>(null);
-  observaciones = new FormControl<string>('');
+  observaciones = new FormControl<string>(
+    null,
+    Validators.pattern(STRING_PATTERN)
+  );
   esEmpresa = new FormControl<boolean>(null);
   noExpediente = new FormControl<number>(null);
 }
 
-export const GOOD_FORM = {
-  val1: new FormControl(null),
-  val2: new FormControl(null),
-  val3: new FormControl(null),
-  val4: new FormControl(null),
-  val5: new FormControl(null),
-  val6: new FormControl(null),
-  val7: new FormControl(null),
-  val8: new FormControl(null),
-  val9: new FormControl(null),
-  val10: new FormControl(null),
-  val11: new FormControl(null),
-  val12: new FormControl(null),
-  val13: new FormControl(null),
-  val14: new FormControl(null),
-  val15: new FormControl(null),
-  val16: new FormControl(null),
-  val17: new FormControl(null),
-  val18: new FormControl(null),
-  val19: new FormControl(null),
-  val20: new FormControl(null),
-  val21: new FormControl(null),
-  val22: new FormControl(null),
-  val23: new FormControl(null),
-  val24: new FormControl(null),
-  val25: new FormControl(null),
-  val26: new FormControl(null),
-  val27: new FormControl(null),
-  val28: new FormControl(null),
-  val29: new FormControl(null),
-  val30: new FormControl(null),
-  val31: new FormControl(null),
-  val32: new FormControl(null),
-  val33: new FormControl(null),
-  val34: new FormControl(null),
-  val35: new FormControl(null),
-  val36: new FormControl(null),
-  val37: new FormControl(null),
-  val38: new FormControl(null),
-  val39: new FormControl(null),
-  val40: new FormControl(null),
-  val41: new FormControl(null),
-  val42: new FormControl(null),
-  val43: new FormControl(null),
-  val44: new FormControl(null),
-  val45: new FormControl(null),
-  val46: new FormControl(null),
-  val47: new FormControl(null),
-  val48: new FormControl(null),
-  val49: new FormControl(null),
-  val50: new FormControl(null),
-  val51: new FormControl(null),
-  val52: new FormControl(null),
-  val53: new FormControl(null),
-  val54: new FormControl(null),
-  val55: new FormControl(null),
-  val56: new FormControl(null),
-  val57: new FormControl(null),
-  val58: new FormControl(null),
-  val59: new FormControl(null),
-  val60: new FormControl(null),
-  val61: new FormControl(null),
-  val62: new FormControl(null),
-  val63: new FormControl(null),
-  val64: new FormControl(null),
-  val65: new FormControl(null),
-  val66: new FormControl(null),
-  val67: new FormControl(null),
-  val68: new FormControl(null),
-  val69: new FormControl(null),
-  val70: new FormControl(null),
-  val71: new FormControl(null),
-  val72: new FormControl(null),
-  val73: new FormControl(null),
-  val74: new FormControl(null),
-  val75: new FormControl(null),
-  val76: new FormControl(null),
-  val77: new FormControl(null),
-  val78: new FormControl(null),
-  val79: new FormControl(null),
-  val80: new FormControl(null),
-  val81: new FormControl(null),
-  val82: new FormControl(null),
-  val83: new FormControl(null),
-  val84: new FormControl(null),
-  val85: new FormControl(null),
-  val86: new FormControl(null),
-  val87: new FormControl(null),
-  val88: new FormControl(null),
-  val89: new FormControl(null),
-  val90: new FormControl(null),
-  val91: new FormControl(null),
-  val92: new FormControl(null),
-  val93: new FormControl(null),
-  val94: new FormControl(null),
-  val95: new FormControl(null),
-  val96: new FormControl(null),
-  val97: new FormControl(null),
-  val98: new FormControl(null),
-  val99: new FormControl(null),
-  val100: new FormControl(null),
-  val101: new FormControl(null),
-  val102: new FormControl(null),
-  val103: new FormControl(null),
-  val104: new FormControl(null),
-  val105: new FormControl(null),
-  val106: new FormControl(null),
-  val107: new FormControl(null),
-  val108: new FormControl(null),
-  val109: new FormControl(null),
-  val110: new FormControl(null),
-  val111: new FormControl(null),
-  val112: new FormControl(null),
-  val113: new FormControl(null),
-  val114: new FormControl(null),
-  val115: new FormControl(null),
-  val116: new FormControl(null),
-  val117: new FormControl(null),
-  val118: new FormControl(null),
-  val119: new FormControl(null),
-  val120: new FormControl(null),
-};
+export class GOOD_FORM {
+  val1 = new FormControl(null);
+  val2 = new FormControl(null);
+  val3 = new FormControl(null);
+  val4 = new FormControl(null);
+  val5 = new FormControl(null);
+  val6 = new FormControl(null);
+  val7 = new FormControl(null);
+  val8 = new FormControl(null);
+  val9 = new FormControl(null);
+  val10 = new FormControl(null);
+  val11 = new FormControl(null);
+  val12 = new FormControl(null);
+  val13 = new FormControl(null);
+  val14 = new FormControl(null);
+  val15 = new FormControl(null);
+  val16 = new FormControl(null);
+  val17 = new FormControl(null);
+  val18 = new FormControl(null);
+  val19 = new FormControl(null);
+  val20 = new FormControl(null);
+  val21 = new FormControl(null);
+  val22 = new FormControl(null);
+  val23 = new FormControl(null);
+  val24 = new FormControl(null);
+  val25 = new FormControl(null);
+  val26 = new FormControl(null);
+  val27 = new FormControl(null);
+  val28 = new FormControl(null);
+  val29 = new FormControl(null);
+  val30 = new FormControl(null);
+  val31 = new FormControl(null);
+  val32 = new FormControl(null);
+  val33 = new FormControl(null);
+  val34 = new FormControl(null);
+  val35 = new FormControl(null);
+  val36 = new FormControl(null);
+  val37 = new FormControl(null);
+  val38 = new FormControl(null);
+  val39 = new FormControl(null);
+  val40 = new FormControl(null);
+  val41 = new FormControl(null);
+  val42 = new FormControl(null);
+  val43 = new FormControl(null);
+  val44 = new FormControl(null);
+  val45 = new FormControl(null);
+  val46 = new FormControl(null);
+  val47 = new FormControl(null);
+  val48 = new FormControl(null);
+  val49 = new FormControl(null);
+  val50 = new FormControl(null);
+  val51 = new FormControl(null);
+  val52 = new FormControl(null);
+  val53 = new FormControl(null);
+  val54 = new FormControl(null);
+  val55 = new FormControl(null);
+  val56 = new FormControl(null);
+  val57 = new FormControl(null);
+  val58 = new FormControl(null);
+  val59 = new FormControl(null);
+  val60 = new FormControl(null);
+  val61 = new FormControl(null);
+  val62 = new FormControl(null);
+  val63 = new FormControl(null);
+  val64 = new FormControl(null);
+  val65 = new FormControl(null);
+  val66 = new FormControl(null);
+  val67 = new FormControl(null);
+  val68 = new FormControl(null);
+  val69 = new FormControl(null);
+  val70 = new FormControl(null);
+  val71 = new FormControl(null);
+  val72 = new FormControl(null);
+  val73 = new FormControl(null);
+  val74 = new FormControl(null);
+  val75 = new FormControl(null);
+  val76 = new FormControl(null);
+  val77 = new FormControl(null);
+  val78 = new FormControl(null);
+  val79 = new FormControl(null);
+  val80 = new FormControl(null);
+  val81 = new FormControl(null);
+  val82 = new FormControl(null);
+  val83 = new FormControl(null);
+  val84 = new FormControl(null);
+  val85 = new FormControl(null);
+  val86 = new FormControl(null);
+  val87 = new FormControl(null);
+  val88 = new FormControl(null);
+  val89 = new FormControl(null);
+  val90 = new FormControl(null);
+  val91 = new FormControl(null);
+  val92 = new FormControl(null);
+  val93 = new FormControl(null);
+  val94 = new FormControl(null);
+  val95 = new FormControl(null);
+  val96 = new FormControl(null);
+  val97 = new FormControl(null);
+  val98 = new FormControl(null);
+  val99 = new FormControl(null);
+  val100 = new FormControl(null);
+  val101 = new FormControl(null);
+  val102 = new FormControl(null);
+  val103 = new FormControl(null);
+  val104 = new FormControl(null);
+  val105 = new FormControl(null);
+  val106 = new FormControl(null);
+  val107 = new FormControl(null);
+  val108 = new FormControl(null);
+  val109 = new FormControl(null);
+  val110 = new FormControl(null);
+  val111 = new FormControl(null);
+  val112 = new FormControl(null);
+  val113 = new FormControl(null);
+  val114 = new FormControl(null);
+  val115 = new FormControl(null);
+  val116 = new FormControl(null);
+  val117 = new FormControl(null);
+  val118 = new FormControl(null);
+  val119 = new FormControl(null);
+  val120 = new FormControl(null);
+}
 
-export const GOOD_TO_SAVE: Partial<{
+export class GOOD_TO_SAVE {
   goodClassNumber: string;
   description: string;
   quantity: string;
@@ -303,4 +310,4 @@ export const GOOD_TO_SAVE: Partial<{
   val118?: any;
   val119?: any;
   val120?: any;
-}> = {};
+}

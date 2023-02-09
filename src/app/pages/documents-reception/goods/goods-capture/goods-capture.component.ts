@@ -232,8 +232,7 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
   }
 
   handleSuccesSave(good: any) {
-    // this.onLoadToast('success', '', 'Datos del bien guardados correctamente');
-    this.alert('success', 'Registro guardado', 'Datos guardados correctamente');
+    this.alert('success', 'Se agrego el bien al expediente', '');
     if (this.formControls.esEmpresa.value) {
       this.createMenage(good);
     }

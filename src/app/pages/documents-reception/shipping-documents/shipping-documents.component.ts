@@ -180,8 +180,9 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
     senderParams.text = job.userOrigin;
     this.getReceivers(receiverParams);
     this.getSenders(senderParams);
+    const jobDate = new Date(job.shippingDate);
     this.documentsForm.patchValue({
-      date: job.shippingDate,
+      date: jobDate,
       priority: job.priority,
       messageBody: job.text,
       sender: job.userOrigin,
@@ -279,7 +280,7 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
   getDepartmentById() {
     const token = this.jwtHelper.decodeToken();
     return this.getPhaseEdo().pipe(
-      map((res: any) => res.data.stagecreated as number),
+      map((res: any) => res.stagecreated as number),
       switchMap(phaseEdo =>
         this.getLoogedUser(token.preferred_username).pipe(
           map(res => {
@@ -311,11 +312,7 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
       next: () => {
         this.incrementLastOffice(department);
         this.queryMode = true;
-        this.alert(
-          'success',
-          'Oficio Enviado ',
-          'Oficio enviado correctamente'
-        );
+        this.alert('success', 'Oficio Enviado Correctamente', '');
       },
     });
   }

@@ -27,7 +27,7 @@ export class GoodsTrackerComponent extends BasePage implements OnInit {
     const form = this.form.value;
     for (const [key, value] of Object.entries(form)) {
       if (value) {
-        this.params.addFilter(key, value);
+        // this.params.addFilter(key, value);
       }
     }
     console.log(this.params.getParams());

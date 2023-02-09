@@ -52,7 +52,7 @@ import {
 })
 export class GoodsCaptureMain extends BasePage {
   @ViewChild('form') form: ElementRef;
-  goodToSave = GOOD_TO_SAVE;
+  goodToSave = new GOOD_TO_SAVE();
   satTransfer: any = {};
   params: Partial<IGoodCaptureParams> = {
     origin: null,
@@ -112,7 +112,7 @@ export class GoodsCaptureMain extends BasePage {
   vPartida: number;
   vExp: number;
   assetsForm = this.fb.group(new GOOD_CAPTURE_FORM());
-  goodForm = this.fb.group(GOOD_FORM);
+  goodForm = this.fb.group(new GOOD_FORM());
   type: number;
   satCveUnique: string;
   good: any;
