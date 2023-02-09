@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IDonationGood } from 'src/app/core/models/ms-donation/donation.model';
@@ -41,20 +41,9 @@ export class FiltersOfGoodsForDonationComponent
   }
 
   ngOnInit(): void {
-    this.getPagination();
-  }
-
-  openModal(context?: Partial<ModalGoodForDonationComponent>) {
-    const modalRef = this.modalService.show(ModalGoodForDonationComponent, {
-      initialState: { ...context },
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) {
-        console.log('ejectutado');
-      }
-    });
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getPagination());
   }
 
   openForm(allotment?: any) {
