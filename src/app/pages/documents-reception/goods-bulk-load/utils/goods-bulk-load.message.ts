@@ -2,10 +2,16 @@ const FORM_IDENTIFICATOR_NULL =
   'Este proceso masivo requiere de un ID. de Carga.';
 const FORM_ACTION_TYPE_NULL =
   'Este proceso masivo requiere de una opción de Carga.';
+const FORM_ACTION_TYPE_WITH_CHECK_ERROR = (opcion: string) =>
+  `Este proceso masivo requiere de la opción de Carga.: ${opcion}. ya que se selecciono "INMUEBLES" y/o "AUTOMÓVILES"`;
 const NOT_LOAD_FILE = 'Carga un archivo excel válido para continuar.';
 const ERROR_CARGA_MASIVA =
   'Se encontraron errores de datos durante la validación.';
 const VALIDATION_START_MESSAGE = 'Iniciando proceso de Validación de Datos...';
+const VALIDATION_PROCESS_MESSAGE = (numero_registro: number) =>
+  `Válidando el registro: ${numero_registro}.`;
+const VALIDATION_END_MESSAGE = 'Proceso de Validación de Datos Terminado.';
+const ERROR_EXPORT = 'No existen registros para exportar.';
 // PROCESOS
 const ERROR_UNIDAD = (unidad: string) =>
   `La cantidad es inválida. En el campo UNIDAD: ${unidad}.`;
@@ -38,4 +44,8 @@ export {
   ERROR_IDENTIFICADOR_MENAJE,
   ERROR_TRANSFERENTE,
   ERROR_ATRIBUTE_CLASS_GOOD,
+  FORM_ACTION_TYPE_WITH_CHECK_ERROR,
+  ERROR_EXPORT,
+  VALIDATION_PROCESS_MESSAGE,
+  VALIDATION_END_MESSAGE,
 };

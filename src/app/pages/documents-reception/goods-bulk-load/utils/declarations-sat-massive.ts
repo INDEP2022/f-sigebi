@@ -3,9 +3,10 @@ export class DeclarationsSatSaeMassive {
   data_error: any[] = [];
   message_progress: string = '';
 }
-const COMMON_VALIDATORS = {
-  total_erros: 0,
+export const COMMON_VALIDATORS = {
+  total_errores: 0,
   valid: false,
   count: 0,
   total: 0,
+  proceso: '',
 };
