@@ -207,7 +207,7 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
     this.onLoadToast(
       'error',
       'Error',
-      err.status === 0 ? ERROR_INTERNET : err.message
+      err.status === 0 ? ERROR_INTERNET : err.error.message
     );
   }
 
@@ -269,7 +269,7 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'error',
             'Error',
-            err.status === 0 ? ERROR_INTERNET : err.message
+            err.status === 0 ? ERROR_INTERNET : err.error.message
           );
           subscription.unsubscribe();
         },
@@ -304,7 +304,7 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'error',
             'Error',
-            err.status === 0 ? ERROR_INTERNET : err.message
+            err.status === 0 ? ERROR_INTERNET : err.error.message
           );
           subscription.unsubscribe();
         },
