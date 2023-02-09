@@ -9,7 +9,7 @@ import { FormControl } from '@angular/forms';
       <label class="search-label">{{ label }}</label>
       <div class="text-search ">
         <input
-          type="text"
+          type="number"
           class="form-control"
           [formControl]="search"
           [placeholder]="placeholder"
