@@ -158,9 +158,9 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       battery,
-      // callback: (next: boolean) => {
-      //   if (next) this.getBattery(battery.idBattery);
-      // },
+      callback: (next: boolean) => {
+        if (next) this.getSaveValuesById();
+      },
     };
     this.modalService.show(BatteryModalComponent, modalConfig);
   }
@@ -194,9 +194,9 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       shelves,
-      // callback: (next: boolean) => {
-      //   if (next) this.getBattery(battery.idBattery);
-      // },
+      callback: (next: boolean) => {
+        if (next) this.getSaveValuesById();
+      },
     };
     this.modalService.show(ShelvesModalComponent, modalConfig);
   }
@@ -230,9 +230,9 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       locker,
-      // callback: (next: boolean) => {
-      //   if (next) this.getBattery(battery.idBattery);
-      // },
+      callback: (next: boolean) => {
+        if (next) this.getSaveValuesById();
+      },
     };
     this.modalService.show(LockersModalComponent, modalConfig);
   }

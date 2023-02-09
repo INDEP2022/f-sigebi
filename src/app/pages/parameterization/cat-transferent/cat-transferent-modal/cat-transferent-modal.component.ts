@@ -22,6 +22,8 @@ export class CatTransferentModalComponent extends BasePage implements OnInit {
   transferentForm: ModelForm<ITransferente>;
   transferent: ITransferente;
 
+  today: Date;
+
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -29,6 +31,7 @@ export class CatTransferentModalComponent extends BasePage implements OnInit {
     private datePipe: DatePipe
   ) {
     super();
+    this.today = new Date();
   }
 
   ngOnInit(): void {
@@ -37,18 +40,18 @@ export class CatTransferentModalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.transferentForm = this.fb.group({
-      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+      id: [{ value: null, disabled: true }, []],
       nameTransferent: [null, [Validators.pattern(STRING_PATTERN)]],
       keyTransferent: [null, [Validators.pattern(STRING_PATTERN)]],
-      userCreation: [null, [Validators.pattern(STRING_PATTERN)]],
-      dateCreation: [null, []],
-      userUpdate: [null, [Validators.pattern(STRING_PATTERN)]],
-      dateUpdate: [null, []],
+      userCreation: [{ value: null, disabled: true }, []],
+      dateCreation: [{ value: null, disabled: true }, []],
+      userUpdate: [{ value: null, disabled: true }, []],
+      dateUpdate: [{ value: null, disabled: true }, []],
       typeTransferent: [null, [Validators.pattern(STRING_PATTERN)]],
       version: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       status: [null, [Validators.pattern(STRING_PATTERN)]],
       dateBegOperation: [null, []],
-      dateFinalOperation: [null, []],
+      dateFinalOperation: [{ value: null, disabled: true }, []],
       assignor: [null, [Validators.pattern(STRING_PATTERN)]],
       objectCharge: [null, [Validators.pattern(STRING_PATTERN)]],
       sector: [null, [Validators.pattern(STRING_PATTERN)]],
