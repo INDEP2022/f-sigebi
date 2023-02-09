@@ -22,7 +22,7 @@ export const INDICATORSOFPERFORMANCE_COLUMNS = {
 };
 export const INDICATORSPERFORMANCE_COLUMNS = {
   beginning: {
-    title: 'Inicio',
+    title: 'page',
     width: '10%',
     sort: false,
   },
@@ -47,7 +47,7 @@ export const INDICATORSPERFORMANCE_COLUMNS = {
     sort: false,
   },
   startDate: {
-    title: 'Fecha Ind.Inicio',
+    title: 'Fecha Ind.page',
     width: '20%',
     sort: false,
   },

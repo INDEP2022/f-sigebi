@@ -23,7 +23,7 @@ export const GENERAL_PROCESSES_OPINION_COLUNNS = {
     title: 'Fecha Volante',
     sort: false,
   },
-  inicio: {
+  page: {
     title: 'Fecha Desahogo',
     sort: false,
   },
@@ -49,7 +49,7 @@ function getData() {
     noVolante: 'EXAMPLE_DATA',
     tramite: 'EXAMPLE_DATA',
     usuario: 'EXAMPLE_DATA',
-    inicio: 'EXAMPLE_DATA',
+    page: 'EXAMPLE_DATA',
     fin: 'EXAMPLE_DATA',
     max: 'EXAMPLE_DATA',
   };

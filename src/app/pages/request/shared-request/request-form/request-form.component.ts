@@ -106,7 +106,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   prepareForm(): void {
     this.requestForm = this.fb.group({
       applicationDate: [{ value: null, disabled: true }],
-      paperNumber: [null, Validators.required],
+      paperNumber: [null, [Validators.required]],
       regionalDelegationId: [{ value: null, disabled: true }], // cargar la delegacion a la que pertence
       transferenceId: [null, Validators.required],
       keyStateOfRepublic: [null, Validators.required],
@@ -242,7 +242,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'info',
         'Informacion',
-        `Seleccione un usuario a turnar!`
+        `Seleccione un usuario para poder turnar la solicitud!`
       );
       return;
     }

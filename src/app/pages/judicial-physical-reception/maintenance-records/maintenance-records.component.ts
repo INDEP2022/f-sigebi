@@ -67,7 +67,7 @@ export class MaintenanceRecordsComponent implements OnInit {
   prepareForm() {
     this.form = this.fb.group({
       tipoEvento: [null, [Validators.required]],
-      fechaInicio: [null, [Validators.required]],
+      fechapage: [null, [Validators.required]],
       fechaFin: [null, [Validators.required]],
       statusEvento: [null, [Validators.required]],
       coordRegional: [

@@ -23,12 +23,12 @@ export const GENERAL_RECEPTION_STRATEGIES_COLUNNS = {
     title: 'Usuario',
     sort: false,
   },
-  inicio: {
+  page: {
     title: 'Fecha de Estrategia',
     sort: false,
   },
   fin: {
-    title: 'Fecha Inicio Programación',
+    title: 'Fecha page Programación',
     sort: false,
   },
   max: {
@@ -49,7 +49,7 @@ function getData() {
     noVolante: 'EXAMPLE_DATA',
     tramite: 'EXAMPLE_DATA',
     usuario: 'EXAMPLE_DATA',
-    inicio: 'EXAMPLE_DATA',
+    page: 'EXAMPLE_DATA',
     fin: 'EXAMPLE_DATA',
     max: 'EXAMPLE_DATA',
   };

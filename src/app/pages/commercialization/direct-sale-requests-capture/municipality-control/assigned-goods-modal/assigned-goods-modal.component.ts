@@ -82,7 +82,7 @@ export class AssignedGoodsModalComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getGoods({ inicio: 1, text: '' });
+    this.getGoods({ page: 1, text: '' });
     this.getGoodClassification();
     this.getSiabClassification();
   }

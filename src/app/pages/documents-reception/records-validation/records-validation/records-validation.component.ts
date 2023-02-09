@@ -43,7 +43,6 @@ export class RecordsValidationComponent extends BasePage implements OnInit {
     this.activatedRoute.params.subscribe(params => {
       this.proceedingsNumb = params['proceedingsNumb'];
       this.proceedingsCve = params['proceedingsCve'];
-
       console.log(`${this.proceedingsCve},${this.proceedingsNumb}`);
     });
   }
@@ -58,9 +57,8 @@ export class RecordsValidationComponent extends BasePage implements OnInit {
   getInfo() {
     let data: any[] = [];
     let temp: any = {};
-    this.proceedingsValidationsService
-      .getAll(this.proceedingsNumb)
-      .subscribe(resp => {
+    this.proceedingsValidationsService.getAll(this.proceedingsNumb).subscribe({
+      next: resp => {
         for (let validation of resp.data) {
           (temp.secVal = validation.secVal),
             (temp.descVal = validation.proceedingsType.descVal),
@@ -70,7 +68,17 @@ export class RecordsValidationComponent extends BasePage implements OnInit {
           data.push(temp);
         }
         this.dataTable = data;
-      });
+      },
+      error: err => {
+        if (err.status <= 404) {
+          this.onLoadToast(
+            'info',
+            'Información',
+            'No existen validadores para esta acta'
+          );
+        }
+      },
+    });
   }
 
   prepareForm() {

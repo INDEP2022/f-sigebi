@@ -1,8 +1,18 @@
 <div class="row">
   <div class="row">
-    <div class="col-md-12">
-      <h5 class="title"><strong>Bienes</strong></h5>
+    <div class="d-flex">
+      <div class="mr-auto p-2">
+        <h5 class="title"><strong>Bienes</strong></h5>
+      </div>
+      <div class="p-2">
+        <button class="btn btn-primary btn-sm active" (click)="save()">
+          Guardar
+        </button>
+      </div>
     </div>
+    <!-- <div class="col-md-12">
+      <h5 class="title"><strong>Bienes</strong></h5>
+    </div> -->
   </div>
   <div class="row pt-4">
     <div class="d-flex justify-content-end">
@@ -39,8 +49,8 @@
         </button>
       </div>
       <div class="" style="margin-left: 1%">
-        <button class="btn btn-primary btn-sm active" (click)="save()">
-          Guardar
+        <button class="btn btn-danger btn-sm active" (click)="delete()">
+          Eliminar
         </button>
       </div>
     </div>
@@ -71,7 +81,7 @@
         [typeDoc]="'assets'"
         [requestObject]="requestObject"
         [goodObject]="goodObject"
-        [idDomicilie]="idDomicilie"></app-classify-assets-tab>
+        [domicilieObject]="domicilieObject"></app-classify-assets-tab>
     </div>
   </div>
 </div>
