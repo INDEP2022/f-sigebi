@@ -1,6 +1,10 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormGroup } from '@angular/forms';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { CourtService } from 'src/app/core/services/catalogs/court.service';
+import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { GoodTrackerForm } from '../../utils/goods-tracker-form';
 
 @Component({
   selector: 'record-notification-filter',
@@ -9,40 +13,29 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class RecordNotificationFilterComponent implements OnInit {
   @Output() onSubmit = new EventEmitter<any>();
-  form = this.fb.group({
-    expediente: [null, [Validators.required]],
-    volante: [null, [Validators.required]],
-    noJuzgado: [null, [Validators.required]],
-    expTrans: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-    tipoVolante: [null, [Validators.required]],
-    listadoExp: [null, [Validators.required]],
-    fechaOficio: [null, [Validators.required]],
-    amparo: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-    indiciado: [
-      null,
-      [Validators.required, Validators.pattern(STRING_PATTERN)],
-    ],
-    minPub: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-    tocaPenal: [
-      null,
-      [Validators.required, Validators.pattern(STRING_PATTERN)],
-    ],
-    oficExt: [null, [Validators.required]],
-    averPrevia: [
-      null,
-      [Validators.required, Validators.pattern(STRING_PATTERN)],
-    ],
-    dictamen: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-    causaPenal: [
-      null,
-      [Validators.required, Validators.pattern(STRING_PATTERN)],
-    ],
-  });
-  constructor(private fb: FormBuilder) {}
+  @Input() form: FormGroup<GoodTrackerForm>;
+  courts = new DefaultSelect();
+  publicMins = new DefaultSelect();
+  constructor(
+    private courtService: CourtService,
+    private minPubService: MinPubService
+  ) {}
 
   ngOnInit(): void {}
 
   search() {
     this.onSubmit.emit(this.form.value);
+  }
+
+  getMinPubs(params: ListParams) {
+    this.minPubService.getAll(params).subscribe({
+      next: res => (this.publicMins = new DefaultSelect(res.data, res.count)),
+    });
+  }
+
+  getCourts(params: ListParams) {
+    this.courtService.getAll(params).subscribe({
+      next: res => (this.courts = new DefaultSelect(res.data, res.count)),
+    });
   }
 }

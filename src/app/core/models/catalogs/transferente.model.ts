@@ -1,5 +1,5 @@
 export interface ITransferente {
-  id: number;
+  id?: number;
   nameTransferent: string;
   keyTransferent: string;
   userCreation: string;
