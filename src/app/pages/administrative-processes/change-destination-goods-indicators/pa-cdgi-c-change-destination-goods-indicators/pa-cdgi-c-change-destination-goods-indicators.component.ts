@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
@@ -8,6 +9,7 @@ import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
+
 interface IPerson {
   name: string;
   birthdate: Date | any;
@@ -34,6 +36,7 @@ export class PaCdgiCChangeDestinationGoodsIndicatorsComponent
   extends BasePage
   implements OnInit
 {
+  data: LocalDataSource = new LocalDataSource();
   form: FormGroup;
   goods: IGood[] = [];
   goodsNew: IGood[] = [];
@@ -86,12 +89,10 @@ export class PaCdgiCChangeDestinationGoodsIndicatorsComponent
     let idGood = this.goodId.value;
     this.goodServices.getById(idGood).subscribe({
       next: response => {
-        let good: IGood[] = this.goods;
-        good.push(response);
-        console.log(good);
-        this.goods = good;
+        this.goods.push(response);
       },
     });
+    this.data.load(this.goods);
   }
   validarGood() {}
 
