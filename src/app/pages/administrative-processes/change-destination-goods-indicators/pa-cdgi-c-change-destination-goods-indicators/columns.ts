@@ -2,11 +2,11 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 export const COLUMNS = {
-  goodNumber: {
+  id: {
     title: 'No. Bien',
     sort: false,
   },
-  descriptionGood: {
+  description: {
     title: 'Descripcion',
     sort: false,
   },
@@ -14,7 +14,7 @@ export const COLUMNS = {
     title: 'Estatus',
     sort: false,
   },
-  indDestin: {
+  labelNumber: {
     title: 'Ind. Destino',
     sort: false,
   },
