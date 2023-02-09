@@ -65,7 +65,7 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'general-processes/goods-tracker',
     pathMatch: 'full',
   },
   {
