@@ -25,6 +25,9 @@
       [readonly]="readonly">
     </ng-select>
     <span class="form-bar"></span>
-    <label class="float-label">{{ label }}</label>
+    <label class="float-label"
+      >{{ label }}
+      <span [style.color]="'#9D2449'" *ngIf="isRequired()">*</span></label
+    >
   </div>
 </ng-container>

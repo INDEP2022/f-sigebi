@@ -3,6 +3,11 @@
     <h5 class="title">CAT&Aacute;LOGO DE CLIENTES</h5>
   </div>
   <div body>
+    <div class="row">
+      <div class="form-material col-md-5">
+        <search-bar [params]="params"></search-bar>
+      </div>
+    </div>
     <div class="ch-content">
       <h5 class="title">Todos los clientes</h5>
       <div class="col-md-8 buttons">
@@ -56,6 +61,11 @@
     </app-pagination>
     <!--representantes Table-->
     <hr />
+    <div class="row">
+      <div class="form-material col-md-5">
+        <search-bar [params]="params2"></search-bar>
+      </div>
+    </div>
 
     <div class="ch-content">
       <h5 class="title">Representantes</h5>
@@ -77,7 +87,7 @@
             [attr.class]="'table-bordered'"
             [settings]="settings2"
             [source]="representative"
-            (edit)="openFormRepresentative()">
+            (edit)="openFormRepresentative($event.data)">
           </ng2-smart-table>
         </div>
       </div>
