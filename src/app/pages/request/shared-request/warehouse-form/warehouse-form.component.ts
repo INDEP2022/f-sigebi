@@ -97,7 +97,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estas seguro de crar almacén?'
+      '¿Estas seguro de crear almacén?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
@@ -157,6 +157,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   }
 
   municipalitySelect(item: IMunicipality) {
+    console.log('municipio', item);
     this.municipalityId = item.idMunicipality;
     this.getLocalitySelect(new ListParams());
   }
@@ -173,6 +174,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   }
 
   localitySelect(item: ILocality) {
+    console.log('localidad', item);
     this.localityId = item.id;
     this.getZipCodeSelect(new ListParams());
   }
@@ -184,6 +186,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
       params['filter.keyTownship'] = this.municipalityId;
       params['filter.keySettlement'] = this.localityId;
       this.goodsQueryService.getZipCode(params).subscribe(data => {
+        console.log('codigos postales', data);
         this.zipCode = new DefaultSelect(data.data, data.count);
       });
     }
@@ -191,6 +194,9 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
 
   getTypeWarehouseSelect(params: ListParams) {
     this.typeWarehouseService.getAll(params).subscribe(data => {
+      data.data.filter(item => {
+        return item.description;
+      });
       this.typeWarehouse = new DefaultSelect(data.data, data.count);
     });
   }
