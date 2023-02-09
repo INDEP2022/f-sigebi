@@ -1,38 +1,40 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpService } from 'src/app/common/services/http.service';
 import { GoodEndpoints } from '../../../common/constants/endpoints/ms-good-endpoints';
-import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
-import { Repository } from '../../../common/repository/repository';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IDomicilies } from '../../models/good/good.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class GoodDomiciliesService implements ICrudMethods<IDomicilies> {
-  private route: string = GoodEndpoints.Domicilies;
-  private domiciliesRepository = inject(Repository<IDomicilies>);
-  constructor() {}
+export class GoodDomiciliesService extends HttpService {
+  constructor() {
+    super();
+    this.microservice = GoodEndpoints.Good;
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<IDomicilies>> {
-    //return this.requestRepository.getAllPaginated(this.route, params);
-    return this.domiciliesRepository.getAllPaginated(this.route, params);
+    return this.get<IListResponse<IDomicilies>>('domicilies', params);
   }
 
-  getById(id: string | number): Observable<IDomicilies> {
-    return this.domiciliesRepository.getById(this.route, id);
+  getById(id: string | number) {
+    const route = `${GoodEndpoints.Domicilies}/${id}`;
+    return this.get<IListResponse<IDomicilies>>(route);
   }
 
-  create(model: IDomicilies): Observable<IDomicilies> {
-    return this.domiciliesRepository.create(this.route, model);
+  create(domicilie: IDomicilies) {
+    return this.post(GoodEndpoints.Domicilies, domicilie);
   }
 
-  update(id: string | number, model: IDomicilies): Observable<Object> {
-    return this.domiciliesRepository.update(this.route, id, model);
+  update(id: string | number, domicilie: IDomicilies) {
+    const route = `${GoodEndpoints.Domicilies}/${id}`;
+    return this.put(route, domicilie);
   }
 
-  remove(id: string | number): Observable<Object> {
-    return this.domiciliesRepository.remove(this.route, id);
+  remove(id: string | number) {
+    const route = `${GoodEndpoints.Domicilies}/${id}`;
+    return this.delete(route);
   }
 }
