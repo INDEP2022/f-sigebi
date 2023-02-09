@@ -14,7 +14,7 @@ export class ModalListGoodsComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   //Data Table
 
-  data1: any;
+  goods: any;
   constructor(private bsModalRef: BsModalRef, private opcion: ModalOptions) {
     super();
     this.settings = {
@@ -46,8 +46,10 @@ export class ModalListGoodsComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.data1 = this.opcion.initialState;
+    //this.data1 = this.opcion.initialState;
   }
 
-  return() {}
+  return() {
+    this.bsModalRef.hide();
+  }
 }

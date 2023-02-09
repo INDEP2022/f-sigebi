@@ -128,10 +128,12 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
     companyCtrl.setValue(isCompany);
     expedientNum.setValue(Number(expedient.id));
     this.focusInput('noClasifBien');
-    console.log(expedient);
     this.validateSatExpedient(expedient.id).subscribe();
     this.getMaxPaperWork(expedient).subscribe({
-      next: max => this.validateMaxPaperwork(max),
+      next: max => {
+        console.log(max);
+        this.validateMaxPaperwork(max);
+      },
     });
     if (this.global.gnuActivaGestion == '1') {
       this.getMaxFlyerFromNotifications(expedient);
@@ -180,7 +182,6 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
 
   goodClasifNumberChange() {
     const clasifNum = this.formControls.noClasifBien.value;
-    this.getUnitsByClasifNum(clasifNum).subscribe();
     if (!clasifNum) {
       return;
     }
@@ -190,6 +191,7 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
           this.fillFractions(response);
           this.patchSatTransferValue();
           this.getNoms();
+          this.getUnitsByClasifNum(clasifNum).subscribe();
         },
       });
     }
@@ -199,6 +201,7 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
           this.fillFractions(response);
           this.patchSatTransferValue();
           this.getNoms();
+          this.getUnitsByClasifNum(clasifNum).subscribe();
         },
       });
     }
@@ -206,7 +209,9 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
       const clasifNum = this.formControls.noClasifBien.value;
       this.getGoodTypesByClasifNum(clasifNum)
         .pipe(switchMap(() => this.getGoodFeaturesByClasif(clasifNum)))
-        .subscribe();
+        .subscribe({
+          next: () => this.getUnitsByClasifNum(clasifNum).subscribe(),
+        });
     }
   }
 
@@ -227,8 +232,7 @@ export class GoodsCaptureComponent extends GoodsCaptureMain implements OnInit {
   }
 
   handleSuccesSave(good: any) {
-    // this.onLoadToast('success', '', 'Datos del bien guardados correctamente');
-    this.alert('success', 'Registro guardado', 'Datos guardados correctamente');
+    this.alert('success', 'Se agrego el bien al expediente', '');
     if (this.formControls.esEmpresa.value) {
       this.createMenage(good);
     }

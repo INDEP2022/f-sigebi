@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { catchError, map, tap, throwError } from 'rxjs';
 import { IGoodDesc } from 'src/app/core/models/ms-good/good-and-desc.model';
@@ -35,7 +36,8 @@ export class GoodsCaptureRecordSelectComponent
     private fb: FormBuilder,
     private modalRef: BsModalRef,
     private goodsCaptureService: GoodsCaptureService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private router: Router
   ) {
     super();
   }
@@ -84,6 +86,7 @@ export class GoodsCaptureRecordSelectComponent
 
   close() {
     this.modalRef.hide();
+    this.router.navigate(['/pages/home']);
   }
 
   getExpedientById(id: number) {

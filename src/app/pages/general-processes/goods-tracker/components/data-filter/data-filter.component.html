@@ -2,9 +2,18 @@
   <div class="row">
     <form-field
       [control]="form.get('goodNum')"
-      class="col-md-2"
+      class="col-md-3"
       label="No&#46; Bien">
-      <input type="text" formControlName="goodNum" class="form-control" />
+      <ng-select
+        class="form-control"
+        formControlName="goodNum"
+        [items]="[]"
+        [addTag]="true"
+        [multiple]="true"
+        [selectOnTab]="true"
+        [isOpen]="false">
+      </ng-select>
+      <!-- <input type="text" formControlName="goodNum" class="form-control" /> -->
     </form-field>
 
     <!-- <form-check label="List&#46; Bienes" for="goodsList" class="col-md-2">
@@ -19,7 +28,13 @@
       [control]="form.get('process')"
       class="col-md-3"
       label="Proceso">
-      <input type="text" formControlName="process" class="form-control" />
+      <select class="form-control" formControlName="process">
+        <option value="ABANDONO">ABANDONO</option>
+        <option value="ASEGURADO">ASEGURADO</option>
+        <option value="DECOMISO">DECOMISO</option>
+        <option value="EXT_DON">EXT_DOM</option>
+        <option value="TRANSFERENTE">TRANSFERENTE</option>
+      </select>
     </form-field>
 
     <form-field
@@ -42,21 +57,28 @@
   </div>
 
   <div class="row pt-3">
-    <form-field
-      [control]="form.get('targetIdentifier')"
-      class="col-md-3"
-      label="Identificador de Destino">
-      <select formControlName="targetIdentifier" class="form-control">
-        <option
-          [value]="identifier.value"
-          *ngFor="let identifier of targetIdentifiers">
-          {{ identifier.label }}
-        </option>
-      </select>
+    <form-field [control]="form.get('targetIdentifier')" class="col-md-3">
+      <ngx-select
+        [form]="form"
+        [searchOnInit]="true"
+        control="targetIdentifier"
+        [data]="labels"
+        value="id"
+        bindLabel="description"
+        (fetchItems)="getGoodLabels($event)"
+        label="Identificador de Destino"></ngx-select>
     </form-field>
 
-    <form-field [control]="form.get('status')" class="col-md-4" label="Estatus">
-      <input type="text" formControlName="status" class="form-control" />
+    <form-field [control]="form.get('status')" class="col-md-4">
+      <ngx-select
+        [form]="form"
+        [searchOnInit]="true"
+        control="status"
+        [data]="goodStatuses"
+        value="status"
+        bindLabel="description"
+        (fetchItems)="getGoodStatuses($event)"
+        label="Estatus"></ngx-select>
     </form-field>
 
     <form-field
@@ -76,7 +98,10 @@
       [control]="form.get('menageFather')"
       class="col-md-2"
       label="Bien Padre Menaje">
-      <input type="text" formControlName="menageFather" class="form-control" />
+      <input
+        type="number"
+        formControlName="menageFather"
+        class="form-control" />
     </form-field>
   </div>
   <div class="row pt-3">
@@ -84,11 +109,11 @@
       [control]="form.get('valueFrom')"
       class="col-md-3"
       label="Valor Aval&uacute;o de">
-      <input type="text" formControlName="valueFrom" class="form-control" />
+      <input type="number" formControlName="valueFrom" class="form-control" />
     </form-field>
 
     <form-field [control]="form.get('valueTo')" class="col-md-3" label="A">
-      <input type="text" formControlName="valueTo" class="form-control" />
+      <input type="number" formControlName="valueTo" class="form-control" />
     </form-field>
 
     <form-field

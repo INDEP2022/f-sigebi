@@ -116,7 +116,7 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
       to: [null],
       issue: [null],
       delegationNumber: [null],
-      officeNumber: [null],
+      officeNumber: [null, [Validators.maxLength(30)]],
       processStatus: [null],
     });
 
@@ -207,7 +207,7 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
     this.onLoadToast(
       'error',
       'Error',
-      err.status === 0 ? ERROR_INTERNET : err.message
+      err.status === 0 ? ERROR_INTERNET : err.error.message
     );
   }
 
@@ -234,7 +234,7 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
             this.onLoadToast(
               'warning',
               '',
-              NOT_FOUND_MESSAGE('Transferenci SAT')
+              NOT_FOUND_MESSAGE('Transferencia SAT')
             );
           }
           this.loadingSatTransferencia = false;
@@ -258,7 +258,7 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
         data => {
           this.cordinators = new DefaultSelect(
             data.data.map(i => {
-              i.description = '#' + i.noRegister + ' -- ' + i.description;
+              i.description = '#' + i.id + ' -- ' + i.description;
               return i;
             }),
             data.count
@@ -269,7 +269,7 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'error',
             'Error',
-            err.status === 0 ? ERROR_INTERNET : err.message
+            err.status === 0 ? ERROR_INTERNET : err.error.message
           );
           subscription.unsubscribe();
         },
@@ -304,7 +304,7 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'error',
             'Error',
-            err.status === 0 ? ERROR_INTERNET : err.message
+            err.status === 0 ? ERROR_INTERNET : err.error.message
           );
           subscription.unsubscribe();
         },

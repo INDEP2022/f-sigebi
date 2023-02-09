@@ -6,28 +6,32 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-3">
-          <form-field [control]="form.get('number')" label="N&uacute;mero">
-            <input type="text" class="form-control" formControlName="number" />
+          <form-field
+            [control]="form.get('noTypeInventory')"
+            label="N&uacute;mero">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="noTypeInventory" />
           </form-field>
         </div>
         <div class="col-md-5">
           <form-field
-            [control]="form.get('propertyInventory')"
+            [control]="form.get('attributeInventory')"
             label="Atributo Inventario">
             <input
               type="text"
               class="form-control"
-              formControlName="propertyInventory" />
+              formControlName="attributeInventory" />
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="form.get('dateType')" label="Tipo De Dato">
-            <select class="form-control" formControlName="dateType">
-              <option [value]="null">Seleccione un valor</option>
-              <option [value]="1">FECHA</option>
-              <option [value]="2">N&Uacute;MERO FLOTANTE</option>
-              <option [value]="3">NUMERICO</option>
-              <option [value]="4">ALFANUM&Eacute;RICO</option>
+          <form-field [control]="form.get('typeData')" label="Tipo De Dato">
+            <select class="form-control" formControlName="typeData">
+              <option value="FECHA">FECHA</option>
+              <option value="NÚMERO FLOTANTE">N&Uacute;MERO FLOTANTE</option>
+              <option value="NUMERICO">NUMERICO</option>
+              <option value="ALFANUMÉRICO">ALFANUM&Eacute;RICO</option>
             </select>
           </form-field>
         </div>
@@ -38,7 +42,7 @@
     <div class="d-flex justify-content-center">
       <div class="m-3">
         <confirm-button
-          [type]="'button'"
+          type="button"
           [disabled]="!form.valid"
           (click)="saved()"></confirm-button>
       </div>

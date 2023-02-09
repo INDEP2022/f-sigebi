@@ -135,7 +135,7 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
     this.loading = true;
     this.goodServices.getById(this.numberGood.value).subscribe({
       next: response => {
-        this.good = response.data;
+        this.good = response;
         this.loadDescriptionStatus(this.good);
         this.loading = false;
         this.formNew.enable();
