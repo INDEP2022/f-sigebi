@@ -35,7 +35,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
     this.prepareForm();
     this.searchTabForm.get('noBien').valueChanges.subscribe({
       next: val => {
-        this.goodService.getDescAndStatus(val).subscribe({
+        this.goodService.getStatusByGood(val).subscribe({
           next: data => {
             this.searchTabForm
               .get('estatus')
