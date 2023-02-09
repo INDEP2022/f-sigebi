@@ -8,7 +8,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { MailModalComponent } from '../mail-modal/mail-modal.component';
 import { EMAIL_COLUMNS } from './email-columns';
 //Models
-import { IUserAccessAreas } from 'src/app/core/models/catalogs/users-access-areas-model';
+import { ISegUsers } from 'src/app/core/models/ms-users/seg-users-model';
 //servicios
 
 @Component({
@@ -19,7 +19,7 @@ import { IUserAccessAreas } from 'src/app/core/models/catalogs/users-access-area
 export class MailComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
-  userAccessAreas: IUserAccessAreas[] = [];
+  segUsers: ISegUsers[] = [];
 
   constructor(
     private modalService: BsModalService,
@@ -34,9 +34,6 @@ export class MailComponent extends BasePage implements OnInit {
         delete: false,
         position: 'right',
       },
-      edit: {
-        editButtonContent: '<i class="fa fa-eye text-success mx-2"></i>',
-      },
       columns: { ...EMAIL_COLUMNS },
     };
   }
@@ -49,9 +46,9 @@ export class MailComponent extends BasePage implements OnInit {
 
   getSegRelEmail() {
     this.loading = true;
-    this.usersService.getAllSegXAreasFind(this.params.getValue()).subscribe({
+    this.usersService.getAllSegUsers(this.params.getValue()).subscribe({
       next: response => {
-        this.userAccessAreas = response.data;
+        this.segUsers = response.data;
         this.totalItems = response.count;
         this.loading = false;
       },
@@ -59,25 +56,14 @@ export class MailComponent extends BasePage implements OnInit {
     });
   }
 
-  openForm(userAccessAreas?: IUserAccessAreas) {
+  openForm(segUsers?: ISegUsers) {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
-      userAccessAreas,
+      segUsers,
       callback: (next: boolean) => {
         if (next) this.getSegRelEmail();
       },
     };
     this.modalService.show(MailModalComponent, modalConfig);
   }
-
-  data = [
-    {
-      cveScreen: 'FADMAMPAROS',
-      noRegistro: 381165438,
-      user: 'OST12488',
-      name: 'Pedrito',
-      delegation: 'Tijuana',
-      typeD: 'P',
-    },
-  ];
 }

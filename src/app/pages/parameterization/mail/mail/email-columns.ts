@@ -4,23 +4,26 @@ export const EMAIL_COLUMNS = {
   //   sort: false,
   // },
 
-  usuario: {
+  id: {
     title: 'Usuario',
     sort: false,
   },
-  nombre: {
+  name: {
     title: 'Nombre',
     sort: false,
   },
-  descripcion: {
+  usuario: {
     title: 'Delegación',
     sort: false,
+    valuePrepareFunction: (value: any) => {
+      return value.delegationNumber;
+    },
   },
   email: {
     title: 'Email',
     sort: false,
   },
-  no_registro: {
+  registryNumber: {
     title: 'No. registro',
     sort: false,
   },
