@@ -131,11 +131,6 @@ export class DetailAssetsTabComponentComponent
         }
       }
     );
-
-    //inserta el domicilio del bien  POR BORRAR
-    /*if (this.domicilieObject) {
-      this.setGoodDomicilieSelected(this.domicilieObject);
-    }*/
   }
 
   ngOnInit(): void {

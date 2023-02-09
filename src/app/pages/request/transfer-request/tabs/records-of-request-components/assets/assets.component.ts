@@ -322,7 +322,7 @@ export class AssetsComponent extends BasePage implements OnInit {
     new Promise((resolve, reject) => {
       for (let i = 0; i < this.listgoodObjects.length; i++) {
         const element = this.listgoodObjects[i];
-        this.goodService.create(element).subscribe({
+        this.goodService.update(element.id, element).subscribe({
           next: resp => {
             if (resp.statusCode != null) {
               this.message(
@@ -373,6 +373,8 @@ export class AssetsComponent extends BasePage implements OnInit {
       }
     });
   }
+
+  delete() {}
 
   refreshTable() {
     this.requestHelperService.currentRefresh.subscribe({
