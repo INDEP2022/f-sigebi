@@ -3,9 +3,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 //params
 //services
-import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
+import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
-import { SatInterfaceService } from 'src/app/core/services/sat-interface/sat-interface.service';
+import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,12 +15,27 @@ import { SatInterfaceService } from 'src/app/core/services/sat-interface/sat-int
 export class GoodsBulkLoadService {
   constructor(
     private httClient: HttpClient,
-    private satInterfaceService: SatInterfaceService,
-    private delegationService: DelegationService,
-    private goodService: GoodService
+    private goodService: GoodService,
+    private goodSssubtypeService: GoodSssubtypeService,
+    private goodsQueryService: GoodsQueryService,
+    private authorityService: AuthorityService
   ) {}
 
   getGoodStatus(idEstatus: string) {
-    return this.goodService.getStatusByGood(idEstatus);
+    return this.goodService.getByStatus(idEstatus);
+  }
+
+  getGoodssSubtype(params: ListParams) {
+    return this.goodSssubtypeService.getAll(params);
+  }
+
+  getUnityByUnityAndClasifGood(clasifNum: number) {
+    return this.goodsQueryService.getClasifXUnitByClasifNum(clasifNum);
+  }
+  getNumberTransferenteAuthority(params: ListParams) {
+    return this.authorityService.getAll(params);
+  }
+  getAtributeClassificationGood(params: ListParams) {
+    return this.goodsQueryService.getAtributeClassificationGood(params);
   }
 }

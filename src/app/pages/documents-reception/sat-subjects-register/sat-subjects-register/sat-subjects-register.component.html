@@ -29,7 +29,14 @@
           class="col-md-3">
           <input class="form-control" formControlName="issue" />
         </form-field>
-
+        <form-field
+          [control]="satForm.get('officeNumber')"
+          label="Oficio"
+          class="col-md-3">
+          <input class="form-control" formControlName="officeNumber" />
+        </form-field>
+      </div>
+      <div class="row pt-4">
         <form-field [control]="satForm.get('processStatus')" class="col-md-3">
           <ngx-select
             (fetchItems)="getStatusProcess($event)"
@@ -41,20 +48,20 @@
             label="Estatus del Proceso">
           </ngx-select>
         </form-field>
-      </div>
-      <div class="row pt-4">
-        <form-field
-          [control]="satForm.get('officeNumber')"
-          label="Oficio"
-          class="col-md-4">
-          <input class="form-control" formControlName="officeNumber" />
-        </form-field>
+        <div class="col-md-3" *ngIf="satForm.get('processStatus').value">
+          <button
+            type="button"
+            class="ml-2 btn btn-danger active btn-sm"
+            (click)="resetStatusProcess()">
+            Limpiar Estatus<i class="fa fa-trash ml-1"></i>
+          </button>
+        </div>
         <form-field
           [control]="satForm.get('delegationNumber')"
-          class="col-md-4">
+          class="col-md-3">
           <ngx-select
             (fetchItems)="getCoordinador($event)"
-            value="noRegister"
+            value="id"
             bindLabel="description"
             [form]="satForm"
             control="delegationNumber"
@@ -62,10 +69,10 @@
             label="Cord&#46; Regional">
           </ngx-select>
         </form-field>
-        <div class="col-md-4" *ngIf="satForm.get('delegationNumber').value">
+        <div class="col-md-3" *ngIf="satForm.get('delegationNumber').value">
           <button
             type="button"
-            class="ml-2 btn btn-danger btn-sm"
+            class="ml-2 btn btn-danger active btn-sm"
             (click)="resetDelegation()">
             Limpiar Cord&#46; Regional<i class="fa fa-trash ml-1"></i>
           </button>
@@ -124,7 +131,7 @@
 
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Trasnferencias SAT</h5>
+    <h5 class="title">Transferencias SAT</h5>
   </div>
 
   <div body>

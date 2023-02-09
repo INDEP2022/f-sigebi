@@ -21,6 +21,7 @@ export class GoodsQueryService {
   private zipCodeRoute = GoodsQueryEndpoints.ZipCode;
   private attribClassifGoodRoute = GoodsQueryEndpoints.AttribClassifBood;
   private goodsQueryRoute = GoodsQueryEndpoints.ProgrammingGood;
+  private atributeClassificationGood: GoodsQueryEndpoints.AtributeClassificationGood;
   private goodQueryRepository = inject(MsGoodQueryRepository);
   private attribClassifGoodMethodsRepository = inject(
     AttribClassifGoodMethodsRepository
@@ -110,4 +111,17 @@ export class GoodsQueryService {
   // remove(id: string | number): Observable<Object> {
   //   return this.attribClassifGoodMethodsRepository.remove(this.attribClassifGoodRoute, id);
   // }
+
+  getClasifXUnitByClasifNum(clasifNum: number) {
+    return this.httpClient.get(
+      `${environment.API_URL}goodsquery/api/v1/ligie-units-measure/getClasifXUnit/${clasifNum}`
+    );
+  }
+
+  getAtributeClassificationGood(params: ListParams) {
+    return this.goodQueryRepository.getAllPaginated(
+      this.atributeClassificationGood,
+      params
+    );
+  }
 }
