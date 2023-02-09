@@ -1,35 +1,50 @@
 <form class="form-material" [formGroup]="form" (submit)="search()">
   <div class="row">
     <form-field
-      [control]="form.get('noBien')"
-      class="col-md-2"
+      [control]="form.get('goodNum')"
+      class="col-md-3"
       label="No&#46; Bien">
-      <input type="text" formControlName="noBien" class="form-control" />
+      <ng-select
+        class="form-control"
+        formControlName="goodNum"
+        [items]="[]"
+        [addTag]="true"
+        [multiple]="true"
+        [selectOnTab]="true"
+        [isOpen]="false">
+      </ng-select>
+      <!-- <input type="text" formControlName="goodNum" class="form-control" /> -->
     </form-field>
 
-    <form-check label="List&#46; Bienes" for="goodsList" class="col-md-2">
+    <!-- <form-check label="List&#46; Bienes" for="goodsList" class="col-md-2">
       <input
         type="checkbox"
         formControlName="listBienes"
         id="goodsList"
         class="form-control" />
-    </form-check>
+    </form-check> -->
 
     <form-field
-      [control]="form.get('proceso')"
+      [control]="form.get('process')"
       class="col-md-3"
       label="Proceso">
-      <input type="text" formControlName="proceso" class="form-control" />
+      <select class="form-control" formControlName="process">
+        <option value="ABANDONO">ABANDONO</option>
+        <option value="ASEGURADO">ASEGURADO</option>
+        <option value="DECOMISO">DECOMISO</option>
+        <option value="EXT_DON">EXT_DOM</option>
+        <option value="TRANSFERENTE">TRANSFERENTE</option>
+      </select>
     </form-field>
 
     <form-field
-      [control]="form.get('invSami')"
+      [control]="form.get('samiInventory')"
       class="col-md-3"
       label="Inv&#46; SAMI">
-      <input type="text" formControlName="invSami" class="form-control" />
+      <input type="text" formControlName="samiInventory" class="form-control" />
     </form-field>
 
-    <form-check
+    <!-- <form-check
       label="List&#46; Inventario"
       for="inventoryList"
       class="col-md-2">
@@ -38,32 +53,39 @@
         formControlName="listInv"
         id="inventoryList"
         class="form-control" />
-    </form-check>
+    </form-check> -->
   </div>
 
   <div class="row pt-3">
+    <form-field [control]="form.get('targetIdentifier')" class="col-md-3">
+      <ngx-select
+        [form]="form"
+        [searchOnInit]="true"
+        control="targetIdentifier"
+        [data]="labels"
+        value="id"
+        bindLabel="description"
+        (fetchItems)="getGoodLabels($event)"
+        label="Identificador de Destino"></ngx-select>
+    </form-field>
+
+    <form-field [control]="form.get('status')" class="col-md-4">
+      <ngx-select
+        [form]="form"
+        [searchOnInit]="true"
+        control="status"
+        [data]="goodStatuses"
+        value="status"
+        bindLabel="description"
+        (fetchItems)="getGoodStatuses($event)"
+        label="Estatus"></ngx-select>
+    </form-field>
+
     <form-field
-      [control]="form.get('destino')"
+      [control]="form.get('withPhoto')"
       class="col-md-3"
-      label="Identificador de Destino">
-      <select formControlName="destino" class="form-control">
-        <option
-          [value]="identifier.value"
-          *ngFor="let identifier of targetIdentifiers">
-          {{ identifier.label }}
-        </option>
-      </select>
-    </form-field>
-
-    <form-field
-      [control]="form.get('estatus')"
-      class="col-md-4"
-      label="Estatus">
-      <input type="text" formControlName="estatus" class="form-control" />
-    </form-field>
-
-    <form-field [control]="form.get('bienes')" class="col-md-3" label="Bienes">
-      <select formControlName="bienes" class="form-control">
+      label="Fotos de Bienes">
+      <select formControlName="withPhoto" class="form-control">
         <option
           [value]="photoOption.value"
           *ngFor="let photoOption of photosOptions">
@@ -73,87 +95,96 @@
     </form-field>
 
     <form-field
-      [control]="form.get('menaje')"
+      [control]="form.get('menageFather')"
       class="col-md-2"
       label="Bien Padre Menaje">
-      <input type="text" formControlName="menaje" class="form-control" />
+      <input
+        type="number"
+        formControlName="menageFather"
+        class="form-control" />
     </form-field>
   </div>
   <div class="row pt-3">
     <form-field
-      [control]="form.get('avaluoFrom')"
+      [control]="form.get('valueFrom')"
       class="col-md-3"
       label="Valor Aval&uacute;o de">
-      <input type="text" formControlName="avaluoFrom" class="form-control" />
+      <input type="number" formControlName="valueFrom" class="form-control" />
     </form-field>
 
-    <form-field [control]="form.get('avaluoTo')" class="col-md-3" label="A">
-      <input type="text" formControlName="avaluoTo" class="form-control" />
+    <form-field [control]="form.get('valueTo')" class="col-md-3" label="A">
+      <input type="number" formControlName="valueTo" class="form-control" />
     </form-field>
 
     <form-field
-      [control]="form.get('fechaFoto')"
+      [control]="form.get('photoDate')"
       class="col-md-3"
       label="Fecha Foto">
       <input
         type="text"
-        formControlName="fechaFoto"
+        formControlName="photoDate"
         class="form-control"
         bsDatepicker />
     </form-field>
 
     <form-field
-      [control]="form.get('identificador')"
+      [control]="form.get('identifier')"
       class="col-md-3"
       label="Identificador">
-      <input type="text" formControlName="identificador" class="form-control" />
+      <input type="text" formControlName="identifier" class="form-control" />
     </form-field>
   </div>
 
   <div class="row pt-3">
     <form-field
-      [control]="form.get('descripcion')"
+      [control]="form.get('description')"
       class="col-md-4"
       label="Descripci&oacute;n">
-      <input type="text" formControlName="descripcion" class="form-control" />
+      <input type="text" formControlName="description" class="form-control" />
     </form-field>
 
     <form-field
-      [control]="form.get('atributos')"
+      [control]="form.get('attributes')"
       class="col-md-4"
       label="Atributos">
-      <input type="text" formControlName="atributos" class="form-control" />
+      <input type="text" formControlName="attributes" class="form-control" />
     </form-field>
 
-    <form-check label="Gabinete Social" for="gabinete" class="col-md-4">
+    <!-- <form-check label="Gabinete Social" for="gabinete" class="col-md-4">
       <input
         type="checkbox"
         formControlName="gabinete"
         id="gabinete"
         class="form-control" />
-    </form-check>
+    </form-check> -->
   </div>
 
   <div class="row pt-3">
     <form-field
-      [control]="form.get('invMueble')"
+      [control]="form.get('movableIventory')"
       class="col-md-3"
       label="Inv&#46; Mueble">
-      <input type="text" formControlName="invMueble" class="form-control" />
+      <input
+        type="text"
+        formControlName="movableIventory"
+        class="form-control" />
     </form-field>
 
     <form-field
-      [control]="form.get('invSiabi')"
+      [control]="form.get('siabiInventory')"
       class="col-md-3"
       label="Inv&#46; SIABI">
-      <input type="text" formControlName="invSiabi" class="form-control" />
+      <input
+        type="text"
+        formControlName="siabiInventory"
+        class="form-control" />
     </form-field>
 
     <form-field
-      [control]="form.get('invCisi')"
+      [control]="form.get('cisiInventory')"
       class="col-md-3"
       label="Inv&#46; CISI">
-      <input type="text" formControlName="invCisi" class="form-control" />
+      <input type="text" formControlName="cisiInventory" class="form-control" />
     </form-field>
   </div>
 

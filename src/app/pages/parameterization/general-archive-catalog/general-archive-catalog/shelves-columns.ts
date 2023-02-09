@@ -4,11 +4,17 @@ export const SHELVES_COLUMNS = {
     sort: false,
     filter: false,
     width: '25px',
+    valuePrepareFunction: (value: any) => {
+      return value.id;
+    },
   },
   batteryNumber: {
     title: 'No. Bateria',
     sort: false,
     filter: false,
+    valuePrepareFunction: (value: any) => {
+      return value.storeCode;
+    },
   },
   id: {
     title: 'ID',

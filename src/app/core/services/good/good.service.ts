@@ -65,4 +65,16 @@ export class GoodService implements ICrudMethods<IGood> {
   update(id: string | number, model: IGood): Observable<Object> {
     return this.goodRepository.update('good/good', id, model);
   }
+  getByExpedientAndStatus(
+    expedient: string | number,
+    status: string,
+    params?: ListParams
+  ): Observable<IListResponse<IGood>> {
+    const route = `?filter.fileNumber=$eq:${expedient}&filter.status=$eq:${status}`;
+    return this.goodRepository.getAllPaginated(`good/good${route}`, params);
+  }
+
+  getByStatus(idStatus: string) {
+    return this.goodRepository.getById('good/status-good/', idStatus);
+  }
 }

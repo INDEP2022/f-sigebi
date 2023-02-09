@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title col-md-5">Envio de oficios</h5>
+    <h5 class="title col-md-5">Envío de oficios</h5>
     <div class="buttons d-flex justify-content-end">
       <div class="mx-5" *ngIf="officeNumber">
         <p>
@@ -44,7 +44,7 @@
             <form-field
               class="col-md-6"
               [control]="documentsForm.get('date')"
-              label="Fec&#46; Turno">
+              label="Fecha Turno">
               <input class="form-control" formControlName="date" bsDatepicker />
             </form-field>
 
@@ -65,12 +65,11 @@
               [control]="documentsForm.get('sender')">
               <ngx-select
                 [searchOnInit]="true"
-                (change)="getSenders($event)"
                 (fetchItems)="getSenders($event)"
                 [form]="documentsForm"
                 control="sender"
-                value="user.id"
-                bindLabel="user.name"
+                value="id"
+                bindLabel="name"
                 [data]="senders"
                 label="Remitente"></ngx-select>
             </form-field>
@@ -85,8 +84,8 @@
                 (fetchItems)="getReceivers($event)"
                 (change)="getDepartmentTarget($event)"
                 [form]="documentsForm"
-                value="user.id"
-                bindLabel="user.name"
+                value="id"
+                bindLabel="name"
                 control="receiver"
                 [data]="receivers"
                 label="Destinatario"></ngx-select>
@@ -100,8 +99,8 @@
                 (fetchItems)="getReceivers($event)"
                 (change)="getDepartmentTarget($event)"
                 [data]="receivers"
-                value="user.id"
-                bindLabel="user.name"
+                value="id"
+                bindLabel="name"
                 [form]="documentsForm"
                 control="cpp"
                 label="C&#46;P&#46;P&#46;"></ngx-select>
@@ -140,9 +139,9 @@
                   [form]="documentsForm"
                   control="department"
                   value="id"
-                  bindLabel="description"
+                  bindLabel="dsarea"
                   [data]="departments"
-                  label="Area Destino"></ngx-select>
+                  label="Área Destino"></ngx-select>
               </form-field>
             </div>
 

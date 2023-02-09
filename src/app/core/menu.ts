@@ -39,11 +39,6 @@ export const MENU: IMenuItem[] = [
   //     isTitle: true
   // },
   {
-    label: 'Documentation',
-    icon: 'bx-home-circle',
-    link: '/pages/documentation',
-  },
-  {
     label: 'Ejemplo',
     icon: 'bx-calendar',
     link: '/pages/example',

@@ -1,10 +1,17 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
+import { LabelOkeyService } from 'src/app/core/services/catalogs/label-okey.service';
+import { StatusGoodService } from 'src/app/core/services/ms-good/status-good.service';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import {
+  GoodTrackerForm,
   GOOD_PHOTOS_OPTIOS,
   TARGET_IDENTIFIERS,
-} from '../../constants/goods-tracker-form';
+} from '../../utils/goods-tracker-form';
 
 @Component({
   selector: 'data-filter',
@@ -15,68 +22,33 @@ export class DataFilterComponent implements OnInit {
   @Output() onSubmit = new EventEmitter<any>();
   photosOptions = GOOD_PHOTOS_OPTIOS;
   targetIdentifiers = TARGET_IDENTIFIERS;
-  form = this.fb.group({
-    noBien: new FormControl(null, [Validators.required]),
-    listBienes: new FormControl(null, [Validators.required]),
-    proceso: new FormControl(null, [
-      Validators.required,
-      Validators.pattern(STRING_PATTERN),
-    ]),
-    invSami: new FormControl(null, [
-      Validators.required,
-      Validators.pattern(STRING_PATTERN),
-    ]),
-    listInv: new FormControl(null, [Validators.required]),
-    destino: new FormControl(null, [Validators.required]),
-    estatus: new FormControl(null, [
-      Validators.required,
-      Validators.pattern(STRING_PATTERN),
-    ]),
-    bienes: new FormControl(null, [Validators.required]),
-    menaje: new FormControl(null, [
-      Validators.required,
-      Validators.pattern(STRING_PATTERN),
-    ]),
-    avaluoFrom: new FormControl(null, [
-      Validators.required,
-      Validators.pattern(STRING_PATTERN),
-    ]),
-    avaluoTo: new FormControl(null, [
-      Validators.required,
-      Validators.pattern(STRING_PATTERN),
-    ]),
-    fechaFoto: new FormControl(null, [Validators.required]),
-    descripcion: new FormControl(null, [
-      Validators.required,
-      Validators.pattern(STRING_PATTERN),
-    ]),
-    invMueble: new FormControl(null, [
-      Validators.required,
-      Validators.pattern(STRING_PATTERN),
-    ]),
-    gabinete: new FormControl(null, [Validators.required]),
-    atributos: new FormControl(null, [
-      Validators.required,
-      Validators.pattern(STRING_PATTERN),
-    ]),
-    invSiabi: new FormControl(null, [
-      Validators.required,
-      Validators.pattern(STRING_PATTERN),
-    ]),
-    identificador: new FormControl(null, [
-      Validators.required,
-      Validators.pattern(STRING_PATTERN),
-    ]),
-    invCisi: new FormControl(null, [
-      Validators.required,
-      Validators.pattern(STRING_PATTERN),
-    ]),
-  });
-  constructor(private fb: FormBuilder) {}
+  @Input() form: FormGroup<GoodTrackerForm>;
+  @Input() params: FilterParams;
+  labels = new DefaultSelect();
+  goodStatuses = new DefaultSelect();
+  constructor(
+    private fb: FormBuilder,
+    private goodLabelService: LabelOkeyService,
+    private statusGoodService: StatusGoodService
+  ) {}
 
   ngOnInit(): void {}
 
   search() {
     this.onSubmit.emit(this.form.value);
+  }
+
+  getGoodLabels(params: ListParams) {
+    this.goodLabelService.getAll(params).subscribe({
+      next: response =>
+        (this.labels = new DefaultSelect(response.data, response.count)),
+    });
+  }
+
+  getGoodStatuses(params: ListParams) {
+    params.limit = 100;
+    this.statusGoodService.getAll(params).subscribe({
+      next: res => (this.goodStatuses = new DefaultSelect(res.data, res.count)),
+    });
   }
 }

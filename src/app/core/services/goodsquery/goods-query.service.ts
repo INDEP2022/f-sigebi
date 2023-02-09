@@ -20,7 +20,8 @@ export class GoodsQueryService extends HttpService {
   private routeLigieUnitMeasure = GoodsQueryEndpoints.LigieUnitMeasure;
   private zipCodeRoute = GoodsQueryEndpoints.ZipCode;
   private attribClassifGoodRoute = GoodsQueryEndpoints.AttribClassifBood;
-
+  private goodsQueryRoute = GoodsQueryEndpoints.ProgrammingGood;
+  private atributeClassificationGood: GoodsQueryEndpoints.AtributeClassificationGood;
   private goodQueryRepository = inject(MsGoodQueryRepository);
   private attribClassifGoodMethodsRepository = inject(
     AttribClassifGoodMethodsRepository
@@ -62,6 +63,13 @@ export class GoodsQueryService extends HttpService {
       `${environment.API_URL}goodsquery/api/v1/ligie-units-measure/getFranctionFilter`,
       body,
       { params }
+    );
+  }
+
+  getGoodsProgramming(params: ListParams): Observable<IListResponse<any>> {
+    return this.goodQueryRepository.getAllPaginated(
+      this.goodsQueryRoute,
+      params
     );
   }
 
@@ -112,4 +120,17 @@ export class GoodsQueryService extends HttpService {
   // remove(id: string | number): Observable<Object> {
   //   return this.attribClassifGoodMethodsRepository.remove(this.attribClassifGoodRoute, id);
   // }
+
+  getClasifXUnitByClasifNum(clasifNum: number) {
+    return this.httpClient.get(
+      `${environment.API_URL}goodsquery/api/v1/ligie-units-measure/getClasifXUnit/${clasifNum}`
+    );
+  }
+
+  getAtributeClassificationGood(params: ListParams) {
+    return this.goodQueryRepository.getAllPaginated(
+      this.atributeClassificationGood,
+      params
+    );
+  }
 }

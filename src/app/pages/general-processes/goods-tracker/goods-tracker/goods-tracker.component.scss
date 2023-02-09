@@ -1,0 +1,12 @@
+form-radio {
+  margin-top: -15px !important;
+  margin-bottom: -15px !important;
+}
+
+:host ::ng-deep accordion-group .panel-heading {
+  background-color: #eaecee !important;
+}
+
+:host ::ng-deep accordion-group .panel {
+  margin-bottom: 8px !important;
+}

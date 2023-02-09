@@ -1,7 +1,7 @@
-const COMMON_ACTIONS = [
+export const COMMON_ACTIONS = [
   {
-    value: 'Inserción de mensaje',
-    title: 'Inserción de mensaje',
+    value: 'Inserción de menaje',
+    title: 'Inserción de menaje',
   },
   {
     value: 'Actualización de datos de bienes',

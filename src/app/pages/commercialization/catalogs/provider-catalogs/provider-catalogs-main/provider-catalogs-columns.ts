@@ -88,7 +88,7 @@ export const PROVIDER_CATALOGS_PROVIDER_COLUMNS = {
 };
 
 export const PROVIDER_CATALOGS_CLIENT_COLUMNS = {
-  name: {
+  reasonName: {
     title: 'Nombre o Razón',
     type: 'string',
     sort: false,

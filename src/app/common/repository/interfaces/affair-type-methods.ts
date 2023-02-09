@@ -14,7 +14,11 @@ export interface IRead<T> {
 
 export interface IWrite<T> {
   create?(route: string, model: T): Observable<T>;
-  update?(route: string, id: number | string, model: T): Observable<Object>;
+  update?(
+    code: number | string,
+    referralNoteType: number | string,
+    model: T
+  ): Observable<Object>;
   remove?(route: string, id: number | string): Observable<Object>;
 }
 

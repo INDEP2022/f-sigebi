@@ -42,9 +42,7 @@ export class SatSubjectsRegisterService {
    * @returns
    */
   getStatusBySearch(params: ListParams) {
-    return this.procedureManagementRepository.getManagamentProcessSatArea(
-      params
-    );
+    return this.procedureManagementRepository.getManagamentArea(params);
   }
 
   /**
