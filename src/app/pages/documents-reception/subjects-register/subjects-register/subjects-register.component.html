@@ -65,7 +65,7 @@
         <div class="col-md-4" *ngIf="pgrForm.get('delegationNumber').value">
           <button
             type="button"
-            class="ml-2 btn btn-danger btn-sm"
+            class="ml-2 btn btn-danger active btn-sm"
             (click)="resetDelegation()">
             Limpiar Cord&#46; Regional<i class="fa fa-trash ml-1"></i>
           </button>
@@ -73,31 +73,36 @@
       </div>
       <div class="row pb-4">
         <div class="col-md-12">
-          <div class="alert alert-info">
-            {{
-              INFO_DOWNLOAD('Exportar Tabla', 'Exportar Todos los Registros')
-            }}
-          </div>
           <button type="submit" class="btn btn-primary active btn-sm">
             Consultar
-          </button>
-          <button
-            type="button"
-            class="ml-2 btn btn-success btn-sm"
-            [disabled]="true">
-            Exportar Todos los Registros<i class="fa fa-file-excel ml-1"></i>
-          </button>
-          <button
-            type="button"
-            class="ml-2 btn btn-success btn-sm"
-            (click)="exportXlsx('gestion', listGestionPgr)">
-            Exportar <i class="fa fa-file-excel ml-1"></i>
           </button>
         </div>
       </div>
       <hr class="row" />
       <div class="row pb-3">
-        <app-columns-select [(settings)]="mailboxSettings"></app-columns-select>
+        <div class="col-md-12">
+          <div class="alert alert-info">
+            {{
+              INFO_DOWNLOAD('Exportar Tabla', 'Exportar Todos los Registros')
+            }}
+          </div>
+        </div>
+        <div class="col-md-12">
+          <app-columns-select
+            [(settings)]="mailboxSettings"></app-columns-select>
+          <button
+            type="button"
+            class="ml-2 mr-2 btn btn-success btn-sm"
+            [disabled]="true">
+            Exportar Todos los Registros<i class="fa fa-file-excel ml-1"></i>
+          </button>
+          <button
+            type="button"
+            class="ml-2 mr-2 btn btn-success btn-sm"
+            (click)="exportXlsx('gestion', listGestionPgr)">
+            Exportar <i class="fa fa-file-excel ml-1"></i>
+          </button>
+        </div>
       </div>
       <div class="row" style="max-height: 600px; overflow-y: scroll">
         <div class="col-md-12">
@@ -110,6 +115,9 @@
           </div>
         </div>
       </div>
+      <app-pagination
+        [params]="paramsGestionPgr"
+        [totalItems]="totalGestionPgr"></app-pagination>
     </form>
   </div>
 </app-card>
@@ -123,52 +131,58 @@
     <form [formGroup]="pgrTransferForm" class="form-material">
       <div class="row">
         <form-field
-          [control]="pgrTransferForm.get('pgrGood')"
+          [control]="pgrTransferForm.get('pgrGoodNumber')"
           label="PGR No&#46; Bien"
           class="col-md-3">
-          <input class="form-control" formControlName="pgrGood" />
+          <input class="form-control" formControlName="pgrGoodNumber" />
         </form-field>
 
         <form-field
-          [control]="pgrTransferForm.get('saeGood')"
+          [control]="pgrTransferForm.get('saeGoodNumber')"
           label="SAE No&#46; Bien"
           class="col-md-3">
-          <input class="form-control" formControlName="saeGood" />
+          <input class="form-control" formControlName="saeGoodNumber" />
         </form-field>
 
         <form-field
-          [control]="pgrTransferForm.get('saeStatus')"
+          [control]="pgrTransferForm.get('estatus')"
           label="SAE Estatus"
           class="col-md-3">
-          <input class="form-control" formControlName="saeStatus" />
+          <input class="form-control" formControlName="estatus" />
         </form-field>
       </div>
       <div class="row pb-4">
+        <div class="col-md-12">
+          <button type="submit" class="btn btn-primary active btn-sm">
+            Consultar
+          </button>
+        </div>
+      </div>
+      <hr class="row" />
+      <div class="row pb-3">
         <div class="col-md-12">
           <div class="alert alert-info">
             {{
               INFO_DOWNLOAD('Exportar Tabla', 'Exportar Todos los Registros')
             }}
           </div>
-          <button type="submit" class="btn btn-info btn-sm">Consultar</button>
+        </div>
+        <div class="col-md-12">
+          <app-columns-select
+            [(settings)]="transfersSettings"></app-columns-select>
           <button
             type="button"
-            class="ml-2 btn btn-success btn-sm"
+            class="ml-2 mr-2 btn btn-success btn-sm"
             [disabled]="true">
             Exportar Todos los Registros<i class="fa fa-file-excel ml-1"></i>
           </button>
           <button
             type="button"
-            class="ml-2 btn btn-success btn-sm"
+            class="ml-2 mr-2 btn btn-success btn-sm"
             (click)="exportXlsx('transferencia', listPgrTransferencia)">
             Exportar <i class="fa fa-file-excel ml-1"></i>
           </button>
         </div>
-      </div>
-      <hr class="row" />
-      <div class="row pb-3">
-        <app-columns-select
-          [(settings)]="transfersSettings"></app-columns-select>
       </div>
       <div class="row" style="max-height: 600px; overflow-y: scroll">
         <div class="col-md-12">
@@ -185,6 +199,9 @@
           </div>
         </div>
       </div>
+      <app-pagination
+        [params]="paramsPgrTransferencia"
+        [totalItems]="totalPgrTransferencia"></app-pagination>
     </form>
   </div>
 </app-card>
