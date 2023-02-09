@@ -20,6 +20,10 @@ export class GoodService extends HttpService {
     return this.get<IListResponse<IGood>>(GoodEndpoints.Good, params);
   }
 
+  getAllFilter(params?: string): Observable<IListResponse<IGood>> {
+    return this.get<IListResponse<IGood>>(`${GoodEndpoints.Good}?${params}`);
+  }
+
   getById(id: string | number) {
     const route = `${GoodEndpoints.Good}/${id}`;
     return this.get<IListResponse<IGood>>(route);
@@ -53,5 +57,9 @@ export class GoodService extends HttpService {
   getGoodAndDesc(goodId: number | string) {
     const route = `${GoodEndpoints.GoodAndDesc}/${goodId}`;
     return this.get<IGoodDesc>(route);
+  }
+  getDescAndStatus(goodId: number | string) {
+    const route = `${GoodEndpoints.DescAndStatus}/${goodId}`;
+    return this.get(route);
   }
 }

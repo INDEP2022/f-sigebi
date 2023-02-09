@@ -1,8 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IGoodSssubtype } from 'src/app/core/models/catalogs/good-sssubtype.model';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { SEARCH_COLUMNS } from './search-columns';
 
 @Component({
   selector: 'app-search-tab',
@@ -11,70 +17,44 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 })
 export class SearchTabComponent extends BasePage implements OnInit {
   searchTabForm: ModelForm<any>;
+  @Output() dataSearch = new EventEmitter<{ data: any; exist: boolean }>();
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
   list: any[] = [];
-  constructor(private fb: FormBuilder) {
+  classifGood: number;
+  constructor(
+    private fb: FormBuilder,
+    private readonly goodService: GoodService,
+    private readonly notifyService: NotificationService
+  ) {
     super();
-    this.settings.columns = {
-      code: {
-        title: 'No. Volante',
-        type: 'number',
-        sort: false,
-      },
-      description: {
-        title: 'Fecha Recepcion',
-        type: 'string',
-        sort: false,
-      },
-      relationPropertyKey: {
-        title: 'Fecha Captura',
-        type: 'string',
-        sort: false,
-      },
-      referralNoteType: {
-        title: 'No. Indiciado',
-        type: 'string',
-        sort: false,
-      },
-      versionUser: {
-        title: 'Indiciado',
-        type: 'string',
-        sort: false,
-      },
-      creationUser: {
-        title: 'Causa Penal',
-        type: 'string',
-        sort: false,
-      },
-      creationDate: {
-        title: 'Averiguacion Previa',
-        type: 'string',
-        sort: false,
-      },
-      editionUser: {
-        title: 'Autoridad Emisora',
-        type: 'string',
-        sort: false,
-      },
-      modificationDate: {
-        title: 'No. Expediente',
-        type: 'string',
-        sort: false,
-      },
-      idRegister: {
-        title: 'No. Asunto ',
-        type: 'string',
-        sort: false,
-      },
-      idRegistro: {
-        title: 'Descripcion del Asunto ',
-        type: 'string',
-        sort: false,
-      },
-    };
+    this.settings.actions = false;
+    this.settings.columns = SEARCH_COLUMNS;
   }
 
   ngOnInit(): void {
     this.prepareForm();
+    this.searchTabForm.get('noBien').valueChanges.subscribe({
+      next: val => {
+        this.goodService.getDescAndStatus(val).subscribe({
+          next: data => {
+            this.searchTabForm
+              .get('estatus')
+              .patchValue(data.status_descripcion);
+            let dataParam = this.params.getValue();
+            dataParam.addFilter('expedientNumber', data.expedientNumber);
+            this.notifyService.getAllFilter(dataParam.getParams()).subscribe({
+              next: data => {
+                this.list = data.data;
+                this.dataSearch.emit({
+                  data: val,
+                  exist: true,
+                });
+              },
+            });
+          },
+        });
+      },
+    });
   }
   private prepareForm() {
     this.searchTabForm = this.fb.group({
@@ -103,6 +83,7 @@ export class SearchTabComponent extends BasePage implements OnInit {
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       noBien: [null, [Validators.required]],
+      goodDescription: [null],
       valRef: [null, [Validators.required]],
       identifica: [
         null,
@@ -113,5 +94,8 @@ export class SearchTabComponent extends BasePage implements OnInit {
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
     });
+  }
+  getGoods(ssssubType: IGoodSssubtype) {
+    this.classifGood = ssssubType.numClasifGoods;
   }
 }

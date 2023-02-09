@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-depositary-report',
@@ -6,7 +7,17 @@ import { Component, OnInit } from '@angular/core';
   styles: [],
 })
 export class DepositaryReportComponent implements OnInit {
-  constructor() {}
+  depositaryDataForm: FormGroup;
+  constructor(private fb: FormBuilder) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.prepareForm();
+  }
+
+  private prepareForm() {
+    this.depositaryDataForm = this.fb.group({
+      reportDate: [null],
+      report: [null],
+    });
+  }
 }

@@ -3,18 +3,22 @@ import { Observable } from 'rxjs';
 import { NotificationEndpoints } from 'src/app/common/constants/endpoints/ms-notification-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { NotificationRepository } from 'src/app/common/repository/repositories/ms-notification-repository';
+import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { INotification } from '../../models/ms-notification/notification.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class NotificationService {
+export class NotificationService extends HttpService {
   private readonly route = NotificationEndpoints;
 
   constructor(
     private notificationRepository: NotificationRepository<INotification>
-  ) {}
+  ) {
+    super();
+    this.microservice = this.route.Notification;
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<INotification>> {
     return this.notificationRepository.getAll(this.route.Notification, params);
@@ -26,6 +30,12 @@ export class NotificationService {
     return this.notificationRepository.getAll(
       this.route.NotificationxProperty,
       params
+    );
+  }
+
+  getAllFilter(params: string): Observable<IListResponse<INotification>> {
+    return this.get<IListResponse<INotification>>(
+      `${this.route.Notification}?${params}`
     );
   }
 

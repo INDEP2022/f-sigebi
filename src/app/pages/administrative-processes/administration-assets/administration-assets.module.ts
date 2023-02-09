@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { GoodsSharedComponent } from 'src/app/@standalone/shared-forms/goods-shared/goods-shared.component';
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
 
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -34,6 +35,7 @@ import { SecureDataComponent } from './secure-data/secure-data.component';
     AdministrationAssetsRoutingModule,
     TabsModule,
     GoodsTypesSharedComponent,
+    GoodsSharedComponent,
     SharedModule,
   ],
 })
