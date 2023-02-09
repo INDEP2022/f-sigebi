@@ -19,6 +19,6 @@ export class GoodsBulkLoadService {
   ) {}
 
   getGoodStatus(idEstatus: string) {
-    return this.goodService.getStatusByGood(idEstatus);
+    return this.goodService.getByStatus(idEstatus);
   }
 }

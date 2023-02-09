@@ -35,10 +35,10 @@ export const DOCUMENTS_RECEPTION_ROUTES = [
         label: 'Carga masiva de bienes',
         link: '/pages/documents-reception/goods-bulk-load',
       },
-      {
-        label: 'Carga de bienes SAT-SAE',
-        link: '/pages/documents-reception/sat-sae-goods-load',
-      },
+      // { ### NO SE MIGRA ###
+      //   label: 'Carga de bienes SAT-SAE',
+      //   link: '/pages/documents-reception/sat-sae-goods-load',
+      // },
       {
         label: 'Buzón de asuntos SAT',
         link: '/pages/documents-reception/sat-subjects-register',

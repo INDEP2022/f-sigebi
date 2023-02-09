@@ -5,6 +5,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { from, switchMap } from 'rxjs';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -14,7 +15,10 @@ import {
 import { previewData } from '../interfaces/goods-bulk-load-table';
 import { GoodsBulkLoadService } from '../services/goods-bulk-load.table';
 import { DeclarationsSatSaeMassive } from '../utils/declarations-sat-massive';
-import { FORM_IDENTIFICATOR_NULL } from '../utils/goods-bulk-load.message';
+import {
+  FORM_ACTION_TYPE_NULL,
+  FORM_IDENTIFICATOR_NULL,
+} from '../utils/goods-bulk-load.message';
 
 import { GOODS_BULK_LOAD_COLUMNS } from './goods-bulk-load-columns';
 
@@ -80,10 +84,23 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
 
   readExcel(binaryExcel: string | ArrayBuffer) {
     try {
-      this.tableSource = this.excelService.getData<previewData | any>(
+      this.tableSource = [];
+      let preloadFile = this.excelService.getData<previewData | any>(
         binaryExcel
       );
-      console.log(this.tableSource);
+      console.log(this.tableSource, this.tableSource[0]);
+      preloadFile.forEach((data: any) => {
+        let objReplace: any = {};
+        for (const key in data) {
+          if (Object.prototype.hasOwnProperty.call(data, key)) {
+            if (key) {
+              objReplace[key.toLowerCase()] = data[key];
+            }
+          }
+        }
+        this.tableSource.push(objReplace);
+      });
+      console.log(this.tableSource[0]);
       let obj: any = {};
       let object: any = this.tableSource[0];
       // this.tableSource.forEach((object: any) => {
@@ -115,8 +132,11 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
 
   targetChange() {
+    this.assetsForm.get('actionType').reset();
     const target = this.target.value;
     this.actions = GOODS_BULK_LOAD_ACTIONS[target] ?? [];
+    this.assetsForm.get('actionType').setValue(this.actions[0].value);
+    this.assetsForm.get('actionType').updateValueAndValidity();
   }
 
   /**
@@ -157,48 +177,140 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
 
   /**
+   * Revisa si se tiene una opción de carga seleccionada
+   * @returns Si la validacion es correcta
+   */
+  validActionType() {
+    if (this.assetsForm.get('actionType').value) {
+      return true;
+    } else {
+      this.onLoadToast('error', FORM_ACTION_TYPE_NULL, 'Error');
+      return false;
+    }
+  }
+
+  /**
    * Proceso de validación de carga masiva para la opción SAT
    */
   validatorSatMassive() {
     console.log('SAT VALID');
-    if (this.validIdCarga()) {
+    if (this.validIdCarga() && this.validActionType()) {
       this.startVariables();
       // Total de registros
       this.DeclarationsSatSaeMassive.common_general.total =
         this.tableSource.length;
+      let flujo = false;
+
+      from(this.tableSource)
+        .pipe(
+          switchMap(async (row: any, count: number) => {
+            if (count <= 5) {
+              console.log(row);
+              let error: any[] = [[], []];
+              // Indice actual del contador
+              this.DeclarationsSatSaeMassive.common_general.count = count;
+              // --- PROCESO 1
+              if (
+                GOODS_BULK_LOAD_ACTIONS.sat[0].value ==
+                this.assetsForm.get('actionType').value
+              ) {
+                // Validar Unidad
+                if (!row.unidad) {
+                  error = this.agregarError(
+                    error,
+                    'La cantidad es inválida. En el campo: UNIDAD'
+                  );
+                }
+                // Validar Estatus
+                if (row.status) {
+                  this.goodsBulkService
+                    .getGoodStatus('no')
+                    .subscribe(res => console.log(res));
+                }
+              }
+            }
+          })
+        )
+        .subscribe(val => {
+          console.log(val);
+        });
+      return;
       this.tableSource.forEach(async (object: any, count) => {
-        let error: any[] = [[], []];
-        // Indice actual del contador
-        this.DeclarationsSatSaeMassive.common_general.count = count;
-        console.log(
-          GOODS_BULK_LOAD_ACTIONS.sat[0].value,
-          this.assetsForm.get('actionType').value
-        );
-        if (
-          GOODS_BULK_LOAD_ACTIONS.sat[0].value ==
-          this.assetsForm.get('actionType').value
-        ) {
-          // Validar Unidad
-          if (!object.unidad) {
-            // Agregar contador de error
-            this.DeclarationsSatSaeMassive.common_general.total_erros++;
-            // Cambiar validador de proceso
-            this.DeclarationsSatSaeMassive.common_general.valid = false;
-            // Guardar error y mensaje
-            error[0].push('La cantidad es invalida. En el campo: UNIDAD');
+        if (count <= 5) {
+          let error: any[] = [[], []];
+          // Indice actual del contador
+          this.DeclarationsSatSaeMassive.common_general.count = count;
+          console.log(
+            GOODS_BULK_LOAD_ACTIONS.sat[0].value,
+            this.assetsForm.get('actionType').value
+          );
+          // --- PROCESO 1
+          if (
+            GOODS_BULK_LOAD_ACTIONS.sat[0].value ==
+            this.assetsForm.get('actionType').value
+          ) {
+            // Validar Unidad
+            if (!object.unidad) {
+              error = this.agregarError(
+                error,
+                'La cantidad es inválida. En el campo: UNIDAD'
+              );
+            }
+            console.log(object.status, 'Campo');
+            this.goodsBulkService.getGoodStatus(object.status).subscribe({
+              next: res => console.log(res),
+              error: error => {
+                console.log(error);
+              },
+            });
+            // if (object.status) {
+            // var estatus_bien = await
+            // this.goodsBulkService
+            //   .getGoodStatus(object.status)
+            //   // .pipe(
+            //   //   switchMap(res => {
+            //   //     console.log('RESPONSE', res);
+            //   //     return res;
+            //   //   })
+            //   // )
+            //   .subscribe(ret => {
+            //     console.log('Recd from switchMap : ', ret);
+            //   });
+            // if (estatus_bien) {
+            //   // let res = estatus_bien.subscribe(ret => {
+            //   //   console.log('Recd from switchMap : ', ret);
+            //   // });
+            //   console.log('Continuar...');
+            //   error[0].push('La cantidad es invalida. En el campo: UNIDAD');
+            //   console.log(estatus_bien);
+            //   // Termino flujo
+            //   flujo = true;
+            // }
+            // } else {
+            //   error = this.agregarError(error, 'El estatus es inválido.');
+            // }
           }
-          // console.log('Espera...');
-          // var estatus_bien = await this.goodsBulkService.getGoodStatus(
-          //   object.status
-          // );
-          // console.log('Continuar...');
-          // console.log(estatus_bien);
+          // --- PROCESO 1
+          if (flujo == true) {
+            error[1].push(object);
+            this.DeclarationsSatSaeMassive.data_error.push(error);
+            // Reinicia flujo
+            flujo = false;
+          }
         }
-        error[1].push(object);
-        this.DeclarationsSatSaeMassive.data_error.push(error);
       });
       console.log(this.DeclarationsSatSaeMassive);
     }
+  }
+
+  agregarError(error: any[], messageError: string) {
+    // Agregar contador de error
+    this.DeclarationsSatSaeMassive.common_general.total_erros++;
+    // Cambiar validador de proceso
+    this.DeclarationsSatSaeMassive.common_general.valid = false;
+    // Guardar error y mensaje
+    error[0].push(messageError);
+    return error;
   }
 
   validProccessSat() {}
