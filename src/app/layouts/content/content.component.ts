@@ -17,7 +17,7 @@ export class ContentComponent implements OnInit {
 
   ngOnInit(): void {
     if (localStorage.getItem('token')) {
-      this.router.navigate(['/pages/home']);
+      this.router.navigate(['/pages/general-processes/goods-tracker']);
     }
     this.scriptService.removeScript('my-script');
     const header: HTMLCollectionOf<HTMLElement> =

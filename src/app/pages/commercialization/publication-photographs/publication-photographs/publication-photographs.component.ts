@@ -68,7 +68,7 @@ export class PublicationPhotographsComponent
   }
 
   ngOnInit(): void {
-    this.getCve({ inicio: 1, text: '' });
+    this.getCve({ page: 1, text: '' });
     this.data1.load(this.dataAllotment);
     this.prepareForm();
   }

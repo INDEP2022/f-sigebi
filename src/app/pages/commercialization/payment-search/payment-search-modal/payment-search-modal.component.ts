@@ -73,8 +73,8 @@ export class PaymentSearchModalComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getEvents({ inicio: 1, text: '' });
-    this.getBatches({ inicio: 1, text: '' });
+    this.getEvents({ page: 1, text: '' });
+    this.getBatches({ page: 1, text: '' });
   }
 
   private prepareForm(): void {

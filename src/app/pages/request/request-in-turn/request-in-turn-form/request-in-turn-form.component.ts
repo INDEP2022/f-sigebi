@@ -27,6 +27,7 @@ import { TransferenteService } from '../../../../core/services/catalogs/transfer
 })
 export class RequestInTurnFormComponent implements OnInit {
   @Output() sendSearchForm = new EventEmitter<any>();
+  @Output() resetForm = new EventEmitter<boolean>();
   showSearchForm: boolean = true;
 
   edit: boolean = false;
@@ -134,11 +135,16 @@ export class RequestInTurnFormComponent implements OnInit {
     const params = this.getFormChanges();
     params.page = 1;
     params.limit = 10;
+    delete params.inicio;
+    delete params.pageSize;
+    delete params.take;
+    delete params.text;
     this.sendSearchForm.emit(params);
   }
 
   reset(): void {
     this.searchForm.reset();
+    this.resetForm.emit(true);
   }
 
   getFormChanges() {
@@ -187,7 +193,9 @@ export class RequestInTurnFormComponent implements OnInit {
 
     if (this.searchForm.controls['dateJob'].value != null) {
       const dateJob = this.searchForm.controls['dateJob'].value;
-      params['filter.paperDate'] = `$eq:${dateJob}`;
+      const date1 = this.getDateFormat(dateJob[0]);
+      const date2 = this.getDateFormat(dateJob[1]);
+      params['filter.paperDate'] = `$btw:${date1},${date2}`;
     }
     if (this.searchForm.controls['expedient'].value != null) {
       const expedient = this.searchForm.controls['expedient'].value;

@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title col-md-5">Envio de oficiossss</h5>
+    <h5 class="title col-md-5">Envío de oficios</h5>
     <div class="buttons d-flex justify-content-end">
       <div class="mx-5" *ngIf="officeNumber">
         <p>
@@ -44,7 +44,7 @@
             <form-field
               class="col-md-6"
               [control]="documentsForm.get('date')"
-              label="Fec&#46; Turno">
+              label="Fecha Turno">
               <input class="form-control" formControlName="date" bsDatepicker />
             </form-field>
 
@@ -141,7 +141,7 @@
                   value="id"
                   bindLabel="dsarea"
                   [data]="departments"
-                  label="Area Destino"></ngx-select>
+                  label="Área Destino"></ngx-select>
               </form-field>
             </div>
 

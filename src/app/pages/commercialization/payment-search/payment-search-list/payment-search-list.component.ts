@@ -159,8 +159,8 @@ export class PaymentSearchListComponent extends BasePage implements OnInit {
       searchType: [null, [Validators.required]],
       system: [null, [Validators.required]],
     });
-    this.getEvents({ inicio: 1, text: '' });
-    this.getBanks({ inicio: 1, text: '' });
+    this.getEvents({ page: 1, text: '' });
+    this.getBanks({ page: 1, text: '' });
   }
 
   getEvents(params: ListParams) {

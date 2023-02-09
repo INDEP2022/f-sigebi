@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpService } from 'src/app/common/services/http.service';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
 import { ListParams } from '../../../common/repository/interfaces/list-params';
@@ -9,9 +10,15 @@ import { IGoodSsubType } from '../../models/catalogs/good-ssubtype.model';
 @Injectable({
   providedIn: 'root',
 })
-export class GoodSsubtypeService implements ICrudMethods<IGoodSsubType> {
+export class GoodSsubtypeService
+  extends HttpService
+  implements ICrudMethods<IGoodSsubType>
+{
   private readonly route: string = ENDPOINT_LINKS.GoodSsubtype;
-  constructor(private goodSsubtypeRepository: Repository<IGoodSsubType>) {}
+  constructor(private goodSsubtypeRepository: Repository<IGoodSsubType>) {
+    super();
+    this.microservice = 'catalog';
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<IGoodSsubType>> {
     return this.goodSsubtypeRepository.getAllPaginated(this.route, params);
@@ -34,5 +41,10 @@ export class GoodSsubtypeService implements ICrudMethods<IGoodSsubType> {
 
   remove(id: string | number): Observable<Object> {
     return this.goodSsubtypeRepository.remove(this.route, id);
+  }
+
+  getByManyIds(body: any, params?: ListParams) {
+    const route = 'good-ssubtype/search-by-type';
+    return this.post<IListResponse<IGoodSsubType>>(route, body, params);
   }
 }

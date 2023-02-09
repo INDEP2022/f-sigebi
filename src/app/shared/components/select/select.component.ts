@@ -6,7 +6,7 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -110,5 +110,9 @@ export class SelectComponent<T> implements OnInit {
   getLabel(item: any) {
     const key = this.bindLabel;
     return item[key] ?? '';
+  }
+
+  isRequired() {
+    return this.form.get(this.control).hasValidator(Validators.required);
   }
 }

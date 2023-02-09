@@ -1,9 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IRequest } from 'src/app/core/models/requests/request.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { DocumentsListComponent } from '../../../programming-request-components/execute-reception/documents-list/documents-list.component';
@@ -19,6 +21,7 @@ import { EXPEDIENT_DOC_GEN_COLUMNS } from '../registration-request-form/expedien
 })
 export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
   @Input() searchFileForm: FormGroup;
+  searchForm: ModelForm<IRequest>;
   authorities = new DefaultSelect();
   regionalsDelegations = new DefaultSelect();
   states = new DefaultSelect();
@@ -30,7 +33,7 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
 
-  constructor(private modalService: BsModalService) {
+  constructor(private modalService: BsModalService, private fb: FormBuilder) {
     super();
     this.settings = {
       ...this.settings,
@@ -39,7 +42,30 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
     };
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.initSearchForm();
+  }
+
+  initSearchForm() {
+    this.searchForm = this.fb.group({
+      id: [null],
+      authorityId: [null],
+      typeOfTransfer: [null],
+      recordId: [null],
+      indicatedTaxpayer: [null],
+      domainExtinction: [null],
+      regionalDelegationId: [null],
+      transferenceFile: [null],
+      trialType: [null], //tipo de juicio
+      keyStateOfRepublic: [null],
+      trial: [null],
+      previousInquiry: [null],
+      transferenceId: [null],
+      lawsuit: [null],
+      stationId: [null],
+      protectNumber: [null],
+    });
+  }
 
   newExpedient() {
     const newExpedient = this.modalService.show(AssociateFileComponent, {

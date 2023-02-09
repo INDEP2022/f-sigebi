@@ -48,8 +48,14 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
 
   handleError(error: HttpErrorResponse) {
     const status = error.status;
-    const message = error?.error?.message[0] ?? 'Unknown error';
-
+    let message = '';
+    if (Array.isArray(error?.error?.message) === true) {
+      message = error?.error?.message[0];
+    } else if (Array.isArray(error?.error?.message) === false) {
+      message = error?.error?.message;
+    } else {
+      message = 'Unknown error';
+    }
     if (status === 0) {
       this.onLoadToast('error', 'Error', 'Unable to connect to server');
       return;
@@ -95,8 +101,11 @@ export class HttpErrorsInterceptor extends BasePage implements HttpInterceptor {
         throw error;
       }
       const { data, count } = response.body;
-      if ((data && count) || Array.isArray(data)) {
-        return response.clone({ body: { count, data } });
+      if (Array.isArray(data)) {
+        if (data && count >= 0) {
+          return response.clone({ body: { count, data } });
+        }
+        return response.clone({ body: { data } });
       }
       if (data) {
         return response.clone({ body: data });

@@ -108,7 +108,7 @@ export interface IGood {
   goodStatus?: string;
   idGoodProperty?: number;
   requestFolio?: string;
-  type?: string;
+  type?: string | number;
   admissionDate?: Date;
   locationId?: number;
   uniqueKey?: string;
