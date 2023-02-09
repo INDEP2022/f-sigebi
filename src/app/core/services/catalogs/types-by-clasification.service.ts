@@ -24,7 +24,7 @@ export class TypesByClasificationService
   }
 
   private convertData(response: IListResponse<ITypesByClasificationRaw>) {
-    if (!response.data[0]) {
+    if (response.data.length == 0) {
       const error = new HttpErrorResponse({
         status: 404,
       });
