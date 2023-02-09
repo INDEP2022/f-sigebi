@@ -12,12 +12,12 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //Rxjs
 import { BehaviorSubject, takeUntil } from 'rxjs';
 // Interfaces
-import { IPgrSubjectsRegisterGestionPgr } from '../utils/interfaces/pgr-subjects-register.gestion-pgr.interface';
-import { IPgrSubjectsRegisterPgrTransferencia } from '../utils/interfaces/pgr-subjects-register.pgr-transferencia.interface';
 // Service
 import compareDesc from 'date-fns/compareDesc';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { FormFieldsToParamsService } from 'src/app/common/services/form-fields-to-params.service';
+import { IPgrTransfer } from 'src/app/core/models/ms-interfacefgr/ms-interfacefgr.interface';
+import { IManagamentProcessPgr } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { PgrSubjectsRegisterService } from '../service/pgr-subjects-register.service';
 import {
   ERROR_EXPORT,
@@ -42,7 +42,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
     columns: { ...PGR_PAPERWORK_MAILBOX_COLUMNS },
   };
   pgrForm: FormGroup;
-  listGestionPgr: IPgrSubjectsRegisterGestionPgr[] = [];
+  listGestionPgr: IManagamentProcessPgr[] = [];
   paramsGestionPgr = new BehaviorSubject<ListParams>(new ListParams());
   loadingGestionPgr: boolean = false;
   totalGestionPgr: number = 0;
@@ -52,7 +52,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
     columns: { ...PGR_TRANSFERS_COLUMNS },
   };
   pgrTransferForm: FormGroup;
-  listPgrTransferencia: IPgrSubjectsRegisterPgrTransferencia[] = [];
+  listPgrTransferencia: IPgrTransfer[] = [];
   paramsPgrTransferencia = new BehaviorSubject<ListParams>(new ListParams());
   loadingPgrTransferencia: boolean = false;
   totalPgrTransferencia: number = 0;
@@ -85,9 +85,11 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
       processStatus: [null],
     });
     this.pgrTransferForm = this.fb.group({
-      pgrGood: [null],
-      saeGood: [null],
-      saeStatus: [null],
+      pgrGoodNumber: [null],
+      saeGoodNumber: [null],
+      estatus: [null],
+      office: [null],
+      aveprev: [null],
     });
   }
 
@@ -137,7 +139,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
         data => {
           this.cordinators = new DefaultSelect(
             data.data.map(i => {
-              i.description = '#' + i.noRegister + ' -- ' + i.description;
+              i.description = '#' + i.id + ' -- ' + i.description;
               return i;
             }),
             data.count
@@ -148,7 +150,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'error',
             'Error',
-            err.status === 0 ? ERROR_INTERNET : err.message
+            err.status === 0 ? ERROR_INTERNET : err.error.message
           );
           subscription.unsubscribe();
         },
@@ -183,7 +185,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
           this.onLoadToast(
             'error',
             'Error',
-            err.status === 0 ? ERROR_INTERNET : err.message
+            err.status === 0 ? ERROR_INTERNET : err.error.message
           );
           subscription.unsubscribe();
         },
@@ -267,7 +269,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
             this.onLoadToast(
               'warning',
               '',
-              NOT_FOUND_MESSAGE('Gestión Trámites')
+              NOT_FOUND_MESSAGE('Gestión Trámites PGR')
             );
           }
           this.loadingGestionPgr = false;
@@ -283,31 +285,36 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
    * Obtener el listado de la vista PGR Transferencia
    */
   async getPgrTransferencia() {
-    // let filtrados =
-    //   await this.formFieldstoParamsService.validFieldsFormToParams(
-    //     this.pgrTransferForm.value,
-    //     this.paramsPgrTransferencia.value,
-    //     this.filtroPaginado,
-    //     'filter'
-    //   );
-    // this.pgrTransferForm.get('job').reset();
-    // this.pgrSubjectsRegisterService
-    //   .getPgrTransferenciaBySearch(filtrados)
-    //   .subscribe({
-    //     next: data => {
-    // if (data.count > 0) {
-    //   this.listSatTransferencia = data.data;
-    //   this.totalSatTransferencia = data.count;
-    // } else {
-    //   this.onLoadToast('warning', '', NOT_FOUND_MESSAGE('Transferenci SAT'));
-    // }
-    //       this.loadingPgrTransferencia = false;
-    //     },
-    //     error: error => {
-    //       this.loadingPgrTransferencia = false;
-    //       this.errorGet(error);
-    //     },
-    //   });
+    let filtrados =
+      await this.formFieldstoParamsService.validFieldsFormToParams(
+        this.pgrTransferForm.value,
+        this.paramsPgrTransferencia.value,
+        this.filtroPaginado,
+        'filter'
+      );
+    this.pgrTransferForm.get('aveprev').reset();
+    this.pgrTransferForm.get('office').reset();
+    this.pgrSubjectsRegisterService
+      .getPgrTransferenciaBySearch(filtrados)
+      .subscribe({
+        next: data => {
+          if (data.count > 0) {
+            this.listPgrTransferencia = data.data;
+            this.totalPgrTransferencia = data.count;
+          } else {
+            this.onLoadToast(
+              'warning',
+              '',
+              NOT_FOUND_MESSAGE('Transferencias PGR')
+            );
+          }
+          this.loadingPgrTransferencia = false;
+        },
+        error: error => {
+          this.loadingPgrTransferencia = false;
+          this.errorGet(error);
+        },
+      });
   }
 
   /**
@@ -318,7 +325,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
     this.onLoadToast(
       'error',
       'Error',
-      err.status === 0 ? ERROR_INTERNET : err.message
+      err.status === 0 ? ERROR_INTERNET : err.error.message
     );
   }
 
@@ -339,8 +346,8 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
   }
 
   selectRow(row: any) {
-    this.pgrTransferForm.get('pgrProceedings').setValue(row.proceedingsNumber);
-    this.pgrTransferForm.get('job').setValue(row.officeNumber);
+    this.pgrTransferForm.get('aveprev').setValue(row.proceedingsNumber);
+    this.pgrTransferForm.get('office').setValue(row.officeNumber);
     this.pgrTransferForm.updateValueAndValidity();
     setTimeout(() => {
       this.consultarPgrTransferForm();

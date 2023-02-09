@@ -197,6 +197,14 @@ const routes: Routes = [
       screen: 'FCATCATTRANSFERENTE',
     },
   },
+  {
+    path: 'mail',
+    loadChildren: async () => (await import('./mail/mail.module')).MailModule,
+    data: {
+      title: 'Matt. Correos',
+      screen: 'FMTODESTCORREOS',
+    },
+  },
 
   //Alexander
   {

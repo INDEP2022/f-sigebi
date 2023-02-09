@@ -6,7 +6,7 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -34,7 +34,7 @@ export class SelectComponent<T> implements OnInit {
   @Input() multiple: boolean = false;
   @Input() loading: boolean = false;
   @Input() closeOnSelect: boolean = true;
-  @Input() maxSelectedItems: number = 0;
+  @Input() maxSelectedItems: number;
   @Input() searchable: boolean = true;
   @Input() searchOnInit: boolean = false;
   @Output() fetchItems = new EventEmitter<ListParams>();
@@ -105,5 +105,14 @@ export class SelectComponent<T> implements OnInit {
   }
   onChange(event: any) {
     this.change.emit(event);
+  }
+
+  getLabel(item: any) {
+    const key = this.bindLabel;
+    return item[key] ?? '';
+  }
+
+  isRequired() {
+    return this.form.get(this.control).hasValidator(Validators.required);
   }
 }

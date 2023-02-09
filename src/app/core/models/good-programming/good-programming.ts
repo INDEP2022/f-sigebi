@@ -46,4 +46,9 @@ export interface IGoodProgramming {
   regSendSat: string;
   subtypegood: string;
   typegood: string;
+  view: IView[];
+}
+
+export interface IView {
+  uniqueKey: string;
 }

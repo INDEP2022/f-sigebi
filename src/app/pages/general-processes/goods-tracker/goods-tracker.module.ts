@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { DocumentsListComponent } from 'src/app/@standalone/documents-list/documents-list.component';
+import { SelectFractionComponent } from 'src/app/@standalone/modals/select-fraction/select-fraction.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -38,6 +40,8 @@ import { GoodsTrackerComponent } from './goods-tracker/goods-tracker.component';
     ModalModule.forChild(),
     PreviewDocumentsComponent,
     CarouselModule,
+    AccordionModule,
+    SelectFractionComponent,
   ],
 })
 export class GoodsTrackerModule {}

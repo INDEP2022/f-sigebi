@@ -1,68 +1,37 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  GoodsTrackerCriteriasEnum,
-  GOODS_TRACKER_CRITERIAS,
-} from '../constants/goods-tracker-criterias.enum';
-import { GOODS_TRACKER_FORM } from '../constants/goods-tracker-form';
+import { GOODS_TRACKER_CRITERIAS } from '../utils/goods-tracker-criterias.enum';
+import { GoodTrackerForm } from '../utils/goods-tracker-form';
 
 @Component({
   selector: 'app-goods-tracker',
   templateUrl: './goods-tracker.component.html',
-  styles: [
-    `
-      form-radio {
-        margin-top: -15px !important;
-        margin-bottom: -15px !important;
-      }
-    `,
-  ],
+  styleUrls: ['./goods-tracker.component.scss'],
 })
 export class GoodsTrackerComponent extends BasePage implements OnInit {
-  @ViewChild('scrollFilter') scrollFilter: ElementRef;
-  @ViewChild('tableItems') tableItems: ElementRef<HTMLDivElement>;
-  criteriasEnum = GoodsTrackerCriteriasEnum;
   filterCriterias = GOODS_TRACKER_CRITERIAS;
-  form = this.fb.group(GOODS_TRACKER_FORM);
+  form = this.fb.group(new GoodTrackerForm());
   showTable: boolean = false;
-
-  get criteriaControl() {
-    return this.form.controls.criterio;
-  }
+  params = new FilterParams();
 
   constructor(private fb: FormBuilder) {
     super();
   }
 
-  ngOnInit(): void {
-    this.listenCriteriaChange();
-  }
-
-  listenCriteriaChange() {
-    this.form.controls.criterio.valueChanges.subscribe(criteria => {
-      this.scrollFilter.nativeElement.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-        inline: 'center',
-      });
-    });
-  }
+  ngOnInit(): void {}
 
   searchGoods(params: any) {
-    this.showTable = true;
-    this.tableItems.nativeElement.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
-      inline: 'center',
-    });
-  }
+    this.params.removeAllFilters();
+    const form = this.form.value;
+    for (const [key, value] of Object.entries(form)) {
+      if (value) {
+        // this.params.addFilter(key, value);
+      }
+    }
+    console.log(this.params.getParams());
 
-  getFilterName(): string {
-    return (
-      this.filterCriterias.find(
-        criteria => criteria.value === this.criteriaControl.value
-      )?.label ?? ''
-    );
+    this.showTable = true;
   }
 }

@@ -1,8 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import {
+  IInventoryQuery,
+  TypesInventory,
+} from 'src/app/core/models/ms-inventory-query/inventory-query.model';
+import { InventoryTypeService } from 'src/app/core/services/ms-inventory-type/inventory-type.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { ModalCatalogOfInventoryTypesComponent } from '../modal-catalog-of-inventory-types/modal-catalog-of-inventory-types.component';
@@ -21,7 +27,16 @@ export class CatalogOfInventoryTypesComponent
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  @ViewChild('inv', { static: true }) inventory: ElementRef<HTMLInputElement>;
+  isPresent: string = '';
+
+  public dataInventory: IListResponse<IInventoryQuery> =
+    {} as IListResponse<IInventoryQuery>;
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private inventoryServ: InventoryTypeService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -32,94 +47,145 @@ export class CatalogOfInventoryTypesComponent
         position: 'right',
       },
       columns: {
-        number: {
-          title: 'Numero',
+        noTypeInventory: {
+          title: 'Número',
           sort: false,
         },
-        propertyInventory: {
+        attributeInventory: {
           title: 'Atributo Inventario',
           sort: false,
         },
-        dateType: {
+        typeData: {
           title: 'Tipo de Dato',
           sort: false,
         },
       },
     };
+    this.dataInventory.count = 0;
   }
 
   ngOnInit(): void {
-    this.getPagination();
     this.prepareForm();
   }
 
   private prepareForm() {
     this.form = this.fb.group({
-      inventoryType: [
+      cveTypeInventory: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [
+          Validators.pattern(STRING_PATTERN),
+          Validators.minLength(1),
+          Validators.maxLength(10),
+        ],
       ],
-      description: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      description: [null, [Validators.pattern(STRING_PATTERN)]],
+      noRegister: [null],
+    });
+
+    this.searchInventory();
+  }
+
+  searchInventory() {
+    let timeout: any;
+    this.inventory.nativeElement.addEventListener('keyup', (ev: any) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        clearTimeout(timeout);
+        if (ev.target.value != '') {
+          this.inventoryServ.getInventotyById(ev.target.value).subscribe({
+            next: (next: any) => {
+              const data = next as TypesInventory;
+              this.form.patchValue(data);
+              this.isPresent = 'NID';
+              this.getPagination();
+            },
+            error: err => {
+              this.onLoadToast('warning', err.error.message, '');
+              this.reset();
+            },
+          });
+        } else {
+          this.reset();
+          this.isPresent = '';
+        }
+      }, 1000);
     });
   }
-  openModal(context?: Partial<ModalCatalogOfInventoryTypesComponent>) {
-    const modalRef = this.modalService.show(
-      ModalCatalogOfInventoryTypesComponent,
-      {
-        initialState: { ...context },
-        class: 'modal-lg modal-dialog-centered',
-        ignoreBackdropClick: true,
-      }
-    );
-    modalRef.content.refresh.subscribe(next => {
-      if (next) {
-        this.getData();
-        this.onLoadToast('success', 'Guardado Correctamente', '');
-      }
-    });
+
+  reset() {
+    this.form.get('noRegister').patchValue(null);
+    this.form.get('description').patchValue(null);
+    this.isPresent = 'N';
+    this.dataInventory = {} as IListResponse<IInventoryQuery>;
+    this.dataInventory.count = 0;
   }
 
   openForm(allotment?: any) {
-    this.openModal({ allotment });
-  }
-
-  getData() {
-    this.loading = true;
-    this.columns = this.data;
-    this.totalItems = this.data.length;
-    this.loading = false;
+    let config: ModalOptions = {
+      initialState: {
+        data: this.form.value,
+        allotment,
+        callback: (next: boolean) => {
+          if (next) this.getPagination();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.modalService.show(ModalCatalogOfInventoryTypesComponent, config);
   }
 
   getPagination() {
-    this.columns = this.data;
-    this.totalItems = this.columns.length;
+    this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(() => {
+      const filter = this.form.get('cveTypeInventory').value;
+      this.inventoryServ.getAll(this.params.getValue(), filter).subscribe({
+        next: resp => {
+          this.dataInventory = resp;
+        },
+        error: err => {
+          this.onLoadToast('warning', err.error.message, '');
+          this.dataInventory = {} as IListResponse<IInventoryQuery>;
+          this.dataInventory.count = 0;
+        },
+      });
+    });
   }
 
-  data = [
-    {
-      number: '3',
-      propertyInventory: '2022',
-      dateType: 1,
-    },
-    {
-      number: '2',
-      propertyInventory: '2022',
-      dateType: 2,
-    },
-  ];
-
-  delete(event: any) {
+  deleteDetail(event: string | number) {
     this.alertQuestion(
       'warning',
       'Eliminar',
       'Desea eliminar este registro?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
-        this.onLoadToast('success', 'Eliminado correctamente', '');
+        this.inventoryServ.delete(event).subscribe({
+          next: () => {
+            this.onLoadToast('success', 'Eliminado correctamente', '');
+            this.getPagination();
+          },
+          error: err => this.onLoadToast('warning', err.error.message, ''),
+        });
+      }
+    });
+  }
+
+  nuevoInventory() {
+    this.alertQuestion(
+      'question',
+      'Creación',
+      `Estas seguro de crear este inventario ${
+        this.form.get('cveTypeInventory').value
+      }`
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.inventoryServ.createInventory(this.form.value).subscribe({
+          next: () => {
+            this.isPresent = 'NID';
+            this.onLoadToast('success', 'Inventario creado correctamente', '');
+            this.getPagination();
+          },
+          error: err => this.onLoadToast('warning', err.error.message, ''),
+        });
       }
     });
   }

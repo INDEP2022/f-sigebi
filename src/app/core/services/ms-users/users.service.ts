@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { GoodEndpoints } from '../../../common/constants/endpoints/ms-good-endpoints';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IDepartment } from '../../models/catalogs/department.model';
+import { ISegUsers } from '../../models/ms-users/seg-users-model';
 
 @Injectable({
   providedIn: 'root',
@@ -19,16 +20,33 @@ export class UsersService {
 
   getAllSegUsers(params: ListParams) {
     return this.httpClient.get<IListResponse<any>>(
-      `${environment.API_URL}/users/api/v1/seg-users`,
+      `${environment.API_URL}users/api/v1/seg-users`,
       { params }
     );
   }
 
   getAllSegXAreas(params: ListParams) {
     return this.httpClient.get<IListResponse<any>>(
-      `${environment.API_URL}/users/api/v1/seg-access-x-areas`,
+      `${environment.API_URL}users/api/v1/seg-access-x-areas`,
       { params }
     );
+  }
+
+  getAllSegXAreasFind(params: ListParams) {
+    return this.httpClient.get<IListResponse<any>>(
+      `${environment.API_URL}users/api/v1/seg-access-x-areas/find-all-registers-users-access-by-areas-and-delegatons`,
+      { params }
+    );
+  }
+
+  create(segUsers: ISegUsers) {
+    const route = `${environment.API_URL}users/api/v1/seg-users`;
+    return this.httpClient.post(route, segUsers);
+  }
+
+  update(segUsers: ISegUsers) {
+    const route = `${environment.API_URL}users/api/v1/seg-users`;
+    return this.httpClient.put(route, segUsers);
   }
 
   /**

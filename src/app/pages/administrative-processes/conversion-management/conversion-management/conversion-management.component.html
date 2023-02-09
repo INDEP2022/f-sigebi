@@ -14,7 +14,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="idConversion" />
+              formControlName="idConversion"
+              (change)="searchConversion()" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
@@ -25,7 +26,7 @@
               type="text"
               class="form-control"
               formControlName="noBien"
-              (change)="searchGoods()" />
+              (change)="onChangeGood()" />
           </form-field>
         </div>
         <div class="col-md-4 col-sm-12 col-xs-12">
@@ -38,17 +39,17 @@
           </form-field>
         </div>
       </div>
-      <div class="row mt-5">
-        <div class="col-md-6 col-sm-12 col-xs-12">
+      <div class="row mt-5 mb-5">
+        <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field [control]="form.get('tipo')" label="Tipo">
             <select class="form-control" formControlName="tipo">
               <option [value]="null">Seleccione un valor</option>
-              <option value="derivado">Derivado</option>
-              <option value="conversion">Conversión</option>
+              <option value="1">Derivado</option>
+              <option value="2">Conversión</option>
             </select>
           </form-field>
         </div>
-        <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="col-md-3 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('noExpediente')"
             label="No Expediente">
@@ -58,8 +59,6 @@
               formControlName="noExpediente" />
           </form-field>
         </div>
-      </div>
-      <div class="row mt-5">
         <div class="col-md-6 col-sm-12 col-xs-12">
           <form-field
             [control]="form.get('actaConversion')"
@@ -73,9 +72,11 @@
       </div>
       <app-card>
         <div body>
-          <h5 class="title mt-0">Datos del bien</h5>
           <div class="row">
-            <div class="col-md-6 col-sm-12 col-xs-12">
+            <h5 class="title mt-0">Datos del bien</h5>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-5 col-sm-12 col-xs-12">
               <form-field
                 [control]="form.get('desStatus')"
                 label="Desc. Estatus">
@@ -85,12 +86,23 @@
                   formControlName="desStatus" />
               </form-field>
             </div>
-            <div class="col-md-6 col-sm-12 col-xs-12">
+            <div class="col-md-4 col-sm-12 col-xs-12">
               <form-field [control]="form.get('actaER')" label="Acta E/R">
                 <input
                   type="text"
                   class="form-control"
                   formControlName="actaER" />
+              </form-field>
+            </div>
+            <div class="col-md-3 col-sm-12 col-xs-12">
+              <form-field
+                [control]="form.get('actaERDate')"
+                label="Fecha acta E/R">
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="actaERDate"
+                  bsDatepicker />
               </form-field>
             </div>
           </div>
@@ -99,8 +111,10 @@
               <form-field
                 [control]="form.get('description')"
                 label="Descripción">
-                <textarea class="form-control" formControlName="description">
-                </textarea>
+                <textarea
+                  type="text"
+                  class="form-control"
+                  formControlName="description"></textarea>
               </form-field>
             </div>
           </div>
@@ -108,29 +122,32 @@
       </app-card>
       <div class="row mt-5">
         <div class="col-md-6 col-sm-12 col-xs-12 mt-2">
-          <div class="add-select">
-            <button
-              class="btn btn-primary btn-sm active"
-              (click)="generatePaswword()"
-              [disabled]="saved">
-              Generar PW
-            </button>
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button
+                class="btn btn-primary active"
+                (click)="generatePaswword()"
+                [disabled]="saved">
+                Generar PW
+              </button>
+            </div>
           </div>
         </div>
-
         <div class="col-md-6 col-sm-12 col-xs-12 mt-2">
-          <div class="add-select">
-            <button class="btn btn-success btn-sm active" (click)="save()">
-              Guardar
-            </button>
+          <div class="d-flex justify-content-center">
+            <div class="m-3">
+              <button class="btn btn-success active" (click)="save()">
+                Guardar
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="row mt-5" *ngIf="generarPass">
-        <div class="col-md-4 col-sm-12 col-xs-12 mt-2">
+        <div class="d-flex justify-content-center">
           <p>
-            Nueva contraseña: <strong>{{ password }}</strong>
+            Nueva contraseña: &nbsp; &nbsp; <strong>{{ password }}</strong>
           </p>
         </div>
       </div>

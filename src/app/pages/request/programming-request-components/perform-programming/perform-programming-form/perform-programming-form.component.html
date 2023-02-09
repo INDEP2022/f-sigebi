@@ -3,8 +3,23 @@
     <h5 class="title">Realizar programaci&oacute;n</h5>
   </div>
   <div body>
+    <div class="form-inline justify-content-end btn-toolbar">
+      <button (click)="newWarehouse()" class="btn btn-info btn-sm active mr-2">
+        Reporte de bienes programables
+      </button>
+      <confirm-button
+        [disabled]="!performForm.valid"
+        [loading]="loading"
+        [btnSmall]="true"
+        (confirm)="confirm()"></confirm-button>
+      <button
+        (click)="newWarehouse()"
+        class="btn btn-success btn-sm active mr-2">
+        Enviar
+      </button>
+    </div>
     <form [formGroup]="performForm" class="form-material">
-      <div class="row">
+      <div class="row pt-5">
         <div class="col-md-4">
           <form-field [control]="performForm.get('regionalDelegation')">
             <ngx-select
@@ -142,7 +157,8 @@
               value="idAuthority"
               bindLabel="authorityName"
               label="Selecciona una autoridad"
-              (fetchItems)="getAuthoritiesSelect($event)"></ngx-select>
+              (change)="authoritySelect($event)"
+              (fetchItems)="getAuthoritySelect($event)"></ngx-select>
           </form-field>
           <form-field
             [control]="performForm.get('authority')"
@@ -194,17 +210,17 @@
 
       <div class="row pt-5">
         <h5 class="title">Almac&eacute;n</h5>
-
         <div class="form-inline justify-content-end btn-toolbar">
           <button
             (click)="newWarehouse()"
-            class="btn btn-primary btn-sm active">
+            class="btn btn-primary btn-sm active mr-2">
             Solicitar alta almac&eacute;n
           </button>
         </div>
-
         <div class="col-sm-12 pt-4">
-          <form-field [control]="performForm.get('warehouse')">
+          <form-field
+            [control]="performForm.get('warehouse')"
+            *ngIf="showWarehouseInfo">
             <ngx-select
               [form]="performForm"
               control="warehouse"
@@ -214,6 +230,18 @@
               (change)="showWarehouse($event)"
               label="Selecciona un almac&eacute;n"
               (fetchItems)="getWarehouseSelect($event)"></ngx-select>
+          </form-field>
+          <form-field
+            [control]="performForm.get('warehouse')"
+            *ngIf="!showWarehouseInfo">
+            <ngx-select
+              [form]="performForm"
+              control="warehouse"
+              [data]="warehouse"
+              [searchable]="showWarehouseInfo"
+              value="id"
+              bindLabel="description"
+              label="Selecciona un almac&eacute;n"></ngx-select>
           </form-field>
         </div>
       </div>
@@ -332,12 +360,6 @@
     </form>
 
     <div class="d-flex justify-content-center" *ngIf="showForm">
-      <div class="m-3">
-        <confirm-button
-          [disabled]="!performForm.valid"
-          [loading]="loading"
-          (confirm)="confirm()"></confirm-button>
-      </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
           Cancelar

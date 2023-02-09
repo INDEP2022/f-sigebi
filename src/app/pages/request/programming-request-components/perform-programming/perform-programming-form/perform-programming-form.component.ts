@@ -19,6 +19,7 @@ import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
+import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { EMAIL_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -55,6 +56,7 @@ export class PerformProgrammingFormComponent
   estates: any[] = [];
   estatesList: any[] = [];
   usersData = userData;
+  regionalDelegationUser: IRegionalDelegation;
   performForm: FormGroup = new FormGroup({});
   estateForm: FormGroup = new FormGroup({});
   regionalsDelegations = new DefaultSelect<IRegionalDelegation>();
@@ -66,17 +68,18 @@ export class PerformProgrammingFormComponent
   warehouse = new DefaultSelect<IWarehouse>();
   warehouseUbication: string = '';
   params = new BehaviorSubject<ListParams>(new ListParams());
+  idAuthority: string = '';
+  idState: string = '';
   totalItems: number = 0;
+  idTrans: number = 0;
+  idStation: number = 0;
+  idTypeRelevant: number = 0;
   showForm: boolean = false;
   showUbication: boolean = false;
-  idTrans: number = 0;
-  idState: string = '';
-  idStation: number = 0;
   showSelectTransferent: boolean = false;
   showSelectStation: boolean = false;
   showSelectAuthority: boolean = false;
-  regionalDelegationUser: IRegionalDelegation;
-
+  showWarehouseInfo: boolean = false;
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
@@ -88,7 +91,8 @@ export class PerformProgrammingFormComponent
     private transferentService: TransferenteService,
     private typeRelevantService: TypeRelevantService,
     private warehouseService: WarehouseService,
-    private authorityService: AuthorityService
+    private authorityService: AuthorityService,
+    private goodsQueryService: GoodsQueryService
   ) {
     super();
 
@@ -141,6 +145,7 @@ export class PerformProgrammingFormComponent
   typeSchedule(type: ITypeRelevant) {
     if (type.id != null) {
       this.showForm = true;
+      this.idTypeRelevant = type.id;
     }
   }
 
@@ -208,16 +213,6 @@ export class PerformProgrammingFormComponent
     );
   }
 
-  getProgGoods(params?: ListParams, dataSearch?: IEstateSearch) {
-    params['filter.regionalDelegationNumber'] = this.regionalDelegationUser.id;
-    if (dataSearch.state) params['filter.stateKey'] = dataSearch.state;
-    console.log('Parametros', params);
-    return this.programmingGoodService.getAll(params).subscribe(data => {
-      this.estatesList = data.data;
-      console.log('bienes a programar', data);
-    });
-  }
-
   getRegionalDelegationSelect(params?: ListParams) {
     if (params.text) {
       this.regionalDelegationService.search(params).subscribe(data => {
@@ -253,6 +248,7 @@ export class PerformProgrammingFormComponent
   stateSelect(state: IStateOfRepublic) {
     this.idState = state.id;
     this.getTransferentSelect(new ListParams());
+    this.getWarehouseSelect(new ListParams());
     if (this.idTrans) this.getStations(new ListParams());
   }
 
@@ -264,7 +260,6 @@ export class PerformProgrammingFormComponent
       this.transferentService
         .getByTypeUserIdState(params, state, type)
         .subscribe(data => {
-          console.log('Transferente', data);
           this.transferences = new DefaultSelect(data.data, data.count);
         });
     }
@@ -288,10 +283,10 @@ export class PerformProgrammingFormComponent
 
   stationSelect(item: IStation) {
     this.idStation = item.id;
-    this.getAuthoritiesSelect(new ListParams());
+    this.getAuthoritySelect(new ListParams());
   }
 
-  getAuthoritiesSelect(params?: ListParams) {
+  getAuthoritySelect(params?: ListParams) {
     if (this.idTrans && this.idStation) {
       const columns = {
         idTransferer: this.idTrans,
@@ -299,11 +294,14 @@ export class PerformProgrammingFormComponent
       };
 
       this.authorityService.postByColumns(params, columns).subscribe(data => {
-        console.log('Autoridades', data);
         this.authorities = new DefaultSelect(data.data, data.count);
         this.showSelectAuthority = true;
       });
     }
+  }
+
+  authoritySelect(item: IAuthority) {
+    this.idAuthority = item.idAuthority;
   }
 
   getTypeRelevantSelect(params: ListParams) {
@@ -313,9 +311,34 @@ export class PerformProgrammingFormComponent
   }
 
   getWarehouseSelect(params: ListParams) {
-    this.warehouseService.getAll(params).subscribe(data => {
-      this.warehouse = new DefaultSelect(data.data, data.count);
-    });
+    if (this.idState) {
+      this.showWarehouseInfo = true;
+      params['filter.stateCode'] = this.idState;
+      if (params.text) {
+        this.warehouseService.search(params).subscribe(data => {
+          this.warehouse = new DefaultSelect(data.data, data.count);
+        });
+      } else {
+        this.warehouseService.getAll(params).subscribe(data => {
+          this.warehouse = new DefaultSelect(data.data, data.count);
+        });
+      }
+    }
+  }
+
+  getProgGoods(params?: ListParams, dataSearch?: IEstateSearch) {
+    params['filter.regionalDelegationNumber'] = this.regionalDelegationUser.id;
+    if (dataSearch.state) params['filter.stateKey'] = dataSearch.state;
+    console.log('transferente', this.idTrans);
+    console.log('emisora', this.idStation);
+    console.log('autoridad', this.idAuthority);
+    console.log('tipo relevante', this.idTypeRelevant);
+    return this.goodsQueryService
+      .getGoodsProgramming(params)
+      .subscribe(data => {
+        console.log('data bienes', data);
+        this.estatesList = data.data;
+      });
   }
 
   confirm() {}

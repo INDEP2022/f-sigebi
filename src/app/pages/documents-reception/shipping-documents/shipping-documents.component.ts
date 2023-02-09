@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import { JwtHelperService } from '@auth0/angular-jwt';
 import { format } from 'date-fns';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import {
@@ -23,10 +25,13 @@ import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
+import { GoodParametersService } from 'src/app/core/services/ms-good-parameters/good-parameters.service';
 import { CopiesByTradeService } from 'src/app/core/services/ms-office-management/copies-by-trade.service';
 import { JobsService } from 'src/app/core/services/ms-office-management/jobs.service';
+import { SecurityService } from 'src/app/core/services/ms-security/security.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { NotificationService } from 'src/app/core/services/notification/notification.service';
+import { ReportService } from 'src/app/core/services/reports/reports.service';
 
 import { BasePage } from 'src/app/core/shared/base-page';
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
@@ -63,7 +68,7 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
   selectedNotifications: any[] = [];
   officeNumber: string = null;
   officeKey: string = null;
-  queryMode: boolean = false;
+  queryMode: boolean = null;
 
   get formControls() {
     return this.documentsForm.controls;
@@ -77,7 +82,12 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
     private jobsService: JobsService,
     private copiesByTradeService: CopiesByTradeService,
     private departmentService: DepartamentService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private sanitizer: DomSanitizer,
+    private reportService: ReportService,
+    private goodParameterService: GoodParametersService,
+    private securityService: SecurityService,
+    private jwtHelper: JwtHelperService
   ) {
     super();
     this.settings = {
@@ -124,10 +134,18 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
     this.params
       .pipe(
         takeUntil(this.$unSubscribe),
-        skip(1) // TODO: cambiar por skipwhile cuando funcione el ms de usuarios
-        // skipWhile(() => !this.documentsForm.valid)
+        skip(1)
+        // skipWhile(() => this.canGetNotifications())
       )
       .subscribe(() => this.getNotificationsByAreas());
+  }
+
+  canGetNotifications() {
+    if (this.queryMode) {
+      return true;
+    }
+
+    return !this.documentsForm.valid;
   }
 
   openDialog() {
@@ -139,6 +157,8 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
           if (data) {
             this.queryMode = true;
             this.patchFormValue(data);
+          } else {
+            this.queryMode = false;
           }
         },
       },
@@ -151,25 +171,33 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
     const { job, copies } = data;
     this.officeKey = job.jobKey;
     this.officeNumber = job.id;
-    // const receiver = copies.find(copy => copy.personType == 'D');
-    // const cpp = copies.find(copy => copy.personType == 'C');
-    // const receivers = [receiver];
-    // console.log({ receiver, cpp });
-    // if (cpp) {
-    //   this.formControls.cpp.setValue(cpp.id);
-    //   receivers.push(cpp);
-    //   this.getDepartmentTarget(cpp);
-    // } else {
-    //   this.getDepartmentTarget(receiver);
-    // }
-    // this.receivers = new DefaultSelect(receivers, receivers.length);
+    const receiver = copies.find(copy => copy.personType == 'D');
+    const cpp = copies.find(copy => copy.personType == 'C');
+    const receivers = [receiver];
+    const senderParams = new ListParams();
+    const receiverParams = new ListParams();
+    receiverParams.text = receiver.personKey;
+    senderParams.text = job.userOrigin;
+    this.getReceivers(receiverParams);
+    this.getSenders(senderParams);
+    const jobDate = new Date(job.shippingDate);
     this.documentsForm.patchValue({
-      date: job.shippingDate,
+      date: jobDate,
       priority: job.priority,
       messageBody: job.text,
       sender: job.userOrigin,
-      // receiver: receiver.id,
+      receiver: receiver.personKey,
     });
+    if (cpp) {
+      this.formControls.cpp.setValue(cpp.personKey);
+      receiverParams.text = cpp.personKey;
+      this.getReceivers(receiverParams);
+      this.getDepartmentTarget({ id: cpp.personKey });
+    } else {
+      this.getDepartmentTarget({ id: receiver.personKey });
+    }
+    this.receivers = new DefaultSelect(receivers, receivers.length);
+
     this.getNotificationsByOffice(job.id);
     this.settings = {
       ...this.settings,
@@ -182,7 +210,7 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
 
   getNotificationsByOffice(officeNum: string | number) {
     const params = this.params.getValue();
-    params.addFilter('wheelNumber', officeNum);
+    params.addFilter('officeNumber', officeNum);
     this.params.next(params);
   }
 
@@ -208,9 +236,14 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
     }
   }
 
+  printPdf() {
+    const url = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPOFIVOLANTE.pdf?NO_OFICIO=${this.officeNumber}`;
+    window.open(url, `${this.officeKey}.pdf`);
+  }
+
   save() {
     if (this.queryMode) {
-      return;
+      this.printPdf();
     }
     this.documentsForm.markAllAsTouched();
     if (!this.documentsForm.valid) {
@@ -226,7 +259,7 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
       return;
     }
     this.getDepartmentById().subscribe({
-      next: department => this.setOfficeKey(department),
+      next: (department: any) => this.setOfficeKey(department),
     });
   }
 
@@ -245,16 +278,32 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
   }
 
   getDepartmentById() {
-    /**
-     * ! Estos valores estan harcodeados, se deben traer del token
-     */
-    const body = {
-      id: 1,
-      numDelegation: 0,
-      numSubDelegation: 0,
-      phaseEdo: 1,
-    };
-    return this.departmentService.getByDelIds(body);
+    const token = this.jwtHelper.decodeToken();
+    return this.getPhaseEdo().pipe(
+      map((res: any) => res.stagecreated as number),
+      switchMap(phaseEdo =>
+        this.getLoogedUser(token.preferred_username).pipe(
+          map(res => {
+            const info = res.data[0];
+            return {
+              id: Number(info.departament),
+              numDelegation: Number(info.delegation),
+              numSubDelegation: Number(info.subdelegation),
+              phaseEdo,
+            };
+          })
+        )
+      ),
+      switchMap(body => this.departmentService.getByDelIds(body))
+    );
+  }
+
+  getPhaseEdo() {
+    return this.goodParameterService.getPhaseEdo();
+  }
+
+  getLoogedUser(user: string) {
+    return this.securityService.pupUser(user);
   }
 
   saveAll(department: IDepartment) {
@@ -262,8 +311,8 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
     this.createOffice().subscribe({
       next: () => {
         this.incrementLastOffice(department);
-
-        this.onLoadToast('success', '', 'Envio generado correctamente');
+        this.queryMode = true;
+        this.alert('success', 'Oficio Enviado Correctamente', '');
       },
     });
   }
@@ -291,7 +340,6 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
   createOffice() {
     this.loading = true;
     return this.jobsService.create(this.jobForm.value).pipe(
-      // TODO: Descomentar y checar funcionalidad ticket - 254
       switchMap((response: any) => {
         const copies = this.buildOfficeCopies(response.id);
         const obs = copies.map(copy => this.createTradeCopy(copy.value));
@@ -314,6 +362,7 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
       tap(response => {
         this.loading = false;
         this.patchOfficeCve(response);
+        this.printPdf();
       })
     );
   }
@@ -373,18 +422,33 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
   }
 
   getUsers(params: ListParams) {
+    return this.usersService.getAllSegUsers(params);
+  }
+
+  getUserArea(params: ListParams) {
     return this.usersService.getAllSegXAreas(params);
   }
 
   getDepartmentTarget(user: any) {
-    const { delegation, departament, subDelegation } = user;
-    this.delegations = new DefaultSelect([delegation], 1);
-    this.subdelegations = new DefaultSelect([subDelegation], 1);
-    this.departments = new DefaultSelect([departament], 1);
-    this.documentsForm.patchValue({
-      delegation: delegation.id,
-      subdelegation: subDelegation.id,
-      department: departament.id,
+    const params = new ListParams();
+    params.text = user.id;
+    this.getUserArea(params).subscribe({
+      next: data => {
+        const area = data.data[0];
+        if (!area) return;
+        const { delegation, departament, subDelegation } = area;
+        const delegations = delegation ? [delegation] : [];
+        const subdelegations = subDelegation ? [subDelegation] : [];
+        const departments = departament ? [departament] : [];
+        this.delegations = new DefaultSelect(delegations, 1);
+        this.subdelegations = new DefaultSelect(subdelegations, 1);
+        this.departments = new DefaultSelect(departments, 1);
+        this.documentsForm.patchValue({
+          delegation: delegation?.id,
+          subdelegation: subDelegation?.id,
+          department: departament?.id,
+        });
+      },
     });
   }
 
@@ -398,6 +462,11 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
   }
 
   getNotifications() {
+    if (!this.documentsForm.valid && this.queryMode == false) {
+      this.onLoadToast('error', 'Error', 'Completa los campos faltantes');
+      this.documentsForm.markAllAsTouched();
+      return;
+    }
     const { delegation, subdelegation, department } = this.formControls;
     const params = this.params.getValue();
     params.addFilter('delDestinyNumber', delegation.value);

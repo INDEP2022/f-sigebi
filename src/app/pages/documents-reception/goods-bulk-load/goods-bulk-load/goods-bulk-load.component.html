@@ -27,6 +27,7 @@
         <div class="col-md-7">
           <div class="row">
             <div class="col-md-7">
+              <label>Opciones de Carga</label>
               <div>
                 <form-radio
                   *ngFor="let action of actions"
@@ -41,10 +42,7 @@
             <div class="col-md-5">
               <div class="row">
                 <form-check label="Son automoviles" for="cars">
-                  <input
-                    id="cars"
-                    type="checkbox"
-                    formControlName="assetType" />
+                  <input id="cars" type="checkbox" formControlName="cars" />
                 </form-check>
               </div>
               <div class="row">
@@ -52,7 +50,7 @@
                   <input
                     id="property"
                     type="checkbox"
-                    formControlName="assetType" />
+                    formControlName="inmuebles" />
                 </form-check>
               </div>
               <hr class="row" />
@@ -111,7 +109,7 @@
 
     <hr class="row" />
 
-    <div class="row">
+    <div class="row" style="max-height: 600px; overflow-y: scroll">
       <div class="col-md-12">
         <ng2-smart-table [source]="tableSource" [settings]="settings">
         </ng2-smart-table>

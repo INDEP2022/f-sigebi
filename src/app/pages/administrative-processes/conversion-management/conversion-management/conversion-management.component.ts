@@ -1,63 +1,26 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { IConvertiongood } from 'src/app/core/models/ms-convertiongood/convertiongood';
+import { IGood } from 'src/app/core/models/ms-good/good';
+import { ConvertiongoodService } from 'src/app/core/services/ms-convertiongood/convertiongood.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-
-export interface Example {
-  idConversion: number;
-  date: Date;
-  actaConversion: string;
-  goods: GoodsExample;
-}
-
-export interface GoodsExample {
-  noBien: number;
-  noExpediente: number;
-  tipo: string;
-  desStatus: string;
-  actaER: any;
-  description: string;
-}
 
 @Component({
   selector: 'app-conversion-management',
   templateUrl: './conversion-management.component.html',
   styles: [],
 })
-export class ConversionManagementComponent implements OnInit {
+export class ConversionManagementComponent extends BasePage implements OnInit {
   //
-  public goods: GoodsExample[] = [
-    {
-      noBien: 1,
-      noExpediente: 1245,
-      description: 'ASDADFSdfsdf',
-      tipo: 'derivado',
-      actaER: 'dsdsdsd',
-      desStatus: 'sdsdsd',
-    },
-    {
-      noBien: 2,
-      noExpediente: 222,
-      description: 'ASDADFSdfsdf',
-      actaER: 'mmmmm',
-      tipo: 'derivado',
-      desStatus: 'sdsdsd',
-    },
-    {
-      noBien: 3,
-      noExpediente: 555,
-      description: 'ASDADFSdfsdf',
-      actaER: 'xxxxxxx',
-      tipo: 'derivado',
-      desStatus: 'sdsdsd',
-    },
-  ];
+  good: IGood;
   //
   saved: boolean = true;
   //
   generarPass: boolean = false;
   //
-  good: GoodsExample;
-
+  conversion: IConvertiongood;
   //Reactive Forms
   form: FormGroup;
   // Variable para la contraseña
@@ -87,12 +50,21 @@ export class ConversionManagementComponent implements OnInit {
   get actaER() {
     return this.form.get('actaER');
   }
+  get actaERDate() {
+    return this.form.get('actaERDate');
+  }
   get description() {
     return this.form.get('description');
   }
   // public get goods(){return this.form.controls['goods'] as FormArray;}
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private readonly goodServices: GoodService,
+    private readonly conversiongoodServices: ConvertiongoodService
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.buildForm();
@@ -119,6 +91,7 @@ export class ConversionManagementComponent implements OnInit {
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       actaER: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      actaERDate: [null, [Validators.required]],
       description: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
@@ -131,42 +104,100 @@ export class ConversionManagementComponent implements OnInit {
     this.idConversion.setValue(1245);
     this.date.setValue(new Date());
     this.saved = false;
-    //this.showToast('success');
   }
 
-  searchGoods() {
-    const NoGood = Number(this.noBien.value);
+  onChangeGood() {
+    this.searchGoods(this.noBien.value);
+  }
+  searchGoods(idGood: number | string) {
     // buscar el bien
-    this.goods.forEach(element => {
-      if (element.noBien === NoGood) {
-        this.good = element;
-      }
+    this.goodServices.getById(idGood).subscribe({
+      next: response => {
+        this.good = response;
+        this.loadActER(this.good.id);
+        this.loadDescriptionStatus(this.good.id);
+        this.setGood(this.good);
+      },
+      error: err => {
+        this.onLoadToast('error', 'ERROR', 'Bien no existe');
+        this.form.reset();
+        console.log(err);
+      },
     });
-    this.setValueGood(this.good);
   }
 
-  setValueGood(good: GoodsExample) {
-    this.noExpediente.setValue(good.noExpediente);
-    this.tipo.setValue(good.tipo);
-    this.actaER.setValue(good.actaER);
-    this.desStatus.setValue(good.desStatus);
+  setGood(good: IGood) {
+    this.noBien.setValue(good.id);
+    this.noExpediente.setValue(good.fileNumber);
     this.description.setValue(good.description);
+  }
+
+  loadDescriptionStatus(idGood: number | string) {
+    this.goodServices.getStatusByGood(idGood).subscribe({
+      next: response => {
+        this.desStatus.setValue(response.status_descripcion);
+      },
+      error: error => {
+        this.desStatus.setValue('');
+        this.onLoadToast(
+          'info',
+          'Opss..',
+          'Este bien no tiene status asignado'
+        );
+        this.loading = false;
+        console.log(error);
+      },
+    });
+  }
+
+  loadActER(idGood: number | string) {
+    this.conversiongoodServices.getActsByGood(idGood).subscribe({
+      next: response => {
+        this.actaER.setValue(response.cve_acta);
+        this.actaERDate.setValue(new Date(response.fec_elaboracion));
+      },
+      error: err => {
+        this.actaER.setValue('');
+        this.actaERDate.setValue('');
+        this.onLoadToast(
+          'info',
+          'Opss..',
+          'Este bien no tiene Acta E/R asociada'
+        );
+        console.log(err);
+      },
+    });
   }
 
   openDialogPW() {}
 
   generatePaswword() {
     this.generarPass = true;
-    var pass = '';
-    var str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let pass = '';
+    let str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     for (let i = 1; i <= 8; i++) {
-      var char = Math.floor(Math.random() * str.length + 1);
+      let char = Math.floor(Math.random() * str.length + 1);
       pass += str.charAt(char);
     }
     this.password = pass;
     console.log(this.password);
   }
 
+  searchConversion() {
+    this.conversiongoodServices.getById(this.idConversion.value).subscribe({
+      next: response => {
+        this.conversion = response;
+        this.searchGoods(this.conversion.goodFatherNumber);
+        this.tipo.setValue(this.conversion.typeConv);
+        this.date.setValue(new Date());
+      },
+      error: err => {
+        this.onLoadToast('error', 'ERROR', 'Conversion no existe');
+        this.form.reset();
+        console.log(err);
+      },
+    });
+  }
   /*   showToast(status: NbComponentStatus) {
     this.toastrService.show(status, 'Guardado exitoso !!', { status });
   } */
