@@ -19,6 +19,7 @@ import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { responsableUser, typeTercero } from './warehouse-data';
 
 @Component({
   selector: 'app-warehouse-form',
@@ -28,8 +29,8 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class WarehouseFormComponent extends BasePage implements OnInit {
   regDelData: IRegionalDelegation;
   warehouseForm: FormGroup = new FormGroup({});
-  responsiblesUsers = new DefaultSelect();
-  typeTercero = new DefaultSelect();
+  responsiblesUsers = new DefaultSelect(responsableUser);
+  typeTercero = new DefaultSelect(typeTercero);
   states = new DefaultSelect<IStateOfRepublic>();
   municipalities = new DefaultSelect<IMunicipality>();
   cities = new DefaultSelect<ICity>();
@@ -103,9 +104,6 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
         //Ejecutar el servicio
         this.onLoadToast('success', 'Almacén creado correctamente', '');
         this.close();
-        this.router.navigate([
-          '/pages/request/perform-programming/1/warehouse/1',
-        ]);
       }
     });
   }
@@ -194,10 +192,10 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
 
   getTypeWarehouseSelect(params: ListParams) {
     this.typeWarehouseService.getAll(params).subscribe(data => {
-      data.data.filter(item => {
+      const filterType = data.data.filter(item => {
         return item.description;
       });
-      this.typeWarehouse = new DefaultSelect(data.data, data.count);
+      this.typeWarehouse = new DefaultSelect(filterType, data.count);
     });
   }
 
