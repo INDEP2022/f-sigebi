@@ -39,13 +39,14 @@ export class ShelvesRepository<T> implements IShelvesMethods<T> {
 
   getByCveSaveValues?(
     route: string,
-    id: number | string,
+    key: number | string,
+    batteryNumber: number | string,
     _params?: ListParams
   ): Observable<IListResponse<T>> {
     const fullRoute = `${this.ms}/${route}`;
     const params = this.makeParams(_params);
     return this.httpClient.get<IListResponse<T>>(
-      `${fullRoute}?limit=10&page=1&filter.key=${id}`
+      `${fullRoute}?filter.key=${key}&filter.batteryNumber=${batteryNumber}`
     );
   }
 
