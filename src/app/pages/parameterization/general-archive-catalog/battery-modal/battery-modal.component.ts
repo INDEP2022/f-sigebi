@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
 //models
@@ -39,13 +38,6 @@ export class BatteryModalComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-  }
-
-  getCveSaveValues(params: ListParams) {
-    this.saveValueService.getCveSaveValues(params).subscribe({
-      next: data =>
-        (this.cveSaveValues = new DefaultSelect(data.data, data.count)),
-    });
   }
 
   private prepareForm() {

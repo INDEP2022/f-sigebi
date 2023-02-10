@@ -32,9 +32,9 @@ export class LockerRepository<T> implements ILockerMethods<T> {
     );
   }
 
-  update(route: string, id: number | string, formData: Object) {
-    const fullRoute = `${this.ms}/${route}`;
-    return this.httpClient.put(`${fullRoute}/${id}`, formData);
+  update(formData: Object) {
+    const fullRoute = `${this.ms}/locker`;
+    return this.httpClient.put(`${fullRoute}`, formData);
   }
 
   create(route: string, formData: Object) {

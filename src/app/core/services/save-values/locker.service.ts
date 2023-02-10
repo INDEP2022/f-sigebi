@@ -37,12 +37,8 @@ export class LockersService extends HttpService {
     );
   }
 
-  update(id: string | number, formData: ILocker): Observable<Object> {
-    return this.lockerRepository.update(
-      this.route.FilterSaveValueKey,
-      id,
-      formData
-    );
+  update(formData: ILocker): Observable<Object> {
+    return this.lockerRepository.update(formData);
   }
 
   create(model: ILocker): Observable<ILocker> {

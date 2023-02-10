@@ -17,7 +17,7 @@ export const SHELVES_COLUMNS = {
     },
   },
   id: {
-    title: 'ID',
+    title: 'No. Estante',
     sort: false,
     filter: false,
   },

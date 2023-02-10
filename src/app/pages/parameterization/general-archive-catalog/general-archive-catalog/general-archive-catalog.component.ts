@@ -42,6 +42,7 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
   idSaveValues: ISaveValue;
   storeCode: IBattery;
   idBattery: IBattery;
+  idShelve: IShelves;
 
   saveValueKey: IShelves;
   numBattery: IShelves;
@@ -81,7 +82,7 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
       ...this.settings,
       actions: {
         columnTitle: 'Acciones',
-        edit: true,
+        edit: false,
         delete: false,
         position: 'right',
       },
@@ -172,13 +173,13 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
 
   //Abrir formulario de Batterias
   openFormBattery(battery?: IBattery) {
-    const cve = { ...this.form.value };
+    const cve = { ...this.idSaveValues };
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       battery,
       cve,
       callback: (next: boolean) => {
-        if (next) this.ngOnInit();
+        if (next) this.getBattery(this.idSaveValues);
       },
     };
     this.modalService.show(BatteryModalComponent, modalConfig);
@@ -218,10 +219,14 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
   //Abrir formulario de Estantes
   openFormShelves(shelves?: IShelves) {
     const modalConfig = MODAL_CONFIG;
+    const cve = { ...this.idSaveValues };
+    const noBattery = { ...this.idBattery };
     modalConfig.initialState = {
       shelves,
+      cve,
+      noBattery,
       callback: (next: boolean) => {
-        if (next) this.ngOnInit();
+        if (next) this.getShelves(this.storeCode, this.idBattery);
       },
     };
     this.modalService.show(ShelvesModalComponent, modalConfig);
@@ -267,10 +272,17 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
   //Abrir formulario de casilleros
   openFormLocker(locker?: ILocker) {
     const modalConfig = MODAL_CONFIG;
+    const cve = { ...this.idSaveValues };
+    const noBattery = { ...this.idBattery };
+    const noShelve = { ...this.idShelve };
     modalConfig.initialState = {
       locker,
+      cve,
+      noBattery,
+      noShelve,
       callback: (next: boolean) => {
-        if (next) this.ngOnInit();
+        if (next)
+          this.getLocker(this.saveValueKey, this.numBattery, this.numShelf);
       },
     };
     this.modalService.show(LockersModalComponent, modalConfig);
