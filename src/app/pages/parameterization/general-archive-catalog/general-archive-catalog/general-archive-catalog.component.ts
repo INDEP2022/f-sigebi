@@ -23,8 +23,8 @@ import { IShelves } from 'src/app/core/models/catalogs/shelves.model';
 //Component modal
 import { ISaveValue } from 'src/app/core/models/catalogs/save-value.model';
 import { BatteryModalComponent } from '../battery-modal/battery-modal.component';
-import { GeneralArchiveCatalogModalComponent } from '../general-archive-catalog-modal/general-archive-catalog-modal.component';
 import { LockersModalComponent } from '../lockers-modal/lockers-modal.component';
+import { SaveValuesModalComponent } from '../save-values-modal/save-values-modal.component';
 import { ShelvesModalComponent } from '../shelves-modal/shelves-modal.component';
 
 @Component({
@@ -149,14 +149,15 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
     });
   }
 
-  openFormSaveValues() {
+  openFormSaveValues(saveValues?: ISaveValue) {
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
-      // callback: (next: boolean) => {
-      //   if (next) this.getSaveValues();
-      // },
+      saveValues,
+      callback: (next: boolean) => {
+        if (next) this.getSaveValues();
+      },
     };
-    this.modalService.show(GeneralArchiveCatalogModalComponent, modalConfig);
+    this.modalService.show(SaveValuesModalComponent, modalConfig);
   }
 
   //Evento al seleccionar fila de tabla Guardavaluo
@@ -249,7 +250,6 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
 
   //Evento al seleccionar fila de Shelves
   rowsSelectedShelves(event: any) {
-    console.log('hola');
     this.saveValueKey = event.data;
     this.numBattery = event.data;
     this.numShelf = event.data;

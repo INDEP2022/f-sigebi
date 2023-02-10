@@ -31,7 +31,7 @@
             <ng2-smart-table
               [settings]="settingsSaveValues"
               [source]="saveValuesList"
-              (edit)="openFormSaveValues()"
+              (edit)="openFormSaveValues($event.data)"
               (userRowSelect)="
                 rowsSelectedSaveValues($event)
               "></ng2-smart-table>
