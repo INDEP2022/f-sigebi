@@ -188,8 +188,8 @@ export class NumeraireExchangeFormComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getGoods({ inicio: 1, text: '' });
-    this.getAccounts({ inicio: 1, text: '' });
+    this.getGoods({ page: 1, text: '' });
+    this.getAccounts({ page: 1, text: '' });
     this.expenseSettings.columns = EXPENSE_COLUMNS;
     this.expenseSettings.columns = {
       ...this.expenseSettings.columns,

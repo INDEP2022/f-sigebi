@@ -7,6 +7,7 @@ import { DelegationSharedComponent } from 'src/app/@standalone/shared-forms/dele
 import { UsersSharedComponent } from 'src/app/@standalone/shared-forms/user-shared/user-shared.component';
 
 import { BatteryModalComponent } from './battery-modal/battery-modal.component';
+import { GeneralArchiveCatalogModalComponent } from './general-archive-catalog-modal/general-archive-catalog-modal.component';
 import { GeneralArchiveCatalogRoutingModule } from './general-archive-catalog-routing.module';
 import { GeneralArchiveCatalogComponent } from './general-archive-catalog/general-archive-catalog.component';
 import { LockersModalComponent } from './lockers-modal/lockers-modal.component';
@@ -18,6 +19,7 @@ import { ShelvesModalComponent } from './shelves-modal/shelves-modal.component';
     BatteryModalComponent,
     ShelvesModalComponent,
     LockersModalComponent,
+    GeneralArchiveCatalogModalComponent,
   ],
   imports: [
     CommonModule,

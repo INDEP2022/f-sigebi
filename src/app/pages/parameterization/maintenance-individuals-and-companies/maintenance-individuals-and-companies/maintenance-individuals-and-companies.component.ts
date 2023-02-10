@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PersonService } from 'src/app/core/services/catalogs/person.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
+  NUMBERS_PATTERN,
   PHONE_PATTERN,
   RFCCURP_PATTERN,
   STRING_PATTERN,
@@ -33,32 +34,80 @@ export class MaintenanceIndividualsAndCompaniesComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      personNumber: [null],
-      name: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      street: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      streetNumber: [null, [Validators.required]],
-      apartmentNumber: [null, [Validators.required]],
-      suburb: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
-      zipCode: [null, Validators.required],
-      delegation: [null, Validators.required],
-      federative: [null, Validators.required],
-      phone: [null, [Validators.required, Validators.pattern(PHONE_PATTERN)]],
+      personNumber: [
+        null,
+        [
+          Validators.required,
+          Validators.pattern(STRING_PATTERN),
+          Validators.maxLength(30),
+        ],
+      ],
+      name: [
+        null,
+        [Validators.maxLength(30), Validators.pattern(STRING_PATTERN)],
+      ],
+      street: [
+        null,
+        [Validators.maxLength(200), Validators.pattern(STRING_PATTERN)],
+      ],
+      streetNumber: [
+        null,
+        [Validators.maxLength(10), Validators.pattern(STRING_PATTERN)],
+      ],
+      apartmentNumber: [
+        null,
+        [Validators.maxLength(10), Validators.pattern(STRING_PATTERN)],
+      ],
+      suburb: [
+        null,
+        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+      ],
+      zipCode: [null, Validators.pattern(NUMBERS_PATTERN)],
+      delegation: [
+        null,
+        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+      ],
+      federative: [null],
+      phone: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.pattern(PHONE_PATTERN)],
+      ],
       observations: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
       ],
-      rfc: [null, [Validators.required, Validators.pattern(RFCCURP_PATTERN)]],
-      curp: [null, [Validators.required, Validators.pattern(RFCCURP_PATTERN)]],
+      rfc: [
+        null,
+        [
+          Validators.maxLength(20),
+          Validators.pattern(STRING_PATTERN),
+          Validators.pattern(RFCCURP_PATTERN),
+        ],
+      ],
+      curp: [
+        null,
+        [
+          Validators.maxLength(20),
+          Validators.pattern(STRING_PATTERN),
+          Validators.pattern(RFCCURP_PATTERN),
+        ],
+      ],
       curriculumV: [null],
       curriculum: ['N'],
-      typePerson: [null],
+      typePerson: [null, Validators.required],
       keyOperation: [null],
       profile: [
         null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
+        [Validators.maxLength(500), Validators.pattern(STRING_PATTERN)],
       ],
-      manager: [null],
-      numberDeep: [null],
+      manager: [
+        null,
+        [Validators.maxLength(60), Validators.pattern(STRING_PATTERN)],
+      ],
+      numberDeep: [
+        null,
+        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
+      ],
       keyEntFed: [null],
       typeResponsible: [null],
     });
@@ -70,10 +119,6 @@ export class MaintenanceIndividualsAndCompaniesComponent
     this.form.get('curriculumV').valueChanges.subscribe({
       next: (value: boolean) =>
         this.form.get('curriculum').patchValue(value ? 'S' : 'N'),
-    });
-
-    this.form.get('name').valueChanges.subscribe({
-      next: (value: string) => this.form.get('personNumber').patchValue(value),
     });
 
     this.form.get('typePerson').valueChanges.subscribe({
@@ -97,19 +142,10 @@ export class MaintenanceIndividualsAndCompaniesComponent
       this.form.get('typeResponsible').patchValue('D');
       this.personService.create(this.form.value).subscribe({
         next: () => {
-          this.onLoadToast(
-            'success',
-            'Creacion ministerio publico',
-            'Ha sido creado con éxito'
-          );
+          this.onLoadToast('success', 'Ha sido creado con éxito', '');
           this.form.reset();
         },
-        error: () =>
-          this.onLoadToast(
-            'error',
-            'Conexión',
-            'Revise su conexion de internet'
-          ),
+        error: error => this.onLoadToast('error', error.error.message, ''),
       });
     }
   }

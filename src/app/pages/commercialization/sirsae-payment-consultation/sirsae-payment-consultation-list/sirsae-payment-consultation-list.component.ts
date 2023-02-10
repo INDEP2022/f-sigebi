@@ -142,7 +142,7 @@ export class SirsaePaymentConsultationListComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getGoods({ inicio: 1, text: '' });
+    this.getGoods({ page: 1, text: '' });
     this.consultSettings.columns = CONSULT_SIRSAE_COLUMNS;
     this.params
       .pipe(takeUntil(this.$unSubscribe))

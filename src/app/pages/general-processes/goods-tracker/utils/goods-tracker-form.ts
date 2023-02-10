@@ -1,4 +1,5 @@
 import { FormControl, Validators } from '@angular/forms';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { GoodsTrackerCriteriasEnum } from './goods-tracker-criterias.enum';
 
 export const GOODS_TRACKER_FORM = {
@@ -6,6 +7,24 @@ export const GOODS_TRACKER_FORM = {
     Validators.required,
   ]),
 };
+
+export const PROCESSES = [
+  {
+    value: 'ABANDONO',
+  },
+  {
+    value: 'ASEGURADO',
+  },
+  {
+    value: 'DECOMISO',
+  },
+  {
+    value: 'EXT_DON',
+  },
+  {
+    value: 'TRANSFERENTE',
+  },
+];
 
 export const TARGET_IDENTIFIERS = [
   {
@@ -56,14 +75,18 @@ export const GOOD_PHOTOS_OPTIOS = [
 export class GoodTrackerForm {
   satDepartureNum = new FormControl<string>(null);
   clasifNum = new FormControl<string>(null);
-  alternativeClasifNum = new FormControl<string>(null);
+  alternativeClasifNum = new FormControl<string>(null, [
+    Validators.pattern(STRING_PATTERN),
+  ]);
   types = new FormControl<string[]>(null);
   subtypes = new FormControl<string[]>(null);
   ssubtypes = new FormControl<string[]>(null);
   sssubtypes = new FormControl<string[]>(null);
   goodNum = new FormControl<string>(null);
   process = new FormControl<string>(null);
-  samiInventory = new FormControl<string>(null);
+  samiInventory = new FormControl<string>(null, [
+    Validators.pattern(STRING_PATTERN),
+  ]);
   targetIdentifier = new FormControl<string>(null);
   status = new FormControl<string>(null);
   withPhoto = new FormControl<string>(null);
@@ -71,34 +94,70 @@ export class GoodTrackerForm {
   valueFrom = new FormControl<string>(null);
   valueTo = new FormControl<string>(null);
   photoDate = new FormControl<string>(null);
-  identifier = new FormControl<string>(null);
-  description = new FormControl<string>(null);
-  attributes = new FormControl<string>(null);
-  movableIventory = new FormControl<string>(null);
-  siabiInventory = new FormControl<string>(null);
-  cisiInventory = new FormControl<string>(null);
+  identifier = new FormControl<string>(null, [
+    Validators.pattern(STRING_PATTERN),
+  ]);
+  description = new FormControl<string>(null, [
+    Validators.pattern(STRING_PATTERN),
+  ]);
+  attributes = new FormControl<string>(null, [
+    Validators.pattern(STRING_PATTERN),
+  ]);
+  movableIventory = new FormControl<string>(null, [
+    Validators.pattern(STRING_PATTERN),
+  ]);
+  siabiInventory = new FormControl<string>(null, [
+    Validators.pattern(STRING_PATTERN),
+  ]);
+  cisiInventory = new FormControl<string>(null, [
+    Validators.pattern(STRING_PATTERN),
+  ]);
   expedientNum = new FormControl<string>(null);
   flyerNum = new FormControl<string>(null);
   judgeNum = new FormControl<string>(null);
-  trasnferExp = new FormControl<string>(null);
-  flyerType = new FormControl<string>(null);
+  trasnferExp = new FormControl<string>(null, [
+    Validators.pattern(STRING_PATTERN),
+  ]);
+  flyerType = new FormControl<string>(null, [
+    Validators.pattern(STRING_PATTERN),
+  ]);
   officeDate = new FormControl<string>(null);
-  protection = new FormControl<string>(null);
-  indicatedName = new FormControl<string>(null);
+  protection = new FormControl<string>(null, [
+    Validators.pattern(STRING_PATTERN),
+  ]);
+  indicatedName = new FormControl<string>(null, [
+    Validators.pattern(STRING_PATTERN),
+  ]);
   publicMin = new FormControl<string>(null);
-  criminalCase = new FormControl<string>(null);
-  officeNum = new FormControl<string>(null);
-  previusInvestigation = new FormControl<string>(null);
-  dictum = new FormControl<string>(null);
-  criminalCause = new FormControl<string>(null);
+  criminalCase = new FormControl<string>(null, [
+    Validators.pattern(STRING_PATTERN),
+  ]);
+  extOfficeNum = new FormControl<string>(null, [
+    Validators.pattern(STRING_PATTERN),
+  ]);
+  previusInvestigation = new FormControl<string>(null, [
+    Validators.pattern(STRING_PATTERN),
+  ]);
+  dictum = new FormControl<string>(null, [Validators.pattern(STRING_PATTERN)]);
+  criminalCause = new FormControl<string>(null, [
+    Validators.pattern(STRING_PATTERN),
+  ]);
   receptionForm = new FormControl<string>(null);
   receptionTo = new FormControl<string>(null);
-  certificate = new FormControl<string>(null);
-  receptionStatus = new FormControl<string>(null);
+  certificate = new FormControl<string>(null, [
+    Validators.pattern(STRING_PATTERN),
+  ]);
+  receptionStatus = new FormControl<string>(null, [
+    Validators.pattern(STRING_PATTERN),
+  ]);
   statusChangeFrom = new FormControl<string>(null);
   statusChaangeTo = new FormControl<string>(null);
-  eventNum = new FormControl<string>(null);
-  historicalProcess = new FormControl<string>(null);
+  eventNum = new FormControl<string>(null, [
+    Validators.pattern(STRING_PATTERN),
+  ]);
+  historicalProcess = new FormControl<string>(null, [
+    Validators.pattern(STRING_PATTERN),
+  ]);
   transfers = new FormControl<string>(null);
   transmitters = new FormControl<string>(null);
   autorities = new FormControl<string>(null);

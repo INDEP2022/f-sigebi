@@ -59,4 +59,5 @@ export enum SearchFilter {
   LIKE = '$like',
   NOT = '$not',
   NULL = '$null',
+  ILIKE = '$ilike',
 }

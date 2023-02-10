@@ -51,25 +51,25 @@
           <div body>
             <div class="row pt-2">
               <div class="col-md-4">
-                <label
-                  ><span class="label">Fecha de Solicitud&#58;</span>
+                <div>
+                  <label for="">Fecha de Solicitud&#58;</label>
                   {{
                     registRequestForm.get('applicationDate').value
-                      | date: 'dd/MM/yyyy'
+                      | date : 'dd/MM/yyyy'
                   }}
-                </label>
+                </div>
               </div>
               <div class="col-md-4">
-                <label class="label"
-                  >Estado:
-                  <span>{{ stateOfRepublicName }}</span>
-                </label>
+                <div>
+                  <label for="">Estado&#58;</label>
+                  {{ stateOfRepublicName }}
+                </div>
               </div>
               <div class="col-md-4">
-                <label
-                  ><span class="label">No&#46; Solicitud&#58;</span>
-                  {{ registRequestForm.get('id').value }}</label
-                >
+                <div>
+                  <label for="">No&#46; Solicitud&#58;</label>
+                  {{ registRequestForm.get('id').value }}
+                </div>
               </div>
             </div>
             <div class="row pt-2">
@@ -82,22 +82,22 @@
                 >
               </div>-->
               <div class="col-lg-4">
-                <label
-                  ><span class="label">Transferente:</span>
-                  {{ transferentName }}</label
-                >
+                <div>
+                  <label for="">Transferente&#58;</label>
+                  {{ transferentName }}
+                </div>
               </div>
               <div class="col-md-4">
-                <label
-                  ><span class="label">No&#46; Oficio:</span>
-                  {{ registRequestForm.get('paperNumber').value }}</label
-                >
+                <div>
+                  <label for="">No&#46; Oficio&#58;</label>
+                  {{ registRequestForm.get('paperNumber').value }}
+                </div>
               </div>
               <div class="col-md-4">
-                <label
-                  ><span class="label">Emisora:</span>
+                <div>
+                  <label for="">Emisora&#58;</label>
                   {{ stationName }}
-                </label>
+                </div>
               </div>
 
               <!--<div class="col-md-3">
@@ -111,16 +111,16 @@
             </div>
             <div class="row pt-2">
               <div class="col-md-4">
-                <label
-                  ><span class="label">Delegaci&oacute;n Regional&#58;</span>
+                <div>
+                  <label for="">Delegaci&oacute;n Regional&#58;</label>
                   {{ delegationName }}
-                </label>
+                </div>
               </div>
-              <div class="col-md-4">
-                <label
-                  ><span class="label">Autoridad&#58;</span>
+              <div class="col-md-8">
+                <div>
+                  <label for="">Autoridad&#58;</label>
                   {{ authorityName }}
-                </label>
+                </div>
               </div>
             </div>
           </div>

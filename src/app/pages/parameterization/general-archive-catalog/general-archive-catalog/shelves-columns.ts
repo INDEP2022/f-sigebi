@@ -13,11 +13,11 @@ export const SHELVES_COLUMNS = {
     sort: false,
     filter: false,
     valuePrepareFunction: (value: any) => {
-      return value.storeCode;
+      return value.idBattery;
     },
   },
   id: {
-    title: 'ID',
+    title: 'No. Estante',
     sort: false,
     filter: false,
   },

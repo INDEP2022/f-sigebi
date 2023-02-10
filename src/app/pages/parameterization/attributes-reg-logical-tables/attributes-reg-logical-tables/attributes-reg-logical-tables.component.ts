@@ -41,7 +41,7 @@ export class AttributesRegLogicalTablesComponent
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: true,
+        delete: false,
         position: 'right',
       },
       columns: { ...ATT_REG_LOG_TAB_COLUMNS },
@@ -88,7 +88,8 @@ export class AttributesRegLogicalTablesComponent
       .subscribe(() => this.getRegisterAttribute(id));
   }
 
-  getRegisterAttribute(id: string | number): void {
+  getRegisterAttribute(id?: string | number): void {
+    this.loading = true;
     this.parameterGoodService.getById(id).subscribe({
       next: response => {
         this.tdescAtrib = response.data;
@@ -103,6 +104,9 @@ export class AttributesRegLogicalTablesComponent
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       tdescAtrib,
+      callback: (next: boolean) => {
+        if (next) this.getLogicalTablesByID();
+      },
     };
     this.modalService.show(
       AttributesRegLogicalTablesModalComponent,

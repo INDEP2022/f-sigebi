@@ -19,7 +19,7 @@ export class ApprovalChangeNumeraireComponent implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getBien({ inicio: 1, text: '' });
+    this.getBien({ page: 1, text: '' });
   }
 
   private prepareForm() {

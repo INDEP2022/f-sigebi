@@ -18,7 +18,7 @@ export const COLUMNS = {
     sort: false,
   },
   initDate: {
-    title: 'Fecha Hora Inicio',
+    title: 'Fecha Hora page',
     type: 'string',
     sort: false,
   },

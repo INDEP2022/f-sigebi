@@ -85,25 +85,25 @@
           <br />
           <!-- Tabla de bienes DECLARATORIA -->
 
-          <!-- Forms DECLARATORIA INICIO FIN -->
+          <!-- Forms DECLARATORIA page FIN -->
           <form
-            [formGroup]="formDeclaratoriaInicioFin"
+            [formGroup]="formDeclaratoriapageFin"
             class="container-fluid form-material">
             <div class="row w-100">
               <hr class="row" />
               <div class="col-sm-12 col-12 col-md-6 pr-3">
                 <form-field
-                  [control]="formDeclaratoriaInicioFin.get('inicio')"
-                  label="Inicio">
-                  <!-- <label class="label w-100">Inicio</label> -->
+                  [control]="formDeclaratoriapageFin.get('page')"
+                  label="page">
+                  <!-- <label class="label w-100">page</label> -->
                   <textarea
                     class="form-control w-100"
-                    formControlName="inicio"></textarea>
+                    formControlName="page"></textarea>
                 </form-field>
               </div>
               <div class="col-sm-12 col-12 col-md-6 pr-3">
                 <form-field
-                  [control]="formDeclaratoriaInicioFin.get('fin')"
+                  [control]="formDeclaratoriapageFin.get('fin')"
                   label="Fin">
                   <!-- <label class="label w-100">Fin</label> -->
                   <textarea
@@ -113,7 +113,7 @@
               </div>
             </div>
           </form>
-          <!-- Forms DECLARATORIA INICIO FIN -->
+          <!-- Forms DECLARATORIA page FIN -->
 
           <!-- Apartado folio de escaneo -->
           <div class="row">
@@ -172,14 +172,14 @@
           <hr class="row" />
           <!-- Apartado folio de escaneo -->
         </tab>
-        <!-- DECLARATORIA PANTALLA INICIO FIN -->
+        <!-- DECLARATORIA PANTALLA page FIN -->
 
         <tab heading="OFICIO">
           <!-- FORM OFICIO -->
           <ngx-fact-abandonos-oficio
             [formOficio]="formOficio"
             [formCcpOficio]="formCcpOficio"
-            [formOficioInicioFin]="formOficioInicioFin"
+            [formOficiopageFin]="formOficiopageFin"
             (formValues)="mostrarInfoOficio($event)">
           </ngx-fact-abandonos-oficio>
           <!-- FORM OFICIO -->

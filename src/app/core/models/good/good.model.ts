@@ -191,6 +191,7 @@ export interface IGood {
   statusProcess: string;
   version?: any;
   observations?: any;
+  addressId?: any;
   idHome?: any;
   complyRule?: any;
   descriptionGoodSae?: any;
@@ -443,7 +444,8 @@ export interface IDomicilies {
   regionalDelegationIdid?: number | null;
 }
 
-export interface IGoodDomicilies {
+//Bien inmueble
+export interface IGoodRealState {
   id?: number | null;
   description?: string;
   quantity?: string;

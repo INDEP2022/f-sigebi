@@ -78,7 +78,7 @@ export class GoodSubtypeFormComponent extends BasePage implements OnInit {
       });
       this.types = new DefaultSelect([goodType], 1);
     } else {
-      this.getTypes({ inicio: 1, text: '' });
+      this.getTypes({ page: 1, text: '' });
     }
   }
 
