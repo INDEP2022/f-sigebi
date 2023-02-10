@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { EventEmitter, Output } from '@angular/core';
 //BasePage
 import { BasePage } from 'src/app/core/shared/base-page';
 
@@ -15,12 +17,17 @@ interface IReportRanges {
   styles: [],
 })
 export class ReportComponent extends BasePage implements OnInit {
+  @Output() sendSearchForm = new EventEmitter<any>();
+  @Output() resetForm = new EventEmitter<boolean>();
+  showSearchForm: boolean = true;
+  searchForm: ModelForm<any>;
   reportForm: FormGroup;
   datePickerConfig: Partial<BsDatepickerConfig> = {
     minMode: 'month',
     adaptivePosition: true,
     dateInputFormat: 'MMMM YYYY',
   };
+
   ranges: IReportRanges[] = [
     { code: 'daily', name: 'Diario' },
     { code: 'monthly', name: 'Mensual' },
@@ -50,13 +57,14 @@ export class ReportComponent extends BasePage implements OnInit {
     this.reportForm = this.fb.group({
       delegation: [null, [Validators.required]],
       subdelegation: [null, [Validators.required]],
-      from: [null, [Validators.required]],
-      to: [null, [Validators.required]],
+      dateRequest: [null, [Validators.required]],
+      from: [null],
+      to: [null],
       range: ['daily', [Validators.required]],
     });
   }
 
-  save() {}
+  save() { }
 
   rangeChange() {
     this.changeCalendarFormat();
@@ -89,8 +97,23 @@ export class ReportComponent extends BasePage implements OnInit {
     //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf? P_USR=LGONZALEZ&P_CUMP=1&P_T_NO_CUMP=2&P_T_CUMP=100`; //window.URL.createObjectURL(blob);
     //let newWin = window.open(pdfurl,"test.pdf");
 
-    this.onLoadToast('error', 'Reporte no encontrado', '');
+    // this.onLoadToast('error', 'Reporte no encontrado', '');
     this.loading = false;
+
+    const guardarArchivoDeTexto = (params: ArrayBuffer) => {
+      const a = document.createElement("a");
+      const archivo = new Blob([params], { type: 'application/pdf' });
+      const url = URL.createObjectURL(archivo);
+      a.href = url;
+
+      a.click();
+      URL.revokeObjectURL(url);
+      window.open(url);
+    }
+
+
+
+
     //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf? P_USR=LGONZALEZ&P_CUMP=1&P_T_NO_CUMP=2&P_T_CUMP=100`; //window.URL.createObjectURL(blob);
     //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RCONCOGVOLANTESRE.pdf?PN_VOLANTEFIN=70646&P_IDENTIFICADOR=0`; //window.URL.createObjectURL(blob);
 
@@ -133,4 +156,7 @@ export class ReportComponent extends BasePage implements OnInit {
   cleanForm(): void {
     this.reportForm.reset();
   }
+
+
+
 }
