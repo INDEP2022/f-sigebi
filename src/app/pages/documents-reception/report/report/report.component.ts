@@ -62,10 +62,9 @@ export class ReportComponent extends BasePage implements OnInit {
     this.reportForm = this.fb.group({
       delegation: [null, [Validators.required]],
       subdelegation: [null, [Validators.required]],
-      dateRequest: [null, [Validators.required]],
-      from: [null],
-      to: [null],
-      range: ['daily', [Validators.required]],
+      from: [null, [Validators.required]],
+      to: [null, [Validators.required]],
+      range: ['daily'],
     });
   }
 
@@ -88,6 +87,7 @@ export class ReportComponent extends BasePage implements OnInit {
   }
 
   confirm(): void {
+
     console.log(this.reportForm.value);
     let params = {
       PN_DELEG: this.reportForm.controls['delegation'].value,
@@ -97,11 +97,11 @@ export class ReportComponent extends BasePage implements OnInit {
     };
     console.log(params);
     // open the window
-    this.onLoadToast('success', 'vista generada exitosamente', '');
+    this.onLoadToast('success', 'procesando', '');
     const pdfurl = `http://s29.q4cdn.com/175625835/files/doc_downloads/test.pdf`; //window.URL.createObjectURL(blob);
     window.open(pdfurl, "RGEROFPRECEPDOCUM.pdf");
     //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RCONCOGVOLANTESRE.pdf?PN_VOLANTEFIN=70646&P_IDENTIFICADOR=0`; //window.URL.createObjectURL(blob);
-
+    this.onLoadToast('success', 'vista generada exitosamente', '');
   }
 
   cleanForm(): void {
