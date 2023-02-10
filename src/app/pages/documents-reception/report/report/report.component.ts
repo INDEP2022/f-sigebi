@@ -3,8 +3,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { EventEmitter, Output } from '@angular/core';
+import { ReportService } from 'src/app/core/services/reports/reports.service';
+import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 //BasePage
 import { BasePage } from 'src/app/core/shared/base-page';
+import { AnalysisResultModule } from 'src/app/pages/request/economic-compensation/analysis-result/analysis-result.module';
 
 interface IReportRanges {
   code: 'daily' | 'monthly' | 'yearly';
@@ -34,6 +37,8 @@ export class ReportComponent extends BasePage implements OnInit {
     { code: 'yearly', name: 'Anual' },
   ];
 
+
+
   get range() {
     return this.reportForm.get('range');
   }
@@ -45,7 +50,7 @@ export class ReportComponent extends BasePage implements OnInit {
   get to() {
     return this.reportForm.get('to');
   }
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private reportService: ReportService) {
     super();
   }
 
@@ -83,7 +88,7 @@ export class ReportComponent extends BasePage implements OnInit {
   }
 
   confirm(): void {
-    this.loading = true;
+
     console.log(this.reportForm.value);
     let params = {
       PN_DELEG: this.reportForm.controls['delegation'].value,
@@ -93,72 +98,37 @@ export class ReportComponent extends BasePage implements OnInit {
     };
 
     console.log(params);
+
+
+
     // open the window
-    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf? P_USR=LGONZALEZ&P_CUMP=1&P_T_NO_CUMP=2&P_T_CUMP=100`; //window.URL.createObjectURL(blob);
-    //let newWin = window.open(pdfurl,"test.pdf");
 
-    this.onLoadToast('error', 'Reporte no encontrado', '');
-    this.loading = false;
-
-    /*
-        const guardarArchivoDeTexto = (params: ArrayBuffer) => {
-          const a = document.createElement("a");
-          const archivo = new Blob([params], { type: 'application/pdf' });
-          const url = URL.createObjectURL(archivo);
-          a.href = url;
-    
-          a.click();
-          URL.revokeObjectURL(url);
-          window.open(url);
-        }
-    
-        */
-
-
+    this.onLoadToast('success', 'vista generada exitosamente', '');
+    this.preview(params);
 
     //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf? P_USR=LGONZALEZ&P_CUMP=1&P_T_NO_CUMP=2&P_T_CUMP=100`; //window.URL.createObjectURL(blob);
     //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RCONCOGVOLANTESRE.pdf?PN_VOLANTEFIN=70646&P_IDENTIFICADOR=0`; //window.URL.createObjectURL(blob);
 
-    // console.log(this.flyersForm.value);
-    //let params = { ...this.flyersForm.value };
-    /*for (const key in params) {
-      if (params[key] === null) delete params[key];
-    }*/
-    //console.log(params);
-    /*this.siabService
-      .getReport(SiabReportEndpoints.RCONCOGVOLANTESRE, params)
-      .subscribe({
-        next: response => {
-          console.log(response);
-          // this.readFile(response);
-          this.loading = false;
-        },
-        error: () => {
-          this.loading = false;
-          this.openPrevPdf(pdfurl);
-        },
-      });*/
-    // this.loading = false;
-    //this.openPrevPdf(pdfurl)
-    // open the window
-    //let newWin = window.open(pdfurl,"test.pdf");
 
-    // this.siabService.getReport(SiabReportEndpoints.RINDICA, form).subscribe(
-    //   (report: IReport) => {
-    //     console.log(report);
-    //     //TODO: VIEW FILE
-    //   },
-    //   error => (this.loading = false)
-    // );
-    /*setTimeout(st => {
-      this.loading = false;
-    }, 5000);*/
   }
 
   cleanForm(): void {
     this.reportForm.reset();
   }
 
+  preview(data: any) {
 
+    this.reportService.download(data).subscribe(response => {
+      if (response !== null) {
+        const fileReader = new FileReader();
+        let blob = new Blob([response], { type: 'application/pdf' });
+        const fileURL = URL.createObjectURL(blob);
+        window.open(fileURL, "RGEROFPRECEPDOCUM.pdf");
+
+
+
+      }
+    });
+  }
 
 }
