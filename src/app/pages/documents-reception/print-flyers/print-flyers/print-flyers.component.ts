@@ -282,6 +282,7 @@ export class PrintFlyersComponent extends BasePage implements OnInit {
   setMinDateEnd(date: Date) {
     if (date != undefined) this.minDateEnd = date;
   }
+
   cleanForm(): void {
     this.flyersForm.reset();
   }
