@@ -61,7 +61,7 @@ export class SummaryComponent extends BasePage implements OnInit {
     //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf? P_USR=LGONZALEZ&P_CUMP=1&P_T_NO_CUMP=2&P_T_CUMP=100`; //window.URL.createObjectURL(blob);
     //let newWin = window.open(pdfurl,"test.pdf");
 
-    this.onLoadToast('error', 'Reporte no encontrado', '');
+    this.onLoadToast('error', 'Reporte no disponible', '');
     this.loading = false;
   }
   cleanForm(): void {

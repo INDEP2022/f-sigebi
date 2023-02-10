@@ -103,16 +103,27 @@ export class PrintFlyersComponent extends BasePage implements OnInit {
     });
   }
 
+  loadFile() {
+    return;
+  }
+
   confirm(): void {
     this.loading = true;
     console.log(this.flyersForm.value);
     const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RCONCOGVOLANTESRE.pdf?PN_VOLANTEFIN=70646&P_IDENTIFICADOR=0`; //window.URL.createObjectURL(blob);
+
+    const downloadLink = document.createElement('a');
+    //console.log(linkSource);
+    downloadLink.href = pdfurl;
+    downloadLink.target = '_blank';
+    downloadLink.click();
+
     // console.log(this.flyersForm.value);
     let params = { ...this.flyersForm.value };
     for (const key in params) {
       if (params[key] === null) delete params[key];
     }
-    let newWin = window.open(pdfurl, 'test.pdf');
+    //let newWin = window.open(pdfurl, 'test.pdf');
     this.onLoadToast('success', '', 'Reporte generado');
     this.loading = false;
     //console.log(params);
