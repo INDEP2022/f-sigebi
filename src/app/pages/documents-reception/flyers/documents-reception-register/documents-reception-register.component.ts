@@ -4,8 +4,19 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { map, merge, takeUntil } from 'rxjs';
 import { DocumentsListComponent } from 'src/app/@standalone/documents-list/documents-list.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
+import { IAffair } from 'src/app/core/models/catalogs/affair.model';
+import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
+import { AffairService } from 'src/app/core/services/catalogs/affair.service';
+import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { TvalTable1Data } from '../../../../core/models/catalogs/dinamic-tables.model';
+import { DynamicTablesService } from '../../../../core/services/dynamic-catalogs/dynamic-tables.service';
 import { DocumentsReceptionFlyerSelectComponent } from './components/documents-reception-flyer-select/documents-reception-flyer-select.component';
 import { DOCUMENTS_RECEPTION_REGISTER_DEFAULT_IDENFIFIERS } from './constants/documents-reception-register-default-values';
 import {
@@ -33,7 +44,18 @@ export class DocumentsReceptionRegisterComponent
     DOCUMENTS_RECEPTION_REGISTER_DEFAULT_IDENFIFIERS,
     3
   );
-  constructor(private fb: FormBuilder, private modalService: BsModalService) {
+  subjects = new DefaultSelect<IAffair>();
+  federalEtities = new DefaultSelect<TvalTable1Data>();
+  transferors = new DefaultSelect<ITransferente>();
+
+  constructor(
+    private fb: FormBuilder,
+    private modalService: BsModalService,
+    private affairService: AffairService,
+    private notificationService: NotificationService,
+    private dynamicTablesService: DynamicTablesService,
+    private transferentService: TransferenteService
+  ) {
     super();
   }
 
@@ -45,10 +67,20 @@ export class DocumentsReceptionRegisterComponent
     return this.documentsReceptionForm.controls;
   }
 
+  get flyer() {
+    return this.documentsReceptionForm.controls['flyer'];
+  }
+
   ngOnInit(): void {
     // ! descomentar esta linea para mostrar el modal al inicio
     // this.selectFlyer();
     this.onFormChanges();
+    this.initSelectElements();
+  }
+
+  initSelectElements() {
+    this.getSubjects({ inicio: 1, text: '' });
+    this.getTransferors({ inicio: 1, text: '' });
   }
 
   onFormChanges() {
@@ -115,4 +147,59 @@ export class DocumentsReceptionRegisterComponent
   }
 
   save() {}
+
+  handleSelectErrors(err?: any) {
+    let error = '';
+    if (err.status === 0) {
+      error = 'Revise su conexión de Internet.';
+    } else {
+      error = err.message;
+    }
+    this.onLoadToast('error', 'Error', error);
+  }
+
+  getSubjects(params?: ListParams) {
+    this.affairService.getAll(params).subscribe({
+      next: data => {
+        this.subjects = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {
+        this.handleSelectErrors(err);
+      },
+    });
+  }
+
+  getIdentifiers(lparams: ListParams) {
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    if (lparams?.text.length > 0) params.addFilter('identifier', lparams.text);
+    //TODO: Flitro por volante (No se encontro el campo en el endpoint)
+    this.notificationService.getAllFilter(params.getParams()).subscribe({
+      next: data => {
+        this.identifiers = new DefaultSelect(data.data, data.count);
+      },
+      error: err => this.handleSelectErrors(err),
+    });
+  }
+
+  getDynamicTables(id: number | string, params: ListParams) {
+    //TODO: llamar servicio con params
+    this.dynamicTablesService.getTvalTable1ByTableKey(id).subscribe({
+      next: data => {
+        return { data: data.data, count: data.count };
+      },
+      error: err => this.handleSelectErrors(err),
+    });
+  }
+
+  getTransferors(lparams: ListParams) {
+    //TODO: aplicar filterparams para nameTransferent y active (not: 1,2 or null)
+    this.transferentService.getAll(lparams).subscribe({
+      next: data => {
+        this.transferors = new DefaultSelect(data.data, data.count);
+      },
+      error: err => this.handleSelectErrors(err),
+    });
+  }
 }

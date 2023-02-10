@@ -1,7 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { environment } from 'src/environments/environment';
+import { TvalTable1Data } from '../../../core/models/catalogs/dinamic-tables.model';
 import { ListParams } from '../interfaces/list-params';
 import { IDynamicCatalogMethods } from '../interfaces/ms-dynamiccatalog-methods';
 
@@ -21,6 +23,16 @@ export class DynamicCatalogRepository<T> implements IDynamicCatalogMethods<T> {
   getByIdData(route: string, _id?: number | string): Observable<T> {
     const fullRoute = `${this.s}/${route}`;
     return this.httpClient.get<T>(`${fullRoute}/${_id}`);
+  }
+
+  getByKeyTvalTable1(
+    route: string,
+    _id?: number | string
+  ): Observable<IListResponse<TvalTable1Data>> {
+    const fullRoute = `${this.ms}/${route}`;
+    return this.httpClient.get<IListResponse<TvalTable1Data>>(
+      `${fullRoute}/${_id}`
+    );
   }
 
   //   getAllPaginated(

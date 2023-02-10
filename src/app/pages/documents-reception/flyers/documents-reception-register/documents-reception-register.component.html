@@ -80,7 +80,10 @@
             [control]="documentsReceptionForm.get('subject')">
             <ngx-select
               [form]="documentsReceptionForm"
-              [data]="identifiers"
+              (fetchItems)="getSubjects($event)"
+              [data]="subjects"
+              value="id"
+              bindLabel="description"
               control="subject"
               label="Asunto">
             </ngx-select>
@@ -293,7 +296,10 @@
             [control]="documentsReceptionForm.get('transfer')">
             <ngx-select
               [form]="documentsReceptionForm"
-              [data]="identifiers"
+              (fetchItems)="getTransferors($event)"
+              [data]="transferors"
+              value="id"
+              bindLabel="nameTransferent"
               control="transfer"
               label="Transferente">
             </ngx-select>

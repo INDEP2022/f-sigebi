@@ -26,6 +26,13 @@ export interface ITablesType {
   no_registro: number;
 }
 
+export interface TvalTable1Data {
+  otKey: string;
+  table: ITables;
+  value: string;
+  numRegister: string;
+  abbreviation: null;
+}
 // export interface ITdescatrib {
 //   idNmTable: number; //nmtabla
 //   keyAtrib: number;
