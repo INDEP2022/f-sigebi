@@ -5,49 +5,36 @@
     </div>
   </div>
   <div body>
-    <form class="form-material" [formGroup]="form">
-      <div class="row">
-        <div class="col-md-2">
-          <form-field [control]="form.get('id')" label="CVE Guardavalor">
-            <input type="text" class="form-control" formControlName="id" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="form.get('description')" label="Descripción">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="description" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="form.get('location')" label="Ubicaci&oacute;n">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="location" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <form-field [control]="form.get('responsible')" label="Responsable">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="responsible" />
-          </form-field>
-        </div>
-        <div class="col-md-2">
-          <button
-            class="btn btn-sm btn-secondary btn-block active"
-            [disabled]="!form.valid"
-            (click)="getSaveValuesById()">
-            Generar Bater&iacute;as
-          </button>
-        </div>
+    <div class="row">
+      <div class="form-material col-md-5">
+        <search-bar [params]="params0"></search-bar>
       </div>
-    </form>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="ch-content">
+          <h5 class="title"></h5>
+          <div class="col-md-5 buttons">
+            <app-columns-select
+              [(settings)]="settingsSaveValues"></app-columns-select>
+            <div>
+              <button class="btn btn-primary active btn-sm ml-3">Nuevo</button>
+            </div>
+          </div>
+        </div>
+        <div class="table-responsive pt-3">
+          <ng2-smart-table
+            [settings]="settingsSaveValues"
+            [source]="saveValuesList"
+            (userRowSelect)="rowsSelectedSaveValues($event)"></ng2-smart-table>
+        </div>
+        <app-pagination
+          [params]="params0"
+          [totalItems]="totalItems0"></app-pagination>
+      </div>
+    </div>
 
-    <div class="row" *ngIf="form.get('responsible').value !== null">
+    <div class="row">
       <div class="row">
         <div class="col-md-12">
           <hr />
@@ -68,8 +55,9 @@
           <div class="table-responsive pt-3">
             <ng2-smart-table
               [settings]="settingsBattery"
-              [source]="dataBattery"
-              (edit)="openFormBattery($event.data)"></ng2-smart-table>
+              [source]="batteryList"
+              (edit)="openFormBattery($event.data)"
+              (userRowSelect)="rowsSelectedBattery($event)"></ng2-smart-table>
           </div>
         </div>
       </div>
@@ -91,8 +79,9 @@
           <div class="table-responsive pt-3">
             <ng2-smart-table
               [settings]="settingsShelves"
-              [source]="dataShelves"
-              (edit)="openFormShelves($event.data)"></ng2-smart-table>
+              [source]="shelvesList"
+              (edit)="openFormShelves($event.data)"
+              (userRowSelect)="rowsSelectedShelves($event)"></ng2-smart-table>
           </div>
         </div>
       </div>
@@ -114,7 +103,7 @@
           <div class="table-responsive pt-3">
             <ng2-smart-table
               [settings]="settingsLockers"
-              [source]="dataLockers"
+              [source]="lockerList"
               (edit)="openFormLocker($event.data)"></ng2-smart-table>
           </div>
         </div>

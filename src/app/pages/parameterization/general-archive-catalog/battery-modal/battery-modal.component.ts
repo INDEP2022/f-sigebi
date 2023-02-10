@@ -60,7 +60,7 @@ export class BatteryModalComponent extends BasePage implements OnInit {
       registerNumber: [null, []],
     });
     if (this.battery != null) {
-      this.id = this.battery.storeCode as ISaveValue;
+      this.id = this.battery.storeCode as unknown as ISaveValue;
       this.edit = true;
       this.batteryForm.patchValue(this.battery);
       this.batteryForm.controls['storeCode'].setValue(this.id.id);
