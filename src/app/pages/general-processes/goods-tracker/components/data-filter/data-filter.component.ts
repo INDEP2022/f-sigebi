@@ -37,6 +37,7 @@ export class DataFilterComponent implements OnInit {
   ngOnInit(): void {}
 
   search() {
+    console.log(this.form.controls.process.value);
     this.onSubmit.emit(this.form.value);
   }
 

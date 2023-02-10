@@ -14,6 +14,11 @@ import { GoodSubtypeService } from 'src/app/core/services/catalogs/good-subtype.
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { TypesByClasificationService } from 'src/app/core/services/catalogs/types-by-clasification.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import {
+  SSSUBTYPES_CLASIF,
+  SUBTYPES_CLASIF,
+  TYPES_CLASIF,
+} from '../../utils/constants/filter-match';
 import { GoodTrackerForm } from '../../utils/goods-tracker-form';
 
 @Component({
@@ -43,6 +48,8 @@ export class ClasificationFilterComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {}
+
+  fractionChange() {}
 
   search() {
     this.onSubmit.emit(this.form.value);
@@ -85,6 +92,42 @@ export class ClasificationFilterComponent implements OnInit {
       });
   }
 
+  getClasif() {
+    const params = new ListParams();
+    params.limit = 1000;
+    const types = this.form.controls.types.value;
+    const subtypes = this.form.controls.subtypes.value;
+    const ssubtypes = this.form.controls.ssubtypes.value;
+    return this.goodSssubtypeService.getByManyIds(
+      { types, subtypes, ssubtypes },
+      params
+    );
+  }
+
+  typesChange() {
+    TYPES_CLASIF.length = 0;
+    this.getClasif().subscribe({
+      next: res => TYPES_CLASIF.push(res.data.map(t => t.numClasifGoods)),
+    });
+    this.getSubtypes();
+  }
+
+  subtypesChange() {
+    SUBTYPES_CLASIF.length = 0;
+    this.getClasif().subscribe({
+      next: res => SUBTYPES_CLASIF.push(res.data.map(t => t.numClasifGoods)),
+    });
+    this.getSsubtypes();
+  }
+
+  ssubtypesChange() {
+    SSSUBTYPES_CLASIF.length = 0;
+    this.getClasif().subscribe({
+      next: res => SSSUBTYPES_CLASIF.push(res.data.map(t => t.numClasifGoods)),
+    });
+    this.getSssubtypes();
+  }
+
   selectFraction() {
     const modalConfig = {
       ...MODAL_CONFIG,
@@ -108,13 +151,9 @@ export class ClasificationFilterComponent implements OnInit {
   fillTypesByClasif(types: ITypesByClasification) {
     const { sssubtype } = types;
     const sssubtypes = [
-      { id: sssubtype.id, description: sssubtype.description },
+      { numClasifGoods: types.id, description: sssubtype.description },
     ];
     this.sssubtypes = new DefaultSelect(sssubtypes, 1);
-    this.formControls.sssubtypes.setValue([`${sssubtype.id}`]);
-  }
-
-  fractionChange() {
-    console.log('fraction change');
+    this.formControls.sssubtypes.setValue([`${types.id}`]);
   }
 }

@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BehaviorSubject } from 'rxjs';
 import { DocumentsListComponent } from 'src/app/@standalone/documents-list/documents-list.component';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ITrackedGood } from 'src/app/core/models/ms-good-tracker/tracked-good.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ViewPhotosComponent } from '../view-photos/view-photos.component';
 import { GP_GOODS_COLUMNS } from './goods-columns';
@@ -15,7 +18,9 @@ import { GP_GOODS_COLUMNS } from './goods-columns';
 })
 export class GoodsTableComponent extends BasePage implements OnInit {
   pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
-
+  @Input() goods: ITrackedGood[] = [];
+  @Input() totalItems: number = 0;
+  @Input() params: BehaviorSubject<ListParams>;
   constructor(
     private modalService: BsModalService,
     private sanitizer: DomSanitizer
