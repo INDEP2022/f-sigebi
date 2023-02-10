@@ -69,6 +69,10 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
 
   lockers: ILocker;
 
+  selectedSaveValues: boolean = false;
+  selectedBattery: boolean = false;
+  selectedShelve: boolean = false;
+
   constructor(
     private fb: FormBuilder,
     private saveValueService: SaveValueService,
@@ -153,6 +157,7 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
     this.params0
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getBattery(this.idSaveValues));
+    this.selectedSaveValues = true;
   }
 
   //Método para traer registros de Baterias basados en ID de Guardavalor
@@ -193,6 +198,7 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
     this.params1
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getShelves(this.storeCode, this.idBattery));
+    this.selectedBattery = true;
   }
 
   //Método para llenar tabla de registros basado en los filtros
@@ -244,6 +250,7 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
       .subscribe(() =>
         this.getLocker(this.saveValueKey, this.numBattery, this.numShelf)
       );
+    this.selectedShelve = true;
   }
 
   //Métodos para llenar tabla de Casilleros/Locker con ID de Guardavalor/SaveValues
@@ -274,7 +281,7 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
     const modalConfig = MODAL_CONFIG;
     const cve = { ...this.idSaveValues };
     const noBattery = { ...this.idBattery };
-    const noShelve = { ...this.idShelve };
+    const noShelve = { ...this.numShelf };
     modalConfig.initialState = {
       locker,
       cve,

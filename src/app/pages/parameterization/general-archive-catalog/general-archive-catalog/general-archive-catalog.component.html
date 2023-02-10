@@ -10,6 +10,7 @@
         <search-bar [params]="params0"></search-bar>
       </div>
     </div>
+
     <div class="row">
       <div class="col-md-12">
         <!-- <div class="ch-content">
@@ -39,7 +40,7 @@
     </div>
 
     <div class="row">
-      <div class="row">
+      <div class="row" *ngIf="selectedSaveValues">
         <div class="col-md-12">
           <hr />
           <div class="ch-content">
@@ -67,7 +68,7 @@
           </div>
         </div>
       </div>
-      <div class="row">
+      <div class="row" *ngIf="selectedBattery">
         <div class="col-md-12">
           <hr />
           <div class="ch-content">
@@ -93,7 +94,7 @@
           </div>
         </div>
       </div>
-      <div class="row">
+      <div class="row" *ngIf="selectedShelve">
         <div class="col-md-12">
           <hr />
           <div class="ch-content">
