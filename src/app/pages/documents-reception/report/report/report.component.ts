@@ -88,7 +88,6 @@ export class ReportComponent extends BasePage implements OnInit {
   }
 
   confirm(): void {
-
     console.log(this.reportForm.value);
     let params = {
       PN_DELEG: this.reportForm.controls['delegation'].value,
@@ -96,19 +95,12 @@ export class ReportComponent extends BasePage implements OnInit {
       PF_MES: this.reportForm.controls['from'].value,
       PF_ANIO: this.reportForm.controls['to'].value,
     };
-
     console.log(params);
-
-
-
     // open the window
-
     this.onLoadToast('success', 'vista generada exitosamente', '');
-    this.preview(params);
-
-    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf? P_USR=LGONZALEZ&P_CUMP=1&P_T_NO_CUMP=2&P_T_CUMP=100`; //window.URL.createObjectURL(blob);
+    const pdfurl = `http://s29.q4cdn.com/175625835/files/doc_downloads/test.pdf`; //window.URL.createObjectURL(blob);
+    window.open(pdfurl, "RGEROFPRECEPDOCUM.pdf");
     //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RCONCOGVOLANTESRE.pdf?PN_VOLANTEFIN=70646&P_IDENTIFICADOR=0`; //window.URL.createObjectURL(blob);
-
 
   }
 
@@ -116,19 +108,6 @@ export class ReportComponent extends BasePage implements OnInit {
     this.reportForm.reset();
   }
 
-  preview(data: any) {
 
-    this.reportService.download(data).subscribe(response => {
-      if (response !== null) {
-        const fileReader = new FileReader();
-        let blob = new Blob([response], { type: 'application/pdf' });
-        const fileURL = URL.createObjectURL(blob);
-        window.open(fileURL, "RGEROFPRECEPDOCUM.pdf");
-
-
-
-      }
-    });
-  }
 
 }
