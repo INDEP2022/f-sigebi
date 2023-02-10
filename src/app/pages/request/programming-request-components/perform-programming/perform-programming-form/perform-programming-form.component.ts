@@ -51,7 +51,7 @@ export class PerformProgrammingFormComponent
     actions: {
       columnTitle: 'Acciones',
       position: 'right',
-      delete: false,
+      delete: true,
     },
     columns: USER_COLUMNS,
   };
