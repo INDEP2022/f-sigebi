@@ -357,7 +357,6 @@ export class AssetsComponent extends BasePage implements OnInit {
   }
 
   saveMenaje() {
-    debugger;
     new Promise((resolve, reject) => {
       for (let i = 0; i < this.menajeSelected.length; i++) {
         const element = this.menajeSelected[i];
@@ -425,7 +424,6 @@ export class AssetsComponent extends BasePage implements OnInit {
     this.requestHelperService.currentRefresh.subscribe({
       next: data => {
         if (data) {
-          this.saveMenaje();
           setTimeout(() => {
             this.closeCreateGoodWIndows();
           }, 600);

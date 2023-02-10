@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   Component,
   inject,
@@ -14,6 +15,7 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { catchError } from 'rxjs/operators';
 import {
   FilterParams,
   ListParams,
@@ -440,7 +442,7 @@ export class DetailAssetsTabComponentComponent
     keyTownship?: number,
     keyState?: number,
     keySettlement?: number
-  ) {
+  ): any {
     params.limit = 20;
     params['filter.keyTownship'] = `$eq:${keyTownship}`;
     params['filter.keyState'] = `$eq:${keyState}`;
@@ -452,14 +454,22 @@ export class DetailAssetsTabComponentComponent
 
     const par = new FilterParams();
 
-    this.goodsQueryService.getZipCode(params).subscribe({
-      next: data => {
-        this.selectCP = new DefaultSelect(data.data, data.count);
-      },
-      error: error => {
-        console.log(error);
-      },
-    });
+    this.goodsQueryService
+      .getZipCode(params)
+      .pipe(
+        catchError((error: HttpErrorResponse) => {
+          let resp: any = '';
+          if (error?.error?.message !== 'No se encontrarón registros') {
+            resp = error;
+          }
+          return resp;
+        })
+      )
+      .subscribe({
+        next: (data: any) => {
+          this.selectCP = new DefaultSelect(data.data, data.count);
+        },
+      });
   }
 
   getBrand(event: any) {}
@@ -510,9 +520,9 @@ export class DetailAssetsTabComponentComponent
           this.selectState = new DefaultSelect([data]);
           this.domicileForm.controls['statusKey'].setValue(data.id);
         },
-        error: error => {
+        /*error: error => {
           console.log(error);
-        },
+        },*/
       });
     }
   }
