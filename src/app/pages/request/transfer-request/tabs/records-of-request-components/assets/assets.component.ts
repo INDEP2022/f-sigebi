@@ -13,6 +13,7 @@ import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { RequestHelperService } from 'src/app/pages/request/request-helper-services/request-helper.service';
+import Swal from 'sweetalert2';
 import { MenajeComponent } from '../records-of-request-child-tabs-components/menaje/menaje.component';
 import { SelectAddressComponent } from '../records-of-request-child-tabs-components/select-address/select-address.component';
 import { ASSETS_COLUMNS } from './assests-columns';
@@ -374,7 +375,44 @@ export class AssetsComponent extends BasePage implements OnInit {
     });
   }
 
-  delete() {}
+  delete() {
+    if (this.listgoodObjects.length > 0) {
+      Swal.fire({
+        title: 'Eliminar',
+        text: 'Esta seguro de querer eliminar el bien seleccionado?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#9D2449',
+        cancelButtonColor: '#B38E5D',
+        confirmButtonText: 'Aceptar',
+      }).then(result => {
+        if (result.isConfirmed) {
+          this.deleteGood();
+        }
+      });
+    } else {
+      this.message('info', 'Información', `Seleccione uno o mas bienes`);
+    }
+  }
+
+  deleteGood() {
+    for (let i = 0; i < this.listgoodObjects.length; i++) {
+      const element = this.listgoodObjects[i];
+      this.goodService.remove(element.id).subscribe({
+        next: resp => {
+          if (resp.statusCode === 200) {
+            this.message('success', 'Eliminado', `${resp.message[0]}`);
+            this.closeCreateGoodWIndows();
+          } else {
+            this.message('error', 'Eliminar', `${resp.message[0]}`);
+          }
+        },
+        error: error => {
+          console.log(error);
+        },
+      });
+    }
+  }
 
   refreshTable() {
     this.requestHelperService.currentRefresh.subscribe({
@@ -382,14 +420,18 @@ export class AssetsComponent extends BasePage implements OnInit {
         if (data) {
           this.saveMenaje();
           setTimeout(() => {
-            this.goodObject = null;
-            this.createNewAsset = false;
-            this.btnCreate = 'Crear Nuevo';
-            this.paginatedData();
+            this.closeCreateGoodWIndows();
           }, 600);
         }
       },
     });
+  }
+
+  closeCreateGoodWIndows() {
+    this.goodObject = null;
+    this.createNewAsset = false;
+    this.btnCreate = 'Crear Nuevo';
+    this.paginatedData();
   }
 
   message(header: any, title: string, body: string) {

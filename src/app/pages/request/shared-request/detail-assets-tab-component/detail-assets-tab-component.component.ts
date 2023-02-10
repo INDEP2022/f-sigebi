@@ -668,7 +668,7 @@ export class DetailAssetsTabComponentComponent
   getGoodDomicilie(addressId: number) {
     this.goodDomicilie.getById(addressId).subscribe({
       next: (resp: any) => {
-        var value = resp.data;
+        var value = resp;
         this.getStateOfRepublic(new ListParams(), value.statusKey);
         //this.domicileForm.controls['statusKey'].setValue(value.statusKey);
         this.domicileForm.patchValue(value);
