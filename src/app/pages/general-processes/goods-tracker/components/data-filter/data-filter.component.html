@@ -29,19 +29,19 @@
       <ng-select
         class="form-control"
         formControlName="process"
-        value="value"
-        bindLabel="value"
+        bindValue="value"
+        bindLabel="label"
         [items]="processes"
         [multiple]="true">
       </ng-select>
     </form-field>
 
-    <form-field
+    <!-- <form-field
       [control]="form.get('samiInventory')"
       class="col-md-3"
       label="Inv&#46; SAMI">
       <input type="text" formControlName="samiInventory" class="form-control" />
-    </form-field>
+    </form-field> -->
 
     <!-- <form-check
       label="List&#46; Inventario"
@@ -59,7 +59,7 @@
         [searchOnInit]="true"
         control="targetIdentifier"
         [data]="labels"
-        value="id"
+        value="description"
         bindLabel="description"
         (fetchItems)="getGoodLabels($event)"
         label="Identificador de Destino"></ngx-select>
@@ -164,7 +164,7 @@
   </div>
 
   <div class="row pt-5">
-    <form-field
+    <!-- <form-field
       [control]="form.get('movableIventory')"
       class="col-md-3"
       label="Inv&#46; Mueble">
@@ -172,7 +172,7 @@
         type="text"
         formControlName="movableIventory"
         class="form-control" />
-    </form-field>
+    </form-field> -->
 
     <form-field
       [control]="form.get('siabiInventory')"

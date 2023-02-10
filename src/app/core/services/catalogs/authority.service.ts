@@ -1,6 +1,7 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpService, _Params } from 'src/app/common/services/http.service';
 import { environment } from 'src/environments/environment';
 import { ENDPOINT_LINKS } from '../../../common/constants/endpoints';
 import { ICrudMethods } from '../../../common/repository/interfaces/crud-methods';
@@ -12,12 +13,15 @@ import { IAuthority } from '../../models/catalogs/authority.model';
 @Injectable({
   providedIn: 'root',
 })
-export class AuthorityService implements ICrudMethods<IAuthority> {
+export class AuthorityService
+  extends HttpService
+  implements ICrudMethods<IAuthority>
+{
   private readonly route: string = ENDPOINT_LINKS.Authority;
-  constructor(
-    private authorityRepository: Repository<IAuthority>,
-    private readonly httpClient: HttpClient
-  ) {}
+  constructor(private authorityRepository: Repository<IAuthority>) {
+    super();
+    this.microservice = 'catalog';
+  }
 
   getAll(params?: ListParams): Observable<IListResponse<IAuthority>> {
     return this.authorityRepository.getAllPaginated(this.route, params);
@@ -45,6 +49,10 @@ export class AuthorityService implements ICrudMethods<IAuthority> {
       `${environment.API_URL}${route}`,
       model
     );
+  }
+
+  getAllFilter(params?: _Params) {
+    return this.get('authority', params);
   }
 
   postByColumns(
