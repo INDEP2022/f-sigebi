@@ -11,7 +11,7 @@
         <input type="checkbox" name="" id="galery" />
       </form-check>
       <div>
-        <button class="btn btn-primary btn-sm active">
+        <button (click)="getAll()" class="btn btn-primary btn-sm active">
           Todos los registros <i class="fa fa-search ml-2"></i>
         </button>
       </div>
@@ -113,5 +113,9 @@
     </div>
   </div>
 </app-card>
-
-<goods-table *ngIf="showTable"></goods-table>
+<div #scrollTable></div>
+<goods-table
+  *ngIf="showTable"
+  [goods]="goods"
+  [params]="_params"
+  [totalItems]="totalItems"></goods-table>

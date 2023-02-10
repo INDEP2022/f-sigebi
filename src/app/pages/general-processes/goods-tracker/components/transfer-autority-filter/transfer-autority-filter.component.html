@@ -10,24 +10,24 @@
         control="transfers"
         label="Transferente"
         [data]="transfers"
-        (fetchItems)="getTransfers($event)"></ngx-select>
+        (fetchItems)="getTransfers($event)"
+        (change)="transferChange()"></ngx-select>
     </form-field>
     <form-field [control]="form.get('transmitters')" class="col-md-4">
       <ngx-select
         [form]="form"
-        [searchOnInit]="true"
         [multiple]="true"
         control="transmitters"
         value="id"
         bindLabel="stationName"
         label="Emisora"
         [data]="transmitters"
-        (fetchItems)="getTransmitters($event)"></ngx-select>
+        (fetchItems)="getTransmitters($event)"
+        (change)="transmitterChange()"></ngx-select>
     </form-field>
     <form-field [control]="form.get('autorities')" class="col-md-4">
       <ngx-select
         [form]="form"
-        [searchOnInit]="true"
         [multiple]="true"
         value="idAuthority"
         bindLabel="authorityName"
