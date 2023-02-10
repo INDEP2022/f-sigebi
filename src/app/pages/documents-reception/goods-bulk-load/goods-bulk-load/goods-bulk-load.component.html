@@ -145,9 +145,10 @@
                   '%'
                 ">
                 {{
-                  (DeclarationsSatSaeMassive.common_general.total / 100) *
-                    DeclarationsSatSaeMassive.common_general.count +
-                    1
+                  (DeclarationsSatSaeMassive.common_general.count +
+                    1 / (DeclarationsSatSaeMassive.common_general.count + 1) -
+                    DeclarationsSatSaeMassive.common_general.total) *
+                    100
                 }}%
               </div>
             </div>
