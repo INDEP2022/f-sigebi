@@ -43,7 +43,7 @@ export class SummaryComponent extends BasePage implements OnInit {
     });
   }
 
-  save() { }
+  save() {}
 
   confirm(): void {
     this.loading = true;
@@ -53,8 +53,7 @@ export class SummaryComponent extends BasePage implements OnInit {
       PN_SUBDEL: this.flyersForm.controls['subdelegation'].value,
       PF_FECINI: this.flyersForm.controls['from'].value,
       PF_FECFIN: this.flyersForm.controls['to'].value,
-      PC_ENTFED: this.flyersForm.controls['entidad'].value
-
+      PC_ENTFED: this.flyersForm.controls['entidad'].value,
     };
 
     console.log(params);
@@ -64,7 +63,6 @@ export class SummaryComponent extends BasePage implements OnInit {
 
     this.onLoadToast('error', 'Reporte no encontrado', '');
     this.loading = false;
-
   }
   cleanForm(): void {
     this.flyersForm.reset();
