@@ -2,12 +2,9 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { EventEmitter, Output } from '@angular/core';
 import { ReportService } from 'src/app/core/services/reports/reports.service';
-import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 //BasePage
 import { BasePage } from 'src/app/core/shared/base-page';
-import { AnalysisResultModule } from 'src/app/pages/request/economic-compensation/analysis-result/analysis-result.module';
 
 interface IReportRanges {
   code: 'daily' | 'monthly' | 'yearly';
@@ -36,8 +33,6 @@ export class ReportComponent extends BasePage implements OnInit {
     { code: 'monthly', name: 'Mensual' },
     { code: 'yearly', name: 'Anual' },
   ];
-
-
 
   get range() {
     return this.reportForm.get('range');
@@ -68,7 +63,7 @@ export class ReportComponent extends BasePage implements OnInit {
     });
   }
 
-  save() { }
+  save() {}
 
   rangeChange() {
     this.changeCalendarFormat();
@@ -87,7 +82,6 @@ export class ReportComponent extends BasePage implements OnInit {
   }
 
   confirm(): void {
-
     console.log(this.reportForm.value);
     let params = {
       PN_DELEG: this.reportForm.controls['delegation'].value,
@@ -99,7 +93,7 @@ export class ReportComponent extends BasePage implements OnInit {
     // open the window
     this.onLoadToast('success', 'procesando', '');
     const pdfurl = `http://s29.q4cdn.com/175625835/files/doc_downloads/test.pdf`; //window.URL.createObjectURL(blob);
-    window.open(pdfurl, "RGEROFPRECEPDOCUM.pdf");
+    window.open(pdfurl, 'RGEROFPRECEPDOCUM.pdf');
     //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RCONCOGVOLANTESRE.pdf?PN_VOLANTEFIN=70646&P_IDENTIFICADOR=0`; //window.URL.createObjectURL(blob);
     this.onLoadToast('success', 'vista generada exitosamente', '');
   }
