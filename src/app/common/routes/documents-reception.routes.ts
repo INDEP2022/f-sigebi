@@ -63,10 +63,10 @@ export const DOCUMENTS_RECEPTION_ROUTES = [
         label: 'Previsión de Bienes',
         link: '/pages/documents-reception/goods-forecast',
       },
-      {
-        label: 'Validadores de Actas',
-        link: '/pages/documents-reception/records-validation',
-      },
+      // { ### Esta pantalla se llama desde Cierre de Actas de Decomiso y Devolución
+      //   label: 'Validadores de Actas',
+      //   link: '/pages/documents-reception/records-validation',
+      // },
       {
         label: 'Servicio de vigilancia para Bienes',
         link: '/pages/documents-reception/goods-vigilance-service',
