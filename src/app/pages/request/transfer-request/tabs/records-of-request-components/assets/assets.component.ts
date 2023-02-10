@@ -6,7 +6,6 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
-import { IGood } from 'src/app/core/models/ms-good/good';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
@@ -42,7 +41,8 @@ var defaultData = [
 export class AssetsComponent extends BasePage implements OnInit {
   @Input() requestObject: any; //solicitudes
   goodObject: any; //bienes
-  listgoodObjects: IGood[] = [];
+  listgoodObjects: any[] = [];
+  totalItems: number = 0;
   principalSave: boolean = false;
   bsModalRef: BsModalRef;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -127,6 +127,7 @@ export class AssetsComponent extends BasePage implements OnInit {
           });
 
           Promise.all(result).then(x => {
+            this.totalItems = data.data.length;
             this.paragraphs = data.data;
             this.loading = false;
           });
@@ -314,6 +315,7 @@ export class AssetsComponent extends BasePage implements OnInit {
       if (this.isSaveMenaje === true) {
         await this.saveMenaje();
       }
+      this.closeCreateGoodWIndows();
     } else {
       this.message('error', 'Error', `Seleccione al menos un bien`);
     }
@@ -323,6 +325,11 @@ export class AssetsComponent extends BasePage implements OnInit {
     new Promise((resolve, reject) => {
       for (let i = 0; i < this.listgoodObjects.length; i++) {
         const element = this.listgoodObjects[i];
+        delete element.goodTypeName;
+        delete element.physicalStatusName;
+        delete element.stateConservationName;
+        delete element.transferentDestinyName;
+        delete element.destinyLigieName;
         this.goodService.update(element.id, element).subscribe({
           next: resp => {
             if (resp.statusCode != null) {
@@ -401,7 +408,7 @@ export class AssetsComponent extends BasePage implements OnInit {
       this.goodService.remove(element.id).subscribe({
         next: resp => {
           if (resp.statusCode === 200) {
-            this.message('success', 'Eliminado', `${resp.message[0]}`);
+            this.message('success', 'Eliminado', `Bien ${resp.message[0]}`);
             this.closeCreateGoodWIndows();
           } else {
             this.message('error', 'Eliminar', `${resp.message[0]}`);
