@@ -16,7 +16,6 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 //Components
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { SiabReportEndpoints } from 'src/app/common/constants/endpoints/siab-reports-endpoints';
 import {
   FilterParams,
   ListParams,
@@ -104,34 +103,31 @@ export class PrintFlyersComponent extends BasePage implements OnInit {
     });
   }
 
+  loadFile() {
+    return;
+  }
+
   confirm(): void {
     this.loading = true;
     console.log(this.flyersForm.value);
-
-    // this.loading = false;
-    // return;
-
-    // let form = {
-    //   P_USR: 'LGONZALEZ',
-    //   P_CUMP: 1,
-    //   P_T_NO_CUMP: 2,
-    //   P_T_CUMP: 100,
-    // };
-
-    // let form = {
-    //   PN_VOLANTEINI: 1,
-    //   PN_VOLANTEFIN: 10000,
-    // };
-
-    // const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RINDICA_0001.pdf?P_USR=LGONZALEZ&P_CUMP=1&P_T_NO_CUMP=2&P_T_CUMP=100`; //window.URL.createObjectURL(blob);
     const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RCONCOGVOLANTESRE.pdf?PN_VOLANTEFIN=70646&P_IDENTIFICADOR=0`; //window.URL.createObjectURL(blob);
+
+    const downloadLink = document.createElement('a');
+    //console.log(linkSource);
+    downloadLink.href = pdfurl;
+    downloadLink.target = '_blank';
+    downloadLink.click();
+
     // console.log(this.flyersForm.value);
     let params = { ...this.flyersForm.value };
     for (const key in params) {
       if (params[key] === null) delete params[key];
     }
-    console.log(params);
-    this.siabService
+    //let newWin = window.open(pdfurl, 'test.pdf');
+    this.onLoadToast('success', '', 'Reporte generado');
+    this.loading = false;
+    //console.log(params);
+    /*this.siabService
       .getReport(SiabReportEndpoints.RCONCOGVOLANTESRE, params)
       .subscribe({
         next: response => {
@@ -145,7 +141,7 @@ export class PrintFlyersComponent extends BasePage implements OnInit {
           // this.openPrevPdf(pdfurl);
           window.open(pdfurl, 'Reporte de Impresion de Volantes');
         },
-      });
+    });*/
     // this.loading = false;
     //this.openPrevPdf(pdfurl)
     // open the window
@@ -296,5 +292,9 @@ export class PrintFlyersComponent extends BasePage implements OnInit {
 
   setMinDateEnd(date: Date) {
     if (date != undefined) this.minDateEnd = date;
+  }
+
+  cleanForm(): void {
+    this.flyersForm.reset();
   }
 }

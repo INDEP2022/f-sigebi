@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { EventEmitter, Output } from '@angular/core';
 //BasePage
 import { BasePage } from 'src/app/core/shared/base-page';
 
@@ -64,7 +63,7 @@ export class ReportComponent extends BasePage implements OnInit {
     });
   }
 
-  save() { }
+  save() {}
 
   rangeChange() {
     this.changeCalendarFormat();
@@ -97,11 +96,11 @@ export class ReportComponent extends BasePage implements OnInit {
     //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf? P_USR=LGONZALEZ&P_CUMP=1&P_T_NO_CUMP=2&P_T_CUMP=100`; //window.URL.createObjectURL(blob);
     //let newWin = window.open(pdfurl,"test.pdf");
 
-    // this.onLoadToast('error', 'Reporte no encontrado', '');
+    //
     this.loading = false;
-
+    this.onLoadToast('error', 'Reporte no disponible', '');
     const guardarArchivoDeTexto = (params: ArrayBuffer) => {
-      const a = document.createElement("a");
+      const a = document.createElement('a');
       const archivo = new Blob([params], { type: 'application/pdf' });
       const url = URL.createObjectURL(archivo);
       a.href = url;
@@ -109,10 +108,7 @@ export class ReportComponent extends BasePage implements OnInit {
       a.click();
       URL.revokeObjectURL(url);
       window.open(url);
-    }
-
-
-
+    };
 
     //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf? P_USR=LGONZALEZ&P_CUMP=1&P_T_NO_CUMP=2&P_T_CUMP=100`; //window.URL.createObjectURL(blob);
     //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RCONCOGVOLANTESRE.pdf?PN_VOLANTEFIN=70646&P_IDENTIFICADOR=0`; //window.URL.createObjectURL(blob);
@@ -156,7 +152,4 @@ export class ReportComponent extends BasePage implements OnInit {
   cleanForm(): void {
     this.reportForm.reset();
   }
-
-
-
 }

@@ -49,6 +49,7 @@ export class UserFormComponent extends BasePage implements OnInit {
         //Ejecutar el servicio
         this.loading = true;
         this.onLoadToast('success', 'Usuario creado correctamente', '');
+        this.close();
       }
     });
   }
@@ -63,6 +64,7 @@ export class UserFormComponent extends BasePage implements OnInit {
         //Ejecutar el servicio
         this.loading = true;
         this.onLoadToast('success', 'Usuario editado correctamente', '');
+        this.close();
       }
     });
   }

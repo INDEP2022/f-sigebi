@@ -1,3 +1,4 @@
+import { HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { GoodsQueryEndpoints } from 'src/app/common/constants/endpoints/ms-good-query-endpoints';
@@ -20,7 +21,7 @@ export class GoodsQueryService extends HttpService {
   private routeLigieUnitMeasure = GoodsQueryEndpoints.LigieUnitMeasure;
   private zipCodeRoute = GoodsQueryEndpoints.ZipCode;
   private attribClassifGoodRoute = GoodsQueryEndpoints.AttribClassifBood;
-  private goodsQueryRoute = GoodsQueryEndpoints.ProgrammingGood;
+  private routeGoodsProg = GoodsQueryEndpoints.ProgrammingGood;
   private atributeClassificationGood: GoodsQueryEndpoints.AtributeClassificationGood;
   private goodQueryRepository = inject(MsGoodQueryRepository);
   private attribClassifGoodMethodsRepository = inject(
@@ -66,10 +67,14 @@ export class GoodsQueryService extends HttpService {
     );
   }
 
-  getGoodsProgramming(params: ListParams): Observable<IListResponse<any>> {
-    return this.goodQueryRepository.getAllPaginated(
-      this.goodsQueryRoute,
-      params
+  postGoodsProgramming(
+    _params: ListParams,
+    filterColumns: Object
+  ): Observable<IListResponse<any>> {
+    const params = this.makeParams(_params);
+    return this.httpClient.post<IListResponse<any>>(
+      `${environment.API_URL}${this.routeGoodsProg}?${params}`,
+      { filterColumns }
     );
   }
 
@@ -132,5 +137,13 @@ export class GoodsQueryService extends HttpService {
       this.atributeClassificationGood,
       params
     );
+  }
+
+  private makeParams(params: ListParams): HttpParams {
+    let httpParams: HttpParams = new HttpParams();
+    Object.keys(params).forEach(key => {
+      httpParams = httpParams.append(key, (params as any)[key]);
+    });
+    return httpParams;
   }
 }

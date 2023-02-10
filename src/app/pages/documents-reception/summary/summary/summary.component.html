@@ -9,13 +9,18 @@
         <div class="col-md-4">
           <app-delegation-shared [form]="flyersForm"></app-delegation-shared>
           <form-check label="Filtrar por &aacute;rea" for="make_filter">
-            <input id="make_filter" type="checkbox" formControlName="includeArea" />
+            <input
+              id="make_filter"
+              type="checkbox"
+              formControlName="includeArea" />
           </form-check>
         </div>
 
         <div class="col-md-2">
           <div class="row pt-3">
-            <form-field [control]="flyersForm.get('from')" label="Recepci&oacute;n desde">
+            <form-field
+              [control]="flyersForm.get('from')"
+              label="Recepci&oacute;n desde">
               <input formControlName="from" class="form-control" bsDatepicker />
             </form-field>
           </div>
@@ -35,13 +40,21 @@
             </form-field>-->
 
             <form-field [control]="flyersForm.get('entidad')">
-              <ngx-select [form]="flyersForm" control="entidad" [data]="select" label="Entidad Federativa"></ngx-select>
+              <ngx-select
+                [form]="flyersForm"
+                control="entidad"
+                [data]="select"
+                label="Entidad Federativa"></ngx-select>
             </form-field>
           </div>
 
           <div class="row pt-3" *ngIf="includeArea.value">
             <form-field [control]="flyersForm.get('area')">
-              <ngx-select [form]="flyersForm" control="area" [data]="select" label="&Aacute;rea Destino"></ngx-select>
+              <ngx-select
+                [form]="flyersForm"
+                control="area"
+                [data]="select"
+                label="&Aacute;rea Destino"></ngx-select>
             </form-field>
           </div>
         </div>
@@ -51,11 +64,18 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button text="Imprimir" [disabled]="flyersForm.invalid" [loading]="loading" (confirm)="confirm()">
+        <confirm-button
+          text="Imprimir"
+          [disabled]="flyersForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="cleanForm()">
+        <button
+          type="button"
+          class="btn btn-danger active"
+          (click)="cleanForm()">
           Limpiar
         </button>
       </div>

@@ -76,9 +76,10 @@ export class FlatFileNotificationsComponent extends BasePage implements OnInit {
   downloadExcel(pdf: any) {
     const linkSource = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${pdf}`;
     const downloadLink = document.createElement('a');
-    console.log(linkSource);
+    //console.log(linkSource);
     downloadLink.href = linkSource;
     downloadLink.target = '_blank';
     downloadLink.click();
+    this.onLoadToast('success', '', 'Archivo generado');
   }
 }

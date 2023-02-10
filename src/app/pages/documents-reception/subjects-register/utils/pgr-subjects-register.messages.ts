@@ -6,7 +6,7 @@ const ERROR_EXPORT = 'No existen registros para exportar.';
 const ERROR_FORM_FECHA =
   'La fecha de inicio debe ser menor o igual a la fecha final.';
 const INFO_DOWNLOAD = (buttonName: string, buttonNameAll: string) =>
-  `Para descargar únicamente los registros mostrados en la tabla da clic en "${buttonName}" y para exportar todos los registros de la búsqueda da clic en "${buttonNameAll}"`;
+  `Para descargar únicamente los registros mostrados en la tabla da clic en "${buttonName}"`; // y para exportar todos los registros de la búsqueda da clic en "${buttonNameAll}"`;
 
 export {
   ERROR_INTERNET,

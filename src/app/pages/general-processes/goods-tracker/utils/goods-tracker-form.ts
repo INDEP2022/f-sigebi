@@ -10,19 +10,28 @@ export const GOODS_TRACKER_FORM = {
 
 export const PROCESSES = [
   {
+    value: null,
+    label: 'TODOS',
+  },
+  {
     value: 'ABANDONO',
+    label: 'ABANDONO',
   },
   {
     value: 'ASEGURADO',
+    label: 'ASEGURADO',
   },
   {
     value: 'DECOMISO',
+    label: 'DECOMISO',
   },
   {
     value: 'EXT_DON',
+    label: 'EXT_DON',
   },
   {
     value: 'TRANSFERENTE',
+    label: 'TRANSFERENTE',
   },
 ];
 
@@ -60,7 +69,7 @@ export const TARGET_IDENTIFIERS = [
 export const GOOD_PHOTOS_OPTIOS = [
   {
     label: 'Todos',
-    value: '1',
+    value: null,
   },
   {
     label: 'Con fotografías',
@@ -78,10 +87,10 @@ export class GoodTrackerForm {
   alternativeClasifNum = new FormControl<string>(null, [
     Validators.pattern(STRING_PATTERN),
   ]);
-  types = new FormControl<string[]>(null);
-  subtypes = new FormControl<string[]>(null);
-  ssubtypes = new FormControl<string[]>(null);
-  sssubtypes = new FormControl<string[]>(null);
+  types = new FormControl<string[]>([]);
+  subtypes = new FormControl<string[]>([]);
+  ssubtypes = new FormControl<string[]>([]);
+  sssubtypes = new FormControl<string[]>([]);
   goodNum = new FormControl<string>(null);
   process = new FormControl<string>(null);
   samiInventory = new FormControl<string>(null, [
@@ -112,8 +121,8 @@ export class GoodTrackerForm {
   cisiInventory = new FormControl<string>(null, [
     Validators.pattern(STRING_PATTERN),
   ]);
-  expedientNum = new FormControl<string>(null);
-  flyerNum = new FormControl<string>(null);
+  expedientNum = new FormControl<string[]>([]);
+  flyerNum = new FormControl<string[]>([]);
   judgeNum = new FormControl<string>(null);
   trasnferExp = new FormControl<string>(null, [
     Validators.pattern(STRING_PATTERN),
@@ -158,9 +167,9 @@ export class GoodTrackerForm {
   historicalProcess = new FormControl<string>(null, [
     Validators.pattern(STRING_PATTERN),
   ]);
-  transfers = new FormControl<string>(null);
-  transmitters = new FormControl<string>(null);
-  autorities = new FormControl<string>(null);
+  transfers = new FormControl<string[]>([]);
+  transmitters = new FormControl<string[]>([]);
+  autorities = new FormControl<string[]>([]);
   warehouse = new FormControl<string>(null);
   cordination = new FormControl<string>(null);
   autorityState = new FormControl<string>(null);

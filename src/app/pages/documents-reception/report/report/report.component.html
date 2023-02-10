@@ -12,17 +12,34 @@
 
         <div class="col-md-4">
           <div class="row">
-            <form-field [class]="range.value == 'daily' ? '' : 'col-md-6'" [control]="reportForm.get('from')"
-              [label]="range.value == 'yearly' ? 'Del año' : 'Rango de fechas de recepci&oacute;n'">
+            <form-field
+              [class]="range.value == 'daily' ? '' : 'col-md-6'"
+              [control]="reportForm.get('from')"
+              [label]="
+                range.value == 'yearly'
+                  ? 'Del año'
+                  : 'Rango de fechas de recepci&oacute;n'
+              ">
               <!-- <input class="form-control" formControlName="from" bsDatepicker [bsConfig]="datePickerConfig" />-->
-              <input type="text" class="form-control" formControlName="dateRequest" bsDaterangepicker
+              <input
+                type="text"
+                class="form-control"
+                formControlName="dateRequest"
+                bsDaterangepicker
                 [bsConfig]="{ isAnimated: true }" />
             </form-field>
 
-            <form-field *ngIf="range.value != 'daily'" class="col-md-6" [control]="reportForm.get('to')"
+            <!--<form-field
+              *ngIf="range.value != 'daily'"
+              class="col-md-6"
+              [control]="reportForm.get('to')"
               [label]="range.value == 'yearly' ? 'Al año' : 'Al mes'">
-              <input class="form-control" formControlName="to" bsDatepicker [bsConfig]="datePickerConfig" />
-            </form-field>
+              <input
+                class="form-control"
+                formControlName="to"
+                bsDatepicker
+                [bsConfig]="datePickerConfig" />
+            </form-field>-->
           </div>
         </div>
       </div>
@@ -37,11 +54,18 @@
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button text="Imprimir" [disabled]="reportForm.invalid" [loading]="loading" (confirm)="confirm()">
+        <confirm-button
+          text="Imprimir"
+          [disabled]="reportForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="cleanForm()">
+        <button
+          type="button"
+          class="btn btn-danger active"
+          (click)="cleanForm()">
           Limpiar
         </button>
       </div>
