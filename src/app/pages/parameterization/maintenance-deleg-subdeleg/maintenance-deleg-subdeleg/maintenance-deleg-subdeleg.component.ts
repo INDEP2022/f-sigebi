@@ -109,11 +109,13 @@ export class MaintenanceDelegSubdelegComponent
 
   openForm(subDelegation?: ISubdelegation) {
     console.log(subDelegation);
+    const idD = { ...this.delegations };
     let delegation = this.delegations;
     let config: ModalOptions = {
       initialState: {
         subDelegation,
         delegation,
+        idD,
         callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',
