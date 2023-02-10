@@ -282,7 +282,6 @@ export class PerformProgrammingFormComponent
   }
 
   stateSelect(state: IStateOfRepublic) {
-    console.log('item', state);
     this.idState = state.id;
     this.getTransferentSelect(new ListParams());
     this.getWarehouseSelect(new ListParams());
@@ -392,7 +391,7 @@ export class PerformProgrammingFormComponent
     if (this.goodSelect.length == 0) {
       this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
     } else {
-      this.headingTransportable = `Tranportables(${this.goodSelect.length})`;
+      this.headingTransportable = `Transportables(${this.goodSelect.length})`;
       this.goodsTranportables = this.goodSelect;
     }
   }

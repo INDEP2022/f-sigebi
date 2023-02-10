@@ -49,7 +49,7 @@ const routes: Routes = [
     path: 'summary',
     data: {
       screen: 'FGEROFPRESUMENDIAA',
-      title: 'Resumen de Recepción Documental',
+      title: 'Resumen Diario de Recepción Documental',
     },
     loadChildren: async () =>
       (await import('./summary/summary.module')).SummaryModule,
@@ -101,7 +101,8 @@ const routes: Routes = [
       (await import('./subjects-register/subjects-register.module'))
         .SubjectsRegisterModule,
   },
-  {
+  /*#### NO SE MIGRA ####*/
+  /*{
     path: 'documents-requirements-verification',
     data: {
       screen: 'FACTJURDICTAMPROC',
@@ -113,7 +114,7 @@ const routes: Routes = [
           './documents-requirements-verification/documents-requirements-verification.module'
         )
       ).DocumentsRequirementsVerificationModule,
-  },
+  },*/
   {
     path: 'closing-of-confiscation-and-return-records',
     data: { screen: 'FACTREFACTACIEDEV', title: 'Cierre de Actas de Decomiso' },
@@ -124,13 +125,13 @@ const routes: Routes = [
         )
       ).ClosingConfiscationAndReturnRecordsModule,
   },
-  {
+  /*{
     path: 'records-inventory',
     data: { screen: 'FACTREFINVXEXPEDI', title: 'Inventario por Expediente' },
     loadChildren: async () =>
       (await import('./records-inventory/records-inventory.module'))
         .RecordsInventoryModule,
-  },
+  },*/
   {
     path: 'goods-forecast',
     data: { screen: 'FACTREFPREVISBIEN', title: 'Previsión de Bienes' },

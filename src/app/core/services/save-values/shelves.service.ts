@@ -24,24 +24,16 @@ export class ShelvessService extends HttpService {
   }
 
   getByCveSaveValues(
-    id: string | number,
+    idSaveValues: string | number,
+    batteryNumber: string | number,
     params?: ListParams
   ): Observable<IListResponse<IShelves>> {
-    return this.shelvesRepository.getByCveSaveValues(this.route2, id, params);
-  }
-
-  getShelvesByIds(
-    key: string,
-    numBattery: number | string,
-    numShelf: number | string,
-    body?: {},
-    params?: ListParams
-  ): Observable<IListResponse<IShelves>> {
-    if (params) {
-      params['key'] = key;
-    }
-    const route = ShelvesEndpoints.Test;
-    return this.post<IListResponse<IShelves>>(route, '04');
+    return this.shelvesRepository.getByCveSaveValues(
+      this.route2,
+      idSaveValues,
+      batteryNumber,
+      params
+    );
   }
 
   getShelvesById(params: ListParams) {

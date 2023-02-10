@@ -6,13 +6,13 @@ import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IDomicilies } from 'src/app/core/models/good/good.model';
-import { IGood } from 'src/app/core/models/ms-good/good';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
 import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { RequestHelperService } from 'src/app/pages/request/request-helper-services/request-helper.service';
+import Swal from 'sweetalert2';
 import { MenajeComponent } from '../records-of-request-child-tabs-components/menaje/menaje.component';
 import { SelectAddressComponent } from '../records-of-request-child-tabs-components/select-address/select-address.component';
 import { ASSETS_COLUMNS } from './assests-columns';
@@ -41,7 +41,8 @@ var defaultData = [
 export class AssetsComponent extends BasePage implements OnInit {
   @Input() requestObject: any; //solicitudes
   goodObject: any; //bienes
-  listgoodObjects: IGood[] = [];
+  listgoodObjects: any[] = [];
+  totalItems: number = 0;
   principalSave: boolean = false;
   bsModalRef: BsModalRef;
   params = new BehaviorSubject<ListParams>(new ListParams());
@@ -126,6 +127,7 @@ export class AssetsComponent extends BasePage implements OnInit {
           });
 
           Promise.all(result).then(x => {
+            this.totalItems = data.data.length;
             this.paragraphs = data.data;
             this.loading = false;
           });
@@ -313,6 +315,7 @@ export class AssetsComponent extends BasePage implements OnInit {
       if (this.isSaveMenaje === true) {
         await this.saveMenaje();
       }
+      this.closeCreateGoodWIndows();
     } else {
       this.message('error', 'Error', `Seleccione al menos un bien`);
     }
@@ -322,6 +325,11 @@ export class AssetsComponent extends BasePage implements OnInit {
     new Promise((resolve, reject) => {
       for (let i = 0; i < this.listgoodObjects.length; i++) {
         const element = this.listgoodObjects[i];
+        delete element.goodTypeName;
+        delete element.physicalStatusName;
+        delete element.stateConservationName;
+        delete element.transferentDestinyName;
+        delete element.destinyLigieName;
         this.goodService.update(element.id, element).subscribe({
           next: resp => {
             if (resp.statusCode != null) {
@@ -374,7 +382,44 @@ export class AssetsComponent extends BasePage implements OnInit {
     });
   }
 
-  delete() {}
+  delete() {
+    if (this.listgoodObjects.length > 0) {
+      Swal.fire({
+        title: 'Eliminar',
+        text: 'Esta seguro de querer eliminar el bien seleccionado?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#9D2449',
+        cancelButtonColor: '#B38E5D',
+        confirmButtonText: 'Aceptar',
+      }).then(result => {
+        if (result.isConfirmed) {
+          this.deleteGood();
+        }
+      });
+    } else {
+      this.message('info', 'Información', `Seleccione uno o mas bienes`);
+    }
+  }
+
+  deleteGood() {
+    for (let i = 0; i < this.listgoodObjects.length; i++) {
+      const element = this.listgoodObjects[i];
+      this.goodService.remove(element.id).subscribe({
+        next: resp => {
+          if (resp.statusCode === 200) {
+            this.message('success', 'Eliminado', `Bien ${resp.message[0]}`);
+            this.closeCreateGoodWIndows();
+          } else {
+            this.message('error', 'Eliminar', `${resp.message[0]}`);
+          }
+        },
+        error: error => {
+          console.log(error);
+        },
+      });
+    }
+  }
 
   refreshTable() {
     this.requestHelperService.currentRefresh.subscribe({
@@ -382,14 +427,18 @@ export class AssetsComponent extends BasePage implements OnInit {
         if (data) {
           this.saveMenaje();
           setTimeout(() => {
-            this.goodObject = null;
-            this.createNewAsset = false;
-            this.btnCreate = 'Crear Nuevo';
-            this.paginatedData();
+            this.closeCreateGoodWIndows();
           }, 600);
         }
       },
     });
+  }
+
+  closeCreateGoodWIndows() {
+    this.goodObject = null;
+    this.createNewAsset = false;
+    this.btnCreate = 'Crear Nuevo';
+    this.paginatedData();
   }
 
   message(header: any, title: string, body: string) {

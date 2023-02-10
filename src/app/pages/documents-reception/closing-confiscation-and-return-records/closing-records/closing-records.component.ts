@@ -28,8 +28,9 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
   dataResp: IProceedings;
   dataTable: any[] = [];
   proceedingsNumb: number;
-  proceedingsCve: string;
+  proceedingsKey: string;
   di_clasif_numerario: number;
+  dataForm: any;
   private route: Router;
 
   constructor(
@@ -44,6 +45,10 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
       actions: false,
       columns: CLOSING_RECORDS_COLUMNS,
     };
+  }
+
+  get proceedingsCve() {
+    return this.form.get('proceedingsCve');
   }
 
   ngOnInit(): void {
@@ -99,7 +104,6 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
       )
       .subscribe({
         next: data => {
-          console.log(data);
           this.prepareData(data);
         },
         error: error => {
@@ -123,9 +127,10 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
     this.statusAct = 'ABIERTA';
     // this.statusAct = this.dataResp.proceedingStatus;          //DESCOMENTAR ESTO
     this.proceedingsNumb = data.proceedings.data[0].id;
-    this.proceedingsCve = data.proceedings.data[0].proceedingsCve;
-    let dataForm = {
+    this.proceedingsKey = data.proceedings.data[0].proceedingsCve;
+    this.dataForm = {
       previewFind: this.dataResp.fileNumber.previewFind,
+      proceedingsCve: this.dataResp.proceedingsCve,
       penaltyCause: this.dataResp.fileNumber.penaltyCause,
       elaborationDate: this.convertDate(this.dataResp.elaborationDate),
       authorityOrder: this.dataResp.authorityOrder,
@@ -144,7 +149,7 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
         goodsData.push(data);
       }
     }
-    this.form.patchValue(dataForm);
+    this.form.patchValue(this.dataForm);
     this.dataTable = goodsData;
     this.flag = true;
   }
@@ -159,10 +164,6 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
 
   convertDate(date: Date) {
     return new Date(date).toLocaleDateString().toString();
-  }
-
-  goToProceedingsValidations() {
-    this.route.navigate(['./records-validation']);
   }
 
   update() {
@@ -187,12 +188,24 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
       }
     }
     this.copyFormValues(dataToUpdate);
-    console.log(dataToUpdate);
-    this.proceedingsService
-      .update(dataToUpdate.id, dataToUpdate)
-      .subscribe((resp: IListResponse<IProceedings>) => {
-        console.log(resp);
-      });
+    this.proceedingsService.update(dataToUpdate.id, dataToUpdate).subscribe({
+      next: (resp: IListResponse<IProceedings>) => {
+        this.onLoadToast(
+          'success',
+          'Actualizada',
+          'El acta ha sido actualizado exitosamente'
+        );
+        this.proceedingsKey = this.form.value.proceedingsCve;
+      },
+      error: (error: HttpErrorResponse) => {
+        if (error.status <= 404) {
+          this.form.patchValue(this.dataForm);
+          this.onLoadToast('error', 'Error', error.message);
+        }
+      },
+    });
+    // .subscribe((resp: IListResponse<IProceedings>) => {
+    // });
   }
 
   copyFormValues(dataToUpdate: IUpdateProceedings) {
@@ -205,10 +218,10 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
   prepareForm() {
     this.form = this.fb.group({
       proceedingsCve: [null, [Validators.required]],
-      previewFind: [null, [Validators.required]],
+      previewFind: [null],
       penaltyCause: [null, []],
-      proceedingsType: [null, [Validators.required]],
-      elaborationDate: [null, [Validators.required]],
+      proceedingsType: [null],
+      elaborationDate: [null],
       authorityOrder: [null, [Validators.required]],
       universalFolio: [null, [Validators.required]],
       observations: [

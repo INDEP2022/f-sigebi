@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IGoodType } from 'src/app/core/models/catalogs/good-type.model';
 import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-manifest-form',
@@ -31,28 +32,47 @@ export class ManifestFormComponent extends BasePage implements OnInit {
 
   createForm() {
     this.goodTypeForm = this.formBuilder.group({
-      nameGoodType: [''],
-      creationUser: [''],
-      editionUser: [''],
-      maxAsseguranceTime: [],
-      maxExtensionTime: [],
-      maxFractionTime: [],
-      maxLimitTime1: [],
-      maxLimitTime2: [],
-      maxLimitTime3: [],
-      maxStatementTime: [],
-      modificationDate: [],
-      noRegister: [],
-      version: [],
-      id: [],
-      creationDate: [],
+      nameGoodType: [null],
+      creationUser: [null],
+      editionUser: [null],
+      maxAsseguranceTime: [
+        0,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.max(9999)],
+      ],
+      maxExtensionTime: [
+        0,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.max(9999)],
+      ],
+      maxFractionTime: [
+        0,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.max(9999)],
+      ],
+      maxLimitTime1: [
+        0,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.max(9999)],
+      ],
+      maxLimitTime2: [
+        0,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.max(9999)],
+      ],
+      maxLimitTime3: [
+        0,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.max(9999)],
+      ],
+      maxStatementTime: [
+        0,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.max(9999)],
+      ],
+      modificationDate: [null],
+      noRegister: [null],
+      version: [null],
+      id: [null],
+      creationDate: [null],
     });
 
     this.goodTypeForm.patchValue({
       ...this.goodType,
     });
-
-    console.log(this.goodTypeForm.value);
   }
 
   updateManifest() {
