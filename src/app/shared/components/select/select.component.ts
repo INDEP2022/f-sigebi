@@ -88,6 +88,10 @@ export class SelectComponent<T> implements OnInit {
         debounceTime(200),
         distinctUntilChanged(),
         switchMap((text: string) => {
+          if (text === null) {
+            console.log('texto nulo');
+            return of([]);
+          }
           this.page = 1;
           this.buffer = [];
           this.loading = true;

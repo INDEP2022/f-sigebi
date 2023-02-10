@@ -7,7 +7,8 @@ export interface IRead<T> {
   getById?(route: string, id: number | string): Observable<T>;
   getByCveSaveValues?(
     route: string,
-    id: number | string,
+    key: number | string,
+    batteryNumber: number | string,
     params?: ListParams
   ): Observable<IListResponse<T>>;
 }

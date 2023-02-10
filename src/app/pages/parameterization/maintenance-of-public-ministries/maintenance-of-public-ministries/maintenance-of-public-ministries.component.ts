@@ -10,6 +10,7 @@ import { DelegationService } from 'src/app/core/services/catalogs/delegation.ser
 import { MinPubService } from 'src/app/core/services/catalogs/minpub.service';
 import { SubdelegationService } from 'src/app/core/services/catalogs/subdelegation.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-maintenance-of-public-ministries',
@@ -44,17 +45,39 @@ export class MaintenanceOfPublicMinistriesComponent
           Validators.required,
           Validators.minLength(1),
           Validators.maxLength(100),
+          Validators.pattern(STRING_PATTERN),
         ],
       ],
-      manager: [null, Validators.required],
-      street: [null, Validators.required],
-      insideNumber: [null, Validators.required],
-      outNumber: [null, Validators.required],
-      colony: [null, Validators.required],
-      delegNunic: [null, Validators.required],
-      zipCode: [null, Validators.required],
-      phone: [null, Validators.required],
-      city: [null, [Validators.required]],
+      manager: [
+        null,
+        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+      ],
+      street: [
+        null,
+        [Validators.maxLength(60), Validators.pattern(STRING_PATTERN)],
+      ],
+      insideNumber: [
+        null,
+        [Validators.maxLength(10), Validators.pattern(STRING_PATTERN)],
+      ],
+      outNumber: [
+        null,
+        [Validators.maxLength(100), Validators.pattern(STRING_PATTERN)],
+      ],
+      colony: [
+        null,
+        [Validators.maxLength(60), Validators.pattern(STRING_PATTERN)],
+      ],
+      delegNunic: [
+        null,
+        [Validators.maxLength(60), Validators.pattern(STRING_PATTERN)],
+      ],
+      zipCode: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      phone: [
+        null,
+        [Validators.maxLength(20), Validators.pattern(STRING_PATTERN)],
+      ],
+      city: [null],
       entity: [null],
       delegation: [null],
       subDelegation: [null],
@@ -81,20 +104,11 @@ export class MaintenanceOfPublicMinistriesComponent
       this.maintenceService.create(this.form.value).subscribe({
         next: (resp: any) => {
           if (resp.statusCode == 201) {
-            this.onLoadToast(
-              'success',
-              'Creacion ministerio publico',
-              'Ha sido creado con éxito'
-            );
+            this.onLoadToast('success', 'Ha sido creado con éxito', '');
             this.form.reset();
           }
         },
-        error: () =>
-          this.onLoadToast(
-            'error',
-            'Conexión',
-            'Revise su conexion de internet'
-          ),
+        error: error => this.onLoadToast('error', error.erro.message, ''),
       });
     }
   }

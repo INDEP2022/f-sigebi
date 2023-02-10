@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { addDays } from 'date-fns';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { minDate } from 'src/app/common/validations/date.validators';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
 import { IDelegationState } from 'src/app/core/models/catalogs/delegation-state.model';
 import { IRegionalDelegation } from 'src/app/core/models/catalogs/regional-delegation.model';
@@ -27,12 +30,12 @@ import { WarehouseFormComponent } from '../../../shared-request/warehouse-form/w
 import { ESTATE_COLUMNS } from '../../acept-programming/columns/estate-columns';
 import { USER_COLUMNS } from '../../acept-programming/columns/users-columns';
 import { SearchUserFormComponent } from '../../schedule-reception/search-user-form/search-user-form.component';
+import { userData } from '../../schedule-reception/search-user-form/users-data';
 import { ProgrammingGoodService } from '../../service/programming-good.service';
 import { ProgrammingRequestService } from '../../service/programming-request.service';
 import { EstateSearchFormComponent } from '../estate-search-form/estate-search-form.component';
 import { IEstateSearch } from '../estate-search-form/estate-search.interface';
 import { UserFormComponent } from '../user-form/user-form.component';
-import { userData } from './data-perfom-programming';
 
 @Component({
   selector: 'app-perform-programming-form',
@@ -43,43 +46,69 @@ export class PerformProgrammingFormComponent
   extends BasePage
   implements OnInit
 {
-  settingEstate = { ...this.settings, actions: false, columns: ESTATE_COLUMNS };
   settingUser = {
     ...this.settings,
     actions: {
       columnTitle: 'Acciones',
       position: 'right',
-      delete: true,
+      delete: false,
     },
     columns: USER_COLUMNS,
   };
 
   settingsTransportableGoods = {
     ...this.settings,
-    actions: false,
+    actions: {
+      ...this.settings.actions,
+      delete: false,
+      edit: false,
+      columnTitle: 'Acciones',
+      position: 'right',
+    },
+    delete: {
+      ...this.settings.delete,
+      confirmDelete: true,
+    },
     columns: ESTATE_COLUMNS,
   };
 
   settingGuardGoods = {
     ...this.settings,
-    actions: false,
+    actions: {
+      edit: false,
+      delete: false,
+      columnTitle: 'Acciones',
+      position: 'right',
+    },
+    edit: {
+      editButtonContent: '<i class="fa fa-eye"></i>',
+    },
     columns: ESTATE_COLUMNS,
   };
 
   settingWarehouseGoods = {
     ...this.settings,
-    actions: false,
+    actions: {
+      edit: false,
+      delete: false,
+      columnTitle: 'Acciones',
+      position: 'right',
+    },
+    edit: {
+      editButtonContent: '<i class="fa fa-eye"></i>',
+    },
     columns: ESTATE_COLUMNS,
   };
 
   estates: any[] = [];
-  estatesList: any[] = [];
+  estatesList: LocalDataSource = new LocalDataSource();
   goodSelect: any[] = [];
   goodsTranportables: any[] = [];
   goodsGuards: any[] = [];
   goodsWarehouse: any[] = [];
 
-  usersData = userData;
+  usersData: any[] = [];
+  dataSearch: IEstateSearch;
   regionalDelegationUser: IRegionalDelegation;
   performForm: FormGroup = new FormGroup({});
   estateForm: FormGroup = new FormGroup({});
@@ -100,7 +129,7 @@ export class PerformProgrammingFormComponent
   idTrans: number = 0;
   idStation: number = 0;
   idTypeRelevant: number = 0;
-  showForm: boolean = false;
+  showForm: boolean = true;
   showUbication: boolean = false;
   showSelectTransferent: boolean = false;
   showSelectStation: boolean = false;
@@ -115,6 +144,8 @@ export class PerformProgrammingFormComponent
   totalItemsGuardGoods: number = 0;
   paramsWarehouseGoods = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsWarehouseGoods: number = 0;
+  paramsUsers = new BehaviorSubject<ListParams>(new ListParams());
+  totalItemsUsers: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -135,8 +166,8 @@ export class PerformProgrammingFormComponent
     this.settings = {
       ...this.settings,
       actions: false,
-      selectMode: 'multi',
       columns: ESTATE_COLUMNS,
+      selectMode: 'multi',
     };
   }
 
@@ -147,22 +178,23 @@ export class PerformProgrammingFormComponent
   }
 
   prepareForm() {
+    const fiveDays = addDays(new Date(), 5);
     this.performForm = this.fb.group({
       email: [null, [Validators.required, Validators.pattern(EMAIL_PATTERN)]],
       address: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      city: [null, [Validators.pattern(STRING_PATTERN)]],
-      startDate: [null],
-      endDate: [null],
+      city: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      startDate: [null, [Validators.required, minDate(new Date())]],
+      endDate: [null, [Validators.required, minDate(new Date(fiveDays))]],
       observation: [null, [Validators.pattern(STRING_PATTERN)]],
-      regionalDelegation: [null],
-      state: [null],
-      transferent: [null],
-      station: [null],
-      authority: [null],
-      typeRelevant: [null],
+      regionalDelegation: [null, [Validators.required]],
+      state: [null, [Validators.required]],
+      transferent: [null, [Validators.required]],
+      station: [null, [Validators.required]],
+      authority: [null, [Validators.required]],
+      typeRelevant: [null, [Validators.required]],
       warehouse: [null],
       userId: [null],
     });
@@ -210,6 +242,7 @@ export class PerformProgrammingFormComponent
     config.initialState = {
       callback: (data: any) => {
         if (data) {
+          this.usersData = userData;
         }
       },
     };
@@ -236,8 +269,9 @@ export class PerformProgrammingFormComponent
 
     config.initialState = {
       userData,
-      callback: (dataSearch: IEstateSearch) => {
-        if (dataSearch) {
+      callback: (data: IEstateSearch) => {
+        if (data) {
+          this.dataSearch = data;
           this.initializeParamsTrans();
         }
       },
@@ -247,6 +281,10 @@ export class PerformProgrammingFormComponent
       EstateSearchFormComponent,
       config
     );
+  }
+
+  showGoods() {
+    this.initializeParamsTrans();
   }
 
   getRegionalDelegationSelect(params?: ListParams) {
@@ -282,7 +320,6 @@ export class PerformProgrammingFormComponent
   }
 
   stateSelect(state: IStateOfRepublic) {
-    console.log('item', state);
     this.idState = state.id;
     this.getTransferentSelect(new ListParams());
     this.getWarehouseSelect(new ListParams());
@@ -370,12 +407,16 @@ export class PerformProgrammingFormComponent
   }
 
   getProgGoods() {
+    const filterColumns: Object = {
+      /*regionalDelegation: Number(this.regionalDelegationUser.id),
+      transferent: Number(this.idTrans), */
+    };
     this.loadingGoods = true;
     this.goodsQueryService
-      .getGoodsProgramming(this.params.getValue())
+      .postGoodsProgramming(this.params.getValue(), filterColumns)
       .subscribe({
         next: response => {
-          this.estatesList = response.data;
+          this.estatesList.load(response.data);
           this.totalItems = response.count;
           this.loadingGoods = false;
         },
@@ -383,16 +424,15 @@ export class PerformProgrammingFormComponent
       });
   }
 
-  goodsSelect(selected: any) {
-    this.goodSelect = selected;
-    console.log('data', this.goodSelect);
+  goodsSelect(event: any) {
+    this.goodSelect = event.selected;
   }
 
   sendTransportable() {
     if (this.goodSelect.length == 0) {
       this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
     } else {
-      this.headingTransportable = `Tranportables(${this.goodSelect.length})`;
+      this.headingTransportable = `Transportables(${this.goodSelect.length})`;
       this.goodsTranportables = this.goodSelect;
     }
   }
@@ -413,6 +453,19 @@ export class PerformProgrammingFormComponent
       this.headingWarehouse = `Almacén SAT(${this.goodSelect.length})`;
       this.goodsWarehouse = this.goodSelect;
     }
+  }
+
+  showGood() {}
+
+  removeGood(event: any) {
+    event.confirm.resolve();
+    this.onLoadToast('success', 'Elemento Eliminado', '');
+  }
+
+  onDeleteConfirm(event: any) {
+    console.log('Evento', event);
+    event.confirm.resolve();
+    this.onLoadToast('success', 'Elemento Eliminado', '');
   }
 
   confirm() {}

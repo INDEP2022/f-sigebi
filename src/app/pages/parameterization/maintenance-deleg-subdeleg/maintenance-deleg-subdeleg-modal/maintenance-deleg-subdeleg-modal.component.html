@@ -16,7 +16,8 @@
               bindLabel="description"
               label="No&#46; Delegaci&oacute;n"
               (fetchItems)="getDelegations($event)"
-              (change)="onValuesChange($event)">
+              (change)="onValuesChange($event)"
+              [readonly]="true">
             </ngx-select>
             <!-- <input type="number" class="form-control" formControlName="delegationNumber" /> -->
           </form-field>

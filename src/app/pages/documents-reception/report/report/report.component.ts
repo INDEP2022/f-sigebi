@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
@@ -107,7 +107,4 @@ export class ReportComponent extends BasePage implements OnInit {
   cleanForm(): void {
     this.reportForm.reset();
   }
-
-
-
 }

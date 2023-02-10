@@ -34,14 +34,8 @@
         <label class="control-label col-sm-2">Selecciona usuario&#58;</label>
 
         <div class="col-sm-7">
-          <form-field [control]="scheduleForm.get('userId')">
-            <ngx-select
-              [form]="scheduleForm"
-              control="userId"
-              [data]="users"
-              value="id"
-              bindLabel="user"
-              (fetchItems)="getUserSelect($event)"></ngx-select>
+          <form-field [control]="scheduleForm.get('user')">
+            <input type="text" class="form-control" formControlName="user" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -70,13 +64,11 @@
 
     <div class="d-flex justify-content-center">
       <div class="m-2">
-        <button
-          [routerLink]="[
-            '/pages/request/programming-request/perform-programming/1'
-          ]"
-          class="btn btn-primary btn-sm active">
-          Turnar
-        </button>
+        <confirm-button
+          [disabled]="!scheduleForm.valid"
+          [loading]="loading"
+          [btnSmall]="true"
+          (confirm)="confirm()"></confirm-button>
       </div>
       <div class="m-2">
         <button class="btn btn-danger btn-sm active">Cancelar</button>

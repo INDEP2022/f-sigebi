@@ -1,8 +1,6 @@
-import { ISaveValue } from './save-value.model';
-
 export interface IBattery {
   idBattery: number;
-  storeCode?: ISaveValue | string;
+  storeCode?: string;
   description: string;
   status: string;
   registerNumber?: number;

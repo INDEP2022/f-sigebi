@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
 //models
@@ -24,6 +23,7 @@ export class BatteryModalComponent extends BasePage implements OnInit {
   edit: boolean = false;
 
   id: ISaveValue;
+  cve: ISaveValue;
 
   cveSaveValues = new DefaultSelect();
 
@@ -40,13 +40,6 @@ export class BatteryModalComponent extends BasePage implements OnInit {
     this.prepareForm();
   }
 
-  getCveSaveValues(params: ListParams) {
-    this.saveValueService.getCveSaveValues(params).subscribe({
-      next: data =>
-        (this.cveSaveValues = new DefaultSelect(data.data, data.count)),
-    });
-  }
-
   private prepareForm() {
     this.batteryForm = this.fb.group({
       storeCode: [null, []],
@@ -59,10 +52,14 @@ export class BatteryModalComponent extends BasePage implements OnInit {
       registerNumber: [null, []],
     });
     if (this.battery != null) {
-      this.id = this.battery.storeCode as ISaveValue;
+      this.id = this.battery.storeCode as unknown as ISaveValue;
       this.edit = true;
       this.batteryForm.patchValue(this.battery);
       this.batteryForm.controls['storeCode'].setValue(this.id.id);
+    } else {
+      this.edit = false;
+      console.log(this.cve);
+      this.batteryForm.controls['storeCode'].setValue(this.cve.id);
     }
   }
 

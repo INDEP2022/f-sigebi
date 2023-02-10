@@ -1,19 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 //Service
-import { SaveValueService } from 'src/app/core/services/catalogs/save-value.service';
-import { BatterysService } from 'src/app/core/services/save-values/battery.service';
 import { LockersService } from 'src/app/core/services/save-values/locker.service';
-import { ShelvessService } from 'src/app/core/services/save-values/shelves.service';
 //models
+import { IBattery } from 'src/app/core/models/catalogs/battery.model';
 import { ILocker } from 'src/app/core/models/catalogs/locker.model';
+import { ISaveValue } from 'src/app/core/models/catalogs/save-value.model';
+import { IShelves } from 'src/app/core/models/catalogs/shelves.model';
 
 @Component({
   selector: 'app-lockers-modal',
@@ -31,13 +30,14 @@ export class LockersModalComponent extends BasePage implements OnInit {
   idBattery = new DefaultSelect();
   idShelve = new DefaultSelect();
 
+  cve: ISaveValue;
+  noBattery: IBattery;
+  noShelve: IShelves;
+
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private lockersService: LockersService,
-    private saveValueService: SaveValueService,
-    private batterysService: BatterysService,
-    private shelvessService: ShelvessService
+    private lockersService: LockersService
   ) {
     super();
   }
@@ -48,18 +48,9 @@ export class LockersModalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.lockerForm = this.fb.group({
-      saveValueKey: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      numBattery: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
-      numShelf: [
-        null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
-      ],
+      saveValueKey: [null, [Validators.pattern(STRING_PATTERN)]],
+      numBattery: [null, [Validators.pattern(NUMBERS_PATTERN)]],
+      numShelf: [null, [Validators.pattern(NUMBERS_PATTERN)]],
       id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       description: [
         null,
@@ -74,26 +65,15 @@ export class LockersModalComponent extends BasePage implements OnInit {
     if (this.locker != null) {
       this.edit = true;
       this.lockerForm.patchValue(this.locker);
+    } else {
+      this.edit = false;
+      console.log(this.cve);
+      console.log(this.noBattery);
+      console.log(this.noShelve);
+      this.lockerForm.controls['saveValueKey'].setValue(this.cve.id);
+      this.lockerForm.controls['numBattery'].setValue(this.noBattery.idBattery);
+      this.lockerForm.controls['numShelf'].setValue(this.noShelve.id);
     }
-  }
-
-  getCveSaveValues(params: ListParams) {
-    this.saveValueService.getCveSaveValues(params).subscribe({
-      next: data =>
-        (this.cveSaveValues = new DefaultSelect(data.data, data.count)),
-    });
-  }
-
-  getBatteryById(params: ListParams) {
-    this.batterysService.getBatteryById(params).subscribe({
-      next: data => (this.idBattery = new DefaultSelect(data.data, data.count)),
-    });
-  }
-
-  getShelvesById(params: ListParams) {
-    this.shelvessService.getShelvesById(params).subscribe({
-      next: data => (this.idShelve = new DefaultSelect(data.data, data.count)),
-    });
   }
 
   close() {
@@ -115,12 +95,10 @@ export class LockersModalComponent extends BasePage implements OnInit {
 
   update() {
     this.loading = true;
-    this.lockersService
-      .update(this.locker.id, this.lockerForm.value)
-      .subscribe({
-        next: data => this.handleSuccess(),
-        error: error => (this.loading = false),
-      });
+    this.lockersService.update(this.lockerForm.value).subscribe({
+      next: data => this.handleSuccess(),
+      error: error => (this.loading = false),
+    });
   }
 
   handleSuccess() {
