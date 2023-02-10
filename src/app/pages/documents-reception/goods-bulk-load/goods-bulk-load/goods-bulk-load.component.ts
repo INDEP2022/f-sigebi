@@ -505,12 +505,14 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
                 }
               }
               error[1].push(row);
-              let obj: any = {};
-              obj = { ...row };
-              for (let index = 0; index < error[0].length; index++) {
-                obj['errores'] = obj['errores'] + ' --- ' + error[index];
-              }
-              this.listError.push(obj);
+              // let obj: any = {};
+              // obj = { ...row };
+              // for (let index = 0; index < error[0].length; index++) {
+              //   obj['errores'] = obj['errores'] + ' --- ' + error[0][index];
+              //   console.log(error[0][index], obj);
+              // }
+              // this.listError.push(obj);
+              // console.log(obj, error, this.listError);
               this.DeclarationsSatSaeMassive.data_error.push(error);
             }
           })
@@ -519,7 +521,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
           // Fin del proceso de validación
           this.DeclarationsSatSaeMassive.message_progress =
             VALIDATION_END_MESSAGE;
-          console.log(this.DeclarationsSatSaeMassive);
+          console.log(this.DeclarationsSatSaeMassive, this.listError);
           console.log(val);
         });
     }
@@ -573,8 +575,6 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     console.log(likeVar, equalVar);
   }
 
-  validProccessSat() {}
-
   validatorPgrMassive() {
     console.log('PGR VALID');
   }
@@ -585,12 +585,29 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   /**
    * Exportar a XLSX
    */
-  exportXlsx(data: any[]) {
-    if (data.length == 0) {
+  exportXlsx() {
+    let errores = [];
+    for (
+      let index = 0;
+      index < this.DeclarationsSatSaeMassive.data_error.length;
+      index++
+    ) {
+      const element = this.DeclarationsSatSaeMassive.data_error[index];
+      let obj: any = { ...element[1][0] };
+      obj['errores'] = '';
+      for (let indice = 0; indice < element[0].length; indice++) {
+        const elemento = element[0][indice];
+        if (elemento) {
+          obj['errores'] = obj['errores'] + ' --- ' + elemento;
+        }
+      }
+      errores.push(obj);
+    }
+    if (errores.length == 0) {
       this.onLoadToast('warning', 'Reporte', ERROR_EXPORT);
     }
     // El type no es necesario ya que por defecto toma 'xlsx'
-    this.excelService.export(data, {
+    this.excelService.export(errores, {
       filename: `errores_${
         this.DeclarationsSatSaeMassive.common_general.proceso
       }${new Date().getTime()}`,

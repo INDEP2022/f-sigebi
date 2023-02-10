@@ -60,6 +60,7 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
   // Filtro de paginado
   filtroPaginado: string[] = ['page', 'limit'];
   INFO_DOWNLOAD = INFO_DOWNLOAD;
+  base64Preview = '';
 
   constructor(
     private fb: FormBuilder,
@@ -199,6 +200,54 @@ export class SatSubjectsRegisterComponent extends BasePage implements OnInit {
       });
   }
 
+  /**
+   * Obtener el listado de Gestion de Tramites
+   */
+  getReportTramiteSat() {
+    let filtrados = this.formFieldstoParamsService.validFieldsFormToParams(
+      this.satForm.value,
+      this.paramsGestionSat.value,
+      this.filtroPaginado,
+      'filter',
+      'processEntryDate'
+    );
+    delete filtrados.page;
+    delete filtrados.limit;
+    this.satSubjectsRegisterService.getReport(filtrados).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        if (data.base64) {
+          this.downloadFile(data.base64, 'Reporte_Tramite_Bien');
+        } else {
+          this.onLoadToast(
+            'warning',
+            '',
+            NOT_FOUND_MESSAGE('Gestión Trámites')
+          );
+        }
+        this.loadingGestionSat = false;
+      },
+      error: error => {
+        this.loadingGestionSat = false;
+        this.errorGet(error);
+      },
+    });
+  }
+  downloadFile(base64: any, fileName: any) {
+    const linkSource = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${base64}`;
+    const downloadLink = document.createElement('a');
+    downloadLink.href = linkSource;
+    downloadLink.download = fileName;
+    downloadLink.target = '_blank';
+    downloadLink.click();
+    // const src = `data:application/pdf;base64,${base64}`;
+    // const link = document.createElement('a');
+    // link.href = src;
+    // link.download = fileName;
+    // link.click();
+
+    downloadLink.remove();
+  }
   /**
    * Funcion de error de listados
    * @param err Error de la respuesta
