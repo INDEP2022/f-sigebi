@@ -66,4 +66,8 @@ export class SatSubjectsRegisterService {
   getSatTransferenciaBySearch(params: ListParams) {
     return this.satInterfaceService.getVSatTransferencia(params);
   }
+
+  getReport(params: ListParams) {
+    return this.procedureManagementRepository.getReportProcedureManage(params);
+  }
 }

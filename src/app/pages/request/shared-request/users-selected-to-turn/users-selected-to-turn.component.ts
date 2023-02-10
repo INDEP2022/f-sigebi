@@ -56,7 +56,6 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     let typeUser = this.request.requestStatus;
-    console.log(this.request);
     this.getAllUsers(typeUser);
   }
 

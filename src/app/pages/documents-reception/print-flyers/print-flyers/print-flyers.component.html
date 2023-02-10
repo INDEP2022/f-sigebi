@@ -10,7 +10,7 @@
           <div class="row pt-3">
             <form-field
               [control]="flyersForm.get('PN_VOLANTEINI')"
-              label="Numero de volante desde el: ">
+              label="Del Volante: ">
               <input
                 class="form-control"
                 type="number"
@@ -21,7 +21,7 @@
           <div class="row pt-3">
             <form-field
               [control]="flyersForm.get('PN_VOLANTEFIN')"
-              label="Hasta el: ">
+              label="Hasta el Volante: ">
               <input
                 class="form-control"
                 type="number"
@@ -118,6 +118,8 @@
               <input
                 class="form-control"
                 formControlName="PF_FECINI"
+                (bsValueChange)="setMinDateEnd($event)"
+                [maxDate]="maxDateStart"
                 bsDatepicker />
             </form-field>
             <div></div>
@@ -127,6 +129,8 @@
               <input
                 class="form-control"
                 formControlName="PF_FECFIN"
+                [maxDate]="maxDateEnd"
+                [minDate]="minDateEnd"
                 bsDatepicker />
             </form-field>
             <div></div>

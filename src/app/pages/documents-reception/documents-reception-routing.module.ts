@@ -49,7 +49,7 @@ const routes: Routes = [
     path: 'summary',
     data: {
       screen: 'FGEROFPRESUMENDIAA',
-      title: 'Resumen de Recepción Documental',
+      title: 'Resumen Diario de Recepción Documental',
     },
     loadChildren: async () =>
       (await import('./summary/summary.module')).SummaryModule,

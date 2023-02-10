@@ -2,6 +2,8 @@ const FORM_IDENTIFICATOR_NULL =
   'Este proceso masivo requiere de un ID. de Carga.';
 const FORM_ACTION_TYPE_NULL =
   'Este proceso masivo requiere de una opción de Carga.';
+const FORM_INMUEBLES_MUEBLES_CHECK = (autos: string, inmuebles: string) =>
+  `No es posible realizar carga masiva de "${autos}" y "${inmuebles}" al mismo tiempo. Selecciona sólo una de las opciones a la vez.`;
 const FORM_ACTION_TYPE_WITH_CHECK_ERROR = (opcion: string) =>
   `Este proceso masivo requiere de la opción de Carga.: ${opcion}. ya que se selecciono "INMUEBLES" y/o "AUTOMÓVILES"`;
 const NOT_LOAD_FILE = 'Carga un archivo excel válido para continuar.';
@@ -48,4 +50,5 @@ export {
   ERROR_EXPORT,
   VALIDATION_PROCESS_MESSAGE,
   VALIDATION_END_MESSAGE,
+  FORM_INMUEBLES_MUEBLES_CHECK,
 };
