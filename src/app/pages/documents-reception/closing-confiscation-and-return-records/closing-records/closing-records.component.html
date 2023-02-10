@@ -28,7 +28,10 @@
         <div class="col-md-6" *ngIf="statusAct === 'ABIERTA'">
           <div class="row justify-content-end">
             <div class="col-auto">
-              <button class="btn btn-primary btn-sm active" (click)="update()">
+              <button
+                class="btn btn-primary btn-sm active"
+                (click)="update()"
+                [disabled]="form.invalid">
                 Actualizar
               </button>
             </div>
@@ -41,7 +44,7 @@
                 [routerLink]="[
                   '/pages/documents-reception/records-validation',
                   proceedingsNumb,
-                  proceedingsCve
+                  proceedingsKey
                 ]">
                 Validadores de Acta
               </button>
