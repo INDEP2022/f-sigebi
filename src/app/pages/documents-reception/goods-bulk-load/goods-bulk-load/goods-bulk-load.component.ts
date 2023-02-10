@@ -11,10 +11,13 @@ import {
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { IAttribClassifGoods } from 'src/app/core/models/ms-goods-query/attributes-classification-good';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   GOODS_BULK_LOAD_ACTIONS,
   GOODS_BULK_LOAD_TARGETS,
+  SAT_SAE_INMUEBLES_PROCESO_4,
+  SAT_SAE_MUEBLES_PROCESO_4,
 } from '../constants/good-bulk-load-data';
 import { previewData } from '../interfaces/goods-bulk-load-table';
 import { GoodsBulkLoadService } from '../services/goods-bulk-load.table';
@@ -23,13 +26,17 @@ import {
   ERROR_ATRIBUTE_CLASS_GOOD,
   ERROR_CLASS_GOOD,
   ERROR_ESTATUS,
+  ERROR_EXPORT,
   ERROR_IDENTIFICADOR_MENAJE,
   ERROR_TRANSFERENTE,
   ERROR_UNIDAD,
   ERROR_UNITY_CLASS_GOOD,
   FORM_ACTION_TYPE_NULL,
+  FORM_ACTION_TYPE_WITH_CHECK_ERROR,
   FORM_IDENTIFICATOR_NULL,
   NOT_LOAD_FILE,
+  VALIDATION_END_MESSAGE,
+  VALIDATION_PROCESS_MESSAGE,
   VALIDATION_START_MESSAGE,
 } from '../utils/goods-bulk-load.message';
 import { GOODS_BULK_LOAD_COLUMNS } from './goods-bulk-load-columns';
@@ -58,6 +65,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     return this.assetsForm.get('idCarga');
   }
   params = new BehaviorSubject<FilterParams>(new FilterParams());
+  listError: any[] = []; // Guardar lista de errores del proceso
 
   constructor(
     private fb: FormBuilder,
@@ -84,8 +92,13 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
 
   save() {
-    this.assetsForm.markAllAsTouched();
-    this.reviewConditions();
+    this.DeclarationsSatSaeMassive = undefined;
+    setTimeout(() => {
+      this.startVariables();
+      console.log(this.DeclarationsSatSaeMassive);
+      this.assetsForm.markAllAsTouched();
+      this.reviewConditions();
+    }, 500);
   }
 
   onFileChange(event: Event) {
@@ -102,7 +115,6 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       let preloadFile = this.excelService.getData<previewData | any>(
         binaryExcel
       );
-      console.log(this.tableSource, this.tableSource[0]);
       preloadFile.forEach((data: any) => {
         let objReplace: any = {};
         for (const key in data) {
@@ -114,22 +126,19 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         }
         this.tableSource.push(objReplace);
       });
-      console.log(this.tableSource[0]);
       let obj: any = {};
       let object: any = this.tableSource[0];
-      // this.tableSource.forEach((object: any) => {
       for (const key in object) {
         if (Object.prototype.hasOwnProperty.call(object, key)) {
           if (key) {
             obj[key] = {
-              title: key,
+              title: key.toLocaleUpperCase(),
               type: 'string',
               sort: false,
             };
           }
         }
       }
-      // });
 
       const _settings = { columns: obj, actions: false };
       this.settings = { ...this.settings, ..._settings };
@@ -158,6 +167,15 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
    */
   startVariables() {
     this.DeclarationsSatSaeMassive = new DeclarationsSatSaeMassive();
+    this.DeclarationsSatSaeMassive.common_general = {
+      total_errores: 0,
+      valid: false,
+      count: 0,
+      total: 0,
+      proceso: '',
+    };
+    this.DeclarationsSatSaeMassive.data_error = [];
+    this.DeclarationsSatSaeMassive.message_progress = '';
   }
 
   /**
@@ -165,6 +183,9 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
    */
   reviewConditions() {
     console.log(this.assetsForm.value, this.target.value);
+    if (!this.validLoadFile()) {
+      return;
+    }
     if (this.target.value == 'sat') {
       console.log('SAT');
       this.validatorSatMassive();
@@ -185,7 +206,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     if (this.assetsForm.get('idCarga').value) {
       return true;
     } else {
-      this.onLoadToast('error', FORM_IDENTIFICATOR_NULL, 'Error');
+      this.onLoadToast('warning', FORM_IDENTIFICATOR_NULL, 'Error');
       return false;
     }
   }
@@ -196,9 +217,25 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
    */
   validActionType() {
     if (this.assetsForm.get('actionType').value) {
-      return true;
+      if (
+        GOODS_BULK_LOAD_ACTIONS.sat[0].value !=
+          this.assetsForm.get('actionType').value &&
+        (this.assetsForm.get('cars').value ||
+          this.assetsForm.get('inmuebles').value)
+      ) {
+        this.onLoadToast(
+          'warning',
+          FORM_ACTION_TYPE_WITH_CHECK_ERROR(
+            GOODS_BULK_LOAD_ACTIONS.sat[0].value
+          ),
+          'Error'
+        );
+        return false;
+      } else {
+        return true;
+      }
     } else {
-      this.onLoadToast('error', FORM_ACTION_TYPE_NULL, 'Error');
+      this.onLoadToast('warning', FORM_ACTION_TYPE_NULL, 'Error');
       return false;
     }
   }
@@ -211,7 +248,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     if (this.tableSource.length > 0) {
       return true;
     } else {
-      this.onLoadToast('error', NOT_LOAD_FILE, 'Error');
+      this.onLoadToast('warning', NOT_LOAD_FILE, 'Error');
       return false;
     }
   }
@@ -221,8 +258,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
    */
   validatorSatMassive() {
     console.log('SAT VALID');
-    if (this.validIdCarga() && this.validActionType() && this.validLoadFile()) {
-      this.startVariables();
+    if (this.validIdCarga() && this.validActionType()) {
       let proceso = 0;
       if (
         GOODS_BULK_LOAD_ACTIONS.sat[0].value ==
@@ -243,13 +279,13 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         // --- PROCESO 3
         proceso = 3;
       } else if (
-        GOODS_BULK_LOAD_ACTIONS.sat[3].value ==
-        this.assetsForm.get('actionType').value
+        GOODS_BULK_LOAD_ACTIONS.sat[0].value ==
+          this.assetsForm.get('actionType').value &&
+        this.assetsForm.get('cars').value &&
+        this.assetsForm.get('inmuebles').value
       ) {
         // --- PROCESO 4
         proceso = 4;
-      } else {
-        return;
       }
       // Total de registros
       this.DeclarationsSatSaeMassive.common_general.total =
@@ -257,10 +293,15 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       // Inicia proceso de validación
       this.DeclarationsSatSaeMassive.message_progress =
         VALIDATION_START_MESSAGE;
-
+      this.listError = [];
+      this.DeclarationsSatSaeMassive.common_general.proceso =
+        this.assetsForm.get('actionType').value;
       from(this.tableSource)
         .pipe(
           switchMap(async (row: any, count: number) => {
+            // Mensaje de proceso de validación actual
+            this.DeclarationsSatSaeMassive.message_progress =
+              VALIDATION_PROCESS_MESSAGE(count + 1);
             if (count <= 5) {
               let error: any[] = [[], []];
               // Indice actual del contador
@@ -298,7 +339,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
                   error = this.agregarError(error, ERROR_ESTATUS(data.status));
                 }
                 // Validar Clasificación de bien
-                // #### Falta que filtre por numero clasificacion bien
+                // #### Falta que filtre por numero clasificacion bien HALLAZGO 231
                 if (data.clasif) {
                   const params: ListParams = {
                     page: this.params.getValue().page,
@@ -362,7 +403,8 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
               }
               // --- PROCESO 4
               if (proceso == 4) {
-                // Validar transferente
+                // Validar transferente para revisar si el transferente es mayor a 10000 y existe en la base de datos
+                // #### HALLAZGO 290
                 if (data.transferente > 10000) {
                   const params: ListParams = {
                     page: this.params.getValue().page,
@@ -383,6 +425,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
                       },
                     });
                 }
+                // Opción del check para sólo autos
                 if (this.assetsForm.get('cars').value) {
                   const params: ListParams = {
                     page: this.params.getValue().page,
@@ -396,6 +439,41 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
                     .subscribe({
                       next: res => {
                         console.log(res);
+                        if (res.data) {
+                          this.validateAttributeClassificationgood(
+                            res.data,
+                            SAT_SAE_MUEBLES_PROCESO_4
+                          );
+                        }
+                      },
+                      error: err => {
+                        error = this.agregarError(
+                          error,
+                          ERROR_ATRIBUTE_CLASS_GOOD(data.clasif)
+                        );
+                      },
+                    });
+                }
+                // Opción del check para sólo inmuebles
+                if (this.assetsForm.get('inmuebles').value) {
+                  const params: ListParams = {
+                    page: this.params.getValue().page,
+                    limit: this.params.getValue().limit,
+                  };
+                  this.params.getValue().getParams();
+                  params['filter.classifGoodNumber'] =
+                    '$eq:' + data.clasif + '';
+                  await this.goodsBulkService
+                    .getAtributeClassificationGood(data.clasif)
+                    .subscribe({
+                      next: res => {
+                        console.log(res);
+                        if (res.data) {
+                          this.validateAttributeClassificationgood(
+                            res.data,
+                            SAT_SAE_INMUEBLES_PROCESO_4
+                          );
+                        }
                       },
                       error: err => {
                         error = this.agregarError(
@@ -407,11 +485,20 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
                 }
               }
               error[1].push(row);
+              let obj: any = {};
+              obj = { ...row };
+              for (let index = 0; index < error[0].length; index++) {
+                obj['errores'] = obj['errores'] + ' --- ' + error[index];
+              }
+              this.listError.push(obj);
               this.DeclarationsSatSaeMassive.data_error.push(error);
             }
           })
         )
         .subscribe(val => {
+          // Fin del proceso de validación
+          this.DeclarationsSatSaeMassive.message_progress =
+            VALIDATION_END_MESSAGE;
           console.log(this.DeclarationsSatSaeMassive);
           console.log(val);
         });
@@ -420,12 +507,50 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
 
   agregarError(error: any[], messageError: string) {
     // Agregar contador de error
-    this.DeclarationsSatSaeMassive.common_general.total_erros++;
+    this.DeclarationsSatSaeMassive.common_general.total_errores++;
     // Cambiar validador de proceso
     this.DeclarationsSatSaeMassive.common_general.valid = false;
     // Guardar error y mensaje
     error[0].push(messageError);
     return error;
+  }
+
+  /**
+   * Validar la respuesta de atributos de clasificacion del bien con los registros cargados
+   * @param dataResponse Respuesta con el listado de Atributos de clasificacion del bien
+   */
+  validateAttributeClassificationgood(
+    dataResponse: IAttribClassifGoods[],
+    listCompare: any
+  ) {
+    let likeVar = 0;
+    let equalVar = 0;
+    for (let indice = 0; indice < dataResponse.length; indice++) {
+      const info = dataResponse[indice];
+      if (info) {
+        for (
+          let index = 0;
+          index < listCompare.listSearchExist.length;
+          index++
+        ) {
+          const element = listCompare.listSearchExist[index];
+          if (element == info.attribute) {
+            likeVar = 1;
+          }
+        }
+        for (
+          let index = 0;
+          index < listCompare.listEqualExist.length;
+          index++
+        ) {
+          const element = listCompare.listEqualExist[index];
+          if (element == info.attribute) {
+            equalVar = 1;
+          }
+        }
+      }
+    }
+    console.log(likeVar, equalVar);
   }
 
   validProccessSat() {}
@@ -435,5 +560,20 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
   validatorGeneralMassive() {
     console.log('GENERAL VALID');
+  }
+
+  /**
+   * Exportar a XLSX
+   */
+  exportXlsx(data: any[]) {
+    if (data.length == 0) {
+      this.onLoadToast('warning', 'Reporte', ERROR_EXPORT);
+    }
+    // El type no es necesario ya que por defecto toma 'xlsx'
+    this.excelService.export(data, {
+      filename: `errores_${
+        this.DeclarationsSatSaeMassive.common_general.proceso
+      }${new Date().getTime()}`,
+    });
   }
 }

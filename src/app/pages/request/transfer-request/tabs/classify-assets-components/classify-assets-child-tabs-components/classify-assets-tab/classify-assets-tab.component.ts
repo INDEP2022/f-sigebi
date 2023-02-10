@@ -10,6 +10,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { IDomicilies } from 'src/app/core/models/good/good.model';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { FractionService } from 'src/app/core/services/catalogs/fraction.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
@@ -32,11 +33,10 @@ export class ClassifyAssetsTabComponent
   @Input() assetsId: any = '';
   @Input() typeDoc: string = '';
   @Input() goodObject: ModelForm<any> = null;
-  @Input() idDomicilie: number = null;
+  @Input() domicilieObject: IDomicilies;
   classiGoodsForm: ModelForm<IGood>;
   private bsModalRef: BsModalRef;
   private advSearch: boolean = false;
-  public isSave: boolean = false;
 
   public selectSection: any;
   public selectChapter = new DefaultSelect<any>();
@@ -77,11 +77,7 @@ export class ClassifyAssetsTabComponent
       }
     }
 
-    if (changes['idDomicilie'].currentValue) {
-      const id = changes['idDomicilie'].currentValue;
-      this.classiGoodsForm.controls['addressId'].setValue(id);
-    }
-
+    //bienes selecionados
     this.good = changes['goodObject'].currentValue;
     if (this.classiGoodsForm != undefined) {
       if (this.goodObject != null) {
@@ -335,7 +331,6 @@ export class ClassifyAssetsTabComponent
     this.bsModalRef = this.modalService.show(AdvancedSearchComponent, config);
 
     this.bsModalRef.content.event.subscribe((res: any) => {
-      console.log(res);
       this.matchLevelFraction(res);
     });
   }
@@ -367,7 +362,6 @@ export class ClassifyAssetsTabComponent
   }
 
   saveRequest(): void {
-    //this.isSave = true;
     const goods = this.classiGoodsForm.getRawValue();
     console.log('bienes: ', goods);
     var goodAction =
@@ -394,10 +388,8 @@ export class ClassifyAssetsTabComponent
           this.classiGoodsForm.controls['id'].setValue(data.id);
 
           this.refreshTable(true);
+          // this.principalSave = false;
         }
-      },
-      complete: () => {
-        //this.isSave = false;
       },
     });
   }

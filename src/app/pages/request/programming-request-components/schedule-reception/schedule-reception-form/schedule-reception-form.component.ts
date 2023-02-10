@@ -3,8 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IUser } from 'src/app/core/models/catalogs/user.model';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { userData } from '../../perform-programming/perform-programming-form/data-perfom-programming';
 import { ProgrammingRequestService } from '../../service/programming-request.service';
 import { SearchUserFormComponent } from '../search-user-form/search-user-form.component';
 
@@ -16,7 +16,7 @@ import { SearchUserFormComponent } from '../search-user-form/search-user-form.co
 export class ScheduleReceptionFormComponent implements OnInit {
   scheduleForm: FormGroup = new FormGroup({});
   loading: boolean = false;
-  users = new DefaultSelect<IUser>();
+  users = new DefaultSelect(userData);
   date = new Date();
   nameUser: string = '';
   typeUser: string = 'T.E';
@@ -29,6 +29,7 @@ export class ScheduleReceptionFormComponent implements OnInit {
   ngOnInit(): void {
     this.prepareForm();
     this.getUserInfo();
+    this.getUserSelect(new ListParams());
   }
 
   getUserInfo() {

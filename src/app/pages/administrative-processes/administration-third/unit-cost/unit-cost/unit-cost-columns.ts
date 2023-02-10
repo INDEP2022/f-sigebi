@@ -67,7 +67,7 @@ export const VALIDITYCOST_COLUMNS = {
     sort: false,
   },
   startDate: {
-    title: 'Fecha inicio',
+    title: 'Fecha page',
     width: '10%',
     sort: false,
   },

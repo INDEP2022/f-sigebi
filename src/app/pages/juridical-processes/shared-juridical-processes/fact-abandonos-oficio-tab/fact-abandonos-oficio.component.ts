@@ -26,13 +26,13 @@ export class FormFactAbandonosOficioComponent
   allForms: {
     formOficio: FormGroup;
     formCcpOficio: FormGroup;
-    formOficioInicioFin: FormGroup;
+    formOficiopageFin: FormGroup;
   };
   items = new DefaultSelect<Example>();
 
   @Input() formOficio: FormGroup;
   @Input() formCcpOficio: FormGroup;
-  @Input() formOficioInicioFin: FormGroup;
+  @Input() formOficiopageFin: FormGroup;
 
   @Output() formValues = new EventEmitter<any>();
 
@@ -75,7 +75,7 @@ export class FormFactAbandonosOficioComponent
     this.formOficio = formOficio;
     this.allForms.formOficio = this.formOficio;
     this.allForms.formCcpOficio = this.formCcpOficio;
-    this.allForms.formOficioInicioFin = this.formOficioInicioFin;
+    this.allForms.formOficiopageFin = this.formOficiopageFin;
     console.log(this.allForms);
     this.formValues.emit(this.allForms);
   }

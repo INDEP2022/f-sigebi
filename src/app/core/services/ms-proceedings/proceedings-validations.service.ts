@@ -20,7 +20,6 @@ export class ProceedingsValidationsService extends HttpService {
     proceedingsNumb: number,
     params?: ListParams
   ): Observable<IListResponse<IValidations>> {
-    //proceedingsNumb = 1;  para probar
     return this.get<IListResponse<IValidations>>(
       `${this.endpoint}?filter.numProceedings=${proceedingsNumb}`
     );

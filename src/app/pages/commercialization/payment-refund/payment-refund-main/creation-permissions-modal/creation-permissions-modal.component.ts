@@ -118,7 +118,7 @@ export class CreationPermissionsModalComponent
   ngOnInit(): void {
     this.getData();
     this.prepareForm();
-    this.getUsers({ inicio: 1, text: '' });
+    this.getUsers({ page: 1, text: '' });
   }
 
   private prepareForm(): void {

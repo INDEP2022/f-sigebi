@@ -168,10 +168,10 @@ export class ExpensesRequestComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getConcepts({ inicio: 1, text: '' });
-    this.getEvents({ inicio: 1, text: '' });
-    this.getVouchers({ inicio: 1, text: '' });
-    this.getUsers({ inicio: 1, text: '' });
+    this.getConcepts({ page: 1, text: '' });
+    this.getEvents({ page: 1, text: '' });
+    this.getVouchers({ page: 1, text: '' });
+    this.getUsers({ page: 1, text: '' });
     this.getData();
   }
 

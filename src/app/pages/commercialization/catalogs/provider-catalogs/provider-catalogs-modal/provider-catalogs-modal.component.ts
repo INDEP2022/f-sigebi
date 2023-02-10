@@ -122,9 +122,9 @@ export class ProviderCatalogsModalComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getCities({ inicio: 1, text: '' });
-    this.getStates({ inicio: 1, text: '' });
-    this.getCountries({ inicio: 1, text: '' });
+    this.getCities({ page: 1, text: '' });
+    this.getStates({ page: 1, text: '' });
+    this.getCountries({ page: 1, text: '' });
   }
 
   private prepareForm(): void {

@@ -86,7 +86,7 @@
               <div class="col-md-3">
                 <form-field
                   [control]="requestForm.get('paperNumber')"
-                  label="*No&#46; Oficio">
+                  label="No&#46; Oficio">
                   <input
                     type="text"
                     class="form-control"
@@ -101,7 +101,7 @@
                   [data]="selectEntity"
                   bindLabel="descCondition"
                   [searchable]="false"
-                  label="*Entidad"
+                  label="Entidad"
                   value="id"></ngx-select>
               </div>
             </div>
@@ -113,7 +113,7 @@
                   (fetchItems)="getTransferent($event)"
                   [data]="selectTransfe"
                   bindLabel="nameTransferent"
-                  label="*Transferente"
+                  label="Transferente"
                   value="id"></ngx-select>
               </div>
               <div class="col-md-4">
@@ -124,7 +124,7 @@
                   [data]="selectStation"
                   bindLabel="stationName"
                   [searchable]="false"
-                  label="*Emisora"
+                  label="Emisora"
                   value="id"></ngx-select>
               </div>
               <div class="col-md-4">
@@ -135,7 +135,7 @@
                   [data]="selectAuthority"
                   bindLabel="authorityName"
                   [searchable]="false"
-                  label="*Autoridad"
+                  label="Autoridad"
                   value="idAuthority"></ngx-select>
               </div>
               <div *ngIf="op == 2" class="col-md-3">

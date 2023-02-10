@@ -139,6 +139,18 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
                 if (childanchor && parent5El.id !== 'side-menu') {
                   childanchor.classList.add('mm-active');
                 }
+
+                /*IF MENU NIVEL 3*/
+                const parent6El = parent5El.parentElement;
+                if (parent6El && parent6El.id !== 'side-menu') {
+                  parent6El.classList.add('mm-show');
+                  parent6El.classList.add('mm-active');
+                  const childanchor = parent6El.querySelector('.is-parent');
+                  if (childanchor && parent6El.id !== 'side-menu') {
+                    childanchor.classList.add('mm-show');
+                    childanchor.classList.add('mm-active');
+                  }
+                }
               }
             }
           }
