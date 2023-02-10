@@ -1,4 +1,5 @@
 import { FormControl, Validators } from '@angular/forms';
+import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 // types
 export type DocumentsReceptionRegister =
   typeof DOCUMENTS_RECEPTION_REGISTER_FORM;
@@ -37,6 +38,7 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   city: new FormControl<string | number>(null, Validators.required),
   state: new FormControl<string | number>(null, Validators.required),
   transfer: new FormControl<string | number>(null, Validators.required),
+  transferDup: new FormControl<ITransferente>(null, Validators.required),
   court: new FormControl<string | number>(null),
   transmitter: new FormControl<string | number>(null, Validators.required),
   autority: new FormControl<string | number>(null, Validators.required),
@@ -48,3 +50,8 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   cpp: new FormControl<string | number>(null),
   status: new FormControl<string | number>(null, Validators.required),
 };
+
+export enum TaxpayerLabel {
+  Taxpayer = 'Contribuyente',
+  Defendant = 'Indiciado',
+}

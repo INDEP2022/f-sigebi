@@ -95,7 +95,8 @@
             <input
               id="desalojov-check"
               type="checkbox"
-              formControlName="desalojov" />
+              formControlName="desalojov"
+              (input)="checkDesalojo($event)" />
           </form-check>
 
           <form-check
@@ -198,7 +199,7 @@
     <div class="row pt-5">
       <div class="col-md-5">
         <div class="row">
-          <form-field
+          <!-- <form-field
             class="col-md-8"
             [control]="documentsReceptionForm.get('judgmentType')">
             <ngx-select
@@ -207,6 +208,20 @@
               control="judgmentType"
               label="Tipo Juicio">
             </ngx-select>
+          </form-field> -->
+          <form-field
+            [control]="documentsReceptionForm.get('judgmentType')"
+            label="Tipo Juicio">
+            <ng-select
+              formControlName="judgmentType"
+              [searchable]="false"
+              class="form-control"
+              [clearable]="false">
+              <ng-option value="Amparo">Amparo</ng-option>
+              <ng-option value="Procedimientos en Materia Adminsitrativa"
+                >Procedimientos en Materia Adminsitrativa</ng-option
+              >
+            </ng-select>
           </form-field>
 
           <form-field
@@ -301,7 +316,8 @@
               value="id"
               bindLabel="nameTransferent"
               control="transfer"
-              label="Transferente">
+              label="Transferente"
+              (change)="changeTransferor($event)">
             </ngx-select>
           </form-field>
         </div>
@@ -312,7 +328,10 @@
             [control]="documentsReceptionForm.get('transmitter')">
             <ngx-select
               [form]="documentsReceptionForm"
-              [data]="identifiers"
+              [data]="stations"
+              (fetchItems)="getStations($event)"
+              value="id"
+              bindLabel="stationName"
               control="transmitter"
               label="Emisora">
             </ngx-select>
@@ -323,7 +342,10 @@
             [control]="documentsReceptionForm.get('autority')">
             <ngx-select
               [form]="documentsReceptionForm"
-              [data]="identifiers"
+              [data]="authorities"
+              (fetchItems)="getAuthorities($event)"
+              id="idAuthority"
+              bindLabel="authorityName"
               control="autority"
               label="Autoridad">
             </ngx-select>
@@ -333,12 +355,14 @@
         <div class="row pt-5">
           <form-field
             class="col-md-6"
-            [control]="documentsReceptionForm.get('transfer')">
+            [control]="documentsReceptionForm.get('transferDup')">
             <ngx-select
               [form]="documentsReceptionForm"
-              [data]="identifiers"
-              control="transfer"
-              label="Transferente">
+              [data]="transferors"
+              bindLabel="nameTransferent"
+              control="transferDup"
+              label="Transferente"
+              [readonly]="true">
             </ngx-select>
           </form-field>
 
@@ -347,7 +371,10 @@
             [control]="documentsReceptionForm.get('court')">
             <ngx-select
               [form]="documentsReceptionForm"
-              [data]="identifiers"
+              [data]="courts"
+              (fetchItems)="getCourts($event)"
+              value="id"
+              bindLabel="description"
               control="court"
               label="Juzgado">
             </ngx-select>
@@ -360,9 +387,12 @@
             [control]="documentsReceptionForm.get('taxpayer')">
             <ngx-select
               [form]="documentsReceptionForm"
-              [data]="identifiers"
+              [data]="defendants"
+              (fetchItems)="getDefendants($event)"
+              value="id"
+              bindLabel="name"
               control="taxpayer"
-              label="Contribuyente">
+              [label]="taxpayerLabel">
             </ngx-select>
           </form-field>
 
@@ -419,27 +449,34 @@
     <div class="row pt-5">
       <form-field
         class="col-md-6"
-        [control]="documentsReceptionForm.get('cpp')">
-        <ngx-select
-          [form]="documentsReceptionForm"
-          [data]="identifiers"
-          control="cpp"
-          label="C.P.P.">
-        </ngx-select>
-      </form-field>
-      <form-field
-        class="col-md-6"
         [control]="documentsReceptionForm.get('inAtention')">
         <ngx-select
           [form]="documentsReceptionForm"
-          [data]="identifiers"
+          [data]="users"
+          (fetchItems)="getUsers($event)"
+          value="id"
+          bindLabel="name"
           control="inAtention"
           label="En atención">
         </ngx-select>
       </form-field>
+      <form-field
+        class="col-md-6"
+        [control]="documentsReceptionForm.get('cpp')">
+        <ngx-select
+          [form]="documentsReceptionForm"
+          [data]="users"
+          (fetchItems)="getUsers($event)"
+          value="id"
+          bindLabel="name"
+          control="cpp"
+          label="C.P.P.">
+        </ngx-select>
+      </form-field>
     </div>
     <div class="row">
-      <form-field
+      <div class="col-md-6"></div>
+      <!-- <form-field
         class="col-md-6"
         [control]="documentsReceptionForm.get('cpp')">
         <ngx-select
@@ -447,7 +484,7 @@
           [data]="identifiers"
           control="cpp">
         </ngx-select>
-      </form-field>
+      </form-field> -->
       <div class="col-md-6 text-right">
         <button class="btn btn-primary active btn-sm mt-3" type="submit">
           Siguiente

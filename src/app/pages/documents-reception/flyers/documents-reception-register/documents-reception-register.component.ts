@@ -9,20 +9,30 @@ import {
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { IAffair } from 'src/app/core/models/catalogs/affair.model';
+import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
+import { ICourt } from 'src/app/core/models/catalogs/court.model';
+import { TvalTable1Data } from 'src/app/core/models/catalogs/dinamic-tables.model';
+import { IIndiciados } from 'src/app/core/models/catalogs/indiciados.model';
+import { IStation } from 'src/app/core/models/catalogs/station.model';
 import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
+import { IUser } from 'src/app/core/models/catalogs/user.model';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
+import { CourtService } from 'src/app/core/services/catalogs/court.service';
+import { IndiciadosService } from 'src/app/core/services/catalogs/indiciados.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
+import { DocReceptionRegisterService } from 'src/app/core/services/document-reception/doc-reception-register.service';
+import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dynamic-tables.service';
 import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
+import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { TvalTable1Data } from '../../../../core/models/catalogs/dinamic-tables.model';
-import { DynamicTablesService } from '../../../../core/services/dynamic-catalogs/dynamic-tables.service';
 import { DocumentsReceptionFlyerSelectComponent } from './components/documents-reception-flyer-select/documents-reception-flyer-select.component';
 import { DOCUMENTS_RECEPTION_REGISTER_DEFAULT_IDENFIFIERS } from './constants/documents-reception-register-default-values';
 import {
   DocuentsReceptionRegisterFormChanges,
   DOCUMENTS_RECEPTION_REGISTER_FORM,
   DOC_RECEPT_REG_FIELDS_TO_LISTEN,
+  TaxpayerLabel,
 } from './interfaces/documets-reception-register-form';
 
 @Component({
@@ -38,15 +48,23 @@ export class DocumentsReceptionRegisterComponent
   valuesChange: DocuentsReceptionRegisterFormChanges = {
     identifier: (value: string) => this.identifierChange(value),
     type: (value: string) => this.transferTypeChange(value),
+    destinationArea: (value: string) => this.destinationAreaChange(value),
+    subject: (value: string) => this.subjectChange(value),
   };
   transfers = new DefaultSelect();
   identifiers = new DefaultSelect(
     DOCUMENTS_RECEPTION_REGISTER_DEFAULT_IDENFIFIERS,
     3
   );
+  taxpayerLabel: TaxpayerLabel = TaxpayerLabel.Taxpayer;
   subjects = new DefaultSelect<IAffair>();
   federalEtities = new DefaultSelect<TvalTable1Data>();
   transferors = new DefaultSelect<ITransferente>();
+  stations = new DefaultSelect<IStation>();
+  authorities = new DefaultSelect<IAuthority>();
+  courts = new DefaultSelect<ICourt>();
+  defendants = new DefaultSelect<IIndiciados>();
+  users = new DefaultSelect<IUser>();
 
   constructor(
     private fb: FormBuilder,
@@ -54,7 +72,11 @@ export class DocumentsReceptionRegisterComponent
     private affairService: AffairService,
     private notificationService: NotificationService,
     private dynamicTablesService: DynamicTablesService,
-    private transferentService: TransferenteService
+    private transferentService: TransferenteService,
+    private docRegisterService: DocReceptionRegisterService,
+    private courtService: CourtService,
+    private defendantService: IndiciadosService,
+    private usersService: UsersService
   ) {
     super();
   }
@@ -71,6 +93,14 @@ export class DocumentsReceptionRegisterComponent
     return this.documentsReceptionForm.controls['flyer'];
   }
 
+  get transmitter() {
+    return this.documentsReceptionForm.controls['transmitter'];
+  }
+
+  get transfer() {
+    return this.documentsReceptionForm.controls['transfer'];
+  }
+
   ngOnInit(): void {
     // ! descomentar esta linea para mostrar el modal al inicio
     // this.selectFlyer();
@@ -81,6 +111,11 @@ export class DocumentsReceptionRegisterComponent
   initSelectElements() {
     this.getSubjects({ inicio: 1, text: '' });
     this.getTransferors({ inicio: 1, text: '' });
+    this.getStations({ page: 1, text: '' });
+    this.getAuthorities({ page: 1, text: '' });
+    this.getCourts({ inicio: 1, text: '' });
+    this.getDefendants({ inicio: 1, text: '' });
+    this.getUsers({ inicio: 1, text: '' });
   }
 
   onFormChanges() {
@@ -112,6 +147,18 @@ export class DocumentsReceptionRegisterComponent
     if (type === 'T' || type === 'AT') {
       this.formControls.identifier.setValue('TRANS');
     }
+    if (type === 'T') this.taxpayerLabel = TaxpayerLabel.Taxpayer;
+    if (type === 'AT') this.taxpayerLabel = TaxpayerLabel.Defendant;
+  }
+
+  destinationAreaChange(area: string) {
+    //TODO: Validar si cambia el area que el usuario en atencion este asignado a ella
+    // con el endpoint seg_acceso_x_areas. Query en el trigger POST-CHANGE de NO_DEPTO_DESTINO
+  }
+
+  subjectChange(subject: string) {
+    //TODO: Obtener si tiene relacion con bien para habilitar captura de bienes
+    //TODO: Validaciones especiales par asunto 21, 22 y 34
   }
 
   fillForm(value: string | number) {
@@ -201,5 +248,73 @@ export class DocumentsReceptionRegisterComponent
       },
       error: err => this.handleSelectErrors(err),
     });
+  }
+
+  getStations(lparams: ListParams) {
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    if (lparams?.text.length > 0) params.addFilter('stationName', lparams.text);
+    if (this.transfer.value != null)
+      params.addFilter('idTransferent', this.transfer.value);
+    this.docRegisterService.getStations(params.getParams()).subscribe({
+      next: data => {
+        this.stations = new DefaultSelect(data.data, data.count);
+      },
+      error: err => this.handleSelectErrors(err),
+    });
+  }
+
+  getAuthorities(lparams: ListParams) {
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    if (lparams?.text.length > 0)
+      params.addFilter('authorityName', lparams.text);
+    if (this.transfer.value != null)
+      params.addFilter('idTransferer', this.transfer.value);
+    if (this.transmitter.value != null)
+      params.addFilter('idStation', this.transmitter.value);
+    this.docRegisterService.getAuthorities(params.getParams()).subscribe({
+      next: data => {
+        this.authorities = new DefaultSelect(data.data, data.count);
+      },
+      error: err => this.handleSelectErrors(err),
+    });
+  }
+
+  changeTransferor(event: ITransferente) {
+    this.documentsReceptionForm.controls['transferDup'].setValue(event);
+  }
+
+  getCourts(lparams: ListParams) {
+    this.courtService.getAll(lparams).subscribe({
+      next: data => {
+        this.courts = new DefaultSelect(data.data, data.count);
+      },
+      error: err => this.handleSelectErrors(err),
+    });
+  }
+
+  getDefendants(lparams: ListParams) {
+    this.defendantService.getAll(lparams).subscribe({
+      next: data => {
+        this.defendants = new DefaultSelect(data.data, data.count);
+      },
+      error: err => this.handleSelectErrors(err),
+    });
+  }
+
+  getUsers(lparams: ListParams) {
+    this.usersService.getAllSegUsers(lparams).subscribe({
+      next: data => {
+        this.users = new DefaultSelect(data.data, data.count);
+      },
+      error: err => this.handleSelectErrors(err),
+    });
+  }
+
+  checkDesalojo(event: any) {
+    console.log(event, this.documentsReceptionForm.controls['desalojov'].value);
   }
 }

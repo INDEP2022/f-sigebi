@@ -1,10 +1,12 @@
 import {
   Component,
+  ElementRef,
   EventEmitter,
   Input,
   OnInit,
   Output,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import {
@@ -40,10 +42,12 @@ export class SelectComponent<T> implements OnInit {
   @Output() fetchItems = new EventEmitter<ListParams>();
   @Output() change = new EventEmitter<any>();
   @Input() readonly: boolean = false;
+  @Input() initialValue: Object = null;
   buffer: any[] = [];
   input$ = new Subject<string>();
   page: number = 1;
   totalItems: number = 0;
+  @ViewChild('select') select: ElementRef;
   private concat: boolean = false;
   private readonly selectSize: number = SELECT_SIZE;
   constructor() {}
