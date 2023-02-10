@@ -129,26 +129,25 @@
               class="progress"
               role="progressbar"
               aria-label="Example with label"
+              style="background-color: lightgrey"
               [attr.aria-valuenow]="
-                (DeclarationsSatSaeMassive.common_general.total / 100) *
-                  DeclarationsSatSaeMassive.common_general.count +
-                1
+                ((DeclarationsSatSaeMassive.common_general.count + 1) /
+                  DeclarationsSatSaeMassive.common_general.total) *
+                  100 | number: '1.2-2'
               "
               aria-valuemin="0"
               aria-valuemax="100">
               <div
-                class="progress-bar"
+                class="progress-bar bg-info"
                 [style.width]="
-                  (DeclarationsSatSaeMassive.common_general.total / 100) *
-                    DeclarationsSatSaeMassive.common_general.count +
-                  1 +
-                  '%'
+                  (((DeclarationsSatSaeMassive.common_general.count + 1) /
+                    DeclarationsSatSaeMassive.common_general.total) *
+                    100 | number: '1.2-2') + '%'
                 ">
                 {{
-                  (DeclarationsSatSaeMassive.common_general.count +
-                    1 / (DeclarationsSatSaeMassive.common_general.count + 1) -
+                  ((DeclarationsSatSaeMassive.common_general.count + 1) /
                     DeclarationsSatSaeMassive.common_general.total) *
-                    100
+                    100 | number: '1.2-2'
                 }}%
               </div>
             </div>
@@ -174,7 +173,6 @@
           <div
             class="list-group-item"
             *ngIf="
-              listError.length > 0 &&
               DeclarationsSatSaeMassive.common_general.total_errores > 0 &&
               DeclarationsSatSaeMassive.common_general.valid == false
             ">
@@ -185,7 +183,7 @@
             <button
               type="button"
               class="ml-2 mr-2 mt-4 btn btn-success btn-sm"
-              (click)="exportXlsx(listError)">
+              (click)="exportXlsx()">
               Exportar Errores Encontrados en el Proceso<i
                 class="fa fa-file-excel ml-1"></i>
             </button>

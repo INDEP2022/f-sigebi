@@ -97,12 +97,12 @@
         <div class="col-md-12">
           <app-columns-select
             [(settings)]="mailboxSettings"></app-columns-select>
-          <button
+          <!-- <button
             type="button"
             class="ml-2 mr-2 btn btn-success btn-sm"
             [disabled]="true">
             Exportar Todos los Registros<i class="fa fa-file-excel ml-1"></i>
-          </button>
+          </button> -->
           <button
             type="button"
             class="ml-2 mr-2 btn btn-success btn-sm"
@@ -187,12 +187,12 @@
         <div class="col-md-12">
           <app-columns-select
             [(settings)]="transfersSettings"></app-columns-select>
-          <button
+          <!-- <button
             type="button"
             class="ml-2 mr-2 btn btn-success btn-sm"
-            [disabled]="true">
+            (click)="getReportTramiteSat()">
             Exportar Todos los Registros<i class="fa fa-file-excel ml-1"></i>
-          </button>
+          </button> -->
           <button
             type="button"
             class="ml-2 mr-2 btn btn-success btn-sm"
