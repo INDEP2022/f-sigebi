@@ -34,6 +34,7 @@ import {
   FORM_ACTION_TYPE_NULL,
   FORM_ACTION_TYPE_WITH_CHECK_ERROR,
   FORM_IDENTIFICATOR_NULL,
+  FORM_INMUEBLES_MUEBLES_CHECK,
   NOT_LOAD_FILE,
   VALIDATION_END_MESSAGE,
   VALIDATION_PROCESS_MESSAGE,
@@ -94,7 +95,6 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   save() {
     this.DeclarationsSatSaeMassive = undefined;
     setTimeout(() => {
-      this.startVariables();
       console.log(this.DeclarationsSatSaeMassive);
       this.assetsForm.markAllAsTouched();
       this.reviewConditions();
@@ -203,7 +203,11 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
    * @returns Si la validacion es correcta
    */
   validIdCarga() {
-    if (this.assetsForm.get('idCarga').value) {
+    this.assetsForm.get('idCarga').addValidators(Validators.required);
+    this.assetsForm.get('idCarga').updateValueAndValidity();
+    if (this.assetsForm.get('idCarga').valid) {
+      this.assetsForm.get('idCarga').clearValidators();
+      this.assetsForm.get('idCarga').updateValueAndValidity();
       return true;
     } else {
       this.onLoadToast('warning', FORM_IDENTIFICATOR_NULL, 'Error');
@@ -232,7 +236,22 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         );
         return false;
       } else {
-        return true;
+        if (
+          this.assetsForm.get('cars').value &&
+          this.assetsForm.get('inmuebles').value
+        ) {
+          this.onLoadToast(
+            'warning',
+            FORM_INMUEBLES_MUEBLES_CHECK(
+              this.assetsForm.get('cars').value,
+              this.assetsForm.get('inmuebles').value
+            ),
+            'Error'
+          );
+          return false;
+        } else {
+          return true;
+        }
       }
     } else {
       this.onLoadToast('warning', FORM_ACTION_TYPE_NULL, 'Error');
@@ -259,6 +278,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   validatorSatMassive() {
     console.log('SAT VALID');
     if (this.validIdCarga() && this.validActionType()) {
+      this.startVariables();
       let proceso = 0;
       if (
         GOODS_BULK_LOAD_ACTIONS.sat[0].value ==
@@ -302,204 +322,194 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
             // Mensaje de proceso de validación actual
             this.DeclarationsSatSaeMassive.message_progress =
               VALIDATION_PROCESS_MESSAGE(count + 1);
-            if (count <= 5) {
-              let error: any[] = [[], []];
-              // Indice actual del contador
-              this.DeclarationsSatSaeMassive.common_general.count = count;
-              let data: any = row;
-              // Procesos comunes
-              // --- PROCESO 1
-              // --- PROCESO 2
-              // --- PROCESO 3
-              // --- PROCESO 4
-              if (
-                proceso == 1 ||
-                proceso == 2 ||
-                proceso == 3 ||
-                proceso == 4
-              ) {
-                // Validar Unidad
-                if (!data.unidad) {
-                  error = this.agregarError(error, ERROR_UNIDAD(data.unidad));
-                }
-                // Validar Estatus
-                if (data.status) {
-                  await this.goodsBulkService
-                    .getGoodStatus(data.status)
-                    .subscribe({
-                      next: res => res,
-                      error: err => {
-                        error = this.agregarError(
-                          error,
-                          ERROR_ESTATUS(data.status)
-                        );
-                      },
-                    });
-                } else {
-                  error = this.agregarError(error, ERROR_ESTATUS(data.status));
-                }
-                // Validar Clasificación de bien
-                // #### Falta que filtre por numero clasificacion bien HALLAZGO 231
-                if (data.clasif) {
-                  const params: ListParams = {
-                    page: this.params.getValue().page,
-                    limit: this.params.getValue().limit,
-                  };
-                  this.params.getValue().getParams();
-                  params['filter.numClasifGoods'] = '$eq:' + data.clasif + '';
-                  await this.goodsBulkService
-                    .getGoodssSubtype(params)
-                    .subscribe({
-                      next: res => res,
-                      error: err => {
-                        error = this.agregarError(
-                          error,
-                          ERROR_CLASS_GOOD(data.clasif)
-                        );
-                      },
-                    });
-                } else {
-                  error = this.agregarError(
-                    error,
-                    ERROR_CLASS_GOOD(data.clasif)
-                  );
-                }
-                // Validar Unidad de acuerdo al número de Clasificación de bien
-                if (data.clasif) {
-                  await this.goodsBulkService
-                    .getUnityByUnityAndClasifGood(data.clasif)
-                    .subscribe({
-                      next: (res: any) => {
-                        if (res.minunit != data.unidad) {
-                          error = this.agregarError(
-                            error,
-                            ERROR_UNITY_CLASS_GOOD(data.unidad, data.clasif)
-                          );
-                        }
-                      },
-                      error: err => {
+            // if (count <= 5) {
+            let error: any[] = [[], []];
+            // Indice actual del contador
+            this.DeclarationsSatSaeMassive.common_general.count = count;
+            let data: any = row;
+            // Procesos comunes
+            // --- PROCESO 1
+            // --- PROCESO 2
+            // --- PROCESO 3
+            // --- PROCESO 4
+            if (proceso == 1 || proceso == 2 || proceso == 3 || proceso == 4) {
+              // Validar Unidad
+              if (!data.unidad) {
+                error = this.agregarError(error, ERROR_UNIDAD(data.unidad));
+              }
+              // Validar Estatus
+              if (data.status) {
+                await this.goodsBulkService
+                  .getGoodStatus(data.status)
+                  .subscribe({
+                    next: res => res,
+                    error: err => {
+                      error = this.agregarError(
+                        error,
+                        ERROR_ESTATUS(data.status)
+                      );
+                    },
+                  });
+              } else {
+                error = this.agregarError(error, ERROR_ESTATUS(data.status));
+              }
+              // Validar Clasificación de bien
+              // #### Falta que filtre por numero clasificacion bien HALLAZGO 231
+              if (data.clasif) {
+                const params: ListParams = {
+                  page: this.params.getValue().page,
+                  limit: this.params.getValue().limit,
+                };
+                this.params.getValue().getParams();
+                params['filter.numClasifGoods'] = '$eq:' + data.clasif + '';
+                await this.goodsBulkService.getGoodssSubtype(params).subscribe({
+                  next: res => res,
+                  error: err => {
+                    error = this.agregarError(
+                      error,
+                      ERROR_CLASS_GOOD(data.clasif)
+                    );
+                  },
+                });
+              } else {
+                error = this.agregarError(error, ERROR_CLASS_GOOD(data.clasif));
+              }
+              // Validar Unidad de acuerdo al número de Clasificación de bien
+              if (data.clasif) {
+                await this.goodsBulkService
+                  .getUnityByUnityAndClasifGood(data.clasif)
+                  .subscribe({
+                    next: (res: any) => {
+                      if (res.minunit != data.unidad) {
                         error = this.agregarError(
                           error,
                           ERROR_UNITY_CLASS_GOOD(data.unidad, data.clasif)
                         );
-                      },
-                    });
-                } else {
-                  error = this.agregarError(
-                    error,
-                    ERROR_UNITY_CLASS_GOOD(data.unidad, data.clasif)
-                  );
-                }
+                      }
+                    },
+                    error: err => {
+                      error = this.agregarError(
+                        error,
+                        ERROR_UNITY_CLASS_GOOD(data.unidad, data.clasif)
+                      );
+                    },
+                  });
+              } else {
+                error = this.agregarError(
+                  error,
+                  ERROR_UNITY_CLASS_GOOD(data.unidad, data.clasif)
+                );
               }
-              // --- PROCESO 2
-              if (proceso == 2) {
-                // Validar Identificador padre de menaje
-                if (!data.identificador) {
-                  error = this.agregarError(
-                    error,
-                    ERROR_IDENTIFICADOR_MENAJE(data.identificador)
-                  );
-                }
-              }
-              // --- PROCESO 4
-              if (proceso == 4) {
-                // Validar transferente para revisar si el transferente es mayor a 10000 y existe en la base de datos
-                // #### HALLAZGO 290
-                if (data.transferente > 10000) {
-                  const params: ListParams = {
-                    page: this.params.getValue().page,
-                    limit: this.params.getValue().limit,
-                  };
-                  this.params.getValue().getParams();
-                  params['filter.idAuthorityIssuerTransferor'] =
-                    '$eq:' + data.transferente + '';
-                  await this.goodsBulkService
-                    .getNumberTransferenteAuthority(data.transferente)
-                    .subscribe({
-                      next: res => res,
-                      error: err => {
-                        error = this.agregarError(
-                          error,
-                          ERROR_TRANSFERENTE(data.transferente)
-                        );
-                      },
-                    });
-                }
-                // Opción del check para sólo autos
-                if (this.assetsForm.get('cars').value) {
-                  const params: ListParams = {
-                    page: this.params.getValue().page,
-                    limit: this.params.getValue().limit,
-                  };
-                  this.params.getValue().getParams();
-                  params['filter.classifGoodNumber'] =
-                    '$eq:' + data.clasif + '';
-                  await this.goodsBulkService
-                    .getAtributeClassificationGood(data.clasif)
-                    .subscribe({
-                      next: res => {
-                        console.log(res);
-                        if (res.data) {
-                          this.validateAttributeClassificationgood(
-                            res.data,
-                            SAT_SAE_MUEBLES_PROCESO_4
-                          );
-                        }
-                      },
-                      error: err => {
-                        error = this.agregarError(
-                          error,
-                          ERROR_ATRIBUTE_CLASS_GOOD(data.clasif)
-                        );
-                      },
-                    });
-                }
-                // Opción del check para sólo inmuebles
-                if (this.assetsForm.get('inmuebles').value) {
-                  const params: ListParams = {
-                    page: this.params.getValue().page,
-                    limit: this.params.getValue().limit,
-                  };
-                  this.params.getValue().getParams();
-                  params['filter.classifGoodNumber'] =
-                    '$eq:' + data.clasif + '';
-                  await this.goodsBulkService
-                    .getAtributeClassificationGood(data.clasif)
-                    .subscribe({
-                      next: res => {
-                        console.log(res);
-                        if (res.data) {
-                          this.validateAttributeClassificationgood(
-                            res.data,
-                            SAT_SAE_INMUEBLES_PROCESO_4
-                          );
-                        }
-                      },
-                      error: err => {
-                        error = this.agregarError(
-                          error,
-                          ERROR_ATRIBUTE_CLASS_GOOD(data.clasif)
-                        );
-                      },
-                    });
-                }
-              }
-              error[1].push(row);
-              let obj: any = {};
-              obj = { ...row };
-              for (let index = 0; index < error[0].length; index++) {
-                obj['errores'] = obj['errores'] + ' --- ' + error[index];
-              }
-              this.listError.push(obj);
-              this.DeclarationsSatSaeMassive.data_error.push(error);
             }
+            // --- PROCESO 2
+            if (proceso == 2) {
+              // Validar Identificador padre de menaje
+              if (!data.identificador) {
+                error = this.agregarError(
+                  error,
+                  ERROR_IDENTIFICADOR_MENAJE(data.identificador)
+                );
+              }
+            }
+            // --- PROCESO 4
+            if (proceso == 4) {
+              // Validar transferente para revisar si el transferente es mayor a 10000 y existe en la base de datos
+              // #### HALLAZGO 290
+              if (data.transferente > 10000) {
+                const params: ListParams = {
+                  page: this.params.getValue().page,
+                  limit: this.params.getValue().limit,
+                };
+                this.params.getValue().getParams();
+                params['filter.idAuthorityIssuerTransferor'] =
+                  '$eq:' + data.transferente + '';
+                await this.goodsBulkService
+                  .getNumberTransferenteAuthority(data.transferente)
+                  .subscribe({
+                    next: res => res,
+                    error: err => {
+                      error = this.agregarError(
+                        error,
+                        ERROR_TRANSFERENTE(data.transferente)
+                      );
+                    },
+                  });
+              }
+              // Opción del check para sólo autos
+              if (this.assetsForm.get('cars').value) {
+                const params: ListParams = {
+                  page: this.params.getValue().page,
+                  limit: this.params.getValue().limit,
+                };
+                this.params.getValue().getParams();
+                params['filter.classifGoodNumber'] = '$eq:' + data.clasif + '';
+                await this.goodsBulkService
+                  .getAtributeClassificationGood(data.clasif)
+                  .subscribe({
+                    next: res => {
+                      console.log(res);
+                      if (res.data) {
+                        this.validateAttributeClassificationgood(
+                          res.data,
+                          SAT_SAE_MUEBLES_PROCESO_4
+                        );
+                      }
+                    },
+                    error: err => {
+                      error = this.agregarError(
+                        error,
+                        ERROR_ATRIBUTE_CLASS_GOOD(data.clasif)
+                      );
+                    },
+                  });
+              }
+              // Opción del check para sólo inmuebles
+              if (this.assetsForm.get('inmuebles').value) {
+                const params: ListParams = {
+                  page: this.params.getValue().page,
+                  limit: this.params.getValue().limit,
+                };
+                this.params.getValue().getParams();
+                params['filter.classifGoodNumber'] = '$eq:' + data.clasif + '';
+                await this.goodsBulkService
+                  .getAtributeClassificationGood(data.clasif)
+                  .subscribe({
+                    next: res => {
+                      console.log(res);
+                      if (res.data) {
+                        this.validateAttributeClassificationgood(
+                          res.data,
+                          SAT_SAE_INMUEBLES_PROCESO_4
+                        );
+                      }
+                    },
+                    error: err => {
+                      error = this.agregarError(
+                        error,
+                        ERROR_ATRIBUTE_CLASS_GOOD(data.clasif)
+                      );
+                    },
+                  });
+              }
+            }
+            error[1].push(row);
+            // let obj: any = {};
+            // obj = { ...row };
+            // for (let index = 0; index < error[0].length; index++) {
+            //   obj['errores'] = obj['errores'] + ' --- ' + error[0][index];
+            //   console.log(error[0][index], obj);
+            // }
+            // this.listError.push(obj);
+            // console.log(obj, error, this.listError);
+            this.DeclarationsSatSaeMassive.data_error.push(error);
+            // }
           })
         )
         .subscribe(val => {
           // Fin del proceso de validación
           this.DeclarationsSatSaeMassive.message_progress =
             VALIDATION_END_MESSAGE;
-          console.log(this.DeclarationsSatSaeMassive);
+          console.log(this.DeclarationsSatSaeMassive, this.listError);
           console.log(val);
         });
     }
@@ -553,8 +563,6 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     console.log(likeVar, equalVar);
   }
 
-  validProccessSat() {}
-
   validatorPgrMassive() {
     console.log('PGR VALID');
   }
@@ -565,12 +573,29 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   /**
    * Exportar a XLSX
    */
-  exportXlsx(data: any[]) {
-    if (data.length == 0) {
+  exportXlsx() {
+    let errores = [];
+    for (
+      let index = 0;
+      index < this.DeclarationsSatSaeMassive.data_error.length;
+      index++
+    ) {
+      const element = this.DeclarationsSatSaeMassive.data_error[index];
+      let obj: any = { ...element[1][0] };
+      obj['errores'] = '';
+      for (let indice = 0; indice < element[0].length; indice++) {
+        const elemento = element[0][indice];
+        if (elemento) {
+          obj['errores'] = obj['errores'] + ' --- ' + elemento;
+        }
+      }
+      errores.push(obj);
+    }
+    if (errores.length == 0) {
       this.onLoadToast('warning', 'Reporte', ERROR_EXPORT);
     }
     // El type no es necesario ya que por defecto toma 'xlsx'
-    this.excelService.export(data, {
+    this.excelService.export(errores, {
       filename: `errores_${
         this.DeclarationsSatSaeMassive.common_general.proceso
       }${new Date().getTime()}`,

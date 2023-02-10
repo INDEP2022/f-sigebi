@@ -68,6 +68,15 @@ export class AuthorityService
     );
   }
 
+  search(_params?: ListParams): Observable<IListResponse<IAuthority>> {
+    const route = `catalog/api/v1/authority/search`;
+    const params = this.makeParams(_params);
+
+    return this.httpClient.get<IListResponse<IAuthority>>(
+      `${environment.API_URL}${route}?${params}`
+    );
+  }
+
   private makeParams(params: ListParams): HttpParams {
     let httpParams: HttpParams = new HttpParams();
     Object.keys(params).forEach(key => {

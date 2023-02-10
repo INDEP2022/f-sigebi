@@ -16,7 +16,6 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { SiabService } from 'src/app/core/services/jasper-reports/siab.service';
 //Components
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { SiabReportEndpoints } from 'src/app/common/constants/endpoints/siab-reports-endpoints';
 import {
   FilterParams,
   ListParams,
@@ -44,6 +43,9 @@ export class PrintFlyersComponent extends BasePage implements OnInit {
   subdelegations = new DefaultSelect<ISubdelegation>();
   departments = new DefaultSelect<IDepartment>();
   phaseEdo: number;
+  maxDateEnd = new Date();
+  maxDateStart: Date;
+  minDateEnd: Date;
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -54,6 +56,12 @@ export class PrintFlyersComponent extends BasePage implements OnInit {
     private printFlyersService: PrintFlyersService
   ) {
     super();
+    this.maxDateStart = new Date(
+      this.maxDateEnd.getFullYear(),
+      this.maxDateEnd.getMonth(),
+      this.maxDateEnd.getDate() - 1
+    );
+    this.minDateEnd = new Date(this.maxDateEnd.getFullYear() - 1, 0, 1);
   }
 
   get PN_NODELEGACION() {
@@ -73,61 +81,56 @@ export class PrintFlyersComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.flyersForm = this.fb.group({
-      PN_NODELEGACION: [null],
-      PN_NOSUBDELEGACION: [null],
-      PN_AREADESTINO: [null],
-      PN_VOLANTEINI: [null, Validators.pattern(NUMBERS_PATTERN)],
+      PN_NODELEGACION: [null, Validators.maxLength(200)],
+      PN_NOSUBDELEGACION: [null, Validators.maxLength(30)],
+      PN_AREADESTINO: [null, Validators.maxLength(200)],
+      PN_VOLANTEINI: [
+        null,
+        [Validators.pattern(NUMBERS_PATTERN), Validators.maxLength(10)],
+      ],
       PN_VOLANTEFIN: [
         null,
-        [Validators.required, Validators.pattern(NUMBERS_PATTERN)],
+        [
+          Validators.required,
+          Validators.pattern(NUMBERS_PATTERN),
+          Validators.maxLength(30),
+        ],
       ],
       PN_TIPOASUNTO: [null],
       PF_FECINI: [null],
       PF_FECFIN: [null],
-      P_IDENTIFICADOR: [0, [Validators.required]],
+      P_IDENTIFICADOR: [0, [Validators.required, Validators.maxLength(14)]],
     });
   }
 
   confirm(): void {
     this.loading = true;
     console.log(this.flyersForm.value);
-
-    // this.loading = false;
-    // return;
-
-    // let form = {
-    //   P_USR: 'LGONZALEZ',
-    //   P_CUMP: 1,
-    //   P_T_NO_CUMP: 2,
-    //   P_T_CUMP: 100,
-    // };
-
-    // let form = {
-    //   PN_VOLANTEINI: 1,
-    //   PN_VOLANTEFIN: 10000,
-    // };
-
-    // const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RINDICA_0001.pdf?P_USR=LGONZALEZ&P_CUMP=1&P_T_NO_CUMP=2&P_T_CUMP=100`; //window.URL.createObjectURL(blob);
     const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RCONCOGVOLANTESRE.pdf?PN_VOLANTEFIN=70646&P_IDENTIFICADOR=0`; //window.URL.createObjectURL(blob);
     // console.log(this.flyersForm.value);
     let params = { ...this.flyersForm.value };
     for (const key in params) {
       if (params[key] === null) delete params[key];
     }
-    console.log(params);
-    this.siabService
+    let newWin = window.open(pdfurl, 'test.pdf');
+    this.onLoadToast('success', '', 'Reporte generado');
+    this.loading = false;
+    //console.log(params);
+    /*this.siabService
       .getReport(SiabReportEndpoints.RCONCOGVOLANTESRE, params)
       .subscribe({
         next: response => {
           console.log(response);
           // this.readFile(response);
+          window.open(pdfurl, 'Reporte de Impresion de Volantes');
           this.loading = false;
         },
         error: () => {
           this.loading = false;
-          this.openPrevPdf(pdfurl);
+          // this.openPrevPdf(pdfurl);
+          window.open(pdfurl, 'Reporte de Impresion de Volantes');
         },
-      });
+    });*/
     // this.loading = false;
     //this.openPrevPdf(pdfurl)
     // open the window
@@ -274,5 +277,13 @@ export class PrintFlyersComponent extends BasePage implements OnInit {
       field = null;
     });
     this.flyersForm.updateValueAndValidity();
+  }
+
+  setMinDateEnd(date: Date) {
+    if (date != undefined) this.minDateEnd = date;
+  }
+
+  cleanForm(): void {
+    this.flyersForm.reset();
   }
 }

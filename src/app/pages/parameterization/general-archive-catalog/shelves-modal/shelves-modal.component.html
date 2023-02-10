@@ -5,33 +5,29 @@
   <div body>
     <form class="form-material" [formGroup]="shelvesForm">
       <div class="row">
-        <div class="col-md-5" *ngIf="edit == false">
-          <form-field [control]="shelvesForm.get('key')">
-            <ngx-select
-              [form]="shelvesForm"
-              control="key"
-              [data]="cveSaveValues"
-              value="id"
-              bindLabel="id"
-              label="Cve GuardaValor"
-              (fetchItems)="getCveSaveValues($event)">
-            </ngx-select>
+        <div class="col-md-5">
+          <form-field
+            label="Cve Guardavalor"
+            [control]="shelvesForm.get('key')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="key"
+              readonly />
           </form-field>
         </div>
-        <div class="col-md-4" *ngIf="edit == false">
-          <form-field [control]="shelvesForm.get('batteryNumber')">
-            <ngx-select
-              [form]="shelvesForm"
-              control="batteryNumber"
-              [data]="idBatteryD"
-              value="idBattery"
-              bindLabel="idBattery"
-              label="Bateria"
-              (fetchItems)="getBatteryById($event)">
-            </ngx-select>
+        <div class="col-md-4">
+          <form-field
+            label="Bateria"
+            [control]="shelvesForm.get('batteryNumber')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="batteryNumber"
+              readonly />
           </form-field>
         </div>
-        <div class="col-md-3" *ngIf="edit == false">
+        <div class="col-md-3">
           <form-field label="No. Estante" [control]="shelvesForm.get('id')">
             <input type="number" class="form-control" formControlName="id" />
           </form-field>

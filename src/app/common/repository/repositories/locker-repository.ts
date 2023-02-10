@@ -7,12 +7,12 @@ import { ListParams } from '../interfaces/list-params';
 import { ILockerMethods } from '../interfaces/locker-methods';
 @Injectable({ providedIn: 'root' })
 export class LockerRepository<T> implements ILockerMethods<T> {
-  ms: string = `${environment.API_URL}catalog/api/v1/locker`;
+  ms: string = `${environment.API_URL}catalog/api/v1`;
 
   constructor(public readonly httpClient: HttpClient) {}
 
   getAll(route: string, _params?: ListParams): Observable<IListResponse<T>> {
-    const fullRoute = `${this.ms}/${route}`;
+    const fullRoute = `${this.ms}`;
     const params = this.makeParams(_params);
 
     return this.httpClient.get<IListResponse<T>>(`${fullRoute}`, { params });
@@ -20,17 +20,21 @@ export class LockerRepository<T> implements ILockerMethods<T> {
 
   getByCveSaveValues?(
     route: string,
-    id: number | string,
+    saveValueKey: string | number,
+    numBattery: string | number,
+    numShelf: string | number,
     _params?: ListParams
-  ): Observable<IListResponse<T>> {
+  ): Observable<IListResponse<any>> {
     const fullRoute = `${this.ms}/${route}`;
     const params = this.makeParams(_params);
-    return this.httpClient.get<IListResponse<T>>(`${fullRoute}${id}`); //Cambiar forma de body si es necesario
+    return this.httpClient.get<IListResponse<T>>(
+      `${fullRoute}?filter.saveValueKey=${saveValueKey}&filter.numBattery=${numBattery}&filter.numShelf=${numShelf}`
+    );
   }
 
-  update(route: string, id: number | string, formData: Object) {
-    const fullRoute = `${this.ms}/${route}`;
-    return this.httpClient.put(`${fullRoute}/${id}`, formData);
+  update(formData: Object) {
+    const fullRoute = `${this.ms}/locker`;
+    return this.httpClient.put(`${fullRoute}`, formData);
   }
 
   create(route: string, formData: Object) {
