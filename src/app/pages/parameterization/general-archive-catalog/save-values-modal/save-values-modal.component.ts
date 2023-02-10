@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -7,6 +7,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { ISaveValue } from 'src/app/core/models/catalogs/save-value.model';
 //Services
 import { SaveValueService } from 'src/app/core/services/catalogs/save-value.service';
+import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-save-values-modal',
@@ -34,11 +35,23 @@ export class SaveValuesModalComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.saveValuesForm = this.fb.group({
-      id: [null, []],
-      description: [null, []],
-      location: [null, []],
-      responsible: [null, []],
-      noRegistration: [null, []],
+      id: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      location: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      responsible: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      noRegistration: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
     });
     if (this.saveValues != null) {
       this.edit = true;
