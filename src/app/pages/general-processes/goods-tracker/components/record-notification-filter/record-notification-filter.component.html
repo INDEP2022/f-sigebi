@@ -24,6 +24,7 @@
         formControlName="flyerNum"
         [items]="[]"
         [addTag]="true"
+        (change)="flyerChange()"
         [multiple]="true"
         [selectOnTab]="true"
         [isOpen]="false">
@@ -41,22 +42,31 @@
         value="id"
         bindLabel="description"
         (fetchItems)="getCourts($event)"
+        (change)="courtChange()"
         label="No&#46; Juzgado"></ngx-select>
     </form-field>
 
-    <form-field
+    <!-- No hay filtro para este  campo -->
+    <!-- <form-field
       [control]="form.get('trasnferExp')"
       label="Exp&#46; Trans&#46;"
       class="col-md-3">
       <input type="text" formControlName="trasnferExp" class="form-control" />
-    </form-field>
+    </form-field> -->
   </div>
   <div class="row pt-4">
     <form-field
       [control]="form.get('flyerType')"
       label="Tipo de Volante"
       class="col-md-2">
-      <input type="text" formControlName="flyerType" class="form-control" />
+      <!-- <input type="text" formControlName="flyerType" class="form-control" /> -->
+      <select
+        formControlName="flyerType"
+        class="form-control"
+        (change)="flyerTypeChange()">
+        <option value="T">T</option>
+        <option value="P">P</option>
+      </select>
     </form-field>
     <form-field
       [control]="form.get('officeDate')"
@@ -64,6 +74,7 @@
       class="col-md-3">
       <input
         type="text"
+        (ngModelChange)="fecChange()"
         formControlName="officeDate"
         class="form-control"
         bsDatepicker />
@@ -73,17 +84,22 @@
       [control]="form.get('protection')"
       label="Amparo"
       class="col-md-4">
-      <input type="text" formControlName="protection" class="form-control" />
+      <input
+        type="text"
+        formControlName="protection"
+        class="form-control"
+        (change)="protectionChange()" />
     </form-field>
   </div>
 
   <div class="row pt-4">
-    <form-field
+    <!-- ! no hay filtro aun -->
+    <!-- <form-field
       [control]="form.get('indicatedName')"
       label="Nombre Indiciado"
       class="col-md-4">
       <input type="text" formControlName="indicatedName" class="form-control" />
-    </form-field>
+    </form-field> -->
 
     <form-field [control]="form.get('publicMin')" class="col-md-4">
       <!-- <input type="text" formControlName="publicMin" class="form-control" /> -->
@@ -95,6 +111,7 @@
         value="id"
         bindLabel="description"
         (fetchItems)="getMinPubs($event)"
+        (change)="minpubChange()"
         label="Ministerio P&uacute;blico"></ngx-select>
     </form-field>
 
@@ -102,11 +119,15 @@
       [control]="form.get('criminalCase')"
       label="Toca Penal"
       class="col-md-4">
-      <input type="text" formControlName="criminalCase" class="form-control" />
+      <input
+        type="text"
+        formControlName="criminalCase"
+        (change)="criminalCaseChange()"
+        class="form-control" />
     </form-field>
   </div>
 
-  <div class="row pt-4">
+  <!-- <div class="row pt-4">
     <form-field
       [control]="form.get('extOfficeNum')"
       label="Oficio Ext&#46; No&#46;"
@@ -137,7 +158,7 @@
       class="col-md-3">
       <input type="text" formControlName="criminalCase" class="form-control" />
     </form-field>
-  </div>
+  </div> -->
 
   <div class="row">
     <div class="col-md-12">

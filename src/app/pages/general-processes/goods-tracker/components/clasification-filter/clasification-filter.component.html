@@ -12,7 +12,7 @@
     </form-field>
 
     <div class="col-1 mx-0 px-0">
-      <button class="btn btn-small" (click)="selectFraction()">
+      <button class="btn btn-small" type="button" (click)="selectFraction()">
         <i class="fa fa-search text-pink" aria-hidden="true"></i>
       </button>
     </div>
@@ -48,7 +48,7 @@
         value="id"
         bindLabel="nameGoodType"
         (fetchItems)="getTypes($event)"
-        (change)="getSubtypes()"></ngx-select>
+        (change)="typesChange()"></ngx-select>
     </form-field>
 
     <form-field [control]="form.get('subtypes')" class="col-md-3">
@@ -62,7 +62,7 @@
         value="id"
         bindLabel="nameSubtypeGood"
         (fetchItems)="getSubtypes($event)"
-        (change)="getSsubtypes()"></ngx-select>
+        (change)="subtypesChange()"></ngx-select>
     </form-field>
 
     <form-field [control]="form.get('ssubtypes')" class="col-md-3">
@@ -73,10 +73,10 @@
         control="ssubtypes"
         label="Ssubtipo"
         [data]="ssubtypes"
-        value="id"
+        value="numClasifGoods"
         bindLabel="description"
         (fetchItems)="getSsubtypes($event)"
-        (change)="getSssubtypes()"></ngx-select>
+        (change)="ssubtypesChange()"></ngx-select>
     </form-field>
 
     <form-field [control]="form.get('sssubtypes')" class="col-md-3">
@@ -87,7 +87,7 @@
         control="sssubtypes"
         label="Sssubtipo"
         [data]="sssubtypes"
-        value="id"
+        value="numClasifGoods"
         bindLabel="description"
         (fetchItems)="getSssubtypes($event)"></ngx-select>
     </form-field>

@@ -1,6 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { WarehouseService } from 'src/app/core/services/catalogs/warehouse.service';
@@ -34,9 +38,18 @@ export class LocationFilterComponent implements OnInit {
   }
 
   getWarehouses(params: ListParams) {
-    this.warehouseService.getAll(params).subscribe({
-      next: res => (this.warehouses = new DefaultSelect(res.data, res.count)),
-    });
+    const _params = new FilterParams();
+    _params.page = params.page;
+    _params.limit = params.limit;
+    if (params.text) {
+      _params.addFilter('description', params.text, SearchFilter.ILIKE);
+    }
+    this.warehouseService
+      .getAllFilter(_params.getParams())
+      // this.warehouseService.getAll(params)
+      .subscribe({
+        next: res => (this.warehouses = new DefaultSelect(res.data, res.count)),
+      });
   }
 
   getDelegations(params: ListParams) {
