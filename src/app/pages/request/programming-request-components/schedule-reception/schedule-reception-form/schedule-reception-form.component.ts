@@ -69,8 +69,9 @@ export class ScheduleReceptionFormComponent implements OnInit {
       typeUser,
       callback: (data: any) => {
         if (data) {
-          console.log('usuario', data);
-          this.scheduleForm.get('user').setValue(data.user);
+          data.map((item: any) => {
+            this.scheduleForm.get('user').setValue(item.user);
+          });
         }
       },
     };
