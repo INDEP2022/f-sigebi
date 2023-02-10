@@ -14,7 +14,10 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import {
   IDomicilies,
@@ -53,7 +56,7 @@ export class DetailAssetsTabComponentComponent
   @Input() typeDoc: any;
   bsModalRef: BsModalRef;
   request: IRequest;
-  stateOfRepublicName: string = '';
+  stateOfRepId: number = null;
   municipalityId: number = null;
 
   goodDomicilieForm: ModelForm<IGoodRealState>; // bien del inmueble
@@ -128,6 +131,9 @@ export class DetailAssetsTabComponentComponent
         if (data) {
           this.getTypeGood(this.detailAssets.controls['goodTypeId'].value);
           this.displayTypeTapInformation(Number(data));
+        } else {
+          //limpia los tabs de los bienes
+          this.displayTypeTapInformation(data);
         }
       }
     );
@@ -429,10 +435,23 @@ export class DetailAssetsTabComponentComponent
     });
   }
 
-  getCP(params: ListParams, keyTownship?: number, keyState?: number) {
+  getCP(
+    params: ListParams,
+    keyTownship?: number,
+    keyState?: number,
+    keySettlement?: number
+  ) {
     params.limit = 20;
     params['filter.keyTownship'] = `$eq:${keyTownship}`;
     params['filter.keyState'] = `$eq:${keyState}`;
+    params['filter.keySettlement'] = `$eq:${keySettlement}`;
+    delete params.text;
+    delete params.take;
+    delete params.inicio;
+    delete params.pageSize;
+
+    const par = new FilterParams();
+
     this.goodsQueryService.getZipCode(params).subscribe({
       next: data => {
         this.selectCP = new DefaultSelect(data.data, data.count);
@@ -691,6 +710,7 @@ export class DetailAssetsTabComponentComponent
 
     this.domicileForm.controls['statusKey'].valueChanges.subscribe(data => {
       if (data !== null) {
+        this.stateOfRepId = data;
         this.getMunicipaly(new ListParams(), data);
       }
     });
@@ -714,7 +734,8 @@ export class DetailAssetsTabComponentComponent
           this.getCP(
             new ListParams(),
             this.municipalityId,
-            this.requestObject.keyStateOfRepublic
+            this.stateOfRepId,
+            Number(data)
           );
         }
       }
