@@ -47,26 +47,29 @@ export const DOCUMENTS_RECEPTION_ROUTES = [
         label: 'Buzón de asuntos PGR',
         link: '/pages/documents-reception/subjects-register',
       },
-      {
+      /*##NO SE MIGRA##*/
+      /*{
         label: 'Comprobación de Requisitos Documentales',
         link: '/pages/documents-reception/documents-requirements-verification',
-      },
+      },*/
       {
         label: 'Cierre de Actas de Decomiso y Devolución',
         link: '/pages/documents-reception/closing-of-confiscation-and-return-records',
       },
-      {
+      /*##NO SE MIGRA##*/
+      /*{
         label: 'Inventario por Expediente',
         link: '/pages/documents-reception/records-inventory',
-      },
+      },*/
       {
         label: 'Previsión de Bienes',
         link: '/pages/documents-reception/goods-forecast',
       },
-      {
+      /*##Se manda a llamar desde CIERRE DE ACTAS DE DECOMISO Y DEVOLUCIÓN##*/
+      /*{
         label: 'Validadores de Actas',
         link: '/pages/documents-reception/records-validation',
-      },
+      },*/
       {
         label: 'Servicio de vigilancia para Bienes',
         link: '/pages/documents-reception/goods-vigilance-service',
