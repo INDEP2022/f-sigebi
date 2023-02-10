@@ -23,6 +23,7 @@ import { IShelves } from 'src/app/core/models/catalogs/shelves.model';
 //Component modal
 import { ISaveValue } from 'src/app/core/models/catalogs/save-value.model';
 import { BatteryModalComponent } from '../battery-modal/battery-modal.component';
+import { GeneralArchiveCatalogModalComponent } from '../general-archive-catalog-modal/general-archive-catalog-modal.component';
 import { LockersModalComponent } from '../lockers-modal/lockers-modal.component';
 import { ShelvesModalComponent } from '../shelves-modal/shelves-modal.component';
 
@@ -86,7 +87,7 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
       ...this.settings,
       actions: {
         columnTitle: 'Acciones',
-        edit: false,
+        edit: true,
         delete: false,
         position: 'right',
       },
@@ -148,7 +149,15 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
     });
   }
 
-  openFormSaveValues() {}
+  openFormSaveValues() {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      // callback: (next: boolean) => {
+      //   if (next) this.getSaveValues();
+      // },
+    };
+    this.modalService.show(GeneralArchiveCatalogModalComponent, modalConfig);
+  }
 
   //Evento al seleccionar fila de tabla Guardavaluo
   rowsSelectedSaveValues(event: any) {

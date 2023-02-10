@@ -1,1 +1,33 @@
-<p>general-archive-catalog-modal works!</p>
+<app-modal>
+  <div header>
+    <h5 class="modal-title">{{ edit ? 'Editar' : 'Nuevo' }} {{ title }}</h5>
+  </div>
+  <div body>
+    <form class="form-material" [formGroup]="form">
+      <div class="row">
+        <div class="col-md-5 pt-5">
+          <form-field
+            label="Cve Guardavalor"
+            [control]="form.get('description')">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="description"
+              readonly />
+          </form-field>
+        </div>
+      </div>
+      <div class="row pt-5"></div>
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3"></div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="close()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-modal>
