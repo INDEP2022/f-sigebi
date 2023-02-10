@@ -5,6 +5,7 @@ import { DelegationSharedComponent } from 'src/app/@standalone/shared-forms/dele
 import { SharedModule } from 'src/app/shared/shared.module';
 import { SummaryRoutingModule } from './summary-routing.module';
 import { SummaryComponent } from './summary/summary.component';
+import { FederativeSharedComponent } from 'src/app/@standalone/shared-forms/federative-shared/federative-shared.component'
 
 @NgModule({
   declarations: [SummaryComponent],
@@ -13,6 +14,7 @@ import { SummaryComponent } from './summary/summary.component';
     SummaryRoutingModule,
     SharedModule,
     DelegationSharedComponent,
+    FederativeSharedComponent
   ],
 })
-export class SummaryModule {}
+export class SummaryModule { }
