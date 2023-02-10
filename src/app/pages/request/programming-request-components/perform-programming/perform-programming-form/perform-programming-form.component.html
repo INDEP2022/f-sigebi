@@ -68,7 +68,7 @@
         <div class="col-md-4">
           <form-field
             [control]="performForm.get('startDate')"
-            label="Fecha page operativo">
+            label="Fecha inicio operativo">
             <input
               class="form-control"
               formControlName="startDate"
@@ -273,8 +273,8 @@
           (delete)="delete($event.data)">
         </ng2-smart-table>
         <app-pagination
-          [params]="params"
-          [totalItems]="totalItems"></app-pagination>
+          [params]="paramsUsers"
+          [totalItems]="totalItemsUsers"></app-pagination>
       </div>
 
       <div class="row pt-5" *ngIf="showForm">
@@ -282,8 +282,11 @@
         <div class="form-inline justify-content-end">
           <button
             (click)="estateSearch()"
-            class="btn btn-primary btn-sm active">
-            Buscar bienes
+            class="btn btn-info btn-sm active mr-2">
+            filtrar bienes
+          </button>
+          <button (click)="showGoods()" class="btn btn-primary btn-sm active">
+            Mostrar bienes
           </button>
         </div>
 
@@ -308,7 +311,7 @@
             [attr.class]="'table-bordered'"
             [settings]="settings"
             [source]="estatesList"
-            (userRowSelect)="goodsSelect($event.selected)">
+            (userRowSelect)="goodsSelect($event)">
           </ng2-smart-table>
         </div>
         <app-pagination
@@ -328,7 +331,9 @@
                 <ng2-smart-table
                   [attr.class]="'table-bordered'"
                   [settings]="settingsTransportableGoods"
-                  [source]="goodsTranportables">
+                  [source]="goodsTranportables"
+                  (edit)="showGood()"
+                  (delete)="onDeleteConfirm($event)">
                 </ng2-smart-table>
               </tab>
               <tab [heading]="headingGuard">
@@ -339,7 +344,9 @@
                 <ng2-smart-table
                   [attr.class]="'table-bordered'"
                   [settings]="settingGuardGoods"
-                  [source]="goodsGuards">
+                  [source]="goodsGuards"
+                  (edit)="showGood()"
+                  (deleteConfirm)="removeGood($event)">
                 </ng2-smart-table>
               </tab>
               <tab [heading]="headingWarehouse">
@@ -350,7 +357,9 @@
                 <ng2-smart-table
                   [attr.class]="'table-bordered'"
                   [settings]="settingWarehouseGoods"
-                  [source]="goodsWarehouse">
+                  [source]="goodsWarehouse"
+                  (edit)="showGood()"
+                  (deleteConfirm)="removeGood($event)">
                 </ng2-smart-table>
               </tab>
             </tabset>
@@ -358,13 +367,5 @@
         </div>
       </div>
     </form>
-
-    <div class="d-flex justify-content-center" *ngIf="showForm">
-      <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="close()">
-          Cancelar
-        </button>
-      </div>
-    </div>
   </div>
 </app-card>
