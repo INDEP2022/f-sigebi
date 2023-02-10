@@ -42,7 +42,7 @@ export class LockersService extends HttpService {
   }
 
   create(model: ILocker): Observable<ILocker> {
-    return this.lockerRepository.create(this.route.Post, model);
+    return this.lockerRepository.create(this.route.Locker, model);
   }
 
   private makeParams(params: ListParams): HttpParams {
