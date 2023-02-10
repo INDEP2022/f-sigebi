@@ -28,6 +28,7 @@ export class MaintenanceDelegSubdelegModalComponent
   subDelegationForm: ModelForm<ISubdelegation>;
   subDelegation: ISubdelegation;
   id: IDelegation;
+  idD: IDelegation;
 
   delegationValue: IDelegation;
 
@@ -75,6 +76,11 @@ export class MaintenanceDelegSubdelegModalComponent
       console.log(this.subDelegation);
       this.subDelegationForm.patchValue(this.subDelegation);
       this.subDelegationForm.controls['delegationNumber'].setValue(this.id.id);
+    } else {
+      this.edit = false;
+      console.log(this.idD);
+      this.subDelegationForm.controls['delegationNumber'].setValue(this.idD.id);
+      this.subDelegationForm.controls['phaseEdo'].setValue(this.idD.etapaEdo);
     }
   }
 

@@ -74,11 +74,17 @@ export class RequestInTurnFormComponent implements OnInit {
       transfer: [null],
       station: [null],
       authority: [null],
-      expedient: [null, [Validators.pattern(STRING_PATTERN)]],
+      expedient: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
       affair: [null],
       contributor: [null, [Validators.pattern(STRING_PATTERN)]],
-      acta: [null, [Validators.pattern(STRING_PATTERN)]],
-      ascertainment: [null],
+      acta: [
+        null,
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(40)],
+      ],
+      ascertainment: [null, [Validators.maxLength(40)]],
       cause: [null, [Validators.pattern(STRING_PATTERN)]],
     });
     if (this.requestInTurn != null) {
@@ -116,7 +122,7 @@ export class RequestInTurnFormComponent implements OnInit {
   getAuthority(params?: ListParams) {
     params.text = params.text == null ? '' : params.text;
     this.authorityService
-      .getAll(params)
+      .search(params)
       .subscribe((data: IListResponse<IAuthority>) => {
         this.selectAuthority = new DefaultSelect(data.data, data.count);
       });

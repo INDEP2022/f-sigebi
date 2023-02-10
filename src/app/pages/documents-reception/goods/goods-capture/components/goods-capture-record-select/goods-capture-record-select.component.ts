@@ -86,7 +86,7 @@ export class GoodsCaptureRecordSelectComponent
 
   close() {
     this.modalRef.hide();
-    this.router.navigate(['/pages/home']);
+    this.router.navigate(['/']);
   }
 
   getExpedientById(id: number) {

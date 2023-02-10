@@ -11,30 +11,25 @@
         </div>
 
         <div class="col-md-4">
-          <div class="row pt-4">
-            <div class="d-flex">
-              <form-radio *ngFor="let range of ranges" [label]="range.name">
-                <input
-                  type="radio"
-                  formControlName="range"
-                  [value]="range.code"
-                  (change)="rangeChange()" />
-              </form-radio>
-            </div>
-          </div>
           <div class="row">
             <form-field
               [class]="range.value == 'daily' ? '' : 'col-md-6'"
               [control]="reportForm.get('from')"
-              [label]="range.value == 'yearly' ? 'Del año' : 'Del mes'">
+              [label]="
+                range.value == 'yearly'
+                  ? 'Del año'
+                  : 'Rango de fechas de recepci&oacute;n'
+              ">
+              <!-- <input class="form-control" formControlName="from" bsDatepicker [bsConfig]="datePickerConfig" />-->
               <input
+                type="text"
                 class="form-control"
-                formControlName="from"
-                bsDatepicker
-                [bsConfig]="datePickerConfig" />
+                formControlName="dateRequest"
+                bsDaterangepicker
+                [bsConfig]="{ isAnimated: true }" />
             </form-field>
 
-            <form-field
+            <!--<form-field
               *ngIf="range.value != 'daily'"
               class="col-md-6"
               [control]="reportForm.get('to')"
@@ -44,7 +39,7 @@
                 formControlName="to"
                 bsDatepicker
                 [bsConfig]="datePickerConfig" />
-            </form-field>
+            </form-field>-->
           </div>
         </div>
       </div>

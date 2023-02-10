@@ -397,17 +397,23 @@ export class ClassifyAssetsTabComponent
   getReactiveFormActions() {
     this.classiGoodsForm.controls['ligieSection'].valueChanges.subscribe(
       (data: any) => {
-        this.classiGoodsForm.controls['ligieChapter'].setValue(null);
+        //this.classiGoodsForm.controls['ligieChapter'].setValue(null);
         if (data != null) {
           if (this.advSearch === false) {
             this.getChapter(new ListParams(), data);
+            this.classiGoodsForm.controls['ligieChapter'].setValue(null);
+            this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
+            this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
+            this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
+            this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
+            this.classiGoodsForm.controls['goodTypeId'].setValue(null);
           }
         }
       }
     );
     this.classiGoodsForm.controls['ligieChapter'].valueChanges.subscribe(
       (dataChapter: any) => {
-        this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
+        //this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
         if (dataChapter != null) {
           let fractionCode = this.selectChapter.data.filter(
             x => x.id === dataChapter
@@ -419,13 +425,17 @@ export class ClassifyAssetsTabComponent
           );
           if (this.advSearch === false) {
             this.getLevel1(new ListParams(), dataChapter);
+            this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
+            this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
+            this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
+            this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
           }
         }
       }
     );
     this.classiGoodsForm.controls['ligieLevel1'].valueChanges.subscribe(
       (dataLevel1: any) => {
-        this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
+        //this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
         if (dataLevel1 != null) {
           let fractionCode = this.selectLevel1.data.filter(
             x => x.id === dataLevel1
@@ -437,15 +447,17 @@ export class ClassifyAssetsTabComponent
           );
           if (this.advSearch === false) {
             this.getLevel2(new ListParams(), dataLevel1);
+            this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
+            this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
+            this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
           }
         }
       }
     );
     this.classiGoodsForm.controls['ligieLevel2'].valueChanges.subscribe(
       (dataLevel2: any) => {
-        this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
+        //this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
         if (dataLevel2 != null) {
-          //console.log(this.getRelevantTypeId(this.selectLevel2.data, dataLevel2));
           let fractionCode = this.selectLevel2.data.filter(
             x => x.id === dataLevel2
           )[0].fractionCode;
@@ -459,13 +471,15 @@ export class ClassifyAssetsTabComponent
 
           if (this.advSearch === false) {
             this.getLevel3(new ListParams(), dataLevel2);
+            this.classiGoodsForm.controls['ligieLevel3'].setValue(null);
+            this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
           }
         }
       }
     );
     this.classiGoodsForm.controls['ligieLevel3'].valueChanges.subscribe(
       (dataLevel3: any) => {
-        this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
+        //this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
         if (dataLevel3 != null) {
           let fractionCode = this.selectLevel3.data.filter(
             x => x.id === dataLevel3
@@ -481,6 +495,7 @@ export class ClassifyAssetsTabComponent
 
           if (this.advSearch === false) {
             this.getLevel4(new ListParams(), dataLevel3);
+            this.classiGoodsForm.controls['ligieLevel4'].setValue(null);
           }
         }
       }

@@ -191,6 +191,7 @@
             <div class="p-2">
               <button
                 (click)="search()"
+                [disabled]="searchForm.invalid"
                 class="btn btn-primary active btn-sm ml-3"
                 style="height: 36px">
                 <i class="bx bx-search-alt-2"></i> Buscar
