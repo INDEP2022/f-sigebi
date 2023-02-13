@@ -86,9 +86,9 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
   searchForm(params: any) {
     var par = new FilterParams();
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+      console.log(this.settings);
       params.page = data.page;
       params.limit = data.limit;
-
       this.getRequest(params);
     });
   }
@@ -123,6 +123,7 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
           const delegacionService = this.regionalDelegacionService.getById(
             item.regionalDelegationId
           );
+
           const stateOfRepublicService = this.stateOfRepublicService.getById(
             item.keyStateOfRepublic
           );
@@ -139,7 +140,6 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
             stateOfRepublicService,
             transferenteService,
             stationService,
-
             affairService,
           ]).subscribe(
             ([_delegation, _state, _transferent, _station, _affair]) => {
@@ -176,5 +176,9 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
 
   onCustomAction(event: any) {
     this.requestSelected = event.selected;
+  }
+
+  resetForm(event: any) {
+    if (event === true) this.paragraphs = new LocalDataSource();
   }
 }

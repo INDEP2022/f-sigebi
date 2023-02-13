@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
   PGR_PAPERWORK_MAILBOX_COLUMNS,
@@ -79,15 +79,15 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
     this.pgrForm = this.fb.group({
       from: [null],
       to: [null],
-      issue: [null],
+      issue: [null, [Validators.maxLength(30)]],
       delegationNumber: [null],
-      officeNumber: [null],
+      officeNumber: [null, [Validators.maxLength(30)]],
       processStatus: [null],
     });
     this.pgrTransferForm = this.fb.group({
-      pgrGoodNumber: [null],
-      saeGoodNumber: [null],
-      estatus: [null],
+      pgrGoodNumber: [null, [Validators.maxLength(400)]],
+      saeGoodNumber: [null, [Validators.maxLength(400)]],
+      estatus: [null, [Validators.maxLength(60)]],
       office: [null],
       aveprev: [null],
     });
@@ -237,11 +237,11 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
     }
   }
 
-  consultarPgrTransferForm() {
+  consultarPgrTransferForm(resetValues: boolean = false) {
     if (this.pgrTransferForm.valid) {
       this.loadingPgrTransferencia = true;
       this.setEmptyPgrTransferencia();
-      this.getPgrTransferencia();
+      this.getPgrTransferencia(resetValues);
     } else {
       this.onLoadToast('error', 'Error', ERROR_FORM);
     }
@@ -284,7 +284,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
   /**
    * Obtener el listado de la vista PGR Transferencia
    */
-  async getPgrTransferencia() {
+  async getPgrTransferencia(resetValues: boolean = false) {
     let filtrados =
       await this.formFieldstoParamsService.validFieldsFormToParams(
         this.pgrTransferForm.value,
@@ -292,8 +292,11 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
         this.filtroPaginado,
         'filter'
       );
-    this.pgrTransferForm.get('aveprev').reset();
-    this.pgrTransferForm.get('office').reset();
+    if (resetValues == true) {
+      this.pgrTransferForm.get('aveprev').reset();
+      this.pgrTransferForm.get('office').reset();
+      this.pgrTransferForm.updateValueAndValidity();
+    }
     this.pgrSubjectsRegisterService
       .getPgrTransferenciaBySearch(filtrados)
       .subscribe({
@@ -350,7 +353,7 @@ export class SubjectsRegisterComponent extends BasePage implements OnInit {
     this.pgrTransferForm.get('office').setValue(row.officeNumber);
     this.pgrTransferForm.updateValueAndValidity();
     setTimeout(() => {
-      this.consultarPgrTransferForm();
+      this.consultarPgrTransferForm(true);
     }, 100);
   }
 }

@@ -31,8 +31,8 @@ export class AbandonmentsDeclarationTradesComponent
   public formCcpOficio: FormGroup;
   public formDeclaratoria: FormGroup;
   public formDeclaratoriaTabla: FormGroup;
-  public formOficioInicioFin: FormGroup;
-  public formDeclaratoriaInicioFin: FormGroup;
+  public formOficiopageFin: FormGroup;
+  public formDeclaratoriapageFin: FormGroup;
 
   /** Tabla bienes */
   data1 = [
@@ -189,12 +189,12 @@ export class AbandonmentsDeclarationTradesComponent
       noExpediente: ['', [Validators.required]], //*
       averiPrevia: ['', [Validators.required]], //*
     });
-    this.formDeclaratoriaInicioFin = this.fb.group({
-      inicio: ['', [Validators.required, Validators.pattern(STRING_PATTERN)]], //*
+    this.formDeclaratoriapageFin = this.fb.group({
+      page: ['', [Validators.required, Validators.pattern(STRING_PATTERN)]], //*
       fin: ['', [Validators.required, Validators.pattern(STRING_PATTERN)]], //*
     });
-    this.formOficioInicioFin = this.fb.group({
-      inicio: ['', [Validators.required]], //*
+    this.formOficiopageFin = this.fb.group({
+      page: ['', [Validators.required]], //*
       fin: ['', [Validators.required]], //*
     });
 

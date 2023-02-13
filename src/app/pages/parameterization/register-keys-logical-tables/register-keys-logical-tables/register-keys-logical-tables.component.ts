@@ -96,10 +96,15 @@ export class RegisterKeysLogicalTablesComponent
       .getById(id)
       .pipe(
         map((data2: any) => {
-          let list: IListResponse<ITdescCve> = {} as IListResponse<ITdescCve>;
+          /**let list: IListResponse<ITdescCve> = {} as IListResponse<ITdescCve>;
           const array2: ITdescCve[] = [{ ...data2.data }];
           list.data = array2;
           list.count = 10;
+          return list;*/
+
+          let list: IListResponse<ITdescCve> = {} as IListResponse<ITdescCve>;
+          const array2: ITdescCve[] = [{ ...data2 }];
+          list.data = array2;
           return list;
         })
       )

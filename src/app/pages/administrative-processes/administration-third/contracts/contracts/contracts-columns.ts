@@ -10,7 +10,7 @@ export const CONTRACTS_COLUMNS = {
     sort: false,
   },
   startDate: {
-    title: 'Fecha inicio',
+    title: 'Fecha page',
     width: '30%',
     sort: false,
   },

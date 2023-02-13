@@ -53,4 +53,15 @@ export class ProcedureManagementService extends HttpService {
       params
     );
   }
+
+  getReportProcedureManage(
+    params: ListParams
+  ): Observable<IListResponse<IManagamentProcessSat>> {
+    this.microservice = 'massivegood';
+    return this.get<IListResponse<IManagamentProcessSat>>(
+      ProcedureManagementEndPoints.ReportViews,
+      params
+    );
+  }
+  // http://sigebimsqa.indep.gob.mx/massivegood/api/v1/views/file-procedure-mng?limit=11&page=1
 }

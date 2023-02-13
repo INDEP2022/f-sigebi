@@ -19,6 +19,7 @@ import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { responsableUser, typeTercero } from './warehouse-data';
 
 @Component({
   selector: 'app-warehouse-form',
@@ -28,8 +29,8 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class WarehouseFormComponent extends BasePage implements OnInit {
   regDelData: IRegionalDelegation;
   warehouseForm: FormGroup = new FormGroup({});
-  responsiblesUsers = new DefaultSelect();
-  typeTercero = new DefaultSelect();
+  responsiblesUsers = new DefaultSelect(responsableUser);
+  typeTercero = new DefaultSelect(typeTercero);
   states = new DefaultSelect<IStateOfRepublic>();
   municipalities = new DefaultSelect<IMunicipality>();
   cities = new DefaultSelect<ICity>();
@@ -97,15 +98,12 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estas seguro de crar almacén?'
+      '¿Estas seguro de crear almacén?'
     ).then(question => {
       if (question.isConfirmed) {
         //Ejecutar el servicio
         this.onLoadToast('success', 'Almacén creado correctamente', '');
         this.close();
-        this.router.navigate([
-          '/pages/request/perform-programming/1/warehouse/1',
-        ]);
       }
     });
   }
@@ -157,6 +155,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   }
 
   municipalitySelect(item: IMunicipality) {
+    console.log('municipio', item);
     this.municipalityId = item.idMunicipality;
     this.getLocalitySelect(new ListParams());
   }
@@ -173,6 +172,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   }
 
   localitySelect(item: ILocality) {
+    console.log('localidad', item);
     this.localityId = item.id;
     this.getZipCodeSelect(new ListParams());
   }
@@ -184,6 +184,7 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
       params['filter.keyTownship'] = this.municipalityId;
       params['filter.keySettlement'] = this.localityId;
       this.goodsQueryService.getZipCode(params).subscribe(data => {
+        console.log('codigos postales', data);
         this.zipCode = new DefaultSelect(data.data, data.count);
       });
     }
@@ -191,7 +192,10 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
 
   getTypeWarehouseSelect(params: ListParams) {
     this.typeWarehouseService.getAll(params).subscribe(data => {
-      this.typeWarehouse = new DefaultSelect(data.data, data.count);
+      const filterType = data.data.filter(item => {
+        return item.description;
+      });
+      this.typeWarehouse = new DefaultSelect(filterType, data.count);
     });
   }
 

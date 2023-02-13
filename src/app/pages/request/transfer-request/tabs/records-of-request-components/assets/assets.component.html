@@ -1,12 +1,22 @@
 <div class="row">
   <div class="row">
-    <div class="col-md-12">
-      <h5 class="title"><strong>Bienes</strong></h5>
+    <div class="d-flex">
+      <div class="mr-auto p-2">
+        <h5 class="title"><strong>Bienes</strong></h5>
+      </div>
+      <div class="p-2">
+        <button class="btn btn-primary btn-sm active" (click)="save()">
+          Guardar
+        </button>
+      </div>
     </div>
+    <!-- <div class="col-md-12">
+      <h5 class="title"><strong>Bienes</strong></h5>
+    </div> -->
   </div>
   <div class="row pt-4">
     <div class="d-flex justify-content-end">
-      <div class="" style="margin-left: 1%">
+      <!-- <div class="" style="margin-left: 1%">
         <button
           class="btn btn-success btn-sm ml-2"
           type="button"
@@ -20,7 +30,7 @@
           class="d-none"
           accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
           (change)="onFileChange($event)" />
-      </div>
+      </div> -->
       <div class="" style="margin-left: 1%">
         <button class="btn btn-secondary btn-sm active" (click)="newAsset()">
           {{ btnCreate }}
@@ -33,14 +43,14 @@
           <i class="bx bx-home"></i> Seleccionar Domicilio
         </button>
       </div>
-      <div class="" style="margin-left: 1%">
+      <!-- <div class="" style="margin-left: 1%">
         <button class="btn btn-info btn-sm active" (click)="menajeModal()">
           Menaje
         </button>
-      </div>
+      </div> -->
       <div class="" style="margin-left: 1%">
-        <button class="btn btn-primary btn-sm active" (click)="save()">
-          Guardar
+        <button class="btn btn-danger btn-sm active" (click)="delete()">
+          Eliminar
         </button>
       </div>
     </div>
@@ -52,17 +62,20 @@
   </div> -->
   <div class="row pt-4">
     <div class="col-md-12">
-      <ng-scrollbar track="all" style="min-height: 200px; border: none">
-        <div [class]="loading ? 'table-loading' : ''">
-          <ng2-smart-table
-            [attr.class]="'table-bordered'"
-            [settings]="settings"
-            [source]="paragraphs"
-            (userRowSelect)="selectRows($event)"
-            ><!-- (rowSelect)="editRequest($event)" (edit)="openForm($event.data)" -->
-          </ng2-smart-table>
-        </div>
-      </ng-scrollbar>
+      <!--  <ng-scrollbar track="all" style="min-height: 200px; border: none"> -->
+      <div [class]="loading ? 'table-loading' : ''">
+        <ng2-smart-table
+          [attr.class]="'table-bordered table-responsive'"
+          [settings]="settings"
+          [source]="paragraphs"
+          (userRowSelect)="selectRows($event)"
+          ><!-- (rowSelect)="editRequest($event)" (edit)="openForm($event.data)" -->
+        </ng2-smart-table>
+      </div>
+      <app-pagination
+        [params]="params"
+        [totalItems]="totalItems"></app-pagination>
+      <!--  </ng-scrollbar> -->
     </div>
   </div>
   <div class="row pt-4">
@@ -71,7 +84,7 @@
         [typeDoc]="'assets'"
         [requestObject]="requestObject"
         [goodObject]="goodObject"
-        [idDomicilie]="idDomicilie"></app-classify-assets-tab>
+        [domicilieObject]="domicilieObject"></app-classify-assets-tab>
     </div>
   </div>
 </div>

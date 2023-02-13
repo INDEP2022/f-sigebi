@@ -21,24 +21,19 @@
 </h5>
 
 <div *ngIf="showSearchForm">
-  <form [formGroup]="searchFileForm" class="form-material">
+  <form [formGroup]="searchForm" class="form-material">
     <div class="row pt-3">
       <div class="col-md-4">
-        <form-field
-          [control]="searchFileForm.get('requestNumber')"
-          label="No&#46; solicitud">
-          <input
-            type="text"
-            class="form-control"
-            formControlName="requestNumber" />
+        <form-field [control]="searchForm.get('id')" label="No&#46; solicitud">
+          <input type="text" class="form-control" formControlName="id" />
         </form-field>
       </div>
 
       <div class="col-md-4">
-        <form-field [control]="searchFileForm.get('authority')">
+        <form-field [control]="searchForm.get('authorityId')">
           <ngx-select
-            [form]="searchFileForm"
-            control="authority"
+            [form]="searchForm"
+            control="authorityId"
             [data]="authorities"
             value="id"
             bindLabel="id"
@@ -50,12 +45,12 @@
 
       <div class="col-md-4">
         <form-field
-          [control]="searchFileForm.get('typeTransference')"
+          [control]="searchForm.get('typeOfTransfer')"
           label="Tipo transferencía">
           <input
             type="text"
             class="form-control"
-            formControlName="typeTransference" />
+            formControlName="typeOfTransfer" />
         </form-field>
       </div>
     </div>
@@ -63,24 +58,27 @@
     <div class="row pt-4">
       <div class="col-md-4">
         <form-field
-          [control]="searchFileForm.get('expedientNumber')"
+          [control]="searchForm.get('recordId')"
           label="No&#46; expediente">
           <input
             type="number"
             class="form-control"
-            formControlName="expedientNumber" />
+            formControlName="recordId" />
         </form-field>
       </div>
       <div class="col-md-4">
         <form-field
-          [control]="searchFileForm.get('indicated')"
+          [control]="searchForm.get('indicatedTaxpayer')"
           label="Contribuyente y&#47;o indiciado">
-          <input type="text" class="form-control" formControlName="indicated" />
+          <input
+            type="text"
+            class="form-control"
+            formControlName="indicatedTaxpayer" />
         </form-field>
       </div>
       <div class="col-md-4">
         <form-field
-          [control]="searchFileForm.get('domainExtinction')"
+          [control]="searchForm.get('domainExtinction')"
           label="Extinci&oacute;n de dominio">
           <input
             type="text"
@@ -92,10 +90,10 @@
 
     <div class="row pt-4">
       <div class="col-md-4">
-        <form-field [control]="searchFileForm.get('regionalDelegation')">
+        <form-field [control]="searchForm.get('regionalDelegationId')">
           <ngx-select
-            [form]="searchFileForm"
-            control="regionalDelegation"
+            [form]="searchForm"
+            control="regionalDelegationId"
             [data]="regionalsDelegations"
             value="id"
             bindLabel="id"
@@ -107,33 +105,28 @@
 
       <div class="col-md-4">
         <form-field
-          [control]="searchFileForm.get('transferFile')"
+          [control]="searchForm.get('transferenceFile')"
           label="Expediente transferente &#47; PAMA">
           <input
             type="text"
             class="form-control"
-            formControlName="transferFile" />
+            formControlName="transferenceFile" />
         </form-field>
       </div>
 
       <div class="col-md-4">
-        <form-field
-          [control]="searchFileForm.get('judgmentType')"
-          label="Tipo juicio">
-          <input
-            type="text"
-            class="form-control"
-            formControlName="judgmentType" />
+        <form-field [control]="searchForm.get('trialType')" label="Tipo juicio">
+          <input type="text" class="form-control" formControlName="trialType" />
         </form-field>
       </div>
     </div>
 
     <div class="row pt-4">
       <div class="col-md-4">
-        <form-field [control]="searchFileForm.get('state')">
+        <form-field [control]="searchForm.get('keyStateOfRepublic')">
           <ngx-select
-            [form]="searchFileForm"
-            control="state"
+            [form]="searchForm"
+            control="keyStateOfRepublic"
             [data]="states"
             value="id"
             bindLabel="id"
@@ -144,29 +137,29 @@
       </div>
 
       <div class="col-md-4">
-        <form-field [control]="searchFileForm.get('judment')" label="Juicio">
-          <input type="text" class="form-control" formControlName="judment" />
+        <form-field [control]="searchForm.get('trial')" label="Juicio">
+          <input type="text" class="form-control" formControlName="trial" />
         </form-field>
       </div>
 
       <div class="col-md-4">
         <form-field
-          [control]="searchFileForm.get('inquiryPreliminary')"
+          [control]="searchForm.get('previousInquiry')"
           label="Averiguaci&uacute;n previa">
           <input
             type="text"
             class="form-control"
-            formControlName="inquiryPreliminary" />
+            formControlName="previousInquiry" />
         </form-field>
       </div>
     </div>
 
     <div class="row pt-4">
       <div class="col-md-4">
-        <form-field [control]="searchFileForm.get('transferent')">
+        <form-field [control]="searchForm.get('transferenceId')">
           <ngx-select
-            [form]="searchFileForm"
-            control="transferent"
+            [form]="searchForm"
+            control="transferenceId"
             [data]="transferents"
             value="id"
             bindLabel="id"
@@ -177,20 +170,15 @@
       </div>
 
       <div class="col-md-4">
-        <form-field
-          [control]="searchFileForm.get('casePenal')"
-          label="Caso penal">
-          <input type="text" class="form-control" formControlName="casePenal" />
+        <form-field [control]="searchForm.get('lawsuit')" label="Causa penal">
+          <input type="text" class="form-control" formControlName="lawsuit" />
         </form-field>
       </div>
-    </div>
-
-    <div class="row pt-4">
       <div class="col-md-4">
-        <form-field [control]="searchFileForm.get('station')">
+        <form-field [control]="searchForm.get('stationId')">
           <ngx-select
             [form]="searchFileForm"
-            control="station"
+            control="stationId"
             [data]="stations"
             value="id"
             bindLabel="id"
@@ -199,15 +187,14 @@
           </ngx-select>
         </form-field>
       </div>
-
       <div class="col-md-4">
         <form-field
-          [control]="searchFileForm.get('protectionNumber')"
+          [control]="searchFileForm.get('protectNumber')"
           label="No. Amparo">
           <input
             type="text"
             class="form-control"
-            formControlName="protectionNumber" />
+            formControlName="protectNumber" />
         </form-field>
       </div>
     </div>

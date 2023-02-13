@@ -1,6 +1,6 @@
 export const CATALOGS_ROUTES = [
   {
-    label: 'Catalogos',
+    label: 'Catálogos',
     icon: 'bx-folder',
     subItems: [
       {

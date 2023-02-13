@@ -1,6 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { ReportService } from 'src/app/core/services/reports/reports.service';
+//BasePage
+import { BasePage } from 'src/app/core/shared/base-page';
 
 interface IReportRanges {
   code: 'daily' | 'monthly' | 'yearly';
@@ -12,13 +16,18 @@ interface IReportRanges {
   templateUrl: './report.component.html',
   styles: [],
 })
-export class ReportComponent implements OnInit {
+export class ReportComponent extends BasePage implements OnInit {
+  @Output() sendSearchForm = new EventEmitter<any>();
+  @Output() resetForm = new EventEmitter<boolean>();
+  showSearchForm: boolean = true;
+  searchForm: ModelForm<any>;
   reportForm: FormGroup;
   datePickerConfig: Partial<BsDatepickerConfig> = {
     minMode: 'month',
     adaptivePosition: true,
     dateInputFormat: 'MMMM YYYY',
   };
+
   ranges: IReportRanges[] = [
     { code: 'daily', name: 'Diario' },
     { code: 'monthly', name: 'Mensual' },
@@ -36,7 +45,9 @@ export class ReportComponent implements OnInit {
   get to() {
     return this.reportForm.get('to');
   }
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private reportService: ReportService) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -48,7 +59,7 @@ export class ReportComponent implements OnInit {
       subdelegation: [null, [Validators.required]],
       from: [null, [Validators.required]],
       to: [null, [Validators.required]],
-      range: ['daily', [Validators.required]],
+      range: ['daily'],
     });
   }
 
@@ -68,5 +79,26 @@ export class ReportComponent implements OnInit {
       this.datePickerConfig.minMode = 'month';
       this.datePickerConfig.dateInputFormat = 'MMMM YYYY';
     }
+  }
+
+  confirm(): void {
+    console.log(this.reportForm.value);
+    let params = {
+      PN_DELEG: this.reportForm.controls['delegation'].value,
+      PN_SUBDEL: this.reportForm.controls['subdelegation'].value,
+      PF_MES: this.reportForm.controls['from'].value,
+      PF_ANIO: this.reportForm.controls['to'].value,
+    };
+    console.log(params);
+    // open the window
+    this.onLoadToast('success', 'procesando', '');
+    const pdfurl = `http://s29.q4cdn.com/175625835/files/doc_downloads/test.pdf`; //window.URL.createObjectURL(blob);
+    window.open(pdfurl, 'RGEROFPRECEPDOCUM.pdf');
+    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RCONCOGVOLANTESRE.pdf?PN_VOLANTEFIN=70646&P_IDENTIFICADOR=0`; //window.URL.createObjectURL(blob);
+    this.onLoadToast('success', 'vista generada exitosamente', '');
+  }
+
+  cleanForm(): void {
+    this.reportForm.reset();
   }
 }

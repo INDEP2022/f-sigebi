@@ -20,6 +20,7 @@ import { IRAsuntDic } from 'src/app/core/models/catalogs/r-asunt-dic.model';
 import { AffairTypeService } from 'src/app/core/services/affair/affair-type.service';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
 import { RAsuntDicService } from 'src/app/core/services/catalogs/r-asunt-dic.service';
+import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-cat-relationship-opinion',
@@ -82,7 +83,7 @@ export class CatRelationshipOpinionComponent
 
   private prepareForm() {
     this.affairForm = this.fb.group({
-      id: [null, [Validators.required]],
+      id: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
       description: [{ value: null, disabled: true }],
     });
     // this.form = this.fb.group({

@@ -1,4 +1,4 @@
-<app-modal>
++<app-modal>
   <div header>
     <h5 class="modal-title">Alta almac&eacute;n</h5>
   </div>
@@ -22,9 +22,8 @@
               control="responsibleUser"
               [data]="responsiblesUsers"
               value="id"
-              bindLabel="norm"
-              label="Usuario reponsable"
-              (fetchItems)="getResponsibleUserSelect($event)"></ngx-select>
+              bindLabel="name"
+              label="Usuario reponsable"></ngx-select>
           </form-field>
         </div>
       </div>
@@ -48,7 +47,7 @@
               control="typeTercero"
               [data]="typeTercero"
               value="id"
-              bindLabel="norm"
+              bindLabel="name"
               label="Tipo tercero"
               (fetchItems)="getTypeTerceroSelect($event)"></ngx-select>
           </form-field>
@@ -102,7 +101,7 @@
         <div class="col-md-6">
           <form-field
             [control]="warehouseForm.get('startOperation')"
-            label="Inicio operaciones">
+            label="inicio operaciones">
             <input
               bsDatepicker
               class="form-control"

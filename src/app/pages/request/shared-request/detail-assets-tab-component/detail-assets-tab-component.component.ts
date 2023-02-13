@@ -14,10 +14,15 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
-import { IDomicile } from 'src/app/core/models/catalogs/domicile';
-import { IGoodDomicilies } from 'src/app/core/models/good/good.model';
+import {
+  IDomicilies,
+  IGoodRealState,
+} from 'src/app/core/models/good/good.model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { GenericService } from 'src/app/core/services/catalogs/generic.service';
@@ -47,15 +52,15 @@ export class DetailAssetsTabComponentComponent
   //usado para cargar los adatos de los bienes en el caso de cumplimientos de bienes y clasificacion de bienes
   @Input() requestObject: any; //solicitud
   @Input() detailAssets: ModelForm<any>; // bienes
+  @Input() domicilieObject: IDomicilies; //
   @Input() typeDoc: any;
-  @Input() isSave: boolean = false;
   bsModalRef: BsModalRef;
   request: IRequest;
-  stateOfRepublicName: string = '';
+  stateOfRepId: number = null;
   municipalityId: number = null;
 
-  goodDomicilieForm: ModelForm<IGoodDomicilies>; // bien del domicilio
-  domicileForm: ModelForm<IDomicile>; //domicilio del bien tranferente
+  goodDomicilieForm: ModelForm<IGoodRealState>; // bien del inmueble
+  domicileForm: ModelForm<IDomicilies>; //domicilio del bien
   assetsForm: ModelForm<any>; //borrar
 
   selectSae = new DefaultSelect<any>();
@@ -126,13 +131,12 @@ export class DetailAssetsTabComponentComponent
         if (data) {
           this.getTypeGood(this.detailAssets.controls['goodTypeId'].value);
           this.displayTypeTapInformation(Number(data));
+        } else {
+          //limpia los tabs de los bienes
+          this.displayTypeTapInformation(data);
         }
       }
     );
-
-    if (this.isSave === true) {
-      this.save();
-    }
   }
 
   ngOnInit(): void {
@@ -431,10 +435,23 @@ export class DetailAssetsTabComponentComponent
     });
   }
 
-  getCP(params: ListParams, keyTownship?: number, keyState?: number) {
+  getCP(
+    params: ListParams,
+    keyTownship?: number,
+    keyState?: number,
+    keySettlement?: number
+  ) {
     params.limit = 20;
     params['filter.keyTownship'] = `$eq:${keyTownship}`;
     params['filter.keyState'] = `$eq:${keyState}`;
+    params['filter.keySettlement'] = `$eq:${keySettlement}`;
+    delete params.text;
+    delete params.take;
+    delete params.inicio;
+    delete params.pageSize;
+
+    const par = new FilterParams();
+
     this.goodsQueryService.getZipCode(params).subscribe({
       next: data => {
         this.selectCP = new DefaultSelect(data.data, data.count);
@@ -515,21 +532,7 @@ export class DetailAssetsTabComponentComponent
 
     this.bsModalRef.content.event.subscribe((res: any) => {
       //cargarlos en el formulario
-      this.stateOfRepublicName = res.stateOfRepublicName;
-
-      delete res.stateOfRepublicName;
-
-      this.detailAssets.controls['addressId'].setValue(res.id);
-      this.getStateOfRepublic(new ListParams(), res.statusKey);
-      //this.domicileForm.controls['statusKey'].setValue(res.statusKey);
-      this.domicileForm.patchValue(res);
-
-      this.domicileForm.controls['municipalityKey'].setValue(
-        res.municipalityKey
-      );
-      ///this.domicileForm.controls['localityKey'].setValue(res.localityKey);
-      //this.domicileForm.controls['code'].setValue(res.code);
-
+      this.setGoodDomicilieSelected(res);
       //habilita los campos
       this.isDisabled = false;
     });
@@ -556,13 +559,6 @@ export class DetailAssetsTabComponentComponent
   }
 
   displayTypeTapInformation(typeRelevantId: number) {
-    /*otherAssets: boolean = false;
-
-    especialMachineryAssets: boolean = false;
-    mineralsAssets: boolean = false;
-
-    manejeAssets: boolean = false; //diverso
-    foodAndDrink: boolean = false; //diverso*/
     switch (typeRelevantId) {
       case 1:
         this.getGoodEstateTab();
@@ -593,8 +589,9 @@ export class DetailAssetsTabComponentComponent
 
   async save(): Promise<void> {
     const domicilie = this.domicileForm.getRawValue();
-    this.isSave = true;
+    //this.isSave = true;
 
+    //se guarda bien domicilio
     if (domicilie.id !== null) {
       await this.saveDomicilieGood(domicilie);
     }
@@ -608,10 +605,10 @@ export class DetailAssetsTabComponentComponent
       }
     }
 
-    this.isSave = false;
+    //this.isSave = false;
   }
 
-  saveDomicilieGood(domicilie: IDomicile) {
+  saveDomicilieGood(domicilie: IDomicilies) {
     return new Promise((resolve, reject) => {
       this.goodDomicilie.update(domicilie.id, domicilie).subscribe({
         next: (data: any) => {
@@ -657,7 +654,7 @@ export class DetailAssetsTabComponentComponent
       var action = null;
       if (domicilie.id === null) {
         domicilie.id = this.detailAssets.controls['id'].value;
-        action = this.goodEstateService.create(domicilie as IGoodDomicilies);
+        action = this.goodEstateService.create(domicilie);
       } else {
         action = this.goodEstateService.update(domicilie.id, domicilie);
       }
@@ -690,7 +687,7 @@ export class DetailAssetsTabComponentComponent
   getGoodDomicilie(addressId: number) {
     this.goodDomicilie.getById(addressId).subscribe({
       next: (resp: any) => {
-        var value = resp.data;
+        var value = resp;
         this.getStateOfRepublic(new ListParams(), value.statusKey);
         //this.domicileForm.controls['statusKey'].setValue(value.statusKey);
         this.domicileForm.patchValue(value);
@@ -713,6 +710,7 @@ export class DetailAssetsTabComponentComponent
 
     this.domicileForm.controls['statusKey'].valueChanges.subscribe(data => {
       if (data !== null) {
+        this.stateOfRepId = data;
         this.getMunicipaly(new ListParams(), data);
       }
     });
@@ -736,7 +734,8 @@ export class DetailAssetsTabComponentComponent
           this.getCP(
             new ListParams(),
             this.municipalityId,
-            this.requestObject.keyStateOfRepublic
+            this.stateOfRepId,
+            Number(data)
           );
         }
       }
@@ -769,5 +768,16 @@ export class DetailAssetsTabComponentComponent
         }
       },
     });
+  }
+
+  setGoodDomicilieSelected(domicilie: IDomicilies) {
+    this.detailAssets.controls['addressId'].setValue(domicilie.id);
+    this.getStateOfRepublic(new ListParams(), domicilie.statusKey);
+    //this.domicileForm.controls['statusKey'].setValue(res.statusKey);
+    this.domicileForm.patchValue(domicilie);
+
+    this.domicileForm.controls['municipalityKey'].setValue(
+      domicilie.municipalityKey
+    );
   }
 }

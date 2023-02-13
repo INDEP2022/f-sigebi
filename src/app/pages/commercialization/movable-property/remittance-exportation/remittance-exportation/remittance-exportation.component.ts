@@ -27,7 +27,7 @@ export class RemittanceExportationComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getCoordinations({ inicio: 1, text: '' });
+    this.getCoordinations({ page: 1, text: '' });
   }
 
   private prepareForm() {

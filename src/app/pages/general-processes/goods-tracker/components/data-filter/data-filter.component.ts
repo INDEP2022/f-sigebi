@@ -10,6 +10,7 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import {
   GoodTrackerForm,
   GOOD_PHOTOS_OPTIOS,
+  PROCESSES,
   TARGET_IDENTIFIERS,
 } from '../../utils/goods-tracker-form';
 
@@ -26,6 +27,7 @@ export class DataFilterComponent implements OnInit {
   @Input() params: FilterParams;
   labels = new DefaultSelect();
   goodStatuses = new DefaultSelect();
+  processes = PROCESSES;
   constructor(
     private fb: FormBuilder,
     private goodLabelService: LabelOkeyService,
@@ -35,6 +37,7 @@ export class DataFilterComponent implements OnInit {
   ngOnInit(): void {}
 
   search() {
+    console.log(this.form.controls.process.value);
     this.onSubmit.emit(this.form.value);
   }
 

@@ -23,8 +23,8 @@ export const GENERAL_PROCESSES_RECEPTION_AND_DELIVERY_COLUNNS = {
     title: 'Cantidad de Bienes',
     sort: false,
   },
-  inicio: {
-    title: 'Fecha Inicio',
+  page: {
+    title: 'Fecha page',
     sort: false,
   },
   fin: {
@@ -53,7 +53,7 @@ function getData() {
     noVolante: 'EXAMPLE_DATA',
     tramite: 'EXAMPLE_DATA',
     usuario: 'EXAMPLE_DATA',
-    inicio: 'EXAMPLE_DATA',
+    page: 'EXAMPLE_DATA',
     fin: 'EXAMPLE_DATA',
     max: 'EXAMPLE_DATA',
     max2: 'EXAMPLE_DATA',
