@@ -435,5 +435,6 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
   validatorGeneralMassive() {
     console.log('GENERAL VALID');
+    console.log(this.tableSource);
   }
 }

@@ -18,6 +18,8 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
   //
   saved: boolean = true;
   //
+  enableButton: boolean = true;
+  //
   generarPass: boolean = false;
   //
   conversion: IConvertiongood;
@@ -190,6 +192,7 @@ export class ConversionManagementComponent extends BasePage implements OnInit {
         this.searchGoods(this.conversion.goodFatherNumber);
         this.tipo.setValue(this.conversion.typeConv);
         this.date.setValue(new Date());
+        this.enableButton = false;
       },
       error: err => {
         this.onLoadToast('error', 'ERROR', 'Conversion no existe');

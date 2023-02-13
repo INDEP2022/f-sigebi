@@ -45,6 +45,7 @@ export class PaCdgiCChangeDestinationGoodsIndicatorsComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   massive: boolean = false;
   index: number = 0;
+
   get targetIndicator() {
     return this.form.get('targetIndicator');
   }
@@ -86,15 +87,41 @@ export class PaCdgiCChangeDestinationGoodsIndicatorsComponent
     }); */
   }
   addGood() {
-    let idGood = this.goodId.value;
+    this.loading = true;
+    let idGood: number = Number(this.goodId.value);
+    if (this.validarGood(idGood)) {
+      this.onLoadToast(
+        'error',
+        'Bien Duplicado',
+        'Este bien ya esta registrado en la tabla'
+      );
+      this.loading = false;
+      return;
+    }
     this.goodServices.getById(idGood).subscribe({
       next: response => {
         this.goods.push(response);
+        this.loading = false;
+        this.data.load(this.goods);
+        this.data.refresh();
+      },
+      error: err => {
+        console.log(err);
+        this.onLoadToast('error', 'Bien Duplicado', err.error.message);
+        this.loading = false;
       },
     });
-    this.data.load(this.goods);
   }
-  validarGood() {}
+  validarGood(idGood: number): boolean {
+    console.log('Entro al if');
+    let valid: boolean = false;
+    this.goods.forEach(good => {
+      if (Number(good.id) === idGood) {
+        valid = true;
+      }
+    });
+    return valid;
+  }
 
   /*   get personForm(): IFormGroup<IPerson> {
     return this.fb.group({
