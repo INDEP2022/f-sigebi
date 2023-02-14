@@ -43,4 +43,9 @@ export class StationService
   getAllFilter(params?: _Params) {
     return this.get('station', params);
   }
+
+  search(params: ListParams) {
+    var route = 'station/search';
+    return this.get(route, params);
+  }
 }

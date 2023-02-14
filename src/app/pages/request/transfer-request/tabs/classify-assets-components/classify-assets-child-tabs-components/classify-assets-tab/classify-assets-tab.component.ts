@@ -167,7 +167,7 @@ export class ClassifyAssetsTabComponent
     this.fractionService.getAll(params).subscribe({
       next: data => {
         this.selectSection = data.data; //= new DefaultSelect(data.data, data.count);
-        console.log(this.selectSection);
+
         if (this.advSearch === true) {
           this.classiGoodsForm.controls['ligieSection'].setValue(
             data.data[0].id

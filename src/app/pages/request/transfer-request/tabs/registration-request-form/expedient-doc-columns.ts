@@ -1,17 +1,23 @@
+import { AssociateFieldComponent } from './actions/associate-field/associate-field.component';
+
 export const EXPEDIENT_DOC_GEN_COLUMNS = {
   associate: {
     title: 'Asociar',
-    type: 'text',
+    type: 'custom',
+    class: 'custom-field',
+    filter: false,
+    renderComponent: AssociateFieldComponent,
+    onComponentInitFunction(instance?: any) {},
     sort: false,
   },
 
-  requestNumber: {
+  id: {
     title: 'No°. solicitud',
     type: 'text',
     sort: false,
   },
 
-  expedientNumber: {
+  recordId: {
     title: 'No°. expediente',
     type: 'text',
     sort: false,
@@ -19,65 +25,65 @@ export const EXPEDIENT_DOC_GEN_COLUMNS = {
 
   applicationDate: {
     title: 'Fecha de solicitud',
-    type: 'text',
+    type: 'date',
     sort: false,
   },
 
-  officialDate: {
+  paperDate: {
     title: 'Fecha de oficio',
     type: 'text',
     sort: false,
   },
 
-  sendersName: {
+  nameOfOwner: {
     title: 'Nombre del remitente',
     type: 'text',
     sort: false,
   },
 
-  sendersCharge: {
+  holderCharge: {
     title: 'Cargo del remitente',
     type: 'text',
     sort: false,
   },
 
-  sendersPhone: {
+  phoneOfOwner: {
     title: 'Telefono del remitente',
     type: 'text',
     sort: false,
   },
 
-  sendersEmail: {
+  emailOfOwner: {
     title: 'Email del remitente',
     type: 'text',
     sort: false,
   },
 
-  regionalDelegation: {
+  regionalDelegationName: {
     title: 'Delegación regional',
     type: 'string',
     sort: false,
   },
 
-  state: {
+  stateName: {
     title: 'Estado',
     type: 'string',
     sort: false,
   },
 
-  transferent: {
+  transferentName: {
     title: 'Transferente',
     type: 'string',
     sort: false,
   },
 
-  station: {
+  stationName: {
     title: 'Emisora',
     type: 'string',
     sort: false,
   },
 
-  authority: {
+  authorityName: {
     title: 'Autoridad',
     type: 'string',
     sort: false,
@@ -113,31 +119,31 @@ export const EXPEDIENT_DOC_GEN_COLUMNS = {
     sort: false,
   },
 
-  preliminaryInquiry: {
+  previousInquiry: {
     title: 'Averiguación previa',
     type: 'string',
     sort: false,
   },
 
-  causePenal: {
+  lawsuit: {
     title: 'Causa penal',
     type: 'string',
     sort: false,
   },
 
-  protectionNumber: {
+  protectNumber: {
     title: 'No° amparo',
     type: 'string',
     sort: false,
   },
 
-  perfomPenal: {
+  tocaPenal: {
     title: 'Toca penal',
     type: 'string',
     sort: false,
   },
 
-  officeNumber: {
+  paperNumber: {
     title: 'No° oficio',
     type: 'string',
     sort: false,
@@ -167,7 +173,7 @@ export const EXPEDIENT_DOC_GEN_COLUMNS = {
     sort: false,
   },
 
-  receivingPath: {
+  receiptRoute: {
     title: 'Vía de recepción',
     type: 'string',
     sort: false,
@@ -179,7 +185,7 @@ export const EXPEDIENT_DOC_GEN_COLUMNS = {
     sort: false,
   },
 
-  typeExpedient: {
+  typeRecord: {
     title: 'Tipo expediente',
     type: 'string',
     sort: false,

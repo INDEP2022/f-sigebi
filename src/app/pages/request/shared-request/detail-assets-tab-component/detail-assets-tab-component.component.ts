@@ -19,6 +19,7 @@ import { catchError } from 'rxjs/operators';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import {
@@ -35,6 +36,8 @@ import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevan
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
+import { ParameterBrandsService } from 'src/app/core/services/ms-parametercomer/parameter-brands.service';
+import { ParameterSubBrandsService } from 'src/app/core/services/ms-parametercomer/parameter-sub-brands.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
@@ -74,6 +77,7 @@ export class DetailAssetsTabComponentComponent
   destinyLigie: string = '';
   addressId: number = null;
   bsEvaluoDate: any;
+  brandId: string = '';
 
   //tipo de bien seleccionado
   otherAssets: boolean = false;
@@ -116,6 +120,8 @@ export class DetailAssetsTabComponentComponent
   goodEstateService = inject(RealStateService);
   requestHelperService = inject(RequestHelperService);
   authService = inject(AuthService);
+  parameterBrandsService = inject(ParameterBrandsService);
+  parameterSubBrandsService = inject(ParameterSubBrandsService);
 
   isDisabled: boolean = true;
 
@@ -472,9 +478,30 @@ export class DetailAssetsTabComponentComponent
       });
   }
 
-  getBrand(event: any) {}
+  getBrand(params: ListParams) {
+    const pa = new FilterParams();
+    pa.addFilter('id', params.text, SearchFilter.ILIKE);
 
-  getSubBrand(event: any) {}
+    this.parameterBrandsService.getAll(pa.getParams()).subscribe({
+      next: resp => {
+        this.selectBrand = new DefaultSelect(resp.data, resp.count);
+      },
+    });
+  }
+
+  getSubBrand(params: ListParams, brandId?: string) {
+    const idBrand = brandId ? brandId : this.brandId;
+    const pa = new FilterParams();
+    pa.limit = 20;
+    pa.addFilter('idBrand', idBrand);
+    pa.addFilter('idSubBrand', params.text, SearchFilter.ILIKE);
+
+    this.parameterSubBrandsService.getAll(pa.getParams()).subscribe({
+      next: resp => {
+        this.selectSubBrand = new DefaultSelect(resp.data, resp.count);
+      },
+    });
+  }
 
   getTypeUseBoat(event: any) {
     //mis cambios
@@ -599,7 +626,6 @@ export class DetailAssetsTabComponentComponent
 
   async save(): Promise<void> {
     const domicilie = this.domicileForm.getRawValue();
-    //this.isSave = true;
 
     //se guarda bien domicilio
     if (domicilie.id !== null) {
@@ -706,6 +732,13 @@ export class DetailAssetsTabComponentComponent
   }
 
   getReactiveFormCall() {
+    this.detailAssets.controls['brand'].valueChanges.subscribe((data: any) => {
+      if (data) {
+        this.brandId = data;
+        this.getSubBrand(new ListParams(), data);
+      }
+    });
+
     this.detailAssets.controls['transferentDestiny'].valueChanges.subscribe(
       (data: any) => {
         if (data) {
