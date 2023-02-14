@@ -34,3 +34,11 @@ export interface ITable {
   tableType: number;
   //numRegister: number;
 }
+
+export interface TvalTable1Data {
+  otKey: string;
+  table: ITables;
+  value: string;
+  numRegister: string;
+  abbreviation: null;
+}
