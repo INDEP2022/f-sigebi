@@ -17,6 +17,7 @@ export const COLUMNS = {
   labelNumber: {
     title: 'Ind. Destino',
     sort: false,
+    type: 'html',
   },
   valid: {
     title: 'Válido',

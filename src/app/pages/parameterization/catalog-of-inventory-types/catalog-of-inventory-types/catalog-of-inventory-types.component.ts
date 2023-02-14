@@ -171,9 +171,9 @@ export class CatalogOfInventoryTypesComponent
 
   nuevoInventory() {
     this.alertQuestion(
-      'question',
-      'Creación',
-      `Estas seguro de crear este inventario ${
+      'info',
+      'Tipo de inventario',
+      `Estás seguro de crear este inventario: ${
         this.form.get('cveTypeInventory').value
       }`
     ).then(question => {

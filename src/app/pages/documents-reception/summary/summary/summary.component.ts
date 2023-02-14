@@ -35,18 +35,19 @@ export class SummaryComponent extends BasePage implements OnInit {
     this.flyersForm = this.fb.group({
       delegation: [null, [Validators.required]],
       subdelegation: [null, [Validators.required]],
-      entidad: [null, [Validators.required]],
+      entidad: [null],
       from: [null, [Validators.required]],
       to: [null, [Validators.required]],
-      includeArea: [false, [Validators.required]],
-      area: [null, [Validators.required]],
+      includeArea: [false],
+      area: [null],
+      delegdestino: [null],
+      subddestino: [null],
     });
   }
 
   save() {}
 
   confirm(): void {
-    this.loading = true;
     console.log(this.flyersForm.value);
     let params = {
       PN_DELEG: this.flyersForm.controls['delegation'].value,
@@ -54,16 +55,20 @@ export class SummaryComponent extends BasePage implements OnInit {
       PF_FECINI: this.flyersForm.controls['from'].value,
       PF_FECFIN: this.flyersForm.controls['to'].value,
       PC_ENTFED: this.flyersForm.controls['entidad'].value,
+      PARAMFORM: this.flyersForm.controls['includeArea'].value,
+      PN_DELEGACION: this.flyersForm.controls['delegdestino'].value,
+      PN_SUBDELEGACION: this.flyersForm.controls['subddestino'].value,
+      PN_DEPARTAMENTO: this.flyersForm.controls['area'].value,
     };
-
     console.log(params);
     // open the window
-    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf? P_USR=LGONZALEZ&P_CUMP=1&P_T_NO_CUMP=2&P_T_CUMP=100`; //window.URL.createObjectURL(blob);
-    //let newWin = window.open(pdfurl,"test.pdf");
-
-    this.onLoadToast('error', 'Reporte no disponible', '');
-    this.loading = false;
+    this.onLoadToast('success', 'procesando', '');
+    //const pdfurl = `http://s29.q4cdn.com/175625835/files/doc_downloads/test.pdf`; //window.URL.createObjectURL(blob);
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RCONCOGVOLANTESRE.pdf?PN_VOLANTEFIN=70646&P_IDENTIFICADOR=0`; //window.URL.createObjectURL(blob);
+    this.onLoadToast('success', 'vista generada exitosamente', '');
+    window.open(pdfurl, 'RGEROFPESTADIXMES.pdf');
   }
+
   cleanForm(): void {
     this.flyersForm.reset();
   }

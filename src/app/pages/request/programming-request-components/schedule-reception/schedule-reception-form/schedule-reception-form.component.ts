@@ -4,9 +4,9 @@ import { Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ProgrammingRequestService } from 'src/app/core/services/ms-programming-request/programming-request.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { userData } from '../../perform-programming/perform-programming-form/data-perfom-programming';
-import { ProgrammingRequestService } from '../../service/programming-request.service';
 import { SearchUserFormComponent } from '../search-user-form/search-user-form.component';
 
 @Component({
@@ -69,8 +69,9 @@ export class ScheduleReceptionFormComponent implements OnInit {
       typeUser,
       callback: (data: any) => {
         if (data) {
-          console.log('usuario', data);
-          this.scheduleForm.get('user').setValue(data.user);
+          data.map((item: any) => {
+            this.scheduleForm.get('user').setValue(item.user);
+          });
         }
       },
     };
