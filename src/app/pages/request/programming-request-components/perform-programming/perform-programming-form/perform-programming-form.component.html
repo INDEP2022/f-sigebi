@@ -268,7 +268,7 @@
         <ng2-smart-table
           [attr.class]="'table-bordered'"
           [settings]="settingUser"
-          [source]="usersData"
+          [source]="usersToProgramming"
           (edit)="openForm($event.data)"
           (delete)="delete($event.data)">
         </ng2-smart-table>
@@ -311,7 +311,7 @@
             [attr.class]="'table-bordered'"
             [settings]="settings"
             [source]="estatesList"
-            (userRowSelect)="goodsSelect($event)">
+            (userRowSelect)="goodsSelect($event.selected)">
           </ng2-smart-table>
         </div>
         <app-pagination
