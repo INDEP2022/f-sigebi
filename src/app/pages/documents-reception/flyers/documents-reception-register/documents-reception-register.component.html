@@ -30,22 +30,27 @@
               Antecedentes
             </a>
           </div>
-          <div class="d-flex">
-            <form-radio class="ml-3" label="Admin_Tranfer">
+
+          <div
+            class="d-flex"
+            *ngIf="initialCondition == 'AT' || initialCondition == 'T'">
+            <form-radio class="ml-3" label="Admin_Transferente">
               <input type="radio" formControlName="type" value="AT" />
             </form-radio>
-            <form-radio label="Transfere">
+            <form-radio label="Transferente">
               <input type="radio" formControlName="type" value="T" />
             </form-radio>
           </div>
 
-          <div>
-            <span
-              class="label label-{{
-                procedureStatus.value == 'PENDIENTE' ? 'warning' : 'success'
-              }}"
-              >{{ procedureStatus.value }}</span
-            >
+          <div
+            class="d-flex"
+            *ngIf="initialCondition == 'A' || initialCondition == 'P'">
+            <form-radio class="ml-3" label="Administrativo">
+              <input type="radio" formControlName="type" value="A" />
+            </form-radio>
+            <form-radio label="Procesal">
+              <input type="radio" formControlName="type" value="P" />
+            </form-radio>
           </div>
         </div>
         <div class="row pt-5">
@@ -53,10 +58,11 @@
             class="col-md-6"
             [control]="documentsReceptionForm.get('identifier')">
             <ngx-select
-              value="id"
-              bindLabel="description"
               [form]="documentsReceptionForm"
               [data]="identifiers"
+              (fetchItems)="getIdentifiers($event)"
+              value="id"
+              bindLabel="description"
               control="identifier"
               label="Identificador">
             </ngx-select>
@@ -64,13 +70,9 @@
 
           <form-field
             class="col-md-6"
-            [control]="documentsReceptionForm.get('sender')">
-            <ngx-select
-              [form]="documentsReceptionForm"
-              [data]="identifiers"
-              control="sender"
-              label="Remitente">
-            </ngx-select>
+            [control]="documentsReceptionForm.get('sender')"
+            label="Remitente">
+            <input type="text" formControlName="sender" class="form-control" />
           </form-field>
         </div>
 
@@ -89,30 +91,40 @@
             </ngx-select>
           </form-field>
         </div>
-
-        <div class="row">
-          <form-check class="col-md-6" label="Desalojov" for="desalojov-check">
-            <input
-              id="desalojov-check"
-              type="checkbox"
-              formControlName="desalojov"
-              (input)="checkDesalojo($event)" />
-          </form-check>
-
-          <form-check
-            class="col-md-6"
-            label="Dirección General"
-            for="general-check">
-            <input
-              id="general-check"
-              type="checkbox"
-              formControlName="generalDirection" />
-          </form-check>
-        </div>
       </div>
 
       <div class="col-md-5">
-        <div class="row">
+        <div class="row mb-5 pb-5">
+          <div class="col-md-4">
+            <div class="mt-2">
+              <span
+                class="label label-{{
+                  procedureStatus == 'PENDIENTE' ? 'warning' : 'success'
+                }}"
+                >{{ procedureStatus }}</span
+              >
+            </div>
+          </div>
+          <div class="col-md-4">
+            <button
+              [disabled]="procedureStatus == 'ENVIADO'"
+              type="button"
+              class="ml-5 btn btn-warning btn-sm"
+              (click)="sendFlyer()">
+              <i class="bx bxs-lock-alt"></i>
+            </button>
+          </div>
+          <div class="col-md-4">
+            <button
+              type="button"
+              class="ml-5 btn btn-secondary active btn-sm"
+              (click)="viewDocuments()">
+              <i class="bx bx-file"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="row mt-4">
           <form-field
             class="col-md-4"
             [control]="documentsReceptionForm.get('reception')"
@@ -120,6 +132,7 @@
             <input
               formControlName="reception"
               class="form-control"
+              [maxDate]="initialDate"
               bsDatepicker />
           </form-field>
 
@@ -127,29 +140,50 @@
             class="col-md-4"
             [control]="documentsReceptionForm.get('flyer')"
             label="Volante">
-            <input type="number" formControlName="flyer" class="form-control" />
+            <input
+              type="number"
+              formControlName="flyer"
+              class="form-control"
+              readonly />
           </form-field>
 
           <form-field
             class="col-md-4"
-            [control]="documentsReceptionForm.get('priority')"
-            label="Prioridad">
-            <select class="form-control" formControlName="priority">
-              <option value="Alta">Alta</option>
-              <option value="Normal">Normal</option>
-            </select>
+            [control]="documentsReceptionForm.get('consecutive')"
+            label="Consecutivo">
+            <input
+              type="number"
+              formControlName="consecutive"
+              class="form-control"
+              readonly />
           </form-field>
         </div>
 
         <div class="row pt-5">
           <div class="col-md-4">
             <form-field
-              [control]="documentsReceptionForm.get('consecutive')"
-              label="Consecutivo">
+              [control]="documentsReceptionForm.get('priority')"
+              label="Prioridad">
+              <ng-select
+                formControlName="priority"
+                [searchable]="false"
+                class="form-control"
+                [clearable]="false">
+                <ng-option value="A">Alta</ng-option>
+                <ng-option value="N">Normal</ng-option>
+              </ng-select>
+            </form-field>
+          </div>
+
+          <div class="col-md-4">
+            <form-field
+              [control]="documentsReceptionForm.get('record')"
+              label="Expediente">
               <input
                 type="number"
-                formControlName="consecutive"
-                class="form-control" />
+                formControlName="record"
+                class="form-control"
+                readonly />
             </form-field>
           </div>
 
@@ -160,39 +194,45 @@
               <input
                 type="number"
                 formControlName="recordId"
-                class="form-control" />
-            </form-field>
-          </div>
-          <div class="col-md-4">
-            <form-field
-              [control]="documentsReceptionForm.get('record')"
-              label="Expediente">
-              <input
-                type="number"
-                formControlName="record"
-                class="form-control" />
+                class="form-control"
+                readonly />
             </form-field>
           </div>
         </div>
-
-        <div class="row">
-          <div class="col-md-6">
-            <button
-              [disabled]="procedureStatus.value == 'ENVIADO'"
-              type="button"
-              class="btn btn-warning btn-sm"
-              (click)="sendFlyer()">
-              <i class="bx bxs-lock-alt"></i>
-            </button>
-
-            <button
-              type="button"
-              class="ml-5 btn btn-secondary active btn-sm"
-              (click)="viewDocuments()">
-              <i class="bx bx-file"></i>
-            </button>
-          </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6" *ngIf="subject.value == 50">
+        <div class="d-flex">
+          <form-radio class="ml-3" label="Primera Etapa">
+            <input type="radio" formControlName="type" value="PR" />
+          </form-radio>
+          <form-radio label="Segunda Etapa">
+            <input type="radio" formControlName="type" value="SA" />
+          </form-radio>
+          <form-radio label="Tercera Etapa">
+            <input type="radio" formControlName="type" value="TR" />
+          </form-radio>
         </div>
+      </div>
+      <div class="col-md-6">
+        <form-check class="col-md-6" label="Desalojov" for="desalojov-check">
+          <input
+            id="desalojov-check"
+            type="checkbox"
+            formControlName="desalojov"
+            (input)="checkDesalojo($event)" />
+        </form-check>
+
+        <form-check
+          class="col-md-6"
+          label="Dirección General"
+          for="general-check">
+          <input
+            id="general-check"
+            type="checkbox"
+            formControlName="generalDirection" />
+        </form-check>
       </div>
     </div>
     <hr />
@@ -287,9 +327,13 @@
             [control]="documentsReceptionForm.get('city')">
             <ngx-select
               [form]="documentsReceptionForm"
-              [data]="identifiers"
+              [data]="cities"
+              (fetchItems)="getCities($event)"
+              value="idCity"
+              bindLabel="nameCity"
               control="city"
-              label="Ciudad">
+              label="Ciudad"
+              (change)="cityChange($event)">
             </ngx-select>
           </form-field>
         </div>
@@ -300,7 +344,10 @@
             [control]="documentsReceptionForm.get('state')">
             <ngx-select
               [form]="documentsReceptionForm"
-              [data]="identifiers"
+              [data]="federalEntities"
+              (fetchItems)="getFederalEntities($event)"
+              value="value"
+              bindLabel="value"
               control="state"
               label="Ent. Fed">
             </ngx-select>
@@ -401,7 +448,10 @@
             [control]="documentsReceptionForm.get('receptionWay')">
             <ngx-select
               [form]="documentsReceptionForm"
-              [data]="identifiers"
+              [data]="receptionWays"
+              (fetchItems)="getReceptionWays($event)"
+              value="value"
+              bindLabel="value"
               control="receptionWay"
               label="Vía Recepción">
             </ngx-select>
@@ -437,7 +487,10 @@
             [control]="documentsReceptionForm.get('destinationManagement')">
             <ngx-select
               [form]="documentsReceptionForm"
-              [data]="identifiers"
+              [data]="managementAreas"
+              (fetchItems)="getManagementAreas($event)"
+              value="id"
+              bindLabel="description"
               control="destinationManagement"
               label="Gestión Destino">
             </ngx-select>

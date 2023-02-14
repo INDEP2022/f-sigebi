@@ -23,9 +23,9 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   subject: new FormControl<string | number>(null, Validators.required),
   reception: new FormControl<string | number>(null, Validators.required),
   priority: new FormControl<string | number>(null, Validators.required),
-  flyer: new FormControl<string | number>(null, Validators.required),
-  consecutive: new FormControl<string | number>(null, Validators.required),
-  record: new FormControl<string | number>(null, Validators.required),
+  flyer: new FormControl<string | number>(null),
+  consecutive: new FormControl<string | number>(null),
+  record: new FormControl<string | number>(null),
   recordId: new FormControl<string | number>(null),
   desalojov: new FormControl<boolean>(false),
   generalDirection: new FormControl<boolean>(false),
@@ -48,10 +48,21 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   destinationManagement: new FormControl<string | number>(null),
   inAtention: new FormControl<string | number>(null, Validators.required),
   cpp: new FormControl<string | number>(null),
-  status: new FormControl<string | number>(null, Validators.required),
 };
 
 export enum TaxpayerLabel {
   Taxpayer = 'Contribuyente',
   Defendant = 'Indiciado',
+}
+
+export enum InitialCondition {
+  administrative = 'A',
+  procedure = 'P',
+  adminTransfer = 'AT',
+  transferor = 'T',
+}
+
+export enum ProcedureStatus {
+  pending = 'PENDIENTE',
+  sent = 'ENVIADO',
 }

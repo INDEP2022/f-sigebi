@@ -38,11 +38,10 @@ export class DynamicTablesService extends HttpService {
   }
 
   getTvalTable1ByTableKey(
-    id: number | string
+    id: number | string,
+    params: ListParams
   ): Observable<IListResponse<TvalTable1Data>> {
-    return this.dynamicCatalogRepository.getByKeyTvalTable1(
-      `${DynamicCatalogEndpoint.DinamicTables}/${DynamicCatalogEndpoint.findTvalTable1ByKey}`,
-      id
-    );
+    const fullRoute = `${DynamicCatalogEndpoint.DinamicTables}/${DynamicCatalogEndpoint.findTvalTable1ByKey}/${id}`;
+    return this.get<IListResponse<TvalTable1Data>>(fullRoute, params);
   }
 }

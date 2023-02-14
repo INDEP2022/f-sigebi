@@ -1,37 +1,43 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { map, merge, takeUntil } from 'rxjs';
+import { map, merge, Observable, takeUntil } from 'rxjs';
 import { DocumentsListComponent } from 'src/app/@standalone/documents-list/documents-list.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
+  SearchFilter,
 } from 'src/app/common/repository/interfaces/list-params';
+import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IAffair } from 'src/app/core/models/catalogs/affair.model';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
+import { ICity } from 'src/app/core/models/catalogs/city.model';
 import { ICourt } from 'src/app/core/models/catalogs/court.model';
 import { TvalTable1Data } from 'src/app/core/models/catalogs/dinamic-tables.model';
+import { IIdentifier } from 'src/app/core/models/catalogs/identifier.model';
 import { IIndiciados } from 'src/app/core/models/catalogs/indiciados.model';
 import { IStation } from 'src/app/core/models/catalogs/station.model';
 import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { IUser } from 'src/app/core/models/catalogs/user.model';
+import { IManagementArea } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { AffairService } from 'src/app/core/services/catalogs/affair.service';
+import { CityService } from 'src/app/core/services/catalogs/city.service';
 import { CourtService } from 'src/app/core/services/catalogs/court.service';
 import { IndiciadosService } from 'src/app/core/services/catalogs/indiciados.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { DocReceptionRegisterService } from 'src/app/core/services/document-reception/doc-reception-register.service';
 import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dynamic-tables.service';
-import { NotificationService } from 'src/app/core/services/ms-notification/notification.service';
 import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { DocumentsReceptionFlyerSelectComponent } from './components/documents-reception-flyer-select/documents-reception-flyer-select.component';
-import { DOCUMENTS_RECEPTION_REGISTER_DEFAULT_IDENFIFIERS } from './constants/documents-reception-register-default-values';
 import {
   DocuentsReceptionRegisterFormChanges,
   DOCUMENTS_RECEPTION_REGISTER_FORM,
   DOC_RECEPT_REG_FIELDS_TO_LISTEN,
+  InitialCondition,
+  ProcedureStatus,
   TaxpayerLabel,
 } from './interfaces/documets-reception-register-form';
 
@@ -51,27 +57,31 @@ export class DocumentsReceptionRegisterComponent
     destinationArea: (value: string) => this.destinationAreaChange(value),
     subject: (value: string) => this.subjectChange(value),
   };
-  transfers = new DefaultSelect();
-  identifiers = new DefaultSelect(
-    DOCUMENTS_RECEPTION_REGISTER_DEFAULT_IDENFIFIERS,
-    3
-  );
+  initialCondition: InitialCondition = InitialCondition.transferor;
+  procedureStatus: ProcedureStatus = ProcedureStatus.pending;
+  initialDate: Date = new Date();
+  maxDate: Date = new Date();
   taxpayerLabel: TaxpayerLabel = TaxpayerLabel.Taxpayer;
+  // transfers = new DefaultSelect();
+  identifiers = new DefaultSelect<IIdentifier>();
   subjects = new DefaultSelect<IAffair>();
-  federalEtities = new DefaultSelect<TvalTable1Data>();
+  cities = new DefaultSelect<ICity>();
+  federalEntities = new DefaultSelect<TvalTable1Data>();
   transferors = new DefaultSelect<ITransferente>();
   stations = new DefaultSelect<IStation>();
   authorities = new DefaultSelect<IAuthority>();
   courts = new DefaultSelect<ICourt>();
   defendants = new DefaultSelect<IIndiciados>();
+  receptionWays = new DefaultSelect<TvalTable1Data>();
+  managementAreas = new DefaultSelect<IManagementArea>();
   users = new DefaultSelect<IUser>();
 
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
     private affairService: AffairService,
-    private notificationService: NotificationService,
     private dynamicTablesService: DynamicTablesService,
+    private cityService: CityService,
     private transferentService: TransferenteService,
     private docRegisterService: DocReceptionRegisterService,
     private courtService: CourtService,
@@ -79,10 +89,6 @@ export class DocumentsReceptionRegisterComponent
     private usersService: UsersService
   ) {
     super();
-  }
-
-  get procedureStatus() {
-    return this.formControls.status;
   }
 
   private get formControls() {
@@ -101,21 +107,47 @@ export class DocumentsReceptionRegisterComponent
     return this.documentsReceptionForm.controls['transfer'];
   }
 
+  get subject() {
+    return this.documentsReceptionForm.controls['subject'];
+  }
+
+  get type() {
+    return this.documentsReceptionForm.controls['type'];
+  }
+
+  get state() {
+    return this.documentsReceptionForm.controls['state'];
+  }
+
   ngOnInit(): void {
     // ! descomentar esta linea para mostrar el modal al inicio
     // this.selectFlyer();
     this.onFormChanges();
+    this.setDefaultValues();
     this.initSelectElements();
   }
 
   initSelectElements() {
+    this.getIdentifiers({ page: 1, text: '' });
     this.getSubjects({ inicio: 1, text: '' });
     this.getTransferors({ inicio: 1, text: '' });
+    this.getCities({ inicio: 1, text: '' });
+    this.getFederalEntities({ inicio: 1, text: '' });
     this.getStations({ page: 1, text: '' });
     this.getAuthorities({ page: 1, text: '' });
     this.getCourts({ inicio: 1, text: '' });
     this.getDefendants({ inicio: 1, text: '' });
+    this.getReceptionWays({ inicio: 1, text: '' });
+    this.getManagementAreas({ page: 1, text: '' });
     this.getUsers({ inicio: 1, text: '' });
+  }
+
+  setDefaultValues() {
+    const day = this.initialDate.getDate();
+    const month = this.initialDate.getMonth() + 1;
+    const year = this.initialDate.getFullYear();
+    const initialDate = `${day}/${month}/${year}`;
+    this.formControls.reception.setValue(initialDate);
   }
 
   onFormChanges() {
@@ -161,6 +193,10 @@ export class DocumentsReceptionRegisterComponent
     //TODO: Validaciones especiales par asunto 21, 22 y 34
   }
 
+  cityChange(city: ICity) {
+    this.state.setValue(city.state.descCondition);
+  }
+
   fillForm(value: string | number) {
     this.documentsReceptionForm.reset();
     this.documentsReceptionForm.get('flyer').setValue(value);
@@ -181,7 +217,7 @@ export class DocumentsReceptionRegisterComponent
   }
 
   sendFlyer() {
-    this.documentsReceptionForm.get('status').setValue('ENVIADO');
+    this.procedureStatus = ProcedureStatus.sent;
   }
 
   viewDocuments() {
@@ -206,6 +242,8 @@ export class DocumentsReceptionRegisterComponent
   }
 
   getSubjects(params?: ListParams) {
+    //TODO: Agregar filtro por tipo de volante o proceso, campo referralNoteType y
+    // agregar checkbox para filtrar por relacion bien
     this.affairService.getAll(params).subscribe({
       next: data => {
         this.subjects = new DefaultSelect(data.data, data.count);
@@ -220,9 +258,10 @@ export class DocumentsReceptionRegisterComponent
     const params = new FilterParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
-    if (lparams?.text.length > 0) params.addFilter('identifier', lparams.text);
-    //TODO: Flitro por volante (No se encontro el campo en el endpoint)
-    this.notificationService.getAllFilter(params.getParams()).subscribe({
+    if (lparams?.text.length > 0)
+      params.addFilter('description', lparams.text, SearchFilter.LIKE);
+    if (this.type.value != null) params.addFilter('keyview', this.type.value);
+    this.docRegisterService.getIdentifiers(params.getParams()).subscribe({
       next: data => {
         this.identifiers = new DefaultSelect(data.data, data.count);
       },
@@ -230,14 +269,31 @@ export class DocumentsReceptionRegisterComponent
     });
   }
 
-  getDynamicTables(id: number | string, params: ListParams) {
-    //TODO: llamar servicio con params
-    this.dynamicTablesService.getTvalTable1ByTableKey(id).subscribe({
+  getFederalEntities(params: ListParams) {
+    let elements$ = this.getDynamicTables(1, params);
+    elements$.subscribe({
       next: data => {
-        return { data: data.data, count: data.count };
+        this.federalEntities = new DefaultSelect(data.data, data.count);
       },
       error: err => this.handleSelectErrors(err),
     });
+  }
+
+  getReceptionWays(params: ListParams) {
+    let elements$ = this.getDynamicTables(9, params);
+    elements$.subscribe({
+      next: data => {
+        this.receptionWays = new DefaultSelect(data.data, data.count);
+      },
+      error: err => this.handleSelectErrors(err),
+    });
+  }
+
+  getDynamicTables(
+    id: number | string,
+    params: ListParams
+  ): Observable<IListResponse<TvalTable1Data>> {
+    return this.dynamicTablesService.getTvalTable1ByTableKey(id, params);
   }
 
   getTransferors(lparams: ListParams) {
@@ -254,7 +310,8 @@ export class DocumentsReceptionRegisterComponent
     const params = new FilterParams();
     params.page = lparams.page;
     params.limit = lparams.limit;
-    if (lparams?.text.length > 0) params.addFilter('stationName', lparams.text);
+    if (lparams?.text.length > 0)
+      params.addFilter('stationName', lparams.text, SearchFilter.LIKE);
     if (this.transfer.value != null)
       params.addFilter('idTransferent', this.transfer.value);
     this.docRegisterService.getStations(params.getParams()).subscribe({
@@ -270,7 +327,7 @@ export class DocumentsReceptionRegisterComponent
     params.page = lparams.page;
     params.limit = lparams.limit;
     if (lparams?.text.length > 0)
-      params.addFilter('authorityName', lparams.text);
+      params.addFilter('authorityName', lparams.text, SearchFilter.LIKE);
     if (this.transfer.value != null)
       params.addFilter('idTransferer', this.transfer.value);
     if (this.transmitter.value != null)
@@ -284,7 +341,7 @@ export class DocumentsReceptionRegisterComponent
   }
 
   changeTransferor(event: ITransferente) {
-    this.documentsReceptionForm.controls['transferDup'].setValue(event);
+    this.formControls.transferDup.setValue(event);
   }
 
   getCourts(lparams: ListParams) {
@@ -300,6 +357,29 @@ export class DocumentsReceptionRegisterComponent
     this.defendantService.getAll(lparams).subscribe({
       next: data => {
         this.defendants = new DefaultSelect(data.data, data.count);
+      },
+      error: err => this.handleSelectErrors(err),
+    });
+  }
+
+  getCities(lparams: ListParams) {
+    this.cityService.getAll(lparams).subscribe({
+      next: data => {
+        this.cities = new DefaultSelect(data.data, data.count);
+      },
+      error: err => this.handleSelectErrors(err),
+    });
+  }
+
+  getManagementAreas(lparams: ListParams) {
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    if (lparams?.text.length > 0)
+      params.addFilter('description', lparams.text, SearchFilter.LIKE);
+    this.docRegisterService.getManagementAreas(params.getParams()).subscribe({
+      next: data => {
+        this.managementAreas = new DefaultSelect(data.data, data.count);
       },
       error: err => this.handleSelectErrors(err),
     });
