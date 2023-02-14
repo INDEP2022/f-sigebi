@@ -1,8 +1,8 @@
 export interface ICustomer {
-  id: number;
+  id?: number;
   reasonName: string;
   rfc: string;
-  sellerId: number;
+  sellerId: ISeller | number;
   street: string;
   city: string;
   colony: string;
@@ -41,4 +41,16 @@ export interface ICustomer {
   checksAccount: string;
   penaltyInitDate: string;
   penalizeUser: string;
+}
+
+export interface ISeller {
+  cityNumber: string;
+  colony: string;
+  comission: string;
+  id: string;
+  outside: string;
+  phone: string;
+  reasonName: string;
+  rfc: string;
+  street: string;
 }

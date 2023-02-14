@@ -24,6 +24,8 @@ export class RegisterAttributesTypesModalComponent
   attribClassifGoodForm: ModelForm<IAttribClassifGoods>;
   attribClassifGood: IAttribClassifGoods;
 
+  noClass: IAttribClassifGoods;
+  _id: any;
   constructor(
     private fb: FormBuilder,
     private modalRef: BsModalRef,
@@ -108,8 +110,16 @@ export class RegisterAttributesTypesModalComponent
     if (this.attribClassifGood != null) {
       this.edit = true;
       this.attribClassifGoodForm.patchValue(this.attribClassifGood);
+    } else {
+      this.edit = false;
+      this.attribClassifGoodForm.controls['classifGoodNumber'].setValue(
+        this._id
+      );
+      console.log('Valor de modal: ', this._id);
     }
   }
+
+  message: any = false;
 
   close() {
     this.modalRef.hide();
