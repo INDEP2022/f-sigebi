@@ -1,16 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { IFormGroup } from 'src/app/core/interfaces/model-form';
 import { IGood } from 'src/app/core/models/ms-good/good';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { COLUMNS } from './columns';
 
-interface IPerson {
+/* interface IPerson {
   name: string;
   birthdate: Date | any;
 }
@@ -26,7 +25,7 @@ interface IRole {
   description: string;
   status: string;
   labelNumber: string;
-}
+} */
 @Component({
   selector: 'app-pa-cdgi-c-change-destination-goods-indicators',
   templateUrl: './pa-cdgi-c-change-destination-goods-indicators.component.html',
@@ -40,7 +39,7 @@ export class PaCdgiCChangeDestinationGoodsIndicatorsComponent
   form: FormGroup;
   goods: IGood[] = [];
   goodsNew: IGood[] = [];
-  userExample: IFormGroup<IUser>;
+  userExample: FormGroup;
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   massive: boolean = false;
@@ -80,11 +79,10 @@ export class PaCdgiCChangeDestinationGoodsIndicatorsComponent
       goodId: [null, [Validators.required]],
       goodDescription: [null, [Validators.required]],
     });
-    /*     this.userExample = this.fb.group({
-      person: this.personForm,
+    this.userExample = this.fb.group({
       roles: this.fb.array([this.roleForm]),
       username: [''],
-    }); */
+    });
   }
   addGood() {
     this.loading = true;
@@ -123,13 +121,7 @@ export class PaCdgiCChangeDestinationGoodsIndicatorsComponent
     return valid;
   }
 
-  /*   get personForm(): IFormGroup<IPerson> {
-    return this.fb.group({
-      name: [null],
-      birthdate: [new Date()],
-    });
-  }
-  get roleForm(): IFormGroup<IRole> {
+  get roleForm() {
     return this.fb.group({
       role: [null],
       description: [null],
@@ -151,7 +143,7 @@ export class PaCdgiCChangeDestinationGoodsIndicatorsComponent
     this.roles.removeAt(index);
   }
 
-  saveRole() {
+  /*   saveRole() {
     this.user = this.userExample.getRawValue();
   } */
 }

@@ -48,7 +48,65 @@
         </div>
       </div>
       <hr />
-      <div class="row">
+      <form [formGroup]="userExample" class="form-material">
+        <div>
+          <button
+            type="button"
+            class="btn btn-sm btn-primary"
+            (click)="addRole()">
+            Agregar Bien
+          </button>
+        </div>
+        <br />
+        <br />
+        <ng-container
+          formArrayName="roles"
+          *ngFor="let role of roles.controls; index as i">
+          <br />
+          <div class="d-flex" [formGroupName]="i">
+            <form-field [control]="role.get('role')" label="N° Bien">
+              <input type="text" class="form-control" formControlName="role" />
+            </form-field>
+            &nbsp;&nbsp;
+            <form-field [control]="role.get('description')" label="Descripción">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="description" />
+            </form-field>
+            &nbsp;&nbsp;
+            <form-field [control]="role.get('status')" label="Status">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="status" />
+            </form-field>
+            &nbsp;&nbsp;
+            <form-field
+              [control]="role.get('labelNumber')"
+              label="Indicador de destino">
+              <select class="form-control" formControlName="labelNumber">
+                <option [value]="null">Seleccione un valor</option>
+                <option value="1">Venta</option>
+                <option value="2">Donación</option>
+                <option value="3">Resguardo</option>
+                <option value="4">Destrucción</option>
+                <option value="5">Enterado LIF</option>
+              </select>
+            </form-field>
+            &nbsp; &nbsp;
+            <div>
+              <button
+                type="button"
+                class="btn btn-danger"
+                (click)="removeRole(i)">
+                -
+              </button>
+            </div>
+          </div>
+        </ng-container>
+      </form>
+      <!--       <div class="row">
         <div class="col-md-6 col-sm-12 col-xs-12 mt-3">
           <form-field [control]="form.get('goodId')" label="Ingrese el bien">
             <input
@@ -74,7 +132,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
   </app-card>
 </form>
