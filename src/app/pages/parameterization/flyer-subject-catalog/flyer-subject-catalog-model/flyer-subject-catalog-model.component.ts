@@ -28,7 +28,7 @@ export class FlyerSubjectCatalogModelComponent
   id: IAffair;
 
   affair = new DefaultSelect();
-  affairValue: IAffair;
+  idF: IAffair;
 
   constructor(
     private fb: FormBuilder,
@@ -57,6 +57,9 @@ export class FlyerSubjectCatalogModelComponent
       console.log(this.affairType);
       this.affairTypeForm.patchValue(this.affairType);
       this.affairTypeForm.controls['code'].setValue(this.id.id);
+    } else {
+      console.log('Limpio', this.idF.id);
+      this.affairTypeForm.controls['code'].setValue(this.idF.id);
     }
   }
 
