@@ -17,15 +17,15 @@
         </form-field>
       </div>
       <div class="row pt-3">
-        <form-field [control]="userForm.get('chargeUser')">
+        <form-field [control]="userForm.get('charge')">
           <ngx-select
             [form]="userForm"
-            control="chargeUser"
-            [data]="chargeUser"
-            value="id"
-            bindLabel="norm"
+            control="charge"
+            [data]="chargesUsers"
+            value="keyId"
+            bindLabel="description"
             label="Cargo usuario"
-            (fetchItems)="getFractionSelect($event)"></ngx-select>
+            (fetchItems)="getChargesUsers($event)"></ngx-select>
         </form-field>
       </div>
     </form>

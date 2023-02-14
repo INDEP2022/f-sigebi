@@ -7,22 +7,15 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-2" *ngIf="!isCreate">
+        <div class="col-md-2">
           <form-field [control]="form.get('personNumber')" label="No Persona">
             <input
               type="text"
               class="form-control"
               formControlName="personNumber" />
           </form-field>
-          <!--  <app-circuit-shared [form]="form"></app-circuit-shared> -->
-          <!-- <app-goods-status-shared [form]="form"></app-goods-status-shared> -->
         </div>
-        <!-- <div class="col-md-5">
-          <form-field [control]="form.get('surname')" label="Apellidos">
-            <input type="text" class="form-control" formControlName="surname" />
-          </form-field>
-        </div> -->
-        <div class="col-md-12">
+        <div class="col-md-10">
           <form-field [control]="form.get('name')" label="Nombre completo">
             <input type="text" class="form-control" formControlName="name" />
           </form-field>
@@ -117,12 +110,12 @@
           </form-check>
         </div>
         <div class="col-md-3 col-sm-6 col-xs-6">
-          <form-radio label="Persona Moral">
+          <form-radio label="* Persona Moral">
             <input type="radio" formControlName="typePerson" value="M" />
           </form-radio>
         </div>
         <div class="col-md-3 col-sm-6 col-xs-6">
-          <form-radio label="Persona F&iacute;sica">
+          <form-radio label="* Persona F&iacute;sica">
             <input type="radio" formControlName="typePerson" value="F" />
           </form-radio>
         </div>
@@ -161,6 +154,7 @@
             <button
               type="button"
               class="btn btn-primary active"
+              [disabled]="!form.valid"
               (click)="saved()">
               Guardar
             </button>

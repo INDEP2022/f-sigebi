@@ -22,8 +22,11 @@ export class RegisterKeysLogicalTablesModalComponent
 {
   tdescCveForm: ModelForm<ITdescCve>;
   tdescCve: ITdescCve;
+
   title: string = 'Registro de claves para tablas logicas';
   edit: boolean = false;
+
+  _id: any;
 
   constructor(
     private fb: FormBuilder,
@@ -39,7 +42,7 @@ export class RegisterKeysLogicalTablesModalComponent
 
   private prepareForom() {
     this.tdescCveForm = this.fb.group({
-      id: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      id: [null, [Validators.required]],
 
       dsKey1: [null, [Validators.pattern(KEYGENERATION_PATTERN)]],
       swFormat1: [null, [Validators.pattern(STRING_PATTERN)]],
@@ -68,8 +71,9 @@ export class RegisterKeysLogicalTablesModalComponent
     });
     if (this.tdescCve != null) {
       this.edit = true;
-      console.log(this.tdescCve);
       this.tdescCveForm.patchValue(this.tdescCve);
+    } else {
+      (this.edit = false), this.tdescCveForm.controls['id'].setValue(this._id);
     }
   }
 
@@ -85,7 +89,14 @@ export class RegisterKeysLogicalTablesModalComponent
     this.loading = true;
     this.tdescCveService.create(this.tdescCveForm.value).subscribe({
       next: data => this.handleSuccess(),
-      error: error => (this.loading = false),
+      error: error => (
+        (this.loading = false),
+        this.onLoadToast(
+          'warning',
+          this.title,
+          `${error.error.message} Correctamente`
+        )
+      ),
     });
   }
 

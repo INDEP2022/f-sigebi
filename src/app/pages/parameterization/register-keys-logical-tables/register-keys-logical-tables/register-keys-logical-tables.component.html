@@ -5,15 +5,17 @@
     </div>
   </div>
   <div body>
-    <form [formGroup]="form" class="form-material">
+    <form [formGroup]="tableForm" class="form-material">
       <div class="row">
         <div class="col-md-2">
-          <form-field [control]="form.get('table')" label="id">
+          <form-field [control]="tableForm.get('table')" label="id">
             <input type="number" class="form-control" formControlName="table" />
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field [control]="form.get('description')" label="Descripción">
+          <form-field
+            [control]="tableForm.get('description')"
+            label="Descripción">
             <input
               type="text"
               class="form-control"
@@ -21,7 +23,9 @@
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field [control]="form.get('tableType')" label="Tipo de tabla">
+          <form-field
+            [control]="tableForm.get('tableType')"
+            label="Tipo de tabla">
             <input
               type="text"
               class="form-control"
@@ -31,7 +35,7 @@
         <div class="col-md-2">
           <button
             class="btn btn-sm btn-primary active"
-            [disabled]="!form.valid"
+            [disabled]="!tableForm.valid"
             (click)="getLogicalTablesByID()">
             Buscar
           </button>
@@ -39,7 +43,7 @@
       </div>
     </form>
 
-    <div class="row" *ngIf="form.get('description').value !== null">
+    <div class="row" *ngIf="tableForm.get('description').value !== null">
       <div class="ch-content">
         <h5 class="title">Descripción de Claves</h5>
         <div class="col-md-5 buttons">
@@ -60,7 +64,7 @@
         </div>
       </div>
     </div>
-    <app-pagination [params]="params" [totalItems]="totalItems">
-    </app-pagination>
+    <!-- <app-pagination [params]="params" [totalItems]="totalItems">
+    </app-pagination> -->
   </div>
 </app-card>

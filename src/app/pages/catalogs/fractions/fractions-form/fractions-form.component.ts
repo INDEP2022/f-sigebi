@@ -102,8 +102,8 @@ export class FractionsFormComponent extends BasePage implements OnInit {
       );
       this.norms = new DefaultSelect([norm ? norm : []], 1);
     } else {
-      this.getClasificationSelect({ inicio: 1, text: '' });
-      this.getFractionSelect({ inicio: 1, text: '' });
+      this.getClasificationSelect({ page: 1, text: '' });
+      this.getFractionSelect({ page: 1, text: '' });
     }
   }
 

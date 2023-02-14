@@ -4,22 +4,22 @@
   (formValues)="getDataFormOficio($event)"></ngx-form-oficio>
 <!-- Forms OFICIO -->
 
-<!-- Forms OFICIO INICIO FIN -->
-<form [formGroup]="formOficioInicioFin" class="container-fluid form-material">
+<!-- Forms OFICIO page FIN -->
+<form [formGroup]="formOficiopageFin" class="container-fluid form-material">
   <div class="row w-100">
     <div class="col-sm-12 col-12 col-md-6 pr-3">
-      <form-field [control]="formOficioInicioFin.get('inicio')" label="Inicio">
-        <textarea class="form-control" formControlName="inicio"></textarea>
+      <form-field [control]="formOficiopageFin.get('page')" label="page">
+        <textarea class="form-control" formControlName="page"></textarea>
       </form-field>
     </div>
     <div class="col-sm-12 col-12 col-md-6 pr-3">
-      <form-field [control]="formOficioInicioFin.get('fin')" label="Fin">
+      <form-field [control]="formOficiopageFin.get('fin')" label="Fin">
         <textarea class="form-control" formControlName="fin"></textarea>
       </form-field>
     </div>
   </div>
 </form>
-<!-- Forms OFICIO INICIO FIN -->
+<!-- Forms OFICIO page FIN -->
 
 <hr class="row" />
 <div class="row">

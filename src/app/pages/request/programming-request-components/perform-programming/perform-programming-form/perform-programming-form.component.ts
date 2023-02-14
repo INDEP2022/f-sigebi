@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { addDays } from 'date-fns';
+import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { minDate } from 'src/app/common/validations/date.validators';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
 import { IDelegationState } from 'src/app/core/models/catalogs/delegation-state.model';
 import { IRegionalDelegation } from 'src/app/core/models/catalogs/regional-delegation.model';
@@ -11,7 +14,9 @@ import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic
 import { IStation } from 'src/app/core/models/catalogs/station.model';
 import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { ITypeRelevant } from 'src/app/core/models/catalogs/type-relevant.model';
+import { IUser } from 'src/app/core/models/catalogs/user.model';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
+import { IGoodProgrammingSelect } from 'src/app/core/models/good-programming/good-programming';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
@@ -23,16 +28,20 @@ import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.
 import { BasePage } from 'src/app/core/shared/base-page';
 import { EMAIL_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { ProgrammingGoodService } from '../../../../../core/services/ms-programming-request/programming-good.service';
 import { WarehouseFormComponent } from '../../../shared-request/warehouse-form/warehouse-form.component';
 import { ESTATE_COLUMNS } from '../../acept-programming/columns/estate-columns';
-import { USER_COLUMNS } from '../../acept-programming/columns/users-columns';
 import { SearchUserFormComponent } from '../../schedule-reception/search-user-form/search-user-form.component';
-import { ProgrammingGoodService } from '../../service/programming-good.service';
-import { ProgrammingRequestService } from '../../service/programming-request.service';
+import { userData } from '../../schedule-reception/search-user-form/users-data';
 import { EstateSearchFormComponent } from '../estate-search-form/estate-search-form.component';
 import { IEstateSearch } from '../estate-search-form/estate-search.interface';
 import { UserFormComponent } from '../user-form/user-form.component';
-import { userData } from './data-perfom-programming';
+import {
+  settingGuard,
+  settingTransGoods,
+  SettingUserTable,
+  settingWarehouse,
+} from './settings-tables';
 
 @Component({
   selector: 'app-perform-programming-form',
@@ -43,19 +52,13 @@ export class PerformProgrammingFormComponent
   extends BasePage
   implements OnInit
 {
-  settingEstate = { ...this.settings, actions: false, columns: ESTATE_COLUMNS };
-  settingUser = {
-    ...this.settings,
-    actions: {
-      columnTitle: 'Acciones',
-      position: 'right',
-      delete: true,
-    },
-    columns: USER_COLUMNS,
-  };
-  estates: any[] = [];
-  estatesList: any[] = [];
-  usersData = userData;
+  estatesList: LocalDataSource = new LocalDataSource();
+  goodSelect: IGoodProgrammingSelect[] = [];
+  goodsTranportables: IGoodProgrammingSelect[] = [];
+  goodsGuards: IGoodProgrammingSelect[] = [];
+  goodsWarehouse: IGoodProgrammingSelect[] = [];
+  usersToProgramming: LocalDataSource = new LocalDataSource();
+  dataSearch: IEstateSearch;
   regionalDelegationUser: IRegionalDelegation;
   performForm: FormGroup = new FormGroup({});
   estateForm: FormGroup = new FormGroup({});
@@ -67,23 +70,50 @@ export class PerformProgrammingFormComponent
   typeRelevant = new DefaultSelect<ITypeRelevant>();
   warehouse = new DefaultSelect<IWarehouse>();
   warehouseUbication: string = '';
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  tranportableItems: number = 0;
+  headingTransportable: string = `Transportables(0)`;
+  headingGuard: string = `Resguardo(0)`;
+  headingWarehouse: string = `Almacén SAT(0)`;
   idAuthority: string = '';
   idState: string = '';
-  totalItems: number = 0;
   idTrans: number = 0;
   idStation: number = 0;
   idTypeRelevant: number = 0;
-  showForm: boolean = false;
+  showForm: boolean = true;
   showUbication: boolean = false;
   showSelectTransferent: boolean = false;
   showSelectStation: boolean = false;
   showSelectAuthority: boolean = false;
   showWarehouseInfo: boolean = false;
+  loadingGoods: boolean = false;
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  totalItems: number = 0;
+  paramsTransportableGoods = new BehaviorSubject<ListParams>(new ListParams());
+  totalItemsTransportableGoods: number = 0;
+  paramsGuardGoods = new BehaviorSubject<ListParams>(new ListParams());
+  totalItemsGuardGoods: number = 0;
+  paramsWarehouseGoods = new BehaviorSubject<ListParams>(new ListParams());
+  totalItemsWarehouseGoods: number = 0;
+  paramsUsers = new BehaviorSubject<ListParams>(new ListParams());
+  totalItemsUsers: number = 0;
+
+  settingUser = { ...this.settings, ...SettingUserTable };
+
+  settingsTransportableGoods = { ...this.settings, ...settingTransGoods };
+
+  settingGuardGoods = {
+    ...this.settings,
+    ...settingGuard,
+  };
+
+  settingWarehouseGoods = {
+    ...this.settings,
+    ...settingWarehouse,
+  };
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private programmingRequestService: ProgrammingRequestService,
     private programmingGoodService: ProgrammingGoodService,
     private stationService: StationService,
     private regionalDelegationService: RegionalDelegationService,
@@ -99,8 +129,8 @@ export class PerformProgrammingFormComponent
     this.settings = {
       ...this.settings,
       actions: false,
-      selectMode: 'multi',
       columns: ESTATE_COLUMNS,
+      selectMode: 'multi',
     };
   }
 
@@ -111,22 +141,23 @@ export class PerformProgrammingFormComponent
   }
 
   prepareForm() {
+    const fiveDays = addDays(new Date(), 5);
     this.performForm = this.fb.group({
       email: [null, [Validators.required, Validators.pattern(EMAIL_PATTERN)]],
       address: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      city: [null, [Validators.pattern(STRING_PATTERN)]],
-      startDate: [null],
-      endDate: [null],
+      city: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      startDate: [null, [Validators.required, minDate(new Date())]],
+      endDate: [null, [Validators.required, minDate(new Date(fiveDays))]],
       observation: [null, [Validators.pattern(STRING_PATTERN)]],
-      regionalDelegation: [null],
-      state: [null],
-      transferent: [null],
-      station: [null],
-      authority: [null],
-      typeRelevant: [null],
+      regionalDelegation: [null, [Validators.required]],
+      state: [null, [Validators.required]],
+      transferent: [null, [Validators.required]],
+      station: [null, [Validators.required]],
+      authority: [null, [Validators.required]],
+      typeRelevant: [null, [Validators.required]],
       warehouse: [null],
       userId: [null],
     });
@@ -159,8 +190,12 @@ export class PerformProgrammingFormComponent
 
     config.initialState = {
       userData,
-      callback: (data: any) => {
+      callback: (data: IUser[]) => {
         if (data) {
+          this.usersToProgramming.getElements().then(item => {
+            item.push(data);
+            this.usersToProgramming.load(item);
+          });
         }
       },
     };
@@ -168,12 +203,42 @@ export class PerformProgrammingFormComponent
     const rejectionComment = this.modalService.show(UserFormComponent, config);
   }
 
+  newWarehouse() {
+    if (this.regionalDelegationUser) {
+      const regDelData = this.regionalDelegationUser;
+      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+      config.initialState = {
+        regDelData,
+        callback: (next: boolean) => {},
+      };
+
+      const constShowWarehouse = this.modalService.show(
+        WarehouseFormComponent,
+        config
+      );
+    } else {
+      this.onLoadToast(
+        'warning',
+        'Advertencia',
+        'Para crear un almacén necesitas seleccionar una delegación regional'
+      );
+    }
+  }
+
   listUsers() {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
 
     config.initialState = {
       callback: (data: any) => {
-        if (data) {
+        if (data && this.usersToProgramming.count() == 0) {
+          this.usersToProgramming.load(data);
+          this.onLoadToast(
+            'success',
+            'Correcto',
+            'Úsuario(s) agregado(s) correctamente'
+          );
+        } else if (data && this.usersToProgramming.count() >= 0) {
+          this.concatUsers(data);
         }
       },
     };
@@ -181,18 +246,18 @@ export class PerformProgrammingFormComponent
     const searchUser = this.modalService.show(SearchUserFormComponent, config);
   }
 
-  newWarehouse() {
-    const regDelData = this.regionalDelegationUser;
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-    config.initialState = {
-      regDelData,
-      callback: (next: boolean) => {},
-    };
-
-    const constShowWarehouse = this.modalService.show(
-      WarehouseFormComponent,
-      config
-    );
+  concatUsers(users: IUser[]) {
+    this.usersToProgramming.getElements().then(items => {
+      users.map(item => {
+        items.push(item);
+        this.usersToProgramming.load(items);
+        this.onLoadToast(
+          'success',
+          'Correcto',
+          'Úsuario(s) agregado(s) correctamente'
+        );
+      });
+    });
   }
 
   estateSearch() {
@@ -200,9 +265,10 @@ export class PerformProgrammingFormComponent
 
     config.initialState = {
       userData,
-      callback: (dataSearch: IEstateSearch) => {
-        if (dataSearch) {
-          this.getProgGoods(new ListParams(), dataSearch);
+      callback: (data: IEstateSearch) => {
+        if (data) {
+          this.dataSearch = data;
+          this.initializeParamsTrans();
         }
       },
     };
@@ -211,6 +277,10 @@ export class PerformProgrammingFormComponent
       EstateSearchFormComponent,
       config
     );
+  }
+
+  showGoods() {
+    this.initializeParamsTrans();
   }
 
   getRegionalDelegationSelect(params?: ListParams) {
@@ -326,19 +396,75 @@ export class PerformProgrammingFormComponent
     }
   }
 
-  getProgGoods(params?: ListParams, dataSearch?: IEstateSearch) {
-    params['filter.regionalDelegationNumber'] = this.regionalDelegationUser.id;
-    if (dataSearch.state) params['filter.stateKey'] = dataSearch.state;
-    console.log('transferente', this.idTrans);
-    console.log('emisora', this.idStation);
-    console.log('autoridad', this.idAuthority);
-    console.log('tipo relevante', this.idTypeRelevant);
-    return this.goodsQueryService
-      .getGoodsProgramming(params)
-      .subscribe(data => {
-        console.log('data bienes', data);
-        this.estatesList = data.data;
+  initializeParamsTrans() {
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getProgGoods());
+  }
+
+  getProgGoods() {
+    const filterColumns: Object = {
+      /*regionalDelegation: Number(this.regionalDelegationUser.id),
+      transferent: Number(this.idTrans), */
+    };
+    this.loadingGoods = true;
+    this.goodsQueryService
+      .postGoodsProgramming(this.params.getValue(), filterColumns)
+      .subscribe({
+        next: response => {
+          this.estatesList.load(response.data);
+          this.totalItems = response.count;
+          this.loadingGoods = false;
+        },
+        error: error => (this.loadingGoods = false),
       });
+  }
+
+  goodsSelect(items: IGoodProgrammingSelect[]) {
+    this.goodSelect = items;
+  }
+
+  sendTransportable() {
+    if (this.goodSelect.length) {
+      this.headingTransportable = `Transportables(${this.goodSelect.length})`;
+      this.goodsTranportables = this.goodSelect;
+      this.onLoadToast('success', 'Correcto', 'Bien movido a transportable');
+    } else {
+      this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
+    }
+  }
+
+  sendGuard() {
+    if (this.goodSelect.length) {
+      this.headingGuard = `Resguardo(${this.goodSelect.length})`;
+      this.goodsGuards = this.goodSelect;
+      this.onLoadToast('success', 'Correcto', 'Bien movido a resguardo');
+    } else {
+      this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
+    }
+  }
+
+  sendWarehouse() {
+    if (this.goodSelect.length == 0) {
+      this.headingWarehouse = `Almacén SAT(${this.goodSelect.length})`;
+      this.onLoadToast('success', 'Correcto', 'Bien movido a almacén SAT');
+      this.goodsWarehouse = this.goodSelect;
+      this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
+    } else {
+    }
+  }
+
+  showGood() {}
+
+  removeGood(event: any) {
+    event.confirm.resolve();
+    this.onLoadToast('success', 'Elemento Eliminado', '');
+  }
+
+  onDeleteConfirm(event: any) {
+    console.log('Evento', event);
+    event.confirm.resolve();
+    this.onLoadToast('success', 'Elemento Eliminado', '');
   }
 
   confirm() {}

@@ -106,7 +106,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   prepareForm(): void {
     this.requestForm = this.fb.group({
       applicationDate: [{ value: null, disabled: true }],
-      paperNumber: [null, Validators.required],
+      paperNumber: [null, [Validators.required, Validators.maxLength(40)]],
       regionalDelegationId: [{ value: null, disabled: true }], // cargar la delegacion a la que pertence
       transferenceId: [null, Validators.required],
       keyStateOfRepublic: [null, Validators.required],
@@ -242,7 +242,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       this.onLoadToast(
         'info',
         'Informacion',
-        `Seleccione un usuario a turnar!`
+        `Seleccione un usuario para poder turnar la solicitud!`
       );
       return;
     }
@@ -259,7 +259,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
       (data: any) => {
         this.msgModal(
           'Se turnar la solicitud con el Folio Nº '
-            .concat(data.id)
+            .concat(`<strong>${data.id}</strong>`)
             .concat(` al usuario ${this.userName}`),
           'Solicitud Creada',
           'success'
@@ -274,7 +274,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
   msgModal(message: string, title: string, typeMsg: any) {
     Swal.fire({
       title: title,
-      text: message,
+      html: message,
       icon: typeMsg,
       showCancelButton: false,
       confirmButtonColor: '#9D2449',

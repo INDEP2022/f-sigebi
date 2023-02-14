@@ -6,7 +6,11 @@ import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { forkJoin } from 'rxjs';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { PHONE_PATTERN } from 'src/app/core/shared/patterns';
+import {
+  EMAIL_PATTERN,
+  PHONE_PATTERN,
+  STRING_PATTERN,
+} from 'src/app/core/shared/patterns';
 import Swal from 'sweetalert2';
 import { IRequest } from '../../../../core/models/requests/request.model';
 import { AuthorityService } from '../../../../core/services/catalogs/authority.service';
@@ -94,7 +98,7 @@ export class RegistrationOfRequestsComponent
   prepareForm() {
     this.registRequestForm = this.fb.group({
       applicationDate: [null],
-      paperNumber: [null],
+      paperNumber: [null, [Validators.required]],
       regionalDelegationId: [null],
       keyStateOfRepublic: [null],
       transferenceId: [null],
@@ -108,25 +112,25 @@ export class RegistrationOfRequestsComponent
       receptionDate: [{ value: null, disabled: true }],
       paperDate: [null, Validators.required],
       typeRecord: [null],
-      publicMinistry: [null],
-      nameOfOwner: [null], //nombre remitente
-      holderCharge: [null], //cargo remitente
+      publicMinistry: [null, [Validators.pattern(STRING_PATTERN)]],
+      nameOfOwner: [null, [Validators.pattern(STRING_PATTERN)]], //nombre remitente
+      holderCharge: [null, [Validators.pattern(STRING_PATTERN)]], //cargo remitente
       phoneOfOwner: [null, Validators.pattern(PHONE_PATTERN)], //telefono remitente
-      emailOfOwner: [null, Validators.email], //email remitente
-      court: [null],
-      crime: [null],
+      emailOfOwner: [null, [Validators.pattern(EMAIL_PATTERN)]], //email remitente
+      court: [null, [Validators.pattern(STRING_PATTERN)]],
+      crime: [null, [Validators.pattern(STRING_PATTERN)]],
       receiptRoute: [null],
-      destinationManagement: [null],
-      indicatedTaxpayer: [null],
+      destinationManagement: [null, [Validators.pattern(STRING_PATTERN)]],
+      indicatedTaxpayer: [null, [Validators.pattern(STRING_PATTERN)]],
       affair: [null],
-      transferEntNotes: [null],
-      observations: [null],
+      transferEntNotes: [null, [Validators.pattern(STRING_PATTERN)]],
+      observations: [null, [Validators.pattern(STRING_PATTERN)]],
     });
   }
 
   getRequest(id: any) {
     this.requestService.getById(id).subscribe((data: any) => {
-      let request = data.data;
+      let request = data;
       request.receptionDate = new Date().toISOString();
       this.object = request as IRequest;
       this.requestData = request as IRequest;

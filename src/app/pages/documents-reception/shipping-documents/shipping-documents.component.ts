@@ -244,9 +244,10 @@ export class ShippingDocumentsComponent extends BasePage implements OnInit {
   save() {
     if (this.queryMode) {
       this.printPdf();
+      return;
     }
     this.documentsForm.markAllAsTouched();
-    if (!this.documentsForm.valid) {
+    if (!this.documentsForm.valid && !this.queryMode) {
       this.onLoadToast('warning', 'Advertencia', 'Valida el formulario');
       return;
     }

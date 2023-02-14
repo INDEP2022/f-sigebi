@@ -1,5 +1,5 @@
 export interface IExpedient {
-  id: string;
+  id: string | number;
   natureDocument: string;
   documentDescription: string;
   significantDate: string;

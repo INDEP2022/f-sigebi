@@ -23,8 +23,8 @@ export const GENERAL_PROCESSES_CAPTURE_DIGITALIZATION_COLUNNS = {
     title: 'Usuario',
     sort: false,
   },
-  inicio: {
-    title: 'Fecha Inicio Ind.',
+  page: {
+    title: 'Fecha page Ind.',
     sort: false,
   },
   fin: {
@@ -49,7 +49,7 @@ function getData() {
     noVolante: 'EXAMPLE_DATA',
     tramite: 'EXAMPLE_DATA',
     usuario: 'EXAMPLE_DATA',
-    inicio: 'EXAMPLE_DATA',
+    page: 'EXAMPLE_DATA',
     fin: 'EXAMPLE_DATA',
     max: 'EXAMPLE_DATA',
   };

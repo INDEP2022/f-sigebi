@@ -15,6 +15,6 @@ export abstract class ImageCategoryData {
   abstract get gridDataSource(): DataSource;
   abstract list(
     pageNumber: number,
-    pageSize: number
+    limit: number
   ): Observable<FetchedSubCategoriesModel[]>;
 }

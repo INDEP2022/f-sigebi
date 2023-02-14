@@ -11,7 +11,7 @@
         <input type="checkbox" name="" id="galery" />
       </form-check>
       <div>
-        <button class="btn btn-primary btn-sm active">
+        <button (click)="getAll()" class="btn btn-primary btn-sm active">
           Todos los registros <i class="fa fa-search ml-2"></i>
         </button>
       </div>
@@ -63,6 +63,7 @@
               <div></div>
             </div>
             <record-notification-filter
+              [form]="form"
               (onSubmit)="searchGoods($event)"></record-notification-filter>
           </accordion-group>
           <accordion-group>
@@ -76,6 +77,7 @@
               <div></div>
             </div>
             <certificates-filter
+              [form]="form"
               (onSubmit)="searchGoods($event)"></certificates-filter>
           </accordion-group>
           <accordion-group>
@@ -89,6 +91,7 @@
               <div></div>
             </div>
             <transfer-autority-filter
+              [form]="form"
               (onSubmit)="searchGoods($event)"></transfer-autority-filter>
           </accordion-group>
           <accordion-group>
@@ -101,12 +104,18 @@
               </div>
               <div></div>
             </div>
-            <location-filter (onSubmit)="searchGoods($event)"></location-filter>
+            <location-filter
+              [form]="form"
+              (onSubmit)="searchGoods($event)"></location-filter>
           </accordion-group>
         </accordion>
       </div>
     </div>
   </div>
 </app-card>
-
-<goods-table *ngIf="showTable"></goods-table>
+<div #scrollTable></div>
+<goods-table
+  *ngIf="showTable"
+  [goods]="goods"
+  [params]="_params"
+  [totalItems]="totalItems"></goods-table>

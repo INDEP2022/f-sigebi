@@ -130,7 +130,7 @@ export class RelatedEventsListComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getEvents({ inicio: 1, text: '' });
+    this.getEvents({ page: 1, text: '' });
     this.eventForm = this.fb.group({
       event: [null],
     });

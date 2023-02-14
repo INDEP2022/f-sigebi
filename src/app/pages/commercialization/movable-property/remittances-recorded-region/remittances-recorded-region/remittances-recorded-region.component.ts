@@ -38,7 +38,7 @@ export class RemittancesRecordedRegionComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getCoordinations({ inicio: 1, text: '' });
+    this.getCoordinations({ page: 1, text: '' });
   }
 
   private prepareForm() {

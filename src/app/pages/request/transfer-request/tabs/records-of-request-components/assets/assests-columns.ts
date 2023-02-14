@@ -1,6 +1,6 @@
 export const ASSETS_COLUMNS = {
   goodId: {
-    title: 'No. Gestion',
+    title: 'No. Gestión',
     type: 'string',
     sort: false,
   },
@@ -10,12 +10,12 @@ export const ASSETS_COLUMNS = {
     sort: false,
   },
   goodTypeName: {
-    title: 'Typo de Bien',
+    title: 'Tipo de Bien',
     type: 'string',
     sort: false,
   },
   physicalStatusName: {
-    title: 'Estado Fisico',
+    title: 'Estado Físico',
     type: 'string',
     sort: false,
   },

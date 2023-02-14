@@ -1,4 +1,4 @@
-<app-card [header]="true">
+<app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
     <h5 class="title">Resumen diario de recepci&oacute;n documental</h5>
   </div>
@@ -8,6 +8,17 @@
       <div class="row">
         <div class="col-md-4">
           <app-delegation-shared [form]="flyersForm"></app-delegation-shared>
+          <form-field [control]="flyersForm.get('entidad')">
+            <ngx-select
+              [form]="flyersForm"
+              control="entidad"
+              [data]="select"
+              label="Entidad Federativa"></ngx-select>
+          </form-field>
+          <!--   <form-field class="col-md-3" [control]="flyersForm.get('entidad')">
+            <ngx-select [form]="flyersForm" [control]="entidad" [data]="select" value="id" label="Entidad Federativa"
+              bindLabel="otWorth" (fetchItems)="getStates($event)"></ngx-select>
+          </form-field>-->
           <form-check label="Filtrar por &aacute;rea" for="make_filter">
             <input
               id="make_filter"
@@ -16,30 +27,18 @@
           </form-check>
         </div>
 
-        <div class="col-md-2">
+        <div class="col-md-4">
           <div class="row pt-3">
             <form-field
               [control]="flyersForm.get('from')"
-              label="Recepci&oacute;n del">
+              label="Recepci&oacute;n desde">
               <input formControlName="from" class="form-control" bsDatepicker />
             </form-field>
           </div>
 
           <div class="row pt-3">
-            <form-field [control]="flyersForm.get('to')" label="Al">
+            <form-field [control]="flyersForm.get('to')" label="Hasta">
               <input formControlName="to" class="form-control" bsDatepicker />
-            </form-field>
-          </div>
-        </div>
-
-        <div class="col-md-4">
-          <div class="row pt-3">
-            <form-field [control]="flyersForm.get('entidad')">
-              <ngx-select
-                [form]="flyersForm"
-                control="entidad"
-                [data]="select"
-                label="Entidad Federativa"></ngx-select>
             </form-field>
           </div>
 
@@ -49,17 +48,37 @@
                 [form]="flyersForm"
                 control="area"
                 [data]="select"
-                label="&Aacute;rea Destino"></ngx-select>
+                label="&Aacute;rea"></ngx-select>
             </form-field>
           </div>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="col-md-12">
-          <button type="submit" class="btn btn-primary active">Imprimir</button>
+        <div class="col-md-4">
+          <div class="row pt-3" *ngIf="includeArea.value">
+            <app-delegation-shared [form]="flyersForm"></app-delegation-shared>
+          </div>
         </div>
       </div>
     </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <confirm-button
+          text="Imprimir"
+          [disabled]="flyersForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button
+          type="button"
+          class="btn btn-danger active"
+          (click)="cleanForm()">
+          Limpiar
+        </button>
+      </div>
+    </div>
   </div>
 </app-card>

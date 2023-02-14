@@ -27,6 +27,7 @@ export class AttributesRegLogicalTablesModalComponent
   edit: boolean = false;
 
   tables = new DefaultSelect();
+  _id: any;
 
   constructor(
     private fb: FormBuilder,
@@ -76,6 +77,9 @@ export class AttributesRegLogicalTablesModalComponent
       this.edit = true;
       console.log(this.tdescAtrib);
       this.tdescAtribForm.patchValue(this.tdescAtrib);
+    } else {
+      this.edit = false;
+      this.tdescAtribForm.controls['idNmTable'].setValue(this._id);
     }
   }
   close() {

@@ -1,3 +1,3 @@
 export enum ProgrammingGoodEndpoints {
-  ProgrammingGood = 'programminggood',
+  ProgrammingGood = 'programminggood/api/v1',
 }

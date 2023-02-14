@@ -72,13 +72,13 @@ export class IssuingInstitutionFormComponent
       });
       this.issuingInstitution.numCity
         ? (this.itemsCity = new DefaultSelect([city], 1))
-        : this.getFromSelectCity({ inicio: 1, text: '' });
+        : this.getFromSelectCity({ page: 1, text: '' });
       this.issuingInstitution.numTransference
         ? (this.itemsTransfer = new DefaultSelect([numTransfer], 1))
-        : this.getFromSelectTransfer({ inicio: 1, text: '' });
+        : this.getFromSelectTransfer({ page: 1, text: '' });
     } else {
-      this.getFromSelectCity({ inicio: 1, text: '' });
-      this.getFromSelectTransfer({ inicio: 1, text: '' });
+      this.getFromSelectCity({ page: 1, text: '' });
+      this.getFromSelectTransfer({ page: 1, text: '' });
     }
   }
 

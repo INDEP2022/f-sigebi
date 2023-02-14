@@ -154,9 +154,9 @@ export class PartialityDirectAdjudicationMainComponent
   }
 
   ngOnInit(): void {
-    this.getEvents({ inicio: 1, text: '' });
-    this.getBatches({ inicio: 1, text: '' });
-    this.getClients({ inicio: 1, text: '' });
+    this.getEvents({ page: 1, text: '' });
+    this.getBatches({ page: 1, text: '' });
+    this.getClients({ page: 1, text: '' });
     this.prepareForm();
   }
 
@@ -249,9 +249,9 @@ export class PartialityDirectAdjudicationMainComponent
     this.paramsForm.reset();
     this.clColumns = [];
     this.totalItems = 0;
-    this.getEvents({ inicio: 1, text: '' });
-    this.getBatches({ inicio: 1, text: '' });
-    this.getClients({ inicio: 1, text: '' });
+    this.getEvents({ page: 1, text: '' });
+    this.getBatches({ page: 1, text: '' });
+    this.getClients({ page: 1, text: '' });
     this.selectedEvent = null;
     this.selectedBatch = null;
     this.selectedClient = null;

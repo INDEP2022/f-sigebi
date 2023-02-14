@@ -161,10 +161,10 @@ export class PenaltyBillingMainComponent implements OnInit {
       }
     });
     this.prepareForm();
-    this.getEvents({ inicio: 1, text: '' });
-    this.getBatches({ inicio: 1, text: '' });
-    this.getMunicipalities({ inicio: 1, text: '' });
-    this.getStates({ inicio: 1, text: '' });
+    this.getEvents({ page: 1, text: '' });
+    this.getBatches({ page: 1, text: '' });
+    this.getMunicipalities({ page: 1, text: '' });
+    this.getStates({ page: 1, text: '' });
     this.getTypes();
   }
 

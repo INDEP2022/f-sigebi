@@ -4,6 +4,7 @@ import { ConvertiongoodEndpoints } from 'src/app/common/constants/endpoints/ms-c
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
+import { IAssetConversion } from '../../models/ms-convertiongood/asset-conversion';
 import { IConvertiongood } from '../../models/ms-convertiongood/convertiongood';
 
 @Injectable({
@@ -44,5 +45,11 @@ export class ConvertiongoodService extends HttpService {
   getActsByGood(id: string | number) {
     const route = `${ConvertiongoodEndpoints.Convertion}/procedure/returnMinutes/${id}`;
     return this.get(route);
+  }
+  createAssetConversions(assetConversions: IAssetConversion) {
+    return this.post(
+      ConvertiongoodEndpoints.AssetConversions,
+      assetConversions
+    );
   }
 }

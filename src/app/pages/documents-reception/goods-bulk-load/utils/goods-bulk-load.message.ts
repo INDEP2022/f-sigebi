@@ -2,11 +2,26 @@ const FORM_IDENTIFICATOR_NULL =
   'Este proceso masivo requiere de un ID. de Carga.';
 const FORM_ACTION_TYPE_NULL =
   'Este proceso masivo requiere de una opción de Carga.';
+const FORM_INMUEBLES_MUEBLES_CHECK = (autos: string, inmuebles: string) =>
+  `No es posible realizar carga masiva de "${autos}" y "${inmuebles}" al mismo tiempo. Selecciona sólo una de las opciones a la vez.`;
+const FORM_ACTION_TYPE_WITH_CHECK_ERROR = (opcion: string) =>
+  `Este proceso masivo requiere de la opción de Carga.: ${opcion}. ya que se selecciono "INMUEBLES" y/o "AUTOMÓVILES"`;
 const NOT_LOAD_FILE = 'Carga un archivo excel válido para continuar.';
 const ERROR_CARGA_MASIVA =
   'Se encontraron errores de datos durante la validación.';
 const VALIDATION_START_MESSAGE = 'Iniciando proceso de Validación de Datos...';
-// PROCESOS
+const VALIDATION_PROCESS_MESSAGE = (numero_registro: number) =>
+  `Válidando el registro: ${numero_registro}.`;
+const VALIDATION_END_MESSAGE = 'Proceso de Validación de Datos Terminado.';
+const VALIDATION_UPLOAD_START_MESSAGE =
+  'Iniciando proceso de Carga de Datos...';
+const VALIDATION_UPDATE_PROCESS_MESSAGE = (numero_registro: number) =>
+  `Cargando el registro: ${numero_registro}.`;
+const ERROR_EXPORT = 'No existen registros para exportar.';
+const VALIDATION_UPLOAD_CREATION_EXPEDIENTE_MESSAGE = 'Creación de Expediente.';
+const VALIDATION_UPLOAD_GENERATION_EXPEDIENTE_MESSAGE =
+  'Generación de Expediente.';
+// PROCESOS VALIDACION
 const ERROR_UNIDAD = (unidad: string) =>
   `La cantidad es inválida. En el campo UNIDAD: ${unidad}.`;
 const ERROR_ESTATUS = (estatus: string) =>
@@ -24,6 +39,12 @@ const ERROR_TRANSFERENTE = (transferente: string) =>
   `No existe la transferente, emisora y autoridad para la clave indicada: ${transferente}.`;
 const ERROR_ATRIBUTE_CLASS_GOOD = (class_good: number) =>
   `El atributo no pudo ser cargado para el clasificador del bien: ${class_good}.`;
+// CARGA PROCESO
+const ERROR_CVE_SAT = (cve_sat: number) =>
+  `No se encontro SAT_CVE_UNICA: ${cve_sat}.`;
+// PROCESO 2
+const ERROR_GOOD_INMUEBLE = (good_number: string) =>
+  `No se encontraron datos del bien inmueble: ${good_number}.`;
 
 export {
   FORM_IDENTIFICATOR_NULL,
@@ -38,4 +59,15 @@ export {
   ERROR_IDENTIFICADOR_MENAJE,
   ERROR_TRANSFERENTE,
   ERROR_ATRIBUTE_CLASS_GOOD,
+  FORM_ACTION_TYPE_WITH_CHECK_ERROR,
+  ERROR_EXPORT,
+  VALIDATION_PROCESS_MESSAGE,
+  VALIDATION_END_MESSAGE,
+  FORM_INMUEBLES_MUEBLES_CHECK,
+  VALIDATION_UPLOAD_START_MESSAGE,
+  VALIDATION_UPDATE_PROCESS_MESSAGE,
+  ERROR_CVE_SAT,
+  ERROR_GOOD_INMUEBLE,
+  VALIDATION_UPLOAD_CREATION_EXPEDIENTE_MESSAGE,
+  VALIDATION_UPLOAD_GENERATION_EXPEDIENTE_MESSAGE,
 };

@@ -8,7 +8,10 @@ import {
 } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { FilterParams } from './../../../common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  SearchFilter,
+} from './../../../common/repository/interfaces/list-params';
 //Rxjs
 import { BehaviorSubject } from 'rxjs';
 //Params
@@ -80,7 +83,7 @@ export class GoodsFilterSharedComponent
       data.addFilter('goodClassNumber', this.classifGood);
     }
     if (params.text != undefined && params.text != '') {
-      data.addFilter('description', params.text);
+      data.addFilter('description', params.text, SearchFilter.ILIKE);
     }
     this.service.getAllFilter(data.getParams()).subscribe({
       next: data => {

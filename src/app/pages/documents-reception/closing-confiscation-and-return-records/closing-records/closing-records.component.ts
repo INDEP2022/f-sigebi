@@ -1,14 +1,17 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { map, switchMap } from 'rxjs';
+import { catchError, EMPTY, map, of, switchMap } from 'rxjs';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IDetailProceedingsDevolution } from 'src/app/core/models/ms-proceedings/detail-proceedings-devolution.model';
 import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
+import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { DetailProceedingsDevolutionService } from 'src/app/core/services/ms-proceedings/detail-proceedings-devolution';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings/proceedings.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { IParameters } from './../../../../core/models/ms-parametergood/parameters.model';
 import { IUpdateProceedings } from './../../../../core/models/ms-proceedings/update-proceedings.model';
 import { CLOSING_RECORDS_COLUMNS } from './closing-records-columns';
 
@@ -25,13 +28,16 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
   dataResp: IProceedings;
   dataTable: any[] = [];
   proceedingsNumb: number;
-  proceedingsCve: string;
+  proceedingsKey: string;
+  di_clasif_numerario: number;
+  dataForm: any;
   private route: Router;
 
   constructor(
     private fb: FormBuilder,
     private proceedingsService: ProceedingsService,
-    private detailProceedingsDevolutionService: DetailProceedingsDevolutionService
+    private detailProceedingsDevolutionService: DetailProceedingsDevolutionService,
+    private parametersService: ParametersService
   ) {
     super();
     this.settings = {
@@ -41,8 +47,25 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
     };
   }
 
+  get proceedingsCve() {
+    return this.form.get('proceedingsCve');
+  }
+
   ngOnInit(): void {
+    this.getParamCve();
     this.prepareForm();
+  }
+
+  getParamCve() {
+    this.parametersService.getById('CLASINUMER').subscribe({
+      next: (data: IListResponse<IParameters>) => {
+        console.log(data);
+        // this.di_clasif_numerario = data.initialValue;
+      },
+      error: error => {
+        console.log(error);
+      },
+    });
   }
 
   search(fileNumber: string) {
@@ -54,10 +77,24 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
     this.proceedingsService
       .getActByFileNumber(fileNumber)
       .pipe(
+        catchError(err => {
+          this.handleError(
+            err,
+            'No se han encontrado registros para este expediente'
+          );
+          return EMPTY;
+        }),
         switchMap((proceedings: IListResponse<IProceedings>) =>
           this.detailProceedingsDevolutionService
             .getDetailProceedingsDevolutionByExpedient(fileNumber)
             .pipe(
+              catchError(err => {
+                this.handleError(
+                  err,
+                  'No existen bienes asociados a este número de expediente'
+                );
+                return of(err);
+              }),
               map((goods: any) => ({
                 proceedings,
                 goods,
@@ -75,6 +112,12 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
       });
   }
 
+  handleError(error: HttpErrorResponse, msg: string) {
+    if (error.status <= 404) {
+      this.onLoadToast('info', 'Información', msg);
+    }
+  }
+
   prepareData(data: {
     proceedings: IListResponse<IProceedings>;
     goods: IListResponse<IDetailProceedingsDevolution>;
@@ -84,9 +127,10 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
     this.statusAct = 'ABIERTA';
     // this.statusAct = this.dataResp.proceedingStatus;          //DESCOMENTAR ESTO
     this.proceedingsNumb = data.proceedings.data[0].id;
-    this.proceedingsCve = data.proceedings.data[0].proceedingsCve;
-    let dataForm = {
+    this.proceedingsKey = data.proceedings.data[0].proceedingsCve;
+    this.dataForm = {
       previewFind: this.dataResp.fileNumber.previewFind,
+      proceedingsCve: this.dataResp.proceedingsCve,
       penaltyCause: this.dataResp.fileNumber.penaltyCause,
       elaborationDate: this.convertDate(this.dataResp.elaborationDate),
       authorityOrder: this.dataResp.authorityOrder,
@@ -94,16 +138,18 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
       universalFolio: this.dataResp.universalFolio,
       observations: this.dataResp.observations,
     };
-    for (let good of data.goods.data) {
-      let data: any = {
-        goodsId: good.good[0].goodsID,
-        description: good.good[0].description,
-        quantity: good.good[0].quantity,
-        amountReturned: good.amountReturned,
-      };
-      goodsData.push(data);
+    if (!data.goods.hasOwnProperty('error')) {
+      for (let good of data.goods.data) {
+        let data: any = {
+          goodsId: good.good[0].goodsID,
+          description: good.good[0].description,
+          quantity: good.good[0].quantity,
+          amountReturned: good.amountReturned,
+        };
+        goodsData.push(data);
+      }
     }
-    this.form.patchValue(dataForm);
+    this.form.patchValue(this.dataForm);
     this.dataTable = goodsData;
     this.flag = true;
   }
@@ -118,10 +164,6 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
 
   convertDate(date: Date) {
     return new Date(date).toLocaleDateString().toString();
-  }
-
-  goToProceedingsValidations() {
-    this.route.navigate(['./records-validation']);
   }
 
   update() {
@@ -146,12 +188,24 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
       }
     }
     this.copyFormValues(dataToUpdate);
-    console.log(dataToUpdate);
-    this.proceedingsService
-      .update(dataToUpdate.id, dataToUpdate)
-      .subscribe((resp: IListResponse<IProceedings>) => {
-        console.log(resp);
-      });
+    this.proceedingsService.update(dataToUpdate.id, dataToUpdate).subscribe({
+      next: (resp: IListResponse<IProceedings>) => {
+        this.onLoadToast(
+          'success',
+          'Actualizada',
+          'El acta ha sido actualizado exitosamente'
+        );
+        this.proceedingsKey = this.form.value.proceedingsCve;
+      },
+      error: (error: HttpErrorResponse) => {
+        if (error.status <= 404) {
+          this.form.patchValue(this.dataForm);
+          this.onLoadToast('error', 'Error', error.message);
+        }
+      },
+    });
+    // .subscribe((resp: IListResponse<IProceedings>) => {
+    // });
   }
 
   copyFormValues(dataToUpdate: IUpdateProceedings) {
@@ -164,10 +218,10 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
   prepareForm() {
     this.form = this.fb.group({
       proceedingsCve: [null, [Validators.required]],
-      previewFind: [null, [Validators.required]],
+      previewFind: [null],
       penaltyCause: [null, []],
-      proceedingsType: [null, [Validators.required]],
-      elaborationDate: [null, [Validators.required]],
+      proceedingsType: [null],
+      elaborationDate: [null],
       authorityOrder: [null, [Validators.required]],
       universalFolio: [null, [Validators.required]],
       observations: [

@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { GoodSssubtypeService } from 'src/app/core/services/catalogs/good-sssubtype.service';
+import { IssuingInstitutionService } from 'src/app/core/services/catalogs/issuing-institution.service';
 import { GoodService } from 'src/app/core/services/good/good.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 
@@ -18,8 +19,13 @@ export class GoodsBulkLoadService {
     private goodService: GoodService,
     private goodSssubtypeService: GoodSssubtypeService,
     private goodsQueryService: GoodsQueryService,
-    private authorityService: AuthorityService
+    private authorityService: AuthorityService,
+    private issuingInstitutionService: IssuingInstitutionService
   ) {}
+
+  /**
+   * FUNCIONES PARA VALIDAR LOS ARCHIVOS
+   */
 
   getGoodStatus(idEstatus: string) {
     return this.goodService.getByStatus(idEstatus);
@@ -37,5 +43,20 @@ export class GoodsBulkLoadService {
   }
   getAtributeClassificationGood(params: ListParams) {
     return this.goodsQueryService.getAtributeClassificationGood(params);
+  }
+
+  /**
+   * FUNCIONES DE CARGA DE ARCHIVOS
+   */
+
+  getGoodById(idGood: string) {
+    return this.goodService.getById(idGood);
+  }
+
+  searchForSatOnlyKey(params: ListParams) {}
+  searchCityByDescripction(params: ListParams) {}
+
+  getIssuingInstitutionById(idInstitution: string) {
+    return this.issuingInstitutionService.getById(idInstitution);
   }
 }

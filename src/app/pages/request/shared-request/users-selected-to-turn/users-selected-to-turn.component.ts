@@ -33,7 +33,7 @@ var users: any[] = [
   styles: [],
 })
 export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
-  title: string = '¿DESEAS TURNAR LAS SOLICITUDES SELECCIONAS?';
+  title: string = '¿DESEA TURNAR LA SOLICITUD SELECCIONADA?';
   paragraphs: any[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   public event: EventEmitter<any> = new EventEmitter();
@@ -56,7 +56,6 @@ export class UsersSelectedToTurnComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     let typeUser = this.request.requestStatus;
-    console.log(this.request);
     this.getAllUsers(typeUser);
   }
 
