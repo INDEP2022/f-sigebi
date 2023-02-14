@@ -40,11 +40,12 @@ export class SummaryComponent extends BasePage implements OnInit {
       to: [null, [Validators.required]],
       includeArea: [false],
       area: [null],
+      delegdestino: [null],
+      subddestino: [null],
     });
   }
 
-  save() { }
-
+  save() {}
 
   confirm(): void {
     console.log(this.flyersForm.value);
@@ -53,19 +54,22 @@ export class SummaryComponent extends BasePage implements OnInit {
       PN_SUBDEL: this.flyersForm.controls['subdelegation'].value,
       PF_FECINI: this.flyersForm.controls['from'].value,
       PF_FECFIN: this.flyersForm.controls['to'].value,
-      PC_ENTFED: this.flyersForm.controls['entidad'].value
+      PC_ENTFED: this.flyersForm.controls['entidad'].value,
+      PARAMFORM: this.flyersForm.controls['includeArea'].value,
+      PN_DELEGACION: this.flyersForm.controls['delegdestino'].value,
+      PN_SUBDELEGACION: this.flyersForm.controls['subddestino'].value,
+      PN_DEPARTAMENTO: this.flyersForm.controls['area'].value,
     };
     console.log(params);
     // open the window
     this.onLoadToast('success', 'procesando', '');
-    const pdfurl = `http://s29.q4cdn.com/175625835/files/doc_downloads/test.pdf`; //window.URL.createObjectURL(blob);
-    window.open(pdfurl, "RGEROFPESTADIXMES.pdf");
-    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RCONCOGVOLANTESRE.pdf?PN_VOLANTEFIN=70646&P_IDENTIFICADOR=0`; //window.URL.createObjectURL(blob);
+    //const pdfurl = `http://s29.q4cdn.com/175625835/files/doc_downloads/test.pdf`; //window.URL.createObjectURL(blob);
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RCONCOGVOLANTESRE.pdf?PN_VOLANTEFIN=70646&P_IDENTIFICADOR=0`; //window.URL.createObjectURL(blob);
     this.onLoadToast('success', 'vista generada exitosamente', '');
+    window.open(pdfurl, 'RGEROFPESTADIXMES.pdf');
   }
 
   cleanForm(): void {
     this.flyersForm.reset();
   }
-
 }
