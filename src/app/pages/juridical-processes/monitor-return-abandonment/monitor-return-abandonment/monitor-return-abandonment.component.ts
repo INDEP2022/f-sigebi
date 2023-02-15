@@ -1,14 +1,15 @@
 /** BASE IMPORT */
 import { DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BehaviorSubject } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IGood } from 'src/app/core/models/good/good.model';
-import { GoodService } from 'src/app/core/services/good/good.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { NotificationService } from '../../../../core/services/ms-notification/notification.service';
 import { MONITOR_RETUR_ABANDONMENT } from './monitor-return-abandonment-columns';
 
 /** LIBRERÍAS EXTERNAS IMPORTS */
@@ -31,7 +32,7 @@ export class MonitorReturnAbandonmentComponent
   public form: FormGroup;
   data: LocalDataSource = new LocalDataSource();
   totalItems: number = 0;
-  goods: IGood[] = [];
+  goods: any[] = [];
   id: string | number;
   dateNoti: string | Date;
   //historygood
@@ -41,6 +42,7 @@ export class MonitorReturnAbandonmentComponent
   constructor(
     private fb: FormBuilder,
     private goodService: GoodService,
+    private notificationService: NotificationService,
     private datePipe: DatePipe,
     private route: Router
   ) {
@@ -55,14 +57,13 @@ export class MonitorReturnAbandonmentComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    this.form.disable();
     this.getGoods();
     this.loading = true;
   }
 
   private prepareForm() {
     this.form = this.fb.group({
-      diEstatusBien: '',
+      diEstatusBien: ['', Validators.required],
     });
   }
 
@@ -71,7 +72,7 @@ export class MonitorReturnAbandonmentComponent
   }
 
   public btnDeclaracion() {
-    if (this.id != undefined && this.dateNoti != undefined) {
+    if (this.id != undefined && this.id !== null) {
       const route = `pages/juridical/return-abandonment-monitor/${this.id}`;
       this.route.navigate([route]);
     } else {
@@ -84,7 +85,7 @@ export class MonitorReturnAbandonmentComponent
     this.id = good.id;
     this.dateNoti = good.notifyDate;
 
-    this.statusgood.setValue(good.status);
+    this.statusgood.setValue(good.goodStatus);
   }
 
   getGoods(): void {

@@ -53,6 +53,19 @@ export class NotificationService extends HttpService {
     );
   }
 
+  updateNotificationxPropertyFilter(
+    numberProperty: number | string,
+    notificationDate: Date | string,
+    formData: Object
+  ): Observable<any> {
+    return this.notificationRepository.updateNotification(
+      this.route.NotificationxPropertyPut,
+      numberProperty,
+      notificationDate,
+      formData
+    );
+  }
+
   updateupdateNotification(
     numberProperty: number | string,
     notificationDate: Date | string,
