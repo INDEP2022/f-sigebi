@@ -4,13 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
-/** LIBRERÍAS EXTERNAS IMPORTS */
-
-/** SERVICE IMPORTS */
-
-/** ROUTING MODULE */
-
-/** COMPONENTS IMPORTS */
+import { ERROR_FORM } from 'src/app/pages/documents-reception/subjects-register/utils/pgr-subjects-register.messages';
 
 @Component({
   selector: 'app-declaration-abandonment-insurance',
@@ -51,7 +45,39 @@ export class DeclarationAbandonmentInsuranceComponent
     });
   }
 
-  public btnRatificacion() {
-    console.log('btnRatificacion');
+  public consultarRatification() {
+    if (this.form.valid) {
+      const {
+        noBien,
+        descripcion,
+        cantidad,
+        estatus,
+        fechaNotificacion,
+        fechaNotificacion2,
+        fechaNotificacion3,
+        fechaTerminoPeriodo,
+        fechaTerminoPeriodo2,
+        fechaTerminoPeriodo3,
+        declaracionAbandonoSERA,
+      } = this.form.value;
+
+      const ratification = {
+        noBien: Number(noBien),
+        cantidad,
+        descripcion,
+        estatus,
+        fechaNotificacion: fechaNotificacion.toISOString(),
+        fechaNotificacion2: fechaNotificacion2.toISOString(),
+        fechaNotificacion3: fechaNotificacion3.toISOString(),
+        fechaTerminoPeriodo: fechaTerminoPeriodo.toISOString(),
+        fechaTerminoPeriodo2: fechaTerminoPeriodo2.toISOString(),
+        fechaTerminoPeriodo3: fechaTerminoPeriodo3.toISOString(),
+        declaracionAbandonoSERA,
+      };
+
+      console.log(ratification);
+    } else {
+      this.onLoadToast('error', 'Error', ERROR_FORM);
+    }
   }
 }

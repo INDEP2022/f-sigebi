@@ -48,7 +48,6 @@ export class ReturnAbandonmentMonitorComponent
     if (id) this.idBien = String(id);
 
     this.getGood(id);
-    console.log(this.good);
 
     this.prepareForm();
     this.loading = true;
@@ -57,8 +56,10 @@ export class ReturnAbandonmentMonitorComponent
   private getGood(id: number | string) {
     this.goodService.getById(id).subscribe(
       response => {
-        this.good = response.data;
-        this.loadGood(this.good);
+        setTimeout(() => {
+          this.good = response;
+          this.loadGood(response);
+        }, 1000);
       },
 
       error => (this.loading = false)
@@ -76,16 +77,22 @@ export class ReturnAbandonmentMonitorComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      noBien: [this.idBien ? this.idBien : ''],
-      descripcion: [''],
-      quantity: [''],
-      estatus: ['', [Validators.pattern(STRING_PATTERN)]],
-      goodEstatus: [''],
-      fechaNotificacion: [''],
-      fechaNotificacion2: [''],
-      fechaTerminoPeriodo: [''],
-      fechaTerminoPeriodo2: [''],
-      declaracionAbandonoSERA: ['', [Validators.pattern(STRING_PATTERN)]],
+      noBien: [this.idBien ? this.idBien : '', Validators.required],
+      descripcion: ['', [Validators.required, Validators.maxLength(150)]],
+      quantity: ['', [Validators.required]],
+      estatus: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(50)],
+      ],
+      goodEstatus: ['', [Validators.required, Validators.maxLength(50)]],
+      fechaNotificacion: ['', [Validators.required]],
+      fechaNotificacion2: ['', [Validators.required]],
+      fechaTerminoPeriodo: ['', [Validators.required]],
+      fechaTerminoPeriodo2: ['', [Validators.required]],
+      declaracionAbandonoSERA: [
+        '',
+        [Validators.pattern(STRING_PATTERN), Validators.maxLength(150)],
+      ],
     });
   }
 
@@ -101,9 +108,7 @@ export class ReturnAbandonmentMonitorComponent
   }
 
   public btnRatificacion() {
-    //this.getNotification();
     this.ratificacion();
-    //console.log(this.notificationPropertyResponse);
   }
 
   private ratificacion() {
@@ -111,36 +116,42 @@ export class ReturnAbandonmentMonitorComponent
       numberProperty: this.good.id,
       notificationDate: '2002-04-09T00:00:00.000Z',
     };
-    //console.log(notificationPropertyRequest);
 
-    this.notificationService
-      .createNotificationxPropertyFilter(notificationPropertyRequest)
-      .subscribe({
-        next: response => {
-          console.log(response);
-          this.GetNotificationxPropertyFilter(response.data);
-        },
-        error: err => {
-          //error
-        },
-      });
+    this.GetNotificationxPropertyFilter(notificationPropertyRequest);
   }
 
   private GetNotificationxPropertyFilter(data: any) {
-    console.log(data[0]);
     this.notificationService
-      .updateupdateNotification(
-        data[0].numberProperty,
-        data[0].notificationDate,
-        data[0]
-      )
+      .getByNotificationxProperty(data.numberProperty)
       .subscribe({
         next: response => {
-          this.onLoadToast(
-            'success',
-            'Ratificado',
-            'Se ratifico correctamente'
-          );
+          const { data } = response;
+
+          delete data[0].userCorrectsKey;
+
+          let form = {
+            userCorrectsKey: 'sigebiadmon',
+            ...data[0],
+          };
+
+          this.notificationService
+            .updateNotificationxPropertyFilter(
+              Number(data[0].numberProperty),
+              data[0].notificationDate,
+              form
+            )
+            .subscribe({
+              next: response => {
+                this.onLoadToast(
+                  'success',
+                  'Ratificado',
+                  'Se Ratifico correctamente'
+                );
+              },
+              error: err => {
+                this.onLoadToast('error', 'Ratificado', 'No se pudo Ratificar');
+              },
+            });
         },
         error: err => {
           this.onLoadToast('error', 'Ratificado', 'Error al  ratificar');
