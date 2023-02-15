@@ -7,31 +7,65 @@
     <form [formGroup]="reportForm" class="form-material">
       <div class="row">
         <div class="col-md-4">
-          <app-delegation-shared [form]="reportForm"></app-delegation-shared>
+
+          <form-field [control]="reportForm.get('PN_DELEG')">
+            <ngx-select [form]="reportForm" (fetchItems)="getDelegations($event)" [data]="delegations" value="id"
+              bindLabel="description" label="Delegaci&oacute;n" [control]="'PN_DELEG'"
+              (change)="onDelegationsChange($event)">
+            </ngx-select>
+          </form-field>
+          <form-field [control]="reportForm.get('PN_SUBDEL')">
+            <ngx-select [form]="reportForm" (fetchItems)="getSubDelegations($event)" [data]="subdelegations" value="id"
+              bindLabel="description" label="Sub Delegaci&oacute;n" [control]="'PN_SUBDEL'"
+              (change)="onSubDelegationsChange($event)">
+            </ngx-select>
+          </form-field>
+
 
         </div>
 
         <div class="col-md-4">
-          <div class="row pt-3">
-            <form-field [control]="reportForm.get('from')" label="Desde: ">
-              <input formControlName="from" class="form-control" bsDatepicker />
-            </form-field>
-          </div>
 
           <div class="row pt-3">
-            <form-field [control]="reportForm.get('to')" label="Hasta:">
-              <input formControlName="to" class="form-control" bsDatepicker />
+            <form-field [control]="reportForm.get('PF_MES')" label="Desde:">
+              <input class="form-control" formControlName="PF_MES" [maxDate]="maxDateEnd" [minDate]="minDateEnd"
+                bsDatepicker />
+            </form-field>
+
+          </div>
+          <div class="row pt-3">
+
+            <form-field [control]="reportForm.get('PF_ANIO')" label="Hasta:">
+              <input class="form-control" formControlName="PF_ANIO" [maxDate]="maxDateEnd" [minDate]="minDateEnd"
+                bsDatepicker />
             </form-field>
           </div>
-
 
 
 
         </div>
+
+
       </div>
 
     </form>
   </div>
+
+</app-card>
+<div footer>
+  <div class="d-flex justify-content-center">
+    <div class="m-3">
+      <confirm-button text="Imprimir" [disabled]="reportForm.invalid" [loading]="loading" (confirm)="confirm()">
+      </confirm-button>
+    </div>
+    <div class="m-3">
+      <button type="button" class="btn btn-danger active" (click)="cleanForm()">
+        Limpiar
+      </button>
+    </div>
+  </div>
+</div>
+<!--
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
@@ -44,5 +78,4 @@
         </button>
       </div>
     </div>
-  </div>
-</app-card>
+  </div>-->
