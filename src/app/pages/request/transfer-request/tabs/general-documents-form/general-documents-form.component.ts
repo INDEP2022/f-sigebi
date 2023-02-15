@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
-import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
   ListParams,
@@ -13,15 +13,16 @@ import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
 import { IRequest } from 'src/app/core/models/requests/request.model';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
+import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
-import { StateOfRepublicService } from 'src/app/core/services/catalogs/state-of-republic.service';
 import { StationService } from 'src/app/core/services/catalogs/station.service';
 import { TransferenteService } from 'src/app/core/services/catalogs/transferente.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import Swal from 'sweetalert2';
 import { DocumentsListComponent } from '../../../programming-request-components/execute-reception/documents-list/documents-list.component';
-import { ElectronicSignatureListComponent } from '../../../shared-request/electronic-signature-list/electronic-signature-list.component';
+import { RequestHelperService } from '../../../request-helper-services/request-helper.service';
 import { ShowSignatureProgrammingComponent } from '../../../shared-request/show-signature-programming/show-signature-programming.component';
 import { AssociateFileComponent } from '../associate-file/associate-file.component';
 import { EXPEDIENT_DOC_GEN_COLUMNS } from '../registration-request-form/expedient-doc-columns';
@@ -43,19 +44,25 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
   documentsGenData: any[] = [];
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
+  requestId: number = 0;
   columns = EXPEDIENT_DOC_GEN_COLUMNS;
+  idDelegReg: number = null;
+  idTransferent: number = null;
+  idStation: number = null;
 
   constructor(
+    private route: ActivatedRoute,
+    private router: Router,
     private modalService: BsModalService,
     private fb: FormBuilder,
     private authorityService: AuthorityService,
     private regionalDelegationService: RegionalDelegationService,
-    //private delegationStateService: DelegationStateService,
-    private stateOfRepublicServicio: StateOfRepublicService,
+    private delegationStateService: DelegationStateService,
     private transferenteService: TransferenteService,
     private stationService: StationService,
     private requestService: RequestService,
-    private bsModalRef: BsModalRef
+    private bsModalRef: BsModalRef,
+    private requestHelperService: RequestHelperService
   ) {
     super();
     this.settings = {
@@ -66,15 +73,23 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.requestId = Number(this.route.snapshot.paramMap.get('id'));
+    if (this.requestId === 0 || !this.requestId) {
+      this.router.navigate(['pages/request/list']);
+    }
+
     this.columns.associate = {
       ...this.columns.associate,
       onComponentInitFunction: (instance?: any) => {
         instance.btnclick.subscribe((data: any) => {
-          console.log(data);
+          this.associateRequestAndExpedient(data);
         });
       },
     };
     this.initSearchForm();
+    this.getRegionalDelegationSelect(new ListParams());
+    this.getTransferentSelect(new ListParams());
+    this.dynamicFormCall();
   }
 
   initSearchForm() {
@@ -99,10 +114,6 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
   }
 
   newExpedient() {
-    /*const newExpedient = this.modalService.show(AssociateFileComponent, {
-      class: 'modal-lg modal-dialog-centered',
-      ignoreBackdropClick: true,
-    });*/
     this.openModal(AssociateFileComponent);
   }
 
@@ -113,7 +124,7 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
     });
   }
 
-  electronicSign() {
+  /* electronicSign() {
     const config = MODAL_CONFIG;
     config.initialState = {
       callback: (next: boolean) => {
@@ -127,7 +138,7 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
       ElectronicSignatureListComponent,
       config
     );
-  }
+  } */
 
   showSignProg() {
     const showSignProg = this.modalService.show(
@@ -137,6 +148,11 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
         ignoreBackdropClick: true,
       }
     );
+  }
+
+  resetForm() {
+    this.searchForm.reset();
+    this.documentsGenData = [];
   }
 
   search() {
@@ -191,8 +207,11 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
 
   getAuthoritySelect(params: ListParams) {
     params.text = params.text == null ? '' : params.text;
+    params['filter.idStation'] = `$eq:${this.idStation}`;
+    params['filter.idTransferer'] = `$eq:${this.idTransferent}`;
+    params['filter.authorityName'] = `$ilike:${params.text}`;
     this.authorityService
-      .search(params)
+      .getAll(params)
       .subscribe((data: IListResponse<IAuthority>) => {
         this.authorities = new DefaultSelect(data.data, data.count);
       });
@@ -208,17 +227,19 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
   }
 
   getStateSelect(params: ListParams, regDelegId?: Number) {
-    // params['filter.regionalDelegation'] = `$eq:${regDelegId}`;
-    this.stateOfRepublicServicio.search(params).subscribe({
+    const idDelegReg: any = regDelegId ? regDelegId : this.idDelegReg;
+    params['filter.regionalDelegation'] = `$eq:${idDelegReg}`;
+    params.limit = 20;
+    this.delegationStateService.getAll(params).subscribe({
       next: resp => {
-        /*const stateCode = resp.data
+        const stateCode = resp.data
           .map((x: any) => {
             if (x.stateCode != null) {
               return x.stateCode;
             }
           })
-          .filter(x => x != undefined);*/
-        this.states = new DefaultSelect(resp.data, resp.count);
+          .filter(x => x != undefined);
+        this.states = new DefaultSelect(stateCode, stateCode.length);
       },
     });
   }
@@ -232,13 +253,24 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
     });
   }
 
-  getStationSelect(params: ListParams) {
-    params.text = params.text == null ? '' : params.text;
-    this.stationService.search(params).subscribe({
+  getStationSelect(params: ListParams, transferentId?: number) {
+    const idTransfer = transferentId ? transferentId : this.idTransferent;
+    params['filter.idTransferent'] = `$eq:${idTransfer}`;
+    params.limit = 30;
+    this.stationService.getAll(params).subscribe({
       next: resp => {
         this.stations = new DefaultSelect(resp.data, resp.count);
       },
     });
+  }
+
+  associateRequestAndExpedient(expedient: any) {
+    console.log(expedient);
+    var request = { id: this.requestId, recordId: expedient.recordId };
+    this.updateStateRequestTab();
+    if (this.requestId) {
+      this.alertMessage(request);
+    }
   }
 
   openModal(component: any) {
@@ -257,5 +289,66 @@ export class GeneralDocumentsFormComponent extends BasePage implements OnInit {
     /*this.bsModalRef.content.event.subscribe((res: any) => {
       this.matchLevelFraction(res);
     });*/
+  }
+
+  dynamicFormCall() {
+    this.searchForm.controls['regionalDelegationId'].valueChanges.subscribe(
+      resp => {
+        if (resp) {
+          this.idDelegReg = Number(resp);
+          this.getStateSelect(new ListParams(), Number(resp));
+        }
+      }
+    );
+
+    this.searchForm.controls['transferenceId'].valueChanges.subscribe(resp => {
+      if (resp) {
+        this.idTransferent = Number(resp);
+        this.getStationSelect(new ListParams(), Number(resp));
+      }
+    });
+
+    this.searchForm.controls['stationId'].valueChanges.subscribe(resp => {
+      if (resp) {
+        this.idStation = Number(resp);
+        this.getAuthoritySelect(new ListParams());
+      }
+    });
+  }
+
+  updateStateRequestTab() {
+    this.requestHelperService.associateExpedient(true);
+  }
+
+  alertMessage(request: any) {
+    Swal.fire({
+      title: 'Asociar Solicitud',
+      text:
+        'Esta seguro de querer asociar la solicitud actual con el expediente Nº ' +
+        request.recordId,
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonColor: '#9D2449',
+      cancelButtonColor: '#B38E5D',
+      confirmButtonText: 'Aceptar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.requestService.update(this.requestId, request).subscribe({
+          next: resp => {
+            if (resp.stateCode != null) {
+              this.onLoadToast(
+                'error',
+                'Error',
+                `Ocurrio un error al asociar la socitud con el expediente ${resp.message[0]}`
+              );
+            }
+
+            if (resp.id != null) {
+              this.updateStateRequestTab();
+            }
+          },
+        });
+      }
+    });
   }
 }

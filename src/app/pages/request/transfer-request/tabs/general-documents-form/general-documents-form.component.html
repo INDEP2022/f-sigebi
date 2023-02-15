@@ -30,16 +30,13 @@
       </div>
 
       <div class="col-md-4">
-        <form-field [control]="searchForm.get('authorityId')">
-          <ngx-select
-            [form]="searchForm"
-            control="authorityId"
-            [data]="authorities"
-            bindLabel="authorityName"
-            label="Autoridad"
-            value="idAuthority"
-            (fetchItems)="getAuthoritySelect($event)">
-          </ngx-select>
+        <form-field
+          [control]="searchForm.get('protectNumber')"
+          label="No. Amparo">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="protectNumber" />
         </form-field>
       </div>
 
@@ -187,14 +184,19 @@
           </ngx-select>
         </form-field>
       </div>
-      <div class="col-md-4">
-        <form-field
-          [control]="searchForm.get('protectNumber')"
-          label="No. Amparo">
-          <input
-            type="text"
-            class="form-control"
-            formControlName="protectNumber" />
+    </div>
+    <div class="row pt-4">
+      <div class="col-md-8">
+        <form-field [control]="searchForm.get('authorityId')">
+          <ngx-select
+            [form]="searchForm"
+            control="authorityId"
+            [data]="authorities"
+            bindLabel="authorityName"
+            label="Autoridad"
+            value="idAuthority"
+            (fetchItems)="getAuthoritySelect($event)">
+          </ngx-select>
         </form-field>
       </div>
     </div>
@@ -205,7 +207,7 @@
     <i class="fa fa-search"></i> Buscar
   </button>
 
-  <button *ngIf="showSearchForm" class="btn btn-danger btn-sm active">
+  <button class="btn btn-danger btn-sm active" (click)="resetForm()">
     Limpiar
   </button>
 </div>
@@ -217,10 +219,9 @@
   <button (click)="newExpedient()" class="btn btn-success btn-sm active">
     <i class="fa fa-file"></i> Nuevo expediente
   </button>
-
-  <button (click)="electronicSign()" class="btn btn-pink btn-sm active">
+  <!-- <button (click)="electronicSign()" class="btn btn-pink btn-sm active">
     <i class="fa fa-key"></i> Firma electr&oacute;nica
-  </button>
+  </button> -->
 </div>
 <div class="d-flex justify-content-end">
   <app-columns-select [(settings)]="settings"></app-columns-select>

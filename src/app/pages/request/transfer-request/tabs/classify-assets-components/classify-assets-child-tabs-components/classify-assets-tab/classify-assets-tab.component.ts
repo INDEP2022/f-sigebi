@@ -420,9 +420,14 @@ export class ClassifyAssetsTabComponent
           )[0].fractionCode;
           this.getUnidMeasure(fractionCode);
 
-          this.classiGoodsForm.controls['goodTypeId'].setValue(
-            this.getRelevantTypeId(this.selectChapter.data, dataChapter)
+          const relativeTypeId = this.getRelevantTypeId(
+            this.selectChapter.data,
+            dataChapter
           );
+          this.setRelevantTypeId(relativeTypeId);
+          /* this.classiGoodsForm.controls['goodTypeId'].setValue(
+            this.getRelevantTypeId(this.selectChapter.data, dataChapter)
+          ); */
           if (this.advSearch === false) {
             this.getLevel1(new ListParams(), dataChapter);
             this.classiGoodsForm.controls['ligieLevel1'].setValue(null);
@@ -442,9 +447,14 @@ export class ClassifyAssetsTabComponent
           )[0].fractionCode;
           this.getUnidMeasure(fractionCode);
 
-          this.classiGoodsForm.controls['goodTypeId'].setValue(
+          /* this.classiGoodsForm.controls['goodTypeId'].setValue(
             this.getRelevantTypeId(this.selectLevel1.data, dataLevel1)
+          ); */
+          const relativeTypeId = this.getRelevantTypeId(
+            this.selectLevel1.data,
+            dataLevel1
           );
+          this.setRelevantTypeId(relativeTypeId);
           if (this.advSearch === false) {
             this.getLevel2(new ListParams(), dataLevel1);
             this.classiGoodsForm.controls['ligieLevel2'].setValue(null);
