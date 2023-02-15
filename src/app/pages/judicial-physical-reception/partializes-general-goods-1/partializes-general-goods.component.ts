@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { GoodService } from 'src/app/core/services/good/good.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -56,7 +58,11 @@ export class PartializesGeneralGoodsComponent implements OnInit {
   };
   data = EXAMPLE_DATA;
   itemsSelect = new DefaultSelect();
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private goodService: GoodService) {
+    this.goodService.getAll(new ListParams()).subscribe(x => {
+      console.log(x);
+    });
+  }
 
   ngOnInit(): void {
     this.prepareForm();

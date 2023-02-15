@@ -61,12 +61,16 @@
 
       <div class="row">
         <div class="col-md-4">
-          <form-field [control]="form.get('estatus')" label="Estatus">
+          <!-- <form-field [control]="form.get('estatus')" label="Estatus">
             <ngx-select
               control="estatus"
               [form]="form"
               [data]="itemsSelect"></ngx-select>
-          </form-field>
+          </form-field> -->
+          <app-goods-status-shared
+            [form]="form"
+            labelStatus="Estatus"
+            goodStatusField="estatus"></app-goods-status-shared>
         </div>
         <div class="col-md-4">
           <form-field [control]="form.get('extDom')" label="Ext&#46; Dom">
