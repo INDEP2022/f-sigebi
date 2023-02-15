@@ -35,6 +35,7 @@ export class UserFormComponent extends BasePage implements OnInit {
       user: [null, [Validators.required, Validators.pattern(NAME_PATTERN)]],
       email: [null, [Validators.required, Validators.pattern(EMAIL_PATTERN)]],
       charge: [null, [Validators.required]],
+      keyId: [null],
     });
 
     if (this.userData != null) {
@@ -48,6 +49,10 @@ export class UserFormComponent extends BasePage implements OnInit {
     return this.genericService.getAll(params).subscribe(data => {
       this.chargesUsers = new DefaultSelect(data.data, data.count);
     });
+  }
+
+  chargeSelect(item: IGeneric) {
+    this.userForm.get('keyId').setValue(item.keyId);
   }
 
   confirm() {
@@ -64,7 +69,8 @@ export class UserFormComponent extends BasePage implements OnInit {
       if (question.isConfirmed) {
         this.loading = true;
         this.onLoadToast('success', 'Usuario creado correctamente', '');
-        this.modalService.content.callback(this.userForm.value);
+        const create: boolean = true;
+        this.modalService.content.callback(this.userForm.value, create);
         this.close();
       } else {
         this.close();
@@ -82,6 +88,7 @@ export class UserFormComponent extends BasePage implements OnInit {
         //Ejecutar el servicio
         this.loading = true;
         this.onLoadToast('success', 'Usuario editado correctamente', '');
+        this.modalService.content.callback(this.userForm.value);
         this.close();
       }
     });

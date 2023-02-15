@@ -22,9 +22,10 @@
             [form]="userForm"
             control="charge"
             [data]="chargesUsers"
-            value="keyId"
+            value="description"
             bindLabel="description"
             label="Cargo usuario"
+            (change)="chargeSelect($event)"
             (fetchItems)="getChargesUsers($event)"></ngx-select>
         </form-field>
       </div>

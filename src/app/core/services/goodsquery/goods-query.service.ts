@@ -74,7 +74,7 @@ export class GoodsQueryService extends HttpService {
     const params = this.makeParams(_params);
     return this.httpClient.post<IListResponse<any>>(
       `${environment.API_URL}${this.routeGoodsProg}?${params}`,
-      { filterColumns }
+      filterColumns
     );
   }
 
