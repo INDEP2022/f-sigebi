@@ -11,10 +11,7 @@ export const CUSTOMERS_COLUMNS = {
     title: 'RFC',
     sort: false,
   },
-  sellerId: {
-    title: 'Clave vendedor',
-    sort: false,
-  },
+
   street: {
     title: 'Calle',
     sort: false,
@@ -42,6 +39,13 @@ export const CUSTOMERS_COLUMNS = {
   fax: {
     title: 'Fax',
     sort: false,
+  },
+  sellerId: {
+    title: 'Clave vendedor',
+    sort: false,
+    // valuePrepareFunction: (value: any) => {
+    //   return value.id;
+    // },
   },
   phone: {
     title: 'Teléfono',

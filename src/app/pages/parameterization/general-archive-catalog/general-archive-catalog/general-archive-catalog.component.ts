@@ -237,6 +237,7 @@ export class GeneralArchiveCatalogComponent extends BasePage implements OnInit {
     const modalConfig = MODAL_CONFIG;
     const cve = { ...this.idSaveValues };
     const noBattery = { ...this.idBattery };
+    console.log(noBattery);
     modalConfig.initialState = {
       shelves,
       cve,

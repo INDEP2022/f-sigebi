@@ -55,7 +55,9 @@ export class CustomerService extends HttpService {
   }
 
   create(model: ICustomer): Observable<ICustomer> {
-    return this.customerRepository.create(this.route, model);
+    const route = `${this.endpointClients}`;
+    return this.post(route, model);
+    // return this.customerRepository.create(this.route, model);
   }
 
   updateCustomers(id: string | number, customer: ICustomer) {

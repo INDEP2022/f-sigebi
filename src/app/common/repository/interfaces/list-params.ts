@@ -58,7 +58,7 @@ class DynamicFilter {
 export enum SearchFilter {
   EQ = '$eq',
   IN = '$in',
-  LIKE = '$like',
+  LIKE = '$ilike',
   NOT = '$not',
   NULL = '$null',
   ILIKE = '$ilike',
