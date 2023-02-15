@@ -1,20 +1,41 @@
 <app-card [header]="true" [footer]="true">
   <div class="ch-content" header>
-    <h5 class="title">Reporte Acumulado de Bienes Anual</h5>
+    <h5 class="title">Reporte Acumulado de Bienes Anual</h5> 
   </div>
 
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-4">
-          <app-delegation-shared [form]="form" [showSubdelegation]="false">
-          </app-delegation-shared>
+          <form-field [control]="form.get('delegation')"> 
+                <ngx-select
+                  [searchOnInit]="true"
+                  [form]="form"
+                  (fetchItems)="getDelegations($event)"
+                  [data]="delegations"
+                  value="id"
+                  bindLabel="description"
+                  label="Delegaci&oacute;n"
+                  [control]="'delegation'"
+                  (change)="onDelegationsChange($event)">
+                </ngx-select>
+              </form-field>
         </div>
         <div class="col-md-4">
-          <app-delegation-shared [form]="form" [showDelegation]="false">
-          </app-delegation-shared>
+          <form-field [control]="form.get('subdelegation')">
+            <ngx-select
+                  [form]="form"
+                  (fetchItems)="getSubDelegations($event)"
+                  [data]="subdelegations"
+                  value="id"
+                  bindLabel="description"
+                  label="Sub Delegaci&oacute;n"
+                  [control]="'subdelegation'"
+                  (change)="onSubDelegationsChange($event)">
+                </ngx-select>
+          </form-field>
         </div>
-        <div class="col-md-2 mb-3 mt-3">
+        <div class="col-md-2">
           <form-field
             [control]="form.get('fromYear')"
             label="A&ntilde;o Inicial">
@@ -23,16 +44,20 @@
               class="form-control"
               [bsConfig]="bsConfigFromYear"
               formControlName="fromYear"
+              (bsValueChange)="setMinDateEnd($event)"
+              [maxDate]="maxDateStart"
               bsDatepicker />
           </form-field>
         </div>
-        <div class="col-md-2 mb-3 mt-3">
+        <div class="col-md-2">
           <form-field [control]="form.get('toYear')" label="A&ntilde;o final">
             <input
               type="text"
               class="form-control"
               [bsConfig]="bsConfigToYear"
               formControlName="toYear"
+              [maxDate]="maxDateEnd"
+              [minDate]="minDateEnd"
               bsDatepicker />
           </form-field>
         </div>
@@ -50,6 +75,13 @@
           Imprimir
         </button>
       </div>
+      <div class="m-3">
+        <button (click)="cleanForm()" type="button" class="btn btn-danger active">
+          Limpiar
+        </button>
+      </div>
     </div>
   </div>
 </app-card>
+
+

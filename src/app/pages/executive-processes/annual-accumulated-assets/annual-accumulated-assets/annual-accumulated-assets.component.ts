@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import {
   BsDatepickerConfig,
@@ -7,9 +7,15 @@ import {
 } from 'ngx-bootstrap/datepicker';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { maxDate } from 'src/app/common/validations/date.validators';
+import { FilterParams, ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+//Models
+import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
+import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
+//Services
+import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
+import { PrintFlyersService } from 'src/app/core/services/document-reception/print-flyers.service';
 
 @Component({
   selector: 'app-annual-accumulated-assets',
@@ -22,19 +28,44 @@ export class AnnualAccumulatedAssetsComponent
 {
   form: FormGroup = new FormGroup({});
   select = new DefaultSelect();
-  pdfurl = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
+  pdfurl = 'http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf';
 
   bsConfigToYear: Partial<BsDatepickerConfig>;
   bsConfigFromYear: Partial<BsDatepickerConfig>;
+  
+  maxDateEnd = new Date();
+  maxDateStart: Date;
+  minDateEnd: Date;
+
+  delegations = new DefaultSelect<IDelegation>();
+  subdelegations = new DefaultSelect<ISubdelegation>();
 
   mode: BsDatepickerViewMode = 'year'; // change for month:year
+
+  phaseEdo: number;
+
+  get delegation() {
+    return this.form.get('delegation');
+  }
+  get subdelegation() {
+    return this.form.get('subdelegation');
+  }
+  
 
   constructor(
     private modalService: BsModalService,
     private fb: FormBuilder,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private serviceDeleg: DelegationService,
+    private printFlyersService: PrintFlyersService
   ) {
     super();
+    this.maxDateStart = new Date(
+      this.maxDateEnd.getFullYear(),
+      this.maxDateEnd.getMonth(),
+      this.maxDateEnd.getDate() - 0
+    );
+    this.minDateEnd = new Date(this.maxDateEnd.getFullYear() - 1, 0, 1);
   }
 
   ngOnInit(): void {
@@ -57,12 +88,89 @@ export class AnnualAccumulatedAssetsComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      delegation: [''],
-      subdelegation: [''],
-      fromYear: [null, [Validators.required, maxDate(new Date())]],
-      toYear: [null, [Validators.required, maxDate(new Date())]],
+      delegation: [null, [Validators.required, ]],
+      subdelegation: [null, [Validators.required, ]],
+      fromYear: [null, [Validators.required, ]],
+      toYear: [null, [Validators.required, ]], 
     });
   }
+
+  getDelegations(params: ListParams) {
+    this.serviceDeleg.getAll(params).subscribe(
+      data => {
+        this.delegations = new DefaultSelect(data.data, data.count);
+      },
+      err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          error = err.message;
+        }
+        this.onLoadToast('error', 'Error', error);
+      },
+      () => {}
+    );
+  }
+
+ onDelegationsChange(element: any) {
+    this.resetFields([this.delegation]);
+    this.subdelegations = new DefaultSelect();
+    // console.log(this.PN_NODELEGACION.value);
+    if (this.delegation.value)
+      this.getSubDelegations({ page: 1, limit: 10, text: '' });
+  }
+
+  getSubDelegations(lparams: ListParams) {
+    // console.log(lparams);
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    if (lparams?.text.length > 0)
+      params.addFilter('dsarea', lparams.text, SearchFilter.LIKE);
+    if (this.delegation.value) {
+      params.addFilter('delegationNumber', this.delegation.value);
+    }
+    if (this.phaseEdo) params.addFilter('phaseEdo', this.phaseEdo);
+    // console.log(params.getParams());
+    this.printFlyersService.getSubdelegations(params.getParams()).subscribe({
+      next: data => {
+        this.subdelegations = new DefaultSelect(data.data, data.count);
+      },
+      error: err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          error = err.message;
+        }
+
+        this.onLoadToast('error', 'Error', error);
+      },
+    });
+  }
+
+  onSubDelegationsChange(element: any) {
+    this.resetFields([this.subdelegation]);
+    
+  }
+
+
+  resetFields(fields: AbstractControl[]) {
+    fields.forEach(field => {
+      field = null;
+    });
+    this.form.updateValueAndValidity();
+  }
+
+setMinDateEnd(date: Date) {
+    if (date != undefined) this.minDateEnd = date;
+  }
+
+  cleanForm(): void {
+    this.form.reset();
+  }
+  
 
   openPrevPdf() {
     let config: ModalOptions = {
