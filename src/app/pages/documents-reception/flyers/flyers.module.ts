@@ -32,7 +32,6 @@ import { RdFShiftChangeComponent } from './shift-change/shift-change.component';
     SharedModule,
     BsDatepickerModule,
     ModalModule.forChild(),
-    BsDatepickerModule,
     DocumentsListComponent,
     NgScrollbarModule,
   ],

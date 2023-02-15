@@ -2,13 +2,16 @@ import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { ENDPOINT_LINKS } from 'src/app/common/constants/endpoints';
 import { ProcedureManagementEndPoints } from 'src/app/common/constants/endpoints/ms-proceduremanagement-endpoints';
+import { UserEndpoints } from 'src/app/common/constants/endpoints/ms-users-endpoints';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { IIdentifier } from 'src/app/core/models/catalogs/identifier.model';
+import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
 import { IStation } from 'src/app/core/models/catalogs/station.model';
 import { IManagementArea } from '../../models/ms-proceduremanagement/ms-proceduremanagement.interface';
+import { IUserAccessAreaRelational } from '../../models/ms-users/seg-access-area-relational.model';
 
 @Injectable({
   providedIn: 'root',
@@ -31,6 +34,14 @@ export class DocReceptionRegisterService extends HttpService {
     let partials = ENDPOINT_LINKS.Authority.split('/');
     this.microservice = partials[0];
     return this.get<IListResponse<IAuthority>>(partials[1], params).pipe(
+      tap(() => (this.microservice = ''))
+    );
+  }
+
+  getPublicMinistries(params?: string): Observable<IListResponse<IMinpub>> {
+    let partials = ENDPOINT_LINKS.MinPub.split('/');
+    this.microservice = partials[0];
+    return this.get<IListResponse<IMinpub>>(partials[1], params).pipe(
       tap(() => (this.microservice = ''))
     );
   }
@@ -60,6 +71,16 @@ export class DocReceptionRegisterService extends HttpService {
     this.microservice = ProcedureManagementEndPoints.ProcedureManagement;
     return this.get<IListResponse<IManagementArea>>(
       ProcedureManagementEndPoints.ManagamentArea,
+      params
+    ).pipe(tap(() => (this.microservice = '')));
+  }
+
+  getUsersSegAreas(
+    params?: string
+  ): Observable<IListResponse<IUserAccessAreaRelational>> {
+    this.microservice = UserEndpoints.BasePath;
+    return this.get<IListResponse<IUserAccessAreaRelational>>(
+      UserEndpoints.SegAccessAreas,
       params
     ).pipe(tap(() => (this.microservice = '')));
   }

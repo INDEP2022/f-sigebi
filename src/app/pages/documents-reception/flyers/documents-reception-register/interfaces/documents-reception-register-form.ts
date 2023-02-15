@@ -29,6 +29,16 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   recordId: new FormControl<string | number>(null),
   desalojov: new FormControl<boolean>(false),
   generalDirection: new FormControl<boolean>(false),
+  circumstantialAct: new FormControl<string | number>(
+    null,
+    Validators.required
+  ),
+  preliminaryInquiry: new FormControl<string | number>(
+    null,
+    Validators.required
+  ),
+  criminalCase: new FormControl<string | number>(null, Validators.required),
+  protectionNo: new FormControl<string | number>(null, Validators.required),
   judgmentType: new FormControl<string | number>(null),
   jobNumber: new FormControl<string | number>(null, Validators.required),
   jobDate: new FormControl<string | number>(null, Validators.required),
@@ -42,6 +52,8 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   court: new FormControl<string | number>(null),
   transmitter: new FormControl<string | number>(null, Validators.required),
   autority: new FormControl<string | number>(null, Validators.required),
+  publicMinistry: new FormControl<string | number>(null),
+  crime: new FormControl<string | number>(null, Validators.required),
   taxpayer: new FormControl<string | number>(null, Validators.required),
   receptionWay: new FormControl<string | number>(null, Validators.required),
   destinationArea: new FormControl<string | number>(null, Validators.required),
