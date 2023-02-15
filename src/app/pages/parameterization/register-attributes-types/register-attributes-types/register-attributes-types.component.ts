@@ -261,9 +261,12 @@ export class RegisterAttributesTypesComponent
   }
 
   openForm(attribClassifGood?: IAttribClassifGoods) {
+    let _id = this.form.controls['attrib'].value;
+    console.log('Pantalla incial', _id);
     let config: ModalOptions = {
       initialState: {
         attribClassifGood,
+        _id,
         callback: (next: boolean) => {},
       },
       class: 'modal-lg modal-dialog-centered',

@@ -1,8 +1,6 @@
-import { IExpedient } from './expedient.model';
-
 export interface IConvertiongood {
-  id?: string | number;
-  fileNumber?: IExpedient | number;
+  id?: number;
+  fileNumber?: /* IExpedient | number */ any;
   goodFatherNumber: string | number;
   pageDocto?: string;
   fCreate: Date;
@@ -20,7 +18,7 @@ export interface IConvertiongood {
   minutesErNumber?: string;
   cveActaConv?: string;
   pageEscConv?: string;
-  statusConv?: string;
+  statusConv?: string | number;
   noRegister?: string | number;
   addressedTo?: string;
   address?: string;
@@ -36,6 +34,6 @@ export interface IConvertiongood {
   ccp5?: string;
   chargeCcp5?: string;
   fecActaEr: Date;
-  typeConv: string;
+  typeConv: string | number;
   pwAccess: string;
 }

@@ -101,9 +101,11 @@ export class AttributesRegLogicalTablesComponent
   }
 
   openForm(tdescAtrib?: ITdescAtrib) {
+    let _id = this.form.controls['table'].value;
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       tdescAtrib,
+      _id,
       callback: (next: boolean) => {
         if (next) this.getLogicalTablesByID();
       },

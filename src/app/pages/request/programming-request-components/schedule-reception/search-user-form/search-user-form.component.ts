@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IUser } from 'src/app/core/models/catalogs/user.model';
+import { ProgrammingGoodService } from 'src/app/core/services/ms-programming-request/programming-good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { USER_COLUMNS } from '../../acept-programming/columns/users-columns';
-import { userData } from './users-data';
 
 @Component({
   selector: 'app-search-user-form',
@@ -12,12 +13,16 @@ import { userData } from './users-data';
   styles: [],
 })
 export class SearchUserFormComponent extends BasePage implements OnInit {
-  usersData: any[] = [];
+  usersData: IUser[] = [];
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
   typeUser: string = '';
-  userInfo = userData;
-  constructor(private modalRef: BsModalRef) {
+  userInfo: IUser[];
+  textButton: string = 'Seleccionar';
+  constructor(
+    private modalRef: BsModalRef,
+    private programmingGoodService: ProgrammingGoodService
+  ) {
     super();
     this.settings = {
       ...this.settings,
@@ -28,11 +33,24 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.usersData = userData;
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getUsers());
   }
 
   getUsers() {
-    console.log('Tipo de usuario', this.typeUser);
+    this.loading = true;
+    //console.log('Tipo de usuario', this.typeUser);
+    this.params.getValue()['search'] = this.params.getValue().text;
+    this.programmingGoodService
+      .getUsersProgramming(this.params.getValue())
+      .subscribe({
+        next: response => {
+          this.usersData = response.data;
+          this.totalItems = response.count;
+          this.loading = false;
+        },
+      });
   }
 
   userSelect(event: any) {
@@ -40,8 +58,16 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
   }
 
   confirm() {
-    this.modalRef.content.callback(this.userInfo);
-    this.modalRef.hide();
+    if (this.userInfo) {
+      this.modalRef.content.callback(this.userInfo);
+      this.modalRef.hide();
+    } else {
+      this.onLoadToast(
+        'warning',
+        'Advertencía',
+        'Debes seleccionar al menos un usuario'
+      );
+    }
   }
 
   close() {

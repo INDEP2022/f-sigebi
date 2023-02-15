@@ -91,11 +91,16 @@ export class ReportComponent extends BasePage implements OnInit {
     };
     console.log(params);
     // open the window
-    this.onLoadToast('success', 'procesando', '');
+    setTimeout(() => {
+      this.onLoadToast('success', 'procesando', '');
+    }, 1000);
+
     const pdfurl = `http://s29.q4cdn.com/175625835/files/doc_downloads/test.pdf`; //window.URL.createObjectURL(blob);
     window.open(pdfurl, 'RGEROFPRECEPDOCUM.pdf');
     //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RCONCOGVOLANTESRE.pdf?PN_VOLANTEFIN=70646&P_IDENTIFICADOR=0`; //window.URL.createObjectURL(blob);
-    this.onLoadToast('success', 'vista generada exitosamente', '');
+    setTimeout(() => {
+      this.onLoadToast('success', 'vista generada exitosamente', '');
+    }, 500);
   }
 
   cleanForm(): void {

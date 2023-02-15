@@ -125,6 +125,7 @@
           <div class="d-flex justify-content-center">
             <div class="m-3">
               <button
+                type="button"
                 class="btn btn-primary active"
                 (click)="generatePaswword()"
                 [disabled]="saved">
@@ -136,7 +137,11 @@
         <div class="col-md-6 col-sm-12 col-xs-12 mt-2">
           <div class="d-flex justify-content-center">
             <div class="m-3">
-              <button class="btn btn-success active" (click)="save()">
+              <button
+                type="button"
+                class="btn btn-success active"
+                [disabled]="enableButton"
+                (click)="save()">
                 Guardar
               </button>
             </div>

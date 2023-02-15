@@ -14,7 +14,9 @@ import { IStateOfRepublic } from 'src/app/core/models/catalogs/state-of-republic
 import { IStation } from 'src/app/core/models/catalogs/station.model';
 import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { ITypeRelevant } from 'src/app/core/models/catalogs/type-relevant.model';
+import { IUser } from 'src/app/core/models/catalogs/user.model';
 import { IWarehouse } from 'src/app/core/models/catalogs/warehouse.model';
+import { IGoodProgrammingSelect } from 'src/app/core/models/good-programming/good-programming';
 import { AuthorityService } from 'src/app/core/services/catalogs/authority.service';
 import { DelegationStateService } from 'src/app/core/services/catalogs/delegation-state.service';
 import { RegionalDelegationService } from 'src/app/core/services/catalogs/regional-delegation.service';
@@ -26,16 +28,20 @@ import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.
 import { BasePage } from 'src/app/core/shared/base-page';
 import { EMAIL_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { ProgrammingGoodService } from '../../../../../core/services/ms-programming-request/programming-good.service';
 import { WarehouseFormComponent } from '../../../shared-request/warehouse-form/warehouse-form.component';
 import { ESTATE_COLUMNS } from '../../acept-programming/columns/estate-columns';
-import { USER_COLUMNS } from '../../acept-programming/columns/users-columns';
 import { SearchUserFormComponent } from '../../schedule-reception/search-user-form/search-user-form.component';
 import { userData } from '../../schedule-reception/search-user-form/users-data';
-import { ProgrammingGoodService } from '../../service/programming-good.service';
-import { ProgrammingRequestService } from '../../service/programming-request.service';
 import { EstateSearchFormComponent } from '../estate-search-form/estate-search-form.component';
 import { IEstateSearch } from '../estate-search-form/estate-search.interface';
 import { UserFormComponent } from '../user-form/user-form.component';
+import {
+  settingGuard,
+  settingTransGoods,
+  SettingUserTable,
+  settingWarehouse,
+} from './settings-tables';
 
 @Component({
   selector: 'app-perform-programming-form',
@@ -46,68 +52,12 @@ export class PerformProgrammingFormComponent
   extends BasePage
   implements OnInit
 {
-  settingUser = {
-    ...this.settings,
-    actions: {
-      columnTitle: 'Acciones',
-      position: 'right',
-      delete: true,
-    },
-    columns: USER_COLUMNS,
-  };
-
-  settingsTransportableGoods = {
-    ...this.settings,
-    actions: {
-      ...this.settings.actions,
-      delete: false,
-      edit: false,
-      columnTitle: 'Acciones',
-      position: 'right',
-    },
-    delete: {
-      ...this.settings.delete,
-      confirmDelete: true,
-    },
-    columns: ESTATE_COLUMNS,
-  };
-
-  settingGuardGoods = {
-    ...this.settings,
-    actions: {
-      edit: false,
-      delete: false,
-      columnTitle: 'Acciones',
-      position: 'right',
-    },
-    edit: {
-      editButtonContent: '<i class="fa fa-eye"></i>',
-    },
-    columns: ESTATE_COLUMNS,
-  };
-
-  settingWarehouseGoods = {
-    ...this.settings,
-    actions: {
-      edit: false,
-      delete: false,
-      columnTitle: 'Acciones',
-      position: 'right',
-    },
-    edit: {
-      editButtonContent: '<i class="fa fa-eye"></i>',
-    },
-    columns: ESTATE_COLUMNS,
-  };
-
-  estates: any[] = [];
   estatesList: LocalDataSource = new LocalDataSource();
-  goodSelect: any[] = [];
-  goodsTranportables: any[] = [];
-  goodsGuards: any[] = [];
-  goodsWarehouse: any[] = [];
-
-  usersData: any[] = [];
+  goodSelect: IGoodProgrammingSelect[] = [];
+  goodsTranportables: IGoodProgrammingSelect[] = [];
+  goodsGuards: IGoodProgrammingSelect[] = [];
+  goodsWarehouse: IGoodProgrammingSelect[] = [];
+  usersToProgramming: LocalDataSource = new LocalDataSource();
   dataSearch: IEstateSearch;
   regionalDelegationUser: IRegionalDelegation;
   performForm: FormGroup = new FormGroup({});
@@ -147,10 +97,23 @@ export class PerformProgrammingFormComponent
   paramsUsers = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsUsers: number = 0;
 
+  settingUser = { ...this.settings, ...SettingUserTable };
+
+  settingsTransportableGoods = { ...this.settings, ...settingTransGoods };
+
+  settingGuardGoods = {
+    ...this.settings,
+    ...settingGuard,
+  };
+
+  settingWarehouseGoods = {
+    ...this.settings,
+    ...settingWarehouse,
+  };
+
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private programmingRequestService: ProgrammingRequestService,
     private programmingGoodService: ProgrammingGoodService,
     private stationService: StationService,
     private regionalDelegationService: RegionalDelegationService,
@@ -227,8 +190,12 @@ export class PerformProgrammingFormComponent
 
     config.initialState = {
       userData,
-      callback: (data: any) => {
+      callback: (data: IUser[]) => {
         if (data) {
+          this.usersToProgramming.getElements().then(item => {
+            item.push(data);
+            this.usersToProgramming.load(item);
+          });
         }
       },
     };
@@ -236,13 +203,42 @@ export class PerformProgrammingFormComponent
     const rejectionComment = this.modalService.show(UserFormComponent, config);
   }
 
+  newWarehouse() {
+    if (this.regionalDelegationUser) {
+      const regDelData = this.regionalDelegationUser;
+      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+      config.initialState = {
+        regDelData,
+        callback: (next: boolean) => {},
+      };
+
+      const constShowWarehouse = this.modalService.show(
+        WarehouseFormComponent,
+        config
+      );
+    } else {
+      this.onLoadToast(
+        'warning',
+        'Advertencia',
+        'Para crear un almacén necesitas seleccionar una delegación regional'
+      );
+    }
+  }
+
   listUsers() {
     let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
 
     config.initialState = {
       callback: (data: any) => {
-        if (data) {
-          this.usersData = userData;
+        if (data && this.usersToProgramming.count() == 0) {
+          this.usersToProgramming.load(data);
+          this.onLoadToast(
+            'success',
+            'Correcto',
+            'Úsuario(s) agregado(s) correctamente'
+          );
+        } else if (data && this.usersToProgramming.count() >= 0) {
+          this.concatUsers(data);
         }
       },
     };
@@ -250,18 +246,18 @@ export class PerformProgrammingFormComponent
     const searchUser = this.modalService.show(SearchUserFormComponent, config);
   }
 
-  newWarehouse() {
-    const regDelData = this.regionalDelegationUser;
-    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
-    config.initialState = {
-      regDelData,
-      callback: (next: boolean) => {},
-    };
-
-    const constShowWarehouse = this.modalService.show(
-      WarehouseFormComponent,
-      config
-    );
+  concatUsers(users: IUser[]) {
+    this.usersToProgramming.getElements().then(items => {
+      users.map(item => {
+        items.push(item);
+        this.usersToProgramming.load(items);
+        this.onLoadToast(
+          'success',
+          'Correcto',
+          'Úsuario(s) agregado(s) correctamente'
+        );
+      });
+    });
   }
 
   estateSearch() {
@@ -424,34 +420,37 @@ export class PerformProgrammingFormComponent
       });
   }
 
-  goodsSelect(event: any) {
-    this.goodSelect = event.selected;
+  goodsSelect(items: IGoodProgrammingSelect[]) {
+    this.goodSelect = items;
   }
 
   sendTransportable() {
-    if (this.goodSelect.length == 0) {
-      this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
-    } else {
+    if (this.goodSelect.length) {
       this.headingTransportable = `Transportables(${this.goodSelect.length})`;
       this.goodsTranportables = this.goodSelect;
+      this.onLoadToast('success', 'Correcto', 'Bien movido a transportable');
+    } else {
+      this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
     }
   }
 
   sendGuard() {
-    if (this.goodSelect.length == 0) {
-      this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
-    } else {
+    if (this.goodSelect.length) {
       this.headingGuard = `Resguardo(${this.goodSelect.length})`;
       this.goodsGuards = this.goodSelect;
+      this.onLoadToast('success', 'Correcto', 'Bien movido a resguardo');
+    } else {
+      this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
     }
   }
 
   sendWarehouse() {
     if (this.goodSelect.length == 0) {
+      this.headingWarehouse = `Almacén SAT(${this.goodSelect.length})`;
+      this.onLoadToast('success', 'Correcto', 'Bien movido a almacén SAT');
+      this.goodsWarehouse = this.goodSelect;
       this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
     } else {
-      this.headingWarehouse = `Almacén SAT(${this.goodSelect.length})`;
-      this.goodsWarehouse = this.goodSelect;
     }
   }
 

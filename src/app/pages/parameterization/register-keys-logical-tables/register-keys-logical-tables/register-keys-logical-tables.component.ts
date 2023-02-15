@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, map, takeUntil } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
@@ -13,8 +13,9 @@ import { TdescCveService } from 'src/app/core/services/ms-parametergood/tdesccve
 //Models
 import { LocalDataSource } from 'ng2-smart-table';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { ITable } from 'src/app/core/models/catalogs/dinamic-tables.model';
 import { ITdescCve } from 'src/app/core/models/ms-parametergood/tdesccve-model';
-import { NUMBERS_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
   selector: 'app-register-keys-logical-tables',
@@ -29,14 +30,14 @@ export class RegisterKeysLogicalTablesComponent
   params = new BehaviorSubject<ListParams>(new ListParams());
   tdescCve: ITdescCve[] = [];
 
-  data2: LocalDataSource = new LocalDataSource();
+  tableForm: ModelForm<ITable>;
+  idTable: ITable;
 
-  form: FormGroup = new FormGroup({});
+  data2: LocalDataSource = new LocalDataSource();
 
   constructor(
     private modalService: BsModalService,
     private fb: FormBuilder,
-    private fb2: FormBuilder,
     private dynamicTablesService: DynamicTablesService,
     private tdescCveService: TdescCveService
   ) {
@@ -59,21 +60,24 @@ export class RegisterKeysLogicalTablesComponent
   }
 
   private prepareForm() {
-    this.form = this.fb.group({
-      table: [null, [Validators.required, Validators.pattern(NUMBERS_PATTERN)]],
+    this.tableForm = this.fb.group({
+      table: [null, [Validators.required]],
+      name: [{ value: null, disabled: true }],
       description: [{ value: null, disabled: true }],
+      actionType: [{ value: null, disabled: true }],
       tableType: [{ value: null, disabled: true }],
     });
   }
+
   //Método para buscar y llenar inputs (Encabezado)
   getLogicalTablesByID(): void {
-    let _id = this.form.controls['table'].value;
+    let _id = this.tableForm.controls['table'].value;
     this.loading = true;
     this.dynamicTablesService.getById(_id).subscribe(
       response => {
         if (response !== null) {
-          this.form.patchValue(response);
-          this.form.updateValueAndValidity();
+          this.tableForm.patchValue(response);
+          this.tableForm.updateValueAndValidity();
           this.getKeysByLogicalTables(_id);
         } else {
           this.alert('info', 'No se encontraron los registros', '');
@@ -96,12 +100,6 @@ export class RegisterKeysLogicalTablesComponent
       .getById(id)
       .pipe(
         map((data2: any) => {
-          /**let list: IListResponse<ITdescCve> = {} as IListResponse<ITdescCve>;
-          const array2: ITdescCve[] = [{ ...data2.data }];
-          list.data = array2;
-          list.count = 10;
-          return list;*/
-
           let list: IListResponse<ITdescCve> = {} as IListResponse<ITdescCve>;
           const array2: ITdescCve[] = [{ ...data2 }];
           list.data = array2;
@@ -114,12 +112,14 @@ export class RegisterKeysLogicalTablesComponent
       });
   }
   openForm(tdescCve?: ITdescCve) {
+    let _id = this.tableForm.controls['table'].value;
     const modalConfig = MODAL_CONFIG;
     modalConfig.initialState = {
       tdescCve,
-      // callback: (next: boolean) => {
-      //   if (next) this.getKeysLogicalTables();
-      // },
+      _id,
+      callback: (next: boolean) => {
+        if (next) this.getKeysByLogicalTables(tdescCve.id);
+      },
     };
     this.modalService.show(
       RegisterKeysLogicalTablesModalComponent,

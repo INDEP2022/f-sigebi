@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 //Shared
 import { SharedModule } from 'src/app/shared/shared.module';
 //Ngx Bootstrap
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ModalModule } from 'ngx-bootstrap/modal';
 //Routing
@@ -28,6 +29,7 @@ import { RepresentativesModalComponent } from './representatives-modal/represent
     SharedModule,
     BsDropdownModule,
     ModalModule.forChild(),
+    BsDatepickerModule,
   ],
 })
 export class CustomersModule {}
