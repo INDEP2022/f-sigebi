@@ -43,7 +43,6 @@ export class RecordsValidationComponent extends BasePage implements OnInit {
     this.activatedRoute.params.subscribe(params => {
       this.proceedingsNumb = params['proceedingsNumb'];
       this.proceedingsCve = params['proceedingsCve'];
-      console.log(`${this.proceedingsCve},${this.proceedingsNumb}`);
     });
   }
 
