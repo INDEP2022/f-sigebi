@@ -1,5 +1,6 @@
 import { IDelegationNumber } from './delegation-number.model';
 import { IFileNumber } from './file-number.model';
+import { IIdentifier } from './identifier.model';
 import { ITransferNumber } from './transfer-number.model';
 
 export interface IProceedings {
@@ -30,7 +31,7 @@ export interface IProceedings {
   receiptCve: string;
   transferNumber: ITransferNumber;
   proceedingsTypeId: string;
-  identifier: string;
+  identifier: IIdentifier;
   proceeding: string;
   closingDate: Date;
   hcClosingDate: Date;

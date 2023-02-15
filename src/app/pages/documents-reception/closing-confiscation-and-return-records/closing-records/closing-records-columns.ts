@@ -1,4 +1,4 @@
-export const CLOSING_RECORDS_COLUMNS = {
+export const GOODS_RECORDS_COLUMNS = {
   goodsId: {
     title: 'No. Bien',
     sort: false,
