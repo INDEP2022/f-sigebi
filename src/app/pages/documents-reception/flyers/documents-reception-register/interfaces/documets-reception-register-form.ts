@@ -45,6 +45,14 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   taxpayer: new FormControl<string | number>(null, Validators.required),
   receptionWay: new FormControl<string | number>(null, Validators.required),
   destinationArea: new FormControl<string | number>(null, Validators.required),
+  destinationAreaId: new FormControl<string | number>(
+    null,
+    Validators.required
+  ),
+  delegationNo: new FormControl<string | number>(null, Validators.required),
+  delegationName: new FormControl<string>(null, Validators.required),
+  subDelegationNo: new FormControl<string | number>(null, Validators.required),
+  subDelegationName: new FormControl<string>(null, Validators.required),
   destinationManagement: new FormControl<string | number>(null),
   inAtention: new FormControl<string | number>(null, Validators.required),
   cpp: new FormControl<string | number>(null),

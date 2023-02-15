@@ -323,7 +323,7 @@
           </form-field>
 
           <form-field
-            class="col-md-8"
+            class="col-md-6"
             [control]="documentsReceptionForm.get('city')">
             <ngx-select
               [form]="documentsReceptionForm"
@@ -336,6 +336,15 @@
               (change)="cityChange($event)">
             </ngx-select>
           </form-field>
+
+          <div class="col-md-2">
+            <button
+              type="button"
+              class="btn btn-secondary btn-sm active"
+              (click)="clearCityState()">
+              <i class="bx bxs-eraser"></i>
+            </button>
+          </div>
         </div>
 
         <div class="row pt-5">
@@ -453,13 +462,13 @@
               value="value"
               bindLabel="value"
               control="receptionWay"
-              label="Vía Recepción">
+              label="V&iacute;a Recepci&oacute;n">
             </ngx-select>
           </form-field>
         </div>
 
         <div class="row pt-5">
-          <form-field
+          <!-- <form-field
             class="col-md-6"
             [control]="documentsReceptionForm.get('destinationArea')">
             <ngx-select
@@ -468,9 +477,50 @@
               control="destinationArea"
               label="Área Destino">
             </ngx-select>
+          </form-field> -->
+          <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('destinationArea')"
+            label="&Aacute;rea Destino">
+            <input
+              type="text"
+              formControlName="destinationArea"
+              class="form-control"
+              readonly />
           </form-field>
 
+          <div class="col-md-2">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              (click)="openModalAreas()">
+              <i class="bx bx-window-open"></i>
+            </button>
+          </div>
+        </div>
+        <div class="row pt-5">
+          <!-- <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('destinationArea')">
+            <ngx-select
+              [form]="documentsReceptionForm"
+              [data]="identifiers"
+              control="destinationArea"
+              label="Área Destino">
+            </ngx-select>
+          </form-field> -->
           <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('delegationName')"
+            label="Delegaci&oacute;n">
+            <input
+              type="text"
+              formControlName="delegationName"
+              class="form-control"
+              readonly />
+          </form-field>
+
+          <!-- <form-field
             class="col-md-6"
             [control]="documentsReceptionForm.get('destinationArea')">
             <ngx-select
@@ -478,6 +528,16 @@
               [data]="identifiers"
               control="destinationArea">
             </ngx-select>
+          </form-field> -->
+          <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('subDelegationName')"
+            label="Subdelegaci&oacute;n">
+            <input
+              type="text"
+              formControlName="subDelegationName"
+              class="form-control"
+              readonly />
           </form-field>
         </div>
 

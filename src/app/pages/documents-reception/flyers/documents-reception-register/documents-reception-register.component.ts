@@ -14,10 +14,13 @@ import { IAffair } from 'src/app/core/models/catalogs/affair.model';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
 import { ICity } from 'src/app/core/models/catalogs/city.model';
 import { ICourt } from 'src/app/core/models/catalogs/court.model';
+import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
+import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { TvalTable1Data } from 'src/app/core/models/catalogs/dinamic-tables.model';
 import { IIdentifier } from 'src/app/core/models/catalogs/identifier.model';
 import { IIndiciados } from 'src/app/core/models/catalogs/indiciados.model';
 import { IStation } from 'src/app/core/models/catalogs/station.model';
+import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
 import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { IUser } from 'src/app/core/models/catalogs/user.model';
 import { IManagementArea } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
@@ -32,6 +35,8 @@ import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { DocumentsReceptionFlyerSelectComponent } from './components/documents-reception-flyer-select/documents-reception-flyer-select.component';
+import { DocumentsReceptionSelectComponent } from './components/documents-reception-select/documents-reception-select.component';
+import { DOCUMENTS_RECEPTION_SELECT_AREA_COLUMNS } from './interfaces/columns';
 import {
   DocuentsReceptionRegisterFormChanges,
   DOCUMENTS_RECEPTION_REGISTER_FORM,
@@ -243,7 +248,7 @@ export class DocumentsReceptionRegisterComponent
 
   getSubjects(params?: ListParams) {
     //TODO: Agregar filtro por tipo de volante o proceso, campo referralNoteType y
-    // agregar checkbox para filtrar por relacion bien
+    // cargar datos en modal tabla con la relacion al bien
     this.affairService.getAll(params).subscribe({
       next: data => {
         this.subjects = new DefaultSelect(data.data, data.count);
@@ -396,5 +401,43 @@ export class DocumentsReceptionRegisterComponent
 
   checkDesalojo(event: any) {
     console.log(event, this.documentsReceptionForm.controls['desalojov'].value);
+  }
+
+  openModalAreas() {
+    this.openModalSelect({
+      title: 'Área',
+      columnsType: { ...DOCUMENTS_RECEPTION_SELECT_AREA_COLUMNS },
+      service: this.docRegisterService,
+      dataObservableFn: this.docRegisterService.getDepartaments,
+      filter: { field: 'description', operator: SearchFilter.LIKE },
+    });
+  }
+
+  selectArea(areaData: IDepartment) {
+    console.log(areaData);
+    const delegation = areaData.numDelegation as IDelegation;
+    const subdelegation = areaData.numSubDelegation as ISubdelegation;
+    this.formControls.destinationAreaId.setValue(areaData.dsarea);
+    this.formControls.destinationArea.setValue(areaData.description);
+    this.formControls.delegationNo.setValue(delegation.id);
+    this.formControls.delegationName.setValue(delegation.description);
+    this.formControls.subDelegationNo.setValue(subdelegation.id);
+    this.formControls.subDelegationName.setValue(subdelegation.description);
+  }
+
+  openModalSelect(context?: Partial<DocumentsReceptionSelectComponent>) {
+    const modalRef = this.modalService.show(DocumentsReceptionSelectComponent, {
+      initialState: { ...context },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.onSelect.subscribe(data => {
+      if (data) this.selectArea(data);
+    });
+  }
+
+  clearCityState() {
+    this.formControls.city.setValue(null);
+    this.formControls.state.setValue(null);
   }
 }
