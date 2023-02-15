@@ -72,6 +72,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   params = new BehaviorSubject<FilterParams>(new FilterParams());
   listError: any[] = []; // Guardar lista de errores del proceso
   proceso: number = 0;
+  inicioProceso: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -95,6 +96,15 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       desalojo: [false, [Validators.required]],
       idCarga: [null],
     });
+  }
+
+  resetProcess() {
+    this.listError = [];
+    // this.startVariables();
+    this.DeclarationsSatSaeMassive = null;
+    this.assetsForm.reset();
+    this.targetChange();
+    this.inicioProceso = false;
   }
 
   save() {
@@ -193,13 +203,15 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     }
     if (this.target.value == 'sat') {
       console.log('SAT');
-      this.validatorSatMassive();
+      this.validatorPreloadMassive();
     } else if (this.target.value == 'pgr') {
       console.log('PGR');
-      this.validatorPgrMassive();
+      this.validatorPreloadMassive();
+      // this.validatorPgrMassive();
     } else if (this.target.value == 'general') {
       console.log('GENERAL');
-      this.validatorGeneralMassive();
+      this.validatorPreloadMassive();
+      // this.validatorGeneralMassive();
     }
   }
 
@@ -280,7 +292,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   /**
    * Proceso de validación de carga masiva para la opción SAT
    */
-  validatorSatMassive() {
+  validatorPreloadMassive() {
     console.log('SAT VALID');
     if (this.validIdCarga() && this.validActionType()) {
       this.startVariables();
@@ -318,7 +330,10 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       // Inicia proceso de validación
       this.DeclarationsSatSaeMassive.message_progress =
         VALIDATION_START_MESSAGE;
+      // Setear arreglo de lista de errores
       this.listError = [];
+      // Se inicia proceso de carga masiva
+      this.inicioProceso = true;
       this.DeclarationsSatSaeMassive.common_general.proceso =
         this.assetsForm.get('actionType').value;
       from(this.tableSource)
@@ -364,7 +379,6 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
                   error = this.agregarError(error, ERROR_ESTATUS(data.status));
                 }
                 // Validar Clasificación de bien
-                // #### Falta que filtre por numero clasificacion bien HALLAZGO 231
                 if (data.clasif) {
                   const params: ListParams = {
                     page: this.params.getValue().page,
@@ -375,7 +389,14 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
                   await this.goodsBulkService
                     .getGoodssSubtype(params)
                     .subscribe({
-                      next: res => res,
+                      next: res => {
+                        if (res.data.length == 0) {
+                          error = this.agregarError(
+                            error,
+                            ERROR_CLASS_GOOD(data.clasif)
+                          );
+                        }
+                      },
                       error: err => {
                         error = this.agregarError(
                           error,
@@ -429,7 +450,6 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
               // --- PROCESO 4
               if (this.proceso == 4) {
                 // Validar transferente para revisar si el transferente es mayor a 10000 y existe en la base de datos
-                // #### HALLAZGO 290
                 if (data.transferente > 10000) {
                   const params: ListParams = {
                     page: this.params.getValue().page,
@@ -441,7 +461,14 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
                   await this.goodsBulkService
                     .getNumberTransferenteAuthority(data.transferente)
                     .subscribe({
-                      next: res => res,
+                      next: res => {
+                        if (res.data.length == 0) {
+                          error = this.agregarError(
+                            error,
+                            ERROR_TRANSFERENTE(data.transferente)
+                          );
+                        }
+                      },
                       error: err => {
                         error = this.agregarError(
                           error,
@@ -465,10 +492,12 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
                       next: res => {
                         console.log(res);
                         if (res.data) {
-                          this.validateAttributeClassificationgood(
-                            res.data,
-                            SAT_SAE_MUEBLES_PROCESO_4
-                          );
+                          let dataResponse =
+                            this.validateAttributeClassificationgood(
+                              res.data,
+                              SAT_SAE_MUEBLES_PROCESO_4
+                            );
+                          console.log(dataResponse);
                         }
                       },
                       error: err => {
@@ -494,10 +523,12 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
                       next: res => {
                         console.log(res);
                         if (res.data) {
-                          this.validateAttributeClassificationgood(
-                            res.data,
-                            SAT_SAE_INMUEBLES_PROCESO_4
-                          );
+                          let dataResponse =
+                            this.validateAttributeClassificationgood(
+                              res.data,
+                              SAT_SAE_INMUEBLES_PROCESO_4
+                            );
+                          console.log(dataResponse);
                         }
                       },
                       error: err => {
@@ -578,14 +609,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
       }
     }
     console.log(likeVar, equalVar);
-  }
-
-  validatorPgrMassive() {
-    console.log('PGR VALID');
-  }
-  validatorGeneralMassive() {
-    console.log('GENERAL VALID');
-    console.log(this.tableSource);
+    return { likeVar: likeVar, equalVar: equalVar };
   }
 
   /**
