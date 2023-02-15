@@ -2,12 +2,16 @@ import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { ENDPOINT_LINKS } from 'src/app/common/constants/endpoints';
 import { ProcedureManagementEndPoints } from 'src/app/common/constants/endpoints/ms-proceduremanagement-endpoints';
+import { UserEndpoints } from 'src/app/common/constants/endpoints/ms-users-endpoints';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
+import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { IIdentifier } from 'src/app/core/models/catalogs/identifier.model';
+import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
 import { IStation } from 'src/app/core/models/catalogs/station.model';
 import { IManagementArea } from '../../models/ms-proceduremanagement/ms-proceduremanagement.interface';
+import { IUserAccessAreaRelational } from '../../models/ms-users/seg-access-area-relational.model';
 
 @Injectable({
   providedIn: 'root',
@@ -34,12 +38,31 @@ export class DocReceptionRegisterService extends HttpService {
     );
   }
 
+  getPublicMinistries(params?: string): Observable<IListResponse<IMinpub>> {
+    let partials = ENDPOINT_LINKS.MinPub.split('/');
+    this.microservice = partials[0];
+    return this.get<IListResponse<IMinpub>>(partials[1], params).pipe(
+      tap(() => (this.microservice = ''))
+    );
+  }
+
   getIdentifiers(params?: string): Observable<IListResponse<IIdentifier>> {
     let partials = ENDPOINT_LINKS.Identifier.split('/');
     this.microservice = partials[0];
     return this.get<IListResponse<IIdentifier>>(partials[1], params).pipe(
       tap(() => (this.microservice = ''))
     );
+  }
+
+  getDepartaments(
+    self?: DocReceptionRegisterService,
+    params?: string
+  ): Observable<IListResponse<IDepartment>> {
+    let partials = ENDPOINT_LINKS.Departament.split('/');
+    self.microservice = partials[0];
+    return self
+      .get<IListResponse<IDepartment>>(partials[1], params)
+      .pipe(tap(() => (this.microservice = '')));
   }
 
   getManagementAreas(
@@ -51,4 +74,40 @@ export class DocReceptionRegisterService extends HttpService {
       params
     ).pipe(tap(() => (this.microservice = '')));
   }
+
+  getUsersSegAreas(
+    params?: string
+  ): Observable<IListResponse<IUserAccessAreaRelational>> {
+    this.microservice = UserEndpoints.BasePath;
+    return this.get<IListResponse<IUserAccessAreaRelational>>(
+      UserEndpoints.SegAccessAreas,
+      params
+    ).pipe(tap(() => (this.microservice = '')));
+  }
+
+  // protected get<T = any>(route: string, _params?: _Params) {
+  //   const params = this.getParams(_params);
+  //   const url = this.buildRoute(route);
+  //   return this.httpClient.get<T>(`${url}`, { params });
+  // }
+
+  // private buildRoute(route: string): string {
+  //   return `${this.url}${this.microservice}/${this.prefix}${route}`;
+  // }
+
+  // private getParams(rawParams: _Params) {
+  //   if (rawParams instanceof HttpParams) {
+  //     return rawParams;
+  //   }
+
+  //   if (typeof rawParams === 'string') {
+  //     return new HttpParams({ fromString: rawParams });
+  //   }
+
+  //   if (rawParams instanceof ListParams) {
+  //     return new HttpParams({ fromObject: rawParams });
+  //   }
+
+  //   return new HttpParams({ fromObject: rawParams });
+  // }
 }

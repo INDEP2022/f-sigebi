@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { addDays } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { minDate } from 'src/app/common/validations/date.validators';
@@ -54,9 +54,9 @@ export class PerformProgrammingFormComponent
 {
   estatesList: LocalDataSource = new LocalDataSource();
   goodSelect: IGoodProgrammingSelect[] = [];
-  goodsTranportables: IGoodProgrammingSelect[] = [];
-  goodsGuards: IGoodProgrammingSelect[] = [];
-  goodsWarehouse: IGoodProgrammingSelect[] = [];
+  goodsTranportables: LocalDataSource = new LocalDataSource();
+  goodsGuards: LocalDataSource = new LocalDataSource();
+  goodsWarehouse: LocalDataSource = new LocalDataSource();
   usersToProgramming: LocalDataSource = new LocalDataSource();
   dataSearch: IEstateSearch;
   regionalDelegationUser: IRegionalDelegation;
@@ -96,7 +96,7 @@ export class PerformProgrammingFormComponent
   totalItemsWarehouseGoods: number = 0;
   paramsUsers = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsUsers: number = 0;
-
+  loadGoods: boolean = false;
   settingUser = { ...this.settings, ...SettingUserTable };
 
   settingsTransportableGoods = { ...this.settings, ...settingTransGoods };
@@ -190,11 +190,15 @@ export class PerformProgrammingFormComponent
 
     config.initialState = {
       userData,
-      callback: (data: IUser[]) => {
-        if (data) {
+      callback: (data: IUser, create: boolean) => {
+        if (data && create) {
           this.usersToProgramming.getElements().then(item => {
             item.push(data);
             this.usersToProgramming.load(item);
+          });
+        } else {
+          this.usersToProgramming.find(userData).then((item: IUser) => {
+            this.usersToProgramming.update(item, data);
           });
         }
       },
@@ -268,7 +272,8 @@ export class PerformProgrammingFormComponent
       callback: (data: IEstateSearch) => {
         if (data) {
           this.dataSearch = data;
-          this.initializeParamsTrans();
+          console.log('search', this.dataSearch);
+          //this.initializeParamsTrans();
         }
       },
     };
@@ -279,8 +284,8 @@ export class PerformProgrammingFormComponent
     );
   }
 
-  showGoods() {
-    this.initializeParamsTrans();
+  showGoodsProgramming() {
+    this.getProgGoods();
   }
 
   getRegionalDelegationSelect(params?: ListParams) {
@@ -303,6 +308,7 @@ export class PerformProgrammingFormComponent
   getStateSelect(params?: ListParams) {
     params['filter.regionalDelegation'] = this.regionalDelegationUser.id;
     this.stateService.getAll(params).subscribe(data => {
+      console.log('estados', data);
       const filterStates = data.data.filter(_states => {
         return _states.stateCode;
       });
@@ -325,11 +331,12 @@ export class PerformProgrammingFormComponent
   getTransferentSelect(params?: ListParams) {
     if (this.idState) {
       this.showSelectTransferent = true;
-      const type = 'TE';
+      const type = 'TLP';
       const state = Number(this.idState);
       this.transferentService
         .getByTypeUserIdState(params, state, type)
         .subscribe(data => {
+          console.log('transferentes', data);
           this.transferences = new DefaultSelect(data.data, data.count);
         });
     }
@@ -346,6 +353,7 @@ export class PerformProgrammingFormComponent
       params['filter.idTransferent'] = this.idTrans;
       params['filter.keyState'] = this.idState;
       this.stationService.getAll(params).subscribe(data => {
+        console.log('Emisoras', data);
         this.stations = new DefaultSelect(data.data, data.count);
       });
     }
@@ -365,6 +373,7 @@ export class PerformProgrammingFormComponent
 
       this.authorityService.postByColumns(params, columns).subscribe(data => {
         this.authorities = new DefaultSelect(data.data, data.count);
+        console.log('Autoridades', data);
         this.showSelectAuthority = true;
       });
     }
@@ -376,6 +385,7 @@ export class PerformProgrammingFormComponent
 
   getTypeRelevantSelect(params: ListParams) {
     this.typeRelevantService.getAll(params).subscribe(data => {
+      console.log('tipo relevante', data);
       this.typeRelevant = new DefaultSelect(data.data, data.count);
     });
   }
@@ -396,25 +406,25 @@ export class PerformProgrammingFormComponent
     }
   }
 
-  initializeParamsTrans() {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getProgGoods());
-  }
-
   getProgGoods() {
-    const filterColumns: Object = {
-      /*regionalDelegation: Number(this.regionalDelegationUser.id),
-      transferent: Number(this.idTrans), */
-    };
     this.loadingGoods = true;
+    const filterColumns: Object = {
+      regionalDelegation: Number(this.regionalDelegationUser.id),
+      transferent: Number(this.idTrans),
+      station: Number(this.idStation),
+      authority: Number(this.idAuthority),
+      relevantType: Number(this.idTypeRelevant),
+    };
+
     this.goodsQueryService
       .postGoodsProgramming(this.params.getValue(), filterColumns)
       .subscribe({
         next: response => {
+          console.log(response);
           this.estatesList.load(response.data);
           this.totalItems = response.count;
           this.loadingGoods = false;
+          this.loadGoods = true;
         },
         error: error => (this.loadingGoods = false),
       });
@@ -427,8 +437,9 @@ export class PerformProgrammingFormComponent
   sendTransportable() {
     if (this.goodSelect.length) {
       this.headingTransportable = `Transportables(${this.goodSelect.length})`;
-      this.goodsTranportables = this.goodSelect;
+      this.goodsTranportables.load(this.goodSelect);
       this.onLoadToast('success', 'Correcto', 'Bien movido a transportable');
+      this.removeGoodsSelected(this.goodSelect);
     } else {
       this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
     }
@@ -437,8 +448,9 @@ export class PerformProgrammingFormComponent
   sendGuard() {
     if (this.goodSelect.length) {
       this.headingGuard = `Resguardo(${this.goodSelect.length})`;
-      this.goodsGuards = this.goodSelect;
+      this.goodsGuards.load(this.goodSelect);
       this.onLoadToast('success', 'Correcto', 'Bien movido a resguardo');
+      this.removeGoodsSelected(this.goodSelect);
     } else {
       this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
     }
@@ -447,24 +459,73 @@ export class PerformProgrammingFormComponent
   sendWarehouse() {
     if (this.goodSelect.length == 0) {
       this.headingWarehouse = `Almacén SAT(${this.goodSelect.length})`;
+      this.goodsWarehouse.load(this.goodSelect);
       this.onLoadToast('success', 'Correcto', 'Bien movido a almacén SAT');
-      this.goodsWarehouse = this.goodSelect;
-      this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
+      this.removeGoodsSelected(this.goodSelect);
     } else {
+      this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
     }
+  }
+
+  removeGoodsSelected(items: IGoodProgrammingSelect[]) {
+    items.map(data => {
+      this.estatesList.find(data).then(items => {
+        this.estatesList.remove(items);
+      });
+    });
   }
 
   showGood() {}
 
-  removeGood(event: any) {
-    event.confirm.resolve();
-    this.onLoadToast('success', 'Elemento Eliminado', '');
+  removeGoodTrans(item: IGoodProgrammingSelect) {
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Desea remover el bien?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.goodsTranportables.remove(item);
+        this.estatesList.getElements().then(items => {
+          items.push(item);
+          this.estatesList.load(items);
+          this.onLoadToast('success', 'Bien removido correctamente', '');
+        });
+      }
+    });
   }
 
-  onDeleteConfirm(event: any) {
-    console.log('Evento', event);
-    event.confirm.resolve();
-    this.onLoadToast('success', 'Elemento Eliminado', '');
+  removeGoodGuard(item: IGoodProgrammingSelect) {
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Desea remover el bien?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.goodsGuards.remove(item);
+        this.estatesList.getElements().then(items => {
+          items.push(item);
+          this.estatesList.load(items);
+          this.onLoadToast('success', 'Bien removido correctamente', '');
+        });
+      }
+    });
+  }
+
+  removeGoodWarehouse(item: IGoodProgrammingSelect) {
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Desea remover el bien?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.goodsWarehouse.remove(item);
+        this.estatesList.getElements().then(items => {
+          items.push(item);
+          this.estatesList.load(items);
+          this.onLoadToast('success', 'Bien removido correctamente', '');
+        });
+      }
+    });
   }
 
   confirm() {}
@@ -472,12 +533,14 @@ export class PerformProgrammingFormComponent
   delete(user: any) {
     this.alertQuestion(
       'warning',
-      'Eliminar',
-      '¿Desea eliminar este registro?'
+      'Confirmación',
+      '¿Desea eliminar el usuario de la programación?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecuta el servicio//
-        this.onLoadToast('success', 'Usuario eliminado correctamente', '');
+        this.usersToProgramming.remove(user).then(() => {
+          this.usersToProgramming.refresh();
+          this.onLoadToast('success', 'Usuario eliminado correctamente', '');
+        });
       }
     });
   }
