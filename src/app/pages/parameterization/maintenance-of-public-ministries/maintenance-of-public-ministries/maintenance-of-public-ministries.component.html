@@ -122,7 +122,7 @@
           type="button"
           class="btn btn-success active"
           (click)="saved()"
-          [disabled]="!form.valid">
+          [disabled]="!form.valid || loading">
           Guardar
         </button>
       </div>

@@ -1,4 +1,5 @@
 import { FormControl, Validators } from '@angular/forms';
+import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 // types
 export type DocumentsReceptionRegister =
   typeof DOCUMENTS_RECEPTION_REGISTER_FORM;
@@ -22,9 +23,9 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   subject: new FormControl<string | number>(null, Validators.required),
   reception: new FormControl<string | number>(null, Validators.required),
   priority: new FormControl<string | number>(null, Validators.required),
-  flyer: new FormControl<string | number>(null, Validators.required),
-  consecutive: new FormControl<string | number>(null, Validators.required),
-  record: new FormControl<string | number>(null, Validators.required),
+  flyer: new FormControl<string | number>(null),
+  consecutive: new FormControl<string | number>(null),
+  record: new FormControl<string | number>(null),
   recordId: new FormControl<string | number>(null),
   desalojov: new FormControl<boolean>(false),
   generalDirection: new FormControl<boolean>(false),
@@ -37,6 +38,7 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   city: new FormControl<string | number>(null, Validators.required),
   state: new FormControl<string | number>(null, Validators.required),
   transfer: new FormControl<string | number>(null, Validators.required),
+  transferDup: new FormControl<ITransferente>(null, Validators.required),
   court: new FormControl<string | number>(null),
   transmitter: new FormControl<string | number>(null, Validators.required),
   autority: new FormControl<string | number>(null, Validators.required),
@@ -46,5 +48,21 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   destinationManagement: new FormControl<string | number>(null),
   inAtention: new FormControl<string | number>(null, Validators.required),
   cpp: new FormControl<string | number>(null),
-  status: new FormControl<string | number>(null, Validators.required),
 };
+
+export enum TaxpayerLabel {
+  Taxpayer = 'Contribuyente',
+  Defendant = 'Indiciado',
+}
+
+export enum InitialCondition {
+  administrative = 'A',
+  procedure = 'P',
+  adminTransfer = 'AT',
+  transferor = 'T',
+}
+
+export enum ProcedureStatus {
+  pending = 'PENDIENTE',
+  sent = 'ENVIADO',
+}

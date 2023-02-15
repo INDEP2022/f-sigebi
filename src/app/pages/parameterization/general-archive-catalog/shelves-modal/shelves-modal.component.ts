@@ -4,7 +4,6 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //models
 import { IShelves } from 'src/app/core/models/catalogs/shelves.model';
 //Services
@@ -24,9 +23,6 @@ export class ShelvesModalComponent extends BasePage implements OnInit {
   title: string = 'Estantes';
   edit: boolean = false;
 
-  cveSaveValues = new DefaultSelect();
-  idBatteryD = new DefaultSelect();
-
   id: ISaveValue;
   idBattery: IBattery;
   cve: ISaveValue;
@@ -42,6 +38,7 @@ export class ShelvesModalComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.prepareForm();
+    console.log(this.noBattery);
   }
 
   private prepareForm() {

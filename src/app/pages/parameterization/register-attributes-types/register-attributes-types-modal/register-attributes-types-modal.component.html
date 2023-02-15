@@ -5,17 +5,18 @@
   <div body>
     <form class="form-material" [formGroup]="attribClassifGoodForm">
       <div class="row">
-        <div class="col-md-3" *ngIf="edit == false">
+        <div class="col-md-3">
           <form-field
             [control]="attribClassifGoodForm.get('classifGoodNumber')"
             label="No. Clasificacion bien">
             <input
               type="number"
               class="form-control"
-              formControlName="classifGoodNumber" />
+              formControlName="classifGoodNumber"
+              readonly />
           </form-field>
         </div>
-        <div class="col-md-3" *ngIf="edit == false">
+        <div class="col-md-3">
           <form-field
             [control]="attribClassifGoodForm.get('columnNumber')"
             label="No. Columna">

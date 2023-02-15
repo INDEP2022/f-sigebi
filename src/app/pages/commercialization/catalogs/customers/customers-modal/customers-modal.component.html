@@ -7,7 +7,11 @@
       <div class="row">
         <div class="col-md-2">
           <form-field label="ID" [control]="customerForm.get('id')">
-            <input type="text" class="form-control" formControlName="id" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="id"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -33,6 +37,15 @@
               type="text"
               class="form-control"
               formControlName="sellerId" />
+            <!-- <ngx-select
+              [searchOnInit]="true"
+              [form]="customerForm"
+              control="sellerId"
+              [data]="sellers"
+              value="id"
+              bindLabel="id"
+              label="Clave vendedor"
+              (fetchItems)="getSellers($event)"> -->
           </form-field>
         </div>
       </div>
@@ -92,10 +105,11 @@
       <!-- __ -->
       <div class="row pt-5">
         <div class="col-md-3">
-          <form-field
-            label="Código Postal"
-            [control]="customerForm.get('mailWeb')">
-            <input type="text" class="form-control" formControlName="mailWeb" />
+          <form-field label="Email" [control]="customerForm.get('mailWeb')">
+            <input
+              type="email"
+              class="form-control"
+              formControlName="mailWeb" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -110,12 +124,16 @@
         </div>
         <div class="col-md-3">
           <form-field
-            label="¿Lista Negra?"
+            label="¿En lista Negra?"
             [control]="customerForm.get('blackList')">
-            <input
-              type="text"
+            <ng-select
+              formControlName="blackList"
+              [searchable]="false"
               class="form-control"
-              formControlName="blackList" />
+              [clearable]="false">
+              <ng-option value="S">Si</ng-option>
+              <ng-option value="N">No</ng-option>
+            </ng-select>
           </form-field>
         </div>
       </div>
@@ -168,7 +186,12 @@
             <input
               type="text"
               class="form-control"
-              formControlName="blackListDate" />
+              formControlName="blackListDate"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -178,7 +201,12 @@
             <input
               type="text"
               class="form-control"
-              formControlName="releaseDate" />
+              formControlName="releaseDate"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
           </form-field>
         </div>
         <div class="col-md-3">
@@ -195,10 +223,14 @@
           <form-field
             label="Tipo de persona"
             [control]="customerForm.get('personType')">
-            <input
-              type="text"
+            <ng-select
+              formControlName="personType"
+              [searchable]="false"
               class="form-control"
-              formControlName="personType" />
+              [clearable]="false">
+              <ng-option value="M">Hombre</ng-option>
+              <ng-option value="F">Mujer</ng-option>
+            </ng-select>
           </form-field>
         </div>
       </div>
@@ -231,7 +263,12 @@
             <input
               type="text"
               class="form-control"
-              formControlName="freeDate" />
+              formControlName="freeDate"
+              bsDatepicker
+              [maxDate]="today"
+              [bsConfig]="{
+                dateInputFormat: 'YYYY-MM-DD'
+              }" />
           </form-field>
         </div>
       </div>
