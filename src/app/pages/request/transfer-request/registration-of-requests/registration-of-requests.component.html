@@ -55,7 +55,7 @@
                   <label for="">Fecha de Solicitud&#58;</label>
                   {{
                     registRequestForm.get('applicationDate').value
-                      | date : 'dd/MM/yyyy'
+                      | date: 'dd/MM/yyyy'
                   }}
                 </div>
               </div>
@@ -127,7 +127,7 @@
         </app-card>
 
         <div class="row pt-2">
-          <tabset class="md-tabs">
+          <tabset class="md-tabs" #staticTabs>
             <tab heading="{{ tab1 }}" id="tab1">
               <!-- Registro de Solicitudes o bines -->
               <app-request-record-tab
@@ -196,7 +196,7 @@
             </tab>
             <tab
               heading="{{ tab4 }}"
-              *ngIf="requestRegistration || approvalProcess">
+              *ngIf="(requestRegistration || approvalProcess) && !isExpedient">
               <app-registration-request-form
                 *ngIf="requestRegistration"></app-registration-request-form>
               <!-- Aprovacion de de solicitudes -->

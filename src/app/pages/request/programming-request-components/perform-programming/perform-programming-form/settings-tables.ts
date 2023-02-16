@@ -13,10 +13,13 @@ export const SettingUserTable = {
 
 export const settingTransGoods = {
   actions: {
-    delete: false,
-    edit: false,
+    delete: true,
+    edit: true,
     columnTitle: 'Acciones',
     position: 'right',
+  },
+  edit: {
+    editButtonContent: '<i class="fa fa-eye"></i>',
   },
   delete: {
     ...TABLE_SETTINGS.delete,
@@ -27,8 +30,8 @@ export const settingTransGoods = {
 
 export const settingGuard = {
   actions: {
-    edit: false,
-    delete: false,
+    edit: true,
+    delete: true,
     columnTitle: 'Acciones',
     position: 'right',
   },
@@ -40,8 +43,8 @@ export const settingGuard = {
 
 export const settingWarehouse = {
   actions: {
-    edit: false,
-    delete: false,
+    edit: true,
+    delete: true,
     columnTitle: 'Acciones',
     position: 'right',
   },

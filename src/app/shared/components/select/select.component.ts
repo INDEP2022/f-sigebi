@@ -42,7 +42,6 @@ export class SelectComponent<T> implements OnInit {
   @Output() fetchItems = new EventEmitter<ListParams>();
   @Output() change = new EventEmitter<any>();
   @Input() readonly: boolean = false;
-  @Input() initialValue: Object = null;
   buffer: any[] = [];
   input$ = new Subject<string>();
   page: number = 1;

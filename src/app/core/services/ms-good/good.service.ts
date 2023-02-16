@@ -16,7 +16,7 @@ export class GoodService extends HttpService {
     this.microservice = GoodEndpoints.Good;
   }
 
-  getAll(params?: ListParams): Observable<IListResponse<IGood>> {
+  getAll(params?: ListParams | string): Observable<IListResponse<IGood>> {
     return this.get<IListResponse<IGood>>(GoodEndpoints.Good, params);
   }
 

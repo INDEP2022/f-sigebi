@@ -1,8 +1,19 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { catchError, EMPTY, map, of, switchMap } from 'rxjs';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import {
+  BehaviorSubject,
+  catchError,
+  EMPTY,
+  map,
+  of,
+  switchMap,
+  takeUntil,
+  tap,
+} from 'rxjs';
+import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IDetailProceedingsDevolution } from 'src/app/core/models/ms-proceedings/detail-proceedings-devolution.model';
 import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
@@ -10,10 +21,12 @@ import { ParametersService } from 'src/app/core/services/ms-parametergood/parame
 import { DetailProceedingsDevolutionService } from 'src/app/core/services/ms-proceedings/detail-proceedings-devolution';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings/proceedings.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { ListParams } from './../../../../common/repository/interfaces/list-params';
 import { IParameters } from './../../../../core/models/ms-parametergood/parameters.model';
 import { IUpdateProceedings } from './../../../../core/models/ms-proceedings/update-proceedings.model';
-import { CLOSING_RECORDS_COLUMNS } from './closing-records-columns';
+import { FormEditComponent } from './../form-edit/form-edit.component';
+import { GOODS_RECORDS_COLUMNS } from './closing-records-columns';
+import { PROCEEDINGS_RECORD_COLUMNS } from './proceedings-records-columns';
 
 @Component({
   selector: 'app-closing-records',
@@ -23,37 +36,146 @@ import { CLOSING_RECORDS_COLUMNS } from './closing-records-columns';
 export class ClosingRecordsComponent extends BasePage implements OnInit {
   form: FormGroup;
   statusAct: string = 'ABIERTA';
+  settings2: any;
   flag: boolean = false;
+  firsTime: boolean = true;
   record: IUpdateProceedings;
   dataResp: IProceedings;
   dataTable: any[] = [];
+  fileNumber: number;
   proceedingsNumb: number;
   proceedingsKey: string;
   di_clasif_numerario: number;
   dataForm: any;
+  copyDataProceedings: any;
+  proceedingsData: any[] = [];
+  proceedingsData2: any[] = [];
+  paramsProceedings = new BehaviorSubject<ListParams>(new ListParams());
+  paginatorProceedings: any = {};
+  paramsGoods = new BehaviorSubject<ListParams>(new ListParams());
+  paginatorGoods: any = {};
+  totalProceedings: number = 0;
+  totalGoods: number = 0;
   private route: Router;
 
   constructor(
     private fb: FormBuilder,
     private proceedingsService: ProceedingsService,
     private detailProceedingsDevolutionService: DetailProceedingsDevolutionService,
-    private parametersService: ParametersService
+    private parametersService: ParametersService,
+    private modalService: BsModalService
   ) {
     super();
+    this.settings2 = this.settings;
+    this.settings2.columns = PROCEEDINGS_RECORD_COLUMNS;
+    this.settings2.actions.delete = true;
     this.settings = {
       ...this.settings,
       actions: false,
-      columns: CLOSING_RECORDS_COLUMNS,
+      columns: GOODS_RECORDS_COLUMNS,
     };
+    // this.settings2.actions.delete = true;
   }
 
   get proceedingsCve() {
     return this.form.get('proceedingsCve');
   }
 
+  editProceeding(proceeding: IProceedings) {
+    console.log(proceeding);
+    console.log(this.copyDataProceedings);
+    const found = this.copyDataProceedings.find(
+      (element: IProceedings) => element.id == proceeding.id
+    );
+    console.log(found);
+    this.openForm(found);
+  }
+
   ngOnInit(): void {
-    this.getParamCve();
+    this.getParamCve(); //
     this.prepareForm();
+    this.initPaginatorProceedings();
+    this.initPaginatorGoods();
+  }
+
+  deleteExpedient() {
+    if (this.proceedingsData.length >= 1) {
+      this.onLoadToast(
+        'info',
+        'Info',
+        'No puede eliminar el expediente debido a que tiene actas.'
+      );
+    } else {
+      console.log('Eliminando expediente...');
+    }
+  }
+
+  deleteProceedings(proceeding: any) {
+    console.log(proceeding);
+    console.log('deleteProeedings');
+    this.getGoods(proceeding.data?.id)
+      .pipe(
+        catchError(err => {
+          if (err.status == 400) {
+            console.log('XXXX');
+            this.proceedingsService.remove(proceeding.data?.id).subscribe({
+              next: () => {
+                this.onLoadToast(
+                  'info',
+                  'Info',
+                  'El acta ha sido eliminada exitosamente'
+                );
+                setTimeout(() => {
+                  this.getInfo(this.fileNumber);
+                }, 2000);
+              },
+              error: err => {
+                console.log('Z1');
+                this.onLoadToast('info', 'Error', err.message);
+              },
+            });
+          }
+          return EMPTY;
+        })
+      )
+      .subscribe({
+        next: (data: any) => {
+          this.onLoadToast(
+            'info',
+            'Info',
+            'El acta no puede ser eliminada debido a que cuenta con bienes'
+          );
+        },
+        // error: err => {
+        //   console.log('Z2');
+        //   this.onLoadToast('info', 'Error', err.message);
+        // },
+      });
+  }
+
+  showDeleteAlert(proceedings: any) {
+    this.alertQuestion(
+      'warning',
+      'Eliminar',
+      '¿Desea eliminar esta acta?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.deleteProceedings(proceedings);
+        // Swal.fire('Acta borrada exitosamente', '', 'success');
+      }
+    });
+  }
+
+  openForm(proceeding: any) {
+    const modalConfig = MODAL_CONFIG;
+    modalConfig.initialState = {
+      proceeding,
+      title: 'Actualizar Acta',
+      callback: (next: boolean) => {
+        this.getInfo(this.fileNumber);
+      },
+    };
+    this.modalService.show(FormEditComponent, modalConfig);
   }
 
   getParamCve() {
@@ -69,14 +191,85 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
   }
 
   search(fileNumber: string) {
-    this.getInfo(parseInt(fileNumber));
+    this.fileNumber = Number(fileNumber);
+    this.firsTime = true;
+    this.resetGoodsPaginator();
+    this.resetProceedingssPaginator();
+    this.form.reset();
+    this.getInfo(this.fileNumber);
+  }
+
+  initPaginatorProceedings() {
+    console.log('Inicio');
+    this.paramsProceedings
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(data => {
+        this.paginatorProceedings.page = data.page;
+        this.paginatorProceedings.limit = data.limit;
+        console.log(this.paginatorProceedings);
+        console.log(`Init Paginator ${data.page} ${data.limit}`);
+        if (!this.firsTime) {
+          this.getProceedings(this.fileNumber).subscribe((data: any) => {
+            this.prepareProceedingsData(data);
+          });
+        }
+      });
+  }
+
+  initPaginatorGoods() {
+    this.paramsGoods.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
+      console.log(2);
+      this.paginatorGoods.page = data.page;
+      this.paginatorGoods.limit = data.limit;
+      if (!this.firsTime) {
+        console.log('XXXX');
+        this.getGoods(this.proceedingsNumb).subscribe((data: any) => {
+          this.prepareGoodsData(data);
+        });
+      }
+    });
+  }
+
+  resetGoodsPaginator() {
+    this.paramsGoods.next({ page: 1, limit: 10 });
+  }
+
+  resetProceedingssPaginator() {
+    this.paramsProceedings.next({ page: 1, limit: 10 });
+  }
+
+  selectProceedings(row: any) {
+    console.log('Seleccionar Acta', row);
+    // this.paramsGoods.next({ page: 1, limit: 10 });
+    console.log(row.data?.id);
+    this.proceedingsNumb = row.data?.id;
+    this.paramsGoods.next({ page: 1, limit: 10 });
+  }
+
+  getProceedings(fileNumber: number) {
+    return this.proceedingsService.getActByFileNumber(
+      fileNumber,
+      this.paginatorProceedings
+    );
+  }
+
+  getGoods(proceedingsNumb: number) {
+    console.log(proceedingsNumb);
+    return this.detailProceedingsDevolutionService.getDetailProceedingsDevolutionByProceedingsNumb(
+      proceedingsNumb,
+      this.paginatorGoods
+    );
   }
 
   getInfo(fileNumber: number) {
     this.flag = false;
-    this.proceedingsService
-      .getActByFileNumber(fileNumber)
+    this.firsTime = false;
+    this.getProceedings(fileNumber)
       .pipe(
+        tap((data: IListResponse<IProceedings>) => {
+          this.proceedingsNumb = data.data[0].id; // se asignan estos valores para luego pasarlos a la pantalla de validadores de actas
+          this.proceedingsKey = data.data[0].proceedingsCve;
+        }),
         catchError(err => {
           this.handleError(
             err,
@@ -85,26 +278,28 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
           return EMPTY;
         }),
         switchMap((proceedings: IListResponse<IProceedings>) =>
-          this.detailProceedingsDevolutionService
-            .getDetailProceedingsDevolutionByExpedient(fileNumber)
-            .pipe(
-              catchError(err => {
-                this.handleError(
-                  err,
-                  'No existen bienes asociados a este número de expediente'
-                );
-                return of(err);
-              }),
-              map((goods: any) => ({
-                proceedings,
-                goods,
-              }))
-            )
+          this.getGoods(proceedings.data[0].id).pipe(
+            tap(resp => console.log(resp)),
+            catchError(err => {
+              this.handleError(
+                err,
+                'No existen bienes asociados a este número de expediente'
+              );
+              return of(err);
+            }),
+            map((goods: any) => ({
+              proceedings,
+              goods,
+            }))
+          )
         )
       )
       .subscribe({
         next: data => {
+          this.firsTime = false;
           this.prepareData(data);
+          this.totalProceedings = Number(data.proceedings.count);
+          this.totalGoods = Number(data.goods.count);
         },
         error: error => {
           console.log(error);
@@ -122,36 +317,57 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
     proceedings: IListResponse<IProceedings>;
     goods: IListResponse<IDetailProceedingsDevolution>;
   }) {
-    let goodsData: any[] = [];
-    this.dataResp = data.proceedings.data[0];
-    this.statusAct = 'ABIERTA';
+    console.log(data);
+    this.proceedingsData = [];
+    this.proceedingsData2 = [];
+    let proceedingsTemp: any;
+    let expedientInfo: any = {};
+    // this.dataResp = data.proceedings.data[0];
+    // this.statusAct = 'ABIERTA';
     // this.statusAct = this.dataResp.proceedingStatus;          //DESCOMENTAR ESTO
-    this.proceedingsNumb = data.proceedings.data[0].id;
-    this.proceedingsKey = data.proceedings.data[0].proceedingsCve;
-    this.dataForm = {
-      previewFind: this.dataResp.fileNumber.previewFind,
-      proceedingsCve: this.dataResp.proceedingsCve,
-      penaltyCause: this.dataResp.fileNumber.penaltyCause,
-      elaborationDate: this.convertDate(this.dataResp.elaborationDate),
-      authorityOrder: this.dataResp.authorityOrder,
-      proceedingsType: this.dataResp.proceedingsType,
-      universalFolio: this.dataResp.universalFolio,
-      observations: this.dataResp.observations,
-    };
+    expedientInfo.penaltyCause =
+      data.proceedings.data[0].fileNumber.penaltyCause;
+    expedientInfo.previewFind = data.proceedings.data[0].fileNumber.previewFind;
+    this.form.patchValue(expedientInfo);
+    this.prepareProceedingsData(data.proceedings);
+    // this.proceedingsData = this.proceedingsData2;
     if (!data.goods.hasOwnProperty('error')) {
-      for (let good of data.goods.data) {
-        let data: any = {
-          goodsId: good.good[0].goodsID,
-          description: good.good[0].description,
-          quantity: good.good[0].quantity,
-          amountReturned: good.amountReturned,
-        };
-        goodsData.push(data);
-      }
+      this.prepareGoodsData(data.goods);
     }
-    this.form.patchValue(this.dataForm);
-    this.dataTable = goodsData;
+    // this.form.patchValue(this.dataForm);
     this.flag = true;
+  }
+
+  prepareProceedingsData(data: IListResponse<IProceedings>) {
+    let proceedingsTemp: any;
+    this.copyDataProceedings = data.data;
+    for (let proceedings of data.data) {
+      proceedingsTemp = {
+        id: proceedings.id,
+        proceedingsCve: proceedings.proceedingsCve,
+        elaborationDate: this.convertDate(proceedings.elaborationDate),
+        authorityOrder: proceedings.authorityOrder,
+        proceedingsType: proceedings.proceedingsType,
+        universalFolio: proceedings.universalFolio,
+        observations: proceedings.observations,
+      };
+      console.log(proceedingsTemp.universalFolio);
+      this.proceedingsData.push(proceedingsTemp);
+    }
+  }
+
+  prepareGoodsData(data: IListResponse<IDetailProceedingsDevolution>) {
+    let goodsData: any[] = [];
+    for (let good of data.data) {
+      let data: any = {
+        goodsId: good.good[0].goodsID,
+        description: good.good[0].description,
+        quantity: good.good[0].quantity,
+        amountReturned: good.amountReturned,
+      };
+      goodsData.push(data);
+    }
+    this.dataTable = goodsData;
   }
 
   enableDisableFields(option: string) {
@@ -217,17 +433,8 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      proceedingsCve: [null, [Validators.required]],
       previewFind: [null],
       penaltyCause: [null, []],
-      proceedingsType: [null],
-      elaborationDate: [null],
-      authorityOrder: [null, [Validators.required]],
-      universalFolio: [null, [Validators.required]],
-      observations: [
-        null,
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
     });
   }
 }
