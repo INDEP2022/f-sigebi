@@ -101,12 +101,12 @@ export class MaintenanceOfPublicMinistriesComponent
     }
 
     if (this.form.valid) {
+      this.loading = true;
       this.maintenceService.create(this.form.value).subscribe({
         next: (resp: any) => {
-          if (resp.statusCode == 201) {
-            this.onLoadToast('success', 'Ha sido creado con éxito', '');
-            this.form.reset();
-          }
+          this.onLoadToast('success', 'Ha sido creado con éxito', '');
+          this.form.reset();
+          this.loading = false;
         },
         error: error => this.onLoadToast('error', error.erro.message, ''),
       });

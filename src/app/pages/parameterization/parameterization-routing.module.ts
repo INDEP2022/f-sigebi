@@ -229,7 +229,7 @@ const routes: Routes = [
           './maintenance-of-public-ministries/maintenance-of-public-ministries.module'
         )
       ).MaintenanceOfPublicMinistriesModule,
-    data: { title: 'Mantenimiento a ministerios publicos' },
+    data: { title: 'Mantenimiento a ministerios públicos' },
   },
   {
     path: 'wareahouse-catalog',

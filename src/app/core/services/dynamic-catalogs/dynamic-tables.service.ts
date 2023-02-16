@@ -8,6 +8,7 @@ import { IListResponse } from '../../interfaces/list-response.interface';
 import {
   ITables,
   ITablesData,
+  TvalTable1Data,
 } from '../../models/catalogs/dinamic-tables.model';
 @Injectable({
   providedIn: 'root',
@@ -34,5 +35,13 @@ export class DynamicTablesService extends HttpService {
       DynamicCatalogEndpoint.DinamicTables,
       params
     );
+  }
+
+  getTvalTable1ByTableKey(
+    id: number | string,
+    params: ListParams
+  ): Observable<IListResponse<TvalTable1Data>> {
+    const fullRoute = `${DynamicCatalogEndpoint.DinamicTables}/${DynamicCatalogEndpoint.findTvalTable1ByKey}/${id}`;
+    return this.get<IListResponse<TvalTable1Data>>(fullRoute, params);
   }
 }
