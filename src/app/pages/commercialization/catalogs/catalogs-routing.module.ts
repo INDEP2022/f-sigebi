@@ -11,8 +11,8 @@ const routes: Routes = [
   {
     path: 'authorization-keys-ois',
     loadChildren: async () =>
-      (await import('./authorization-keys-ois/authorization-keys-ois.module'))
-        .CCMAuthorizationKeysOisModule,
+      (await import('./authorization-keys/authorization-keys.module'))
+        .AuthorizationKeysModule,
     data: {
       title: 'Claves de Autorización Envío Ext. OIs',
       screen: 'FCOMERCVEAUTOI',

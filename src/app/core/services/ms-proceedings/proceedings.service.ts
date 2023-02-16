@@ -22,10 +22,12 @@ export class ProceedingsService extends HttpService {
   // }
 
   getActByFileNumber(
-    fileNumber?: number
+    fileNumber?: number,
+    params?: ListParams
   ): Observable<IListResponse<IProceedings>> {
     return this.get<IListResponse<IProceedings>>(
-      `${this.endpoint}?filter.fileNumber=${fileNumber}`
+      `${this.endpoint}?filter.fileNumber=${fileNumber}`,
+      params
     );
   }
 
@@ -40,6 +42,12 @@ export class ProceedingsService extends HttpService {
   ) {
     return this.get<IListResponse<IProceedings>>(
       `${this.endpoint}?filter.fileNumber=${fileNumber}`
+    );
+  }
+
+  remove(proceedingsNumb: number) {
+    return this.delete<IListResponse<IProceedings>>(
+      `${this.endpoint}/${proceedingsNumb}`
     );
   }
 }

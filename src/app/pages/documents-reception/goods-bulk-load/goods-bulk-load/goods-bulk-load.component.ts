@@ -26,6 +26,7 @@ import {
   ERROR_ATRIBUTE_CLASS_GOOD,
   ERROR_CLASS_GOOD,
   ERROR_ESTATUS,
+  ERROR_EXPEDIENTE,
   ERROR_EXPORT,
   ERROR_GOOD_INMUEBLE,
   ERROR_IDENTIFICADOR_MENAJE,
@@ -759,6 +760,22 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
                         error = this.agregarError(
                           error,
                           ERROR_TRANSFERENTE(data.transferente)
+                        );
+                      },
+                    });
+                }
+                if (data.expediente) {
+                  // Validar si existe un expediente
+                  await this.goodsBulkService
+                    .getExpedientById(data.expediente)
+                    .subscribe({
+                      next: res => {
+                        console.log(res);
+                      },
+                      error: err => {
+                        error = this.agregarError(
+                          error,
+                          ERROR_EXPEDIENTE(data.expediente)
                         );
                       },
                     });

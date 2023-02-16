@@ -45,6 +45,9 @@ const ERROR_CVE_SAT = (cve_sat: number) =>
 // PROCESO 2
 const ERROR_GOOD_INMUEBLE = (good_number: string) =>
   `No se encontraron datos del bien inmueble: ${good_number}.`;
+// PROCESO 4
+const ERROR_EXPEDIENTE = (expedient: string) =>
+  `No se encontro el expediente en el documento: ${expedient}.`;
 
 export {
   FORM_IDENTIFICATOR_NULL,
@@ -70,4 +73,5 @@ export {
   ERROR_GOOD_INMUEBLE,
   VALIDATION_UPLOAD_CREATION_EXPEDIENTE_MESSAGE,
   VALIDATION_UPLOAD_GENERATION_EXPEDIENTE_MESSAGE,
+  ERROR_EXPEDIENTE,
 };

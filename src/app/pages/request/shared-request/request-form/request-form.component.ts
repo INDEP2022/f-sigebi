@@ -180,7 +180,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
 
   getTransferent(params?: ListParams) {
     this.transferentService
-      .getAll(params)
+      .search(params)
       .subscribe((data: IListResponse<ITransferente>) => {
         this.selectTransfe = new DefaultSelect(data.data, data.count);
       });
@@ -241,7 +241,7 @@ export class RequestFormComponent extends BasePage implements OnInit {
     if (this.requestForm.controls['targetUser'].value === null) {
       this.onLoadToast(
         'info',
-        'Informacion',
+        'Información',
         `Seleccione un usuario para poder turnar la solicitud!`
       );
       return;

@@ -1,9 +1,8 @@
 export const PROVIDER_CATALOGS_PROVIDER_COLUMNS = {
   providerId: {
-    title: 'id',
+    title: 'ID Proveedor',
     type: 'string',
     sort: false,
-    hide: true,
   },
   rfc: {
     title: 'R.F.C.',

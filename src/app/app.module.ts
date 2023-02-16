@@ -17,6 +17,7 @@ import { ContentComponent } from './layouts/content/content.component';
 import { FullModule } from './layouts/full/full.module';
 import { CatTransferentModule } from './pages/parameterization/cat-transferent/cat-transferent.module';
 import { MailModule } from './pages/parameterization/mail/mail.module';
+import { AuthorizationKeysModule } from './pages/commercialization/catalogs/authorization-keys/authorization-keys.module';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -48,6 +49,7 @@ export function tokenGetter() {
     DateFnsModule.forRoot(),
     MailModule,
     CatTransferentModule,
+    AuthorizationKeysModule,
   ],
   providers: [
     {

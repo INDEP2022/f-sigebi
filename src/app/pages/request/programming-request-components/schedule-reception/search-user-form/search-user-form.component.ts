@@ -47,6 +47,7 @@ export class SearchUserFormComponent extends BasePage implements OnInit {
       .subscribe({
         next: response => {
           this.usersData = response.data;
+          console.log(this.usersData);
           this.totalItems = response.count;
           this.loading = false;
         },

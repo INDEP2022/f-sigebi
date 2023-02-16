@@ -52,4 +52,9 @@ export class TransferenteService extends HttpService {
     const route = `${this.endpoint}/${id}`;
     return this.delete(route);
   }
+
+  search(params: ListParams): Observable<IListResponse<ITransferente>> {
+    var route = `${this.endpoint}/search`;
+    return this.get<IListResponse<ITransferente>>(route, params);
+  }
 }

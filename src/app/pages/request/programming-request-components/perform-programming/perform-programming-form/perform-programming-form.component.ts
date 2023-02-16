@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { addDays } from 'date-fns';
 import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject, takeUntil } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { minDate } from 'src/app/common/validations/date.validators';
@@ -33,9 +33,11 @@ import { WarehouseFormComponent } from '../../../shared-request/warehouse-form/w
 import { ESTATE_COLUMNS } from '../../acept-programming/columns/estate-columns';
 import { SearchUserFormComponent } from '../../schedule-reception/search-user-form/search-user-form.component';
 import { userData } from '../../schedule-reception/search-user-form/users-data';
+import { DetailGoodProgrammingFormComponent } from '../../shared-components-programming/detail-good-programming-form/detail-good-programming-form.component';
 import { EstateSearchFormComponent } from '../estate-search-form/estate-search-form.component';
 import { IEstateSearch } from '../estate-search-form/estate-search.interface';
 import { UserFormComponent } from '../user-form/user-form.component';
+import { WarehouseSelectFormComponent } from '../warehouse-select-form/warehouse-select-form.component';
 import {
   settingGuard,
   settingTransGoods,
@@ -54,9 +56,9 @@ export class PerformProgrammingFormComponent
 {
   estatesList: LocalDataSource = new LocalDataSource();
   goodSelect: IGoodProgrammingSelect[] = [];
-  goodsTranportables: IGoodProgrammingSelect[] = [];
-  goodsGuards: IGoodProgrammingSelect[] = [];
-  goodsWarehouse: IGoodProgrammingSelect[] = [];
+  goodsTranportables: LocalDataSource = new LocalDataSource();
+  goodsGuards: LocalDataSource = new LocalDataSource();
+  goodsWarehouse: LocalDataSource = new LocalDataSource();
   usersToProgramming: LocalDataSource = new LocalDataSource();
   dataSearch: IEstateSearch;
   regionalDelegationUser: IRegionalDelegation;
@@ -96,7 +98,7 @@ export class PerformProgrammingFormComponent
   totalItemsWarehouseGoods: number = 0;
   paramsUsers = new BehaviorSubject<ListParams>(new ListParams());
   totalItemsUsers: number = 0;
-
+  loadGoods: boolean = false;
   settingUser = { ...this.settings, ...SettingUserTable };
 
   settingsTransportableGoods = { ...this.settings, ...settingTransGoods };
@@ -190,11 +192,15 @@ export class PerformProgrammingFormComponent
 
     config.initialState = {
       userData,
-      callback: (data: IUser[]) => {
-        if (data) {
+      callback: (data: IUser, create: boolean) => {
+        if (data && create) {
           this.usersToProgramming.getElements().then(item => {
             item.push(data);
             this.usersToProgramming.load(item);
+          });
+        } else {
+          this.usersToProgramming.find(userData).then((item: IUser) => {
+            this.usersToProgramming.update(item, data);
           });
         }
       },
@@ -268,7 +274,6 @@ export class PerformProgrammingFormComponent
       callback: (data: IEstateSearch) => {
         if (data) {
           this.dataSearch = data;
-          this.initializeParamsTrans();
         }
       },
     };
@@ -279,8 +284,8 @@ export class PerformProgrammingFormComponent
     );
   }
 
-  showGoods() {
-    this.initializeParamsTrans();
+  showGoodsProgramming() {
+    this.getProgGoods();
   }
 
   getRegionalDelegationSelect(params?: ListParams) {
@@ -325,7 +330,7 @@ export class PerformProgrammingFormComponent
   getTransferentSelect(params?: ListParams) {
     if (this.idState) {
       this.showSelectTransferent = true;
-      const type = 'TE';
+      const type = 'TLP';
       const state = Number(this.idState);
       this.transferentService
         .getByTypeUserIdState(params, state, type)
@@ -365,6 +370,7 @@ export class PerformProgrammingFormComponent
 
       this.authorityService.postByColumns(params, columns).subscribe(data => {
         this.authorities = new DefaultSelect(data.data, data.count);
+
         this.showSelectAuthority = true;
       });
     }
@@ -396,25 +402,34 @@ export class PerformProgrammingFormComponent
     }
   }
 
-  initializeParamsTrans() {
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getProgGoods());
-  }
-
   getProgGoods() {
-    const filterColumns: Object = {
-      /*regionalDelegation: Number(this.regionalDelegationUser.id),
-      transferent: Number(this.idTrans), */
-    };
     this.loadingGoods = true;
+    const filterColumns: Object = {
+      regionalDelegation: Number(this.regionalDelegationUser.id),
+      transferent: Number(this.idTrans),
+      station: Number(this.idStation),
+      authority: Number(this.idAuthority),
+      relevantType: Number(this.idTypeRelevant),
+    };
+
     this.goodsQueryService
       .postGoodsProgramming(this.params.getValue(), filterColumns)
       .subscribe({
         next: response => {
-          this.estatesList.load(response.data);
+          const filterData = response.data.map(items => {
+            if (items.physicalState == 1) {
+              items.physicalState = 'BUENO';
+              return items;
+            } else if (items.physicalState == 2) {
+              items.physicalState = 'MALO';
+              return items;
+            }
+          });
+
+          this.estatesList.load(filterData);
           this.totalItems = response.count;
           this.loadingGoods = false;
+          this.loadGoods = true;
         },
         error: error => (this.loadingGoods = false),
       });
@@ -426,9 +441,30 @@ export class PerformProgrammingFormComponent
 
   sendTransportable() {
     if (this.goodSelect.length) {
-      this.headingTransportable = `Transportables(${this.goodSelect.length})`;
-      this.goodsTranportables = this.goodSelect;
-      this.onLoadToast('success', 'Correcto', 'Bien movido a transportable');
+      if (this.goodsTranportables.count() == 0) {
+        this.goodsTranportables.load(this.goodSelect);
+        this.headingTransportable = `Transportables(${this.goodSelect.length})`;
+        this.onLoadToast(
+          'success',
+          'Correcto',
+          'Bienes movidos a transportable'
+        );
+        this.removeGoodsSelected(this.goodSelect);
+      } else {
+        this.goodsTranportables.getElements().then(data => {
+          this.goodSelect.map(items => {
+            data.push(items);
+            this.goodsTranportables.load(data);
+            this.headingTransportable = `Transportables(${this.goodsTranportables.count()})`;
+            this.onLoadToast(
+              'success',
+              'Correcto',
+              'Bienes movidos a transportable'
+            );
+            this.removeGoodsSelected(this.goodSelect);
+          });
+        });
+      }
     } else {
       this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
     }
@@ -436,35 +472,149 @@ export class PerformProgrammingFormComponent
 
   sendGuard() {
     if (this.goodSelect.length) {
-      this.headingGuard = `Resguardo(${this.goodSelect.length})`;
-      this.goodsGuards = this.goodSelect;
-      this.onLoadToast('success', 'Correcto', 'Bien movido a resguardo');
+      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+      const idTransferent = this.idTrans;
+      config.initialState = {
+        idTransferent,
+        callback: (data: any) => {
+          if (data) this.addGoodsGuards();
+        },
+      };
+
+      this.modalService.show(WarehouseSelectFormComponent, config);
     } else {
       this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
+    }
+  }
+
+  addGoodsGuards() {
+    if (this.goodsGuards.count() == 0) {
+      this.headingGuard = `Resguardo(${this.goodSelect.length})`;
+      this.goodsGuards.load(this.goodSelect);
+      this.onLoadToast('success', 'Correcto', 'Bien movido a resguardo');
+      this.removeGoodsSelected(this.goodSelect);
+    } else {
+      this.goodsGuards.getElements().then(data => {
+        this.goodSelect.map(items => {
+          data.push(items);
+          this.goodsGuards.load(data);
+          this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
+          this.onLoadToast('success', 'Correcto', 'Bienes movidos a Resguardo');
+          this.removeGoodsSelected(this.goodSelect);
+        });
+      });
     }
   }
 
   sendWarehouse() {
-    if (this.goodSelect.length == 0) {
-      this.headingWarehouse = `Almacén SAT(${this.goodSelect.length})`;
-      this.onLoadToast('success', 'Correcto', 'Bien movido a almacén SAT');
-      this.goodsWarehouse = this.goodSelect;
-      this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
+    if (this.goodSelect.length) {
+      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+      const idTransferent = this.idTrans;
+      config.initialState = {
+        idTransferent,
+        callback: (data: any) => {
+          if (data) this.addGoodsWarehouse();
+        },
+      };
+
+      this.modalService.show(WarehouseSelectFormComponent, config);
     } else {
+      this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
     }
   }
 
-  showGood() {}
-
-  removeGood(event: any) {
-    event.confirm.resolve();
-    this.onLoadToast('success', 'Elemento Eliminado', '');
+  addGoodsWarehouse() {
+    if (this.goodsWarehouse.count() == 0) {
+      this.headingWarehouse = `Almacén SAT(${this.goodSelect.length})`;
+      this.goodsWarehouse.load(this.goodSelect);
+      this.onLoadToast('success', 'Correcto', 'Bien movido a almacén SAT');
+      this.removeGoodsSelected(this.goodSelect);
+    } else {
+      this.goodsWarehouse.getElements().then(data => {
+        this.goodSelect.map(items => {
+          data.push(items);
+          this.goodsWarehouse.load(data);
+          this.headingWarehouse = `Almacén SAT(${this.goodsWarehouse.count()})`;
+          this.onLoadToast(
+            'success',
+            'Correcto',
+            'Bienes movidos a almacén SAT'
+          );
+          this.removeGoodsSelected(this.goodSelect);
+        });
+      });
+    }
   }
 
-  onDeleteConfirm(event: any) {
-    console.log('Evento', event);
-    event.confirm.resolve();
-    this.onLoadToast('success', 'Elemento Eliminado', '');
+  removeGoodsSelected(items: IGoodProgrammingSelect[]) {
+    items.map(data => {
+      this.estatesList.find(data).then(items => {
+        this.estatesList.remove(items);
+      });
+    });
+  }
+
+  showGood(item: IGoodProgrammingSelect) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      item,
+      callback: () => {},
+    };
+    this.modalService.show(DetailGoodProgrammingFormComponent, config);
+  }
+
+  removeGoodTrans(item: IGoodProgrammingSelect) {
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Desea remover el bien?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.goodsTranportables.remove(item);
+        this.estatesList.getElements().then(items => {
+          items.push(item);
+          this.estatesList.load(items);
+          this.headingTransportable = `Transportables(${this.goodsTranportables.count()})`;
+          this.onLoadToast('success', 'Bien removido correctamente', '');
+        });
+      }
+    });
+  }
+
+  removeGoodGuard(item: IGoodProgrammingSelect) {
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Desea remover el bien?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.goodsGuards.remove(item);
+        this.estatesList.getElements().then(items => {
+          items.push(item);
+          this.estatesList.load(items);
+          this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
+          this.onLoadToast('success', 'Bien removido correctamente', '');
+        });
+      }
+    });
+  }
+
+  removeGoodWarehouse(item: IGoodProgrammingSelect) {
+    this.alertQuestion(
+      'warning',
+      'Confirmación',
+      '¿Desea remover el bien?'
+    ).then(question => {
+      if (question.isConfirmed) {
+        this.goodsWarehouse.remove(item);
+        this.estatesList.getElements().then(items => {
+          items.push(item);
+          this.estatesList.load(items);
+          this.headingWarehouse = `Almacén SAT(${this.goodsWarehouse.count()})`;
+          this.onLoadToast('success', 'Bien removido correctamente', '');
+        });
+      }
+    });
   }
 
   confirm() {}
@@ -472,12 +622,14 @@ export class PerformProgrammingFormComponent
   delete(user: any) {
     this.alertQuestion(
       'warning',
-      'Eliminar',
-      '¿Desea eliminar este registro?'
+      'Confirmación',
+      '¿Desea eliminar el usuario de la programación?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecuta el servicio//
-        this.onLoadToast('success', 'Usuario eliminado correctamente', '');
+        this.usersToProgramming.remove(user).then(() => {
+          this.usersToProgramming.refresh();
+          this.onLoadToast('success', 'Usuario eliminado correctamente', '');
+        });
       }
     });
   }
