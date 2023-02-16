@@ -8,7 +8,7 @@
           [form]="form"
           value="status"
           bindLabel="description"
-          label="Estatus Bienes"
+          [label]="labelStatus"
           [control]="goodStatusField"
           (change)="onGoodStatusChange($event)">
         </ngx-select>
