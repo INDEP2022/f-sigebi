@@ -90,6 +90,25 @@
               label="Asunto">
             </ngx-select>
           </form-field>
+          <!-- <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('subject')"
+            label="Asunto">
+            <input
+              type="text"
+              formControlName="subject"
+              class="form-control"
+              readonly />
+          </form-field>
+
+          <div class="col-md-2">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              (click)="openModalSubjects()">
+              <i class="bx bx-list-plus bx-sm float-icon"></i>
+            </button>
+          </div> -->
         </div>
       </div>
 
@@ -239,6 +258,50 @@
     <div class="row pt-5">
       <div class="col-md-5">
         <div class="row">
+          <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('circumstantialAct')"
+            label="Acta Circuns">
+            <input
+              type="text"
+              formControlName="circumstantialAct"
+              class="form-control" />
+          </form-field>
+
+          <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('preliminaryInquiry')"
+            label="Averig. Previa">
+            <input
+              type="text"
+              formControlName="preliminaryInquiry"
+              class="form-control" />
+          </form-field>
+        </div>
+
+        <div class="row pt-5">
+          <form-field
+            class="col-md-8"
+            [control]="documentsReceptionForm.get('criminalCase')"
+            label="Causa Penal">
+            <input
+              type="text"
+              formControlName="criminalCase"
+              class="form-control" />
+          </form-field>
+
+          <form-field
+            class="col-md-4"
+            [control]="documentsReceptionForm.get('protectionNo')"
+            label="No. Amparo">
+            <input
+              type="text"
+              formControlName="protectionNo"
+              class="form-control" />
+          </form-field>
+        </div>
+
+        <div class="row pt-5">
           <!-- <form-field
             class="col-md-8"
             [control]="documentsReceptionForm.get('judgmentType')">
@@ -250,6 +313,7 @@
             </ngx-select>
           </form-field> -->
           <form-field
+            class="col-md-8"
             [control]="documentsReceptionForm.get('judgmentType')"
             label="Tipo Juicio">
             <ng-select
@@ -323,7 +387,7 @@
           </form-field>
 
           <form-field
-            class="col-md-8"
+            class="col-md-6"
             [control]="documentsReceptionForm.get('city')">
             <ngx-select
               [form]="documentsReceptionForm"
@@ -336,6 +400,15 @@
               (change)="cityChange($event)">
             </ngx-select>
           </form-field>
+
+          <div class="col-md-2">
+            <button
+              type="button"
+              class="btn btn-secondary btn-sm active"
+              (click)="clearCityState()">
+              <i class="bx bxs-eraser bx-sm float-icon"></i>
+            </button>
+          </div>
         </div>
 
         <div class="row pt-5">
@@ -400,7 +473,7 @@
         </div>
 
         <div class="row pt-5">
-          <form-field
+          <!-- <form-field
             class="col-md-6"
             [control]="documentsReceptionForm.get('transferDup')">
             <ngx-select
@@ -411,8 +484,37 @@
               label="Transferente"
               [readonly]="true">
             </ngx-select>
+          </form-field> -->
+          <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('publicMinistry')">
+            <ngx-select
+              [form]="documentsReceptionForm"
+              [data]="publicMinistries"
+              (fetchItems)="getPublicMinistries($event)"
+              value="id"
+              bindLabel="description"
+              control="publicMinistry"
+              label="Min. P&uacute;blico">
+            </ngx-select>
           </form-field>
 
+          <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('crime')">
+            <ngx-select
+              [form]="documentsReceptionForm"
+              [data]="crimes"
+              (fetchItems)="getCrimes($event)"
+              value="value"
+              bindLabel="value"
+              control="crime"
+              label="Delito">
+            </ngx-select>
+          </form-field>
+        </div>
+
+        <div class="row pt-5">
           <form-field
             class="col-md-6"
             [control]="documentsReceptionForm.get('court')">
@@ -453,13 +555,13 @@
               value="value"
               bindLabel="value"
               control="receptionWay"
-              label="Vía Recepción">
+              label="V&iacute;a Recepci&oacute;n">
             </ngx-select>
           </form-field>
         </div>
 
         <div class="row pt-5">
-          <form-field
+          <!-- <form-field
             class="col-md-6"
             [control]="documentsReceptionForm.get('destinationArea')">
             <ngx-select
@@ -468,9 +570,50 @@
               control="destinationArea"
               label="Área Destino">
             </ngx-select>
+          </form-field> -->
+          <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('destinationArea')"
+            label="&Aacute;rea Destino">
+            <input
+              type="text"
+              formControlName="destinationArea"
+              class="form-control"
+              readonly />
           </form-field>
 
+          <div class="col-md-2">
+            <button
+              type="button"
+              class="btn btn-primary btn-sm active"
+              (click)="openModalAreas()">
+              <i class="bx bx-list-plus bx-sm float-icon"></i>
+            </button>
+          </div>
+        </div>
+        <div class="row pt-5">
+          <!-- <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('destinationArea')">
+            <ngx-select
+              [form]="documentsReceptionForm"
+              [data]="identifiers"
+              control="destinationArea"
+              label="Área Destino">
+            </ngx-select>
+          </form-field> -->
           <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('delegationName')"
+            label="Delegaci&oacute;n">
+            <input
+              type="text"
+              formControlName="delegationName"
+              class="form-control"
+              readonly />
+          </form-field>
+
+          <!-- <form-field
             class="col-md-6"
             [control]="documentsReceptionForm.get('destinationArea')">
             <ngx-select
@@ -478,6 +621,16 @@
               [data]="identifiers"
               control="destinationArea">
             </ngx-select>
+          </form-field> -->
+          <form-field
+            class="col-md-6"
+            [control]="documentsReceptionForm.get('subDelegationName')"
+            label="Subdelegaci&oacute;n">
+            <input
+              type="text"
+              formControlName="subDelegationName"
+              class="form-control"
+              readonly />
           </form-field>
         </div>
 
@@ -507,8 +660,8 @@
           [form]="documentsReceptionForm"
           [data]="users"
           (fetchItems)="getUsers($event)"
-          value="id"
-          bindLabel="name"
+          value="user.id"
+          bindLabel="user.name"
           control="inAtention"
           label="En atención">
         </ngx-select>
@@ -518,10 +671,10 @@
         [control]="documentsReceptionForm.get('cpp')">
         <ngx-select
           [form]="documentsReceptionForm"
-          [data]="users"
-          (fetchItems)="getUsers($event)"
-          value="id"
-          bindLabel="name"
+          [data]="usersCopy"
+          (fetchItems)="getUsersCopy($event)"
+          value="user.id"
+          bindLabel="user.name"
           control="cpp"
           label="C.P.P.">
         </ngx-select>

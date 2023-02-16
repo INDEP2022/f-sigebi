@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ENDPOINT_LINKS } from 'src/app/common/constants/endpoints';
 import { HttpService } from 'src/app/common/services/http.service';
-import { ListParams } from '../../../common/repository/interfaces/list-params';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IRequest } from '../../models/requests/request.model';
 
@@ -15,7 +14,7 @@ export class RequestService extends HttpService {
     this.microservice = ENDPOINT_LINKS.request;
   }
 
-  getAll(params?: ListParams): Observable<IListResponse<IRequest>> {
+  getAll(params?: any): Observable<IListResponse<IRequest>> {
     return this.get<IListResponse<IRequest>>(ENDPOINT_LINKS.request, params);
   }
 

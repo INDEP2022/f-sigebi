@@ -2,9 +2,11 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { NgScrollbarModule } from 'ngx-scrollbar';
 import { DocumentsListComponent } from 'src/app/@standalone/documents-list/documents-list.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { DocumentsReceptionFlyerSelectComponent } from './documents-reception-register/components/documents-reception-flyer-select/documents-reception-flyer-select.component';
+import { DocumentsReceptionSelectComponent } from './documents-reception-register/components/documents-reception-select/documents-reception-select.component';
 import { DocumentsReceptionRegisterComponent } from './documents-reception-register/documents-reception-register.component';
 import { FlyersRoutingModule } from './flyers-routing.module';
 import { PublicMinistriesComponent } from './public-ministries/public-ministries.component';
@@ -22,6 +24,7 @@ import { RdFShiftChangeComponent } from './shift-change/shift-change.component';
     RelatedDocumentsComponent,
     PublicMinistriesComponent,
     DocumentsReceptionFlyerSelectComponent,
+    DocumentsReceptionSelectComponent,
   ],
   imports: [
     CommonModule,
@@ -29,8 +32,8 @@ import { RdFShiftChangeComponent } from './shift-change/shift-change.component';
     SharedModule,
     BsDatepickerModule,
     ModalModule.forChild(),
-    BsDatepickerModule,
     DocumentsListComponent,
+    NgScrollbarModule,
   ],
 })
 export class FlyersModule {}

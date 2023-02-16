@@ -52,45 +52,45 @@
       </div>
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
-          <form-field [control]="providerForm.get('stateDesc')">
+          <form-field [control]="providerForm.get('clkedo')">
             <ngx-select
               [form]="providerForm"
               [data]="stateItems"
               label="Estado"
-              value="description"
-              bindLabel="description"
+              value="id"
+              bindLabel="descCondition"
               (fetchItems)="getStates($event)"
-              control="stateDesc">
+              control="clkedo">
             </ngx-select>
           </form-field>
         </div>
         <div class="col-sm-12 col-md-6">
-          <form-field [control]="providerForm.get('cityDesc')">
+          <form-field [control]="providerForm.get('clkmun')">
             <ngx-select
               [form]="providerForm"
               [data]="cityItems"
               label="Ciudad"
-              value="description"
-              bindLabel="description"
+              value="idCity"
+              bindLabel="nameCity"
               (fetchItems)="getCities($event)"
-              control="cityDesc">
+              control="clkmun">
             </ngx-select>
           </form-field>
         </div>
       </div>
       <div class="row mt-5">
         <div class="col-sm-12 col-md-6">
-          <form-field [control]="providerForm.get('clkCountry')">
-            <ngx-select
-              [form]="providerForm"
-              [data]="countryItems"
-              label="País"
-              value="description"
-              bindLabel="description"
-              (fetchItems)="getCountries($event)"
-              control="clkCountry">
-            </ngx-select>
+          <form-field [control]="providerForm.get('desCountry')" label="País">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="desCountry" />
           </form-field>
+          <!-- <form-field [control]="providerForm.get('clkCountry')">
+            <ngx-select [form]="providerForm" [data]="countryItems" label="País" value="description"
+              bindLabel="description" (fetchItems)="getCountries($event)" control="clkCountry">
+            </ngx-select>
+          </form-field> -->
         </div>
         <div class="col-sm-12 col-md-6">
           <form-field [control]="providerForm.get('cp')" label="Cp">

@@ -3,6 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { map, merge, Observable, takeUntil } from 'rxjs';
 import { DocumentsListComponent } from 'src/app/@standalone/documents-list/documents-list.component';
+import { SelectListFilteredModalComponent } from 'src/app/@standalone/modals/select-list-filtered-modal/select-list-filtered-modal.component';
 import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import {
   FilterParams,
@@ -14,10 +15,14 @@ import { IAffair } from 'src/app/core/models/catalogs/affair.model';
 import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
 import { ICity } from 'src/app/core/models/catalogs/city.model';
 import { ICourt } from 'src/app/core/models/catalogs/court.model';
+import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
+import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { TvalTable1Data } from 'src/app/core/models/catalogs/dinamic-tables.model';
 import { IIdentifier } from 'src/app/core/models/catalogs/identifier.model';
 import { IIndiciados } from 'src/app/core/models/catalogs/indiciados.model';
+import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
 import { IStation } from 'src/app/core/models/catalogs/station.model';
+import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
 import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { IUser } from 'src/app/core/models/catalogs/user.model';
 import { IManagementArea } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
@@ -32,6 +37,7 @@ import { UsersService } from 'src/app/core/services/ms-users/users.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { DocumentsReceptionFlyerSelectComponent } from './components/documents-reception-flyer-select/documents-reception-flyer-select.component';
+import { DOCUMENTS_RECEPTION_SELECT_AREA_COLUMNS } from './interfaces/columns';
 import {
   DocuentsReceptionRegisterFormChanges,
   DOCUMENTS_RECEPTION_REGISTER_FORM,
@@ -39,7 +45,7 @@ import {
   InitialCondition,
   ProcedureStatus,
   TaxpayerLabel,
-} from './interfaces/documets-reception-register-form';
+} from './interfaces/documents-reception-register-form';
 
 @Component({
   selector: 'app-documents-reception-register',
@@ -71,10 +77,13 @@ export class DocumentsReceptionRegisterComponent
   stations = new DefaultSelect<IStation>();
   authorities = new DefaultSelect<IAuthority>();
   courts = new DefaultSelect<ICourt>();
+  publicMinistries = new DefaultSelect<IMinpub>();
+  crimes = new DefaultSelect<TvalTable1Data>();
   defendants = new DefaultSelect<IIndiciados>();
   receptionWays = new DefaultSelect<TvalTable1Data>();
   managementAreas = new DefaultSelect<IManagementArea>();
   users = new DefaultSelect<IUser>();
+  usersCopy = new DefaultSelect<IUser>();
 
   constructor(
     private fb: FormBuilder,
@@ -119,6 +128,18 @@ export class DocumentsReceptionRegisterComponent
     return this.documentsReceptionForm.controls['state'];
   }
 
+  get city() {
+    return this.documentsReceptionForm.controls['city'];
+  }
+
+  get delegationNo() {
+    return this.documentsReceptionForm.controls['delegationNo'];
+  }
+
+  get subDelegationNo() {
+    return this.documentsReceptionForm.controls['subDelegationNo'];
+  }
+
   ngOnInit(): void {
     // ! descomentar esta linea para mostrar el modal al page
     // this.selectFlyer();
@@ -135,11 +156,14 @@ export class DocumentsReceptionRegisterComponent
     this.getFederalEntities({ inicio: 1, text: '' });
     this.getStations({ page: 1, text: '' });
     this.getAuthorities({ page: 1, text: '' });
+    this.getPublicMinistries({ page: 1, text: '' });
+    this.getCrimes({ inicio: 1, text: '' });
     this.getCourts({ inicio: 1, text: '' });
     this.getDefendants({ inicio: 1, text: '' });
     this.getReceptionWays({ inicio: 1, text: '' });
     this.getManagementAreas({ page: 1, text: '' });
-    this.getUsers({ inicio: 1, text: '' });
+    this.getUsers({ page: 1, text: '' });
+    this.getUsersCopy({ page: 1, text: '' });
   }
 
   setDefaultValues() {
@@ -195,6 +219,7 @@ export class DocumentsReceptionRegisterComponent
 
   cityChange(city: ICity) {
     this.state.setValue(city.state.descCondition);
+    this.getPublicMinistries({ page: 1, text: '' });
   }
 
   fillForm(value: string | number) {
@@ -243,7 +268,7 @@ export class DocumentsReceptionRegisterComponent
 
   getSubjects(params?: ListParams) {
     //TODO: Agregar filtro por tipo de volante o proceso, campo referralNoteType y
-    // agregar checkbox para filtrar por relacion bien
+    // cargar datos en modal tabla con la relacion al bien
     this.affairService.getAll(params).subscribe({
       next: data => {
         this.subjects = new DefaultSelect(data.data, data.count);
@@ -284,6 +309,16 @@ export class DocumentsReceptionRegisterComponent
     elements$.subscribe({
       next: data => {
         this.receptionWays = new DefaultSelect(data.data, data.count);
+      },
+      error: err => this.handleSelectErrors(err),
+    });
+  }
+
+  getCrimes(params: ListParams) {
+    let elements$ = this.getDynamicTables(2, params);
+    elements$.subscribe({
+      next: data => {
+        this.crimes = new DefaultSelect(data.data, data.count);
       },
       error: err => this.handleSelectErrors(err),
     });
@@ -340,6 +375,26 @@ export class DocumentsReceptionRegisterComponent
     });
   }
 
+  getPublicMinistries(lparams: ListParams) {
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    if (lparams?.text.length > 0)
+      params.addFilter('description', lparams.text, SearchFilter.LIKE);
+    if (this.city.value != null) params.addFilter('idCity', this.city.value);
+    if (this.delegationNo.value != null)
+      params.addFilter('noDelegation', this.delegationNo.value);
+    if (this.subDelegationNo.value != null)
+      params.addFilter('noSubDelegation', this.subDelegationNo.value);
+    // console.log(params.getParams());
+    this.docRegisterService.getPublicMinistries(params.getParams()).subscribe({
+      next: data => {
+        this.publicMinistries = new DefaultSelect(data.data, data.count);
+      },
+      error: err => this.handleSelectErrors(err),
+    });
+  }
+
   changeTransferor(event: ITransferente) {
     this.formControls.transferDup.setValue(event);
   }
@@ -386,7 +441,17 @@ export class DocumentsReceptionRegisterComponent
   }
 
   getUsers(lparams: ListParams) {
-    this.usersService.getAllSegUsers(lparams).subscribe({
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    params.addFilter('assigned', 'S');
+    if (lparams?.text.length > 0)
+      params.addFilter('user', lparams.text, SearchFilter.LIKE);
+    if (this.delegationNo.value != null)
+      params.addFilter('delegationNumber', this.delegationNo.value);
+    if (this.subDelegationNo.value != null)
+      params.addFilter('subdelegationNumber', this.subDelegationNo.value);
+    this.docRegisterService.getUsersSegAreas(params.getParams()).subscribe({
       next: data => {
         this.users = new DefaultSelect(data.data, data.count);
       },
@@ -394,7 +459,87 @@ export class DocumentsReceptionRegisterComponent
     });
   }
 
+  getUsersCopy(lparams: ListParams) {
+    const params = new FilterParams();
+    params.page = lparams.page;
+    params.limit = lparams.limit;
+    params.addFilter('assigned', 'S');
+    if (lparams?.text.length > 0)
+      params.addFilter('user', lparams.text, SearchFilter.LIKE);
+    this.docRegisterService.getUsersSegAreas(params.getParams()).subscribe({
+      next: data => {
+        this.usersCopy = new DefaultSelect(data.data, data.count);
+      },
+      error: err => this.handleSelectErrors(err),
+    });
+  }
+
   checkDesalojo(event: any) {
     console.log(event, this.documentsReceptionForm.controls['desalojov'].value);
+  }
+
+  openModalAreas() {
+    this.openModalSelect({
+      title: 'Área',
+      columnsType: { ...DOCUMENTS_RECEPTION_SELECT_AREA_COLUMNS },
+      service: this.docRegisterService,
+      dataObservableFn: this.docRegisterService.getDepartaments,
+      filter: { field: 'description', operator: SearchFilter.LIKE },
+    });
+  }
+
+  openModalSubjects() {
+    //TODO: Adaptar filtro para keyview al abrir modal de lista para selccionar
+    this.openModalSelect({
+      title: 'Asunto',
+      columnsType: { ...DOCUMENTS_RECEPTION_SELECT_AREA_COLUMNS },
+      service: this.docRegisterService,
+      dataObservableFn: this.docRegisterService.getDepartaments,
+      filter: {
+        field: 'keyview',
+        value: this.type.value,
+        operator: SearchFilter.LIKE,
+      },
+    });
+  }
+
+  // openModalSelect(context?: Partial<DocumentsReceptionSelectComponent>) {
+  //   const modalRef = this.modalService.show(DocumentsReceptionSelectComponent, {
+  //     initialState: { ...context },
+  //     class: 'modal-lg modal-dialog-centered',
+  //     ignoreBackdropClick: true,
+  //   });
+  //   modalRef.content.onSelect.subscribe(data => {
+  //     if (data) this.selectArea(data);
+  //   });
+  // }
+  openModalSelect(context?: Partial<SelectListFilteredModalComponent>) {
+    const modalRef = this.modalService.show(SelectListFilteredModalComponent, {
+      initialState: { ...context },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    });
+    modalRef.content.onSelect.subscribe(data => {
+      if (data) this.selectArea(data);
+    });
+  }
+
+  selectArea(areaData: IDepartment) {
+    const delegation = areaData.numDelegation as IDelegation;
+    const subdelegation = areaData.numSubDelegation as ISubdelegation;
+    this.formControls.destinationAreaId.setValue(areaData.dsarea);
+    this.formControls.destinationArea.setValue(areaData.description);
+    this.formControls.delegationNo.setValue(delegation.id);
+    this.formControls.delegationName.setValue(delegation.description);
+    this.formControls.subDelegationNo.setValue(subdelegation.id);
+    this.formControls.subDelegationName.setValue(subdelegation.description);
+    this.getPublicMinistries({ page: 1, text: '' });
+    this.getUsers({ page: 1, text: '' });
+  }
+
+  clearCityState() {
+    this.formControls.city.setValue(null);
+    this.formControls.state.setValue(null);
+    this.getPublicMinistries({ page: 1, text: '' });
   }
 }

@@ -95,7 +95,7 @@ export class RequestInTurnFormComponent implements OnInit {
 
   getTransferente(params?: ListParams) {
     this.transferenteSevice
-      .getAll(params)
+      .search(params)
       .subscribe((data: IListResponse<ITransferente>) => {
         this.selectTransfer = new DefaultSelect(data.data, data.count);
       });

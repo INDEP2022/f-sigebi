@@ -4,10 +4,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, forkJoin, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import {
-  FilterParams,
-  ListParams,
-} from 'src/app/common/repository/interfaces/list-params';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { IRequestInTurn } from 'src/app/core/models/catalogs/request-in-turn.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { IListResponse } from '../../../../core/interfaces/list-response.interface';
@@ -84,9 +81,7 @@ export class RequestInTurnListComponent extends BasePage implements OnInit {
   }
 
   searchForm(params: any) {
-    var par = new FilterParams();
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      console.log(this.settings);
       params.page = data.page;
       params.limit = data.limit;
       this.getRequest(params);
