@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
-import { ProceedingsDeliveryReceptionTsService } from './../../../core/services/ms-proceedings/proceedings-delivery-reception.ts.service';
 
 @Component({
   selector: 'app-scheduled-maintenance',
@@ -56,7 +56,7 @@ export class ScheduledMaintenanceComponent extends BasePage implements OnInit {
   data = EXAMPLE_DATA;
   constructor(
     private fb: FormBuilder,
-    private proceedingService: ProceedingsDeliveryReceptionTsService
+    private proceedingService: ProceedingsDeliveryReceptionService
   ) {
     super();
   }

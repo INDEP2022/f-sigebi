@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
+import { ProceedingsEndpoints } from '../../../common/constants/endpoints/ms-proceedings-endpoints';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import { IProceedings } from '../../models/ms-proceedings/proceedings.model';
-import { ProceedingsEndpoints } from './../../../common/constants/endpoints/ms-proceedings-endpoints';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ProceedingsDeliveryReceptionTsService extends HttpService {
+export class ProceedingsDeliveryReceptionService extends HttpService {
   private readonly endpoint = ProceedingsEndpoints.DetailProceedingsReception;
   constructor() {
     super();
