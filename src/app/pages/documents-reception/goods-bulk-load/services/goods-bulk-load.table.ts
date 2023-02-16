@@ -64,4 +64,7 @@ export class GoodsBulkLoadService {
   getEntityFederativeByAsuntoSat(asuntoSat: string) {
     return this.issuingInstitutionService.getById(asuntoSat);
   }
+  getExpedientById(idExpedient: string) {
+    return this.expedientService.getById(idExpedient);
+  }
 }
