@@ -17,6 +17,9 @@ import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model
 //Services
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { PrintFlyersService } from 'src/app/core/services/document-reception/print-flyers.service';
+export interface IReport {
+  data: File;
+}
 
 @Component({
   selector: 'app-cumulative-goods',
@@ -90,25 +93,6 @@ export class CumulativeGoodsComponent extends BasePage implements OnInit {
       toMonth: [null, [Validators.required, maxDate(new Date())]],
       fromMonth: [null, [Validators.required, maxDate(new Date())]],
     });
-  }
-
-  openPrevPdf() {
-    let fecha = this.form.controls['toMonth'].value;
-    console.log(fecha);
-    let config: ModalOptions = {
-      initialState: {
-        documento: {
-          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(this.pdfurl),
-          type: 'pdf',
-        },
-        callback: (data: any) => {
-          console.log(data);
-        },
-      }, //pasar datos por aca
-      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
-      ignoreBackdropClick: true, //ignora el click fuera del modal
-    };
-    this.modalService.show(PreviewDocumentsComponent, config);
   }
 
   getDelegations(params: ListParams) {
@@ -185,6 +169,59 @@ export class CumulativeGoodsComponent extends BasePage implements OnInit {
   cleanForm(): void {
     this.form.reset();
   }
+
+  confirm(): void {
+    this.loading = true;
+    console.log(this.form.value);
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
+
+    const downloadLink = document.createElement('a');
+    //console.log(linkSource);
+    downloadLink.href = pdfurl;
+    downloadLink.target = '_blank';
+    downloadLink.click();
+
+    // console.log(this.flyersForm.value);
+    let params = { ...this.form.value };
+    for (const key in params) {
+      if (params[key] === null) delete params[key];
+    }
+    //let newWin = window.open(pdfurl, 'test.pdf');
+    this.onLoadToast('success', '', 'Reporte generado');
+    this.loading = false;
+  }
+
+  
+
+  readFile(file: IReport) {
+    const reader = new FileReader();
+    reader.readAsDataURL(file.data);
+    reader.onload = _event => {
+      // this.retrieveURL = reader.result;
+      this.openPrevPdf(reader.result as string);
+    };
+  }
+  
+
+  openPrevPdf(pdfurl: string) {
+    console.log(pdfurl);
+    let config: ModalOptions = {
+      initialState: {
+        documento: {
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfurl),
+          type: 'pdf',
+        },
+        callback: (data: any) => {
+          console.log(data);
+        },
+      }, //pasar datos por aca
+      class: 'modal-lg modal-dialog-centered', //asignar clase de bootstrap o personalizado
+      ignoreBackdropClick: true, //ignora el click fuera del modal
+    };
+    this.modalService.show(PreviewDocumentsComponent, config);
+  }
+
+  
 
 
 }

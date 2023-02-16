@@ -14,6 +14,10 @@ import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { PrintFlyersService } from 'src/app/core/services/document-reception/print-flyers.service';
 
+export interface IReport {
+  data: File;
+}
+
 @Component({
   selector: 'app-assets-received-admon',
   templateUrl: './assets-received-admon.component.html',
@@ -135,11 +139,45 @@ export class AssetsReceivedAdmonComponent extends BasePage implements OnInit {
     this.form.reset();
   }
 
-  openPrevPdf() {
+  confirm(): void {
+    this.loading = true;
+    console.log(this.form.value);
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
+
+    const downloadLink = document.createElement('a');
+    //console.log(linkSource);
+    downloadLink.href = pdfurl;
+    downloadLink.target = '_blank';
+    downloadLink.click();
+
+    // console.log(this.flyersForm.value);
+    let params = { ...this.form.value };
+    for (const key in params) {
+      if (params[key] === null) delete params[key];
+    }
+    //let newWin = window.open(pdfurl, 'test.pdf');
+    this.onLoadToast('success', '', 'Reporte generado');
+    this.loading = false;
+  }
+
+  
+
+  readFile(file: IReport) {
+    const reader = new FileReader();
+    reader.readAsDataURL(file.data);
+    reader.onload = _event => {
+      // this.retrieveURL = reader.result;
+      this.openPrevPdf(reader.result as string);
+    };
+  }
+  
+
+  openPrevPdf(pdfurl: string) {
+    console.log(pdfurl);
     let config: ModalOptions = {
       initialState: {
         documento: {
-          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(this.pdfurl),
+          urlDoc: this.sanitizer.bypassSecurityTrustResourceUrl(pdfurl),
           type: 'pdf',
         },
         callback: (data: any) => {
