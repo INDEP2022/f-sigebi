@@ -13,7 +13,7 @@ export const SettingUserTable = {
 
 export const settingTransGoods = {
   actions: {
-    delete: false,
+    delete: true,
     edit: false,
     columnTitle: 'Acciones',
     position: 'right',
@@ -28,7 +28,7 @@ export const settingTransGoods = {
 export const settingGuard = {
   actions: {
     edit: false,
-    delete: false,
+    delete: true,
     columnTitle: 'Acciones',
     position: 'right',
   },
@@ -41,7 +41,7 @@ export const settingGuard = {
 export const settingWarehouse = {
   actions: {
     edit: false,
-    delete: false,
+    delete: true,
     columnTitle: 'Acciones',
     position: 'right',
   },

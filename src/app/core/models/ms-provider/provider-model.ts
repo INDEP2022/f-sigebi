@@ -28,4 +28,5 @@ export interface IComerProvider {
   webMail?: string;
   customerId?: number;
   references?: string;
+  customer?: string;
 }

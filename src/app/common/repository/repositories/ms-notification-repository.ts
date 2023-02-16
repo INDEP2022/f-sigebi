@@ -8,7 +8,7 @@ import { INotificationMethods } from '../interfaces/ms-notification-methods';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationRepository<T> implements INotificationMethods<T> {
-  ms: string = `${environment.API_URL}/notification/api/v1`;
+  ms: string = `${environment.API_URL}notification/api/v1`;
 
   constructor(public readonly httpClient: HttpClient) {}
 

@@ -57,6 +57,9 @@ export interface INotification {
   delegation: null | IDelegation;
   subDelegation: null | ISubdelegation;
   departament: null | IDepartment;
+  numberProperty: number;
+  notificationDate: any;
+  userCorrectsKey: any;
 }
 
 export interface IAffair {
