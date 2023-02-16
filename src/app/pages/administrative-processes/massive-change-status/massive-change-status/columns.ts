@@ -1,7 +1,7 @@
 //Components
 
 export const COLUMNS = {
-  number: {
+  id: {
     title: 'No. Bien',
     sort: false,
   },
