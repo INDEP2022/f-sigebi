@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ExpedientService } from 'src/app/core/services/expedients/expedient.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from '../../../shared/components/select/default-select';
 
@@ -11,7 +12,7 @@ import { DefaultSelect } from '../../../shared/components/select/default-select'
 export class ComplementArticleComponent implements OnInit {
   form: FormGroup;
   itemsSelect = new DefaultSelect();
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private service: ExpedientService) {}
 
   ngOnInit(): void {
     this.prepareForm();
@@ -55,5 +56,17 @@ export class ComplementArticleComponent implements OnInit {
       ],
       lugar: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
     });
+  }
+
+  getExpedient() {
+    console.log('blur');
+    this.service.getById(this.form.get('expediente').value).subscribe(
+      data => {
+        console.log(data);
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
 }

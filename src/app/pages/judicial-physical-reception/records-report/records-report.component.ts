@@ -5,6 +5,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 enum REPORT_TYPE {
@@ -21,7 +22,9 @@ export class RecordsReportComponent implements OnInit {
   REPORT_TYPES = REPORT_TYPE;
   type: FormControl = new FormControl(REPORT_TYPE.Reception);
   form: FormGroup;
-  itemsSelect = new DefaultSelect();
+  itemsSelect = new DefaultSelect<IDelegation>();
+  delegacionRecibe: string = 'delegacionRecibe';
+  subdelegationField: string = 'subdelegation';
 
   get initialRecord() {
     return this.form.get('actaInicial');
@@ -29,6 +32,7 @@ export class RecordsReportComponent implements OnInit {
   get finalRecord() {
     return this.form.get('actaFinal');
   }
+
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
@@ -38,7 +42,7 @@ export class RecordsReportComponent implements OnInit {
   prepareForm() {
     this.form = this.fb.group({
       delegacionRecibe: [null, [Validators.required]],
-      delegacionAdministra: [null, [Validators.required]],
+      subdelegation: [null, [Validators.required]],
       estatusActa: [null, [Validators.required]],
       actaInicial: [null, [Validators.required]],
       actaFinal: [null, [Validators.required]],
@@ -52,6 +56,13 @@ export class RecordsReportComponent implements OnInit {
 
   onSubmit() {
     this.form.markAllAsTouched();
+    if (this.REPORT_TYPES.Reception) {
+      const value = this.form.get('delegacionRecibe').value;
+      console.log({
+        delegacionRecibe: value,
+        delegacionEmite: this.form.get('delegacionAdministra').value,
+      });
+    }
   }
 
   onTypeChange() {

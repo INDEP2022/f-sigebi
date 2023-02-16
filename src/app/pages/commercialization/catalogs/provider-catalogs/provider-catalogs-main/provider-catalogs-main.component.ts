@@ -231,7 +231,9 @@ export class ProviderCatalogsMainComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.onSelect.subscribe((data: boolean) => {
-      if (data) console.log(data);
+      if (data) {
+        console.log(data);
+      }
     });
   }
 
