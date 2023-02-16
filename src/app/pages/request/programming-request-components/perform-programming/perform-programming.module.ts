@@ -8,12 +8,14 @@ import { EstateSearchFormComponent } from './estate-search-form/estate-search-fo
 import { PerformProgrammingFormComponent } from './perform-programming-form/perform-programming-form.component';
 import { PerformProgrammingRoutingModule } from './perform-programming-routing.module';
 import { UserFormComponent } from './user-form/user-form.component';
+import { WarehouseSelectFormComponent } from './warehouse-select-form/warehouse-select-form.component';
 
 @NgModule({
   declarations: [
     PerformProgrammingFormComponent,
     UserFormComponent,
     EstateSearchFormComponent,
+    WarehouseSelectFormComponent,
   ],
 
   imports: [
