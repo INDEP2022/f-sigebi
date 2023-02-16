@@ -35,49 +35,7 @@ export class WarehouseInquiriesComponent extends BasePage implements OnInit {
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
   //Data Table
-  warehouses: IWarehouse[] = [];
-  data: ExampleWarehouse[] = [
-    {
-      number: 1,
-      description: 'Descripción 1',
-      location: 'Ubicacion 1',
-      responsible: 'Responsable 1',
-      entity: 'Entidad 1',
-      municipality: 'Municipio 1',
-      city: 'Ciudad 1',
-      locality: 'Localidad 1',
-      goods: [
-        {
-          numberGood: 1,
-          description: 'Descripción 1',
-          quantity: 1000,
-          dossier: 'Expediente 1',
-        },
-        {
-          numberGood: 2,
-          description: 'Descripción 2',
-          quantity: 2000,
-          dossier: 'Expediente 2',
-        },
-        {
-          numberGood: 3,
-          description: 'Descripción 3',
-          quantity: 3000,
-          dossier: 'Expediente 3',
-        },
-      ],
-    },
-    {
-      number: 2,
-      description: 'Descripción 2',
-      location: 'Ubicacion 2',
-      responsible: 'Responsable 2',
-      entity: 'Entidad 2',
-      municipality: 'Municipio 2',
-      city: 'Ciudad 2',
-      locality: 'Localidad 2',
-    },
-  ];
+  warehouses: any[] = [];
 
   constructor(
     private modalService: BsModalService,
@@ -100,7 +58,7 @@ export class WarehouseInquiriesComponent extends BasePage implements OnInit {
         },
         ubication: {
           title: 'Ubicacion',
-          width: '10%',
+          width: '20%',
           sort: false,
         },
         responsibleDelegation: {
@@ -108,7 +66,7 @@ export class WarehouseInquiriesComponent extends BasePage implements OnInit {
           width: '10%',
           sort: false,
         },
-        entity: {
+        manager: {
           title: 'Entidad',
           width: '10%',
           sort: false,
@@ -155,7 +113,28 @@ export class WarehouseInquiriesComponent extends BasePage implements OnInit {
     this.loading = true;
     this.warehouseService.getAll(this.params.getValue()).subscribe({
       next: response => {
-        this.warehouses = response.data;
+        console.log(response);
+        this.warehouses = response.data.map(ware => {
+          return {
+            idWarehouse: ware.idWarehouse,
+            description: ware.description,
+            indActive: ware.indActive,
+            localityCode: ware.localityCode
+              ? ware.localityCode.nameLocation
+              : null,
+            cityCode: ware.cityCode ? ware.cityCode.nameCity : '',
+            manager: ware.manager,
+            municipalityCode: ware.municipalityCode
+              ? ware.municipalityCode.nameMunicipality
+              : null,
+            registerNumber: ware.registerNumber,
+            responsibleDelegation: ware.responsibleDelegation,
+            stateCode: ware.stateCode,
+            type: ware.type,
+            ubication: ware.ubication,
+          };
+        });
+
         this.totalItems = response.count;
         this.loading = false;
         console.log(this.warehouses);

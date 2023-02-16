@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { GoodTypeService } from 'src/app/core/services/catalogs/good-type.service';
+import { GoodService } from 'src/app/core/services/good/good.service';
+import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
@@ -56,7 +59,21 @@ export class PartializesGeneralGoodsComponent implements OnInit {
   };
   data = EXAMPLE_DATA;
   itemsSelect = new DefaultSelect();
-  constructor(private fb: FormBuilder) {}
+  types = new DefaultSelect();
+  constructor(
+    private fb: FormBuilder,
+    private goodService: GoodService,
+    private goodTypesService: GoodTypeService,
+    private goodsQueryService: GoodsQueryService
+  ) {
+    // this.goodService.getAll(new ListParams()).subscribe(x => {
+    //   console.log(x);
+    // });
+    // this.goodTypesService.search(new ListParams()).subscribe(x => {});
+    // this.goodsQueryService.getAtributeClassificationGood(new ListParams()).subscribe(x => {
+    //   console.log(x);
+    // });
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -75,24 +92,121 @@ export class PartializesGeneralGoodsComponent implements OnInit {
   }
   prepareForm() {
     this.form = this.fb.group({
-      noBien: [null, [Validators.required]],
-      cantidadBien: [null, [Validators.required]],
+      noBien: [null, [Validators.required, Validators.min(1)]],
+      cantidadBien: [null, [Validators.required, Validators.min(1)]],
       descripcion: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      cantidad: [null, [Validators.required]],
-      avaluo: [null, [Validators.required]],
+      cantidad: [null, [Validators.required, Validators.min(1)]],
+      avaluo: [null, [Validators.required, Validators.min(1)]],
       estatus: [null, [Validators.required]],
-      extDom: [null, [Validators.required]],
-      moneda: [null, [Validators.required]],
+      extDom: [null, [Validators.required, Validators.min(1)]],
+      moneda: [null, [Validators.required, Validators.min(1)]],
       expediente: [null, [Validators.required]],
       clasificador: [null, [Validators.required]],
-      importe: [null, [Validators.required]],
-      veces: [null, [Validators.required]],
-      cantidad2: [null, [Validators.required]],
-      saldo: [null, [Validators.required]],
+      importe: [null, [Validators.required, Validators.min(1)]],
+      veces: [null, [Validators.required, Validators.min(1)]],
+      cantidad2: [null, [Validators.required, Validators.min(1)]],
+      saldo: [null, [Validators.required, Validators.min(1)]],
     });
+  }
+
+  cleanBlock() {
+    this.form.get('veces').setValue(null);
+    this.form.get('cantidad2').setValue(null);
+    this.form.get('saldo').setValue(null);
+    this.data = [];
+  }
+
+  get cantidadRows() {
+    return this.form.get('cantidad2');
+  }
+
+  get noBien() {
+    return this.form.get('noBien');
+  }
+
+  get cantidadBien() {
+    return this.form.get('cantidadBien');
+  }
+
+  get descripcion() {
+    return this.form.get('descripcion');
+  }
+
+  get avaluo() {
+    return this.form.get('avaluo');
+  }
+  get estatus() {
+    return this.form.get('estatus');
+  }
+  get extDom() {
+    return this.form.get('extDom');
+  }
+  get moneda() {
+    return this.form.get('moneda');
+  }
+  get expediente() {
+    return this.form.get('expediente');
+  }
+  get clasificador() {
+    return this.form.get('clasificador');
+  }
+  get importe() {
+    return this.form.get('importe');
+  }
+  get veces() {
+    return this.form.get('veces');
+  }
+  get cantidad2() {
+    return this.form.get('cantidad2');
+  }
+  get saldo() {
+    return this.form.get('saldo');
+  }
+
+  partialize() {
+    if (this.form.valid) {
+      this.goodService.getById(this.noBien.value).subscribe(x => {
+        console.log(x);
+      });
+      this.goodService
+        .getDataByGoodFather(this.cantidadBien.value)
+        .subscribe(x => {
+          console.log(x);
+        });
+      this.data = [];
+      let totalCantidad = 0;
+      let totalImporte = 0;
+      for (let index = 0; index < this.veces.value; index++) {
+        this.data.push({
+          id: 1,
+          noBien: this.noBien.value,
+          descripcion: this.descripcion.value,
+          proceso: this.extDom.value,
+          cantidad: this.cantidad2.value,
+          avaluo: this.avaluo.value,
+          importe: this.importe.value,
+        });
+        totalCantidad += this.cantidad2.value;
+        totalImporte += this.importe.value;
+      }
+      this.data.push({
+        id: null,
+        noBien: null,
+        descripcion: null,
+        proceso: null,
+        cantidad: totalCantidad,
+        avaluo: null,
+        importe: totalImporte,
+      });
+    } else {
+      this.form.markAllAsTouched();
+      setTimeout(() => {
+        this.form.markAsUntouched();
+      }, 1000);
+    }
   }
 }
 
