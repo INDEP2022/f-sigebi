@@ -1,3 +1,6 @@
+import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
+import { IDepartment } from 'src/app/core/models/catalogs/department.model';
+import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
 export interface INotification {
   wheelNumber: number;
   receiptDate: Date;
@@ -51,9 +54,9 @@ export interface INotification {
   desKnowingDate: Date;
   addressGeneral: number;
   affair: IAffair;
-  delegation: null;
-  subDelegation: null;
-  departament: null;
+  delegation: null | IDelegation;
+  subDelegation: null | ISubdelegation;
+  departament: null | IDepartment;
 }
 
 export interface IAffair {
