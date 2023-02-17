@@ -118,6 +118,7 @@ export enum ENDPOINT_LINKS {
   parametergoodActa = 'parametergood/validadores-actas',
   parametergoodCat = 'parametergood/cat-motivosrev',
   parameterComer = 'parametercomer/api/v1/bank-accounts',
+  Document = 'documents',
   documents = 'documents/api/v1/documents-dictum-x-state-m',
   ZoneGeographic = 'catalog/zone-geographic',
   DocumentsForDictum = 'documents-for-dictum',
