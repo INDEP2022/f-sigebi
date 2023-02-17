@@ -32,39 +32,19 @@ export const DOCUMENTS_RECEPTION_SELECT_AREA_COLUMNS = {
   },
 };
 
-export const DOCUMENTS_RECEPTION_SELECT_SUBJECT_COLUMNS = {
-  numDelegation: {
-    title: 'Del.',
+export const DOCUMENTS_RECEPTION_SELECT_AFFAIR_COLUMNS = {
+  id: {
+    title: 'Número',
     type: 'string',
     sort: false,
   },
-  descDelegation: {
-    title: 'Nombre Delegación',
+  description: {
+    title: 'Tipo de Asunto',
     type: 'string',
     sort: false,
   },
-  numSubDelegation: {
-    title: 'SubDel.',
-    type: 'string',
-    sort: false,
-  },
-  descSubDelegation: {
-    title: 'Nombre Subdelegación',
-    type: 'string',
-    sort: false,
-  },
-  idArea: {
-    title: 'Área',
-    type: 'string',
-    sort: false,
-  },
-  dsArea: {
-    title: 'Siglas Área',
-    type: 'string',
-    sort: false,
-  },
-  descArea: {
-    title: 'Nombre Área',
+  clv: {
+    title: 'Relación Bienes.',
     type: 'string',
     sort: false,
   },

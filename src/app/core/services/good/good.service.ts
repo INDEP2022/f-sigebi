@@ -24,6 +24,13 @@ export class GoodService implements ICrudMethods<IGood> {
     return this.goodRepository.getById('good/good', id);
   }
 
+  getDataByGoodFather(goodFather: number) {
+    return this.goodRepository.getById(
+      'good/good/getDataByGoodFather',
+      goodFather
+    );
+  }
+
   getGoodsByRecordId(recordId: number) {
     return this.goodRepository.getAllPaginated(
       'good/good/getidReferenceGood/' + recordId

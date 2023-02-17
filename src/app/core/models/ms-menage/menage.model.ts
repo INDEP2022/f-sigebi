@@ -11,3 +11,10 @@ export interface IMenageWrite {
   noGood: string | number;
   noRegister?: string | number;
 }
+
+export interface IMenageDescription {
+  noGoodMenaje: string | number;
+  noGood: string | number;
+  noRegister?: string | number;
+  menajeDescription: IGood;
+}

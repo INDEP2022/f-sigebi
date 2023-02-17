@@ -36,6 +36,7 @@ import { RequestDocumentFormComponent } from './tabs/request-document-form/reque
 import { SearchDocumentFormComponent } from './tabs/search-document-form/search-document-form.component';
 import { ClarificationsComponent } from './tabs/validate-asset-document-components/clarifications/clarifications.component';
 import { TransferRequestRoutingModule } from './transfer-request-routing.module';
+import { AssociateFieldComponent } from './tabs/registration-request-form/actions/associate-field/associate-field.component';
 
 @NgModule({
   declarations: [
@@ -69,6 +70,7 @@ import { TransferRequestRoutingModule } from './transfer-request-routing.module'
     RefuseClarificationModalComponent,
     ApprovalAssetsTabsComponent,
     GenerateDictumComponent,
+    AssociateFieldComponent,
   ],
   imports: [
     CommonModule,

@@ -33,9 +33,11 @@ import { WarehouseFormComponent } from '../../../shared-request/warehouse-form/w
 import { ESTATE_COLUMNS } from '../../acept-programming/columns/estate-columns';
 import { SearchUserFormComponent } from '../../schedule-reception/search-user-form/search-user-form.component';
 import { userData } from '../../schedule-reception/search-user-form/users-data';
+import { DetailGoodProgrammingFormComponent } from '../../shared-components-programming/detail-good-programming-form/detail-good-programming-form.component';
 import { EstateSearchFormComponent } from '../estate-search-form/estate-search-form.component';
 import { IEstateSearch } from '../estate-search-form/estate-search.interface';
 import { UserFormComponent } from '../user-form/user-form.component';
+import { WarehouseSelectFormComponent } from '../warehouse-select-form/warehouse-select-form.component';
 import {
   settingGuard,
   settingTransGoods,
@@ -272,8 +274,6 @@ export class PerformProgrammingFormComponent
       callback: (data: IEstateSearch) => {
         if (data) {
           this.dataSearch = data;
-          console.log('search', this.dataSearch);
-          //this.initializeParamsTrans();
         }
       },
     };
@@ -308,7 +308,6 @@ export class PerformProgrammingFormComponent
   getStateSelect(params?: ListParams) {
     params['filter.regionalDelegation'] = this.regionalDelegationUser.id;
     this.stateService.getAll(params).subscribe(data => {
-      console.log('estados', data);
       const filterStates = data.data.filter(_states => {
         return _states.stateCode;
       });
@@ -336,7 +335,6 @@ export class PerformProgrammingFormComponent
       this.transferentService
         .getByTypeUserIdState(params, state, type)
         .subscribe(data => {
-          console.log('transferentes', data);
           this.transferences = new DefaultSelect(data.data, data.count);
         });
     }
@@ -353,7 +351,6 @@ export class PerformProgrammingFormComponent
       params['filter.idTransferent'] = this.idTrans;
       params['filter.keyState'] = this.idState;
       this.stationService.getAll(params).subscribe(data => {
-        console.log('Emisoras', data);
         this.stations = new DefaultSelect(data.data, data.count);
       });
     }
@@ -373,7 +370,7 @@ export class PerformProgrammingFormComponent
 
       this.authorityService.postByColumns(params, columns).subscribe(data => {
         this.authorities = new DefaultSelect(data.data, data.count);
-        console.log('Autoridades', data);
+
         this.showSelectAuthority = true;
       });
     }
@@ -385,7 +382,6 @@ export class PerformProgrammingFormComponent
 
   getTypeRelevantSelect(params: ListParams) {
     this.typeRelevantService.getAll(params).subscribe(data => {
-      console.log('tipo relevante', data);
       this.typeRelevant = new DefaultSelect(data.data, data.count);
     });
   }
@@ -420,8 +416,17 @@ export class PerformProgrammingFormComponent
       .postGoodsProgramming(this.params.getValue(), filterColumns)
       .subscribe({
         next: response => {
-          console.log(response);
-          this.estatesList.load(response.data);
+          const filterData = response.data.map(items => {
+            if (items.physicalState == 1) {
+              items.physicalState = 'BUENO';
+              return items;
+            } else if (items.physicalState == 2) {
+              items.physicalState = 'MALO';
+              return items;
+            }
+          });
+
+          this.estatesList.load(filterData);
           this.totalItems = response.count;
           this.loadingGoods = false;
           this.loadGoods = true;
@@ -436,10 +441,30 @@ export class PerformProgrammingFormComponent
 
   sendTransportable() {
     if (this.goodSelect.length) {
-      this.headingTransportable = `Transportables(${this.goodSelect.length})`;
-      this.goodsTranportables.load(this.goodSelect);
-      this.onLoadToast('success', 'Correcto', 'Bien movido a transportable');
-      this.removeGoodsSelected(this.goodSelect);
+      if (this.goodsTranportables.count() == 0) {
+        this.goodsTranportables.load(this.goodSelect);
+        this.headingTransportable = `Transportables(${this.goodSelect.length})`;
+        this.onLoadToast(
+          'success',
+          'Correcto',
+          'Bienes movidos a transportable'
+        );
+        this.removeGoodsSelected(this.goodSelect);
+      } else {
+        this.goodsTranportables.getElements().then(data => {
+          this.goodSelect.map(items => {
+            data.push(items);
+            this.goodsTranportables.load(data);
+            this.headingTransportable = `Transportables(${this.goodsTranportables.count()})`;
+            this.onLoadToast(
+              'success',
+              'Correcto',
+              'Bienes movidos a transportable'
+            );
+            this.removeGoodsSelected(this.goodSelect);
+          });
+        });
+      }
     } else {
       this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
     }
@@ -447,23 +472,77 @@ export class PerformProgrammingFormComponent
 
   sendGuard() {
     if (this.goodSelect.length) {
-      this.headingGuard = `Resguardo(${this.goodSelect.length})`;
-      this.goodsGuards.load(this.goodSelect);
-      this.onLoadToast('success', 'Correcto', 'Bien movido a resguardo');
-      this.removeGoodsSelected(this.goodSelect);
+      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+      const idTransferent = this.idTrans;
+      config.initialState = {
+        idTransferent,
+        callback: (data: any) => {
+          if (data) this.addGoodsGuards();
+        },
+      };
+
+      this.modalService.show(WarehouseSelectFormComponent, config);
     } else {
       this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
     }
   }
 
+  addGoodsGuards() {
+    if (this.goodsGuards.count() == 0) {
+      this.headingGuard = `Resguardo(${this.goodSelect.length})`;
+      this.goodsGuards.load(this.goodSelect);
+      this.onLoadToast('success', 'Correcto', 'Bien movido a resguardo');
+      this.removeGoodsSelected(this.goodSelect);
+    } else {
+      this.goodsGuards.getElements().then(data => {
+        this.goodSelect.map(items => {
+          data.push(items);
+          this.goodsGuards.load(data);
+          this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
+          this.onLoadToast('success', 'Correcto', 'Bienes movidos a Resguardo');
+          this.removeGoodsSelected(this.goodSelect);
+        });
+      });
+    }
+  }
+
   sendWarehouse() {
-    if (this.goodSelect.length == 0) {
+    if (this.goodSelect.length) {
+      let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+      const idTransferent = this.idTrans;
+      config.initialState = {
+        idTransferent,
+        callback: (data: any) => {
+          if (data) this.addGoodsWarehouse();
+        },
+      };
+
+      this.modalService.show(WarehouseSelectFormComponent, config);
+    } else {
+      this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
+    }
+  }
+
+  addGoodsWarehouse() {
+    if (this.goodsWarehouse.count() == 0) {
       this.headingWarehouse = `Almacén SAT(${this.goodSelect.length})`;
       this.goodsWarehouse.load(this.goodSelect);
       this.onLoadToast('success', 'Correcto', 'Bien movido a almacén SAT');
       this.removeGoodsSelected(this.goodSelect);
     } else {
-      this.alert('warning', 'Error', 'Se necesita tener un bien seleccionado');
+      this.goodsWarehouse.getElements().then(data => {
+        this.goodSelect.map(items => {
+          data.push(items);
+          this.goodsWarehouse.load(data);
+          this.headingWarehouse = `Almacén SAT(${this.goodsWarehouse.count()})`;
+          this.onLoadToast(
+            'success',
+            'Correcto',
+            'Bienes movidos a almacén SAT'
+          );
+          this.removeGoodsSelected(this.goodSelect);
+        });
+      });
     }
   }
 
@@ -475,7 +554,14 @@ export class PerformProgrammingFormComponent
     });
   }
 
-  showGood() {}
+  showGood(item: IGoodProgrammingSelect) {
+    let config = { ...MODAL_CONFIG, class: 'modal-lg modal-dialog-centered' };
+    config.initialState = {
+      item,
+      callback: () => {},
+    };
+    this.modalService.show(DetailGoodProgrammingFormComponent, config);
+  }
 
   removeGoodTrans(item: IGoodProgrammingSelect) {
     this.alertQuestion(
@@ -488,6 +574,7 @@ export class PerformProgrammingFormComponent
         this.estatesList.getElements().then(items => {
           items.push(item);
           this.estatesList.load(items);
+          this.headingTransportable = `Transportables(${this.goodsTranportables.count()})`;
           this.onLoadToast('success', 'Bien removido correctamente', '');
         });
       }
@@ -505,6 +592,7 @@ export class PerformProgrammingFormComponent
         this.estatesList.getElements().then(items => {
           items.push(item);
           this.estatesList.load(items);
+          this.headingGuard = `Resguardo(${this.goodsGuards.count()})`;
           this.onLoadToast('success', 'Bien removido correctamente', '');
         });
       }
@@ -522,6 +610,7 @@ export class PerformProgrammingFormComponent
         this.estatesList.getElements().then(items => {
           items.push(item);
           this.estatesList.load(items);
+          this.headingWarehouse = `Almacén SAT(${this.goodsWarehouse.count()})`;
           this.onLoadToast('success', 'Bien removido correctamente', '');
         });
       }

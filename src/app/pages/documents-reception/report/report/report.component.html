@@ -6,12 +6,11 @@
   <div body>
     <form [formGroup]="reportForm" class="form-material">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-5">
           <app-delegation-shared [form]="reportForm"></app-delegation-shared>
-
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-5">
           <div class="row pt-3">
             <form-field [control]="reportForm.get('from')" label="Desde: ">
               <input formControlName="from" class="form-control" bsDatepicker />
@@ -23,23 +22,25 @@
               <input formControlName="to" class="form-control" bsDatepicker />
             </form-field>
           </div>
-
-
-
-
         </div>
       </div>
-
     </form>
   </div>
   <div footer>
     <div class="d-flex justify-content-center">
       <div class="m-3">
-        <confirm-button text="Imprimir" [disabled]="reportForm.invalid" [loading]="loading" (confirm)="confirm()">
+        <confirm-button
+          text="Imprimir"
+          [disabled]="reportForm.invalid"
+          [loading]="loading"
+          (confirm)="confirm()">
         </confirm-button>
       </div>
       <div class="m-3">
-        <button type="button" class="btn btn-danger active" (click)="cleanForm()">
+        <button
+          type="button"
+          class="btn btn-danger active"
+          (click)="cleanForm()">
           Limpiar
         </button>
       </div>

@@ -1,8 +1,9 @@
 import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { TabsetComponent } from 'ngx-bootstrap/tabs';
 import { forkJoin } from 'rxjs';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -19,6 +20,7 @@ import { StateOfRepublicService } from '../../../../core/services/catalogs/state
 import { StationService } from '../../../../core/services/catalogs/station.service';
 import { TransferenteService } from '../../../../core/services/catalogs/transferente.service';
 import { RequestService } from '../../../../core/services/requests/request.service';
+import { RequestHelperService } from '../../request-helper-services/request-helper.service';
 import { GenerateDictumComponent } from '../tabs/approval-requests-components/generate-dictum/generate-dictum.component';
 
 @Component({
@@ -30,6 +32,7 @@ export class RegistrationOfRequestsComponent
   extends BasePage
   implements OnInit
 {
+  @ViewChild('staticTabs', { static: false }) staticTabs?: TabsetComponent;
   registRequestForm: ModelForm<IRequest>;
   edit: boolean = false;
   title: string = 'Registro de solicitud con folio: ';
@@ -40,6 +43,7 @@ export class RegistrationOfRequestsComponent
   btnSaveTitle: string = '';
   saveClarifiObject: boolean = false;
   bsValue = new Date();
+  isExpedient: boolean = false;
 
   //tabs
   tab1: string = '';
@@ -76,6 +80,7 @@ export class RegistrationOfRequestsComponent
     public router: Router,
     private location: Location,
     private requestService: RequestService,
+    private requestHelperService: RequestHelperService,
     private stateOfRepublicService: StateOfRepublicService,
     private transferentService: TransferenteService,
     private stationService: StationService,
@@ -93,6 +98,19 @@ export class RegistrationOfRequestsComponent
     this.intiTabs();
     this.prepareForm();
     this.getRequest(id);
+    this.associateExpedientListener();
+  }
+
+  //cambia el estado del tab en caso de que se asocie un expediente a la solicitud
+  associateExpedientListener() {
+    this.requestHelperService.currentExpedient.subscribe({
+      next: resp => {
+        if (resp === true) {
+          this.isExpedient = resp;
+          this.staticTabs.tabs[0].active = true;
+        }
+      },
+    });
   }
 
   prepareForm() {
@@ -131,10 +149,11 @@ export class RegistrationOfRequestsComponent
   getRequest(id: any) {
     this.requestService.getById(id).subscribe((data: any) => {
       let request = data;
+      //verifica si la solicitud tiene expediente si no tiene no muestra el tab asociar expediente
+      this.isExpedient = request.recordId ? true : false;
       request.receptionDate = new Date().toISOString();
       this.object = request as IRequest;
       this.requestData = request as IRequest;
-
       this.registRequestForm.patchValue(request);
       this.getData(request);
     });

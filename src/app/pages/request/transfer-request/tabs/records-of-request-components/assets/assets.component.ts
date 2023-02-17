@@ -285,9 +285,13 @@ export class AssetsComponent extends BasePage implements OnInit {
   }
 
   menajeModal() {
+    if (!this.listgoodObjects) {
+      this.onLoadToast('info', 'Información', `Seleccione uno o mas bienes!`);
+      return;
+    }
     let config: ModalOptions = {
       initialState: {
-        data: '',
+        goodsObject: this.listgoodObjects,
         requestId: this.requestObject.id,
         callback: (next: boolean) => {
           //if (next) this.getExample();
@@ -347,7 +351,7 @@ export class AssetsComponent extends BasePage implements OnInit {
                 'Actualizado',
                 `Se guardo correctamente el bien del domicilio!`
               );
-
+              this.isSaveDomicilie = false;
               resolve('Se guardo correctamente el bien del domicilio!');
             }
           },
@@ -357,10 +361,11 @@ export class AssetsComponent extends BasePage implements OnInit {
   }
 
   saveMenaje() {
-    debugger;
     new Promise((resolve, reject) => {
       for (let i = 0; i < this.menajeSelected.length; i++) {
         const element = this.menajeSelected[i];
+        console.log(element);
+
         this.menageSerice.create(element).subscribe({
           next: data => {
             if (data.statusCode != null) {
@@ -373,7 +378,12 @@ export class AssetsComponent extends BasePage implements OnInit {
             }
 
             if (data.id != null) {
-              this.message('success', 'Actualizado', `Se guardo el menaje`);
+              this.message(
+                'success',
+                'Menaje guardado',
+                `Se guardaron los menajes existosamente`
+              );
+              this.isSaveMenaje = false;
               resolve('Se guardo correctamente el menaje!');
             }
           },
@@ -425,7 +435,6 @@ export class AssetsComponent extends BasePage implements OnInit {
     this.requestHelperService.currentRefresh.subscribe({
       next: data => {
         if (data) {
-          this.saveMenaje();
           setTimeout(() => {
             this.closeCreateGoodWIndows();
           }, 600);

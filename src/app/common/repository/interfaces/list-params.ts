@@ -67,3 +67,9 @@ export enum SearchFilter {
   GTE = '$gte',
   LTE = '$lte',
 }
+
+export interface DynamicFilterLike {
+  field: string;
+  value: string | number;
+  operator?: SearchFilter;
+}
