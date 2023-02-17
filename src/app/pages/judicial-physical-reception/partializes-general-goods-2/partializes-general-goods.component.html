@@ -50,12 +50,16 @@
 
       <div class="row">
         <div class="col-md-4">
-          <form-field [control]="form.get('estatus')" label="Estatus">
+          <!-- <form-field [control]="form.get('estatus')" label="Estatus">
             <ngx-select
               control="estatus"
               [form]="form"
               [data]="itemsSelect"></ngx-select>
-          </form-field>
+          </form-field> -->
+          <app-goods-status-shared
+            [form]="form"
+            labelStatus="Estatus"
+            goodStatusField="estatus"></app-goods-status-shared>
         </div>
         <div class="col-md-4">
           <form-field
@@ -70,12 +74,17 @@
       </div>
       <div class="row">
         <div class="col-md-4">
-          <form-field [control]="form.get('clasificador')" label="Clasificador">
+          <app-goods-classification-shared
+            label="Clasificador"
+            goodClassificationField="clasificador"
+            [form]="form">
+          </app-goods-classification-shared>
+          <!-- <form-field [control]="form.get('clasificador')" label="Clasificador">
             <ngx-select
               control="clasificador"
               [form]="form"
               [data]="itemsSelect"></ngx-select>
-          </form-field>
+          </form-field> -->
         </div>
         <div class="col-md-4">
           <form-field [control]="form.get('moneda')" label="Moneda">
@@ -123,8 +132,12 @@
           <div class="col-md-6">
             <div class="row">
               <div class="form-group">
-                <button class="mx-1" size="small">Parcializa</button>
-                <button class="mx-1" size="small">Limpia Bloque</button>
+                <button class="mx-1" size="small" (click)="partialize()">
+                  Parcializa
+                </button>
+                <button class="mx-1" size="small" (click)="cleanBlock()">
+                  Limpia Bloque
+                </button>
                 <button class="mx-1 my-1" size="small">Verifica Suma</button>
                 <button class="mx-1 my-1" size="small">Aplica</button>
               </div>

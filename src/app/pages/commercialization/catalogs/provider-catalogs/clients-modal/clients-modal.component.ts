@@ -97,6 +97,7 @@ export class ClientsModalComponent extends BasePage implements OnInit {
 
   confirm(): void {
     // TODO: Obtener clkmun, clkedo y clkCountry
+
     this.openModalProvider({
       provider: {
         nameReason: this.selectedRow.reasonName,
@@ -108,11 +109,12 @@ export class ClientsModalComponent extends BasePage implements OnInit {
         stateDesc: this.selectedRow.state,
         cityDesc: this.selectedRow.city,
         clkmun: '1',
-        clkedo: '1',
+        clkedo: String(this.selectedRow.stateId),
         clkCountry: null,
         cp: this.selectedRow.zipCode,
         phone: this.selectedRow.phone,
         fax: this.selectedRow.fax,
+        typePerson: this.selectedRow.personType.includes('F') ? '1' : '2',
         webMail: this.selectedRow.mailWeb,
         customerId: this.selectedRow.id,
       },
@@ -133,7 +135,7 @@ export class ClientsModalComponent extends BasePage implements OnInit {
       ignoreBackdropClick: true,
     });
     modalRef.content.onConfirm.subscribe(data => {
-      if (data) this.modalRef.hide();
+      if (data) this.handleSuccess();
     });
   }
 }
