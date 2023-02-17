@@ -58,7 +58,10 @@
           </form-field>
         </div>
         <div class="col-md-3">
-          <button class="btn btn-primary btn-sm active">Imprimir</button>
+          <confirm-button
+            text="Imprimir"
+            [loading]="loading"
+            (confirm)="confirm()"></confirm-button>
         </div>
       </div>
 
