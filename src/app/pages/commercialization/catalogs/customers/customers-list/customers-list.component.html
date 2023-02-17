@@ -10,12 +10,53 @@
     </div>
     <div class="ch-content">
       <h5 class="title">Todos los clientes</h5>
-      <div class="col-md-8 buttons">
-        <div class="col-md-2">
+      <div class="col-md-5 buttons">
+        <div>
+          <div class="btn-group col-md-2" dropdown>
+            <button
+              id="button-basic"
+              dropdownToggle
+              type="button"
+              class="btn btn-success active btn-sm ml-3"
+              aria-controls="dropdown-basic">
+              Opciones <span class="caret"></span>
+            </button>
+            <ul
+              id="dropdown-basic"
+              *dropdownMenu
+              class="dropdown-menu"
+              role="menu"
+              aria-labelledby="button-basic">
+              <li role="menuitem">
+                <a class="dropdown-item" (click)="openFormClients()"
+                  >Agregar cliente<i class="fa fa-plus text-primary mx-2"></i
+                ></a>
+              </li>
+              <li class="divider dropdown-divider"></li>
+              <li role="menuitem">
+                <a class="dropdown-item" (click)="openBlackList()"
+                  >Lista Negra<i class="fa fa-ban text-danger mx-2"></i
+                ></a>
+              </li>
+              <li role="menuitem">
+                <a class="dropdown-item" (click)="openWhiteList()"
+                  >Lista Blanca<i class="fa fa-check text-success mx-2"></i
+                ></a>
+              </li>
+              <li class="divider dropdown-divider"></li>
+              <li role="menuitem">
+                <a class="dropdown-item" (click)="exportAllClients()"
+                  >Descargar todo</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- <div class="col-md-2">
           <button
             class="btn btn-success active btn-sm ml-3"
             (click)="exportAllClients()">
-            Exportar a Excel.
+            Exportar a Excel
           </button>
         </div>
         <div class="col-md-2">
@@ -33,14 +74,7 @@
             (click)="openWhiteList()">
             Lista Blanca
           </button>
-        </div>
-        <div class="col-md-2">
-          <button
-            class="btn btn-primary active btn-sm ml-3"
-            (click)="openFormClients()">
-            Nuevo
-          </button>
-        </div>
+        </div>-->
         <app-columns-select [(settings)]="settings"> </app-columns-select>
       </div>
     </div>

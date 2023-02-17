@@ -4,7 +4,10 @@ import { MenageEndpoints } from 'src/app/common/constants/endpoints/ms-menage';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
-import { IMenageWrite } from '../../models/ms-menage/menage.model';
+import {
+  IMenageDescription,
+  IMenageWrite,
+} from '../../models/ms-menage/menage.model';
 
 @Injectable({
   providedIn: 'root',
@@ -37,5 +40,9 @@ export class MenageService extends HttpService {
   remove(id: string | number) {
     const route = `${MenageEndpoints.MenageManagement}/${id}`;
     return this.delete(route);
+  }
+  getByGood(id: string | number) {
+    const route = `${MenageEndpoints.MenageManagement}?filter.noGood=$eq:${id}`;
+    return this.get<IListResponse<IMenageDescription>>(route);
   }
 }

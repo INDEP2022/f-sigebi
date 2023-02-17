@@ -12,6 +12,7 @@ export class ListParams {
 export class FilterParams {
   page?: number = 1;
   limit?: number = 10;
+  search?: string = '';
 
   private filters: string[] = [];
 
@@ -34,6 +35,7 @@ export class FilterParams {
     const paginationParams = [];
     paginationParams.push(`page=${this.page}`);
     paginationParams.push(`limit=${this.limit}`);
+    paginationParams.push(`search=${this.search ?? ''}`);
     return paginationParams;
   }
 }
@@ -56,8 +58,18 @@ class DynamicFilter {
 export enum SearchFilter {
   EQ = '$eq',
   IN = '$in',
-  LIKE = '$like',
+  LIKE = '$ilike',
   NOT = '$not',
   NULL = '$null',
   ILIKE = '$ilike',
+  GT = '$gt',
+  LT = '$lt',
+  GTE = '$gte',
+  LTE = '$lte',
+}
+
+export interface DynamicFilterLike {
+  field: string;
+  value: string | number;
+  operator?: SearchFilter;
 }

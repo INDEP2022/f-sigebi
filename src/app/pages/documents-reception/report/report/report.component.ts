@@ -1,12 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
+import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { ReportService } from 'src/app/core/services/reports/reports.service';
 //BasePage
 import { BasePage } from 'src/app/core/shared/base-page';
 
-interface IReportRanges {
-  code: 'daily' | 'monthly' | 'yearly';
-  name: string;
+export interface IReport {
+  data: File;
 }
 
 @Component({
@@ -15,21 +16,16 @@ interface IReportRanges {
   styles: [],
 })
 export class ReportComponent extends BasePage implements OnInit {
+  @Output() sendSearchForm = new EventEmitter<any>();
+  @Output() resetForm = new EventEmitter<boolean>();
+  showSearchForm: boolean = true;
+  searchForm: ModelForm<any>;
   reportForm: FormGroup;
   datePickerConfig: Partial<BsDatepickerConfig> = {
     minMode: 'month',
     adaptivePosition: true,
     dateInputFormat: 'MMMM YYYY',
   };
-  ranges: IReportRanges[] = [
-    { code: 'daily', name: 'Diario' },
-    { code: 'monthly', name: 'Mensual' },
-    { code: 'yearly', name: 'Anual' },
-  ];
-
-  get range() {
-    return this.reportForm.get('range');
-  }
 
   get from() {
     return this.reportForm.get('from');
@@ -38,7 +34,7 @@ export class ReportComponent extends BasePage implements OnInit {
   get to() {
     return this.reportForm.get('to');
   }
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private reportService: ReportService) {
     super();
   }
 
@@ -52,85 +48,115 @@ export class ReportComponent extends BasePage implements OnInit {
       subdelegation: [null, [Validators.required]],
       from: [null, [Validators.required]],
       to: [null, [Validators.required]],
-      range: ['daily', [Validators.required]],
     });
   }
 
   save() {}
 
-  rangeChange() {
-    this.changeCalendarFormat();
-    this.from.setValue(null);
-    this.to.setValue(null);
-  }
-
-  changeCalendarFormat() {
-    if (this.range.value === 'yearly') {
-      this.datePickerConfig.minMode = 'year';
-      this.datePickerConfig.dateInputFormat = 'YYYY';
-    } else {
-      this.datePickerConfig.minMode = 'month';
-      this.datePickerConfig.dateInputFormat = 'MMMM YYYY';
-    }
-  }
-
   confirm(): void {
-    this.loading = true;
     console.log(this.reportForm.value);
-    let params = {
-      PN_DELEG: this.reportForm.controls['delegation'].value,
-      PN_SUBDEL: this.reportForm.controls['subdelegation'].value,
-      PF_MES: this.reportForm.controls['from'].value,
-      PF_ANIO: this.reportForm.controls['to'].value,
-    };
+    /*
+        let params = {
+          PN_DELEG: this.reportForm.controls['delegation'].value,
+          PN_SUBDEL: this.reportForm.controls['subdelegation'].value,
+          PF_MES: this.reportForm.controls['from'].value,
+          PF_ANIO: this.reportForm.controls['to'].value,
+        };
+        */
 
-    console.log(params);
-    // open the window
-    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf? P_USR=LGONZALEZ&P_CUMP=1&P_T_NO_CUMP=2&P_T_CUMP=100`; //window.URL.createObjectURL(blob);
-    //let newWin = window.open(pdfurl,"test.pdf");
+    //this.showSearch = true;
+    const start = new Date(this.reportForm.get('from').value);
+    const end = new Date(this.reportForm.get('to').value);
 
-    this.onLoadToast('error', 'Reporte no encontrado', '');
-    this.loading = false;
-    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf? P_USR=LGONZALEZ&P_CUMP=1&P_T_NO_CUMP=2&P_T_CUMP=100`; //window.URL.createObjectURL(blob);
-    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RCONCOGVOLANTESRE.pdf?PN_VOLANTEFIN=70646&P_IDENTIFICADOR=0`; //window.URL.createObjectURL(blob);
+    const startTemp = `${start.getFullYear()}-0${
+      start.getUTCMonth() + 1
+    }-0${start.getDate()}`;
+    const endTemp = `${end.getFullYear()}-0${
+      end.getUTCMonth() + 1
+    }-0${end.getDate()}`;
 
-    // console.log(this.flyersForm.value);
-    //let params = { ...this.flyersForm.value };
-    /*for (const key in params) {
+    if (end < start) {
+      this.onLoadToast(
+        'warning',
+        'advertencia',
+        'Fecha final no puede ser menor a fecha de inicio'
+      );
+      return;
+    }
+    // console.log(this.reportForm.value);
+    let params = { ...this.reportForm.value };
+
+    for (const key in params) {
       if (params[key] === null) delete params[key];
-    }*/
-    //console.log(params);
-    /*this.siabService
-      .getReport(SiabReportEndpoints.RCONCOGVOLANTESRE, params)
-      .subscribe({
-        next: response => {
-          console.log(response);
-          // this.readFile(response);
-          this.loading = false;
-        },
-        error: () => {
-          this.loading = false;
-          this.openPrevPdf(pdfurl);
-        },
-      });*/
-    // this.loading = false;
-    //this.openPrevPdf(pdfurl)
-    // open the window
-    //let newWin = window.open(pdfurl,"test.pdf");
+    }
+    setTimeout(() => {
+      this.onLoadToast('success', 'procesando', '');
+    }, 1000);
+    //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf?P_IDENTIFICADOR=${params}`; //window.URL.createObjectURL(blob);
+    const pdfurl = `https://drive.google.com/file/d/1o3IASuVIYb6CPKbqzgtLcxx3l_V5DubV/view?usp=sharing`; //window.URL.createObjectURL(blob);
+    window.open(pdfurl, 'RGEROFPRECEPDOCUM.pdf');
+    setTimeout(() => {
+      this.onLoadToast('success', 'Reporte generado', '');
+    }, 2000);
 
-    // this.siabService.getReport(SiabReportEndpoints.RINDICA, form).subscribe(
-    //   (report: IReport) => {
-    //     console.log(report);
-    //     //TODO: VIEW FILE
-    //   },
-    //   error => (this.loading = false)
-    // );
-    /*setTimeout(st => {
-      this.loading = false;
-    }, 5000);*/
+    this.loading = false;
+    this.cleanForm();
   }
 
   cleanForm(): void {
     this.reportForm.reset();
+  }
+
+  pdfSrc!: Uint8Array;
+  api = '';
+
+  preview(file: IReport) {
+    try {
+      this.reportService.download(file).subscribe(response => {
+        if (response !== null) {
+          let blob = new Blob([response], { type: 'application/pdf' });
+          const fileURL = URL.createObjectURL(blob);
+          window.open(fileURL);
+        }
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  Generar() {
+    const start = new Date(this.reportForm.get('PF_MES').value);
+    const end = new Date(this.reportForm.get('PF_ANIO').value);
+
+    const startTemp = `${start.getFullYear()}-0${
+      start.getUTCMonth() + 1
+    }-0${start.getDate()}`;
+    const endTemp = `${end.getFullYear()}-0${
+      end.getUTCMonth() + 1
+    }-0${end.getDate()}`;
+
+    if (endTemp < startTemp) {
+      this.onLoadToast(
+        'warning',
+        'advertencia',
+        'Fecha final no puede ser menor a fecha de inicio'
+      );
+    }
+
+    this.reportService.getReport(this.reportForm.value).subscribe({
+      next: (resp: any) => {
+        if (resp.file.base64 !== '') {
+          this.preview(resp.file.base64);
+        } else {
+          this.onLoadToast(
+            'warning',
+            'advertencia',
+            'Sin datos para los rangos de fechas suministrados'
+          );
+        }
+
+        return;
+      },
+    });
   }
 }

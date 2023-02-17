@@ -11,7 +11,7 @@ export const ESTATE_COLUMNS = {
     sort: false,
   },
 
-  record: {
+  transferFile: {
     title: 'Expediente',
     type: 'string',
     sort: false,

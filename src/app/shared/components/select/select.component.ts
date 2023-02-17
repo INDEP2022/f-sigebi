@@ -1,10 +1,12 @@
 import {
   Component,
+  ElementRef,
   EventEmitter,
   Input,
   OnInit,
   Output,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import {
@@ -44,6 +46,7 @@ export class SelectComponent<T> implements OnInit {
   input$ = new Subject<string>();
   page: number = 1;
   totalItems: number = 0;
+  @ViewChild('select') select: ElementRef;
   private concat: boolean = false;
   private readonly selectSize: number = SELECT_SIZE;
   constructor() {}
@@ -88,6 +91,10 @@ export class SelectComponent<T> implements OnInit {
         debounceTime(200),
         distinctUntilChanged(),
         switchMap((text: string) => {
+          if (text === null) {
+            console.log('texto nulo');
+            return of([]);
+          }
           this.page = 1;
           this.buffer = [];
           this.loading = true;

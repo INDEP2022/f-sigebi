@@ -8,7 +8,7 @@
           [form]="form"
           value="id"
           bindLabel="description"
-          label="Classificación de Bienes"
+          [label]="label"
           [control]="goodClassificationField"
           (change)="onGoodClassificationChange($event)">
         </ngx-select>

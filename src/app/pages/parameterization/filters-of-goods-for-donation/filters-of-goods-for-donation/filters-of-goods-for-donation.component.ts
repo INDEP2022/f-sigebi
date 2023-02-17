@@ -61,6 +61,7 @@ export class FiltersOfGoodsForDonationComponent
   }
 
   getPagination(params?: ListParams) {
+    this.loading = true;
     this.donationServ.getAll(this.params.getValue()).subscribe({
       next: response => {
         if (response.data.length > 0) {
@@ -69,11 +70,15 @@ export class FiltersOfGoodsForDonationComponent
             donation.tagId = donation.tag.id;
             donation.tagDesc = donation.tag.description;
           });
+          this.loading = false;
         }
         this.data = response;
         this.data.count = 4;
       },
-      error: err => {},
+      error: err => {
+        this.onLoadToast('error', err.error.message, '');
+        this.loading = false;
+      },
     });
   }
 
@@ -91,7 +96,7 @@ export class FiltersOfGoodsForDonationComponent
             this.getPagination();
           },
           error: err => {
-            this.onLoadToast('error', 'Alerta', err.error.message);
+            this.onLoadToast('error', err.error.message, '');
           },
         });
       }

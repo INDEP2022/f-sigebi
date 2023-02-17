@@ -2,7 +2,10 @@ import { Component, EventEmitter, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -22,7 +25,7 @@ class Manege {
 export class MenajeComponent extends BasePage implements OnInit {
   title: any = 'Inmuebles de la solicitud';
   paragraphs: any[] = [];
-  params = new BehaviorSubject<ListParams>(new ListParams());
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
   public event: EventEmitter<any> = new EventEmitter();
   immovablesSelected: any;
@@ -30,7 +33,7 @@ export class MenajeComponent extends BasePage implements OnInit {
   listMenage: any = [];
   menage = new Manege();
 
-  data: any;
+  goodsObject: any;
 
   constructor(
     private modelRef: BsModalRef,
@@ -50,21 +53,18 @@ export class MenajeComponent extends BasePage implements OnInit {
   }
 
   loadPaginator() {
-    var param = new ListParams();
     this.params.pipe(takeUntil(this.$unSubscribe)).subscribe(data => {
-      param.page = data.inicio;
-      param.limit = data.pageSize;
-      param.text = data.text;
-      this.getData(param);
+      this.getData();
     });
   }
 
-  getData(params: ListParams) {
+  getData() {
     this.loading = true;
     this.paragraphs = [];
     this.listMenage = [];
-    params['filter.requestId'] = `$eq:${this.requestId}`;
-    this.goodService.getAll(params).subscribe({
+    this.params.value.addFilter('requestId', this.requestId);
+    var filter = this.params.getValue().getParams();
+    this.goodService.getAll(filter).subscribe({
       next: async (resp: any) => {
         if (resp.data) {
           const result = resp.data.map(async (item: any) => {
@@ -75,6 +75,7 @@ export class MenajeComponent extends BasePage implements OnInit {
           });
 
           Promise.all(result).then(data => {
+            this.totalItems = this.listMenage.length;
             this.paragraphs = this.listMenage;
             this.loading = false;
           });
@@ -103,14 +104,35 @@ export class MenajeComponent extends BasePage implements OnInit {
   }
 
   selectRow(event: any) {
-    console.log(event);
-
-    this.immovablesSelected = event.data;
+    if (event.isSelected) {
+      this.immovablesSelected = event.data;
+    } else {
+      this.immovablesSelected = null;
+    }
   }
 
   selectImmovable() {
-    this.event.emit(this.immovablesSelected);
+    if (!this.immovablesSelected) {
+      this.onLoadToast('info', 'Información', `Seleccione un inmueble!`);
+      return;
+    }
+    var menages = this.builtMenage(this.immovablesSelected);
+
+    this.event.emit(menages);
     this.close();
+  }
+
+  builtMenage(menage: any) {
+    const menageList: any[] = [];
+    for (let i = 0; i < this.goodsObject.length; i++) {
+      const element = this.goodsObject[i];
+      menageList.push({
+        noGoodMenage: element.id, //Good
+        noGood: menage.id, //menaje
+        noRegister: null, //no insertar nada
+      });
+    }
+    return menageList;
   }
 
   close() {

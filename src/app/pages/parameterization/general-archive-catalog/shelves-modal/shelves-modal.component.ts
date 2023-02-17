@@ -1,18 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { NUMBERS_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
-import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //models
 import { IShelves } from 'src/app/core/models/catalogs/shelves.model';
 //Services
 import { IBattery } from 'src/app/core/models/catalogs/battery.model';
 import { ISaveValue } from 'src/app/core/models/catalogs/save-value.model';
-import { SaveValueService } from 'src/app/core/services/catalogs/save-value.service';
-import { BatterysService } from 'src/app/core/services/save-values/battery.service';
 import { ShelvessService } from 'src/app/core/services/save-values/shelves.service';
 
 @Component({
@@ -27,38 +23,22 @@ export class ShelvesModalComponent extends BasePage implements OnInit {
   title: string = 'Estantes';
   edit: boolean = false;
 
-  cveSaveValues = new DefaultSelect();
-  idBatteryD = new DefaultSelect();
-
   id: ISaveValue;
   idBattery: IBattery;
+  cve: ISaveValue;
+  noBattery: IBattery;
 
   constructor(
     private modalRef: BsModalRef,
     private fb: FormBuilder,
-    private shelvessService: ShelvessService,
-    private saveValueService: SaveValueService,
-    private batterysService: BatterysService
+    private shelvessService: ShelvessService
   ) {
     super();
   }
 
   ngOnInit(): void {
     this.prepareForm();
-  }
-
-  getCveSaveValues(params: ListParams) {
-    this.saveValueService.getCveSaveValues(params).subscribe({
-      next: data =>
-        (this.cveSaveValues = new DefaultSelect(data.data, data.count)),
-    });
-  }
-
-  getBatteryById(params: ListParams) {
-    this.batterysService.getBatteryById(params).subscribe({
-      next: data =>
-        (this.idBatteryD = new DefaultSelect(data.data, data.count)),
-    });
+    console.log(this.noBattery);
   }
 
   private prepareForm() {
@@ -87,6 +67,13 @@ export class ShelvesModalComponent extends BasePage implements OnInit {
       this.shelvesForm.controls['key'].setValue(this.id.id);
       this.shelvesForm.controls['batteryNumber'].setValue(
         this.idBattery.idBattery
+      );
+    } else {
+      this.edit = false;
+      console.log(this.cve);
+      this.shelvesForm.controls['key'].setValue(this.cve.id);
+      this.shelvesForm.controls['batteryNumber'].setValue(
+        this.noBattery.idBattery
       );
     }
   }

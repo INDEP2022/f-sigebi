@@ -16,7 +16,7 @@ export class GoodService extends HttpService {
     this.microservice = GoodEndpoints.Good;
   }
 
-  getAll(params?: ListParams): Observable<IListResponse<IGood>> {
+  getAll(params?: ListParams | string): Observable<IListResponse<IGood>> {
     return this.get<IListResponse<IGood>>(GoodEndpoints.Good, params);
   }
 
@@ -79,5 +79,14 @@ export class GoodService extends HttpService {
   getStatusByGood(idGood: string | number): Observable<any> {
     const route = `${GoodEndpoints.StatusAndDesc}/${idGood}`;
     return this.get<any>(route);
+  }
+  getBySafe(
+    body: Object,
+    params?: ListParams
+  ): Observable<IListResponse<IGood>> {
+    const route = `${GoodEndpoints.Good}/getGoodBySafe`;
+    console.log(route);
+
+    return this.post<IListResponse<IGood>>(route, body);
   }
 }

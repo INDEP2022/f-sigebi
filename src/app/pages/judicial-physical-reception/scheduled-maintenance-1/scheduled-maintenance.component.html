@@ -6,15 +6,28 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col">
-          <form-field [control]="form.get('tipoEvento')" label="Tipo Evento">
+          <!-- <form-field [control]="form.get('tipoEvento')" label="Tipo Evento">
             <ngx-select
               control="tipoEvento"
               [form]="form"
               [data]="itemsSelect"></ngx-select>
+          </form-field> -->
+          <app-event-type-shared
+            [form]="form"
+            eventField="tipoEvento"></app-event-type-shared>
+        </div>
+        <div class="col">
+          <form-field
+            [control]="form.get('fechapageFin')"
+            label="Fecha de Pago - Fin">
+            <input
+              class="form-control"
+              ngModel
+              bsDaterangepicker
+              formControlName="fechapageFin" />
           </form-field>
         </div>
-
-        <div class="col">
+        <!-- <div class="col">
           <form-field [control]="form.get('fechapage')" label="Fecha page">
             <input
               bsDatepicker
@@ -30,16 +43,20 @@
               class="form-control"
               formControlName="fechaFin" />
           </form-field>
-        </div>
+        </div> -->
 
         <div class="col">
-          <form-field
-            [control]="form.get('statusEvento')"
-            label="Status Evento">
+          <form-field [control]="form.get('statusEvento')">
             <ngx-select
+              (fetchItems)="getStatus($event)"
               control="statusEvento"
+              label="Estatus Evento"
+              [bindLabel]="'description'"
+              value="id"
               [form]="form"
-              [data]="itemsSelect"></ngx-select>
+              [data]="statusEvent"
+              (change)="onEventsChange($event)">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col">
@@ -60,11 +77,11 @@
             Refrescar Informaci&oacute;n
           </button>
         </div>
-        <div class="col">
+        <!-- <div class="col">
           <button class="btn btn-primary active" type="submit" size="small">
             Calendario
           </button>
-        </div>
+        </div> -->
         <div class="col">
           <button class="btn btn-primary active" type="submit" size="small">
             Buscar Bien en Acta

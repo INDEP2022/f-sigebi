@@ -17,8 +17,9 @@ import { MunicipalityService } from 'src/app/core/services/catalogs/municipality
 import { TypeWarehouseService } from 'src/app/core/services/catalogs/type-warehouse.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { BasePage } from 'src/app/core/shared/base-page';
-import { STRING_PATTERN } from 'src/app/core/shared/patterns';
+import { DOUBLE_PATTERN, STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { responsableUser, typeTercero } from './warehouse-data';
 
 @Component({
   selector: 'app-warehouse-form',
@@ -28,8 +29,8 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 export class WarehouseFormComponent extends BasePage implements OnInit {
   regDelData: IRegionalDelegation;
   warehouseForm: FormGroup = new FormGroup({});
-  responsiblesUsers = new DefaultSelect();
-  typeTercero = new DefaultSelect();
+  responsiblesUsers = new DefaultSelect(responsableUser);
+  typeTercero = new DefaultSelect(typeTercero);
   states = new DefaultSelect<IStateOfRepublic>();
   municipalities = new DefaultSelect<IMunicipality>();
   cities = new DefaultSelect<ICity>();
@@ -66,46 +67,49 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
   //Verificar typeTercero//
   prepareForm() {
     this.warehouseForm = this.fb.group({
-      nameWarehouse: [null, [Validators.pattern(STRING_PATTERN)]],
+      description: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
       responsibleUser: [null],
-      numberRegister: [null],
-      typeTercero: [null],
-      regionalDelegation: [
+      numberRegister: [
+        null,
+        [Validators.required, Validators.pattern(STRING_PATTERN)],
+      ],
+      typeTercero: [null, [Validators.required]],
+      responsibleDelegation: [
         this.regDelData.description,
         [Validators.pattern(STRING_PATTERN)],
       ],
       managedBy: [null, [Validators.pattern(STRING_PATTERN)]],
-      state: [null],
-      municipality: [null],
-      city: [null],
-      locality: [null],
-      zipCode: [null],
-      street: [null],
+      stateCode: [null, [Validators.required]],
+      municipalityCode: [null, [Validators.required]],
+      cityCode: [null, [Validators.required]],
+      localityCode: [null, [Validators.required]],
+      zipCode: [null, [Validators.required]],
+      street: [null, [Validators.pattern(STRING_PATTERN)]],
       numberOutside: [null],
-      typeWarehouse: [null],
-      numberManagement: [null],
+      type: [null],
+      numberManagement: [null, [Validators.pattern(STRING_PATTERN)]],
       locator: [null],
-      contractNumber: [null],
+      contractNumber: [null, [Validators.pattern(STRING_PATTERN)]],
       siabWarehouse: [null, [Validators.pattern(STRING_PATTERN)]],
       startOperation: [null],
       endOperation: [null],
-      latitude: [null, [Validators.pattern(STRING_PATTERN)]],
-      longitude: [null, [Validators.pattern(STRING_PATTERN)]],
+      latitude: [null, [Validators.pattern(DOUBLE_PATTERN)]],
+      longitude: [null, [Validators.pattern(DOUBLE_PATTERN)]],
     });
   }
   confirm() {
     this.alertQuestion(
       'warning',
       'Confirmación',
-      '¿Estas seguro de crar almacén?'
+      '¿Estas seguro de crear almacén?'
     ).then(question => {
       if (question.isConfirmed) {
-        //Ejecutar el servicio
+        console.log(this.warehouseForm.value);
         this.onLoadToast('success', 'Almacén creado correctamente', '');
         this.close();
-        this.router.navigate([
-          '/pages/request/perform-programming/1/warehouse/1',
-        ]);
       }
     });
   }
@@ -191,7 +195,10 @@ export class WarehouseFormComponent extends BasePage implements OnInit {
 
   getTypeWarehouseSelect(params: ListParams) {
     this.typeWarehouseService.getAll(params).subscribe(data => {
-      this.typeWarehouse = new DefaultSelect(data.data, data.count);
+      const filterType = data.data.filter(item => {
+        return item.description;
+      });
+      this.typeWarehouse = new DefaultSelect(filterType, data.count);
     });
   }
 
