@@ -65,16 +65,20 @@
         </div>
         <div class="col-md-6" *ngIf="statusAct === 'ABIERTA'">
           <div class="row justify-content-end">
-            <div class="col-auto">
+            <!-- <div class="col-auto">
               <button
                 class="btn btn-primary btn-sm active"
                 (click)="update()"
                 [disabled]="form.invalid">
                 Actualizar
               </button>
-            </div>
-            <div class="col-auto">
-              <button class="btn btn-primary btn-sm active">Cerrar</button>
+            </div> -->
+            <div class="col-auto" *ngIf="selectedProceedings">
+              <button
+                class="btn btn-primary btn-sm active"
+                (click)="closeProceedings()">
+                Cerrar Acta
+              </button>
             </div>
             <div class="col-auto">
               <button
@@ -108,7 +112,7 @@
             [source]="proceedingsData"
             (edit)="editProceeding($event.data)"
             (delete)="showDeleteAlert($event)"
-            (userRowSelect)="selectProceedings($event)">
+            (userRowSelect)="selectProceedings($event.data)">
           </ng2-smart-table>
         </div>
       </ng-scrollbar>
