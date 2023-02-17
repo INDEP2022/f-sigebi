@@ -143,6 +143,7 @@ export class RegistrationOfRequestsComponent
       affair: [null],
       transferEntNotes: [null, [Validators.pattern(STRING_PATTERN)]],
       observations: [null, [Validators.pattern(STRING_PATTERN)]],
+      transferenceFile: [null],
     });
   }
 

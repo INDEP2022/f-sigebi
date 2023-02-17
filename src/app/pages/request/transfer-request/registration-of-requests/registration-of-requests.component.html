@@ -135,15 +135,16 @@
                 [requestForm]="registRequestForm"></app-request-record-tab>
               <!-- Fin -->
               <!-- cumplimiento de verificacion y clasificacion de bienes-->
-              <app-request-detail-tab
-                *ngIf="
-                  complianceVerifi ||
+              <!--//en caso de que no funciones el === false ///
+                complianceVerifi ||
                   classifyAssets ||
                   validateDocument ||
                   notifyClarifiOrImpropriety ||
                   approvalProcess
-                "
-                [dataObject]="object"></app-request-detail-tab>
+              -->
+              <app-request-detail-tab
+                *ngIf="requestRegistration === false"
+                [requestForm]="registRequestForm"></app-request-detail-tab>
               <!-- fin -->
             </tab>
             <tab heading="{{ tab2 }}">

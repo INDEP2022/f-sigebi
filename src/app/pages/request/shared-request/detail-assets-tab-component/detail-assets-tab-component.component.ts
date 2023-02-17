@@ -133,18 +133,6 @@ export class DetailAssetsTabComponentComponent
     if (this.typeDoc === 'clarification') {
       console.log(changes['detailAssets'].currentValue);
     }
-
-    this.detailAssets.controls['goodTypeId'].valueChanges.subscribe(
-      (data: any) => {
-        if (data) {
-          this.getTypeGood(this.detailAssets.controls['goodTypeId'].value);
-          this.displayTypeTapInformation(Number(data));
-        } else {
-          //limpia los tabs de los bienes
-          this.displayTypeTapInformation(data);
-        }
-      }
-    );
   }
 
   ngOnInit(): void {
@@ -734,6 +722,18 @@ export class DetailAssetsTabComponentComponent
   }
 
   getReactiveFormCall() {
+    this.detailAssets.controls['goodTypeId'].valueChanges.subscribe(
+      (data: any) => {
+        if (data) {
+          this.getTypeGood(this.detailAssets.controls['goodTypeId'].value);
+          this.displayTypeTapInformation(Number(data));
+        } else {
+          //limpia los tabs de los bienes
+          this.displayTypeTapInformation(data);
+        }
+      }
+    );
+
     this.detailAssets.controls['brand'].valueChanges.subscribe((data: any) => {
       if (data) {
         this.brandId = data;
