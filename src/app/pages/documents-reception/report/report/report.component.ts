@@ -89,12 +89,15 @@ export class ReportComponent extends BasePage implements OnInit {
     for (const key in params) {
       if (params[key] === null) delete params[key];
     }
+    setTimeout(() => {
+      this.onLoadToast('success', 'procesando', '');
+    }, 1000);
     //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf?P_IDENTIFICADOR=${params}`; //window.URL.createObjectURL(blob);
     const pdfurl = `https://drive.google.com/file/d/1o3IASuVIYb6CPKbqzgtLcxx3l_V5DubV/view?usp=sharing`; //window.URL.createObjectURL(blob);
     window.open(pdfurl, 'RGEROFPRECEPDOCUM.pdf');
     setTimeout(() => {
-      this.onLoadToast('success', '', 'Reporte generado');
-    }, 1000);
+      this.onLoadToast('success', 'Reporte generado', '');
+    }, 2000);
 
     this.loading = false;
     this.cleanForm();

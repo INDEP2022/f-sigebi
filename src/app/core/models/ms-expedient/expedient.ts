@@ -52,3 +52,18 @@ export interface IExpedient {
   authorityNumber: number | string;
   insertionDatehc: Date;
 }
+export interface IExpedientMassiveUpload {
+  id: string | number; // NO EXPEDIENTE
+  insertedBy: string; // INSERTADO POR
+  insertMethod: string; // METODO DE INSERCION
+  insertDate: Date; //  FECHA DE INSERCION
+  nameInstitution: string; // NOMBRE DE INSTITUCION
+  indicatedName: string; // NOMBRE INDICIADO
+  federalEntityKey: string; // CLAVE ENTIDAD FEDERATIVA
+  identifier: string; // IDENTIFICADOR
+  transferNumber: string; // NO TRANSFERENTE
+  expTransferNumber: string; // NO EXPEDIENTES TRANSFERENTES
+  expedientType: string; // TIPO DE EXPEDIENTE
+  authorityNumber: number | string; //  NO DE AUTORIDAD
+  stationNumber: number | string; // NO EMISORA
+}
