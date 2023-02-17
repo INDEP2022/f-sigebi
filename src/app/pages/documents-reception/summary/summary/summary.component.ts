@@ -64,7 +64,9 @@ export class SummaryComponent extends BasePage implements OnInit {
 
   confirm(): void {
     console.log(this.flyersForm.value);
-    let entidadades = [
+
+    /*
+        let entidadades = [
       {
         id: 1,
         etapaEdo: 1252,
@@ -130,7 +132,6 @@ export class SummaryComponent extends BasePage implements OnInit {
         idZoneGeographic: 122,
       },
     ];
-    /*
         let params = {
           PN_DELEG: this.flyersForm.controls['delegation'].value,
           PN_SUBDEL: this.flyersForm.controls['subdelegation'].value,
@@ -170,10 +171,16 @@ export class SummaryComponent extends BasePage implements OnInit {
 
     console.log(params);
     // open the window
-    this.onLoadToast('success', 'procesando', '');
+    setTimeout(() => {
+      this.onLoadToast('success', 'procesando', '');
+    }, 1000);
+
     //const pdfurl = `http://s29.q4cdn.com/175625835/files/doc_downloads/test.pdf`; //window.URL.createObjectURL(blob);
     const pdfurl = `https://drive.google.com/file/d/1o3IASuVIYb6CPKbqzgtLcxx3l_V5DubV/view?usp=sharing`; //window.URL.createObjectURL(blob);
-    this.onLoadToast('success', 'Reporte generado', '');
+    setTimeout(() => {
+      this.onLoadToast('success', 'Reporte generado', '');
+    }, 2000);
+
     window.open(pdfurl, 'RGEROFPRESUMENDIA.pdf');
     this.loading = false;
     this.cleanForm();

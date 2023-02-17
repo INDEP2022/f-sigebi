@@ -12,7 +12,6 @@
             [control]="flyersForm.get('entidad')"
             label="Entidad Federativa:">
             <select class="form-control" formControlName="entidad">
-              <option [value]="null">Seleccione una entidad</option>
               <option value="Nayarit">Nayarit</option>
               <option value="Nuevo León">Nuevo León</option>
               <option value="Oaxaca">Oaxaca</option>
@@ -58,9 +57,8 @@
           <div class="row pt-3" *ngIf="includeArea.value">
             <form-field
               [control]="flyersForm.get('area')"
-              label="Entidad Federativa:">
+              label="Área destino:">
               <select class="form-control" formControlName="area">
-                <option [value]="null">Seleccione un departamento</option>
                 <option value="Aguascalientes">Aguascalientes</option>
                 <option value="Mexicali">Mexicali</option>
                 <option value="La Paz">Baja California Sur</option>
