@@ -19,6 +19,24 @@ var usuario: IRequestList[] = [
     process: 'SolicitudeTransferencia',
   },
   {
+    id: 43437,
+    title: 'Verificacion de solicitud (Captura de Solicitud) con folio 43437',
+    noRequest: 45009,
+    numTask: 260301,
+    noInstance: 820169,
+    created: 'tester_nsbxt',
+    process: 'VerificarCumplimiento',
+  },
+  {
+    id: 43437,
+    title: 'Registro de solicitud (Captura de Solicitud) con folio 43437',
+    noRequest: 45009,
+    numTask: 260301,
+    noInstance: 820169,
+    created: 'tester_nsbxt',
+    process: 'SolicitudeTransferencia',
+  },
+  {
     title: 'Registo de solicitud (programar solicitud) con folio 45010',
     noRequest: 45010,
     numTask: 260302,
@@ -352,6 +370,13 @@ export class RequestListComponent extends BasePage implements OnInit {
         this.router.navigate([
           'pages/request/transfer-request/registration-request',
           event.data.id,
+        ]);
+        break;
+      case 'VerificarCumplimiento':
+        // en el caso de que sea una solicitud de programacion
+        this.router.navigate([
+          'pages/request/transfer-request/verify-compliance',
+          event.data.noRequest,
         ]);
         break;
 

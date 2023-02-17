@@ -64,7 +64,7 @@ export class AssetsComponent extends BasePage implements OnInit {
     private genericService: GenericService,
     private requestHelperService: RequestHelperService,
     private excelService: ExcelService,
-    private menageSerice: MenageService
+    private menageService: MenageService
   ) {
     super();
   }
@@ -124,6 +124,9 @@ export class AssetsComponent extends BasePage implements OnInit {
             );
             item['transferentDestinyName'] = transferentDestiny;
             item['destinyLigieName'] = transferentDestiny;
+
+            const goodMenaje = await this.getMenaje(item.id);
+            item['goodMenaje'] = goodMenaje;
           });
 
           Promise.all(result).then(x => {
@@ -201,6 +204,23 @@ export class AssetsComponent extends BasePage implements OnInit {
       } else {
         resolve('');
       }
+    });
+  }
+
+  getMenaje(id: number) {
+    return new Promise((resolve, reject) => {
+      this.menageService.getById(id).subscribe({
+        next: (resp: any) => {
+          if (resp) {
+            resolve(resp['noGood']);
+          } else {
+            resolve('');
+          }
+        },
+        error: error => {
+          resolve('');
+        },
+      });
     });
   }
 
@@ -334,6 +354,7 @@ export class AssetsComponent extends BasePage implements OnInit {
         delete element.stateConservationName;
         delete element.transferentDestinyName;
         delete element.destinyLigieName;
+        delete element.goodMenaje;
         this.goodService.update(element.id, element).subscribe({
           next: resp => {
             if (resp.statusCode != null) {
@@ -366,7 +387,7 @@ export class AssetsComponent extends BasePage implements OnInit {
         const element = this.menajeSelected[i];
         console.log(element);
 
-        this.menageSerice.create(element).subscribe({
+        this.menageService.create(element).subscribe({
           next: data => {
             if (data.statusCode != null) {
               this.message(

@@ -363,7 +363,6 @@ export class ClassifyAssetsTabComponent
 
   saveRequest(): void {
     const goods = this.classiGoodsForm.getRawValue();
-    console.log('bienes: ', goods);
     var goodAction =
       goods.goodId === null
         ? this.goodService.create(goods)
@@ -388,7 +387,10 @@ export class ClassifyAssetsTabComponent
           this.classiGoodsForm.controls['id'].setValue(data.id);
 
           this.refreshTable(true);
-          // this.principalSave = false;
+
+          setTimeout(() => {
+            this.refreshTable(false);
+          }, 5000);
         }
       },
     });

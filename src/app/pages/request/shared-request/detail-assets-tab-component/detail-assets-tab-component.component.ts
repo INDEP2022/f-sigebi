@@ -312,6 +312,7 @@ export class DetailAssetsTabComponentComponent
       }),
     });
 
+    //formulario de domicilio
     this.domicileForm = this.fb.group({
       id: [null],
       warehouseAlias: ['DOMICILIO TRANSFERENTE'],
@@ -345,6 +346,7 @@ export class DetailAssetsTabComponentComponent
     }
   }
 
+  //formulario del inmueble
   getGoodEstateTab() {
     this.goodDomicilieForm = this.fb.group({
       id: [null],
@@ -626,22 +628,22 @@ export class DetailAssetsTabComponentComponent
 
   async save(): Promise<void> {
     const domicilie = this.domicileForm.getRawValue();
-
     //se guarda bien domicilio
     if (domicilie.id !== null) {
       await this.saveDomicilieGood(domicilie);
     }
-
     //Se guardar el bien inmueble
     if (this.immovablesAssets === true) {
       if (this.domicileForm.controls['id'].value === null) {
-        this.message('info', 'Error', `Se requiere el domicilio del bien`);
+        this.message(
+          'info',
+          'Error',
+          `Se reguiqere ingresar el domicilio del bien`
+        );
       } else {
         await this.saveGoodDomicilie();
       }
     }
-
-    //this.isSave = false;
   }
 
   saveDomicilieGood(domicilie: IDomicilies) {
@@ -661,7 +663,7 @@ export class DetailAssetsTabComponentComponent
             this.message(
               'success',
               'Actualizado',
-              `Se actualizo el domicilio!`
+              `Se actualizo el domicilio del bien!`
             );
             this.domicileForm.controls['id'].setValue(data.id);
             resolve('Se actualizo el registro del domicilio del bien');
@@ -701,19 +703,19 @@ export class DetailAssetsTabComponentComponent
             this.message(
               'error',
               'Error',
-              `El registro del bien del domicilio guardar!\n. ${data.message}`
+              `No se guardo el registro del bien inmueble!\n. ${data.message}`
             );
-            reject('El registro del bien del domicilio guardar!');
+            reject('El registro del bien del inmueble no se guardo!');
           }
 
           if (data.id != null) {
             this.message(
               'success',
-              'Actualizado',
-              `Se guardo correctamente el bien del domicilio!`
+              'Guardado',
+              `Se guardo correctamente el bien inmueble!`
             );
 
-            resolve('Se guardo correctamente el bien del domicilio!');
+            resolve('Se guardo correctamente el bien inmueble!');
           }
         },
       });
@@ -791,7 +793,7 @@ export class DetailAssetsTabComponentComponent
       this.goodEstateService.getById(id).subscribe({
         next: resp => {
           console.log(resp);
-          this.goodDomicilieForm.patchValue(resp.data);
+          this.goodDomicilieForm.patchValue(resp);
         },
       });
     }

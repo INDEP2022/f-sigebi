@@ -44,7 +44,7 @@ export const ASSETS_COLUMNS = {
     type: 'string',
     sort: false,
   },
-  householdAsset: {
+  goodMenaje: {
     title: 'Menaje del Bien',
     type: 'string',
     sort: false,

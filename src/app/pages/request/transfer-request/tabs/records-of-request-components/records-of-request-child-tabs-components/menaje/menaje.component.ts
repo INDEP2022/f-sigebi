@@ -127,8 +127,8 @@ export class MenajeComponent extends BasePage implements OnInit {
     for (let i = 0; i < this.goodsObject.length; i++) {
       const element = this.goodsObject[i];
       menageList.push({
-        noGoodMenage: element.id, //Good
-        noGood: menage.id, //menaje
+        noGood: menage.id, //bien padre o Bien Inmueble
+        noGoodMenage: element.id, //Good hijo o Good
         noRegister: null, //no insertar nada
       });
     }
