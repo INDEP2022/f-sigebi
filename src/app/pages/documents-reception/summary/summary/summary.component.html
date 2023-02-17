@@ -8,17 +8,30 @@
       <div class="row">
         <div class="col-md-4">
           <app-delegation-shared [form]="flyersForm"></app-delegation-shared>
-          <form-field [control]="flyersForm.get('entidad')">
-            <ngx-select
-              [form]="flyersForm"
-              control="entidad"
-              [data]="select"
-              label="Entidad Federativa"></ngx-select>
+          <form-field
+            [control]="flyersForm.get('entidad')"
+            label="Entidad Federativa:">
+            <select class="form-control" formControlName="entidad">
+              <option [value]="null">Seleccione una entidad</option>
+              <option value="Nayarit">Nayarit</option>
+              <option value="Nuevo León">Nuevo León</option>
+              <option value="Oaxaca">Oaxaca</option>
+              <option value="Puebla">Puebla</option>
+              <option value="Querétaro">Querétaro</option>
+              <option value="Quintana Roo">Quintana Roo</option>
+              <option value="San Luis Potosí">San Luis Potosí</option>
+              <option value="Sinaloa">Sinaloa</option>
+            </select>
           </form-field>
+
           <!--   <form-field class="col-md-3" [control]="flyersForm.get('entidad')">
             <ngx-select [form]="flyersForm" [control]="entidad" [data]="select" value="id" label="Entidad Federativa"
               bindLabel="otWorth" (fetchItems)="getStates($event)"></ngx-select>
-          </form-field>-->
+          </form-field>
+                <form-field [control]="flyersForm.get('area')">
+                  <ngx-select [form]="flyersForm" control="area" [data]="select" label="&Aacute;rea"></ngx-select>
+                </form-field>
+        -->
           <form-check label="Filtrar por &aacute;rea" for="make_filter">
             <input
               id="make_filter"
@@ -43,20 +56,27 @@
           </div>
 
           <div class="row pt-3" *ngIf="includeArea.value">
-            <form-field [control]="flyersForm.get('area')">
-              <ngx-select
-                [form]="flyersForm"
-                control="area"
-                [data]="select"
-                label="&Aacute;rea"></ngx-select>
+            <form-field
+              [control]="flyersForm.get('area')"
+              label="Entidad Federativa:">
+              <select class="form-control" formControlName="area">
+                <option [value]="null">Seleccione un departamento</option>
+                <option value="Aguascalientes">Aguascalientes</option>
+                <option value="Mexicali">Mexicali</option>
+                <option value="La Paz">Baja California Sur</option>
+                <option value="Campeche">Campeche</option>
+                <option value="Chiapas">Chiapas</option>
+                <option value="Chihuahua">Chihuahua</option>
+                <option value="México">Ciudad de México</option>
+                <option value="Coahuila">Coahuila</option>
+                <option value="Durango">Durango</option>
+              </select>
             </form-field>
           </div>
         </div>
 
-        <div class="col-md-4">
-          <div class="row pt-3" *ngIf="includeArea.value">
-            <app-delegation-shared [form]="flyersForm"></app-delegation-shared>
-          </div>
+        <div class="col-md-3" *ngIf="includeArea.value">
+          <app-delegation-shared [form]="flyersForm"></app-delegation-shared>
         </div>
       </div>
     </form>
