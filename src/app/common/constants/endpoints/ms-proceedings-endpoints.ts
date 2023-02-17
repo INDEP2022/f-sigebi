@@ -5,4 +5,5 @@ export enum ProceedingsEndpoints {
   DetailProceedingsDevollution = 'detail-proceedings-devolution',
   DetailProceedingsReception = 'detail-proceedings-delivery-reception',
   ProceedingsValidations = 'proceedings-validations',
+  MaximunClosingTime = 'maximun-closing-time',
 }
