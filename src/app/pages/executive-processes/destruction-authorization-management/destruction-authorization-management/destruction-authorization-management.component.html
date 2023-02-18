@@ -2,7 +2,7 @@
   <div header>
     <div class="ch-content">
       <h5 class="title">
-        GESTI&Oacute;N DE AUTORIZACI&Oacute;N DE DESTRUCCI&Oacute;N 
+        GESTI&Oacute;N DE AUTORIZACI&Oacute;N DE DESTRUCCI&Oacute;N  
       </h5>
     </div>
   </div>
@@ -10,70 +10,85 @@
     <form class="form-material" [formGroup]="form">
       <div class="row">
         <div class="col-md-1">
-          <form-field [control]="form.get('noAuth')" label="No.">
+          <form-field [control]="form.get('id')" label="No.">
             <input
               type="text"
               class="form-control"
-              formControlName="noAuth"
-              maxlength="8"
-              minlength="1" />
+              formControlName="id" readonly/>
           </form-field>
         </div>
         <div class="col-md-2">
           <form-field
-            [control]="form.get('requesOffice')"
-            label="Oficio de Solicitud">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="requesOffice" />
+            [control]="form.get('keysProceedings')"
+            >
+            <ngx-select
+                  [searchOnInit]="true"
+                  [form]="form"
+                  (fetchItems)="getProceedings($event)"
+                  [data]="proceedings"
+                  value="keysProceedings"
+                  bindLabel="keysProceedings"
+                  label="Oficio de Solicitud"
+                  [control]="'keysProceedings'"
+                  (change)="onValuesChange($event)">
+                </ngx-select> 
           </form-field>
         </div>
         <div class="col-md-2">
           <form-field
-            [control]="form.get('requesScop')"
+            [control]="form.get('typeProceedings')"
             label="Oficio de alcance">
             <input
               type="text"
               class="form-control"
-              formControlName="requesScop" />
+              formControlName="typeProceedings" readonly/>
           </form-field>
         </div>
         <div class="col-md-2">
           <form-field
-            [control]="form.get('recepDate')"
+            [control]="form.get('datePhysicalReception')"
             label="Fecha recepci&oacute;n">
             <input
               type="text"
               placeholder=""
               class="form-control"
               bsDatepicker
-              formControlName="recepDate"
-              [bsConfig]="{ isAnimated: true }" />
+              formControlName="datePhysicalReception"
+              [bsConfig]="{ isAnimated: true }" readonly/>
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field [control]="form.get('scopDate')" label="Fecha de alcance">
+          <form-field [control]="form.get('dateDeliveryGood')" label="Fecha de alcance">
             <input
               type="text"
               placeholder=""
               class="form-control"
               bsDatepicker
-              formControlName="scopDate"
-              [bsConfig]="{ isAnimated: true }" />
+              formControlName="dateDeliveryGood"
+              [bsConfig]="{ isAnimated: true }" readonly/>
           </form-field>
         </div>
         <div class="col-md-2">
           <form-field
-            [control]="form.get('inteDate')"
+            [control]="form.get('dateCaptureHc')"
             label="Fecha de integraci&oacute;n">
             <input
               type="text"
               placeholder=""
               class="form-control"
               bsDatepicker
-              formControlName="inteDate"
-              [bsConfig]="{ isAnimated: true }" />
+              formControlName="dateCaptureHc"
+              [bsConfig]="{ isAnimated: true }" readonly/>
+          </form-field>
+        </div>
+        <div class="col-md-1">
+          <form-field
+            [control]="form.get('statusProceedings')"
+            label="Estado">
+            <input
+              type="text"
+              class="form-control"
+              formControlName="statusProceedings" readonly/>
           </form-field>
         </div>
       </div>
@@ -97,12 +112,12 @@
       <div class="form-group row pt-5">
         <div class="col-md-3">
           <form-field
-            [control]="form.get('scanFolio')"
+            [control]="form.get('universalFolio')"
             label="Folio de escaneo">
             <input
               type="text"
               class="form-control"
-              formControlName="scanFolio" />
+              formControlName="universalFolio" />
           </form-field>
         </div>
         <div class="col-md-1">
