@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
+import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
+import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { ReportService } from 'src/app/core/services/reports/reports.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 //BasePage
+import { AbstractControl } from '@angular/forms';
 import { IDelegationState } from 'src/app/core/models/catalogs/delegation-state.model';
 import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { BasePage } from 'src/app/core/shared/base-page';
@@ -25,6 +28,9 @@ export class SummaryComponent extends BasePage implements OnInit {
   flyersForm: FormGroup;
   entidad = new DefaultSelect<IDelegationState>();
   select = new DefaultSelect<IDepartment>();
+  delegdestino = new DefaultSelect<IDelegation>();
+  subddestino = new DefaultSelect<ISubdelegation>();
+
   datePickerConfig: Partial<BsDatepickerConfig> = {
     minMode: 'month',
     adaptivePosition: true,
@@ -50,11 +56,11 @@ export class SummaryComponent extends BasePage implements OnInit {
     this.flyersForm = this.fb.group({
       delegation: [null, [Validators.required]],
       subdelegation: [null, [Validators.required]],
-      entidad: [null],
-      from: [null, [Validators.required]],
-      to: [null, [Validators.required]],
+      federative: [null],
+      PF_FECINI: [null, [Validators.required]],
+      PF_FECFIN: [null, [Validators.required]],
       includeArea: [false],
-      area: [null],
+      department: [null],
       delegdestino: [null],
       subddestino: [null],
     });
@@ -63,8 +69,16 @@ export class SummaryComponent extends BasePage implements OnInit {
   save() {}
 
   confirm(): void {
-    console.log(this.flyersForm.value);
-
+    let params = {
+      PN_DELEG: this.flyersForm.controls['delegation'].value,
+      PN_SUBDEL: this.flyersForm.controls['subdelegation'].value,
+      PN_DELEGACION: this.flyersForm.controls['delegdestino'].value,
+      PN_SUBDELEGACION: this.flyersForm.controls['subddestino'].value,
+      PF_FECINI: this.flyersForm.controls['PF_FECINI'].value,
+      PF_FECFIN: this.flyersForm.controls['PF_FECFIN'].value,
+      PC_ENTFED: this.flyersForm.controls['federative'].value,
+      DEPARTAMENTO: this.flyersForm.controls['department'].value,
+    };
     /*
         let entidadades = [
       {
@@ -144,8 +158,8 @@ export class SummaryComponent extends BasePage implements OnInit {
           PN_DEPARTAMENTO: this.flyersForm.controls['area'].value,
         };
         */
-    const start = new Date(this.flyersForm.get('from').value);
-    const end = new Date(this.flyersForm.get('to').value);
+    const start = new Date(this.flyersForm.get('PF_FECINI').value);
+    const end = new Date(this.flyersForm.get('PF_FECFIN').value);
 
     const startTemp = `${start.getFullYear()}-0${
       start.getUTCMonth() + 1
@@ -161,12 +175,6 @@ export class SummaryComponent extends BasePage implements OnInit {
         'Fecha final no puede ser menor a fecha de inicio'
       );
       return;
-    }
-    // console.log(this.reportForm.value);
-    let params = { ...this.flyersForm.value };
-
-    for (const key in params) {
-      if (params[key] === null) delete params[key];
     }
 
     console.log(params);
@@ -238,5 +246,33 @@ export class SummaryComponent extends BasePage implements OnInit {
 
   cleanForm(): void {
     this.flyersForm.reset();
+  }
+
+  // onDptosChange(idDelegation: string | number, idSubdelegation: string | number) {
+  //   this.departamentService.getByDelegationsSubdelegation(idDelegation, idSubdelegation).subscribe({
+  //     next: (resp: any) => {
+  //       if (resp.data) {
+  //         return resp.data;
+  //       } else {
+  //         this.onLoadToast(
+  //           'warning',
+  //           'advertencia',
+  //           'No hay delegaciones para éste departamento'
+  //         );
+  //       }
+
+  //       return;
+  //     },
+  //   });
+  // }
+  //  this.departamentService.getAll().subscribe(response => {
+  //    return response.data;
+  //  })
+
+  resetFields(fields: AbstractControl[]) {
+    fields.forEach(field => {
+      field = null;
+    });
+    this.flyersForm.updateValueAndValidity();
   }
 }
