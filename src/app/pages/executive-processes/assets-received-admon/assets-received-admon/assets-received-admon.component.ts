@@ -13,6 +13,8 @@ import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model
 //Services
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { PrintFlyersService } from 'src/app/core/services/document-reception/print-flyers.service';
+import { TvalTable1Data } from 'src/app/core/models/catalogs/dinamic-tables.model';
+import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dynamic-tables.service';
 
 export interface IReport {
   data: File;
@@ -31,6 +33,8 @@ export class AssetsReceivedAdmonComponent extends BasePage implements OnInit {
 
   delegations = new DefaultSelect<IDelegation>();
   subdelegations = new DefaultSelect<ISubdelegation>();
+  status = new DefaultSelect<TvalTable1Data>();
+  statusD : TvalTable1Data
 
 
   phaseEdo: number;
@@ -47,7 +51,8 @@ export class AssetsReceivedAdmonComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private sanitizer: DomSanitizer,
     private serviceDeleg: DelegationService,
-    private printFlyersService: PrintFlyersService
+    private printFlyersService: PrintFlyersService,
+    private dynamicTablesService: DynamicTablesService
   ) {
     super();
     this.today = new Date();
@@ -65,6 +70,7 @@ export class AssetsReceivedAdmonComponent extends BasePage implements OnInit {
       // toDate: ['', [Validators.required]],
       rangeDate: [null, [Validators.required, maxDate(new Date())]],
       status: [null],
+      statusDescription: [null],
     });
   }
 
@@ -126,6 +132,30 @@ export class AssetsReceivedAdmonComponent extends BasePage implements OnInit {
   onSubDelegationsChange(element: any) {
     this.resetFields([this.subdelegation]);
     
+  }
+
+  getStatus(params: ListParams){
+    this.dynamicTablesService.getStatusByTable400(params).subscribe(
+      data => {
+        this.status = new DefaultSelect(data.data, data.count);
+      },
+      err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          error = err.message;
+        }
+        this.onLoadToast('error', 'Error', error);
+      },
+      () => {}
+    );
+  }
+
+  onValuesChange(statusChange: TvalTable1Data) {
+   
+    this.statusD = statusChange;
+    this.form.controls['statusDescription'].setValue(this.statusD.value);
   }
 
   resetFields(fields: AbstractControl[]) {

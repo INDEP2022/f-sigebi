@@ -53,4 +53,13 @@ export class DynamicTablesService extends HttpService {
     const fullRoute = `${DynamicCatalogEndpoint.DinamicTables}/${DynamicCatalogEndpoint.findTvalTable1ByKey}/${id}`;
     return this.get<IListResponse<TvalTable1Data>>(fullRoute, params);
   }
+
+
+  getStatusByTable400(params?: ListParams): Observable<IListResponse<ITables>> {
+    return this.get<IListResponse<ITablesData>>(
+      DynamicCatalogEndpoint.StatusTableBy400,
+      params
+    );
+  }
+
 }

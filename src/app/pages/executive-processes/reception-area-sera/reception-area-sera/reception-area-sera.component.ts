@@ -13,6 +13,8 @@ import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model
 //Services
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { PrintFlyersService } from 'src/app/core/services/document-reception/print-flyers.service';
+import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
+import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 export interface IReport {
   data: File;
 }
@@ -32,6 +34,12 @@ export class ReceptionAreaSeraComponent extends BasePage implements OnInit {
   delegations = new DefaultSelect<IDelegation>();
   subdelegations = new DefaultSelect<ISubdelegation>();
 
+  areas = new DefaultSelect<IDepartment>();
+  areaValue: IDepartment;
+
+  idDel: IDelegation;
+  idSub: ISubdelegation;
+
   phaseEdo: number;
 
   get delegation() {
@@ -46,7 +54,8 @@ export class ReceptionAreaSeraComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private sanitizer: DomSanitizer,
     private serviceDeleg: DelegationService,
-    private printFlyersService: PrintFlyersService
+    private printFlyersService: PrintFlyersService,
+    private departamentService: DepartamentService
   ) {
     super();
     this.today = new Date();
@@ -58,9 +67,11 @@ export class ReceptionAreaSeraComponent extends BasePage implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      delegation: [null],
-      subdelegation: [null],
-      idArea: [null],
+      delegation: [null], //noDelegation
+      subdelegation: [null], //noSubDelegation
+      departamentDes: [null], //noDepartament Destino
+      delegationDes: [null], //noDelegation Destino
+      subdelegationDes: [null], //noSubDelegation Destino
       rangeDate: [null, [Validators.required, maxDate(new Date())]],
       // fromMonth: ['', [Validators.required]],
       // toMonth: ['', [Validators.required]],
@@ -125,6 +136,33 @@ export class ReceptionAreaSeraComponent extends BasePage implements OnInit {
   onSubDelegationsChange(element: any) {
     this.resetFields([this.subdelegation]);
     
+  }
+
+  getAreas(params: ListParams){
+    this.departamentService.getAll(params).subscribe(
+      data => {
+        this.areas = new DefaultSelect(data.data, data.count);
+      },
+      err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          error = err.message;
+        }
+        this.onLoadToast('error', 'Error', error);
+      },
+      () => {}
+    );
+  }
+
+  onValuesChange(areaChange: IDepartment) {
+    this.idDel = areaChange.numDelegation as IDelegation;
+    this.idSub = areaChange.numSubDelegation as ISubdelegation;
+    console.log(areaChange);
+    this.areaValue = areaChange;
+    this.form.controls['delegationDes'].setValue(this.idDel.description);
+    this.form.controls['subdelegationDes'].setValue(this.idSub.description);
   }
 
   resetFields(fields: AbstractControl[]) {
