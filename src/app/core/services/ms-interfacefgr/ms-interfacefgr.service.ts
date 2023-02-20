@@ -21,4 +21,13 @@ export class InterfacefgrService extends HttpService {
       params
     );
   }
+
+  getPgrTransferFiltered(
+    params?: string
+  ): Observable<IListResponse<IPgrTransfer>> {
+    return this.get<IListResponse<IPgrTransfer>>(
+      InterfacefgrEndPoints.PgrTransfer,
+      params
+    );
+  }
 }

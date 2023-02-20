@@ -19,4 +19,8 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
   getAll(params?: ListParams): Observable<IListResponse<IProceedings>> {
     return this.get<IListResponse<IProceedings>>(this.endpoint);
   }
+
+  getAllProceedingsDeliveryReception(params?: ListParams): Observable<IListResponse<IProceedings>> {
+    return this.get<IListResponse<IProceedings>>(ProceedingsEndpoints.ProceedingsDeliveryReception, params);
+  }
 }

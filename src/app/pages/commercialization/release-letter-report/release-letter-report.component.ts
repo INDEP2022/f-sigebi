@@ -41,138 +41,69 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
 
   prepareForm() {
     this.form = this.fb.group({
-      evento: [17, [Validators.required]],
-      lote: [25, [Validators.required]],
-      oficio: [
-        'E-784555',
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      evento: [null, [Validators.required]],
+      lote: [null, [Validators.required]],
+      oficio: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       diridoA: [
-        'Administrador',
+        null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      puesto: [
-        'Director',
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      puesto: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       parrafo1: [
-        'Convocatoria',
+        null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       adjudicatorio: [
-        'Convocatoria',
+        null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      factura: ['254182', [Validators.required]],
-      fechaFactura: ['20/11/2022', [Validators.required]],
+      factura: [null, [Validators.required]],
+      fechaFactura: [null, [Validators.required]],
       parrafo2: [
-        'E-45155',
+        null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
       firmante: [
-        'indepCorp',
+        null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      ccp1: [
-        '20122',
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      ccp2: [
-        '78455',
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      ccp1: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      ccp2: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      puestoFirma: [null],
+      puestoCcp1: [null],
+      puestoCcp2: [null],
+      fechaCarta: [null],
     });
   }
 
   confirm(): void {
     console.log(this.form.value);
-
-    /*
-        let entidadades = [
-      {
-        id: 1,
-        etapaEdo: 1252,
-        cveState: 'Nayarit',
-        description: 'Nayarit',
-        addressOffice: 'Nayarit',
-        regionalDelegate: 'Nayarit',
-        city: 'Nayarit',
-        status: 1,
-        iva: 12,
-        noRegister: 12145,
-        zoneContractCVE: 2454,
-        zoneVigilanceCVE: 12454,
-        diffHours: 5145451,
-        idZoneGeographic: 122,
-      },
-      {
-        id: 2,
-        etapaEdo: 1252,
-        cveState: 'Nuevo León',
-        description: 'Nuevo León',
-        addressOffice: 'Nuevo León',
-        regionalDelegate: 'Nuevo León',
-        city: 'Nuevo León',
-        status: 1,
-        iva: 12,
-        noRegister: 12145,
-        zoneContractCVE: 2454,
-        zoneVigilanceCVE: 12454,
-        diffHours: 5145451,
-        idZoneGeographic: 122,
-      },
-      {
-        id: 3,
-        etapaEdo: 1252,
-        cveState: 'Oaxaca',
-        description: 'Oaxaca',
-        addressOffice: 'Oaxaca',
-        regionalDelegate: 'Oaxaca',
-        city: 'Oaxaca',
-        status: 1,
-        iva: 12,
-        noRegister: 12145,
-        zoneContractCVE: 2454,
-        zoneVigilanceCVE: 12454,
-        diffHours: 5145451,
-        idZoneGeographic: 122,
-      },
-      {
-        id: 4,
-        etapaEdo: 1252,
-        cveState: 'Sinaloa',
-        description: 'Sinaloa',
-        addressOffice: 'Sinaloa',
-        regionalDelegate: 'Sinaloa',
-        city: 'Sinaloa',
-        status: 1,
-        iva: 12,
-        noRegister: 12145,
-        zoneContractCVE: 2454,
-        zoneVigilanceCVE: 12454,
-        diffHours: 5145451,
-        idZoneGeographic: 122,
-      },
-    ];
-        let params = {
-          PN_DELEG: this.flyersForm.controls['delegation'].value,
-          PN_SUBDEL: this.flyersForm.controls['subdelegation'].value,
-          PF_FECINI: this.flyersForm.controls['from'].value,
-          PF_FECFIN: this.flyersForm.controls['to'].value,
-          PC_ENTFED: this.flyersForm.controls['entidad'].value,
-          PARAMFORM: this.flyersForm.controls['includeArea'].value,
-          PN_DELEGACION: this.flyersForm.controls['delegdestino'].value,
-          PN_SUBDELEGACION: this.flyersForm.controls['subddestino'].value,
-          PN_DEPARTAMENTO: this.flyersForm.controls['area'].value,
-        };
-        */
-
+    let params = {
+      DESTYPE: this.form.controls['evento'].value,
+      ID_LOTE: this.form.controls['lote'].value,
+      OFICIO_CARTALIB: this.form.controls['oficio'].value,
+      DIRIGIDO_A: this.form.controls['diridoA'].value,
+      PUESTO: this.form.controls['puesto'].value,
+      PARRAFO1: this.form.controls['parrafo1'].value,
+      ADJUDICATARIO: this.form.controls['adjudicatorio'].value,
+      NO_FACTURA: this.form.controls['factura'].value,
+      FECHA_FACTURA: this.form.controls['fechaFactura'].value,
+      PARRAFO2: this.form.controls['parrafo2'].value,
+      FIRMANTE: this.form.controls['firmante'].value,
+      PUESTOFIRMA: this.form.controls['puestoFirma'].value,
+      CCP1: this.form.controls['ccp1'].value,
+      CCP2: this.form.controls['ccp1'].value,
+      PUESTOCCP1: this.form.controls['puestoCcp1'].value,
+      PUESTOCCP2: this.form.controls['puestoCcp2'].value,
+      FECHA_CARTA: this.form.controls['fechaCarta'].value,
+    };
     // console.log(this.reportForm.value);
-    let params = { ...this.form.value };
 
-    for (const key in params) {
-      if (params[key] === null) delete params[key];
-    }
+    // let params = { ...this.form.value };
+
+    // for (const key in params) {
+    //   if (params[key] === null) delete params[key];
+    // }
 
     console.log(params);
     // open the window
@@ -186,8 +117,9 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
       this.onLoadToast('success', 'Reporte generado', '');
     }, 2000);
 
-    window.open(pdfurl, 'FCOMERCARTALIB.pdf');
+    window.open(pdfurl, 'FCOMERCARTARESP_I.pdf');
     this.loading = false;
+    this.cleanForm();
   }
 
   Generar() {
@@ -207,7 +139,9 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
       },
     });
   }
-
+  cleanForm(): void {
+    this.form.reset();
+  }
   preview(file: IReport) {
     try {
       this.reportService.download(file).subscribe(response => {
@@ -225,27 +159,27 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
 
 const EXAMPLE_DATA = [
   {
-    description: 'descripcion',
+    description: 'Comercialización',
   },
   {
-    description: 'descripcion',
+    description: 'Siap',
   },
   {
-    description: 'descripcion',
+    description: 'Entrega de bienes',
   },
   {
-    description: 'descripcion',
+    description: 'Inmuebles',
   },
   {
-    description: 'descripcion',
+    description: 'Muebles',
   },
   {
-    description: 'descripcion',
+    description: 'Importaciones',
   },
   {
-    description: 'descripcion',
+    description: 'Enajenación',
   },
   {
-    description: 'descripcion',
+    description: 'Lícito de bienes',
   },
 ];
