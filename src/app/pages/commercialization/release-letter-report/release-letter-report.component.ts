@@ -69,19 +69,41 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
       ],
       ccp1: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
       ccp2: [null, [Validators.required, Validators.pattern(STRING_PATTERN)]],
+      puestoFirma: [null],
+      puestoCcp1: [null],
+      puestoCcp2: [null],
+      fechaCarta: [null],
     });
   }
 
   confirm(): void {
     console.log(this.form.value);
-
+    let params = {
+      DESTYPE: this.form.controls['evento'].value,
+      ID_LOTE: this.form.controls['lote'].value,
+      OFICIO_CARTALIB: this.form.controls['oficio'].value,
+      DIRIGIDO_A: this.form.controls['diridoA'].value,
+      PUESTO: this.form.controls['puesto'].value,
+      PARRAFO1: this.form.controls['parrafo1'].value,
+      ADJUDICATARIO: this.form.controls['adjudicatorio'].value,
+      NO_FACTURA: this.form.controls['factura'].value,
+      FECHA_FACTURA: this.form.controls['fechaFactura'].value,
+      PARRAFO2: this.form.controls['parrafo2'].value,
+      FIRMANTE: this.form.controls['firmante'].value,
+      PUESTOFIRMA: this.form.controls['puestoFirma'].value,
+      CCP1: this.form.controls['ccp1'].value,
+      CCP2: this.form.controls['ccp1'].value,
+      PUESTOCCP1: this.form.controls['puestoCcp1'].value,
+      PUESTOCCP2: this.form.controls['puestoCcp2'].value,
+      FECHA_CARTA: this.form.controls['fechaCarta'].value,
+    };
     // console.log(this.reportForm.value);
 
-    let params = { ...this.form.value };
+    // let params = { ...this.form.value };
 
-    for (const key in params) {
-      if (params[key] === null) delete params[key];
-    }
+    // for (const key in params) {
+    //   if (params[key] === null) delete params[key];
+    // }
 
     console.log(params);
     // open the window
@@ -137,27 +159,27 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
 
 const EXAMPLE_DATA = [
   {
-    description: 'descripcion',
+    description: 'Comercialización',
   },
   {
-    description: 'descripcion',
+    description: 'Siap',
   },
   {
-    description: 'descripcion',
+    description: 'Entrega de bienes',
   },
   {
-    description: 'descripcion',
+    description: 'Inmuebles',
   },
   {
-    description: 'descripcion',
+    description: 'Muebles',
   },
   {
-    description: 'descripcion',
+    description: 'Importaciones',
   },
   {
-    description: 'descripcion',
+    description: 'Enajenación',
   },
   {
-    description: 'descripcion',
+    description: 'Lícito de bienes',
   },
 ];
