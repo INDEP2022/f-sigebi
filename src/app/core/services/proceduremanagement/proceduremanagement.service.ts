@@ -27,6 +27,15 @@ export class ProcedureManagementService extends HttpService {
     );
   }
 
+  getAllFiltered(
+    params?: string
+  ): Observable<IListResponse<IProceduremanagement>> {
+    return this.get<IListResponse<IProceduremanagement>>(
+      ProcedureManagementEndPoints.ProcedureManagement,
+      params
+    );
+  }
+
   getManagamentProcessSat(
     params?: ListParams
   ): Observable<IListResponse<IManagamentProcessSat>> {
@@ -47,6 +56,15 @@ export class ProcedureManagementService extends HttpService {
 
   getManagamentArea(
     params?: ListParams
+  ): Observable<IListResponse<IManagementArea>> {
+    return this.get<IListResponse<IManagementArea>>(
+      ProcedureManagementEndPoints.ManagamentArea,
+      params
+    );
+  }
+
+  getManagementAreasFiltered(
+    params?: string
   ): Observable<IListResponse<IManagementArea>> {
     return this.get<IListResponse<IManagementArea>>(
       ProcedureManagementEndPoints.ManagamentArea,

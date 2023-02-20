@@ -45,7 +45,7 @@ export interface TvalTable1Data {
 
 export interface ISingleTable {
   table?: number; //nmtabla
-  data?: ITablesEntryData;
+  data: ITablesEntryData;
   name: string;
   description: string;
   actionType: string;
