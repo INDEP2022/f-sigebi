@@ -32,7 +32,10 @@ export class NumeraryCategoriesService
     return this.numeraryCategoriesRepository.create(this.route, model);
   }
 
-  update(id: string | number, model: INumeraryCategories): Observable<Object> {
+  update(
+    id?: string | number,
+    model?: INumeraryCategories
+  ): Observable<Object> {
     return this.numeraryCategoriesRepository.update(this.route, id, model);
   }
 
