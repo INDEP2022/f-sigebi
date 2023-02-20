@@ -23,18 +23,6 @@ export class DynamicCatalogRepository<T> implements IDynamicCatalogMethods<T> {
     return this.httpClient.get<T>(`${fullRoute}/${_id}`);
   }
 
-  // getByKeyTvalTable1(
-  //   route: string,
-  //   _id: number | string,
-  //   params: ListParams
-  // ): Observable<IListResponse<TvalTable1Data>> {
-  //   const fullRoute = `${this.ms}/${route}`;
-  //   return this.httpClient.get<IListResponse<TvalTable1Data>>(
-  //     `${fullRoute}/${_id}`,
-  //     params
-  //   );
-  // }
-
   //   getAllPaginated(
   //     route: string,
   //     _params?: ListParams

@@ -51,14 +51,24 @@
                 </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-4 ">
+        <div class="col-md-2 ">
           <form-field [control]="form.get('status')">
             <ngx-select
-              typeToSearchText="Escriba 3 o más caracteres"
-              label="Estatus"
-              [form]="form"
-              control="status">
-            </ngx-select>
+                  [searchOnInit]="true"
+                  [form]="form"
+                  (fetchItems)="getStatus($event)"
+                  [data]="status"
+                  value="otKey"
+                  bindLabel="otKey"
+                  label="Estatus"
+                  [control]="'status'"
+                  (change)="onValuesChange($event)">
+                </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-2">
+          <form-field [control]="form.get('statusDescription')" label="Descripcipon">
+            <input type="text" class="form-control" formControlName="statusDescription" readonly>
           </form-field>
         </div>
       </div>

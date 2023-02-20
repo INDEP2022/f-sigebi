@@ -8,7 +8,7 @@
   <div body>
     <form class="form-material" [formGroup]="form">
       <div class="row">
-        <div class="col-md-2">
+        <div class="col-md-3">
           <form-field [control]="form.get('delegation')"> 
                 <ngx-select
                   [searchOnInit]="true"
@@ -23,7 +23,7 @@
                 </ngx-select>
               </form-field>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
           <form-field [control]="form.get('subdelegation')">
             <ngx-select
                   [form]="form"
@@ -37,7 +37,7 @@
                 </ngx-select>
           </form-field>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
           <form-field
             [control]="form.get('rangeDate')"
             label="Fechas de recepci&oacute;n">
@@ -53,14 +53,32 @@
               }" />
           </form-field>
         </div>
+        
+      </div>
+      <div class="row pt-5">
         <div class="col-md-2">
-          <form-field [control]="form.get('idArea')">
+          <form-field [control]="form.get('departamentDes')">
             <ngx-select
-              typeToSearchText="Escriba 3 o m&aacute;s caracteres"
-              label="&Aacute;rea Destino"
-              [form]="form"
-              control="idArea">
-            </ngx-select>
+                  [searchOnInit]="true"
+                  [form]="form"
+                  (fetchItems)="getAreas($event)"
+                  [data]="areas"
+                  value="id"
+                  bindLabel="dsarea"
+                  label="Área Destino"
+                  [control]="'departamentDes'"
+                  (change)="onValuesChange($event)">
+                </ngx-select>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="Delegación Destino" [control]="form.get('delegationDes')">
+            <input type="text" class="form-control" formControlName="delegationDes" readonly>
+          </form-field>
+        </div>
+        <div class="col-md-3">
+          <form-field label="Sub Delegación Destino" [control]="form.get('subdelegationDes')">
+            <input type="text" class="form-control" formControlName="subdelegationDes" readonly>
           </form-field>
         </div>
       </div>

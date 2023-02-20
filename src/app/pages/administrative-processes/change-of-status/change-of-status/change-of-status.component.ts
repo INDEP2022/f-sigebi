@@ -173,7 +173,6 @@ export class ChangeOfStatusComponent extends BasePage implements OnInit {
       this.extDomProcess.value === null
         ? this.good.extDomProcess
         : this.extDomProcess.value;
-    // this.good.usrApprovedUtilization = this.issuingUser.value;
     this.good.userModification = this.token.decodeToken().preferred_username;
     this.goodServices
       .updateStatusGood(this.numberGood.value, this.good)

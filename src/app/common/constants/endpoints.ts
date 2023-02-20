@@ -68,6 +68,7 @@ export enum ENDPOINT_LINKS {
   OriginCisi = 'catalog/origin-cisi',
   Origin = 'catalog/origin',
   Paragraph = 'catalog/cat-paragraphs',
+  Parameter = 'catalog/parameter',
   PaymentConcept = 'payments-concept',
   Penalty = 'catalog/penalty',
   Person = 'catalog/person',
@@ -118,6 +119,7 @@ export enum ENDPOINT_LINKS {
   parametergoodActa = 'parametergood/validadores-actas',
   parametergoodCat = 'parametergood/cat-motivosrev',
   parameterComer = 'parametercomer/api/v1/bank-accounts',
+  Document = 'documents',
   documents = 'documents/api/v1/documents-dictum-x-state-m',
   ZoneGeographic = 'catalog/zone-geographic',
   DocumentsForDictum = 'documents-for-dictum',
@@ -133,8 +135,10 @@ export enum ENDPOINT_LINKS {
   AttributesFinancialInfo = 'attributes-financial-information',
   BankConcepts = 'concept-movis-bank',
   NumeraryCategories = 'numerary-categories',
+  NumeraryCategoriesAutom = 'categorization-autom-numerary',
   tevents = 'event/comer-tevents',
   usuxtpevents = 'event/comer-usuxtpevents',
+  security = 'security/seg-profile',
   //request
   request = 'request',
   //expedient

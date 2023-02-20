@@ -3,7 +3,10 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { BehaviorSubject, Observable, takeUntil } from 'rxjs';
-import { FilterParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  DynamicFilterLike,
+  FilterParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { SearchBarFilter } from 'src/app/common/repository/interfaces/search-bar-filters';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -28,8 +31,8 @@ export class SelectListFilteredModalComponent
   columnsType: any = {}; // Input requerido al llamar el modal
   service: any; // Input requerido al llamar el modal
   dataObservableFn: (self: any, params: string) => Observable<any>; // Input requerido al llamar el modal
-  filter: SearchBarFilter; // Input requerido al llamar el modal
-  showSearch: boolean = true; // Input opcional para mostrar busqueda
+  searchFilter: SearchBarFilter; // Input requerido al llamar el modal
+  filters: DynamicFilterLike[] = []; // Input opcional para agregar filtros sin usar busqueda
   @Output() onSelect = new EventEmitter<any>();
 
   constructor(private modalRef: BsModalRef) {
@@ -43,6 +46,7 @@ export class SelectListFilteredModalComponent
       actions: false,
       columns: { ...this.columnsType },
     };
+    this.addFilters();
     this.params
       .pipe(takeUntil(this.$unSubscribe))
       .subscribe(() => this.getData());
@@ -64,6 +68,16 @@ export class SelectListFilteredModalComponent
         this.onLoadToast('error', 'Error', err);
       },
     });
+  }
+
+  addFilters() {
+    if (this.filters.length > 0) {
+      const params = new FilterParams();
+      this.filters.forEach(f => {
+        if (f.value !== null) params.addFilter(f.field, f.value, f?.operator);
+      });
+      this.params.next(params);
+    }
   }
 
   close() {

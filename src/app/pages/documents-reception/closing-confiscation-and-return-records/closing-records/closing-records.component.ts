@@ -17,13 +17,16 @@ import { MODAL_CONFIG } from 'src/app/common/constants/modal-config';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
 import { IDetailProceedingsDevolution } from 'src/app/core/models/ms-proceedings/detail-proceedings-devolution.model';
 import { IProceedings } from 'src/app/core/models/ms-proceedings/proceedings.model';
+import { DocumentsService } from 'src/app/core/services/ms-documents-type/documents.service';
 import { ParametersService } from 'src/app/core/services/ms-parametergood/parameters.service';
 import { DetailProceedingsDevolutionService } from 'src/app/core/services/ms-proceedings/detail-proceedings-devolution';
 import { ProceedingsService } from 'src/app/core/services/ms-proceedings/proceedings.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ListParams } from './../../../../common/repository/interfaces/list-params';
 import { IParameters } from './../../../../core/models/ms-parametergood/parameters.model';
+import { IMaximumClosingTime } from './../../../../core/models/ms-proceedings/maximum-closing-time.model';
 import { IUpdateProceedings } from './../../../../core/models/ms-proceedings/update-proceedings.model';
+import { MaximunClosingTimeService } from './../../../../core/services/ms-proceedings/maximun-closing-time.service';
 import { FormEditComponent } from './../form-edit/form-edit.component';
 import { GOODS_RECORDS_COLUMNS } from './closing-records-columns';
 import { PROCEEDINGS_RECORD_COLUMNS } from './proceedings-records-columns';
@@ -56,12 +59,17 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
   paginatorGoods: any = {};
   totalProceedings: number = 0;
   totalGoods: number = 0;
+  selectedProceedings: boolean = false;
+  maximunClosingTime: Date;
+  dataProceedingsSelected: any;
   private route: Router;
 
   constructor(
     private fb: FormBuilder,
     private proceedingsService: ProceedingsService,
     private detailProceedingsDevolutionService: DetailProceedingsDevolutionService,
+    private documentService: DocumentsService,
+    private maximunClosingTimeService: MaximunClosingTimeService,
     private parametersService: ParametersService,
     private modalService: BsModalService
   ) {
@@ -239,10 +247,14 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
   }
 
   selectProceedings(row: any) {
+    this.dataProceedingsSelected = row;
+    console.log(row);
+    console.log(this.dataProceedingsSelected);
+    this.selectedProceedings = true;
     console.log('Seleccionar Acta', row);
     // this.paramsGoods.next({ page: 1, limit: 10 });
-    console.log(row.data?.id);
-    this.proceedingsNumb = row.data?.id;
+    console.log(row?.id);
+    this.proceedingsNumb = row?.id;
     this.paramsGoods.next({ page: 1, limit: 10 });
   }
 
@@ -386,7 +398,75 @@ export class ClosingRecordsComponent extends BasePage implements OnInit {
     this.buildObjectToUpdate();
   }
 
-  close() {}
+  closeProceedings() {
+    var maximunClosingTime: IMaximumClosingTime;
+    this.getMaximumClosingTime();
+  }
+
+  getMaximumClosingTime() {
+    this.maximunClosingTimeService.getByProceedingsType('DEV').subscribe({
+      //Cambiar por data: IListResponse<IMaximumClosingTime> El endpoint no devuelve un array sino un objeto
+      next: (data: any) => {
+        this.maximunClosingTime = data?.date;
+        if (this.validateClosingDate()) {
+          if (this.dataProceedingsSelected.universalFolio != '') {
+            this.documentService
+              .getByFilters({
+                id: this.dataProceedingsSelected.universalFolio,
+                scanStatus: 'ESCANEADO',
+                numberProceedings: this.fileNumber,
+              })
+              .subscribe({
+                next: data => {
+                  console.log(data);
+                },
+                error: err => {
+                  this.onLoadToast(
+                    'error',
+                    'Error',
+                    'Acta con estatus de documento diferente a escaneado'
+                  );
+                  console.log(err);
+                },
+              });
+          } else {
+            this.onLoadToast('error', 'Error', 'El valor del folio es vacío');
+          }
+        } else {
+          this.onLoadToast(
+            'error',
+            'Error',
+            'El plazo para cerrar actas del mes anterior ha caducado.'
+          );
+        }
+      },
+      error: err => {
+        this.handleError(err, err.msg);
+      },
+    });
+  }
+
+  validateClosingDate() {
+    let validDate: boolean = false;
+    let currentDate = new Date();
+    currentDate.setMonth(currentDate.getMonth() - 3); //restando un mes a la fecha actual
+    console.log(currentDate);
+    //se obtiene el último día del mes
+    let lastDayOfMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1,
+      0
+    );
+    console.log(lastDayOfMonth.getDate());
+    currentDate.setDate(currentDate.getDate() + lastDayOfMonth.getDate());
+    console.log(currentDate);
+    let testDate = new Date('2008-06-1');
+    if (testDate < new Date(this.maximunClosingTime)) {
+      //cambiar testDate x currentDate
+      validDate = true;
+    }
+    return validDate;
+  }
 
   //se construye el objeto necesario para actualizar el acta
   buildObjectToUpdate() {

@@ -7,7 +7,7 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 //models
 import { INumeraryCategories } from 'src/app/core/models/catalogs/numerary-categories-model';
 //Services
-import { NumeraryCategoriesService } from 'src/app/core/services/catalogs/numerary-categories-service';
+import { NumeraryCategoriesService } from 'src/app/core/services/catalogs/numerary-categories.service';
 
 @Component({
   selector: 'app-cat-effective-numeraire-modal',

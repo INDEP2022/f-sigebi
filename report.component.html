@@ -1,0 +1,88 @@
+<app-card [header]="true" [footer]="true">
+  <div class="ch-content" header>
+    <h5 class="title">Reporte de recepci&oacute;n documental</h5>
+  </div>
+
+  <div body>
+    <form [formGroup]="reportForm" class="form-material">
+      <div class="row">
+        <div class="col-md-5">
+
+          <!--<app-delegation-shared [showSubdelegation]="true" [control]="reportForm.get('PN_DELEG')"></app-delegation-shared>
+          -->
+          <form-field [control]="reportForm.get('PN_DELEG')">
+            <ngx-select [form]="reportForm" (fetchItems)="getDelegations($event)" [data]="delegations" value="id"
+              bindLabel="description" label="Delegaci&oacute;n" [control]="'PN_DELEG'"
+              (change)="onDelegationsChange($event)">
+            </ngx-select>
+          </form-field>
+          <form-field [control]="reportForm.get('PN_SUBDEL')">
+            <ngx-select [form]="reportForm" (fetchItems)="getSubDelegations($event)" [data]="subdelegations" value="id"
+              bindLabel="description" label="Sub Delegaci&oacute;n" [control]="'PN_SUBDEL'"
+              (change)="onSubDelegationsChange($event)">
+            </ngx-select>
+          </form-field>
+
+        </div>
+
+        <div class="col-md-5">
+
+
+          <form-field [control]="reportForm.get('PF_MES')" label="Desde:">
+            <input class="form-control" formControlName="PF_MES" bsDatepicker />
+          </form-field>
+
+
+
+          <form-field [control]="reportForm.get('PF_ANIO')" label="Hasta:">
+            <input class="form-control" formControlName="PF_ANIO" bsDatepicker />
+          </form-field>
+
+
+
+
+        </div>
+
+
+      </div>
+
+    </form>
+  </div>
+  <div footer>
+    <div class="d-flex justify-content-center">
+      <div class="m-3">
+        <!--<confirm-button text="Imprimir" [disabled]="reportForm.invalid" [loading]="loading" (confirm)="confirm()">-->
+        <confirm-button text="Imprimir" [loading]="loading" [disabled]="reportForm.invalid" (confirm)="confirm()">
+        </confirm-button>
+      </div>
+      <div class="m-3">
+        <button type="button" class="btn btn-danger active" (click)="cleanForm()">
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+</app-card>
+
+<app-modal header="Preview" [style]="{width: '800px', height: '800px'}">
+  <div header>
+    <!--<h5 class="modal-title">Seleccionar {{ title }}</h5>-->
+  </div>
+  <div body>
+    <!--<pdf-viewer *ngIf="pdfSrc" [src]="pdfSrc" [render-text]="true" [original-size]="true"
+      style="width: 100%; height: 100%"></pdf-viewer>-->
+    <h1>Prueba</h1>
+
+  </div>
+
+</app-modal>
+
+<div footer>
+  <div class="d-flex justify-content-center">
+    <div class="m-3">
+      <button type="button" class="btn btn-danger active" (click)="cancel()">
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>

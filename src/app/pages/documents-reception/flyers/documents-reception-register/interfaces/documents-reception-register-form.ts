@@ -1,5 +1,18 @@
 import { FormControl, Validators } from '@angular/forms';
+import { IAuthority } from 'src/app/core/models/catalogs/authority.model';
+import { ICity } from 'src/app/core/models/catalogs/city.model';
+import { ICourt } from 'src/app/core/models/catalogs/court.model';
+import {
+  ITablesEntryData,
+  TvalTable1Data,
+} from 'src/app/core/models/catalogs/dinamic-tables.model';
+import { IIdentifier } from 'src/app/core/models/catalogs/identifier.model';
+import { IIndiciados } from 'src/app/core/models/catalogs/indiciados.model';
+import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
+import { IStation } from 'src/app/core/models/catalogs/station.model';
 import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
+import { IManagementArea } from 'src/app/core/models/ms-proceduremanagement/ms-proceduremanagement.interface';
+import { IUserAccessAreas } from '../../../../../core/models/ms-users/users-access-areas-model';
 // types
 export type DocumentsReceptionRegister =
   typeof DOCUMENTS_RECEPTION_REGISTER_FORM;
@@ -14,60 +27,110 @@ export type DocumentsReceptionRegisterFieldsToListen = Partial<
 
 // constants
 export const DOC_RECEPT_REG_FIELDS_TO_LISTEN: DocumentsReceptionRegisterFieldsToListen =
-  ['identifier', 'type'];
+  [
+    'identifier',
+    'wheelType',
+    'departamentDestinyNumber',
+    'affairKey',
+    'judgementType',
+    'stage',
+    'autorityNumber',
+  ];
 
 export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
-  type: new FormControl<string>(null, Validators.required),
-  identifier: new FormControl<string>(null, Validators.required),
-  sender: new FormControl<string | number>(null, Validators.required),
-  subject: new FormControl<string | number>(null, Validators.required),
-  reception: new FormControl<string | number>(null, Validators.required),
+  wheelType: new FormControl<string>(null, Validators.required),
+  identifier: new FormControl<IIdentifier>(null, Validators.required),
+  externalRemitter: new FormControl<string | number>(null, Validators.required),
+  affairKey: new FormControl<string | number>(null, Validators.required),
+  affair: new FormControl<string | number>(null, Validators.required),
+  receiptDate: new FormControl<string | number | Date>(
+    null,
+    Validators.required
+  ),
   priority: new FormControl<string | number>(null, Validators.required),
-  flyer: new FormControl<string | number>(null),
-  consecutive: new FormControl<string | number>(null),
-  record: new FormControl<string | number>(null),
+  wheelNumber: new FormControl<string | number>(null),
+  consecutiveNumber: new FormControl<string | number>(null),
+  expedientNumber: new FormControl<string | number>(null),
   recordId: new FormControl<string | number>(null),
-  desalojov: new FormControl<boolean>(false),
-  generalDirection: new FormControl<boolean>(false),
-  circumstantialAct: new FormControl<string | number>(
+  dailyEviction: new FormControl<boolean | number>(false),
+  addressGeneral: new FormControl<boolean | number>(false),
+  stage: new FormControl<string>(null, Validators.required),
+  stageName: new FormControl<string>(null),
+  circumstantialRecord: new FormControl<string | number>(null),
+  preliminaryInquiry: new FormControl<string | number>(null),
+  criminalCase: new FormControl<string | number>(null),
+  judgementType: new FormControl<string>(null),
+  protectionKey: new FormControl<string | number>(null),
+  touchPenaltyKey: new FormControl<string | number>(null),
+  officeExternalKey: new FormControl<string | number>(
     null,
     Validators.required
   ),
-  preliminaryInquiry: new FormControl<string | number>(
+  externalOfficeDate: new FormControl<string | number | Date>(
     null,
     Validators.required
   ),
-  criminalCase: new FormControl<string | number>(null, Validators.required),
-  protectionNo: new FormControl<string | number>(null, Validators.required),
-  judgmentType: new FormControl<string | number>(null),
-  jobNumber: new FormControl<string | number>(null, Validators.required),
-  jobDate: new FormControl<string | number>(null, Validators.required),
-  description: new FormControl<string | number>(null, Validators.required),
-  expTransfer: new FormControl<string | number>(null),
+  observations: new FormControl<string | number>(null, Validators.required),
+  expedientTransferenceNumber: new FormControl<string | number>(null),
   uniqueKey: new FormControl<string | number>(null),
-  city: new FormControl<string | number>(null, Validators.required),
-  state: new FormControl<string | number>(null, Validators.required),
-  transfer: new FormControl<string | number>(null, Validators.required),
-  transferDup: new FormControl<ITransferente>(null, Validators.required),
-  court: new FormControl<string | number>(null),
-  transmitter: new FormControl<string | number>(null, Validators.required),
-  autority: new FormControl<string | number>(null, Validators.required),
-  publicMinistry: new FormControl<string | number>(null),
-  crime: new FormControl<string | number>(null, Validators.required),
-  taxpayer: new FormControl<string | number>(null, Validators.required),
-  receptionWay: new FormControl<string | number>(null, Validators.required),
-  destinationArea: new FormControl<string | number>(null, Validators.required),
-  destinationAreaId: new FormControl<string | number>(
+  cityNumber: new FormControl<ICity>(null, Validators.required),
+  entFedKey: new FormControl<TvalTable1Data | ITablesEntryData>(
     null,
     Validators.required
   ),
-  delegationNo: new FormControl<string | number>(null, Validators.required),
+  endTransferNumber: new FormControl<ITransferente>(null, Validators.required),
+  transference: new FormControl<string | number>(null, Validators.required),
+  courtNumber: new FormControl<ICourt>(null),
+  stationNumber: new FormControl<IStation>(null, Validators.required),
+  autorityNumber: new FormControl<IAuthority>(null, Validators.required),
+  minpubNumber: new FormControl<IMinpub>(null),
+  crimeKey: new FormControl<TvalTable1Data | ITablesEntryData>(
+    null,
+    Validators.required
+  ),
+  indiciadoNumber: new FormControl<IIndiciados>(null, Validators.required),
+  viaKey: new FormControl<TvalTable1Data | ITablesEntryData>(
+    null,
+    Validators.required
+  ),
+  destinationArea: new FormControl<string | number>(null, Validators.required),
+  departamentDestinyNumber: new FormControl<string | number>(
+    null,
+    Validators.required
+  ),
+  delegationNumber: new FormControl<string | number>(null, Validators.required),
   delegationName: new FormControl<string>(null, Validators.required),
-  subDelegationNo: new FormControl<string | number>(null, Validators.required),
+  subDelegationNumber: new FormControl<string | number>(
+    null,
+    Validators.required
+  ),
   subDelegationName: new FormControl<string>(null, Validators.required),
-  destinationManagement: new FormControl<string | number>(null),
-  inAtention: new FormControl<string | number>(null, Validators.required),
-  cpp: new FormControl<string | number>(null),
+  estatusTramite: new FormControl<IManagementArea>(null),
+  goodRelation: new FormControl<string>(null),
+  institutionNumber: new FormControl<string | number>(200, Validators.required),
+  officeNumber: new FormControl<string | number>(null),
+  captureDate: new FormControl<string | number | Date>(null),
+  wheelStatus: new FormControl<string>(null),
+  entryProcedureDate: new FormControl<string | number | Date>(new Date()),
+  registerNumber: new FormControl<string | number>(null),
+  originNumber: new FormControl<string | number>(null),
+  dictumKey: new FormControl<string | number>(null),
+  reserved: new FormControl<string>(null),
+  autoscan: new FormControl<string>(null),
+};
+
+export const DOCUMENTS_RECEPTION_FLYER_COPIES_RECIPIENT_FORM = {
+  copyNumber: new FormControl<string | number>(1, Validators.required),
+  copyuser: new FormControl<IUserAccessAreas>(null, Validators.required),
+  persontype: new FormControl<string>('D', Validators.required),
+  flierNumber: new FormControl<string | number>(null),
+};
+
+export const DOCUMENTS_RECEPTION_FLYER_COPIES_CPP_FORM = {
+  copyNumber: new FormControl<string | number>(2),
+  copyuser: new FormControl<IUserAccessAreas>(null),
+  persontype: new FormControl<string>('C'),
+  flierNumber: new FormControl<string | number>(null),
 };
 
 export enum TaxpayerLabel {
@@ -86,3 +149,28 @@ export enum ProcedureStatus {
   pending = 'PENDIENTE',
   sent = 'ENVIADO',
 }
+
+export interface IGlobalFlyerRegistration {
+  gNoExpediente: number | null; //Puede ser null porque el endpoint no deberia requerirlo para crear expediente
+  noVolante: number | null;
+  bn: number | null;
+  gCreaExpediente: string | null;
+  gstMensajeGuarda: string | null;
+  gnuActivaGestion: number | null;
+  antecede: number | null;
+  pSatTipoExp: string | number | null;
+  pIndicadorSat: string | number | null;
+  gLastCheck: number | null;
+  vTipoTramite: number | null;
+}
+
+export interface IDocReceptionFlyersRegistrationParams {
+  gGestOk: number | null;
+  pNoVolante: number | null;
+  pSatTipoExp: string | null; //No necesario si existe global
+  pNoTramite: number | null;
+}
+
+export type FlyersRegistrationParamName = Partial<
+  keyof IDocReceptionFlyersRegistrationParams
+>;

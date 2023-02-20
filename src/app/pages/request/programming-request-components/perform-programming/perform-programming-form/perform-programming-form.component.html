@@ -337,7 +337,7 @@
                   [attr.class]="'table-bordered'"
                   [settings]="settingsTransportableGoods"
                   [source]="goodsTranportables"
-                  (edit)="showGood()"
+                  (edit)="showGood($event.data)"
                   (delete)="removeGoodTrans($event.data)">
                 </ng2-smart-table>
               </tab>
@@ -350,7 +350,7 @@
                   [attr.class]="'table-bordered'"
                   [settings]="settingGuardGoods"
                   [source]="goodsGuards"
-                  (edit)="showGood()"
+                  (edit)="showGood($event.data)"
                   (delete)="removeGoodGuard($event.data)">
                 </ng2-smart-table>
               </tab>
@@ -363,7 +363,7 @@
                   [attr.class]="'table-bordered'"
                   [settings]="settingWarehouseGoods"
                   [source]="goodsWarehouse"
-                  (edit)="showGood()"
+                  (edit)="showGood($event.data)"
                   (delete)="removeGoodWarehouse($event.data)">
                 </ng2-smart-table>
               </tab>
