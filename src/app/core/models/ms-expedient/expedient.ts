@@ -56,7 +56,7 @@ export interface IExpedientMassiveUpload {
   id: string | number; // NO EXPEDIENTE
   insertedBy: string; // INSERTADO POR
   insertMethod: string; // METODO DE INSERCION
-  insertDate: Date; //  FECHA DE INSERCION
+  insertDate: string | Date; //  FECHA DE INSERCION
   nameInstitution: string; // NOMBRE DE INSTITUCION
   indicatedName: string; // NOMBRE INDICIADO
   federalEntityKey: string; // CLAVE ENTIDAD FEDERATIVA

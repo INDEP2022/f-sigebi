@@ -51,15 +51,27 @@ export class GoodsBulkLoadService {
    * FUNCIONES DE CARGA DE ARCHIVOS
    */
 
+  /**
+   * Obtener el bien de acuerdo el id del bien
+   * @param idGood Id del bien
+   * @returns
+   */
   getGoodById(idGood: string) {
     return this.goodService.getById(idGood);
   }
 
   searchForSatOnlyKey(params: ListParams) {}
-  searchCityByDescripction(params: ListParams) {}
+
+  /**
+   * Obtener la clave de la ciudad apartir de la clave Asunto SAT
+   * @param asuntoSat Clave de Asunto SAT
+   */
+  searchCityByAsuntoSat(asuntoSat: string) {
+    return this.authorityService.getCityByAsuntoSat(asuntoSat);
+  }
 
   getIssuingInstitutionById(idInstitution: string) {
-    return this.issuingInstitutionService.getById(idInstitution);
+    return this.authorityService.getById(idInstitution);
   }
   getEntityFederativeByAsuntoSat(asuntoSat: string) {
     return this.issuingInstitutionService.getById(asuntoSat);
