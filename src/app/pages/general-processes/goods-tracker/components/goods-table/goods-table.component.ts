@@ -21,6 +21,7 @@ export class GoodsTableComponent extends BasePage implements OnInit {
   @Input() goods: ITrackedGood[] = [];
   @Input() totalItems: number = 0;
   @Input() params: BehaviorSubject<ListParams>;
+  @Input() override loading: boolean = false;
   constructor(
     private modalService: BsModalService,
     private sanitizer: DomSanitizer

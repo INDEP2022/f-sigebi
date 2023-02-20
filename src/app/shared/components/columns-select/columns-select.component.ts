@@ -3,6 +3,7 @@ interface IColumns {
   id: string;
   name: string;
   show: boolean;
+  showAlways?: boolean;
 }
 
 interface ISettings {
@@ -35,11 +36,13 @@ export class ColumnsSelectComponent implements OnInit {
 
   private buildColumnsSelect(initial: number) {
     Object.keys(this.allColumns).forEach((e, i) => {
-      this.allColumns[e].show = i < initial ? true : false;
+      this.allColumns[e].show =
+        this.allColumns[e]?.showAlways ?? (i < initial ? true : false);
       this.columns.push({
         id: e,
         name: this.allColumns[e].title,
         show: this.allColumns[e].show,
+        showAlways: this.allColumns[e]?.showAlways,
       });
     });
     this.filterColumns();
