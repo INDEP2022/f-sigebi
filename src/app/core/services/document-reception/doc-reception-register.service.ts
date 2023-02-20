@@ -11,6 +11,7 @@ import { IDepartment } from 'src/app/core/models/catalogs/department.model';
 import { IIdentifier } from 'src/app/core/models/catalogs/identifier.model';
 import { IMinpub } from 'src/app/core/models/catalogs/minpub.model';
 import { IStation } from 'src/app/core/models/catalogs/station.model';
+import { ITransferente } from 'src/app/core/models/catalogs/transferente.model';
 import { IManagementArea } from '../../models/ms-proceduremanagement/ms-proceduremanagement.interface';
 import { IUserAccessAreaRelational } from '../../models/ms-users/seg-access-area-relational.model';
 
@@ -55,6 +56,14 @@ export class DocReceptionRegisterService extends HttpService {
     );
   }
 
+  getTransferents(params?: string): Observable<IListResponse<ITransferente>> {
+    let partials = ENDPOINT_LINKS.Transferente.split('/');
+    this.microservice = partials[0];
+    return this.get<IListResponse<ITransferente>>(partials[1], params).pipe(
+      tap(() => (this.microservice = ''))
+    );
+  }
+
   getDepartaments(
     self?: DocReceptionRegisterService,
     params?: string
@@ -66,6 +75,16 @@ export class DocReceptionRegisterService extends HttpService {
       .pipe(tap(() => (this.microservice = '')));
   }
 
+  getDepartamentsFiltered(
+    params?: string
+  ): Observable<IListResponse<IDepartment>> {
+    let partials = ENDPOINT_LINKS.Departament.split('/');
+    this.microservice = partials[0];
+    return this.get<IListResponse<IDepartment>>(partials[1], params).pipe(
+      tap(() => (this.microservice = ''))
+    );
+  }
+
   getAffairs(
     self?: DocReceptionRegisterService,
     params?: string
@@ -75,6 +94,14 @@ export class DocReceptionRegisterService extends HttpService {
     return self
       .get<IListResponse<IAffair>>(partials[1], params)
       .pipe(tap(() => (this.microservice = '')));
+  }
+
+  getAffairsFiltered(params?: string): Observable<IListResponse<IAffair>> {
+    let partials = ENDPOINT_LINKS.Affair.split('/');
+    this.microservice = partials[0];
+    return this.get<IListResponse<IAffair>>(partials[1], params).pipe(
+      tap(() => (this.microservice = ''))
+    );
   }
 
   getManagementAreas(
