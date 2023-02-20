@@ -136,7 +136,10 @@ export class Repository<T> implements IRepository<T> {
   remove2(route: string, id: number | string) {
     return this.httpClient.delete(`${environment.API_URL2}${route}/${id}`);
   }
-
+  remove3(route: string, formData: Object) {
+    const fullRoute = this.buildRoute(route);
+    return this.httpClient.delete<T>(`${fullRoute}`, formData);
+  }
   updateByIds2(route: string, ids: Partial<T>, formData: Object) {
     const idsRoute: string = this.makeIdsRoute(ids);
     return this.httpClient.put(

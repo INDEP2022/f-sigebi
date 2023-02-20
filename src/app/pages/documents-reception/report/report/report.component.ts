@@ -4,6 +4,10 @@ import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
 import { ReportService } from 'src/app/core/services/reports/reports.service';
 //BasePage
+import { BehaviorSubject } from 'rxjs';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
+import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
 import { BasePage } from 'src/app/core/shared/base-page';
 
 export interface IReport {
@@ -18,6 +22,9 @@ export interface IReport {
 export class ReportComponent extends BasePage implements OnInit {
   @Output() sendSearchForm = new EventEmitter<any>();
   @Output() resetForm = new EventEmitter<boolean>();
+  params = new BehaviorSubject<ListParams>(new ListParams());
+  PN_DELEG = new EventEmitter<IDelegation>();
+  PN_SUBDEL = new EventEmitter<ISubdelegation>();
   showSearchForm: boolean = true;
   searchForm: ModelForm<any>;
   reportForm: FormGroup;
@@ -27,13 +34,6 @@ export class ReportComponent extends BasePage implements OnInit {
     dateInputFormat: 'MMMM YYYY',
   };
 
-  get from() {
-    return this.reportForm.get('from');
-  }
-
-  get to() {
-    return this.reportForm.get('to');
-  }
   constructor(private fb: FormBuilder, private reportService: ReportService) {
     super();
   }
@@ -46,27 +46,25 @@ export class ReportComponent extends BasePage implements OnInit {
     this.reportForm = this.fb.group({
       delegation: [null, [Validators.required]],
       subdelegation: [null, [Validators.required]],
-      from: [null, [Validators.required]],
-      to: [null, [Validators.required]],
+      PF_MES: [null, [Validators.required]],
+      PF_ANIO: [null, [Validators.required]],
     });
   }
 
   save() {}
 
   confirm(): void {
-    console.log(this.reportForm.value);
-    /*
-        let params = {
-          PN_DELEG: this.reportForm.controls['delegation'].value,
-          PN_SUBDEL: this.reportForm.controls['subdelegation'].value,
-          PF_MES: this.reportForm.controls['from'].value,
-          PF_ANIO: this.reportForm.controls['to'].value,
-        };
-        */
+    let params = {
+      PN_DELEG: this.reportForm.controls['delegation'].value,
+      PN_SUBDEL: this.reportForm.controls['subdelegation'].value,
+      PF_MES: this.reportForm.controls['PF_MES'].value,
+      PF_ANIO: this.reportForm.controls['PF_ANIO'].value,
+    };
 
     //this.showSearch = true;
-    const start = new Date(this.reportForm.get('from').value);
-    const end = new Date(this.reportForm.get('to').value);
+    console.log(params);
+    const start = new Date(this.reportForm.get('PF_MES').value);
+    const end = new Date(this.reportForm.get('PF_ANIO').value);
 
     const startTemp = `${start.getFullYear()}-0${
       start.getUTCMonth() + 1
@@ -83,18 +81,16 @@ export class ReportComponent extends BasePage implements OnInit {
       );
       return;
     }
-    // console.log(this.reportForm.value);
-    let params = { ...this.reportForm.value };
 
-    for (const key in params) {
-      if (params[key] === null) delete params[key];
-    }
+    setTimeout(() => {
+      this.onLoadToast('success', 'procesando', '');
+    }, 1000);
     //const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RGEROFPRECEPDOCUM.pdf?P_IDENTIFICADOR=${params}`; //window.URL.createObjectURL(blob);
     const pdfurl = `https://drive.google.com/file/d/1o3IASuVIYb6CPKbqzgtLcxx3l_V5DubV/view?usp=sharing`; //window.URL.createObjectURL(blob);
     window.open(pdfurl, 'RGEROFPRECEPDOCUM.pdf');
     setTimeout(() => {
-      this.onLoadToast('success', '', 'Reporte generado');
-    }, 1000);
+      this.onLoadToast('success', 'Reporte generado', '');
+    }, 2000);
 
     this.loading = false;
     this.cleanForm();

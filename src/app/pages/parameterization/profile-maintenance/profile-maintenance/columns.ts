@@ -3,14 +3,6 @@
 import { CheckboxElementComponent } from 'src/app/shared/components/checkbox-element-smarttable/checkbox-element';
 
 export const COLUMNS_PERFIL = {
-  number: {
-    title: 'Perfil',
-    sort: false,
-  },
-  description: {
-    title: 'Descripcion',
-    sort: false,
-  },
   display: {
     title: 'Pantalla',
     sort: false,
@@ -48,7 +40,7 @@ export const COLUMNS_PERFIL = {
 };
 
 export const COLUMNS_I = {
-  number: {
+  profile: {
     title: 'Perfil',
     sort: false,
   },

@@ -242,7 +242,9 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-6" *ngIf="affairKey.value == 50">
+        <div
+          class="col-md-6"
+          *ngIf="affairKey.value == 50 && initialCondition == 'T'">
           <div class="d-flex">
             <form-radio class="ml-3" label="Primera Etapa">
               <input type="radio" formControlName="stage" value="ETAPA 1" />
@@ -256,7 +258,11 @@
           </div>
         </div>
         <div class="col-md-6">
-          <form-check class="col-md-6" label="Desalojov" for="desalojov-check">
+          <form-check
+            *ngIf="initialCondition != 'A'"
+            class="col-md-6"
+            label="Desalojov"
+            for="desalojov-check">
             <input
               id="desalojov-check"
               type="checkbox"
@@ -271,15 +277,17 @@
             <input
               id="general-check"
               type="checkbox"
-              formControlName="addressGeneral" />
+              formControlName="addressGeneral"
+              value="1" />
           </form-check>
         </div>
       </div>
       <hr />
       <div class="row pt-5">
         <div class="col-md-5">
-          <div class="row">
+          <div class="row" *ngIf="initialCondition != 'T'">
             <form-field
+              *ngIf="!pgrInterface"
               class="col-md-6"
               [control]="documentsReceptionForm.get('circumstantialRecord')"
               label="Acta Circuns">
@@ -296,11 +304,12 @@
               <input
                 type="text"
                 formControlName="preliminaryInquiry"
-                class="form-control" />
+                class="form-control"
+                [readonly]="pgrInterface" />
             </form-field>
           </div>
 
-          <div class="row pt-5">
+          <div class="row pt-5" *ngIf="initialCondition != 'T'">
             <form-field
               class="col-md-8"
               [control]="documentsReceptionForm.get('criminalCase')"
@@ -308,10 +317,12 @@
               <input
                 type="text"
                 formControlName="criminalCase"
-                class="form-control" />
+                class="form-control"
+                [readonly]="pgrInterface" />
             </form-field>
 
             <form-field
+              *ngIf="!pgrInterface"
               class="col-md-4"
               [control]="documentsReceptionForm.get('protectionKey')"
               label="No. Amparo">
@@ -322,7 +333,7 @@
             </form-field>
           </div>
 
-          <div class="row pt-5">
+          <div class="row {{ initialCondition == 'T' ? '' : 'pt-5' }}">
             <!-- <form-field
             class="col-md-8"
             [control]="documentsReceptionForm.get('touchPenaltyKey')">
@@ -334,11 +345,12 @@
             </ngx-select>
           </form-field> -->
             <form-field
-              class="col-md-8"
-              [control]="documentsReceptionForm.get('touchPenaltyKey')"
+              *ngIf="!pgrInterface && initialCondition == 'T'"
+              class="col-md-12"
+              [control]="documentsReceptionForm.get('judgementType')"
               label="Tipo Juicio">
               <ng-select
-                formControlName="touchPenaltyKey"
+                formControlName="judgementType"
                 [searchable]="false"
                 class="form-control"
                 [clearable]="false">
@@ -348,14 +360,14 @@
                 >
               </ng-select>
             </form-field>
-
             <form-field
-              class="col-md-4"
-              [control]="documentsReceptionForm.get('officeExternalKey')"
-              label="No. Oficio">
+              *ngIf="initialCondition != 'T'"
+              class="col-md-12"
+              [control]="documentsReceptionForm.get('touchPenaltyKey')"
+              label="Toca Penal">
               <input
-                type="number"
-                formControlName="officeExternalKey"
+                type="text"
+                formControlName="touchPenaltyKey"
                 class="form-control" />
             </form-field>
           </div>
@@ -363,23 +375,49 @@
 
           <div class="row pt-5">
             <form-field
-              class="col-md-8"
+              class="col-md-6"
+              [control]="documentsReceptionForm.get('officeExternalKey')"
+              label="No. Oficio">
+              <input
+                type="number"
+                formControlName="officeExternalKey"
+                class="form-control"
+                [readonly]="pgrInterface" />
+            </form-field>
+
+            <form-field
+              class="col-md-6"
               [control]="documentsReceptionForm.get('externalOfficeDate')"
               label="Fecha Oficio">
               <input
                 formControlName="externalOfficeDate"
                 class="form-control"
-                bsDatepicker />
+                bsDatepicker
+                [readonly]="pgrInterface" />
+            </form-field>
+          </div>
+
+          <div class="row pt-5" *ngIf="initialCondition == 'T'">
+            <form-field
+              *ngIf="affairKey.value == 50"
+              class="col-md-6"
+              [control]="documentsReceptionForm.get('stageName')"
+              label="">
+              <input
+                type="text"
+                formControlName="stageName"
+                class="form-control"
+                readonly />
             </form-field>
 
             <form-field
-              class="col-md-4"
+              class="col-md-6"
               [control]="
                 documentsReceptionForm.get('expedientTransferenceNumber')
               "
               label="Exp Transfer">
               <input
-                type="number"
+                type="text"
                 formControlName="expedientTransferenceNumber"
                 class="form-control" />
             </form-field>
@@ -392,7 +430,8 @@
               <textarea
                 rows="5"
                 formControlName="observations"
-                class="form-control"></textarea>
+                class="form-control"
+                [readonly]="pgrInterface"></textarea>
             </form-field>
           </div>
         </div>
@@ -485,7 +524,8 @@
                 (fetchItems)="getAuthorities($event)"
                 bindLabel="authorityName"
                 control="autorityNumber"
-                label="Autoridad">
+                label="Autoridad"
+                [readonly]="pgrInterface">
               </ngx-select>
             </form-field>
           </div>
@@ -504,6 +544,7 @@
             </ngx-select>
           </form-field> -->
             <form-field
+              *ngIf="initialCondition != 'T'"
               class="col-md-6"
               [control]="documentsReceptionForm.get('minpubNumber')">
               <ngx-select
@@ -525,13 +566,15 @@
                 (fetchItems)="getCrimes($event)"
                 bindLabel="value"
                 control="crimeKey"
-                label="Delito">
+                label="Delito"
+                [readonly]="pgrInterface">
               </ngx-select>
             </form-field>
           </div>
 
           <div class="row pt-5">
             <form-field
+              *ngIf="initialCondition != 'T'"
               class="col-md-6"
               [control]="documentsReceptionForm.get('courtNumber')">
               <ngx-select
@@ -693,7 +736,13 @@
     </div>
     <div class="row">
       <div class="d-flex justify-content-center">
-        <div class="m-3">
+        <div
+          class="m-3"
+          *ngIf="
+            documentsReceptionForm.get('goodRelation').value == 'N' &&
+            !pgrInterface &&
+            !satInterface
+          ">
           <confirm-button
             text="Guardar"
             loadingText="Cargando"
@@ -706,11 +755,18 @@
             Limpiar
           </button>
         </div>
-        <div class="m-3">
+        <div
+          class="m-3"
+          *ngIf="
+            documentsReceptionForm.get('goodRelation').value == 'S' ||
+            pgrInterface ||
+            satInterface
+          ">
           <button
             type="button"
             class="btn btn-primary active"
-            (click)="captureGoods()">
+            (click)="captureGoods()"
+            [disabled]="!flyerCopyRecipientForm.valid">
             Siguiente
           </button>
         </div>

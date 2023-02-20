@@ -19,6 +19,11 @@ export class DocumentsTypeRepository<T> implements IDocumentsTypeMethods<T> {
     return this.httpClient.get<IListResponse<T>>(fullRoute, { params });
   }
 
+  getByFilters(route: string) {
+    const fullRoute = `${this.ms}${route}`;
+    return this.httpClient.get<IListResponse<T>>(fullRoute);
+  }
+
   getById(route: string, id: string | number): Observable<IListResponse<T>> {
     const fullRoute = `${this.ms}${route}${id}`;
     return this.httpClient.get<IListResponse<T>>(fullRoute);
