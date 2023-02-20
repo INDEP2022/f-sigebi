@@ -77,16 +77,11 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
   }
 
   confirm(): void {
-    // console.log(this.reportForm.value);
-    // let params = { ...this.form.value };
-
-    // for (const key in params) {
-    //   if (params[key] === null) delete params[key];
-    // }
+    console.log(this.form.value);
     let params = {
       DESTYPE: this.form.controls['evento'].value,
-      OFICIO_CARTALIB: this.form.controls['oficio'].value,
       ID_LOTE: this.form.controls['lote'].value,
+      OFICIO_CARTALIB: this.form.controls['oficio'].value,
       DIRIGIDO_A: this.form.controls['diridoA'].value,
       PUESTO: this.form.controls['puesto'].value,
       PARRAFO1: this.form.controls['parrafo1'].value,
@@ -97,11 +92,18 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
       FIRMANTE: this.form.controls['firmante'].value,
       PUESTOFIRMA: this.form.controls['puestoFirma'].value,
       CCP1: this.form.controls['ccp1'].value,
-      CCP2: this.form.controls['ccp2'].value,
+      CCP2: this.form.controls['ccp1'].value,
       PUESTOCCP1: this.form.controls['puestoCcp1'].value,
       PUESTOCCP2: this.form.controls['puestoCcp2'].value,
       FECHA_CARTA: this.form.controls['fechaCarta'].value,
     };
+    // console.log(this.reportForm.value);
+
+    // let params = { ...this.form.value };
+
+    // for (const key in params) {
+    //   if (params[key] === null) delete params[key];
+    // }
 
     console.log(params);
     // open the window
@@ -115,7 +117,7 @@ export class ReleaseLetterReportComponent extends BasePage implements OnInit {
       this.onLoadToast('success', 'Reporte generado', '');
     }, 2000);
 
-    window.open(pdfurl, 'FCOMERCARTALIB.pdf');
+    window.open(pdfurl, 'FCOMERCARTARESP_I.pdf');
     this.loading = false;
     this.cleanForm();
   }

@@ -29,6 +29,7 @@
           <confirm-button
             text="Imprimir"
             [loading]="loading"
+            [disabled]="form.invalid"
             (confirm)="confirm()"></confirm-button>
         </div>
       </div>
