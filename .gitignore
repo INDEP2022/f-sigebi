@@ -41,6 +41,3 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
-
-# Pages para comentar modulos que no se ocupan y no ocupe tanta RAM el proyecto
-/src/app/pages/pages-routing.module.ts
