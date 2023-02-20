@@ -17,9 +17,9 @@
     <div class="table-responsive">
       <ng2-smart-table
         [settings]="settings"
-        [source]="data"
+        [source]="numeraryParameterization"
         (edit)="openForm($event.data)"
-        (delete)="delete($event.data)"></ng2-smart-table>
+        (delete)="showDeleteAlert($event.data)"></ng2-smart-table>
     </div>
     <app-pagination [params]="params" [totalItems]="totalItems">
     </app-pagination>

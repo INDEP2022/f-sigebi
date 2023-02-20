@@ -7,9 +7,12 @@
       <div class="row">
         <div class="col-md-4">
           <form-field
-            [control]="form.get('typeAct')"
+            [control]="form.get('typeProceeding')"
             label="Tipo de Acta o Pantalla">
-            <input type="text" class="form-control" formControlName="typeAct" />
+            <input
+              type="text"
+              class="form-control"
+              formControlName="typeProceeding" />
           </form-field>
         </div>
         <div class="col-md-4">
@@ -41,7 +44,7 @@
         <confirm-button
           [type]="'button'"
           [disabled]="!form.valid"
-          (click)="saved()"></confirm-button>
+          (click)="confirm()"></confirm-button>
       </div>
       <div class="m-3">
         <button type="button" class="btn btn-danger active" (click)="close()">
