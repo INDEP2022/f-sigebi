@@ -25,7 +25,11 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <button class="btn btn-primary btn-sm active">Imprimir</button>
+          <confirm-button
+            text="Imprimir"
+            [loading]="loading"
+            (confirm)="confirm()"></confirm-button>
+          <!--<button class="btn btn-primary btn-sm active">Imprimir</button>-->
         </div>
       </div>
       <hr class="row" />
@@ -66,7 +70,7 @@
             <textarea
               rows="2"
               class="form-control"
-              formControlName="Parrafo 1"></textarea>
+              formControlName="parrafo1"></textarea>
           </form-field>
         </div>
       </div>
@@ -127,7 +131,7 @@
             <textarea
               rows="2"
               class="form-control"
-              formControlName="Parrafo 2"></textarea>
+              formControlName="parrafo2"></textarea>
           </form-field>
         </div>
       </div>
