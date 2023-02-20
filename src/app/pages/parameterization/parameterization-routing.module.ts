@@ -431,6 +431,20 @@ const routes: Routes = [
       screen: 'TMPMAXCIERREACTDEV',
     },
   },
+  {
+    path: 'cat-of-separators-documents',
+    loadChildren: async () =>
+      (
+        await import(
+          './cat-of-separators-documents/cat-of-separators-documents.module'
+        )
+      ).CatOfSeparatorsDocumentsModule,
+    data: {
+      title: 'Catálogo de separadores a documentos',
+      screen: 'FCATCATSEPARDOCUM',
+    },
+  },
+  // CatOfSeparatorsDocumentsModule
 ];
 
 @NgModule({
