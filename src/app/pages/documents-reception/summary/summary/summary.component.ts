@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsDatepickerConfig } from 'ngx-bootstrap/datepicker';
-import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
-import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
 import { DepartamentService } from 'src/app/core/services/catalogs/departament.service';
 import { ReportService } from 'src/app/core/services/reports/reports.service';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -28,8 +26,6 @@ export class SummaryComponent extends BasePage implements OnInit {
   flyersForm: FormGroup;
   entidad = new DefaultSelect<IDelegationState>();
   select = new DefaultSelect<IDepartment>();
-  delegdestino = new DefaultSelect<IDelegation>();
-  subddestino = new DefaultSelect<ISubdelegation>();
 
   datePickerConfig: Partial<BsDatepickerConfig> = {
     minMode: 'month',
@@ -40,6 +36,13 @@ export class SummaryComponent extends BasePage implements OnInit {
   get includeArea() {
     return this.flyersForm.get('includeArea');
   }
+  get delegdestino() {
+    return this.flyersForm.get('delegdestino');
+  }
+  get subddestino() {
+    return this.flyersForm.get('subddestino');
+  }
+
   constructor(
     private fb: FormBuilder,
     private reportService: ReportService,

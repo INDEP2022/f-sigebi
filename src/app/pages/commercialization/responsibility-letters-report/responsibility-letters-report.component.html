@@ -1,6 +1,6 @@
 <app-card [header]="true">
   <div class="ch-content" header>
-    <h5 class="title">Reporte de Cartas de Liberacion</h5>
+    <h5 class="title">Reporte de Cartas de Responsabilidad</h5>
   </div>
 
   <div body>
@@ -24,40 +24,8 @@
               placeholder="Lote" />
           </form-field>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-3">
-          <form-field
-            [control]="form.get('oficioCartaLiberacion')"
-            label="Oficio Carta Liberacion">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="oficioCartaLiberacion"
-              placeholder="Oficio Carta Liberacion" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field [control]="form.get('factura')" label="No Factura">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="factura"
-              placeholder="No Factura" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
-          <form-field
-            [control]="form.get('fechaFactura')"
-            label="Fecha Factura">
-            <input
-              bsDatepicker
-              class="form-control"
-              formControlName="fechaFactura"
-              placeholder="Fecha Factura" />
-          </form-field>
-        </div>
-        <div class="col-md-3">
+
+        <div class="col-md-4">
           <confirm-button
             text="Imprimir"
             [loading]="loading"
@@ -79,18 +47,6 @@
           </form-field>
         </div>
         <div class="col-md-4">
-          <form-field [control]="form.get('rfc')" label="RFC">
-            <input
-              type="text"
-              class="form-control"
-              formControlName="rfc"
-              placeholder="RFC" />
-          </form-field>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-4">
           <form-field [control]="form.get('domicilio')" label="Domicilio">
             <input
               type="text"
@@ -108,6 +64,12 @@
               placeholder="Colonia" />
           </form-field>
         </div>
+
+        <!-- <div class="col-md-4">
+          <form-field [control]="form.get('rfc')" label="RFC">
+            <input type="text" class="form-control" formControlName="rfc" placeholder="RFC" />
+          </form-field>
+        </div> -->
       </div>
 
       <div class="row">
@@ -148,7 +110,7 @@
             <textarea
               rows="2"
               class="form-control"
-              formControlName="Parrafo 1"></textarea>
+              formControlName="parrafo1"></textarea>
           </form-field>
         </div>
       </div>
@@ -171,17 +133,15 @@
             <textarea
               rows="2"
               class="form-control"
-              formControlName="Parrafo 2"></textarea>
+              formControlName="parrafo2"></textarea>
           </form-field>
         </div>
-      </div>
-      <div class="row">
         <div class="col-md-6">
           <form-field [control]="form.get('parrafo3')" label="Parrafo 3">
             <textarea
               rows="2"
               class="form-control"
-              formControlName="Parrafo 3"></textarea>
+              formControlName="parrafo3"></textarea>
           </form-field>
         </div>
       </div>
