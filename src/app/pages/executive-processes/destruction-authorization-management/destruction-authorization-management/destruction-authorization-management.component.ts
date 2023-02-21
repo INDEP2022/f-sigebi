@@ -1,18 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import { maxDate } from 'src/app/common/validations/date.validators';
+import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
+import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 
 import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  KEYGENERATION_PATTERN,
-  NUMBERS_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
+import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { GOODS_COLUMNS } from './destruction-authorization-management-goods-columns';
 
 import { PROCEEDINGS_COLUMNS } from './destruction-authorization-management-proceedings-columns';
@@ -27,6 +24,9 @@ export class DestructionAuthorizationManagementComponent
   extends BasePage
   implements OnInit
 {
+  proceedings = new DefaultSelect<IProccedingsDeliveryReception>();
+  modelValue: IProccedingsDeliveryReception;
+
   settings2 = {
     ...this.settings,
     actions: false,
@@ -48,7 +48,8 @@ export class DestructionAuthorizationManagementComponent
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService
   ) {
     super();
     this.today = new Date();
@@ -73,35 +74,58 @@ export class DestructionAuthorizationManagementComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      noAuth: [
-        '',
-        [
-          Validators.required,
-          Validators.maxLength(8),
-          Validators.minLength(1),
-          Validators.pattern(NUMBERS_PATTERN),
-        ],
-      ],
-      requesOffice: [
-        '',
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      requesScop: [
-        '',
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
-      recepDate: ['', [Validators.required, maxDate(new Date())]],
-      scopDate: ['', [Validators.required, maxDate(new Date())]],
-      inteDate: ['', [Validators.required, maxDate(new Date())]],
-      scanFolio: [
-        '',
-        [Validators.required, Validators.pattern(KEYGENERATION_PATTERN)],
-      ],
-      observations: [
-        '',
-        [Validators.required, Validators.pattern(STRING_PATTERN)],
-      ],
+      id: [null, []],
+      keysProceedings: [null, []],
+      typeProceedings: [null, []],
+      datePhysicalReception: [null, []],
+      dateDeliveryGood: [null, []],
+      dateCaptureHc: [null, []],
+      statusProceedings: [null, []],
+      universalFolio: [null, []],
+      observations: [null, []],
     });
+  }
+
+  getProceedings(params: ListParams) {
+    this.proceedingsDeliveryReceptionService
+      .getAllProceedingsDeliveryReception(params)
+      .subscribe(
+        data => {
+          this.proceedings = new DefaultSelect(data.data, data.count);
+        },
+        err => {
+          let error = '';
+          if (err.proceedings === 0) {
+            error = 'Revise su conexión de Internet.';
+          } else {
+            error = err.message;
+          }
+          this.onLoadToast('error', 'Error', error);
+        },
+        () => {}
+      );
+  }
+
+  onValuesChange(modelChange: IProccedingsDeliveryReception) {
+    this.modelValue = modelChange;
+    this.form.controls['id'].setValue(this.modelValue.id);
+    this.form.controls['typeProceedings'].setValue(
+      this.modelValue.typeProceedings
+    );
+    this.form.controls['datePhysicalReception'].setValue(
+      this.modelValue.datePhysicalReception
+    );
+    this.form.controls['dateDeliveryGood'].setValue(
+      this.modelValue.dateDeliveryGood
+    );
+    this.form.controls['dateCaptureHc'].setValue(this.modelValue.dateCaptureHc);
+    this.form.controls['statusProceedings'].setValue(
+      this.modelValue.statusProceedings
+    );
+    this.form.controls['universalFolio'].setValue(
+      this.modelValue.universalFolio
+    );
+    this.form.controls['observations'].setValue(this.modelValue.observations);
   }
 
   getPagination() {

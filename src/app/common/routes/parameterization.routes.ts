@@ -151,6 +151,10 @@ export const PARAMETERIZATION_ROUTES = [
       },
       //Félix
       {
+        label: 'Catálogo de separadores a documentos',
+        link: '/pages/parameterization/cat-of-separators-documents',
+      },
+      {
         label: 'Valores',
         link: '/pages/parameterization/values',
       },
