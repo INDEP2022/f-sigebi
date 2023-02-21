@@ -18,7 +18,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
 
   @Input() numberFoli: string | number = '';
   @Input() good: IGood;
-  @Output() folioUniversal = new EventEmitter<string | number>();
+  @Output() document = new EventEmitter<IDocuments>();
   get scanningFoli() {
     return this.form.get('scanningFoli');
   }
@@ -72,7 +72,7 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       keyTypeDocument: 'ENTRE',
       natureDocument: 'ORIGINAL',
       descriptionDocument: 'REGULARIZACION JURIDICA',
-      significantDate: new Date(),
+      significantDate: this.significantDate(),
       scanStatus: 'SOLICITADO',
       userRequestsScan: this.token.decodeToken().preferred_username,
       scanRequestDate: new Date(),
@@ -80,11 +80,12 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
       flyerNumber: this.good.flyerNumber,
       goodNumber: this.good.id,
     };
+    console.log(documents);
     this.documnetServices.create(documents).subscribe({
       next: response => {
         console.log(response);
         this.scanningFoli.setValue(response.id);
-        this.folioUniversal.emit(response.id);
+        this.document.emit(response);
         this.onLoadToast(
           'success',
           'Generado correctamente',
@@ -96,5 +97,20 @@ export class ScanningFoilComponent extends BasePage implements OnInit {
         this.onLoadToast('error', 'ERROR', err.error.message);
       },
     });
+  }
+  significantDate() {
+    let date = new Date();
+    let day = date.getDate();
+    let month = date.getMonth() + 1;
+    let year = date.getFullYear();
+    return month < 10 ? `0${month}/${year}` : `${month}/${year}`;
+  }
+
+  generate() {
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
+    const downloadLink = document.createElement('a');
+    downloadLink.href = pdfurl;
+    downloadLink.target = '_blank';
+    downloadLink.click();
   }
 }
