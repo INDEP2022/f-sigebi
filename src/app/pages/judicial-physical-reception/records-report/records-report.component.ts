@@ -5,7 +5,9 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
+import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 
 enum REPORT_TYPE {
@@ -18,13 +20,16 @@ enum REPORT_TYPE {
   templateUrl: './records-report.component.html',
   styles: [],
 })
-export class RecordsReportComponent implements OnInit {
+export class RecordsReportComponent extends BasePage implements OnInit {
   REPORT_TYPES = REPORT_TYPE;
   type: FormControl = new FormControl(REPORT_TYPE.Reception);
-  form: FormGroup;
-  itemsSelect = new DefaultSelect<IDelegation>();
+  form: FormGroup = this.fb.group({});
+  itemsSelect = new DefaultSelect();
+  initialProceeding = new DefaultSelect();
   delegacionRecibe: string = 'delegacionRecibe';
   subdelegationField: string = 'subdelegation';
+  labelDelegation: string = 'Delegación Recibe';
+  labelSubdelegation: string = 'Delegación Administra';
 
   get initialRecord() {
     return this.form.get('actaInicial');
@@ -33,7 +38,12 @@ export class RecordsReportComponent implements OnInit {
     return this.form.get('actaFinal');
   }
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private serviceProcVal: ProceedingsDeliveryReceptionService
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -63,6 +73,38 @@ export class RecordsReportComponent implements OnInit {
         delegacionEmite: this.form.get('delegacionAdministra').value,
       });
     }
+  }
+
+  getProceedings(params: ListParams) {
+    console.log(params);
+    this.serviceProcVal.getAll(params).subscribe(
+      res => {
+        console.log(res);
+        this.initialProceeding = new DefaultSelect(res.data, res.count);
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+
+  print() {
+    this.loading = true;
+    const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/SIAB/RREPREFACTAENTREC.pdf?PN_VOLANTEFIN=70646&P_IDENTIFICADOR=0`; //window.URL.createObjectURL(blob);
+
+    const downloadLink = document.createElement('a');
+    //console.log(linkSource);
+    downloadLink.href = pdfurl;
+    downloadLink.target = '_blank';
+    downloadLink.click();
+
+    /* let params = { ...this.flyersForm.value };
+    for (const key in params) {
+      if (params[key] === null) delete params[key];
+    } */
+    //let newWin = window.open(pdfurl, 'test.pdf');
+    this.onLoadToast('success', '', 'Reporte generado');
+    this.loading = false;
   }
 
   onTypeChange() {

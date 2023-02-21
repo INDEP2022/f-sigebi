@@ -3,4 +3,5 @@ export enum ProceedingsEndpoints {
   ProeedingsDevolution = 'proceedings-devolution',
   DetailProceedingsDevollution = 'detail-proceedings-devolution',
   ProceedingsValidations = 'proceedings-validations',
+  ProccedingsDeliveryReception = 'proceedings-delivery-reception',
 }

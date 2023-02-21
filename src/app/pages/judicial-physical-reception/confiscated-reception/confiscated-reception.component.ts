@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
+import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception';
 import {
   KEYGENERATION_PATTERN,
   STRING_PATTERN,
@@ -25,10 +26,30 @@ export class ConfiscatedReceptionComponent implements OnInit {
       return row.data.status ? 'available' : 'not-available';
     },
   };
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private serviceProcDelRes: ProceedingsDeliveryReceptionService
+  ) {}
 
   ngOnInit(): void {
     this.prepareForm();
+  }
+
+  blurE() {
+    this.serviceProcDelRes.getByCve(this.form.get('cveActa').value).subscribe({
+      next: data => {
+        console.log('Acta duplicada');
+        alert('Acta duplicada');
+      },
+      error: err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          error = err.message;
+        }
+      },
+    });
   }
 
   prepareForm() {
@@ -105,7 +126,7 @@ const EXAMPLE_DATA = [
     description: 'DISCOS DE MUSICA VARIOS ARTISTAS',
     cantidad: 1,
     fec: new Date().toDateString(),
-    status: false,
+    status: true,
   },
   {
     noBien: 1,

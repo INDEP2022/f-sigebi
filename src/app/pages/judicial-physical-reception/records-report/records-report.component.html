@@ -26,7 +26,11 @@
             <div class="col-md-9">
               <app-delegation-shared
                 [form]="form"
-                [delegationField]="delegacionRecibe"></app-delegation-shared>
+                [delegationField]="delegacionRecibe"
+                [labelDelegation]="labelDelegation"
+                [labelSubdelegation]="
+                  labelSubdelegation
+                "></app-delegation-shared>
             </div>
           </div>
 
@@ -46,22 +50,26 @@
 
           <div class="row" *ngIf="type.value === REPORT_TYPES.Reception">
             <div class="col-md-9">
-              <form-field
-                [control]="form.get('actaInicial')"
-                label="Acta Inicial">
+              <form-field [control]="form.get('actaInicial')">
                 <ngx-select
+                  (fetchItems)="getProceedings($event)"
+                  value="id"
+                  bindLabel="proceedingsCve"
                   control="actaInicial"
+                  label="Acta Inicial"
                   [form]="form"
-                  [data]="itemsSelect"></ngx-select>
+                  [data]="initialProceeding"></ngx-select>
               </form-field>
             </div>
           </div>
 
           <div class="row" *ngIf="type.value === REPORT_TYPES.Reception">
             <div class="col-md-9">
-              <form-field [control]="form.get('actaFinal')" label="Acta Final">
+              <form-field [control]="form.get('actaFinal')">
                 <ngx-select
+                  (fetchItems)="getProceedings($event)"
                   control="actaFinal"
+                  label="Acta Final"
                   [form]="form"
                   [data]="itemsSelect"></ngx-select>
               </form-field>
@@ -117,7 +125,7 @@
           <div class="d-flex justify-content-center">
             <div>
               <button
-                (click)="onSubmit()"
+                (click)="print()"
                 class="btn btn-primary active"
                 type="submit"
                 size="small">

@@ -9,28 +9,36 @@
         <div class="col-md-4">
           <form-field [control]="form.get('expediente')" label="Expediente">
             <input
-              type="text"
+              (ngModelChange)="
+                toggleButton('expediente', 'search-goods-expedient')
+              "
+              type="number"
               class="form-control"
-              formControlName="expediente"
-              (ngModelChange)="getExpedient()" />
+              formControlName="expediente" />
           </form-field>
         </div>
 
         <div class="col-md-4">
-          <form-field
+          <button
+            id="search-goods-expedient"
+            class="btn btn-primary btn-sm active disabled w-50"
+            (click)="getGoodsByExpedient()">
+            Buscar
+          </button>
+          <!--  <form-field
             [control]="form.get('fechaFe')"
             label="Fecha de f&eacute; ministerial">
             <input
               bsDatepicker
               class="form-control"
               formControlName="fechaFe" />
-          </form-field>
+          </form-field> -->
         </div>
       </div>
 
       <div class="row">
         <div class="col-md-4">
-          <table class="table">
+          <table class="table table-responsive" style="max-height: 300px">
             <thead>
               <tr>
                 <th>No Bien</th>
@@ -38,9 +46,11 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>1231</td>
-                <td>Mueble &#46;&#46;&#46;&#46;</td>
+              <tr
+                *ngFor="let item of dataGoods"
+                (dblclick)="getGoodData(item.id)">
+                <td>{{ item.id }}</td>
+                <td>{{ item.description }}</td>
               </tr>
             </tbody>
           </table>
@@ -90,11 +100,20 @@
                   </div>
 
                   <div class="row">
-                    <form-field [control]="form.get('moneda')" label="Moneda">
+                    <!-- <form-field [control]="form.get('moneda')" label="Moneda">
                       <input
                         type="text"
                         class="form-control"
                         formControlName="moneda" />
+                    </form-field> -->
+                    <form-field [control]="form.get('moneda')">
+                      <ngx-select
+                        (fetchItems)="getCurrency($event)"
+                        label="Moneda"
+                        bindLabel="otValue01"
+                        control="moneda"
+                        [form]="form"
+                        [data]="currencySelect"></ngx-select>
                     </form-field>
                   </div>
 
@@ -121,22 +140,26 @@
                   </div>
 
                   <div class="row">
-                    <form-field [control]="form.get('perito')" label="Perito">
+                    <form-field [control]="form.get('perito')">
                       <ngx-select
+                        (fetchItems)="getProeficients($event)"
+                        label="Perito"
+                        bindLabel="name"
                         control="perito"
                         [form]="form"
-                        [data]="itemsSelect"></ngx-select>
+                        [data]="proeficientSelect"></ngx-select>
                     </form-field>
                   </div>
 
                   <div class="row">
-                    <form-field
-                      [control]="form.get('institucion')"
-                      label="Instituci&oacute;n">
+                    <form-field [control]="form.get('institucion')">
                       <ngx-select
+                        (fetchItems)="getInstitutions($event)"
+                        bindLabel="description"
+                        label="Instituci&oacute;n"
                         control="institucion"
                         [form]="form"
-                        [data]="itemsSelect"></ngx-select>
+                        [data]="institutionSelect"></ngx-select>
                     </form-field>
                   </div>
                 </div>
@@ -234,8 +257,17 @@
               </div>
             </tab>
           </tabset>
+          <div class="col-md-12 mt-4 text-center">
+            <button class="my-1 mx-2 btn btn-primary active disabled btn-sm">
+              Actualizar
+            </button>
+            <button class="my-1 mx-2 btn btn-danger active btn-sm">
+              Cancelar
+            </button>
+          </div>
         </div>
       </div>
+      <span>{{ goodSelected }}</span>
     </form>
   </div>
 </app-card>
