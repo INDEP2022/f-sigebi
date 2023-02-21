@@ -62,10 +62,7 @@ export const DOCUMENTS_RECEPTION_REGISTER_FORM = {
   judgementType: new FormControl<string>(null),
   protectionKey: new FormControl<string | number>(null),
   touchPenaltyKey: new FormControl<string | number>(null),
-  officeExternalKey: new FormControl<string | number>(
-    null,
-    Validators.required
-  ),
+  officeExternalKey: new FormControl<string>(null, Validators.required),
   externalOfficeDate: new FormControl<string | number | Date>(
     null,
     Validators.required
@@ -162,10 +159,13 @@ export interface IGlobalFlyerRegistration {
   pIndicadorSat: string | number | null;
   gLastCheck: number | null;
   vTipoTramite: number | null;
+  gCommit: string | number;
+  gOFFCommit: string | number;
+  noTransferente: string | number;
 }
 
 export interface IDocReceptionFlyersRegistrationParams {
-  gGestOk: number | null;
+  pGestOk: number | null;
   pNoVolante: number | null;
   pSatTipoExp: string | null; //No necesario si existe global
   pNoTramite: number | null;
