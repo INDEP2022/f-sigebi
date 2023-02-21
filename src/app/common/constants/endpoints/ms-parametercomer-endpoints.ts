@@ -5,4 +5,5 @@ export enum ParameterComerEndpoints {
   ParameterMod = `parameters-mod`,
   Brand = 'comer-brands',
   SubBrand = 'sub-brands',
+  Tiie = 'comer-cat-tiie',
 }

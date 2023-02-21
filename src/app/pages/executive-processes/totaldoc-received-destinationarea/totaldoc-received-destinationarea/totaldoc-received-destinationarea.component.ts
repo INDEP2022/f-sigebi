@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
@@ -23,8 +28,10 @@ export interface IReport {
   templateUrl: './totaldoc-received-destinationarea.component.html',
   styles: [],
 })
-export class TotaldocReceivedDestinationareaComponent extends BasePage implements OnInit {
-  
+export class TotaldocReceivedDestinationareaComponent
+  extends BasePage
+  implements OnInit
+{
   form: FormGroup = new FormGroup({});
   today: Date;
 
@@ -58,7 +65,7 @@ export class TotaldocReceivedDestinationareaComponent extends BasePage implement
     });
   }
 
-  getAreas(params: ListParams){
+  getAreas(params: ListParams) {
     this.departamentService.getAll(params).subscribe(
       data => {
         this.areas = new DefaultSelect(data.data, data.count);
@@ -96,7 +103,7 @@ export class TotaldocReceivedDestinationareaComponent extends BasePage implement
     this.form.reset();
   }
 
- confirm(): void {
+  confirm(): void {
     this.loading = true;
     console.log(this.form.value);
     const pdfurl = `http://reportsqa.indep.gob.mx/jasperserver/rest_v2/reports/SIGEBI/Reportes/blank.pdf`; //window.URL.createObjectURL(blob);
@@ -117,8 +124,6 @@ export class TotaldocReceivedDestinationareaComponent extends BasePage implement
     this.loading = false;
   }
 
-  
-
   readFile(file: IReport) {
     const reader = new FileReader();
     reader.readAsDataURL(file.data);
@@ -127,7 +132,6 @@ export class TotaldocReceivedDestinationareaComponent extends BasePage implement
       this.openPrevPdf(reader.result as string);
     };
   }
-  
 
   openPrevPdf(pdfurl: string) {
     console.log(pdfurl);

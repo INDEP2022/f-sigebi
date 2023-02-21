@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
@@ -13,7 +14,10 @@ import {
 import { ExcelService } from 'src/app/common/services/excel.service';
 import { IExpedientMassiveUpload } from 'src/app/core/models/ms-expedient/expedient';
 import { IAttribClassifGoods } from 'src/app/core/models/ms-goods-query/attributes-classification-good';
+import { IMassiveParams } from 'src/app/core/models/ms-interfacesat/ms-interfacesat.interface';
+import { AuthService } from 'src/app/core/services/authentication/auth.service';
 import { BasePage } from 'src/app/core/shared/base-page';
+import { GlobalVarsService } from 'src/app/shared/global-vars/services/global-vars.service';
 import {
   GOODS_BULK_LOAD_ACTIONS,
   GOODS_BULK_LOAD_TARGETS,
@@ -25,10 +29,12 @@ import { GoodsBulkLoadService } from '../services/goods-bulk-load.table';
 import { DeclarationsSatSaeMassive } from '../utils/declarations-sat-massive';
 import {
   ERROR_ATRIBUTE_CLASS_GOOD,
+  ERROR_CITY_ASUNTO_SAT,
   ERROR_CLASS_GOOD,
   ERROR_ESTATUS,
   ERROR_EXPEDIENTE,
   ERROR_EXPORT,
+  ERROR_GET_CLAVE_SAT,
   ERROR_GOOD_INMUEBLE,
   ERROR_IDENTIFICADOR_MENAJE,
   ERROR_TRANSFERENTE,
@@ -75,11 +81,22 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   listError: any[] = []; // Guardar lista de errores del proceso
   proceso: number = 0;
   inicioProceso: boolean = false;
+  paramsGeneral: IMassiveParams = {
+    p_no_oficio: '',
+    p_no_volante: '',
+    p_no_expediente: '',
+    p_sat_tipo_exp: '',
+    asunto_sat: '',
+    p_indicador_sat: '',
+  };
 
   constructor(
     private fb: FormBuilder,
     private excelService: ExcelService,
-    private goodsBulkService: GoodsBulkLoadService
+    private goodsBulkService: GoodsBulkLoadService,
+    private authService: AuthService,
+    private globalVarsService: GlobalVarsService,
+    private datePipe: DatePipe
   ) {
     super();
     const _settings = { columns: GOODS_BULK_LOAD_COLUMNS, actions: false };
@@ -87,6 +104,11 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
+    this.globalVarsService.loadGlobalVars();
+    let tk = this.authService.decodeToken();
+    console.log(tk);
+    let gv = this.globalVarsService.getGlobalVars$();
+    console.log(gv);
     this.prepareForm();
   }
 
@@ -657,6 +679,14 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
     // Inicia proceso de validación para carga
     this.DeclarationsSatSaeMassive.message_progress =
       VALIDATION_UPLOAD_START_MESSAGE;
+    this.paramsGeneral = {
+      p_no_oficio: '800-36-00-06-00-2011-16989',
+      p_no_volante: '',
+      p_no_expediente: '',
+      p_sat_tipo_exp: '',
+      asunto_sat: 'AVV070110777',
+      p_indicador_sat: '',
+    };
     from(this.tableSource)
       .pipe(
         switchMap(async (row: any, count: number) => {
@@ -696,46 +726,42 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
               this.assetsForm.get('inmuebles').value ||
               this.assetsForm.get('cars').value
             ) {
-              const params: ListParams = {
-                page: this.params.getValue().page,
-                limit: this.params.getValue().limit,
+              // Parametros para buscar la clave SAT
+              let objParams = {
+                officeKey: this.paramsGeneral.p_no_oficio,
+                asunto: this.paramsGeneral.asunto_sat,
+                saeIdTransferencia: '56136', //data.transferente,
               };
-              this.params.getValue().getParams();
-              // params['filter.classifGoodNumber'] = '$eq:' + data.clasif + '';
-              // CARGAR POR PARAMETROS EN EL BODY ME LA PASO RAFA
               if (data.transferente == null) {
-                await this.goodsBulkService.searchForSatOnlyKey(params);
-                // .subscribe({
-                //   next: res => res,
-                //   error: err => {
-                //     error = this.agregarError(
-                //       error,
-                //       ERROR_CVE_SAT(data.transferente)
-                //     );
-                //   },
-                // });
+                await this.goodsBulkService.getSatKey(objParams).subscribe({
+                  next: res => res,
+                  error: err => {
+                    error = this.agregarError(
+                      error,
+                      ERROR_GET_CLAVE_SAT(data.transferente)
+                    );
+                  },
+                });
               }
             }
             // PROCESO --- 4
             // GENERACION DE VOLANTES
             if (this.proceso == 4) {
+              let no_ciudad = null;
+              // COL1 es la descripcion en el archivo
               if (data.descripcion != null && data.descripcion == '') {
-                const params: ListParams = {
-                  page: this.params.getValue().page,
-                  limit: this.params.getValue().limit,
-                };
-                this.params.getValue().getParams();
-                // params['filter.classifGoodNumber'] = '$eq:' + data.clasif + '';
-                await this.goodsBulkService.searchCityByDescripction(params);
-                // .subscribe({
-                //   next: res => res,
-                //   error: err => {
-                //     error = this.agregarError(
-                //       error,
-                //       ERROR_CVE_SAT(data.transferente)
-                //     );
-                //   },
-                // });              }
+                // Obtener la clave de la ciudad apartir de la clave Asunto SAT
+                await this.goodsBulkService
+                  .searchCityByAsuntoSat(this.paramsGeneral.asunto_sat)
+                  .subscribe({
+                    next: res => (no_ciudad = res.no_ciudad),
+                    error: err => {
+                      error = this.agregarError(
+                        error,
+                        ERROR_CITY_ASUNTO_SAT(this.paramsGeneral.asunto_sat)
+                      );
+                    },
+                  });
                 // CREANDO EXPEDIENTE
                 if (data.descripcion) {
                   // Inicia proceso de validación para carga
@@ -767,35 +793,61 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
                     });
                 }
                 if (data.expediente) {
-                  // Validar si existe un expediente
+                  let no_transferente = 120;
+                  const paramsAuth: ListParams = {
+                    page: this.params.getValue().page,
+                    limit: this.params.getValue().limit,
+                  };
+                  paramsAuth['filter.idAuthorityIssuerTransferor'] =
+                    '$eq:' + no_transferente + '';
+                  // Obtener institucion emisora de acuerdo al id 200
                   await this.goodsBulkService
-                    .getExpedientById(data.expediente)
+                    .getNumberTransferenteAuthority(paramsAuth)
                     .subscribe({
-                      next: res => {
+                      next: async res => {
                         console.log(res);
-                        let expediente: IExpedientMassiveUpload = {
-                          id: data.expediente,
-                          insertedBy: '',
-                          insertMethod: 'CARGA MASIVA VOLANTES',
-                          insertDate: null,
-                          nameInstitution: '',
-                          indicatedName: '',
-                          federalEntityKey: '',
-                          identifier: '',
-                          transferNumber: '',
-                          expTransferNumber: '',
-                          expedientType: '',
-                          authorityNumber: '',
-                          stationNumber: '',
+                        let dataExtra = {
+                          nameInstitution: res.data[0].authorityName, // Institucion emisora nombre
+                          federalEntityKey: data.entfed, // Entidad federativa
+                          identifier: data.identificador, // Identificador
+                          transferNumber: data.transferente, // Transferente
+                          authorityNumber: res.data[0].idAuthority, // Numero de autoridad
                         };
-                        if (!res) {
-                          this.saveExpedient(expediente);
+                        this.validExpedientExist(data, error, dataExtra);
+
+                        // Validar transferente para revisar si el transferente es mayor a 10000 y existe en la base de datos
+                        if (data.transferente > 10000) {
+                          const params: ListParams = {
+                            page: this.params.getValue().page,
+                            limit: this.params.getValue().limit,
+                          };
+                          this.params.getValue().getParams();
+                          params['filter.idAuthorityIssuerTransferor'] =
+                            '$eq:' + data.transferente + '';
+                          await this.goodsBulkService
+                            .getNumberTransferenteAuthority(data.transferente)
+                            .subscribe({
+                              next: res => {
+                                if (res.data.length == 0) {
+                                  error = this.agregarError(
+                                    error,
+                                    ERROR_TRANSFERENTE(data.transferente)
+                                  );
+                                }
+                              },
+                              error: err => {
+                                error = this.agregarError(
+                                  error,
+                                  ERROR_TRANSFERENTE(data.transferente)
+                                );
+                              },
+                            });
                         }
                       },
                       error: err => {
                         error = this.agregarError(
                           error,
-                          ERROR_EXPEDIENTE(data.expediente)
+                          ERROR_TRANSFERENTE(data.transferente)
                         );
                       },
                     });
@@ -820,6 +872,36 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         console.log(this.DeclarationsSatSaeMassive, this.listError);
         console.log(val);
       });
+  }
+  async validExpedientExist(data: any, error: any[], dataExtra: any) {
+    // Validar si existe un expediente
+    await this.goodsBulkService.getExpedientById(data.expediente).subscribe({
+      next: res => {
+        let dateNowParse = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
+        console.log(res);
+        let expediente: IExpedientMassiveUpload = {
+          id: data.expediente,
+          insertedBy: 'USER',
+          insertMethod: 'CARGA MASIVA VOLANTES',
+          insertDate: dateNowParse,
+          nameInstitution: dataExtra.nameInstitution,
+          indicatedName: null,
+          federalEntityKey: dataExtra.federalEntityKey,
+          identifier: dataExtra.identificador,
+          transferNumber: dataExtra.transferNumber,
+          expTransferNumber: '',
+          expedientType: 'T',
+          authorityNumber: dataExtra.authorityNumber,
+          stationNumber: '',
+        };
+        if (!res) {
+          this.saveExpedient(expediente);
+        }
+      },
+      error: err => {
+        error = this.agregarError(error, ERROR_EXPEDIENTE(data.expediente));
+      },
+    });
   }
 
   saveExpedient(expediente: IExpedientMassiveUpload) {

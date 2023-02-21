@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { BehaviorSubject } from 'rxjs';
@@ -29,7 +29,7 @@ export class DestructionAuthorizationManagementComponent
   extends BasePage
   implements OnInit
 {
-  proceedings= new DefaultSelect<IProccedingsDeliveryReception>();
+  proceedings = new DefaultSelect<IProccedingsDeliveryReception>();
   modelValue: IProccedingsDeliveryReception;
 
   settings2 = {
@@ -83,15 +83,15 @@ export class DestructionAuthorizationManagementComponent
 
   private prepareForm() {
     this.form = this.fb.group({
-      id: [null,[]],
+      id: [null, []],
       keysProceedings: [null, []],
-      typeProceedings: [ null, []],
+      typeProceedings: [null, []],
       datePhysicalReception: [null, []],
       dateDeliveryGood: [null, []],
       dateCaptureHc: [null, []],
       statusProceedings: [null, []],
       universalFolio: [null, []],
-      observations: [null,[]],
+      observations: [null, []],
     });
   }
 
@@ -114,17 +114,26 @@ export class DestructionAuthorizationManagementComponent
     );
   }
 
-  onValuesChange(modelChange: IProccedingsDeliveryReception){
+  onValuesChange(modelChange: IProccedingsDeliveryReception) {
     this.modelValue = modelChange;
     this.form.controls['id'].setValue(this.modelValue.id);
-    this.form.controls['typeProceedings'].setValue(this.modelValue.typeProceedings);
-    this.form.controls['datePhysicalReception'].setValue(this.modelValue.datePhysicalReception);
-    this.form.controls['dateDeliveryGood'].setValue(this.modelValue.dateDeliveryGood);
+    this.form.controls['typeProceedings'].setValue(
+      this.modelValue.typeProceedings
+    );
+    this.form.controls['datePhysicalReception'].setValue(
+      this.modelValue.datePhysicalReception
+    );
+    this.form.controls['dateDeliveryGood'].setValue(
+      this.modelValue.dateDeliveryGood
+    );
     this.form.controls['dateCaptureHc'].setValue(this.modelValue.dateCaptureHc);
-    this.form.controls['statusProceedings'].setValue(this.modelValue.statusProceedings);
-    this.form.controls['universalFolio'].setValue(this.modelValue.universalFolio);
+    this.form.controls['statusProceedings'].setValue(
+      this.modelValue.statusProceedings
+    );
+    this.form.controls['universalFolio'].setValue(
+      this.modelValue.universalFolio
+    );
     this.form.controls['observations'].setValue(this.modelValue.observations);
-
   }
 
   getProceedingsByKey(): void{

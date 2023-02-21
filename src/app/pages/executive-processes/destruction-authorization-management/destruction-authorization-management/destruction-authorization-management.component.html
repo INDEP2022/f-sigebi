@@ -2,7 +2,7 @@
   <div header>
     <div class="ch-content">
       <h5 class="title">
-        GESTI&Oacute;N DE AUTORIZACI&Oacute;N DE DESTRUCCI&Oacute;N  
+        GESTI&Oacute;N DE AUTORIZACI&Oacute;N DE DESTRUCCI&Oacute;N
       </h5>
     </div>
   </div>
@@ -58,7 +58,9 @@
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field [control]="form.get('dateDeliveryGood')" label="Fecha de alcance">
+          <form-field
+            [control]="form.get('dateDeliveryGood')"
+            label="Fecha de alcance">
             <input
               type="text"
               placeholder=""
@@ -82,13 +84,12 @@
           </form-field>
         </div>
         <div class="col-md-1">
-          <form-field
-            [control]="form.get('statusProceedings')"
-            label="Estado">
+          <form-field [control]="form.get('statusProceedings')" label="Estado">
             <input
               type="text"
               class="form-control"
-              formControlName="statusProceedings" readonly/>
+              formControlName="statusProceedings"
+              readonly />
           </form-field>
         </div>
       </div>

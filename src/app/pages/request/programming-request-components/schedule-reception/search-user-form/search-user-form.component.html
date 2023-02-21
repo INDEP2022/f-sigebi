@@ -10,12 +10,13 @@
     </div>
     <div [class]="loading ? 'table-loading' : ''">
       <ng2-smart-table
+        id="tableUser"
         [attr.class]="'table-bordered'"
         [settings]="settings"
-        [source]="usersData"
-        (userRowSelect)="userSelect($event)">
+        [source]="usersData">
       </ng2-smart-table>
     </div>
+
     <app-pagination
       [params]="params"
       [totalItems]="totalItems"></app-pagination>

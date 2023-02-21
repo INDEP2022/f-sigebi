@@ -12,15 +12,15 @@ import {
 } from 'src/app/core/shared/patterns';
 import { ASSETS_DESTRUCTION_COLUMLNS } from './authorization-assets-destruction-columns';
 //XLSX
+import { DatePipe } from '@angular/common';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
-import * as XLSX from 'xlsx';
 import { ExpedientService } from 'src/app/core/services/ms-expedient/expedient.service';
 import { GoodService } from 'src/app/core/services/ms-good/good.service';
-import { DatePipe } from '@angular/common';
+import * as XLSX from 'xlsx';
 //Models
-import { IGood } from 'src/app/core/models/ms-good/good';
 import { LocalDataSource } from 'ng2-smart-table';
+import { IGood } from 'src/app/core/models/ms-good/good';
 
 @Component({
   selector: 'app-authorization-assets-destruction',
@@ -156,7 +156,6 @@ export class AuthorizationAssetsDestructionComponent
     this.rowSelected = true;
   }
 
-
   msjRequest() {
     this.alertQuestion(
       'question',
@@ -207,6 +206,4 @@ export class AuthorizationAssetsDestructionComponent
       console.log(this.data);
     };
   }
-
-  
 }

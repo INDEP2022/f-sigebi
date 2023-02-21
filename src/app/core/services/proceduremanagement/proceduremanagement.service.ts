@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { ProcedureManagementEndPoints } from 'src/app/common/constants/endpoints/ms-proceduremanagement-endpoints';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
@@ -79,7 +79,21 @@ export class ProcedureManagementService extends HttpService {
     return this.get<IListResponse<IManagamentProcessSat>>(
       ProcedureManagementEndPoints.ReportViews,
       params
+    ).pipe(
+      tap(() => {
+        this.microservice = ProcedureManagementEndPoints.ProcedureManagement;
+      })
     );
   }
   // http://sigebimsqa.indep.gob.mx/massivegood/api/v1/views/file-procedure-mng?limit=11&page=1
+
+  update(
+    id: number,
+    body: Partial<IProceduremanagement>
+  ): Observable<IProceduremanagement> {
+    return this.patch<IProceduremanagement>(
+      `${ProcedureManagementEndPoints.ProcedureManagement}/${id}`,
+      body
+    );
+  }
 }

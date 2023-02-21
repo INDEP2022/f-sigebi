@@ -20,8 +20,13 @@ export class ProceedingsDeliveryReceptionService extends HttpService {
     return this.get<IListResponse<IProceedings>>(this.endpoint);
   }
 
-  getAllProceedingsDeliveryReception(params?: ListParams): Observable<IListResponse<IProceedings>> {
-    return this.get<IListResponse<IProceedings>>(ProceedingsEndpoints.ProceedingsDeliveryReception, params);
+  getAllProceedingsDeliveryReception(
+    params?: ListParams
+  ): Observable<IListResponse<IProceedings>> {
+    return this.get<IListResponse<IProceedings>>(
+      ProceedingsEndpoints.ProceedingsDeliveryReception,
+      params
+    );
   }
 
   getProceedingsByKey(id: string | number): Observable<IListResponse<IProceedings>> {
