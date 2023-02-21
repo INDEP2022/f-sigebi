@@ -11,7 +11,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 
 //Components
-import { GoodsTypesSharedComponent } from 'src/app/@standalone/shared-forms/goods-types-shared/goods-types-shared.component';
+import { GoodsStatusSharedComponent } from 'src/app/@standalone/shared-forms/goods-status-shared/goods-status-shared.component';
 import { MassiveChangeStatusRoutingModule } from './massive-change-status-routing.module';
 import { MassiveChangeStatusComponent } from './massive-change-status/massive-change-status.component';
 
@@ -29,7 +29,7 @@ import { MassiveChangeStatusComponent } from './massive-change-status/massive-ch
     BsDatepickerModule,
     TabsModule,
     ModalModule.forChild(),
-    GoodsTypesSharedComponent,
+    GoodsStatusSharedComponent,
   ],
 })
 export class MassiveChangeStatusModule {}

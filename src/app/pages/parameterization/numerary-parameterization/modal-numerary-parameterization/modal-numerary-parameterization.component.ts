@@ -1,6 +1,9 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { ICategorizationAutomNumerary } from 'src/app/core/models/catalogs/numerary-categories-model';
+import { NumeraryParameterizationAutomService } from 'src/app/core/services/catalogs/numerary-parameterization-autom.service';
+import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 
 @Component({
@@ -8,14 +11,23 @@ import { STRING_PATTERN } from 'src/app/core/shared/patterns';
   templateUrl: './modal-numerary-parameterization.component.html',
   styles: [],
 })
-export class ModalNumeraryParameterizationComponent implements OnInit {
+export class ModalNumeraryParameterizationComponent
+  extends BasePage
+  implements OnInit
+{
   title: string = 'TASA';
   edit: boolean = false;
   form: FormGroup = new FormGroup({});
-  allotment: any;
+  allotment: ICategorizationAutomNumerary;
   @Output() refresh = new EventEmitter<true>();
 
-  constructor(private fb: FormBuilder, private modalRef: BsModalRef) {}
+  constructor(
+    private fb: FormBuilder,
+    private modalRef: BsModalRef,
+    private numeraryParameterizationAutomService: NumeraryParameterizationAutomService
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.prepareForm();
@@ -23,7 +35,7 @@ export class ModalNumeraryParameterizationComponent implements OnInit {
 
   private prepareForm() {
     this.form = this.fb.group({
-      typeAct: [
+      typeProceeding: [
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
@@ -42,7 +54,33 @@ export class ModalNumeraryParameterizationComponent implements OnInit {
       this.form.patchValue(this.allotment);
     }
   }
-  saved() {
+  confirm() {
+    this.edit ? this.update() : this.create();
+  }
+  create() {
+    this.loading = true;
+    this.numeraryParameterizationAutomService
+      .create(this.form.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+  }
+  update() {
+    this.loading = true;
+    this.numeraryParameterizationAutomService
+      .update(this.form.controls['typeProceeding'].value, this.form.value)
+      .subscribe({
+        next: data => this.handleSuccess(),
+        error: error => (this.loading = false),
+      });
+  }
+
+  handleSuccess() {
+    const message: string = this.edit ? 'Actualizado' : 'Guardado';
+    this.onLoadToast('success', this.title, `${message} Correctamente`);
+    this.loading = false;
+    this.modalRef.content.callback(true);
     this.modalRef.hide();
   }
   close() {

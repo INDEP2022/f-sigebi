@@ -1,5 +1,5 @@
 export const ASSETS_DESTRUCTION_COLUMLNS = {
-  noBien: {
+  id: {
     title: 'No. Bien',
     type: 'string',
     sort: false,
@@ -9,7 +9,7 @@ export const ASSETS_DESTRUCTION_COLUMLNS = {
     type: 'string',
     sort: false,
   },
-  ubiExact: {
+  ubicationType: {
     title: 'Ubicación Exacta',
     type: 'string',
     sort: false,
@@ -20,30 +20,30 @@ export const ASSETS_DESTRUCTION_COLUMLNS = {
     sort: false,
   },
 
-  noOficio: {
+  flyerNumber: {
     title: 'No. de Autorización',
     type: 'string',
     sort: false,
   },
-  fecha: {
+  insertRegDate: {
     title: 'Fecha',
     type: 'string',
     sort: false,
   },
-  status: {
+  goodStatus: {
     title: 'Estatus',
     type: 'string',
     sort: false,
   },
-  extraDom: {
+  extDomProcess: {
     title: 'Ext. Dom',
     type: 'string',
     sort: false,
   },
-  availability: {
-    title: 'Disponibilidad',
-    type: 'boolean',
-    sort: false,
-    hide: true,
-  },
+  // availability: {
+  //   title: 'Disponibilidad',
+  //   type: 'boolean',
+  //   sort: false,
+  //   hide: true,
+  // },
 };

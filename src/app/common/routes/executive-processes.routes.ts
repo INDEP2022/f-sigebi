@@ -69,10 +69,10 @@ export const EXECUTIVE_PROCESSES_ROUTES = [
         label: 'Gestión de Autorización de Destrucción',
         link: '/pages/executive-processes/destruction-authorization-management',
       },
-      {
-        label: 'Aprobación de cambio a numerario',
-        link: '/pages/executive-processes/approval-change-numeraire',
-      },
+      // {
+      //   label: 'Aprobación de cambio a numerario',
+      //   link: '/pages/executive-processes/approval-change-numeraire',
+      // },
       {
         label: 'Documentación recibida en sera',
         link: '/pages/executive-processes/doc-received-sera',
