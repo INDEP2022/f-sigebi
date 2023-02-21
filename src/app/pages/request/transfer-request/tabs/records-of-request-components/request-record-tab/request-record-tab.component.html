@@ -21,13 +21,21 @@
           <span style="line-height: 2">Prioridad</span>
         </div>
         <div class="col-md-2">
-          <form-field [control]="requestForm.get('urgentPriority')">
+          <!-- <form-field [control]="requestForm.get('urgentPriority')">
             <input
               type="checkbox"
               formControlName="urgentPriority"
               aria-label=""
               id="priority" />
-          </form-field>
+          </form-field> -->
+          <form-check label="Prioridad" for="urgentPriority">
+            <input
+              id="urgentPriority"
+              type="checkbox"
+              [ngModelOptions]="{ standalone: true }"
+              [(ngModel)]="priority"
+              (change)="changePriority($event)" />
+          </form-check>
         </div>
         <div class="col-md-4">
           <ngx-select
