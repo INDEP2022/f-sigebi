@@ -6,20 +6,19 @@ import { BehaviorSubject } from 'rxjs';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { maxDate } from 'src/app/common/validations/date.validators';
-import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
-import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
-
-import { BasePage } from 'src/app/core/shared/base-page';
-import {
-  KEYGENERATION_PATTERN,
-  NUMBERS_PATTERN,
-  STRING_PATTERN,
-} from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
+import { BasePage } from 'src/app/core/shared/base-page';
+//PAtterns
+//columns
 import { GOODS_COLUMNS } from './destruction-authorization-management-goods-columns';
-
 import { PROCEEDINGS_COLUMNS } from './destruction-authorization-management-proceedings-columns';
 import { RULINGS_COLUMNS } from './destruction-authorization-management-rulings-columns';
+//models
+import { IProccedingsDeliveryReception } from 'src/app/core/models/ms-proceedings/proceedings-delivery-reception-model';
+import { IGood } from 'src/app/core/models/ms-good/good';
+//Services
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
+import { ProceedingsDeliveryReceptionService } from 'src/app/core/services/ms-proceedings/proceedings-delivery-reception.service';
 
 @Component({
   selector: 'app-destruction-authorization-management',
@@ -37,6 +36,7 @@ export class DestructionAuthorizationManagementComponent
     ...this.settings,
     actions: false,
   };
+
   settings3 = {
     ...this.settings,
     actions: false,
@@ -49,13 +49,16 @@ export class DestructionAuthorizationManagementComponent
 
   params = new BehaviorSubject<ListParams>(new ListParams());
   totalItems: number = 0;
-  columns: any[] = [];
+
+
+  goodPDS: IGood[]=[];
 
   constructor(
     private fb: FormBuilder,
     private modalService: BsModalService,
     private sanitizer: DomSanitizer,
-    private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService
+    private proceedingsDeliveryReceptionService: ProceedingsDeliveryReceptionService,
+    private goodService: GoodService
   ) {
     super();
     this.today = new Date();
@@ -64,9 +67,9 @@ export class DestructionAuthorizationManagementComponent
       actions: false,
       columns: { ...GOODS_COLUMNS },
       rowClassFunction: function (row: {
-        data: { availability: any };
+        data: { status: any };
       }): 'available' | 'not-available' {
-        return row.data.availability ? 'available' : 'not-available';
+        return row.data.status ? 'available' : 'not-available';
       },
     };
     this.settings2.columns = RULINGS_COLUMNS;
@@ -75,7 +78,7 @@ export class DestructionAuthorizationManagementComponent
 
   ngOnInit(): void {
     this.prepareForm();
-    this.getPagination();
+    this.getGoodByStatusPDS();
   }
 
   private prepareForm() {
@@ -92,7 +95,8 @@ export class DestructionAuthorizationManagementComponent
     });
   }
 
-  getProceedings(params: ListParams){
+  //Método para select, que trae el listado de todos (No se esta usando)
+  getProceedingsAll(params: ListParams){
     this.proceedingsDeliveryReceptionService.getAllProceedingsDeliveryReception(params).subscribe(
       data => {
         this.proceedings = new DefaultSelect(data.data, data.count);
@@ -123,10 +127,41 @@ export class DestructionAuthorizationManagementComponent
 
   }
 
-  getPagination() {
-    this.columns = this.dataNoBien;
-    this.totalItems = this.columns.length;
+  getProceedingsByKey(): void{
+    let keys = this.form.controls['id'].value;
+    this.proceedingsDeliveryReceptionService.getProceedingsByKey(keys).subscribe(
+      response => {
+        //TODO: Validate Response
+        if (response !== null) {
+          this.form.patchValue(response);
+          this.form.updateValueAndValidity();
+          // this.getGoodsByExpedient(response.id);
+        } else {
+          //TODO: CHECK MESSAGE
+          this.alert('info', 'No se encontraron registros', '');
+        }
+
+        this.loading = false;
+      },
+      error => (this.loading = false)
+    );
   }
+
+  //Método para traer los bienes con estatus PDS
+
+  getGoodByStatusPDS() {
+    this.loading = true;
+    this.goodService.getGoodByStatusPDS(this.params.getValue()).subscribe({
+      next: response => {
+        this.goodPDS = response.data;
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
+  }
+
+  
 
   dataActRec = [
     {
@@ -152,31 +187,7 @@ export class DestructionAuthorizationManagementComponent
     },
   ];
 
-  dataNoBien = [
-    {
-      noBien: 85431,
-      descripcion: 'ROLLO DE PAPEL',
-      cantidad: 1,
-      ofsol: 'DCCR/DECRO/DRBC/ATJRBC/00001/2018',
-      availability: true,
-    },
-
-    {
-      noBien: 3051053,
-      descripcion: 'DISCOS EN FORMATO CD Y DVD',
-      cantidad: 98,
-      ofsol: 'DCCR/DECRO/DRBC/ATJRBC/00002/2018',
-      availability: true,
-    },
-
-    {
-      noBien: 3301787,
-      descripcion: 'EXHIBIDOR PUBLICITARIO',
-      cantidad: 12,
-      ofsol: 'DCCR/DECRO/DRBC/ATJRBC/00003/2018',
-      availability: false,
-    },
-  ];
+  
 
   msjRequest() {
     this.alertQuestion(
@@ -213,5 +224,9 @@ export class DestructionAuthorizationManagementComponent
       ignoreBackdropClick: true, //ignora el click fuera del modal
     };
     this.modalService.show(PreviewDocumentsComponent, config);
+  }
+
+  cleanForm(): void {
+    this.form.reset();
   }
 }
