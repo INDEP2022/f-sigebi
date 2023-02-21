@@ -1,5 +1,5 @@
 export const COLUMNSPARAMETER = {
-  cve: {
+  id: {
     title: 'Clave parámetro',
     sort: false,
   },
@@ -10,10 +10,22 @@ export const COLUMNSPARAMETER = {
   startDate: {
     title: 'Fecha inical',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `
+        ${text ? text.split('T')[0] : ''}  
+      `;
+    },
   },
   endDate: {
     title: 'Fecha final',
     sort: false,
+    type: 'html',
+    valuePrepareFunction: (text: string) => {
+      return `
+        ${text ? text.split('T')[0] : ''}  
+      `;
+    },
   },
   initialValue: {
     title: 'Valor inicial',
