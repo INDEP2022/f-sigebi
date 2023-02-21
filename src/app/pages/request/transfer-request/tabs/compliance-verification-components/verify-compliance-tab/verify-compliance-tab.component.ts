@@ -1,8 +1,20 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { BehaviorSubject, takeUntil } from 'rxjs';
 import { TABLE_SETTINGS } from 'src/app/common/constants/table-settings';
-import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+} from 'src/app/common/repository/interfaces/list-params';
 import { ModelForm } from 'src/app/core/interfaces/model-form';
+import { GenericService } from 'src/app/core/services/catalogs/generic.service';
+import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevant.service';
+import { GoodService } from 'src/app/core/services/ms-good/good.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { Articulo12, Articulo3 } from './articulos';
 import { DETAIL_ESTATE_COLUMNS } from './detail-estates-columns';
@@ -47,26 +59,38 @@ var bienes: IDetailEstate[] = [
   templateUrl: './verify-compliance-tab.component.html',
   styleUrls: ['./verify-compliance-tab.component.scss'],
 })
-export class VerifyComplianceTabComponent extends BasePage implements OnInit {
-  @Input() dataObject: any;
+export class VerifyComplianceTabComponent
+  extends BasePage
+  implements OnInit, OnChanges
+{
+  //@Input() dataObject: any;
+  @Input() requestObject: any;
   @Input() typeDoc: string = '';
   verifComplianceForm: ModelForm<any>;
 
-  settingsEstate = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
-  paragraphsEstate = new BehaviorSubject<ListParams>(new ListParams());
-  detallesBienes: IDetailEstate[] = [];
+  goodSettings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
+  //paragraphsEstate = new BehaviorSubject<FilterParams>(new FilterParams());
+  goodData: any = [];
+  //detallesBienes: IDetailEstate[] = [];
   columns = DETAIL_ESTATE_COLUMNS;
 
   paragraphsTable1: any[] = [];
   paragraphsTable2: any[] = [];
-  params = new BehaviorSubject<ListParams>(new ListParams());
+
+  params = new BehaviorSubject<FilterParams>(new FilterParams());
   totalItems: number = 0;
 
   detailArray: any;
   article3array: Array<any> = new Array<any>();
   article12and13array: Array<any> = new Array<any>();
 
-  constructor() {
+  //goodSettings = { ...TABLE_SETTINGS, actions: false };
+
+  constructor(
+    private goodServices: GoodService,
+    private typeRelevantService: TypeRelevantService,
+    private genericService: GenericService
+  ) {
     super();
     this.detailArray = new Array();
   }
@@ -74,25 +98,99 @@ export class VerifyComplianceTabComponent extends BasePage implements OnInit {
   ngOnInit(): void {
     this.settings = { ...TABLE_SETTINGS, actions: false, selectMode: 'multi' };
     this.settings.columns = VERIRY_COMPLIANCE_COLUMNS;
-    this.settingsEstate.columns = DETAIL_ESTATE_COLUMNS;
+    this.goodSettings.columns = DETAIL_ESTATE_COLUMNS;
 
-    this.columns.descriptionEstateSAE = {
-      ...this.columns.descriptionEstateSAE,
+    this.paragraphsTable1 = Articulo3;
+    this.paragraphsTable2 = Articulo12;
+
+    this.columns.descriptionGoodSae = {
+      ...this.columns.descriptionGoodSae,
       onComponentInitFunction: (instance?: any) => {
         instance.input.subscribe((data: any) => {
           console.log(data);
         });
       },
     };
-    this.params
-      .pipe(takeUntil(this.$unSubscribe))
-      .subscribe(() => this.getData());
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.requestObject) {
+      this.params
+        .pipe(takeUntil(this.$unSubscribe))
+        .subscribe(() => this.getData());
+    }
   }
 
   getData() {
-    this.paragraphsTable1 = Articulo3;
-    this.paragraphsTable2 = Articulo12;
-    this.detallesBienes = bienes;
+    this.loading = true;
+    this.params.value.addFilter('requestId', this.requestObject.id);
+    const filter = this.params.getValue().getParams();
+    this.goodServices.getAll(filter).subscribe({
+      next: resp => {
+        var result = resp.data.map(async (item: any) => {
+          const goodTypeName = await this.getTypeGood(item.goodTypeId);
+          item['goodTypeName'] = goodTypeName;
+
+          const physicalStatus = await this.getByTheirStatus(
+            item.physicalStatus,
+            'Estado Fisico'
+          );
+          item['physicstateName'] = physicalStatus;
+
+          const stateConservation = await this.getByTheirStatus(
+            item.stateConservation,
+            'Estado Conservacion'
+          );
+          item['stateConservationName'] = stateConservation;
+
+          const transferentDestiny = await this.getByTheirStatus(
+            item.transferentDestiny,
+            'Destino'
+          );
+          item['transferentDestinyName'] = transferentDestiny;
+
+          const destiny = await this.getByTheirStatus(item.destiny, 'Destino');
+          item['destinyName'] = destiny;
+        });
+
+        Promise.all(result).then(data => {
+          this.goodData = resp.data;
+          this.totalItems = resp.count;
+          this.loading = false;
+        });
+      },
+    });
+  }
+
+  getTypeGood(id: number) {
+    return new Promise((resolve, reject) => {
+      if (id) {
+        this.typeRelevantService.getById(id).subscribe({
+          next: resp => {
+            resolve(resp.description);
+          },
+        });
+      } else {
+        resolve(null);
+      }
+    });
+  }
+
+  getByTheirStatus(id: number | string, typeName: string) {
+    return new Promise((resolve, reject) => {
+      if (id) {
+        var params = new ListParams();
+        params['filter.name'] = `$eq:${typeName}`;
+        params['filter.keyId'] = `$eq:${id}`;
+        this.genericService.getAll(params).subscribe({
+          next: resp => {
+            resolve(resp.data[0].description);
+          },
+        });
+      } else {
+        resolve(null);
+      }
+    });
   }
 
   article3Selected(event: any): void {
@@ -110,7 +208,7 @@ export class VerifyComplianceTabComponent extends BasePage implements OnInit {
     console.log(event);
   }
 
-  selectAll(event?: any) {
+  /*  selectAll(event?: any) {
     this.detailArray = [];
     if (event.target.checked) {
       this.detallesBienes.forEach(x => {
@@ -124,9 +222,9 @@ export class VerifyComplianceTabComponent extends BasePage implements OnInit {
       });
     }
     console.log(this.detailArray);
-  }
+  } */
 
-  selectOne(event: any) {
+  /* selectOne(event: any) {
     if (event.target.checked == true) {
       this.detailArray.push(
         this.detallesBienes.find(x => x.id == event.target.value)
@@ -142,7 +240,9 @@ export class VerifyComplianceTabComponent extends BasePage implements OnInit {
 
   getTableElements(event: any) {
     console.log(event);
-  }
+  } */
+
+  selectGood(event: any) {}
 
   confirm() {
     if (
