@@ -431,6 +431,16 @@ const routes: Routes = [
       screen: 'TMPMAXCIERREACTDEV',
     },
   },
+  {
+    path: 'cat-appraisers',
+    loadChildren: async () =>
+      (await import('./cat-appraisers/cat-appraisers.module'))
+        .CatAppraisersModule,
+    data: {
+      title: 'Catalao de Peritos',
+      screen: 'FCATCATMTOPERITOS',
+    },
+  },
 ];
 
 @NgModule({

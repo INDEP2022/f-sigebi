@@ -1,8 +1,8 @@
 export interface IDocuments {
-  id: string | number;
+  id?: string | number;
   natureDocument: string;
   descriptionDocument?: string;
-  significantDate: Date;
+  significantDate: Date | string;
   scanStatus: string;
   fileStatus?: string;
   userRequestsScan?: string;
