@@ -5,10 +5,17 @@
     </div>
   </div>
   <div body>
-    <ng2-smart-table [settings]="settings1" [source]="data1"></ng2-smart-table>
+    <div [class]="loading ? 'table-loading' : ''">
+      <div class="table-responsive">
+        <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings" [source]="thirdPartyList"
+          (userRowSelect)="rowsSelected($event)"></ng2-smart-table>
+      </div>
+    </div>
+    <app-pagination [params]="params" [totalItems]="totalItems"></app-pagination>
   </div>
+  
 </app-card>
-
+ 
 <app-card [header]="true">
   <div header>
     <div class="ch-content">
@@ -16,7 +23,12 @@
     </div>
   </div>
   <div body>
-    <ng2-smart-table [settings]="settings2" [source]="data2"></ng2-smart-table>
+     <div [class]="loading ? 'table-loading' : ''">
+      <div class="table-responsive">
+        <ng2-smart-table [attr.class]="'table-bordered'" [settings]="settings2" [source]="typeEventList"
+          (userRowSelect)="rowsSelected2($event)"></ng2-smart-table>
+      </div>
+     </div>
   </div>
 </app-card>
 
@@ -27,6 +39,6 @@
     </div>
   </div>
   <div body>
-    <ng2-smart-table [settings]="settings3" [source]="data3"></ng2-smart-table>
+    <ng2-smart-table [settings]="settings3" [source]="amountList"></ng2-smart-table>
   </div>
 </app-card>
