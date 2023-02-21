@@ -306,18 +306,12 @@
           </button>
         </div>
         <div [class]="loadingGoods ? 'table-loading' : ''">
-          <ng-scrollbar
-            [track]="'all'"
-            [autoHeightDisabled]="false"
-            class="table-scrollbar">
-            <ng2-smart-table
-              id="tableGoods"
-              [attr.class]="'table-bordered'"
-              [settings]="settings"
-              [source]="estatesList"
-              (userRowSelect)="goodsSelect($event.selected)">
-            </ng2-smart-table>
-          </ng-scrollbar>
+          <ng2-smart-table
+            id="tableGoods"
+            [attr.class]="'table-bordered'"
+            [settings]="settings"
+            [source]="estatesList">
+          </ng2-smart-table>
         </div>
         <app-pagination
           [params]="params"
