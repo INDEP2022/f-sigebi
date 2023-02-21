@@ -81,11 +81,11 @@ export class RegistrationOfInterestComponent
   getTiie() {
     this.loading = true;
 
-    this.parameterTiieService.getAll().subscribe({
+    this.parameterTiieService.getTiie().subscribe({
       next: response => {
-        this.cats = response.data;
-        console.log(this.cats);
-        this.totalItems = response.count;
+        // this.cats = response.data;
+        console.log(response);
+        // this.totalItems = response.count;
         this.loading = false;
       },
       error: error => (this.loading = false),

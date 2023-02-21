@@ -1,8 +1,10 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from 'src/app/core/interfaces/list-response.interface';
+import { environment } from 'src/environments/environment';
 import { ParameterComerEndpoints } from '../../../common/constants/endpoints/ms-parametercomer-endpoints';
 import { ITiieV1 } from '../../models/ms-parametercomer/parameter';
 
@@ -11,9 +13,14 @@ import { ITiieV1 } from '../../models/ms-parametercomer/parameter';
 })
 export class ParameterTiieService extends HttpService {
   private readonly endpoint: string = ParameterComerEndpoints.ParameterMod;
-  constructor() {
+  constructor(private htpp: HttpClient) {
     super();
     this.microservice = ParameterComerEndpoints.BasePath;
+  }
+
+  getTiie() {
+    const url = `${environment.API_URL}parametercomer/api/v1/comer-cat-tiie`;
+    return this.htpp.get(url);
   }
 
   getAll(params?: ListParams): Observable<IListResponse<ITiieV1>> {
