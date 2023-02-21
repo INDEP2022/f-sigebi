@@ -1,9 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { PreviewDocumentsComponent } from 'src/app/@standalone/preview-documents/preview-documents.component';
-import { FilterParams, ListParams, SearchFilter } from 'src/app/common/repository/interfaces/list-params';
+import {
+  FilterParams,
+  ListParams,
+  SearchFilter,
+} from 'src/app/common/repository/interfaces/list-params';
 import { maxDate } from 'src/app/common/validations/date.validators';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
@@ -11,8 +20,10 @@ import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { IDelegation } from 'src/app/core/models/catalogs/delegation.model';
 import { ISubdelegation } from 'src/app/core/models/catalogs/subdelegation.model';
 //Services
+import { TvalTable1Data } from 'src/app/core/models/catalogs/dinamic-tables.model';
 import { DelegationService } from 'src/app/core/services/catalogs/delegation.service';
 import { PrintFlyersService } from 'src/app/core/services/document-reception/print-flyers.service';
+import { DynamicTablesService } from 'src/app/core/services/dynamic-catalogs/dynamic-tables.service';
 
 export interface IReport {
   data: File;
@@ -31,7 +42,8 @@ export class AssetsReceivedAdmonComponent extends BasePage implements OnInit {
 
   delegations = new DefaultSelect<IDelegation>();
   subdelegations = new DefaultSelect<ISubdelegation>();
-
+  status = new DefaultSelect<TvalTable1Data>();
+  statusD: TvalTable1Data;
 
   phaseEdo: number;
 
@@ -47,7 +59,8 @@ export class AssetsReceivedAdmonComponent extends BasePage implements OnInit {
     private fb: FormBuilder,
     private sanitizer: DomSanitizer,
     private serviceDeleg: DelegationService,
-    private printFlyersService: PrintFlyersService
+    private printFlyersService: PrintFlyersService,
+    private dynamicTablesService: DynamicTablesService
   ) {
     super();
     this.today = new Date();
@@ -65,10 +78,11 @@ export class AssetsReceivedAdmonComponent extends BasePage implements OnInit {
       // toDate: ['', [Validators.required]],
       rangeDate: [null, [Validators.required, maxDate(new Date())]],
       status: [null],
+      statusDescription: [null],
     });
   }
 
-   getDelegations(params: ListParams) {
+  getDelegations(params: ListParams) {
     this.serviceDeleg.getAll(params).subscribe(
       data => {
         this.delegations = new DefaultSelect(data.data, data.count);
@@ -86,7 +100,7 @@ export class AssetsReceivedAdmonComponent extends BasePage implements OnInit {
     );
   }
 
- onDelegationsChange(element: any) {
+  onDelegationsChange(element: any) {
     this.resetFields([this.delegation]);
     this.subdelegations = new DefaultSelect();
     // console.log(this.PN_NODELEGACION.value);
@@ -125,7 +139,29 @@ export class AssetsReceivedAdmonComponent extends BasePage implements OnInit {
 
   onSubDelegationsChange(element: any) {
     this.resetFields([this.subdelegation]);
-    
+  }
+
+  getStatus(params: ListParams) {
+    this.dynamicTablesService.getStatusByTable400(params).subscribe(
+      data => {
+        this.status = new DefaultSelect(data.data, data.count);
+      },
+      err => {
+        let error = '';
+        if (err.status === 0) {
+          error = 'Revise su conexión de Internet.';
+        } else {
+          error = err.message;
+        }
+        this.onLoadToast('error', 'Error', error);
+      },
+      () => {}
+    );
+  }
+
+  onValuesChange(statusChange: TvalTable1Data) {
+    this.statusD = statusChange;
+    this.form.controls['statusDescription'].setValue(this.statusD.value);
   }
 
   resetFields(fields: AbstractControl[]) {
@@ -160,8 +196,6 @@ export class AssetsReceivedAdmonComponent extends BasePage implements OnInit {
     this.loading = false;
   }
 
-  
-
   readFile(file: IReport) {
     const reader = new FileReader();
     reader.readAsDataURL(file.data);
@@ -170,7 +204,6 @@ export class AssetsReceivedAdmonComponent extends BasePage implements OnInit {
       this.openPrevPdf(reader.result as string);
     };
   }
-  
 
   openPrevPdf(pdfurl: string) {
     console.log(pdfurl);

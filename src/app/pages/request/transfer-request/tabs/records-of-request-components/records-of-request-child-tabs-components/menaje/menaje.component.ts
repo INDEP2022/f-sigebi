@@ -90,9 +90,11 @@ export class MenajeComponent extends BasePage implements OnInit {
       params['filter.id'] = `$eq:${item.id}`;
       this.goodRealState.getAll(params).subscribe({
         next: resp => {
-          if (resp.data.length !== 0) {
-            this.menage.id = item.id;
-            this.menage.description = resp.data[0].description;
+          this.menage = new Manege();
+          var good = resp.data;
+          if (good.length !== 0) {
+            this.menage.id = good[0].id;
+            this.menage.description = good[0].description;
             this.menage.requestId = item.requestId;
             resolve(this.menage);
           } else {

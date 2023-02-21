@@ -16,3 +16,6 @@ export interface IAuthority {
   idAuthorityIssuerTransferor: string;
   Station: any;
 }
+export interface INoCityByAsuntoSAT {
+  no_ciudad: string;
+}

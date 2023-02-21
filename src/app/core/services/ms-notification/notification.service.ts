@@ -46,6 +46,13 @@ export class NotificationService extends HttpService {
     );
   }
 
+  update(
+    wheelNumber: number,
+    notification: Partial<INotification>
+  ): Observable<{ statusCode: number; message: string[] }> {
+    return this.put(`${this.route.Notification}/${wheelNumber}`, notification);
+  }
+
   createNotificationxPropertyFilter(model: any): Observable<any> {
     return this.notificationRepository.create(
       this.route.NotificationxPropertyFilter,

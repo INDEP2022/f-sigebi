@@ -42,9 +42,8 @@ export class ScheduleReceptionFormComponent implements OnInit {
 
   prepareForm() {
     this.scheduleForm = this.fb.group({
-      radio: ['T.E'],
-      user: [null, [Validators.required]],
-      check: [false],
+      typeUser: ['T.E'],
+      creationUser: [null, [Validators.required]],
     });
   }
 
@@ -54,9 +53,8 @@ export class ScheduleReceptionFormComponent implements OnInit {
 
   confirm() {
     this.loading = true;
-    this.router.navigate([
-      '/pages/request/programming-request/perform-programming/1',
-    ]);
+    console.log('Enviar', this.scheduleForm.value);
+    this.loading = false;
   }
 
   getUserSelect(user: ListParams) {}
@@ -70,7 +68,7 @@ export class ScheduleReceptionFormComponent implements OnInit {
       callback: (data: any) => {
         if (data) {
           data.map((item: any) => {
-            this.scheduleForm.get('user').setValue(item.user);
+            this.scheduleForm.get('creationUser').setValue(item.user);
           });
         }
       },
