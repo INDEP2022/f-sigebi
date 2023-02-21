@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { BehaviorSubject } from 'rxjs';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { BehaviorSubject, takeUntil } from 'rxjs';
 import { ListParams } from 'src/app/common/repository/interfaces/list-params';
+import { IIndiciados } from 'src/app/core/models/catalogs/indiciados.model';
+import { IndiciadosService } from 'src/app/core/services/catalogs/indiciados.service';
 import { BasePage } from 'src/app/core/shared/base-page';
 import { ModalIndiciaRegistrationComponent } from '../modal-indicia-registration/modal-indicia-registration.component';
 
@@ -11,31 +13,47 @@ import { ModalIndiciaRegistrationComponent } from '../modal-indicia-registration
   styles: [],
 })
 export class IndiciaRegistrationComponent extends BasePage implements OnInit {
-  columns: any[] = [];
+  paragraphs: IIndiciados[] = [];
   totalItems: number = 0;
   params = new BehaviorSubject<ListParams>(new ListParams());
 
-  constructor(private modalService: BsModalService) {
+  constructor(
+    private modalService: BsModalService,
+    private indicatedService: IndiciadosService
+  ) {
     super();
     this.settings = {
       ...this.settings,
       actions: {
         columnTitle: 'Acciones',
         edit: true,
-        delete: true,
+        delete: false,
         position: 'right',
       },
       columns: {
-        numberIndiciado: {
-          title: 'No Indiciado',
+        id: {
+          title: 'Número indiciado',
+          type: 'number',
           sort: false,
         },
         name: {
           title: 'Nombre',
+          type: 'string',
+          sort: false,
+        },
+        noRegistration: {
+          title: 'Número de registro',
+          type: 'number',
           sort: false,
         },
         curp: {
           title: 'Curp',
+          type: 'string',
+          sort: false,
+        },
+        consecutive: {
+          title: 'Consecutivo',
+          type: 'number',
           sort: false,
         },
       },
@@ -43,51 +61,36 @@ export class IndiciaRegistrationComponent extends BasePage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getPagination();
+    this.params
+      .pipe(takeUntil(this.$unSubscribe))
+      .subscribe(() => this.getIndicated());
   }
 
-  openModal(context?: Partial<ModalIndiciaRegistrationComponent>) {
-    const modalRef = this.modalService.show(ModalIndiciaRegistrationComponent, {
-      initialState: { ...context },
+  getIndicated() {
+    this.loading = true;
+    this.indicatedService.getAll(this.params.getValue()).subscribe({
+      next: response => {
+        this.paragraphs = response.data;
+        this.totalItems = response.count;
+        this.loading = false;
+      },
+      error: error => (this.loading = false),
+    });
+  }
+
+  public openForm(indicated?: IIndiciados) {
+    let config: ModalOptions = {
+      initialState: {
+        indicated,
+        callback: (next: boolean) => {
+          if (next) this.getIndicated();
+        },
+      },
       class: 'modal-lg modal-dialog-centered',
       ignoreBackdropClick: true,
-    });
-    modalRef.content.refresh.subscribe(next => {
-      if (next) {
-        this.getData();
-        this.onLoadToast('success', 'Guardado Correctamente', '');
-      }
-    });
+    };
+    this.modalService.show(ModalIndiciaRegistrationComponent, config);
   }
-
-  openForm(allotment?: any) {
-    this.openModal({ allotment });
-  }
-
-  getData() {
-    this.loading = true;
-    this.columns = this.data;
-    this.totalItems = this.data.length;
-    this.loading = false;
-  }
-
-  getPagination() {
-    this.columns = this.data;
-    this.totalItems = this.columns.length;
-  }
-
-  data = [
-    {
-      numberIndiciado: '1',
-      name: 'INDICIADO NUMERO 1',
-      curp: 'CURP_N',
-    },
-    {
-      numberIndiciado: '2',
-      name: 'INDICIADO NUMERO 2',
-      curp: 'CURP_N2',
-    },
-  ];
 
   delete(event: any) {
     this.alertQuestion(
