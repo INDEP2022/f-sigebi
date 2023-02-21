@@ -43,6 +43,12 @@ export class HttpService {
     return this.httpClient.put<T>(`${url}`, body, { params });
   }
 
+  protected patch<T = any>(route: string, body: {}, _params?: _Params) {
+    const params = this.getParams(_params);
+    const url = this.buildRoute(route);
+    return this.httpClient.patch<T>(`${url}`, body, { params });
+  }
+
   protected delete<T = any>(route: string, _params?: _Params) {
     const params = this.getParams(_params);
     const url = this.buildRoute(route);

@@ -6,7 +6,7 @@ import { IDocReceptionFlyersRegistrationParams } from 'src/app/pages/documents-r
 })
 export class DocumentsReceptionDataService {
   private _flyersRegistrationParams: IDocReceptionFlyersRegistrationParams = {
-    gGestOk: null,
+    pGestOk: null,
     pNoVolante: null,
     pSatTipoExp: null, //No necesario si existe global
     pNoTramite: null,
