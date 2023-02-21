@@ -12,14 +12,20 @@
 
         <div class="col-md-5">
           <div class="row pt-3">
-            <form-field [control]="reportForm.get('from')" label="Desde: ">
-              <input formControlName="from" class="form-control" bsDatepicker />
+            <form-field [control]="reportForm.get('PF_MES')" label="Desde: ">
+              <input
+                formControlName="PF_MES"
+                class="form-control"
+                bsDatepicker />
             </form-field>
           </div>
 
           <div class="row pt-3">
-            <form-field [control]="reportForm.get('to')" label="Hasta:">
-              <input formControlName="to" class="form-control" bsDatepicker />
+            <form-field [control]="reportForm.get('PF_ANIO')" label="Hasta:">
+              <input
+                formControlName="PF_ANIO"
+                class="form-control"
+                bsDatepicker />
             </form-field>
           </div>
         </div>

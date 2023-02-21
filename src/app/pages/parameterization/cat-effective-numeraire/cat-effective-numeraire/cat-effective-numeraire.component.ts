@@ -9,7 +9,7 @@ import { CAT_EFFECTIVE_NUM_COLUMNS } from './cat-effective-num-columns';
 //models
 import { INumeraryCategories } from 'src/app/core/models/catalogs/numerary-categories-model';
 //Services
-import { NumeraryCategoriesService } from 'src/app/core/services/catalogs/numerary-categories-service';
+import { NumeraryCategoriesService } from 'src/app/core/services/catalogs/numerary-categories.service';
 import Swal from 'sweetalert2';
 
 @Component({

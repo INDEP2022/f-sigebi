@@ -16,6 +16,9 @@ interface NotData {
   id: number;
   reason: string;
 }
+interface IDs {
+  id: number;
+}
 @Component({
   selector: 'app-massive-change-status',
   templateUrl: './massive-change-status.component.html',
@@ -25,11 +28,12 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
   fileName: string = 'Seleccionar archivo';
   tableSource: previewData[] = [];
   data: LocalDataSource = new LocalDataSource();
-  ids: any[];
+  ids: IDs[];
   form: FormGroup;
   goods: IGood[] = [];
   idsNotExist: NotData[] = [];
   showError: boolean = false;
+  showStatus: boolean = false;
   get goodStatus() {
     return this.form.get('goodStatus');
   }
@@ -53,7 +57,6 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
 
   ngOnInit(): void {
     this.buildForm();
-    /* this.loandData(); */
   }
 
   /**
@@ -68,7 +71,6 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
         null,
         [Validators.required, Validators.pattern(STRING_PATTERN)],
       ],
-      csv: [null, [Validators.required]],
     });
   }
 
@@ -80,45 +82,22 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
     fileReader.onload = () => this.readExcel(fileReader.result);
   }
   readExcel(binaryExcel: string | ArrayBuffer) {
-    /*     try {
-      this.tableSource = [];
-      let preloadFile = this.excelService.getData<previewData | any>(
-        binaryExcel
-      );
-      preloadFile.forEach((data: any) => {
-        let objReplace: any = {};
-        for (const key in data) {
-          if (Object.prototype.hasOwnProperty.call(data, key)) {
-            if (key) {
-              objReplace[key.toLowerCase()] = data[key];
-            }
-          }
-        }
-        this.tableSource.push(objReplace);
-      });
-      let obj: any = {};
-      let object: any = this.tableSource[0];
-      for (const key in object) {
-        if (Object.prototype.hasOwnProperty.call(object, key)) {
-          if (key) {
-            obj[key] = {
-              title: key.toLocaleUpperCase(),
-              type: 'string',
-              sort: false,
-            };
-          }
-        }
-      }
-      const _settings = { columns: obj, actions: false };
-      this.settings = { ...this.settings, ..._settings };
-      this.loadGood(preloadFile);
-      this.onLoadToast('success', 'Archivo subido con Exito', 'Exitoso');
-    } catch (error) {
-      this.onLoadToast('error', 'Ocurrio un error al leer el archivo', 'Error');
-    } */
     try {
-      this.data.load([]);
       this.ids = this.excelService.getData(binaryExcel);
+      if (this.ids[0].id === undefined) {
+        this.onLoadToast(
+          'error',
+          'Ocurrio un error al leer el archivo',
+          'El archivo no cuenta con la estructura requerida'
+        );
+        return;
+      }
+      this.data.load([]);
+      3;
+      this.goods = [];
+      this.idsNotExist = [];
+      this.showError = false;
+      this.showStatus = false;
       this.loadGood(this.ids);
       this.onLoadToast('success', 'Archivo subido con Exito', 'Exitoso');
     } catch (error) {
@@ -152,5 +131,39 @@ export class MassiveChangeStatusComponent extends BasePage implements OnInit {
   addStatus() {
     this.data.load(this.goods);
     this.data.refresh();
+  }
+
+  changeStatusGood() {
+    if (this.goods.length === 0) {
+      this.onLoadToast('error', 'ERROR', 'Debe cargar la lista de bienes');
+      return;
+    }
+    this.goods.forEach(good => {
+      console.log(good);
+      good.status = this.goodStatus.value;
+      if (this.goodStatus.value === 'CAN') {
+        good.observations = `${this.observation.value}. ${good.observations}`;
+      }
+      this.goodServices.update(good.id, good).subscribe({
+        next: response => {
+          console.log(response);
+        },
+        error: err => {
+          this.loading = false;
+          this.idsNotExist.push({ id: good.id, reason: err.error.message });
+        },
+      });
+    });
+    this.onLoadToast(
+      'success',
+      'Actualizado',
+      'Se ha cambiado el status de los bienes seleccionados'
+    );
+    this.addStatus();
+    this.showStatus = true;
+  }
+  validGood() {
+    /// validar si puede ser cambiado el status de forma masiva
+    console.log('Validar');
   }
 }

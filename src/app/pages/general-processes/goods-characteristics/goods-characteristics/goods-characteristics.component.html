@@ -12,17 +12,30 @@
               <div class="row">
                 <div class="col-md-4">
                   <app-goods-types-shared
-                    [form]="form"></app-goods-types-shared>
+                    [form]="form"
+                    typeField="type"
+                    subtypeField="subtype"
+                    ssubtypeField="ssubtype"
+                    sssubtypeField="sssubtype"
+                    (goodSssubtypeChange)="
+                      getGoods($event)
+                    "></app-goods-types-shared>
                 </div>
                 <div class="col-md-4">
                   <div class="row pt-3">
-                    <form-field [control]="form.get('noBien')">
+                    <!-- <form-field [control]="form.get('noBien')">
                       <ngx-select
                         [form]="form"
                         control="noBien"
                         [data]="select"
                         label="No&#46; Bien"></ngx-select>
-                    </form-field>
+                    </form-field> -->
+                    <div class="form-group row">
+                      <goods-filter-shared
+                        [form]="form"
+                        goodField="noBien"
+                        [classifGood]="good"></goods-filter-shared>
+                    </div>
                   </div>
                   <div class="row pt-4">
                     <form-field
@@ -88,7 +101,28 @@
                   </div>
                 </div>
                 <div class="col-md-4">
-                  <app-delegation-shared [form]="form"></app-delegation-shared>
+                  <div class="form-group row">
+                    <form-field
+                      [control]="form.get('delegation')"
+                      label="Delegación"
+                      class="col-md-12">
+                      <input
+                        type="text"
+                        formControlName="delegation"
+                        class="form-control" />
+                    </form-field>
+                  </div>
+                  <div class="form-group row">
+                    <form-field
+                      [control]="form.get('subdelegation')"
+                      label="Delegación"
+                      class="col-md-12">
+                      <input
+                        type="text"
+                        formControlName="subdelegation"
+                        class="form-control" />
+                    </form-field>
+                  </div>
                 </div>
               </div>
 
