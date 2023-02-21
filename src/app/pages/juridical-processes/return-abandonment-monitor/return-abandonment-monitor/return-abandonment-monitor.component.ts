@@ -100,7 +100,6 @@ export class ReturnAbandonmentMonitorComponent
     this.notificationService.getAll(this.params.getValue()).subscribe(
       response => {
         this.notifications = response.data;
-        console.log(this.notifications);
         this.loading = false;
       },
       error => (this.loading = false)

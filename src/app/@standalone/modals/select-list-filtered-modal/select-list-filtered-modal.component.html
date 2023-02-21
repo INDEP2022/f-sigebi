@@ -3,9 +3,11 @@
     <h5 class="modal-title">Seleccionar {{ title }}</h5>
   </div>
   <div body>
-    <div class="row" *ngIf="showSearch">
+    <div class="row" *ngIf="filters.length == 0">
       <div class="form-material col-md-5">
-        <search-bar [filterParams]="params" [filterField]="filter"></search-bar>
+        <search-bar
+          [filterParams]="params"
+          [filterField]="searchFilter"></search-bar>
       </div>
     </div>
     <div class="row pt-4">

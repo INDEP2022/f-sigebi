@@ -6,6 +6,7 @@ import { DynamicCatalogRepository } from 'src/app/common/repository/repositories
 import { HttpService } from 'src/app/common/services/http.service';
 import { IListResponse } from '../../interfaces/list-response.interface';
 import {
+  ISingleTable,
   ITables,
   ITablesData,
   TvalTable1Data,
@@ -30,6 +31,14 @@ export class DynamicTablesService extends HttpService {
     return this.dynamicCatalogRepository.getByIdData(this.route, id);
   }
 
+  getByTableKeyOtKey(
+    tableKey: number | string,
+    OtKey: number | string
+  ): Observable<ISingleTable> {
+    const route = `${DynamicCatalogEndpoint.DinamicTables}/tableKey/${tableKey}/otKey/${OtKey}`;
+    return this.get<ISingleTable>(route);
+  }
+
   getAll(params?: ListParams): Observable<IListResponse<ITables>> {
     return this.get<IListResponse<ITablesData>>(
       DynamicCatalogEndpoint.DinamicTables,
@@ -44,4 +53,13 @@ export class DynamicTablesService extends HttpService {
     const fullRoute = `${DynamicCatalogEndpoint.DinamicTables}/${DynamicCatalogEndpoint.findTvalTable1ByKey}/${id}`;
     return this.get<IListResponse<TvalTable1Data>>(fullRoute, params);
   }
+
+
+  getStatusByTable400(params?: ListParams): Observable<IListResponse<ITables>> {
+    return this.get<IListResponse<ITablesData>>(
+      DynamicCatalogEndpoint.StatusTableBy400,
+      params
+    );
+  }
+
 }

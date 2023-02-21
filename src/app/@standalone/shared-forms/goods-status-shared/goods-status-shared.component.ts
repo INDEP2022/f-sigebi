@@ -23,7 +23,7 @@ import { GoodService } from 'src/app/core/services/good/good.service';
 export class GoodsStatusSharedComponent extends BasePage implements OnInit {
   @Input() form: FormGroup;
   @Input() goodStatusField: string = 'goodStatus';
-
+  @Input() labelStatus: string = 'Estatus Bienes';
   @Input() showGoodStatus: boolean = true;
 
   status = new DefaultSelect<IGoodStatus>();

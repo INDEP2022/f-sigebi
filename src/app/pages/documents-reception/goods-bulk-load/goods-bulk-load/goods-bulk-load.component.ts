@@ -11,6 +11,7 @@ import {
   ListParams,
 } from 'src/app/common/repository/interfaces/list-params';
 import { ExcelService } from 'src/app/common/services/excel.service';
+import { IExpedientMassiveUpload } from 'src/app/core/models/ms-expedient/expedient';
 import { IAttribClassifGoods } from 'src/app/core/models/ms-goods-query/attributes-classification-good';
 import { BasePage } from 'src/app/core/shared/base-page';
 import {
@@ -26,6 +27,7 @@ import {
   ERROR_ATRIBUTE_CLASS_GOOD,
   ERROR_CLASS_GOOD,
   ERROR_ESTATUS,
+  ERROR_EXPEDIENTE,
   ERROR_EXPORT,
   ERROR_GOOD_INMUEBLE,
   ERROR_IDENTIFICADOR_MENAJE,
@@ -700,6 +702,7 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
               };
               this.params.getValue().getParams();
               // params['filter.classifGoodNumber'] = '$eq:' + data.clasif + '';
+              // CARGAR POR PARAMETROS EN EL BODY ME LA PASO RAFA
               if (data.transferente == null) {
                 await this.goodsBulkService.searchForSatOnlyKey(params);
                 // .subscribe({
@@ -763,6 +766,40 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
                       },
                     });
                 }
+                if (data.expediente) {
+                  // Validar si existe un expediente
+                  await this.goodsBulkService
+                    .getExpedientById(data.expediente)
+                    .subscribe({
+                      next: res => {
+                        console.log(res);
+                        let expediente: IExpedientMassiveUpload = {
+                          id: data.expediente,
+                          insertedBy: '',
+                          insertMethod: 'CARGA MASIVA VOLANTES',
+                          insertDate: null,
+                          nameInstitution: '',
+                          indicatedName: '',
+                          federalEntityKey: '',
+                          identifier: '',
+                          transferNumber: '',
+                          expTransferNumber: '',
+                          expedientType: '',
+                          authorityNumber: '',
+                          stationNumber: '',
+                        };
+                        if (!res) {
+                          this.saveExpedient(expediente);
+                        }
+                      },
+                      error: err => {
+                        error = this.agregarError(
+                          error,
+                          ERROR_EXPEDIENTE(data.expediente)
+                        );
+                      },
+                    });
+                }
               }
             }
           } // Validacion 5 registros
@@ -783,5 +820,25 @@ export class GoodsBulkLoadComponent extends BasePage implements OnInit {
         console.log(this.DeclarationsSatSaeMassive, this.listError);
         console.log(val);
       });
+  }
+
+  saveExpedient(expediente: IExpedientMassiveUpload) {
+    console.log(expediente);
+    // await this.goodsBulkService
+    //   .getExpedientById(data.expediente)
+    //   .subscribe({
+    //     next: res => {
+    //       console.log(res);
+    //       if (!res) {
+
+    //       }
+    //     },
+    //     error: err => {
+    //       error = this.agregarError(
+    //         error,
+    //         ERROR_EXPEDIENTE(data.expediente)
+    //       );
+    //     },
+    //   });
   }
 }

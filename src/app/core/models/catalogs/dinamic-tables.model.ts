@@ -5,7 +5,7 @@ export interface ITables {
   description: string;
   actionType: string;
   tableType: number;
-  //numRegister: number;
+  numRegister?: number;
 }
 
 export interface ITablesData {
@@ -14,7 +14,7 @@ export interface ITablesData {
   description: string;
   actionType: string;
   tableType: number;
-  //numRegister: number;
+  numRegister?: number;
 }
 
 export interface ITablesType {
@@ -41,4 +41,22 @@ export interface TvalTable1Data {
   value: string;
   numRegister: string;
   abbreviation: null;
+}
+
+export interface ISingleTable {
+  table?: number; //nmtabla
+  data: ITablesEntryData;
+  name: string;
+  description: string;
+  actionType: string;
+  tableType: number;
+  numRegister?: number;
+}
+
+export interface ITablesEntryData {
+  otKey: string | number;
+  table: string | number;
+  value: string;
+  numRegister: string | number;
+  abbreviation: string | null;
 }
