@@ -2,7 +2,7 @@
   <div header>
     <div class="ch-content">
       <h5 class="title">
-        GESTI&Oacute;N DE AUTORIZACI&Oacute;N DE DESTRUCCI&Oacute;N  
+        GESTI&Oacute;N DE AUTORIZACI&Oacute;N DE DESTRUCCI&Oacute;N
       </h5>
     </div>
   </div>
@@ -14,24 +14,23 @@
             <input
               type="text"
               class="form-control"
-              formControlName="id" readonly/>
+              formControlName="id"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field
-            [control]="form.get('keysProceedings')"
-            >
+          <form-field [control]="form.get('keysProceedings')">
             <ngx-select
-                  [searchOnInit]="true"
-                  [form]="form"
-                  (fetchItems)="getProceedings($event)"
-                  [data]="proceedings"
-                  value="keysProceedings"
-                  bindLabel="keysProceedings"
-                  label="Oficio de Solicitud"
-                  [control]="'keysProceedings'"
-                  (change)="onValuesChange($event)">
-                </ngx-select> 
+              [searchOnInit]="true"
+              [form]="form"
+              (fetchItems)="getProceedings($event)"
+              [data]="proceedings"
+              value="keysProceedings"
+              bindLabel="keysProceedings"
+              label="Oficio de Solicitud"
+              [control]="'keysProceedings'"
+              (change)="onValuesChange($event)">
+            </ngx-select>
           </form-field>
         </div>
         <div class="col-md-2">
@@ -41,7 +40,8 @@
             <input
               type="text"
               class="form-control"
-              formControlName="typeProceedings" readonly/>
+              formControlName="typeProceedings"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-2">
@@ -54,18 +54,22 @@
               class="form-control"
               bsDatepicker
               formControlName="datePhysicalReception"
-              [bsConfig]="{ isAnimated: true }" readonly/>
+              [bsConfig]="{ isAnimated: true }"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-2">
-          <form-field [control]="form.get('dateDeliveryGood')" label="Fecha de alcance">
+          <form-field
+            [control]="form.get('dateDeliveryGood')"
+            label="Fecha de alcance">
             <input
               type="text"
               placeholder=""
               class="form-control"
               bsDatepicker
               formControlName="dateDeliveryGood"
-              [bsConfig]="{ isAnimated: true }" readonly/>
+              [bsConfig]="{ isAnimated: true }"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-2">
@@ -78,17 +82,17 @@
               class="form-control"
               bsDatepicker
               formControlName="dateCaptureHc"
-              [bsConfig]="{ isAnimated: true }" readonly/>
+              [bsConfig]="{ isAnimated: true }"
+              readonly />
           </form-field>
         </div>
         <div class="col-md-1">
-          <form-field
-            [control]="form.get('statusProceedings')"
-            label="Estado">
+          <form-field [control]="form.get('statusProceedings')" label="Estado">
             <input
               type="text"
               class="form-control"
-              formControlName="statusProceedings" readonly/>
+              formControlName="statusProceedings"
+              readonly />
           </form-field>
         </div>
       </div>

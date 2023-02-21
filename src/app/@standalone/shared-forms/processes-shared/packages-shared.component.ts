@@ -42,9 +42,7 @@ export class ProcessesSharedComponent extends BasePage implements OnInit {
 
   getProcesses(params: ListParams) {
     this.historyGoodService
-      .getByGoodAndProcess(
-        `filter.propertyNum=$eq:${this.idGood}&filter.extDomProcess=$not:${this.process}`
-      )
+      .getByGoodAndProcess(this.idGood, this.process)
       .subscribe({
         next: response => {
           this.processes = new DefaultSelect(
