@@ -36,6 +36,7 @@ import { TypeRelevantService } from 'src/app/core/services/catalogs/type-relevan
 import { GoodDomiciliesService } from 'src/app/core/services/good/good-domicilies.service';
 import { GoodsQueryService } from 'src/app/core/services/goodsquery/goods-query.service';
 import { RealStateService } from 'src/app/core/services/ms-good/real-state.service';
+import { MenageService } from 'src/app/core/services/ms-menage/menage.service';
 import { ParameterBrandsService } from 'src/app/core/services/ms-parametercomer/parameter-brands.service';
 import { ParameterSubBrandsService } from 'src/app/core/services/ms-parametercomer/parameter-sub-brands.service';
 import { RequestService } from 'src/app/core/services/requests/request.service';
@@ -43,6 +44,7 @@ import { BasePage } from 'src/app/core/shared/base-page';
 import { STRING_PATTERN } from 'src/app/core/shared/patterns';
 import { DefaultSelect } from 'src/app/shared/components/select/default-select';
 import { RequestHelperService } from '../../request-helper-services/request-helper.service';
+import { MenajeComponent } from '../../transfer-request/tabs/records-of-request-components/records-of-request-child-tabs-components/menaje/menaje.component';
 import { SelectAddressComponent } from '../../transfer-request/tabs/records-of-request-components/records-of-request-child-tabs-components/select-address/select-address.component';
 
 @Component({
@@ -122,8 +124,11 @@ export class DetailAssetsTabComponentComponent
   authService = inject(AuthService);
   parameterBrandsService = inject(ParameterBrandsService);
   parameterSubBrandsService = inject(ParameterSubBrandsService);
+  menageService = inject(MenageService);
 
   isDisabled: boolean = true;
+  menajeSelected: any;
+  isSaveMenaje: boolean = false;
 
   constructor(private fb: FormBuilder, private modalServise: BsModalService) {
     super();
@@ -312,6 +317,7 @@ export class DetailAssetsTabComponentComponent
       }),
     });
 
+    //formulario de domicilio
     this.domicileForm = this.fb.group({
       id: [null],
       warehouseAlias: ['DOMICILIO TRANSFERENTE'],
@@ -345,6 +351,7 @@ export class DetailAssetsTabComponentComponent
     }
   }
 
+  //formulario del inmueble
   getGoodEstateTab() {
     this.goodDomicilieForm = this.fb.group({
       id: [null],
@@ -575,6 +582,29 @@ export class DetailAssetsTabComponentComponent
     });
   }
 
+  openSelectMenage() {
+    let config: ModalOptions = {
+      initialState: {
+        goodsObject: [this.detailAssets.getRawValue()],
+        requestId: this.requestObject.id,
+        callback: (next: boolean) => {
+          //if (next) this.getExample();
+        },
+      },
+      class: 'modal-lg modal-dialog-centered',
+      ignoreBackdropClick: true,
+    };
+    this.bsModalRef = this.modalServise.show(MenajeComponent, config);
+
+    this.bsModalRef.content.event.subscribe((res: any) => {
+      //ver si es necesario recivir los datos desde menaje
+      if (res) {
+        this.menajeSelected = res;
+        this.isSaveMenaje = true;
+      }
+    });
+  }
+
   getTypeGood(id: number) {
     this.typeRelevantSevice.getById(id).subscribe({
       next: (data: any) => {
@@ -626,22 +656,58 @@ export class DetailAssetsTabComponentComponent
 
   async save(): Promise<void> {
     const domicilie = this.domicileForm.getRawValue();
-
     //se guarda bien domicilio
     if (domicilie.id !== null) {
       await this.saveDomicilieGood(domicilie);
     }
-
     //Se guardar el bien inmueble
     if (this.immovablesAssets === true) {
       if (this.domicileForm.controls['id'].value === null) {
-        this.message('info', 'Error', `Se requiere el domicilio del bien`);
+        this.message(
+          'info',
+          'Error',
+          `Se reguiqere ingresar el domicilio del bien`
+        );
       } else {
         await this.saveGoodDomicilie();
       }
     }
 
-    //this.isSave = false;
+    //guarda el menaje
+    if (this.isSaveMenaje === true) {
+      await this.saveMenaje();
+    }
+  }
+
+  saveMenaje() {
+    new Promise((resolve, reject) => {
+      for (let i = 0; i < this.menajeSelected.length; i++) {
+        const element = this.menajeSelected[i];
+
+        this.menageService.create(element).subscribe({
+          next: data => {
+            if (data.statusCode != null) {
+              this.message(
+                'error',
+                'Error',
+                `El menaje no se pudo guardar!\n. ${data.message}`
+              );
+              reject('El registro del bien del domicilio no se guardo!');
+            }
+
+            if (data.id != null) {
+              this.message(
+                'success',
+                'Menaje guardado',
+                `Se guardaron los menajes existosamente`
+              );
+              this.isSaveMenaje = false;
+              resolve('Se guardo correctamente el menaje!');
+            }
+          },
+        });
+      }
+    });
   }
 
   saveDomicilieGood(domicilie: IDomicilies) {
@@ -661,7 +727,7 @@ export class DetailAssetsTabComponentComponent
             this.message(
               'success',
               'Actualizado',
-              `Se actualizo el domicilio!`
+              `Se actualizo el domicilio del bien!`
             );
             this.domicileForm.controls['id'].setValue(data.id);
             resolve('Se actualizo el registro del domicilio del bien');
@@ -701,19 +767,19 @@ export class DetailAssetsTabComponentComponent
             this.message(
               'error',
               'Error',
-              `El registro del bien del domicilio guardar!\n. ${data.message}`
+              `No se guardo el registro del bien inmueble!\n. ${data.message}`
             );
-            reject('El registro del bien del domicilio guardar!');
+            reject('El registro del bien del inmueble no se guardo!');
           }
 
           if (data.id != null) {
             this.message(
               'success',
-              'Actualizado',
-              `Se guardo correctamente el bien del domicilio!`
+              'Guardado',
+              `Se guardo correctamente el bien inmueble!`
             );
 
-            resolve('Se guardo correctamente el bien del domicilio!');
+            resolve('Se guardo correctamente el bien inmueble!');
           }
         },
       });
@@ -791,7 +857,7 @@ export class DetailAssetsTabComponentComponent
       this.goodEstateService.getById(id).subscribe({
         next: resp => {
           console.log(resp);
-          this.goodDomicilieForm.patchValue(resp.data);
+          this.goodDomicilieForm.patchValue(resp);
         },
       });
     }
